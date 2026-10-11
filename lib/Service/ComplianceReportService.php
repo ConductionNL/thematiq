@@ -25,6 +25,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IURLGenerator;
+use OCP\ServerVersion;
 
 /**
  * Computes the active-configuration WCAG contrast compliance evidence report.
@@ -178,6 +179,15 @@ class ComplianceReportService {
 	private ITimeFactory $timeFactory;
 
 	/**
+	 * The running server's version (public since NC 31, below this app's floor of 32).
+	 *
+	 * Null only when constructed without it (isolated unit tests).
+	 *
+	 * @var ServerVersion|null
+	 */
+	private ?ServerVersion $serverVersion;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast The WCAG contrast math service.
@@ -189,6 +199,9 @@ class ComplianceReportService {
 	 * @param IConfig $config The config service.
 	 * @param IURLGenerator $urlGenerator The URL generator.
 	 * @param ITimeFactory $timeFactory The injectable clock.
+	 * @param ServerVersion|null $serverVersion The running server's version.
+	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator backs one part of the report.
 	 */
 	public function __construct(
 		ContrastService $contrast,
@@ -200,6 +213,7 @@ class ComplianceReportService {
 		IConfig $config,
 		IURLGenerator $urlGenerator,
 		ITimeFactory $timeFactory,
+		?ServerVersion $serverVersion = null,
 	) {
 		$this->contrast = $contrast;
 		$this->cssParser = $cssParser;
@@ -210,6 +224,7 @@ class ComplianceReportService {
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->timeFactory = $timeFactory;
+		$this->serverVersion = $serverVersion;
 	}//end __construct()
 
 	/**
@@ -725,23 +740,24 @@ class ComplianceReportService {
 	/**
 	 * Resolve the Nextcloud server version string.
 	 *
-	 * Uses the deprecated array-returning \OCP\Util::getVersion() rather than
-	 * the newer \OCP\ServerVersion (NC 31.0.0+) because this app supports NC
-	 * back to 28 (appinfo/info.xml) and a type-hinted ServerVersion
-	 * constructor dependency would break DI autowiring on 28-30. Falls back
-	 * to "unknown" when no live Nextcloud server container is present (e.g. a
-	 * standalone PHPUnit run without a full NC bootstrap) — that never
-	 * happens for the real endpoint/occ command, only in isolated unit tests.
+	 * Uses the injected \OCP\ServerVersion (public since NC 31.0.0, below
+	 * this app's floor of 32 in appinfo/info.xml) instead of the
+	 * \OCP\Util::getVersion() deprecated since 31. Falls back to "unknown"
+	 * when it was not injected (e.g. a standalone PHPUnit run without a full
+	 * NC bootstrap) — that never happens for the real endpoint/occ command,
+	 * only in isolated unit tests.
 	 *
 	 * @return string The Nextcloud version (e.g. "34.0.0.5"), or "unknown".
-	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - see rationale above.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveNextcloudVersion(): string {
+		if ($this->serverVersion === null) {
+			return 'unknown';
+		}
+
 		try {
-			return implode('.', \OCP\Util::getVersion());
+			return implode('.', $this->serverVersion->getVersion());
 		} catch (\Throwable $e) {
 			return 'unknown';
 		}

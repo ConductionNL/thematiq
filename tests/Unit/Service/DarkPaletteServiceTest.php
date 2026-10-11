@@ -490,6 +490,30 @@ class DarkPaletteServiceTest extends TestCase {
 	}//end testTheRepairLoopFixesControlLabels()
 
 	/**
+	 * The body text reads on the selected navigation entry's wash (thematiq#1051).
+	 *
+	 * Nextcloud 34+ paints the selected entry as 16% of the primary colour
+	 * over its dark navigation (#171717), 22% hovered, with the label in the
+	 * main text colour. These are conduction-new's dark values: #7499de read
+	 * 6.4:1 on the page but 4.37:1 on the wash, and 3.70:1 hovered.
+	 */
+	public function testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash(): void {
+		$result = $this->service->verifyAndRepair(
+			[
+				'--nldesign-color-background' => '#141414',
+				'--nldesign-color-primary' => '#bcceef',
+				'--nldesign-color-text' => '#7499de',
+			]
+		);
+
+		$this->assertSame([], $result['warnings']);
+		$text = $result['declarations']['--nldesign-color-text'];
+		foreach (['16%' => '#31343a', '22%' => '#3b3f47'] as $share => $wash) {
+			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $text, background: $wash), $text . ' on the ' . $share . ' wash ' . $wash);
+		}
+	}//end testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash()
+
+	/**
 	 * A mid-tone page background still derives to a dark page (thematiq#952).
 	 *
 	 * vng's theming background_color #0277BD stood in for the page background

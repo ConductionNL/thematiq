@@ -434,13 +434,14 @@ test.describe('lasuite-parity', () => {
 	// The isolation the comment wanted comes from the one-test-per-element split,
 	// which is orthogonal to serial mode and is kept. Nothing here depends on a
 	// previous test: every test navigates, reads its own CSRF token, sets its own
-	// token set and reloads. And `workers: 1` / `fullyParallel: false` in
-	// playwright.config.ts mean dropping serial introduces no concurrency at all —
-	// the tests still execute one at a time, in the same order. The only thing
-	// that changes is that a failure stops being contagious.
+	// token set and reloads. And `workers: 1` in playwright.config.ts means
+	// dropping serial introduces no concurrency at all — on each CI shard the
+	// tests still execute one at a time, in order. The only thing that changes
+	// is that a failure stops being contagious.
 	//
-	// (`beforeAll`/`afterAll` still run exactly once per worker either way, so the
-	// token-set snapshot/restore is unaffected.)
+	// (Under `fullyParallel` sharding the tests may be spread over several
+	// shards. Each shard that gets some runs `beforeAll`/`afterAll` for them, so
+	// the token-set snapshot/restore still brackets every test.)
 
 	// Every navigation in this suite settles slowly on a loaded instance, and the
 	// default 30s budget turns that into a reported PARITY failure — the report

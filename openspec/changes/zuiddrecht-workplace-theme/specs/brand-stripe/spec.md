@@ -59,3 +59,16 @@ the same tokens.
 - WHEN its rules are read
 - THEN the header stripe and the login card stripe MUST share one rule for the colours, the stops and the height
 - AND the login card stripe MUST sit at `top: 0`
+
+### Requirement: The Component Library Gets The Same Tokens
+While the stripe is on, the stylesheet MUST set `--cn-brand-stripe-color-1`, `-color-2`, `-color-3`,
+`--cn-brand-stripe-ratio-1`, `-ratio-2`, `-ratio-3` and `--cn-brand-stripe-height` on `:root`, each
+from its `--nldesign-brand-stripe-*` token with the fallback the top bar stripe uses, so the
+library's stripe component draws the same bands.
+
+#### Scenario: A portal header matches the top bar
+@e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the `:root` rule of css/brand-stripe.css
+- GIVEN `css/brand-stripe.css`
+- WHEN its `:root` rule is read
+- THEN it MUST declare the seven `--cn-brand-stripe-*` properties
+- AND each MUST read the matching `--nldesign-brand-stripe-*` token

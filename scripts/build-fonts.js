@@ -286,12 +286,20 @@ const FAMILIES = [
 		copyright:
 			'2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)',
 		upstream: '@fontsource/ibm-plex-sans 5.3.0',
+		note: 'Medium (500) is there for esdoornveen, whose design uses four weights.',
 		faces: [
 			{
 				weight: 400,
 				style: 'normal',
 				local: 'IBM Plex Sans',
 				file: 'ibm-plex-sans-latin-400-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'IBM Plex Sans Medium',
+				file: 'ibm-plex-sans-latin-500-normal',
 				formats: ['woff2'],
 			},
 			{
@@ -306,6 +314,197 @@ const FAMILIES = [
 				style: 'normal',
 				local: 'IBM Plex Sans Bold',
 				file: 'ibm-plex-sans-latin-700-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'IBM Plex Mono',
+		spdx: 'OFL-1.1',
+		copyright:
+			'2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)',
+		upstream: '@fontsource/ibm-plex-mono 5.3.0',
+		note: 'Codes such as crebo numbers and exam codes in the esdoornveen set. The 400 file keeps the name css/fonts-conduction.css has always linked; it is byte-identical to the package file ibm-plex-mono-latin-400-normal.woff2.',
+		faces: [
+			{
+				weight: 400,
+				style: 'normal',
+				local: 'IBM Plex Mono',
+				file: 'ibm-plex-mono-latin-400',
+				formats: ['woff2'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'IBM Plex Mono Medium',
+				file: 'ibm-plex-mono-latin-500-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'Lexend',
+		spdx: 'OFL-1.1',
+		copyright:
+			'2019 The Lexend Project Authors (https://github.com/googlefonts/lexend)',
+		upstream: '@fontsource/lexend 5.3.0',
+		note: 'Named by the wilgenboom set.',
+		faces: [
+			{
+				weight: 400,
+				style: 'normal',
+				local: 'Lexend',
+				file: 'lexend-latin-400-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'Lexend Medium',
+				file: 'lexend-latin-500-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Lexend SemiBold',
+				file: 'lexend-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Lexend Bold',
+				file: 'lexend-latin-700-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'Red Hat Display',
+		spdx: 'OFL-1.1',
+		copyright:
+			'2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)',
+		upstream: '@fontsource/red-hat-display 5.3.0',
+		note: 'The heading face of the vaartveld set.',
+		faces: [
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Red Hat Display SemiBold',
+				file: 'red-hat-display-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Red Hat Display Bold',
+				file: 'red-hat-display-latin-700-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 800,
+				style: 'normal',
+				local: 'Red Hat Display ExtraBold',
+				file: 'red-hat-display-latin-800-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'Red Hat Text',
+		spdx: 'OFL-1.1',
+		copyright:
+			'2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)',
+		upstream: '@fontsource/red-hat-text 5.3.0',
+		note: 'The text face of the vaartveld set.',
+		faces: [
+			{
+				weight: 400,
+				style: 'normal',
+				local: 'Red Hat Text',
+				file: 'red-hat-text-latin-400-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'Red Hat Text Medium',
+				file: 'red-hat-text-latin-500-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Red Hat Text SemiBold',
+				file: 'red-hat-text-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Red Hat Text Bold',
+				file: 'red-hat-text-latin-700-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'Barlow',
+		spdx: 'OFL-1.1',
+		copyright: '2017 The Barlow Project Authors (https://github.com/jpt/barlow)',
+		upstream: '@fontsource/barlow 5.3.0',
+		note: 'The text face of the warmtepompacademie set.',
+		faces: [
+			{
+				weight: 400,
+				style: 'normal',
+				local: 'Barlow',
+				file: 'barlow-latin-400-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 500,
+				style: 'normal',
+				local: 'Barlow Medium',
+				file: 'barlow-latin-500-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Barlow SemiBold',
+				file: 'barlow-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Barlow Bold',
+				file: 'barlow-latin-700-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
+		family: 'Barlow Semi Condensed',
+		spdx: 'OFL-1.1',
+		copyright: '2017 The Barlow Project Authors (https://github.com/jpt/barlow)',
+		upstream: '@fontsource/barlow-semi-condensed 5.3.0',
+		note: 'The heading face of the warmtepompacademie set.',
+		faces: [
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Barlow Semi Condensed SemiBold',
+				file: 'barlow-semi-condensed-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Barlow Semi Condensed Bold',
+				file: 'barlow-semi-condensed-latin-700-normal',
 				formats: ['woff2'],
 			},
 		],
@@ -356,22 +555,13 @@ const FAMILIES = [
  * Bundled typefaces whose `@font-face` lives in another stylesheet, listed here
  * so the licence notice beside the binaries still names them.
  *
- * IBM Plex Mono is declared by `css/fonts-conduction.css`, which is a layer no
- * design system links today. The bytes ship either way, so the OFL notice has
- * to name the holder either way — generating the notice from the emitting table
- * alone dropped IBM Plex Mono from `css/fonts/OFL.txt`, which is exactly the
- * failure this table prevents.
+ * Empty since IBM Plex Mono moved into FAMILIES for the esdoornveen set. It
+ * used to sit here because only `css/fonts-conduction.css`, a layer no design
+ * system links, declared it: generating the notice from the emitting table
+ * alone had dropped it from `css/fonts/OFL.txt`. Keep the table for the next
+ * family in that position.
  */
-const NOTICE_ONLY = [
-	{
-		family: 'IBM Plex Mono',
-		spdx: 'OFL-1.1',
-		copyright:
-			'2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)',
-		upstream: '@fontsource/ibm-plex-mono',
-		faces: [{ file: 'ibm-plex-mono-latin-400', formats: ['woff2'] }],
-	},
-]
+const NOTICE_ONLY = []
 
 /**
  * The notice file each licence's bundled families are named in, beside the

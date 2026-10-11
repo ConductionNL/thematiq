@@ -717,6 +717,28 @@ body > #content-vue,
 	margin: 22px !important;
 }
 
+/* ONE SURFACE INSIDE THE CARD (#1052). The Files table header and footer and
+   the README editor paint `--color-main-background`, which REQ-CSS-007 leaves
+   to Nextcloud. In light that is the card's white anyway, but in dark it is
+   #171717, so they showed as darker strips on the gray-800 card. The
+   reserved variable stays untouched: these elements take the card's own
+   surface token instead. The id prefix beats the scoped
+   `.files-list[data-v-…] .files-list__thead` (0,3,0), and the colour stays
+   opaque, because the sticky header has to hide the rows scrolling under it.
+   tests/vitest/lasuiteCardStrips.spec.js holds each element. */
+#app-content-vue .files-list__thead,
+#app-content-vue .files-list__tfoot,
+#app-content-vue #rich-workspace .text-editor,
+#app-content-vue #rich-workspace .text-editor__main,
+#app-content-vue #rich-workspace .editor,
+#app-content-vue #rich-workspace .text-menubar,
+#app-content-vue #rich-workspace .ProseMirror {
+	background-color: var(
+		--lasuite--contextuals--background--surface--primary,
+		var(--lasuite-color-gray-000)
+	) !important;
+}
+
 /* CARD HEADER BAND — La Suite separates the card's title row from the content
    beneath it with a 1px gray-100 rule and 12px/24px padding (measured live: the
    "All docs" title sits in a div with exactly that border and padding).

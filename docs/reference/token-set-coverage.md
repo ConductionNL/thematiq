@@ -39,7 +39,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | conduction-new | 26/87 | self-hosted | no (known) | pass |
 | cunningham | n/a | declared | no (known) | pass |
 | demodam | 21/87 | self-hosted | no (known) | pass |
-| denhaag | 0/87 | self-hosted | yes | pass |
+| denhaag | 81/87 | declared | yes | pass |
 | dinkelland | 53/87 | self-hosted | no (known) | pass |
 | drechterland | 19/87 | system | yes | pass |
 | duiven | 10/87 | self-hosted | no (known) | pass |
@@ -47,6 +47,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | enkhuizen | 19/87 | system | no (known) | pass |
 | enschede | 55/87 | self-hosted | no (known) | pass |
 | epe | 0/87 | self-hosted | yes | pass |
+| esdoornveen | 0/87 | self-hosted | yes | pass |
 | example-basisschool | 74/87 | self-hosted | yes | pass |
 | example-college | 74/87 | self-hosted | yes | pass |
 | example-gemeente | 74/87 | self-hosted | yes | pass |
@@ -80,19 +81,22 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | tilburg | 25/87 | system | yes | pass |
 | tubbergen | 53/87 | self-hosted | no (known) | pass |
 | utrecht | 0/87 | self-hosted | yes | pass |
+| vaartveld | 0/87 | self-hosted | yes | pass |
 | venray | 23/87 | declared | no (known) | pass |
 | vng | 74/87 | declared | yes | pass |
 | vught | 23/87 | declared | no (known) | pass |
+| warmtepompacademie | 0/87 | self-hosted | yes | pass |
 | westervoort | 8/87 | self-hosted | no (known) | pass |
+| wilgenboom | 0/87 | self-hosted | yes | pass |
 | xxllnc | 46/87 | declared | yes | pass |
 | zaanstad | 55/87 | self-hosted | no (known) | pass |
 | zevenaar | 8/87 | self-hosted | no (known) | pass |
 | zuiddrecht | 0/87 | self-hosted | yes | pass |
 | zwolle | 0/87 | declared | no (known) | pass |
 
-- 57 sets measured; 23 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 9 of 53 bridged sets declare none of the 87 --utrecht-* names; median 21.
-- font: 16 declared, 37 self-hosted, 4 system.
-- logo: 34 of 57 point Nextcloud at no logo.
-- contrast: 0 of 57 do not pass.
+- 61 sets measured; 27 pass every gated dimension (font, logo, contrast).
+- bridge (measured, NOT gated): 12 of 57 bridged sets declare none of the 87 --utrecht-* names; median 21.
+- font: 17 declared, 40 self-hosted, 4 system.
+- logo: 34 of 61 point Nextcloud at no logo.
+- contrast: 0 of 61 do not pass.
 

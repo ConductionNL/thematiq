@@ -1,0 +1,204 @@
+/**
+ * Vaartveld College Design Tokens
+ *
+ * Vaartveld College is a school in Zuiddrecht, the demo town that does not exist,
+ * so a demonstration never borrows the house style of a real school. The
+ * palette is Conduction's own design for it (openspec/changes/school-token-sets).
+ * The long view down the canal: clear, confident and a little bold, for pupils of 12 to 18.
+ *
+ * #1F4FD8 (cobalt) is the interactive colour for buttons, links and focus,
+ * #14338F its hover. #1FB5A8 (aqua) is the accent, NOT the interactive
+ * primary: it marks the selected navigation entry (a soft wash with a
+ * #0B6259 label) and the count badge in the navigation. Urgency is always the
+ * red status colour with words, never the accent alone.
+ *
+ * THE WORKPLACE LOOK. Like zuiddrecht, this set wears the light workplace
+ * layout: a white top bar with dark text, a white app navigation, a grey
+ * workspace (#F5F6F8) and white cards with a hairline border. token-sets.json
+ * turns the workplace layout on for this set (its `layout` block), and an
+ * administrator can switch it off again.
+ *
+ * Every text pair below reaches WCAG AA (4.5:1), computed, not estimated:
+ * white on #1F4FD8 6.63, #1F4FD8 on white 6.63 and on the workspace 6.13,
+ * #14338F on #E8EEFC 9.51, #1B1C1D on white 17.07, #5E6168 on white 6.20 and
+ * on the workspace 5.74, #B30000 on white 7.20 and on the workspace
+ * 6.66, #0B6259 on the selected-entry wash #DBF3F1 6.23,
+ * #1A1A1A on #1FB5A8 6.82, #1E6B2A on #E7F3EA 5.77, #7A4F00 on #FFF4DE
+ * 6.53, #A30000 on #FCEDEC 7.22.
+ */
+
+:root {
+	/* Primary interactive colour */
+	--nldesign-color-primary: #1F4FD8;
+	--nldesign-color-primary-text: #ffffff;
+	--nldesign-color-primary-hover: #14338F;
+	--nldesign-color-primary-light: #E8EEFC;
+	/* Not in the design: the primary-light tint with 7% of the primary mixed
+	 * in, the step zuiddrecht's #DCE6F2 takes from its #EAF0F7. */
+	--nldesign-color-primary-light-hover: #DAE3F9;
+
+	/* Vaartveld College palette */
+	--vaartveld-color-main: #1F4FD8;
+	--vaartveld-color-main-deep: #14338F;
+	--vaartveld-color-main-light: #E8EEFC;
+	--vaartveld-color-accent: #1FB5A8;
+	--vaartveld-color-accent-light: #DDF5F2;
+	--vaartveld-color-accent-text: #0B6259;
+	--vaartveld-color-ink: #1B1C1D;
+	--vaartveld-color-muted: #5E6168;
+	--vaartveld-color-line: #E4E6EA;
+	--vaartveld-color-surface: #F5F6F8;
+
+	/* Logo image */
+	--nldesign-logo-url: url('../../img/logos/vaartveld.svg');
+	/* The logo is a wordmark, 3.47 times as wide as it is high.
+	 * 111px gives it 32px of height in Nextcloud's header. */
+	--nldesign-logo-width: 111px;
+
+	/* Background colours, for hover states and the darker steps. The main
+	 * background is managed by Nextcloud's theming system. */
+	--nldesign-color-background-hover: #F0F1F3;
+	--nldesign-color-background-dark: #EDEFF2;
+	--nldesign-color-background-darker: #D3D8DF;
+
+	/* Header: white with dark text and a hairline under it (as zuiddrecht) */
+	--nldesign-color-header-background: #ffffff;
+	--nldesign-color-header-text: #1B1C1D;
+	--nldesign-header-border-bottom: 1px solid rgba(138, 146, 158, 0.25);
+
+	/* Navigation */
+	--nldesign-color-nav-background: #ffffff;
+
+	/* Text colours: Cunningham's ink, and #5E6168 for muted text (Cunningham's
+	 * own #74777c is 4.49:1 on white, just under AA). */
+	--nldesign-color-text: #1B1C1D;
+	--nldesign-color-text-muted: #5E6168;
+	--nldesign-color-text-light: #ffffff;
+
+	/* Status colours. Error is the design's #B30000; its hover is the dark red
+	 * of the overdue pill. */
+	--nldesign-color-error: #B30000;
+	--nldesign-color-error-rgb: 179, 0, 0;
+	--nldesign-color-error-hover: #A30000;
+	--nldesign-color-warning: #7A4F00;
+	--nldesign-color-warning-rgb: 122, 79, 0;
+	--nldesign-color-success: #1E6B2A;
+	--nldesign-color-success-rgb: 30, 107, 42;
+	--nldesign-color-info: #1F4FD8;
+	--nldesign-color-info-rgb: 31, 79, 216;
+
+	/* Border colours. The hairline is for cards and dividers. The design's
+	 * field border #C4C7CB is 1.7:1 against white, under the 3:1 a control
+	 * border needs, so controls take zuiddrecht's #8A929E (3.14). */
+	--nldesign-color-border: #E4E6EA;
+	--nldesign-color-border-dark: #8A929E;
+
+	/* Focus colour */
+	--nldesign-color-focus: rgba(31, 79, 216, 0.5);
+	--nldesign-color-focus-rgb: 31, 79, 216;
+
+	/* Link colours (the interactive colour, not the accent) */
+	--nldesign-color-link: #1F4FD8;
+	--nldesign-color-link-hover: #14338F;
+
+	/* Button colours */
+	--nldesign-color-button-primary-background: #1F4FD8;
+	--nldesign-color-button-primary-text: #ffffff;
+	--nldesign-color-button-primary-border: #1F4FD8;
+	--nldesign-color-button-primary-hover: #14338F;
+
+	/* Typography: Red Hat Text in 400, 500, 600 and 700 for text, Red Hat Display in 600, 700 and 800 for headings, both bundled by thematiq. */
+	--nldesign-font-family: 'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+	/* Headings: their own face. Nextcloud's headings read this token, and
+	 * css/public-bridge.css hands it to the website's headings. */
+	--nldesign-component-heading-font-family: 'Red Hat Display', 'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+	/* Border radius: NEXTCLOUD'S SCALE, NOT THE WEBSITE'S. The workplace keeps
+	 * 8px controls and 12px containers, for the reason zuiddrecht.css and
+	 * cunningham.css give: a near-square or rounder brand radius would reshape
+	 * the Nextcloud chrome. Literals, not var(): overrides.css maps
+	 * Nextcloud's scale FROM these tokens. */
+	--nldesign-border-radius: 8px;
+	--nldesign-border-radius-small: 4px;
+	--nldesign-border-radius-large: 12px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* The website's own corners: 6px for buttons and fields, 10px for cards.
+	 * Only css/public-bridge.css reads these, on a public portal. */
+	--nldesign-website-border-radius: 6px;
+	--nldesign-website-border-radius-large: 10px;
+
+	/* The selected navigation entry: the accent, where Nextcloud uses the
+	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
+	 * colour (#DBF3F1 on white, the design's #DDF5F2) with the
+	 * #0B6259 label on it at 6.23:1. */
+	--nldesign-component-navigation-active-background-color: #1FB5A8;
+	--nldesign-component-navigation-active-color: #0B6259;
+
+	/* The count badge in the navigation: the accent with ink on it (6.82:1). */
+	--nldesign-component-navigation-badge-background-color: #1FB5A8;
+	--nldesign-component-navigation-badge-color: #1A1A1A;
+
+	/* The workspace: a grey surface that white cards sit on, with a very
+	 * light shadow (4% ink). */
+	--nldesign-component-content-surface-background-color: #F5F6F8;
+	--nldesign-component-content-card-shadow-color: rgba(27, 28, 29, 0.04);
+
+	/* Status pills, fixed for the four school sets: received is the
+	 * primary's own tint. info 9.51:1, success 5.77:1, warning 6.53:1, error 7.22:1. */
+	--nldesign-component-status-badge-info-background-color: #E8EEFC;
+	--nldesign-component-status-badge-info-color: #14338F;
+	--nldesign-component-status-badge-success-background-color: #E7F3EA;
+	--nldesign-component-status-badge-success-color: #1E6B2A;
+	--nldesign-component-status-badge-warning-background-color: #FFF4DE;
+	--nldesign-component-status-badge-warning-color: #7A4F00;
+	--nldesign-component-status-badge-error-background-color: #FCEDEC;
+	--nldesign-component-status-badge-error-color: #A30000;
+
+	/* The login watermark: the emblem in grey, large and faint, in the bottom
+	 * corner of the login page while the workplace layout is light. */
+	--nldesign-login-watermark-image: url('../../img/logos/vaartveld-emblem-grey.svg');
+	--nldesign-login-watermark-opacity: 0.08;
+
+	/* The motif, "de vaart": the canal and its bank, a 4px cobalt line, 3px of ground and a 2px aqua line. Drawn
+	 * along the top bar and the login card while the brand stripe is on.
+	 * The 3px between the two lines is transparent rather than white, so it is the ground of the bar it sits on in the dark as well. The three colours are for the component library, which draws flat bands only: cobalt, aqua, cobalt in the ratio 4 : 2 : 4, the weights of the two lines. */
+	--nldesign-brand-stripe-color-1: #1F4FD8;
+	--nldesign-brand-stripe-color-2: #1FB5A8;
+	--nldesign-brand-stripe-color-3: #1F4FD8;
+	--nldesign-brand-stripe-ratio-1: 4;
+	--nldesign-brand-stripe-ratio-2: 2;
+	--nldesign-brand-stripe-ratio-3: 4;
+	--nldesign-brand-stripe-height: 9px;
+	--nldesign-brand-stripe-image: linear-gradient(to bottom, #1F4FD8 0 4px, transparent 4px 7px, #1FB5A8 7px 9px);
+	/* On the dark footer band the bank between the two lines is drawn white. */
+	--nldesign-brand-stripe-image-inverse: linear-gradient(to bottom, #1F4FD8 0 4px, #ffffff 4px 7px, #1FB5A8 7px 9px);
+
+	/* THE WEBSITE (openspec/changes/brand-motif-on-portals). Read only by
+	 * css/public-bridge.css, which a portal links and an instance page never
+	 * does.
+	 * The accent (aqua): the menu item on screen, count badges and the
+	 * "today first" card. Never a button or a link colour. */
+	--nldesign-color-accent: #1FB5A8;
+	--nldesign-color-accent-light: #DDF5F2;
+	--nldesign-color-accent-text: #0B6259;
+	/* The footer band: the primary's deep step, white text on it. */
+	--nldesign-color-footer-background: #14338F;
+	--nldesign-color-footer-text: #ffffff;
+	/* The logo in the site header and footer, 50px high. It carries the
+	 * name, so the portal keeps its title for screen readers only. */
+	--nldesign-website-logo-height: 50px;
+	--nldesign-website-logo-width: 173px;
+	--nldesign-website-logo-text-size: 0;
+	/* The hero on the website: a light ground with dark type, the first
+	 * button in the primary colour, and the emblem as a faint watermark. */
+	--nldesign-hero-background-color: #E8EEFC;
+	--nldesign-hero-title-color: #1B1C1D;
+	--nldesign-hero-body-color: #1B1C1D;
+	--nldesign-hero-action-background-color: #1F4FD8;
+	--nldesign-hero-action-color: #ffffff;
+	/* The portal names the set's emblem in --nldesign-emblem-url. */
+	--nldesign-hero-decoration-image: var(--nldesign-emblem-url);
+}

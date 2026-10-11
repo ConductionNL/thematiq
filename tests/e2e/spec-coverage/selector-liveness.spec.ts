@@ -289,6 +289,18 @@ const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 			+ 'on the NC 32 floor. Its NC 33+ counterpart is the [class*="_colorPickerField__button"] '
 			+ 'rule in SINCE below (thematiq#611).',
 	},
+	{
+		pattern: /^(\.button-vue)?\.button-vue--primary(?![\w-])/,
+		reason:
+			'The nc-vue 9 spelling of a primary button, kept next to the nc-vue 8 '
+			+ 'button-vue--vue-primary for Vue 3 pages. Every rule carries '
+			+ ':not(:where([class*="_colorPickerField__button"])) (thematiq#778), and on Nextcloud 35 '
+			+ 'the colour-picker buttons are the only button-vue--primary elements on any surveyed '
+			+ 'surface. MEASURED on run 37453545530: six button-vue--primary elements across all ten '
+			+ 'surfaces, all six _colorPickerField__button, while every other primary button renders '
+			+ 'as button-vue--vue-primary. The rules are what theme a Vue 3 primary button that is not '
+			+ 'a colour picker, which no surveyed page renders.',
+	},
 ]
 
 function allowedReason(selector: string): string | null {
@@ -430,6 +442,15 @@ const REQUIRES_APP: Array<{ pattern: RegExp; appId: string; reason: string }> = 
 		reason:
 			'The bell is rendered by the notifications app, which lives in its own repository and is '
 			+ 'not part of the nextcloud/server checkout CI builds its instance from.',
+	},
+	{
+		pattern: /#rich-workspace\b/,
+		appId: 'text',
+		reason:
+			'The README editor above the Files list (#rich-workspace) is rendered by the Text app, '
+			+ 'which lives in its own repository like notifications: apps/files in the server source '
+			+ 'has no rich-workspace markup. MEASURED on run 37453545530: no surveyed surface '
+			+ 'requested anything under /apps/text/.',
 	},
 ]
 

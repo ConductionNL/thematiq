@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
+- **Four more layout options, each with a per-theme default.** Where the brand stripe is drawn
+  (`brand_stripe_placement`: both places, the top bar only or the login card only), the
+  navigation width (`navigation_width`, 200 to 480 pixels), the selected navigation entry's style
+  (`navigation_active_style`: Nextcloud's or a soft tint of the accent with a bold label) and the
+  login watermark (`login_watermark`). Each follows the active token set's `layout` block until an
+  administrator chooses, and a set that names none keeps what it had. Zuiddrecht names a 264px
+  navigation and the soft entry. All six layout choices now travel in the configuration bundle
+  (`config.layoutOptions`, bundle version 4), which the first Zuiddrecht change left out.
+- **Zuiddrecht wears the workplace boards.** `css/token-overrides/zuiddrecht.css` now carries the
+  measures of the approved workplace boards (DqTokens, DqZijbalk, DqDashboard, DqZaken, DqZaak) on
+  the Conduction library's own class names, for this set only: a 264px navigation
+  (`--nldesign-nc-navigation-width`), small grey capital captions, a flat soft-red selected entry with
+  a bold label, 28px page titles and a 32px greeting, 18px card titles, the attention card's 13px red
+  kicker over a 20px title, 34px counters over grey labels, 38px pill views with the chosen one in ink,
+  and a quiet 14px table. Every colour goes through a token, so the dark variant follows on its own.
+- **The light workplace draws the standard apps as cards.** While the workplace layout is `light`,
+  `css/workplace-layout.css` draws the dashboard's panels, the Files list, the settings sections and
+  the thematiq panel as cards on the surface (the container radius, a hairline, the cards' shadow
+  colour), with the card title size on the dashboard, a quiet 14px header row on the Files list, and
+  a 44px token set select in the theme picker. No colour literal.
+- **The light workplace draws the login page and the top bar.** While the workplace layout is
+  `light`, `css/workplace-layout.css` now draws Nextcloud's own pages the way the Zuiddrecht boards
+  draw them: the logo above the login card, 56px high, the card 420px wide with a hairline, the
+  container radius, the cards' shadow colour and a 24px title, 44px controls with a 1px edge, a
+  muted footer line without a plate; a 68px top bar with a 40px app grid square and a 44px search
+  pill on the workspace colour. On a guest page the "Back to …" button's label, which the NL Design
+  link rule painted link-blue on blue, reads again. No colour literal: the sheet still suits any set
+  an administrator turns it on for.
+- **The site's page title, lead, notice text and surface are vocabulary.** A set may name
+  `--nldesign-website-page-title-size` and `-line-height`, `--nldesign-website-lead-font-size`,
+  `--nldesign-website-notice-color` and `--nldesign-color-surface` for its portal; only the public
+  bridge reads them, and a set that names none keeps every value it had. Zuiddrecht names them:
+  2.75rem on 1.15, 18px, #1A1A1A and #F4F6F9, every pair computed.
+- **An attention strip apart from the plain notice.** `--nldesign-website-attention-background-color`,
+  `-border-color` and `-color` name the "Let op" strip; Zuiddrecht: #FFF4DE, #E8C77D, #1A1A1A.
+- **Four demo schools in Zuiddrecht.** `wilgenboom` (Basisschool De Wilgenboom, willow green
+  `#2F6B4A` and sun yellow, Lexend), `vaartveld` (Vaartveld College, cobalt `#1F4FD8` and aqua,
+  Red Hat Display over Red Hat Text), `esdoornveen` (Esdoornveen, mbo college, plum `#5B2E91`
+  and maple rose, IBM Plex Sans with IBM Plex Mono for codes) and `warmtepompacademie`
+  (Warmtepompacademie, petrol `#0B6E7A` and ember, Barlow Semi Condensed over Barlow). Each is
+  built the way `zuiddrecht` is: a light workplace on Nextcloud's radius scale, a generated
+  dark variant, four logos and a login watermark. Every text pair reaches AA in the light and
+  in both dark scopes, computed by `tests/vitest/schoolTokenSets.spec.js`.
+- **Lexend, Red Hat Display, Red Hat Text, Barlow, Barlow Semi Condensed, IBM Plex Sans 500 and
+  IBM Plex Mono 400 and 500** join the bundled typefaces, all SIL OFL 1.1, from Fontsource 5.3.0.
+- **A brand stripe may draw a motif of its own.** A set names any background image in
+  `--nldesign-brand-stripe-image` and the stripe draws it instead of the three bands. The four
+  schools draw their motifs this way: the hanging twigs, the canal, the slanted cut and the
+  temperature line.
+- **Website corners and heading faces on a portal.** A set may name the website's own radii in
+  `--nldesign-website-border-radius` and `--nldesign-website-border-radius-large`; only the
+  public bridge reads them, so the workplace keeps 8px and 12px. The bridge also hands
+  `--nldesign-component-heading-font-family` to the website's headings.
 - **Gemeente Zuiddrecht, a demo municipality.** The `zuiddrecht` token set is a light
   workplace: blue `#3669A5` for actions, red `#CC0000` as the accent, a white top bar and
   navigation, a grey workspace with white cards, Nextcloud's own radius scale and a

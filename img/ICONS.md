@@ -273,7 +273,7 @@ PHP/template and other non-Vue consumers.
 These URLs only resolve while the nldesign app is enabled. Consumers must ship a fallback
 icon or declare a dependency on `nldesign`.
 
-## Logos (41 total)
+## Logos (57 total)
 
 Available in: `img/logos/`. Static, checked-in huisstijl assets tied to token sets
 (`token-sets.json` `theming.logo` entries) — organisation marks displayed as that
@@ -284,27 +284,31 @@ organisation's own identity on that organisation's own instance. **Not build out
 - denhaag
 - dinkelland
 - drechterland
-- epe
 - epe-dark
+- epe
+- esdoornveen-dark
+- esdoornveen-emblem-grey
+- esdoornveen-emblem
+- esdoornveen
 - example-basisschool
 - example-college
 - example-gemeente
 - example-opleider
 - example-voortgezet
-- frankendesk
 - frankendesk-dark
+- frankendesk
 - ggd-amsterdam
 - hoorn
 - leiden
 - museum_weesp
-- nijmegen
 - nijmegen-dark
+- nijmegen
 - noaberkracht
-- noordwijk
 - noordwijk-dark
+- noordwijk
 - opencatalogi
-- provincie-zuid-holland
 - provincie-zuid-holland-dark
+- provincie-zuid-holland
 - rijkshuisstijl
 - rotterdam
 - stadsarchief
@@ -312,15 +316,27 @@ organisation's own identity on that organisation's own instance. **Not build out
 - tilburg
 - tubbergen
 - utrecht
+- vaartveld-dark
+- vaartveld-emblem-grey
+- vaartveld-emblem
+- vaartveld
 - vga-verzekeringen
-- vng
 - vng-dark
-- xxllnc
+- vng
+- warmtepompacademie-dark
+- warmtepompacademie-emblem-grey
+- warmtepompacademie-emblem
+- warmtepompacademie
+- wilgenboom-dark
+- wilgenboom-emblem-grey
+- wilgenboom-emblem
+- wilgenboom
 - xxllnc-dark
-- zuiddrecht
+- xxllnc
 - zuiddrecht-dark
-- zuiddrecht-emblem
 - zuiddrecht-emblem-grey
+- zuiddrecht-emblem
+- zuiddrecht
 
 ## Naming stability (public API)
 

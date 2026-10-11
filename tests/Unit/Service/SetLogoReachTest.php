@@ -381,14 +381,24 @@ class SetLogoReachTest extends TestCase {
 	}//end testWithoutAGreyEmblemThereIsNoWatermark()
 
 	/**
-	 * Only Zuiddrecht ships a grey emblem, so only its layer changes. Read off
-	 * the real directory, not a mock.
+	 * Only Zuiddrecht and its four demo schools ship a grey emblem, so only
+	 * their layers change. Read off the real directory, not a mock.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-ships-its-logos-and-a-login-watermark
 	 */
-	public function testOnlyZuiddrechtShipsAGreyEmblem(): void {
+	public function testOnlyTheDemoSetsShipAGreyEmblem(): void {
 		$emblems = array_map('basename', (array)glob(\dirname(__DIR__, 3) . '/img/logos/*-emblem-grey.*'));
 
-		$this->assertSame(['zuiddrecht-emblem-grey.svg'], $emblems);
-	}//end testOnlyZuiddrechtShipsAGreyEmblem()
+		$this->assertSame(
+			[
+				'esdoornveen-emblem-grey.svg',
+				'vaartveld-emblem-grey.svg',
+				'warmtepompacademie-emblem-grey.svg',
+				'wilgenboom-emblem-grey.svg',
+				'zuiddrecht-emblem-grey.svg',
+			],
+			$emblems
+		);
+	}//end testOnlyTheDemoSetsShipAGreyEmblem()
 }//end class

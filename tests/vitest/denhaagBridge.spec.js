@@ -105,16 +105,45 @@ describe('the Den Haag section of the public bridge', () => {
 
 describe('the cascade a portal sees', () => {
 	it('a set with only the semantic layer paints a case card in its own colours', () => {
-		const merged = cascade('denhaag')
+		// The subject used to be `denhaag`, which stopped being a semantic-only
+		// set when scripts/brands/denhaag.json gave it Den Haag's own component
+		// mapping. `tilburg` declares no --denhaag-* property at all, which the
+		// assertion below states rather than assumes, so the three colours can
+		// only reach the card through the bridge.
+		const tilburg = declarations(read('css/tokens/tilburg.css'))
+		expect([...tilburg.keys()].some((k) => k.startsWith('--denhaag-'))).toBe(
+			false,
+		)
+		const merged = cascade('tilburg')
 		const own = (t) => resolve(merged.get(t), merged)
-		expect(value('denhaag', '--denhaag-case-card-title-color')).toBe(
+		expect(value('tilburg', '--denhaag-case-card-title-color')).toBe(
 			own('--nldesign-color-text'),
 		)
-		expect(value('denhaag', '--denhaag-case-card-subtitle-color')).toBe(
+		expect(value('tilburg', '--denhaag-case-card-subtitle-color')).toBe(
 			own('--nldesign-color-text-muted'),
 		)
-		expect(value('denhaag', '--denhaag-case-card-border-color')).toBe(
+		expect(value('tilburg', '--denhaag-case-card-border-color')).toBe(
 			own('--nldesign-color-border'),
+		)
+	})
+
+	it('denhaag keeps its own case card colours and still takes the border', () => {
+		// The mixed case, and the reason the bridge is linked BEFORE the set:
+		// Den Haag states a title and a subtitle colour of its own, so those win,
+		// while it states no card border, so that one still follows the set's
+		// --nldesign-color-border through the bridge.
+		const own = declarations(read('css/tokens/denhaag.css'))
+		const merged = cascade('denhaag')
+		for (const token of [
+			'--denhaag-case-card-title-color',
+			'--denhaag-case-card-subtitle-color',
+		]) {
+			expect(own.get(token), token).toBeDefined()
+			expect(merged.get(token), token).toBe(own.get(token))
+		}
+		expect(own.has('--denhaag-case-card-border-color')).toBe(false)
+		expect(value('denhaag', '--denhaag-case-card-border-color')).toBe(
+			resolve(merged.get('--nldesign-color-border'), merged),
 		)
 	})
 

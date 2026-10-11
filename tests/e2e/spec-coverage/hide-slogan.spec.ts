@@ -84,7 +84,11 @@ const HIDDEN = { display: 'none', visibility: 'hidden', onScreen: false }
 test.use({ colorScheme: 'light' })
 
 test.describe('hide-slogan', () => {
-	test.describe.configure({ mode: 'serial', timeout: 90_000 })
+	// Not `mode: 'serial'`: every test sets and restores its own state through
+	// withThemeState(), so none depends on the one before it. Serial mode would
+	// skip the rest of the file after one failure, and keep all 20 tests (over
+	// ten minutes) on one CI shard.
+	test.describe.configure({ timeout: 90_000 })
 
 	test(// @e2e openspec/specs/hide-slogan/spec.md#setting-stored-as-enabled
 	// @e2e openspec/specs/hide-slogan/spec.md#true-boolean-converted-to-string-1
@@ -153,43 +157,55 @@ test.describe('hide-slogan', () => {
 	'enabled, the login page loads hide-slogan.css after layer 7 and custom-overrides', async ({
 		browser,
 	}) => {
-		await withThemeState(browser, { hideSlogan: true }, async () => {
-			await onLoginPage(browser, async (page) => {
-				const layers = await thematiqLayers(page)
-				const slogan = layers.indexOf('hide-slogan')
-				expect(slogan).toBeGreaterThanOrEqual(0)
-				expect(slogan).toBeGreaterThan(
-					layers.findIndex((l) => l.startsWith('custom-overrides')),
-				)
-				for (const [i, l] of layers.entries()) {
-					if (l.startsWith('systems/') || l.startsWith('tokens/')) {
-						expect(i, l).toBeLessThan(slogan)
-					}
-				}
-				// Every declaration in it is !important, so position is not the
-				// only thing it relies on.
-				const priorities = await page.evaluate(() => {
-					const sheet = [...document.styleSheets].find(
-						(s) =>
-							s.href !== null
-							&& new URL(s.href).pathname.endsWith(
-								'/thematiq/css/hide-slogan.css',
-							),
+		// An empty overrides file of its own, so the custom-overrides layer is
+		// there to load after: without one, findIndex() is -1 and "after it"
+		// holds for any position.
+		await withThemeState(
+			browser,
+			{ hideSlogan: true, overrides: {} },
+			async () => {
+				await onLoginPage(browser, async (page) => {
+					const layers = await thematiqLayers(page)
+					const slogan = layers.indexOf('hide-slogan')
+					const overrides = layers.findIndex((l) =>
+						l.startsWith('custom-overrides'),
 					)
-					if (sheet === undefined) return null
-					return [...sheet.cssRules].flatMap((r) => {
-						const style = (r as CSSStyleRule).style
-						return [...style].map(
-							(p) => `${p}:${style.getPropertyPriority(p)}`,
+					expect(slogan).toBeGreaterThanOrEqual(0)
+					expect(
+						overrides,
+						'the custom-overrides layer must load',
+					).toBeGreaterThanOrEqual(0)
+					expect(slogan).toBeGreaterThan(overrides)
+					for (const [i, l] of layers.entries()) {
+						if (l.startsWith('systems/') || l.startsWith('tokens/')) {
+							expect(i, l).toBeLessThan(slogan)
+						}
+					}
+					// Every declaration in it is !important, so position is not the
+					// only thing it relies on.
+					const priorities = await page.evaluate(() => {
+						const sheet = [...document.styleSheets].find(
+							(s) =>
+								s.href !== null
+								&& new URL(s.href).pathname.endsWith(
+									'/thematiq/css/hide-slogan.css',
+								),
 						)
+						if (sheet === undefined) return null
+						return [...sheet.cssRules].flatMap((r) => {
+							const style = (r as CSSStyleRule).style
+							return [...style].map(
+								(p) => `${p}:${style.getPropertyPriority(p)}`,
+							)
+						})
 					})
+					expect(priorities).toEqual([
+						'display:important',
+						'visibility:important',
+					])
 				})
-				expect(priorities).toEqual([
-					'display:important',
-					'visibility:important',
-				])
-			})
-		})
+			},
+		)
 	})
 
 	test(// @e2e openspec/specs/hide-slogan/spec.md#feature-disabled-skips-css

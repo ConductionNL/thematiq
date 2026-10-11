@@ -1,0 +1,69 @@
+/* SPDX-License-Identifier: EUPL-1.2
+   SPDX-FileCopyrightText: 2026 Conduction B.V.
+
+   Basisschool De Wilgenboom overrides: the dark page, the dark workspace and the
+   login logo, as css/token-overrides/zuiddrecht.css sets them for zuiddrecht
+   and for the same reasons (openspec/changes/school-token-sets).
+
+   1. THE PAGE BACKGROUND. Nextcloud keeps the theming background (#F5F6F8)
+      in the dark, so a dark workplace would sit in a light grey frame. In the
+      dark the page takes the colour of the workspace.
+
+   2. THE WORKSPACE. The generator turns the light #F5F6F8 into a grey that is
+      lighter than Nextcloud's dark cards (#171717), so the cards would sink
+      into it. In the dark the workspace is #121315, below the cards.
+
+   This lives outside `css/tokens/` because a shipped token file is one flat
+   `:root { }` block with no at-rule (TokenCssShapeTest). The selectors start
+   with `:root` so they outrank the generated dark file, which loads after
+   this one. */
+@media (prefers-color-scheme: dark) {
+	:root
+		body:not([data-theme-light]):not([data-theme-dark]):not(
+			[data-theme-light-highcontrast]
+		):not([data-theme-dark-highcontrast]) {
+		--color-background-plain: #121315;
+		--color-background-plain-text: var(--color-main-text);
+		--nldesign-component-content-surface-background-color: #121315;
+	}
+}
+
+:root body[data-theme-dark],
+:root body[data-themes*='dark'] {
+	--color-background-plain: #121315;
+	--color-background-plain-text: var(--color-main-text);
+	--nldesign-component-content-surface-background-color: #121315;
+}
+
+/* The logo on the login card. The NL Design sheet draws it in a 40 by 32
+ * pixel box, which suits an emblem; this logo is a wordmark,
+ * 4.77 times as wide as it is high. It gets 200 by 44 pixels,
+ * centred in the 100px the card keeps free above the form (the box is
+ * `contain`, so the wordmark keeps its proportions inside it). Same
+ * selectors as the rule it follows (css/systems/nldesign/theme.css). */
+#body-login .guest-box.login-box::after,
+#body-login div.guest-box::after,
+.guest-box.login-box::after,
+div.guest-box.login-box::after {
+	top: 28px !important;
+	width: 200px !important;
+	height: 44px !important;
+}
+
+/* The solid selected entry: ink on the accent.
+
+   Where Nextcloud still fills the selected navigation entry solid (the
+   server-rendered navigation of the settings pages, an entry marked
+   --legacy, and every entry on Nextcloud 32 and 33), it fills it with the
+   accent #F5B82E and writes the primary's label colour on it: white, which
+   is under 3:1 on this accent. The design writes ink on the accent, so the
+   label colour is ink for those entries only. The wash Nextcloud 34 and later
+   draw keeps its own label (--nldesign-component-navigation-active-color).
+   Same selectors as the rule in css/systems/nldesign/element-overrides.css
+   that hands those entries the label colour, one `:root` in front. */
+:root #app-navigation li.active,
+:root #app-navigation .app-navigation-entry--legacy.active,
+:root #app-navigation-vue .app-navigation-entry--legacy.active,
+:root .app-navigation .app-navigation-entry--legacy.active {
+	--color-primary-element-text: #1a1a1a;
+}

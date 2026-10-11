@@ -290,7 +290,6 @@ The server MUST compute WCAG 2.1 relative-luminance contrast ratios for the fixe
 - AND the admin panel MUST display the warning with a localized explanation referencing WCAG 2.1 AA
 
 #### Scenario: Contrast warning resurfaces when applying the set
-@e2e exclude theme-config scenario; covered by themer integration, no standalone e2e
 - GIVEN a stored custom set with a persisted contrast warning
 - WHEN the admin selects it in the token set dropdown and the apply dialog opens
 - THEN the dialog MUST display the persisted contrast warning above the change list

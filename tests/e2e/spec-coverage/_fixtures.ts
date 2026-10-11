@@ -12,6 +12,8 @@
 import { expect, type Browser, type Page } from '@playwright/test'
 import * as path from 'path'
 
+import { confirmAdminPassword } from '../workflows/_helpers'
+
 /**
  * The admin session saved by tests/e2e/global-setup.ts.
  *
@@ -52,6 +54,7 @@ export const NONADMIN_PASS =
  *                  somewhere that carries `OC.requestToken`
  */
 export async function ensureNonAdminUser(adminPage: Page): Promise<void> {
+	await confirmAdminPassword(adminPage)
 	const result = await adminPage.evaluate(
 		async ({ user, pass }) => {
 			const body = new URLSearchParams({ userid: user, password: pass })

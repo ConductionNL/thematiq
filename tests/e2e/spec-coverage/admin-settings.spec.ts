@@ -11,28 +11,61 @@
  * Per-scenario excludes for backend-only scenarios are annotated in the
  * spec file.
  */
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { openTokenTab } from '../workflows/_helpers'
+import { adminContext } from './_fixtures'
 
 const THEMING_URL = '/settings/admin/theming'
 
 test.describe('admin-settings', () => {
+	// Every test below that takes no `page` argument reads the SAME page load.
+	// They only read what the server rendered and change nothing, and an admin
+	// page load is the most expensive step of this suite (about 20 s on CI),
+	// so loading it once per test spent minutes on one page. A test that
+	// changes the page, such as the preview test opening a tab, keeps its own.
+	//
+	// `mode: 'default'` keeps the block on one CI shard, so the page loads once
+	// per run. Under `fullyParallel` a block with a beforeAll is otherwise cut
+	// into groups across shards, each loading the page again. Unlike 'serial',
+	// a failure does not skip the tests after it.
+	test.describe.configure({ mode: 'default' })
+
+	let page: Page
+
+	test.beforeAll(async ({ browser }) => {
+		const context = await adminContext(browser)
+		page = await context.newPage()
+		await page.goto(THEMING_URL)
+		await page.waitForLoadState('domcontentloaded')
+	})
+
+	test.afterAll(async () => {
+		await page?.context().close()
+	})
+
+	// The shared page is not the test's own `page` fixture, so Playwright
+	// takes no screenshot of it on a failure; this one does.
+	test.afterEach(async ({}, testInfo) => {
+		if (page !== undefined && testInfo.status !== testInfo.expectedStatus) {
+			await testInfo.attach('shared page', {
+				body: await page.screenshot({ fullPage: true }),
+				contentType: 'image/png',
+			})
+		}
+	})
+
 	// -----------------------------------------------------------------------
 	// REQ-ASET-001: Settings Panel Registration
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#settings-panel-appears-in-admin-area
-	'Settings panel appears in admin area', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Settings panel appears in admin area', async () => {
 		const heading = page.locator('h2:has-text("Thematiq")')
 		await expect(heading).toBeVisible()
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#settings-panel-position-relative-to-nextcloud-theming
-	'Settings panel position relative to Nextcloud theming', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Settings panel position relative to Nextcloud theming', async () => {
 		// Both sections are present — the native "Theming" heading and the
 		// NL Design heading, which must come after.
 		const sections = page.locator('main h2')
@@ -70,16 +103,13 @@ test.describe('admin-settings', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#dropdown-populated-with-token-sets
-	'Dropdown populated with token sets', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Dropdown populated with token sets', async () => {
 		const select = page.locator('#nldesign-token-set-select')
 		await expect(select).toBeVisible()
 		// The dropdown is the SELECTABLE list, not the catalogue: only brands
-		// that are fully functional are offered, which today is `nextcloud`
-		// alone. This used to assert "more than five options", which described
-		// the catalogue and now describes nothing — an instance running the
-		// stock set offers exactly one.
+		// that are fully functional are offered (TokenSetSelectionPolicy, which
+		// derives that from the data since #1038), and `nextcloud` is always
+		// among them.
 		const values = await select
 			.locator('option')
 			.evaluateAll((options) =>
@@ -97,9 +127,7 @@ test.describe('admin-settings', () => {
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#dropdown-label-is-associated-with-select
-	'Dropdown label is associated with select', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Dropdown label is associated with select', async () => {
 		// The label element with for="nldesign-token-set-select" must exist
 		const label = page.locator('label[for="nldesign-token-set-select"]')
 		await expect(label).toBeVisible()
@@ -107,9 +135,7 @@ test.describe('admin-settings', () => {
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#design-system-badge-updates-on-selection
-	'Design system badge is present after page load', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Design system badge is present after page load', async () => {
 		const badge = page.locator('#nldesign-design-system-badge')
 		await expect(badge).toBeAttached()
 	})
@@ -130,6 +156,7 @@ test.describe('admin-settings', () => {
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#preview-box-renders-with-token-set-colors
 	'Preview box renders with token set colors', async ({ page }) => {
+		// Its own page: opening the Buttons & Status tab changes the page.
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
 		// Live preview is rendered as `.nldesign-preview` (id #nldesign-preview)
@@ -159,9 +186,7 @@ test.describe('admin-settings', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
-	'Hide slogan checkbox is present and has correct label', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Hide slogan checkbox is present and has correct label', async () => {
 		const checkbox = page.locator('#nldesign-hide-slogan')
 		await expect(checkbox).toBeAttached()
 		const label = page.locator('label[for="nldesign-hide-slogan"]')
@@ -174,9 +199,7 @@ test.describe('admin-settings', () => {
 	// Depends on IConfig state of running environment — not deterministic in shared env.
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
-	'Hide slogan checkbox label text and accessibility', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Hide slogan checkbox label text and accessibility', async () => {
 		const label = page.locator('label[for="nldesign-hide-slogan"]')
 		await expect(label).toContainText(
 			'Hide Nextcloud slogan/payoff on login page',
@@ -211,11 +234,7 @@ test.describe('admin-settings', () => {
 	// hide-slogan tests all along. That over-crediting is a gate defect and is
 	// filed upstream; it cannot be fixed from the test side.
 	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
-	'Show menu labels checkbox is present and has correct label', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Show menu labels checkbox is present and has correct label', async () => {
 		const checkbox = page.locator('#nldesign-show-menu-labels')
 		await expect(checkbox).toBeAttached()
 		const label = page.locator('label[for="nldesign-show-menu-labels"]')
@@ -228,9 +247,7 @@ test.describe('admin-settings', () => {
 	// Depends on IConfig runtime state.
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
-	'Show menu labels checkbox label text and accessibility', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Show menu labels checkbox label text and accessibility', async () => {
 		const label = page.locator('label[for="nldesign-show-menu-labels"]')
 		await expect(label).toContainText(
 			'Show text labels in app menu (hide icons)',
@@ -248,9 +265,7 @@ test.describe('admin-settings', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#documentation-link-rendered
-	'Documentation link rendered with correct attributes', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Documentation link rendered with correct attributes', async () => {
 		// The href follows the active design system (#662), so find the link by id.
 		const link = page.locator('#nldesign-doc-link')
 		await expect(link).toBeVisible()
@@ -261,9 +276,7 @@ test.describe('admin-settings', () => {
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#nl-design-system-info-link-rendered
-	'NL Design System info link rendered', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'NL Design System info link rendered', async () => {
 		const link = page.locator('a[href="https://nldesignsystem.nl/"]')
 		await expect(link).toBeVisible()
 		await expect(link).toHaveAttribute('target', '_blank')
@@ -297,8 +310,7 @@ test.describe('admin-settings', () => {
 	// PHP annotation check — backend implementation detail.
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#admin-with-valid-session-can-access-all-endpoints
-	'Admin with valid session can access settings page', async ({ page }) => {
-		await page.goto(THEMING_URL)
+	'Admin with valid session can access settings page', async () => {
 		await expect(page).not.toHaveURL(/login/)
 		await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
 	})
@@ -308,9 +320,7 @@ test.describe('admin-settings', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#token-editor-mount-point-rendered
-	'Token editor mount point rendered with content', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Token editor mount point rendered with content', async () => {
 		const editorEl = page.locator('#nldesign-token-editor')
 		await expect(editorEl).toBeAttached()
 	})
@@ -328,9 +338,7 @@ test.describe('admin-settings', () => {
 	// -----------------------------------------------------------------------
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#settings-hint-rendered
-	'Settings hint text rendered', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	'Settings hint text rendered', async () => {
 		const hint = page
 			.locator('.settings-hint')
 			.filter({ hasText: 'Select a Dutch government design token set' })
@@ -367,12 +375,7 @@ test.describe('admin-settings', () => {
 	}
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#token-sets-provided-as-initial-state
-	'Token sets provided as initial state, not as a data attribute', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-
+	'Token sets provided as initial state, not as a data attribute', async () => {
 		const settingsDiv = page.locator('#nldesign-settings')
 		await expect(settingsDiv).toBeAttached()
 
@@ -389,12 +392,7 @@ test.describe('admin-settings', () => {
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#current-token-set-provided-as-initial-state
-	'Current token set provided as initial state, not as a data attribute', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-
+	'Current token set provided as initial state, not as a data attribute', async () => {
 		const current = await readInitialState(page, 'currentTokenSet')
 		expect(typeof current).toBe('string')
 		expect(current.length).toBeGreaterThan(0)
@@ -404,12 +402,7 @@ test.describe('admin-settings', () => {
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#active-preview-and-icon-pack-source-provided-as-initial-state
-	'Active preview and icon pack source provided as initial state', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-
+	'Active preview and icon pack source provided as initial state', async () => {
 		// `activePreview` is null when no preview is running — a null is a
 		// value here, so the assertion is that the KEY is published, not
 		// that it is truthy.

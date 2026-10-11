@@ -148,7 +148,7 @@ The `token-sets.json` manifest MUST follow a defined schema for each entry.
 The active token set MUST be stored in Nextcloud's `IConfig` and default to `nextcloud`.
 
 #### Scenario: No token set configured (fresh install)
-@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. tests/Unit/Controller/SettingsControllerEndpointsTest.php::testTheActiveTokenSetDefaultsToStock asserts the default.
+@e2e exclude The GIVEN is the app value never having been written. No route clears it (POST /settings/tokenset only writes a valid id), so an instance that has run this suite cannot be put back in that state. The read route that test covered is gone (#873); the active set is now queried through the public capability. tests/Unit/CapabilitiesTest.php::testDefaultConfigNoTokenSet asserts that with no `token_set` value the capability answers `nextcloud`.
 - GIVEN no value has been set for `nldesign:token_set` in IConfig
 - WHEN the active token set is queried
 - THEN the default value MUST be `'nextcloud'` (stock Nextcloud theming)
@@ -514,6 +514,7 @@ The required semantic tokens are exactly:
 - AND `complete` MUST be true
 
 #### Scenario: Missing required tokens are evaluated against the set file alone
+@e2e exclude The GIVEN cannot be produced on an instance: only shipped sets are audited, and every shipped set declares the full vocabulary since thematiq#1006 (the allow-list is empty). tests/Unit/TokenSetVocabularyTest.php::testAuditDistinguishesCompleteFromIncompleteSets audits a probe nldesign set that declares only a primary next to the real defaults.css and asserts it is incomplete and misses `--nldesign-color-text`.
 - GIVEN `css/tokens/zwolle.css` declares none of the required semantic tokens
 - AND `css/systems/nldesign/defaults.css` declares Rijkshuisstijl values for all of them
 - WHEN the set is audited
@@ -523,6 +524,7 @@ The required semantic tokens are exactly:
 - AND the reason MUST be reported as "the set renders as the defaults.css brand, not its own"
 
 #### Scenario: `--nldesign-*` names nothing reads are reported as foreign
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testANldesignNameNoLayerReadsIsForeign audits an nldesign set declaring `--nldesign-color-blue-40` and asserts it is the one foreign name and the set is incomplete.
 - GIVEN a shipped set declares `--nldesign-color-blue-40` (a raw upstream palette step)
 - AND no `.css` file under `css/` outside `css/tokens/` declares or reads that name
 - WHEN the set is audited
@@ -532,6 +534,7 @@ The required semantic tokens are exactly:
   `--zwolle-color-blue-40`), where it cannot masquerade as app vocabulary
 
 #### Scenario: The accepted vocabulary is every name any non-token-set CSS layer declares or reads
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testTheVocabularyIsEveryNonTokenLayerAndNeverTheRuntimeFiles asserts a name only one layer reads is vocabulary, and names only in css/tokens/ (dark included), custom-overrides.css or custom-css.css are not.
 - GIVEN `css/systems/nldesign/theme.css` reads `--nldesign-logo-url`
 - AND neither `defaults.css` nor `utrecht-bridge.css` mentions that name
 - WHEN a set declaring `--nldesign-logo-url` is audited
@@ -541,6 +544,7 @@ The required semantic tokens are exactly:
   `custom-css.css`, so a value an admin typed into the theme editor can never widen the vocabulary
 
 #### Scenario: Token names are matched case-sensitively but not case-restrictively
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testACamelCaseNameIsRecognisedKeptAsWrittenAndReported audits `--nldesign-tokenSetOrder-0`: parsed as written, foreign while nothing reads it, vocabulary once a layer reads it.
 - GIVEN `css/tokens/nijmegen.css` declares `--nldesign-tokenSetOrder-0` (an upstream generator
   artefact with a camelCase segment)
 - WHEN the set is audited
@@ -550,6 +554,7 @@ The required semantic tokens are exactly:
   can never disagree about whether such a name exists
 
 #### Scenario: A primary colour that disagrees with the manifest is a mismatch
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testAPrimaryThatDisagreesWithTheManifestIsAMismatchComparedNormalised asserts `#000000` against `#333` is a mismatch with both values normalised, and `#ABC` against `#aabbcc` is not.
 - GIVEN `css/tokens/xxllnc.css` declares `--nldesign-color-primary: #000000`
 - AND `token-sets.json`'s entry for `xxllnc` declares `theming.primary_color: "#333333"`
 - WHEN the set is audited
@@ -558,6 +563,7 @@ The required semantic tokens are exactly:
 - AND comparison MUST normalise case and expand 3-digit hex to 6-digit before comparing
 
 #### Scenario: An absent or non-literal primary is not double-reported as a mismatch
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set declares a literal `--nldesign-color-primary` since thematiq#1006 (the allow-list is empty). tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php::testCommentedOutDeclarationsNeverCount audits an nldesign set without a primary and asserts it is reported once, in `missingRequired`, with `primaryMismatch` false.
 - GIVEN a set does not declare `--nldesign-color-primary` at all, or declares a non-hex value
 - WHEN the set is audited
 - THEN the defect MUST be reported once, in `missingRequired`
@@ -663,6 +669,7 @@ selection, with the specific findings available to the admin. The finding MUST t
 distinguishable from a contrast warning without inspecting its other fields.
 
 #### Scenario: Selecting an incomplete set shows the "Incomplete set" badge
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/vitest/admin-incomplete-set.spec.js 'shows the badge with its findings for an incomplete set and hides it for a complete one' drives js/admin.js with the warning the audit emits.
 - GIVEN the admin opens the nldesign settings page
 - WHEN they select a token set whose audit reports it incomplete
 - THEN a badge reading "Incomplete set" MUST appear next to the design-system badge
@@ -671,6 +678,7 @@ distinguishable from a contrast warning without inspecting its other fields.
 - AND the badge MUST be hidden entirely for a complete set
 
 #### Scenario: The apply dialog explains the fallback
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/vitest/admin-incomplete-set.spec.js 'explains the fallback in its own banner, apart from the contrast banner, and still applies' drives js/admin.js through the apply dialog to the POST.
 - GIVEN the admin selects an incomplete set and the apply dialog opens
 - WHEN the dialog renders its warnings
 - THEN a non-blocking banner MUST state that the missing tokens fall back to the Rijkshuisstijl
@@ -679,6 +687,7 @@ distinguishable from a contrast warning without inspecting its other fields.
 - AND applying the set MUST NOT be blocked
 
 #### Scenario: The vocabulary finding is distinguishable from a contrast finding
+@e2e exclude The GIVEN cannot be produced on an instance: every shipped set is complete since thematiq#1006 and only shipped sets are audited. tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php::testTheVocabularyFindingHasItsOwnKindAndShape asserts the exact keys warningsFor() emits and that a ContrastService finding has no kind; tests/vitest/admin-incomplete-set.spec.js holds the contrast banner leaving the vocabulary entry out.
 - GIVEN a set has both a contrast warning and a vocabulary warning
 - WHEN the `warnings` array reaches the admin JS
 - THEN the vocabulary entry MUST carry `kind: 'incomplete'` with `missing[]`, `foreign[]`,

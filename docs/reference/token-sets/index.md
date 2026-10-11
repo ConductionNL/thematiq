@@ -19,6 +19,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Enkhuizen](./enkhuizen.md) `enkhuizen`
 - [Gemeente Enschede](./enschede.md) `enschede`
 - [Gemeente Epe](./epe.md) `epe`
+- [Esdoornveen, mbo college](./esdoornveen.md) `esdoornveen`
 - [(EXAMPLE) Basisschool](./example-basisschool.md) `example-basisschool`
 - [(EXAMPLE) College](./example-college.md) `example-college`
 - [(EXAMPLE) Gemeente](./example-gemeente.md) `example-gemeente`
@@ -54,10 +55,13 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Tilburg](./tilburg.md) `tilburg`
 - [Gemeente Tubbergen](./tubbergen.md) `tubbergen`
 - [Gemeente Utrecht](./utrecht.md) `utrecht`
+- [Vaartveld College](./vaartveld.md) `vaartveld`
 - [Gemeente Venray](./venray.md) `venray`
 - [VNG Vereniging Nederlandse Gemeenten](./vng.md) `vng`
 - [Gemeente Vught](./vught.md) `vught`
+- [Warmtepompacademie](./warmtepompacademie.md) `warmtepompacademie`
 - [Gemeente Westervoort](./westervoort.md) `westervoort`
+- [Basisschool De Wilgenboom](./wilgenboom.md) `wilgenboom`
 - [xxllnc](./xxllnc.md) `xxllnc`
 - [Gemeente Zaanstad](./zaanstad.md) `zaanstad`
 - [Gemeente Zevenaar](./zevenaar.md) `zevenaar`

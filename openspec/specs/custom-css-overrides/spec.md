@@ -52,7 +52,7 @@ token-overrides, dark variant, contrast fixes, theme and component scopes).
 - THEN the resolved value MUST be `#0000FF` (custom override wins)
 
 #### Scenario: Missing file does not break stack
-@e2e exclude a browser cannot make the file absent and uncreatable; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testAFailingOverridesWriteDoesNotCancelTheLaterLayers asserts the other layers still load when the file cannot be created
+@e2e exclude a browser cannot make the overrides file absent on an instance that has saved overrides. Since the runtime files left the app directory (#811) rendering never creates the file. PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testRenderingWritesNothingAndLaterLayersStillRun renders with no saved overrides and asserts no file is created and every later layer still loads; tests/Unit/Service/CssInjectionServiceTest.php::testNoSavedOverridesIsNotAWarning asserts nothing is logged for it.
 - GIVEN `custom-overrides.css` does not exist on disk
 - WHEN Nextcloud loads the CSS stack
 - THEN the remaining CSS layers MUST apply normally

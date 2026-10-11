@@ -1,0 +1,200 @@
+/**
+ * Basisschool De Wilgenboom Design Tokens
+ *
+ * Basisschool De Wilgenboom is a school in Zuiddrecht, the demo town that does not exist,
+ * so a demonstration never borrows the house style of a real school. The
+ * palette is Conduction's own design for it (openspec/changes/school-token-sets).
+ * The tree you shelter under: warm, calm and clear for busy parents.
+ *
+ * #2F6B4A (willow green) is the interactive colour for buttons, links and focus,
+ * #1F4A33 its hover. #F5B82E (sun yellow) is the accent, NOT the interactive
+ * primary: it marks the selected navigation entry (a soft wash with a
+ * #6B4A00 label) and the count badge in the navigation. Urgency is always the
+ * red status colour with words, never the accent alone.
+ *
+ * THE WORKPLACE LOOK. Like zuiddrecht, this set wears the light workplace
+ * layout: a white top bar with dark text, a white app navigation, a grey
+ * workspace (#F5F6F8) and white cards with a hairline border. token-sets.json
+ * turns the workplace layout on for this set (its `layout` block), and an
+ * administrator can switch it off again.
+ *
+ * Every text pair below reaches WCAG AA (4.5:1), computed, not estimated:
+ * white on #2F6B4A 6.32, #2F6B4A on white 6.32 and on the workspace 5.84,
+ * #1F4A33 on #E8F1EB 8.73, #1B1C1D on white 17.07, #5E6168 on white 6.20 and
+ * on the workspace 5.74, #B30000 on white 7.20 and on the workspace
+ * 6.66, #6B4A00 on the selected-entry wash #FDF4DE 7.36,
+ * #1A1A1A on #F5B82E 9.76, #1E6B2A on #E7F3EA 5.77, #7A4F00 on #FFF4DE
+ * 6.53, #A30000 on #FCEDEC 7.22.
+ */
+
+:root {
+	/* Primary interactive colour */
+	--nldesign-color-primary: #2F6B4A;
+	--nldesign-color-primary-text: #ffffff;
+	--nldesign-color-primary-hover: #1F4A33;
+	--nldesign-color-primary-light: #E8F1EB;
+	/* Not in the design: the primary-light tint with 7% of the primary mixed
+	 * in, the step zuiddrecht's #DCE6F2 takes from its #EAF0F7. */
+	--nldesign-color-primary-light-hover: #DBE8E0;
+
+	/* Basisschool De Wilgenboom palette */
+	--wilgenboom-color-main: #2F6B4A;
+	--wilgenboom-color-main-deep: #1F4A33;
+	--wilgenboom-color-main-light: #E8F1EB;
+	--wilgenboom-color-accent: #F5B82E;
+	--wilgenboom-color-accent-light: #FDF3D7;
+	--wilgenboom-color-accent-text: #6B4A00;
+	--wilgenboom-color-ink: #1B1C1D;
+	--wilgenboom-color-muted: #5E6168;
+	--wilgenboom-color-line: #E4E6EA;
+	--wilgenboom-color-surface: #F5F6F8;
+
+	/* Logo image */
+	--nldesign-logo-url: url('../../img/logos/wilgenboom.svg');
+	/* The logo is a wordmark, 4.77 times as wide as it is high.
+	 * 153px gives it 32px of height in Nextcloud's header. */
+	--nldesign-logo-width: 153px;
+
+	/* Background colours, for hover states and the darker steps. The main
+	 * background is managed by Nextcloud's theming system. */
+	--nldesign-color-background-hover: #F0F1F3;
+	--nldesign-color-background-dark: #EDEFF2;
+	--nldesign-color-background-darker: #D3D8DF;
+
+	/* Header: white with dark text and a hairline under it (as zuiddrecht) */
+	--nldesign-color-header-background: #ffffff;
+	--nldesign-color-header-text: #1B1C1D;
+	--nldesign-header-border-bottom: 1px solid rgba(138, 146, 158, 0.25);
+
+	/* Navigation */
+	--nldesign-color-nav-background: #ffffff;
+
+	/* Text colours: Cunningham's ink, and #5E6168 for muted text (Cunningham's
+	 * own #74777c is 4.49:1 on white, just under AA). */
+	--nldesign-color-text: #1B1C1D;
+	--nldesign-color-text-muted: #5E6168;
+	--nldesign-color-text-light: #ffffff;
+
+	/* Status colours. Error is the design's #B30000; its hover is the dark red
+	 * of the overdue pill. */
+	--nldesign-color-error: #B30000;
+	--nldesign-color-error-rgb: 179, 0, 0;
+	--nldesign-color-error-hover: #A30000;
+	--nldesign-color-warning: #7A4F00;
+	--nldesign-color-warning-rgb: 122, 79, 0;
+	--nldesign-color-success: #1E6B2A;
+	--nldesign-color-success-rgb: 30, 107, 42;
+	--nldesign-color-info: #2F6B4A;
+	--nldesign-color-info-rgb: 47, 107, 74;
+
+	/* Border colours. The hairline is for cards and dividers. The design's
+	 * field border #C4C7CB is 1.7:1 against white, under the 3:1 a control
+	 * border needs, so controls take zuiddrecht's #8A929E (3.14). */
+	--nldesign-color-border: #E4E6EA;
+	--nldesign-color-border-dark: #8A929E;
+
+	/* Focus colour */
+	--nldesign-color-focus: rgba(47, 107, 74, 0.5);
+	--nldesign-color-focus-rgb: 47, 107, 74;
+
+	/* Link colours (the interactive colour, not the accent) */
+	--nldesign-color-link: #2F6B4A;
+	--nldesign-color-link-hover: #1F4A33;
+
+	/* Button colours */
+	--nldesign-color-button-primary-background: #2F6B4A;
+	--nldesign-color-button-primary-text: #ffffff;
+	--nldesign-color-button-primary-border: #2F6B4A;
+	--nldesign-color-button-primary-hover: #1F4A33;
+
+	/* Typography: Lexend in 400, 500, 600 and 700, bundled by thematiq. It was designed for reading ease, which is the school's subject. */
+	--nldesign-font-family: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+	/* Border radius: NEXTCLOUD'S SCALE, NOT THE WEBSITE'S. The workplace keeps
+	 * 8px controls and 12px containers, for the reason zuiddrecht.css and
+	 * cunningham.css give: a near-square or rounder brand radius would reshape
+	 * the Nextcloud chrome. Literals, not var(): overrides.css maps
+	 * Nextcloud's scale FROM these tokens. */
+	--nldesign-border-radius: 8px;
+	--nldesign-border-radius-small: 4px;
+	--nldesign-border-radius-large: 12px;
+	--nldesign-border-radius-rounded: 28px;
+	--nldesign-border-radius-pill: 100px;
+
+	/* The website's own corners: 10px for buttons and fields, 14px for cards.
+	 * Only css/public-bridge.css reads these, on a public portal. */
+	--nldesign-website-border-radius: 10px;
+	--nldesign-website-border-radius-large: 14px;
+
+	/* The selected navigation entry: the accent, where Nextcloud uses the
+	 * primary colour. Nextcloud 34 and later draw it as a 16% wash of this
+	 * colour (#FDF4DE on white, the design's #FDF3D7) with the
+	 * #6B4A00 label on it at 7.36:1. */
+	--nldesign-component-navigation-active-background-color: #F5B82E;
+	--nldesign-component-navigation-active-color: #6B4A00;
+
+	/* The count badge in the navigation: the accent with ink on it (9.76:1). */
+	--nldesign-component-navigation-badge-background-color: #F5B82E;
+	--nldesign-component-navigation-badge-color: #1A1A1A;
+
+	/* The workspace: a grey surface that white cards sit on, with a very
+	 * light shadow (4% ink). */
+	--nldesign-component-content-surface-background-color: #F5F6F8;
+	--nldesign-component-content-card-shadow-color: rgba(27, 28, 29, 0.04);
+
+	/* Status pills, fixed for the four school sets: received is the
+	 * primary's own tint. info 8.73:1, success 5.77:1, warning 6.53:1, error 7.22:1. */
+	--nldesign-component-status-badge-info-background-color: #E8F1EB;
+	--nldesign-component-status-badge-info-color: #1F4A33;
+	--nldesign-component-status-badge-success-background-color: #E7F3EA;
+	--nldesign-component-status-badge-success-color: #1E6B2A;
+	--nldesign-component-status-badge-warning-background-color: #FFF4DE;
+	--nldesign-component-status-badge-warning-color: #7A4F00;
+	--nldesign-component-status-badge-error-background-color: #FCEDEC;
+	--nldesign-component-status-badge-error-color: #A30000;
+
+	/* The login watermark: the emblem in grey, large and faint, in the bottom
+	 * corner of the login page while the workplace layout is light. */
+	--nldesign-login-watermark-image: url('../../img/logos/wilgenboom-emblem-grey.svg');
+
+	/* The motif, "de twijgen": the hanging twigs of the willow, short bars with round ends in uneven lengths (14, 8, 11, 6, 12, 9, 5, 13, 7 and 10px, 6px wide, 6px apart), green with every seventh one yellow. Drawn
+	 * along the top bar and the login card while the brand stripe is on.
+	 * The three colours read the twigs as proportions for the component library, which draws flat bands only: green, yellow, green in the ratio 3 : 1 : 3, one bar in seven. */
+	--nldesign-brand-stripe-color-1: #2F6B4A;
+	--nldesign-brand-stripe-color-2: #F5B82E;
+	--nldesign-brand-stripe-color-3: #2F6B4A;
+	--nldesign-brand-stripe-ratio-1: 3;
+	--nldesign-brand-stripe-ratio-2: 1;
+	--nldesign-brand-stripe-ratio-3: 3;
+	--nldesign-brand-stripe-height: 17px;
+	--nldesign-brand-stripe-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='840' height='17'><rect width='840' height='3' fill='%232F6B4A'/><g transform='translate(0 3)'><path fill='%232F6B4A' d='M0 0h6v11a3 3 0 0 1-6 0zM12 0h6v5a3 3 0 0 1-6 0zM24 0h6v8a3 3 0 0 1-6 0zM36 0h6v3a3 3 0 0 1-6 0zM60 0h6v6a3 3 0 0 1-6 0zM72 0h6v2a3 3 0 0 1-6 0zM84 0h6v10a3 3 0 0 1-6 0zM96 0h6v4a3 3 0 0 1-6 0zM108 0h6v7a3 3 0 0 1-6 0zM120 0h6v11a3 3 0 0 1-6 0zM144 0h6v8a3 3 0 0 1-6 0zM156 0h6v3a3 3 0 0 1-6 0zM168 0h6v9a3 3 0 0 1-6 0zM180 0h6v6a3 3 0 0 1-6 0zM192 0h6v2a3 3 0 0 1-6 0zM204 0h6v10a3 3 0 0 1-6 0zM228 0h6v7a3 3 0 0 1-6 0zM240 0h6v11a3 3 0 0 1-6 0zM252 0h6v5a3 3 0 0 1-6 0zM264 0h6v8a3 3 0 0 1-6 0zM276 0h6v3a3 3 0 0 1-6 0zM288 0h6v9a3 3 0 0 1-6 0zM312 0h6v2a3 3 0 0 1-6 0zM324 0h6v10a3 3 0 0 1-6 0zM336 0h6v4a3 3 0 0 1-6 0zM348 0h6v7a3 3 0 0 1-6 0zM360 0h6v11a3 3 0 0 1-6 0zM372 0h6v5a3 3 0 0 1-6 0zM396 0h6v3a3 3 0 0 1-6 0zM408 0h6v9a3 3 0 0 1-6 0zM420 0h6v6a3 3 0 0 1-6 0zM432 0h6v2a3 3 0 0 1-6 0zM444 0h6v10a3 3 0 0 1-6 0zM456 0h6v4a3 3 0 0 1-6 0zM480 0h6v11a3 3 0 0 1-6 0zM492 0h6v5a3 3 0 0 1-6 0zM504 0h6v8a3 3 0 0 1-6 0zM516 0h6v3a3 3 0 0 1-6 0zM528 0h6v9a3 3 0 0 1-6 0zM540 0h6v6a3 3 0 0 1-6 0zM564 0h6v10a3 3 0 0 1-6 0zM576 0h6v4a3 3 0 0 1-6 0zM588 0h6v7a3 3 0 0 1-6 0zM600 0h6v11a3 3 0 0 1-6 0zM612 0h6v5a3 3 0 0 1-6 0zM624 0h6v8a3 3 0 0 1-6 0zM648 0h6v9a3 3 0 0 1-6 0zM660 0h6v6a3 3 0 0 1-6 0zM672 0h6v2a3 3 0 0 1-6 0zM684 0h6v10a3 3 0 0 1-6 0zM696 0h6v4a3 3 0 0 1-6 0zM708 0h6v7a3 3 0 0 1-6 0zM732 0h6v5a3 3 0 0 1-6 0zM744 0h6v8a3 3 0 0 1-6 0zM756 0h6v3a3 3 0 0 1-6 0zM768 0h6v9a3 3 0 0 1-6 0zM780 0h6v6a3 3 0 0 1-6 0zM792 0h6v2a3 3 0 0 1-6 0zM816 0h6v4a3 3 0 0 1-6 0zM828 0h6v7a3 3 0 0 1-6 0z'/><path fill='%23F5B82E' d='M48 0h6v9a3 3 0 0 1-6 0zM132 0h6v5a3 3 0 0 1-6 0zM216 0h6v4a3 3 0 0 1-6 0zM300 0h6v6a3 3 0 0 1-6 0zM384 0h6v8a3 3 0 0 1-6 0zM468 0h6v7a3 3 0 0 1-6 0zM552 0h6v2a3 3 0 0 1-6 0zM636 0h6v3a3 3 0 0 1-6 0zM720 0h6v11a3 3 0 0 1-6 0zM804 0h6v10a3 3 0 0 1-6 0z'/></g></svg>");
+	/* On the dark footer band the twigs hang from its top edge, in a light
+	 * green (#5F9A78) and the same yellow, without the green line. */
+	--nldesign-brand-stripe-image-inverse: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='840' height='14'><path fill='%235F9A78' d='M0 0h6v11a3 3 0 0 1-6 0zM12 0h6v5a3 3 0 0 1-6 0zM24 0h6v8a3 3 0 0 1-6 0zM36 0h6v3a3 3 0 0 1-6 0zM60 0h6v6a3 3 0 0 1-6 0zM72 0h6v2a3 3 0 0 1-6 0zM84 0h6v10a3 3 0 0 1-6 0zM96 0h6v4a3 3 0 0 1-6 0zM108 0h6v7a3 3 0 0 1-6 0zM120 0h6v11a3 3 0 0 1-6 0zM144 0h6v8a3 3 0 0 1-6 0zM156 0h6v3a3 3 0 0 1-6 0zM168 0h6v9a3 3 0 0 1-6 0zM180 0h6v6a3 3 0 0 1-6 0zM192 0h6v2a3 3 0 0 1-6 0zM204 0h6v10a3 3 0 0 1-6 0zM228 0h6v7a3 3 0 0 1-6 0zM240 0h6v11a3 3 0 0 1-6 0zM252 0h6v5a3 3 0 0 1-6 0zM264 0h6v8a3 3 0 0 1-6 0zM276 0h6v3a3 3 0 0 1-6 0zM288 0h6v9a3 3 0 0 1-6 0zM312 0h6v2a3 3 0 0 1-6 0zM324 0h6v10a3 3 0 0 1-6 0zM336 0h6v4a3 3 0 0 1-6 0zM348 0h6v7a3 3 0 0 1-6 0zM360 0h6v11a3 3 0 0 1-6 0zM372 0h6v5a3 3 0 0 1-6 0zM396 0h6v3a3 3 0 0 1-6 0zM408 0h6v9a3 3 0 0 1-6 0zM420 0h6v6a3 3 0 0 1-6 0zM432 0h6v2a3 3 0 0 1-6 0zM444 0h6v10a3 3 0 0 1-6 0zM456 0h6v4a3 3 0 0 1-6 0zM480 0h6v11a3 3 0 0 1-6 0zM492 0h6v5a3 3 0 0 1-6 0zM504 0h6v8a3 3 0 0 1-6 0zM516 0h6v3a3 3 0 0 1-6 0zM528 0h6v9a3 3 0 0 1-6 0zM540 0h6v6a3 3 0 0 1-6 0zM564 0h6v10a3 3 0 0 1-6 0zM576 0h6v4a3 3 0 0 1-6 0zM588 0h6v7a3 3 0 0 1-6 0zM600 0h6v11a3 3 0 0 1-6 0zM612 0h6v5a3 3 0 0 1-6 0zM624 0h6v8a3 3 0 0 1-6 0zM648 0h6v9a3 3 0 0 1-6 0zM660 0h6v6a3 3 0 0 1-6 0zM672 0h6v2a3 3 0 0 1-6 0zM684 0h6v10a3 3 0 0 1-6 0zM696 0h6v4a3 3 0 0 1-6 0zM708 0h6v7a3 3 0 0 1-6 0zM732 0h6v5a3 3 0 0 1-6 0zM744 0h6v8a3 3 0 0 1-6 0zM756 0h6v3a3 3 0 0 1-6 0zM768 0h6v9a3 3 0 0 1-6 0zM780 0h6v6a3 3 0 0 1-6 0zM792 0h6v2a3 3 0 0 1-6 0zM816 0h6v4a3 3 0 0 1-6 0zM828 0h6v7a3 3 0 0 1-6 0z'/><path fill='%23F5B82E' d='M48 0h6v9a3 3 0 0 1-6 0zM132 0h6v5a3 3 0 0 1-6 0zM216 0h6v4a3 3 0 0 1-6 0zM300 0h6v6a3 3 0 0 1-6 0zM384 0h6v8a3 3 0 0 1-6 0zM468 0h6v7a3 3 0 0 1-6 0zM552 0h6v2a3 3 0 0 1-6 0zM636 0h6v3a3 3 0 0 1-6 0zM720 0h6v11a3 3 0 0 1-6 0zM804 0h6v10a3 3 0 0 1-6 0z'/></svg>");
+
+	/* THE WEBSITE (openspec/changes/brand-motif-on-portals). Read only by
+	 * css/public-bridge.css, which a portal links and an instance page never
+	 * does.
+	 * The accent (sun yellow; #6B4A00 on #FDF3D7 7.36:1): the menu item on screen, count badges and the
+	 * "today first" card. Never a button or a link colour. */
+	--nldesign-color-accent: #F5B82E;
+	--nldesign-color-accent-light: #FDF3D7;
+	--nldesign-color-accent-text: #6B4A00;
+	/* The footer band: the primary's deep step, white text on it. */
+	--nldesign-color-footer-background: #1F4A33;
+	--nldesign-color-footer-text: #ffffff;
+	/* The logo in the site header and footer, 50px high. It carries the
+	 * name, so the portal keeps its title for screen readers only. */
+	--nldesign-website-logo-height: 50px;
+	--nldesign-website-logo-width: 238px;
+	--nldesign-website-logo-text-size: 0;
+	/* The hero on the website: a light ground with dark type, the first
+	 * button in the primary colour, and the emblem as a faint watermark. */
+	--nldesign-hero-background-color: #E8F1EB;
+	--nldesign-hero-title-color: #1F4A33;
+	--nldesign-hero-body-color: #1B1C1D;
+	--nldesign-hero-action-background-color: #2F6B4A;
+	--nldesign-hero-action-color: #ffffff;
+	/* The portal names the set's emblem in --nldesign-emblem-url. */
+	--nldesign-hero-decoration-image: var(--nldesign-emblem-url);
+}

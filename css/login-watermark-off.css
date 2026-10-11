@@ -1,0 +1,17 @@
+/**
+ * Login watermark: off
+ * (openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded after css/workplace-layout.css, only while the layout is light and
+ * the login watermark resolves to off: an administrator switched it off, or
+ * the active token set says so in its `layout` block. The watermark rule in
+ * the layout sheet stays as it is; this sheet takes the mark off the login
+ * page again, on the same pseudo-element, so the later sheet wins.
+ */
+body#body-login::before {
+	content: none !important;
+	background-image: none !important;
+}

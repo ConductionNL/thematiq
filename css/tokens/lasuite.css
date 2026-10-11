@@ -61,4 +61,11 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-border-radius-large: 4px;
 	--nldesign-border-radius-rounded: 4px;
+
+	/* Table headers sit on the card with no fill of their own, as in light,
+	 * where the lasuite bundle never loads the nldesign defaults. Left out, the
+	 * dark generator took defaults.css's background-dark alias and painted
+	 * the Files header cells #23232f on the gray-800 card (thematiq#1052).
+	 * Cunningham's set declares the same. */
+	--nldesign-component-table-header-background-color: transparent;
 }

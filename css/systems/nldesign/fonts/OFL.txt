@@ -5,6 +5,12 @@ Open Sans: Copyright 2020 The Open Sans Project Authors (https://github.com/goog
 Lato: Copyright 2010-2011 by tyPoland Lukasz Dziedzic (team@latofonts.com) with Reserved Font Name "Lato"
 Roboto: Copyright 2011 The Roboto Project Authors (https://github.com/googlefonts/roboto-classic)
 IBM Plex Sans: Copyright 2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)
+IBM Plex Mono: Copyright 2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)
+Lexend: Copyright 2019 The Lexend Project Authors (https://github.com/googlefonts/lexend)
+Red Hat Display: Copyright 2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)
+Red Hat Text: Copyright 2024 The Red Hat Project Authors (https://github.com/RedHatOfficial/RedHatFont)
+Barlow: Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)
+Barlow Semi Condensed: Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow)
 Figtree: Copyright 2022 The Figtree Project Authors (https://github.com/erikdkennedy/figtree)
 
 licensed under the SIL Open Font License, Version 1.1.

@@ -86,7 +86,7 @@ class WcagCachePrefixPairingTest extends TestCase {
 	public function testBothClassesShareOneWcagCachePrefix(): void {
 		$audit = $this->createMock(ShippedTokenSetAuditService::class);
 
-		$tokenSetService = new TokenSetService(
+		new TokenSetService(
 			$this->createMock(IAppManager::class),
 			$this->createMock(IConfig::class),
 			$this->createMock(LoggerInterface::class),
@@ -103,7 +103,6 @@ class WcagCachePrefixPairingTest extends TestCase {
 			$this->createMock(IAppManager::class),
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(DesignSystemService::class),
-			$tokenSetService,
 			$audit,
 			$this->recordingFactory()
 		);

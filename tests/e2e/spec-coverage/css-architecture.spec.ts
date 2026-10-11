@@ -53,6 +53,7 @@ import {
 	thematiqLayers,
 	tokenSetManifest,
 	withThemeState,
+	withUploadedSet,
 	type ThemeSnapshot,
 } from './_theme-state'
 
@@ -293,17 +294,20 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				})
 		})
 		expect(rules, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
-		// The requirement is about Fira Sans. The same file also registers
-		// Source Sans 3 for the (EXAMPLE) Gemeente set (#899), which loads only
-		// when a page asks for that family.
+		// The requirement is about Fira Sans. The same file also registers the
+		// families other token sets name, such as Source Sans 3 for the
+		// (EXAMPLE) Gemeente set (#899); each loads only when a page asks for it.
+		// The scenario names the four faces that MUST be there; it does not
+		// forbid more, and the file also carries 500 and 600 for the sets that
+		// ask for those weights (#1049).
 		const fira = (rules ?? []).filter((r) => r.family === 'Fira Sans')
-		expect(fira.map((r) => `${r.family} ${r.weight} ${r.style}`).sort()).toEqual(
-			[
+		expect(fira.map((r) => `${r.family} ${r.weight} ${r.style}`)).toEqual(
+			expect.arrayContaining([
 				'Fira Sans 400 italic',
 				'Fira Sans 400 normal',
 				'Fira Sans 700 italic',
 				'Fira Sans 700 normal',
-			],
+			]),
 		)
 		expect(new Set((rules ?? []).map((r) => r.display))).toEqual(
 			new Set(['swap']),
@@ -365,10 +369,12 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				})
 		})
 		expect(faces, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
-		// The Fira Sans faces, as the requirement names them. Source Sans 3
-		// (#899, the (EXAMPLE) Gemeente set) ships woff2 only.
+		// Every Fira Sans face: at least the four the requirement names, plus
+		// the 500 and 600 weights #1049 added, and each must follow the rule
+		// below. Source Sans 3 (#899, the (EXAMPLE) Gemeente set) ships woff2
+		// only, so the rule is checked for Fira Sans alone.
 		const fira = (faces ?? []).filter((f) => f.family === 'Fira Sans')
-		expect(fira.length).toBe(4)
+		expect(fira.length).toBeGreaterThanOrEqual(4)
 		for (const face of fira) {
 			expect(face.src.trim().startsWith('local(')).toBe(true)
 			expect(face.urls.map((u) => u.format)).toEqual(['woff2', 'woff'])
@@ -1161,27 +1167,44 @@ test.describe('css-architecture: design systems and layers on other sets', () =>
 		browser,
 		page,
 	}) => {
-		const set = 'groningen'
-		expect(repoFile(`css/tokens/${set}.css`)).not.toContain(
-			'--nldesign-color-error',
-		)
+		// The set is the test's own: every shipped set declares an error colour
+		// since the token sync (#1006, #1008), so none of them is incomplete in
+		// the way this scenario describes. It brands the primary and nothing
+		// else.
 		const fallback = rootDeclarations(
 			repoFile('css/systems/nldesign/defaults.css'),
 		).get('--nldesign-color-error') as string
-		await withThemeState(browser, { tokenSet: set, overrides: {} }, async () => {
-			const layers = await probeLayers(page)
-			expect(layers).toContain(`tokens/${set}`)
-			const expected = await resolveColor(page, fallback)
-			expect(
-				await resolveColor(
-					page,
-					await rootVar(page, '--nldesign-color-error'),
-				),
-			).toBe(expected)
-			expect(
-				await resolveColor(page, await bodyVar(page, '--color-error')),
-			).toBe(expected)
-		})
+		await withUploadedSet(
+			browser,
+			'no error colour',
+			':root {\n\t--nldesign-color-primary: #154273;\n}\n',
+			async (set) => {
+				await withThemeState(
+					browser,
+					{ tokenSet: set, overrides: {} },
+					async () => {
+						const layers = await probeLayers(page)
+						expect(layers).toContain(`tokens/${set}`)
+						expect(await servedCss(page, `tokens/${set}`)).not.toContain(
+							'--nldesign-color-error',
+						)
+						const expected = await resolveColor(page, fallback)
+						expect(
+							await resolveColor(
+								page,
+								await rootVar(page, '--nldesign-color-error'),
+							),
+						).toBe(expected)
+						expect(
+							await resolveColor(
+								page,
+								await bodyVar(page, '--color-error'),
+							),
+						).toBe(expected)
+					},
+				)
+			},
+		)
 	})
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#organization-colors-applied

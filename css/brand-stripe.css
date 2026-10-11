@@ -19,6 +19,18 @@
  * A set that declares none gets three equal bands in its primary colour, the
  * primary hover and the primary again, 4px high.
  *
+ * A MOTIF THAT IS NOT THREE BANDS. A set may name an image of its own in
+ *
+ *   --nldesign-brand-stripe-image               any background-image value
+ *
+ * and the stripe draws that instead of the three bands, in the same box and at
+ * the same height: the hanging twigs of wilgenboom, the canal and its bank of
+ * vaartveld, the slanted cut of esdoornveen, the five steps of the
+ * warmtepompacademie (openspec/changes/school-token-sets). The three colours
+ * stay declared, because the component library's stripe below reads only
+ * those. An image named by url() must be a data: URI: a relative path would
+ * resolve against this stylesheet, not against the token file that names it.
+ *
  * IT SITS INSIDE THE BAR, NOT UNDER IT. Nextcloud places the content exactly
  * one header height from the top, so a stripe hanging below the bar would lie
  * over the first pixels of every app, and raising `--header-height` moves
@@ -78,12 +90,15 @@
 	z-index: 1;
 	height: var(--nldesign-brand-stripe-height, 4px);
 	pointer-events: none;
-	background-image: linear-gradient(
-		to right,
-		var(--thematiq-stripe-color-1) 0 var(--thematiq-stripe-stop-1),
-		var(--thematiq-stripe-color-2) var(--thematiq-stripe-stop-1)
-			var(--thematiq-stripe-stop-2),
-		var(--thematiq-stripe-color-3) var(--thematiq-stripe-stop-2) 100%
+	background-image: var(
+		--nldesign-brand-stripe-image,
+		linear-gradient(
+			to right,
+			var(--thematiq-stripe-color-1) 0 var(--thematiq-stripe-stop-1),
+			var(--thematiq-stripe-color-2) var(--thematiq-stripe-stop-1)
+				var(--thematiq-stripe-stop-2),
+			var(--thematiq-stripe-color-3) var(--thematiq-stripe-stop-2) 100%
+		)
 	);
 }
 
@@ -95,4 +110,41 @@
 /* Along the top edge of the login card. */
 #body-login div[class*='login-box__wrapper']::before {
 	top: 0;
+}
+
+/*
+ * The same stripe for the shared component library. Its `CnBrandStripe` reads
+ * its own `--cn-brand-stripe-*` properties and knows no theme, so the tokens
+ * are handed over here, with the fallbacks the stripe above uses. While the
+ * stripe is off this sheet is not loaded and the component draws its own
+ * default: one band in the primary colour.
+ */
+:root {
+	--cn-brand-stripe-color-1: var(
+		--nldesign-brand-stripe-color-1,
+		var(--color-primary-element)
+	);
+	--cn-brand-stripe-color-2: var(
+		--nldesign-brand-stripe-color-2,
+		var(--color-primary-element-hover)
+	);
+	--cn-brand-stripe-color-3: var(
+		--nldesign-brand-stripe-color-3,
+		var(--cn-brand-stripe-color-1)
+	);
+	--cn-brand-stripe-ratio-1: var(--nldesign-brand-stripe-ratio-1, 1);
+	--cn-brand-stripe-ratio-2: var(--nldesign-brand-stripe-ratio-2, 1);
+	--cn-brand-stripe-ratio-3: var(--nldesign-brand-stripe-ratio-3, 1);
+	--cn-brand-stripe-height: var(--nldesign-brand-stripe-height, 4px);
+	/*
+	 * The motif, when the set names one, and its variant for a dark band
+	 * (openspec/changes/brand-motif-on-portals). No fallback: with the set
+	 * silent both are the guaranteed-invalid value and the component draws its
+	 * three bands, exactly as before.
+	 */
+	--cn-brand-stripe-image: var(--nldesign-brand-stripe-image);
+	--cn-brand-stripe-image-inverse: var(
+		--nldesign-brand-stripe-image-inverse,
+		var(--nldesign-brand-stripe-image)
+	);
 }

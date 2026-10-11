@@ -1661,6 +1661,112 @@ class CssInjectionServiceTest extends TestCase {
 		$linkLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $linkLog)->getStylesheetManifest('zuiddrecht');
 
-		$this->assertSame(['workplaceLayout' => 'light', 'brandStripe' => true], $manifest['layout']);
+		$this->assertSame(
+			[
+				'workplaceLayout' => 'light',
+				'brandStripe' => true,
+				'navigationWidth' => null,
+				'navigationActiveStyle' => 'default',
+				'brandStripePlacement' => 'header-and-login',
+				'loginWatermark' => true,
+			],
+			$manifest['layout']
+		);
 	}//end testTheManifestCarriesTheResolvedLayout()
+
+	/**
+	 * A set that carries every newer layout default gets each conditional
+	 * stylesheet, in cascade order after the two older ones, and the
+	 * navigation width as one inline `:root` variable after the links. A set
+	 * that carries none gets none of them (the control).
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 */
+	public function testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth(): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(
+			meta: [
+				'layout' => [
+					'workplace_layout' => 'light',
+					'brand_stripe' => true,
+					'navigation_width' => 264,
+					'navigation_active_style' => 'soft',
+					'brand_stripe_placement' => 'login',
+					'login_watermark' => false,
+				],
+			]
+		);
+
+		$log = [];
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+					$this->runtimeFiles,
+					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
+			->getMock();
+		$service->method('emitStylesheetLink')->willReturnCallback(
+			function (string $url) use (&$log) {
+				$log[] = 'link:' . $url;
+			}
+		);
+		$service->method('emitInlineStyle')->willReturnCallback(
+			function (string $css, ?string $id = null) use (&$log) {
+				$log[] = 'inline:' . (string)$id . ':' . $css;
+			}
+		);
+
+		$service->inject('user');
+
+		$conditional = array_values(
+			array_filter(
+				$log,
+				static fn (string $entry): bool => str_starts_with($entry, 'inline:thematiq-navigation-width')
+					|| preg_match('#/css/(workplace-layout|login-watermark-off|brand-stripe|brand-stripe-login-only|brand-stripe-header-only|navigation-width|navigation-active-soft)\.css#', $entry) === 1
+			)
+		);
+		$this->assertSame(
+			[
+				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0',
+				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0',
+				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0',
+				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0',
+				'link:/custom_apps/thematiq/css/navigation-width.css?v=0',
+				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0',
+				'inline:thematiq-navigation-width::root { --thematiq-navigation-width: 264px; }',
+			],
+			$conditional
+		);
+	}//end testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth()
+
+	/**
+	 * The control for the test above: a set without a layout block and no
+	 * stored choice loads none of the newer stylesheets and no inline width.
+	 *
+	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 */
+	public function testTheNewerLayoutStylesheetsAreAbsentByDefault(): void {
+		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureLayoutSet(meta: []);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
+
+		foreach (['login-watermark-off', 'brand-stripe-login-only', 'brand-stripe-header-only', 'navigation-width', 'navigation-active-soft'] as $file) {
+			$this->assertFalse($this->linksStylesheet($linkLog, $file), $file);
+		}
+	}//end testTheNewerLayoutStylesheetsAreAbsentByDefault()
 }//end class

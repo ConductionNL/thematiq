@@ -62,8 +62,8 @@ label {
 	background-color: var(--color-main-background) !important;
 
 	/* Navigation entries are chrome, not content links: they take the body text
-	 * colour, and the selected entry takes the primary colour's paired
-	 * foreground. See NAVIGATION ENTRIES below for why the colour travels as an
+	 * colour, and a solid (legacy) selected entry takes the primary colour's
+	 * paired foreground. See NAVIGATION ENTRIES below for why the colour travels as an
 	 * inherited property instead of a `color` rule, and why it is declared here
 	 * rather than in its own block (one selector, one rule). */
 	--nldesign-color-on-surface: var(--color-main-text);
@@ -337,11 +337,19 @@ header nav .icon {
    SOLID BACKGROUNDS
    ============================================ */
 
+/*
+ * A widget gets a solid ground; the parts inside it do not. A BEM element
+ * such as `.cn-stages-widget__bar` also holds "widget" in its class, and
+ * this rule (ID-level specificity through `:not(#header *)`) used to paint
+ * it the page background, so a part that is drawn as a coloured shape, the
+ * stages bars first, disappeared on its card. Skipping `widget__` leaves
+ * every container solid and the parts their own colour.
+ */
 .panel:not(#header *),
 .widget:not(#header *),
 .dashboard-widget:not(#header *),
 [class*='panel']:not(#header *),
-[class*='widget']:not(#header *),
+[class*='widget']:not([class*='widget__']):not(#header *),
 #app-content,
 .app-content {
 	background: var(--color-main-background);
@@ -349,6 +357,37 @@ header nav .icon {
 	opacity: 1;
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
+}
+
+/*
+ * A borderless widget asks for no ground of its own: it sits on the page
+ * ground (nextcloud-vue draws `.cn-widget-wrapper--borderless` transparent).
+ * The rule above painted the wrapper and the widget inside it white, so a
+ * greeting on the ground sat in a white box, a borderless attention banner
+ * had a second, taller white card under it (dossiq, DqDashboard) and the
+ * borderless rows of the pipelinq and decidiq dashboards showed white bands
+ * on the grey workspace.
+ *
+ * So every borderless wrapper, its content and the widget directly in it
+ * stay transparent, and so does a greeting on the ground anywhere. A widget
+ * that draws its own card keeps it: the attention banner, the calendar and
+ * the tiles paint their own ground, which this rule leaves alone.
+ *
+ * WEIGHT. The solid rule above scores (1,2,0): two attribute selectors and
+ * the ID inside `:not(#header *)`. A selector here that scores less loses,
+ * whatever its place, so each one carries at least two classes besides the
+ * `:not(#header *)`, and the block comes after the solid rule.
+ */
+.cn-widget-wrapper.cn-widget-wrapper--borderless:not(#header *),
+.cn-widget-wrapper--borderless > .cn-widget-wrapper__content:not(#header *),
+.cn-widget-wrapper--borderless
+	> .cn-widget-wrapper__content
+	> [class*='widget']:not([class*='widget__']):not(
+		.cn-banner-widget--attention
+	):not(.cn-calendar-widget):not([class*='tile-widget']):not(#header *),
+.cn-header-widget.cn-header-widget--ground:not(#header *) {
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ============================================
@@ -410,6 +449,62 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 }
 
 /* ============================================
+   FILES TABLE HEADER, FOOTER AND README ON THE SURFACE
+   ============================================ */
+
+/*
+ * component-scopes.css gives the app content the set's surface
+ * (`--nldesign-component-content-surface-background-color`) and hands the
+ * main background back to its children, so cards stand out from it. The Files
+ * table header and footer are not cards: Nextcloud paints them with
+ * `--color-main-background` only so the sticky header hides the rows under
+ * it. On a set with a surface of its own they showed as strips: white on
+ * Zuiddrecht's #F5F6F8, and #171717 on its dark #121315 (thematiq#1061).
+ * The README editor above the list does the same, as on La Suite (#1052).
+ *
+ * They now take the surface itself. A set without the token falls back to
+ * the main background, which is what they painted before. The id prefix beats
+ * the scoped `.files-list[data-v-…] .files-list__thead` (0,3,0).
+ * tests/vitest/contentSurfaceTable.spec.js holds every nldesign set.
+ */
+#app-content-vue .files-list__thead,
+#app-content-vue .files-list__tfoot,
+#app-content-vue #rich-workspace .text-editor,
+#app-content-vue #rich-workspace .text-editor__main,
+#app-content-vue #rich-workspace .editor,
+#app-content-vue #rich-workspace .text-menubar,
+#app-content-vue #rich-workspace .ProseMirror,
+#app-content-vue #rich-workspace .heading-anchor {
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-main-background)
+	) !important;
+}
+
+/* Inside the README the Text app paints two more things from
+ * `--color-main-background`: the read-only block and the fade at the bottom
+ * of the collapsed preview. (The heading anchor joins the list above.) Both take the surface as well. The variable itself
+ * is left alone: nldesign never writes it (REQ-CSS-007,
+ * nextcloudVariableInventory.spec.js). */
+#app-content-vue #rich-workspace div[contenteditable='false'] {
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-main-background)
+	) !important;
+}
+
+#app-content-vue #rich-workspace:not(.focus):not(.empty)::after {
+	background-image: linear-gradient(
+		to bottom,
+		transparent,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-main-background)
+		)
+	) !important;
+}
+
+/* ============================================
    NAVIGATION ENTRIES — chrome, not content links
    ============================================ */
 
@@ -434,11 +529,31 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
  * navigation's own declaration lives in the CONTAINER OVERRIDES rule at the top
  * of this file, which already carries that exact selector.
  */
+/*
+ * Only the SOLID selection takes the primary colour's paired foreground: the
+ * server-rendered navigation (`#app-navigation li.active`) and an
+ * NcAppNavigationItem marked `--legacy`. Since Nextcloud 34 every other
+ * selected entry is a 16% wash of `--color-primary-element` over the
+ * navigation (22% hovered) with the label in `--color-main-text`, so it keeps
+ * the navigation's own on-surface colour. Handing it the solid fill's label
+ * painted #111111 on a dark wash in Utrecht dark and white on a pale wash in
+ * light (thematiq#1051, tests/vitest/selectedNavText.spec.js).
+ */
 #app-navigation li.active,
-#app-navigation .app-navigation-entry.active,
-#app-navigation-vue .app-navigation-entry.active,
-.app-navigation .app-navigation-entry.active {
+#app-navigation .app-navigation-entry--legacy.active,
+#app-navigation-vue .app-navigation-entry--legacy.active,
+.app-navigation .app-navigation-entry--legacy.active {
 	--nldesign-color-on-surface: var(--color-primary-element-text);
+}
+
+/* The wash keeps the main text colour, computed on the entry itself, so a
+ * set's `--nldesign-component-navigation-active-color` (component-scopes.css,
+ * navigation-active-entry) reaches the label. Without this the entry would
+ * inherit the navigation's value and lose it. */
+#app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+#app-navigation-vue .app-navigation-entry:not(.app-navigation-entry--legacy).active,
+.app-navigation .app-navigation-entry:not(.app-navigation-entry--legacy).active {
+	--nldesign-color-on-surface: var(--color-main-text);
 }
 
 /* Underlining is for links in prose. `a { text-decoration: underline }` in
