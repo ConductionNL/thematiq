@@ -178,6 +178,7 @@ class CssInjectionService {
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
 	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
+	 * @param AppMenuService|null $appMenu The sections of the apps menu in the workplace top bar; null keeps one grid.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -198,6 +199,7 @@ class CssInjectionService {
 		?InternalScopesService $internalScopes = null,
 		?LayoutOptionsService $layoutOptions = null,
 		private readonly ?HeaderUserService $headerUser = null,
+		private readonly ?AppMenuService $appMenu = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -325,10 +327,9 @@ class CssInjectionService {
 		// 5. Conditional stylesheets, and the person the workplace top bar names.
 		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
 		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'app-menu', work: fn () => $this->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
 
-		// 6. Preview banner — ONLY when a theme preview is active for this
-		// request's user. Every other user (and every anonymous render) pays
-		// nothing: no script, no style, no initial state.
+		// 6. Preview banner: only with a preview active for this user; others pay nothing.
 		$this->runLayer(
 			layer: 'preview-banner',
 			work: fn () => $this->previewBannerService->inject(tokenSet: $tokenSet, tokenSetMeta: $tokenSetMeta)

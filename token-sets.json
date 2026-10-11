@@ -817,6 +817,93 @@
 				"nl": "Gemeente Zuiddrecht · werkplek op Nextcloud",
 				"en": "Gemeente Zuiddrecht · workplace on Nextcloud"
 			}
+		},
+		"app_menu": {
+			"groups": [
+				{
+					"title": {
+						"nl": "Werk",
+						"en": "Work"
+					},
+					"link": {
+						"label": {
+							"nl": "Mijn werkdag in launchpad",
+							"en": "My working day in launchpad"
+						},
+						"url": "/apps/launchpad/"
+					},
+					"apps": [
+						{
+							"id": "launchpad",
+							"description": {
+								"nl": "Mijn werkdag",
+								"en": "My working day"
+							}
+						},
+						{
+							"id": "dossiq",
+							"description": {
+								"nl": "Zaken en Woo",
+								"en": "Cases and Woo"
+							}
+						},
+						{
+							"id": "pipelinq",
+							"description": {
+								"nl": "Klantcontact",
+								"en": "Customer contact"
+							}
+						},
+						{
+							"id": "decidiq",
+							"description": {
+								"nl": "Besluitvorming",
+								"en": "Decision making"
+							}
+						},
+						{
+							"id": "learniq",
+							"description": {
+								"nl": "Onderwijs",
+								"en": "Learning"
+							}
+						},
+						{
+							"id": "portaliq",
+							"description": {
+								"nl": "Website en Mijn",
+								"en": "Website and portal"
+							}
+						},
+						{
+							"id": "opencatalogi",
+							"description": {
+								"nl": "Publicaties",
+								"en": "Publications"
+							}
+						},
+						{
+							"id": "thematiq",
+							"description": {
+								"nl": "Huisstijl",
+								"en": "House style"
+							}
+						}
+					]
+				}
+			],
+			"others_title": {
+				"nl": "Nextcloud",
+				"en": "Nextcloud"
+			},
+			"hint": {
+				"nl": "Pijltjestoetsen bladeren, Enter opent, Escape sluit.",
+				"en": "Arrow keys browse, Enter opens, Escape closes."
+			},
+			"manage_label": {
+				"nl": "Apps beheren",
+				"en": "Manage apps"
+			}
 		}
 	},
 	{
