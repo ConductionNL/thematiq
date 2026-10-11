@@ -259,7 +259,12 @@
 		}
 		scan()
 		if (typeof MutationObserver === 'function') {
-			new MutationObserver(scan).observe(document.body, {
+			// One watcher per page, even when the script is evaluated again.
+			if (window.thematiqAppMenuObserver) {
+				window.thematiqAppMenuObserver.disconnect()
+			}
+			window.thematiqAppMenuObserver = new MutationObserver(scan)
+			window.thematiqAppMenuObserver.observe(document.body, {
 				childList: true,
 				subtree: true,
 			})

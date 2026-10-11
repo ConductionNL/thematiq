@@ -339,6 +339,13 @@ body[data-themes*='dark'] #header .thematiq-user-chip__avatar {
 	box-shadow: 0 8px 24px rgba(27, 28, 29, 0.12);
 }
 
+/* The board opens the menu 116px left of the grid button and 2px under the
+ * bar; Nextcloud places it 82px left and 4px higher. */
+.app-menu__popover-base .v-popper__wrapper {
+	margin-block-start: 6px !important;
+	margin-inline-start: -34px;
+}
+
 .app-menu__popover-base .v-popper__inner {
 	border-radius: var(--border-radius-container-large, 12px) !important;
 }
@@ -353,6 +360,8 @@ body[data-themes*='dark'] #header .thematiq-user-chip__avatar {
 
 .app-menu__popover-base .app-menu__grid[data-thematiq-app-menu] {
 	grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+	/* Nextcloud gives every row at least a tile's height; a heading row is a line. */
+	grid-auto-rows: auto !important;
 }
 
 .app-menu__popover-base .app-menu__grid > a.app-item {
@@ -477,12 +486,14 @@ body[data-themes*='dark'] #header .thematiq-user-chip__avatar {
 	margin-block-start: 12px;
 }
 
-.app-menu__popover-base .thematiq-app-menu__title {
-	margin: 0;
-	color: var(--color-text-maxcontrast);
-	font-size: 13px;
-	font-weight: 700;
-	letter-spacing: 0.06em;
+/* The NL Design heading rule sizes every h2 with id strength. */
+.app-menu__popover-base .thematiq-app-menu__heading h2.thematiq-app-menu__title {
+	margin: 0 !important;
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 13px !important;
+	font-weight: 700 !important;
+	line-height: 1.2 !important;
+	letter-spacing: 0.06em !important;
 	text-transform: uppercase;
 }
 
