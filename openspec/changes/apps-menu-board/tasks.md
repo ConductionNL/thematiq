@@ -14,4 +14,4 @@
 - [x] 3.2 Vitest: `tests/vitest/appMenu.spec.js`.
 
 ## 4. Verify
-- [x] 4.1 Live on :8080 with the menu open (`screens-diff.mjs --click .app-menu__waffle`), against the AppMenu board: 9.30% -> 8.41% as Pieter; the rest is the top bar and the app data (see the PR).
+- [x] 4.1 Live on :8080 with the menu open (`screens-diff.mjs --click .app-menu__waffle`), against the AppMenu board: 11.69% (development) -> 8.41% as Pieter; the rest is the top bar and the app data (see the PR).

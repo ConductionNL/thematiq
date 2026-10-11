@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\AppMenuService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
-use OCA\Thematiq\Service\AppMenuService;
 use OCA\Thematiq\Service\HeaderUserService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LogoLayerService;

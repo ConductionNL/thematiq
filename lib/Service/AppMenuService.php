@@ -161,8 +161,12 @@ class AppMenuService {
 	private static function groups(array $rows, string $language): array {
 		$groups = [];
 		foreach ($rows as $row) {
-			$title = (is_array($row) === true) ? CopyValues::pick(value: ($row['title'] ?? null), language: $language) : null;
-			$apps = (is_array($row) === true && is_array($row['apps'] ?? null) === true) ? self::apps(rows: $row['apps'], language: $language) : [];
+			if (is_array($row) === false || is_array($row['apps'] ?? null) === false) {
+				continue;
+			}
+
+			$title = CopyValues::pick(value: ($row['title'] ?? null), language: $language);
+			$apps = self::apps(rows: $row['apps'], language: $language);
 			if ($title === null || $apps === []) {
 				continue;
 			}
@@ -193,13 +197,17 @@ class AppMenuService {
 	private static function apps(array $rows, string $language): array {
 		$apps = [];
 		foreach ($rows as $row) {
-			$id = (is_array($row) === true) ? ($row['id'] ?? null) : $row;
+			if (is_array($row) === false) {
+				$row = ['id' => $row];
+			}
+
+			$id = ($row['id'] ?? null);
 			if (is_string($id) === false || preg_match('/^[a-z0-9_]{1,64}$/', $id) !== 1) {
 				continue;
 			}
 
 			$app = ['id' => $id];
-			$description = (is_array($row) === true) ? CopyValues::pick(value: ($row['description'] ?? null), language: $language) : null;
+			$description = CopyValues::pick(value: ($row['description'] ?? null), language: $language);
 			if ($description !== null) {
 				$app['description'] = $description;
 			}
