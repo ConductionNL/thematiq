@@ -158,7 +158,7 @@ class LoginCopyService {
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
-	public function copy(string $tokenSet, string $language): array {
+	public function resolveCopy(string $tokenSet, string $language): array {
 		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$fromSet = ($meta['login'] ?? null);
 		$fromAdmin = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
@@ -178,7 +178,7 @@ class LoginCopyService {
 		}
 
 		return $copy;
-	}//end copy()
+	}//end resolveCopy()
 
 	/**
 	 * Provide the copy and load the script, for a login page drawn by the
@@ -202,7 +202,7 @@ class LoginCopyService {
 			}
 
 			$l10n = $this->l10nFactory->get(Application::APP_ID);
-			$copy = $this->copy(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
+			$copy = $this->resolveCopy(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
 			$copy['divider'] = ($copy['divider'] ?? $l10n->t('or'));
 
 			$this->initialState->provideInitialState(self::STATE_KEY, $copy);

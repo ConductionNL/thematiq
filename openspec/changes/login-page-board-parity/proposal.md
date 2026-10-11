@@ -38,6 +38,8 @@ with an "of" divider, draws "Inloggen" outlined, and closes with a line of its o
 - **`LoginCopyService`** resolves the copy for the page's set and language and hands it to
   **`js/login-copy.js`** as initial state, on the login page of the light workplace only.
 - **`css/workplace-layout.css`** lays the card out in the board's order when the script has run.
+  Zuiddrecht names the outlined button's edge in a new token, `--nldesign-login-secondary-border-color`
+  (#C4C7CB, the board's field grey); every other set falls back to the dark border colour.
 
 **Out of scope:** installing or configuring a login app, and the two system settings above. A
 Nextcloud core change is not needed for any element.
@@ -49,5 +51,6 @@ Nextcloud core change is not needed for any element.
 
 ## Impact
 - `lib/Service/LoginCopyService.php` (new), `lib/Listener/ThemeInjectionListener.php`, `lib/Service/CssInjectionService.php` (`isContextThemed()` public),
-  `js/login-copy.js` (new), `css/workplace-layout.css`, `token-sets.json`, `l10n/*` ("or").
+  `js/login-copy.js` (new), `css/workplace-layout.css`, `css/tokens/zuiddrecht.css` and its dark variant,
+  `token-sets.json`, `l10n/*` ("or"), `.gitignore` (the new script is source).
 - Sets on the default layout: unchanged. The script loads only with the light layout.

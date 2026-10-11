@@ -165,7 +165,7 @@ class LoginCopyServiceTest extends TestCase {
 		$entry = array_values(array_filter($manifest, fn (array $set) => $set['id'] === 'zuiddrecht'))[0];
 		$this->configure(login: $entry['login']);
 
-		$copy = $this->service()->copy(tokenSet: 'zuiddrecht', language: 'nl');
+		$copy = $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'nl');
 
 		$this->assertSame('Inloggen bij de werkplek', $copy['title']);
 		$this->assertSame('Voor medewerkers van Gemeente Zuiddrecht.', $copy['subtitle']);
@@ -183,9 +183,9 @@ class LoginCopyServiceTest extends TestCase {
 	public function testALanguageMapPicksTheRequestsLanguage(): void {
 		$this->configure(login: ['title' => ['nl' => 'Inloggen', 'en' => 'Log in'], 'footer' => 'Overal'], override: '');
 
-		$this->assertSame(['title' => 'Inloggen', 'footer' => 'Overal'], $this->service()->copy(tokenSet: 'x', language: 'nl_NL'));
-		$this->assertSame(['title' => 'Log in', 'footer' => 'Overal'], $this->service()->copy(tokenSet: 'x', language: 'en'));
-		$this->assertSame(['footer' => 'Overal'], $this->service()->copy(tokenSet: 'x', language: 'de'));
+		$this->assertSame(['title' => 'Inloggen', 'footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl_NL'));
+		$this->assertSame(['title' => 'Log in', 'footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'en'));
+		$this->assertSame(['footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'de'));
 	}//end testALanguageMapPicksTheRequestsLanguage()
 
 	/**
@@ -207,7 +207,7 @@ class LoginCopyServiceTest extends TestCase {
 				'footerLinkLabel' => 'Mijn school',
 				'footerLinkUrl' => '/apps/portaliq/',
 			],
-			$this->service()->copy(tokenSet: 'x', language: 'nl')
+			$this->service()->resolveCopy(tokenSet: 'x', language: 'nl')
 		);
 	}//end testTheOverrideWinsKeyByKey()
 
@@ -230,7 +230,7 @@ class LoginCopyServiceTest extends TestCase {
 			override: '{not json'
 		);
 
-		$this->assertSame(['footerLinkLabel' => 'Mijn school'], $this->service()->copy(tokenSet: 'x', language: 'nl'));
+		$this->assertSame(['footerLinkLabel' => 'Mijn school'], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
 	}//end testWhatMayNotBeShownIsDropped()
 
 	/**
@@ -241,7 +241,7 @@ class LoginCopyServiceTest extends TestCase {
 	public function testAProtocolRelativeLinkIsDropped(): void {
 		$this->configure(login: ['footer_link_url' => '//elders.example/'], override: '');
 
-		$this->assertSame([], $this->service()->copy(tokenSet: 'x', language: 'nl'));
+		$this->assertSame([], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
 	}//end testAProtocolRelativeLinkIsDropped()
 
 	/**

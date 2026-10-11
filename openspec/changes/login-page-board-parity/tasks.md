@@ -16,4 +16,4 @@
 - [x] 3.2 Vitest: `tests/vitest/loginCopy.spec.js`.
 
 ## 4. Verify
-- [ ] 4.1 Live on :8080: pixel diff against NcLogin with `screens-diff.mjs --no-login`.
+- [x] 4.1 Live on :8080: pixel diff against NcLogin with `screens-diff.mjs --no-login`: 4.55% before, 3.29% after on the instance as configured (no SSO provider, remember-me and device login on), 0.40% with those three set as the board draws them.

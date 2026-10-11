@@ -98,7 +98,8 @@
 	function placeIntro(box, copy) {
 		var intro = box.querySelector(':scope > .' + INTRO)
 		var headline = box.querySelector('.login-form__headline')
-		var title = text(copy, 'title') || (headline ? headline.textContent.trim() : '')
+		var title =
+			text(copy, 'title') || (headline ? headline.textContent.trim() : '')
 		if (title === '') {
 			return intro
 		}
@@ -200,7 +201,11 @@
 			// Everything before the legal links is Nextcloud's name and slogan.
 			var legal = info.querySelector('.footer__legal-links')
 			var stop = legal ? legal.previousSibling : null
-			while (info.firstChild && info.firstChild !== stop && info.firstChild !== legal) {
+			while (
+				info.firstChild
+				&& info.firstChild !== stop
+				&& info.firstChild !== legal
+			) {
 				info.removeChild(info.firstChild)
 			}
 			if (stop && stop.nodeName === 'BR') {
