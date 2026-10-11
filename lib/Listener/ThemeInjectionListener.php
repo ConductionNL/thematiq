@@ -24,6 +24,7 @@ namespace OCA\Thematiq\Listener;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\EnvironmentMarkerService;
+use OCA\Thematiq\Service\LoginCopyService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -98,6 +99,7 @@ class ThemeInjectionListener implements IEventListener {
 	 * @param IRequest $request The current request.
 	 * @param LoggerInterface $logger The logger for swallowed failures.
 	 * @param EnvironmentMarkerService $environmentMarker The environment marker.
+	 * @param LoginCopyService|null $loginCopy The words and the SSO button on the login page; null leaves Nextcloud's.
 	 */
 	public function __construct(
 		CssInjectionService $cssInjectionService,
@@ -105,6 +107,7 @@ class ThemeInjectionListener implements IEventListener {
 		IRequest $request,
 		LoggerInterface $logger,
 		EnvironmentMarkerService $environmentMarker,
+		private readonly ?LoginCopyService $loginCopy = null,
 	) {
 		$this->cssInjectionService = $cssInjectionService;
 		$this->appThemingService = $appThemingService;
@@ -123,6 +126,7 @@ class ThemeInjectionListener implements IEventListener {
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 * @spec openspec/specs/environment-marker/spec.md
+	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
 	 */
 	public function handle(Event $event): void {
 		// The environment marker is a safety signal, not a theme: it runs
@@ -136,6 +140,12 @@ class ThemeInjectionListener implements IEventListener {
 			if ($event instanceof BeforeLoginTemplateRenderedEvent) {
 				// Login is never an app page — the per-app guard never runs.
 				$this->cssInjectionService->inject(context: 'login');
+				// The board's words and order, on a themed login page only
+				// (openspec/changes/login-page-board-parity).
+				if ($this->cssInjectionService->isContextThemed(context: 'login') === true) {
+					$this->loginCopy?->injectForLogin();
+				}
+
 				return;
 			}
 

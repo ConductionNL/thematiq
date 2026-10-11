@@ -17,6 +17,7 @@ use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\EnvironmentMarkerService;
+use OCA\Thematiq\Service\LoginCopyService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -319,4 +320,51 @@ class ThemeInjectionListenerTest extends TestCase {
 
 		$this->listener->handle(new Event());
 	}//end testUnrelatedEventGetsNoEnvironmentMarker()
+
+	/**
+	 * The login copy runs on a themed login page, and never on an unthemed
+	 * login page (the control) nor on any other page.
+	 *
+	 * @param bool $themed Whether the login context is themed.
+	 * @param bool $login Whether the event is the login page's.
+	 * @param int $expected How often the login copy runs.
+	 *
+	 * @dataProvider loginCopyProvider
+	 *
+	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 */
+	public function testTheLoginCopyRunsOnAThemedLoginPageOnly(bool $themed, bool $login, int $expected): void {
+		$loginCopy = $this->createMock(LoginCopyService::class);
+		$loginCopy->expects($this->exactly($expected))->method('injectForLogin');
+		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
+		$listener = new ThemeInjectionListener(
+			$this->cssInjectionService,
+			$this->appThemingService,
+			$this->request,
+			$this->logger,
+			$this->environmentMarker,
+			$loginCopy
+		);
+
+		$response = new TemplateResponse('core', 'login', [], $login === true ? TemplateResponse::RENDER_AS_GUEST : TemplateResponse::RENDER_AS_USER);
+		$event = new BeforeTemplateRenderedEvent(true, $response);
+		if ($login === true) {
+			$event = new BeforeLoginTemplateRenderedEvent($response);
+		}
+
+		$listener->handle($event);
+	}//end testTheLoginCopyRunsOnAThemedLoginPageOnly()
+
+	/**
+	 * Themed and unthemed login pages, and a user page.
+	 *
+	 * @return array<string, array{0: bool, 1: bool, 2: int}>
+	 */
+	public static function loginCopyProvider(): array {
+		return [
+			'a themed login page' => [true, true, 1],
+			'an unthemed login page' => [false, true, 0],
+			'a user page' => [true, false, 0],
+		];
+	}//end loginCopyProvider()
 }//end class

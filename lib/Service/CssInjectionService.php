@@ -178,7 +178,6 @@ class CssInjectionService {
 	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
 	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
- * @param LoginCopyService|null $loginCopy The words and the SSO button on the login page; null leaves Nextcloud's.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -199,7 +198,6 @@ class CssInjectionService {
 		?InternalScopesService $internalScopes = null,
 		?LayoutOptionsService $layoutOptions = null,
 		private readonly ?HeaderUserService $headerUser = null,
-		private readonly ?LoginCopyService $loginCopy = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -327,9 +325,6 @@ class CssInjectionService {
 		// 5. Conditional stylesheets, and the person the workplace top bar names.
 		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
 		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		if ($context === 'login') {
-			$this->runLayer(layer: 'login-copy', work: fn () => $this->loginCopy?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		}
 
 		// 6. Preview banner — ONLY when a theme preview is active for this
 		// request's user. Every other user (and every anonymous render) pays
@@ -1005,7 +1000,7 @@ class CssInjectionService {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 */
-	private function isContextThemed(string $context): bool {
+	public function isContextThemed(string $context): bool {
 		if (in_array($context, self::VALID_CONTEXTS, true) === false) {
 			return true;
 		}

@@ -53,7 +53,7 @@ shown only with both a label and an accepted address. A failure MUST be logged a
 Nextcloud's login page.
 
 #### Scenario: Zuiddrecht's login page
-@e2e exclude Live-checked on :8080 with the pixel diff against the NcLogin board (screens-diff.mjs --no-login); unit: PHPUnit LoginCopyServiceTest and CssInjectionServiceTest
+@e2e exclude Live-checked on :8080 with the pixel diff against the NcLogin board (screens-diff.mjs --no-login); unit: PHPUnit LoginCopyServiceTest and ThemeInjectionListenerTest
 - GIVEN the token set `zuiddrecht` and a Dutch browser
 - WHEN the login page renders
 - THEN the card MUST show "Inloggen bij de werkplek" and "Voor medewerkers van Gemeente Zuiddrecht."
@@ -68,7 +68,7 @@ Nextcloud's login page.
 - AND the password button MUST be drawn outlined
 
 #### Scenario: Only the login page asks for the copy
-@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/CssInjectionServiceTest.php
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Listener/ThemeInjectionListenerTest.php
 - GIVEN the light workplace
 - WHEN a user page or a guest page renders
 - THEN the login copy MUST NOT be asked

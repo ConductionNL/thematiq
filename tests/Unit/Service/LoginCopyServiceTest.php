@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LoginCopyService;
 use OCP\AppFramework\Services\IInitialState;
@@ -290,4 +291,30 @@ class LoginCopyServiceTest extends TestCase {
 
 		$this->assertSame(0, $this->scripts);
 	}//end testAFailureIsLoggedAndLeavesThePage()
+
+	/**
+	 * The login page's entry resolves the set without an app brand and
+	 * injects for it; a resolver failure is logged and loads nothing.
+	 *
+	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 */
+	public function testTheLoginEntryResolvesTheSetAndFailsOpen(): void {
+		$this->configure(login: ['title' => 'Inloggen']);
+		$this->language('nl');
+		$groups = $this->createMock(GroupThemingService::class);
+		$groups->method('resolveTokenSetForRequest')->with(null)->willReturn('zuiddrecht');
+		$this->initialState->expects($this->once())->method('provideInitialState')->with(LoginCopyService::STATE_KEY, ['title' => 'Inloggen', 'divider' => 'of']);
+
+		$service = $this->getMockBuilder(LoginCopyService::class)
+			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $this->l10nFactory, $this->logger, $groups, $this->layout('light')])
+			->onlyMethods(['emitScript'])
+			->getMock();
+		$service->injectForLogin();
+
+		$broken = $this->createMock(GroupThemingService::class);
+		$broken->method('resolveTokenSetForRequest')->willThrowException(new RuntimeException('boom'));
+		$this->logger->expects($this->once())->method('warning');
+		$failing = new LoginCopyService($this->config, $this->designSystemService, $this->initialState, $this->l10nFactory, $this->logger, $broken, $this->layout('light'));
+		$failing->injectForLogin();
+	}//end testTheLoginEntryResolvesTheSetAndFailsOpen()
 }//end class

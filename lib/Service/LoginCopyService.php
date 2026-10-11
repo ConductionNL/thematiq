@@ -103,6 +103,8 @@ class LoginCopyService {
 	 * @param IInitialState $initialState The initial state channel.
 	 * @param IFactory $l10nFactory The language of this request.
 	 * @param LoggerInterface $logger Records a swallowed failure.
+	 * @param GroupThemingService|null $groupTheming Resolves the login page's token set; null in unit tests of {@see self::inject()}.
+	 * @param LayoutOptionsService|null $layoutOptions Resolves the login page's layout; null in unit tests of {@see self::inject()}.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -110,8 +112,37 @@ class LoginCopyService {
 		private readonly IInitialState $initialState,
 		private readonly IFactory $l10nFactory,
 		private readonly LoggerInterface $logger,
+		private readonly ?GroupThemingService $groupTheming = null,
+		private readonly ?LayoutOptionsService $layoutOptions = null,
 	) {
 	}//end __construct()
+
+	/**
+	 * The login page's entry: resolve the set the page renders with (the
+	 * per-group resolution, no app brand: login is never an app page) and
+	 * {@see self::inject()} for it. Fails open.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 */
+	public function injectForLogin(): void {
+		if ($this->groupTheming === null || $this->layoutOptions === null) {
+			return;
+		}
+
+		try {
+			$tokenSet = $this->groupTheming->resolveTokenSetForRequest(appBrandSet: null);
+		} catch (Throwable $e) {
+			$this->logger->warning(
+				'thematiq: the login copy could not resolve the token set; the login page keeps Nextcloud\'s words.',
+				['app' => Application::APP_ID, 'exception' => $e]
+			);
+			return;
+		}
+
+		$this->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions);
+	}//end injectForLogin()
 
 	/**
 	 * The copy for a page rendered with this token set, in this language.

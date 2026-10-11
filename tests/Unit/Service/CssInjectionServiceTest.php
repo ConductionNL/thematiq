@@ -20,7 +20,6 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\HeaderUserService;
-use OCA\Thematiq\Service\LoginCopyService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
@@ -1841,62 +1840,4 @@ class CssInjectionServiceTest extends TestCase {
 			'a light set that names no header style' => [['workplace_layout' => 'light'], false],
 		];
 	}//end headerStyleProvider()
-
-	/**
-	 * The login copy is asked on the login page only, with the page's set;
-	 * every other context (the control) never asks it.
-	 *
-	 * @param string $context The render context.
-	 * @param int $expected How often the login copy is asked.
-	 *
-	 * @dataProvider loginCopyContextProvider
-	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
-	 */
-	public function testTheLoginCopyRunsOnTheLoginPageOnly(string $context, int $expected): void {
-		$this->configureAppValues(['token_set' => 'zuiddrecht']);
-		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light']]);
-
-		$loginCopy = $this->createMock(LoginCopyService::class);
-		$loginCopy->expects($this->exactly($expected))->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
-
-		$service = $this->getMockBuilder(CssInjectionService::class)
-			->setConstructorArgs(
-				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
-					$this->appBrands,
-					null,
-					null,
-					null,
-					$loginCopy,
-				]
-			)
-			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
-			->getMock();
-
-		$service->inject($context);
-	}//end testTheLoginCopyRunsOnTheLoginPageOnly()
-
-	/**
-	 * The login page and the contexts that are not it.
-	 *
-	 * @return array<string, array{0: string, 1: int}>
-	 */
-	public static function loginCopyContextProvider(): array {
-		return [
-			'the login page' => ['login', 1],
-			'a user page' => ['user', 0],
-			'a guest page' => ['guest', 0],
-		];
-	}//end loginCopyContextProvider()
 }//end class

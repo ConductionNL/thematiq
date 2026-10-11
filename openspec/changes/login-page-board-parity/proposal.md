@@ -48,6 +48,6 @@ Nextcloud core change is not needed for any element.
 - `workplace-layout`: the light workplace draws the login card of the board, with copy per set.
 
 ## Impact
-- `lib/Service/LoginCopyService.php` (new), `lib/Service/CssInjectionService.php`,
+- `lib/Service/LoginCopyService.php` (new), `lib/Listener/ThemeInjectionListener.php`, `lib/Service/CssInjectionService.php` (`isContextThemed()` public),
   `js/login-copy.js` (new), `css/workplace-layout.css`, `token-sets.json`, `l10n/*` ("or").
 - Sets on the default layout: unchanged. The script loads only with the light layout.
