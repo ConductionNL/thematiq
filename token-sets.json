@@ -791,6 +791,32 @@
 			"navigation_active_style": "soft",
 			"brand_stripe_placement": "login",
 			"header_style": "workplace"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Gemeente Zuiddrecht.",
+				"en": "For staff of Gemeente Zuiddrecht."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw gemeenteaccount",
+				"en": "Log in with your municipality account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Gemeente Zuiddrecht · werkplek op Nextcloud",
+				"en": "Gemeente Zuiddrecht · workplace on Nextcloud"
+			}
 		}
 	},
 	{
@@ -806,6 +832,28 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor het team van De Wilgenboom.",
+				"en": "For the team of De Wilgenboom."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			}
 		}
 	},
 	{
@@ -821,6 +869,32 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Vaartveld College.",
+				"en": "For staff of Vaartveld College."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mailadres",
+				"en": "Username or email address"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Vaartveld College · werkplek op Nextcloud",
+				"en": "Vaartveld College · workplace on Nextcloud"
+			}
 		}
 	},
 	{
@@ -837,6 +911,32 @@
 		"layout": {
 			"workplace_layout": "light",
 			"brand_stripe": true
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Esdoornveen.",
+				"en": "For staff of Esdoornveen."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Esdoornveen, mbo college · werkplek op Nextcloud",
+				"en": "Esdoornveen, mbo college · workplace on Nextcloud"
+			}
 		}
 	},
 	{
@@ -852,6 +952,32 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor planning, trainers en administratie van de Warmtepompacademie.",
+				"en": "For planning, trainers and administration of the Warmtepompacademie."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw academie-account",
+				"en": "Log in with your academy account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Warmtepompacademie · werkplek op Nextcloud",
+				"en": "Warmtepompacademie · workplace on Nextcloud"
+			}
 		}
 	}
 ]

@@ -311,6 +311,177 @@ body#body-login footer.guest-box p.info a.entity-name {
 	text-decoration: none !important;
 }
 
+/*
+ * The card in the board's order (openspec/changes/login-page-board-parity).
+ *
+ * js/login-copy.js puts an intro (title and subtitle) at the top of the card
+ * and marks the card `data-thematiq-login-intro`; it moves the alternative
+ * logins (an SSO button) under the intro with an "of" divider and marks the
+ * card `data-thematiq-sso`. The card then lays its parts out itself: 32px of
+ * padding under the stripe, 18px between the parts, as NcLogin draws it.
+ * Without the script none of these selectors match and the rules above hold.
+ */
+body#body-login .guest-box.login-box[data-thematiq-login-intro] {
+	position: relative !important;
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 18px !important;
+	padding: calc(32px + var(--nldesign-brand-stripe-height, 0px)) 32px 32px !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]
+	div[class*='login-box__wrapper'] {
+	position: static !important;
+	gap: 18px !important;
+	padding: 0 !important;
+}
+
+body#body-login .guest-box.login-box[data-thematiq-login-intro] form,
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]
+	> .thematiq-login-intro,
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]
+	> #alternative-logins,
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]
+	> .thematiq-login-divider {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* The intro carries the title now; Nextcloud's headline would repeat it. */
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]
+	.login-form__headline {
+	display: none !important;
+}
+
+/* The intro and the divider belong to the login form: the reset password
+ * form and the passwordless form have their own title. */
+body#body-login .guest-box.login-box:not(:has(.login-form)) > .thematiq-login-intro,
+body#body-login
+	.guest-box.login-box:not(:has(.login-form))
+	> .thematiq-login-divider {
+	display: none !important;
+}
+
+body#body-login .thematiq-login-intro {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	text-align: start;
+}
+
+body#body-login .guest-box .thematiq-login-intro__title {
+	margin: 0 !important;
+	font-size: 24px !important;
+	font-weight: 700 !important;
+	line-height: 1.25 !important;
+	text-align: start !important;
+}
+
+body#body-login .thematiq-login-intro__subtitle {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 15px;
+	line-height: 1.4;
+}
+
+/* The SSO button is the primary action: 46px, the primary colour. */
+body#body-login .guest-box.login-box[data-thematiq-sso] > #alternative-logins {
+	gap: 12px !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	> #alternative-logins
+	.button-vue {
+	--nldesign-color-on-surface: var(--color-primary-element-text);
+
+	height: 46px !important;
+	min-height: 46px !important;
+	border: 0 !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	background-color: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
+	font-size: 15px !important;
+	font-weight: 600 !important;
+	text-decoration: none !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	> #alternative-logins
+	.button-vue:hover {
+	background-color: var(--color-primary-element-hover) !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	> #alternative-logins
+	.button-vue__text {
+	color: var(--color-primary-element-text) !important;
+	font-weight: 600 !important;
+}
+
+/* "of" between the SSO button and the form, with a hairline either side. */
+body#body-login .thematiq-login-divider {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+	line-height: 20px;
+}
+
+body#body-login .thematiq-login-divider::before,
+body#body-login .thematiq-login-divider::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--color-border);
+}
+
+/* With an SSO button the password form is the second way in: its button is
+ * outlined on the card, as the board draws "Inloggen". */
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	.login-form
+	button[type='submit'] {
+	--nldesign-color-on-surface: var(--color-main-text);
+
+	border: 1px solid var(--color-border-dark) !important;
+	background-color: var(--color-main-background) !important;
+	color: var(--color-main-text) !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	.login-form
+	button[type='submit']
+	.button-vue__text {
+	color: var(--color-main-text) !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-sso]
+	.login-form
+	button[type='submit']:hover {
+	background-color: var(--color-background-hover) !important;
+}
+
+/* The footer hint, a second line under the footer. */
+body#body-login footer.guest-box p.thematiq-login-footer-hint {
+	margin-top: 4px;
+}
+
+body#body-login footer.guest-box p.thematiq-login-footer-hint a {
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+	text-decoration: underline !important;
+}
+
 /* The guest pages' "Back to …" action and their container. */
 body#body-login .body-login-container a.button.primary,
 body#body-login .guest-content a.button.primary,
