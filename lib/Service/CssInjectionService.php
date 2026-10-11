@@ -1000,7 +1000,7 @@ class CssInjectionService {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 */
-	private function isContextThemed(string $context): bool {
+	public function isContextThemed(string $context): bool {
 		if (in_array($context, self::VALID_CONTEXTS, true) === false) {
 			return true;
 		}
