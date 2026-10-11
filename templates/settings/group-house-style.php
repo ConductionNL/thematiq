@@ -6,12 +6,12 @@
  *
  * House style of my groups: a group subadmin picks the set of a delegated
  * group (openspec/specs/per-group-theming/spec.md). Filled by
- * js/personal-group-house-style.js.
+ * js/admin-group-house-style.js.
  *
  * @var \OCP\IL10N $l
  */
 
-script('thematiq', 'personal-group-house-style');
+script('thematiq', 'admin-group-house-style');
 ?>
 <div id="thematiq-my-groups" class="section">
 	<h2><?php p($l->t('House style of my groups')); ?></h2>
