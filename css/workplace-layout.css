@@ -559,6 +559,125 @@ body#body-login footer.guest-box p.thematiq-login-footer-hint a {
 	text-decoration: underline !important;
 }
 
+/*
+ * Nextcloud's "page not found" page (openspec/changes/not-found-page-board).
+ *
+ * Its search icon draws nothing in the light workplace and left an empty
+ * white block above the title; the NietGevonden board has no icon, so it
+ * goes. js/not-found.js writes the set's copy and marks the card
+ * `data-thematiq-not-found`: the card then reads as the board's content
+ * column, left-aligned, 24px between the parts: the error code, a 44px
+ * title, the explanation, "Of ga verder naar" with its links, a closing line.
+ */
+body#body-login .guest-content .body-login-container .icon-big.icon-search {
+	display: none !important;
+}
+
+body#body-login
+	.guest-content
+	.body-login-container[data-thematiq-not-found]:not(#header) {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 24px !important;
+	box-sizing: border-box !important;
+	width: 840px !important;
+	max-width: 100% !important;
+	margin-inline: auto !important;
+	padding: 40px !important;
+	background: var(--color-main-background) !important;
+	text-align: start !important;
+}
+
+body#body-login .body-login-container[data-thematiq-not-found]:not(#header) > * {
+	margin: 0 !important;
+}
+
+body#body-login .body-login-container[data-thematiq-not-found]:not(#header) h2 {
+	font-size: 44px !important;
+	font-weight: 700 !important;
+	line-height: 1.15 !important;
+	text-align: start !important;
+}
+
+body#body-login
+	.body-login-container[data-thematiq-not-found]:not(#header)
+	p.infogroup {
+	--nldesign-color-on-surface: var(--color-main-text);
+
+	color: var(--color-main-text) !important;
+	font-size: 21px !important;
+	line-height: 1.55 !important;
+	text-align: start !important;
+}
+
+body#body-login .thematiq-not-found__eyebrow,
+body#body-login .thematiq-not-found__hint {
+	--nldesign-color-on-surface: var(--color-text-maxcontrast);
+
+	color: var(--color-text-maxcontrast) !important;
+}
+
+/* Nextcloud keeps the guest column at 500px; the board's text column is
+ * 760px, so the card is 840px with its 40px padding. */
+body#body-login .wrapper:has(.body-login-container[data-thematiq-not-found]) {
+	width: 840px !important;
+	max-width: 100% !important;
+}
+
+body#body-login .guest-content p.thematiq-not-found__eyebrow {
+	font-size: 18px !important;
+	font-weight: 600 !important;
+	line-height: normal !important;
+}
+
+body#body-login .guest-content h3.thematiq-not-found__heading {
+	margin-top: 8px !important;
+	font-size: 26px !important;
+	font-weight: 700 !important;
+	line-height: normal !important;
+}
+
+body#body-login .thematiq-not-found__links {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 0;
+	list-style: none;
+	font-size: 19px !important;
+}
+
+body#body-login .guest-content a.thematiq-not-found__link {
+	--nldesign-color-on-surface: var(
+		--nldesign-color-link,
+		var(--color-primary-element)
+	);
+
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	min-height: 44px;
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+	font-size: 19px !important;
+	font-weight: 600 !important;
+	text-decoration: underline !important;
+}
+
+body#body-login .thematiq-not-found__chevron {
+	flex: none;
+}
+
+body#body-login .guest-content p.thematiq-not-found__hint {
+	font-size: 16px !important;
+	line-height: 1.5 !important;
+}
+
+/* With the set's links, Nextcloud's "Back to …" button gives way to them. */
+body#body-login
+	.body-login-container[data-thematiq-not-found]
+	.thematiq-not-found__replaced {
+	display: none !important;
+}
+
 /* The guest pages' "Back to …" action and their container. */
 body#body-login .body-login-container a.button.primary,
 body#body-login .guest-content a.button.primary,

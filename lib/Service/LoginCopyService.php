@@ -93,7 +93,7 @@ class LoginCopyService {
 	 *
 	 * @var int
 	 */
-	public const MAX_LENGTH = 300;
+	public const MAX_LENGTH = CopyValues::MAX_LENGTH;
 
 	/**
 	 * Constructor.
@@ -156,6 +156,8 @@ class LoginCopyService {
 	 *
 	 * @return array<string, string> The resolved copy, keyed in camel case (`ssoLabel`).
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the not-found page.
+	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {
@@ -170,9 +172,10 @@ class LoginCopyService {
 			}
 
 			foreach (self::KEYS as $key) {
-				$value = self::pick(value: ($source[$key] ?? null), language: $language);
-				if ($value !== null && self::acceptable(key: $key, value: $value) === true) {
-					$copy[self::camel(key: $key)] = $value;
+				$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
+				$linkable = ($key !== 'footer_link_url' || ($value !== null && CopyValues::isAddress(value: $value) === true));
+				if ($value !== null && $linkable === true) {
+					$copy[CopyValues::camel(key: $key)] = $value;
 				}
 			}
 		}
@@ -214,70 +217,6 @@ class LoginCopyService {
 			);
 		}//end try
 	}//end inject()
-
-	/**
-	 * The string a value stands for in a language: the value itself, or the
-	 * map's entry for the language, else for its primary subtag (`nl` for
-	 * `nl_NL`). Null when there is none.
-	 *
-	 * @param mixed $value A string or a map from language code to string.
-	 * @param string $language The request's language code.
-	 *
-	 * @return string|null The trimmed string, or null.
-	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
-	 */
-	private static function pick(mixed $value, string $language): ?string {
-		if (is_array($value) === true) {
-			$primary = strtolower((string)preg_replace('/[-_].*$/', '', $language));
-			$value = ($value[$language] ?? $value[$primary] ?? null);
-		}
-
-		if (is_string($value) === false) {
-			return null;
-		}
-
-		$value = trim($value);
-		if ($value === '') {
-			return null;
-		}
-
-		return $value;
-	}//end pick()
-
-	/**
-	 * Whether a value may be shown: not longer than {@see self::MAX_LENGTH},
-	 * and for the link an absolute http(s) address or a path on this server.
-	 *
-	 * @param string $key The key, as written in token-sets.json.
-	 * @param string $value The trimmed value.
-	 *
-	 * @return bool True when it may be shown.
-	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
-	 */
-	private static function acceptable(string $key, string $value): bool {
-		if (mb_strlen($value) > self::MAX_LENGTH) {
-			return false;
-		}
-
-		if ($key !== 'footer_link_url') {
-			return true;
-		}
-
-		return (preg_match('#^(https?://[^\s]+|/(?!/)[^\s]*)$#i', $value) === 1);
-	}//end acceptable()
-
-	/**
-	 * The camel-case name a key goes by in the initial state.
-	 *
-	 * @param string $key The key, as written in token-sets.json.
-	 *
-	 * @return string The camel-case name.
-	 */
-	private static function camel(string $key): string {
-		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
-	}//end camel()
 
 	/**
 	 * Load js/login-copy.js. A seam, so unit tests need no Nextcloud bootstrap.

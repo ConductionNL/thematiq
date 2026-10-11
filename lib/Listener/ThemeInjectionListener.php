@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCA\Thematiq\Service\LoginCopyService;
+use OCA\Thematiq\Service\NotFoundCopyService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -100,6 +101,7 @@ class ThemeInjectionListener implements IEventListener {
 	 * @param LoggerInterface $logger The logger for swallowed failures.
 	 * @param EnvironmentMarkerService $environmentMarker The environment marker.
 	 * @param LoginCopyService|null $loginCopy The words and the SSO button on the login page; null leaves Nextcloud's.
+	 * @param NotFoundCopyService|null $notFoundCopy The words and links on the not-found page; null leaves Nextcloud's.
 	 */
 	public function __construct(
 		CssInjectionService $cssInjectionService,
@@ -108,6 +110,7 @@ class ThemeInjectionListener implements IEventListener {
 		LoggerInterface $logger,
 		EnvironmentMarkerService $environmentMarker,
 		private readonly ?LoginCopyService $loginCopy = null,
+		private readonly ?NotFoundCopyService $notFoundCopy = null,
 	) {
 		$this->cssInjectionService = $cssInjectionService;
 		$this->appThemingService = $appThemingService;
@@ -127,6 +130,7 @@ class ThemeInjectionListener implements IEventListener {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 * @spec openspec/specs/environment-marker/spec.md
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
 	 */
 	public function handle(Event $event): void {
 		// The environment marker is a safety signal, not a theme: it runs
@@ -160,6 +164,8 @@ class ThemeInjectionListener implements IEventListener {
 					context: $this->resolveContext(response: $response),
 					appId: $this->resolveAppId(response: $response)
 				);
+
+				$this->injectNotFoundCopy(response: $response);
 			}
 		} catch (Throwable $e) {
 			// Fail open: a listener failure must never break page rendering
@@ -177,6 +183,26 @@ class ThemeInjectionListener implements IEventListener {
 		}//end try
 
 	}//end handle()
+
+	/**
+	 * Nextcloud's own "page not found" page, drawn as the NietGevonden board
+	 * draws it, when its context is themed.
+	 *
+	 * @param TemplateResponse $response The response being rendered.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 */
+	private function injectNotFoundCopy(TemplateResponse $response): void {
+		if ($response->getApp() !== 'core' || $response->getTemplateName() !== '404') {
+			return;
+		}
+
+		if ($this->cssInjectionService->isContextThemed(context: $this->resolveContext(response: $response)) === true) {
+			$this->notFoundCopy?->inject();
+		}
+	}//end injectNotFoundCopy()
 
 	/**
 	 * Map a `TemplateResponse`'s `renderAs` to a render context.
