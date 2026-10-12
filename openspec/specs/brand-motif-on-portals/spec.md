@@ -115,3 +115,120 @@ MUST name a semibold hero search label, and the esdoornveen set the hero photo's
 - GIVEN the wilgenboom set
 - WHEN the home page renders its notice strip
 - THEN it is `#FDF3D7` with a 1px `#ECD391` line under it
+
+### Requirement: The school sets name the type scale of their boards
+
+Each school set MUST name its boards' page title size (44px for wilgenboom and esdoornveen, 48px for
+vaartveld and warmtepompacademie) as the website's level 1 heading and page title, 17px as the
+content text and 21px as the lead. The warmtepompacademie set MUST name capitals for the month of a
+date tile; the bridge MUST pass it on without a fallback.
+
+#### Scenario: De Wilgenboom's content page
+@e2e exclude Token resolution in vitest: tests/vitest/publicBridgeRoleLayer.spec.js; measured on :8092 in the PR
+- GIVEN the wilgenboom set on a public portal
+- WHEN "Uw kind afwezig melden" renders
+- THEN its title is 44px and its paragraphs 17px
+
+#### Scenario: The academy's course days
+@e2e exclude Token resolution in vitest: tests/vitest/publicBridgeRoleLayer.spec.js
+- GIVEN the warmtepompacademie set
+- WHEN the bridge resolves `--thematiq-date-month-text-transform`
+- THEN it is `uppercase`, and nothing for every other set
+
+### Requirement: The site's page title, lead, notice text and surface are vocabulary
+A set MAY name, for its portal only, `--nldesign-website-page-title-size` and
+`--nldesign-website-page-title-line-height` (a content page's title, drawn larger than the
+heading 1 role), `--nldesign-website-lead-font-size` (the lead paragraph),
+`--nldesign-website-notice-color` (the text on a plain notice) and `--nldesign-color-surface`
+(the site's grey band and a boxed table's header row). `css/public-bridge.css` MUST read each:
+the lead size into `--utrecht-paragraph-lead-font-size` with 20px as its fallback, the notice
+text into `--utrecht-alert-color`, the page title into `--thematiq-page-title-font-size` and
+`--thematiq-page-title-line-height`, and the surface into `--thematiq-surface-color`, the last
+four without a fallback so a consumer's own fallback applies where a set names none. No
+stylesheet an instance page loads MUST read any of them.
+
+#### Scenario: Zuiddrecht draws its site
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js resolves the bridge and the set the way a page does
+- GIVEN a portal on `zuiddrecht`
+- WHEN the bridge and the set are resolved
+- THEN the page title role MUST be 2.75rem on a 1.15 line, the lead 18px, the notice text
+  #1A1A1A and the surface #F4F6F9
+
+#### Scenario: A set that names none keeps every value
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js (the control)
+- GIVEN a portal on a school set or on `vng`
+- WHEN the same roles are resolved
+- THEN the lead MUST be 20px
+- AND the page title roles, the notice text and the surface MUST resolve to nothing
+
+#### Scenario: Every pair on the new grounds reaches AA
+@e2e exclude Computed from the files: tests/vitest/zuiddrechtTokenSet.spec.js measures the pairs in the light and in both dark scopes
+- GIVEN the `zuiddrecht` tokens in the light scheme and in the generated dark one
+- WHEN the notice text is measured on the notice ground, and the text, muted text, link and
+  link hover on the surface
+- THEN each pair MUST reach 4.5:1
+
+### Requirement: The attention strip has names of its own
+A set MAY name, for its portal only, `--nldesign-website-attention-background-color`,
+`--nldesign-website-attention-border-color` and `--nldesign-website-attention-color` for an
+attention strip ("Let op"), apart from the plain notice `--nldesign-website-notice-*` names.
+`css/public-bridge.css` MUST read each into `--thematiq-attention-background-color`,
+`--thematiq-attention-border-color` and `--thematiq-attention-color`, without a fallback.
+
+#### Scenario: Zuiddrecht draws a yellow strip next to its blue notice
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js resolves the bridge and the set the way a page does
+- GIVEN a portal on `zuiddrecht`
+- WHEN the bridge and the set are resolved
+- THEN the attention roles MUST be #FFF4DE, #E8C77D and #1A1A1A
+- AND the plain notice ground MUST stay #EAF0F7
+
+#### Scenario: A set that names none draws no strip colours
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js (the control)
+- GIVEN a portal on a school set or on `vng`
+- WHEN the attention roles are resolved
+- THEN each MUST resolve to nothing
+
+#### Scenario: The strip text reaches AA in both schemes
+@e2e exclude Computed from the files: tests/vitest/zuiddrechtTokenSet.spec.js measures the pair in the light and in both dark scopes
+- GIVEN the `zuiddrecht` tokens in the light scheme and in the generated dark one
+- WHEN the attention text is measured on the attention ground
+- THEN the pair MUST reach 4.5:1
+
+### Requirement: The website type scale, controls and marks are vocabulary
+A set MAY name, for its portal only, `--nldesign-website-heading-1-font-size`, `-2-font-size`
+and `-3-font-size`; `--nldesign-website-control-border-width`;
+`--nldesign-website-badge-border-radius`; `--nldesign-website-step-marker-size`,
+`-step-done-color`, `-step-done-mark-color`, `-step-current-color` and
+`-step-current-background-color`; `--nldesign-website-notice-background-color`, `-border-color`
+and `-border-width`; and `--nldesign-website-tab-line-color` and `-tab-current-color`.
+`css/public-bridge.css` MUST read each into the role it refines (the Utrecht heading sizes, button
+and text box border widths, the plain alert, the Den Haag data badge radius and step marker roles,
+and `--thematiq-tab-line-color` and `--thematiq-tab-current-color`), and no stylesheet an instance
+page loads MUST read any of them. Every role that had a value MUST keep that value as its fallback;
+the notice ground and border and the two tab roles MUST carry no fallback, so a consumer's own
+fallback applies where a set names none, as does the data badge radius, which no pinned Den Haag
+stylesheet reads. The step marker roles MUST be wrapped by the generator from the `website`
+section of the mapping, never by hand.
+
+#### Scenario: Zuiddrecht draws its boards
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js resolves the bridge and the set the way a page does
+- GIVEN a portal on `zuiddrecht`
+- WHEN the bridge and the set are resolved
+- THEN the heading sizes MUST be 44px, 40px and 26px, the button and text box borders 2px, the
+  data badge radius 14px, the step marker 36px, a done marker filled #3669A5 with a white tick and
+  a blue line after it, the current marker white with a #CC0000 ring and number, the plain alert
+  #EAF0F7 with a 1px #B9CBE2 border, and the tab roles #D3D8DF and #CC0000
+
+#### Scenario: A set that names none keeps every value
+@e2e exclude Static file check: tests/vitest/publicBridgeRoleLayer.spec.js (the control)
+- GIVEN a portal on a school set or on `vng`
+- WHEN the same roles are resolved
+- THEN the heading sizes MUST be 36px, 32px and 24px, the button border 1px, the alert border 2px,
+  the step marker 32px in the colours it had
+- AND the plain alert ground and border and the two tab roles MUST resolve to nothing
+
+#### Scenario: The generator refuses a website rule nothing reads
+@e2e exclude Static file check: scripts/generate-denhaag-bridge.mjs --check
+- GIVEN a `website` rule for a property no pinned component reads, or one naming a token outside `--nldesign-website-*`
+- WHEN the section is built
+- THEN the generator MUST report it as a problem

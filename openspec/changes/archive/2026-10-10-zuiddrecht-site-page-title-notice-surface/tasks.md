@@ -16,4 +16,5 @@
 - [x] 4.2 `tests/vitest/zuiddrechtTokenSet.spec.js`: the notice text and the surface pairs in both schemes.
 
 ## 5. Verify
-- [ ] 5.1 Live check on the demo instance with portaliq `feat/zuiddrecht-site-pixel-match`: the content page title at 44px, the band and the table header #F4F6F9.
+- [x] 5.1 Live check on the demo instance with portaliq `feat/zuiddrecht-site-pixel-match`: the content page title at 44px, the band and the table header #F4F6F9.
+      Run on the throwaway with portaliq development (the pixel-match branch has landed). Live 2026-10-10 on the throwaway thematiq-live2 (:8093, NC 34; thematiq build/openspecs-live2, openregister 2.1.38, portaliq 0.2.10, dossiq 0.4.50, learniq 0.3.13 unstable development builds; `portaliq:example-site:install zuiddrecht` + `portaliq:example-resident:install zuiddrecht`, `learniq:example-set:load mbo` and `training`): `/afval` page title 44px, its table header cells #F4F6F9, the home's surface band (`nl-link-columns--surface`) #F4F6F9, `--thematiq-surface-color` #F4F6F9.

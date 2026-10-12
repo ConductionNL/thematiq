@@ -43,9 +43,21 @@ own, with a delta spec, when it is picked up.
 - [ ] 5.1 Export a token set from the component playground that the vocabulary audit rates
       complete: the reference the converter's output is diffed against.
 - [ ] 5.2 Author the OpenWOO reference values (design work; the playground is the tool, not the
-      set).
+      set), commit them as `css/tokens/openwoo.css`, and diff the converter's output for the OpenWOO
+      theme against it. Moved here from nlds-theme-converter 9.7 (Q-thematiq-6, decision 137): that
+      change closed on the Utrecht paste, because the reference file was never committed and
+      `@conduction/theme` 2.1.0 ships OpenWOO only as Style Dictionary sources.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
 - [ ] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
       per supported Nextcloud major.
+
+## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
+
+- [ ] 7.1 `example-basisschool`, `example-college`, `example-opleider` and `example-voortgezet` map the
+      role layer's link blue `#034591` to brand-400, their hover step, so `--tilburg-interaction-color`
+      and with it the Utrecht primary and secondary buttons (and, where the semantic link is the
+      primary, the links) wear the hover colour. example-gemeente was fixed on 10 Oct with an
+      `upstreamOverrides` entry (370d0b2b). Apply the same per set, keeping example-basisschool's
+      deliberately darker link, extend the `publicBridgeRoleLayer.spec.js` block, and check each live.

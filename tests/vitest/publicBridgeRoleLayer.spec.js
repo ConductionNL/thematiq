@@ -454,6 +454,35 @@ describe('a set with a role layer of its own keeps it', () => {
 	})
 })
 
+describe('example-gemeente draws its buttons and links in its primary (example-gemeente-theme 4.2)', () => {
+	// Live on 10 Oct (portaliq /site, Mijn Zuiddrecht on example-gemeente): the
+	// header and the case links wore #12506B, the primary and secondary buttons
+	// #0B3648, the hover step, because the set's own role layer pointed the
+	// Utrecht button and link roles at the interaction colour, which the
+	// generator had mapped to brand-400.
+	const set = 'example-gemeente'
+	const primary = token(set, '--nldesign-color-primary')
+	const hover = token(set, '--nldesign-color-primary-hover')
+
+	it('names #12506B as its primary and #0B3648 as its hover (the control)', () => {
+		expect(primary).toBe('#12506B')
+		expect(hover).toBe('#0B3648')
+	})
+
+	it('paints the primary button, the secondary button and the link in the primary', () => {
+		expect(token(set, '--utrecht-button-primary-action-background-color')).toBe(
+			primary,
+		)
+		expect(token(set, '--utrecht-button-secondary-action-color')).toBe(primary)
+		expect(token(set, '--utrecht-link-color')).toBe(primary)
+	})
+
+	it('keeps the hover step for hover and active', () => {
+		expect(token(set, '--tilburg-interaction-hover-color')).toBe(hover)
+		expect(token(set, '--tilburg-interaction-active-color')).toBe(hover)
+	})
+})
+
 describe('an info melding may be a tinted card without a line', () => {
 	it('keeps the width every melding has when the set names nothing', () => {
 		expect(token('zuiddrecht', '--utrecht-alert-info-border-width')).toBe(
