@@ -52,6 +52,8 @@ Check the text on your action colour: it needs 4.5:1. Thematiq warns when it doe
 
 The NL Design System and La Suite (Cunningham) bundles read these tokens. Summer Breeze and High contrast do not.
 
+An imported theme brings them too. In a theme's CSS, name them `--<prefix>-color-action`, `--<prefix>-color-action-hover` and `--<prefix>-color-action-text`. In a design tokens (DTCG) file, use the paths `color.action`, `color.action-hover` and `color.action-text`. A theme that names only the action colour gets a readable text on it: white or black, whichever reads better.
+
 ### Header Tokens
 
 | Token | Purpose | Example |

@@ -1114,7 +1114,10 @@ OC.L10N.register(
         "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} overgenomen, {adapted} aangepast, {kept} behouden, {skipped} overgeslagen.",
         "The navigation column's own surface": "Het eigen oppervlak van de navigatiekolom",
         "The initials of an avatar without a picture": "De initialen van een avatar zonder foto",
-        "or": "of"
+        "or": "of",
+        "Text on the main button": "Tekst op de hoofdknop",
+        "Give the main button its own color": "Geef de hoofdknop een eigen kleur",
+        "Main button color": "Kleur van de hoofdknop"
     },
     "nplurals=2; plural=(n != 1);"
 )
