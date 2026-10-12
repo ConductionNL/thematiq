@@ -42,6 +42,9 @@
       `test:lasuite-bridge-coverage` and nine more), stylelint and prettier on the touched files.
 - [x] 6.2 Browser comparison of every set, light and dark, before and after: no difference.
       Forced regeneration of all dark variants: no difference.
+- [x] 6.2a The browser comparison is a check in the repository:
+      `npm run test:action-colour-unset` (`tests/css/check-action-colour-unset.mjs`), and
+      `tests/e2e/spec-coverage/action-colour-unset.spec.ts` runs it in the Playwright job.
 - [x] 6.3 `composer check:strict`, once, before the push. `npm run lint`.
 - [ ] 6.4 A set that declares the token, on a running instance: the main button, a checkbox and
       the progress bar in the action colour, light and dark.
