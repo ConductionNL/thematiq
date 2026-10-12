@@ -454,6 +454,98 @@ describe('a set with a role layer of its own keeps it', () => {
 	})
 })
 
+describe('example-gemeente draws its buttons and links in its primary (example-gemeente-theme 4.2)', () => {
+	// Live on 10 Oct (portaliq /site, Mijn Zuiddrecht on example-gemeente): the
+	// header and the case links wore #12506B, the primary and secondary buttons
+	// #0B3648, the hover step, because the set's own role layer pointed the
+	// Utrecht button and link roles at the interaction colour, which the
+	// generator had mapped to brand-400.
+	const set = 'example-gemeente'
+	const primary = token(set, '--nldesign-color-primary')
+	const hover = token(set, '--nldesign-color-primary-hover')
+
+	it('names #12506B as its primary and #0B3648 as its hover (the control)', () => {
+		expect(primary).toBe('#12506B')
+		expect(hover).toBe('#0B3648')
+	})
+
+	it('paints the primary button, the secondary button and the link in the primary', () => {
+		expect(token(set, '--utrecht-button-primary-action-background-color')).toBe(
+			primary,
+		)
+		expect(token(set, '--utrecht-button-secondary-action-color')).toBe(primary)
+		expect(token(set, '--utrecht-link-color')).toBe(primary)
+	})
+
+	it('keeps the hover step for hover and active', () => {
+		expect(token(set, '--tilburg-interaction-hover-color')).toBe(hover)
+		expect(token(set, '--tilburg-interaction-active-color')).toBe(hover)
+	})
+})
+
+describe('the four other example sets draw their buttons in their primary (token-set-coverage-next-waves 7.1)', () => {
+	// The same defect example-gemeente had on 10 Oct: the generator maps the
+	// role layer's link blue to brand-400, the hover step, so the interaction
+	// colour, and with it the Utrecht primary and secondary buttons, wore the
+	// hover colour at rest.
+	const EXPECTED = {
+		'example-basisschool': {
+			primary: '#B03A12',
+			hover: '#8A2D0E',
+			link: '#8A2D0E',
+		},
+		'example-college': { primary: '#7A1F6E', hover: '#5E1755', link: '#7A1F6E' },
+		'example-opleider': {
+			primary: '#0E4D5C',
+			hover: '#0A3A46',
+			link: '#0E4D5C',
+		},
+		'example-voortgezet': {
+			primary: '#2D4FA0',
+			hover: '#233F82',
+			link: '#2D4FA0',
+		},
+	}
+
+	for (const [set, expected] of Object.entries(EXPECTED)) {
+		it(`${set} names its primary, hover and link (the control)`, () => {
+			expect(token(set, '--nldesign-color-primary')).toBe(expected.primary)
+			expect(token(set, '--nldesign-color-primary-hover')).toBe(expected.hover)
+			expect(token(set, '--nldesign-color-link')).toBe(expected.link)
+		})
+
+		it(`${set} paints the primary and the secondary button in the primary`, () => {
+			expect(
+				token(set, '--utrecht-button-primary-action-background-color'),
+			).toBe(expected.primary)
+			expect(token(set, '--utrecht-button-secondary-action-color')).toBe(
+				expected.primary,
+			)
+		})
+
+		it(`${set} draws the component link in the link colour of the set`, () => {
+			expect(token(set, '--utrecht-link-color')).toBe(expected.link)
+		})
+
+		it(`${set} keeps the hover step for hover and active`, () => {
+			expect(token(set, '--tilburg-interaction-hover-color')).toBe(
+				expected.hover,
+			)
+			expect(token(set, '--tilburg-interaction-active-color')).toBe(
+				expected.hover,
+			)
+		})
+	}
+
+	it('keeps the darker link of example-basisschool apart from its primary', () => {
+		// #B03A12 is the button colour; the set names #8A2D0E for links on
+		// purpose, and the component link has to follow that, not the button.
+		expect(token('example-basisschool', '--utrecht-link-color')).not.toBe(
+			token('example-basisschool', '--nldesign-color-primary'),
+		)
+	})
+})
+
 describe('an info melding may be a tinted card without a line', () => {
 	it('keeps the width every melding has when the set names nothing', () => {
 		expect(token('zuiddrecht', '--utrecht-alert-info-border-width')).toBe(

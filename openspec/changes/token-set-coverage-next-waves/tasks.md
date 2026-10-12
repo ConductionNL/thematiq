@@ -6,9 +6,13 @@ own, with a delta spec, when it is picked up.
 
 ## 1. Bridge-zero sets (from every-shipped-set-selectable 6.1 and 6.2, honest-token-set-coverage 6.1)
 
-- [ ] 1.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css`, already vendored
+- [x] 1.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css`, already vendored
       under EUPL-1.2 for `generate-denhaag-bridge.mjs`. The one of the eight that needs nothing
       invented.
+      Already built when this plan was written down: #1089 (change `denhaag-component-tokens`,
+      archived) generates `css/tokens/denhaag.css` from `scripts/brands/denhaag.json` and
+      `scripts/brands/denhaag.components.json`, and `docs/reference/token-set-coverage.md` measures
+      denhaag at 81 of 87 on the bridge (read 12 Oct). Seven sets are left at 0 of 87, see 1.2.
 - [ ] 1.2 Brand files for the other seven bridge-zero sets (`amsterdam`, `epe`, `groningen`,
       `ridderkerk`, `rijkshuisstijl`, `utrecht`, `zwolle`). Each declares 3 to 9 palette steps of
       its own (`epe` 226) and a brand file needs about 43 ramp steps, so each needs a sourced
@@ -34,18 +38,39 @@ own, with a delta spec, when it is picked up.
 
 ## 4. Dead weight (from honest-token-set-coverage 6.6)
 
-- [ ] 4.1 Retire `css/fonts-conduction.css`: no design system links it. Re-source the
+- [x] 4.1 Retire `css/fonts-conduction.css`: no design system links it. Re-source the
       `openspec/parity/capabilities.json` evidence line that cites it and check whether portaliq
       links it first.
+      Built 12 Oct as the change `retire-fonts-conduction-stylesheet`: portaliq does not link it,
+      the file is gone, the three citations name the stylesheets that serve the faces, and
+      `tests/vitest/fontStylesheetsAreLinked.spec.js` keeps every font stylesheet linked.
 
 ## 5. Playground handover (from component-playground 8.2 and 9.1)
 
 - [ ] 5.1 Export a token set from the component playground that the vocabulary audit rates
       complete: the reference the converter's output is diffed against.
 - [ ] 5.2 Author the OpenWOO reference values (design work; the playground is the tool, not the
-      set).
+      set), commit them as `css/tokens/openwoo.css`, and diff the converter's output for the OpenWOO
+      theme against it. Moved here from nlds-theme-converter 9.7 (Q-thematiq-6, decision 137): that
+      change closed on the Utrecht paste, because the reference file was never committed and
+      `@conduction/theme` 2.1.0 ships OpenWOO only as Style Dictionary sources.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
 - [ ] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
       per supported Nextcloud major.
+
+## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
+
+- [x] 7.1 `example-basisschool`, `example-college`, `example-opleider` and `example-voortgezet` map the
+      role layer's link blue `#034591` to brand-400, their hover step, so `--tilburg-interaction-color`
+      and with it the Utrecht primary and secondary buttons (and, where the semantic link is the
+      primary, the links) wear the hover colour. example-gemeente was fixed on 10 Oct with an
+      `upstreamOverrides` entry (370d0b2b). Apply the same per set, keeping example-basisschool's
+      deliberately darker link, and extend the `publicBridgeRoleLayer.spec.js` block.
+      Built 12 Oct: each of the four brand files names its primary as `--tilburg-interaction-color`;
+      example-basisschool also points `--utrecht-link-color` at `--nldesign-color-link` (#8A2D0E).
+      Sets, dark variants and reference pages regenerated; 17 new assertions in
+      `tests/vitest/publicBridgeRoleLayer.spec.js`, 7 of them red before the change.
+- [ ] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
+      at rest, the hover step on hover, example-basisschool links in #8A2D0E (live pass, decision 139).

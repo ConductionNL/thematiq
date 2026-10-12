@@ -305,7 +305,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	</commands>
 	<settings>
 		<admin>OCA\Thematiq\Settings\Admin</admin>
+		<admin>OCA\Thematiq\Settings\GroupHouseStyle</admin>
 		<admin-section>theming</admin-section>
-		<personal>OCA\Thematiq\Settings\Personal</personal>
 	</settings>
 </info>

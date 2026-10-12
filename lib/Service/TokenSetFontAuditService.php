@@ -107,10 +107,10 @@ class TokenSetFontAuditService {
 	 * The font families a design system's own stylesheets declare an
 	 * `@font-face` for.
 	 *
-	 * Only the stylesheets the system LINKS count. `css/fonts.css` and
-	 * `css/fonts-conduction.css` are not in any design system's list, so a face
-	 * declared only there never loads on an instance however correct it looks in
-	 * the repository.
+	 * Only the stylesheets the system LINKS count. `css/fonts.css` is the layer
+	 * portaliq links for a public site and is in no design system's list, so a
+	 * face declared only there never loads on an instance however correct it
+	 * looks in the repository.
 	 *
 	 * @param string $appPath The app root path.
 	 * @param string $designSystem The design system id.

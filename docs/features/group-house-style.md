@@ -20,11 +20,21 @@ Members keep seeing the current set until a subadmin picks another one. The orde
 
 The subadmins of the group choose. A subadmin is the owner role Nextcloud already has per group: you appoint one under Accounts. A subadmin can change the set of their own delegated group, and nothing else. They cannot change the order, the allowed sets or another group.
 
+## Give subadmins the page
+
+House style of my groups is part of the administration settings. You decide who may open it.
+
+1. Go to Settings > Administration > Administration privileges.
+2. Find House style of my groups.
+3. Add the group your subadmins are in.
+
+Members of that group now see Settings > Administration > Theming with only this block. Without the privilege, a subadmin cannot choose, even for their own group.
+
 ## What a subadmin sees
 
-A subadmin of a delegated group finds House style of my groups under Personal settings, Appearance and accessibility. Every delegated group they manage is listed with its allowed sets and the contrast result of each set. A choice is saved at once. Members see it on their next page.
+A subadmin of a delegated group finds House style of my groups under Settings > Administration > Theming. Every delegated group they manage is listed with its allowed sets and the contrast result of each set. A choice is saved at once. Members see it on their next page.
 
-Users who manage no delegated group do not see the block.
+Users who manage no delegated group do not see the block. Personal settings keep only Nextcloud's own appearance choices: theme, font and background.
 
 ## Lock a group again
 

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\AppMenuService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -1840,4 +1841,44 @@ class CssInjectionServiceTest extends TestCase {
 			'a light set that names no header style' => [['workplace_layout' => 'light'], false],
 		];
 	}//end headerStyleProvider()
+
+	/**
+	 * The apps menu's layer is asked on every page with the page's set; it
+	 * decides from the same stylesheets as the person's layer.
+	 *
+	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 */
+	public function testTheAppMenuLayerIsAskedWithThePagesSet(): void {
+		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'header_style' => 'workplace']]);
+
+		$appMenu = $this->createMock(AppMenuService::class);
+		$appMenu->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
+
+		$service = $this->getMockBuilder(CssInjectionService::class)
+			->setConstructorArgs(
+				[
+					$this->config,
+					$this->designSystemService,
+					$this->customCssService,
+					$this->fontService,
+					$this->urlGenerator,
+					$this->groupThemingService,
+					$this->previewBannerService,
+					$this->logger,
+					$this->stockTokens,
+					$this->runtimeFiles,
+					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					$this->appBrands,
+					null,
+					null,
+					null,
+					$appMenu,
+				]
+			)
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
+			->getMock();
+
+		$service->inject('user');
+	}//end testTheAppMenuLayerIsAskedWithThePagesSet()
 }//end class

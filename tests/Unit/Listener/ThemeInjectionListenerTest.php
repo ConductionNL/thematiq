@@ -17,6 +17,8 @@ use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\EnvironmentMarkerService;
+use OCA\Thematiq\Service\LoginCopyService;
+use OCA\Thematiq\Service\NotFoundCopyService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -319,4 +321,95 @@ class ThemeInjectionListenerTest extends TestCase {
 
 		$this->listener->handle(new Event());
 	}//end testUnrelatedEventGetsNoEnvironmentMarker()
+
+	/**
+	 * The login copy runs on a themed login page, and never on an unthemed
+	 * login page (the control) nor on any other page.
+	 *
+	 * @param bool $themed Whether the login context is themed.
+	 * @param bool $login Whether the event is the login page's.
+	 * @param int $expected How often the login copy runs.
+	 *
+	 * @dataProvider loginCopyProvider
+	 *
+	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 */
+	public function testTheLoginCopyRunsOnAThemedLoginPageOnly(bool $themed, bool $login, int $expected): void {
+		$loginCopy = $this->createMock(LoginCopyService::class);
+		$loginCopy->expects($this->exactly($expected))->method('injectForLogin');
+		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
+		$listener = new ThemeInjectionListener(
+			$this->cssInjectionService,
+			$this->appThemingService,
+			$this->request,
+			$this->logger,
+			$this->environmentMarker,
+			$loginCopy
+		);
+
+		$response = new TemplateResponse('core', 'login', [], $login === true ? TemplateResponse::RENDER_AS_GUEST : TemplateResponse::RENDER_AS_USER);
+		$event = new BeforeTemplateRenderedEvent(true, $response);
+		if ($login === true) {
+			$event = new BeforeLoginTemplateRenderedEvent($response);
+		}
+
+		$listener->handle($event);
+	}//end testTheLoginCopyRunsOnAThemedLoginPageOnly()
+
+	/**
+	 * Themed and unthemed login pages, and a user page.
+	 *
+	 * @return array<string, array{0: bool, 1: bool, 2: int}>
+	 */
+	public static function loginCopyProvider(): array {
+		return [
+			'a themed login page' => [true, true, 1],
+			'an unthemed login page' => [false, true, 0],
+			'a user page' => [true, false, 0],
+		];
+	}//end loginCopyProvider()
+
+	/**
+	 * The not-found copy runs on Nextcloud's own 404 page when its context is
+	 * themed, and never on another template or an unthemed context (the controls).
+	 *
+	 * @param string $app The response's app.
+	 * @param string $template The response's template.
+	 * @param bool $themed Whether the context is themed.
+	 * @param int $expected How often the not-found copy runs.
+	 *
+	 * @dataProvider notFoundProvider
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 */
+	public function testTheNotFoundCopyRunsOnTheCore404Only(string $app, string $template, bool $themed, int $expected): void {
+		$notFound = $this->createMock(NotFoundCopyService::class);
+		$notFound->expects($this->exactly($expected))->method('inject');
+		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
+		$listener = new ThemeInjectionListener(
+			$this->cssInjectionService,
+			$this->appThemingService,
+			$this->request,
+			$this->logger,
+			$this->environmentMarker,
+			null,
+			$notFound
+		);
+
+		$listener->handle(new BeforeTemplateRenderedEvent(false, new TemplateResponse($app, $template, [], TemplateResponse::RENDER_AS_GUEST)));
+	}//end testTheNotFoundCopyRunsOnTheCore404Only()
+
+	/**
+	 * The core 404 page and its controls.
+	 *
+	 * @return array<string, array{0: string, 1: string, 2: bool, 3: int}>
+	 */
+	public static function notFoundProvider(): array {
+		return [
+			'the core 404 page' => ['core', '404', true, 1],
+			'the core 404 page, unthemed' => ['core', '404', false, 0],
+			'another core guest page' => ['core', '403', true, 0],
+			'an app template named 404' => ['files', '404', true, 0],
+		];
+	}//end notFoundProvider()
 }//end class
