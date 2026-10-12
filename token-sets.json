@@ -523,7 +523,7 @@
 	{
 		"id": "opencatalogi",
 		"name": "OpenCatalogi",
-		"description": "Design tokens for OpenCatalogi, transcribed from the tokens opencatalogi.nl ships",
+		"description": "Conduction's own brand for OpenCatalogi, its open source catalogue product. Design tokens transcribed from the tokens opencatalogi.nl ships",
 		"theming": {
 			"primary_color": "#00811f",
 			"background_color": "#FFFFFF",
