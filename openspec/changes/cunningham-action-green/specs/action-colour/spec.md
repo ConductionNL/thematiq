@@ -14,8 +14,8 @@ beside it in `ActionColourTokenTest`.
 @e2e exclude Token values of one set, covered by PHPUnit (ActionColourTokenTest, ShellCatalogueTest) and a browser comparison recorded in the pull request
 - GIVEN the active token set is Cunningham
 - WHEN a page with a main button and a checked checkbox is drawn
-- THEN both MUST be `#1f883d`
-- AND the header and the links MUST stay in the set's blue
+- THEN the main button MUST be `#1f883d`
+- AND the checked checkbox, the header and the links MUST stay in the set's blue
 
 #### Scenario: Every other set
 @e2e exclude Regression over all shipped sets, covered by PHPUnit (ActionColourTokenTest)

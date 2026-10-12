@@ -24,27 +24,24 @@ The dark variant, the token reference page and the shell catalogue are regenerat
 
 ## Impact
 
-Only instances on the Cunningham set change, and they change visibly. Seen on a Nextcloud 35
-instance on 12 Oct 2026, light and dark:
+Only instances on the Cunningham set change, and only in one thing: the filled primary button.
 
 Turns green:
 
-- the main button, and the confirm button of a dialog
+- the main button of a page (NcButton primary, `button.primary`, `input.primary`)
+- the confirm button of a dialog
 - the login button
-- a checked checkbox, radio button and switch
-- the counter badge of the selected navigation entry, in light
-- the folder icons and the share icons in the Files list
 
-Stays as it was, because the La Suite bundle draws these itself:
+Stays as it was: everything else. Checked checkboxes, radio buttons and switches, the counter
+badge, the folder and share icons in Files, the selected navigation entry, the focus ring, the
+storage bar, the header and the links keep the set's blue.
 
-- the header, links, filter labels and `--color-primary`
-- the selected entry in the app navigation, a grey wash
-- the focus ring of a text input
-- the storage bar
-- the counter badges in dark
+A first version of this change wired the action colour into Nextcloud's primary element colour,
+and a live look showed the checkboxes, switches and folder icons turning green too. Ruben decided
+on 13 Oct 2026 that only the main button gets the colour (`action-colour-main-button-only`).
 
 The main button's label is white on `#1f883d`, 4.52:1, in both themes. Before it was `#eaf1fb` on
 `#1167d4`, 4.72:1.
 
-Screens: every page of a Cunningham instance that shows one of the above. The OpenProject boards
+Screens: every page of a Cunningham instance that shows a primary button. The OpenProject boards
 are the reference for the green; no Nextcloud board draws Cunningham with it yet.

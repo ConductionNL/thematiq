@@ -15,6 +15,9 @@ export function compare(
 	withActionColour: string[]
 	values: number
 	differences: string[]
-	blindControls: string[]
+	notReached: string[]
+	leaked: string[]
+	reached: string[]
+	unmoved: number
 	leftovers: string[]
 }>

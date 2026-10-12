@@ -141,28 +141,21 @@ body {
 	   brand-650 made our button-at-rest match La Suite's HOVER state — one step
 	   too dark. Verified by a local computed-style comparison against La Suite's
 	   own shipped Cunningham CSS (2026-07-26). */
-	/* The action colour, for a set that wants its main button apart from the
-	   brand: --nldesign-color-action with -hover and -text beside it. Of
-	   the shipped sets only Cunningham declares it (green, as OpenProject draws
-	   its main button). Without it each fallback below is the old value. --thematiq-action-hover is the declared hover step, or the action
-	   colour 15% darker; with neither declared it is invalid and its readers
-	   take their fallback. */
+	--color-primary-element: var(--lasuite-color-brand-550) !important;
+	--color-primary-element-text: var(--lasuite-color-brand-050) !important;
+	--color-primary-element-hover: var(--lasuite-color-brand-650) !important;
+	/* The action colour is NOT read above. A set may give the one main button
+	   its own colour (--nldesign-color-action with -hover and -text beside
+	   it), and only that button wears it: element-overrides.css paints the
+	   primary button from it. Checked boxes, switches and everything else in
+	   --color-primary-element stay with the brand. --thematiq-action-hover is
+	   the button's hover step: the declared one, or the action colour 15%
+	   darker; with neither declared it is invalid and its readers take their
+	   fallback. */
 	--thematiq-action-hover: var(
 		--nldesign-color-action-hover,
 		color-mix(in srgb, var(--nldesign-color-action) 85%, black)
 	);
-	--color-primary-element: var(
-		--nldesign-color-action,
-		var(--lasuite-color-brand-550)
-	) !important;
-	--color-primary-element-text: var(
-		--nldesign-color-action-text,
-		var(--lasuite-color-brand-050)
-	) !important;
-	--color-primary-element-hover: var(
-		--thematiq-action-hover,
-		var(--lasuite-color-brand-650)
-	) !important;
 	--color-primary-element-light: var(--lasuite-color-brand-050) !important;
 	--color-primary-element-light-text: var(--lasuite-color-brand-650) !important;
 	--color-primary-element-light-hover: var(--lasuite-color-brand-100) !important;

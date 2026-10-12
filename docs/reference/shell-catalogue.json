@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:29cdd6f8c2034f36",
+    "generated_from": "sets:29c06348b5628165",
     "sets": [
         {
             "id": "amsterdam",
@@ -2126,9 +2126,9 @@
             "logo": {
                 "file": "img/logos/opencatalogi.svg",
                 "inverse_file": null,
-                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
-                "redistributable": null,
-                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Conduction's own brand\"); REUSE.toml: EUPL-1.2."
             },
             "dark": {
                 "tokens": {

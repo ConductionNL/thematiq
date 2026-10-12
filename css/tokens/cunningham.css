@@ -37,10 +37,9 @@
 	 * action colour of the OpenProject boards on identity.conduction.nl/screens
 	 * (--sc-action #1f883d, --sc-action-deep #197032). White on it is 4.52:1;
 	 * the bundle's own button label, brand-050 #eaf1fb, would be 3.98:1, so the
-	 * text is named here. Checked boxes, radio buttons and switches follow
-	 * this colour, and the folder icons in Files: Nextcloud draws them in its
-	 * primary element colour. The focus ring, the storage bar and the selected
-	 * navigation entry do not: this bundle draws those itself. */
+	 * text is named here. Only the filled primary button wears this colour.
+	 * Checked boxes, switches, folder icons and everything else Nextcloud
+	 * draws in its primary element colour stay blue. */
 	--nldesign-color-action: #1f883d;
 	--nldesign-color-action-hover: #197032;
 	--nldesign-color-action-text: #ffffff;

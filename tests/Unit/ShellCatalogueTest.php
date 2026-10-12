@@ -305,6 +305,7 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertTrue($sets['example-gemeente']['logo']['redistributable']);
 		$this->assertTrue($sets['dinkelland']['logo']['redistributable']);
 		$this->assertTrue($sets['frankendesk']['logo']['redistributable']);
+		$this->assertTrue($sets['opencatalogi']['logo']['redistributable'], 'OpenCatalogi is a Conduction product, and token-sets.json says so');
 	}//end testALogoIsRedistributableOnlyOnEvidence()
 
 	/**
@@ -315,7 +316,7 @@ class ShellCatalogueTest extends TestCase {
 	public function testARealOrganisationsLogoIsNotMarkedRedistributable(): void {
 		$sets = $this->setsById(catalogue: $this->catalogue());
 
-		foreach (['amsterdam', 'denhaag', 'rotterdam', 'utrecht', 'vng', 'nijmegen', 'provincie-zuid-holland', 'xxllnc', 'opencatalogi'] as $id) {
+		foreach (['amsterdam', 'denhaag', 'rotterdam', 'utrecht', 'vng', 'nijmegen', 'provincie-zuid-holland', 'xxllnc'] as $id) {
 			$this->assertNull($sets[$id]['logo']['redistributable'], $id . ': the repository does not say, so the catalogue does not either');
 			$this->assertStringContainsString('holder of the artwork is not stated', (string)$sets[$id]['logo']['licence'], $id);
 		}

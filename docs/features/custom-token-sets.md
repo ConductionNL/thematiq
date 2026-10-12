@@ -110,7 +110,7 @@ Thematiq fills in every token a complete set needs:
 
 While you pick colours, the preview shows a primary button and its hover shade, exactly as they will be stored. Below it you see two contrast ratios: text on primary against 4.5:1, and primary on background against 3:1. A ratio below its threshold is a warning. You can still save.
 
-Want the main button in another colour than your primary, such as a green button on a blue house style? Tick **Give the main button its own colour** and pick it. Checked boxes, switches and progress bars take that colour too. The header and the links keep your primary. The preview then shows the main button, and a third ratio: the text on it against 4.5:1.
+Want the main button in another colour than your primary, such as a green button on a blue house style? Tick **Give the main button its own colour** and pick it. Only the main button takes that colour. Checked boxes, switches, the header and the links keep your primary. The preview then shows the main button, and a third ratio: the text on it against 4.5:1.
 
 The logo may be SVG, PNG, JPG, GIF or WebP, up to 512 KB. It becomes the set's logo for the theming-sync dialog, together with your primary colour.
 
