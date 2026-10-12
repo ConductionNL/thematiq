@@ -65,6 +65,9 @@ skipped and reported (`imported` / `skipped` counts).
 | `color.primary-text` / `color.on-primary` | `--nldesign-color-primary-text` |
 | `color.primary-hover` | `--nldesign-color-primary-hover` |
 | `color.primary-light` | `--nldesign-color-primary-light` |
+| `color.action` | `--nldesign-color-action` (optional: the main button apart from the primary) |
+| `color.action-hover` | `--nldesign-color-action-hover` |
+| `color.action-text` / `color.on-action` | `--nldesign-color-action-text` |
 | `color.background` | `--nldesign-color-background` |
 | `color.text` | `--nldesign-color-text` |
 | `fontFamily.base` / `typography.font-family` | `--nldesign-font-family` |
