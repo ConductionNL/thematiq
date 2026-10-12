@@ -18,6 +18,8 @@
       `css/systems/nldesign/fonts.css`.
 - [x] 2.5 `scripts/build-fonts.js`: the IBM Plex Mono note and the licence table comment speak of
       the file in the past tense; both font layers regenerated, `npm run test:fonts` reports no drift.
+- [x] 2.6 `css/tokens/dark/frankendesk.css`: regenerated, because the dark variant records the hash
+      of its source and the source's comments changed. Only the hash line differs.
 
 ## 3. Checks
 
