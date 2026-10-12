@@ -75,6 +75,7 @@ class ContrastService {
 	 *                                                                                                            The non-blocking contrast warnings.
 	 *
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	public function check(array $declarations): array {
 		$warnings = [];
@@ -119,8 +120,58 @@ class ContrastService {
 			}
 		}//end foreach
 
-		return $warnings;
+		return array_merge($warnings, $this->checkAction(declarations: $declarations));
 	}//end check()
+
+	/**
+	 * The text on the action colour, checked like the text on the primary.
+	 *
+	 * The action colour is optional: a set declares `--nldesign-color-action`
+	 * (and `--nldesign-color-action-text`) to give the main button a colour of
+	 * its own, and each falls back to its primary counterpart. So the pair is
+	 * only measured when a set moved a side of it. A set that declares neither,
+	 * or declares them equal to the primary pair, gets no entry here: that is
+	 * the pair {@see self::PAIRS} already measured, and reporting it twice
+	 * would change what every existing set is told.
+	 *
+	 * @param array<string, string> $declarations Map of token name => value.
+	 *
+	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> Zero or one warning.
+	 *
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 */
+	private function checkAction(array $declarations): array {
+		$primary = ($declarations['--nldesign-color-primary'] ?? null);
+		$primaryText = ($declarations['--nldesign-color-primary-text'] ?? null);
+		$action = ($declarations['--nldesign-color-action'] ?? $primary);
+		$actionText = ($declarations['--nldesign-color-action-text'] ?? $primaryText);
+
+		if ($action === null || $actionText === null || ($action === $primary && $actionText === $primaryText)) {
+			return [];
+		}
+
+		$ratio = $this->measure(
+			foreground: $actionText,
+			background: $action,
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+
+		$warning = [
+			'pair' => '--nldesign-color-action-text vs --nldesign-color-action',
+			'ratio' => null,
+			'threshold' => self::ROLE_TEXT_THRESHOLD,
+			'level' => 'AA',
+		];
+		if ($ratio === null) {
+			return [array_merge($warning, ['unevaluated' => true])];
+		}
+
+		if ($ratio < self::ROLE_TEXT_THRESHOLD) {
+			return [array_merge($warning, ['ratio' => round($ratio, 2)])];
+		}
+
+		return [];
+	}//end checkAction()
 
 	/**
 	 * Evaluate an arbitrary list of candidate colors against one background,

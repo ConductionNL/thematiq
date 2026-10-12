@@ -787,13 +787,21 @@ button[class*='primary']:not(:where([class*='_colorPickerField__button'])) {
 	   blocks turn that alias brand-050 for icons on a dark header, which made
 	   the fill as pale as the brand-050 label (#935). Cunningham's dark theme
 	   keeps brand-550 here, and so do the dark blocks below. */
+	/* A set's action colour comes first (see bridge.css); without one the
+	   fill is what it was. */
 	background-color: var(
-		--lasuite--contextuals--background--semantic--brand--primary,
-		var(--lasuite-color-brand-550)
+		--nldesign-color-action,
+		var(
+			--lasuite--contextuals--background--semantic--brand--primary,
+			var(--lasuite-color-brand-550)
+		)
 	) !important;
 	border-color: var(
-		--lasuite--contextuals--background--semantic--brand--primary,
-		var(--lasuite-color-brand-550)
+		--nldesign-color-action,
+		var(
+			--lasuite--contextuals--background--semantic--brand--primary,
+			var(--lasuite-color-brand-550)
+		)
 	) !important;
 	border-radius: var(--lasuite-border-radius) !important;
 }
@@ -836,7 +844,10 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
 	   not pure white — matched to the shipped Cunningham CSS (2026-07-26).
 	   Selector kept symmetric with the fill rule above so any primary-classed
 	   button gets both the brand-550 fill AND the brand-050 text. */
-	color: var(--lasuite-color-brand-050) !important;
+	color: var(
+		--nldesign-color-action-text,
+		var(--lasuite-color-brand-050)
+	) !important;
 }
 
 /* …except Nextcloud's own colour pickers, whose button background IS the colour
@@ -861,12 +872,18 @@ button.primary:hover,
 		:where([class*='_colorPickerField__button'])
 	) {
 	background-color: var(
-		--lasuite--contextuals--background--semantic--brand--primary-hover,
-		var(--lasuite-color-brand-650)
+		--thematiq-action-hover,
+		var(
+			--lasuite--contextuals--background--semantic--brand--primary-hover,
+			var(--lasuite-color-brand-650)
+		)
 	) !important;
 	border-color: var(
-		--lasuite--contextuals--background--semantic--brand--primary-hover,
-		var(--lasuite-color-brand-650)
+		--thematiq-action-hover,
+		var(
+			--lasuite--contextuals--background--semantic--brand--primary-hover,
+			var(--lasuite-color-brand-650)
+		)
 	) !important;
 }
 

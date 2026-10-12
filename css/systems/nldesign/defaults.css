@@ -247,21 +247,29 @@
 		--nldesign-color-focus
 	); /* reserved */
 
-	/* Button — primary-action */
+	/* Button — primary-action. --nldesign-color-action, -hover and -text are
+	 * optional: a set that wants its main button apart from its primary
+	 * declares them. They are deliberately NOT declared here. Undeclared, each
+	 * value below falls back to the primary, as before. */
 	--nldesign-component-button-primary-action-background-color: var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	);
 	--nldesign-component-button-primary-action-color: var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	);
 	--nldesign-component-button-primary-action-border-color: var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	);
 	--nldesign-component-button-primary-action-hover-background-color: var(
-		--nldesign-color-primary-hover
+		--nldesign-color-action-hover,
+		var(--nldesign-color-primary-hover)
 	);
 	--nldesign-component-button-primary-action-hover-color: var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	); /* reserved */
 
 	/* Button — secondary-action */

@@ -34,6 +34,24 @@ rhc.color.lintblauw.500         --nldesign-color-header-*    #header { backgroun
 | `--nldesign-color-primary-light` | Light tint of primary | `#e8f0f8` |
 | `--nldesign-color-primary-light-hover` | Hover on light primary | `#d4e4f2` |
 
+### Action colour (optional)
+
+A token set may give the one main button of a page a colour of its own, apart from its primary. Declare these in the set's file:
+
+| Token | Purpose | Without it |
+|-------|---------|------------|
+| `--nldesign-color-action` | Fill of the main button, and of everything Nextcloud draws in its primary element colour | The primary |
+| `--nldesign-color-action-hover` | The same on hover | The action colour, 15% darker. Without an action colour: the primary hover |
+| `--nldesign-color-action-text` | Text and icons on the action colour | The text on the primary |
+
+No default is declared for them, on purpose. A set that leaves them out renders as it always did.
+
+The action colour reaches further than buttons. Nextcloud draws checked boxes and switches, progress bars, the selected navigation entry, focus borders of inputs and counter badges in the same variable (`--color-primary-element`). They all take the action colour. Links, the header and light tints stay with the primary.
+
+Check the text on your action colour: it needs 4.5:1. Thematiq warns when it does not reach that, as it does for the text on the primary. In a dark variant the action colour gets a dark value like any other colour of the set.
+
+The NL Design System and La Suite (Cunningham) bundles read these tokens. Summer Breeze and High contrast do not.
+
 ### Header Tokens
 
 | Token | Purpose | Example |

@@ -20,9 +20,25 @@ body {
 	--color-primary-text: var(--nldesign-color-primary-text) !important;
 	--color-primary-hover: var(--nldesign-color-primary-hover) !important;
 	--color-primary-light: var(--nldesign-color-primary-light) !important;
-	--color-primary-element: var(--nldesign-color-primary) !important;
-	--color-primary-element-text: var(--nldesign-color-primary-text) !important;
-	--color-primary-element-hover: var(--nldesign-color-primary-hover) !important;
+	/* The action colour, as in overrides.css, restated here because a dark
+	 * variant declares its values on body. Without the action token each
+	 * fallback is the old value. */
+	--thematiq-action-hover: var(
+		--nldesign-color-action-hover,
+		color-mix(in srgb, var(--nldesign-color-action) 85%, black)
+	);
+	--color-primary-element: var(
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
+	) !important;
+	--color-primary-element-text: var(
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
+	) !important;
+	--color-primary-element-hover: var(
+		--thematiq-action-hover,
+		var(--nldesign-color-primary-hover)
+	) !important;
 	--color-primary-element-light: var(--nldesign-color-primary-light) !important;
 	--color-primary-element-light-text: var(--nldesign-color-primary) !important;
 	--color-primary-element-light-hover: var(

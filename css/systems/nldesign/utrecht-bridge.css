@@ -102,22 +102,35 @@
 		var(--nldesign-color-focus)
 	);
 
-	/* Button — primary-action */
+	/* Button — primary-action. The action colour comes first when a set
+	 * declares it (see overrides.css); without it each value is what it was. */
 	--nldesign-component-button-primary-action-background-color: var(
-		--utrecht-button-primary-action-background-color,
-		var(--nldesign-color-primary)
+		--nldesign-color-action,
+		var(
+			--utrecht-button-primary-action-background-color,
+			var(--nldesign-color-primary)
+		)
 	);
 	--nldesign-component-button-primary-action-color: var(
-		--utrecht-button-primary-action-color,
-		var(--nldesign-color-primary-text)
+		--nldesign-color-action-text,
+		var(
+			--utrecht-button-primary-action-color,
+			var(--nldesign-color-primary-text)
+		)
 	);
 	--nldesign-component-button-primary-action-border-color: var(
-		--utrecht-button-primary-action-border-color,
-		var(--nldesign-color-primary)
+		--nldesign-color-action,
+		var(
+			--utrecht-button-primary-action-border-color,
+			var(--nldesign-color-primary)
+		)
 	);
 	--nldesign-component-button-primary-action-hover-background-color: var(
-		--utrecht-button-primary-action-hover-background-color,
-		var(--nldesign-color-primary-hover)
+		--thematiq-action-hover,
+		var(
+			--utrecht-button-primary-action-hover-background-color,
+			var(--nldesign-color-primary-hover)
+		)
 	);
 	--nldesign-component-button-primary-action-font-weight: var(
 		--utrecht-button-primary-action-font-weight,
