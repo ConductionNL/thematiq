@@ -64,6 +64,50 @@
 		},
 		{
 			"$comment": [
+				"THE ACTION COLOUR IS OPTIONAL, so these three rules have no fallback from the primary.",
+				"A theme that gives its main button a colour apart from its brand declares",
+				"--{p}-color-action (with -hover and -text beside it), and only then does the set get",
+				"--nldesign-color-action. Without the source nothing is written, and Nextcloud's primary",
+				"element keeps reading the primary, which is what every existing conversion relies on.",
+				"",
+				"--utrecht-button-primary-action-background-color is deliberately NOT a source here: it",
+				"is the first source of --nldesign-color-primary above, so naming it again would hand",
+				"every converted theme an action colour equal to its primary."
+			],
+			"target": "--nldesign-color-action",
+			"nextcloud": ["--color-primary-element"],
+			"sources": ["--{p}-color-action"],
+			"transform": "copy"
+		},
+		{
+			"$comment": [
+				"No fallback: a set with an action colour and no hover gets that colour 15% darker from",
+				"the stylesheet itself (--thematiq-action-hover)."
+			],
+			"target": "--nldesign-color-action-hover",
+			"nextcloud": ["--color-primary-element-hover"],
+			"sources": ["--{p}-color-action-hover"],
+			"transform": "copy"
+		},
+		{
+			"$comment": [
+				"Derived from the action colour when the theme names none, as the text on the primary",
+				"is. The derivation reads --nldesign-color-action, so a set without an action colour",
+				"gets no action text either."
+			],
+			"target": "--nldesign-color-action-text",
+			"nextcloud": ["--color-primary-element-text"],
+			"sources": ["--{p}-color-action-text"],
+			"fallback": {
+				"kind": "derive",
+				"from": "--nldesign-color-action",
+				"transform": "onColor",
+				"args": { "light": "#ffffff", "dark": "#000000" }
+			},
+			"transform": "copy"
+		},
+		{
+			"$comment": [
 				"ALWAYS derived from the primary, never taken from a token. These are Nextcloud's",
 				"light TINTS of the element colour (hover backgrounds for primary-ish controls), so",
 				"they only make sense as a wash of the brand colour.",
