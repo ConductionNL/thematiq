@@ -55,9 +55,15 @@ own, with a delta spec, when it is picked up.
 
 ## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
 
-- [ ] 7.1 `example-basisschool`, `example-college`, `example-opleider` and `example-voortgezet` map the
+- [x] 7.1 `example-basisschool`, `example-college`, `example-opleider` and `example-voortgezet` map the
       role layer's link blue `#034591` to brand-400, their hover step, so `--tilburg-interaction-color`
       and with it the Utrecht primary and secondary buttons (and, where the semantic link is the
       primary, the links) wear the hover colour. example-gemeente was fixed on 10 Oct with an
       `upstreamOverrides` entry (370d0b2b). Apply the same per set, keeping example-basisschool's
-      deliberately darker link, extend the `publicBridgeRoleLayer.spec.js` block, and check each live.
+      deliberately darker link, and extend the `publicBridgeRoleLayer.spec.js` block.
+      Built 12 Oct: each of the four brand files names its primary as `--tilburg-interaction-color`;
+      example-basisschool also points `--utrecht-link-color` at `--nldesign-color-link` (#8A2D0E).
+      Sets, dark variants and reference pages regenerated; 17 new assertions in
+      `tests/vitest/publicBridgeRoleLayer.spec.js`, 7 of them red before the change.
+- [ ] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
+      at rest, the hover step on hover, example-basisschool links in #8A2D0E (live pass, decision 139).
