@@ -63,6 +63,8 @@ php scripts/generate-shell-catalogue.php --copy-to ../my-product/catalogue --fro
 }
 ```
 
+A set that ships a dark variant also has a `dark` block with the same eighteen roles, as thematiq's own dark variant gives them: `"dark": { "tokens": { … } }`. A role the dark variant does not restate, such as a radius or the font, keeps its light value. The stock `nextcloud` set has no `dark` block, because Nextcloud brings its own dark theme.
+
 The example is shortened: `tokens` holds all eighteen roles, the same ones the endpoint answers. `generated_from` identifies the content, so two catalogues with the same value hold the same sets.
 
 ## Which files you may carry
