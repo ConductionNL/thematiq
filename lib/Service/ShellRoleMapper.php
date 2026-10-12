@@ -232,6 +232,37 @@ class ShellRoleMapper {
 	}//end map()
 
 	/**
+	 * The eighteen roles of one token set on a dark page.
+	 *
+	 * The same mapping as {@see self::map()}, with one role read the way a
+	 * dark page uses it. `primary-deep` is the colour written on
+	 * `primary-light`, the tint behind a selected item. In light that is the
+	 * primary's darker step. In dark the tint is dark, and a set's darker step
+	 * (often its light hover colour, kept as it is) does not read on it.
+	 * Nextcloud itself writes the primary on that tint
+	 * (`--color-primary-light-text`), so the role takes the first of its own
+	 * value, the primary and the ink that reaches 4.5:1 on `primary-light`.
+	 *
+	 * @param array<string, string> $tokens The set's light declarations with its dark variant's over them.
+	 *
+	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 */
+	public function mapDark(array $tokens): array {
+		$roles = $this->map(tokens: $tokens);
+		foreach ([$roles['primary-deep'], $roles['primary'], $roles['ink']] as $candidate) {
+			$ratio = $this->colours->measure(foreground: $candidate, background: $roles['primary-light'], page: $roles['ground']);
+			if ($ratio !== null && $ratio >= 4.5) {
+				$roles['primary-deep'] = $candidate;
+				break;
+			}
+		}
+
+		return $roles;
+	}//end mapDark()
+
+	/**
 	 * The first declared name that holds a value a consumer can use.
 	 *
 	 * @param string[] $names The names to try, in order.

@@ -147,7 +147,14 @@ class ShellCatalogueService {
 			// Optional: only a set that ships a dark variant has dark roles.
 			$dark = $this->darkDeclarations(appPath: $appPath, id: $id);
 			if ($dark !== []) {
-				$set['dark'] = ['tokens' => $this->mapper->map(tokens: array_merge($light, $dark))];
+				// A set that names no page background draws on Nextcloud's own,
+				// which is white in light and dark in dark. The light
+				// declarations carry the white; a dark page must not inherit it.
+				if (isset($dark['--nldesign-color-background']) === false) {
+					$dark['--nldesign-color-background'] = DarkPaletteService::NEXTCLOUD_DARK_MAIN_BACKGROUND;
+				}
+
+				$set['dark'] = ['tokens' => $this->mapper->mapDark(tokens: array_merge($light, $dark))];
 			}
 
 			$sets[] = $set;

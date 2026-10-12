@@ -204,6 +204,48 @@ class ShellCatalogueTest extends TestCase {
 	}//end testASetWithADarkVariantHasDarkRoles()
 
 	/**
+	 * In every dark block the text reads on what it is written on.
+	 *
+	 * Main text, body text and muted text on the page, and the selected
+	 * item's text on its tint, at 4.5:1. A set that names no page background
+	 * stands on Nextcloud's dark page, not on the white of its light page:
+	 * that mistake gave seven sets main text at 1.2 to 1.6:1.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 */
+	public function testTheDarkRolesReadOnEachOther(): void {
+		$contrast = new ContrastService();
+		$pairs = [['ink', 'ground'], ['text', 'ground'], ['muted', 'ground'], ['link', 'ground'], ['primary-deep', 'primary-light']];
+
+		$failures = [];
+		$checked = 0;
+		foreach ($this->catalogue()['sets'] as $set) {
+			if (isset($set['dark']) === false) {
+				continue;
+			}
+
+			$tokens = $set['dark']['tokens'];
+			foreach ($pairs as [$foreground, $background]) {
+				$checked++;
+				$ratio = $contrast->measure(foreground: $tokens[$foreground], background: $tokens[$background], page: $tokens['ground']);
+				if ($ratio === null || $ratio < 4.5) {
+					$failures[] = sprintf('%s: %s %s on %s %s is %s', $set['id'], $foreground, $tokens[$foreground], $background, $tokens[$background], var_export($ratio, true));
+				}
+			}
+		}
+
+		$this->assertGreaterThan(300, $checked);
+		$this->assertSame([], $failures);
+
+		// A set without a page background of its own: Nextcloud's dark page.
+		$sets = $this->setsById(catalogue: $this->catalogue());
+		$this->assertSame('#171717', $sets['enschede']['dark']['tokens']['ground']);
+		$this->assertSame('#ffffff', $sets['enschede']['tokens']['ground']);
+	}//end testTheDarkRolesReadOnEachOther()
+
+	/**
 	 * A logo file named in the catalogue exists, and a set without a logo says nothing about one.
 	 *
 	 * @return void

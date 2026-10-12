@@ -297,6 +297,34 @@ class ShellRoleMapperTest extends TestCase {
 	}//end testASetsActionColourIsTheActionRole()
 
 	/**
+	 * On a dark page the text on the selected item's tint must read: a darker step that does not is passed over.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 */
+	public function testOnADarkPageTheSelectedItemsTextReads(): void {
+		$dark = [
+			'--nldesign-color-primary' => '#84aad7',
+			'--nldesign-color-primary-hover' => '#234a78',
+			'--nldesign-color-primary-light' => '#13202e',
+			'--nldesign-color-text' => '#e2e3e4',
+			'--nldesign-color-background' => '#171a20',
+		];
+
+		$this->assertSame('#234a78', $this->mapper()->map(tokens: $dark)['primary-deep'], 'the plain mapping keeps the darker step');
+
+		$roles = $this->mapper()->mapDark(tokens: $dark);
+		$this->assertSame('#84aad7', $roles['primary-deep'], 'the dark mapping writes the primary on the tint, as Nextcloud does');
+		$this->assertSame('#84aad7', $roles['primary']);
+		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles));
+
+		// A step that already reads is left alone.
+		$fine = $this->mapper()->mapDark(tokens: (['--nldesign-color-primary-hover' => '#7397c4'] + $dark));
+		$this->assertSame('#7397c4', $fine['primary-deep']);
+	}//end testOnADarkPageTheSelectedItemsTextReads()
+
+	/**
 	 * Summer Breeze keeps its own vocabulary, and is read by it.
 	 *
 	 * @return void
