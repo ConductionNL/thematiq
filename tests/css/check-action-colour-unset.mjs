@@ -220,6 +220,7 @@ export async function compare(browser, options = {}) {
 	}
 
 	const differences = []
+	const withActionColour = new Set()
 	const blindControls = []
 	const leftovers = new Set()
 	let values = 0
@@ -233,6 +234,17 @@ export async function compare(browser, options = {}) {
 			}
 			const { set, scheme } = job
 			const files = stylesheetsOf(set, systems)
+			// A set that declares an action colour is meant to render
+			// differently, so it is not part of this proof. It is counted,
+			// not skipped in silence.
+			if (
+				/--nldesign-color-action[\w-]*\s*:/.test(
+					read(`css/tokens/${set.id}.css`),
+				)
+			) {
+				withActionColour.add(set.id)
+				continue
+			}
 			for (const file of files) {
 				if (
 					/nldesign-color-action|thematiq-action-hover/.test(
@@ -302,7 +314,8 @@ export async function compare(browser, options = {}) {
 	await Promise.all(Array.from({ length: workers }, work))
 
 	return {
-		sets: sets.length,
+		sets: sets.length - withActionColour.size,
+		withActionColour: [...withActionColour].sort(),
 		values,
 		differences,
 		blindControls,
@@ -348,7 +361,8 @@ async function main() {
 		+ result.differences.length
 		+ result.blindControls.length
 	console.log(
-		`[action-colour-unset] ${result.sets} sets, light and dark, ${result.values} values compared: `
+		`[action-colour-unset] ${result.sets} sets without an action colour, light and dark, ${result.values} values compared `
+			+ `(${result.withActionColour.length} set(s) declare one and are left out: ${result.withActionColour.join(', ') || 'none'}): `
 			+ `${result.differences.length} difference(s), ${result.blindControls.length} blind control(s), `
 			+ `${result.leftovers.length} reader(s) without a fallback.`,
 	)

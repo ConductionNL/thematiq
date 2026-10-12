@@ -12,6 +12,7 @@ export function compare(
 	options?: { workers?: number },
 ): Promise<{
 	sets: number
+	withActionColour: string[]
 	values: number
 	differences: string[]
 	blindControls: string[]
