@@ -1113,7 +1113,8 @@ OC.L10N.register(
         "Paste the contents of a theme file first.": "Paste the contents of a theme file first.",
         "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.",
         "The navigation column's own surface": "The navigation column's own surface",
-        "The initials of an avatar without a picture": "The initials of an avatar without a picture"
+        "The initials of an avatar without a picture": "The initials of an avatar without a picture",
+        "or": "or"
     },
     "nplurals=2; plural=(n != 1);"
 )

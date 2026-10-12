@@ -165,6 +165,10 @@
 	 * cards keep 4%). */
 	--nldesign-login-card-shadow-color: rgba(27, 28, 29, 0.06);
 
+	/* The outlined "Inloggen" beside an SSO button: the board's field grey.
+	 * Its label carries the button, so the edge is decoration (WCAG 1.4.11). */
+	--nldesign-login-secondary-border-color: #c4c7cb;
+
 	/* The brand stripe, "de drie banen": red, blue, red in the ratio 6 : 3 : 1,
 	 * 5px high. Drawn under the header while the brand stripe option is on. */
 	--nldesign-brand-stripe-color-1: #CC0000;
