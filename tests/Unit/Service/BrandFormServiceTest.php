@@ -150,11 +150,59 @@ class BrandFormServiceTest extends TestCase {
 		foreach ($fixture['cases'] as $case) {
 			$this->assertSame(
 				$case['expected'],
-				$this->service->derive(appPath: $this->root, primary: $case['primary'], background: $case['background']),
-				$case['primary'] . ' on ' . $case['background']
+				$this->service->derive(appPath: $this->root, primary: $case['primary'], background: $case['background'], action: $case['action']),
+				$case['primary'] . ' on ' . $case['background'] . ' with ' . ($case['action'] ?? 'no action colour')
 			);
 		}
 	}//end testParityFixtureMatchesPhp()
+
+	/**
+	 * Without an action colour the set holds no action token, and is what the form made before.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
+	 */
+	public function testWithoutAnActionColourTheSetHoldsNoActionToken(): void {
+		$plain = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff');
+		$empty = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '');
+
+		$this->assertSame($plain, $empty, 'an empty field is no action colour');
+		$this->assertNull($plain['textOnAction']);
+		$this->assertNull($plain['actionTextRatio']);
+		foreach (array_keys($plain['declarations']) as $token) {
+			$this->assertStringNotContainsString('color-action', $token);
+		}
+	}//end testWithoutAnActionColourTheSetHoldsNoActionToken()
+
+	/**
+	 * With an action colour the set holds it, a hover step and the text that reads best on it.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
+	 */
+	public function testAnActionColourBringsItsHoverAndText(): void {
+		$plain = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff');
+		$green = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#1F883D');
+
+		$this->assertSame('#1f883d', $green['declarations']['--nldesign-color-action']);
+		$this->assertSame('#1a7434', $green['declarations']['--nldesign-color-action-hover'], '15% darker, the step the stylesheet would derive');
+		$this->assertSame($green['textOnAction'], $green['declarations']['--nldesign-color-action-text']);
+		$this->assertContains($green['textOnAction'], ['#ffffff', '#000000']);
+		$this->assertGreaterThanOrEqual(4.5, $green['actionTextRatio']);
+
+		// Everything else is what the form made without it.
+		$rest = array_diff_key($green['declarations'], array_flip(['--nldesign-color-action', '--nldesign-color-action-hover', '--nldesign-color-action-text']));
+		$this->assertSame($plain['declarations'], $rest);
+		$this->assertSame('#1a67a3', $green['declarations']['--nldesign-color-header-background'], 'the header stays with the primary');
+
+		$yellow = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#ffd200');
+		$this->assertSame('#000000', $yellow['declarations']['--nldesign-color-action-text'], 'black reads on yellow');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: 'green');
+	}//end testAnActionColourBringsItsHoverAndText()
 
 	/**
 	 * Task 3.1: the vocabulary audit finds no required token missing in a stored generated set.

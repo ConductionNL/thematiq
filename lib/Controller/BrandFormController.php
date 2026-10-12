@@ -105,7 +105,8 @@ class BrandFormController extends Controller {
 			$derived = $this->brandForm->derive(
 				appPath: $this->apps->getAppPath('thematiq'),
 				primary: (string)$this->request->getParam('primary', ''),
-				background: (string)$this->request->getParam('background', '')
+				background: (string)$this->request->getParam('background', ''),
+				action: (string)$this->request->getParam('action', '')
 			);
 		} catch (InvalidArgumentException $e) {
 			return new JSONResponse(['error' => $this->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
@@ -140,6 +141,8 @@ class BrandFormController extends Controller {
 				'textOnPrimary' => $derived['textOnPrimary'],
 				'textRatio' => $derived['textRatio'],
 				'uiRatio' => $derived['uiRatio'],
+				'textOnAction' => $derived['textOnAction'],
+				'actionTextRatio' => $derived['actionTextRatio'],
 				'warnings' => $result['warnings'],
 			]
 		);
