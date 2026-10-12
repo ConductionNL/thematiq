@@ -214,7 +214,7 @@ class TokenSetLicenceService {
 
 		foreach ($this->switches->all() as $switch) {
 			$open = in_array(($switch['status'] ?? ''), ['planned', 'running'], true);
-			if ($open === true && in_array($tokenSetId, [($switch['tokenSet'] ?? null), ($switch['revertTo'] ?? null)], true) === true) {
+			if ($open === true && in_array($tokenSetId, [($switch['tokenSet'] ?? ''), ($switch['revertTo'] ?? '')], true) === true) {
 				$places[] = ['kind' => 'switch', 'id' => (string)($switch['id'] ?? '')];
 			}
 		}
