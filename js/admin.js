@@ -1359,6 +1359,16 @@
 						return response.json()
 					})
 					.then(function (data) {
+						if (data.error === 'restricted_set_not_confirmed') {
+							previewBtn.disabled = false
+							notify(
+								t(
+									'thematiq',
+									'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+								),
+							)
+							return
+						}
 						if (data.status !== 'ok') {
 							previewBtn.disabled = false
 							notify(t('thematiq', 'Failed to start theme preview.'))
@@ -1462,6 +1472,17 @@
 		function saveTokenSet(tokenSet, publishMode) {
 			commitTokenSetChange(tokenSet, publishMode === true)
 				.then(function (data) {
+					if (data.error === 'restricted_set_not_confirmed') {
+						// Another organisation's house style, not confirmed
+						// (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+						notify(
+							t(
+								'thematiq',
+								'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+							),
+						)
+						return
+					}
 					if (data.status !== 'ok') {
 						notify(t('thematiq', 'Failed to update theme.'))
 						return

@@ -45,7 +45,8 @@ use Psr\Log\LoggerInterface;
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
- *     upstreamRef?: string
+ *     upstreamRef?: string,
+ *     licence?: array<string, mixed>
  * }
  * @psalm-type   TokenSetEntry array{
  *     id: string,
@@ -56,7 +57,8 @@ use Psr\Log\LoggerInterface;
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
- *     upstreamRef?: string
+ *     upstreamRef?: string,
+ *     licence?: array<string, mixed>
  * }
  *
  * @spec openspec/specs/token-sets/spec.md
@@ -130,6 +132,13 @@ class TokenSetService {
 	 * @var ICache
 	 */
 	private ICache $warningsCache;
+
+	/**
+	 * The licence gate, built on first use.
+	 *
+	 * @var RestrictedSetGate|null
+	 */
+	private ?RestrictedSetGate $licenceGate = null;
 
 	/**
 	 * Constructor.
@@ -347,8 +356,31 @@ class TokenSetService {
 			$tokenSet['upstreamRef'] = $meta['upstreamRef'];
 		}
 
+		$licence = $this->licenceGate()->licenceOf(tokenSetId: (string)$tokenSet['id']);
+		if ($licence !== null) {
+			$licence['confirmed'] = ($this->licenceGate()->confirmation(tokenSetId: (string)$tokenSet['id']) !== null);
+			$tokenSet['licence'] = $licence;
+		}
+
 		return $tokenSet;
 	}//end applyProvenance()
+
+	/**
+	 * The gate that knows each shipped set's licence and whether a restricted
+	 * set is confirmed. Every service that applies a set holds this service,
+	 * so each of them asks here before it writes.
+	 *
+	 * @return RestrictedSetGate The gate, one per request.
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 */
+	public function licenceGate(): RestrictedSetGate {
+		if ($this->licenceGate === null) {
+			$this->licenceGate = new RestrictedSetGate(config: $this->config, appPath: $this->getAppPath());
+		}
+
+		return $this->licenceGate;
+	}//end licenceGate()
 
 	/**
 	 * Resolve the merged metadata for one discovered id, logging (and

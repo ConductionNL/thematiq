@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -120,6 +121,15 @@ class ScheduledSwitchService {
 	public function create(string $tokenSet, string $startAt, ?string $endAt, string $createdBy): array {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
+		}
+
+		try {
+			$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			throw new ScheduledSwitchException(
+				message: $this->l10n->t('Confirm first that your organisation may use the house style {set}.', ['set' => $tokenSet]),
+				code: 403
+			);
 		}
 
 		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
@@ -382,9 +392,16 @@ class ScheduledSwitchService {
 			$entry['revertTo'] = $this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
 			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $tokenSet]);
+			if ($e instanceof RestrictedSetNotConfirmedException) {
+				$reason = $this->l10n->t(
+					'Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.',
+					['set' => $tokenSet]
+				);
+			}
+
 			$this->logger->warning(
-				'thematiq: planned switch {id} to {set} failed: the set does not exist',
-				['id' => $entry['id'], 'set' => $tokenSet]
+				'thematiq: planned switch {id} to {set} failed: {why}',
+				['id' => $entry['id'], 'set' => $tokenSet, 'why' => $e->getMessage()]
 			);
 			$this->auditService->log(
 				action: self::AUDIT_ACTION,

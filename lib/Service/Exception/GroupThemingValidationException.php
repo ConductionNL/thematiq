@@ -44,13 +44,26 @@ class GroupThemingValidationException extends \InvalidArgumentException {
 	 *
 	 * @param mixed $entry The offending mapping entry.
 	 * @param string $reason The human-readable validation failure reason.
+	 * @param string|null $restrictedSet The set that was refused because its licence limits use to its
+	 *                                   owner and nobody confirmed it; null for every other failure.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function __construct(mixed $entry, string $reason) {
+	public function __construct(mixed $entry, string $reason, private readonly ?string $restrictedSet = null) {
 		parent::__construct(message: $reason);
 		$this->entry = $entry;
 	}//end __construct()
+
+	/**
+	 * The restricted set this entry was refused for, if that is the reason.
+	 *
+	 * @return string|null The set id, or null when the entry failed for another reason.
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 */
+	public function getRestrictedSet(): ?string {
+		return $this->restrictedSet;
+	}//end getRestrictedSet()
 
 	/**
 	 * Get the offending mapping entry.

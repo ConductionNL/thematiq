@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
@@ -426,6 +427,7 @@ class ConfigBundleService {
 		// (shipped or already-installed custom) OR one of THIS bundle's own
 		// custom sets — only meaningful once customTokenSets parsed cleanly.
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
+		$this->validateRestrictedSets(bundle: $bundle, errors: $errors);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
 		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
@@ -937,6 +939,49 @@ class ConfigBundleService {
 			'message' => 'Unresolvable token set "' . $tokenSet . '": neither shipped/installed nor present in this bundle.',
 		];
 	}//end validateTokenSetResolution()
+
+	/**
+	 * Refuse a bundle that would apply a restricted token set nobody confirmed
+	 * on this server: as the active set, in a planned switch, or as an app's
+	 * brand. A confirmation does not travel in a bundle; it is given per server.
+	 * The set that is active here now may stay.
+	 *
+	 * @param array<string, mixed> $bundle The bundle.
+	 * @param array<int, array{section: string, message: string}> $errors The error list, appended to.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 */
+	private function validateRestrictedSets(array $bundle, array &$errors): void {
+		$config = ($bundle['config'] ?? null);
+		if (is_array($config) === false) {
+			$config = [];
+		}
+
+		$named = [($config['tokenSet'] ?? null)];
+		foreach ((array)($config['scheduledSwitches'] ?? []) as $switch) {
+			$named[] = (((array)$switch)['tokenSet'] ?? null);
+		}
+
+		foreach ((array)($bundle['appBrands'] ?? []) as $brand) {
+			$named[] = (((array)$brand)['tokenSet'] ?? null);
+		}
+
+		$active = (string)$this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$gate = $this->tokenSetService->licenceGate();
+		foreach (array_unique(array_filter($named, 'is_string')) as $id) {
+			try {
+				$gate->assertMayApply(tokenSetId: $id, alreadyApplied: $active);
+			} catch (RestrictedSetNotConfirmedException $e) {
+				$errors[] = [
+					'section' => 'config',
+					'message' => 'Token set "' . $id . '" is restricted to its owner (' . RestrictedSetNotConfirmedException::ERROR
+						. '). Confirm on this server that your organisation may use it, then import again.',
+				];
+			}
+		}
+	}//end validateRestrictedSets()
 
 	/**
 	 * Validate `config.scheduledSwitches`: times parse, windows do not

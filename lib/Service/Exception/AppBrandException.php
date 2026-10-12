@@ -58,6 +58,13 @@ class AppBrandException extends RuntimeException {
 	public const UNKNOWN_SET = 'unknown-set';
 
 	/**
+	 * A token set whose licence limits use to its owner, not confirmed for this instance.
+	 *
+	 * @var string
+	 */
+	public const RESTRICTED_SET = 'restricted_set_not_confirmed';
+
+	/**
 	 * A logo that is not an accepted image.
 	 *
 	 * @var string

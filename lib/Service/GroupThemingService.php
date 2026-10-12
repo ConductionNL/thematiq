@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -262,6 +263,16 @@ class GroupThemingService {
 			throw new GroupThemingValidationException(entry: $entry, reason: sprintf('Token set "%s" is not available.', $tokenSet));
 		}
 
+		try {
+			$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: $this->storedSetOf(group: $group));
+		} catch (RestrictedSetNotConfirmedException $e) {
+			throw new GroupThemingValidationException(
+				entry: $entry,
+				reason: sprintf('Token set "%s" is restricted to its owner and has not been confirmed.', $tokenSet),
+				restrictedSet: $tokenSet
+			);
+		}
+
 		$seenGroups[$group] = true;
 
 		return (new GroupDelegationRules())->validate(
@@ -270,6 +281,24 @@ class GroupThemingService {
 			isAvailable: fn (string $setId): bool => $this->tokenSetService->isValidTokenSet(tokenSetId: $setId)
 		);
 	}//end validateEntry()
+
+	/**
+	 * The set a group's stored entry names. A group that keeps its set is not
+	 * a new use of it, so the licence gate lets that entry through.
+	 *
+	 * @param string $group The group id.
+	 *
+	 * @return string|null The stored set id, or null when the group has no entry.
+	 */
+	private function storedSetOf(string $group): ?string {
+		foreach ($this->getMapping() as $stored) {
+			if ($stored['group'] === $group) {
+				return $stored['tokenSet'];
+			}
+		}
+
+		return null;
+	}//end storedSetOf()
 
 	/**
 	 * Extract a string field from a raw, possibly malformed mapping entry.
