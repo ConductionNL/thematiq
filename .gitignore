@@ -148,3 +148,6 @@ tests/e2e/.auth/
 
 # Conversion reports of admin-uploaded sets; the reports of shipped sets are committed.
 /css/tokens/custom-*.report.json
+
+# Playwright writes its last-run record here when a spec is run from the repository root.
+/test-results/

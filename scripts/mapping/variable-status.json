@@ -1105,9 +1105,9 @@
 		"--color-primary-element": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-action",
+			"token": "--nldesign-color-primary",
 			"category": "Primary Colors",
-			"note": "Main button and element colour: the set's action colour, else `--nldesign-color-primary`"
+			"note": "Interactive element colour: checked boxes, switches, icons. Not the main button, which a set's action colour may move"
 		},
 		"--color-primary-element-extra-light": {
 			"status": "settable",
@@ -1120,9 +1120,9 @@
 		"--color-primary-element-hover": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-action-hover",
+			"token": "--nldesign-color-primary-hover",
 			"category": "Primary Colors",
-			"note": "Element hover: the set's action hover, else `--nldesign-color-primary-hover`"
+			"note": "Interactive element hover"
 		},
 		"--color-primary-element-light": {
 			"status": "mapped",
@@ -1148,9 +1148,9 @@
 		"--color-primary-element-text": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-action-text",
+			"token": "--nldesign-color-primary-text",
 			"category": "Primary Colors",
-			"note": "Text on the element colour: the set's action text, else `--nldesign-color-primary-text`"
+			"note": "Text on primary element"
 		},
 		"--color-primary-element-text-dark": {
 			"status": "mapped",
