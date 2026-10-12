@@ -48,7 +48,7 @@ No default is declared for them, on purpose. A set that leaves them out renders 
 
 The action colour reaches further than buttons. Nextcloud draws checked boxes and switches, progress bars, the selected navigation entry, focus borders of inputs and counter badges in the same variable (`--color-primary-element`). They all take the action colour. Links, the header and light tints stay with the primary.
 
-Check the text on your action colour: it needs 4.5:1. Thematiq warns when it does not reach that, as it does for the text on the primary. In a dark variant the action colour gets a dark value like any other colour of the set.
+Check the text on your action colour: it needs 4.5:1. Thematiq warns when it does not reach that, as it does for the text on the primary. In a dark variant the action colour is treated as the primary is: it keeps its value when its text already reads on it, and its text is adjusted until it does.
 
 The NL Design System and La Suite (Cunningham) bundles read these tokens. Summer Breeze and High contrast do not.
 

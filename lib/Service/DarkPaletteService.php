@@ -92,8 +92,25 @@ class DarkPaletteService {
 	 *
 	 * Version 9 repairs the body text against the selected navigation entry's
 	 * wash, at rest and hovered (see {@see self::WASH_PATTERN}, thematiq#1051).
+	 *
+	 * The action colour (see {@see self::ACTION_TOKENS}) came without a new
+	 * version: it changes the output only for a set that declares one, and no
+	 * set did when it was added, so every existing file is still what this
+	 * version writes.
 	 */
 	public const GENERATOR_VERSION = 9;
+
+	/**
+	 * The optional action colour of a set: the main button apart from the
+	 * primary. In dark it is treated as the primary is. It keeps its light
+	 * value when its own text already reads on it (the brand exception), its
+	 * text is repaired against it like any other pair, and a set that declares
+	 * the colour without a text gets the primary's text to start from, which
+	 * is what the light stylesheet falls back to.
+	 *
+	 * @var array<int, string>
+	 */
+	private const ACTION_TOKENS = ['--nldesign-color-action', '--nldesign-color-action-hover', '--nldesign-color-action-text'];
 
 	/**
 	 * Nextcloud's own dark main background, which the navigation paints and
@@ -753,6 +770,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	public function deriveDarkDeclarations(array $lightDeclarations): array {
+		$lightDeclarations = $this->withActionText(lightDeclarations: $lightDeclarations);
 		$dark = [];
 		$keptBands = $this->darkBands(lightDeclarations: $lightDeclarations);
 
@@ -933,6 +951,11 @@ class DarkPaletteService {
 			return $this->rgbToHex(rgb: $rgb);
 		}
 
+		if (in_array($token, self::ACTION_TOKENS, true) === true && $this->actionPasses(lightDeclarations: $lightDeclarations) === true) {
+			// The same exception for the action colour, on its own pair.
+			return $this->rgbToHex(rgb: $rgb);
+		}
+
 		[$hue, $saturation, $lightness] = $this->rgbToHsl(rgb: $rgb);
 
 		$isText = $this->isTextClass(token: $token);
@@ -973,6 +996,64 @@ class DarkPaletteService {
 	private function luminanceOf(array $rgb): float {
 		return (($this->contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
 	}//end luminanceOf()
+
+	/**
+	 * The light declarations with a text for the action colour, when a set
+	 * declares the colour and no text of its own.
+	 *
+	 * The light stylesheets read `var(--nldesign-color-action-text,
+	 * var(--nldesign-color-primary-text))`. Without this the dark file would
+	 * hold an action colour and leave its text to the dark primary text, a
+	 * colour nobody checked against it.
+	 *
+	 * @param array<string, string> $lightDeclarations The effective light declarations.
+	 *
+	 * @return array<string, string> The declarations, with `--nldesign-color-action-text` when an action colour needs one.
+	 *
+	 * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+	 */
+	private function withActionText(array $lightDeclarations): array {
+		if (isset($lightDeclarations['--nldesign-color-action']) === false
+			|| isset($lightDeclarations['--nldesign-color-action-text']) === true
+			|| isset($lightDeclarations['--nldesign-color-primary-text']) === false
+		) {
+			return $lightDeclarations;
+		}
+
+		$lightDeclarations['--nldesign-color-action-text'] = $this->resolveAlias(
+			value: $lightDeclarations['--nldesign-color-primary-text'],
+			declarations: $lightDeclarations
+		);
+
+		return $lightDeclarations;
+	}//end withActionText()
+
+	/**
+	 * Whether the light action colour and its text already reach 4.5:1: the
+	 * condition for keeping the action colour as it is in dark.
+	 *
+	 * @param array<string, string> $lightDeclarations The full light declaration map.
+	 *
+	 * @return bool True when the pair passes. False when it fails or cannot be measured:
+	 *              an action colour is a choice a set made on purpose, so it is only
+	 *              kept on evidence.
+	 *
+	 * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+	 */
+	private function actionPasses(array $lightDeclarations): bool {
+		$background = ($lightDeclarations['--nldesign-color-action'] ?? null);
+		$foreground = ($lightDeclarations['--nldesign-color-action-text'] ?? null);
+		if ($background === null || $foreground === null) {
+			return false;
+		}
+
+		$ratio = $this->contrast->measure(
+			foreground: $this->resolveAlias(value: $foreground, declarations: $lightDeclarations),
+			background: $this->resolveAlias(value: $background, declarations: $lightDeclarations)
+		);
+
+		return ($ratio !== null && $ratio >= 4.5);
+	}//end actionPasses()
 
 	/**
 	 * Whether a token is the brand-primary token or its hover variant (the
