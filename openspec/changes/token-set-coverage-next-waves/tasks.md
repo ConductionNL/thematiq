@@ -6,9 +6,13 @@ own, with a delta spec, when it is picked up.
 
 ## 1. Bridge-zero sets (from every-shipped-set-selectable 6.1 and 6.2, honest-token-set-coverage 6.1)
 
-- [ ] 1.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css`, already vendored
+- [x] 1.1 `denhaag`'s component layer, from `scripts/sources/denhaag/*.css`, already vendored
       under EUPL-1.2 for `generate-denhaag-bridge.mjs`. The one of the eight that needs nothing
       invented.
+      Already built when this plan was written down: #1089 (change `denhaag-component-tokens`,
+      archived) generates `css/tokens/denhaag.css` from `scripts/brands/denhaag.json` and
+      `scripts/brands/denhaag.components.json`, and `docs/reference/token-set-coverage.md` measures
+      denhaag at 81 of 87 on the bridge (read 12 Oct). Seven sets are left at 0 of 87, see 1.2.
 - [ ] 1.2 Brand files for the other seven bridge-zero sets (`amsterdam`, `epe`, `groningen`,
       `ridderkerk`, `rijkshuisstijl`, `utrecht`, `zwolle`). Each declares 3 to 9 palette steps of
       its own (`epe` 226) and a brand file needs about 43 ramp steps, so each needs a sourced
