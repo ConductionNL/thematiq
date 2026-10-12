@@ -60,10 +60,10 @@
 	/* 4. Provenance — enough to tell two runs apart without running anything.
 	 *    input kind:      A (built theme CSS)
 	 *    source:          nl-design-system/themes proprietary/groningen-design-tokens
-	 *    source version:  4.0.0
+	 *    source version:  5.1.0
 	 *    slug:            groningen
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         2
 	 *    adapted:         42
 	 *    kept:            2

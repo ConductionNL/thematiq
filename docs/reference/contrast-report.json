@@ -188,8 +188,8 @@
         },
         "hoeksche-waard": {
             "verdict": "pass",
-            "textRatio": 4.56,
-            "uiRatio": 4.56,
+            "textRatio": 5.11,
+            "uiRatio": 5.11,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },

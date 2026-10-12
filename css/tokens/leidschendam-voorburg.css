@@ -169,7 +169,7 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #6b69ce;
 	--nldesign-color-background-darker: #e6e6e6;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #e6e6e6;
 	--nldesign-color-border: #dddde4;
 	--nldesign-color-border-dark: #dddde4;
 	--nldesign-color-error: #d70d0d;
@@ -212,7 +212,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            leidschendam-voorburg
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
 	 *    adapted:         37
 	 *    kept:            176

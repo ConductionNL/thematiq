@@ -1226,20 +1226,20 @@
 	--nldesign-color-favorite: #f9cf00;
 	--nldesign-color-focus: rgba(83, 21, 246, 0.5);
 	--nldesign-color-focus-rgb: 83, 21, 246;
-	--nldesign-color-header-background: #3BAC2A;
-	--nldesign-color-header-text: #000000;
-	--nldesign-color-info: #3BAC2A;
-	--nldesign-color-info-rgb: 59, 172, 42;
+	--nldesign-color-header-background: #2b7e1f;
+	--nldesign-color-header-text: #ffffff;
+	--nldesign-color-info: #2b7e1f;
+	--nldesign-color-info-rgb: 43, 126, 31;
 	--nldesign-color-link: #2e8721;
 	--nldesign-color-link-hover: #3F10BC;
 	--nldesign-color-link-visited: #2e8721;
 	--nldesign-color-nav-background: #ffffff;
 	--nldesign-color-placeholder-dark: #e4e7ec;
 	--nldesign-color-placeholder-light: #f2f4f6;
-	--nldesign-color-primary: #2e8721;
+	--nldesign-color-primary: #2b7e1f;
 	--nldesign-color-primary-hover: #3F10BC;
-	--nldesign-color-primary-light: #ebf7ea;
-	--nldesign-color-primary-light-hover: #d8eed4;
+	--nldesign-color-primary-light: #eaf2e9;
+	--nldesign-color-primary-light-hover: #d5e5d2;
 	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #39870c;
 	--nldesign-color-success-rgb: 57, 135, 12;
@@ -1252,6 +1252,7 @@
 	--nldesign-component-table-header-color: #5B6E8A;
 	--nldesign-component-table-header-font-weight: 400;
 	--nldesign-font-family: Fira Sans, Tahoma, Verdana, sans-serif;
+	--nldesign-header-icon-filter: none;
 
 	/* 4. Provenance — enough to tell two runs apart without running anything.
 	 *    input kind:      A (built theme CSS)
@@ -1259,9 +1260,9 @@
 	 *    source version:  1.1.0
 	 *    slug:            hoeksche-waard
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
-	 *    applied:         14
-	 *    adapted:         34
+	 *    mapping table:   v1 sha256:883c92216a2862cf
+	 *    applied:         13
+	 *    adapted:         35
 	 *    kept:            1191
 	 *    skipped:         27
 	 */

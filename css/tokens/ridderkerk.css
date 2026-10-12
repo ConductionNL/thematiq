@@ -26,9 +26,9 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #f3f5f9;
-	--nldesign-color-background-darker: #f3f5f9;
+	--nldesign-color-background-darker: #2b2b2b;
 	--nldesign-color-background-hover: #f3f5f9;
-	--nldesign-color-border: #f3f5f9;
+	--nldesign-color-border: #2b2b2b;
 	--nldesign-color-border-dark: #2b2b2b;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
@@ -44,7 +44,7 @@
 	--nldesign-color-link-hover: #007b32;
 	--nldesign-color-link-visited: #008937;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #f3f5f9;
+	--nldesign-color-placeholder-dark: #2b2b2b;
 	--nldesign-color-placeholder-light: #f3f5f9;
 	--nldesign-color-primary: #008937;
 	--nldesign-color-primary-hover: #007b32;
@@ -70,7 +70,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            ridderkerk
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         3
 	 *    adapted:         41
 	 *    kept:            8

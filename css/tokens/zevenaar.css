@@ -67,8 +67,8 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #e8ead7;
-	--nldesign-color-background-darker: #ffffff;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-darker: #b5b5b5;
+	--nldesign-color-background-hover: #b5b5b5;
 	--nldesign-color-border: #8e9834;
 	--nldesign-color-border-dark: #000000;
 	--nldesign-color-error: #d70d0d;
@@ -85,8 +85,8 @@
 	--nldesign-color-link-hover: #000000;
 	--nldesign-color-link-visited: #474b1b;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #ffffff;
-	--nldesign-color-placeholder-light: #ffffff;
+	--nldesign-color-placeholder-dark: #b5b5b5;
+	--nldesign-color-placeholder-light: #b5b5b5;
 	--nldesign-color-primary: #596e28;
 	--nldesign-color-primary-hover: #506324;
 	--nldesign-color-primary-light: #eef1ea;
@@ -111,7 +111,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            zevenaar
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
 	 *    adapted:         36
 	 *    kept:            77

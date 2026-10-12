@@ -69,8 +69,8 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #f9f0ec;
-	--nldesign-color-background-darker: #ffffff;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-darker: #a6abb0;
+	--nldesign-color-background-hover: #a6abb0;
 	--nldesign-color-border: #1d73b4;
 	--nldesign-color-border-dark: #a6abb0;
 	--nldesign-color-error: #d70d0d;
@@ -87,8 +87,8 @@
 	--nldesign-color-link-hover: #456378;
 	--nldesign-color-link-visited: #1d73b4;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #ffffff;
-	--nldesign-color-placeholder-light: #ffffff;
+	--nldesign-color-placeholder-dark: #a6abb0;
+	--nldesign-color-placeholder-light: #a6abb0;
 	--nldesign-color-primary: #1d5b8f;
 	--nldesign-color-primary-hover: #1a5281;
 	--nldesign-color-primary-light: #e8eff4;
@@ -113,7 +113,7 @@
 	 *    source version:  1.0.0
 	 *    slug:            duiven
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:883c92216a2862cf
 	 *    applied:         9
 	 *    adapted:         36
 	 *    kept:            85
