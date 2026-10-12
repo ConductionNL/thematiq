@@ -63,8 +63,7 @@ const stylesheets = (dir) => {
  * @param {string} name The property name.
  * @return {boolean} True when the name is declared.
  */
-const declares = (css, name) =>
-	new RegExp(`(^|[\\s;{])${name}\\s*:`).test(css)
+const declares = (css, name) => new RegExp(`(^|[\\s;{])${name}\\s*:`).test(css)
 
 describe('the recorded reach of the Conduction component tokens', () => {
 	it('covers every Conduction token of the inventory and nothing else', () => {
