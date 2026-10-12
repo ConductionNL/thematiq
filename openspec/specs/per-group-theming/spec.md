@@ -1,7 +1,7 @@
 # per-group-theming Specification
 
 ## Purpose
-TBD - created by archiving change per-group-theming. Update Purpose after archive.
+Per-group theming lets one Nextcloud instance show a different house style to different groups of people. This capability covers the ordered mapping of groups to token sets and how a person's set is resolved from it, what stays the same for the whole instance, how the mapping sits beside per-app exclusions and app brands, and delegation: an administrator hands a group's choice to its subadmins, who set it under the delegated administration settings, with every change audited.
 
 ## Requirements
 
