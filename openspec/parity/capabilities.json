@@ -7108,7 +7108,7 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "every asset is served from the instance: uploaded fonts through font#serve (appinfo/routes.php:83, lib/Service/FontService.php:447-448 builds the @font-face URL with linkToRoute), bundled fonts self-hosted (css/fonts-conduction.css:11-14 states 'self-hosted, not linked to Google', :25 and :37 load local woff2 files), logos and icons from img/ in the app",
+				"evidence": "every asset is served from the instance: uploaded fonts through font#serve (appinfo/routes.php:83, lib/Service/FontService.php:447-448 builds the @font-face URL with linkToRoute), bundled fonts self-hosted (css/systems/nldesign/fonts.css:8-9 states 'self-hosted, not linked to Google', and every @font-face in it loads a local woff2 file from css/systems/nldesign/fonts/), logos and icons from img/ in the app",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/custom-fonts"

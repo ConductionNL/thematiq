@@ -34,9 +34,12 @@ own, with a delta spec, when it is picked up.
 
 ## 4. Dead weight (from honest-token-set-coverage 6.6)
 
-- [ ] 4.1 Retire `css/fonts-conduction.css`: no design system links it. Re-source the
+- [x] 4.1 Retire `css/fonts-conduction.css`: no design system links it. Re-source the
       `openspec/parity/capabilities.json` evidence line that cites it and check whether portaliq
       links it first.
+      Built 12 Oct as the change `retire-fonts-conduction-stylesheet`: portaliq does not link it,
+      the file is gone, the three citations name the stylesheets that serve the faces, and
+      `tests/vitest/fontStylesheetsAreLinked.spec.js` keeps every font stylesheet linked.
 
 ## 5. Playground handover (from component-playground 8.2 and 9.1)
 

@@ -73,7 +73,7 @@
 	 * a fixed string against Inter's 209.13px — a THIRD face neither we nor the
 	 * design system chose, which would differ again on the next machine.
 	 *
-	 * Inter is self-hosted (nldesign/css/fonts-conduction.css), so it renders
+	 * Inter is self-hosted (css/systems/lasuite/fonts.css), so it renders
 	 * the same everywhere, and it is what Cunningham falls back to anyway.
 	 *
 	 * This is the one place the delta departs from its parent on purpose rather
@@ -124,7 +124,7 @@
 	--frankendesk-container-max: 1200px;
 	--frankendesk-container-padding-inline: 24px;
 
-	/* Type: Inter is now actually served (css/fonts-conduction.css). */
+	/* Type: Inter is served by css/systems/lasuite/fonts.css. */
 	--nldesign-body-font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
 	/* Hero: the brand violet, with a headline that carries the page. */
