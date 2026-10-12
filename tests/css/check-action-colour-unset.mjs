@@ -293,14 +293,52 @@ export async function compare(browser, options = {}) {
 			const { set, scheme } = job
 			const files = stylesheetsOf(set, systems)
 			// A set that declares an action colour is meant to render
-			// differently, so it is not part of this proof. It is counted,
-			// not skipped in silence.
+			// differently, so it is not part of the first proof. It gets the
+			// second one on its own colour instead: its page with the readers
+			// unwrapped is the page without an action colour, and against that
+			// only its buttons may differ.
 			if (
 				/--nldesign-color-action[\w-]*\s*:/.test(
 					read(`css/tokens/${set.id}.css`),
 				)
 			) {
 				withActionColour.add(set.id)
+				const own = await measure(
+					page,
+					files.map((f) => sheet(f).now),
+					scheme,
+				)
+				const without = await measure(
+					page,
+					files.map((f) => sheet(f).before),
+					scheme,
+				)
+				for (const key of new Set([
+					...Object.keys(own),
+					...Object.keys(without),
+				])) {
+					const id = key.split(' ')[0]
+					if (
+						id in BUTTONS
+						|| id in NLDESIGN_BUTTONS
+						|| /nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/.test(
+							key,
+						)
+					) {
+						continue
+					}
+					if (own[key] !== without[key]) {
+						leaked.push(
+							`${set.id} ${scheme} (its own action colour): ${OTHERS[id] ?? key} changed: ${key} was "${without[key]}", is "${own[key]}"`,
+						)
+					}
+					unmoved++
+				}
+				if (own['b1 background'] === without['b1 background']) {
+					notReached.push(
+						`${set.id} ${scheme}: the main button does not wear the set's own action colour`,
+					)
+				}
 				continue
 			}
 			for (const file of files) {
@@ -454,7 +492,7 @@ async function main() {
 		+ result.leaked.length
 	console.log(
 		`[action-colour-unset] Unset: ${result.sets} sets without an action colour, light and dark, ${result.values} values compared `
-			+ `(${result.withActionColour.length} set(s) declare one and are left out: ${result.withActionColour.join(', ') || 'none'}): `
+			+ `(${result.withActionColour.length} set(s) declare one and are checked on their own colour: ${result.withActionColour.join(', ') || 'none'}): `
 			+ `${result.differences.length} difference(s), ${result.leftovers.length} reader(s) without a fallback.`,
 	)
 	console.log(
