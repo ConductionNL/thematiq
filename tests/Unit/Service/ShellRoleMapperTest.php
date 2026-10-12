@@ -262,6 +262,41 @@ class ShellRoleMapperTest extends TestCase {
 	}//end testTheAccentFallsBackToTheErrorColour()
 
 	/**
+	 * A set's action colour is the action role, apart from its primary.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-action-colour
+	 */
+	public function testASetsActionColourIsTheActionRole(): void {
+		$set = [
+			'--nldesign-color-primary' => '#1a67a3',
+			'--nldesign-color-primary-hover' => '#124872',
+			'--nldesign-color-link' => '#175a8e',
+		];
+
+		$without = $this->mapper()->map(tokens: $set);
+		$this->assertSame('#1a67a3', $without['action'], 'no action colour: the action is the primary');
+		$this->assertSame('#124872', $without['action-deep']);
+
+		$full = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d', '--nldesign-color-action-hover' => '#197032']));
+		$this->assertSame('#1f883d', $full['action']);
+		$this->assertSame('#197032', $full['action-deep']);
+		$this->assertSame('#1a67a3', $full['primary'], 'the primary does not move with the action');
+		$this->assertSame('#124872', $full['primary-deep']);
+		$this->assertSame('#175a8e', $full['link'], 'links stay with the set');
+
+		// Without its own hover step the action darkens by 15%, as the page
+		// draws it, and never borrows the primary's blue hover.
+		$alone = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']));
+		$this->assertSame('#1a7434', $alone['action-deep']);
+
+		// An administrator's own value of the Nextcloud variable still wins.
+		$overridden = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']), overrides: ['--color-primary-element' => '#aa0000']);
+		$this->assertSame('#aa0000', $overridden['action']);
+	}//end testASetsActionColourIsTheActionRole()
+
+	/**
 	 * Summer Breeze keeps its own vocabulary, and is read by it.
 	 *
 	 * @return void

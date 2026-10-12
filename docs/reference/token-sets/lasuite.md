@@ -81,19 +81,24 @@ Contrast: primary text on primary 7.76:1, primary on background 7.76:1 (pass).
 		--nldesign-color-primary
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237774c8%22%2F%3E%3C%2Fsvg%3E) `#7774c8` | defaults | |
 | `--nldesign-component-button-primary-action-background-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235956b5%22%2F%3E%3C%2Fsvg%3E) `#5956b5` | defaults | |
 | `--nldesign-component-button-primary-action-border-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235956b5%22%2F%3E%3C%2Fsvg%3E) `#5956b5` | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dedede%22%2F%3E%3C%2Fsvg%3E) `#dedede` | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
-		--nldesign-color-primary-hover
+		--nldesign-color-action-hover,
+		var(--nldesign-color-primary-hover)
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237f7dc3%22%2F%3E%3C%2Fsvg%3E) `#7f7dc3` | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(

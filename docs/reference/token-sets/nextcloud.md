@@ -81,19 +81,24 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 		--nldesign-color-primary
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-background-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-border-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
-		--nldesign-color-primary-hover
+		--nldesign-color-action-hover,
+		var(--nldesign-color-primary-hover)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(

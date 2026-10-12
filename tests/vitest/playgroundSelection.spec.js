@@ -72,6 +72,14 @@ function tokenSources() {
 	)) {
 		sources[match[1]] = match[2]
 	}
+	// A variable that reads an optional token first, `var(--optional,
+	// var(--token))`, maps to the token every set has, as the server does
+	// (TokenSetPreviewService::parseMappings()).
+	for (const match of css.matchAll(
+		/^\s*(--[\w-]+)\s*:\s*var\(\s*(--[\w-]+)\s*,\s*var\(\s*(--[\w-]+)\s*\)\s*\)\s*(?:!important)?\s*;/gm,
+	)) {
+		sources[match[1]] = match[3]
+	}
 	return sources
 }
 

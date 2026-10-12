@@ -98,14 +98,19 @@ class ShellRoleMapper {
 	 * source: no token set declares a body colour between ink and muted, so it
 	 * is always derived.
 	 *
+	 * `action` reads the optional action colour (`--nldesign-color-action`)
+	 * before the primary: a set declares it to give the main button a colour
+	 * of its own, and Nextcloud's primary element follows it. `action-deep`
+	 * lists its own hover step only; {@see self::map()} says what stands in.
+	 *
 	 * @var array<string, string[]>
 	 */
 	private const SOURCES = [
 		'primary' => ['--color-primary', '--summer-color-primary', '--nldesign-color-primary'],
 		'primary-deep' => ['--color-primary-hover', '--summer-color-primary-hover', '--nldesign-color-primary-hover'],
 		'primary-light' => ['--color-primary-light', '--summer-color-primary-light', '--nldesign-color-primary-light'],
-		'action' => ['--color-primary-element', '--summer-color-primary', '--nldesign-color-primary'],
-		'action-deep' => ['--color-primary-element-hover', '--summer-color-primary-hover', '--nldesign-color-primary-hover'],
+		'action' => ['--color-primary-element', '--nldesign-color-action', '--summer-color-primary', '--nldesign-color-primary'],
+		'action-deep' => ['--color-primary-element-hover', '--nldesign-color-action-hover'],
 		'link' => ['--summer-color-primary', '--nldesign-color-link'],
 		'accent' => ['--nldesign-color-accent', '--color-error', '--summer-color-error', '--nldesign-color-error'],
 		'ink' => ['--color-main-text', '--summer-color-text', '--nldesign-color-text'],
@@ -124,6 +129,23 @@ class ShellRoleMapper {
 		'radius-lg' => ['--border-radius-large', '--summer-radius-large', '--nldesign-border-radius-large'],
 		'font-family' => ['--font-face', '--summer-font-family', '--nldesign-font-family'],
 	];
+
+	/**
+	 * The hover step of the primary, which is also the action's when a set
+	 * declares no action colour.
+	 *
+	 * @var string[]
+	 */
+	private const PRIMARY_HOVER = ['--summer-color-primary-hover', '--nldesign-color-primary-hover'];
+
+	/**
+	 * How much black the hover step of an action colour takes when the set
+	 * declares the colour and not the step: what `--thematiq-action-hover`
+	 * mixes in the stylesheets.
+	 *
+	 * @var float
+	 */
+	private const ACTION_HOVER = 0.15;
 
 	/**
 	 * How much black a deep colour takes when it is derived.
@@ -158,6 +180,7 @@ class ShellRoleMapper {
 	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
 	 *
 	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-action-colour
 	 */
 	public function map(array $tokens, array $overrides = []): array {
 		$declared = array_merge($tokens, $overrides);
@@ -172,6 +195,18 @@ class ShellRoleMapper {
 		$ink = ($read['ink'] ?? self::DEFAULTS['ink']);
 		$muted = ($read['muted'] ?? self::DEFAULTS['muted']);
 
+		// The step the action colour hovers to: its own; else, for a set with
+		// an action colour, that colour a little darker, as the page draws it;
+		// else the primary's hover step, which is what the action then is.
+		$actionDeep = $read['action-deep'];
+		if ($actionDeep === null && $this->usable(value: ($declared['--nldesign-color-action'] ?? null)) !== null) {
+			$actionDeep = $this->mix(first: $action, second: '#000000', weight: self::ACTION_HOVER);
+		}
+
+		if ($actionDeep === null) {
+			$actionDeep = $this->firstUsable(names: self::PRIMARY_HOVER, declared: $declared);
+		}
+
 		return [
 			'primary' => $primary,
 			'primary-deep' => $this->deeper(candidate: $read['primary-deep'], base: $primary),
@@ -179,7 +214,7 @@ class ShellRoleMapper {
 				?? $this->mix(first: $primary, second: '#ffffff', weight: self::LIGHTEN)
 				?? self::DEFAULTS['primary-light']),
 			'action' => $action,
-			'action-deep' => $this->deeper(candidate: $read['action-deep'], base: $action),
+			'action-deep' => $this->deeper(candidate: $actionDeep, base: $action),
 			'link' => ($read['link'] ?? $primary),
 			'accent' => ($read['accent'] ?? self::DEFAULTS['accent']),
 			'ink' => $ink,

@@ -61,7 +61,7 @@ You need no account and no session. The answer holds theme values only, the same
 | `primary` | The header bar and other brand surfaces |
 | `primary-deep` | The darker step of `primary`: hover, borders |
 | `primary-light` | A light tint of `primary`: selected rows, soft panels |
-| `action` | The main button |
+| `action` | The main button. The set's action colour when it has one, else its primary |
 | `action-deep` | The main button on hover, and its border |
 | `link` | Links and link-coloured ids |
 | `accent` | The second brand colour. Red in many sets, so keep it for emphasis |

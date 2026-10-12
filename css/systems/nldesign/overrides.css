@@ -24,9 +24,33 @@
 	--color-primary: var(--nldesign-color-primary) !important;
 	--color-primary-text: var(--nldesign-color-primary-text) !important;
 	--color-primary-hover: var(--nldesign-color-primary-hover) !important;
-	--color-primary-element: var(--nldesign-color-primary) !important;
-	--color-primary-element-hover: var(--nldesign-color-primary-hover) !important;
-	--color-primary-element-text: var(--nldesign-color-primary-text) !important;
+	/* The action colour: the one main button of a page, and what Nextcloud
+	 * calls the primary element (checked boxes, switches, progress bars).
+	 * A token set that wants it apart from its primary declares
+	 * --nldesign-color-action, with -hover and -text beside it. No shipped set
+	 * does, and without the token each line below is exactly what it was:
+	 * the fallback is the old value.
+	 *
+	 * --thematiq-action-hover is the hover step. With only the action colour
+	 * declared it is that colour, 15% darker. With neither declared its own
+	 * var() has nothing to read, so the property is invalid and the lines
+	 * that read it take their fallback. */
+	--thematiq-action-hover: var(
+		--nldesign-color-action-hover,
+		color-mix(in srgb, var(--nldesign-color-action) 85%, black)
+	);
+	--color-primary-element: var(
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
+	) !important;
+	--color-primary-element-hover: var(
+		--thematiq-action-hover,
+		var(--nldesign-color-primary-hover)
+	) !important;
+	--color-primary-element-text: var(
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
+	) !important;
 	/* --color-primary-element-text-dark: intentionally not overridden — dark variant auto-calculated by Nextcloud */
 	--color-primary-light: var(--nldesign-color-primary-light) !important;
 	--color-primary-light-hover: var(
