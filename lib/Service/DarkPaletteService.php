@@ -116,7 +116,7 @@ class DarkPaletteService {
 	 * Nextcloud's own dark main background, which the navigation paints and
 	 * the nldesign stylesheets leave alone (REQ-CSS-007).
 	 */
-	private const NEXTCLOUD_DARK_MAIN_BACKGROUND = '#171717';
+	public const NEXTCLOUD_DARK_MAIN_BACKGROUND = '#171717';
 
 	/**
 	 * A CONTROL_PAIRS background written as the wash Nextcloud paints:
@@ -1345,6 +1345,13 @@ class DarkPaletteService {
 		$value = ($declarations[$token] ?? null);
 		if ($value !== null && strtolower(trim($value)) === 'transparent') {
 			return ($declarations['--nldesign-color-background'] ?? $value);
+		}
+
+		// A set that names no page background draws on Nextcloud's own dark
+		// one. Without this its page pairs had nothing to be measured against
+		// and were skipped: nora's link shipped at 3.57:1 on that page.
+		if ($value === null && $token === '--nldesign-color-background') {
+			return self::NEXTCLOUD_DARK_MAIN_BACKGROUND;
 		}
 
 		return $value;

@@ -272,7 +272,7 @@
 		--nldesign-color-info: #64cd54;
 		--nldesign-color-info-rgb: 100, 205, 84;
 		--nldesign-color-link: #7fd672;
-		--nldesign-color-link-hover: #7044e5;
+		--nldesign-color-link-hover: #c6b4f5;
 		--nldesign-color-link-visited: #7fd672;
 		--nldesign-color-nav-background: #141414;
 		--nldesign-color-placeholder-dark: #22262e;
@@ -843,7 +843,7 @@ body[data-themes*=dark] {
 	--nldesign-color-info: #64cd54;
 	--nldesign-color-info-rgb: 100, 205, 84;
 	--nldesign-color-link: #7fd672;
-	--nldesign-color-link-hover: #7044e5;
+	--nldesign-color-link-hover: #c6b4f5;
 	--nldesign-color-link-visited: #7fd672;
 	--nldesign-color-nav-background: #141414;
 	--nldesign-color-placeholder-dark: #22262e;
