@@ -1,0 +1,282 @@
+<?php
+
+/**
+ * A token set becomes eighteen shell roles, and no role is ever empty.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ *
+ * @category  Test
+ * @package   OCA\Thematiq\Tests\Unit\Service
+ * @author    Conduction <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
+ * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ * @link      https://github.com/ConductionNL/thematiq
+ *
+ * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ */
+
+declare(strict_types=1);
+
+namespace OCA\Thematiq\Tests\Unit\Service;
+
+use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\ShellRoleMapper;
+use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * The mapper is pure, so most cases hand it a map and read the roles back.
+ * Two cases read the token files this app ships, through the resolver the
+ * endpoint uses, so the mapping is checked against real declarations and not
+ * only against the names this test happens to spell.
+ *
+ * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ */
+class ShellRoleMapperTest extends TestCase {
+
+	/**
+	 * The mapper under test.
+	 *
+	 * @return ShellRoleMapper The mapper.
+	 */
+	private function mapper(): ShellRoleMapper {
+		return new ShellRoleMapper(colours: new ContrastService());
+	}//end mapper()
+
+	/**
+	 * The app directory this test runs in.
+	 *
+	 * @return string The path.
+	 */
+	private static function appPath(): string {
+		return dirname(__DIR__, 3);
+	}//end appPath()
+
+	/**
+	 * A shipped set's declarations, resolved the way the endpoint resolves them.
+	 *
+	 * @param string $id The token set id.
+	 *
+	 * @return array<string, string> The declarations.
+	 */
+	private function shipped(string $id): array {
+		$resolver = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
+
+		return $resolver->resolveDeclarations(appPath: self::appPath(), id: $id, theming: []);
+	}//end shipped()
+
+	/**
+	 * Every shipped token set id.
+	 *
+	 * @return array<string, array{0: string}> The ids, by id.
+	 */
+	public static function shippedSetIds(): array {
+		$ids = [];
+		foreach ((array)glob(self::appPath() . '/css/tokens/*.css') as $file) {
+			$id = basename((string)$file, '.css');
+			$ids[$id] = [$id];
+		}
+
+		return $ids;
+	}//end shippedSetIds()
+
+	/**
+	 * With nothing declared, every role takes its documented default.
+	 *
+	 * @return void
+	 */
+	public function testAnEmptySetGetsTheDocumentedDefaults(): void {
+		$roles = $this->mapper()->map(tokens: []);
+
+		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles));
+		$this->assertSame(ShellRoleMapper::DEFAULTS, $roles);
+		$this->assertCount(18, $roles);
+	}//end testAnEmptySetGetsTheDocumentedDefaults()
+
+	/**
+	 * Gemeente Zuiddrecht, the set the shell roles were drawn for, maps onto its own colours.
+	 *
+	 * @return void
+	 */
+	public function testZuiddrechtMapsOntoItsOwnColours(): void {
+		$roles = $this->mapper()->map(tokens: $this->shipped(id: 'zuiddrecht'));
+
+		$font = $roles['font-family'];
+		unset($roles['font-family']);
+
+		$this->assertSame(
+			[
+				'primary' => '#3669A5',
+				'primary-deep' => '#234A78',
+				'primary-light' => '#EAF0F7',
+				'action' => '#3669A5',
+				'action-deep' => '#234A78',
+				'link' => '#3669A5',
+				'accent' => '#CC0000',
+				'ink' => '#1B1C1D',
+				'text' => '#3d3f43',
+				'muted' => '#5E6168',
+				'line' => '#E4E6EA',
+				'soft' => '#EDEFF2',
+				'ground' => '#F5F6F8',
+				'chip' => '#F0F1F3',
+				'field' => '#8A929E',
+				'radius' => '8px',
+				'radius-lg' => '12px',
+			],
+			$roles
+		);
+		$this->assertStringStartsWith("'Fira Sans', ", $font);
+		$this->assertStringNotContainsString("\n", $font);
+	}//end testZuiddrechtMapsOntoItsOwnColours()
+
+	/**
+	 * Every set this app ships gets all eighteen roles, each a usable value.
+	 *
+	 * @param string $id The token set id.
+	 *
+	 * @return void
+	 */
+	#[DataProvider('shippedSetIds')]
+	public function testEveryShippedSetGetsEveryRole(string $id): void {
+		$roles = $this->mapper()->map(tokens: $this->shipped(id: $id));
+
+		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles), $id);
+		foreach ($roles as $role => $value) {
+			$this->assertNotSame('', $value, $id . ' ' . $role);
+			$this->assertStringNotContainsString('var(', $value, $id . ' ' . $role);
+			$this->assertDoesNotMatchRegularExpression('/[;{}]/', $value, $id . ' ' . $role);
+		}
+
+		foreach (['radius', 'radius-lg'] as $role) {
+			$this->assertMatchesRegularExpression('/^[\d.]+(px|rem|em|%)$/', $roles[$role], $id . ' ' . $role);
+		}
+	}//end testEveryShippedSetGetsEveryRole()
+
+	/**
+	 * An administrator's own value of a Nextcloud variable wins over the set's token.
+	 *
+	 * @return void
+	 */
+	public function testAnAdministratorsOwnValueWins(): void {
+		$roles = $this->mapper()->map(
+			tokens: [
+				'--nldesign-color-primary' => '#3669a5',
+				'--nldesign-color-text' => '#1b1c1d',
+				'--nldesign-border-radius' => '8px',
+				'--nldesign-font-family' => "'Fira Sans', sans-serif",
+			],
+			overrides: [
+				'--color-primary' => '#aa0000',
+				'--color-primary-element' => '#00aa00',
+				'--color-main-text' => '#000000',
+				'--border-radius' => '2px',
+				'--font-face' => 'Inter, sans-serif',
+			]
+		);
+
+		$this->assertSame('#aa0000', $roles['primary']);
+		$this->assertSame('#00aa00', $roles['action']);
+		$this->assertSame('#000000', $roles['ink']);
+		$this->assertSame('2px', $roles['radius']);
+		$this->assertSame('Inter, sans-serif', $roles['font-family']);
+	}//end testAnAdministratorsOwnValueWins()
+
+	/**
+	 * The deep roles are the dark step: a hover colour lighter than its base is not taken.
+	 *
+	 * @return void
+	 */
+	public function testALighterHoverIsNotTakenAsTheDeepColour(): void {
+		$roles = $this->mapper()->map(
+			tokens: [
+				'--nldesign-color-primary' => '#154273',
+				'--nldesign-color-primary-hover' => '#1d5499',
+			]
+		);
+
+		$this->assertSame('#0f2e51', $roles['primary-deep']);
+		$this->assertSame('#0f2e51', $roles['action-deep']);
+	}//end testALighterHoverIsNotTakenAsTheDeepColour()
+
+	/**
+	 * Roles without a token of their own are derived from the roles next to them.
+	 *
+	 * @return void
+	 */
+	public function testMissingRolesAreDerived(): void {
+		$roles = $this->mapper()->map(
+			tokens: [
+				'--nldesign-color-primary' => '#3669a5',
+				'--nldesign-color-text' => '#000000',
+				'--nldesign-color-text-muted' => '#808080',
+				'--nldesign-color-border' => '#cccccc',
+				'--nldesign-border-radius' => '4px',
+			]
+		);
+
+		$this->assertSame('#3669a5', $roles['action'], 'the action colour is the primary colour');
+		$this->assertSame('#3669a5', $roles['link'], 'a link without its own colour is primary');
+		$this->assertSame('#ebf0f6', $roles['primary-light'], 'primary on white, one part in ten');
+		$this->assertSame('#404040', $roles['text'], 'halfway between ink and muted');
+		$this->assertSame('#cccccc', $roles['field'], 'a field without its own border wears the line colour');
+		$this->assertSame('4px', $roles['radius-lg'], 'the large radius falls back to the radius');
+	}//end testMissingRolesAreDerived()
+
+	/**
+	 * A value a consumer cannot write into a stylesheet is passed over.
+	 *
+	 * @return void
+	 */
+	public function testAnUnusableValueIsPassedOver(): void {
+		$roles = $this->mapper()->map(
+			tokens: [
+				'--nldesign-color-primary' => 'var(--brand-that-nothing-declares)',
+				'--nldesign-color-link' => 'red; } body { display: none',
+				'--nldesign-color-border' => 'url(https://example.org/x.png)',
+				'--nldesign-color-text' => '   ',
+				'--nldesign-font-family' => "'Fira Sans',\n\t\tArial,\n\t\tsans-serif",
+				'--nldesign-border-radius' => '0',
+			]
+		);
+
+		$this->assertSame(ShellRoleMapper::DEFAULTS['primary'], $roles['primary']);
+		$this->assertSame(ShellRoleMapper::DEFAULTS['primary'], $roles['link']);
+		$this->assertSame(ShellRoleMapper::DEFAULTS['line'], $roles['line']);
+		$this->assertSame(ShellRoleMapper::DEFAULTS['ink'], $roles['ink']);
+		$this->assertSame("'Fira Sans', Arial, sans-serif", $roles['font-family']);
+		$this->assertSame('0px', $roles['radius'], 'a bare 0 is given its unit');
+	}//end testAnUnusableValueIsPassedOver()
+
+	/**
+	 * The accent is the set's accent, and the error colour for a set without one.
+	 *
+	 * @return void
+	 */
+	public function testTheAccentFallsBackToTheErrorColour(): void {
+		$this->assertSame('#f5b82e', $this->mapper()->map(tokens: ['--nldesign-color-accent' => '#f5b82e', '--nldesign-color-error' => '#cc0000'])['accent']);
+		$this->assertSame('#cc0000', $this->mapper()->map(tokens: ['--nldesign-color-error' => '#cc0000'])['accent']);
+	}//end testTheAccentFallsBackToTheErrorColour()
+
+	/**
+	 * Summer Breeze keeps its own vocabulary, and is read by it.
+	 *
+	 * @return void
+	 */
+	public function testSummerBreezeIsReadByItsOwnNames(): void {
+		$roles = $this->mapper()->map(tokens: $this->shipped(id: 'summer-breeze'));
+
+		$this->assertSame('#21468b', $roles['primary']);
+		$this->assertSame('#1b3a75', $roles['primary-deep']);
+		$this->assertSame('#21468b', $roles['link']);
+		$this->assertSame('#02162e', $roles['ink']);
+		$this->assertSame('#e3e9f0', $roles['line']);
+		$this->assertSame('#7a8b9f', $roles['field']);
+		$this->assertSame('#f7f7f7', $roles['ground']);
+		$this->assertSame('12px', $roles['radius']);
+		$this->assertStringStartsWith("'Inter', ", $roles['font-family']);
+	}//end testSummerBreezeIsReadByItsOwnNames()
+}//end class

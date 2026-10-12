@@ -3119,6 +3119,112 @@
               "raw": "{\n  \"candidates\": [\n    { \"name\": \"primary\", \"value\": \"#154273\", \"role\": \"text\" }\n  ],\n  \"background\": \"#F5F6F7\"\n}"
             }
           }
+        },
+        {
+          "name": "GET shell-tokens: anonymous -> 200, eighteen roles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('a reader without a session gets 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "const roles = [\"primary\", \"primary-deep\", \"primary-light\", \"action\", \"action-deep\", \"link\", \"accent\", \"ink\", \"text\", \"muted\", \"line\", \"soft\", \"ground\", \"chip\", \"field\", \"radius\", \"radius-lg\", \"font-family\"];",
+                  "pm.test('the document has the contract fields', () => {",
+                  "  pm.expect(Object.keys(body)).to.eql(['version', 'id', 'name', 'revision', 'tokens', 'logo']);",
+                  "  pm.expect(body.version).to.eql(1);",
+                  "  pm.expect(body.id).to.be.a('string').and.not.empty;",
+                  "  pm.expect(body.name).to.be.a('string').and.not.empty;",
+                  "  pm.expect(body.revision).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.test('every one of the eighteen roles has a value', () => {",
+                  "  pm.expect(Object.keys(body.tokens)).to.eql(roles);",
+                  "  roles.forEach((role) => pm.expect(body.tokens[role], role).to.be.a('string').and.not.empty);",
+                  "});",
+                  "pm.test('the logo names two urls or null', () => {",
+                  "  pm.expect(Object.keys(body.logo)).to.eql(['url', 'inverse_url']);",
+                  "  ['url', 'inverse_url'].forEach((key) => {",
+                  "    if (body.logo[key] !== null) { pm.expect(body.logo[key], key).to.match(/^https?:\\/\\//); }",
+                  "  });",
+                  "});",
+                  "pm.test('the ETag carries the revision', () => {",
+                  "  pm.expect(pm.response.headers.get('ETag')).to.include(body.revision);",
+                  "});",
+                  "pm.collectionVariables.set('shellRevision', body.revision);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/api/shell-tokens",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "api",
+                "shell-tokens"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET shell-tokens: If-None-Match with the current revision -> 304",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('an unchanged document is answered with 304', () => pm.response.to.have.status(304));",
+                  "pm.test('a 304 has no body', () => pm.expect(pm.response.text()).to.eql(''));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "If-None-Match",
+                "value": "\"{{shellRevision}}\""
+              }
+            ],
+            "url": {
+              "raw": "{{noAuthBase}}/index.php/apps/thematiq/api/shell-tokens",
+              "host": [
+                "{{noAuthBase}}"
+              ],
+              "path": [
+                "index.php",
+                "apps",
+                "thematiq",
+                "api",
+                "shell-tokens"
+              ]
+            }
+          }
         }
       ]
     },

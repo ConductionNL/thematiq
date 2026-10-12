@@ -34,6 +34,14 @@ return [
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
+		// The active set as eighteen shell roles and a logo, for another product
+		// that wears this Nextcloud's shell (openspec/changes/shell-tokens-endpoint).
+		// Public (#[PublicPage] + #[NoCSRFRequired] + #[AnonRateLimit]): the
+		// reader is a server without a Nextcloud session, and the values are the
+		// ones the login page already serves as CSS. A new path, so a warm
+		// instance answers 404 until its route cache expires; see the change's
+		// design.md for how an administrator gets it live.
+		['name' => 'shellToken#show', 'url' => '/api/shell-tokens', 'verb' => 'GET'],
 
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],
 		['name' => 'settings#setTokenSet', 'url' => '/settings/tokenset', 'verb' => 'POST'],

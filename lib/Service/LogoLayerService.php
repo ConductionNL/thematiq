@@ -305,11 +305,16 @@ class LogoLayerService {
 	 * The first shipped or uploaded `img/logos/<name>.<ext>`, by the order
 	 * {@see self::layer()} uses.
 	 *
+	 * Public so the shell tokens document names the same file the header
+	 * draws ({@see ShellTokenService}), instead of looking for it a second way.
+	 *
 	 * @param string $name The file name without extension.
 	 *
 	 * @return string|null The app-relative path, or null when there is none.
+	 *
+	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
 	 */
-	private function shippedLogo(string $name): ?string {
+	public function shippedLogo(string $name): ?string {
 		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
 			$candidate = 'img/logos/' . $name . '.' . $extension;
 			if ($this->files->exists(name: $candidate) === true) {
