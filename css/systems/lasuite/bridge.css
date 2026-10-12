@@ -142,9 +142,9 @@ body {
 	   too dark. Verified by a local computed-style comparison against La Suite's
 	   own shipped Cunningham CSS (2026-07-26). */
 	/* The action colour, for a set that wants its main button apart from the
-	   brand: --nldesign-color-action with -hover and -text beside it. No
-	   shipped set declares it, and without it each fallback below is the old
-	   value. --thematiq-action-hover is the declared hover step, or the action
+	   brand: --nldesign-color-action with -hover and -text beside it. Of
+	   the shipped sets only Cunningham declares it (green, as OpenProject draws
+	   its main button). Without it each fallback below is the old value. --thematiq-action-hover is the declared hover step, or the action
 	   colour 15% darker; with neither declared it is invalid and its readers
 	   take their fallback. */
 	--thematiq-action-hover: var(

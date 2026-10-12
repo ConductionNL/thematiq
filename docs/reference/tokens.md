@@ -44,7 +44,7 @@ A token set may give the one main button of a page a colour of its own, apart fr
 | `--nldesign-color-action-hover` | The same on hover | The action colour, 15% darker. Without an action colour: the primary hover |
 | `--nldesign-color-action-text` | Text and icons on the action colour | The text on the primary |
 
-No default is declared for them, on purpose. A set that leaves them out renders as it always did.
+No default is declared for them, on purpose. A set that leaves them out renders as it always did. Of the shipped sets only Cunningham declares them: a green main button (`#1f883d`) on its blue brand, as OpenProject draws it.
 
 The action colour reaches further than buttons. Nextcloud draws checked boxes and switches, progress bars, the selected navigation entry, focus borders of inputs and counter badges in the same variable (`--color-primary-element`). They all take the action colour. Links, the header and light tints stay with the primary.
 

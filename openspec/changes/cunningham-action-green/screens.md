@@ -1,0 +1,1 @@
+- Screen: every Nextcloud page on the Cunningham set that shows a main button, a checked box or switch, a progress bar, a selected navigation entry, a focused input or a counter badge. The green is the one the OpenProject boards on identity.conduction.nl/screens draw (`--sc-action`).

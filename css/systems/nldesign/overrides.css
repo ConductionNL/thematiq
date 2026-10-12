@@ -27,8 +27,9 @@
 	/* The action colour: the one main button of a page, and what Nextcloud
 	 * calls the primary element (checked boxes, switches, progress bars).
 	 * A token set that wants it apart from its primary declares
-	 * --nldesign-color-action, with -hover and -text beside it. No shipped set
-	 * does, and without the token each line below is exactly what it was:
+	 * --nldesign-color-action, with -hover and -text beside it. Cunningham is
+	 * the one shipped set that does. Without the token each line below is
+	 * exactly what it was:
 	 * the fallback is the old value.
 	 *
 	 * --thematiq-action-hover is the hover step. With only the action colour

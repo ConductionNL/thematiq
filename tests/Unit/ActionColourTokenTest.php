@@ -58,6 +58,14 @@ class ActionColourTokenTest extends TestCase {
 	private const HOVER_STEP = 'var( --nldesign-color-action-hover, color-mix(in srgb, var(--nldesign-color-action) 85%, black) )';
 
 	/**
+	 * The shipped sets that declare an action colour, and the colour. Every
+	 * other set must declare none, and render as it always did.
+	 *
+	 * @var array<string, string>
+	 */
+	private const SETS_WITH_AN_ACTION_COLOUR = ['cunningham' => '#1f883d'];
+
+	/**
 	 * What each reading declaration must be: file => property => value, white space collapsed.
 	 *
 	 * The inner `var()` of each value is the whole value the line had before the action colour existed.
@@ -225,7 +233,7 @@ class ActionColourTokenTest extends TestCase {
 	}//end testTheTokenIsOptionalEverywhere()
 
 	/**
-	 * No shipped set declares the action colour, in its file, its dark variant or its overrides.
+	 * Only the sets named in {@see self::SETS_WITH_AN_ACTION_COLOUR} declare the action colour, in their file, dark variant or overrides.
 	 *
 	 * @return void
 	 */
@@ -237,10 +245,16 @@ class ActionColourTokenTest extends TestCase {
 		);
 
 		$this->assertGreaterThan(100, count($files));
+		$declaring = [];
 		foreach ($files as $path) {
-			$this->assertStringNotContainsString('--nldesign-color-action', (string)file_get_contents((string)$path), (string)$path);
 			$this->assertStringNotContainsString('--thematiq-action-hover', (string)file_get_contents((string)$path), (string)$path);
+			if (str_contains((string)file_get_contents((string)$path), '--nldesign-color-action') === true) {
+				$declaring[basename((string)$path, '.css')] = true;
+			}
 		}
+
+		ksort($declaring);
+		$this->assertSame(array_keys(self::SETS_WITH_AN_ACTION_COLOUR), array_keys($declaring), 'a set gained or lost an action colour: that is a visible decision, name it here');
 	}//end testNoShippedSetDeclaresAnActionColour()
 
 	/**
@@ -257,6 +271,17 @@ class ActionColourTokenTest extends TestCase {
 	#[DataProvider('shippedSetIds')]
 	public function testAShippedSetResolvesAsBefore(string $id): void {
 		$declared = $this->resolved(id: $id);
+
+		if (isset(self::SETS_WITH_AN_ACTION_COLOUR[$id]) === true) {
+			// A set with an action colour: the action is that colour, its primary is not, and the text on it reads.
+			$roles = (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $declared);
+			$this->assertSame(self::SETS_WITH_AN_ACTION_COLOUR[$id], $roles['action'], $id);
+			$this->assertNotSame($roles['primary'], $roles['action'], $id);
+			$this->assertSame($declared['--nldesign-color-primary'], $roles['primary'], $id);
+			$this->assertSame([], (new ContrastService())->check(declarations: $declared), $id . ': the text on the action colour must reach 4.5:1');
+
+			return;
+		}
 
 		$this->assertArrayNotHasKey('--nldesign-color-action', $declared, $id);
 		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $declared, $id);
