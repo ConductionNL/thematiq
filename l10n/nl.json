@@ -1112,7 +1112,8 @@
         "Paste the contents of a theme file first.": "Plak eerst de inhoud van een themabestand.",
         "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} overgenomen, {adapted} aangepast, {kept} behouden, {skipped} overgeslagen.",
         "The navigation column's own surface": "Het eigen oppervlak van de navigatiekolom",
-        "The initials of an avatar without a picture": "De initialen van een avatar zonder foto"
+        "The initials of an avatar without a picture": "De initialen van een avatar zonder foto",
+        "or": "of"
     },
     "plurals": {}
 }

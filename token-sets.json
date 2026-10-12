@@ -791,6 +791,146 @@
 			"navigation_active_style": "soft",
 			"brand_stripe_placement": "login",
 			"header_style": "workplace"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Gemeente Zuiddrecht.",
+				"en": "For staff of Gemeente Zuiddrecht."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw gemeenteaccount",
+				"en": "Log in with your municipality account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Gemeente Zuiddrecht · werkplek op Nextcloud",
+				"en": "Gemeente Zuiddrecht · workplace on Nextcloud"
+			}
+		},
+		"not_found": {
+			"eyebrow": {
+				"nl": "Foutcode 404",
+				"en": "Error code 404"
+			},
+			"title": {
+				"nl": "Pagina niet gevonden",
+				"en": "Page not found"
+			},
+			"text": {
+				"nl": "Deze pagina bestaat niet (meer). Misschien is het adres verkeerd getypt, of hebben wij de pagina verplaatst.",
+				"en": "This page does not exist (any more). Perhaps the address was mistyped, or we moved the page."
+			},
+			"links_heading": {
+				"nl": "Of ga verder naar",
+				"en": "Or continue to"
+			},
+			"links": [
+				{
+					"label": {
+						"nl": "De homepage",
+						"en": "The home page"
+					},
+					"url": "/"
+				}
+			]
+		},
+		"app_menu": {
+			"groups": [
+				{
+					"title": {
+						"nl": "Werk",
+						"en": "Work"
+					},
+					"link": {
+						"label": {
+							"nl": "Mijn werkdag in launchpad",
+							"en": "My working day in launchpad"
+						},
+						"url": "/apps/launchpad/"
+					},
+					"apps": [
+						{
+							"id": "launchpad",
+							"description": {
+								"nl": "Mijn werkdag",
+								"en": "My working day"
+							}
+						},
+						{
+							"id": "dossiq",
+							"description": {
+								"nl": "Zaken en Woo",
+								"en": "Cases and Woo"
+							}
+						},
+						{
+							"id": "pipelinq",
+							"description": {
+								"nl": "Klantcontact",
+								"en": "Customer contact"
+							}
+						},
+						{
+							"id": "decidiq",
+							"description": {
+								"nl": "Besluitvorming",
+								"en": "Decision making"
+							}
+						},
+						{
+							"id": "learniq",
+							"description": {
+								"nl": "Onderwijs",
+								"en": "Learning"
+							}
+						},
+						{
+							"id": "portaliq",
+							"description": {
+								"nl": "Website en Mijn",
+								"en": "Website and portal"
+							}
+						},
+						{
+							"id": "opencatalogi",
+							"description": {
+								"nl": "Publicaties",
+								"en": "Publications"
+							}
+						},
+						{
+							"id": "thematiq",
+							"description": {
+								"nl": "Huisstijl",
+								"en": "House style"
+							}
+						}
+					]
+				}
+			],
+			"others_title": {
+				"nl": "Nextcloud",
+				"en": "Nextcloud"
+			},
+			"hint": {
+				"nl": "Pijltjestoetsen bladeren, Enter opent, Escape sluit.",
+				"en": "Arrow keys browse, Enter opens, Escape closes."
+			},
+			"manage_label": {
+				"nl": "Apps beheren",
+				"en": "Manage apps"
+			}
 		}
 	},
 	{
@@ -806,6 +946,28 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor het team van De Wilgenboom.",
+				"en": "For the team of De Wilgenboom."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			}
 		}
 	},
 	{
@@ -821,6 +983,32 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Vaartveld College.",
+				"en": "For staff of Vaartveld College."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mailadres",
+				"en": "Username or email address"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Vaartveld College · werkplek op Nextcloud",
+				"en": "Vaartveld College · workplace on Nextcloud"
+			}
 		}
 	},
 	{
@@ -837,6 +1025,32 @@
 		"layout": {
 			"workplace_layout": "light",
 			"brand_stripe": true
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor medewerkers van Esdoornveen.",
+				"en": "For staff of Esdoornveen."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw schoolaccount",
+				"en": "Log in with your school account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Esdoornveen, mbo college · werkplek op Nextcloud",
+				"en": "Esdoornveen, mbo college · workplace on Nextcloud"
+			}
 		}
 	},
 	{
@@ -852,6 +1066,32 @@
 		},
 		"layout": {
 			"workplace_layout": "light"
+		},
+		"login": {
+			"title": {
+				"nl": "Inloggen bij de werkplek",
+				"en": "Log in to the workplace"
+			},
+			"subtitle": {
+				"nl": "Voor planning, trainers en administratie van de Warmtepompacademie.",
+				"en": "For planning, trainers and administration of the Warmtepompacademie."
+			},
+			"sso_label": {
+				"nl": "Inloggen met uw academie-account",
+				"en": "Log in with your academy account"
+			},
+			"username_label": {
+				"nl": "Gebruikersnaam of e-mail",
+				"en": "Username or email"
+			},
+			"divider": {
+				"nl": "of",
+				"en": "or"
+			},
+			"footer": {
+				"nl": "Warmtepompacademie · werkplek op Nextcloud",
+				"en": "Warmtepompacademie · workplace on Nextcloud"
+			}
 		}
 	}
 ]
