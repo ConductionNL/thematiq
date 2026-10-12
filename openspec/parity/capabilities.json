@@ -6567,7 +6567,7 @@
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "decided-no",
+				"state": "none",
 				"evidence": "grep -rniE 'apple-touch|touchicon|touch-icon|logoMobile' in lib/, src/, templates/, css/, appinfo/ finds nothing; thematiq sets the favicon (ast-favicon) but no separate small-screen logo or touch icon",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor"
@@ -6586,7 +6586,7 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://gitlab.opencode.de/bmi/opendesk/deployment/opendesk/-/blob/v1.18.2/CHANGELOG.md",
-			"note": "Decided no 2026-09-28: Single competitor rated yes (openDesk), no demand row, outside the core area (catalogue and apply). Was defer, retired. Small-screen and pinned-app surfaces are where a wrong logo is most noticed on phones issued to staff."
+			"note": "Reopened 2026-10-12 (Ruben): thematiq and the OpenProject plugin reach the same functionality by adding, never by removing, and OpenProject has a mobile logo and a touch icon. Not built yet; no change is written. Before that: decided no 2026-09-28 (single competitor rated yes (openDesk), no demand row, outside the core area). Small-screen and pinned-app surfaces are where a wrong logo is most noticed on phones issued to staff."
 		},
 		{
 			"id": "gov-environment-marker",

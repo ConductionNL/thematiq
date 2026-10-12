@@ -51,6 +51,21 @@ const parsed = (file) => {
 	return PARSED.get(file)
 }
 
+const SELECTORS = new WeakMap()
+/**
+ * A rule's selectors, split once: postcss splits the list on every read, and
+ * every set walks every rule of the shared stylesheets.
+ *
+ * @param {import('postcss').Rule} rule The rule.
+ * @return {string[]} Its selectors.
+ */
+const selectorsOf = (rule) => {
+	if (!SELECTORS.has(rule)) {
+		SELECTORS.set(rule, rule.selectors)
+	}
+	return SELECTORS.get(rule)
+}
+
 const CONTENT = '#app-content-vue'
 const STRIPS = [
 	'.files-list__thead',
@@ -148,7 +163,7 @@ function cascade(files, env, matches) {
 			if (!conditionsHold(rule, env)) {
 				return
 			}
-			const hit = rule.selectors.filter(matches)
+			const hit = selectorsOf(rule).filter(matches)
 			if (hit.length === 0) {
 				return
 			}

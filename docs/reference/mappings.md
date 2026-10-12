@@ -137,12 +137,12 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-primary` | mapped | `--nldesign-color-primary` | `#00679e` | `#00679e` | Main brand color |
-| `--color-primary-element` | mapped | `--nldesign-color-primary` | `#00679e` | `#0091f2` | Interactive element primary color |
-| `--color-primary-element-hover` | mapped | `--nldesign-color-primary-hover` | `#00507a` | `#17a2ff` | Interactive element hover |
+| `--color-primary-element` | mapped | `--nldesign-color-action` | `#00679e` | `#0091f2` | Main button and element colour: the set's action colour, else `--nldesign-color-primary` |
+| `--color-primary-element-hover` | mapped | `--nldesign-color-action-hover` | `#00507a` | `#17a2ff` | Element hover: the set's action hover, else `--nldesign-color-primary-hover` |
 | `--color-primary-element-light` | mapped | `--nldesign-color-primary-light` | `var(--color-primary-light)` | `var(--color-primary-light)` | Deprecated alias for primary-light |
 | `--color-primary-element-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `var(--color-primary-light-hover)` | `var(--color-primary-light-hover)` | Deprecated alias |
 | `--color-primary-element-light-text` | mapped | `--nldesign-color-primary` | `var(--color-primary-light-text)` | `var(--color-primary-light-text)` | Deprecated alias |
-| `--color-primary-element-text` | mapped | `--nldesign-color-primary-text` | `#ffffff` | `#000000` | Text on primary element |
+| `--color-primary-element-text` | mapped | `--nldesign-color-action-text` | `#ffffff` | `#000000` | Text on the element colour: the set's action text, else `--nldesign-color-primary-text` |
 | `--color-primary-element-text-dark` | mapped |  | `#ededed` | `#121212` | Dark variant of primary element text; no NL Design equivalent |
 | `--color-primary-hover` | mapped | `--nldesign-color-primary-hover` | `#3285b1` | `#045783` | Primary hover state |
 | `--color-primary-light` | mapped | `--nldesign-color-primary-light` | `#e5eff5` | `#14232c` | Light variant of primary |

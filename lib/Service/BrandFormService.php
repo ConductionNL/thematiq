@@ -60,6 +60,13 @@ class BrandFormService {
 	public const UI_MIN = 3.0;
 
 	/**
+	 * The one input the form may leave out: the main button's own colour.
+	 *
+	 * @var string
+	 */
+	private const OPTIONAL_INPUT = 'action';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast The contrast arithmetic.
@@ -96,19 +103,39 @@ class BrandFormService {
 	 * @param string $appPath The app root.
 	 * @param string $primary The primary colour, `#rgb` or `#rrggbb`.
 	 * @param string $background The background colour, `#rgb` or `#rrggbb`.
+	 * @param string|null $action The main button's own colour, or null (or '') to leave it with the primary.
 	 *
-	 * @return array{declarations: array<string, string>, textOnPrimary: string, textRatio: float, uiRatio: float}
+	 * The declarations, the text on primary and its two ratios, and the text on the action colour with its ratio (null without one).
+	 *
+	 * @return array{
+	 *     declarations: array<string, string>,
+	 *     textOnPrimary: string,
+	 *     textRatio: float,
+	 *     uiRatio: float,
+	 *     textOnAction: string|null,
+	 *     actionTextRatio: float|null
+	 * }
 	 *
 	 * @throws InvalidArgumentException When a colour is not a hex colour, or a rule resolves to nothing.
 	 *
 	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-the-derived-set-is-complete
 	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-text-on-primary-is-chosen-for-contrast
+	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
-	public function derive(string $appPath, string $primary, string $background): array {
+	public function derive(string $appPath, string $primary, string $background, ?string $action = null): array {
 		$inputs = $this->inputs(appPath: $appPath);
 		$base = ['primary' => $this->hex(value: $primary), 'background' => $this->hex(value: $background)];
+		if ($action !== null && $action !== '') {
+			$base[self::OPTIONAL_INPUT] = $this->hex(value: $action);
+		}
+
 		$declarations = [];
 		foreach ($inputs['rules'] as $token => $rule) {
+			// A rule that reads the action colour is left out when the form gave none.
+			if (($rule[1] ?? null) === self::OPTIONAL_INPUT && isset($base[self::OPTIONAL_INPUT]) === false) {
+				continue;
+			}
+
 			$value = $this->apply(rule: (array)$rule, known: array_merge($base, $declarations), defaults: $inputs['defaults'], token: $token);
 			if ($value === '') {
 				throw new InvalidArgumentException('No value for ' . $token);
@@ -118,12 +145,20 @@ class BrandFormService {
 		}
 
 		$onPrimary = $this->onColor(background: $base['primary']);
+		$onAction = null;
+		$actionRatio = null;
+		if (isset($base[self::OPTIONAL_INPUT]) === true) {
+			$onAction = $this->onColor(background: $base[self::OPTIONAL_INPUT]);
+			$actionRatio = $this->ratio(first: $base[self::OPTIONAL_INPUT], second: $onAction);
+		}
 
 		return [
 			'declarations' => $declarations,
 			'textOnPrimary' => $onPrimary,
 			'textRatio' => $this->ratio(first: $base['primary'], second: $onPrimary),
 			'uiRatio' => $this->ratio(first: $base['primary'], second: $base['background']),
+			'textOnAction' => $onAction,
+			'actionTextRatio' => $actionRatio,
 		];
 	}//end derive()
 

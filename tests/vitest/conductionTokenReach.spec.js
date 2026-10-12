@@ -85,8 +85,13 @@ describe('the recorded reach of the Conduction component tokens', () => {
 		for (const token of following) {
 			const { through, driver } = reach()[token]
 			expect(internal[token].stock, token).toContain(`var(${through}`)
+			// The variable reads the driver directly, or after an optional
+			// token in front of it: `var(--nldesign-color-action, var(driver))`
+			// for the primary element, which a set's action colour may move.
 			expect(theme, token).toMatch(
-				new RegExp(`${through}:\\s*var\\(${driver}\\)`),
+				new RegExp(
+					`${through}:\\s*var\\(\\s*(?:--[\\w-]+\\s*,\\s*var\\(\\s*)?${driver}\\s*\\)`,
+				),
 			)
 			expect(declares(defaults, driver), `${token}: ${driver}`).toBe(true)
 		}

@@ -1114,7 +1114,10 @@ OC.L10N.register(
         "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.": "{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.",
         "The navigation column's own surface": "The navigation column's own surface",
         "The initials of an avatar without a picture": "The initials of an avatar without a picture",
-        "or": "or"
+        "or": "or",
+        "Text on the main button": "Text on the main button",
+        "Give the main button its own color": "Give the main button its own color",
+        "Main button color": "Main button color"
     },
     "nplurals=2; plural=(n != 1);"
 )

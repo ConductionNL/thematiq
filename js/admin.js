@@ -7529,6 +7529,18 @@
 			var backgroundInput = document.getElementById(
 				'nldesign-brand-background',
 			)
+			var actionToggle = document.getElementById(
+				'nldesign-brand-action-enabled',
+			)
+			var actionInput = document.getElementById('nldesign-brand-action')
+			// The main button's own colour, or '' while the box is not ticked.
+			function actionColour() {
+				return actionToggle !== null
+					&& actionToggle.checked === true
+					&& actionInput !== null
+					? actionInput.value
+					: ''
+			}
 			var logoInput = document.getElementById('nldesign-brand-logo')
 			var sample = document.getElementById('nldesign-brand-sample')
 			var sampleHover = document.getElementById('nldesign-brand-sample-hover')
@@ -7561,15 +7573,25 @@
 					inputs,
 					primaryInput.value,
 					backgroundInput.value,
+					actionColour(),
 				)
 				if (result === null) {
 					return
 				}
 				var d = result.declarations
-				sample.style.background = d['--nldesign-color-primary']
-				sample.style.color = d['--nldesign-color-primary-text']
-				sampleHover.style.background = d['--nldesign-color-primary-hover']
-				sampleHover.style.color = d['--nldesign-color-primary-text']
+				// The samples are the main button: its own colour when the form
+				// gives one, else the primary.
+				var fill =
+					d['--nldesign-color-action'] || d['--nldesign-color-primary']
+				var label =
+					d['--nldesign-color-action-text']
+					|| d['--nldesign-color-primary-text']
+				sample.style.background = fill
+				sample.style.color = label
+				sampleHover.style.background =
+					d['--nldesign-color-action-hover']
+					|| d['--nldesign-color-primary-hover']
+				sampleHover.style.color = label
 				form.style.setProperty(
 					'--brand-form-background',
 					d['--nldesign-color-nav-background'],
@@ -7586,6 +7608,15 @@
 						result.uiRatio,
 						brandForm.UI_MIN,
 					)
+				if (result.actionTextRatio !== null) {
+					readout.textContent +=
+						' '
+						+ ratioLine(
+							t('thematiq', 'Text on the main button'),
+							result.actionTextRatio,
+							brandForm.TEXT_MIN,
+						)
+				}
 			}
 
 			function showResult(text) {
@@ -7623,6 +7654,13 @@
 
 			primaryInput.addEventListener('input', pick)
 			backgroundInput.addEventListener('input', pick)
+			if (actionToggle !== null && actionInput !== null) {
+				actionToggle.addEventListener('change', function () {
+					actionInput.disabled = actionToggle.checked !== true
+					repaint()
+				})
+				actionInput.addEventListener('input', repaint)
+			}
 			document.addEventListener('thematiq:theme-applied', followTheme)
 			var coloursTab = document.getElementById('nldesign-create-tab-colours')
 			if (coloursTab !== null) {
@@ -7671,6 +7709,9 @@
 				formData.append('name', name)
 				formData.append('primary', primaryInput.value)
 				formData.append('background', backgroundInput.value)
+				if (actionColour() !== '') {
+					formData.append('action', actionColour())
+				}
 				if (logoInput !== null && logoInput.files && logoInput.files[0]) {
 					formData.append('logo', logoInput.files[0])
 				}

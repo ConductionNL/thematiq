@@ -222,6 +222,26 @@ class DesignTokensMapperTest extends TestCase {
 	}//end testMappingTableIsExposed()
 
 	/**
+	 * The action colour has its own paths, and the longer path wins over `color.action`.
+	 */
+	public function testTheActionColourMapsByPath(): void {
+		$result = $this->mapper->map(document: [
+			'color' => [
+				'primary' => ['$type' => 'color', '$value' => '#1a67a3'],
+				'action' => ['$type' => 'color', '$value' => '#1f883d'],
+				'action-hover' => ['$type' => 'color', '$value' => '#197032'],
+				'action-text' => ['$type' => 'color', '$value' => '#ffffff'],
+			],
+		]);
+
+		$this->assertSame('#1a67a3', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame('#1f883d', $result['declarations']['--nldesign-color-action']);
+		$this->assertSame('#197032', $result['declarations']['--nldesign-color-action-hover']);
+		$this->assertSame('#ffffff', $result['declarations']['--nldesign-color-action-text']);
+		$this->assertSame('--nldesign-color-action-text', $this->mapper->getMappingTable()['color.on-action']);
+	}//end testTheActionColourMapsByPath()
+
+	/**
 	 * A later token colliding on an already-written target is skipped with
 	 * `duplicate-target`, never overwriting the first-seen declaration.
 	 */

@@ -1,5 +1,5 @@
 {
-	"$comment": "How the simple brand form derives a complete token set from a primary and a background colour. Read by lib/Service/BrandFormService.php and js/lib/brandForm.js, in this order. A rule is [op, ...operands]; an operand is 'primary', 'background' or a token already derived above. Ops: from (copy), onColor (black or white, whichever contrasts better), darken (fraction), mix (share of the first kept), legible (the operand when it reaches 4.5:1 on the background, else the defaults value), default (the defaults layer value).",
+	"$comment": "How the simple brand form derives a complete token set from a primary and a background colour. Read by lib/Service/BrandFormService.php and js/lib/brandForm.js, in this order. A rule is [op, ...operands]; an operand is 'primary', 'background', the optional 'action' or a token already derived above. A rule whose first operand is 'action' is left out when the form gives no action colour. Ops: from (copy), onColor (black or white, whichever contrasts better), darken (fraction), mix (share of the first kept), legible (the operand when it reaches 4.5:1 on the background, else the defaults value), default (the defaults layer value).",
 	"tokens": {
 		"--nldesign-color-primary": ["from", "primary"],
 		"--nldesign-color-primary-text": ["onColor", "primary"],
@@ -11,6 +11,9 @@
 			"background",
 			0.22
 		],
+		"--nldesign-color-action": ["from", "action"],
+		"--nldesign-color-action-text": ["onColor", "action"],
+		"--nldesign-color-action-hover": ["darken", "action", 0.15],
 		"--nldesign-color-header-background": ["from", "primary"],
 		"--nldesign-color-header-text": ["onColor", "primary"],
 		"--nldesign-color-nav-background": ["from", "background"],

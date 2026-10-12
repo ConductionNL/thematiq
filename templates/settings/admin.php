@@ -344,6 +344,14 @@ if ($_['mockUi'] === true) {
 						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
+					<!-- The main button's own colour (openspec/changes/brand-form-action-colour). Off by
+					     default: without it the main button wears the primary, as every set did. -->
+					<div class="nldesign-field">
+						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
+						<label for="nldesign-brand-action-enabled"><?php p($l->t('Give the main button its own color')); ?></label>
+						<input type="color" id="nldesign-brand-action" class="nldesign-brand-colour" value="#1f883d" disabled
+							   aria-label="<?php p($l->t('Main button color')); ?>">
+					</div>
 					<div class="nldesign-field">
 						<!-- No `for`: a label for the button would replace its name with
 						     "Logo (optional)", so "Choose logo" would not be in it (WCAG
