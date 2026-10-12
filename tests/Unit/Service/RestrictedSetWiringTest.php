@@ -29,11 +29,11 @@ use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
-use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\RestrictedSetGate;
+use OCA\Thematiq\Service\RestrictedSetsInBundle;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\ScheduledSwitchService;
@@ -81,6 +81,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(ThemeSet::class)]
 #[CoversClass(TokenSetService::class)]
 #[CoversClass(RestrictedSetGate::class)]
+#[CoversClass(RestrictedSetsInBundle::class)]
 #[CoversClass(RestrictedSetNotConfirmedException::class)]
 #[CoversClass(GroupThemingValidationException::class)]
 #[CoversClass(AppBrandException::class)]
@@ -88,7 +89,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
-#[UsesClass(ScheduledSwitchException::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;
@@ -271,8 +271,8 @@ class RestrictedSetWiringTest extends TestCase {
 		try {
 			$switches->create('owned', '2026-10-13T09:00:00+00:00', null, 'admin');
 			$this->fail('a switch to the restricted set was planned without a confirmation');
-		} catch (ScheduledSwitchException $e) {
-			$this->assertSame(403, $e->getCode());
+		} catch (RestrictedSetNotConfirmedException $e) {
+			$this->assertSame('owned', $e->getTokenSetId());
 			$this->assertSame([], (new ScheduledSwitchStore($this->config))->all());
 		}
 

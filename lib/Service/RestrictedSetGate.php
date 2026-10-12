@@ -215,12 +215,24 @@ class RestrictedSetGate {
 	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
 	 */
 	public function assertMayApply(string $tokenSetId, ?string $alreadyApplied = null): void {
-		if ($tokenSetId === $alreadyApplied || $this->mayApply(tokenSetId: $tokenSetId) === true) {
-			return;
+		if ($this->refuses(tokenSetId: $tokenSetId, alreadyApplied: $alreadyApplied) === true) {
+			throw new RestrictedSetNotConfirmedException(tokenSetId: $tokenSetId);
 		}
-
-		throw new RestrictedSetNotConfirmedException(tokenSetId: $tokenSetId);
 	}//end assertMayApply()
+
+	/**
+	 * Whether applying a set here is refused: the answer {@see assertMayApply()} throws on.
+	 *
+	 * @param string $tokenSetId The set about to be applied.
+	 * @param string|null $alreadyApplied The set this place holds now, if any.
+	 *
+	 * @return bool True when the set is restricted, not confirmed and not already there.
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+	 */
+	public function refuses(string $tokenSetId, ?string $alreadyApplied = null): bool {
+		return ($tokenSetId !== $alreadyApplied && $this->mayApply(tokenSetId: $tokenSetId) === false);
+	}//end refuses()
 
 	/**
 	 * Store a confirmation. Use {@see TokenSetLicenceService::confirm()}, which
@@ -228,15 +240,15 @@ class RestrictedSetGate {
 	 *
 	 * @param string $tokenSetId The set id.
 	 * @param string $uid The confirming administrator.
-	 * @param string $at When, ISO 8601.
+	 * @param string $confirmedAt When, ISO 8601.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
-	public function storeConfirmation(string $tokenSetId, string $uid, string $at): void {
+	public function storeConfirmation(string $tokenSetId, string $uid, string $confirmedAt): void {
 		$all = $this->confirmations();
-		$all[$tokenSetId] = ['uid' => $uid, 'at' => $at];
+		$all[$tokenSetId] = ['uid' => $uid, 'at' => $confirmedAt];
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, (string)json_encode($all, JSON_UNESCAPED_SLASHES));
 	}//end storeConfirmation()
 

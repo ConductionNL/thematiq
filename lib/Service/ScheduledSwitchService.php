@@ -64,6 +64,17 @@ class ScheduledSwitchService {
 	private const AUDIT_ACTION = 'scheduled_switch_applied';
 
 	/**
+	 * Why a due switch was not applied: its set is gone (0), or its set is
+	 * restricted and nobody confirmed it (1).
+	 *
+	 * @var array<int, string>
+	 */
+	private const START_REFUSALS = [
+		'The token set {set} no longer exists, so the switch was not applied.',
+		'Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.',
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ScheduledSwitchStore $store The stored plans.
@@ -115,6 +126,7 @@ class ScheduledSwitchService {
 	 *
 	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start
 	 *                                  or not in the future, or the window overlaps.
+	 * @throws RestrictedSetNotConfirmedException When the set is restricted and nobody confirmed it.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
@@ -123,14 +135,8 @@ class ScheduledSwitchService {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
 
-		try {
-			$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
-		} catch (RestrictedSetNotConfirmedException $e) {
-			throw new ScheduledSwitchException(
-				message: $this->l10n->t('Confirm first that your organisation may use the house style {set}.', ['set' => $tokenSet]),
-				code: 403
-			);
-		}
+		// A restricted set nobody confirmed is refused here too; the controller answers 403.
+		$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
 
 		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
 
@@ -391,13 +397,7 @@ class ScheduledSwitchService {
 		try {
 			$entry['revertTo'] = $this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
-			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $tokenSet]);
-			if ($e instanceof RestrictedSetNotConfirmedException) {
-				$reason = $this->l10n->t(
-					'Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.',
-					['set' => $tokenSet]
-				);
-			}
+			$reason = $this->l10n->t(self::START_REFUSALS[(int)($e instanceof RestrictedSetNotConfirmedException)], ['set' => $tokenSet]);
 
 			$this->logger->warning(
 				'thematiq: planned switch {id} to {set} failed: {why}',

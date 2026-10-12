@@ -139,8 +139,8 @@ class TokenSetLicenceService {
 			return $existing;
 		}
 
-		$at = $this->time->getDateTime()->format(DateTimeInterface::ATOM);
-		$gate->storeConfirmation(tokenSetId: $tokenSetId, uid: $uid, at: $at);
+		$confirmedAt = $this->time->getDateTime()->format(DateTimeInterface::ATOM);
+		$gate->storeConfirmation(tokenSetId: $tokenSetId, uid: $uid, confirmedAt: $confirmedAt);
 
 		$licence = $gate->licenceOf(tokenSetId: $tokenSetId);
 		$this->audit->log(
@@ -152,7 +152,7 @@ class TokenSetLicenceService {
 			['uid' => $uid, 'set' => $tokenSetId, 'app' => Application::APP_ID]
 		);
 
-		return ['uid' => $uid, 'at' => $at];
+		return ['uid' => $uid, 'at' => $confirmedAt];
 	}//end confirm()
 
 	/**
@@ -208,27 +208,40 @@ class TokenSetLicenceService {
 			$places[] = ['kind' => 'instance', 'id' => ''];
 		}
 
-		foreach ($this->stored(key: 'group_token_sets') as $entry) {
-			if (is_array($entry) === true && ($entry['tokenSet'] ?? null) === $tokenSetId) {
-				$places[] = ['kind' => 'group', 'id' => (string)($entry['group'] ?? '')];
-			}
-		}
-
-		foreach ($this->stored(key: AppBrandService::CONFIG_KEY) as $appId => $brand) {
-			if (is_array($brand) === true && ($brand['tokenSet'] ?? null) === $tokenSetId) {
-				$places[] = ['kind' => 'app', 'id' => (string)$appId];
-			}
+		foreach (['group' => 'group_token_sets', 'app' => AppBrandService::CONFIG_KEY] as $kind => $key) {
+			$places = array_merge($places, $this->placesIn(kind: $kind, entries: $this->stored(key: $key), tokenSetId: $tokenSetId));
 		}
 
 		foreach ($this->switches->all() as $switch) {
 			$open = in_array(($switch['status'] ?? ''), ['planned', 'running'], true);
-			if ($open === true && (($switch['tokenSet'] ?? null) === $tokenSetId || ($switch['revertTo'] ?? null) === $tokenSetId)) {
+			if ($open === true && in_array($tokenSetId, [($switch['tokenSet'] ?? null), ($switch['revertTo'] ?? null)], true) === true) {
 				$places[] = ['kind' => 'switch', 'id' => (string)($switch['id'] ?? '')];
 			}
 		}
 
 		return $places;
 	}//end appliedIn()
+
+	/**
+	 * The entries of a stored mapping that name a set: a group mapping is a
+	 * list whose entries name their group, a brand mapping is keyed by app id.
+	 *
+	 * @param string $kind `group` or `app`.
+	 * @param array<int|string, mixed> $entries The stored mapping.
+	 * @param string $tokenSetId The set id.
+	 *
+	 * @return list<array{kind: string, id: string}> One entry per place.
+	 */
+	private function placesIn(string $kind, array $entries, string $tokenSetId): array {
+		$places = [];
+		foreach ($entries as $key => $entry) {
+			if (is_array($entry) === true && ($entry['tokenSet'] ?? null) === $tokenSetId) {
+				$places[] = ['kind' => $kind, 'id' => (string)($entry['group'] ?? $key)];
+			}
+		}
+
+		return $places;
+	}//end placesIn()
 
 	/**
 	 * Restricted sets that are applied and that nobody confirmed. That only

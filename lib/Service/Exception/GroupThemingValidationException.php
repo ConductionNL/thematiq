@@ -49,7 +49,11 @@ class GroupThemingValidationException extends \InvalidArgumentException {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function __construct(mixed $entry, string $reason, private readonly ?string $restrictedSet = null) {
+	public function __construct(
+		mixed $entry,
+		string $reason,
+		private readonly ?string $restrictedSet = null,
+	) {
 		parent::__construct(message: $reason);
 		$this->entry = $entry;
 	}//end __construct()

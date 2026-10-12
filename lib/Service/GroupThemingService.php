@@ -22,7 +22,6 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
-use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -263,9 +262,7 @@ class GroupThemingService {
 			throw new GroupThemingValidationException(entry: $entry, reason: sprintf('Token set "%s" is not available.', $tokenSet));
 		}
 
-		try {
-			$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: $this->storedSetOf(group: $group));
-		} catch (RestrictedSetNotConfirmedException $e) {
+		if ($this->tokenSetService->licenceGate()->refuses(tokenSetId: $tokenSet, alreadyApplied: $this->storedSetOf(group: $group)) === true) {
 			throw new GroupThemingValidationException(
 				entry: $entry,
 				reason: sprintf('Token set "%s" is restricted to its owner and has not been confirmed.', $tokenSet),

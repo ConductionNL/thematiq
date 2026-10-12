@@ -30,7 +30,6 @@ use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
-use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\RestrictedSetGate;
@@ -101,7 +100,6 @@ use ReflectionProperty;
 #[UsesClass(RestrictedSetNotConfirmedException::class)]
 #[UsesClass(RestrictedSetInUseException::class)]
 #[UsesClass(GroupThemingValidationException::class)]
-#[UsesClass(ScheduledSwitchException::class)]
 #[UsesClass(AppBrandException::class)]
 #[UsesClass(Application::class)]
 class RestrictedSetRequestPathTest extends TestCase {

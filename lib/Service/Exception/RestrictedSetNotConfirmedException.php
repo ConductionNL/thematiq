@@ -43,7 +43,9 @@ class RestrictedSetNotConfirmedException extends \InvalidArgumentException {
 	 *
 	 * @param string $tokenSetId The restricted set that was refused.
 	 */
-	public function __construct(private readonly string $tokenSetId) {
+	public function __construct(
+		private readonly string $tokenSetId,
+	) {
 		parent::__construct(
 			message: sprintf('Token set "%s" is restricted to its owner and has not been confirmed for this instance.', $tokenSetId),
 			code: 403

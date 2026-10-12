@@ -66,6 +66,8 @@ use Psr\Log\LoggerInterface;
  */
 class TokenSetService {
 
+	use ProvidesLicenceGate;
+
 	/**
 	 * TTL (seconds) for a shipped set's cached warnings. The key already
 	 * changes with the app version and the set's own CSS; the TTL bounds how
@@ -134,13 +136,6 @@ class TokenSetService {
 	private ICache $warningsCache;
 
 	/**
-	 * The licence gate, built on first use.
-	 *
-	 * @var RestrictedSetGate|null
-	 */
-	private ?RestrictedSetGate $licenceGate = null;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager for resolving paths.
@@ -187,6 +182,17 @@ class TokenSetService {
 	public function getAppPath(): string {
 		return $this->appManager->getAppPath('thematiq');
 	}//end getAppPath()
+
+	/**
+	 * The config service the licence gate keeps its confirmations in.
+	 *
+	 * @return IConfig The config.
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 */
+	protected function licenceConfig(): IConfig {
+		return $this->config;
+	}//end licenceConfig()
 
 	/**
 	 * Get all available token sets with metadata.
@@ -364,23 +370,6 @@ class TokenSetService {
 
 		return $tokenSet;
 	}//end applyProvenance()
-
-	/**
-	 * The gate that knows each shipped set's licence and whether a restricted
-	 * set is confirmed. Every service that applies a set holds this service,
-	 * so each of them asks here before it writes.
-	 *
-	 * @return RestrictedSetGate The gate, one per request.
-	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
-	 */
-	public function licenceGate(): RestrictedSetGate {
-		if ($this->licenceGate === null) {
-			$this->licenceGate = new RestrictedSetGate(config: $this->config, appPath: $this->getAppPath());
-		}
-
-		return $this->licenceGate;
-	}//end licenceGate()
 
 	/**
 	 * Resolve the merged metadata for one discovered id, logging (and

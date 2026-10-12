@@ -98,14 +98,14 @@ class TokenSetLicenceController extends Controller {
 	 * administrator's, so a request without it confirms nothing.
 	 *
 	 * @param string $id The token set id.
-	 * @param bool $confirmed The administrator's statement.
+	 * @param mixed $confirmed The administrator's statement; only the JSON value `true` counts.
 	 *
 	 * @return JSONResponse The stored confirmation; 400 without the statement, 404 for a set that is not restricted.
 	 *
 	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
-	public function confirm(string $id, bool $confirmed = false): JSONResponse {
+	public function confirm(string $id, mixed $confirmed = null): JSONResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 		if ($confirmed !== true || $uid === '') {
 			return new JSONResponse(['error' => 'confirmation_required'], 400);

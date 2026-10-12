@@ -34,7 +34,10 @@ class RestrictedSetInUseException extends \RuntimeException {
 	 * @param string $tokenSetId The set whose confirmation was to be withdrawn.
 	 * @param list<array{kind: string, id: string}> $appliedIn Where the set is applied.
 	 */
-	public function __construct(string $tokenSetId, private readonly array $appliedIn) {
+	public function __construct(
+		string $tokenSetId,
+		private readonly array $appliedIn,
+	) {
 		parent::__construct(message: sprintf('Token set "%s" is still applied.', $tokenSetId), code: 409);
 	}//end __construct()
 
