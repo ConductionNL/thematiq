@@ -272,6 +272,10 @@
 		"#e7f9f4": "role-layer success surface"
 	},
 	"upstreamOverrides": {
+		"--tilburg-interaction-color": {
+			"value": "#2D4FA0",
+			"reason": "the role layer's link blue maps to brand-400, the hover step, so the buttons wore #233F82 at rest; they are drawn in the primary #2D4FA0, as example-gemeente since 10 Oct (token-set-coverage-next-waves 7.1). Hover and active keep #233F82"
+		},
 		"--tilburg-typography-font-family-primary": {
 			"value": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
 			"reason": "the role layer names Avenir, which this app does not ship; Fira Sans is bundled"

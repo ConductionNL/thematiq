@@ -97,6 +97,7 @@
 	--vng-color-extra-limegreen: #7DBE3C;
 	--vng-color-extra-purple: #6E3A91;
 	--vng-color-extra-yellow: #FFD23F;
+	--utrecht-document-background-color: var(--tilburg-color-white);
 	--tilburg-erm-font-size: 16px;
 	--ams-pagination-button-border-color: transparent;
 	--ams-pagination-button-background-color: transparent;
@@ -560,7 +561,6 @@
 	--utrecht-document-inverse-color: var(--tilburg-color-white);
 	--utrecht-document-inverse-background-color: var(--tilburg-color-gray-950);
 	--utrecht-document-color: var(--tilburg-color-black-txt);
-	--utrecht-document-background-color: var(--tilburg-color-white);
 	--tilburg-status-badge-background-color: var(--tilburg-color-pink-100);
 	--tilburg-status-badge-padding-block: var(--tilburg-space-block-flea);
 	--tilburg-status-badge-padding-inline: var(--tilburg-space-inline-ant);
@@ -571,7 +571,7 @@
 	--tilburg-line-border-color: #6E6257;
 	--tilburg-interaction-hover-color: #8A2D0E;
 	--tilburg-interaction-active-color: #8A2D0E;
-	--tilburg-interaction-color: #8A2D0E;
+	--tilburg-interaction-color: #B03A12;
 	--tilburg-icon-toptask-size: var(--tilburg-size-icon-4xl);
 	--tilburg-icon-functional-size: var(--tilburg-size-icon-md);
 	--tilburg-pointer-target-min-size: var(--tilburg-size-md);
@@ -769,7 +769,7 @@
 	--utrecht-link-focus-background-color: transparent;
 	--utrecht-link-active-color: var(--tilburg-interaction-active-color);
 	--utrecht-link-text-decoration-color: var(--tilburg-interaction-color);
-	--utrecht-link-color: var(--tilburg-interaction-color);
+	--utrecht-link-color: var(--nldesign-color-link);
 	--utrecht-link-line-height: var(--tilburg-document-line-height);
 	--utrecht-heading-6-font-weight: var(--tilburg-heading-font-weight);
 	--utrecht-heading-6-font-family: var(--tilburg-heading-font-family);

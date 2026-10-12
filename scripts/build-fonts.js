@@ -324,7 +324,7 @@ const FAMILIES = [
 		copyright:
 			'2017 IBM Corp. with Reserved Font Name "Plex" (https://github.com/IBM/plex)',
 		upstream: '@fontsource/ibm-plex-mono 5.3.0',
-		note: 'Codes such as crebo numbers and exam codes in the esdoornveen set. The 400 file keeps the name css/fonts-conduction.css has always linked; it is byte-identical to the package file ibm-plex-mono-latin-400-normal.woff2.',
+		note: 'Codes such as crebo numbers and exam codes in the esdoornveen set. The 400 file keeps the name it had in css/fonts-conduction.css, a stylesheet retired on 12 Oct 2026; it is byte-identical to the package file ibm-plex-mono-latin-400-normal.woff2.',
 		faces: [
 			{
 				weight: 400,
@@ -557,7 +557,7 @@ const FAMILIES = [
  *
  * Empty since IBM Plex Mono moved into FAMILIES for the esdoornveen set. It
  * used to sit here because only `css/fonts-conduction.css`, a layer no design
- * system links, declared it: generating the notice from the emitting table
+ * system linked (retired on 12 Oct 2026), declared it: generating the notice from the emitting table
  * alone had dropped it from `css/fonts/OFL.txt`. Keep the table for the next
  * family in that position.
  */
