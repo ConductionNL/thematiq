@@ -97,6 +97,8 @@ async function load(withTransforms = false) {
 				<input id="nldesign-brand-name" />
 				<input type="color" id="nldesign-brand-primary" value="#154273" />
 				<input type="color" id="nldesign-brand-background" value="#ffffff" />
+				<input type="checkbox" id="nldesign-brand-action-enabled" />
+				<input type="color" id="nldesign-brand-action" value="#1f883d" disabled />
 				<input type="file" id="nldesign-brand-logo" hidden />
 				<button type="button" id="nldesign-brand-logo-btn">Choose logo</button>
 				<span id="nldesign-brand-logo-name">No file chosen</span>
@@ -239,9 +241,51 @@ describe('admin.js simple brand form', () => {
 		expect(post.body.get('name')).toBe('Gemeente Voorbeeld')
 		expect(post.body.get('primary')).toBe('#c8102e')
 		expect(post.body.get('background')).toBe('#ffffff')
+		expect(post.body.has('action')).toBe(false)
 		expect(
 			document.getElementById('nldesign-brand-result').textContent,
 		).toContain('already exists')
+	})
+
+	it('gives the main button its own colour only when the box is ticked', async () => {
+		await load()
+		const toggle = document.getElementById('nldesign-brand-action-enabled')
+		const action = document.getElementById('nldesign-brand-action')
+		const sample = document.getElementById('nldesign-brand-sample')
+		const readout = document.getElementById('nldesign-brand-contrast')
+		setPrimary('#1a67a3')
+
+		expect(action.disabled).toBe(true)
+		expect(sample.style.background).toBe(rgb('#1a67a3'))
+		expect(readout.textContent).not.toContain('Text on the main button')
+
+		toggle.checked = true
+		toggle.dispatchEvent(new Event('change'))
+
+		const expected = brandForm.derive(
+			fixture.inputs,
+			'#1a67a3',
+			'#ffffff',
+			'#1f883d',
+		).declarations
+		expect(action.disabled).toBe(false)
+		expect(sample.style.background).toBe(rgb('#1f883d'))
+		expect(
+			document.getElementById('nldesign-brand-sample-hover').style.background,
+		).toBe(rgb(expected['--nldesign-color-action-hover']))
+		expect(readout.textContent).toContain('Text on the main button')
+
+		document.getElementById('nldesign-brand-name').value = 'Groene knop'
+		document.getElementById('nldesign-brand-save').click()
+		await flush()
+		const post = calls.find((c) => c.method === 'POST')
+		expect(post.body.get('primary')).toBe('#1a67a3')
+		expect(post.body.get('action')).toBe('#1f883d')
+
+		toggle.checked = false
+		toggle.dispatchEvent(new Event('change'))
+		expect(action.disabled).toBe(true)
+		expect(sample.style.background).toBe(rgb('#1a67a3'))
 	})
 })
 
