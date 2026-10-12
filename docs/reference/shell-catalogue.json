@@ -1,0 +1,2684 @@
+{
+    "version": 1,
+    "generated_from": "sets:f5983cc3ce3b2b62",
+    "sets": [
+        {
+            "id": "amsterdam",
+            "name": "Gemeente Amsterdam",
+            "tokens": {
+                "primary": "#004699",
+                "primary-deep": "#003677",
+                "primary-light": "#e8f0f8",
+                "action": "#004699",
+                "action-deep": "#003677",
+                "link": "#004699",
+                "accent": "#ec0000",
+                "ink": "#202020",
+                "text": "#4b4b4b",
+                "muted": "#767676",
+                "line": "#d1d1d1",
+                "soft": "#e6e6e6",
+                "ground": "#ffffff",
+                "chip": "#f5f5f5",
+                "field": "#767676",
+                "radius": "0px",
+                "radius-lg": "0px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/amsterdam.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "bodegraven-reeuwijk",
+            "name": "Gemeente Bodegraven-Reeuwijk",
+            "tokens": {
+                "primary": "#0066cc",
+                "primary-deep": "#005cb8",
+                "primary-light": "#e6f0fa",
+                "action": "#0066cc",
+                "action-deep": "#005cb8",
+                "link": "#0066cc",
+                "accent": "#d70d0d",
+                "ink": "#1d1d1b",
+                "text": "#282827",
+                "muted": "#333333",
+                "line": "#0066cc",
+                "soft": "#ffffff",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#0066cc",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Open Sans, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "borne",
+            "name": "Gemeente Borne",
+            "tokens": {
+                "primary": "#003352",
+                "primary-deep": "#002e4a",
+                "primary-light": "#e6ebee",
+                "action": "#003352",
+                "action-deep": "#002e4a",
+                "link": "#002e52",
+                "accent": "#d70d0d",
+                "ink": "#002e52",
+                "text": "#001729",
+                "muted": "#000000",
+                "line": "#e6e6e6",
+                "soft": "#e6e6e6",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#ffffff",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "buren",
+            "name": "Gemeente Buren",
+            "tokens": {
+                "primary": "#d41422",
+                "primary-deep": "#bf121f",
+                "primary-light": "#fbe8e9",
+                "action": "#d41422",
+                "action-deep": "#bf121f",
+                "link": "#d41422",
+                "accent": "#d70d0d",
+                "ink": "#333333",
+                "text": "#545454",
+                "muted": "#757575",
+                "line": "#ced4da",
+                "soft": "#f2f2f2",
+                "ground": "#ffffff",
+                "chip": "#f2f2f2",
+                "field": "#ced4da",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Roboto, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "conduction",
+            "name": "Conduction",
+            "tokens": {
+                "primary": "#21468B",
+                "primary-deep": "#173161",
+                "primary-light": "#EEF2F8",
+                "action": "#21468B",
+                "action-deep": "#173161",
+                "link": "#21468B",
+                "accent": "#bf1a12",
+                "ink": "#333333",
+                "text": "#404e6c",
+                "muted": "#4D69A4",
+                "line": "#DCE3F0",
+                "soft": "#EEF2F8",
+                "ground": "#ffffff",
+                "chip": "#F7F9FC",
+                "field": "#8095BD",
+                "radius": "8px",
+                "radius-lg": "16px",
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "conduction-new",
+            "name": "Conduction 2026",
+            "tokens": {
+                "primary": "#21468B",
+                "primary-deep": "#1B3A75",
+                "primary-light": "#EEF2F8",
+                "action": "#21468B",
+                "action-deep": "#1B3A75",
+                "link": "#21468B",
+                "accent": "#AE1C28",
+                "ink": "#21468B",
+                "text": "#375898",
+                "muted": "#4D69A4",
+                "line": "#B6C2DD",
+                "soft": "#DCE3F0",
+                "ground": "#FFFFFF",
+                "chip": "#EEF2F8",
+                "field": "#21468B",
+                "radius": "6px",
+                "radius-lg": "10px",
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "cunningham",
+            "name": "Cunningham (blue base)",
+            "tokens": {
+                "primary": "#1a509f",
+                "primary-deep": "#203c63",
+                "primary-light": "#eaf1fb",
+                "action": "#1a509f",
+                "action-deep": "#203c63",
+                "link": "#1a509f",
+                "accent": "#d80000",
+                "ink": "#1b1c1d",
+                "text": "#484a4d",
+                "muted": "#74777c",
+                "line": "#c4c7cb",
+                "soft": "#e1e2e5",
+                "ground": "#ffffff",
+                "chip": "#f0f1f2",
+                "field": "#74777c",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Marianne, Inter, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "demodam",
+            "name": "Demodam",
+            "tokens": {
+                "primary": "#027db5",
+                "primary-deep": "#01587f",
+                "primary-light": "#e6f6fe",
+                "action": "#027db5",
+                "action-deep": "#01587f",
+                "link": "#17252A",
+                "accent": "#d70d0d",
+                "ink": "#212121",
+                "text": "#212121",
+                "muted": "#212121",
+                "line": "#dddddd",
+                "soft": "#ffffff",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#17252A",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Lato\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "denhaag",
+            "name": "Gemeente Den Haag",
+            "tokens": {
+                "primary": "#238541",
+                "primary-deep": "#1e6c35",
+                "primary-light": "#d5e7d5",
+                "action": "#238541",
+                "action-deep": "#1e6c35",
+                "link": "#1260a1",
+                "accent": "#a30500",
+                "ink": "#2e2e2e",
+                "text": "#3c3c3c",
+                "muted": "#4a4a4a",
+                "line": "#d1d1d1",
+                "soft": "#f2f2f2",
+                "ground": "#ffffff",
+                "chip": "#f9f8f6",
+                "field": "#7a7a7a",
+                "radius": "3px",
+                "radius-lg": "3px",
+                "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/denhaag.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "dinkelland",
+            "name": "Gemeente Dinkelland",
+            "tokens": {
+                "primary": "#006cb9",
+                "primary-deep": "#004c82",
+                "primary-light": "#fcfdfe",
+                "action": "#006cb9",
+                "action-deep": "#004c82",
+                "link": "#006cb9",
+                "accent": "#dc3545",
+                "ink": "#333333",
+                "text": "#555555",
+                "muted": "#767676",
+                "line": "#767676",
+                "soft": "#f2f4f7",
+                "ground": "#ffffff",
+                "chip": "#edeff2",
+                "field": "#767676",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Lato\", Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/dinkelland.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "drechterland",
+            "name": "Gemeente Drechterland",
+            "tokens": {
+                "primary": "#1b6e8c",
+                "primary-deep": "#18637e",
+                "primary-light": "#e8f1f4",
+                "action": "#1b6e8c",
+                "action-deep": "#18637e",
+                "link": "#1b7298",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#111313",
+                "muted": "#222626",
+                "line": "#e0e0e0",
+                "soft": "#1e7da7",
+                "ground": "#ffffff",
+                "chip": "#fafafa",
+                "field": "#e0e0e0",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+            },
+            "logo": {
+                "file": "img/logos/drechterland.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "duiven",
+            "name": "Gemeente Duiven",
+            "tokens": {
+                "primary": "#1d5b8f",
+                "primary-deep": "#1a5281",
+                "primary-light": "#e8eff4",
+                "action": "#1d5b8f",
+                "action-deep": "#1a5281",
+                "link": "#1d73b4",
+                "accent": "#d70d0d",
+                "ink": "#003061",
+                "text": "#3b536b",
+                "muted": "#757575",
+                "line": "#1d73b4",
+                "soft": "#f9f0ec",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#a6abb0",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "duo",
+            "name": "Duo",
+            "tokens": {
+                "primary": "#004fa3",
+                "primary-deep": "#004793",
+                "primary-light": "#e6edf6",
+                "action": "#004fa3",
+                "action-deep": "#004793",
+                "link": "#007bc7",
+                "accent": "#d70d0d",
+                "ink": "#2b2b2b",
+                "text": "#2b2b2b",
+                "muted": "#2b2b2b",
+                "line": "#e6e6e6",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#2b2b2b",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "enkhuizen",
+            "name": "Gemeente Enkhuizen",
+            "tokens": {
+                "primary": "#0055ad",
+                "primary-deep": "#004d9c",
+                "primary-light": "#e6eef7",
+                "action": "#0055ad",
+                "action-deep": "#004d9c",
+                "link": "#0062ad",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#e0e0e0",
+                "soft": "#0076d1",
+                "ground": "#ffffff",
+                "chip": "#f0f0f0",
+                "field": "#e0e0e0",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "enschede",
+            "name": "Gemeente Enschede",
+            "tokens": {
+                "primary": "#e20d18",
+                "primary-deep": "#9e0911",
+                "primary-light": "#fce7e8",
+                "action": "#e20d18",
+                "action-deep": "#9e0911",
+                "link": "#757575",
+                "accent": "#d70d0d",
+                "ink": "#1B1B1B",
+                "text": "#3f3f3f",
+                "muted": "#636363",
+                "line": "#868686",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#f4f7fa",
+                "field": "#7C7C7C",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "IBM Plex Sans, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "epe",
+            "name": "Gemeente Epe",
+            "tokens": {
+                "primary": "#00549e",
+                "primary-deep": "#004c8e",
+                "primary-light": "#e6eef5",
+                "action": "#00549e",
+                "action-deep": "#004c8e",
+                "link": "#00549e",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#3b3b3b",
+                "muted": "#757575",
+                "line": "#d1d1d1",
+                "soft": "#f5f5f5",
+                "ground": "#ffffff",
+                "chip": "#f7f7f7",
+                "field": "#757575",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/epe.svg",
+                "inverse_file": "img/logos/epe-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "esdoornveen",
+            "name": "Esdoornveen, mbo college",
+            "tokens": {
+                "primary": "#5B2E91",
+                "primary-deep": "#43206E",
+                "primary-light": "#F0EAF7",
+                "action": "#5B2E91",
+                "action-deep": "#43206E",
+                "link": "#5B2E91",
+                "accent": "#C2255C",
+                "ink": "#1B1C1D",
+                "text": "#3d3f43",
+                "muted": "#5E6168",
+                "line": "#E4E6EA",
+                "soft": "#EDEFF2",
+                "ground": "#F5F6F8",
+                "chip": "#F0F1F3",
+                "field": "#8A929E",
+                "radius": "8px",
+                "radius-lg": "12px",
+                "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/esdoornveen.svg",
+                "inverse_file": "img/logos/esdoornveen-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "example-basisschool",
+            "name": "(EXAMPLE) Basisschool",
+            "tokens": {
+                "primary": "#B03A12",
+                "primary-deep": "#8A2D0E",
+                "primary-light": "#FFF1E6",
+                "action": "#B03A12",
+                "action-deep": "#8A2D0E",
+                "link": "#8A2D0E",
+                "accent": "#C62828",
+                "ink": "#2B2520",
+                "text": "#433b34",
+                "muted": "#5A5047",
+                "line": "#D8CCBE",
+                "soft": "#F5F0EA",
+                "ground": "#ffffff",
+                "chip": "#FBF8F4",
+                "field": "#8F8173",
+                "radius": "8px",
+                "radius-lg": "16px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/example-basisschool.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "example-college",
+            "name": "(EXAMPLE) College",
+            "tokens": {
+                "primary": "#7A1F6E",
+                "primary-deep": "#5E1755",
+                "primary-light": "#F7E9F4",
+                "action": "#7A1F6E",
+                "action-deep": "#5E1755",
+                "link": "#7A1F6E",
+                "accent": "#C62828",
+                "ink": "#262124",
+                "text": "#3e373c",
+                "muted": "#554D53",
+                "line": "#D0CACE",
+                "soft": "#F2F0F2",
+                "ground": "#ffffff",
+                "chip": "#F9F8F9",
+                "field": "#8E858B",
+                "radius": "4px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/example-college.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "example-gemeente",
+            "name": "(EXAMPLE) Gemeente",
+            "tokens": {
+                "primary": "#12506B",
+                "primary-deep": "#0B3648",
+                "primary-light": "#E7F1F5",
+                "action": "#12506B",
+                "action-deep": "#0B3648",
+                "link": "#12506B",
+                "accent": "#9C231C",
+                "ink": "#1B1A18",
+                "text": "#383632",
+                "muted": "#55514C",
+                "line": "#D9D4CE",
+                "soft": "#EEF1F3",
+                "ground": "#ffffff",
+                "chip": "#F5F7F8",
+                "field": "#8A8580",
+                "radius": "10px",
+                "radius-lg": "14px",
+                "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/example-gemeente.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "example-opleider",
+            "name": "(EXAMPLE) Opleider",
+            "tokens": {
+                "primary": "#0E4D5C",
+                "primary-deep": "#0A3A46",
+                "primary-light": "#E6F1F3",
+                "action": "#0E4D5C",
+                "action-deep": "#0A3A46",
+                "link": "#0E4D5C",
+                "accent": "#C62828",
+                "ink": "#1F272B",
+                "text": "#353e44",
+                "muted": "#4A555C",
+                "line": "#C9D1D4",
+                "soft": "#F0F3F4",
+                "ground": "#ffffff",
+                "chip": "#F8FAFA",
+                "field": "#84909A",
+                "radius": "2px",
+                "radius-lg": "4px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/example-opleider.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "example-voortgezet",
+            "name": "(EXAMPLE) Voortgezet onderwijs",
+            "tokens": {
+                "primary": "#2D4FA0",
+                "primary-deep": "#233F82",
+                "primary-light": "#EAF0FB",
+                "action": "#2D4FA0",
+                "action-deep": "#233F82",
+                "link": "#2D4FA0",
+                "accent": "#C62828",
+                "ink": "#23272F",
+                "text": "#383e49",
+                "muted": "#4C5463",
+                "line": "#CBD2DE",
+                "soft": "#F1F3F7",
+                "ground": "#ffffff",
+                "chip": "#F8F9FB",
+                "field": "#8790A3",
+                "radius": "6px",
+                "radius-lg": "12px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/example-voortgezet.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "frankendesk",
+            "name": "La Frankendesk",
+            "tokens": {
+                "primary": "#4844ad",
+                "primary-deep": "#36347d",
+                "primary-light": "#eef1fa",
+                "action": "#4844ad",
+                "action-deep": "#36347d",
+                "link": "#4844ad",
+                "accent": "#d80000",
+                "ink": "#1b1b23",
+                "text": "#484857",
+                "muted": "#75758a",
+                "line": "#c5c6d5",
+                "soft": "#e2e2ea",
+                "ground": "#ffffff",
+                "chip": "#f0f0f3",
+                "field": "#75758a",
+                "radius": "4px",
+                "radius-lg": "4px",
+                "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/frankendesk.svg",
+                "inverse_file": "img/logos/frankendesk-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"Conduction's own brand\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "groningen",
+            "name": "Gemeente Groningen",
+            "tokens": {
+                "primary": "#154273",
+                "primary-deep": "#133b68",
+                "primary-light": "#e8ecf1",
+                "action": "#154273",
+                "action-deep": "#133b68",
+                "link": "#154273",
+                "accent": "#d70d0d",
+                "ink": "#333333",
+                "text": "#4e4e4e",
+                "muted": "#696969",
+                "line": "#b4b4b4",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#e8e9ea",
+                "field": "#696969",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "haarlem",
+            "name": "Gemeente Haarlem",
+            "tokens": {
+                "primary": "#1457a3",
+                "primary-deep": "#124e93",
+                "primary-light": "#e8eef6",
+                "action": "#1457a3",
+                "action-deep": "#124e93",
+                "link": "#2E2E33",
+                "accent": "#d70d0d",
+                "ink": "#2E2E33",
+                "text": "#2e2e33",
+                "muted": "#2E2E33",
+                "line": "#2E2E33",
+                "soft": "#f4f4f4",
+                "ground": "#ffffff",
+                "chip": "#f4f4f4",
+                "field": "#626266",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "haarlemmermeer",
+            "name": "Gemeente Haarlemmermeer",
+            "tokens": {
+                "primary": "#068482",
+                "primary-deep": "#05807e",
+                "primary-light": "#e6f4f4",
+                "action": "#068482",
+                "action-deep": "#05807e",
+                "link": "#07828d",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#3b3b3b",
+                "muted": "#757575",
+                "line": "#000000",
+                "soft": "#ffffff",
+                "ground": "#ffffff",
+                "chip": "#f2f2f2",
+                "field": "#07828d",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Calibri,Verdana,sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "hoeksche-waard",
+            "name": "Gemeente Hoeksche Waard",
+            "tokens": {
+                "primary": "#2e8721",
+                "primary-deep": "#3F10BC",
+                "primary-light": "#ebf7ea",
+                "action": "#2e8721",
+                "action-deep": "#3F10BC",
+                "link": "#2e8721",
+                "accent": "#d70d0d",
+                "ink": "#0A2750",
+                "text": "#334b6d",
+                "muted": "#5B6E8A",
+                "line": "#7A8AA0",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#fcf1f6",
+                "field": "#7A8AA0",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "hoog-contrast",
+            "name": "Hoog contrast (WCAG AAA)",
+            "tokens": {
+                "primary": "#000000",
+                "primary-deep": "#000000",
+                "primary-light": "#ffffff",
+                "action": "#000000",
+                "action-deep": "#000000",
+                "link": "#000000",
+                "accent": "#b30000",
+                "ink": "#000000",
+                "text": "#0d0d0d",
+                "muted": "#1a1a1a",
+                "line": "#000000",
+                "soft": "#cccccc",
+                "ground": "#ffffff",
+                "chip": "#e6e6e6",
+                "field": "#000000",
+                "radius": "0px",
+                "radius-lg": "0px",
+                "font-family": "'Fira Sans', sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "hoorn",
+            "name": "Gemeente Hoorn",
+            "tokens": {
+                "primary": "#09366c",
+                "primary-deep": "#083161",
+                "primary-light": "#e6ebf0",
+                "action": "#09366c",
+                "action-deep": "#083161",
+                "link": "#266ea1",
+                "accent": "#d70d0d",
+                "ink": "#353b40",
+                "text": "#54595c",
+                "muted": "#737678",
+                "line": "#d1d1d1",
+                "soft": "#e7e8e9",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#515148",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Clear Sans\", sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/hoorn.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "horstaandemaas",
+            "name": "Gemeente Horst aan de Maas",
+            "tokens": {
+                "primary": "#125ea4",
+                "primary-deep": "#105594",
+                "primary-light": "#e7eff6",
+                "action": "#125ea4",
+                "action-deep": "#105594",
+                "link": "#126eba",
+                "accent": "#d70d0d",
+                "ink": "#302c27",
+                "text": "#302c27",
+                "muted": "#302c27",
+                "line": "#302c27",
+                "soft": "#e6e6e6",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#302c27",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "DIN, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "lasuite",
+            "name": "La Suite numérique",
+            "tokens": {
+                "primary": "#4844ad",
+                "primary-deep": "#36347d",
+                "primary-light": "#eef1fa",
+                "action": "#4844ad",
+                "action-deep": "#36347d",
+                "link": "#4844ad",
+                "accent": "#d80000",
+                "ink": "#1b1b23",
+                "text": "#484857",
+                "muted": "#75758a",
+                "line": "#c5c6d5",
+                "soft": "#e2e2ea",
+                "ground": "#ffffff",
+                "chip": "#f0f0f3",
+                "field": "#75758a",
+                "radius": "4px",
+                "radius-lg": "4px",
+                "font-family": "Marianne, Inter, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "leiden",
+            "name": "Gemeente Leiden",
+            "tokens": {
+                "primary": "#D62410",
+                "primary-deep": "#A91C09",
+                "primary-light": "#fbe9e7",
+                "action": "#D62410",
+                "action-deep": "#A91C09",
+                "link": "#035989",
+                "accent": "#d70d0d",
+                "ink": "#0D1921",
+                "text": "#343e45",
+                "muted": "#5A6268",
+                "line": "#80878C",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#f4f7fa",
+                "field": "#5A6268",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Open Sans\", sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/leiden.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "leidschendam-voorburg",
+            "name": "Gemeente Leidschendam Voorburg",
+            "tokens": {
+                "primary": "#1e1b54",
+                "primary-deep": "#1b184c",
+                "primary-light": "#e9e8ee",
+                "action": "#1e1b54",
+                "action-deep": "#1b184c",
+                "link": "#1a194d",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#dddde4",
+                "soft": "#6b69ce",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#dddde4",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Open Sans, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "losser",
+            "name": "Gemeente Losser",
+            "tokens": {
+                "primary": "#2065A4",
+                "primary-deep": "#164773",
+                "primary-light": "#e9f0f6",
+                "action": "#2065A4",
+                "action-deep": "#164773",
+                "link": "#757575",
+                "accent": "#d70d0d",
+                "ink": "#060606",
+                "text": "#2a2a2a",
+                "muted": "#4E4E4E",
+                "line": "#717171",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#f4f7fa",
+                "field": "#666666",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "IBM Plex Sans, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "nextcloud",
+            "name": "Nextcloud (Base)",
+            "tokens": {
+                "primary": "#00679e",
+                "primary-deep": "#00486f",
+                "primary-light": "#e5eff5",
+                "action": "#00679e",
+                "action-deep": "#00486f",
+                "link": "#00679e",
+                "accent": "#d32f2f",
+                "ink": "#222222",
+                "text": "#4c4c4c",
+                "muted": "#767676",
+                "line": "#d9d9d9",
+                "soft": "#ededed",
+                "ground": "#ffffff",
+                "chip": "#f5f5f5",
+                "field": "#767676",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "nijmegen",
+            "name": "Gemeente Nijmegen",
+            "tokens": {
+                "primary": "#157c68",
+                "primary-deep": "#4a13db",
+                "primary-light": "#eee8ff",
+                "action": "#157c68",
+                "action-deep": "#4a13db",
+                "link": "#5616ff",
+                "accent": "#d70d0d",
+                "ink": "#223c61",
+                "text": "#3d5475",
+                "muted": "#586c88",
+                "line": "#7a8aa0",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#f5f6f8",
+                "field": "#7a8aa0",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/nijmegen.svg",
+                "inverse_file": "img/logos/nijmegen-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "noaberkracht",
+            "name": "Noaberkracht",
+            "tokens": {
+                "primary": "#947200",
+                "primary-deep": "#685000",
+                "primary-light": "#fef8e6",
+                "action": "#947200",
+                "action-deep": "#685000",
+                "link": "#003790",
+                "accent": "#dc3545",
+                "ink": "#003790",
+                "text": "#3b5783",
+                "muted": "#767676",
+                "line": "#003790",
+                "soft": "#f5f5f5",
+                "ground": "#ffffff",
+                "chip": "#f7f7f7",
+                "field": "#003790",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+            },
+            "logo": {
+                "file": "img/logos/noaberkracht.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "noordoostpolder",
+            "name": "Gemeente Noordoostpolder",
+            "tokens": {
+                "primary": "#348603",
+                "primary-deep": "#328203",
+                "primary-light": "#ebf4e6",
+                "action": "#348603",
+                "action-deep": "#328203",
+                "link": "#dd276a",
+                "accent": "#d70d0d",
+                "ink": "#525151",
+                "text": "#525151",
+                "muted": "#525151",
+                "line": "#525151",
+                "soft": "#7fdd06",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#b3b3b3",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Roboto\", \"Arial\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "noordwijk",
+            "name": "Gemeente Noordwijk",
+            "tokens": {
+                "primary": "#2c2276",
+                "primary-deep": "#1f1853",
+                "primary-light": "#eae9f1",
+                "action": "#2c2276",
+                "action-deep": "#1f1853",
+                "link": "#2c2276",
+                "accent": "#dc3545",
+                "ink": "#000000",
+                "text": "#282828",
+                "muted": "#4f4f4f",
+                "line": "#8c8c8c",
+                "soft": "#7366d3",
+                "ground": "#ffffff",
+                "chip": "#6096c7",
+                "field": "#8c8c8c",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/noordwijk.svg",
+                "inverse_file": "img/logos/noordwijk-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "nora",
+            "name": "Nederlandse Overheid Referentie Architectuur (NORA)",
+            "tokens": {
+                "primary": "#431560",
+                "primary-deep": "#3c1356",
+                "primary-light": "#ece8ef",
+                "action": "#431560",
+                "action-deep": "#3c1356",
+                "link": "#0049E5",
+                "accent": "#d70d0d",
+                "ink": "#00243A",
+                "text": "#394d59",
+                "muted": "#727678",
+                "line": "#d3d5d5",
+                "soft": "#008ee3",
+                "ground": "#ffffff",
+                "chip": "#f7f7f7",
+                "field": "#8e9193",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Source Sans 3\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "opencatalogi",
+            "name": "OpenCatalogi",
+            "tokens": {
+                "primary": "#00811f",
+                "primary-deep": "#006e32",
+                "primary-light": "#e1efe2",
+                "action": "#00811f",
+                "action-deep": "#006e32",
+                "link": "#00811f",
+                "accent": "#d70d0d",
+                "ink": "#404b4f",
+                "text": "#536065",
+                "muted": "#65757b",
+                "line": "#cad6da",
+                "soft": "#e4eef1",
+                "ground": "#ffffff",
+                "chip": "#eff4f6",
+                "field": "#7c8b90",
+                "radius": "0px",
+                "radius-lg": "0px",
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/opencatalogi.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "provincie-zuid-holland",
+            "name": "Provincie Zuid-Holland",
+            "tokens": {
+                "primary": "#c42035",
+                "primary-deep": "#16113b",
+                "primary-light": "#eae9f0",
+                "action": "#c42035",
+                "action-deep": "#16113b",
+                "link": "#00804d",
+                "accent": "#d70d0d",
+                "ink": "#16113b",
+                "text": "#39374c",
+                "muted": "#5c5c5c",
+                "line": "#bfbfbf",
+                "soft": "#f5f5f5",
+                "ground": "#ffffff",
+                "chip": "#f5f5f5",
+                "field": "#89869c",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/provincie-zuid-holland.svg",
+                "inverse_file": "img/logos/provincie-zuid-holland-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "purmerend",
+            "name": "NL Design System Purmerend Thema",
+            "tokens": {
+                "primary": "#00856A",
+                "primary-deep": "#00365F",
+                "primary-light": "#e6f3f0",
+                "action": "#00856A",
+                "action-deep": "#00365F",
+                "link": "#00365F",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#3a3a3a",
+                "muted": "#737373",
+                "line": "#000",
+                "soft": "#f1f1f1",
+                "ground": "#ffffff",
+                "chip": "#f7f7f7",
+                "field": "#929292",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "riddeliemers",
+            "name": "Riddeliemers",
+            "tokens": {
+                "primary": "#154273",
+                "primary-deep": "#133b68",
+                "primary-light": "#e8ecf1",
+                "action": "#154273",
+                "action-deep": "#133b68",
+                "link": "#154273",
+                "accent": "#d70d0d",
+                "ink": "#333333",
+                "text": "#4e4e4e",
+                "muted": "#696969",
+                "line": "#b4b4b4",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#e8e9ea",
+                "field": "#696969",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "ridderkerk",
+            "name": "Ridderkerk",
+            "tokens": {
+                "primary": "#008937",
+                "primary-deep": "#007b32",
+                "primary-light": "#e6f3eb",
+                "action": "#008937",
+                "action-deep": "#007b32",
+                "link": "#008937",
+                "accent": "#d70d0d",
+                "ink": "#2b2b2b",
+                "text": "#2b2b2b",
+                "muted": "#2b2b2b",
+                "line": "#f3f5f9",
+                "soft": "#f3f5f9",
+                "ground": "#ffffff",
+                "chip": "#f3f5f9",
+                "field": "#2b2b2b",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "rijkshuisstijl",
+            "name": "Rijkshuisstijl",
+            "tokens": {
+                "primary": "#154273",
+                "primary-deep": "#162f50",
+                "primary-light": "#e8f0f8",
+                "action": "#154273",
+                "action-deep": "#162f50",
+                "link": "#01689b",
+                "accent": "#d52b1e",
+                "ink": "#0F172A",
+                "text": "#3c404a",
+                "muted": "#696969",
+                "line": "#b4b4b4",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#e8e9ea",
+                "field": "#696969",
+                "radius": "0px",
+                "radius-lg": "4px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/rijkshuisstijl.svg",
+                "inverse_file": null,
+                "licence": "Copyright Rijksoverheid: use is forbidden outside sites and apps for the Rijksoverheid",
+                "redistributable": false,
+                "basis": "docs/reference/assets.md: \"Gebruik hiervan is strikt verboden, behalve voor het ontwikkelen van websites en apps voor de Rijksoverheid\""
+            }
+        },
+        {
+            "id": "rotterdam",
+            "name": "Gemeente Rotterdam",
+            "tokens": {
+                "primary": "#00811F",
+                "primary-deep": "#006E32",
+                "primary-light": "#E6F3E9",
+                "action": "#00811F",
+                "action-deep": "#006E32",
+                "link": "#000000",
+                "accent": "#D70D0D",
+                "ink": "#404B4F",
+                "text": "#536065",
+                "muted": "#65757B",
+                "line": "#CAD6DA",
+                "soft": "#E4EEF1",
+                "ground": "#ffffff",
+                "chip": "#EFF4F6",
+                "field": "#7C8B90",
+                "radius": "0px",
+                "radius-lg": "0px",
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/rotterdam.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "stedebroec",
+            "name": "Gemeente Stede Broec",
+            "tokens": {
+                "primary": "#035935",
+                "primary-deep": "#035030",
+                "primary-light": "#e6eeeb",
+                "action": "#035935",
+                "action-deep": "#035030",
+                "link": "#03813c",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#e8e8e8",
+                "soft": "#29a847",
+                "ground": "#ffffff",
+                "chip": "#fafafa",
+                "field": "#e8e8e8",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "summer-breeze",
+            "name": "Summer Breeze",
+            "tokens": {
+                "primary": "#21468b",
+                "primary-deep": "#1b3a75",
+                "primary-light": "#eef2f8",
+                "action": "#21468b",
+                "action-deep": "#1b3a75",
+                "link": "#21468b",
+                "accent": "#c0392b",
+                "ink": "#02162e",
+                "text": "#2f4155",
+                "muted": "#5b6b7b",
+                "line": "#e3e9f0",
+                "soft": "#e7eef6",
+                "ground": "#f7f7f7",
+                "chip": "#eef5fb",
+                "field": "#7a8b9f",
+                "radius": "12px",
+                "radius-lg": "16px",
+                "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "tilburg",
+            "name": "Gemeente Tilburg",
+            "tokens": {
+                "primary": "#003366",
+                "primary-deep": "#002447",
+                "primary-light": "#fef1e6",
+                "action": "#003366",
+                "action-deep": "#002447",
+                "link": "#e6007e",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#333333",
+                "muted": "#666666",
+                "line": "#c4c4c4",
+                "soft": "#757575",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#666666",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/tilburg.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "tubbergen",
+            "name": "Gemeente Tubbergen",
+            "tokens": {
+                "primary": "#067432",
+                "primary-deep": "#045123",
+                "primary-light": "#f7fbf9",
+                "action": "#067432",
+                "action-deep": "#045123",
+                "link": "#0b612d",
+                "accent": "#d62410",
+                "ink": "#333333",
+                "text": "#555555",
+                "muted": "#767676",
+                "line": "#767676",
+                "soft": "#f2f4f7",
+                "ground": "#ffffff",
+                "chip": "#edeff2",
+                "field": "#767676",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Lato\", Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/tubbergen.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "utrecht",
+            "name": "Gemeente Utrecht",
+            "tokens": {
+                "primary": "#24578F",
+                "primary-deep": "#1F4B7A",
+                "primary-light": "#e8eef5",
+                "action": "#24578F",
+                "action-deep": "#1F4B7A",
+                "link": "#24578F",
+                "accent": "#cc0000",
+                "ink": "#000000",
+                "text": "#2e2e2e",
+                "muted": "#5c5c5c",
+                "line": "#cccccc",
+                "soft": "#e8e8e8",
+                "ground": "#ffffff",
+                "chip": "#f5f5f5",
+                "field": "#999999",
+                "radius": "4px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/utrecht.svg",
+                "inverse_file": null,
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "vaartveld",
+            "name": "Vaartveld College",
+            "tokens": {
+                "primary": "#1F4FD8",
+                "primary-deep": "#14338F",
+                "primary-light": "#E8EEFC",
+                "action": "#1F4FD8",
+                "action-deep": "#14338F",
+                "link": "#1F4FD8",
+                "accent": "#1FB5A8",
+                "ink": "#1B1C1D",
+                "text": "#3d3f43",
+                "muted": "#5E6168",
+                "line": "#E4E6EA",
+                "soft": "#EDEFF2",
+                "ground": "#F5F6F8",
+                "chip": "#F0F1F3",
+                "field": "#8A929E",
+                "radius": "8px",
+                "radius-lg": "12px",
+                "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/vaartveld.svg",
+                "inverse_file": "img/logos/vaartveld-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "venray",
+            "name": "Gemeente Venray",
+            "tokens": {
+                "primary": "#2a8113",
+                "primary-deep": "#267411",
+                "primary-light": "#eaf2e7",
+                "action": "#2a8113",
+                "action-deep": "#267411",
+                "link": "#358628",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#000000",
+                "soft": "#ebebeb",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#000000",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "DIN, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "vng",
+            "name": "VNG Vereniging Nederlandse Gemeenten",
+            "tokens": {
+                "primary": "#003865",
+                "primary-deep": "#002747",
+                "primary-light": "#e6f6ff",
+                "action": "#003865",
+                "action-deep": "#002747",
+                "link": "#004488",
+                "accent": "#bf1a12",
+                "ink": "#333333",
+                "text": "#47515f",
+                "muted": "#5b6e8a",
+                "line": "#cfd5dd",
+                "soft": "#e4e7ec",
+                "ground": "#ffffff",
+                "chip": "#f2f4f6",
+                "field": "#7a8aa0",
+                "radius": "8px",
+                "radius-lg": "16px",
+                "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/vng.svg",
+                "inverse_file": "img/logos/vng-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "vught",
+            "name": "Gemeente Vught",
+            "tokens": {
+                "primary": "#0080a3",
+                "primary-deep": "#007a9c",
+                "primary-light": "#e6f3f7",
+                "action": "#0080a3",
+                "action-deep": "#007a9c",
+                "link": "#007fad",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#000000",
+                "soft": "#ebebeb",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#000000",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "DIN, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "warmtepompacademie",
+            "name": "Warmtepompacademie",
+            "tokens": {
+                "primary": "#0B6E7A",
+                "primary-deep": "#084F58",
+                "primary-light": "#E3F1F3",
+                "action": "#0B6E7A",
+                "action-deep": "#084F58",
+                "link": "#0B6E7A",
+                "accent": "#C2410C",
+                "ink": "#1B1C1D",
+                "text": "#3d3f43",
+                "muted": "#5E6168",
+                "line": "#E4E6EA",
+                "soft": "#EDEFF2",
+                "ground": "#F5F6F8",
+                "chip": "#F0F1F3",
+                "field": "#8A929E",
+                "radius": "8px",
+                "radius-lg": "12px",
+                "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/warmtepompacademie.svg",
+                "inverse_file": "img/logos/warmtepompacademie-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "westervoort",
+            "name": "Gemeente Westervoort",
+            "tokens": {
+                "primary": "#003c6b",
+                "primary-deep": "#003660",
+                "primary-light": "#e6ecf0",
+                "action": "#003c6b",
+                "action-deep": "#003660",
+                "link": "#014c93",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#66a947",
+                "soft": "#ffffff",
+                "ground": "#ffffff",
+                "chip": "#f6faf5",
+                "field": "#33a6cc",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "wilgenboom",
+            "name": "Basisschool De Wilgenboom",
+            "tokens": {
+                "primary": "#2F6B4A",
+                "primary-deep": "#1F4A33",
+                "primary-light": "#E8F1EB",
+                "action": "#2F6B4A",
+                "action-deep": "#1F4A33",
+                "link": "#2F6B4A",
+                "accent": "#F5B82E",
+                "ink": "#1B1C1D",
+                "text": "#3d3f43",
+                "muted": "#5E6168",
+                "line": "#E4E6EA",
+                "soft": "#EDEFF2",
+                "ground": "#F5F6F8",
+                "chip": "#F0F1F3",
+                "field": "#8A929E",
+                "radius": "8px",
+                "radius-lg": "12px",
+                "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/wilgenboom.svg",
+                "inverse_file": "img/logos/wilgenboom-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "xxllnc",
+            "name": "xxllnc",
+            "tokens": {
+                "primary": "#2b2b2b",
+                "primary-deep": "#1e1e1e",
+                "primary-light": "#eaeaea",
+                "action": "#2b2b2b",
+                "action-deep": "#1e1e1e",
+                "link": "rgba(0, 0, 0, 0.68)",
+                "accent": "#dc3545",
+                "ink": "#28282c",
+                "text": "#4f4f51",
+                "muted": "#767676",
+                "line": "rgba(0, 0, 0, 0.22)",
+                "soft": "#f1f1f1",
+                "ground": "#ffffff",
+                "chip": "#f7f7f7",
+                "field": "rgba(0, 0, 0, 0.22)",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "neue-haas-grotesk-text, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/xxllnc.svg",
+                "inverse_file": "img/logos/xxllnc-dark.svg",
+                "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
+                "redistributable": null,
+                "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            }
+        },
+        {
+            "id": "zaanstad",
+            "name": "Gemeente Zaanstad",
+            "tokens": {
+                "primary": "#007694",
+                "primary-deep": "#005368",
+                "primary-light": "#e6f1f4",
+                "action": "#007694",
+                "action-deep": "#005368",
+                "link": "#007694",
+                "accent": "#d70d0d",
+                "ink": "#333333",
+                "text": "#4d4d4d",
+                "muted": "#666666",
+                "line": "#bfbfbf",
+                "soft": "#e0e1e2",
+                "ground": "#ffffff",
+                "chip": "#f2f2f2",
+                "field": "#666666",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "zevenaar",
+            "name": "Gemeente Zevenaar",
+            "tokens": {
+                "primary": "#596e28",
+                "primary-deep": "#506324",
+                "primary-light": "#eef1ea",
+                "action": "#596e28",
+                "action-deep": "#506324",
+                "link": "#474b1b",
+                "accent": "#d70d0d",
+                "ink": "#000000",
+                "text": "#000000",
+                "muted": "#000000",
+                "line": "#8e9834",
+                "soft": "#e8ead7",
+                "ground": "#ffffff",
+                "chip": "#ffffff",
+                "field": "#000000",
+                "radius": "8px",
+                "radius-lg": "8px",
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        },
+        {
+            "id": "zuiddrecht",
+            "name": "Gemeente Zuiddrecht",
+            "tokens": {
+                "primary": "#3669A5",
+                "primary-deep": "#234A78",
+                "primary-light": "#EAF0F7",
+                "action": "#3669A5",
+                "action-deep": "#234A78",
+                "link": "#3669A5",
+                "accent": "#CC0000",
+                "ink": "#1B1C1D",
+                "text": "#3d3f43",
+                "muted": "#5E6168",
+                "line": "#E4E6EA",
+                "soft": "#EDEFF2",
+                "ground": "#F5F6F8",
+                "chip": "#F0F1F3",
+                "field": "#8A929E",
+                "radius": "8px",
+                "radius-lg": "12px",
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+            },
+            "logo": {
+                "file": "img/logos/zuiddrecht.svg",
+                "inverse_file": "img/logos/zuiddrecht-dark.svg",
+                "licence": "EUPL-1.2",
+                "redistributable": true,
+                "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            }
+        },
+        {
+            "id": "zwolle",
+            "name": "Gemeente Zwolle",
+            "tokens": {
+                "primary": "#476db8",
+                "primary-deep": "#395793",
+                "primary-light": "#e3e9f5",
+                "action": "#476db8",
+                "action-deep": "#395793",
+                "link": "#476db8",
+                "accent": "#d52b1e",
+                "ink": "#000000",
+                "text": "#363636",
+                "muted": "#6b6b6b",
+                "line": "#ebebeb",
+                "soft": "#ebebeb",
+                "ground": "#ffffff",
+                "chip": "#f5f5f5",
+                "field": "#767676",
+                "radius": "2px",
+                "radius-lg": "10px",
+                "font-family": "DIN, Arial, Helvetica, sans-serif"
+            },
+            "logo": {
+                "file": null,
+                "inverse_file": null,
+                "licence": null,
+                "redistributable": null,
+                "basis": null
+            }
+        }
+    ],
+    "fonts": [
+        {
+            "family": "Apple Color Emoji",
+            "sets": [
+                "borne",
+                "drechterland",
+                "enkhuizen",
+                "noaberkracht",
+                "stedebroec"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "ArialforRotterdam",
+            "sets": [
+                "opencatalogi",
+                "rotterdam"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Avenir",
+            "sets": [
+                "vng"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Linotype / Monotype",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (vng): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Barlow",
+            "sets": [
+                "warmtepompacademie"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/barlow-latin-400-normal.woff2",
+                "css/fonts/barlow-latin-500-normal.woff2",
+                "css/fonts/barlow-latin-600-normal.woff2",
+                "css/fonts/barlow-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/barlow-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/barlow-latin-500-normal.woff2",
+                "css/systems/nldesign/fonts/barlow-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/barlow-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Bolder",
+            "sets": [
+                "opencatalogi",
+                "rotterdam"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, commissioned for the municipality",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (opencatalogi): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Calibri",
+            "sets": [
+                "haarlemmermeer"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Microsoft",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (haarlemmermeer): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Cantarell",
+            "sets": [
+                "amsterdam",
+                "nextcloud",
+                "rijkshuisstijl",
+                "summer-breeze",
+                "utrecht",
+                "vng",
+                "zuiddrecht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Clear Sans",
+            "sets": [
+                "hoorn"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/clear-sans-latin-400-normal.woff2",
+                "css/fonts/clear-sans-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/clear-sans-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/clear-sans-latin-700-normal.woff2"
+            ],
+            "licence": "Apache-2.0",
+            "licence_files": [
+                "css/fonts/APACHE-2.0.txt",
+                "css/systems/nldesign/fonts/APACHE-2.0.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files Apache-2.0, and LICENSES/Apache-2.0.txt allows redistribution with its notice."
+        },
+        {
+            "family": "DIN",
+            "sets": [
+                "horstaandemaas",
+                "venray",
+                "vught",
+                "zwolle"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Monotype / Linotype",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (horstaandemaas): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Droid Sans W01",
+            "sets": [
+                "borne"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Monotype (Fonts.com web edition)",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (borne): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Figtree",
+            "sets": [
+                "conduction",
+                "conduction-new"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/figtree-latin-variable.woff2",
+                "css/systems/nldesign/fonts/figtree-latin-variable.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Fira Sans",
+            "sets": [
+                "amsterdam",
+                "denhaag",
+                "epe",
+                "example-basisschool",
+                "example-college",
+                "example-opleider",
+                "example-voortgezet",
+                "groningen",
+                "hoeksche-waard",
+                "hoog-contrast",
+                "nijmegen",
+                "purmerend",
+                "riddeliemers",
+                "rijkshuisstijl",
+                "utrecht",
+                "zaanstad",
+                "zuiddrecht"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/fira-sans-latin-400-italic.woff",
+                "css/fonts/fira-sans-latin-400-italic.woff2",
+                "css/fonts/fira-sans-latin-400-normal.woff",
+                "css/fonts/fira-sans-latin-400-normal.woff2",
+                "css/fonts/fira-sans-latin-500-italic.woff",
+                "css/fonts/fira-sans-latin-500-italic.woff2",
+                "css/fonts/fira-sans-latin-500-normal.woff",
+                "css/fonts/fira-sans-latin-500-normal.woff2",
+                "css/fonts/fira-sans-latin-600-italic.woff",
+                "css/fonts/fira-sans-latin-600-italic.woff2",
+                "css/fonts/fira-sans-latin-600-normal.woff",
+                "css/fonts/fira-sans-latin-600-normal.woff2",
+                "css/fonts/fira-sans-latin-700-italic.woff",
+                "css/fonts/fira-sans-latin-700-italic.woff2",
+                "css/fonts/fira-sans-latin-700-normal.woff",
+                "css/fonts/fira-sans-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-400-italic.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-400-italic.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-400-normal.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-500-italic.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-500-italic.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-500-normal.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-500-normal.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-600-italic.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-600-italic.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-600-normal.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-700-italic.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-700-italic.woff2",
+                "css/systems/nldesign/fonts/fira-sans-latin-700-normal.woff",
+                "css/systems/nldesign/fonts/fira-sans-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "IBM Plex Sans",
+            "sets": [
+                "enschede",
+                "esdoornveen",
+                "losser"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/ibm-plex-sans-latin-400-normal.woff2",
+                "css/fonts/ibm-plex-sans-latin-500-normal.woff2",
+                "css/fonts/ibm-plex-sans-latin-600-normal.woff2",
+                "css/fonts/ibm-plex-sans-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/ibm-plex-sans-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/ibm-plex-sans-latin-500-normal.woff2",
+                "css/systems/nldesign/fonts/ibm-plex-sans-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/ibm-plex-sans-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Inter",
+            "sets": [
+                "cunningham",
+                "frankendesk",
+                "lasuite",
+                "summer-breeze"
+            ],
+            "shipped": true,
+            "files": [
+                "css/systems/lasuite/fonts/inter-latin-400-italic.woff2",
+                "css/systems/lasuite/fonts/inter-latin-400-normal.woff2",
+                "css/systems/lasuite/fonts/inter-latin-500-normal.woff2",
+                "css/systems/lasuite/fonts/inter-latin-600-normal.woff2",
+                "css/systems/lasuite/fonts/inter-latin-700-italic.woff2",
+                "css/systems/lasuite/fonts/inter-latin-700-normal.woff2",
+                "css/systems/summer-breeze/fonts/Inter-Italic-Variable.woff2",
+                "css/systems/summer-breeze/fonts/Inter-Variable.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/systems/lasuite/fonts/OFL.txt",
+                "css/systems/summer-breeze/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Karbon",
+            "sets": [
+                "provincie-zuid-holland"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Klim Type Foundry",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (provincie-zuid-holland): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Lato",
+            "sets": [
+                "demodam",
+                "dinkelland",
+                "ridderkerk",
+                "tubbergen"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/lato-latin-400-normal.woff2",
+                "css/fonts/lato-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/lato-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/lato-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Lexend",
+            "sets": [
+                "wilgenboom"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/lexend-latin-400-normal.woff2",
+                "css/fonts/lexend-latin-500-normal.woff2",
+                "css/fonts/lexend-latin-600-normal.woff2",
+                "css/fonts/lexend-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/lexend-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/lexend-latin-500-normal.woff2",
+                "css/systems/nldesign/fonts/lexend-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/lexend-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Marianne",
+            "sets": [
+                "cunningham",
+                "lasuite"
+            ],
+            "shipped": true,
+            "files": [
+                "css/systems/lasuite/fonts/marianne/Marianne-Bold.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Bold_Italic.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Light.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Light_Italic.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Medium.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Medium_Italic.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Regular.woff2",
+                "css/systems/lasuite/fonts/marianne/Marianne-Regular_Italic.woff2"
+            ],
+            "licence": "etalab-2.0",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "MARIANNE-LICENCE.md: \"reserved for French State administrations\""
+        },
+        {
+            "family": "Monospace",
+            "sets": [
+                "noordwijk"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Noto Color Emoji",
+            "sets": [
+                "borne",
+                "noaberkracht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Noto Sans",
+            "sets": [
+                "borne",
+                "noaberkracht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Open Sans",
+            "sets": [
+                "bodegraven-reeuwijk",
+                "leiden",
+                "leidschendam-voorburg"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/open-sans-latin-400-normal.woff2",
+                "css/fonts/open-sans-latin-600-normal.woff2",
+                "css/fonts/open-sans-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/open-sans-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/open-sans-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/open-sans-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Oxygen-Sans",
+            "sets": [
+                "amsterdam",
+                "nextcloud",
+                "rijkshuisstijl",
+                "summer-breeze",
+                "utrecht",
+                "vng",
+                "zuiddrecht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Red Hat Text",
+            "sets": [
+                "vaartveld"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/red-hat-text-latin-400-normal.woff2",
+                "css/fonts/red-hat-text-latin-500-normal.woff2",
+                "css/fonts/red-hat-text-latin-600-normal.woff2",
+                "css/fonts/red-hat-text-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/red-hat-text-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/red-hat-text-latin-500-normal.woff2",
+                "css/systems/nldesign/fonts/red-hat-text-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/red-hat-text-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "RijksoverheidSans",
+            "sets": [
+                "duo"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "restricted, Rijksoverheid",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (duo): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Roboto",
+            "sets": [
+                "amsterdam",
+                "borne",
+                "buren",
+                "conduction",
+                "conduction-new",
+                "esdoornveen",
+                "example-basisschool",
+                "example-college",
+                "example-opleider",
+                "example-voortgezet",
+                "nextcloud",
+                "noaberkracht",
+                "noordoostpolder",
+                "noordwijk",
+                "rijkshuisstijl",
+                "summer-breeze",
+                "utrecht",
+                "vaartveld",
+                "vng",
+                "warmtepompacademie",
+                "wilgenboom",
+                "zuiddrecht"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/roboto-latin-400-normal.woff2",
+                "css/fonts/roboto-latin-600-normal.woff2",
+                "css/fonts/roboto-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/roboto-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/roboto-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/roboto-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Segoe UI Emoji",
+            "sets": [
+                "borne",
+                "drechterland",
+                "enkhuizen",
+                "noaberkracht",
+                "stedebroec"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Segoe UI Symbol",
+            "sets": [
+                "borne",
+                "drechterland",
+                "enkhuizen",
+                "noaberkracht",
+                "stedebroec"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "Sofia Pro",
+            "sets": [
+                "haarlem"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Mostardesign",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (haarlem): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Source Sans 3",
+            "sets": [
+                "example-gemeente",
+                "nora"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/source-sans-3-latin-400-normal.woff2",
+                "css/fonts/source-sans-3-latin-600-normal.woff2",
+                "css/fonts/source-sans-3-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-3-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-3-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-3-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Source Sans Pro",
+            "sets": [
+                "drechterland",
+                "duiven",
+                "enkhuizen",
+                "example-gemeente",
+                "stedebroec",
+                "westervoort",
+                "zevenaar"
+            ],
+            "shipped": true,
+            "files": [
+                "css/fonts/source-sans-pro-latin-400-normal.woff2",
+                "css/fonts/source-sans-pro-latin-600-normal.woff2",
+                "css/fonts/source-sans-pro-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-pro-latin-400-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-pro-latin-600-normal.woff2",
+                "css/systems/nldesign/fonts/source-sans-pro-latin-700-normal.woff2"
+            ],
+            "licence": "OFL-1.1",
+            "licence_files": [
+                "css/fonts/OFL.txt",
+                "css/systems/nldesign/fonts/OFL.txt"
+            ],
+            "redistributable": true,
+            "basis": "REUSE.toml names these files OFL-1.1, and LICENSES/OFL-1.1.txt allows redistribution with its notice."
+        },
+        {
+            "family": "Test Karbon",
+            "sets": [
+                "provincie-zuid-holland"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "TheSans",
+            "sets": [
+                "denhaag"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, LucasFonts",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (denhaag): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "Ubuntu",
+            "sets": [
+                "amsterdam",
+                "nextcloud",
+                "rijkshuisstijl",
+                "summer-breeze",
+                "utrecht",
+                "vng",
+                "zuiddrecht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": null,
+            "licence_files": [],
+            "redistributable": null,
+            "basis": "The repository neither ships this family under a stated licence nor says it may not be passed on."
+        },
+        {
+            "family": "greycliff-cf",
+            "sets": [
+                "noaberkracht"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Connary Fagen",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (noaberkracht): the family is not shipped; an administrator uploads it."
+        },
+        {
+            "family": "neue-haas-grotesk-text",
+            "sets": [
+                "xxllnc"
+            ],
+            "shipped": false,
+            "files": [],
+            "licence": "proprietary, Monotype",
+            "licence_files": [],
+            "redistributable": false,
+            "basis": "token-sets.json (xxllnc): the family is not shipped; an administrator uploads it."
+        }
+    ]
+}

@@ -40,6 +40,14 @@ use Throwable;
 class LogoLayerService {
 
 	/**
+	 * The file types a set's logo may have, first match wins. The shell
+	 * catalogue looks for a set's logo by the same list ({@see ShellCatalogueService}).
+	 *
+	 * @var string[]
+	 */
+	public const LOGO_EXTENSIONS = ['svg', 'png', 'jpg', 'gif', 'webp'];
+
+	/**
 	 * What a set's login watermark file is called, after the set id.
 	 *
 	 * @var string
@@ -315,7 +323,7 @@ class LogoLayerService {
 	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
 	 */
 	public function shippedLogo(string $name): ?string {
-		foreach (['svg', 'png', 'jpg', 'gif', 'webp'] as $extension) {
+		foreach (self::LOGO_EXTENSIONS as $extension) {
 			$candidate = 'img/logos/' . $name . '.' . $extension;
 			if ($this->files->exists(name: $candidate) === true) {
 				return $candidate;
