@@ -9,7 +9,7 @@
  * a capability's evidence line cited it as the place those faces were served.
  * Both faces are declared by the stylesheet the nldesign system does link.
  *
- * @spec openspec/changes/retire-fonts-conduction-stylesheet/specs/custom-fonts/spec.md
+ * @spec openspec/specs/custom-fonts/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
