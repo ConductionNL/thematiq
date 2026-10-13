@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignTokensWriter;
 use OCA\Thematiq\Service\FigmaTokenReader;
 use OCA\Thematiq\Service\FigmaTokenWriter;
@@ -100,7 +101,7 @@ final class FigmaTokenReaderTest extends TestCase {
 	}//end testThePathIsTheCssName()
 
 	/**
-	 * A value that is not a CSS value is left out and named.
+	 * A value that is not a CSS value is left out and named; what looks like CSS goes on to the validator.
 	 *
 	 * @return void
 	 */
@@ -124,12 +125,17 @@ final class FigmaTokenReaderTest extends TestCase {
 		);
 
 		$reasons = array_column($read['skipped'], 'reason', 'path');
-		foreach (['escape', 'markup', 'comment', 'sum', 'elsewhere', 'switch', 'empty'] as $key) {
+		foreach (['escape', 'sum', 'elsewhere', 'switch', 'empty'] as $key) {
 			$this->assertSame('value-not-a-css-value', ($reasons['nldesign.spacing.' . $key] ?? null), $key);
 			$this->assertArrayNotHasKey($key, $read['document']['nldesign']['spacing']);
 		}
 
-		$this->assertSame([], $read['document']['$extensions']['nl.conduction.thematiq']['cssOnly']);
+		// Markup and a comment are the validator's to refuse: it sees the file that would be stored.
+		$this->assertSame(
+			['--nldesign-spacing-markup' => '<script>', '--nldesign-spacing-comment' => '1px /* x'],
+			$read['document']['$extensions']['nl.conduction.thematiq']['cssOnly']
+		);
+		$this->assertTrue((new CustomTokenSetValidator())->isForbiddenValue(value: '<script>'));
 		$this->assertArrayHasKey('Odd_Name', $read['document']['nldesign']['spacing'], 'a path that is not a CSS name of ours is left to the mapper');
 	}//end testAValueThatCouldLeaveItsDeclarationIsLeftOut()
 

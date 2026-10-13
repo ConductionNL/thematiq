@@ -86,6 +86,8 @@ Attempting to import an excluded token via the API returns an HTTP 400 error. Du
 
 ## Download as design tokens
 
+For Figma, choose the format in the list next to the button. [Token sets and Figma](figma-tokens.md) has the formats, the path of every token and what a round trip loses.
+
 Take a token set to Tokens Studio, Figma or any other tool that reads W3C Design Tokens (DTCG, version 2025.10). Choose the set in the **Design token set** list and click **Download as design tokens**, next to **Reset theme to Nextcloud**. Every custom set has the same button in its row under **Custom token sets**. You get `{set}.tokens.json`.
 
 The file holds what the set itself declares. The defaults under it and your token editor overrides stay out: they belong to this instance, not to the set.

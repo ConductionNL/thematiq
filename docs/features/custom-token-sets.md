@@ -77,6 +77,10 @@ The longest matching suffix wins, so `color.primary-text` is preferred over
 `color.primary`. The mapping is deliberately tolerant: format drift degrades to
 a higher `skipped` count, never an error.
 
+### 3. A file from Figma
+
+A Tokens Studio single file, in either spelling, and a file that thematiq wrote and Figma changed. See [Token sets and Figma](figma-tokens.md).
+
 ## Validation rules
 
 The uploaded file is served as CSS to **every** user on every page (including

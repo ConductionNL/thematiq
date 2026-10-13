@@ -213,8 +213,9 @@ class FigmaTokenReader {
 			return 'var(--' . str_replace('.', '-', $match[1]) . ')';
 		}
 
-		// A sum over references, or anything that could leave the declaration it is written into.
-		if (preg_match('/[{};<>\\\\]|\/\*/', $value) === 1) {
+		// A sum over references is not a CSS value. Everything else is judged by the token set
+		// validator, which sees the file that would be stored: a data: image may hold markup.
+		if (str_contains($value, '{') === true || str_contains($value, '}') === true) {
 			return null;
 		}
 
