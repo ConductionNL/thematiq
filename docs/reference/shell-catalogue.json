@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:e2312982c9c801d7",
+    "generated_from": "sets:c8e53685ab62eda7",
     "sets": [
         {
             "id": "amsterdam",
@@ -195,8 +195,8 @@
                 "primary": "#1a509f",
                 "primary-deep": "#203c63",
                 "primary-light": "#eaf1fb",
-                "action": "#1a509f",
-                "action-deep": "#203c63",
+                "action": "#1f883d",
+                "action-deep": "#197032",
                 "link": "#1a509f",
                 "accent": "#d80000",
                 "ink": "#1b1c1d",
