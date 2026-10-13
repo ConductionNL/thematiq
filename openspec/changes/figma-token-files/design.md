@@ -38,3 +38,16 @@ and a boolean or empty value. Depth is capped at 16.
 `TokenSetConverterService::convert()` calls the reader first, so the admin upload, the brand import
 and the command line all get it. `DtcgExportController::export()` calls `FigmaTokenWriter` after
 `DesignTokensWriter`.
+
+## The plugin's eight differences
+
+Closed here: the `text` value has a name and the role reads it (1); a light and dark Tokens Studio
+file is one house style (4, the light half); a path without the extension is read by joining it
+(5); the `value` and `type` spelling is read (7). Kept but not a role: `menu` (2). The endpoint has
+eighteen roles at version 1, and a nineteenth is a change to that contract, not to a file format.
+Left open: dark colours from a file (3, and the dark half of 4). Thematiq generates the dark variant
+of a set from its light colours and regenerates it when the set changes, so a dark colour read from
+a file has nowhere to stay; that needs dark overrides per set, a feature of its own. The original
+text of a colour (6) lives in the plugin's extension and only changes the notation. The derived
+values of a partial file (8) are thematiq's as they were; the page now lists each rule and its
+weight so the plugin can follow them.

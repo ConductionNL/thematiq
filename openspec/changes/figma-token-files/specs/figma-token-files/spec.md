@@ -57,3 +57,19 @@ name in a Tokens Studio file.
 - GIVEN each shipped set in the `nldesign` vocabulary
 - WHEN it is downloaded as `figma`, `tokens-studio` and `tokens-studio-legacy` and uploaded again
 - THEN every token the format carries MUST have the value it had
+
+### Requirement: A file from the OpenProject plugin uploads into thematiq
+
+A file the OpenProject plugin downloads, as W3C design tokens or as a Tokens Studio single file in
+either spelling, MUST upload into thematiq with every shell role both products know at the plugin's
+value. `--thematiq-shell-text` and `--thematiq-shell-menu` MUST keep their names, and the `text`
+role MUST read `--thematiq-shell-text` before it mixes ink and muted. A Tokens Studio file with a
+light and a dark theme MUST be read as one house style: the token sets only the dark theme switches
+on MUST be left out and named, and the file MUST NOT be offered as two brands.
+
+#### Scenario: Real plugin files
+@e2e exclude a comparison of parsed files with no page; proven by tests/Unit/Service/FigmaTokenFilesRoundTripTest.php (testAPluginDownloadKeepsEveryRole) and tests/Unit/Service/FigmaTokenReaderTest.php (testALightAndDarkFileIsOneHouseStyle)
+- GIVEN the three files the plugin downloads for `cunningham` and for `zuiddrecht`
+- WHEN each is uploaded
+- THEN each of the eighteen roles MUST have the value the plugin exported
+- AND the dark token set MUST be named as left out

@@ -28,6 +28,8 @@ use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\DesignTokensWriter;
 use OCA\Thematiq\Service\FigmaTokenWriter;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\MultiBrandSource;
+use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -308,4 +310,66 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$this->assertArrayNotHasKey('--nldesign-spacing-double', $back['declarations']);
 		$this->assertArrayNotHasKey('--nldesign-color-concept', $back['declarations'], 'a switched off set is not read');
 	}//end testWhatIsLeftOutIsReported()
+
+	/**
+	 * The files the OpenProject plugin downloads, for two of its design systems.
+	 *
+	 * Real files: built on 13 October 2026 from the plugin's own code
+	 * (`ConductionNL/openproject-thematiq`, development at `451c453e`,
+	 * `OpenProject::Thematiq::Figma.export`) in a throwaway Ruby container. Each
+	 * `roles.json` beside them holds the values the plugin exported.
+	 *
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	public static function pluginFiles(): array {
+		$out = [];
+		foreach (['cunningham', 'zuiddrecht'] as $id) {
+			foreach (['w3c.tokens.json', 'tokens-studio.json', 'tokens-studio-legacy.json'] as $file) {
+				$out[$id . ' ' . $file] = [$id, $file];
+			}
+		}
+
+		return $out;
+	}//end pluginFiles()
+
+	/**
+	 * Scenario: a file the OpenProject plugin downloads uploads into thematiq, and every
+	 * shell role both products know has the plugin's value.
+	 *
+	 * @param string $id The plugin's design system.
+	 * @param string $file The downloaded file.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 */
+	#[DataProvider('pluginFiles')]
+	public function testAPluginDownloadKeepsEveryRole(string $id, string $file): void {
+		$directory = self::appPath() . '/tests/fixtures/figma/plugin/';
+		$expected = json_decode((string)file_get_contents($directory . $id . '.roles.json'), true)['tokens'];
+		$back = $this->upload(json: (string)file_get_contents($directory . $id . '.' . $file));
+		$roles = (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $back['declarations']);
+
+		$differences = [];
+		foreach ($expected as $role => $value) {
+			if (array_key_exists($role, $roles) === false) {
+				$differences[$role] = 'not a role of thematiq';
+				continue;
+			}
+
+			if ($this->normalise(value: (string)$roles[$role]) !== $this->normalise(value: (string)$value)) {
+				$differences[$role] = $value . ' => ' . $roles[$role];
+			}
+		}
+
+		$this->assertSame([], $differences, $id . ' ' . $file);
+		$this->assertCount(18, $expected, 'the plugin exported eighteen values for this design system');
+		$this->assertSame($this->normalise(value: (string)$expected['text']), $this->normalise(value: $back['declarations']['--thematiq-shell-text']));
+
+		// The dark colours are named, not taken for a second brand and not laid over the light ones.
+		if ($file !== 'w3c.tokens.json') {
+			$this->assertSame(['thematiq/dark: dark-colours-not-read'], $back['skipped']);
+			$this->assertSame([], (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file)));
+		}
+	}//end testAPluginDownloadKeepsEveryRole()
 }//end class

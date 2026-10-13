@@ -1,0 +1,39 @@
+{
+  "tokens": {
+    "primary": "#3669a5",
+    "primary-deep": "#234a78",
+    "primary-light": "#eaf0f7",
+    "action": "#3669a5",
+    "action-deep": "#234a78",
+    "link": "#3669a5",
+    "accent": "#cc0000",
+    "ink": "#1b1c1d",
+    "text": "#3d3f43",
+    "muted": "#5e6168",
+    "line": "#e4e6ea",
+    "soft": "#edeff2",
+    "ground": "#f5f6f8",
+    "chip": "#f0f1f3",
+    "field": "#8a929e",
+    "radius": "8px",
+    "radius-lg": "12px",
+    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+  },
+  "dark": {
+    "primary": "#84aad7",
+    "primary-deep": "#84aad7",
+    "primary-light": "#13202e",
+    "action": "#84aad7",
+    "action-deep": "#234a78",
+    "link": "#5b8ac2",
+    "accent": "#f43535",
+    "ink": "#e2e3e4",
+    "text": "#bec0c4",
+    "muted": "#999ca3",
+    "line": "#24272d",
+    "soft": "#1d2026",
+    "ground": "#171a20",
+    "chip": "#1d1f23",
+    "field": "#656c78"
+  }
+}

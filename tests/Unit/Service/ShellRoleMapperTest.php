@@ -272,6 +272,21 @@ class ShellRoleMapperTest extends TestCase {
 	}//end testAColourThatCannotBeMixedIsNotDerivedFrom()
 
 	/**
+	 * The text role is the set's own shell text when it has one, else ink and muted mixed.
+	 *
+	 * The OpenProject plugin writes its text value under this name, so a file from
+	 * the plugin gives the same text here.
+	 *
+	 * @return void
+	 */
+	public function testTheTextRoleReadsItsOwnToken(): void {
+		$tokens = ['--nldesign-color-text' => '#000000', '--nldesign-color-text-muted' => '#808080'];
+
+		$this->assertSame('#404040', $this->mapper()->map(tokens: $tokens)['text']);
+		$this->assertSame('#484a4d', $this->mapper()->map(tokens: ($tokens + ['--thematiq-shell-text' => '#484a4d']))['text']);
+	}//end testTheTextRoleReadsItsOwnToken()
+
+	/**
 	 * The accent is the set's accent, and the error colour for a set without one.
 	 *
 	 * @return void

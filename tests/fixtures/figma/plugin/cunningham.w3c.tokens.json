@@ -1,0 +1,335 @@
+{
+  "$description": "Cunningham (blue base)",
+  "nldesign": {
+    "color": {
+      "primary": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.102,
+            0.3137,
+            0.6235
+          ],
+          "hex": "#1a509f"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-primary"
+          }
+        }
+      },
+      "primary-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1255,
+            0.2353,
+            0.3882
+          ],
+          "hex": "#203c63"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-primary-hover"
+          }
+        }
+      },
+      "primary-light": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9176,
+            0.9451,
+            0.9843
+          ],
+          "hex": "#eaf1fb"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-primary-light"
+          }
+        }
+      },
+      "action": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1216,
+            0.5333,
+            0.2392
+          ],
+          "hex": "#1f883d"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-action"
+          }
+        }
+      },
+      "action-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.098,
+            0.4392,
+            0.1961
+          ],
+          "hex": "#197032"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-action-hover"
+          }
+        }
+      },
+      "link": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.102,
+            0.3137,
+            0.6235
+          ],
+          "hex": "#1a509f"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-link"
+          }
+        }
+      },
+      "accent": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8471,
+            0.0,
+            0.0
+          ],
+          "hex": "#d80000"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-accent"
+          }
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1059,
+            0.1098,
+            0.1137
+          ],
+          "hex": "#1b1c1d"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-text"
+          }
+        }
+      },
+      "text-muted": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4549,
+            0.4667,
+            0.4863
+          ],
+          "hex": "#74777c"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-text-muted"
+          }
+        }
+      },
+      "border": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7686,
+            0.7804,
+            0.7961
+          ],
+          "hex": "#c4c7cb"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-border"
+          }
+        }
+      },
+      "background-dark": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8824,
+            0.8863,
+            0.898
+          ],
+          "hex": "#e1e2e5"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-background-dark"
+          }
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "hex": "#ffffff"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-background"
+          }
+        }
+      },
+      "background-hover": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9412,
+            0.9451,
+            0.949
+          ],
+          "hex": "#f0f1f2"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-background-hover"
+          }
+        }
+      },
+      "border-dark": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4549,
+            0.4667,
+            0.4863
+          ],
+          "hex": "#74777c"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-color-border-dark"
+          }
+        }
+      }
+    },
+    "border": {
+      "radius": {
+        "$type": "dimension",
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-border-radius"
+          }
+        }
+      },
+      "radius-large": {
+        "$type": "dimension",
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-border-radius-large"
+          }
+        }
+      }
+    },
+    "font": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": [
+          "Marianne",
+          "Inter",
+          "sans-serif"
+        ],
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--nldesign-font-family"
+          }
+        }
+      }
+    }
+  },
+  "thematiq": {
+    "shell": {
+      "text": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2824,
+            0.2902,
+            0.302
+          ],
+          "hex": "#484a4d"
+        },
+        "$extensions": {
+          "nl.conduction.thematiq": {
+            "cssVariable": "--thematiq-shell-text"
+          }
+        }
+      }
+    }
+  },
+  "$extensions": {
+    "nl.conduction.thematiq": {
+      "setId": "cunningham",
+      "cssOnly": {
+      }
+    },
+    "nl.conduction.openproject-thematiq": {
+      "generator": "openproject-thematiq 0.1.0",
+      "format": 1,
+      "dark": {
+        "primary": "#558fe3",
+        "primary-deep": "#558fe3",
+        "primary-light": "#0c1c32",
+        "action": "#1f883d",
+        "action-deep": "#197032",
+        "link": "#c6d8f3",
+        "accent": "#f42c2c",
+        "ink": "#e2e3e4",
+        "text": "#bfc0c3",
+        "muted": "#9b9da1",
+        "line": "#3f4247",
+        "soft": "#292b2f",
+        "ground": "#292b2f",
+        "chip": "#1e2022",
+        "field": "#828589"
+      }
+    }
+  }
+}

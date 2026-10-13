@@ -34,6 +34,25 @@ class TokensStudioSets {
 	private const MAX_DEPTH = 16;
 
 	/**
+	 * The themes of a file that are brands: none for fewer than two themes, and none for a
+	 * light and dark file, which is one house style.
+	 *
+	 * @param array<string, mixed> $document The file.
+	 *
+	 * @return array<int|string, mixed> The themes.
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 */
+	public function brandThemes(array $document): array {
+		$themes = ($document['$themes'] ?? null);
+		if (is_array($themes) === false || count($themes) < 2 || $this->darkSets(document: $document) !== null) {
+			return [];
+		}
+
+		return $themes;
+	}//end brandThemes()
+
+	/**
 	 * Whether a document is a Tokens Studio single file: it has `$themes` or `$metadata`.
 	 *
 	 * @param array<string, mixed> $document The document.
@@ -45,6 +64,57 @@ class TokensStudioSets {
 	public function isSingleFile(array $document): bool {
 		return (array_key_exists('$themes', $document) === true || array_key_exists('$metadata', $document) === true);
 	}//end isSingleFile()
+
+	/**
+	 * The token sets that hold the dark colours of a light and dark file.
+	 *
+	 * Two themes of which one is called "dark": the sets only that theme switches on. No
+	 * themes: a set called `dark`. Such a file is one house style, not two brands.
+	 *
+	 * @param array<string, mixed> $document The file.
+	 *
+	 * @return array<int, string>|null The names, or null when the file is not a light and dark file.
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 */
+	public function darkSets(array $document): ?array {
+		$themes = array_values(array_filter((array)($document['$themes'] ?? []), 'is_array'));
+		if ($themes === []) {
+			$named = static fn (string $name): bool => strtolower($name) === 'dark';
+			$dark = array_values(array_filter($this->names(document: $document), $named));
+			if ($dark === []) {
+				return null;
+			}
+
+			return $dark;
+		}
+
+		if (count($themes) !== 2) {
+			return null;
+		}
+
+		$isDark = static fn (array $theme): bool => in_array(
+			'dark',
+			[strtolower((string)($theme['id'] ?? '')), strtolower((string)($theme['name'] ?? ''))],
+			true
+		);
+		if ($isDark($themes[0]) === $isDark($themes[1])) {
+			return null;
+		}
+
+		$darkTheme = $themes[1];
+		$lightTheme = $themes[0];
+		if ($isDark($themes[0]) === true) {
+			$darkTheme = $themes[0];
+			$lightTheme = $themes[1];
+		}
+
+		$switchedOn = static fn (array $theme): array => array_keys(
+			array_filter((array)($theme['selectedTokenSets'] ?? []), static fn ($status): bool => $status === 'enabled' || $status === 'source')
+		);
+
+		return array_values(array_map('strval', array_diff($switchedOn($darkTheme), $switchedOn($lightTheme))));
+	}//end darkSets()
 
 	/**
 	 * The names of the token sets: first in `tokenSetOrder`, then the ones it does not list.
@@ -103,7 +173,13 @@ class TokensStudioSets {
 		$selected = $this->selection(document: $document);
 
 		$merged = [];
+		$dark = ($this->darkSets(document: $document) ?? []);
 		foreach ($this->names(document: $document) as $name) {
+			if (in_array($name, $dark, true) === true) {
+				$skipped[] = ['path' => (string)$name, 'reason' => 'dark-colours-not-read'];
+				continue;
+			}
+
 			$status = 'enabled';
 			if ($selected !== null) {
 				$status = ($selected[$name] ?? 'disabled');

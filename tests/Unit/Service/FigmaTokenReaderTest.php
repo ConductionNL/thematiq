@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignTokensWriter;
 use OCA\Thematiq\Service\FigmaTokenReader;
 use OCA\Thematiq\Service\FigmaTokenWriter;
+use OCA\Thematiq\Service\TokensStudioSets;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -188,6 +189,41 @@ final class FigmaTokenReaderTest extends TestCase {
 		$this->assertArrayNotHasKey('$metadata', $read['document']);
 		$this->assertSame([], $read['skipped']);
 	}//end testSetsAreMergedInTheirOrder()
+
+	/**
+	 * A file with a light and a dark token set is one house style: the dark set is named and left out.
+	 *
+	 * @return void
+	 */
+	public function testALightAndDarkFileIsOneHouseStyle(): void {
+		$light = ['color' => ['primary' => ['$value' => '#111111', '$type' => 'color']]];
+		$dark = ['color' => ['primary' => ['$value' => '#eeeeee', '$type' => 'color']]];
+		$sets = new TokensStudioSets();
+
+		$withoutThemes = $this->read(document: ['basis' => $light, 'Dark' => $dark, '$metadata' => ['tokenSetOrder' => ['basis', 'Dark']]]);
+		$this->assertSame('#111111', $withoutThemes['document']['color']['primary']['$value']);
+		$this->assertSame([['path' => 'Dark', 'reason' => 'dark-colours-not-read']], $withoutThemes['skipped']);
+
+		$pair = [
+			'licht' => $light,
+			'donker' => $dark,
+			'$themes' => [
+				['id' => 'dark', 'name' => 'Donker', 'selectedTokenSets' => ['licht' => 'enabled', 'donker' => 'enabled']],
+				['id' => 'a1', 'name' => 'Licht', 'selectedTokenSets' => ['licht' => 'enabled', 'donker' => 'disabled']],
+			],
+		];
+		$this->assertSame(['donker'], $sets->darkSets(document: $pair));
+		$this->assertSame('#111111', $this->read(document: $pair)['document']['color']['primary']['$value']);
+
+		// Two brands, or two themes both called dark, are not a light and dark file.
+		$pair['$themes'][0]['id'] = 'noord';
+		$this->assertNull($sets->darkSets(document: $pair));
+		$pair['$themes'][1]['name'] = 'Dark';
+		$pair['$themes'][0]['name'] = 'dark';
+		$this->assertNull($sets->darkSets(document: $pair));
+		$this->assertNull($sets->darkSets(document: ['basis' => $light, '$metadata' => []]));
+		$this->assertNull($sets->darkSets(document: ['a' => $light, '$themes' => [['id' => 'x'], ['id' => 'y'], ['id' => 'dark']]]));
+	}//end testALightAndDarkFileIsOneHouseStyle()
 
 	/**
 	 * A colour that is not opaque is written as rgba(), and a name that is also a group has no place in a Tokens Studio file.

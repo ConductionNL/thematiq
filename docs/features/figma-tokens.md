@@ -42,6 +42,7 @@ The limits of every upload hold here too: 512 KB, no value that could leave its 
 | Reason | Meaning |
 |---|---|
 | `token-set-disabled` | The file's only theme has this token set switched off. |
+| `dark-colours-not-read` | The token set holds the dark colours of a light and dark file. Thematiq makes the dark variant of a set itself. |
 | `alias-cycle` | The token refers to itself through other tokens. |
 | `value-not-a-css-value` | The value is a sum over references (`{a} * 2`), a reference to a token the file does not hold, a boolean, or empty. |
 | `unmapped` | The path is not one thematiq knows. See the paths below. |
@@ -94,7 +95,7 @@ On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `font
 | `link` | `--nldesign-color-link` | `nldesign.color.link` | colour |
 | `accent` | `--nldesign-color-accent`, else `--nldesign-color-error` | `nldesign.color.accent`, else `nldesign.color.error` | colour |
 | `ink` | `--nldesign-color-text` | `nldesign.color.text` | colour |
-| `text` | none: `ink` and `muted` mixed half and half | none | derived |
+| `text` | `--thematiq-shell-text`, else `ink` and `muted` mixed half and half | `thematiq.shell.text` | colour, optional |
 | `muted` | `--nldesign-color-text-muted` | `nldesign.color.text-muted` | colour |
 | `line` | `--nldesign-color-border` | `nldesign.color.border` | colour |
 | `soft` | `--nldesign-color-background-dark` | `nldesign.color.background-dark` | colour |
@@ -105,7 +106,29 @@ On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `font
 | `radius-lg` | `--nldesign-border-radius-large` | `nldesign.border.radius-large` | size |
 | `font-family` | `--nldesign-font-family` | `nldesign.font.family` | font stack |
 
-A role whose token a set leaves out is derived or takes its default, as the endpoint page describes. `primary-deep` is only taken from the hover colour when that is darker than the primary.
+A role whose token a set leaves out is derived, in this way:
+
+| Role | Without its token |
+|---|---|
+| `primary-deep` | The primary with 30% black mixed in. The hover colour is only taken when it is darker than the primary. |
+| `primary-light` | The primary with 90% white mixed in. |
+| `action` | The primary. |
+| `action-deep` | With an action colour: that colour with 15% black. Without one: the primary's hover colour, by the rule for `primary-deep`. |
+| `link` | The primary. |
+| `text` | `ink` and `muted` mixed half and half. |
+| `field` | `line`. |
+| `radius-lg` | `radius`. |
+| Any other | The default the [endpoint page](shell-tokens-api.md) lists. |
+
+## Files from the OpenProject plugin
+
+A file the plugin downloads uploads into thematiq, in all three of its formats. The test suite does this with real plugin files and compares the eighteen roles.
+
+- The plugin's `text` value sits at `thematiq.shell.text` (`--thematiq-shell-text`). Thematiq keeps that name and reads the `text` role from it.
+- The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps the token, so it is in the next download. It is not one of the eighteen roles of the endpoint.
+- A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style, takes the light set and names the dark one as left out.
+- The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq does not read them and does not write them. It makes the dark variant of a set itself.
+- The plugin keeps the original text of a colour in its own extension. Thematiq reads the colour object, so the colour is the same and the notation may differ.
 
 ## What a round trip loses
 

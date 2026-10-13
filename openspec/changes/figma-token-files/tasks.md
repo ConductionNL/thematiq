@@ -14,3 +14,5 @@
 - [x] 7 `FigmaTokenFilesRoundTripTest`: every shipped set in each format; fixtures in both
       spellings. `FigmaTokenReaderTest` and `DtcgExportControllerTest` for the small cases.
 - [x] 8 `docs/features/figma-tokens.md`, and a copy for the plugin lane.
+- [x] 9 Files from the OpenProject plugin: the shell names kept, the `text` role reads its own
+      token, a light and dark Tokens Studio file is one house style. Real plugin files as fixtures.

@@ -363,4 +363,23 @@ final class MultiBrandImportServiceTest extends TestCase {
 			$this->assertSame(Admin::class, ($attribute[0]->getArguments()['settings'] ?? null), $method);
 		}
 	}//end testSourceRoutesAreAdminOnly()
+
+	/**
+	 * Scenario: a file with a light theme and a dark theme is one house style, not two brands.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 */
+	public function testALightAndDarkFileIsNotTwoBrands(): void {
+		$file = (string)file_get_contents(\dirname(__DIR__, 3) . '/tests/fixtures/figma/plugin/cunningham.tokens-studio.json');
+		$document = json_decode($file, true);
+
+		$this->assertSame([], $this->imports->brands(content: $file));
+
+		// The same file with its dark theme called something else is two brands again.
+		$document['$themes'][1]['id'] = 'noord';
+		$document['$themes'][1]['name'] = 'Noord';
+		$this->assertCount(2, $this->imports->brands(content: (string)json_encode($document)));
+	}//end testALightAndDarkFileIsNotTwoBrands()
 }//end class
