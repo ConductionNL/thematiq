@@ -182,7 +182,8 @@ class ShellCatalogueTest extends TestCase {
 			}
 
 			$with++;
-			$this->assertSame(['tokens'], array_keys($set['dark']), $id);
+			$this->assertSame([], array_diff(array_keys($set['dark']), ['tokens', 'vocabulary']), $id);
+			$this->assertSame('tokens', array_key_first($set['dark']), $id);
 			$this->assertSame(ShellRoleMapper::ROLES, array_keys($set['dark']['tokens']), $id);
 			foreach ($set['dark']['tokens'] as $role => $value) {
 				$this->assertNotSame('', trim($value), $id . ' dark ' . $role);
@@ -438,6 +439,28 @@ class ShellCatalogueTest extends TestCase {
 			}
 		}
 	}//end testTheVocabularyIsTheSetsOwnTokensBeyondTheRoles()
+
+	/**
+	 * The dark block carries the dark variant's own vocabulary, under the same rules as the light one.
+	 *
+	 * @return void
+	 */
+	public function testTheDarkBlockCarriesTheDarkVariantsVocabulary(): void {
+		$sets = $this->setsById(catalogue: $this->catalogue());
+		$dark = $sets['zuiddrecht']['dark']['vocabulary'];
+
+		$this->assertSame('#f43535', $dark['color-error']);
+		$this->assertSame('#ff5c5c', $dark['component-navigation-active-color']);
+		$this->assertNotSame($sets['zuiddrecht']['vocabulary']['color-error'], $dark['color-error']);
+		$this->assertArrayNotHasKey('color-background', $dark, 'a role name stays in the dark roles');
+
+		foreach ($sets as $id => $set) {
+			foreach (($set['dark']['vocabulary'] ?? []) as $key => $value) {
+				$this->assertNotContains('--nldesign-' . $key, ShellCatalogueVocabulary::ROLE_NAMES, $id . ' ' . $key);
+				$this->assertStringNotContainsString('var(', $value, $id . ' ' . $key);
+			}
+		}
+	}//end testTheDarkBlockCarriesTheDarkVariantsVocabulary()
 
 	/**
 	 * Each role name is a token some shipped set declares, so the list holds the names the roles really come from.

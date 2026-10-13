@@ -71,4 +71,16 @@ class ShellCatalogueVocabularyTest extends TestCase {
 
 		$this->assertSame([], (new ShellCatalogueVocabulary())->ofSet(css: $css, resolved: $resolved));
 	}//end testItLeavesOutWhatHasAnotherHomeOrNoMeaningElsewhere()
+
+	/**
+	 * A block of declarations that are the set's own already, such as a dark variant, by the same rules.
+	 *
+	 * @return void
+	 */
+	public function testADarkBlockGivesItsOwnVocabulary(): void {
+		$this->assertSame(
+			['color-error' => '#f43535'],
+			(new ShellCatalogueVocabulary())->ofDeclarations(declarations: ['--nldesign-color-error' => '#f43535', '--nldesign-color-background' => '#171a20'])
+		);
+	}//end testADarkBlockGivesItsOwnVocabulary()
 }//end class
