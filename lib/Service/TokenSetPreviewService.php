@@ -65,23 +65,6 @@ class TokenSetPreviewService {
 	private ?array $sourceMemo = null;
 
 	/**
-	 * The optional token a Nextcloud variable reads before the token in
-	 * {@see getTokenSources()}, for the variables `overrides.css` writes as
-	 * `var(--optional, var(--token))`. Filled by {@see parseMappings()}.
-	 *
-	 * @var array<string, string>
-	 */
-	private array $optionalSources = [];
-
-	/**
-	 * The set token behind an internal step `overrides.css` reads: the step
-	 * holds the token's value when a set declares it.
-	 *
-	 * @var array<string, string>
-	 */
-	private const INTERNAL_STEPS = ['--thematiq-action-hover' => '--nldesign-color-action-hover'];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param IAppManager $appManager The app manager.
@@ -213,7 +196,6 @@ class TokenSetPreviewService {
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-token-set-may-declare-an-action-colour
 	 */
 	public function getResolvedColors(string $tokenSetId): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
@@ -240,16 +222,8 @@ class TokenSetPreviewService {
 
 		foreach (array_keys($editableTokens) as $colorToken) {
 			if (isset($mappings[$colorToken]) === true) {
-				// Mapping exists in overrides.css. A set that declares the
-				// optional token the variable reads first (the action colour)
-				// is shown in that colour, as the page draws it.
+				// Mapping exists in overrides.css.
 				$nldesignRef = $mappings[$colorToken];
-				$optional = ($this->optionalSources[$colorToken] ?? null);
-				$optional = (self::INTERNAL_STEPS[$optional] ?? $optional);
-				if ($optional !== null && isset($nldesignVars[$optional]) === true) {
-					$nldesignRef = $optional;
-				}
-
 				$value = $this->resolveVarReference(
 					ref: $nldesignRef,
 					vars: $nldesignVars
@@ -313,12 +287,6 @@ class TokenSetPreviewService {
 	 * Returns a map of --color-X => --nldesign-Y (without the var() wrapper).
 	 * Ignores commented-out lines.
 	 *
-	 * A variable written as `var(--optional, var(--nldesign-Y))` maps to
-	 * `--nldesign-Y`, the token every set has: the optional one (the action
-	 * colour) is declared by a set that wants it and by no other, so the map
-	 * stays what it was for every set that does not. The optional name is
-	 * kept beside it for {@see getResolvedColors()}.
-	 *
 	 * @param string $filePath Absolute path to overrides.css.
 	 *
 	 * @return array<string, string> Map of --color-X => --nldesign-Y.
@@ -349,19 +317,6 @@ class TokenSetPreviewService {
 			$colorToken = trim($match[1]);
 			$nldesignToken = trim($match[2]);
 			$mappings[$colorToken] = $nldesignToken;
-		}
-
-		// The same, with an optional token in front: var(--optional, var(--nldesign-Y)).
-		preg_match_all(
-			'/^\s*(--[\w-]+)\s*:\s*var\(\s*(--[\w-]+)\s*,\s*var\(\s*(--[\w-]+)\s*\)\s*\)\s*(?:!important)?\s*;/m',
-			$content,
-			$optional,
-			PREG_SET_ORDER
-		);
-
-		foreach ($optional as $match) {
-			$mappings[$match[1]] = $match[3];
-			$this->optionalSources[$match[1]] = $match[2];
 		}
 
 		return $mappings;

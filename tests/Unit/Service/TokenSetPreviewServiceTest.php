@@ -354,4 +354,85 @@ class TokenSetPreviewServiceTest extends TestCase {
 			array_keys($declared)
 		);
 	}//end testTheSemanticLayerIsSortedByName()
+
+	/* ---------------------------------------------------------------- */
+	/* getResolvedColors() and the memo                                  */
+	/* ---------------------------------------------------------------- */
+
+	/**
+	 * The map is read from disk once per request.
+	 *
+	 * The settings page asks for it several times while it builds one
+	 * response. A second read that saw a different file would give one
+	 * response two answers.
+	 */
+	public function testTokenSourcesAreReadOnce(): void {
+		$this->writeCss(
+			'css/systems/nldesign/overrides.css',
+			":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
+		);
+
+		$service = $this->build();
+		$first = $service->getTokenSources();
+
+		$this->writeCss(
+			'css/systems/nldesign/overrides.css',
+			":root {\n\t--color-primary: var(--nldesign-color-action) !important;\n}\n"
+		);
+
+		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $first);
+		$this->assertSame($first, $service->getTokenSources());
+	}//end testTokenSourcesAreReadOnce()
+
+	/**
+	 * A token whose value names another token resolves to that token's value.
+	 *
+	 * This is the shape the primary element variables have again now that
+	 * they read the primary: the preview shows the colour, not the reference.
+	 */
+	public function testResolvedColoursFollowATokenThatNamesAnotherToken(): void {
+		$this->writeCss(
+			'css/systems/nldesign/defaults.css',
+			":root {\n"
+			. "\t--nldesign-color-primary: #0b5fff;\n"
+			. "\t--nldesign-color-primary-element: var(--nldesign-color-primary);\n"
+			. "}\n"
+		);
+		$this->writeCss(
+			'css/systems/nldesign/overrides.css',
+			":root {\n"
+			. "\t--color-primary: var(--nldesign-color-primary) !important;\n"
+			. "\t--color-primary-element: var(--nldesign-color-primary-element) !important;\n"
+			. "}\n"
+		);
+
+		$colours = $this->build()->getResolvedColors(tokenSetId: 'no-such-set');
+
+		$this->assertSame('#0b5fff', $colours['--color-primary']);
+		$this->assertSame('#0b5fff', $colours['--color-primary-element']);
+	}//end testResolvedColoursFollowATokenThatNamesAnotherToken()
+
+	/**
+	 * A variable that reads a token nothing declares keeps the token's name.
+	 *
+	 * An empty value would read as "no colour". The name tells the reader
+	 * which token is missing.
+	 */
+	public function testAResolvedColourWithoutAValueKeepsItsTokenName(): void {
+		$this->writeCss(
+			'css/systems/nldesign/overrides.css',
+			":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
+		);
+
+		$colours = $this->build()->getResolvedColors(tokenSetId: 'no-such-set');
+
+		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $colours);
+	}//end testAResolvedColourWithoutAValueKeepsItsTokenName()
+
+	/**
+	 * Without the bundle's stylesheets there is nothing to resolve.
+	 */
+	public function testResolvedColoursAreEmptyWithoutTheStylesheets(): void {
+		$this->assertSame([], $this->build()->getResolvedColors(tokenSetId: 'no-such-set'));
+	}//end testResolvedColoursAreEmptyWithoutTheStylesheets()
 }//end class

@@ -67,15 +67,15 @@
 				"THE ACTION COLOUR IS OPTIONAL, so these three rules have no fallback from the primary.",
 				"A theme that gives its main button a colour apart from its brand declares",
 				"--{p}-color-action (with -hover and -text beside it), and only then does the set get",
-				"--nldesign-color-action. Without the source nothing is written, and Nextcloud's primary",
-				"element keeps reading the primary, which is what every existing conversion relies on.",
+				"--nldesign-color-action, which only the main button wears. Without the source nothing",
+				"is written and the button keeps the primary, as every existing conversion relies on.",
 				"",
 				"--utrecht-button-primary-action-background-color is deliberately NOT a source here: it",
 				"is the first source of --nldesign-color-primary above, so naming it again would hand",
 				"every converted theme an action colour equal to its primary."
 			],
 			"target": "--nldesign-color-action",
-			"nextcloud": ["--color-primary-element"],
+			"nextcloud": ["primary button background"],
 			"sources": ["--{p}-color-action"],
 			"transform": "copy"
 		},
@@ -85,7 +85,7 @@
 				"the stylesheet itself (--thematiq-action-hover)."
 			],
 			"target": "--nldesign-color-action-hover",
-			"nextcloud": ["--color-primary-element-hover"],
+			"nextcloud": ["primary button background on hover"],
 			"sources": ["--{p}-color-action-hover"],
 			"transform": "copy"
 		},
@@ -96,7 +96,7 @@
 				"gets no action text either."
 			],
 			"target": "--nldesign-color-action-text",
-			"nextcloud": ["--color-primary-element-text"],
+			"nextcloud": ["primary button label"],
 			"sources": ["--{p}-color-action-text"],
 			"fallback": {
 				"kind": "derive",

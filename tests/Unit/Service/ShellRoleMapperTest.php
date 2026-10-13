@@ -172,6 +172,7 @@ class ShellRoleMapperTest extends TestCase {
 			overrides: [
 				'--color-primary' => '#aa0000',
 				'--color-primary-element' => '#00aa00',
+				'--nldesign-component-button-primary-action-background-color' => '#aa00aa',
 				'--color-main-text' => '#000000',
 				'--border-radius' => '2px',
 				'--font-face' => 'Inter, sans-serif',
@@ -179,7 +180,7 @@ class ShellRoleMapperTest extends TestCase {
 		);
 
 		$this->assertSame('#aa0000', $roles['primary']);
-		$this->assertSame('#00aa00', $roles['action']);
+		$this->assertSame('#aa00aa', $roles['action'], 'the main button follows its own token, not the element variable');
 		$this->assertSame('#000000', $roles['ink']);
 		$this->assertSame('2px', $roles['radius']);
 		$this->assertSame('Inter, sans-serif', $roles['font-family']);
@@ -252,6 +253,25 @@ class ShellRoleMapperTest extends TestCase {
 	}//end testAnUnusableValueIsPassedOver()
 
 	/**
+	 * A colour the mapper cannot do sums on is passed on as it is.
+	 *
+	 * The deep and light steps are mixed from the primary. A primary written
+	 * in a notation the mapper does not parse has no mix, so the deep steps
+	 * stay on the colour itself and the light step takes the default.
+	 *
+	 * @return void
+	 */
+	public function testAColourThatCannotBeMixedIsNotDerivedFrom(): void {
+		$roles = $this->mapper()->map(tokens: ['--nldesign-color-primary' => 'oklch(0.5 0.15 250)']);
+
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary-deep']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['action']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['action-deep']);
+		$this->assertSame(ShellRoleMapper::DEFAULTS['primary-light'], $roles['primary-light']);
+	}//end testAColourThatCannotBeMixedIsNotDerivedFrom()
+
+	/**
 	 * The accent is the set's accent, and the error colour for a set without one.
 	 *
 	 * @return void
@@ -291,9 +311,18 @@ class ShellRoleMapperTest extends TestCase {
 		$alone = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']));
 		$this->assertSame('#1a7434', $alone['action-deep']);
 
-		// An administrator's own value of the Nextcloud variable still wins.
-		$overridden = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']), overrides: ['--color-primary-element' => '#aa0000']);
-		$this->assertSame('#aa0000', $overridden['action']);
+		// An administrator's value for Nextcloud's element variable moves checked
+		// boxes and switches, not the main button, so the action role ignores it.
+		$element = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']), overrides: ['--color-primary-element' => '#aa0000']);
+		$this->assertSame('#1f883d', $element['action']);
+
+		// An administrator's value for the main button's own token wins.
+		$button = $this->mapper()->map(
+			tokens: ($set + ['--nldesign-color-action' => '#1f883d']),
+			overrides: ['--nldesign-component-button-primary-action-background-color' => '#aa0000']
+		);
+		$this->assertSame('#aa0000', $button['action']);
+		$this->assertSame('#910000', $button['action-deep'], 'and hovers a little darker');
 	}//end testASetsActionColourIsTheActionRole()
 
 	/**
