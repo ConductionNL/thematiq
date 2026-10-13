@@ -675,15 +675,9 @@ class TokenSetConverterService {
 	private function detectInput(string $content): string {
 		$trimmed = trim($content);
 
-		if ($trimmed !== '' && ($trimmed[0] === '{' || $trimmed[0] === '[')) {
-			$decoded = json_decode($trimmed, true);
-			if (is_array($decoded) === true) {
-				if ($this->hasDtcgLeaf(node: $decoded) === true || $this->isThematiqExport(content: $trimmed) === true) {
-					return 'B';
-				}
-
-				return 'C';
-			}
+		$jsonKind = $this->jsonKind(trimmed: $trimmed);
+		if ($jsonKind !== null) {
+			return $jsonKind;
 		}
 
 		$stripped = (string)preg_replace('#/\*.*?\*/#s', '', $content);
@@ -702,6 +696,31 @@ class TokenSetConverterService {
 
 		return 'A';
 	}//end detectInput()
+
+	/**
+	 * Which JSON shape the content is: a DTCG document (it has a `$value` leaf, or thematiq
+	 * wrote it and every value sits in its `cssOnly` map) or a Style Dictionary tree.
+	 *
+	 * @param string $trimmed The trimmed content.
+	 *
+	 * @return string|null `B`, `C`, or null when the content is not a JSON object or list.
+	 */
+	private function jsonKind(string $trimmed): ?string {
+		if ($trimmed === '' || ($trimmed[0] !== '{' && $trimmed[0] !== '[')) {
+			return null;
+		}
+
+		$decoded = json_decode($trimmed, true);
+		if (is_array($decoded) === false) {
+			return null;
+		}
+
+		if ($this->hasDtcgLeaf(node: $decoded) === true || $this->isThematiqExport(content: $trimmed) === true) {
+			return 'B';
+		}
+
+		return 'C';
+	}//end jsonKind()
 
 	/**
 	 * Whether any node in a decoded JSON tree is a DTCG leaf (`$value`).
