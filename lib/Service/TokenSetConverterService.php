@@ -272,6 +272,14 @@ class TokenSetConverterService {
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
 
+		// A file from a Figma tool: token sets merged, the `value` spelling respelled,
+		// thematiq's own paths given their CSS names back. Any other content is untouched.
+		$leftOut = [];
+		$content = (new FigmaTokenReader())->normalise(content: $content, skipped: $leftOut);
+		foreach ($leftOut as $entry) {
+			$report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];
+		}
+
 		$inputKind = $this->detectInput(content: $content);
 		$sourceVersion = null;
 
@@ -670,7 +678,7 @@ class TokenSetConverterService {
 		if ($trimmed !== '' && ($trimmed[0] === '{' || $trimmed[0] === '[')) {
 			$decoded = json_decode($trimmed, true);
 			if (is_array($decoded) === true) {
-				if ($this->hasDtcgLeaf(node: $decoded) === true) {
+				if ($this->hasDtcgLeaf(node: $decoded) === true || $this->isThematiqExport(content: $trimmed) === true) {
 					return 'B';
 				}
 

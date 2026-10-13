@@ -28,6 +28,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignTokensWriter;
+use OCA\Thematiq\Service\FigmaTokenWriter;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\TokenSetService;
@@ -88,6 +89,11 @@ class DtcgExportController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
 
+		$format = (string)$this->request->getParam('format', 'dtcg');
+		if (in_array($format, FigmaTokenWriter::FORMATS, true) === false) {
+			return new JSONResponse(['error' => $this->l->t('Unknown file format.')], 400);
+		}
+
 		$appPath = $this->appManager->getAppPath(Application::APP_ID);
 		$css = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
 		$name = $id;
@@ -105,8 +111,17 @@ class DtcgExportController extends Controller {
 			deprecations: $this->deprecations->all()
 		);
 
+		$figma = new FigmaTokenWriter();
+		$document = $figma->write(
+			document: $document,
+			declarations: $this->cssParser->parseRootBlock(css: $css),
+			format: $format,
+			setId: $id,
+			setName: $name
+		);
+
 		$response = new JSONResponse($document);
-		$response->addHeader('Content-Disposition', 'attachment; filename="' . $id . '.tokens.json"');
+		$response->addHeader('Content-Disposition', 'attachment; filename="' . $figma->fileName(setId: $id, format: $format) . '"');
 
 		return $response;
 	}//end export()
