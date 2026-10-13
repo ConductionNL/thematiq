@@ -98,10 +98,15 @@ class ShellRoleMapper {
 	 * source: no token set declares a body colour between ink and muted, so it
 	 * is always derived.
 	 *
-	 * `action` reads the optional action colour (`--nldesign-color-action`)
-	 * before the primary: a set declares it to give the main button a colour
-	 * of its own, and Nextcloud's primary element follows it. `action-deep`
-	 * lists its own hover step only; {@see self::map()} says what stands in.
+	 * `action` is the main button, and nothing else. It reads the optional
+	 * action colour (`--nldesign-color-action`) before the primary: a set
+	 * declares it to give the main button a colour of its own. It does NOT
+	 * read `--color-primary-element`: that variable paints checked boxes,
+	 * switches and folder icons, which stay with the primary, so an
+	 * administrator's value for it says nothing about the button. An
+	 * administrator moves the main button with its own tokens
+	 * ({@see self::BUTTON_OVERRIDES}). `action-deep` lists its own hover step
+	 * only; {@see self::map()} says what stands in.
 	 *
 	 * @var array<string, string[]>
 	 */
@@ -109,8 +114,8 @@ class ShellRoleMapper {
 		'primary' => ['--color-primary', '--summer-color-primary', '--nldesign-color-primary'],
 		'primary-deep' => ['--color-primary-hover', '--summer-color-primary-hover', '--nldesign-color-primary-hover'],
 		'primary-light' => ['--color-primary-light', '--summer-color-primary-light', '--nldesign-color-primary-light'],
-		'action' => ['--color-primary-element', '--nldesign-color-action', '--summer-color-primary', '--nldesign-color-primary'],
-		'action-deep' => ['--color-primary-element-hover', '--nldesign-color-action-hover'],
+		'action' => ['--nldesign-color-action', '--summer-color-primary', '--nldesign-color-primary'],
+		'action-deep' => ['--nldesign-color-action-hover'],
 		'link' => ['--summer-color-primary', '--nldesign-color-link'],
 		'accent' => ['--nldesign-color-accent', '--color-error', '--summer-color-error', '--nldesign-color-error'],
 		'ink' => ['--color-main-text', '--summer-color-text', '--nldesign-color-text'],
@@ -128,6 +133,19 @@ class ShellRoleMapper {
 		'radius' => ['--border-radius', '--summer-radius', '--nldesign-border-radius'],
 		'radius-lg' => ['--border-radius-large', '--summer-radius-large', '--nldesign-border-radius-large'],
 		'font-family' => ['--font-face', '--summer-font-family', '--nldesign-font-family'],
+	];
+
+	/**
+	 * The tokens an administrator sets in the token editor to move the main
+	 * button on one instance: its fill, and its fill on hover. Read from the
+	 * administrator's own values only. A set's value for them is already what
+	 * the action colour resolves to.
+	 *
+	 * @var array<string, string>
+	 */
+	private const BUTTON_OVERRIDES = [
+		'action' => '--nldesign-component-button-primary-action-background-color',
+		'action-deep' => '--nldesign-component-button-primary-action-hover-background-color',
 	];
 
 	/**
@@ -191,15 +209,16 @@ class ShellRoleMapper {
 		}
 
 		$primary = ($read['primary'] ?? self::DEFAULTS['primary']);
-		$action = ($read['action'] ?? $primary);
+		$ownButton = $this->usable(value: ($overrides[self::BUTTON_OVERRIDES['action']] ?? null));
+		$action = ($ownButton ?? $read['action'] ?? $primary);
 		$ink = ($read['ink'] ?? self::DEFAULTS['ink']);
 		$muted = ($read['muted'] ?? self::DEFAULTS['muted']);
 
-		// The step the action colour hovers to: its own; else, for a set with
-		// an action colour, that colour a little darker, as the page draws it;
-		// else the primary's hover step, which is what the action then is.
-		$actionDeep = $read['action-deep'];
-		if ($actionDeep === null && $this->usable(value: ($declared['--nldesign-color-action'] ?? null)) !== null) {
+		// The step the main button hovers to: its own; else, for a button with
+		// a colour of its own, that colour a little darker, as the page draws
+		// it; else the primary's hover step, which is what the action then is.
+		$actionDeep = ($this->usable(value: ($overrides[self::BUTTON_OVERRIDES['action-deep']] ?? null)) ?? $read['action-deep']);
+		if ($actionDeep === null && ($ownButton !== null || $this->usable(value: ($declared['--nldesign-color-action'] ?? null)) !== null)) {
 			$actionDeep = $this->mix(first: $action, second: '#000000', weight: self::ACTION_HOVER);
 		}
 
@@ -230,6 +249,37 @@ class ShellRoleMapper {
 			'font-family' => ($read['font-family'] ?? self::DEFAULTS['font-family']),
 		];
 	}//end map()
+
+	/**
+	 * The eighteen roles of one token set on a dark page.
+	 *
+	 * The same mapping as {@see self::map()}, with one role read the way a
+	 * dark page uses it. `primary-deep` is the colour written on
+	 * `primary-light`, the tint behind a selected item. In light that is the
+	 * primary's darker step. In dark the tint is dark, and a set's darker step
+	 * (often its light hover colour, kept as it is) does not read on it.
+	 * Nextcloud itself writes the primary on that tint
+	 * (`--color-primary-light-text`), so the role takes the first of its own
+	 * value, the primary and the ink that reaches 4.5:1 on `primary-light`.
+	 *
+	 * @param array<string, string> $tokens The set's light declarations with its dark variant's over them.
+	 *
+	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 */
+	public function mapDark(array $tokens): array {
+		$roles = $this->map(tokens: $tokens);
+		foreach ([$roles['primary-deep'], $roles['primary'], $roles['ink']] as $candidate) {
+			$ratio = $this->colours->measure(foreground: $candidate, background: $roles['primary-light'], page: $roles['ground']);
+			if ($ratio !== null && $ratio >= 4.5) {
+				$roles['primary-deep'] = $candidate;
+				break;
+			}
+		}
+
+		return $roles;
+	}//end mapDark()
 
 	/**
 	 * The first declared name that holds a value a consumer can use.

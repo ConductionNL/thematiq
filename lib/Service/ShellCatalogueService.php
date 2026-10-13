@@ -135,13 +135,29 @@ class ShellCatalogueService {
 		$families = [];
 		foreach ($ids as $id) {
 			$meta = ($manifest[$id] ?? []);
-			$tokens = $this->mapper->map(tokens: $this->declarations->resolveDeclarations(appPath: $appPath, id: $id, theming: []));
-			$sets[] = [
+			$light = $this->declarations->resolveDeclarations(appPath: $appPath, id: $id, theming: []);
+			$tokens = $this->mapper->map(tokens: $light);
+			$set = [
 				'id' => $id,
 				'name' => $this->nameOf(id: $id, meta: $meta),
 				'tokens' => $tokens,
 				'logo' => $this->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $annotations),
 			];
+
+			// Optional: only a set that ships a dark variant has dark roles.
+			$dark = $this->darkDeclarations(appPath: $appPath, id: $id);
+			if ($dark !== []) {
+				// A set that names no page background draws on Nextcloud's own,
+				// which is white in light and dark in dark. The light
+				// declarations carry the white; a dark page must not inherit it.
+				if (isset($dark['--nldesign-color-background']) === false) {
+					$dark['--nldesign-color-background'] = DarkPaletteService::NEXTCLOUD_DARK_MAIN_BACKGROUND;
+				}
+
+				$set['dark'] = ['tokens' => $this->mapper->mapDark(tokens: array_merge($light, $dark))];
+			}
+
+			$sets[] = $set;
 
 			foreach ($this->fonts->familiesIn(stack: $tokens['font-family']) as $family) {
 				$families[$family][] = $id;
@@ -199,6 +215,45 @@ class ShellCatalogueService {
 
 		return $files;
 	}//end redistributableLogos()
+
+	/**
+	 * What a set's dark variant declares, or nothing when it ships none.
+	 *
+	 * Read from the committed `css/tokens/dark/<id>.css`, the file a dark
+	 * page gets: {@see DarkPaletteService} wrote it (or, for the high contrast
+	 * set, a person did), so these are thematiq's own dark values and no
+	 * second derivation. The file states its declarations twice, for the
+	 * system preference and for Nextcloud's explicit dark theme; the explicit
+	 * block is read. A token the dark variant leaves out keeps its light
+	 * value, as it does in the browser.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $id The set id.
+	 *
+	 * @return array<string, string> Declaration name => dark value.
+	 */
+	private function darkDeclarations(string $appPath, string $id): array {
+		$css = $this->licences->read(path: $appPath . '/css/tokens/dark/' . $id . '.css');
+		$start = strpos($css, 'body[data-theme-dark]');
+		if ($start === false) {
+			return [];
+		}
+
+		$open = strpos($css, '{', $start);
+		$close = strpos($css, '}', (int)$open);
+		if ($open === false || $close === false) {
+			return [];
+		}
+
+		preg_match_all('/(--[\w-]+)\s*:\s*([^;]+);/', substr($css, ($open + 1), ($close - $open - 1)), $matches, PREG_SET_ORDER);
+
+		$declared = [];
+		foreach ($matches as $match) {
+			$declared[$match[1]] = trim($match[2]);
+		}
+
+		return $declared;
+	}//end darkDeclarations()
 
 	/**
 	 * The entries of `token-sets.json`, by id.

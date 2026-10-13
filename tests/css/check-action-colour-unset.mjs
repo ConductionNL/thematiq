@@ -3,31 +3,38 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  * SPDX-License-Identifier: EUPL-1.2
  *
- * A token set without an action colour renders as it did before the action
- * colour existed. This check proves it in a browser.
+ * Two proofs about the action colour, both in a browser.
  *
- * The action colour (`--nldesign-color-action`, with `-hover` and `-text`) is
- * optional. Every stylesheet that reads it is written
- * `var(--nldesign-color-action…, <what the line was before>)`. So the
- * stylesheets as they were are still in the tree: take each reader and keep
- * only its fallback. This check does that, then loads every shipped token set
- * twice in Chromium, once with the stylesheets as they are and once with the
- * readers unwrapped, in the order CssInjectionService links them, in the
- * light and in the dark theme. Every custom property on the root, the body and
- * a child, and the colours of five buttons at rest and on hover, must be the
- * same in both.
+ * 1. UNSET CHANGES NOTHING. The action colour (`--nldesign-color-action`, with
+ *    `-hover` and `-text`) is optional. Every stylesheet that reads it is
+ *    written `var(--nldesign-color-action…, <what the line was before>)`. So
+ *    the stylesheets as they were are still in the tree: take each reader and
+ *    keep only its fallback. This check does that, then loads every shipped
+ *    token set twice in Chromium, once with the stylesheets as they are and
+ *    once with the readers unwrapped, in the order CssInjectionService links
+ *    them, in the light and in the dark theme. Every custom property on the
+ *    root, the body and a child, the buttons and the other controls must be
+ *    the same in both.
  *
- * A check that cannot see a difference proves nothing, so there is a control:
- * with an action colour declared, the two must differ for the bundles that
- * read it.
+ * 2. SET, IT REACHES THE MAIN BUTTON AND NOTHING ELSE. With an action colour
+ *    declared, the filled primary buttons must wear it, and a checked
+ *    checkbox, radio button and switch, a progress bar, the selected
+ *    navigation entry, a counter badge, a focused input, a folder icon and
+ *    `--color-primary-element` itself must stay what they were. A bundle that
+ *    does not read the token must not change at all.
+ *
+ * The page holds no Nextcloud stylesheet, so for the other controls the check
+ * reads the variables Nextcloud paints them with, on elements that carry
+ * Nextcloud's own class names: thematiq scopes those variables per component.
  *
  * Usage:
  *   node tests/css/check-action-colour-unset.mjs            (two pages at a time)
  *   node tests/css/check-action-colour-unset.mjs --workers 1
  *
  * Exit codes:
- *   0  no set renders differently, and the control sees the action colour
- *   1  a set renders differently, a reader has no fallback, or the control is blind
+ *   0  no set renders differently, and a declared action colour reaches the buttons only
+ *   1  a set renders differently, a reader has no fallback, a button did not
+ *      take the action colour, or something other than a button did
  *   2  Chromium could not be started (nothing was checked)
  *
  * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
@@ -125,14 +132,55 @@ export function shippedSets() {
 	return sets
 }
 
+const STILL = 'style="transition:none!important"'
 const BODY = `
 <div id="content">
-<button id="b1" style="transition:none!important" class="button-vue button-vue--primary button-vue--vue-primary"><span class="button-vue__wrapper"><span class="button-vue__text">x</span></span></button>
-<button id="b2" style="transition:none!important" class="primary">x</button>
-<input id="b3" style="transition:none!important" class="primary" type="submit" value="x">
-<a id="b4" style="transition:none!important" class="primary">x</a>
-<button id="b5" style="transition:none!important" class="button-vue button-vue--secondary button-vue--vue-secondary">x</button>
+<button id="b1" ${STILL} class="button-vue button-vue--primary button-vue--vue-primary"><span class="button-vue__wrapper"><span class="button-vue__text">x</span></span></button>
+<button id="b2" ${STILL} class="primary">x</button>
+<input id="b3" ${STILL} class="primary" type="submit" value="x">
+<a id="b4" ${STILL} class="primary">x</a>
+<button id="b5" ${STILL} class="button-vue button-vue--secondary button-vue--vue-secondary">x</button>
+<div class="modal-container"><button id="b6" ${STILL} class="button-vue button-vue--primary">confirm</button></div>
+<form class="login-form"><button id="b7" ${STILL} type="submit">Log in</button></form>
+<span class="checkbox-radio-switch checkbox-radio-switch--checked checkbox-radio-switch-checkbox"><span class="checkbox-radio-switch__content"><span id="p-checkbox" class="checkbox-radio-switch__icon"></span></span></span>
+<span class="checkbox-radio-switch checkbox-radio-switch--checked checkbox-radio-switch-radio"><span class="checkbox-radio-switch__content"><span id="p-radio" class="checkbox-radio-switch__icon"></span></span></span>
+<span class="checkbox-radio-switch checkbox-radio-switch--checked checkbox-radio-switch-switch"><span class="checkbox-radio-switch__content"><span id="p-switch" class="checkbox-radio-switch__icon"></span></span></span>
+<progress id="p-progress" class="progress-bar" value="50" max="100"></progress>
+<div id="app-navigation-vue"><ul><li id="p-navigation" class="app-navigation-entry active"><a class="app-navigation-entry-link">x</a><span id="p-counter" class="counter-bubble__counter">1</span></li></ul></div>
+<span class="input-field"><input id="p-input" class="input-field__input" type="text"></span>
+<span class="files-list__row-icon"><span id="p-folder" class="folder-icon"></span></span>
 </div>`
+
+/** The filled primary buttons, by probe id, and where each is drawn. */
+export const BUTTONS = {
+	b1: 'NcButton primary (.button-vue--primary and .button-vue--vue-primary)',
+	b2: 'button.primary',
+	b3: 'input.primary / input[type=submit].primary',
+	b6: 'the confirm button of a dialog (.modal-container .button-vue--primary)',
+}
+
+/** Buttons only the NL Design System bundle paints from the main button tokens. */
+export const NLDESIGN_BUTTONS = {
+	b4: 'a.primary',
+	b7: 'the login button (.login-form button[type=submit])',
+}
+
+/** What must stay with the primary, by probe id. */
+export const OTHERS = {
+	'p-checkbox': 'a checked checkbox',
+	'p-radio': 'a selected radio button',
+	'p-switch': 'a switch that is on',
+	'p-progress': 'a progress bar',
+	'p-navigation': 'the selected navigation entry',
+	'p-counter': 'a counter badge',
+	'p-input': 'a text input and its focus ring',
+	'p-folder': 'a folder icon',
+	b5: 'a secondary button',
+}
+
+/** The action colour the second proof declares, and its computed form. */
+const ACTION = '#12ab34'
+const ACTION_RGB = 'rgb(18, 171, 52)'
 
 /**
  * What a page computes for one set of stylesheets.
@@ -165,18 +213,25 @@ async function measure(page, sheets, scheme) {
 		dump('root', document.documentElement)
 		dump('body', document.body)
 		dump('content', document.getElementById('content'))
-		for (const id of ['b1', 'b2', 'b3', 'b4', 'b5']) {
-			const cs = getComputedStyle(document.getElementById(id))
-			flat[id + ' background'] = cs.backgroundColor
-			flat[id + ' border'] = cs.borderTopColor
-			flat[id + ' color'] = cs.color
+		for (const el of document.querySelectorAll('#content [id]')) {
+			const cs = getComputedStyle(el)
+			flat[el.id + ' background'] = cs.backgroundColor
+			flat[el.id + ' border'] = cs.borderTopColor
+			flat[el.id + ' color'] = cs.color
+			flat[el.id + ' outline'] = cs.outlineColor
+			// The variables Nextcloud paints this control with, as it sees them.
+			for (const name of ['', '-hover', '-text', '-light', '-light-text']) {
+				flat[el.id + ' --color-primary-element' + name] = cs
+					.getPropertyValue('--color-primary-element' + name)
+					.trim()
+			}
 		}
 		flat['b1 label'] = getComputedStyle(
 			document.querySelector('#b1 .button-vue__text'),
 		).color
 		return flat
 	})
-	for (const id of ['b1', 'b2']) {
+	for (const id of ['b1', 'b2', 'b6']) {
 		await page.hover('#' + id)
 		const hover = await page.evaluate((target) => {
 			const cs = getComputedStyle(document.getElementById(target))
@@ -194,7 +249,7 @@ async function measure(page, sheets, scheme) {
  *
  * @param {import('playwright-core').Browser} browser A Chromium.
  * @param {{workers?: number}} [options] How many pages work at a time.
- * @return {Promise<{sets: number, values: number, differences: string[], blindControls: string[], leftovers: string[]}>} The findings.
+ * @return {Promise<{sets: number, values: number, differences: string[], notReached: string[], leaked: string[], reached: string[], unmoved: number, leftovers: string[]}>} The findings.
  */
 export async function compare(browser, options = {}) {
 	const workers = Math.max(1, options.workers ?? 2)
@@ -221,7 +276,10 @@ export async function compare(browser, options = {}) {
 
 	const differences = []
 	const withActionColour = new Set()
-	const blindControls = []
+	const notReached = []
+	const leaked = []
+	const reached = new Set()
+	let unmoved = 0
 	const leftovers = new Set()
 	let values = 0
 
@@ -235,14 +293,52 @@ export async function compare(browser, options = {}) {
 			const { set, scheme } = job
 			const files = stylesheetsOf(set, systems)
 			// A set that declares an action colour is meant to render
-			// differently, so it is not part of this proof. It is counted,
-			// not skipped in silence.
+			// differently, so it is not part of the first proof. It gets the
+			// second one on its own colour instead: its page with the readers
+			// unwrapped is the page without an action colour, and against that
+			// only its buttons may differ.
 			if (
 				/--nldesign-color-action[\w-]*\s*:/.test(
 					read(`css/tokens/${set.id}.css`),
 				)
 			) {
 				withActionColour.add(set.id)
+				const own = await measure(
+					page,
+					files.map((f) => sheet(f).now),
+					scheme,
+				)
+				const without = await measure(
+					page,
+					files.map((f) => sheet(f).before),
+					scheme,
+				)
+				for (const key of new Set([
+					...Object.keys(own),
+					...Object.keys(without),
+				])) {
+					const id = key.split(' ')[0]
+					if (
+						id in BUTTONS
+						|| id in NLDESIGN_BUTTONS
+						|| /nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/.test(
+							key,
+						)
+					) {
+						continue
+					}
+					if (own[key] !== without[key]) {
+						leaked.push(
+							`${set.id} ${scheme} (its own action colour): ${OTHERS[id] ?? key} changed: ${key} was "${without[key]}", is "${own[key]}"`,
+						)
+					}
+					unmoved++
+				}
+				if (own['b1 background'] === without['b1 background']) {
+					notReached.push(
+						`${set.id} ${scheme}: the main button does not wear the set's own action colour`,
+					)
+				}
 				continue
 			}
 			for (const file of files) {
@@ -285,27 +381,50 @@ export async function compare(browser, options = {}) {
 				}
 			}
 
-			// The control: with an action colour, the bundles that read it must show it.
-			if (
-				scheme === 'light'
-				&& READING_SYSTEMS.includes(set.design_system ?? 'nldesign')
-			) {
-				const withAction = await measure(
-					page,
-					[
-						...files.map((f) => sheet(f).now),
-						':root{--nldesign-color-action:#12ab34}',
-					],
-					scheme,
-				)
-				if (
-					withAction['body --color-primary-element'] !== '#12ab34'
-					|| withAction['b1 background'] !== 'rgb(18, 171, 52)'
-				) {
-					blindControls.push(
-						`${set.id}: with an action colour the element is "${withAction['body --color-primary-element']}" and the main button "${withAction['b1 background']}"`,
+			// The second proof: a declared action colour reaches the buttons and nothing else.
+			const system = set.design_system ?? 'nldesign'
+			const reads = READING_SYSTEMS.includes(system)
+			const declared = `:root{--nldesign-color-action:${ACTION};--nldesign-color-action-text:#fefefe}`
+			const withAction = await measure(
+				page,
+				[...files.map((f) => sheet(f).now), declared],
+				scheme,
+			)
+			const where = `${set.id} ${scheme}`
+			// A generated dark variant restates the main button's colours as
+			// literals, derived from the set's own file. A token declared for
+			// this check alone cannot reach them, so in dark the buttons are
+			// only expected to follow where the bundle reads the token direct.
+			const buttons = {
+				...BUTTONS,
+				...(system === 'nldesign' ? NLDESIGN_BUTTONS : {}),
+			}
+			const followsHere =
+				reads && (scheme === 'light' || system !== 'nldesign')
+			for (const [id, name] of Object.entries(buttons)) {
+				if (followsHere && withAction[id + ' background'] !== ACTION_RGB) {
+					notReached.push(
+						`${where}: ${name} is ${withAction[id + ' background']}, not the action colour`,
 					)
 				}
+				if (followsHere) reached.add(`${system}: ${name}`)
+			}
+			for (const [key, value] of Object.entries(withAction)) {
+				const id = key.split(' ')[0]
+				const isButton = id in buttons
+				const isAction =
+					/nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/.test(
+						key,
+					)
+				if ((isButton && reads) || isAction) {
+					continue
+				}
+				if (value !== now[key]) {
+					leaked.push(
+						`${where}: ${OTHERS[id] ?? key} changed: ${key} was "${now[key]}", is "${value}"`,
+					)
+				}
+				unmoved++
 			}
 		}
 		await page.close()
@@ -318,7 +437,10 @@ export async function compare(browser, options = {}) {
 		withActionColour: [...withActionColour].sort(),
 		values,
 		differences,
-		blindControls,
+		notReached,
+		leaked,
+		reached: [...reached].sort(),
+		unmoved,
 		leftovers: [...leftovers].sort(),
 	}
 }
@@ -353,19 +475,33 @@ async function main() {
 	for (const line of result.differences.slice(0, 40)) {
 		console.error('[action-colour-unset] FAIL: ' + line)
 	}
-	for (const line of result.blindControls.slice(0, 10)) {
-		console.error('[action-colour-unset] FAIL (control): ' + line)
+	for (const line of result.notReached.slice(0, 20)) {
+		console.error(
+			'[action-colour-unset] FAIL (a button did not follow): ' + line,
+		)
+	}
+	for (const line of result.leaked.slice(0, 20)) {
+		console.error(
+			'[action-colour-unset] FAIL (not a button, and it changed): ' + line,
+		)
 	}
 	const failed =
 		result.leftovers.length
 		+ result.differences.length
-		+ result.blindControls.length
+		+ result.notReached.length
+		+ result.leaked.length
 	console.log(
-		`[action-colour-unset] ${result.sets} sets without an action colour, light and dark, ${result.values} values compared `
-			+ `(${result.withActionColour.length} set(s) declare one and are left out: ${result.withActionColour.join(', ') || 'none'}): `
-			+ `${result.differences.length} difference(s), ${result.blindControls.length} blind control(s), `
-			+ `${result.leftovers.length} reader(s) without a fallback.`,
+		`[action-colour-unset] Unset: ${result.sets} sets without an action colour, light and dark, ${result.values} values compared `
+			+ `(${result.withActionColour.length} set(s) declare one and are checked on their own colour: ${result.withActionColour.join(', ') || 'none'}): `
+			+ `${result.differences.length} difference(s), ${result.leftovers.length} reader(s) without a fallback.`,
 	)
+	console.log(
+		`[action-colour-unset] Set: ${result.reached.length} button kind(s) took the action colour, ${result.notReached.length} did not; `
+			+ `${result.unmoved} other values checked, ${result.leaked.length} changed.`,
+	)
+	for (const line of result.reached) {
+		console.log('[action-colour-unset]   follows: ' + line)
+	}
 	process.exit(failed === 0 ? 0 : 1)
 }
 

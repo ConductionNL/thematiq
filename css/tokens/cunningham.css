@@ -33,6 +33,17 @@
 	--nldesign-color-primary-light: #eaf1fb;
 	--nldesign-color-primary-light-hover: #d5e4f7;
 
+	/* The main button: green, apart from the blue brand. The value is the
+	 * action colour of the OpenProject boards on identity.conduction.nl/screens
+	 * (--sc-action #1f883d, --sc-action-deep #197032). White on it is 4.52:1;
+	 * the bundle's own button label, brand-050 #eaf1fb, would be 3.98:1, so the
+	 * text is named here. Only the filled primary button wears this colour.
+	 * Checked boxes, switches, folder icons and everything else Nextcloud
+	 * draws in its primary element colour stay blue. */
+	--nldesign-color-action: #1f883d;
+	--nldesign-color-action-hover: #197032;
+	--nldesign-color-action-text: #ffffff;
+
 	/* Background tones — Cunningham greyscale (gray-000/025/050). */
 	--nldesign-color-background-hover: #f0f1f2;
 	--nldesign-color-background-dark: #e1e2e5;
