@@ -90,12 +90,14 @@ class ShellCatalogueService {
 	 * @param ShellRoleMapper $mapper Maps them onto the eighteen roles.
 	 * @param ShellCatalogueFonts $fonts Builds the font list.
 	 * @param ReuseLicences $licences Reads `REUSE.toml`.
+	 * @param ShellCatalogueVocabulary $vocabulary Picks a set's own vocabulary.
 	 */
 	public function __construct(
 		private readonly ShippedTokenSetAuditService $declarations,
 		private readonly ShellRoleMapper $mapper,
 		private readonly ShellCatalogueFonts $fonts = new ShellCatalogueFonts(),
 		private readonly ReuseLicences $licences = new ReuseLicences(),
+		private readonly ShellCatalogueVocabulary $vocabulary = new ShellCatalogueVocabulary(),
 	) {
 	}//end __construct()
 
@@ -143,6 +145,12 @@ class ShellCatalogueService {
 				'tokens' => $tokens,
 				'logo' => $this->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $annotations),
 			];
+
+			// Optional: the set's own tokens beyond the roles, so another product can carry them.
+			$vocabulary = $this->vocabulary->ofSet(css: $this->licences->read(path: $appPath . '/css/tokens/' . $id . '.css'), resolved: $light);
+			if ($vocabulary !== []) {
+				$set['vocabulary'] = $vocabulary;
+			}
 
 			// Optional: only a set that ships a dark variant has dark roles.
 			$dark = $this->darkDeclarations(appPath: $appPath, id: $id);
