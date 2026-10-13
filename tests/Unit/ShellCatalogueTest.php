@@ -128,7 +128,8 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertSame($shipped, array_column($catalogue['sets'], 'id'));
 
 		foreach ($catalogue['sets'] as $set) {
-			$this->assertSame(['id', 'name', 'tokens', 'logo'], array_keys($set), $set['id']);
+			$this->assertSame(['id', 'name', 'tokens', 'logo'], array_slice(array_keys($set), 0, 4), $set['id']);
+			$this->assertSame([], array_diff(array_keys($set), ['id', 'name', 'tokens', 'logo', 'dark']), $set['id']);
 			$this->assertNotSame('', $set['name'], $set['id']);
 			$this->assertSame(['file', 'inverse_file', 'licence', 'redistributable', 'basis'], array_keys($set['logo']), $set['id']);
 		}
@@ -160,6 +161,89 @@ class ShellCatalogueTest extends TestCase {
 			$this->setsById(catalogue: $catalogue)['zuiddrecht']['tokens']
 		);
 	}//end testEverySetHasAllEighteenRoles()
+
+	/**
+	 * A set that ships a dark variant has dark roles, read from that variant; a set without one has no dark block.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
+	 */
+	public function testASetWithADarkVariantHasDarkRoles(): void {
+		$sets = $this->setsById(catalogue: $this->catalogue());
+
+		$with = 0;
+		foreach ($sets as $id => $set) {
+			$hasVariant = is_file($this->root() . '/css/tokens/dark/' . $id . '.css');
+			$this->assertSame($hasVariant, isset($set['dark']), $id);
+			if ($hasVariant === false) {
+				continue;
+			}
+
+			$with++;
+			$this->assertSame(['tokens'], array_keys($set['dark']), $id);
+			$this->assertSame(ShellRoleMapper::ROLES, array_keys($set['dark']['tokens']), $id);
+			foreach ($set['dark']['tokens'] as $role => $value) {
+				$this->assertNotSame('', trim($value), $id . ' dark ' . $role);
+				$this->assertStringNotContainsString('var(', $value, $id . ' dark ' . $role);
+			}
+
+			// What the dark variant does not restate keeps its light value.
+			$this->assertSame($set['tokens']['radius'], $set['dark']['tokens']['radius'], $id);
+			$this->assertSame($set['tokens']['font-family'], $set['dark']['tokens']['font-family'], $id);
+		}
+
+		$this->assertGreaterThan(60, $with);
+		$this->assertArrayNotHasKey('dark', $sets['nextcloud'], 'the stock set ships no dark variant: Nextcloud brings its own');
+
+		// The values are the committed dark file's own.
+		$dark = (string)file_get_contents($this->root() . '/css/tokens/dark/zuiddrecht.css');
+		$this->assertStringContainsString('--nldesign-color-text: ' . $sets['zuiddrecht']['dark']['tokens']['ink'] . ';', $dark);
+		$this->assertStringContainsString('--nldesign-color-primary: ' . $sets['zuiddrecht']['dark']['tokens']['primary'] . ';', $dark);
+		$this->assertNotSame($sets['zuiddrecht']['tokens']['ground'], $sets['zuiddrecht']['dark']['tokens']['ground']);
+	}//end testASetWithADarkVariantHasDarkRoles()
+
+	/**
+	 * In every dark block the text reads on what it is written on.
+	 *
+	 * Main text, body text and muted text on the page, and the selected
+	 * item's text on its tint, at 4.5:1. A set that names no page background
+	 * stands on Nextcloud's dark page, not on the white of its light page:
+	 * that mistake gave seven sets main text at 1.2 to 1.6:1.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 */
+	public function testTheDarkRolesReadOnEachOther(): void {
+		$contrast = new ContrastService();
+		$pairs = [['ink', 'ground'], ['text', 'ground'], ['muted', 'ground'], ['link', 'ground'], ['primary-deep', 'primary-light']];
+
+		$failures = [];
+		$checked = 0;
+		foreach ($this->catalogue()['sets'] as $set) {
+			if (isset($set['dark']) === false) {
+				continue;
+			}
+
+			$tokens = $set['dark']['tokens'];
+			foreach ($pairs as [$foreground, $background]) {
+				$checked++;
+				$ratio = $contrast->measure(foreground: $tokens[$foreground], background: $tokens[$background], page: $tokens['ground']);
+				if ($ratio === null || $ratio < 4.5) {
+					$failures[] = sprintf('%s: %s %s on %s %s is %s', $set['id'], $foreground, $tokens[$foreground], $background, $tokens[$background], var_export($ratio, true));
+				}
+			}
+		}
+
+		$this->assertGreaterThan(300, $checked);
+		$this->assertSame([], $failures);
+
+		// A set without a page background of its own: Nextcloud's dark page.
+		$sets = $this->setsById(catalogue: $this->catalogue());
+		$this->assertSame('#171717', $sets['enschede']['dark']['tokens']['ground']);
+		$this->assertSame('#ffffff', $sets['enschede']['tokens']['ground']);
+	}//end testTheDarkRolesReadOnEachOther()
 
 	/**
 	 * A logo file named in the catalogue exists, and a set without a logo says nothing about one.

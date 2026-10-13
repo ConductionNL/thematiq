@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:c8e53685ab62eda7",
+    "generated_from": "sets:29c06348b5628165",
     "sets": [
         {
             "id": "amsterdam",
@@ -31,6 +31,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9ac8ff",
+                    "primary-deep": "#9ac8ff",
+                    "primary-light": "#112131",
+                    "action": "#9ac8ff",
+                    "action-deep": "#003677",
+                    "link": "#5ea4f7",
+                    "accent": "#f31c1c",
+                    "ink": "#dfdfdf",
+                    "text": "#bfbfbf",
+                    "muted": "#9e9e9e",
+                    "line": "#3b3b3b",
+                    "soft": "#292929",
+                    "ground": "#141414",
+                    "chip": "#1d1d1d",
+                    "field": "#878787",
+                    "radius": "0px",
+                    "radius-lg": "0px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -62,6 +84,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#4da6ff",
+                    "primary-deep": "#4da6ff",
+                    "primary-light": "#0d2135",
+                    "action": "#4da6ff",
+                    "action-deep": "#005cb8",
+                    "link": "#3595f4",
+                    "accent": "#e72e2e",
+                    "ink": "#e4e4e2",
+                    "text": "#d8d8d7",
+                    "muted": "#cccccc",
+                    "line": "#3595f4",
+                    "soft": "#141414",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#3595f4",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Open Sans, sans-serif"
+                }
             }
         },
         {
@@ -93,6 +137,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#53bdff",
+                    "primary-deep": "#53bdff",
+                    "primary-light": "#20282d",
+                    "action": "#53bdff",
+                    "action-deep": "#002e4a",
+                    "link": "#97cefa",
+                    "accent": "#e72e2e",
+                    "ink": "#addbff",
+                    "text": "#cce3f5",
+                    "muted": "#ebebeb",
+                    "line": "#292929",
+                    "soft": "#292929",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#141414",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+                }
             }
         },
         {
@@ -124,6 +190,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#f2757f",
+                    "primary-deep": "#f2757f",
+                    "primary-light": "#340c0e",
+                    "action": "#f2757f",
+                    "action-deep": "#bf121f",
+                    "link": "#f1a0a6",
+                    "accent": "#e72e2e",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#313940",
+                    "soft": "#1f1f1f",
+                    "ground": "#141414",
+                    "chip": "#1f1f1f",
+                    "field": "#313940",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Roboto, sans-serif"
+                }
             }
         },
         {
@@ -155,6 +243,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#bcceef",
+                    "primary-deep": "#bcceef",
+                    "primary-light": "#131c2a",
+                    "action": "#bcceef",
+                    "action-deep": "#4d69a4",
+                    "link": "#6f93d6",
+                    "accent": "#e34a42",
+                    "ink": "#cccccc",
+                    "text": "#a4afc7",
+                    "muted": "#7b92c1",
+                    "line": "#1a2538",
+                    "soft": "#131c2a",
+                    "ground": "#171717",
+                    "chip": "#0f1723",
+                    "field": "#495c82",
+                    "radius": "8px",
+                    "radius-lg": "16px",
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                }
             }
         },
         {
@@ -186,6 +296,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#bcceef",
+                    "primary-deep": "#bcceef",
+                    "primary-light": "#131c2a",
+                    "action": "#bcceef",
+                    "action-deep": "#1b3a75",
+                    "link": "#6f93d6",
+                    "accent": "#da515d",
+                    "ink": "#dbe5f6",
+                    "text": "#abbcdc",
+                    "muted": "#7b92c1",
+                    "line": "#2c3957",
+                    "soft": "#1a2538",
+                    "ground": "#141414",
+                    "chip": "#131c2a",
+                    "field": "#6f93d6",
+                    "radius": "6px",
+                    "radius-lg": "10px",
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                }
             }
         },
         {
@@ -217,6 +349,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#558fe3",
+                    "primary-deep": "#558fe3",
+                    "primary-light": "#0c1c32",
+                    "action": "#1f883d",
+                    "action-deep": "#197032",
+                    "link": "#c6d8f3",
+                    "accent": "#f42c2c",
+                    "ink": "#e2e3e4",
+                    "text": "#bfc0c3",
+                    "muted": "#9b9da1",
+                    "line": "#3f4247",
+                    "soft": "#292b2f",
+                    "ground": "#292b2f",
+                    "chip": "#1e2022",
+                    "field": "#828589",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Marianne, Inter, sans-serif"
+                }
             }
         },
         {
@@ -248,6 +402,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#3ac0fd",
+                    "primary-deep": "#0398dc",
+                    "primary-light": "#052839",
+                    "action": "#3ac0fd",
+                    "action-deep": "#0398dc",
+                    "link": "#c3d5dc",
+                    "accent": "#e72e2e",
+                    "ink": "#dedede",
+                    "text": "#dedede",
+                    "muted": "#dedede",
+                    "line": "#313131",
+                    "soft": "#141414",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#c3d5dc",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Lato\", sans-serif"
+                }
             }
         },
         {
@@ -279,6 +455,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#55d27b",
+                    "primary-deep": "#55d27b",
+                    "primary-light": "#243c24",
+                    "action": "#55d27b",
+                    "action-deep": "#1e6c35",
+                    "link": "#5ba6e4",
+                    "accent": "#f65b56",
+                    "ink": "#d1d1d1",
+                    "text": "#c3c3c3",
+                    "muted": "#b5b5b5",
+                    "line": "#3b3b3b",
+                    "soft": "#1f1f1f",
+                    "ground": "#141414",
+                    "chip": "#201c16",
+                    "field": "#848484",
+                    "radius": "3px",
+                    "radius-lg": "3px",
+                    "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+                }
             }
         },
         {
@@ -310,6 +508,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#3aadff",
+                    "primary-deep": "#3aadff",
+                    "primary-light": "#0c1620",
+                    "action": "#3aadff",
+                    "action-deep": "#2979b3",
+                    "link": "#45acf5",
+                    "accent": "#c42c3a",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#878787",
+                    "soft": "#171c23",
+                    "ground": "#141414",
+                    "chip": "#1d2026",
+                    "field": "#878787",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Lato\", Arial, sans-serif"
+                }
             }
         },
         {
@@ -341,6 +561,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#4ab5dc",
+                    "primary-deep": "#4ab5dc",
+                    "primary-light": "#18282e",
+                    "action": "#4ab5dc",
+                    "action-deep": "#18637e",
+                    "link": "#63b7db",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#e2e4e4",
+                    "muted": "#d9dddd",
+                    "line": "#2e2e2e",
+                    "soft": "#57b1d8",
+                    "ground": "#141414",
+                    "chip": "#191919",
+                    "field": "#2e2e2e",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                }
             }
         },
         {
@@ -372,6 +614,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#509cdc",
+                    "primary-deep": "#509cdc",
+                    "primary-light": "#18252e",
+                    "action": "#509cdc",
+                    "action-deep": "#1a5281",
+                    "link": "#4c9dd9",
+                    "accent": "#e72e2e",
+                    "ink": "#9eceff",
+                    "text": "#9eb6cf",
+                    "muted": "#9e9e9e",
+                    "line": "#4c9dd9",
+                    "soft": "#2d1910",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#565b60",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                }
             }
         },
         {
@@ -403,6 +667,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#a4d0ff",
+                    "primary-deep": "#a4d0ff",
+                    "primary-light": "#142131",
+                    "action": "#a4d0ff",
+                    "action-deep": "#004793",
+                    "link": "#39adf5",
+                    "accent": "#e72e2e",
+                    "ink": "#d4d4d4",
+                    "text": "#d4d4d4",
+                    "muted": "#d4d4d4",
+                    "line": "#292929",
+                    "soft": "#2c2e2f",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#c6c6c6",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+                }
             }
         },
         {
@@ -434,6 +720,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#aed5ff",
+                    "primary-deep": "#aed5ff",
+                    "primary-light": "#122132",
+                    "action": "#aed5ff",
+                    "action-deep": "#004d9c",
+                    "link": "#4eadf6",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#2e2e2e",
+                    "soft": "#319ff4",
+                    "ground": "#141414",
+                    "chip": "#212121",
+                    "field": "#2e2e2e",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                }
             }
         },
         {
@@ -465,6 +773,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#f7777e",
+                    "primary-deep": "#f7777e",
+                    "primary-light": "#360a0c",
+                    "action": "#f7777e",
+                    "action-deep": "#ad5358",
+                    "link": "#888888",
+                    "accent": "#e72e2e",
+                    "ink": "#e4e4e4",
+                    "text": "#c1c1c1",
+                    "muted": "#9e9e9e",
+                    "line": "#7a7a7a",
+                    "soft": "#2c2e2f",
+                    "ground": "#171717",
+                    "chip": "#121b24",
+                    "field": "#828282",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "IBM Plex Sans, sans-serif"
+                }
             }
         },
         {
@@ -496,6 +826,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9fd2ff",
+                    "primary-deep": "#9fd2ff",
+                    "primary-light": "#162431",
+                    "action": "#9fd2ff",
+                    "action-deep": "#004c8e",
+                    "link": "#5aadf6",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#c5c5c5",
+                    "muted": "#9e9e9e",
+                    "line": "#3b3b3b",
+                    "soft": "#1d1d1d",
+                    "ground": "#141414",
+                    "chip": "#1b1b1b",
+                    "field": "#888888",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -527,6 +879,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#decff0",
+                    "primary-deep": "#decff0",
+                    "primary-light": "#20132e",
+                    "action": "#decff0",
+                    "action-deep": "#43206e",
+                    "link": "#d8c8eb",
+                    "accent": "#d14274",
+                    "ink": "#e2e3e4",
+                    "text": "#bec0c4",
+                    "muted": "#999ca3",
+                    "line": "#24272d",
+                    "soft": "#1d2026",
+                    "ground": "#171a20",
+                    "chip": "#1d1f23",
+                    "field": "#656c78",
+                    "radius": "8px",
+                    "radius-lg": "12px",
+                    "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                }
             }
         },
         {
@@ -558,6 +932,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#fad5c8",
+                    "primary-deep": "#fad5c8",
+                    "primary-light": "#3b1c03",
+                    "action": "#fad5c8",
+                    "action-deep": "#8a2d0e",
+                    "link": "#e98c6d",
+                    "accent": "#cf3f3f",
+                    "ink": "#dfd9d4",
+                    "text": "#ccc4bd",
+                    "muted": "#b8aea5",
+                    "line": "#4e4132",
+                    "soft": "#2c2217",
+                    "ground": "#141414",
+                    "chip": "#261c0f",
+                    "field": "#8b7e72",
+                    "radius": "8px",
+                    "radius-lg": "16px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -589,6 +985,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#ebaee3",
+                    "primary-deep": "#ebaee3",
+                    "primary-light": "#2f1329",
+                    "action": "#ebaee3",
+                    "action-deep": "#5e1755",
+                    "link": "#d87dcc",
+                    "accent": "#cf3f3f",
+                    "ink": "#ded9dc",
+                    "text": "#c8c2c6",
+                    "muted": "#b2aab0",
+                    "line": "#423b40",
+                    "soft": "#221e22",
+                    "ground": "#141414",
+                    "chip": "#1c181c",
+                    "field": "#7b7378",
+                    "radius": "4px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -620,6 +1038,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#8fd0ec",
+                    "primary-deep": "#8fd0ec",
+                    "primary-light": "#162830",
+                    "action": "#8fd0ec",
+                    "action-deep": "#0b3648",
+                    "link": "#87c8e5",
+                    "accent": "#da6760",
+                    "ink": "#e7e6e4",
+                    "text": "#cdcbc7",
+                    "muted": "#b3afaa",
+                    "line": "#3f3a32",
+                    "soft": "#1c2226",
+                    "ground": "#141414",
+                    "chip": "#171d20",
+                    "field": "#7f7b76",
+                    "radius": "10px",
+                    "radius-lg": "14px",
+                    "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+                }
             }
         },
         {
@@ -651,6 +1091,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#7ed6eb",
+                    "primary-deep": "#7ed6eb",
+                    "primary-light": "#192c2f",
+                    "action": "#7ed6eb",
+                    "action-deep": "#0a3a46",
+                    "link": "#93d9e9",
+                    "accent": "#cf3f3f",
+                    "ink": "#d4dce0",
+                    "text": "#bcc5cb",
+                    "muted": "#a3aeb5",
+                    "line": "#374043",
+                    "soft": "#1b2124",
+                    "ground": "#141414",
+                    "chip": "#161d1d",
+                    "field": "#68737d",
+                    "radius": "2px",
+                    "radius-lg": "4px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -682,6 +1144,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Not a real organisation\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#d8e0f4",
+                    "primary-deep": "#d8e0f4",
+                    "primary-light": "#0c1932",
+                    "action": "#d8e0f4",
+                    "action-deep": "#233f82",
+                    "link": "#5f7fca",
+                    "accent": "#cf3f3f",
+                    "ink": "#d0d4dc",
+                    "text": "#b6bcc8",
+                    "muted": "#9ca4b3",
+                    "line": "#2d3543",
+                    "soft": "#161b25",
+                    "ground": "#141414",
+                    "chip": "#13171f",
+                    "field": "#60697a",
+                    "radius": "6px",
+                    "radius-lg": "12px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -713,6 +1197,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Conduction's own brand\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9c99d7",
+                    "primary-deep": "#9c99d7",
+                    "primary-light": "#0f162c",
+                    "action": "#9c99d7",
+                    "action-deep": "#36347d",
+                    "link": "#b0afdc",
+                    "accent": "#f42c2c",
+                    "ink": "#dcdce4",
+                    "text": "#b9b9c5",
+                    "muted": "#9696a6",
+                    "line": "#353747",
+                    "soft": "#23232f",
+                    "ground": "#141414",
+                    "chip": "#1d1d23",
+                    "field": "#767689",
+                    "radius": "4px",
+                    "radius-lg": "4px",
+                    "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+                }
             }
         },
         {
@@ -744,6 +1250,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9bc2ed",
+                    "primary-deep": "#9bc2ed",
+                    "primary-light": "#1c232c",
+                    "action": "#9bc2ed",
+                    "action-deep": "#133b68",
+                    "link": "#81afe2",
+                    "accent": "#e72e2e",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#535353",
+                    "soft": "#2c2e2f",
+                    "ground": "#141414",
+                    "chip": "#252728",
+                    "field": "#929292",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -775,6 +1303,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#bed9f7",
+                    "primary-deep": "#bed9f7",
+                    "primary-light": "#15202f",
+                    "action": "#bed9f7",
+                    "action-deep": "#124e93",
+                    "link": "#bfbfc5",
+                    "accent": "#e72e2e",
+                    "ink": "#ccccd1",
+                    "text": "#ccccd1",
+                    "muted": "#ccccd1",
+                    "line": "#bfbfc5",
+                    "soft": "#1e1e1e",
+                    "ground": "#141414",
+                    "chip": "#1e1e1e",
+                    "field": "#959598",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -806,6 +1356,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#15f4f1",
+                    "primary-deep": "#15f4f1",
+                    "primary-light": "#173030",
+                    "action": "#15f4f1",
+                    "action-deep": "#05807e",
+                    "link": "#69e5f0",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#c5c5c5",
+                    "muted": "#9e9e9e",
+                    "line": "#ebebeb",
+                    "soft": "#141414",
+                    "ground": "#141414",
+                    "chip": "#1f1f1f",
+                    "field": "#69e5f0",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Calibri,Verdana,sans-serif"
+                }
             }
         },
         {
@@ -837,6 +1409,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#63d553",
+                    "primary-deep": "#63d553",
+                    "primary-light": "#152e13",
+                    "action": "#63d553",
+                    "action-deep": "#3f10bc",
+                    "link": "#7fd672",
+                    "accent": "#e72e2e",
+                    "ink": "#afccf5",
+                    "text": "#9db3d4",
+                    "muted": "#8a9ab2",
+                    "line": "#637186",
+                    "soft": "#2c2e2f",
+                    "ground": "#171717",
+                    "chip": "#2c0c1a",
+                    "field": "#637186",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                }
             }
         },
         {
@@ -868,6 +1462,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#ffffff",
+                    "primary-deep": "#cccccc",
+                    "primary-light": "#000000",
+                    "action": "#ffffff",
+                    "action-deep": "#cccccc",
+                    "link": "#ffffff",
+                    "accent": "#ff8080",
+                    "ink": "#ffffff",
+                    "text": "#f3f3f3",
+                    "muted": "#e6e6e6",
+                    "line": "#ffffff",
+                    "soft": "#333333",
+                    "ground": "#000000",
+                    "chip": "#1a1a1a",
+                    "field": "#ffffff",
+                    "radius": "0px",
+                    "radius-lg": "0px",
+                    "font-family": "'Fira Sans', sans-serif"
+                }
             }
         },
         {
@@ -899,6 +1515,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#80b5f4",
+                    "primary-deep": "#80b5f4",
+                    "primary-light": "#1d252e",
+                    "action": "#80b5f4",
+                    "action-deep": "#083161",
+                    "link": "#5da1d1",
+                    "accent": "#e72e2e",
+                    "ink": "#bfc5ca",
+                    "text": "#aeb2b5",
+                    "muted": "#9c9fa0",
+                    "line": "#3b3b3b",
+                    "soft": "#262829",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#afafa6",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Clear Sans\", sans-serif"
+                }
             }
         },
         {
@@ -930,6 +1568,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#4a9eeb",
+                    "primary-deep": "#4a9eeb",
+                    "primary-light": "#142330",
+                    "action": "#4a9eeb",
+                    "action-deep": "#105594",
+                    "link": "#469ce4",
+                    "accent": "#e72e2e",
+                    "ink": "#d8d4cf",
+                    "text": "#d8d4cf",
+                    "muted": "#d8d4cf",
+                    "line": "#cbc7c1",
+                    "soft": "#292929",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#cbc7c1",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -961,6 +1621,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9c99d7",
+                    "primary-deep": "#9c99d7",
+                    "primary-light": "#0f162c",
+                    "action": "#9c99d7",
+                    "action-deep": "#36347d",
+                    "link": "#b0afdc",
+                    "accent": "#f42c2c",
+                    "ink": "#dcdce4",
+                    "text": "#b9b9c5",
+                    "muted": "#9696a6",
+                    "line": "#353747",
+                    "soft": "#23232f",
+                    "ground": "#141414",
+                    "chip": "#1d1d23",
+                    "field": "#767689",
+                    "radius": "4px",
+                    "radius-lg": "4px",
+                    "font-family": "Marianne, Inter, sans-serif"
+                }
             }
         },
         {
@@ -992,6 +1674,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#f47e71",
+                    "primary-deep": "#f47e71",
+                    "primary-light": "#35100b",
+                    "action": "#f47e71",
+                    "action-deep": "#a91c09",
+                    "link": "#6cc3f4",
+                    "accent": "#e72e2e",
+                    "ink": "#deeaf2",
+                    "text": "#bbc5cc",
+                    "muted": "#979fa5",
+                    "line": "#757b7f",
+                    "soft": "#2c2e2f",
+                    "ground": "#141414",
+                    "chip": "#121b24",
+                    "field": "#939aa0",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Open Sans\", sans-serif"
+                }
             }
         },
         {
@@ -1023,6 +1727,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#c4c2eb",
+                    "primary-deep": "#c4c2eb",
+                    "primary-light": "#22202a",
+                    "action": "#c4c2eb",
+                    "action-deep": "#1b184c",
+                    "link": "#a4a3dd",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#292933",
+                    "soft": "#3a3897",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#292933",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Open Sans, sans-serif"
+                }
             }
         },
         {
@@ -1054,6 +1780,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#63a5e1",
+                    "primary-deep": "#63a5e1",
+                    "primary-light": "#15222e",
+                    "action": "#63a5e1",
+                    "action-deep": "#45749e",
+                    "link": "#888888",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#cecece",
+                    "muted": "#b1b1b1",
+                    "line": "#8c8c8c",
+                    "soft": "#2c2e2f",
+                    "ground": "#171717",
+                    "chip": "#121b24",
+                    "field": "#959595",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "IBM Plex Sans, sans-serif"
+                }
             }
         },
         {
@@ -1116,6 +1864,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#34ddbc",
+                    "primary-deep": "#34ddbc",
+                    "primary-light": "#110339",
+                    "action": "#34ddbc",
+                    "action-deep": "#4a13db",
+                    "link": "#9875f8",
+                    "accent": "#e72e2e",
+                    "ink": "#9eb8dd",
+                    "text": "#94aac8",
+                    "muted": "#899bb3",
+                    "line": "#637186",
+                    "soft": "#2c2e2f",
+                    "ground": "#141414",
+                    "chip": "#171a20",
+                    "field": "#637186",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                }
             }
         },
         {
@@ -1147,6 +1917,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#ffc915",
+                    "primary-deep": "#f0b800",
+                    "primary-light": "#392c05",
+                    "action": "#ffc915",
+                    "action-deep": "#f0b800",
+                    "link": "#659df7",
+                    "accent": "#c42c3a",
+                    "ink": "#eff5ff",
+                    "text": "#c7cacf",
+                    "muted": "#9e9e9e",
+                    "line": "#659df7",
+                    "soft": "#1d1d1d",
+                    "ground": "#141414",
+                    "chip": "#1b1b1b",
+                    "field": "#659df7",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+                }
             }
         },
         {
@@ -1178,6 +1970,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#67fa0f",
+                    "primary-deep": "#67fa0f",
+                    "primary-light": "#203017",
+                    "action": "#67fa0f",
+                    "action-deep": "#328203",
+                    "link": "#e892b2",
+                    "accent": "#e72e2e",
+                    "ink": "#aeadad",
+                    "text": "#aeadad",
+                    "muted": "#aeadad",
+                    "line": "#a7a6a6",
+                    "soft": "#98ee29",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#545454",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Roboto\", \"Arial\", sans-serif"
+                }
             }
         },
         {
@@ -1209,6 +2023,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#e4e1f6",
+                    "primary-deep": "#e4e1f6",
+                    "primary-light": "#1e1c2b",
+                    "action": "#e4e1f6",
+                    "action-deep": "#2c2276",
+                    "link": "#8b81d5",
+                    "accent": "#c42c3a",
+                    "ink": "#ebebeb",
+                    "text": "#cecece",
+                    "muted": "#b0b0b0",
+                    "line": "#757575",
+                    "soft": "#40349b",
+                    "ground": "#111f27",
+                    "chip": "#3f719e",
+                    "field": "#757575",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+                }
             }
         },
         {
@@ -1240,6 +2076,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#edddf8",
+                    "primary-deep": "#edddf8",
+                    "primary-light": "#261f2b",
+                    "action": "#edddf8",
+                    "action-deep": "#3c1356",
+                    "link": "#9ab8fa",
+                    "accent": "#e72e2e",
+                    "ink": "#c5e9ff",
+                    "text": "#b1c4d0",
+                    "muted": "#9c9fa1",
+                    "line": "#373a3a",
+                    "soft": "#23a5f3",
+                    "ground": "#171717",
+                    "chip": "#1b1b1b",
+                    "field": "#6f7274",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Source Sans 3\", sans-serif"
+                }
             }
         },
         {
@@ -1271,6 +2129,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"Conduction's own brand\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#81ff9f",
+                    "primary-deep": "#81ff9f",
+                    "primary-light": "#1d331e",
+                    "action": "#81ff9f",
+                    "action-deep": "#006e32",
+                    "link": "#71f892",
+                    "accent": "#e72e2e",
+                    "ink": "#b0bbbf",
+                    "text": "#a3afb4",
+                    "muted": "#95a2a8",
+                    "line": "#313f44",
+                    "soft": "#1b2b30",
+                    "ground": "#141414",
+                    "chip": "#172227",
+                    "field": "#717f83",
+                    "radius": "0px",
+                    "radius-lg": "0px",
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -1302,6 +2182,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#e97a88",
+                    "primary-deep": "#e97a88",
+                    "primary-light": "#201e2a",
+                    "action": "#e97a88",
+                    "action-deep": "#16113b",
+                    "link": "#72f8c2",
+                    "accent": "#e72e2e",
+                    "ink": "#c9c4ee",
+                    "text": "#b6b4c9",
+                    "muted": "#a3a3a3",
+                    "line": "#4a4a4a",
+                    "soft": "#1d1d1d",
+                    "ground": "#141414",
+                    "chip": "#1d1d1d",
+                    "field": "#69677b",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                }
             }
         },
         {
@@ -1333,6 +2235,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#05ffcc",
+                    "primary-deep": "#05ffcc",
+                    "primary-light": "#192f2a",
+                    "action": "#05ffcc",
+                    "action-deep": "#00365f",
+                    "link": "#8ccaf9",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#c5c5c5",
+                    "muted": "#9e9e9e",
+                    "line": "#ebebeb",
+                    "soft": "#202020",
+                    "ground": "#171717",
+                    "chip": "#1b1b1b",
+                    "field": "#707070",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1364,6 +2288,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9bc2ed",
+                    "primary-deep": "#9bc2ed",
+                    "primary-light": "#1c232c",
+                    "action": "#9bc2ed",
+                    "action-deep": "#133b68",
+                    "link": "#81afe2",
+                    "accent": "#e72e2e",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#535353",
+                    "soft": "#2c2e2f",
+                    "ground": "#141414",
+                    "chip": "#252728",
+                    "field": "#929292",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1395,6 +2341,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#09ff6c",
+                    "primary-deep": "#09ff6c",
+                    "primary-light": "#192f21",
+                    "action": "#09ff6c",
+                    "action-deep": "#007b32",
+                    "link": "#6bf7a3",
+                    "accent": "#e72e2e",
+                    "ink": "#d4d4d4",
+                    "text": "#d4d4d4",
+                    "muted": "#d4d4d4",
+                    "line": "#141924",
+                    "soft": "#141924",
+                    "ground": "#141414",
+                    "chip": "#141924",
+                    "field": "#c6c6c6",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+                }
             }
         },
         {
@@ -1426,6 +2394,28 @@
                 "licence": "Copyright Rijksoverheid: use is forbidden outside sites and apps for the Rijksoverheid",
                 "redistributable": false,
                 "basis": "docs/reference/assets.md: \"Gebruik hiervan is strikt verboden, behalve voor het ontwikkelen van websites en apps voor de Rijksoverheid\""
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#9bc2ed",
+                    "primary-deep": "#9bc2ed",
+                    "primary-light": "#112131",
+                    "action": "#9bc2ed",
+                    "action-deep": "#162f50",
+                    "link": "#5dc3f5",
+                    "accent": "#d83d32",
+                    "ink": "#d5ddf0",
+                    "text": "#babec7",
+                    "muted": "#9e9e9e",
+                    "line": "#535353",
+                    "soft": "#2c2e2f",
+                    "ground": "#191c1f",
+                    "chip": "#252728",
+                    "field": "#929292",
+                    "radius": "0px",
+                    "radius-lg": "4px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1457,6 +2447,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#01ff3e",
+                    "primary-deep": "#01ff3e",
+                    "primary-light": "#192f1e",
+                    "action": "#01ff3e",
+                    "action-deep": "#006e32",
+                    "link": "#ebebeb",
+                    "accent": "#e72e2e",
+                    "ink": "#b0bbbf",
+                    "text": "#a3afb4",
+                    "muted": "#95a2a8",
+                    "line": "#313f44",
+                    "soft": "#1b2b30",
+                    "ground": "#141414",
+                    "chip": "#172227",
+                    "field": "#717f83",
+                    "radius": "0px",
+                    "radius-lg": "0px",
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -1488,6 +2500,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#07d47e",
+                    "primary-deep": "#07d47e",
+                    "primary-light": "#202d28",
+                    "action": "#07d47e",
+                    "action-deep": "#035030",
+                    "link": "#72f4ad",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#282828",
+                    "soft": "#58ce74",
+                    "ground": "#141414",
+                    "chip": "#191919",
+                    "field": "#282828",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+                }
             }
         },
         {
@@ -1519,6 +2553,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#6f93d6",
+                    "primary-deep": "#6f93d6",
+                    "primary-light": "#131c2a",
+                    "action": "#6f93d6",
+                    "action-deep": "#4e6796",
+                    "link": "#6f93d6",
+                    "accent": "#e7aea8",
+                    "ink": "#d1e5fd",
+                    "text": "#b1c2d5",
+                    "muted": "#909ead",
+                    "line": "#1c2631",
+                    "soft": "#142130",
+                    "ground": "#1b1b1b",
+                    "chip": "#0d1e2d",
+                    "field": "#647386",
+                    "radius": "12px",
+                    "radius-lg": "16px",
+                    "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1550,6 +2606,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#67b3ff",
+                    "primary-deep": "#67b3ff",
+                    "primary-light": "#391d05",
+                    "action": "#67b3ff",
+                    "action-deep": "#d86405",
+                    "link": "#f32194",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#c5c5c5",
+                    "muted": "#9e9e9e",
+                    "line": "#464646",
+                    "soft": "#888888",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#959595",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -1581,6 +2659,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "The file says it is our own drawing (\"logo placeholder\"), not the organisation's artwork; REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#0ced66",
+                    "primary-deep": "#08a647",
+                    "primary-light": "#122119",
+                    "action": "#0ced66",
+                    "action-deep": "#08a647",
+                    "link": "#8eecb3",
+                    "accent": "#e5422f",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#878787",
+                    "soft": "#171c23",
+                    "ground": "#141414",
+                    "chip": "#1d2026",
+                    "field": "#878787",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Lato\", Arial, sans-serif"
+                }
             }
         },
         {
@@ -1612,6 +2712,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#5c96d6",
+                    "primary-deep": "#5c96d6",
+                    "primary-light": "#16212e",
+                    "action": "#5c96d6",
+                    "action-deep": "#1f4b7a",
+                    "link": "#6c9dd3",
+                    "accent": "#f43535",
+                    "ink": "#ebebeb",
+                    "text": "#c7c7c7",
+                    "muted": "#a3a3a3",
+                    "line": "#3f3f3f",
+                    "soft": "#282828",
+                    "ground": "#141414",
+                    "chip": "#1d1d1d",
+                    "field": "#6a6a6a",
+                    "radius": "4px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1643,6 +2765,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#89a3ee",
+                    "primary-deep": "#89a3ee",
+                    "primary-light": "#0a1735",
+                    "action": "#89a3ee",
+                    "action-deep": "#14338f",
+                    "link": "#9aafec",
+                    "accent": "#4cd7cb",
+                    "ink": "#e2e3e4",
+                    "text": "#bec0c4",
+                    "muted": "#999ca3",
+                    "line": "#24272d",
+                    "soft": "#1d2026",
+                    "ground": "#171a20",
+                    "chip": "#1d1f23",
+                    "field": "#656c78",
+                    "radius": "8px",
+                    "radius-lg": "12px",
+                    "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                }
             }
         },
         {
@@ -1674,6 +2818,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#57e133",
+                    "primary-deep": "#57e133",
+                    "primary-light": "#202e1a",
+                    "action": "#57e133",
+                    "action-deep": "#267411",
+                    "link": "#81cf74",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#ebebeb",
+                    "soft": "#252525",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#ebebeb",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -1705,6 +2871,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#66bbff",
+                    "primary-deep": "#66bbff",
+                    "primary-light": "#03273b",
+                    "action": "#66bbff",
+                    "action-deep": "#026596",
+                    "link": "#6cb1f7",
+                    "accent": "#e34a42",
+                    "ink": "#cccccc",
+                    "text": "#abb3bf",
+                    "muted": "#8a9ab2",
+                    "line": "#2e363f",
+                    "soft": "#22262e",
+                    "ground": "#141414",
+                    "chip": "#191e22",
+                    "field": "#637186",
+                    "radius": "8px",
+                    "radius-lg": "16px",
+                    "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1736,6 +2924,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#24d0ff",
+                    "primary-deep": "#24d0ff",
+                    "primary-light": "#122b32",
+                    "action": "#24d0ff",
+                    "action-deep": "#007a9c",
+                    "link": "#4ec9f6",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#ebebeb",
+                    "soft": "#252525",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#ebebeb",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                }
             }
         },
         {
@@ -1767,6 +2977,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#1ad4ea",
+                    "primary-deep": "#1ad4ea",
+                    "primary-light": "#182f33",
+                    "action": "#1ad4ea",
+                    "action-deep": "#084f58",
+                    "link": "#79e0ec",
+                    "accent": "#e9713f",
+                    "ink": "#e2e3e4",
+                    "text": "#bec0c4",
+                    "muted": "#999ca3",
+                    "line": "#24272d",
+                    "soft": "#1d2026",
+                    "ground": "#171a20",
+                    "chip": "#1d1f23",
+                    "field": "#656c78",
+                    "radius": "8px",
+                    "radius-lg": "12px",
+                    "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                }
             }
         },
         {
@@ -1798,6 +3030,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#6cbeff",
+                    "primary-deep": "#6cbeff",
+                    "primary-light": "#1d272e",
+                    "action": "#6cbeff",
+                    "action-deep": "#003660",
+                    "link": "#63aef6",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#75b259",
+                    "soft": "#141414",
+                    "ground": "#141414",
+                    "chip": "#162313",
+                    "field": "#3ba2c4",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                }
             }
         },
         {
@@ -1829,6 +3083,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#60b988",
+                    "primary-deep": "#60b988",
+                    "primary-light": "#1c2c21",
+                    "action": "#60b988",
+                    "action-deep": "#1f4a33",
+                    "link": "#8cc8a7",
+                    "accent": "#cc9414",
+                    "ink": "#e2e3e4",
+                    "text": "#bec0c4",
+                    "muted": "#999ca3",
+                    "line": "#24272d",
+                    "soft": "#1d2026",
+                    "ground": "#171a20",
+                    "chip": "#1d1f23",
+                    "field": "#656c78",
+                    "radius": "8px",
+                    "radius-lg": "12px",
+                    "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                }
             }
         },
         {
@@ -1860,6 +3136,28 @@
                 "licence": "EUPL-1.2 by the repository default in REUSE.toml; the holder of the artwork is not stated",
                 "redistributable": null,
                 "basis": "Nothing in the repository says whose artwork this is or that it may be passed on."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#ababab",
+                    "primary-deep": "#ababab",
+                    "primary-light": "#262626",
+                    "action": "#ababab",
+                    "action-deep": "#2b2b2b",
+                    "link": "#ebebebad",
+                    "accent": "#c42c3a",
+                    "ink": "#d3d3d7",
+                    "text": "#b9b9bb",
+                    "muted": "#9e9e9e",
+                    "line": "#ebebeb38",
+                    "soft": "#202020",
+                    "ground": "#141414",
+                    "chip": "#1b1b1b",
+                    "field": "#ebebeb38",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "neue-haas-grotesk-text, sans-serif"
+                }
             }
         },
         {
@@ -1891,6 +3189,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#15cfff",
+                    "primary-deep": "#15cfff",
+                    "primary-light": "#172b30",
+                    "action": "#15cfff",
+                    "action-deep": "#0097bd",
+                    "link": "#62d9f7",
+                    "accent": "#e72e2e",
+                    "ink": "#cccccc",
+                    "text": "#b5b5b5",
+                    "muted": "#9e9e9e",
+                    "line": "#4a4a4a",
+                    "soft": "#2c2e2f",
+                    "ground": "#171717",
+                    "chip": "#1f1f1f",
+                    "field": "#959595",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1922,6 +3242,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#a0c155",
+                    "primary-deep": "#a0c155",
+                    "primary-light": "#24291d",
+                    "action": "#a0c155",
+                    "action-deep": "#506324",
+                    "link": "#d6dba5",
+                    "accent": "#e72e2e",
+                    "ink": "#ebebeb",
+                    "text": "#ebebeb",
+                    "muted": "#ebebeb",
+                    "line": "#bac466",
+                    "soft": "#383b21",
+                    "ground": "#141414",
+                    "chip": "#141414",
+                    "field": "#ebebeb",
+                    "radius": "8px",
+                    "radius-lg": "8px",
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                }
             }
         },
         {
@@ -1953,6 +3295,28 @@
                 "licence": "EUPL-1.2",
                 "redistributable": true,
                 "basis": "token-sets.json describes the set as ours or made up (\"does not exist\"); REUSE.toml: EUPL-1.2."
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#84aad7",
+                    "primary-deep": "#84aad7",
+                    "primary-light": "#13202e",
+                    "action": "#84aad7",
+                    "action-deep": "#234a78",
+                    "link": "#5b8ac2",
+                    "accent": "#f43535",
+                    "ink": "#e2e3e4",
+                    "text": "#bec0c4",
+                    "muted": "#999ca3",
+                    "line": "#24272d",
+                    "soft": "#1d2026",
+                    "ground": "#171a20",
+                    "chip": "#1d1f23",
+                    "field": "#656c78",
+                    "radius": "8px",
+                    "radius-lg": "12px",
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                }
             }
         },
         {
@@ -1984,6 +3348,28 @@
                 "licence": null,
                 "redistributable": null,
                 "basis": null
+            },
+            "dark": {
+                "tokens": {
+                    "primary": "#a3b6dc",
+                    "primary-deep": "#a3b6dc",
+                    "primary-light": "#151f34",
+                    "action": "#a3b6dc",
+                    "action-deep": "#395793",
+                    "link": "#a6b7d9",
+                    "accent": "#d83d32",
+                    "ink": "#ebebeb",
+                    "text": "#c5c5c5",
+                    "muted": "#9e9e9e",
+                    "line": "#252525",
+                    "soft": "#252525",
+                    "ground": "#141414",
+                    "chip": "#1d1d1d",
+                    "field": "#878787",
+                    "radius": "2px",
+                    "radius-lg": "10px",
+                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                }
             }
         }
     ],
