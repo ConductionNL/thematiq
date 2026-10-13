@@ -1116,7 +1116,14 @@
         "or": "or",
         "Text on the main button": "Text on the main button",
         "Give the main button its own color": "Give the main button its own color",
-        "Main button color": "Main button color"
+        "Main button color": "Main button color",
+        "File format of the design tokens download": "File format of the design tokens download",
+        "W3C design tokens": "W3C design tokens",
+        "Figma variables": "Figma variables",
+        "Tokens Studio for Figma": "Tokens Studio for Figma",
+        "Tokens Studio for Figma, older spelling": "Tokens Studio for Figma, older spelling",
+        "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.",
+        "Unknown file format.": "Unknown file format."
     },
     "plurals": {}
 }

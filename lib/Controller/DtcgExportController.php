@@ -28,6 +28,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignTokensWriter;
+use OCA\Thematiq\Service\FigmaTokenWriter;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\TokenSetService;
@@ -78,7 +79,9 @@ class DtcgExportController extends Controller {
 	 *
 	 * @param string $id The token set id.
 	 *
-	 * @return JSONResponse The document with an attachment name, or 404.
+	 * @return JSONResponse The document with an attachment name, 404 for an unknown set, or 400 for an unknown `format`.
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
 	 */
@@ -86,6 +89,15 @@ class DtcgExportController extends Controller {
 	public function export(string $id): JSONResponse {
 		if (preg_match('/^[a-z0-9][a-z0-9-]*$/', $id) !== 1 || $this->tokenSets->isValidTokenSet(tokenSetId: $id) === false) {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
+		}
+
+		$format = (string)$this->request->getParam('format', 'dtcg');
+		if ($format === '') {
+			$format = 'dtcg';
+		}
+
+		if (in_array($format, FigmaTokenWriter::FORMATS, true) === false) {
+			return new JSONResponse(['error' => $this->l->t('Unknown file format.')], 400);
 		}
 
 		$appPath = $this->appManager->getAppPath(Application::APP_ID);
@@ -105,8 +117,17 @@ class DtcgExportController extends Controller {
 			deprecations: $this->deprecations->all()
 		);
 
+		$figma = new FigmaTokenWriter();
+		$document = $figma->write(
+			document: $document,
+			declarations: $this->cssParser->parseRootBlock(css: $css),
+			format: $format,
+			setId: $id,
+			setName: $name
+		);
+
 		$response = new JSONResponse($document);
-		$response->addHeader('Content-Disposition', 'attachment; filename="' . $id . '.tokens.json"');
+		$response->addHeader('Content-Disposition', 'attachment; filename="' . $figma->fileName(setId: $id, format: $format) . '"');
 
 		return $response;
 	}//end export()

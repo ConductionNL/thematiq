@@ -149,10 +149,8 @@ class MultiBrandSource {
 	 * @return array<int, array{key: string, name: string, tokenCount: int, group?: string}>
 	 */
 	private function themes(array $document): array {
-		$themes = ($document['$themes'] ?? null);
-		if (is_array($themes) === false || count($themes) < 2) {
-			return [];
-		}
+		// Two or more themes, unless they are the light and the dark of one house style.
+		$themes = (new TokensStudioSets())->brandThemes(document: $document);
 
 		$brands = [];
 		foreach ($themes as $theme) {

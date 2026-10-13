@@ -95,7 +95,7 @@ class CustomTokenSetValidator {
 			$componentPrefixes[] = preg_quote(trim($prefix, '-'), '/');
 		}
 
-		$namePattern = '/^--(nldesign|' . preg_quote($slug, '/') . '|'
+		$namePattern = '/^--(nldesign|thematiq-shell|' . preg_quote($slug, '/') . '|'
 			. implode('|', $componentPrefixes) . ')-[a-z0-9-]+$/';
 
 		foreach ($declarations as $name => $value) {
