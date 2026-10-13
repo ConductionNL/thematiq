@@ -253,6 +253,25 @@ class ShellRoleMapperTest extends TestCase {
 	}//end testAnUnusableValueIsPassedOver()
 
 	/**
+	 * A colour the mapper cannot do sums on is passed on as it is.
+	 *
+	 * The deep and light steps are mixed from the primary. A primary written
+	 * in a notation the mapper does not parse has no mix, so the deep steps
+	 * stay on the colour itself and the light step takes the default.
+	 *
+	 * @return void
+	 */
+	public function testAColourThatCannotBeMixedIsNotDerivedFrom(): void {
+		$roles = $this->mapper()->map(tokens: ['--nldesign-color-primary' => 'oklch(0.5 0.15 250)']);
+
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary-deep']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['action']);
+		$this->assertSame('oklch(0.5 0.15 250)', $roles['action-deep']);
+		$this->assertSame(ShellRoleMapper::DEFAULTS['primary-light'], $roles['primary-light']);
+	}//end testAColourThatCannotBeMixedIsNotDerivedFrom()
+
+	/**
 	 * The accent is the set's accent, and the error colour for a set without one.
 	 *
 	 * @return void
