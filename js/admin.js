@@ -8164,13 +8164,18 @@
 		 * @return {void}
 		 */
 		function downloadDtcg(id) {
+			// The format chosen for Figma and other design tools
+			// (openspec/changes/figma-token-files). Without the list: the W3C document.
+			var formatSelect = document.getElementById('nldesign-figma-format')
+			var format = formatSelect === null ? 'dtcg' : formatSelect.value
+			var studio = format === 'tokens-studio' || format === 'tokens-studio-legacy'
 			downloadWithToken(
 				OC.generateUrl(
 					'/apps/thematiq/settings/tokensets/'
 						+ encodeURIComponent(id)
 						+ '/dtcg',
-				),
-				id + '.tokens.json',
+				) + (format === 'dtcg' ? '' : '?format=' + encodeURIComponent(format)),
+				id + (studio ? '.tokens-studio.json' : '.tokens.json'),
 				t('thematiq', 'The design tokens could not be downloaded.'),
 			)
 		}

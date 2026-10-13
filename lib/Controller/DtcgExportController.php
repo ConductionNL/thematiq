@@ -79,7 +79,9 @@ class DtcgExportController extends Controller {
 	 *
 	 * @param string $id The token set id.
 	 *
-	 * @return JSONResponse The document with an attachment name, or 404.
+	 * @return JSONResponse The document with an attachment name, 404 for an unknown set, or 400 for an unknown `format`.
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
 	 */
@@ -90,6 +92,10 @@ class DtcgExportController extends Controller {
 		}
 
 		$format = (string)$this->request->getParam('format', 'dtcg');
+		if ($format === '') {
+			$format = 'dtcg';
+		}
+
 		if (in_array($format, FigmaTokenWriter::FORMATS, true) === false) {
 			return new JSONResponse(['error' => $this->l->t('Unknown file format.')], 400);
 		}

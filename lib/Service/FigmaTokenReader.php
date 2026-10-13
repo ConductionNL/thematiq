@@ -213,7 +213,8 @@ class FigmaTokenReader {
 			return 'var(--' . str_replace('.', '-', $match[1]) . ')';
 		}
 
-		if (str_contains($value, '{') === true || str_contains($value, '}') === true) {
+		// A sum over references, or anything that could leave the declaration it is written into.
+		if (preg_match('/[{};<>\\\\]|\/\*/', $value) === 1) {
 			return null;
 		}
 
