@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:29c06348b5628165",
+    "generated_from": "sets:234c673957d88b8f",
     "sets": [
         {
             "id": "amsterdam",
@@ -332,8 +332,8 @@
                 "link": "#1a509f",
                 "accent": "#d80000",
                 "ink": "#1b1c1d",
-                "text": "#484a4d",
-                "muted": "#74777c",
+                "text": "#3f4144",
+                "muted": "#62656a",
                 "line": "#c4c7cb",
                 "soft": "#e1e2e5",
                 "ground": "#ffffff",
@@ -360,8 +360,8 @@
                     "link": "#c6d8f3",
                     "accent": "#f42c2c",
                     "ink": "#e2e3e4",
-                    "text": "#bfc0c3",
-                    "muted": "#9b9da1",
+                    "text": "#bec0c3",
+                    "muted": "#9a9da2",
                     "line": "#3f4247",
                     "soft": "#292b2f",
                     "ground": "#292b2f",
