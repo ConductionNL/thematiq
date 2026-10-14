@@ -2852,3 +2852,28 @@
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
 }
+
+/* The workspace's mobile logo and home screen icon (mobile-logo-and-touch-icon). */
+.nldesign-workspace-icons__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.nldesign-workspace-icons__row > label {
+	min-width: 180px;
+	font-weight: 600;
+}
+
+.nldesign-workspace-icons__row .settings-hint {
+	flex-basis: 100%;
+	margin: 0;
+}
+
+.nldesign-workspace-icons__preview img {
+	display: block;
+	max-height: 48px;
+	max-width: 160px;
+}
