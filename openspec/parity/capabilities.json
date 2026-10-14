@@ -2299,6 +2299,37 @@
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
 		},
 		{
+			"id": "aut-colour-notation-kept",
+			"area": "authoring",
+			"name": "Keep the notation a colour was written in (rgb, hsl, a name) through a design tokens download and upload.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensWriter.php writes the original text in $extensions[nl.conduction.thematiq].css; lib/Service/DesignTokensMapper.php originalText() reads it, or the OpenProject plugin copy, while it names the same colour; tests/Unit/Service/ColourNotationTest.php",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "colour-notation-kept"
+			},
+			"reachedOn": "Download as design tokens, then the Custom token sets upload",
+			"evidence": {
+				"nextcloud-theming": "no product in this comparison writes a W3C colour object together with its original notation",
+				"m365-branding": "no product in this comparison writes a W3C colour object together with its original notation",
+				"opendesk": "no product in this comparison writes a W3C colour object together with its original notation",
+				"liferay-dxp": "no product in this comparison writes a W3C colour object together with its original notation",
+				"tokens-studio": "not checked: Tokens Studio stores colours as text in its own format, so its notation is whatever the designer typed; whether a W3C colour object round trip keeps the notation there was not checked"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+		},
+		{
 			"id": "aut-convert-nlds-theme",
 			"area": "authoring",
 			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",
