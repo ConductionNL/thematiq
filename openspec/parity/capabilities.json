@@ -3801,6 +3801,37 @@
 			}
 		},
 		{
+			"id": "sur-shell-canon-check",
+			"area": "surfaces",
+			"name": "Have the shell measured against a written canon of sizes, so two products drawn to the same boards stay the same size.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "tests/css/check-shell-canon.mjs measures the Files page at 1440x1000 (top bar, navigation, navigation item, primary button, table rows, body text) against the OpenProject plugin canon, with recorded gaps; tests/e2e/spec-coverage/shell-canon.spec.ts runs it in CI on the Zuiddrecht set",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "shell-canon-check"
+			},
+			"reachedOn": "npm run check:shell-canon, and the CI end-to-end suite",
+			"evidence": {
+				"nextcloud-theming": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"m365-branding": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"opendesk": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"liferay-dxp": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"tokens-studio": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "every-page-styled",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Three gaps recorded: primary button 48 (canon 40), table row 44 (canon 48), body text 15 (canon 14)."
+		},
+		{
 			"id": "sur-menu-labels",
 			"area": "surfaces",
 			"name": "Show text labels instead of icons only in the app menu.",
