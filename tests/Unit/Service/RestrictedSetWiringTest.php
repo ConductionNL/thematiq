@@ -32,10 +32,12 @@ use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\LayoutOptionValues;
 use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\RestrictedSetsInBundle;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
+use OCA\Thematiq\Service\ScheduledSwitchOrder;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ThemePreviewService;
@@ -89,6 +91,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
+#[UsesClass(ScheduledSwitchOrder::class)]
+#[UsesClass(LayoutOptionValues::class)]
+#[UsesClass(CssParserService::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;
