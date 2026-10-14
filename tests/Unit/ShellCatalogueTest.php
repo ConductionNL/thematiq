@@ -24,6 +24,7 @@ namespace OCA\Thematiq\Tests\Unit;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShellCatalogueService;
+use OCA\Thematiq\Service\ShellCatalogueVocabulary;
 use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use PHPUnit\Framework\TestCase;
@@ -129,7 +130,7 @@ class ShellCatalogueTest extends TestCase {
 
 		foreach ($catalogue['sets'] as $set) {
 			$this->assertSame(['id', 'name', 'tokens', 'logo'], array_slice(array_keys($set), 0, 4), $set['id']);
-			$this->assertSame([], array_diff(array_keys($set), ['id', 'name', 'tokens', 'logo', 'dark']), $set['id']);
+			$this->assertSame([], array_diff(array_keys($set), ['id', 'name', 'tokens', 'logo', 'vocabulary', 'dark']), $set['id']);
 			$this->assertNotSame('', $set['name'], $set['id']);
 			$this->assertSame(['file', 'inverse_file', 'licence', 'redistributable', 'basis'], array_keys($set['logo']), $set['id']);
 		}
@@ -402,4 +403,55 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertFalse($fonts['Ubuntu']['shipped']);
 		$this->assertNull($fonts['Ubuntu']['redistributable']);
 	}//end testAFontIsRedistributableOnlyUnderAStatedLicence()
+
+	/**
+	 * The vocabulary is what a set declares itself beyond the roles, with resolved values that mean something elsewhere.
+	 *
+	 * @return void
+	 */
+	public function testTheVocabularyIsTheSetsOwnTokensBeyondTheRoles(): void {
+		$sets = $this->setsById(catalogue: $this->catalogue());
+		$zuiddrecht = $sets['zuiddrecht']['vocabulary'];
+
+		$this->assertSame('#CC0000', $zuiddrecht['color-error']);
+		$this->assertSame('#A30000', $zuiddrecht['component-navigation-active-color']);
+		$this->assertSame('5px', $zuiddrecht['brand-stripe-height']);
+		$this->assertArrayNotHasKey('color-primary', $zuiddrecht, 'a role name stays in tokens');
+		$this->assertArrayNotHasKey('logo-url', $zuiddrecht, 'an address is a file in another product');
+		$this->assertArrayNotHasKey('component-heading-1-color', $zuiddrecht, 'a default the set does not declare is not its own');
+		$keys = array_keys($zuiddrecht);
+		$sorted = $keys;
+		sort($sorted, SORT_STRING);
+		$this->assertSame($sorted, $keys);
+
+		// A set that declares nothing beyond the roles has no vocabulary at all.
+		$this->assertArrayNotHasKey('vocabulary', $sets['summer-breeze']);
+
+		$names = ShellCatalogueVocabulary::ROLE_NAMES;
+		foreach ($sets as $id => $set) {
+			foreach (($set['vocabulary'] ?? []) as $key => $value) {
+				$this->assertNotContains('--nldesign-' . $key, $names, $id . ' ' . $key);
+				$this->assertDoesNotMatchRegularExpression('/-(url|image|image-inverse|clip-path)$/', $key, $id);
+				$this->assertStringNotContainsString('var(', $value, $id . ' ' . $key);
+				$this->assertStringNotContainsString('url(', $value, $id . ' ' . $key);
+				$this->assertNotSame('', $value, $id . ' ' . $key);
+			}
+		}
+	}//end testTheVocabularyIsTheSetsOwnTokensBeyondTheRoles()
+
+	/**
+	 * Each role name is a token some shipped set declares, so the list holds the names the roles really come from.
+	 *
+	 * @return void
+	 */
+	public function testEveryRoleNameIsAShippedToken(): void {
+		$css = '';
+		foreach ((array)glob($this->root() . '/css/tokens/*.css') as $file) {
+			$css .= (string)file_get_contents((string)$file);
+		}
+
+		foreach (ShellCatalogueVocabulary::ROLE_NAMES as $name) {
+			$this->assertStringContainsString($name . ':', $css, $name);
+		}
+	}//end testEveryRoleNameIsAShippedToken()
 }//end class

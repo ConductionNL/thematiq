@@ -67,6 +67,8 @@ A set that ships a dark variant also has a `dark` block with the same eighteen r
 
 The example is shortened: `tokens` holds all eighteen roles, the same ones the endpoint answers. `generated_from` identifies the content, so two catalogues with the same value hold the same sets.
 
+A set that declares more than the roles also has a `vocabulary` block: every `--nldesign-*` token its own file declares, by name without `--nldesign-`, with the resolved value. For example `"vocabulary": { "color-error": "#CC0000", "component-table-header-font-weight": "400" }`. It holds only what the set declares itself, not the defaults under it, so a product that reads it keeps its own value for a token the set leaves out. It leaves out the seventeen names the roles come from (they are in `tokens`), tokens that hold a picture, an address or a shape (`logo-url`, `brand-stripe-image`, `hero-image-clip-path` and the like), and values that still point at another variable. The OpenProject plugin `openproject-thematiq` reads this block.
+
 ## Which files you may carry
 
 Carry a file only when `redistributable` is `true`.
