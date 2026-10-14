@@ -3801,6 +3801,37 @@
 			}
 		},
 		{
+			"id": "sur-shell-pixel-check",
+			"area": "surfaces",
+			"name": "Have the shell compared with reference images, so a platform release that moves the top bar or the navigation is noticed.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "tests/e2e/visual/shell.visual.spec.ts compares the Files top bar and navigation at 1440x1000 with committed references (0.5% and 1% of pixels may differ), as ConductionNL/openproject-thematiq does for OpenProject",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "shell-pixel-check"
+			},
+			"reachedOn": "PW_VISUAL=1 npx playwright test tests/e2e/visual/shell.visual.spec.ts --project=visual",
+			"evidence": {
+				"nextcloud-theming": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"m365-branding": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"opendesk": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"liferay-dxp": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"tokens-studio": "not checked: this product was not seen to ship a pixel check of its workspace shell"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "every-page-styled",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Opt-in, not in CI: references are host specific."
+		},
+		{
 			"id": "sur-menu-labels",
 			"area": "surfaces",
 			"name": "Show text labels instead of icons only in the app menu.",
