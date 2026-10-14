@@ -1124,6 +1124,7 @@
         "Tokens Studio for Figma, older spelling": "Tokens Studio voor Figma, oudere schrijfwijze",
         "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Uploaden uit Figma: kies een Tokens Studio-bestand of een design tokens-bestand. Het resultaat toont wat is geïmporteerd en wat is overgeslagen.",
         "Unknown file format.": "Onbekend bestandsformaat.",
+        "OpenProject plugin set file": "Setbestand voor de OpenProject-plugin",
         "Search the design token sets": "Zoek in de design token sets",
         "Search by name": "Zoek op naam",
         "{shown} of {total} sets match": "{shown} van {total} sets komen overeen"
