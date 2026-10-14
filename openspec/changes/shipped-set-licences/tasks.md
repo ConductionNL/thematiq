@@ -8,6 +8,8 @@
 - [x] 1.2 `token-sets.json`: a `licence` block for 48 sets; `css/tokens/<id>.LICENSE.md` for the 44 restricted.
 - [x] 1.3 `tests/Unit/ShippedSetLicencesTest.php`: the restricted list, every converted set declares a
       licence, every restricted set ships its text, the table lists every declared set.
+- [x] 1.4 `scripts/sync-upstream-tokens.mjs` writes the converted version into `licence.version` as well
+      as `upstreamVersion`; `tests/vitest/syncUpstreamTokens.spec.js` (mergeEntry).
 
 ## 2. Upgrade
 
