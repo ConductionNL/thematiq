@@ -8173,9 +8173,11 @@
 				OC.generateUrl(
 					'/apps/thematiq/settings/tokensets/'
 						+ encodeURIComponent(id)
-						+ '/dtcg',
-				) + (format === 'dtcg' ? '' : '?format=' + encodeURIComponent(format)),
-				id + (studio ? '.tokens-studio.json' : '.tokens.json'),
+						+ (format === 'openproject' ? '/set-file' : '/dtcg'),
+				) + (format === 'dtcg' || format === 'openproject' ? '' : '?format=' + encodeURIComponent(format)),
+				format === 'openproject'
+					? 'thematiq-' + id + '.json'
+					: id + (studio ? '.tokens-studio.json' : '.tokens.json'),
 				t('thematiq', 'The design tokens could not be downloaded.'),
 			)
 		}

@@ -141,6 +141,7 @@ if ($_['mockUi'] === true) {
 				<option value="figma"><?php p($l->t('Figma variables')); ?></option>
 				<option value="tokens-studio"><?php p($l->t('Tokens Studio for Figma')); ?></option>
 				<option value="tokens-studio-legacy"><?php p($l->t('Tokens Studio for Figma, older spelling')); ?></option>
+				<option value="openproject"><?php p($l->t('OpenProject plugin set file')); ?></option>
 			</select>
 			<button type="button" id="nldesign-dtcg-download" class="button">
 				<?php p($l->t('Download as design tokens')); ?>

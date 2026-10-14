@@ -1123,7 +1123,8 @@
         "Tokens Studio for Figma": "Tokens Studio for Figma",
         "Tokens Studio for Figma, older spelling": "Tokens Studio for Figma, older spelling",
         "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.",
-        "Unknown file format.": "Unknown file format."
+        "Unknown file format.": "Unknown file format.",
+        "OpenProject plugin set file": "OpenProject plugin set file"
     },
     "plurals": {}
 }
