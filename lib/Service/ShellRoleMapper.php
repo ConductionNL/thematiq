@@ -359,6 +359,8 @@ class ShellRoleMapper {
 	 * @param float $weight The share of the second colour, 0 to 1.
 	 *
 	 * @return string|null `#rrggbb`, or null when either colour is not a hex or rgb() literal.
+	 *
+	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
 	 */
 	private function mix(string $first, string $second, float $weight): ?string {
 		$one = $this->colours->parseColor(value: $first);
@@ -367,9 +369,13 @@ class ShellRoleMapper {
 			return null;
 		}
 
+		// PHP 8.4 stopped pre-rounding in round(), so a share that lands a hair
+		// under .5 (165 * 0.7 = 115.49999999999999) rounded up on 8.3 and down on
+		// 8.4. Settling the float at six decimals first gives one answer on both.
 		$hex = '#';
 		foreach ([0, 1, 2] as $channel) {
-			$hex .= sprintf('%02x', (int)round(($one[$channel] * (1 - $weight)) + ($two[$channel] * $weight)));
+			$share = round(num: ($one[$channel] * (1 - $weight)) + ($two[$channel] * $weight), precision: 6);
+			$hex .= sprintf('%02x', (int)round(num: $share));
 		}
 
 		return $hex;
