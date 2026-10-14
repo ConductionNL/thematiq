@@ -31,7 +31,7 @@
 		"licence": {
 			"id": "LicenseRef-rijkshuisstijl-house-style",
 			"package": "@rijkshuisstijl-community/design-tokens",
-			"version": "",
+			"version": "18.0.1",
 			"holder": "Rijksoverheid",
 			"restricted": true
 		}
@@ -48,7 +48,7 @@
 		"licence": {
 			"id": "LicenseRef-amsterdam-house-style",
 			"package": "@amsterdam/design-system-tokens",
-			"version": "",
+			"version": "4.3.0",
 			"holder": "Gemeente Amsterdam",
 			"restricted": true
 		}
@@ -715,7 +715,7 @@
 		"licence": {
 			"id": "LicenseRef-utrecht-house-style",
 			"package": "@utrecht/design-tokens",
-			"version": "",
+			"version": "7.0.0",
 			"holder": "Gemeente Utrecht",
 			"restricted": true
 		}
