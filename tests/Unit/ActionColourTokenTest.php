@@ -58,6 +58,14 @@ class ActionColourTokenTest extends TestCase {
 	private const HOVER_STEP = 'var( --nldesign-color-action-hover, color-mix(in srgb, var(--nldesign-color-action) 85%, black) )';
 
 	/**
+	 * The shipped sets that declare an action colour, and the colour. Every
+	 * other set must declare none, and render as it always did.
+	 *
+	 * @var array<string, string>
+	 */
+	private const SETS_WITH_AN_ACTION_COLOUR = ['cunningham' => '#1f883d'];
+
+	/**
 	 * What each reading declaration must be: file => property => value, white space collapsed.
 	 *
 	 * The inner `var()` of each value is the whole value the line had before the action colour existed.
@@ -67,15 +75,6 @@ class ActionColourTokenTest extends TestCase {
 	private const READERS = [
 		'css/systems/nldesign/overrides.css' => [
 			'--thematiq-action-hover' => self::HOVER_STEP,
-			'--color-primary-element' => 'var( --nldesign-color-action, var(--nldesign-color-primary) )',
-			'--color-primary-element-hover' => 'var( --thematiq-action-hover, var(--nldesign-color-primary-hover) )',
-			'--color-primary-element-text' => 'var( --nldesign-color-action-text, var(--nldesign-color-primary-text) )',
-		],
-		'css/systems/nldesign/theme.css' => [
-			'--thematiq-action-hover' => self::HOVER_STEP,
-			'--color-primary-element' => 'var( --nldesign-color-action, var(--nldesign-color-primary) )',
-			'--color-primary-element-hover' => 'var( --thematiq-action-hover, var(--nldesign-color-primary-hover) )',
-			'--color-primary-element-text' => 'var( --nldesign-color-action-text, var(--nldesign-color-primary-text) )',
 		],
 		'css/systems/nldesign/utrecht-bridge.css' => [
 			'--nldesign-component-button-primary-action-background-color'
@@ -97,9 +96,34 @@ class ActionColourTokenTest extends TestCase {
 		],
 		'css/systems/lasuite/bridge.css' => [
 			'--thematiq-action-hover' => self::HOVER_STEP,
-			'--color-primary-element' => 'var( --nldesign-color-action, var(--lasuite-color-brand-550) )',
-			'--color-primary-element-hover' => 'var( --thematiq-action-hover, var(--lasuite-color-brand-650) )',
-			'--color-primary-element-text' => 'var( --nldesign-color-action-text, var(--lasuite-color-brand-050) )',
+		],
+	];
+
+	/**
+	 * What Nextcloud's primary element variables must be: file => property => value.
+	 *
+	 * The action colour drives the main button only. Checked boxes, switches,
+	 * folder icons and everything else Nextcloud draws in these variables stay
+	 * with the primary, so each is exactly what it was before the action
+	 * colour existed.
+	 *
+	 * @var array<string, array<string, string>>
+	 */
+	private const ELEMENT_VARIABLES = [
+		'css/systems/nldesign/overrides.css' => [
+			'--color-primary-element' => 'var(--nldesign-color-primary)',
+			'--color-primary-element-hover' => 'var(--nldesign-color-primary-hover)',
+			'--color-primary-element-text' => 'var(--nldesign-color-primary-text)',
+		],
+		'css/systems/nldesign/theme.css' => [
+			'--color-primary-element' => 'var(--nldesign-color-primary)',
+			'--color-primary-element-hover' => 'var(--nldesign-color-primary-hover)',
+			'--color-primary-element-text' => 'var(--nldesign-color-primary-text)',
+		],
+		'css/systems/lasuite/bridge.css' => [
+			'--color-primary-element' => 'var(--lasuite-color-brand-550)',
+			'--color-primary-element-hover' => 'var(--lasuite-color-brand-650)',
+			'--color-primary-element-text' => 'var(--lasuite-color-brand-050)',
 		],
 	];
 
@@ -188,6 +212,39 @@ class ActionColourTokenTest extends TestCase {
 	}//end testEveryReaderFallsBackToItsOldValue()
 
 	/**
+	 * Nextcloud's primary element variables do not read the action colour: it reaches the main button only.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/action-colour-main-button-only/specs/action-colour/spec.md#requirement-the-action-colour-reaches-the-main-button-and-nothing-else
+	 */
+	public function testThePrimaryElementVariablesStayWithThePrimary(): void {
+		foreach (self::ELEMENT_VARIABLES as $file => $declarations) {
+			$css = $this->css(file: $file);
+			foreach ($declarations as $property => $expected) {
+				$values = $this->valuesOf(css: $css, property: $property);
+
+				$this->assertNotSame([], $values, $file . ' no longer declares ' . $property);
+				foreach ($values as $value) {
+					$this->assertSame($expected, $value, $file . ' ' . $property);
+				}
+			}
+		}
+
+		// No stylesheet anywhere assigns the action colour to one of them.
+		$files = array_merge((array)glob(self::root() . '/css/*.css'), (array)glob(self::root() . '/css/systems/*/*.css'));
+		foreach ($files as $path) {
+			$css = $this->css(file: substr((string)$path, (strlen(self::root()) + 1)));
+			foreach (['--color-primary-element', '--color-primary-element-hover', '--color-primary-element-text', '--color-primary'] as $property) {
+				foreach ($this->valuesOf(css: $css, property: $property) as $value) {
+					$this->assertStringNotContainsString('color-action', $value, basename((string)$path) . ' ' . $property);
+					$this->assertStringNotContainsString('thematiq-action-hover', $value, basename((string)$path) . ' ' . $property);
+				}
+			}
+		}
+	}//end testThePrimaryElementVariablesStayWithThePrimary()
+
+	/**
 	 * Nowhere is the action token read without a fallback, and nowhere is it given a value.
 	 *
 	 * A read without a fallback would leave a declaration invalid for every
@@ -221,11 +278,11 @@ class ActionColourTokenTest extends TestCase {
 			$reads += preg_match_all('/var\(\s*(--nldesign-color-action[\w-]*|--thematiq-action-hover)\s*,/', $css);
 		}
 
-		$this->assertGreaterThanOrEqual(20, $reads, 'the readers this test guards are gone');
+		$this->assertGreaterThanOrEqual(14, $reads, 'the readers this test guards are gone');
 	}//end testTheTokenIsOptionalEverywhere()
 
 	/**
-	 * No shipped set declares the action colour, in its file, its dark variant or its overrides.
+	 * Only the sets named in {@see self::SETS_WITH_AN_ACTION_COLOUR} declare the action colour, in their file, dark variant or overrides.
 	 *
 	 * @return void
 	 */
@@ -237,10 +294,16 @@ class ActionColourTokenTest extends TestCase {
 		);
 
 		$this->assertGreaterThan(100, count($files));
+		$declaring = [];
 		foreach ($files as $path) {
-			$this->assertStringNotContainsString('--nldesign-color-action', (string)file_get_contents((string)$path), (string)$path);
 			$this->assertStringNotContainsString('--thematiq-action-hover', (string)file_get_contents((string)$path), (string)$path);
+			if (str_contains((string)file_get_contents((string)$path), '--nldesign-color-action') === true) {
+				$declaring[basename((string)$path, '.css')] = true;
+			}
 		}
+
+		ksort($declaring);
+		$this->assertSame(array_keys(self::SETS_WITH_AN_ACTION_COLOUR), array_keys($declaring), 'a set gained or lost an action colour: that is a visible decision, name it here');
 	}//end testNoShippedSetDeclaresAnActionColour()
 
 	/**
@@ -257,6 +320,17 @@ class ActionColourTokenTest extends TestCase {
 	#[DataProvider('shippedSetIds')]
 	public function testAShippedSetResolvesAsBefore(string $id): void {
 		$declared = $this->resolved(id: $id);
+
+		if (isset(self::SETS_WITH_AN_ACTION_COLOUR[$id]) === true) {
+			// A set with an action colour: the action is that colour, its primary is not, and the text on it reads.
+			$roles = (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $declared);
+			$this->assertSame(self::SETS_WITH_AN_ACTION_COLOUR[$id], $roles['action'], $id);
+			$this->assertNotSame($roles['primary'], $roles['action'], $id);
+			$this->assertSame($declared['--nldesign-color-primary'], $roles['primary'], $id);
+			$this->assertSame([], (new ContrastService())->check(declarations: $declared), $id . ': the text on the action colour must reach 4.5:1');
+
+			return;
+		}
 
 		$this->assertArrayNotHasKey('--nldesign-color-action', $declared, $id);
 		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $declared, $id);
@@ -367,11 +441,11 @@ class ActionColourTokenTest extends TestCase {
 	}//end testASetWithAnActionColourIsFollowed()
 
 	/**
-	 * The preview of a set with an action colour shows the element variables in that colour.
+	 * The preview of a set with an action colour still shows the element variables in the primary.
 	 *
 	 * @return void
 	 */
-	public function testThePreviewShowsASetsActionColour(): void {
+	public function testThePreviewKeepsTheElementVariablesOnThePrimary(): void {
 		$appPath = sys_get_temp_dir() . '/thematiq-action-' . uniqid();
 		mkdir($appPath . '/css/systems/nldesign', 0777, true);
 		mkdir($appPath . '/css/tokens', 0777, true);
@@ -381,36 +455,28 @@ class ActionColourTokenTest extends TestCase {
 
 		file_put_contents(
 			$appPath . '/css/tokens/green-button.css',
-			":root {\n\t--nldesign-color-primary: #1a67a3;\n\t--nldesign-color-action: #1f883d;\n\t--nldesign-color-action-hover: #197032;\n}\n"
+			":root {\n\t--nldesign-color-primary: #1a67a3;\n\t--nldesign-color-primary-hover: #124872;\n\t--nldesign-color-action: #1f883d;\n}\n"
 		);
-		file_put_contents($appPath . '/css/tokens/plain.css', ":root {\n\t--nldesign-color-primary: #1a67a3;\n\t--nldesign-color-primary-hover: #124872;\n}\n");
 
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appPath);
-
 		$green = (new TokenSetPreviewService($appManager))->getResolvedColors(tokenSetId: 'green-button');
-		$plain = (new TokenSetPreviewService($appManager))->getResolvedColors(tokenSetId: 'plain');
 
 		foreach (['defaults', 'overrides'] as $sheet) {
 			unlink($appPath . '/css/systems/nldesign/' . $sheet . '.css');
 		}
 
 		unlink($appPath . '/css/tokens/green-button.css');
-		unlink($appPath . '/css/tokens/plain.css');
 		rmdir($appPath . '/css/tokens');
 		rmdir($appPath . '/css/systems/nldesign');
 		rmdir($appPath . '/css/systems');
 		rmdir($appPath . '/css');
 		rmdir($appPath);
 
-		$this->assertSame('#1a67a3', $green['--color-primary'], 'the primary stays the primary');
-		$this->assertSame('#1f883d', $green['--color-primary-element']);
-		$this->assertSame('#197032', $green['--color-primary-element-hover']);
-		$this->assertSame('#ffffff', $green['--color-primary-element-text'], 'no action text declared: the text on the primary');
-
-		$this->assertSame('#1a67a3', $plain['--color-primary-element']);
-		$this->assertSame('#124872', $plain['--color-primary-element-hover']);
-	}//end testThePreviewShowsASetsActionColour()
+		$this->assertSame('#1a67a3', $green['--color-primary']);
+		$this->assertSame('#1a67a3', $green['--color-primary-element'], 'checked boxes and switches stay with the primary');
+		$this->assertSame('#124872', $green['--color-primary-element-hover']);
+	}//end testThePreviewKeepsTheElementVariablesOnThePrimary()
 
 	/**
 	 * The text on the action colour is checked like the text on the primary, once a set moves it.

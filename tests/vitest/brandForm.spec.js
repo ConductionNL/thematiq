@@ -28,14 +28,45 @@ describe('brandForm.derive', () => {
 		expect(fixture.cases.length).toBeGreaterThan(2)
 		fixture.cases.forEach((c) => {
 			expect(
-				brandForm.derive(fixture.inputs, c.primary, c.background),
+				brandForm.derive(fixture.inputs, c.primary, c.background, c.action),
 			).toEqual(c.expected)
 		})
+		expect(fixture.cases.some((c) => c.action !== null)).toBe(true)
+	})
+
+	it('leaves the action tokens out until the form gives an action colour', () => {
+		const brandForm = require('../../js/lib/brandForm.js')
+		const plain = brandForm.derive(fixture.inputs, '#1a67a3', '#ffffff')
+		const empty = brandForm.derive(fixture.inputs, '#1a67a3', '#ffffff', '')
+		const green = brandForm.derive(
+			fixture.inputs,
+			'#1a67a3',
+			'#ffffff',
+			'#1f883d',
+		)
+
+		expect(empty).toEqual(plain)
+		expect(
+			Object.keys(plain.declarations).filter((t) =>
+				t.includes('color-action'),
+			),
+		).toEqual([])
+		expect(plain.textOnAction).toBeNull()
+		expect(green.declarations['--nldesign-color-action']).toBe('#1f883d')
+		expect(green.declarations['--nldesign-color-primary']).toBe('#1a67a3')
+		expect(
+			brandForm.derive(fixture.inputs, '#1a67a3', '#ffffff', 'green'),
+		).toBeNull()
 	})
 
 	it('keeps the token order of the rules file', () => {
 		const brandForm = require('../../js/lib/brandForm.js')
-		const result = brandForm.derive(fixture.inputs, '#c8102e', '#ffffff')
+		const result = brandForm.derive(
+			fixture.inputs,
+			'#c8102e',
+			'#ffffff',
+			'#1f883d',
+		)
 
 		expect(Object.keys(result.declarations)).toEqual(
 			Object.keys(fixture.inputs.rules),

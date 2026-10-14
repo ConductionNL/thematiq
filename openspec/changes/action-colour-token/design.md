@@ -103,7 +103,10 @@ Three layers.
    64 sets, two schemes, 357,383 values: no difference other than the new internal step, which is
    empty. A forced regeneration of all 62 dark variants wrote identical files.
 
-The browser run is a measurement, not a test in the repository. See tasks.md, 6.2.
+The browser run is also a check in the repository, `npm run test:action-colour-unset`. It has no
+earlier commit to compare with, so it rebuilds the stylesheets as they were: each reader replaced by
+its fallback. It proves the readers are transparent. That each fallback is the old value is pinned
+by `ActionColourTokenTest`.
 
 ## Decision 6: the contrast check
 

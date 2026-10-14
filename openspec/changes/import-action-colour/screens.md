@@ -1,0 +1,1 @@
+- No screen: an import gains three tokens it may carry; the conversion report lists them like any other.

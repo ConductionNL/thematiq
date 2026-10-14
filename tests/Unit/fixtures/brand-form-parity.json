@@ -26,6 +26,19 @@
                 "background",
                 0.22
             ],
+            "--nldesign-color-action": [
+                "from",
+                "action"
+            ],
+            "--nldesign-color-action-text": [
+                "onColor",
+                "action"
+            ],
+            "--nldesign-color-action-hover": [
+                "darken",
+                "action",
+                0.15
+            ],
             "--nldesign-color-header-background": [
                 "from",
                 "primary"
@@ -273,6 +286,7 @@
         {
             "primary": "#c8102e",
             "background": "#ffffff",
+            "action": null,
             "expected": {
                 "declarations": {
                     "--nldesign-color-primary": "#c8102e",
@@ -304,12 +318,15 @@
                 },
                 "textOnPrimary": "#ffffff",
                 "textRatio": 5.88,
-                "uiRatio": 5.88
+                "uiRatio": 5.88,
+                "textOnAction": null,
+                "actionTextRatio": null
             }
         },
         {
             "primary": "#ffd200",
             "background": "#ffffff",
+            "action": null,
             "expected": {
                 "declarations": {
                     "--nldesign-color-primary": "#ffd200",
@@ -341,12 +358,15 @@
                 },
                 "textOnPrimary": "#000000",
                 "textRatio": 14.47,
-                "uiRatio": 1.45
+                "uiRatio": 1.45,
+                "textOnAction": null,
+                "actionTextRatio": null
             }
         },
         {
             "primary": "#808080",
             "background": "#ffffff",
+            "action": null,
             "expected": {
                 "declarations": {
                     "--nldesign-color-primary": "#808080",
@@ -378,12 +398,15 @@
                 },
                 "textOnPrimary": "#000000",
                 "textRatio": 5.32,
-                "uiRatio": 3.95
+                "uiRatio": 3.95,
+                "textOnAction": null,
+                "actionTextRatio": null
             }
         },
         {
             "primary": "#154273",
             "background": "#f5f5f5",
+            "action": null,
             "expected": {
                 "declarations": {
                     "--nldesign-color-primary": "#154273",
@@ -415,12 +438,15 @@
                 },
                 "textOnPrimary": "#ffffff",
                 "textRatio": 10.2,
-                "uiRatio": 9.36
+                "uiRatio": 9.36,
+                "textOnAction": null,
+                "actionTextRatio": null
             }
         },
         {
             "primary": "#0a0",
             "background": "#FFF",
+            "action": null,
             "expected": {
                 "declarations": {
                     "--nldesign-color-primary": "#00aa00",
@@ -452,7 +478,138 @@
                 },
                 "textOnPrimary": "#000000",
                 "textRatio": 6.75,
-                "uiRatio": 3.11
+                "uiRatio": 3.11,
+                "textOnAction": null,
+                "actionTextRatio": null
+            }
+        },
+        {
+            "primary": "#1a67a3",
+            "background": "#ffffff",
+            "action": "#1f883d",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#1a67a3",
+                    "--nldesign-color-primary-text": "#ffffff",
+                    "--nldesign-color-primary-hover": "#16588b",
+                    "--nldesign-color-primary-light": "#e4edf4",
+                    "--nldesign-color-primary-light-hover": "#cddeeb",
+                    "--nldesign-color-action": "#1f883d",
+                    "--nldesign-color-action-text": "#000000",
+                    "--nldesign-color-action-hover": "#1a7434",
+                    "--nldesign-color-header-background": "#1a67a3",
+                    "--nldesign-color-header-text": "#ffffff",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#1a67a3",
+                    "--nldesign-color-link-hover": "#16588b",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#ffffff",
+                "textRatio": 5.98,
+                "uiRatio": 5.98,
+                "textOnAction": "#000000",
+                "actionTextRatio": 4.65
+            }
+        },
+        {
+            "primary": "#154273",
+            "background": "#ffffff",
+            "action": "#ffd200",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#154273",
+                    "--nldesign-color-primary-text": "#ffffff",
+                    "--nldesign-color-primary-hover": "#123862",
+                    "--nldesign-color-primary-light": "#e3e8ee",
+                    "--nldesign-color-primary-light-hover": "#ccd5e0",
+                    "--nldesign-color-action": "#ffd200",
+                    "--nldesign-color-action-text": "#000000",
+                    "--nldesign-color-action-hover": "#d9b300",
+                    "--nldesign-color-header-background": "#154273",
+                    "--nldesign-color-header-text": "#ffffff",
+                    "--nldesign-color-nav-background": "#ffffff",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#154273",
+                    "--nldesign-color-link-hover": "#123862",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#ffffff",
+                "textRatio": 10.2,
+                "uiRatio": 10.2,
+                "textOnAction": "#000000",
+                "actionTextRatio": 14.47
+            }
+        },
+        {
+            "primary": "#c8102e",
+            "background": "#f5f5f5",
+            "action": "#0A0",
+            "expected": {
+                "declarations": {
+                    "--nldesign-color-primary": "#c8102e",
+                    "--nldesign-color-primary-text": "#ffffff",
+                    "--nldesign-color-primary-hover": "#aa0e27",
+                    "--nldesign-color-primary-light": "#f0dadd",
+                    "--nldesign-color-primary-light-hover": "#ebc3c9",
+                    "--nldesign-color-action": "#00aa00",
+                    "--nldesign-color-action-text": "#000000",
+                    "--nldesign-color-action-hover": "#009100",
+                    "--nldesign-color-header-background": "#c8102e",
+                    "--nldesign-color-header-text": "#ffffff",
+                    "--nldesign-color-nav-background": "#f5f5f5",
+                    "--nldesign-color-text": "#333333",
+                    "--nldesign-color-text-muted": "#696969",
+                    "--nldesign-color-border": "#b4b4b4",
+                    "--nldesign-color-border-dark": "#696969",
+                    "--nldesign-color-link": "#c8102e",
+                    "--nldesign-color-link-hover": "#aa0e27",
+                    "--nldesign-color-error": "#d52b1e",
+                    "--nldesign-color-error-rgb": "213, 43, 30",
+                    "--nldesign-color-warning": "#e17000",
+                    "--nldesign-color-warning-rgb": "225, 112, 0",
+                    "--nldesign-color-success": "#39870c",
+                    "--nldesign-color-success-rgb": "57, 135, 12",
+                    "--nldesign-color-info": "#007bc7",
+                    "--nldesign-color-info-rgb": "0, 123, 199",
+                    "--nldesign-font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,\n\t\tOxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "--nldesign-border-radius": "0",
+                    "--nldesign-border-radius-small": "0",
+                    "--nldesign-border-radius-large": "4px"
+                },
+                "textOnPrimary": "#ffffff",
+                "textRatio": 5.88,
+                "uiRatio": 5.4,
+                "textOnAction": "#000000",
+                "actionTextRatio": 6.75
             }
         }
     ]

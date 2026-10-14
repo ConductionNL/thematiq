@@ -451,6 +451,13 @@ jobs:
       # a branch creation or a dispatch all run everything, and a filtered
       # skip is a declared state in the Quality Report, not a missing one.
       enable-path-filtering: true
+      # The suite reads more than code: stylesheets, the generated reference
+      # pages under docs, images, fonts, translations and the token-set data
+      # files. A push that touched only those used to skip PHPUnit, and a stale
+      # generated page stayed red behind a green run (measured 2026-10-12).
+      # These globs replace the shared default, so the default's entries are
+      # repeated first.
+      path-filter-code-globs: "lib/** src/** tests/** appinfo/** composer.json composer.lock package.json package-lock.json .github/workflows/** css/** docs/** img/** fonts/** l10n/** scripts/** templates/** README.md token-sets.json design-systems.json"
       # PR-time PHPUnit runs the primary PHP against the newest declared
       # Nextcloud; the full matrix still runs on every push to a default
       # branch and on the release PR into beta. Breadth moves from

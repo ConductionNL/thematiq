@@ -33,6 +33,37 @@ const ROOT = path.resolve(__dirname, '../..')
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8')
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel))
 
+const PARSED = new Map()
+/**
+ * A stylesheet parsed once. Every set reads the same design system
+ * stylesheets, and parsing them again per set and per scope is what took
+ * these cases past the default timeout.
+ *
+ * @param {string} file App-relative path.
+ * @return {import('postcss').Root} The tree.
+ */
+const parsed = (file) => {
+	if (!PARSED.has(file)) {
+		PARSED.set(file, postcss.parse(read(file)))
+	}
+	return PARSED.get(file)
+}
+
+const SELECTORS = new WeakMap()
+/**
+ * A rule's selectors, split once: postcss splits the list on every read, and
+ * every set walks every rule of the shared stylesheets.
+ *
+ * @param {import('postcss').Rule} rule The rule.
+ * @return {string[]} Its selectors.
+ */
+const selectorsOf = (rule) => {
+	if (!SELECTORS.has(rule)) {
+		SELECTORS.set(rule, rule.selectors)
+	}
+	return SELECTORS.get(rule)
+}
+
 /** The systems that leave the selected entry to Nextcloud's wash. */
 const WASH_SYSTEMS = ['nldesign', 'high-contrast']
 
@@ -137,8 +168,8 @@ function reachesBody(selector, env) {
 function cascade(files, env, matches) {
 	const won = {}
 	for (const file of files) {
-		postcss.parse(read(file)).walkRules((rule) => {
-			const matched = rule.selectors.filter(matches)
+		parsed(file).walkRules((rule) => {
+			const matched = selectorsOf(rule).filter(matches)
 			if (!conditionsHold(rule, env) || matched.length === 0) {
 				return
 			}

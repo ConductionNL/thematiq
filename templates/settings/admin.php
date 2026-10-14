@@ -138,6 +138,15 @@ if ($_['mockUi'] === true) {
 			<button type="button" id="nldesign-reset-theme-btn" class="button">
 				<?php p($l->t('Reset theme to Nextcloud')); ?>
 			</button>
+			<!-- The file format of the download, for Figma and other design tools
+			     (openspec/changes/figma-token-files). The rows under Custom token sets use it too. -->
+			<select id="nldesign-figma-format" class="nldesign-figma-format"
+					aria-label="<?php p($l->t('File format of the design tokens download')); ?>">
+				<option value="dtcg"><?php p($l->t('W3C design tokens')); ?></option>
+				<option value="figma"><?php p($l->t('Figma variables')); ?></option>
+				<option value="tokens-studio"><?php p($l->t('Tokens Studio for Figma')); ?></option>
+				<option value="tokens-studio-legacy"><?php p($l->t('Tokens Studio for Figma, older spelling')); ?></option>
+			</select>
 			<button type="button" id="nldesign-dtcg-download" class="button">
 				<?php p($l->t('Download as design tokens')); ?>
 			</button>
@@ -314,6 +323,9 @@ if ($_['mockUi'] === true) {
 				<input type="file" id="nldesign-upload-input" accept=".css,.json,.tokens.json"
 					   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
 					   style="display:none">
+				<p class="nldesign-hint" id="nldesign-upload-figma-hint">
+					<?php p($l->t('Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.')); ?>
+				</p>
 				<div class="nldesign-form-actions">
 					<button type="button" id="nldesign-upload-btn" class="button primary">
 						<?php p($l->t('Choose file and upload')); ?>
@@ -358,6 +370,14 @@ if ($_['mockUi'] === true) {
 					<div class="nldesign-field">
 						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
+					</div>
+					<!-- The main button's own colour (openspec/changes/brand-form-action-colour). Off by
+					     default: without it the main button wears the primary, as every set did. -->
+					<div class="nldesign-field">
+						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
+						<label for="nldesign-brand-action-enabled"><?php p($l->t('Give the main button its own color')); ?></label>
+						<input type="color" id="nldesign-brand-action" class="nldesign-brand-colour" value="#1f883d" disabled
+							   aria-label="<?php p($l->t('Main button color')); ?>">
 					</div>
 					<div class="nldesign-field">
 						<!-- No `for`: a label for the button would replace its name with

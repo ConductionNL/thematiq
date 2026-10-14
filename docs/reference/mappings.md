@@ -137,7 +137,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-primary` | mapped | `--nldesign-color-primary` | `#00679e` | `#00679e` | Main brand color |
-| `--color-primary-element` | mapped | `--nldesign-color-primary` | `#00679e` | `#0091f2` | Interactive element primary color |
+| `--color-primary-element` | mapped | `--nldesign-color-primary` | `#00679e` | `#0091f2` | Interactive element colour: checked boxes, switches, icons. Not the main button, which a set's action colour may move |
 | `--color-primary-element-hover` | mapped | `--nldesign-color-primary-hover` | `#00507a` | `#17a2ff` | Interactive element hover |
 | `--color-primary-element-light` | mapped | `--nldesign-color-primary-light` | `var(--color-primary-light)` | `var(--color-primary-light)` | Deprecated alias for primary-light |
 | `--color-primary-element-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `var(--color-primary-light-hover)` | `var(--color-primary-light-hover)` | Deprecated alias |

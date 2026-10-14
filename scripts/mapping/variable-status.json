@@ -1107,7 +1107,7 @@
 			"via": "stylesheet",
 			"token": "--nldesign-color-primary",
 			"category": "Primary Colors",
-			"note": "Interactive element primary color"
+			"note": "Interactive element colour: checked boxes, switches, icons. Not the main button, which a set's action colour may move"
 		},
 		"--color-primary-element-extra-light": {
 			"status": "settable",

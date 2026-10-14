@@ -40,17 +40,19 @@ A token set may give the one main button of a page a colour of its own, apart fr
 
 | Token | Purpose | Without it |
 |-------|---------|------------|
-| `--nldesign-color-action` | Fill of the main button, and of everything Nextcloud draws in its primary element colour | The primary |
+| `--nldesign-color-action` | Fill of the main button | The primary |
 | `--nldesign-color-action-hover` | The same on hover | The action colour, 15% darker. Without an action colour: the primary hover |
-| `--nldesign-color-action-text` | Text and icons on the action colour | The text on the primary |
+| `--nldesign-color-action-text` | Text and icons on the main button | The text on the primary |
 
-No default is declared for them, on purpose. A set that leaves them out renders as it always did.
+No default is declared for them, on purpose. A set that leaves them out renders as it always did. Of the shipped sets only Cunningham declares them: a green main button (`#1f883d`) on its blue brand, as OpenProject draws it.
 
-The action colour reaches further than buttons. Nextcloud draws checked boxes and switches, progress bars, the selected navigation entry, focus borders of inputs and counter badges in the same variable (`--color-primary-element`). They all take the action colour. Links, the header and light tints stay with the primary.
+The action colour reaches the filled main button and nothing else: the primary button of a page, the confirm button of a dialog and the login button. Checked boxes, radio buttons, switches, progress bars, the selected navigation entry, focus rings, counter badges, folder icons and links stay with the primary. An administrator moves the main button on one instance with its own tokens in the token editor (primary button background, label and hover).
 
-Check the text on your action colour: it needs 4.5:1. Thematiq warns when it does not reach that, as it does for the text on the primary. In a dark variant the action colour gets a dark value like any other colour of the set.
+Check the text on your action colour: it needs 4.5:1. Thematiq warns when it does not reach that, as it does for the text on the primary. In a dark variant the action colour is treated as the primary is: it keeps its value when its text already reads on it, and its text is adjusted until it does.
 
 The NL Design System and La Suite (Cunningham) bundles read these tokens. Summer Breeze and High contrast do not.
+
+An imported theme brings them too. In a theme's CSS, name them `--<prefix>-color-action`, `--<prefix>-color-action-hover` and `--<prefix>-color-action-text`. In a design tokens (DTCG) file, use the paths `color.action`, `color.action-hover` and `color.action-text`. A theme that names only the action colour gets a readable text on it: white or black, whichever reads better.
 
 ### Header Tokens
 

@@ -60,9 +60,11 @@ final class DtcgExportControllerTest extends TestCase {
 	/**
 	 * The controller over the repository.
 	 *
+	 * @param string|null $format The `format` query parameter, or null for none.
+	 *
 	 * @return DtcgExportController
 	 */
-	private function controller(): DtcgExportController {
+	private function controller(?string $format = null): DtcgExportController {
 		$appManager = $this->createMock(IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$appManager->method('getAppVersion')->willReturn('9.9.9');
@@ -75,7 +77,10 @@ final class DtcgExportControllerTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		return new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, $parser, new DesignTokensWriter(), new DeprecationRecords($config), $l);
+		$request = $this->createMock(IRequest::class);
+		$request->method('getParam')->willReturnCallback(static fn (string $key, $default = null) => $key === 'format' ? ($format ?? $default) : $default);
+
+		return new DtcgExportController('thematiq', $request, $tokenSets, $appManager, $parser, new DesignTokensWriter(), new DeprecationRecords($config), $l);
 	}//end controller()
 
 	/**
@@ -121,6 +126,65 @@ final class DtcgExportControllerTest extends TestCase {
 
 		$this->assertSame($expected, $names);
 	}//end testOnlyTheSetsOwnDeclarations()
+
+	/**
+	 * Scenario: the Figma variables format holds colours as text, at the same paths.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 */
+	public function testTheFigmaFormatWritesColoursAsText(): void {
+		$response = $this->controller(format: 'figma')->export(id: 'amsterdam');
+		$document = json_decode((string)json_encode($response->getData()), true);
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame('color', $document['nldesign']['color']['primary']['$type']);
+		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', $document['nldesign']['color']['primary']['$value']);
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
+		$this->assertSame('attachment; filename="amsterdam.tokens.json"', $headers['Content-Disposition']);
+	}//end testTheFigmaFormatWritesColoursAsText()
+
+	/**
+	 * Scenario: a Tokens Studio file holds the set under its own key, with one theme that switches it on.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 */
+	public function testTheTokensStudioFormatsWrapTheSet(): void {
+		$dollar = json_decode((string)json_encode($this->controller(format: 'tokens-studio')->export(id: 'amsterdam')->getData()), true);
+		$legacyResponse = $this->controller(format: 'tokens-studio-legacy')->export(id: 'amsterdam');
+		$legacy = json_decode((string)json_encode($legacyResponse->getData()), true);
+
+		$this->assertSame(['tokenSetOrder' => ['amsterdam']], $dollar['$metadata']);
+		$this->assertSame('amsterdam', $dollar['$themes'][0]['id']);
+		$this->assertSame(['amsterdam' => 'enabled'], $dollar['$themes'][0]['selectedTokenSets']);
+		$this->assertSame('color', $dollar['amsterdam']['nldesign']['color']['primary']['$type']);
+		$this->assertIsString($dollar['amsterdam']['nldesign']['color']['primary']['$value']);
+		$this->assertSame(
+			$dollar['amsterdam']['nldesign']['color']['primary']['$value'],
+			$legacy['amsterdam']['nldesign']['color']['primary']['value']
+		);
+		$this->assertSame('color', $legacy['amsterdam']['nldesign']['color']['primary']['type']);
+		$this->assertArrayNotHasKey('$value', $legacy['amsterdam']['nldesign']['color']['primary']);
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($legacyResponse);
+		$this->assertSame('attachment; filename="amsterdam.tokens-studio.json"', $headers['Content-Disposition']);
+	}//end testTheTokensStudioFormatsWrapTheSet()
+
+	/**
+	 * Scenario: a format the app does not write is refused.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 */
+	public function testAnUnknownFormatIsRefused(): void {
+		$response = $this->controller(format: 'sketch')->export(id: 'amsterdam');
+
+		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(['error' => 'Unknown file format.'], $response->getData());
+	}//end testAnUnknownFormatIsRefused()
 
 	/**
 	 * Scenario: an unknown set is refused with 404 and a generic message.

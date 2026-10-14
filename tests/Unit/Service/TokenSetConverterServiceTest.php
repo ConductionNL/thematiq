@@ -221,6 +221,82 @@ class TokenSetConverterServiceTest extends TestCase {
 	}//end testTheContrastGuardDarkensAFailingPrimary()
 
 	/**
+	 * A theme without an action colour gets none: the action rules have no fallback from the primary.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 */
+	public function testAThemeWithoutAnActionColourGetsNone(): void {
+		$result = $this->convert($this->theme([
+			'--utrecht-button-primary-action-background-color' => '#154273',
+			'--utrecht-button-primary-action-color' => '#ffffff',
+			'--utrecht-button-primary-action-hover-background-color' => '#0f2f52',
+		]));
+
+		$this->assertSame('#154273', $result['decl']['--nldesign-color-primary']);
+		foreach (array_keys($result['decl']) as $name) {
+			$this->assertStringNotContainsString('color-action', $name, 'the Utrecht button colour is the primary, not an action colour');
+		}
+	}//end testAThemeWithoutAnActionColourGetsNone()
+
+	/**
+	 * A theme that names an action colour gets it, with a readable text and its own hover when it names one.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 */
+	public function testAThemesActionColourIsConverted(): void {
+		$bare = $this->convert($this->theme([
+			'--demo-color-primary' => '#1a67a3',
+			'--demo-color-action' => '#116329',
+		]));
+
+		$this->assertSame('#1a67a3', $bare['decl']['--nldesign-color-primary']);
+		$this->assertSame('#116329', $bare['decl']['--nldesign-color-action']);
+		$this->assertSame('#ffffff', $bare['decl']['--nldesign-color-action-text'], 'a dark green: the text is derived white, by the rule the primary text uses');
+		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $bare['decl'], 'the stylesheet darkens the action colour itself');
+
+		$full = $this->convert($this->theme([
+			'--demo-color-primary' => '#1a67a3',
+			'--demo-color-action' => '#ffd43b',
+			'--demo-color-action-hover' => '#fcc419',
+			'--demo-color-action-text' => '#212529',
+		]));
+
+		$this->assertSame('#ffd43b', $full['decl']['--nldesign-color-action']);
+		$this->assertSame('#fcc419', $full['decl']['--nldesign-color-action-hover']);
+		$this->assertSame('#212529', $full['decl']['--nldesign-color-action-text']);
+
+		$pale = $this->convert($this->theme(['--demo-color-primary' => '#1a67a3', '--demo-color-action' => '#ffd43b']));
+		$this->assertSame('#000000', $pale['decl']['--nldesign-color-action-text'], 'white does not read on yellow, so the text is derived black');
+	}//end testAThemesActionColourIsConverted()
+
+	/**
+	 * A DTCG document brings its action colour by path.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 */
+	public function testADtcgDocumentBringsItsActionColour(): void {
+		$result = $this->convert((string)json_encode([
+			'color' => [
+				'primary' => ['$value' => '#1a67a3', '$type' => 'color'],
+				'action' => ['$value' => '#1f883d', '$type' => 'color'],
+				'action-hover' => ['$value' => '#197032', '$type' => 'color'],
+				'on-action' => ['$value' => '#ffffff', '$type' => 'color'],
+			],
+		]));
+
+		$this->assertSame('#1a67a3', $result['decl']['--nldesign-color-primary']);
+		$this->assertSame('#1f883d', $result['decl']['--nldesign-color-action']);
+		$this->assertSame('#197032', $result['decl']['--nldesign-color-action-hover']);
+		$this->assertSame('#ffffff', $result['decl']['--nldesign-color-action-text']);
+	}//end testADtcgDocumentBringsItsActionColour()
+
+	/**
 	 * The never policy refuses layout, type scale and clickable areas, and keeps components.
 	 *
 	 * @return void

@@ -15,6 +15,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use PHPUnit\Framework\TestCase;
 
@@ -371,6 +372,40 @@ class ShippedDarkContrastTest extends TestCase {
 		$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
 		$this->assertLessThanOrEqual(0.05, $luminance, sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
 	}//end testThePageBackgroundIsDark()
+
+	/**
+	 * Main text, muted text and links read on the dark page, for every set.
+	 *
+	 * The page is the set's own dark background, or Nextcloud's dark page
+	 * (#171717) for a set that names none. Such a set used to have no page to
+	 * be measured against, so its page pairs were skipped: nora's dark link
+	 * shipped at 3.57:1.
+	 *
+	 * @dataProvider darkSetProvider
+	 *
+	 * @param string $setId The token set id.
+	 */
+	public function testTextAndLinksReadOnTheDarkPage(string $setId): void {
+		$contrast = new ContrastService();
+		$value = $this->darkValues(setId: $setId);
+		$page = ($value('--nldesign-color-background') ?? DarkPaletteService::NEXTCLOUD_DARK_MAIN_BACKGROUND);
+
+		$failures = [];
+		foreach (['--nldesign-color-text', '--nldesign-color-text-muted', '--nldesign-color-link', '--nldesign-color-link-hover'] as $token) {
+			$foreground = $value($token);
+			if ($foreground === null) {
+				continue;
+			}
+
+			$ratio = $contrast->measure(foreground: $foreground, background: $page, page: $page);
+			if ($ratio === null || $ratio < 4.5) {
+				$failures[] = sprintf('%s %s on %s: %s', $token, $foreground, $page, var_export($ratio, true));
+			}
+		}
+
+		$this->assertNotNull($value('--nldesign-color-text'), $setId . ' has no main text colour to measure');
+		$this->assertSame([], $failures, $setId . ' dark');
+	}//end testTextAndLinksReadOnTheDarkPage()
 
 	/**
 	 * A resolver for a set's effective dark values: a token the dark file
