@@ -272,9 +272,10 @@ class TokenSetConverterService {
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
 
-		// A file from a Figma tool: token sets merged, the `value` spelling respelled,
+		// The OpenProject plugin's set file, then a file from a Figma tool: token sets merged, the `value` spelling respelled,
 		// thematiq's own paths given their CSS names back. Any other content is untouched.
 		$leftOut = [];
+		$content = (new OpenProjectSetFile())->normalise(content: $content, skipped: $leftOut);
 		$content = (new FigmaTokenReader())->normalise(content: $content, skipped: $leftOut);
 		foreach ($leftOut as $entry) {
 			$report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];

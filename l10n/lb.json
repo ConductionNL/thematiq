@@ -1124,6 +1124,7 @@
         "Tokens Studio for Figma, older spelling": "Tokens Studio for Figma, older spelling",
         "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.",
         "Unknown file format.": "Unknown file format.",
+        "OpenProject plugin set file": "OpenProject plugin set file",
         "Mobile logo and home screen icon": "Mobile logo and home screen icon",
         "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.": "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.",
         "Mobile logo": "Mobile logo",
