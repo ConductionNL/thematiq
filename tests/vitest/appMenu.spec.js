@@ -188,7 +188,10 @@ describe('the apps menu of the board', () => {
 		expect(links[1].querySelector('path'), 'an icon that is not path data is left out').toBeNull()
 		const heading = grid.querySelector('[data-thematiq-row="openproject"]')
 		expect(heading.querySelector('h2').textContent).toBe('OpenProject')
-		expect(heading.querySelector('a').getAttribute('href')).toBe('https://op.example.org')
 		expect(Number(heading.style.order)).toBeLessThan(Number(links[0].style.order))
+		// After Nextcloud's own apps, and they keep their own order: the links are not counted as tiles.
+		const files = Array.from(grid.querySelectorAll('a.app-item:not([data-thematiq-external])')).map((a) => Number(a.style.order))
+		expect(Math.max(...files.filter((o) => o < 90000))).toBeLessThan(Number(heading.style.order))
+		expect(links[0].style.order).toBe('90001')
 	})
 })

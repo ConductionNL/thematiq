@@ -580,7 +580,8 @@ body:not(#body-login)
 
 body:not(#body-login)
 	.app-menu__popover-base
-	.thematiq-app-menu__external
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.thematiq-app-menu__external
 	.app-item__circle::before {
 	content: none;
 }

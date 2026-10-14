@@ -25,7 +25,7 @@
 	var BLOCK = 'thematiq-app-menu'
 	var OTHERS = 9000
 	var FOOTER = 99999
-	var EXTERNAL = 8000
+	var EXTERNAL = 90000
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqAppMenuMain)
@@ -119,8 +119,8 @@
 	}
 
 	/**
-	 * OpenProject's modules as a section of their own, after the organisation's sections and
-	 * before the other apps (openproject-in-the-app-menu). Links, not Nextcloud tiles: they are
+	 * OpenProject's modules as a section of their own, after Nextcloud's apps and before the
+	 * footer (openproject-in-the-app-menu). Links, not Nextcloud tiles: they are
 	 * added once and keep their place. Text and path data only, never markup.
 	 *
 	 * @param {Element} grid The grid.
@@ -137,7 +137,7 @@
 		if (modules.length === 0 || grid.querySelector(':scope > [data-thematiq-external]') !== null) {
 			return
 		}
-		heading(grid, 'openproject', EXTERNAL, section.title, linkable(section.url) ? { label: section.title, url: section.url } : undefined)
+		heading(grid, 'openproject', EXTERNAL, section.title)
 		var svgNs = 'http://www.w3.org/2000/svg'
 		modules.forEach(function (module, i) {
 			var a = document.createElement('a')
@@ -192,7 +192,7 @@
 		})
 
 		var tiles = Array.prototype.slice.call(
-			grid.querySelectorAll(':scope > a.app-item'),
+			grid.querySelectorAll(':scope > a.app-item:not([data-thematiq-external])'),
 		)
 		var used = {}
 		var others = 0
