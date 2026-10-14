@@ -6591,19 +6591,20 @@
 			"id": "ast-mobile-logo",
 			"area": "assets",
 			"name": "Set a separate mobile logo and home-screen touch icon for the project management app without changing its browser tab icon.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "yes",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "none",
-				"evidence": "grep -rniE 'apple-touch|touchicon|touch-icon|logoMobile' in lib/, src/, templates/, css/, appinfo/ finds nothing; thematiq sets the favicon (ast-favicon) but no separate small-screen logo or touch icon",
+				"state": "built",
+				"evidence": "lib/Service/WorkspaceIconService.php stores a mobile logo and a square PNG touch icon in app data; lib/Listener/WorkspaceIconListener.php adds <link rel=apple-touch-icon sizes=180x180> and a header-logo rule inside @media (max-width:1024px) to every page and the login page; lib/Controller/WorkspaceIconController.php; tests/Unit/Service/WorkspaceIconServiceTest.php",
 				"owner": "ConductionNL/thematiq",
-				"origin": "competitor"
+				"origin": "own",
+				"change": "mobile-logo-and-touch-icon"
 			},
-			"reachedOn": "nothing reaches it",
+			"reachedOn": "Settings > Administration > Theming, 'Mobile logo and home screen icon'",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:48 has no touch-icon upload key, and lib/Controller/IconController.php:146-151 serves the uploaded favicon as the touch icon for every app, so a separate home-screen icon cannot be set without changing the tab icon",
 				"m365-branding": "https://learn.microsoft.com/en-us/graph/api/resources/organizationalbranding?view=graph-rest-1.0: the full branding property list (banner, header, square light/dark logos, favicon, background) has no mobile or touch icon; https://learn.microsoft.com/en-us/microsoft-365/admin/setup/customize-your-organization-theme: Logos tab has default, alternate (dark) logo and on-click link only",
@@ -6617,7 +6618,7 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://gitlab.opencode.de/bmi/opendesk/deployment/opendesk/-/blob/v1.18.2/CHANGELOG.md",
-			"note": "Reopened 2026-10-12 (Ruben): thematiq and the OpenProject plugin reach the same functionality by adding, never by removing, and OpenProject has a mobile logo and a touch icon. Not built yet; no change is written. Before that: decided no 2026-09-28 (single competitor rated yes (openDesk), no demand row, outside the core area). Small-screen and pinned-app surfaces are where a wrong logo is most noticed on phones issued to staff."
+			"note": "Built 2026-10-14 (wave T of the OpenProject plugin parity map). Reopened 2026-10-12 (Ruben): add, never remove. An Android home screen keeps Nextcloud's manifest icon, which the theming app writes from the favicon. Before: decided no 2026-09-28."
 		},
 		{
 			"id": "gov-environment-marker",
