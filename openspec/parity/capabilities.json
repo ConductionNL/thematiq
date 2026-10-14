@@ -2268,6 +2268,37 @@
 			}
 		},
 		{
+			"id": "int-openproject-set-file",
+			"area": "authoring",
+			"name": "Move one house style to and from the OpenProject plugin as its own set file.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Controller/OpenProjectSetFileController.php export() at GET /settings/tokensets/{id}/set-file writes OpenProjectSetFileWriter::setFile(); lib/Service/OpenProjectSetFile.php reads an uploaded set file in TokenSetConverterService::convert(); tests/Unit/Service/OpenProjectSetFileTest.php",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "openproject-set-file"
+			},
+			"reachedOn": "Settings > Administration > Theming, format list next to 'Download as design tokens'; Custom token sets upload",
+			"evidence": {
+				"nextcloud-theming": "the set file is the format of ConductionNL/openproject-thematiq (lib/open_project/thematiq/transfer.rb); this product neither writes nor reads it",
+				"m365-branding": "the set file is the format of ConductionNL/openproject-thematiq (lib/open_project/thematiq/transfer.rb); this product neither writes nor reads it",
+				"opendesk": "the set file is the format of ConductionNL/openproject-thematiq (lib/open_project/thematiq/transfer.rb); this product neither writes nor reads it",
+				"liferay-dxp": "the set file is the format of ConductionNL/openproject-thematiq (lib/open_project/thematiq/transfer.rb); this product neither writes nor reads it",
+				"tokens-studio": "the set file is the format of ConductionNL/openproject-thematiq (lib/open_project/thematiq/transfer.rb); this product neither writes nor reads it"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
+		},
+		{
 			"id": "aut-convert-nlds-theme",
 			"area": "authoring",
 			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",

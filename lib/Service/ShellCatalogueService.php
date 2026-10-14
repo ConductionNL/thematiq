@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
+
 /**
  * Builds the shell catalogue: one entry per `css/tokens/<id>.css`, each with
  * the eighteen roles {@see ShellRoleMapper} gives the shell tokens endpoint,
@@ -91,6 +94,7 @@ class ShellCatalogueService {
 	 * @param ShellCatalogueFonts $fonts Builds the font list.
 	 * @param ReuseLicences $licences Reads `REUSE.toml`.
 	 * @param ShellCatalogueVocabulary $vocabulary Picks a set's own vocabulary.
+	 * @param SetFileReader $files Reads a set's files from the release or the store.
 	 */
 	public function __construct(
 		private readonly ShippedTokenSetAuditService $declarations,
@@ -98,6 +102,7 @@ class ShellCatalogueService {
 		private readonly ShellCatalogueFonts $fonts = new ShellCatalogueFonts(),
 		private readonly ReuseLicences $licences = new ReuseLicences(),
 		private readonly ShellCatalogueVocabulary $vocabulary = new ShellCatalogueVocabulary(),
+		private readonly SetFileReader $files = new SetFileReader(),
 	) {
 	}//end __construct()
 
@@ -137,39 +142,10 @@ class ShellCatalogueService {
 		$families = [];
 		foreach ($ids as $id) {
 			$meta = ($manifest[$id] ?? []);
-			$light = $this->declarations->resolveDeclarations(appPath: $appPath, id: $id, theming: []);
-			$tokens = $this->mapper->map(tokens: $light);
-			$set = [
-				'id' => $id,
-				'name' => $this->nameOf(id: $id, meta: $meta),
-				'tokens' => $tokens,
-				'logo' => $this->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $annotations),
-			];
-
-			// Optional: the set's own tokens beyond the roles, so another product can carry them.
-			$vocabulary = $this->vocabulary->ofSet(css: $this->licences->read(path: $appPath . '/css/tokens/' . $id . '.css'), resolved: $light);
-			if ($vocabulary !== []) {
-				$set['vocabulary'] = $vocabulary;
-			}
-
-			// Optional: only a set that ships a dark variant has dark roles.
-			$dark = $this->darkDeclarations(appPath: $appPath, id: $id);
-			if ($dark !== []) {
-				// A set that names no page background draws on Nextcloud's own,
-				// which is white in light and dark in dark. The light
-				// declarations carry the white; a dark page must not inherit it.
-				if (isset($dark['--nldesign-color-background']) === false) {
-					$dark['--nldesign-color-background'] = DarkPaletteService::NEXTCLOUD_DARK_MAIN_BACKGROUND;
-				}
-
-				$set['dark'] = ['tokens' => $this->mapper->mapDark(tokens: array_merge($light, $dark))];
-
-				// The dark variant's own values for the vocabulary, as its file states them.
-				$darkVocabulary = $this->vocabulary->ofDeclarations(declarations: $dark);
-				if ($darkVocabulary !== []) {
-					$set['dark']['vocabulary'] = $darkVocabulary;
-				}
-			}
+			$set = $this->entry(appPath: $appPath, id: $id, name: $this->nameOf(id: $id, meta: $meta), store: null);
+			$logo = ['logo' => $this->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $annotations)];
+			$set = (array_slice($set, 0, 3, true) + $logo + array_slice($set, 3, null, true));
+			$tokens = $set['tokens'];
 
 			$sets[] = $set;
 
@@ -188,6 +164,58 @@ class ShellCatalogueService {
 			'fonts' => $fonts,
 		];
 	}//end build()
+
+	/**
+	 * One set in the shape the catalogue and the OpenProject plugin's set file share:
+	 * `id`, `name`, the eighteen `tokens`, and the optional `vocabulary` and `dark`. The
+	 * caller adds the `logo`.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $id The set id.
+	 * @param string $name The set's name.
+	 * @param RuntimeFileStore|null $store Where uploaded sets live; null for the release only.
+	 *
+	 * @return array<string, mixed> The entry.
+	 *
+	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 */
+	public function entry(string $appPath, string $id, string $name, ?RuntimeFileStore $store): array {
+		$light = $this->declarations->resolveDeclarations(appPath: $appPath, id: $id, theming: []);
+		$tokens = $this->mapper->map(tokens: $light);
+		$set = [
+			'id' => $id,
+			'name' => $name,
+			'tokens' => $tokens,
+		];
+
+		// Optional: the set's own tokens beyond the roles, so another product can carry them.
+		$css = (string)$this->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $store);
+		$vocabulary = $this->vocabulary->ofSet(css: $css, resolved: $light);
+		if ($vocabulary !== []) {
+			$set['vocabulary'] = $vocabulary;
+		}
+
+		// Optional: only a set that ships a dark variant has dark roles.
+		$dark = $this->darkDeclarations(appPath: $appPath, id: $id, store: $store);
+		if ($dark !== []) {
+			// A set that names no page background draws on Nextcloud's own,
+			// which is white in light and dark in dark. The light
+			// declarations carry the white; a dark page must not inherit it.
+			if (isset($dark['--nldesign-color-background']) === false) {
+				$dark['--nldesign-color-background'] = DarkPaletteService::NEXTCLOUD_DARK_MAIN_BACKGROUND;
+			}
+
+			$set['dark'] = ['tokens' => $this->mapper->mapDark(tokens: array_merge($light, $dark))];
+
+			// The dark variant's own values for the vocabulary, as its file states them.
+			$darkVocabulary = $this->vocabulary->ofDeclarations(declarations: $dark);
+			if ($darkVocabulary !== []) {
+				$set['dark']['vocabulary'] = $darkVocabulary;
+			}
+		}
+
+		return $set;
+	}//end entry()
 
 	/**
 	 * The catalogue as the file that is committed: pretty printed, one trailing newline.
@@ -243,11 +271,12 @@ class ShellCatalogueService {
 	 *
 	 * @param string $appPath The app root path.
 	 * @param string $id The set id.
+	 * @param RuntimeFileStore|null $store Where uploaded sets live.
 	 *
 	 * @return array<string, string> Declaration name => dark value.
 	 */
-	private function darkDeclarations(string $appPath, string $id): array {
-		$css = $this->licences->read(path: $appPath . '/css/tokens/dark/' . $id . '.css');
+	private function darkDeclarations(string $appPath, string $id, ?RuntimeFileStore $store): array {
+		$css = (string)$this->files->read(appPath: $appPath, name: 'css/tokens/dark/' . $id . '.css', store: $store);
 		$start = strpos($css, 'body[data-theme-dark]');
 		if ($start === false) {
 			return [];
@@ -318,8 +347,10 @@ class ShellCatalogueService {
 	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
 	 *
 	 * @return array{file: string|null, inverse_file: string|null, licence: string|null, redistributable: bool|null, basis: string|null} The block.
+	 *
+	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
-	private function logoOf(string $appPath, string $id, array $meta, array $annotations): array {
+	public function logoOf(string $appPath, string $id, array $meta, array $annotations): array {
 		$file = $this->logoFile(appPath: $appPath, name: $id);
 		$inverse = $this->logoFile(appPath: $appPath, name: $id . '-dark');
 		if ($file === null) {

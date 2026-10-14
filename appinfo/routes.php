@@ -117,6 +117,8 @@ return [
 		['name' => 'tokenSource#update', 'url' => '/settings/tokensets/sources/{sourceId}', 'verb' => 'POST'],
 		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
 		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
+		// Any token set as the OpenProject plugin's set file (openproject-set-file), admin-only.
+		['name' => 'openProjectSetFile#export', 'url' => '/settings/tokensets/{id}/set-file', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).
