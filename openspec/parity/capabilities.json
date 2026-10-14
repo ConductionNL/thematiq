@@ -2299,6 +2299,37 @@
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
 		},
 		{
+			"id": "aut-dark-colours-from-file",
+			"area": "authoring",
+			"name": "Bring a house style's own dark colours in from a file, and have them win over the derived dark variant.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/OpenProjectSetFile.php and lib/Service/FileDarkValues.php read the dark block, the plugin W3C dark extension and a Tokens Studio dark set; lib/Service/DarkPins.php keeps them per uploaded set; DarkPaletteService::generateForSet() merges them; tests/Unit/Controller/CustomTokenSetUploadWritesTest.php testDarkValuesFromAFileAreKept",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "dark-colours-from-a-file"
+			},
+			"reachedOn": "Settings > Administration > Theming, Custom token sets upload",
+			"evidence": {
+				"nextcloud-theming": "not checked: no product in this comparison was seen to import dark colours from a design token file into a dark theme",
+				"m365-branding": "not checked: no product in this comparison was seen to import dark colours from a design token file into a dark theme",
+				"opendesk": "not checked: no product in this comparison was seen to import dark colours from a design token file into a dark theme",
+				"liferay-dxp": "not checked: no product in this comparison was seen to import dark colours from a design token file into a dark theme",
+				"tokens-studio": "not checked: Tokens Studio keeps light and dark as token sets and themes; it has no workspace dark variant to bring them into"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+		},
+		{
 			"id": "aut-convert-nlds-theme",
 			"area": "authoring",
 			"name": "Convert an existing NL Design System theme from its upstream token format into a working set.",
