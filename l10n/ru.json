@@ -1149,7 +1149,8 @@
         "Go to the confirmation": "Go to the confirmation",
         "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.": "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.",
         "Confirm first that your organisation may use the house style {set}.": "Confirm first that your organisation may use the house style {set}.",
-        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied."
+        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.",
+        "OpenProject plugin set file": "OpenProject plugin set file"
     },
     "plurals": {}
 }

@@ -123,6 +123,8 @@ return [
 		['name' => 'tokenSetLicence#show', 'url' => '/settings/tokensets/{id}/licence', 'verb' => 'GET'],
 		['name' => 'tokenSetLicence#confirm', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'POST'],
 		['name' => 'tokenSetLicence#withdraw', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'DELETE'],
+		// Any token set as the OpenProject plugin's set file (openproject-set-file), admin-only.
+		['name' => 'openProjectSetFile#export', 'url' => '/settings/tokensets/{id}/set-file', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],
 		['name' => 'customTokenSet#delete', 'url' => '/settings/tokensets/custom/{id}', 'verb' => 'DELETE'],
 		// Active-configuration WCAG contrast compliance evidence report (download).

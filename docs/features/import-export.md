@@ -126,3 +126,19 @@ curl -u admin:password -X POST \
   -d '{"overrides": {"--color-primary": "#005A9C"}}' \
   http://nextcloud.example.com/apps/thematiq/api/settings/overrides
 ```
+
+## The OpenProject plugin's set file
+
+The OpenProject plugin `openproject-thematiq` keeps one design system as a small JSON file: its eighteen roles, an optional `menu`, the rest of the set's tokens as its `vocabulary`, its dark roles and a logo verdict. Thematiq writes and reads that file, so a set moves between the two products without a link between them.
+
+**Download.** Choose **OpenProject plugin set file** in the format list next to **Download as design tokens**. You get `thematiq-{set}.json`. The address is `GET /apps/thematiq/settings/tokensets/{id}/set-file`. The file is the set's entry in the [shell catalogue](shell-catalogue.md): the same roles, vocabulary and dark block. A shipped set carries its logo verdict. An uploaded set names no logo.
+
+**Upload.** Upload the file under **Custom token sets**, like any other. Each role is stored under the name thematiq reads it from: `primary` as `--nldesign-color-primary`, `text` as `--thematiq-shell-text`, `menu` as `--thematiq-shell-menu`, and so on, as listed in [Token sets and Figma](figma-tokens.md). Each vocabulary key is stored with `--nldesign-` in front. The upload result names what was left out:
+
+| Reason | Meaning |
+|---|---|
+| `unmapped` | A role thematiq does not know, or a vocabulary key that is not a token name. |
+| `value-not-a-css-value` | Not a text value, empty, or holding a brace. |
+| `dark-colours-not-read` | The dark block. Thematiq makes a set's dark variant itself. |
+
+Every value still passes the token set validator, and the 512 KB limit holds.
