@@ -233,6 +233,24 @@
 	font-weight: 600;
 }
 
+/* The search field above the token set list (token-set-picker-search). */
+.nldesign-token-set-search {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.nldesign-token-set-search__input {
+	min-width: 240px;
+	max-width: 100%;
+}
+
+.nldesign-token-set-search__status {
+	color: var(--color-text-maxcontrast);
+}
+
 .nldesign-token-set-row,
 .nldesign-token-set-actions {
 	display: flex;
