@@ -829,43 +829,47 @@ input[type='radio']:checked {
    TYPOGRAPHY — Component Token Mapping
    ============================================ */
 
-/* Headings — use !important to win over Nextcloud's high-specificity defaults */
-h1 {
+/* Headings — use !important to win over Nextcloud's high-specificity defaults.
+   Not inside a nextcloud-vue page drawn in the board look (`.cn-look-board`):
+   the library sets its own heading sizes there (an admin card title is 19px),
+   and an !important size here made it 30px. The typeface rule below still
+   reaches every heading. */
+h1:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-1-font-size) !important;
 	font-weight: var(--nldesign-component-heading-1-font-weight) !important;
 	line-height: var(--nldesign-component-heading-1-line-height) !important;
 	color: var(--nldesign-component-heading-1-color) !important;
 }
 
-h2 {
+h2:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-2-font-size) !important;
 	font-weight: var(--nldesign-component-heading-2-font-weight) !important;
 	line-height: var(--nldesign-component-heading-2-line-height) !important;
 	color: var(--nldesign-component-heading-2-color) !important;
 }
 
-h3 {
+h3:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-3-font-size) !important;
 	font-weight: var(--nldesign-component-heading-3-font-weight) !important;
 	line-height: var(--nldesign-component-heading-3-line-height) !important;
 	color: var(--nldesign-component-heading-3-color) !important;
 }
 
-h4 {
+h4:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-4-font-size) !important;
 	font-weight: var(--nldesign-component-heading-4-font-weight) !important;
 	line-height: var(--nldesign-component-heading-4-line-height) !important;
 	color: var(--nldesign-component-heading-4-color) !important;
 }
 
-h5 {
+h5:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-5-font-size) !important;
 	font-weight: var(--nldesign-component-heading-5-font-weight) !important;
 	line-height: var(--nldesign-component-heading-5-line-height) !important;
 	color: var(--nldesign-component-heading-5-color) !important;
 }
 
-h6 {
+h6:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-heading-6-font-size) !important;
 	font-weight: var(--nldesign-component-heading-6-font-weight) !important;
 	line-height: var(--nldesign-component-heading-6-line-height) !important;
@@ -1018,14 +1022,17 @@ header nav svg radialGradient,
    BUTTONS - Fix text overflow
    ============================================ */
 
-/* Fix "Aanpassen" and other button text overflow */
-.button-vue:not(.action-button),
-.button-vue--vue-primary,
-.button-vue--primary,
-.button-vue--vue-secondary,
-.button-vue--secondary,
-button:not(.action-button),
-.button {
+/* Fix "Aanpassen" and other button text overflow. Not inside a nextcloud-vue
+   page drawn in the board look (`.cn-look-board`): the library pads its own
+   buttons and tab strips there, and this padding made a settings tab strip
+   wrap where the board's does not. */
+.button-vue:not(.action-button):not(.cn-look-board *),
+.button-vue--vue-primary:not(.cn-look-board *),
+.button-vue--primary:not(.cn-look-board *),
+.button-vue--vue-secondary:not(.cn-look-board *),
+.button-vue--secondary:not(.cn-look-board *),
+button:not(.action-button):not(.cn-look-board *),
+.button:not(.cn-look-board *) {
 	padding: 8px 16px !important;
 	min-width: max-content !important;
 	white-space: nowrap !important;
