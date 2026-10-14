@@ -23,6 +23,7 @@ use OCA\Thematiq\Service\WorkspaceIconService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -125,6 +126,7 @@ class WorkspaceIconController extends Controller {
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[AnonRateLimit(limit: 480, period: 60)]
 	public function show(string $kind): Response {
 		$image = $this->icons->read(kind: $kind);
 		if ($image === null) {

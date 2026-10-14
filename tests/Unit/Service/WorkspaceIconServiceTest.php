@@ -26,6 +26,7 @@ use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\WorkspaceIconService;
 use OCA\Thematiq\Settings\Admin;
+use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataDisplayResponse;
@@ -265,7 +266,9 @@ final class WorkspaceIconServiceTest extends TestCase {
 			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings']);
 		}
 
-		$this->assertCount(1, (new ReflectionMethod(WorkspaceIconController::class, 'show'))->getAttributes(PublicPage::class));
+		$show = new ReflectionMethod(WorkspaceIconController::class, 'show');
+		$this->assertCount(1, $show->getAttributes(PublicPage::class));
+		$this->assertSame(['limit' => 480, 'period' => 60], $show->getAttributes(AnonRateLimit::class)[0]->getArguments());
 	}//end testWhoMayDoWhat()
 
 	/**

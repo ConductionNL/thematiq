@@ -97,6 +97,8 @@ class WorkspaceIconListener implements IEventListener {
 	 * @return void
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) \OCP\Util::addHeader() is the Nextcloud API for header injection.
+	 *
+	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	protected function emit(string $tag, array $attributes, string $text): void {
 		\OCP\Util::addHeader(tag: $tag, attributes: $attributes, text: $text);
