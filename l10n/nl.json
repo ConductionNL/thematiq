@@ -1124,7 +1124,9 @@
         "Tokens Studio for Figma, older spelling": "Tokens Studio voor Figma, oudere schrijfwijze",
         "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Uploaden uit Figma: kies een Tokens Studio-bestand of een design tokens-bestand. Het resultaat toont wat is geïmporteerd en wat is overgeslagen.",
         "Unknown file format.": "Onbekend bestandsformaat.",
-        "OpenProject plugin set file": "Setbestand voor de OpenProject-plugin"
+        "OpenProject plugin set file": "Setbestand voor de OpenProject-plugin",
+        "{count} dark values from the file are kept for dark mode.": "{count} donkere waarden uit het bestand blijven bewaard voor de donkere modus.",
+        "A dark value in the file is not allowed: %s": "Een donkere waarde in het bestand is niet toegestaan: %s"
     },
     "plurals": {}
 }

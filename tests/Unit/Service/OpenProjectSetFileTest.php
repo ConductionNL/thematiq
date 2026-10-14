@@ -67,7 +67,7 @@ final class OpenProjectSetFileTest extends TestCase {
 	 *
 	 * @param string $json The file.
 	 *
-	 * @return array{declarations: array<string, string>, skipped: array<int, string>}
+	 * @return array{declarations: array<string, string>, skipped: array<int, string>, dark: array<string, string>}
 	 */
 	private function upload(string $json): array {
 		$appManager = $this->createMock(IAppManager::class);
@@ -83,7 +83,7 @@ final class OpenProjectSetFileTest extends TestCase {
 			}
 		}
 
-		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped];
+		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped, 'dark' => ($result['darkDeclarations'] ?? [])];
 	}//end upload()
 
 	/**
@@ -172,7 +172,16 @@ final class OpenProjectSetFileTest extends TestCase {
 			$this->assertSame(strtolower((string)$value), strtolower((string)$roles[$role]), $role);
 		}
 
-		$this->assertSame(['dark: dark-colours-not-read'], $back['skipped']);
+		$this->assertSame([], $back['skipped']);
+
+		// The dark block: every dark role under its name, and the dark vocabulary with the prefix.
+		foreach ($file['dark']['tokens'] as $role => $value) {
+			$this->assertSame($value, $back['dark'][OpenProjectSetFile::ROLE_TOKENS[$role]], 'dark ' . $role);
+		}
+
+		foreach (($file['dark']['vocabulary'] ?? []) as $key => $value) {
+			$this->assertSame($value, $back['dark']['--nldesign-' . $key], 'dark vocabulary ' . $key);
+		}
 	}//end testAPluginSetFileKeepsEveryRole()
 
 	/**

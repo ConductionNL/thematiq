@@ -1124,7 +1124,9 @@
         "Tokens Studio for Figma, older spelling": "Tokens Studio for Figma, older spelling",
         "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.": "Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.",
         "Unknown file format.": "Unknown file format.",
-        "OpenProject plugin set file": "OpenProject plugin set file"
+        "OpenProject plugin set file": "OpenProject plugin set file",
+        "{count} dark values from the file are kept for dark mode.": "{count} dark values from the file are kept for dark mode.",
+        "A dark value in the file is not allowed: %s": "A dark value in the file is not allowed: %s"
     },
     "plurals": {}
 }
