@@ -163,6 +163,12 @@ class ShellCatalogueService {
 				}
 
 				$set['dark'] = ['tokens' => $this->mapper->mapDark(tokens: array_merge($light, $dark))];
+
+				// The dark variant's own values for the vocabulary, as its file states them.
+				$darkVocabulary = $this->vocabulary->ofDeclarations(declarations: $dark);
+				if ($darkVocabulary !== []) {
+					$set['dark']['vocabulary'] = $darkVocabulary;
+				}
 			}
 
 			$sets[] = $set;

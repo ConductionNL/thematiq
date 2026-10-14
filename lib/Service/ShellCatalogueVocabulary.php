@@ -93,6 +93,21 @@ class ShellCatalogueVocabulary {
 	}//end ofSet()
 
 	/**
+	 * The vocabulary of a block of declarations that are the set's own already, such as its dark variant's.
+	 *
+	 * @param array<string, string> $declarations Declaration name => value.
+	 *
+	 * @return array<string, string> Key => value, sorted by key.
+	 *
+	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
+	 */
+	public function ofDeclarations(array $declarations): array {
+		$css = implode('', array_map(static fn (string $name): string => $name . ': x;', array_keys($declarations)));
+
+		return $this->ofSet(css: $css, resolved: $declarations);
+	}//end ofDeclarations()
+
+	/**
 	 * Whether a token name belongs in the vocabulary: not a role name, not a picture, address or shape.
 	 *
 	 * @param string $name The token name.
