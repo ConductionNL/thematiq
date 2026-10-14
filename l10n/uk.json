@@ -1134,7 +1134,22 @@
         "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.",
         "The image is larger than 1 MB.": "The image is larger than 1 MB.",
         "This kind of image is not kept.": "This kind of image is not kept.",
-        "Not set: Nextcloud's own is used.": "Not set: Nextcloud's own is used."
+        "Not set: Nextcloud's own is used.": "Not set: Nextcloud's own is used.",
+        "Projects": "Projects",
+        "My page": "My page",
+        "Work packages": "Work packages",
+        "Gantt charts": "Gantt charts",
+        "Boards": "Boards",
+        "Team planners": "Team planners",
+        "Calendars": "Calendars",
+        "Meetings": "Meetings",
+        "News": "News",
+        "OpenProject address": "OpenProject address",
+        "The apps menu lists OpenProject's modules in a section of their own. Leave empty for none.": "The apps menu lists OpenProject's modules in a section of their own. Leave empty for none.",
+        "Save address": "Save address",
+        "Address saved.": "Address saved.",
+        "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
+        "OpenProject in the apps menu": "OpenProject in the apps menu"
     },
     "plurals": {}
 }

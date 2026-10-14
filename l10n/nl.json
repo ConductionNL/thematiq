@@ -1134,7 +1134,22 @@
         "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "Upload een vierkante PNG van minstens 120 bij 120 pixels; 180 bij 180 is het best.",
         "The image is larger than 1 MB.": "De afbeelding is groter dan 1 MB.",
         "This kind of image is not kept.": "Dit soort afbeelding wordt niet bewaard.",
-        "Not set: Nextcloud's own is used.": "Niet ingesteld: Nextcloud gebruikt de eigen afbeelding."
+        "Not set: Nextcloud's own is used.": "Niet ingesteld: Nextcloud gebruikt de eigen afbeelding.",
+        "Projects": "Projecten",
+        "My page": "Mijn pagina",
+        "Work packages": "Werkpakketten",
+        "Gantt charts": "Gantt-diagrammen",
+        "Boards": "Borden",
+        "Team planners": "Teamplanners",
+        "Calendars": "Agenda's",
+        "Meetings": "Vergaderingen",
+        "News": "Nieuws",
+        "OpenProject address": "Adres van OpenProject",
+        "The apps menu lists OpenProject's modules in a section of their own. Leave empty for none.": "Het appmenu toont de modules van OpenProject in een eigen deel. Laat leeg voor geen.",
+        "Save address": "Adres opslaan",
+        "Address saved.": "Adres opgeslagen.",
+        "Enter an http or https address, or leave the field empty.": "Vul een http- of https-adres in, of laat het veld leeg.",
+        "OpenProject in the apps menu": "OpenProject in het appmenu"
     },
     "plurals": {}
 }

@@ -159,4 +159,36 @@ describe('the apps menu of the board', () => {
 				.hasAttribute('data-thematiq-app-menu'),
 		).toBe(false)
 	})
+
+	it('adds OpenProject\'s modules as a section of links, once, and drops what may not be linked', async () => {
+		openMenu()
+		installState({
+			openproject: {
+				title: 'OpenProject',
+				url: 'https://op.example.org',
+				modules: [
+					{ key: 'work_packages', label: 'Werkpakketten', url: 'https://op.example.org/work_packages', icon: 'M3 6h18M3 12h18M3 18h18' },
+					{ key: 'boards', label: 'Borden', url: 'https://op.example.org/boards', icon: '<script>' },
+					{ key: 'bad', label: 'Fout', url: 'javascript:alert(1)', icon: 'M0 0' },
+				],
+			},
+		})
+		await loadScript()
+		document.querySelector('.app-menu__grid').appendChild(document.createElement('span'))
+		await new Promise((resolve) => setTimeout(resolve, 0))
+
+		const grid = document.querySelector('.app-menu__grid')
+		const links = grid.querySelectorAll('a[data-thematiq-external]')
+		expect(Array.from(links).map((a) => a.getAttribute('href'))).toEqual([
+			'https://op.example.org/work_packages',
+			'https://op.example.org/boards',
+		])
+		expect(links[0].textContent).toBe('Werkpakketten')
+		expect(links[0].querySelector('path').getAttribute('d')).toBe('M3 6h18M3 12h18M3 18h18')
+		expect(links[1].querySelector('path'), 'an icon that is not path data is left out').toBeNull()
+		const heading = grid.querySelector('[data-thematiq-row="openproject"]')
+		expect(heading.querySelector('h2').textContent).toBe('OpenProject')
+		expect(heading.querySelector('a').getAttribute('href')).toBe('https://op.example.org')
+		expect(Number(heading.style.order)).toBeLessThan(Number(links[0].style.order))
+	})
 })

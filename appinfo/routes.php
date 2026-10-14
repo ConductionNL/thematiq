@@ -73,6 +73,9 @@ return [
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
+		// OpenProject's address and modules for the apps menu (openproject-in-the-app-menu), admin-only.
+		['name' => 'openProjectLink#show', 'url' => '/settings/openproject', 'verb' => 'GET'],
+		['name' => 'openProjectLink#save', 'url' => '/settings/openproject', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],

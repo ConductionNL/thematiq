@@ -100,6 +100,7 @@ class AppMenuService {
 	 * @param IInitialState $initialState The initial state channel.
 	 * @param IFactory $l10nFactory The language of this request.
 	 * @param LoggerInterface $logger Records a swallowed failure.
+	 * @param OpenProjectModules|null $openProjectModules OpenProject's modules, a section of their own.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -107,6 +108,7 @@ class AppMenuService {
 		private readonly IInitialState $initialState,
 		private readonly IFactory $l10nFactory,
 		private readonly LoggerInterface $logger,
+		private readonly ?OpenProjectModules $openProjectModules = null,
 	) {
 	}//end __construct()
 
@@ -253,6 +255,7 @@ class AppMenuService {
 	 * @return void
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -261,8 +264,15 @@ class AppMenuService {
 				return;
 			}
 
-			$language = $this->l10nFactory->get(Application::APP_ID)->getLanguageCode();
-			$this->initialState->provideInitialState(self::STATE_KEY, $this->resolveMenu(tokenSet: $tokenSet, language: $language));
+			$l10n = $this->l10nFactory->get(Application::APP_ID);
+			$menu = $this->resolveMenu(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
+			// OpenProject's modules, when an administrator gave its address (openproject-in-the-app-menu).
+			$openProject = $this->openProjectModules?->section(l: $l10n);
+			if ($openProject !== null) {
+				$menu['openproject'] = $openProject;
+			}
+
+			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
 			$this->emitScript();
 		} catch (Throwable $e) {
 			$this->logger->warning(

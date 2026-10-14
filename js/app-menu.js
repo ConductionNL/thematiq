@@ -25,6 +25,7 @@
 	var BLOCK = 'thematiq-app-menu'
 	var OTHERS = 9000
 	var FOOTER = 99999
+	var EXTERNAL = 8000
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqAppMenuMain)
@@ -118,6 +119,60 @@
 	}
 
 	/**
+	 * OpenProject's modules as a section of their own, after the organisation's sections and
+	 * before the other apps (openproject-in-the-app-menu). Links, not Nextcloud tiles: they are
+	 * added once and keep their place. Text and path data only, never markup.
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {object|undefined} section {title, url, modules: [{key, label, url, icon}]}.
+	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md
+	 */
+	function external(grid, section) {
+		if (!section || !Array.isArray(section.modules) || text(section, 'title') === '') {
+			return
+		}
+		var modules = section.modules.filter(function (module) {
+			return text(module, 'label') !== '' && /^https?:\/\//i.test(module.url || '')
+		})
+		if (modules.length === 0 || grid.querySelector(':scope > [data-thematiq-external]') !== null) {
+			return
+		}
+		heading(grid, 'openproject', EXTERNAL, section.title, linkable(section.url) ? { label: section.title, url: section.url } : undefined)
+		var svgNs = 'http://www.w3.org/2000/svg'
+		modules.forEach(function (module, i) {
+			var a = document.createElement('a')
+			a.className = 'app-item ' + BLOCK + '__external'
+			a.setAttribute('data-thematiq-external', text(module, 'key'))
+			a.href = module.url
+			a.style.order = String(EXTERNAL + 1 + i)
+			var circle = document.createElement('span')
+			circle.className = 'app-item__circle'
+			var svg = document.createElementNS(svgNs, 'svg')
+			svg.setAttribute('viewBox', '0 0 24 24')
+			svg.setAttribute('width', '20')
+			svg.setAttribute('height', '20')
+			svg.setAttribute('aria-hidden', 'true')
+			svg.setAttribute('fill', 'none')
+			svg.setAttribute('stroke', 'currentColor')
+			svg.setAttribute('stroke-width', '1.75')
+			svg.setAttribute('stroke-linecap', 'round')
+			svg.setAttribute('stroke-linejoin', 'round')
+			if (/^[MmLlHhVvCcSsQqTtAaZz0-9 .,-]+$/.test(module.icon || '')) {
+				var path = document.createElementNS(svgNs, 'path')
+				path.setAttribute('d', module.icon)
+				svg.appendChild(path)
+			}
+			circle.appendChild(svg)
+			var label = document.createElement('span')
+			label.className = 'app-item__label'
+			label.textContent = text(module, 'label')
+			a.appendChild(circle)
+			a.appendChild(label)
+			grid.appendChild(a)
+		})
+	}
+
+	/**
 	 * Arrange one open grid.
 	 *
 	 * @param {Element} grid The grid.
@@ -194,6 +249,8 @@
 		) {
 			heading(grid, 'others', OTHERS, menu.othersTitle)
 		}
+
+		external(grid, menu.openproject)
 
 		var hint = text(menu, 'hint')
 		var label = text(menu, 'manageLabel')

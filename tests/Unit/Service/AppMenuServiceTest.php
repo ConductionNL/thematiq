@@ -16,6 +16,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\AppMenuService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\LayoutOptionsService;
+use OCA\Thematiq\Service\OpenProjectModules;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -207,4 +208,66 @@ class AppMenuServiceTest extends TestCase {
 
 		$this->assertSame(1, $this->scripts);
 	}//end testTheWorkplaceHeaderLoadsTheScriptAndNothingElseDoes()
+
+	/**
+	 * With OpenProject's address, the menu carries its modules as a section of their own.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 */
+	public function testOpenProjectsModulesJoinTheMenu(): void {
+		$this->configure(block: ['hint' => 'Hint']);
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, $default = '') => ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings'][$key] ?? $default);
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('getLanguageCode')->willReturn('nl');
+		$l10n->method('t')->willReturnArgument(0);
+		$factory = $this->createMock(IFactory::class);
+		$factory->method('get')->willReturn($l10n);
+
+		$this->initialState->expects($this->once())->method('provideInitialState')->with(
+			AppMenuService::STATE_KEY,
+			[
+				'hint' => 'Hint',
+				'openproject' => [
+					'title' => 'OpenProject',
+					'url' => 'https://op.example.org',
+					'modules' => [
+						['key' => 'boards', 'label' => 'Boards', 'url' => 'https://op.example.org/boards', 'icon' => OpenProjectModules::MODULES['boards']['icon']],
+						['key' => 'meetings', 'label' => 'Meetings', 'url' => 'https://op.example.org/meetings', 'icon' => OpenProjectModules::MODULES['meetings']['icon']],
+					],
+				],
+			]
+		);
+
+		$service = $this->getMockBuilder(AppMenuService::class)
+			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, new OpenProjectModules($config)])
+			->onlyMethods(['emitScript'])
+			->getMock();
+		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+	}//end testOpenProjectsModulesJoinTheMenu()
+
+	/**
+	 * Only an http or https address counts, and unknown module keys fall back to the default.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 */
+	public function testTheAddressAndTheModulesAreChecked(): void {
+		$this->assertSame('https://op.example.org/sub', (new OpenProjectModules($this->createMock(IConfig::class)))->normalize(value: ' https://op.example.org/sub// '));
+		foreach (['', 'javascript:alert(1)', 'ftp://op.example.org', 'https://op.example.org/"><script>', '//op.example.org'] as $bad) {
+			$this->assertNull((new OpenProjectModules($this->createMock(IConfig::class)))->normalize(value: $bad), $bad);
+		}
+
+		$this->assertSame(OpenProjectModules::DEFAULT, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: ''));
+		$this->assertSame(OpenProjectModules::DEFAULT, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: 'nope, also-nope'));
+		$this->assertSame(['news', 'projects'], (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: 'News|projects news'));
+		$this->assertCount(OpenProjectModules::MAX, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: implode(',', array_keys(OpenProjectModules::MODULES))));
+
+		$config = $this->createMock(IConfig::class);
+		$config->method('getAppValue')->willReturn('');
+		$this->assertNull((new OpenProjectModules($config))->section(l: $this->createMock(IL10N::class)), 'no address, no section');
+	}//end testTheAddressAndTheModulesAreChecked()
 }//end class
