@@ -24,7 +24,7 @@
 		"name": "Rijkshuisstijl",
 		"description": "Official Dutch national government design system (Rijksoverheid)",
 		"theming": {
-			"primary_color": "#154273",
+			"primary_color": "oklch(37.619% 0.09695 253.44)",
 			"background_color": "#F5F6F7",
 			"logo": "img/logos/rijkshuisstijl.svg"
 		},
@@ -34,7 +34,9 @@
 			"version": "18.0.1",
 			"holder": "Rijksoverheid",
 			"restricted": true
-		}
+		},
+		"upstreamPackage": "@rijkshuisstijl-community/design-tokens",
+		"upstreamVersion": "18.0.1"
 	},
 	{
 		"id": "amsterdam",

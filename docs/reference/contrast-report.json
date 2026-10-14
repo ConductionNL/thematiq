@@ -313,9 +313,9 @@
             "uiThreshold": 3.0
         },
         "rijkshuisstijl": {
-            "verdict": "pass",
-            "textRatio": 10.2,
-            "uiRatio": 9.43,
+            "verdict": "unevaluated",
+            "textRatio": null,
+            "uiRatio": null,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
