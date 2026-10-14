@@ -141,3 +141,7 @@ Every shipped set is downloaded in each format, uploaded again and compared, tok
 - **All formats.** A colour that refers to another colour is stored as the colour it points at. A colour outside sRGB is stored as its nearest sRGB colour, and the upload result says which.
 
 Comments, the order of the declarations and the set's logo are not part of any of these files.
+
+## The plugin's set file
+
+Besides the Figma formats, thematiq writes and reads the plugin's own set file (`GET /apps/thematiq/settings/tokensets/{id}/set-file`, `thematiq-{set}.json`). Each role is stored under the CSS name in the table of the eighteen roles above, `menu` as `--thematiq-shell-menu`, and each vocabulary key with `--nldesign-` in front. See [Import and export](import-export.md).

@@ -1149,7 +1149,8 @@
         "Go to the confirmation": "Naar de bevestiging",
         "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.": "Bevestig eerst dat je organisatie deze huisstijl mag gebruiken. Dat doe je onder Huisstijlen van andere organisaties.",
         "Confirm first that your organisation may use the house style {set}.": "Bevestig eerst dat je organisatie de huisstijl {set} mag gebruiken.",
-        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Niemand heeft bevestigd dat je organisatie de huisstijl {set} mag gebruiken. De wissel is daarom niet toegepast."
+        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Niemand heeft bevestigd dat je organisatie de huisstijl {set} mag gebruiken. De wissel is daarom niet toegepast.",
+        "OpenProject plugin set file": "Setbestand voor de OpenProject-plugin"
     },
     "plurals": {}
 }
