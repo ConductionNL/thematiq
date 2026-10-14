@@ -83,7 +83,7 @@
 		"@eslint/js": "^10.0.0",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
-		"@playwright/test": "^1.63.0",
+		"@playwright/test": "^1.64.0",
 		"@vitest/coverage-v8": "^5.0.1",
 		"@vitest/ui": "^5.0.2",
 		"eslint": "^10.12.0",
