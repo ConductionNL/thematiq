@@ -31,6 +31,8 @@ return [
 		['name' => 'documentStyle#show', 'url' => '/api/document-style', 'verb' => 'GET'],
 		['name' => 'documentStyle#asset', 'url' => '/api/document-style/{kind}', 'verb' => 'GET'],
 		['name' => 'appBrand#logo', 'url' => '/api/app-brands/{appId}/logo/{size}', 'verb' => 'GET'],
+		// The workspace's mobile logo and touch icon, public: a phone fetches the touch icon without a session.
+		['name' => 'workspaceIcon#show', 'url' => '/api/workspace-icons/{kind}', 'verb' => 'GET'],
 		// Token reference of one set, for signed-in users (openspec/specs/token-reference/spec.md).
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
@@ -70,6 +72,10 @@ return [
 		['name' => 'appBrand#save', 'url' => '/settings/app-brands/{appId}', 'verb' => 'POST'],
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
+		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
+		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
+		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
+		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],
 		// Upstream token freshness (opt-in daily background job status + dismissal).
 		['name' => 'settings#getUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'GET'],
 		['name' => 'settings#setUpstreamFreshness', 'url' => '/settings/upstream-freshness', 'verb' => 'POST'],
