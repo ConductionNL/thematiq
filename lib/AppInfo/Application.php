@@ -24,6 +24,7 @@ namespace OCA\Thematiq\AppInfo;
 
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
+use OCA\Thematiq\Listener\WorkspaceIconListener;
 use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
 use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
@@ -41,6 +42,9 @@ use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
  *
  * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
  * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - the composition root: it names every listener,
+ *                                                    middleware and service alias it registers.
  */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'thematiq';
@@ -136,6 +140,10 @@ class Application extends App implements IBootstrap {
 		// Event-driven CSS injection — see lib/Listener/ThemeInjectionListener.php.
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class);
 		$context->registerEventListener(BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class);
+
+		// The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, WorkspaceIconListener::class);
+		$context->registerEventListener(BeforeLoginTemplateRenderedEvent::class, WorkspaceIconListener::class);
 
 		// Federated configuration sharing (openregister): contribute the NL Design
 		// theme as a shareable config type so a theme can be published to and
