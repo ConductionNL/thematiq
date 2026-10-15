@@ -2300,6 +2300,37 @@
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
 		},
 		{
+			"id": "int-menu-colour-role",
+			"area": "authoring",
+			"name": "Give the main menu its own colour and share it with the OpenProject plugin as a shell role.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/ShellRoleMapper.php role menu (reads --thematiq-shell-menu, then the navigation column tokens); lib/Service/TokenSetConverterService.php copies an uploaded menu colour to --nldesign-color-nav-background; tests/Unit/Service/ShellRoleMapperTest.php testTheMenuIsTheNavigationColumn",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "menu-role"
+			},
+			"reachedOn": "GET /apps/thematiq/api/shell-tokens (tokens.menu), the shell catalogue and the set file",
+			"evidence": {
+				"nextcloud-theming": "the shell roles are the contract between thematiq and ConductionNL/openproject-thematiq; this product has no such contract",
+				"m365-branding": "the shell roles are the contract between thematiq and ConductionNL/openproject-thematiq; this product has no such contract",
+				"opendesk": "the shell roles are the contract between thematiq and ConductionNL/openproject-thematiq; this product has no such contract",
+				"liferay-dxp": "the shell roles are the contract between thematiq and ConductionNL/openproject-thematiq; this product has no such contract",
+				"tokens-studio": "the shell roles are the contract between thematiq and ConductionNL/openproject-thematiq; this product has no such contract"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+		},
+		{
 			"id": "aut-colour-notation-kept",
 			"area": "authoring",
 			"name": "Keep the notation a colour was written in (rgb, hsl, a name) through a design tokens download and upload.",
@@ -3831,6 +3862,37 @@
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLayout"
 			}
+		},
+		{
+			"id": "sur-shell-pixel-check",
+			"area": "surfaces",
+			"name": "Have the shell compared with reference images, so a platform release that moves the top bar or the navigation is noticed.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "tests/e2e/visual/shell.visual.spec.ts compares the Files top bar and navigation at 1440x1000 with committed references (0.5% and 1% of pixels may differ), as ConductionNL/openproject-thematiq does for OpenProject",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "shell-pixel-check"
+			},
+			"reachedOn": "PW_VISUAL=1 npx playwright test tests/e2e/visual/shell.visual.spec.ts --project=visual",
+			"evidence": {
+				"nextcloud-theming": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"m365-branding": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"opendesk": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"liferay-dxp": "not checked: this product was not seen to ship a pixel check of its workspace shell",
+				"tokens-studio": "not checked: this product was not seen to ship a pixel check of its workspace shell"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "every-page-styled",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Opt-in, not in CI: references are host specific."
 		},
 		{
 			"id": "sur-shell-canon-check",

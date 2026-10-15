@@ -4,7 +4,7 @@ sidebar_position: 31
 
 # Read the house style from another product
 
-You run another product next to Nextcloud and want it to look the same. Read the active house style here: eighteen values and a logo cover a header, buttons, links and panels.
+You run another product next to Nextcloud and want it to look the same. Read the active house style here: nineteen values and a logo cover a header, buttons, links and panels.
 
 The OpenProject plugin `openproject-thematiq` reads this endpoint.
 
@@ -51,10 +51,10 @@ You need no account and no session. The answer holds theme values only, the same
 
 - `id` and `name` are the token set the instance wears. A set for one group, or a set in preview, is never answered.
 - `revision` changes when any value below it changes, and only then.
-- `tokens` always holds all eighteen roles. None is ever `null` or empty.
+- `tokens` always holds all nineteen roles. None is ever `null` or empty. `menu` was added on 14 October 2026; a reader that knows only the first eighteen can ignore it.
 - `logo.url` and `logo.inverse_url` are absolute URLs, or `null` when there is no such logo.
 
-## The eighteen roles
+## The nineteen roles
 
 | Role | Use it for |
 |---|---|
@@ -76,6 +76,7 @@ You need no account and no session. The answer holds theme values only, the same
 | `radius` | Corners of buttons, chips and cards |
 | `radius-lg` | Corners of inputs, menus and dialogs |
 | `font-family` | The font stack |
+| `menu` | The background of the main menu: the app navigation column in Nextcloud. White unless the set colours it |
 
 The colours are CSS colours, the two radii are CSS lengths, and `font-family` is a CSS font stack. The font files stay on Nextcloud: load the family yourself, or let the stack fall through to a system font.
 
