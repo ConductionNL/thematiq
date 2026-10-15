@@ -102,3 +102,17 @@ Read the document when your product starts, keep it, and ask again every few min
 The path is new in this release. An instance that is updated the normal way answers on it at once. When the code was replaced without an update, Nextcloud keeps its route list for up to an hour and answers `404` until then. Restart the PHP workers to make it answer at once.
 
 Next, request the document from your test instance and map the roles onto your product's own theme settings.
+
+## The shell sizes
+
+The OpenProject plugin draws its shell to a written canon of sizes, measured from the Nextcloud boards. `npm run check:shell-canon -- --url <your instance> --user <admin> --password <password>` measures thematiq's shell against the same canon on the Files page, and CI does the same with the Zuiddrecht set. Measured on 14 October 2026:
+
+| Part | Canon | Thematiq |
+|---|---|---|
+| Top bar height | 68 px | 68 px |
+| Navigation width | 264 px | 264 px |
+| Navigation item height | 42 px | 42 px |
+| Table header row height | 44 px | 44 px |
+| Primary button height | 40 px | 48 px |
+| Table row height | 48 px | 44 px |
+| Body text | 14 px | 15 px |
