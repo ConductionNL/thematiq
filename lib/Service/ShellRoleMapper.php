@@ -30,14 +30,15 @@ namespace OCA\Thematiq\Service;
  * No role is ever empty.
  *
  * Pure: no file, no config and no request is read here, so the same input
- * always gives the same eighteen values.
+ * always gives the same values.
  *
  * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 class ShellRoleMapper {
 
 	/**
-	 * The eighteen roles, in the order the response lists them.
+	 * The roles, in the order the response lists them: the eighteen of version 1 and `menu`,
+	 * added on 14 Oct 2026 for the OpenProject plugin's main menu (add, never remove).
 	 *
 	 * @var string[]
 	 */
@@ -60,6 +61,7 @@ class ShellRoleMapper {
 		'radius',
 		'radius-lg',
 		'font-family',
+		'menu',
 	];
 
 	/**
@@ -87,6 +89,7 @@ class ShellRoleMapper {
 		'radius' => '8px',
 		'radius-lg' => '8px',
 		'font-family' => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+		'menu' => '#ffffff',
 	];
 
 	/**
@@ -107,6 +110,10 @@ class ShellRoleMapper {
 	 * administrator moves the main button with its own tokens
 	 * ({@see self::BUTTON_OVERRIDES}). `action-deep` lists its own hover step
 	 * only; {@see self::map()} says what stands in.
+	 *
+	 * `menu` is the background of the main menu: in Nextcloud the app navigation column. It reads the
+	 * OpenProject plugin's own name first, then the column's token and the set's navigation colour,
+	 * which is what the nldesign bundle paints the column with.
 	 *
 	 * @var array<string, string[]>
 	 */
@@ -133,6 +140,7 @@ class ShellRoleMapper {
 		'radius' => ['--border-radius', '--summer-radius', '--nldesign-border-radius'],
 		'radius-lg' => ['--border-radius-large', '--summer-radius-large', '--nldesign-border-radius-large'],
 		'font-family' => ['--font-face', '--summer-font-family', '--nldesign-font-family'],
+		'menu' => ['--thematiq-shell-menu', '--nldesign-component-navigation-background-color', '--nldesign-color-nav-background'],
 	];
 
 	/**
@@ -247,6 +255,7 @@ class ShellRoleMapper {
 			'radius' => $this->length(value: ($read['radius'] ?? self::DEFAULTS['radius'])),
 			'radius-lg' => $this->length(value: ($read['radius-lg'] ?? $read['radius'] ?? self::DEFAULTS['radius-lg'])),
 			'font-family' => ($read['font-family'] ?? self::DEFAULTS['font-family']),
+			'menu' => ($read['menu'] ?? self::DEFAULTS['menu']),
 		];
 	}//end map()
 

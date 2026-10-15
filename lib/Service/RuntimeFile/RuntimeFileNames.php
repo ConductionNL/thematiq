@@ -56,6 +56,9 @@ final class RuntimeFileNames {
 		'#^css/custom-css\.css$#',
 		'#^css/tokens/' . self::ID . '\.css$#',
 		'#^css/tokens/dark/' . self::ID . '\.css$#',
+		// An uploaded set's dark values from its file (dark-colours-from-a-file); the same values the
+		// dark variant beside it serves.
+		'#^css/tokens/dark-pins/' . self::ID . '\.css$#',
 		'#^img/(logos|backgrounds)/' . self::ID . '\.(svg|png|jpg|gif|webp|ico)$#',
 	];
 

@@ -200,6 +200,36 @@
 	color: var(--color-main-text);
 }
 
+/* House styles of other organisations (token-set-licences). */
+.nldesign-set-licences-awaiting,
+.nldesign-set-licence-warning {
+	padding: 8px 12px;
+	border-left: 4px solid var(--color-warning);
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
+}
+
+.nldesign-set-licence {
+	padding: 4px 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.nldesign-set-licence-text {
+	padding: 8px 12px;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+}
+
+.nldesign-set-licence-statement {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+}
+
 .nldesign-scheduled-item {
 	display: flex;
 	flex-wrap: wrap;
@@ -231,6 +261,24 @@
 
 .nldesign-token-set-selector > label {
 	font-weight: 600;
+}
+
+/* The search field above the token set list (token-set-picker-search). */
+.nldesign-token-set-search {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.nldesign-token-set-search__input {
+	min-width: 240px;
+	max-width: 100%;
+}
+
+.nldesign-token-set-search__status {
+	color: var(--color-text-maxcontrast);
 }
 
 .nldesign-token-set-row,
@@ -2851,4 +2899,29 @@
 .nldesign-token-note {
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
+}
+
+/* The workspace's mobile logo and home screen icon (mobile-logo-and-touch-icon). */
+.nldesign-workspace-icons__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.nldesign-workspace-icons__row > label {
+	min-width: 180px;
+	font-weight: 600;
+}
+
+.nldesign-workspace-icons__row .settings-hint {
+	flex-basis: 100%;
+	margin: 0;
+}
+
+.nldesign-workspace-icons__preview img {
+	display: block;
+	max-height: 48px;
+	max-width: 160px;
 }

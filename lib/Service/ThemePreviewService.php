@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUserSession;
@@ -130,7 +131,8 @@ class ThemePreviewService {
 	 *
 	 * @return array{tokenSet: string, expiresAt: int} The started preview state.
 	 *
-	 * @throws InvalidArgumentException When the token set id does not validate.
+	 * @throws InvalidArgumentException When the token set id does not validate, or (as a
+	 *                                  RestrictedSetNotConfirmedException) the set is restricted and not confirmed.
 	 *
 	 * @spec openspec/specs/theme-preview/spec.md#requirement-per-user-preview-state
 	 */
@@ -139,6 +141,9 @@ class ThemePreviewService {
 			$this->logger->warning('Refused to start a theme preview of an invalid token set.', ['uid' => $uid, 'tokenSet' => $tokenSetId]);
 			throw new InvalidArgumentException('Invalid token set: ' . $tokenSetId);
 		}
+
+		// A preview draws the set on this instance, so it is a use of it.
+		$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $tokenSetId);
 
 		$expiresAt = (time() + self::PREVIEW_DURATION_SECONDS);
 
@@ -211,6 +216,7 @@ class ThemePreviewService {
 	 * @return string The published token set id.
 	 *
 	 * @throws RuntimeException When the caller has no active (non-expired, still-valid) preview.
+	 * @throws RestrictedSetNotConfirmedException When the previewed set is restricted and its confirmation is gone.
 	 *
 	 * @spec openspec/specs/theme-preview/spec.md#requirement-preview-lifecycle-endpoints
 	 */
@@ -220,6 +226,10 @@ class ThemePreviewService {
 			throw new RuntimeException('No active preview to publish for uid: ' . $uid);
 		}
 
+		$this->tokenSetService->licenceGate()->assertMayApply(
+			tokenSetId: $active['tokenSet'],
+			alreadyApplied: (string)$this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud')
+		);
 		$this->config->setAppValue(Application::APP_ID, 'token_set', $active['tokenSet']);
 		$this->clearPreview(uid: $uid);
 
@@ -276,6 +286,10 @@ class ThemePreviewService {
 			if ($this->tokenSetService->isValidTokenSet(tokenSetId: $previewTokenSet) === false) {
 				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
 			}
+
+			// A preview that outlived its set's confirmation is not drawn:
+			// assertMayApply() throws, and the catch below falls back to the active set.
+			$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $previewTokenSet, alreadyApplied: $activeTokenSet);
 
 			return [
 				'tokenSet' => $previewTokenSet,

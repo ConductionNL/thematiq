@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\AppBrandException;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IURLGenerator;
@@ -107,6 +108,12 @@ class AppBrandService {
 		}
 
 		$brands = $this->stored();
+		try {
+			$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: ($brands[$appId]['tokenSet'] ?? null));
+		} catch (RestrictedSetNotConfirmedException $e) {
+			throw new AppBrandException(reason: AppBrandException::RESTRICTED_SET, status: 403);
+		}
+
 		$brands[$appId] = [
 			'tokenSet' => $tokenSet,
 			'logoLarge' => ($brands[$appId]['logoLarge'] ?? null),

@@ -465,6 +465,19 @@ class CustomTokenSetController extends Controller {
 			$parsed['errors'] = $converted['errors'];
 		}
 
+		// Dark values the file brought (dark-colours-from-a-file): judged like the light ones.
+		// One that the validator refuses refuses the upload, as a light value does.
+		if (empty($converted['darkDeclarations']) === false) {
+			$dark = $this->validator->validateDeclarations(declarations: $converted['darkDeclarations'], slug: $slug);
+			if ($dark === null) {
+				$error = $this->validator->getLastError();
+
+				return new JSONResponse(['error' => $this->l->t('A dark value in the file is not allowed: %s', [(string)($error['property'] ?? '')])], 422);
+			}
+
+			$parsed['darkPins'] = $dark['accepted'];
+		}
+
 		return $this->persist(name: $name, parsed: $parsed);
 	}//end storeConverted()
 
@@ -646,6 +659,9 @@ class CustomTokenSetController extends Controller {
 				logoAsset: ($parsed['logoAsset'] ?? null),
 				designSystem: ($parsed['designSystem'] ?? null)
 			);
+			if (empty($parsed['darkPins']) === false) {
+				$this->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
+			}
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
@@ -671,6 +687,7 @@ class CustomTokenSetController extends Controller {
 			'imported' => (int)($parsed['imported'] ?? 0),
 			'skipped' => ($parsed['skipped'] ?? []),
 			'warnings' => $result['warnings'],
+			'darkValues' => count(($parsed['darkPins'] ?? [])),
 		];
 
 		if (isset($parsed['errors']) === true) {

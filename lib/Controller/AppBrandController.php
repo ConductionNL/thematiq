@@ -190,6 +190,9 @@ class AppBrandController extends Controller {
 			AppBrandException::NOT_INSTALLED => $this->l10n->t('This app is not installed.'),
 			AppBrandException::EXCLUDED => $this->l10n->t('This app is excluded from theming. Include it under Theming per app first.'),
 			AppBrandException::UNKNOWN_SET => $this->l10n->t('This token set is not available.'),
+			AppBrandException::RESTRICTED_SET => $this->l10n->t(
+				'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.'
+			),
 			AppBrandException::BAD_IMAGE => $this->l10n->t('Upload a PNG, JPEG or WebP image, or an SVG without script.'),
 			AppBrandException::TOO_LARGE => $this->l10n->t('The logo is larger than 1 MB.'),
 		];

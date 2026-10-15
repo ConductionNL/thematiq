@@ -1359,6 +1359,16 @@
 						return response.json()
 					})
 					.then(function (data) {
+						if (data.error === 'restricted_set_not_confirmed') {
+							previewBtn.disabled = false
+							notify(
+								t(
+									'thematiq',
+									'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+								),
+							)
+							return
+						}
 						if (data.status !== 'ok') {
 							previewBtn.disabled = false
 							notify(t('thematiq', 'Failed to start theme preview.'))
@@ -1462,6 +1472,17 @@
 		function saveTokenSet(tokenSet, publishMode) {
 			commitTokenSetChange(tokenSet, publishMode === true)
 				.then(function (data) {
+					if (data.error === 'restricted_set_not_confirmed') {
+						// Another organisation's house style, not confirmed
+						// (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+						notify(
+							t(
+								'thematiq',
+								'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+							),
+						)
+						return
+					}
 					if (data.status !== 'ok') {
 						notify(t('thematiq', 'Failed to update theme.'))
 						return
@@ -7836,6 +7857,15 @@
 					)
 						.replace('{imported}', res.data.imported)
 						.replace('{skipped}', (res.data.skipped || []).length)
+					// Dark values the file brought (dark-colours-from-a-file).
+					if (res.data.darkValues > 0) {
+						msg +=
+							' '
+							+ t(
+								'thematiq',
+								'{count} dark values from the file are kept for dark mode.',
+							).replace('{count}', res.data.darkValues)
+					}
 					if (res.data.version) {
 						msg +=
 							' '
@@ -8168,13 +8198,17 @@
 			// (openspec/changes/figma-token-files). Without the list: the W3C document.
 			var formatSelect = document.getElementById('nldesign-figma-format')
 			var format = formatSelect === null ? 'dtcg' : formatSelect.value
-			var studio = format === 'tokens-studio' || format === 'tokens-studio-legacy'
+			var studio =
+				format === 'tokens-studio' || format === 'tokens-studio-legacy'
 			downloadWithToken(
 				OC.generateUrl(
 					'/apps/thematiq/settings/tokensets/'
 						+ encodeURIComponent(id)
 						+ (format === 'openproject' ? '/set-file' : '/dtcg'),
-				) + (format === 'dtcg' || format === 'openproject' ? '' : '?format=' + encodeURIComponent(format)),
+				)
+					+ (format === 'dtcg' || format === 'openproject'
+						? ''
+						: '?format=' + encodeURIComponent(format)),
 				format === 'openproject'
 					? 'thematiq-' + id + '.json'
 					: id + (studio ? '.tokens-studio.json' : '.tokens.json'),
@@ -8196,6 +8230,64 @@
 		}
 
 		initDtcgDownload()
+
+		/**
+		 * Search the token set list by name or id (openspec/changes/token-set-picker-search).
+		 *
+		 * Hides every option that does not match and says how many are left. The selected
+		 * set stays visible, so the list never shows a value it does not hold. Escape empties
+		 * the field. Accents and case do not count: "fryslan" finds "Fryslân".
+		 */
+		function initTokenSetSearch() {
+			var input = document.getElementById('nldesign-token-set-search')
+			var status = document.getElementById('nldesign-token-set-search-status')
+			if (input === null || tokenSetSelect === null) {
+				return
+			}
+			var fold = function (text) {
+				return String(text)
+					.normalize('NFD')
+					.replace(/[\u0300-\u036f]/g, '')
+					.toLowerCase()
+					.trim()
+			}
+			var apply = function () {
+				var query = fold(input.value)
+				var options = tokenSetSelect.options
+				var shown = 0
+				for (var i = 0; i < options.length; i++) {
+					var option = options[i]
+					var match =
+						query === ''
+						|| fold(option.textContent).indexOf(query) !== -1
+						|| fold(option.value).indexOf(query) !== -1
+					option.hidden = !match && !option.selected
+					if (match) {
+						shown++
+					}
+				}
+				if (status !== null) {
+					status.textContent =
+						query === ''
+							? ''
+							: t('thematiq', '{shown} of {total} sets match', {
+									shown: shown,
+									total: options.length,
+								})
+				}
+			}
+			input.addEventListener('input', apply)
+			input.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape' && input.value !== '') {
+					event.preventDefault()
+					input.value = ''
+					apply()
+				}
+			})
+			tokenSetSelect.addEventListener('change', apply)
+		}
+
+		initTokenSetSearch()
 
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
