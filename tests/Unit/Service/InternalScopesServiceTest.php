@@ -127,7 +127,7 @@ class InternalScopesServiceTest extends TestCase {
 		// Under the Nextcloud name too: the settable theme loader read every
 		// settable status entry and listed all 453 as brand rows.
 		$this->assertArrayNotHasKey('--dp-hover-color', TokenRegistry::getTokens());
-		$this->assertCount(45, TokenRegistry::getSettableTokens(), 'only the 45 theme variables');
+		$this->assertCount(44, TokenRegistry::getSettableTokens(), 'only the 44 theme variables (--color-info-rgb is mapped)');
 		$this->assertNull(TokenRegistry::settableToken('--dp-hover-color'));
 		$this->assertSame('--nldesign-nc-color-mark', TokenRegistry::settableToken('--color-mark'));
 		$this->assertCount(453, $internal);
