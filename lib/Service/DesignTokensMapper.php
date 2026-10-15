@@ -53,6 +53,13 @@ class DesignTokensMapper {
 	private const EXTENSION = 'nl.conduction.thematiq';
 
 	/**
+	 * The OpenProject plugin's extension key, where it keeps a colour's original text too.
+	 *
+	 * @var string
+	 */
+	private const PLUGIN_EXTENSION = 'nl.conduction.openproject-thematiq';
+
+	/**
 	 * The v2025.10 `fontWeight` keyword => numeric CSS value table.
 	 *
 	 * @var array<string, int>
@@ -287,7 +294,7 @@ class DesignTokensMapper {
 	 * @param string|null $ownType The node's own declared `$type`, if any.
 	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 *
-	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null} The leaf entry.
+	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null, css: mixed} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -302,6 +309,7 @@ class DesignTokensMapper {
 			'type' => ($ownType ?? $inheritedType),
 			'deprecated' => $deprecated,
 			'cssVariable' => $this->extensionName(value: ($node['$extensions'][self::EXTENSION]['cssVariable'] ?? null)),
+			'css' => ($node['$extensions'][self::EXTENSION]['css'] ?? $node['$extensions'][self::PLUGIN_EXTENSION]['css'] ?? null),
 		];
 	}//end buildLeafEntry()
 
@@ -404,7 +412,7 @@ class DesignTokensMapper {
 		$this->dispatchByType(
 			type: $type,
 			path: $path,
-			value: $value,
+			value: $this->originalText(leaf: $leaf, value: $value, type: $type),
 			deprecated: $deprecated,
 			declarations: $declarations,
 			skipped: $skipped,
@@ -696,6 +704,43 @@ class DesignTokensMapper {
 
 		$warnings[] = $warning;
 	}//end maybeWarnDeprecated()
+
+	/**
+	 * A colour's original text instead of its object, when the token carries one and it is the same colour.
+	 *
+	 * The download and the OpenProject plugin keep the text a colour was written in
+	 * (`rgb(…)`, `hsl(…)`, a name) beside the object. A tool that changed the colour left the text behind,
+	 * so the text counts only while it still names the colour the object holds.
+	 *
+	 * @param array<string, mixed> $leaf The leaf entry.
+	 * @param mixed $value The resolved value.
+	 * @param string $type The resolved type.
+	 *
+	 * @return mixed The text, or the value as it was.
+	 *
+	 * @spec openspec/changes/colour-notation-kept/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
+	 */
+	private function originalText(array $leaf, mixed $value, string $type): mixed {
+		$text = $leaf['css'] ?? null;
+		if ($type !== 'color' || is_array($value) === false || is_string($text) === false || trim($text) === '') {
+			return $value;
+		}
+
+		$parsed = (new CssColorParser())->parse(value: $text);
+		$object = $this->serializeColorObject(value: $value);
+		// Only the sRGB notations: a lab(), lch() or color() value keeps its conversion to sRGB, which
+		// the upload reports and the contrast checks read.
+		if ($parsed === null || in_array($parsed['space'], ['srgb', 'hsl', 'hwb'], true) === false || ($object['ok'] ?? false) !== true) {
+			return $value;
+		}
+
+		$rgb = (array)$this->colorSpaces->toSrgb(space: $parsed['space'], components: $parsed['components']);
+		if (strtolower($this->colorSpaces->toHex(rgb: $rgb, alpha: $parsed['alpha'])) !== strtolower((string)$object['value'])) {
+			return $value;
+		}
+
+		return trim($text);
+	}//end originalText()
 
 	/**
 	 * Serialize a `color` value: legacy string literal passthrough, or the

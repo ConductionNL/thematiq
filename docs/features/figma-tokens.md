@@ -78,6 +78,8 @@ The path is the same in all four formats.
 | Anything else, such as a shadow, a gradient or `50%` | in `$extensions.nl.conduction.thematiq.cssOnly`, by CSS name | the same | `other`, the CSS text |
 | Reference to another token | `{path}` | `{path}` | `{path}` |
 
+A colour also keeps the text it was written in: when that is not its hex, the W3C and Figma variables files carry it in `$extensions["nl.conduction.thematiq"].css`. An upload uses that text, or the plugin's own copy in `$extensions["nl.conduction.openproject-thematiq"].css`, while it still names the same colour as the object. Only names, hex, `rgb()`, `hsl()` and `hwb()` count; a `lab()`, `lch()` or `color()` value comes back as its sRGB hex.
+
 On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `fontFamily`, `fontWeights` as `fontWeight`, and `borderRadius`, `borderWidth`, `spacing`, `sizing` and `fontSizes` as `dimension`.
 
 ## The eighteen roles of the shell
@@ -128,7 +130,7 @@ A file the plugin downloads uploads into thematiq, in all three of its formats. 
 - A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style: the light set gives the colours, the dark set the dark values.
 - The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq reads them as the dark values.
 - Dark values from a file are kept for the uploaded set and win over the dark colours thematiq would derive, in every dark variant it makes. The upload result says how many.
-- The plugin keeps the original text of a colour in its own extension. Thematiq reads the colour object, so the colour is the same and the notation may differ.
+- The plugin keeps the original text of a colour in its own extension. Thematiq reads it while it names the same colour, so the notation comes back too.
 
 ## What a round trip loses
 
