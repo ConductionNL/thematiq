@@ -102,6 +102,16 @@ if ($_['mockUi'] === true) {
 
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
+		<!-- Search the list by name (openspec/changes/token-set-picker-search). admin.js
+		     hides the sets that do not match; the selected set always stays in the list. -->
+		<div class="nldesign-token-set-search">
+			<input type="search" id="nldesign-token-set-search" class="nldesign-token-set-search__input"
+				   aria-label="<?php p($l->t('Search the design token sets')); ?>"
+				   aria-controls="nldesign-token-set-select"
+				   placeholder="<?php p($l->t('Search by name')); ?>"
+				   autocomplete="off">
+			<span id="nldesign-token-set-search-status" class="nldesign-token-set-search__status" role="status" aria-live="polite"></span>
+		</div>
 		<div class="nldesign-token-set-row">
 			<select id="nldesign-token-set-select" name="nldesign-token-set">
 				<?php foreach ($_['tokenSets'] as $tokenSet): ?>

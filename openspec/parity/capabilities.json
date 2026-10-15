@@ -1110,7 +1110,7 @@
 			"id": "cat-searchable-picker",
 			"area": "catalogue",
 			"name": "Find a house style by typing its name in a searchable picker that scales to hundreds of entries.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "no",
@@ -1118,12 +1118,13 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "templates/settings/admin.php:66-76 is a plain native <select> with 47 <option> entries, alphabetically sorted (js/admin.js:540-558); no filter/search input for it. Compare js/admin.js:3480-3609 which DOES build a dedicated '<input type=search>' with live filtering for the (separate) per-app theming exclusion list.",
+				"evidence": "templates/settings/admin.php: an <input type=search id=nldesign-token-set-search> above the token-set select; js/admin.js initTokenSetSearch() hides non-matching options by name or id, case and accent insensitive, keeps the selected option, announces the count in a polite live region, Escape clears; tests/vitest/admin-token-set-search.spec.js and tests/e2e/spec-coverage/token-set-picker-search.spec.ts",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/token-set-dropdown"
+				"spec": "openspec/specs/token-set-dropdown",
+				"change": "token-set-picker-search"
 			},
-			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (browser-native type-ahead only)",
+			"reachedOn": "Settings > Administration > Theming, search field above the 'Design token set' dropdown",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/src/views/AdminTheming.vue:13-16 mounts only AdminSectionTheming, AdminSectionThemingAdvanced and AdminSectionAppMenu; no style picker or search field exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : theme picker is a fixed gallery of 8 light + 2 dark default themes plus any custom org themes, not a searchable-by-name picker scaling to hundreds",
@@ -1135,7 +1136,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "You can pick from a list of 47 sets and jump to one by typing its first letters via the browser's own select behaviour, but there is no purpose-built search/filter box the way there is for the app-exclusion list. At 47 entries it is usable; it does not obviously scale to 'hundreds'.",
+			"note": "Built 2026-10-14 for wave T of the OpenProject plugin parity map: a search field filters the list by name. Before: 'partial', a plain select found only by its first letters.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
@@ -2297,6 +2298,37 @@
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
+		},
+		{
+			"id": "aut-colour-notation-kept",
+			"area": "authoring",
+			"name": "Keep the notation a colour was written in (rgb, hsl, a name) through a design tokens download and upload.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/DesignTokensWriter.php writes the original text in $extensions[nl.conduction.thematiq].css; lib/Service/DesignTokensMapper.php originalText() reads it, or the OpenProject plugin copy, while it names the same colour; tests/Unit/Service/ColourNotationTest.php",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "colour-notation-kept"
+			},
+			"reachedOn": "Download as design tokens, then the Custom token sets upload",
+			"evidence": {
+				"nextcloud-theming": "no product in this comparison writes a W3C colour object together with its original notation",
+				"m365-branding": "no product in this comparison writes a W3C colour object together with its original notation",
+				"opendesk": "no product in this comparison writes a W3C colour object together with its original notation",
+				"liferay-dxp": "no product in this comparison writes a W3C colour object together with its original notation",
+				"tokens-studio": "not checked: Tokens Studio stores colours as text in its own format, so its notation is whatever the designer typed; whether a W3C colour object round trip keeps the notation there was not checked"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
 		},
 		{
 			"id": "aut-convert-nlds-theme",
@@ -3830,6 +3862,37 @@
 			"feature": "every-page-styled",
 			"featureConfidence": "high",
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Module paths not checked against a running OpenProject."
+		},
+		{
+			"id": "sur-shell-canon-check",
+			"area": "surfaces",
+			"name": "Have the shell measured against a written canon of sizes, so two products drawn to the same boards stay the same size.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "tests/css/check-shell-canon.mjs measures the Files page at 1440x1000 (top bar, navigation, navigation item, primary button, table rows, body text) against the OpenProject plugin canon, with recorded gaps; tests/e2e/spec-coverage/shell-canon.spec.ts runs it in CI on the Zuiddrecht set",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "shell-canon-check"
+			},
+			"reachedOn": "npm run check:shell-canon, and the CI end-to-end suite",
+			"evidence": {
+				"nextcloud-theming": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"m365-branding": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"opendesk": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"liferay-dxp": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one",
+				"tokens-studio": "not checked: no product in this comparison publishes a size canon for its shell or a test that measures against one"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "every-page-styled",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Three gaps recorded: primary button 48 (canon 40), table row 44 (canon 48), body text 15 (canon 14)."
 		},
 		{
 			"id": "sur-menu-labels",
