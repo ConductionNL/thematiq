@@ -50,8 +50,8 @@ Measured coverage of the listed sets (`token-sets.json`, 63 sets):
 
 | What a set declares | Sets |
 | --- | --- |
-| the full `--utrecht-*` role layer | 26 |
-| only `--nldesign-*` | 15 |
+| the full `--utrecht-*` role layer | 27 |
+| only `--nldesign-*` | 14 |
 | Den Haag component properties | 18 |
 | a case card property | 2 |
 
