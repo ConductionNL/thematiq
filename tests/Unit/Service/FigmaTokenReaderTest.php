@@ -202,7 +202,8 @@ final class FigmaTokenReaderTest extends TestCase {
 
 		$withoutThemes = $this->read(document: ['basis' => $light, 'Dark' => $dark, '$metadata' => ['tokenSetOrder' => ['basis', 'Dark']]]);
 		$this->assertSame('#111111', $withoutThemes['document']['color']['primary']['$value']);
-		$this->assertSame([['path' => 'Dark', 'reason' => 'dark-colours-not-read']], $withoutThemes['skipped']);
+		$this->assertSame([], $withoutThemes['skipped']);
+		$this->assertSame(['--color-primary' => '#eeeeee'], $withoutThemes['document']['$extensions']['nl.conduction.thematiq']['dark'], 'the dark set is the dark values');
 
 		$pair = [
 			'licht' => $light,

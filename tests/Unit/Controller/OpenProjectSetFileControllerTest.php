@@ -82,7 +82,7 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 		$this->assertSame(200, $response->getStatus());
 		$this->assertSame('cunningham', $file['id']);
 		$this->assertSame('#1f883d', $file['tokens']['action']);
-		$this->assertCount(18, $file['tokens']);
+		$this->assertCount(19, $file['tokens']);
 		$this->assertArrayHasKey('redistributable', $file['logo']);
 		$this->assertArrayHasKey('tokens', $file['dark']);
 		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
