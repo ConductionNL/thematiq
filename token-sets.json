@@ -257,15 +257,15 @@
 		"name": "Gemeente Groningen",
 		"description": "Design tokens for Gemeente Groningen",
 		"theming": {
-			"primary_color": "#154273",
+			"primary_color": "#055fa5",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "4.0.0",
+		"upstreamRef": "2a75406b722e286019e01d8d48c11d4cec14a0cb",
+		"upstreamVersion": "5.1.0",
 		"licence": {
 			"id": "LicenseRef-groningen-house-style",
 			"package": "@nl-design-system-unstable/groningen-design-tokens",
-			"version": "4.0.0",
+			"version": "5.1.0",
 			"holder": "Gemeente Groningen",
 			"restricted": true
 		}

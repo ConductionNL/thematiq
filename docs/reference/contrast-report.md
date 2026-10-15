@@ -41,7 +41,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | example-opleider | 9.40:1 | 4.5:1 | 9.40:1 | 3.0:1 | pass |
 | example-voortgezet | 7.67:1 | 4.5:1 | 7.67:1 | 3.0:1 | pass |
 | frankendesk | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
-| groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
+| groningen | 6.59:1 | 4.5:1 | 6.59:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
 | hoeksche-waard | 4.56:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
