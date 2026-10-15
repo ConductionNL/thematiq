@@ -1138,6 +1138,8 @@
         "Search the design token sets": "Search the design token sets",
         "Search by name": "Search by name",
         "{shown} of {total} sets match": "{shown} of {total} sets match",
+        "{count} dark values from the file are kept for dark mode.": "{count} dark values from the file are kept for dark mode.",
+        "A dark value in the file is not allowed: %s": "A dark value in the file is not allowed: %s",
         "Projects": "Projects",
         "My page": "My page",
         "Work packages": "Work packages",

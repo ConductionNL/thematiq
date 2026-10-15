@@ -16,6 +16,8 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DarkPins;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -837,6 +839,37 @@ class DarkPaletteServiceTest extends TestCase {
 		$this->service->deleteDarkVariant(setId: 'custom-x');
 		$this->addToAssertionCount(1);
 	}//end testDeleteDarkVariant()
+
+	/**
+	 * Dark values an uploaded file brought win in every generation, and leave with the set.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	public function testDarkValuesFromAFileWin(): void {
+		file_put_contents($this->appDir . '/css/tokens/custom-x.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n");
+		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'));
+
+		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8', '--nldesign-color-background' => '#202124']);
+		$this->assertSame(['--nldesign-color-background' => '#202124', '--nldesign-color-primary' => '#8ab4f8'], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'));
+
+		$css = (string)($this->service->generateForSet(setId: 'custom-x')['css'] ?? '');
+		$this->assertStringContainsString('--nldesign-color-primary: #8ab4f8;', $css);
+		$this->assertStringContainsString('--nldesign-color-background: #202124;', $css);
+
+		// A shipped set keeps its own dark block; nothing is written for it.
+		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'example', declarations: ['--nldesign-color-primary' => '#000000']);
+		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/example.css');
+		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'example'));
+
+		$this->service->deleteDarkVariant(setId: 'custom-x');
+		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/custom-x.css');
+
+		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8']);
+		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: []);
+		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'), 'an empty map removes the file');
+	}//end testDarkValuesFromAFileWin()
 
 	/**
 	 * `logo_dark` theming metadata is emitted as a dark-scoped

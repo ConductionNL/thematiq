@@ -175,8 +175,8 @@ class TokensStudioSets {
 		$merged = [];
 		$dark = ($this->darkSets(document: $document) ?? []);
 		foreach ($this->names(document: $document) as $name) {
+			// The dark sets are read apart, as the set's dark values ({@see self::darkTree()}).
 			if (in_array($name, $dark, true) === true) {
-				$skipped[] = ['path' => (string)$name, 'reason' => 'dark-colours-not-read'];
 				continue;
 			}
 
@@ -195,6 +195,27 @@ class TokensStudioSets {
 
 		return $merged;
 	}//end mergedSets()
+
+	/**
+	 * The dark token sets of a light and dark file as one tree, in their order; empty for any other file.
+	 *
+	 * @param array<string, mixed> $document The file.
+	 *
+	 * @return array<string, mixed> The merged dark tree.
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	public function darkTree(array $document): array {
+		$dark = ($this->darkSets(document: $document) ?? []);
+		$merged = [];
+		foreach ($this->names(document: $document) as $name) {
+			if (in_array($name, $dark, true) === true) {
+				$merged = $this->replaced(base: $merged, over: $document[$name], depth: 0);
+			}
+		}
+
+		return $merged;
+	}//end darkTree()
 
 	/**
 	 * One tree laid over another: a token replaces whatever was at its path.

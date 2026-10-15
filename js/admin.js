@@ -7836,6 +7836,15 @@
 					)
 						.replace('{imported}', res.data.imported)
 						.replace('{skipped}', (res.data.skipped || []).length)
+					// Dark values the file brought (dark-colours-from-a-file).
+					if (res.data.darkValues > 0) {
+						msg +=
+							' '
+							+ t(
+								'thematiq',
+								'{count} dark values from the file are kept for dark mode.',
+							).replace('{count}', res.data.darkValues)
+					}
 					if (res.data.version) {
 						msg +=
 							' '
