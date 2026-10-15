@@ -75,7 +75,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | purmerend | 21/87 | self-hosted | no (known) | pass |
 | riddeliemers | 10/87 | self-hosted | no (known) | pass |
 | ridderkerk | 0/87 | self-hosted | no (known) | pass |
-| rijkshuisstijl | 0/87 | self-hosted | yes | pass |
+| rijkshuisstijl | 42/87 | declared | yes | pass |
 | rotterdam | 79/87 | declared | yes | pass |
 | stedebroec | 21/87 | system | no (known) | pass |
 | tilburg | 25/87 | system | yes | pass |
@@ -95,8 +95,8 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | zwolle | 0/87 | declared | no (known) | pass |
 
 - 61 sets measured; 27 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 10 of 57 bridged sets declare none of the 87 --utrecht-* names; median 21.
-- font: 17 declared, 40 self-hosted, 4 system.
+- bridge (measured, NOT gated): 9 of 57 bridged sets declare none of the 87 --utrecht-* names; median 23.
+- font: 18 declared, 39 self-hosted, 4 system.
 - logo: 34 of 61 point Nextcloud at no logo.
 - contrast: 0 of 61 do not pass.
 
