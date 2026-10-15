@@ -3895,6 +3895,37 @@
 			}
 		},
 		{
+			"id": "sur-openproject-in-app-menu",
+			"area": "surfaces",
+			"name": "List the modules of OpenProject next to Nextcloud's apps in the apps menu, the way the OpenProject plugin lists Nextcloud's apps.",
+			"thematiq": "yes",
+			"nextcloud-theming": "no",
+			"m365-branding": "no",
+			"opendesk": "no",
+			"liferay-dxp": "no",
+			"tokens-studio": "no",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "openproject-in-the-app-menu"
+			},
+			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
+			"evidence": {
+				"nextcloud-theming": "not checked: this product was not seen to list the modules of an OpenProject installation in its own app menu",
+				"m365-branding": "not checked: this product was not seen to list the modules of an OpenProject installation in its own app menu",
+				"opendesk": "not checked: this product was not seen to list the modules of an OpenProject installation in its own app menu",
+				"liferay-dxp": "not checked: this product was not seen to list the modules of an OpenProject installation in its own app menu",
+				"tokens-studio": "not checked: this product was not seen to list the modules of an OpenProject installation in its own app menu"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "every-page-styled",
+			"featureConfidence": "high",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Module paths not checked against a running OpenProject."
+		},
+		{
 			"id": "sur-shell-pixel-check",
 			"area": "surfaces",
 			"name": "Have the shell compared with reference images, so a platform release that moves the top bar or the navigation is noticed.",

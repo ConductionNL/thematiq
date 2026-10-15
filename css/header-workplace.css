@@ -553,3 +553,46 @@ body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__footer {
 body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__hint {
 	color: var(--color-text-maxcontrast);
 }
+
+/* OpenProject's modules (openproject-in-the-app-menu): links thematiq adds, so
+ * Nextcloud's scoped tile styles do not reach them. They take the layout of a
+ * tile here, and their icon is an inline SVG instead of the masked app icon. */
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid
+	> a.app-item.thematiq-app-menu__external {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	text-align: center;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.thematiq-app-menu__external
+	.app-item__circle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.thematiq-app-menu__external
+	.app-item__circle::before {
+	content: none;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid
+	> a.app-item.thematiq-app-menu__external:hover,
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid
+	> a.app-item.thematiq-app-menu__external:focus-visible {
+	background: var(--nldesign-color-background-hover, var(--color-background-hover));
+}

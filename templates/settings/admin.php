@@ -43,6 +43,7 @@ script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
 script('thematiq', 'admin-workspace-icons');
+script('thematiq', 'admin-openproject-link');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -733,6 +734,22 @@ if ($_['mockUi'] === true) {
 		</p>
 		<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
 		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- OpenProject's modules in the apps menu (openproject-in-the-app-menu).
+	     Filled by js/admin-openproject-link.js. -->
+	<div class="nldesign-openproject-link" id="nldesign-openproject-link" style="margin-top:2em">
+		<h3><?php p($l->t('OpenProject in the apps menu')); ?></h3>
+		<p class="settings-hint" id="nldesign-openproject-link-hint">
+			<?php p($l->t('The apps menu lists OpenProject\'s modules in a section of their own. Leave empty for none.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-openproject-url"><?php p($l->t('OpenProject address')); ?></label>
+			<input type="url" id="nldesign-openproject-url" placeholder="https://openproject.example.org"
+				   aria-describedby="nldesign-openproject-link-hint" autocomplete="off">
+			<button type="button" class="button" id="nldesign-openproject-save"><?php p($l->t('Save address')); ?></button>
+		</p>
+		<span id="nldesign-openproject-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos
