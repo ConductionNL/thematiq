@@ -1164,7 +1164,9 @@ OC.L10N.register(
         "Not set: Nextcloud's own is used.": "Niet ingesteld: Nextcloud gebruikt de eigen afbeelding.",
         "Search the design token sets": "Zoek in de design token sets",
         "Search by name": "Zoek op naam",
-        "{shown} of {total} sets match": "{shown} van {total} sets komen overeen"
+        "{shown} of {total} sets match": "{shown} van {total} sets komen overeen",
+        "{count} dark values from the file are kept for dark mode.": "{count} donkere waarden uit het bestand blijven bewaard voor de donkere modus.",
+        "A dark value in the file is not allowed: %s": "Een donkere waarde in het bestand is niet toegestaan: %s"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -30,7 +30,10 @@ test('the shell of Files looks as it did', async ({ page }) => {
 		await page.waitForSelector('tr.files-list__row', { timeout: 60_000 })
 		await freezePage(page)
 		// The storage line under the navigation changes with every file.
-		const mask = [page.locator('[class*="quota"]'), page.locator('.notifications-button .notification__dot')]
+		const mask = [
+			page.locator('[class*="quota"]'),
+			page.locator('.notifications-button .notification__dot'),
+		]
 		await expect(page).toHaveScreenshot('shell-top-bar.png', {
 			clip: { x: 0, y: 0, width: 1440, height: 68 },
 			animations: 'disabled',
