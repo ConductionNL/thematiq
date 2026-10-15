@@ -13,7 +13,9 @@ import { test, expect } from '@playwright/test'
 import { adminContext } from './_fixtures'
 import { applyThemeState, restoreThemeState } from './_theme-state'
 
-test('the shell matches the canon, or the gap it has recorded', async ({ browser }) => {
+test('the shell matches the canon, or the gap it has recorded', async ({
+	browser,
+}) => {
 	test.setTimeout(180_000)
 	const { measure, judge } = await import('../../css/check-shell-canon.mjs')
 	const context = await adminContext(browser)
@@ -23,7 +25,10 @@ test('the shell matches the canon, or the gap it has recorded', async ({ browser
 	try {
 		await page.goto('/apps/files/')
 		const result = judge(await measure(page))
-		await test.info().attach('canon', { body: JSON.stringify(result, null, 1), contentType: 'application/json' })
+		await test.info().attach('canon', {
+			body: JSON.stringify(result, null, 1),
+			contentType: 'application/json',
+		})
 		expect(result.failures).toEqual([])
 		expect(result.matches.length).toBeGreaterThan(3)
 	} finally {

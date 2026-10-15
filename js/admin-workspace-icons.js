@@ -36,7 +36,10 @@
 			{
 				kind: 'touch-icon',
 				label: t('thematiq', 'Home screen icon'),
-				hint: t('thematiq', 'A square PNG of at least 120 by 120 pixels; 180 by 180 is best.'),
+				hint: t(
+					'thematiq',
+					'A square PNG of at least 120 by 120 pixels; 180 by 180 is best.',
+				),
 				accept: 'image/png',
 			},
 		]
@@ -75,7 +78,10 @@
 				img.alt = ''
 				preview.appendChild(img)
 			} else {
-				preview.textContent = t('thematiq', 'Not set: Nextcloud\'s own is used.')
+				preview.textContent = t(
+					'thematiq',
+					"Not set: Nextcloud's own is used.",
+				)
 			}
 			var input = document.createElement('input')
 			input.type = 'file'
@@ -98,10 +104,14 @@
 				}
 				var form = new FormData()
 				form.append('file', input.files[0])
-				request(base + '/' + item.kind, { method: 'POST', body: form }).then(function (result) {
-					feedback.textContent = result.ok ? t('thematiq', 'Image saved.') : result.body.error
-					load()
-				})
+				request(base + '/' + item.kind, { method: 'POST', body: form }).then(
+					function (result) {
+						feedback.textContent = result.ok
+							? t('thematiq', 'Image saved.')
+							: result.body.error
+						load()
+					},
+				)
 			})
 			wrap.appendChild(label)
 			wrap.appendChild(preview)
@@ -115,10 +125,14 @@
 				remove.setAttribute('aria-labelledby', remove.id + ' ' + label.id)
 				remove.textContent = t('thematiq', 'Remove')
 				remove.addEventListener('click', function () {
-					request(base + '/' + item.kind, { method: 'DELETE' }).then(function (result) {
-						feedback.textContent = result.ok ? t('thematiq', 'Image removed.') : result.body.error
-						load()
-					})
+					request(base + '/' + item.kind, { method: 'DELETE' }).then(
+						function (result) {
+							feedback.textContent = result.ok
+								? t('thematiq', 'Image removed.')
+								: result.body.error
+							load()
+						},
+					)
 				})
 				wrap.appendChild(remove)
 			}

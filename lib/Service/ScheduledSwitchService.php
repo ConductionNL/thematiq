@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -61,6 +62,17 @@ class ScheduledSwitchService {
 	 * @var string
 	 */
 	private const AUDIT_ACTION = 'scheduled_switch_applied';
+
+	/**
+	 * Why a due switch was not applied: its set is gone (0), or its set is
+	 * restricted and nobody confirmed it (1).
+	 *
+	 * @var array<int, string>
+	 */
+	private const START_REFUSALS = [
+		'The token set {set} no longer exists, so the switch was not applied.',
+		'Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.',
+	];
 
 	/**
 	 * Constructor.
@@ -114,6 +126,7 @@ class ScheduledSwitchService {
 	 *
 	 * @throws ScheduledSwitchException When the set does not exist, a time does not parse, the end is not after the start
 	 *                                  or not in the future, or the window overlaps.
+	 * @throws RestrictedSetNotConfirmedException When the set is restricted and nobody confirmed it.
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
@@ -121,6 +134,9 @@ class ScheduledSwitchService {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
+
+		// A restricted set nobody confirmed is refused here too; the controller answers 403.
+		$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
 
 		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
 
@@ -381,10 +397,11 @@ class ScheduledSwitchService {
 		try {
 			$entry['revertTo'] = $this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
-			$reason = $this->l10n->t('The token set {set} no longer exists, so the switch was not applied.', ['set' => $tokenSet]);
+			$reason = $this->l10n->t(self::START_REFUSALS[(int)($e instanceof RestrictedSetNotConfirmedException)], ['set' => $tokenSet]);
+
 			$this->logger->warning(
-				'thematiq: planned switch {id} to {set} failed: the set does not exist',
-				['id' => $entry['id'], 'set' => $tokenSet]
+				'thematiq: planned switch {id} to {set} failed: {why}',
+				['id' => $entry['id'], 'set' => $tokenSet, 'why' => $e->getMessage()]
 			);
 			$this->auditService->log(
 				action: self::AUDIT_ACTION,

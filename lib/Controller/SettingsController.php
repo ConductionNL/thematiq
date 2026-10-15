@@ -41,6 +41,7 @@ use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -239,6 +240,8 @@ class SettingsController extends Controller {
 	public function setTokenSet(string $tokenSet): JSONResponse {
 		try {
 			$this->activeTokenSet->switchTo(tokenSet: $tokenSet);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
 		} catch (\InvalidArgumentException $e) {
 			return new JSONResponse(['error' => 'Invalid token set'], 400);
 		}
@@ -1001,6 +1004,17 @@ class SettingsController extends Controller {
 		try {
 			$after = $this->groupThemingService->setMapping(entries: $mapping);
 		} catch (GroupThemingValidationException $e) {
+			if ($e->getRestrictedSet() !== null) {
+				return new JSONResponse(
+					[
+						'error' => RestrictedSetNotConfirmedException::ERROR,
+						'tokenSet' => $e->getRestrictedSet(),
+						'entry' => $e->getEntry(),
+					],
+					403
+				);
+			}
+
 			return new JSONResponse(
 				[
 					'error' => 'invalid_mapping',

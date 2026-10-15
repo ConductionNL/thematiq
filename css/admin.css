@@ -200,6 +200,36 @@
 	color: var(--color-main-text);
 }
 
+/* House styles of other organisations (token-set-licences). */
+.nldesign-set-licences-awaiting,
+.nldesign-set-licence-warning {
+	padding: 8px 12px;
+	border-left: 4px solid var(--color-warning);
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
+}
+
+.nldesign-set-licence {
+	padding: 4px 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.nldesign-set-licence-text {
+	padding: 8px 12px;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+}
+
+.nldesign-set-licence-statement {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+}
+
 .nldesign-scheduled-item {
 	display: flex;
 	flex-wrap: wrap;

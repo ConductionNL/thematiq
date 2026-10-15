@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -95,6 +96,8 @@ class PreviewController extends Controller {
 
 		try {
 			$state = $this->previewService->startPreview(uid: $uid, tokenSetId: $tokenSet);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
 		} catch (InvalidArgumentException $e) {
 			return new JSONResponse(['error' => 'Invalid token set'], 400);
 		}
@@ -144,6 +147,8 @@ class PreviewController extends Controller {
 
 		try {
 			$tokenSet = $this->previewService->publishPreview(uid: $uid);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => 'No active preview to publish'], 400);
 		}

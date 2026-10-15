@@ -243,7 +243,8 @@ class TokenSetConverterService {
 	 *     counts: array<string, int>,
 	 *     logoAsset: array{path: string, contents: string}|null,
 	 *     importWarnings: array<int, array{path: string, message: string|null}>,
-	 *     errors: array<int, array{path: string, reason: string, detail?: string}>
+	 *     errors: array<int, array{path: string, reason: string, detail?: string}>,
+	 *     darkDeclarations?: array<string, string>
 	 * }
 	 *
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
@@ -306,7 +307,7 @@ class TokenSetConverterService {
 
 		// Thematiq's own export comes back as it went out, without the conversion rules.
 		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
-			return $this->thematiqExportResult(
+			return ['darkDeclarations' => $this->darkFrom(content: $content)] + $this->thematiqExportResult(
 				declarations: $declarations,
 				slug: $slug,
 				displayName: $displayName,
@@ -468,6 +469,31 @@ class TokenSetConverterService {
 	}//end isThematiqExport()
 
 	/**
+	 * The dark values a thematiq-shaped document carries in its extension, by name.
+	 *
+	 * Written there by the readers of the OpenProject plugin's set file and of a light and dark
+	 * Tokens Studio file. Only a custom property name with a text value is taken; the caller
+	 * validates every value before it is kept.
+	 *
+	 * @param string $content The document.
+	 *
+	 * @return array<string, string> Name => dark value.
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	private function darkFrom(string $content): array {
+		$decoded = json_decode($content, true);
+		$out = [];
+		foreach ((array)($decoded['$extensions']['nl.conduction.thematiq']['dark'] ?? []) as $name => $value) {
+			if (preg_match('/^--[a-z][a-z0-9-]*$/', (string)$name) === 1 && is_string($value) === true && trim($value) !== '') {
+				$out[(string)$name] = trim($value);
+			}
+		}
+
+		return $out;
+	}//end darkFrom()
+
+	/**
 	 * The result for a document thematiq exported: every declaration under its own name,
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
@@ -491,6 +517,14 @@ class TokenSetConverterService {
 		array $report,
 	): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
+
+		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
+		// set's navigation colour, which the bundles paint and the dark variant follows; the
+		// plugin's own name stays, so the next download carries it back.
+		if (isset($declarations['--thematiq-shell-menu']) === true && isset($declarations['--nldesign-color-nav-background']) === false) {
+			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
+		}
+
 		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
 		$counts = $this->countActions(report: $report);
 		$manifest = [];

@@ -93,7 +93,7 @@ class ShellRoleMapperTest extends TestCase {
 
 		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles));
 		$this->assertSame(ShellRoleMapper::DEFAULTS, $roles);
-		$this->assertCount(18, $roles);
+		$this->assertCount(19, $roles);
 	}//end testAnEmptySetGetsTheDocumentedDefaults()
 
 	/**
@@ -106,6 +106,8 @@ class ShellRoleMapperTest extends TestCase {
 
 		$font = $roles['font-family'];
 		unset($roles['font-family']);
+		$this->assertSame('#ffffff', $roles['menu'], 'zuiddrecht keeps the white navigation column of the defaults');
+		unset($roles['menu']);
 
 		$this->assertSame(
 			[
@@ -285,6 +287,19 @@ class ShellRoleMapperTest extends TestCase {
 		$this->assertSame('#404040', $this->mapper()->map(tokens: $tokens)['text']);
 		$this->assertSame('#484a4d', $this->mapper()->map(tokens: ($tokens + ['--thematiq-shell-text' => '#484a4d']))['text']);
 	}//end testTheTextRoleReadsItsOwnToken()
+
+	/**
+	 * The menu role is the main menu's background: the plugin's own name, then the column's
+	 * token, then the set's navigation colour, then white.
+	 *
+	 * @return void
+	 */
+	public function testTheMenuIsTheNavigationColumn(): void {
+		$this->assertSame('#ffffff', $this->mapper()->map(tokens: [])['menu']);
+		$this->assertSame('#eeeeee', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee'])['menu']);
+		$this->assertSame('#dddddd', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--nldesign-component-navigation-background-color' => '#dddddd'])['menu']);
+		$this->assertSame('#123456', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--thematiq-shell-menu' => '#123456'])['menu']);
+	}//end testTheMenuIsTheNavigationColumn()
 
 	/**
 	 * The accent is the set's accent, and the error colour for a set without one.
