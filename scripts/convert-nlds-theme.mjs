@@ -28,6 +28,11 @@
  *                      report is printed.
  *   --report <path>    Also write the full report as JSON.
  *   --quiet            Only print the summary line.
+ *   --primary <hex>    The primary colour for a theme that declares none (no
+ *                      --utrecht-button-primary-action-background-color and no
+ *                      --<slug>-color-primary). Defaults to the committed
+ *                      token-sets.json entry's theming.primary_color, the way
+ *                      the nightly sync treats buren and venray. CSS input only.
  *
  * Exit codes: 0 converted, 1 usage or conversion error.
  *
@@ -37,12 +42,14 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { dirname, join, basename, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import {
 	converter,
 	loadConverterContext,
 	repoRoot,
 } from './lib/converter-context.mjs'
+import { withManifestPrimary } from './sync-upstream-tokens.mjs'
 
 const LABEL = 'convert:theme'
 
@@ -61,6 +68,7 @@ function parseArgs(argv) {
 		write: false,
 		report: null,
 		quiet: false,
+		primary: null,
 	}
 
 	for (let index = 0; index < argv.length; index++) {
@@ -81,6 +89,7 @@ function parseArgs(argv) {
 			|| arg === '--name'
 			|| arg === '--report'
 			|| arg === '--source'
+			|| arg === '--primary'
 		) {
 			const value = argv[index + 1]
 			if (value === undefined || value.startsWith('--')) {
@@ -256,10 +265,11 @@ function main() {
 	}
 
 	const context = loadConverterContext()
+	const input = withPrimary(readFileSync(inputPath, 'utf8'), inputPath, options)
 	let result
 
 	try {
-		result = converter.convert(readFileSync(inputPath, 'utf8'), {
+		result = converter.convert(input, {
 			slug: options.slug,
 			displayName: options.name === null ? options.slug : options.name,
 			sourceName:
@@ -318,6 +328,50 @@ function main() {
 }
 
 /**
+ * Give a CSS theme without any primary token the set's primary colour.
+ *
+ * Zwolle's theme names no primary-action colour, so without this the converted
+ * set has no primary, header or link colour. The colour is `--primary`, or the
+ * committed manifest's `theming.primary_color`; it goes in as the theme's own
+ * `--<slug>-color-primary`, the primary rule's second source, exactly as
+ * `withManifestPrimary()` does it for the nightly sync.
+ *
+ * @param {string} css The input as read.
+ * @param {string} inputPath Its path; only a `.css` input is touched.
+ * @param {Object} options The parsed options.
+ * @return {string} The input, with the primary added when the theme had none.
+ *
+ * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-a-theme-without-a-primary-colour-takes-the-sets-own
+ */
+export function withPrimary(css, inputPath, options) {
+	if (inputPath.endsWith('.css') === false) {
+		return css
+	}
+
+	let primary = options.primary
+	if (primary === null) {
+		const manifest = JSON.parse(
+			readFileSync(join(repoRoot, 'token-sets.json'), 'utf8'),
+		)
+		primary =
+			manifest.find((entry) => entry.id === options.slug)?.theming
+				?.primary_color ?? null
+	}
+
+	const out = withManifestPrimary(css, {
+		slug: options.slug,
+		manifestPrimary: primary,
+	})
+	if (out !== css && options.quiet === false) {
+		console.log(
+			`[${LABEL}] the theme declares no primary colour; using ${primary.toLowerCase()} as --${options.slug}-color-primary.`,
+		)
+	}
+
+	return out
+}
+
+/**
  * Regenerate the dark variant of the set just written, and only that one.
  *
  * @param {string} slug The set slug.
@@ -350,4 +404,10 @@ function regenerateDarkVariant(slug) {
 	return run.status === 0 ? 0 : 1
 }
 
-main()
+// Run only as a script, so a test can import withPrimary() without converting.
+if (
+	process.argv[1] !== undefined
+	&& resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+	main()
+}
