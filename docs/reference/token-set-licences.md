@@ -12,7 +12,7 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 
 | Set | Source package | Version | Source | What the licence says | Thematiq |
 |---|---|---|---|---|---|
-| `amsterdam` | `@amsterdam/design-system-tokens` | not recorded | @amsterdam/design-system-tokens (the set records no version) | Proprietary assets of the City of Amsterdam; the open source licence does not apply | restricted |
+| `amsterdam` | `@amsterdam/design-system-tokens` | 4.3.0 | @amsterdam/design-system-tokens@4.3.0 on the npm registry, read 14 October | Proprietary assets of the City of Amsterdam; the open source licence does not apply | restricted |
 | `bodegraven-reeuwijk` | `@nl-design-system-unstable/bodegraven-reeuwijk-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Bodegraven Reeuwijk; permission from Gemeente Bodegraven Reeuwijk | restricted |
 | `borne` | `@nl-design-system-unstable/borne-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Borne; permission from Gemeente Borne | restricted |
 | `buren` | `@nl-design-system-unstable/buren-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Buren; permission from Gemeente Buren | restricted |
@@ -27,7 +27,7 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 | `enschede` | `@nl-design-system-community/enschede-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Enschede; permission from Gemeente Enschede | restricted |
 | `epe` | `@nl-design-system-unstable/epe-design-tokens` | 1.0.3 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Epe; permission from Gemeente Epe | restricted |
 | `frankendesk` | `@gouvfr-lasuite/cunningham-react` | not recorded | @gouvfr-lasuite/cunningham-react | MIT colour source; the Marianne font has its own gate | open |
-| `groningen` | `@nl-design-system-unstable/groningen-design-tokens` | 4.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Groningen; permission from Gemeente Groningen | restricted |
+| `groningen` | `@nl-design-system-unstable/groningen-design-tokens` | 5.1.0 | nl-design-system/themes@2a75406b | Use of logo and house style only by Gemeente Groningen; permission from Gemeente Groningen | restricted |
 | `haarlem` | `@nl-design-system-unstable/haarlem-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Haarlem; permission from Gemeente Haarlem | restricted |
 | `haarlemmermeer` | `@nl-design-system-unstable/haarlemmermeer-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Haarlemmermeer; permission from Gemeente Haarlemmermeer | restricted |
 | `hoeksche-waard` | `@nl-design-system-unstable/hoeksche-waard-design-tokens` | 1.1.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Hoeksche Waard; permission from Gemeente Hoeksche Waard | restricted |
@@ -46,12 +46,12 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 | `purmerend` | `@nl-design-system-community/purmerend-design-tokens` | 1.2.3 | nl-design-system/themes@9cfc4c5a | No licence file in the package; sits in proprietary/; treated as restricted | restricted |
 | `riddeliemers` | `proprietary/riddeliemers-design-tokens (no package.json)` | not recorded | nl-design-system/themes@9cfc4c5a | No licence file in the package; sits in proprietary/; treated as restricted | restricted |
 | `ridderkerk` | `@nl-design-system-unstable/ridderkerk-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by gemeente Ridderkerk; permission from gemeente Ridderkerk | restricted |
-| `rijkshuisstijl` | `@rijkshuisstijl-community/design-tokens` | not recorded | @rijkshuisstijl-community/design-tokens (the set records no version) | All rights reserved; use only by parties on a commission for the Rijksoverheid | restricted |
+| `rijkshuisstijl` | `@rijkshuisstijl-community/design-tokens` | 18.0.1 | @rijkshuisstijl-community/design-tokens@18.0.1 on the npm registry, read 14 October | All rights reserved; use only by parties on a commission for the Rijksoverheid | restricted |
 | `rotterdam` | `@gemeente-rotterdam/design-tokens` | 1.1.0 | @gemeente-rotterdam/design-tokens@1.1.0 | All rights reserved; the open source licence does not apply (template text with unfilled author) | restricted |
 | `stedebroec` | `@nl-design-system-unstable/stedebroec-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Stede Broec; permission from Gemeente Stede Broec | restricted |
 | `tilburg` | `@nl-design-system-unstable/tilburg-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Tilburg; permission from Gemeente Tilburg | restricted |
 | `tubbergen` | `@nl-design-system-unstable/tubbergen-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Tubbergen; permission from Gemeente Tubbergen | restricted |
-| `utrecht` | `@utrecht/design-tokens` | not recorded | @utrecht/design-tokens (the set records no version) | All rights reserved; proprietary assets of Gemeente Utrecht | restricted |
+| `utrecht` | `@utrecht/design-tokens` | 7.0.0 | @utrecht/design-tokens@7.0.0 on the npm registry, read 14 October | All rights reserved; proprietary assets of Gemeente Utrecht | restricted |
 | `venray` | `@nl-design-system-unstable/venray-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Venray; permission from Gemeente Venray | restricted |
 | `vng` | `tilburg-woo-ui _tokens-vng.scss (no published package)` | not recorded | tilburg-woo-ui (hand conversion) | No published source or licence; organisation house style; treated as restricted | restricted |
 | `vught` | `@nl-design-system-unstable/vught-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Vught; permission from Gemeente Vught | restricted |
