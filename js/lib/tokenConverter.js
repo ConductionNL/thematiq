@@ -60,6 +60,23 @@
 	]
 
 	var MAX_VAR_DEPTH = 10
+
+	// OKLab to sRGB, CSS Color 4 sample code; the constants of ColorSpaceConverter.
+	var OKLAB_TO_LMS = [
+		[1.0, 0.3963377773761749, 0.2158037573099136],
+		[1.0, -0.1055613458156586, -0.0638541728258133],
+		[1.0, -0.0894841775298119, -1.2914855480194092],
+	]
+	var LMS_TO_XYZ = [
+		[1.2268798758459243, -0.5578149944602171, 0.2813910456659647],
+		[-0.0405757452148008, 1.112286803280317, -0.0717110580655164],
+		[-0.0763729366746601, -0.4214933324022432, 1.5869240198367816],
+	]
+	var XYZ_TO_LINEAR_SRGB = [
+		[3.2409699419045226, -1.537383177570094, -0.4986107602930034],
+		[-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
+		[0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
+	]
 	var MAX_CONTRAST_STEPS = 10
 
 	/**
@@ -571,7 +588,7 @@
 			}
 		}
 
-		var fn = /^(rgba?|hsla?)\(\s*([^)]*)\)$/.exec(trimmed)
+		var fn = /^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/.exec(trimmed)
 		if (fn === null) {
 			return null
 		}
@@ -596,7 +613,12 @@
 		}
 
 		var rgb
-		if (fn[1].indexOf('rgb') === 0) {
+		if (fn[1].indexOf('ok') === 0) {
+			rgb = oklabChannels(fn[1], parts)
+			if (rgb === null) {
+				return null
+			}
+		} else if (fn[1].indexOf('rgb') === 0) {
 			rgb = parts.slice(0, 3).map(function (part) {
 				return /%$/.test(part)
 					? (parseFloat(part) * 255) / 100
@@ -631,6 +653,80 @@
 			}),
 			a: Math.max(0, Math.min(1, alphaValue)),
 		}
+	}
+
+	/**
+	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut
+	 * per channel. Rijkshuisstijl 18 writes every colour as oklch(); the app reads
+	 * hex and rgb() only. Same maths and constants as `ColorSpaceConverter`
+	 * (CSS Color 4 sample code), so both runtimes write the same hex.
+	 *
+	 * @param {string} space `oklch` or `oklab`.
+	 * @param {Array<string>} parts The three or four arguments.
+	 * @return {Array<number>|null} Unrounded channels in [0, 255], or null.
+	 *
+	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 */
+	function oklabChannels(space, parts) {
+		var values = parts.slice(0, 3).map(function (part, index) {
+			if (part === 'none') {
+				return 0
+			}
+
+			var number = parseFloat(part)
+			if (
+				/^-?[\d.]+(e-?\d+)?(%|deg)?$/.test(part) === false
+				|| isNaN(number)
+			) {
+				return NaN
+			}
+
+			if (/%$/.test(part)) {
+				// L: 100% = 1. Chroma, a and b: 100% = 0.4.
+				return index === 0 ? number / 100 : (number / 100) * 0.4
+			}
+
+			return number
+		})
+		if (values.some(isNaN)) {
+			return null
+		}
+
+		var lab = values
+		if (space === 'oklch') {
+			var hue = (values[2] * Math.PI) / 180
+			lab = [values[0], values[1] * Math.cos(hue), values[1] * Math.sin(hue)]
+		}
+
+		var lms = multiply(OKLAB_TO_LMS, lab).map(function (value) {
+			return value * value * value
+		})
+		var linear = multiply(XYZ_TO_LINEAR_SRGB, multiply(LMS_TO_XYZ, lms))
+
+		return linear.map(function (value) {
+			var abs = Math.abs(value)
+			var gamma =
+				abs <= 0.0031308
+					? 12.92 * value
+					: Math.sign(value) * (1.055 * Math.pow(abs, 1 / 2.4) - 0.055)
+
+			return Math.max(0, Math.min(1, gamma)) * 255
+		})
+	}
+
+	/**
+	 * A 3x3 matrix times a vector.
+	 *
+	 * @param {Array<Array<number>>} matrix The matrix.
+	 * @param {Array<number>} vector The vector.
+	 * @return {Array<number>} The product.
+	 *
+	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 */
+	function multiply(matrix, vector) {
+		return matrix.map(function (row) {
+			return row[0] * vector[0] + row[1] * vector[1] + row[2] * vector[2]
+		})
 	}
 
 	/**
