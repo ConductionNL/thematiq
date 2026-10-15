@@ -517,6 +517,14 @@ class TokenSetConverterService {
 		array $report,
 	): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
+
+		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
+		// set's navigation colour, which the bundles paint and the dark variant follows; the
+		// plugin's own name stays, so the next download carries it back.
+		if (isset($declarations['--thematiq-shell-menu']) === true && isset($declarations['--nldesign-color-nav-background']) === false) {
+			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
+		}
+
 		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
 		$counts = $this->countActions(report: $report);
 		$manifest = [];

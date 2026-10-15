@@ -82,9 +82,9 @@ A colour also keeps the text it was written in: when that is not its hex, the W3
 
 On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `fontFamily`, `fontWeights` as `fontWeight`, and `borderRadius`, `borderWidth`, `spacing`, `sizing` and `fontSizes` as `dimension`.
 
-## The eighteen roles of the shell
+## The roles of the shell
 
-`GET /apps/thematiq/api/shell-tokens` gives another product eighteen values ([Read the house style from another product](shell-tokens-api.md)). Each role reads these tokens of a set, in this order. The path holds in every format.
+`GET /apps/thematiq/api/shell-tokens` gives another product nineteen values ([Read the house style from another product](shell-tokens-api.md)). Each role reads these tokens of a set, in this order. The path holds in every format.
 
 | Role | CSS name | Path in a Figma file | Kind |
 |---|---|---|---|
@@ -106,6 +106,7 @@ On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `font
 | `radius` | `--nldesign-border-radius` | `nldesign.border.radius` | size |
 | `radius-lg` | `--nldesign-border-radius-large` | `nldesign.border.radius-large` | size |
 | `font-family` | `--nldesign-font-family` | `nldesign.font.family` | font stack |
+| `menu` | `--thematiq-shell-menu`, else `--nldesign-component-navigation-background-color`, else `--nldesign-color-nav-background` | `thematiq.shell.menu` | colour |
 
 A role whose token a set leaves out is derived, in this way:
 
@@ -126,7 +127,7 @@ A role whose token a set leaves out is derived, in this way:
 A file the plugin downloads uploads into thematiq, in all three of its formats. The test suite does this with real plugin files and compares the eighteen roles.
 
 - The plugin's `text` value sits at `thematiq.shell.text` (`--thematiq-shell-text`). Thematiq keeps that name and reads the `text` role from it.
-- The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps the token, so it is in the next download. It is not one of the eighteen roles of the endpoint.
+- The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps that name, so it is in the next download, and paints it on the app navigation column: an upload copies it to `--nldesign-color-nav-background` when the file names no navigation colour. The endpoint has `menu` as a role since 14 October 2026.
 - A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style: the light set gives the colours, the dark set the dark values.
 - The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq reads them as the dark values.
 - Dark values from a file are kept for the uploaded set and win over the dark colours thematiq would derive, in every dark variant it makes. The upload result says how many.

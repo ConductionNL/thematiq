@@ -225,6 +225,25 @@ final class OpenProjectSetFileTest extends TestCase {
 	}//end testWhatIsLeftOutIsNamed()
 
 	/**
+	 * Scenario: the plugin's menu colour paints the navigation column, and a set's own colour for it wins.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/menu-role/specs/menu-role/spec.md#requirement-the-main-menu-colour-is-a-shell-role
+	 */
+	public function testTheMenuColourBecomesTheNavigationColour(): void {
+		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#123456', 'menu' => '#20242a']];
+		$back = $this->upload(json: (string)json_encode($file));
+
+		$this->assertSame('#20242a', $back['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame('#20242a', $back['declarations']['--thematiq-shell-menu']);
+		$this->assertSame('#20242a', $this->roles(declarations: $back['declarations'])['menu']);
+
+		$file['vocabulary'] = ['color-nav-background' => '#ffffff'];
+		$this->assertSame('#ffffff', $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']);
+	}//end testTheMenuColourBecomesTheNavigationColour()
+
+	/**
 	 * Any content that is not a set file reaches the converter as it was.
 	 *
 	 * @return void
