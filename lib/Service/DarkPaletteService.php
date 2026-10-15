@@ -1565,7 +1565,10 @@ class DarkPaletteService {
 
 		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
 		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
-		$overrides = $this->parser->parseDarkBlock(css: $tokenCss);
+		// The dark values an uploaded file brought (dark-colours-from-a-file) win over the derived
+		// ones and are protected from repair, like a hand-authored dark block; the block wins over them.
+		$pins = (new DarkPins(store: $this->store, parser: $this->parser))->read(setId: $setId);
+		$overrides = array_merge($pins, $this->parser->parseDarkBlock(css: $tokenCss));
 
 		$merged = $this->withErrorLabel(
 			declarations: array_merge($derived, $overrides),
@@ -1806,6 +1809,7 @@ class DarkPaletteService {
 		}
 
 		$this->store->delete(name: 'css/tokens/dark/' . $setId . '.css');
+		(new DarkPins(store: $this->store, parser: $this->parser))->delete(setId: $setId);
 	}//end deleteDarkVariant()
 
 	/**

@@ -67,7 +67,7 @@ final class OpenProjectSetFileTest extends TestCase {
 	 *
 	 * @param string $json The file.
 	 *
-	 * @return array{declarations: array<string, string>, skipped: array<int, string>}
+	 * @return array{declarations: array<string, string>, skipped: array<int, string>, dark: array<string, string>}
 	 */
 	private function upload(string $json): array {
 		$appManager = $this->createMock(IAppManager::class);
@@ -83,7 +83,7 @@ final class OpenProjectSetFileTest extends TestCase {
 			}
 		}
 
-		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped];
+		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped, 'dark' => ($result['darkDeclarations'] ?? [])];
 	}//end upload()
 
 	/**
@@ -172,7 +172,16 @@ final class OpenProjectSetFileTest extends TestCase {
 			$this->assertSame(strtolower((string)$value), strtolower((string)$roles[$role]), $role);
 		}
 
-		$this->assertSame(['dark: dark-colours-not-read'], $back['skipped']);
+		$this->assertSame([], $back['skipped']);
+
+		// The dark block: every dark role under its name, and the dark vocabulary with the prefix.
+		foreach ($file['dark']['tokens'] as $role => $value) {
+			$this->assertSame($value, $back['dark'][OpenProjectSetFile::ROLE_TOKENS[$role]], 'dark ' . $role);
+		}
+
+		foreach (($file['dark']['vocabulary'] ?? []) as $key => $value) {
+			$this->assertSame($value, $back['dark']['--nldesign-' . $key], 'dark vocabulary ' . $key);
+		}
 	}//end testAPluginSetFileKeepsEveryRole()
 
 	/**
@@ -214,6 +223,25 @@ final class OpenProjectSetFileTest extends TestCase {
 		$this->assertFalse($reader->isSetFile(document: ['tokens' => []]), 'no id');
 		$this->assertFalse($reader->isSetFile(document: ['id' => 'x', 'tokens' => '#fff']), 'tokens not an object');
 	}//end testWhatIsLeftOutIsNamed()
+
+	/**
+	 * Scenario: the plugin's menu colour paints the navigation column, and a set's own colour for it wins.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/menu-role/specs/menu-role/spec.md#requirement-the-main-menu-colour-is-a-shell-role
+	 */
+	public function testTheMenuColourBecomesTheNavigationColour(): void {
+		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#123456', 'menu' => '#20242a']];
+		$back = $this->upload(json: (string)json_encode($file));
+
+		$this->assertSame('#20242a', $back['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame('#20242a', $back['declarations']['--thematiq-shell-menu']);
+		$this->assertSame('#20242a', $this->roles(declarations: $back['declarations'])['menu']);
+
+		$file['vocabulary'] = ['color-nav-background' => '#ffffff'];
+		$this->assertSame('#ffffff', $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']);
+	}//end testTheMenuColourBecomesTheNavigationColour()
 
 	/**
 	 * Any content that is not a set file reaches the converter as it was.
