@@ -60,7 +60,7 @@ final class ColourLiteralParserOklchTest extends TestCase {
 	 */
 	#[DataProvider('literals')]
 	public function testTheLiteralBecomesHex(string $value, string $expected): void {
-		self::assertSame($expected, (new ColourLiteralParser())->normalise(value: $value));
+		self::assertSame(expected: $expected, actual: (new ColourLiteralParser())->normalise(value: $value));
 	}//end testTheLiteralBecomesHex()
 
 	/**
@@ -70,7 +70,7 @@ final class ColourLiteralParserOklchTest extends TestCase {
 	 */
 	public function testAnUnreadableValueIsLeftAlone(): void {
 		$parser = new ColourLiteralParser();
-		self::assertNull($parser->normalise(value: 'oklch(bad 0 0)'));
-		self::assertNull($parser->normalise(value: 'oklch(from red l c h)'));
+		self::assertNull(actual: $parser->normalise(value: 'oklch(bad 0 0)'));
+		self::assertNull(actual: $parser->normalise(value: 'oklch(from red l c h)'));
 	}//end testAnUnreadableValueIsLeftAlone()
 }//end class
