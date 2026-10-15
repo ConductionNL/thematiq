@@ -319,7 +319,7 @@ class ColourLiteralParser {
 	 * Mirrors `oklabChannels()` in js/lib/tokenConverter.js: L takes a percentage (100% = 1),
 	 * chroma, a and b take one where 100% = 0.4, `none` is 0, and the maths is ColorSpaceConverter's.
 	 *
-	 * @param string             $space `oklch` or `oklab`.
+	 * @param string $space `oklch` or `oklab`.
 	 * @param array<int, string> $parts The arguments.
 	 *
 	 * @return array{0: float, 1: float, 2: float}|null The channels in [0, 255], or null when malformed.
