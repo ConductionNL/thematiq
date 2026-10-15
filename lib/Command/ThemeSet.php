@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Command;
 
 use OCA\Thematiq\Service\ActiveTokenSetService;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\TokenSetService;
 use Symfony\Component\Console\Command\Command;
@@ -97,7 +98,15 @@ class ThemeSet extends Command {
 		}
 
 		if ($current !== $target) {
-			$this->switchTo(target: $target, output: $output);
+			try {
+				$this->switchTo(target: $target, output: $output);
+			} catch (RestrictedSetNotConfirmedException $e) {
+				$output->writeln(
+					'<error>' . $target . ' is the house style of another organisation. An administrator first confirms in the '
+					. 'Thematiq admin settings that your organisation may use it. Nothing was changed.</error>'
+				);
+				return Command::FAILURE;
+			}
 		}
 
 		$this->reportCore(target: $target, syncCore: $syncCore, output: $output);

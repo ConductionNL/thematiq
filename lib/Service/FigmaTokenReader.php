@@ -93,13 +93,16 @@ class FigmaTokenReader {
 
 		$sets = new TokensStudioSets();
 		$studio = $sets->isSingleFile(document: $document);
+		$darkValues = new FileDarkValues();
+		$dark = $darkValues->pluginDark(document: $document);
 		if ($studio === true) {
+			$dark += $darkValues->fromTree(tree: $this->respelled(node: $sets->darkTree(document: $document), depth: 0));
 			$document = $sets->merged(document: $document, skipped: $skipped);
 		}
 
 		$own = (is_array($document['nldesign'] ?? null) === true && is_string($document['$extensions'][self::EXTENSION]['setId'] ?? null) === false);
 		if ($studio === false && $own === false) {
-			return $content;
+			return $darkValues->withDark(content: $content, document: $document, dark: $dark);
 		}
 
 		$document = $this->respelled(node: $document, depth: 0);
@@ -107,7 +110,7 @@ class FigmaTokenReader {
 			$document = $this->named(document: $document, skipped: $skipped);
 		}
 
-		return (string)json_encode((object)$document, JSON_UNESCAPED_SLASHES);
+		return $darkValues->withDark(content: (string)json_encode((object)$document, JSON_UNESCAPED_SLASHES), document: $document, dark: $dark);
 	}//end normalise()
 
 	/**

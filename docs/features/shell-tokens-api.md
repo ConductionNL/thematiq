@@ -4,7 +4,7 @@ sidebar_position: 31
 
 # Read the house style from another product
 
-You run another product next to Nextcloud and want it to look the same. Read the active house style here: eighteen values and a logo cover a header, buttons, links and panels.
+You run another product next to Nextcloud and want it to look the same. Read the active house style here: nineteen values and a logo cover a header, buttons, links and panels.
 
 The OpenProject plugin `openproject-thematiq` reads this endpoint.
 
@@ -51,10 +51,10 @@ You need no account and no session. The answer holds theme values only, the same
 
 - `id` and `name` are the token set the instance wears. A set for one group, or a set in preview, is never answered.
 - `revision` changes when any value below it changes, and only then.
-- `tokens` always holds all eighteen roles. None is ever `null` or empty.
+- `tokens` always holds all nineteen roles. None is ever `null` or empty. `menu` was added on 14 October 2026; a reader that knows only the first eighteen can ignore it.
 - `logo.url` and `logo.inverse_url` are absolute URLs, or `null` when there is no such logo.
 
-## The eighteen roles
+## The nineteen roles
 
 | Role | Use it for |
 |---|---|
@@ -76,6 +76,7 @@ You need no account and no session. The answer holds theme values only, the same
 | `radius` | Corners of buttons, chips and cards |
 | `radius-lg` | Corners of inputs, menus and dialogs |
 | `font-family` | The font stack |
+| `menu` | The background of the main menu: the app navigation column in Nextcloud. White unless the set colours it |
 
 The colours are CSS colours, the two radii are CSS lengths, and `font-family` is a CSS font stack. The font files stay on Nextcloud: load the family yourself, or let the stack fall through to a system font.
 
@@ -101,3 +102,17 @@ Read the document when your product starts, keep it, and ask again every few min
 The path is new in this release. An instance that is updated the normal way answers on it at once. When the code was replaced without an update, Nextcloud keeps its route list for up to an hour and answers `404` until then. Restart the PHP workers to make it answer at once.
 
 Next, request the document from your test instance and map the roles onto your product's own theme settings.
+
+## The shell sizes
+
+The OpenProject plugin draws its shell to a written canon of sizes, measured from the Nextcloud boards. `npm run check:shell-canon -- --url <your instance> --user <admin> --password <password>` measures thematiq's shell against the same canon on the Files page, and CI does the same with the Zuiddrecht set. Measured on 14 October 2026:
+
+| Part | Canon | Thematiq |
+|---|---|---|
+| Top bar height | 68 px | 68 px |
+| Navigation width | 264 px | 264 px |
+| Navigation item height | 42 px | 42 px |
+| Table header row height | 44 px | 44 px |
+| Primary button height | 40 px | 48 px |
+| Table row height | 48 px | 44 px |
+| Body text | 14 px | 15 px |

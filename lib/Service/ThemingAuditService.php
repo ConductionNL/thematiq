@@ -107,6 +107,10 @@ class ThemingAuditService {
 	 * (a planned switch applied or failed by the background job; its entries
 	 * pass `actor: system` in the context, because cron runs in CLI).
 	 *
+	 * `restricted_set_confirmed` and `restricted_set_confirmation_withdrawn`
+	 * added by change `token-set-licence-gate` (an administrator states that
+	 * this organisation may use a restricted token set, or takes that back).
+	 *
 	 * @var array<int, string>
 	 */
 	private const VOCABULARY = [
@@ -126,6 +130,8 @@ class ThemingAuditService {
 		'custom_source_updated',
 		'own_token_changed',
 		'token_deprecation_changed',
+		'restricted_set_confirmed',
+		'restricted_set_confirmation_withdrawn',
 	];
 
 	/**

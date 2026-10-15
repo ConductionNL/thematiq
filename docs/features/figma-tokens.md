@@ -42,7 +42,6 @@ The limits of every upload hold here too: 512 KB, no value that could leave its 
 | Reason | Meaning |
 |---|---|
 | `token-set-disabled` | The file's only theme has this token set switched off. |
-| `dark-colours-not-read` | The token set holds the dark colours of a light and dark file. Thematiq makes the dark variant of a set itself. |
 | `alias-cycle` | The token refers to itself through other tokens. |
 | `value-not-a-css-value` | The value is a sum over references (`{a} * 2`), a reference to a token the file does not hold, a boolean, or empty. |
 | `unmapped` | The path is not one thematiq knows. See the paths below. |
@@ -79,11 +78,13 @@ The path is the same in all four formats.
 | Anything else, such as a shadow, a gradient or `50%` | in `$extensions.nl.conduction.thematiq.cssOnly`, by CSS name | the same | `other`, the CSS text |
 | Reference to another token | `{path}` | `{path}` | `{path}` |
 
+A colour also keeps the text it was written in: when that is not its hex, the W3C and Figma variables files carry it in `$extensions["nl.conduction.thematiq"].css`. An upload uses that text, or the plugin's own copy in `$extensions["nl.conduction.openproject-thematiq"].css`, while it still names the same colour as the object. Only names, hex, `rgb()`, `hsl()` and `hwb()` count; a `lab()`, `lch()` or `color()` value comes back as its sRGB hex.
+
 On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `fontFamily`, `fontWeights` as `fontWeight`, and `borderRadius`, `borderWidth`, `spacing`, `sizing` and `fontSizes` as `dimension`.
 
-## The eighteen roles of the shell
+## The roles of the shell
 
-`GET /apps/thematiq/api/shell-tokens` gives another product eighteen values ([Read the house style from another product](shell-tokens-api.md)). Each role reads these tokens of a set, in this order. The path holds in every format.
+`GET /apps/thematiq/api/shell-tokens` gives another product nineteen values ([Read the house style from another product](shell-tokens-api.md)). Each role reads these tokens of a set, in this order. The path holds in every format.
 
 | Role | CSS name | Path in a Figma file | Kind |
 |---|---|---|---|
@@ -105,6 +106,7 @@ On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `font
 | `radius` | `--nldesign-border-radius` | `nldesign.border.radius` | size |
 | `radius-lg` | `--nldesign-border-radius-large` | `nldesign.border.radius-large` | size |
 | `font-family` | `--nldesign-font-family` | `nldesign.font.family` | font stack |
+| `menu` | `--thematiq-shell-menu`, else `--nldesign-component-navigation-background-color`, else `--nldesign-color-nav-background` | `thematiq.shell.menu` | colour |
 
 A role whose token a set leaves out is derived, in this way:
 
@@ -125,10 +127,11 @@ A role whose token a set leaves out is derived, in this way:
 A file the plugin downloads uploads into thematiq, in all three of its formats. The test suite does this with real plugin files and compares the eighteen roles.
 
 - The plugin's `text` value sits at `thematiq.shell.text` (`--thematiq-shell-text`). Thematiq keeps that name and reads the `text` role from it.
-- The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps the token, so it is in the next download. It is not one of the eighteen roles of the endpoint.
-- A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style, takes the light set and names the dark one as left out.
-- The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq does not read them and does not write them. It makes the dark variant of a set itself.
-- The plugin keeps the original text of a colour in its own extension. Thematiq reads the colour object, so the colour is the same and the notation may differ.
+- The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps that name, so it is in the next download, and paints it on the app navigation column: an upload copies it to `--nldesign-color-nav-background` when the file names no navigation colour. The endpoint has `menu` as a role since 14 October 2026.
+- A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style: the light set gives the colours, the dark set the dark values.
+- The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq reads them as the dark values.
+- Dark values from a file are kept for the uploaded set and win over the dark colours thematiq would derive, in every dark variant it makes. The upload result says how many.
+- The plugin keeps the original text of a colour in its own extension. Thematiq reads it while it names the same colour, so the notation comes back too.
 
 ## What a round trip loses
 

@@ -41,6 +41,8 @@ script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
+script('thematiq', 'admin-set-licence');
+script('thematiq', 'admin-workspace-icons');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -100,6 +102,16 @@ if ($_['mockUi'] === true) {
 
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
+		<!-- Search the list by name (openspec/changes/token-set-picker-search). admin.js
+		     hides the sets that do not match; the selected set always stays in the list. -->
+		<div class="nldesign-token-set-search">
+			<input type="search" id="nldesign-token-set-search" class="nldesign-token-set-search__input"
+				   aria-label="<?php p($l->t('Search the design token sets')); ?>"
+				   aria-controls="nldesign-token-set-select"
+				   placeholder="<?php p($l->t('Search by name')); ?>"
+				   autocomplete="off">
+			<span id="nldesign-token-set-search-status" class="nldesign-token-set-search__status" role="status" aria-live="polite"></span>
+		</div>
 		<div class="nldesign-token-set-row">
 			<select id="nldesign-token-set-select" name="nldesign-token-set">
 				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
@@ -123,6 +135,10 @@ if ($_['mockUi'] === true) {
 		     set picked here would silently not last. admin.js fills and shows this
 		     while one runs (openspec/specs/scheduled-switch/spec.md). -->
 		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
+		<!-- The selected set is another organisation's house style and nobody
+		     confirmed it yet (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+		     Filled by js/admin-set-licence.js. -->
+		<p class="settings-hint nldesign-set-licence-hint" id="nldesign-set-licence-hint" role="status" hidden></p>
 		<!-- What can be done with the selected set: the buttons act on it, the
 		     links read it. A row of their own, so they no longer wrap into the
 		     select's line at arbitrary points. -->
@@ -153,6 +169,16 @@ if ($_['mockUi'] === true) {
 				<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token reference')); ?></a>
 			</span>
 		</div>
+	</div>
+
+	<!-- House styles whose licence limits their use to their owner: the warning,
+	     the licence text and the confirmation per set
+	     (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md). Filled by js/admin-set-licence.js. -->
+	<div class="nldesign-set-licences" id="nldesign-set-licences" hidden>
+		<h3><?php p($l->t('House styles of other organisations')); ?></h3>
+		<div class="nldesign-set-licences-awaiting" id="nldesign-set-licences-awaiting" role="alert" hidden></div>
+		<p class="settings-hint"><?php p($l->t('These house styles belong to the organisation they are named after. You can apply one after you confirm that you may use it.')); ?></p>
+		<div id="nldesign-set-licences-list"></div>
 	</div>
 
 	<!-- Planned token set switches (openspec/specs/scheduled-switch).
@@ -696,6 +722,17 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Save app theming')); ?>
 		</button>
 		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).
+	     Filled by js/admin-workspace-icons.js. -->
+	<div class="nldesign-workspace-icons" id="nldesign-workspace-icons" style="margin-top:2em">
+		<h3><?php p($l->t('Mobile logo and home screen icon')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.')); ?>
+		</p>
+		<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
+		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos

@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCA\Thematiq\Service\ScheduledSwitchService;
@@ -95,6 +96,9 @@ class ScheduledSwitchController extends Controller {
 
 		try {
 			$entry = $this->service->create(tokenSet: $tokenSet, startAt: $startAt, endAt: $endAt, createdBy: $createdBy);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			// The same answer as every other path that applies a set.
+			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
 		} catch (ScheduledSwitchException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], 400);
 		}
