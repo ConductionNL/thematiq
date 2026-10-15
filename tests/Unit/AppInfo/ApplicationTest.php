@@ -17,6 +17,7 @@ use ErrorException;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
+use OCA\Thematiq\Listener\WorkspaceIconListener;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
@@ -90,6 +91,9 @@ class ApplicationTest extends TestCase {
 
 		$this->assertContains([BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class], $listeners);
 		$this->assertContains([BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class], $listeners);
+		// The workspace's mobile logo and touch icon, on every page and the login page.
+		$this->assertContains([BeforeTemplateRenderedEvent::class, WorkspaceIconListener::class], $listeners);
+		$this->assertContains([BeforeLoginTemplateRenderedEvent::class, WorkspaceIconListener::class], $listeners);
 	}//end testRegisterWithoutVendorRaisesNoWarning()
 
 	/**
