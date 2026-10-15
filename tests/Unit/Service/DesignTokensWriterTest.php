@@ -164,7 +164,8 @@ final class DesignTokensWriterTest extends TestCase {
 		$result = (new DesignTokensMapper())->map(document: $this->write($colours));
 
 		$this->assertSame([], $result['errors']);
-		$this->assertSame(['--nldesign-a-b' => '#000080', '--nldesign-a-c' => '#15427380', '--nldesign-a-d' => '#336699', '--nldesign-a-e' => '#856caa', '--nldesign-a-f' => '#8849b8', '--nldesign-a-g' => '#3373b3'], $result['declarations']);
+		// The sRGB notations come back as they were written (colour-notation-kept); lab() and display-p3 as sRGB hex.
+		$this->assertSame(['--nldesign-a-b' => 'navy', '--nldesign-a-c' => 'rgb(21 66 115 / 50%)', '--nldesign-a-d' => 'hsl(210, 50%, 40%)', '--nldesign-a-e' => '#856caa', '--nldesign-a-f' => '#8849b8', '--nldesign-a-g' => 'hwb(210 20% 30%)'], $result['declarations']);
 	}//end testEveryColourObjectImports()
 
 	/**

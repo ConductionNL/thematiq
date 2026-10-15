@@ -42,6 +42,7 @@ script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
+script('thematiq', 'admin-workspace-icons');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -101,6 +102,16 @@ if ($_['mockUi'] === true) {
 
 	<div class="nldesign-token-set-selector">
 		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
+		<!-- Search the list by name (openspec/changes/token-set-picker-search). admin.js
+		     hides the sets that do not match; the selected set always stays in the list. -->
+		<div class="nldesign-token-set-search">
+			<input type="search" id="nldesign-token-set-search" class="nldesign-token-set-search__input"
+				   aria-label="<?php p($l->t('Search the design token sets')); ?>"
+				   aria-controls="nldesign-token-set-select"
+				   placeholder="<?php p($l->t('Search by name')); ?>"
+				   autocomplete="off">
+			<span id="nldesign-token-set-search-status" class="nldesign-token-set-search__status" role="status" aria-live="polite"></span>
+		</div>
 		<div class="nldesign-token-set-row">
 			<select id="nldesign-token-set-select" name="nldesign-token-set">
 				<?php foreach ($_['tokenSets'] as $tokenSet): ?>
@@ -711,6 +722,17 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Save app theming')); ?>
 		</button>
 		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).
+	     Filled by js/admin-workspace-icons.js. -->
+	<div class="nldesign-workspace-icons" id="nldesign-workspace-icons" style="margin-top:2em">
+		<h3><?php p($l->t('Mobile logo and home screen icon')); ?></h3>
+		<p class="settings-hint">
+			<?php p($l->t('The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.')); ?>
+		</p>
+		<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
+		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos

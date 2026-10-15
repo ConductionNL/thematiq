@@ -84,6 +84,14 @@ class DesignTokensWriter {
 		$document = ['$description' => $setName];
 		foreach ($typed as $name => $token) {
 			$token['$extensions'] = [self::EXTENSION => ['cssVariable' => $name]];
+			// A colour keeps the text it was written in when that is not its hex, so an upload
+			// gives back `rgb(…)` or `hsl(…)` as it was, not only the same colour.
+			$text = trim((string)$declarations[$name]);
+			$hex = strtolower((string)($token['$value']['hex'] ?? ''));
+			if (($token['$type'] ?? null) === 'color' && is_array($token['$value']) === true && strtolower($text) !== $hex) {
+				$token['$extensions'][self::EXTENSION]['css'] = $text;
+			}
+
 			$token = $this->withDeprecation(token: $token, record: ($deprecations[$name] ?? null));
 			$this->place(document: $document, path: $paths[$name], token: $token);
 		}
