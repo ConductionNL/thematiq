@@ -60,3 +60,12 @@ See the dedicated pages for full details:
 The admin settings panel is built with vanilla JavaScript and PHP templates (no Vue.js or webpack build step). This keeps the admin UI lightweight and avoids frontend build dependencies.
 
 Settings are stored in Nextcloud's `IConfig` system and take effect immediately without requiring a page reload for the CSS changes.
+
+## Mobile logo and home screen icon
+
+Under **Mobile logo and home screen icon** you set two images for the whole workspace:
+
+- **Mobile logo.** The header shows it on screens narrower than 1024 pixels, where Nextcloud's header goes narrow. PNG, JPEG, WebP or SVG, up to 1 MB. A brand per app keeps its own small logo.
+- **Home screen icon.** A phone shows it when someone adds the workspace to its home screen. A square PNG of at least 120 by 120 pixels; 180 by 180 is best.
+
+Without them Nextcloud uses its logo and its favicon. The favicon in the browser tab does not change. An Android home screen keeps Nextcloud's icon: Nextcloud writes that from its favicon, and thematiq cannot change it.

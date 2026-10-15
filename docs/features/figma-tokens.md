@@ -79,6 +79,8 @@ The path is the same in all four formats.
 | Anything else, such as a shadow, a gradient or `50%` | in `$extensions.nl.conduction.thematiq.cssOnly`, by CSS name | the same | `other`, the CSS text |
 | Reference to another token | `{path}` | `{path}` | `{path}` |
 
+A colour also keeps the text it was written in: when that is not its hex, the W3C and Figma variables files carry it in `$extensions["nl.conduction.thematiq"].css`. An upload uses that text, or the plugin's own copy in `$extensions["nl.conduction.openproject-thematiq"].css`, while it still names the same colour as the object. Only names, hex, `rgb()`, `hsl()` and `hwb()` count; a `lab()`, `lch()` or `color()` value comes back as its sRGB hex.
+
 On upload, a Tokens Studio type is read as its W3C type: `fontFamilies` as `fontFamily`, `fontWeights` as `fontWeight`, and `borderRadius`, `borderWidth`, `spacing`, `sizing` and `fontSizes` as `dimension`.
 
 ## The eighteen roles of the shell
@@ -128,7 +130,7 @@ A file the plugin downloads uploads into thematiq, in all three of its formats. 
 - The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps the token, so it is in the next download. It is not one of the eighteen roles of the endpoint.
 - A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style, takes the light set and names the dark one as left out.
 - The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq does not read them and does not write them. It makes the dark variant of a set itself.
-- The plugin keeps the original text of a colour in its own extension. Thematiq reads the colour object, so the colour is the same and the notation may differ.
+- The plugin keeps the original text of a colour in its own extension. Thematiq reads it while it names the same colour, so the notation comes back too.
 
 ## What a round trip loses
 
@@ -141,3 +143,7 @@ Every shipped set is downloaded in each format, uploaded again and compared, tok
 - **All formats.** A colour that refers to another colour is stored as the colour it points at. A colour outside sRGB is stored as its nearest sRGB colour, and the upload result says which.
 
 Comments, the order of the declarations and the set's logo are not part of any of these files.
+
+## The plugin's set file
+
+Besides the Figma formats, thematiq writes and reads the plugin's own set file (`GET /apps/thematiq/settings/tokensets/{id}/set-file`, `thematiq-{set}.json`). Each role is stored under the CSS name in the table of the eighteen roles above, `menu` as `--thematiq-shell-menu`, and each vocabulary key with `--nldesign-` in front. See [Import and export](import-export.md).

@@ -1149,7 +1149,21 @@
         "Go to the confirmation": "Go to the confirmation",
         "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.": "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.",
         "Confirm first that your organisation may use the house style {set}.": "Confirm first that your organisation may use the house style {set}.",
-        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied."
+        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.",
+        "OpenProject plugin set file": "OpenProject plugin set file",
+        "Mobile logo and home screen icon": "Mobile logo and home screen icon",
+        "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.": "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.",
+        "Mobile logo": "Mobile logo",
+        "Home screen icon": "Home screen icon",
+        "PNG, JPEG, WebP or SVG, up to 1 MB.": "PNG, JPEG, WebP or SVG, up to 1 MB.",
+        "A square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "A square PNG of at least 120 by 120 pixels; 180 by 180 is best.",
+        "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.",
+        "The image is larger than 1 MB.": "The image is larger than 1 MB.",
+        "This kind of image is not kept.": "This kind of image is not kept.",
+        "Not set: Nextcloud's own is used.": "Not set: Nextcloud's own is used.",
+        "Search the design token sets": "Search the design token sets",
+        "Search by name": "Search by name",
+        "{shown} of {total} sets match": "{shown} of {total} sets match"
     },
     "plurals": {}
 }

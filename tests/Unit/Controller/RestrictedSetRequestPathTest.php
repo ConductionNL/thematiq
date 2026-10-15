@@ -15,35 +15,64 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OC\AppFramework\Http\Dispatcher;
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Controller\AppBrandController;
 use OCA\Thematiq\Controller\PreviewController;
 use OCA\Thematiq\Controller\ScheduledSwitchController;
 use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Controller\TokenSetLicenceController;
+use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Service\AssistantMarkService;
+use OCA\Thematiq\Service\BrandingPackageService;
+use OCA\Thematiq\Service\BundleExtraSections;
+use OCA\Thematiq\Service\ColourFunctionEvaluator;
 use OCA\Thematiq\Service\ComplianceReportService;
+use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigSourceService;
+use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\CustomTokenSetService;
+use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DenhaagContrastPairs;
+use OCA\Thematiq\Service\DeprecationRecords;
+use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
+use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\OverridesCssBuilder;
+use OCA\Thematiq\Service\OwnTokenService;
 use OCA\Thematiq\Service\RestrictedSetGate;
+use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
+use OCA\Thematiq\Service\SettableContrastPairs;
+use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\ThemePreviewService;
+use OCA\Thematiq\Service\ThemeVersionService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Service\TokenDeprecationService;
+use OCA\Thematiq\Service\TokenLifecycleBundleSection;
+use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
 use OCA\Thematiq\Service\TokenSetLicenceService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCA\Thematiq\Tests\Unit\Support\RestrictedSetFixture;
 use OCP\App\IAppManager;
@@ -102,6 +131,41 @@ use ReflectionProperty;
 #[UsesClass(GroupThemingValidationException::class)]
 #[UsesClass(AppBrandException::class)]
 #[UsesClass(Application::class)]
+#[UsesClass(Capabilities::class)]
+#[UsesClass(ConfigSourceLockMiddleware::class)]
+#[UsesClass(AppBrandLogoStore::class)]
+#[UsesClass(AppThemingService::class)]
+#[UsesClass(AssistantMarkService::class)]
+#[UsesClass(BrandingPackageService::class)]
+#[UsesClass(BundleExtraSections::class)]
+#[UsesClass(ColourFunctionEvaluator::class)]
+#[UsesClass(ConfigBundleService::class)]
+#[UsesClass(ConfigSourceService::class)]
+#[UsesClass(CustomOverridesService::class)]
+#[UsesClass(CustomTokenSetService::class)]
+#[UsesClass(DarkPaletteService::class)]
+#[UsesClass(DenhaagContrastPairs::class)]
+#[UsesClass(DeprecationRecords::class)]
+#[UsesClass(DesignSystemService::class)]
+#[UsesClass(DesignTokensMapper::class)]
+#[UsesClass(DocumentAssetService::class)]
+#[UsesClass(DtcgValueChecker::class)]
+#[UsesClass(EmailThemingService::class)]
+#[UsesClass(FontService::class)]
+#[UsesClass(OverridesCssBuilder::class)]
+#[UsesClass(OwnTokenService::class)]
+#[UsesClass(AppDataRuntimeFileStore::class)]
+#[UsesClass(RuntimeFileLocator::class)]
+#[UsesClass(SettableContrastPairs::class)]
+#[UsesClass(ShippedTokenSetAuditService::class)]
+#[UsesClass(ThemeVersionService::class)]
+#[UsesClass(ThemingAuditService::class)]
+#[UsesClass(TokenDeprecationService::class)]
+#[UsesClass(TokenLifecycleBundleSection::class)]
+#[UsesClass(TokenSetConverterService::class)]
+#[UsesClass(TokenSetPreviewService::class)]
+#[UsesClass(TokenSetVocabularyAuditService::class)]
+#[UsesClass(UpstreamFreshnessService::class)]
 class RestrictedSetRequestPathTest extends TestCase {
 
 	use RestrictedSetFixture;

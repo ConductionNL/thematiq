@@ -1150,7 +1150,21 @@ OC.L10N.register(
         "Go to the confirmation": "Naar de bevestiging",
         "Confirm first that your organisation may use this house style. You do that under House styles of other organisations.": "Bevestig eerst dat je organisatie deze huisstijl mag gebruiken. Dat doe je onder Huisstijlen van andere organisaties.",
         "Confirm first that your organisation may use the house style {set}.": "Bevestig eerst dat je organisatie de huisstijl {set} mag gebruiken.",
-        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Niemand heeft bevestigd dat je organisatie de huisstijl {set} mag gebruiken. De wissel is daarom niet toegepast."
+        "Nobody confirmed that your organisation may use the house style {set}, so the switch was not applied.": "Niemand heeft bevestigd dat je organisatie de huisstijl {set} mag gebruiken. De wissel is daarom niet toegepast.",
+        "OpenProject plugin set file": "Setbestand voor de OpenProject-plugin",
+        "Mobile logo and home screen icon": "Mobiel logo en icoon voor het beginscherm",
+        "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.": "De kopbalk toont het mobiele logo op schermen smaller dan 1024 pixels. Een telefoon toont het icoon voor het beginscherm als iemand de werkplek aan het beginscherm toevoegt. Zonder deze afbeeldingen gebruikt Nextcloud het logo en het favicon. Het favicon in het browsertabblad verandert niet.",
+        "Mobile logo": "Mobiel logo",
+        "Home screen icon": "Icoon voor het beginscherm",
+        "PNG, JPEG, WebP or SVG, up to 1 MB.": "PNG, JPEG, WebP of SVG, tot 1 MB.",
+        "A square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "Een vierkante PNG van minstens 120 bij 120 pixels; 180 bij 180 is het best.",
+        "Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.": "Upload een vierkante PNG van minstens 120 bij 120 pixels; 180 bij 180 is het best.",
+        "The image is larger than 1 MB.": "De afbeelding is groter dan 1 MB.",
+        "This kind of image is not kept.": "Dit soort afbeelding wordt niet bewaard.",
+        "Not set: Nextcloud's own is used.": "Niet ingesteld: Nextcloud gebruikt de eigen afbeelding.",
+        "Search the design token sets": "Zoek in de design token sets",
+        "Search by name": "Zoek op naam",
+        "{shown} of {total} sets match": "{shown} van {total} sets komen overeen"
     },
     "nplurals=2; plural=(n != 1);"
 )
