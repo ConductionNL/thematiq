@@ -28,7 +28,8 @@ const RESTING =
 function rulesOf(css) {
 	const plain = css.replace(/\/\*[\s\S]*?\*\//g, '')
 	return [...plain.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
-		selector: m[1].trim(),
+		// Prettier wraps a long selector over two lines; compare it as one.
+		selector: m[1].trim().replace(/\s+/g, ' '),
 		body: m[2],
 	}))
 }
