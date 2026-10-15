@@ -13,7 +13,7 @@
  * place of use. `scripts/mapping/conduction-token-reach.json` holds that
  * measurement, one entry per token, and this file keeps it true.
  *
- * @spec openspec/changes/conduction-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
