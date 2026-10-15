@@ -123,6 +123,12 @@ return [
 		['name' => 'tokenSource#update', 'url' => '/settings/tokensets/sources/{sourceId}', 'verb' => 'POST'],
 		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
 		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
+		// A set's licence, and the confirmation an administrator gives before a
+		// restricted set can be applied (token-set-licences), admin-only.
+		['name' => 'tokenSetLicence#index', 'url' => '/settings/tokensets/licences', 'verb' => 'GET'],
+		['name' => 'tokenSetLicence#show', 'url' => '/settings/tokensets/{id}/licence', 'verb' => 'GET'],
+		['name' => 'tokenSetLicence#confirm', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'POST'],
+		['name' => 'tokenSetLicence#withdraw', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'DELETE'],
 		// Any token set as the OpenProject plugin's set file (openproject-set-file), admin-only.
 		['name' => 'openProjectSetFile#export', 'url' => '/settings/tokensets/{id}/set-file', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],

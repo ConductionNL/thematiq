@@ -23,12 +23,18 @@ test('the token set list can be searched by name', async ({ browser }) => {
 	const selected = await select.inputValue()
 
 	await search.fill('rijks')
-	const shown = await select.locator('option:not([hidden])').evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))
+	const shown = await select
+		.locator('option:not([hidden])')
+		.evaluateAll((options) => options.map((o) => (o as HTMLOptionElement).value))
 	expect(shown).toContain('rijkshuisstijl')
 	expect(shown).toContain(selected)
 	expect(shown.length).toBeLessThan(total)
-	await expect(page.locator('#nldesign-token-set-search-status')).toContainText(`of ${total}`)
-	expect(await select.inputValue(), 'searching changes no selection').toBe(selected)
+	await expect(page.locator('#nldesign-token-set-search-status')).toContainText(
+		`of ${total}`,
+	)
+	expect(await select.inputValue(), 'searching changes no selection').toBe(
+		selected,
+	)
 
 	await search.press('Escape')
 	await expect(search).toHaveValue('')
