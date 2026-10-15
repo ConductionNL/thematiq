@@ -53,7 +53,7 @@ final class ColourLiteralParserOklchTest extends TestCase {
 	/**
 	 * Each literal becomes the same hex the JavaScript converter writes.
 	 *
-	 * @param string $value    The literal.
+	 * @param string $value The literal.
 	 * @param string $expected The normalised colour.
 	 *
 	 * @return void
