@@ -28,6 +28,7 @@
 			"background_color": "#F5F6F7",
 			"logo": "img/logos/rijkshuisstijl.svg"
 		},
+		"note": "Converted from @rijkshuisstijl-community/design-tokens 18.0.1 without hand edits. In dark mode the error colour #e72e2e on the page background #191c1f measures 3.93:1, under the 4.5:1 that text needs. Reported, not adjusted: the colour is the organisation's own.",
 		"licence": {
 			"id": "LicenseRef-rijkshuisstijl-house-style",
 			"package": "@rijkshuisstijl-community/design-tokens",
