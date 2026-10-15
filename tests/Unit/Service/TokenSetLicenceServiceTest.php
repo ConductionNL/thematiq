@@ -221,8 +221,8 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->appValues['group_token_sets'] = '[{"group":"ruimte","tokenSet":"owned-two"}]';
 		$this->assertSame(
 			[
-				['tokenSet' => 'owned', 'appliedIn' => [['kind' => 'instance', 'id' => '']]],
-				['tokenSet' => 'owned-two', 'appliedIn' => [['kind' => 'group', 'id' => 'ruimte']]],
+				['tokenSet' => 'owned', 'appliedIn' => [['kind' => 'instance', 'id' => '']], 'since' => ''],
+				['tokenSet' => 'owned-two', 'appliedIn' => [['kind' => 'group', 'id' => 'ruimte']], 'since' => ''],
 			],
 			$this->service->awaitingConfirmation()
 		);

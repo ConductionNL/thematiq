@@ -27,6 +27,13 @@
 			"primary_color": "#154273",
 			"background_color": "#F5F6F7",
 			"logo": "img/logos/rijkshuisstijl.svg"
+		},
+		"licence": {
+			"id": "LicenseRef-rijkshuisstijl-house-style",
+			"package": "@rijkshuisstijl-community/design-tokens",
+			"version": "",
+			"holder": "Rijksoverheid",
+			"restricted": true
 		}
 	},
 	{
@@ -37,6 +44,13 @@
 			"primary_color": "#004699",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/amsterdam.svg"
+		},
+		"licence": {
+			"id": "LicenseRef-amsterdam-house-style",
+			"package": "@amsterdam/design-system-tokens",
+			"version": "",
+			"holder": "Gemeente Amsterdam",
+			"restricted": true
 		}
 	},
 	{
@@ -48,7 +62,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-bodegraven-reeuwijk-house-style",
+			"package": "@nl-design-system-unstable/bodegraven-reeuwijk-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Bodegraven Reeuwijk",
+			"restricted": true
+		}
 	},
 	{
 		"id": "borne",
@@ -67,6 +88,13 @@
 			"licenceHolder": "Monotype (Fonts.com web edition)",
 			"action": "upload",
 			"note": "`W01` is a Monotype web-font edition, not the retired Apache-2.0 Droid Sans, and no libre release of either exists on the @fontsource registry (checked 2026-10-04). Shipping a different file under this name would misstate what it is, so an administrator uploads the licensed one."
+		},
+		"licence": {
+			"id": "LicenseRef-borne-house-style",
+			"package": "@nl-design-system-unstable/borne-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Borne",
+			"restricted": true
 		}
 	},
 	{
@@ -78,7 +106,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-buren-house-style",
+			"package": "@nl-design-system-unstable/buren-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Buren",
+			"restricted": true
+		}
 	},
 	{
 		"id": "demodam",
@@ -89,7 +124,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-demodam-house-style",
+			"package": "@nl-design-system-unstable/demodam-design-tokens",
+			"version": "1.0.0",
+			"holder": "Demodam",
+			"restricted": true
+		}
 	},
 	{
 		"id": "dinkelland",
@@ -100,7 +142,14 @@
 			"background_color": "#ffffff"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-dinkelland-house-style",
+			"package": "@nl-design-system-unstable/dinkelland-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Dinkelland",
+			"restricted": true
+		}
 	},
 	{
 		"id": "drechterland",
@@ -112,7 +161,14 @@
 			"logo": "img/logos/drechterland.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-drechterland-house-style",
+			"package": "@nl-design-system-unstable/drechterland-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Drechterland",
+			"restricted": true
+		}
 	},
 	{
 		"id": "duiven",
@@ -123,7 +179,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-duiven-house-style",
+			"package": "@nl-design-system-unstable/duiven-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Duiven",
+			"restricted": true
+		}
 	},
 	{
 		"id": "duo",
@@ -142,6 +205,13 @@
 			"licenceHolder": "Rijksoverheid",
 			"action": "upload",
 			"note": "The Dutch State's own typeface, licensed for rijksoverheid use only. Thematiq self-hosts Fira Sans as its open stand-in, which is what this set renders until an entitled administrator uploads the real one."
+		},
+		"licence": {
+			"id": "LicenseRef-duo-house-style",
+			"package": "@nl-design-system-unstable/duo-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Amsterdam",
+			"restricted": true
 		}
 	},
 	{
@@ -153,7 +223,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-enkhuizen-house-style",
+			"package": "@nl-design-system-unstable/enkhuizen-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Enkhuizen",
+			"restricted": true
+		}
 	},
 	{
 		"id": "epe",
@@ -166,7 +243,14 @@
 			"logo_dark": "img/logos/epe-dark.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.3"
+		"upstreamVersion": "1.0.3",
+		"licence": {
+			"id": "LicenseRef-epe-house-style",
+			"package": "@nl-design-system-unstable/epe-design-tokens",
+			"version": "1.0.3",
+			"holder": "Gemeente Epe",
+			"restricted": true
+		}
 	},
 	{
 		"id": "groningen",
@@ -177,7 +261,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "4.0.0"
+		"upstreamVersion": "4.0.0",
+		"licence": {
+			"id": "LicenseRef-groningen-house-style",
+			"package": "@nl-design-system-unstable/groningen-design-tokens",
+			"version": "4.0.0",
+			"holder": "Gemeente Groningen",
+			"restricted": true
+		}
 	},
 	{
 		"id": "haarlem",
@@ -196,6 +287,13 @@
 			"licenceHolder": "Mostardesign",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-haarlem-house-style",
+			"package": "@nl-design-system-unstable/haarlem-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Haarlem",
+			"restricted": true
 		}
 	},
 	{
@@ -215,6 +313,13 @@
 			"licenceHolder": "Microsoft",
 			"action": "upload",
 			"note": "Not redistributable. It is installed with Windows and with Microsoft Office, so it renders on those machines and nowhere else; an administrator uploads it for the rest."
+		},
+		"licence": {
+			"id": "LicenseRef-haarlemmermeer-house-style",
+			"package": "@nl-design-system-unstable/haarlemmermeer-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Haarlemmermeer",
+			"restricted": true
 		}
 	},
 	{
@@ -227,7 +332,14 @@
 			"logo": "img/logos/hoorn.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-hoorn-house-style",
+			"package": "@nl-design-system-unstable/hoorn-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Hoorn",
+			"restricted": true
+		}
 	},
 	{
 		"id": "horstaandemaas",
@@ -246,6 +358,13 @@
 			"licenceHolder": "Monotype / Linotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-horstaandemaas-house-style",
+			"package": "@nl-design-system-unstable/horstaandemaas-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Horst aan de Maas",
+			"restricted": true
 		}
 	},
 	{
@@ -258,7 +377,14 @@
 			"logo": "img/logos/leiden.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "3.0.0"
+		"upstreamVersion": "3.0.0",
+		"licence": {
+			"id": "LicenseRef-leiden-house-style",
+			"package": "@nl-design-system-unstable/leiden-design-tokens",
+			"version": "3.0.0",
+			"holder": "Gemeente Leiden",
+			"restricted": true
+		}
 	},
 	{
 		"id": "leidschendam-voorburg",
@@ -269,7 +395,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-leidschendam-voorburg-house-style",
+			"package": "@nl-design-system-unstable/leidschendam-voorburg-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Leidschendam-Voorburg",
+			"restricted": true
+		}
 	},
 	{
 		"id": "nijmegen",
@@ -282,7 +415,14 @@
 			"logo_dark": "img/logos/nijmegen-dark.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-nijmegen-house-style",
+			"package": "@nl-design-system-unstable/nijmegen-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Nijmegen",
+			"restricted": true
+		}
 	},
 	{
 		"id": "noaberkracht",
@@ -302,6 +442,13 @@
 			"licenceHolder": "Connary Fagen",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-noaberkracht-house-style",
+			"package": "@nl-design-system-unstable/noaberkracht-design-tokens",
+			"version": "1.0.0",
+			"holder": "Noaberkracht",
+			"restricted": true
 		}
 	},
 	{
@@ -313,7 +460,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-noordoostpolder-house-style",
+			"package": "@nl-design-system-unstable/noordoostpolder-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Noordoostpolder",
+			"restricted": true
+		}
 	},
 	{
 		"id": "noordwijk",
@@ -326,7 +480,14 @@
 			"logo_dark": "img/logos/noordwijk-dark.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-noordwijk-house-style",
+			"package": "@nl-design-system-unstable/noordwijk-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Noordwijk",
+			"restricted": true
+		}
 	},
 	{
 		"id": "provincie-zuid-holland",
@@ -347,6 +508,13 @@
 			"licenceHolder": "Klim Type Foundry",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-provincie-zuid-holland-house-style",
+			"package": "@nl-design-system-unstable/provincie-zuid-holland-design-tokens",
+			"version": "1.0.0",
+			"holder": "Provincie Zuid-Holland",
+			"restricted": true
 		}
 	},
 	{
@@ -357,7 +525,14 @@
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09"
+		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"licence": {
+			"id": "LicenseRef-riddeliemers-house-style",
+			"package": "proprietary/riddeliemers-design-tokens (no package.json)",
+			"version": "",
+			"holder": "Riddeliemers",
+			"restricted": true
+		}
 	},
 	{
 		"id": "ridderkerk",
@@ -368,7 +543,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-ridderkerk-house-style",
+			"package": "@nl-design-system-unstable/ridderkerk-design-tokens",
+			"version": "1.0.0",
+			"holder": "gemeente Ridderkerk",
+			"restricted": true
+		}
 	},
 	{
 		"id": "stedebroec",
@@ -379,7 +561,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-stedebroec-house-style",
+			"package": "@nl-design-system-unstable/stedebroec-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Stede Broec",
+			"restricted": true
+		}
 	},
 	{
 		"id": "tilburg",
@@ -391,7 +580,14 @@
 			"logo": "img/logos/tilburg.svg"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-tilburg-house-style",
+			"package": "@nl-design-system-unstable/tilburg-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Tilburg",
+			"restricted": true
+		}
 	},
 	{
 		"id": "tubbergen",
@@ -402,7 +598,14 @@
 			"background_color": "#ffffff"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-tubbergen-house-style",
+			"package": "@nl-design-system-unstable/tubbergen-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Tubbergen",
+			"restricted": true
+		}
 	},
 	{
 		"id": "venray",
@@ -421,6 +624,13 @@
 			"licenceHolder": "Monotype / Linotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-venray-house-style",
+			"package": "@nl-design-system-unstable/venray-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Venray",
+			"restricted": true
 		}
 	},
 	{
@@ -440,6 +650,13 @@
 			"licenceHolder": "Monotype / Linotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-vught-house-style",
+			"package": "@nl-design-system-unstable/vught-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Vught",
+			"restricted": true
 		}
 	},
 	{
@@ -459,6 +676,13 @@
 			"licenceHolder": "Linotype / Monotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-vng-house-style",
+			"package": "tilburg-woo-ui _tokens-vng.scss (no published package)",
+			"version": "",
+			"holder": "Vereniging Nederlandse Gemeenten",
+			"restricted": true
 		}
 	},
 	{
@@ -470,7 +694,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-westervoort-house-style",
+			"package": "@nl-design-system-unstable/westervoort-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Westervoort",
+			"restricted": true
+		}
 	},
 	{
 		"id": "utrecht",
@@ -480,6 +711,13 @@
 			"primary_color": "#24578F",
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/utrecht.svg"
+		},
+		"licence": {
+			"id": "LicenseRef-utrecht-house-style",
+			"package": "@utrecht/design-tokens",
+			"version": "",
+			"holder": "Gemeente Utrecht",
+			"restricted": true
 		}
 	},
 	{
@@ -498,6 +736,13 @@
 			"licenceHolder": "LucasFonts",
 			"action": "upload",
 			"note": "Den Haag's token CSS names TheSans, a LucasFonts retail face it licenses. No release of it allows redistribution in an app package, so an administrator uploads the licensed webfont under Thematiq's custom fonts. Until then this set renders in the self-hosted Fira Sans behind it in the stack."
+		},
+		"licence": {
+			"id": "EUPL-1.2",
+			"package": "@gemeente-denhaag/design-tokens-components",
+			"version": "5.1.0",
+			"holder": "Gemeente Den Haag",
+			"restricted": false
 		}
 	},
 	{
@@ -518,6 +763,13 @@
 			"licenceHolder": "commissioned for the municipality",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-rotterdam-house-style",
+			"package": "@gemeente-rotterdam/design-tokens",
+			"version": "1.1.0",
+			"holder": "Gemeente Rotterdam",
+			"restricted": true
 		}
 	},
 	{
@@ -557,6 +809,13 @@
 			"licenceHolder": "Monotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-xxllnc-house-style",
+			"package": "@nl-design-system-unstable/xxllnc-design-tokens",
+			"version": "1.0.0",
+			"holder": "XXLLNC",
+			"restricted": true
 		}
 	},
 	{
@@ -568,7 +827,14 @@
 			"background_color": "#FFFFFF"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-zevenaar-house-style",
+			"package": "@nl-design-system-unstable/zevenaar-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Zevenaar",
+			"restricted": true
+		}
 	},
 	{
 		"id": "zwolle",
@@ -587,6 +853,13 @@
 			"licenceHolder": "Monotype / Linotype",
 			"action": "upload",
 			"note": "Not published under a licence that allows redistribution in an app package, and no libre release exists on the @fontsource registry (checked 2026-10-04). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack."
+		},
+		"licence": {
+			"id": "LicenseRef-zwolle-house-style",
+			"package": "@nl-design-system-unstable/zwolle-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Zwolle",
+			"restricted": true
 		}
 	},
 	{
@@ -615,6 +888,13 @@
 			"licenceHolder": "Gouvernement français",
 			"action": "acknowledge",
 			"note": "Reserved for French State bodies. The bytes ship behind the admin acknowledgement gate (css/systems/lasuite/marianne.css, AGREEMENT-MARIANNE.md); without that acknowledgement the family resolves through local() only and Inter carries the page."
+		},
+		"licence": {
+			"id": "MIT",
+			"package": "@gouvfr-lasuite/cunningham-react",
+			"version": "",
+			"holder": "La Suite numérique",
+			"restricted": false
 		}
 	},
 	{
@@ -628,7 +908,14 @@
 			"logo": "img/logos/frankendesk.svg",
 			"logo_dark": "img/logos/frankendesk-dark.svg"
 		},
-		"extends": "lasuite"
+		"extends": "lasuite",
+		"licence": {
+			"id": "MIT",
+			"package": "@gouvfr-lasuite/cunningham-react",
+			"version": "",
+			"holder": "La Suite numérique",
+			"restricted": false
+		}
 	},
 	{
 		"id": "cunningham",
@@ -646,6 +933,13 @@
 			"licenceHolder": "Gouvernement français",
 			"action": "acknowledge",
 			"note": "Reserved for French State bodies. The bytes ship behind the admin acknowledgement gate (css/systems/lasuite/marianne.css, AGREEMENT-MARIANNE.md); without that acknowledgement the family resolves through local() only and Inter carries the page."
+		},
+		"licence": {
+			"id": "MIT",
+			"package": "@openfun/cunningham-tokens",
+			"version": "",
+			"holder": "La Suite numérique",
+			"restricted": false
 		}
 	},
 	{
@@ -716,7 +1010,14 @@
 			"primary_color": "#2e8721"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.1.0"
+		"upstreamVersion": "1.1.0",
+		"licence": {
+			"id": "LicenseRef-hoeksche-waard-house-style",
+			"package": "@nl-design-system-unstable/hoeksche-waard-design-tokens",
+			"version": "1.1.0",
+			"holder": "Gemeente Hoeksche Waard",
+			"restricted": true
+		}
 	},
 	{
 		"id": "purmerend",
@@ -727,7 +1028,14 @@
 			"primary_color": "#00856A"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.2.3"
+		"upstreamVersion": "1.2.3",
+		"licence": {
+			"id": "LicenseRef-purmerend-house-style",
+			"package": "@nl-design-system-community/purmerend-design-tokens",
+			"version": "1.2.3",
+			"holder": "NL Design System Purmerend Thema",
+			"restricted": true
+		}
 	},
 	{
 		"id": "enschede",
@@ -738,7 +1046,14 @@
 			"primary_color": "#e20d18"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0"
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-enschede-house-style",
+			"package": "@nl-design-system-community/enschede-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Enschede",
+			"restricted": true
+		}
 	},
 	{
 		"id": "losser",
@@ -749,7 +1064,14 @@
 			"primary_color": "#2065A4"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.1"
+		"upstreamVersion": "1.0.1",
+		"licence": {
+			"id": "LicenseRef-losser-house-style",
+			"package": "@nl-design-system-community/losser-design-tokens",
+			"version": "1.0.1",
+			"holder": "Gemeente Losser",
+			"restricted": true
+		}
 	},
 	{
 		"id": "zaanstad",
@@ -760,7 +1082,14 @@
 			"primary_color": "#007694"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.1.0"
+		"upstreamVersion": "1.1.0",
+		"licence": {
+			"id": "LicenseRef-zaanstad-house-style",
+			"package": "@nl-design-system-community/zaanstad-design-tokens",
+			"version": "1.1.0",
+			"holder": "Gemeente Zaanstad",
+			"restricted": true
+		}
 	},
 	{
 		"id": "nora",
@@ -771,7 +1100,14 @@
 			"primary_color": "#431560"
 		},
 		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.7.2"
+		"upstreamVersion": "1.7.2",
+		"licence": {
+			"id": "LicenseRef-nora-house-style",
+			"package": "@nl-design-system-community/nora-design-tokens",
+			"version": "1.7.2",
+			"holder": "NORA",
+			"restricted": true
+		}
 	},
 	{
 		"id": "zuiddrecht",

@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Upgrade notes: house styles of other organisations
+
+44 shipped token sets copy the house style of a real organisation, and their licence allows use
+only by that organisation, or with its permission. From this version these sets are off until an
+administrator confirms, per set, that your organisation is that owner or has its permission. The
+list is in `docs/reference/token-set-licences.md`.
+
+- **Nothing changes for your users on upgrade.** A set you already applied stays applied: for the
+  whole instance, for a group, as an app's brand, or in a running planned switch.
+- **The upgrade log names each such set.** The admin settings show a notice under the token set
+  dropdown, with the confirm action.
+- **Until you confirm, the set cannot be applied anywhere new.** That covers another group, a
+  preview, a planned switch, an app's brand, an imported configuration bundle and
+  `occ thematiq:theme:set`. The server answers 403.
+- **Your name and the time go into the audit log** when you confirm.
+
 ### Added
 - **Paste a theme instead of uploading a file.** The Custom token sets panel has a paste box
   beside the file picker. Paste a `design-tokens.css`, a W3C Design Tokens JSON or a Style

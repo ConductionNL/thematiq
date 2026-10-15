@@ -40,6 +40,14 @@ use Psr\Log\LoggerInterface;
 class TokenSetLicenceService {
 
 	/**
+	 * The app config key holding the sets an upgrade found applied without a
+	 * confirmation, with the time it found each: a JSON object by set id.
+	 *
+	 * @var string
+	 */
+	public const AWAITING_KEY = 'restricted_sets_awaiting_confirmation';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param TokenSetService $tokenSets Knows the sets and hands out the licence gate.
@@ -141,6 +149,7 @@ class TokenSetLicenceService {
 
 		$confirmedAt = $this->time->getDateTime()->format(DateTimeInterface::ATOM);
 		$gate->storeConfirmation(tokenSetId: $tokenSetId, uid: $uid, confirmedAt: $confirmedAt);
+		$this->forgetAwaiting(tokenSetId: $tokenSetId);
 
 		$licence = $gate->licenceOf(tokenSetId: $tokenSetId);
 		$this->audit->log(
@@ -249,12 +258,15 @@ class TokenSetLicenceService {
 	 * restricted; the set stays applied and the settings page asks for the
 	 * confirmation.
 	 *
-	 * @return list<array{tokenSet: string, appliedIn: list<array{kind: string, id: string}>}> One entry per set.
+	 * `since` is when an upgrade recorded the set, or empty.
+	 *
+	 * @return list<array{tokenSet: string, appliedIn: list<array{kind: string, id: string}>, since: string}> One entry per set.
 	 *
 	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
 	 */
 	public function awaitingConfirmation(): array {
 		$gate = $this->tokenSets->licenceGate();
+		$recorded = $this->stored(key: self::AWAITING_KEY);
 		$awaiting = [];
 		foreach ($gate->restrictedIds() as $id) {
 			if ($gate->confirmation(tokenSetId: $id) !== null) {
@@ -263,12 +275,57 @@ class TokenSetLicenceService {
 
 			$appliedIn = $this->appliedIn(tokenSetId: $id);
 			if ($appliedIn !== []) {
-				$awaiting[] = ['tokenSet' => $id, 'appliedIn' => $appliedIn];
+				$awaiting[] = ['tokenSet' => $id, 'appliedIn' => $appliedIn, 'since' => (string)($recorded[$id] ?? '')];
 			}
 		}
 
 		return $awaiting;
 	}//end awaitingConfirmation()
+
+	/**
+	 * Record, for every restricted set that is applied without a confirmation,
+	 * that it needs one and since when. A set already recorded keeps its date;
+	 * a set that no longer awaits is dropped from the record. Nothing is
+	 * un-applied.
+	 *
+	 * @return list<string> The sets recorded by this call (new ones only).
+	 *
+	 * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+	 */
+	public function recordAwaitingConfirmation(): array {
+		$before = $this->stored(key: self::AWAITING_KEY);
+		$now = $this->time->getDateTime()->format(DateTimeInterface::ATOM);
+		$record = [];
+		$new = [];
+		foreach ($this->awaitingConfirmation() as $entry) {
+			$id = $entry['tokenSet'];
+			$record[$id] = (string)($before[$id] ?? $now);
+			if (isset($before[$id]) === false) {
+				$new[] = $id;
+			}
+		}
+
+		$this->config->setAppValue(Application::APP_ID, self::AWAITING_KEY, (string)json_encode((object)$record, JSON_UNESCAPED_SLASHES));
+
+		return $new;
+	}//end recordAwaitingConfirmation()
+
+	/**
+	 * Drop a set from the record of sets awaiting confirmation.
+	 *
+	 * @param string $tokenSetId The set id.
+	 *
+	 * @return void
+	 */
+	private function forgetAwaiting(string $tokenSetId): void {
+		$record = $this->stored(key: self::AWAITING_KEY);
+		if (array_key_exists($tokenSetId, $record) === false) {
+			return;
+		}
+
+		unset($record[$tokenSetId]);
+		$this->config->setAppValue(Application::APP_ID, self::AWAITING_KEY, (string)json_encode((object)$record, JSON_UNESCAPED_SLASHES));
+	}//end forgetAwaiting()
 
 	/**
 	 * A stored JSON app config value as an array.
