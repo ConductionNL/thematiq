@@ -136,7 +136,7 @@
 	--color-info: var(--nldesign-color-info) !important;
 	/* --color-info-hover: unmapped — no NL Design equivalent */
 	/* --color-info-text: unmapped — auto-calculated for contrast by Nextcloud */
-	/* --color-info-rgb: unmapped — deprecated, RGB for rgba() */
+	--color-info-rgb: var(--nldesign-color-info-rgb) !important;
 	--color-element-info: var(--nldesign-color-info) !important;
 
 	/* ===================================================================

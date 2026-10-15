@@ -45,7 +45,6 @@ body > *,
 	--color-element-assistant-icon: var(--thematiq-global-color-element-assistant-icon);
 	--color-error-text: var(--thematiq-global-color-error-text);
 	--color-info-hover: var(--thematiq-global-color-info-hover);
-	--color-info-rgb: var(--thematiq-global-color-info-rgb);
 	--color-info-text: var(--thematiq-global-color-info-text);
 	--color-loading-dark: var(--thematiq-global-color-loading-dark);
 	--color-loading-light: var(--thematiq-global-color-loading-light);
@@ -83,7 +82,6 @@ body > *,
 		--nldesign-nc-color-element-assistant-icon: initial;
 		--nldesign-nc-color-error-text: initial;
 		--nldesign-nc-color-info-hover: initial;
-		--nldesign-nc-color-info-rgb: initial;
 		--nldesign-nc-color-info-text: initial;
 		--nldesign-nc-color-loading-dark: initial;
 		--nldesign-nc-color-loading-light: initial;
@@ -108,7 +106,6 @@ body > *,
 	--nldesign-nc-color-element-assistant-icon: initial;
 	--nldesign-nc-color-error-text: initial;
 	--nldesign-nc-color-info-hover: initial;
-	--nldesign-nc-color-info-rgb: initial;
 	--nldesign-nc-color-info-text: initial;
 	--nldesign-nc-color-loading-dark: initial;
 	--nldesign-nc-color-loading-light: initial;

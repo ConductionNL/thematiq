@@ -990,14 +990,11 @@
 			"category": "Status: Info"
 		},
 		"--color-info-rgb": {
-			"status": "settable",
-			"token": "--nldesign-nc-color-info-rgb",
-			"tab": "status",
-			"type": "text",
-			"label": "Info RGB",
-			"perScheme": true,
-			"note": "Deprecated; RGB for rgba()",
-			"category": "Status: Info"
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info-rgb",
+			"category": "Status: Info",
+			"note": "Deprecated; RGB for rgba()"
 		},
 		"--color-info-text": {
 			"status": "settable",

@@ -97,7 +97,7 @@ body,
 	--thematiq-global-color-success-hover: var(--nldesign-nc-color-success-hover, var(--color-success-hover));
 	--thematiq-global-color-info: var(--color-info);
 	--thematiq-global-color-info-text: var(--nldesign-nc-color-info-text, var(--color-info-text));
-	--thematiq-global-color-info-rgb: var(--nldesign-nc-color-info-rgb, var(--color-info-rgb));
+	--thematiq-global-color-info-rgb: var(--color-info-rgb);
 	--thematiq-global-border-radius: var(--border-radius);
 	--thematiq-global-color-warning: var(--color-warning);
 	--thematiq-global-color-warning-text: var(--nldesign-nc-color-warning-text, var(--color-warning-text));
