@@ -21,7 +21,7 @@ This page lists every CSS custom property that Nextcloud 34.0.0.12 and `@conduct
 | icon | 484 | 0 | 0 | 484 |
 | runtime | 36 | 0 | 0 | 36 |
 | slot | 83 | 0 | 56 | 27 |
-| theme | 111 | 66 | 45 | 0 |
+| theme | 111 | 67 | 44 | 0 |
 | unread | 10 | 0 | 0 | 10 |
 
 ## Theme variables
@@ -196,7 +196,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-element-info` | mapped | `--nldesign-color-info` | `#0077C7` | `#0099E0` | Info element accent |
 | `--color-info` | mapped | `--nldesign-color-info` | `#D5F1FA` | `#003553` | Info background/accent |
 | `--color-info-hover` | settable | `--nldesign-nc-color-info-hover` | `#b5e6f6` | `#005686` | Info hover; no NL Design equivalent |
-| `--color-info-rgb` | settable | `--nldesign-nc-color-info-rgb` | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
+| `--color-info-rgb` | mapped | `--nldesign-color-info-rgb` | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
 | `--color-info-text` | settable | `--nldesign-nc-color-info-text` | `#0066AC` | `#00AEFF` | Info text; NC auto-calculates for contrast |
 
 ### Status: Success

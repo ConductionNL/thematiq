@@ -23,7 +23,10 @@ test('the shell matches the canon', async ({ browser }) => {
 	try {
 		await page.goto('/apps/files/')
 		const result = judge(await measure(page))
-		await test.info().attach('canon', { body: JSON.stringify(result, null, 1), contentType: 'application/json' })
+		await test.info().attach('canon', {
+			body: JSON.stringify(result, null, 1),
+			contentType: 'application/json',
+		})
 		expect(result.failures).toEqual([])
 		expect(result.gaps).toEqual([])
 		expect(result.matches.length).toBe(7)

@@ -770,20 +770,19 @@ textarea:disabled {
 /* Placeholder colors */
 ::placeholder {
 	color: var(--nldesign-color-placeholder-dark) !important;
-	opacity: 1 !important;
 }
 
 /*
- * A FLOATING LABEL STILL HIDES ITS PLACEHOLDER. Nextcloud draws a field's
- * label inside the box while it is at rest and hides the placeholder until
- * the field has focus. The rule above makes every placeholder opaque with
- * !important, so the label and the placeholder were drawn on top of each
- * other in every labelled NcSelect and NcTextField (Zuiddrecht live round 3,
- * dossiq's timeline filters). Colour stays as set above; only the resting
- * floating-label case goes back to hidden.
+ * Every placeholder is drawn fully opaque, except where Nextcloud hides it:
+ * a text field or text area with its label inside the field shows the label
+ * at rest and the placeholder only on focus, so the two are never drawn over
+ * each other.
  */
-.input-field:not(.input-field--label-outside) .input-field__input:not(:focus)::placeholder {
-	opacity: 0 !important;
+:not(
+	.input-field:not(.input-field--label-outside) .input-field__input:not(:focus),
+	.textarea__input:not(:focus, .textarea__input--label-outside)
+)::placeholder {
+	opacity: 1 !important;
 }
 
 /* Select elements */

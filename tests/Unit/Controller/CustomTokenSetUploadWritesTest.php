@@ -627,4 +627,45 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$this->assertSame('A', $response->getData()['inputKind']);
 		$this->assertStringContainsString('--nldesign-color-primary: #23845c', $this->liveCssOf('custom-openwoo'));
 	}//end testAFileIsReadByItsContentNotItsExtension()
+
+	/**
+	 * Scenario: the OpenProject plugin's set file with a dark block: the dark values are kept and win.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	public function testDarkValuesFromAFileAreKept(): void {
+		$file = (string)file_get_contents(\dirname(__DIR__, 3) . '/tests/fixtures/openproject/cunningham.json');
+		$darkPrimary = json_decode($file, true)['dark']['tokens']['primary'];
+
+		$response = $this->upload(css: $file, name: 'Kopie', fileName: 'thematiq-cunningham.json');
+
+		$this->assertSame(200, $response->getStatus(), json_encode($response->getData()));
+		$this->assertGreaterThan(15, $response->getData()['darkValues']);
+		$pins = (string)file_get_contents($this->appDir . '/css/tokens/dark-pins/custom-kopie.css');
+		$this->assertStringContainsString('--nldesign-color-primary: ' . $darkPrimary . ';', $pins);
+		$dark = (string)file_get_contents($this->appDir . '/css/tokens/dark/custom-kopie.css');
+		$this->assertStringContainsString('--nldesign-color-primary: ' . $darkPrimary . ';', $dark);
+
+		$this->service->delete(id: 'custom-kopie');
+		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/custom-kopie.css');
+	}//end testDarkValuesFromAFileAreKept()
+
+	/**
+	 * Scenario: a dark value the validator refuses refuses the upload, and nothing is written.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	public function testAForbiddenDarkValueIsRefused(): void {
+		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#154273'], 'dark' => ['tokens' => ['primary' => 'expression(alert(1))']]];
+
+		$response = $this->upload(css: (string)json_encode($file), name: 'Boos', fileName: 'x.json');
+
+		$this->assertSame(422, $response->getStatus());
+		$this->assertStringContainsString('--nldesign-color-primary', $response->getData()['error']);
+		$this->assertSame([], $this->writtenFiles());
+	}//end testAForbiddenDarkValueIsRefused()
 }//end class

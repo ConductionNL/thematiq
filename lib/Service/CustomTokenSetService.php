@@ -290,6 +290,28 @@ class CustomTokenSetService {
 	}//end store()
 
 	/**
+	 * Keep the dark values an uploaded file brought for a stored set, and make its dark variant again.
+	 *
+	 * They win over the derived dark values in this and every later generation, and leave with the set.
+	 *
+	 * @param string $id The stored set's id.
+	 * @param array<string, string> $declarations Validated token name => dark value.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 */
+	public function keepDarkValues(string $id, array $declarations): void {
+		(new DarkPins(store: $this->store))->write(setId: $id, declarations: $declarations);
+
+		try {
+			$this->darkPalette->generateAndWrite(setId: $id, force: true);
+		} catch (\Throwable $e) {
+			// As at upload: a dark-variant failure never breaks the stored set.
+		}
+	}//end keepDarkValues()
+
+	/**
 	 * Create or replace a custom token set by an already-known id, writing
 	 * the canonical CSS content and manifest entry verbatim.
 	 *

@@ -73,6 +73,9 @@ return [
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
+		// OpenProject's address and modules for the apps menu (openproject-in-the-app-menu), admin-only.
+		['name' => 'openProjectLink#show', 'url' => '/settings/openproject', 'verb' => 'GET'],
+		['name' => 'openProjectLink#save', 'url' => '/settings/openproject', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],
@@ -123,6 +126,12 @@ return [
 		['name' => 'tokenSource#update', 'url' => '/settings/tokensets/sources/{sourceId}', 'verb' => 'POST'],
 		// Any token set as a W3C Design Tokens (DTCG) download (authoring-dtcg-export), admin-only.
 		['name' => 'dtcgExport#export', 'url' => '/settings/tokensets/{id}/dtcg', 'verb' => 'GET'],
+		// A set's licence, and the confirmation an administrator gives before a
+		// restricted set can be applied (token-set-licences), admin-only.
+		['name' => 'tokenSetLicence#index', 'url' => '/settings/tokensets/licences', 'verb' => 'GET'],
+		['name' => 'tokenSetLicence#show', 'url' => '/settings/tokensets/{id}/licence', 'verb' => 'GET'],
+		['name' => 'tokenSetLicence#confirm', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'POST'],
+		['name' => 'tokenSetLicence#withdraw', 'url' => '/settings/tokensets/{id}/licence/confirmation', 'verb' => 'DELETE'],
 		// Any token set as the OpenProject plugin's set file (openproject-set-file), admin-only.
 		['name' => 'openProjectSetFile#export', 'url' => '/settings/tokensets/{id}/set-file', 'verb' => 'GET'],
 		['name' => 'customTokenSet#export', 'url' => '/settings/tokensets/custom/{id}/export', 'verb' => 'GET'],

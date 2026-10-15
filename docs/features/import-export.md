@@ -75,7 +75,7 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-Import and export cover every token the token editor shows, <!-- editable-count -->713<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
+Import and export cover every token the token editor shows, <!-- editable-count -->712<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
 
 - image variables such as `--image-logo`, which carry a picture, not a design value;
 - variables Nextcloud's own JavaScript writes on every render, which a stylesheet value cannot hold.
@@ -139,6 +139,5 @@ The OpenProject plugin `openproject-thematiq` keeps one design system as a small
 |---|---|
 | `unmapped` | A role thematiq does not know, or a vocabulary key that is not a token name. |
 | `value-not-a-css-value` | Not a text value, empty, or holding a brace. |
-| `dark-colours-not-read` | The dark block. Thematiq makes a set's dark variant itself. |
 
-Every value still passes the token set validator, and the 512 KB limit holds.
+The dark block is read as well: its roles and its vocabulary become the set's dark values, which win over the dark colours thematiq would derive. Every value still passes the token set validator, a dark one too, and the 512 KB limit holds.

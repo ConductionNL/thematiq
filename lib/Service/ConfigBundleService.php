@@ -426,6 +426,7 @@ class ConfigBundleService {
 		// (shipped or already-installed custom) OR one of THIS bundle's own
 		// custom sets — only meaningful once customTokenSets parsed cleanly.
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
+		$errors = array_merge($errors, (new RestrictedSetsInBundle())->errors(bundle: $bundle, tokenSets: $this->tokenSetService, config: $this->config));
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
 		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);

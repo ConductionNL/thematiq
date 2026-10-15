@@ -650,8 +650,9 @@ function convertOrg(org, context) {
  * @param {Object} org The organisation.
  * @param {string|null} sha The themes commit.
  * @return {void}
+ * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
  */
-function mergeEntry(manifest, entry, org, sha) {
+export function mergeEntry(manifest, entry, org, sha) {
 	const provenance = {}
 	if (sha) {
 		provenance.upstreamRef = sha
@@ -677,6 +678,11 @@ function mergeEntry(manifest, entry, org, sha) {
 		theming.logo = existing.theming.logo
 	}
 	manifest[index] = { ...existing, theming, ...provenance }
+	// The licence names the version its text was read from, so a set converted
+	// from a newer package carries that version in its licence too.
+	if (existing.licence !== undefined && org.version) {
+		manifest[index].licence = { ...existing.licence, version: org.version }
+	}
 }
 
 /**

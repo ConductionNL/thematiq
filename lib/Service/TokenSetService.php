@@ -45,7 +45,8 @@ use Psr\Log\LoggerInterface;
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
- *     upstreamRef?: string
+ *     upstreamRef?: string,
+ *     licence?: array<string, mixed>
  * }
  * @psalm-type   TokenSetEntry array{
  *     id: string,
@@ -56,13 +57,16 @@ use Psr\Log\LoggerInterface;
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
- *     upstreamRef?: string
+ *     upstreamRef?: string,
+ *     licence?: array<string, mixed>
  * }
  *
  * @spec openspec/specs/token-sets/spec.md
  * @spec openspec/specs/custom-token-sets/spec.md
  */
 class TokenSetService {
+
+	use ProvidesLicenceGate;
 
 	/**
 	 * TTL (seconds) for a shipped set's cached warnings. The key already
@@ -178,6 +182,17 @@ class TokenSetService {
 	public function getAppPath(): string {
 		return $this->appManager->getAppPath('thematiq');
 	}//end getAppPath()
+
+	/**
+	 * The config service the licence gate keeps its confirmations in.
+	 *
+	 * @return IConfig The config.
+	 *
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 */
+	protected function licenceConfig(): IConfig {
+		return $this->config;
+	}//end licenceConfig()
 
 	/**
 	 * Get all available token sets with metadata.
@@ -345,6 +360,12 @@ class TokenSetService {
 
 		if (isset($meta['upstreamRef']) === true) {
 			$tokenSet['upstreamRef'] = $meta['upstreamRef'];
+		}
+
+		$licence = $this->licenceGate()->licenceOf(tokenSetId: (string)$tokenSet['id']);
+		if ($licence !== null) {
+			$licence['confirmed'] = ($this->licenceGate()->confirmation(tokenSetId: (string)$tokenSet['id']) !== null);
+			$tokenSet['licence'] = $licence;
 		}
 
 		return $tokenSet;
