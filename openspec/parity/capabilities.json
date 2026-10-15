@@ -3985,7 +3985,7 @@
 			"providerHow": "read-from-code",
 			"feature": "every-page-styled",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Three gaps recorded: primary button 48 (canon 40), table row 44 (canon 48), body text 15 (canon 14)."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. On 2026-10-15 Ruben decided OpenProject follows Nextcloud for the primary button (48), the table row (44) and the body text (15): those are the canon now, and thematiq matches every part."
 		},
 		{
 			"id": "sur-menu-labels",

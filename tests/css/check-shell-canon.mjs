@@ -27,27 +27,28 @@
  * @spec openspec/changes/shell-canon-check/specs/shell-canon-check/spec.md#requirement-the-shell-is-measured-against-the-canon
  */
 
-/** The canon, in CSS pixels: `spike/OP-TWIN-canon.md` of the plugin, 14 October 2026. */
+/**
+ * The canon, in CSS pixels: `spike/OP-TWIN-canon.md` of the plugin, 14 October 2026, with the three
+ * sizes Ruben decided on 15 October 2026. The canon had a 40 px primary button, a 48 px table row and
+ * 14 px body text; Nextcloud draws 48, 44 and 15, and OpenProject follows Nextcloud. So these are the
+ * canon now, and the plugin's canon file follows.
+ */
 export const CANON = {
 	topBarHeight: 68,
 	navigationWidth: 264,
 	navigationItemHeight: 42,
-	primaryButtonHeight: 40,
-	tableHeaderRowHeight: 44,
-	tableRowHeight: 48,
-	bodyTextSize: 14,
-}
-
-/**
- * Where thematiq draws another size today, measured on Nextcloud 35.0.1 with
- * the Zuiddrecht set on 14 October 2026. Each line is a decision still to make:
- * move thematiq to the canon, or the canon to thematiq.
- */
-export const KNOWN = {
 	primaryButtonHeight: 48,
+	tableHeaderRowHeight: 44,
 	tableRowHeight: 44,
 	bodyTextSize: 15,
 }
+
+/**
+ * Where thematiq draws another size than the canon, with the size it draws. Empty: every part
+ * matches. A line here is a decision still to make: move thematiq to the canon, or the canon to
+ * thematiq.
+ */
+export const KNOWN = {}
 
 /** The selectors each part is read from, first match wins. */
 const PARTS = {

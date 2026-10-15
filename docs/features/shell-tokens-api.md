@@ -105,14 +105,16 @@ Next, request the document from your test instance and map the roles onto your p
 
 ## The shell sizes
 
-The OpenProject plugin draws its shell to a written canon of sizes, measured from the Nextcloud boards. `npm run check:shell-canon -- --url <your instance> --user <admin> --password <password>` measures thematiq's shell against the same canon on the Files page, and CI does the same with the Zuiddrecht set. Measured on 14 October 2026:
+The OpenProject plugin draws its shell to a written canon of sizes, measured from the Nextcloud boards. `npm run check:shell-canon -- --url <your instance> --user <admin> --password <password>` measures thematiq's shell against the same canon on the Files page, and CI does the same with the Zuiddrecht set.
 
-| Part | Canon | Thematiq |
-|---|---|---|
-| Top bar height | 68 px | 68 px |
-| Navigation width | 264 px | 264 px |
-| Navigation item height | 42 px | 42 px |
-| Table header row height | 44 px | 44 px |
-| Primary button height | 40 px | 48 px |
-| Table row height | 48 px | 44 px |
-| Body text | 14 px | 15 px |
+| Part | Canon |
+|---|---|
+| Top bar height | 68 px |
+| Navigation width | 264 px |
+| Navigation item height | 42 px |
+| Table header row height | 44 px |
+| Primary button height | 48 px |
+| Table row height | 44 px |
+| Body text | 15 px |
+
+The canon first had a 40 px primary button, a 48 px table row and 14 px body text. Nextcloud draws 48, 44 and 15. On 15 October 2026 Ruben decided that OpenProject follows Nextcloud, so these three are the canon now and thematiq does not change.
