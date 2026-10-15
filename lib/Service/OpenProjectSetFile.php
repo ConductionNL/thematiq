@@ -118,37 +118,67 @@ class OpenProjectSetFile {
 	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function toDocument(array $document, array &$skipped): array {
-		$cssOnly = [];
-		foreach ((array)$document['tokens'] as $role => $value) {
-			$name = (self::ROLE_TOKENS[(string)$role] ?? null);
-			$this->take(name: $name, value: $value, path: 'tokens.' . $role, cssOnly: $cssOnly, skipped: $skipped);
-		}
+		$cssOnly = $this->declarations(roles: (array)$document['tokens'], vocabulary: (array)($document['vocabulary'] ?? []), path: '', skipped: $skipped);
 
-		foreach ((array)($document['vocabulary'] ?? []) as $key => $value) {
-			$name = null;
-			if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', (string)$key) === 1) {
-				$name = ShellCatalogueVocabulary::PREFIX . $key;
+		// The dark block: the roles under `tokens` (or the roles on their own, as the plugin also
+		// reads them) and the dark vocabulary. They become the uploaded set's dark values.
+		$dark = [];
+		if (is_array($document['dark'] ?? null) === true) {
+			$roles = $document['dark'];
+			if (is_array($roles['tokens'] ?? null) === true) {
+				$roles = $roles['tokens'];
 			}
 
-			// A role's own name in the vocabulary would compete with the role; the role wins.
-			if ($name !== null && isset($cssOnly[$name]) === true) {
-				continue;
-			}
-
-			$this->take(name: $name, value: $value, path: 'vocabulary.' . $key, cssOnly: $cssOnly, skipped: $skipped);
+			unset($roles['vocabulary']);
+			$dark = $this->declarations(roles: $roles, vocabulary: (array)($document['dark']['vocabulary'] ?? []), path: 'dark.', skipped: $skipped);
 		}
 
-		if (array_key_exists('dark', $document) === true) {
-			$skipped[] = ['path' => 'dark', 'reason' => 'dark-colours-not-read'];
+		$extension = ['setId' => 'openproject-set-file', 'cssOnly' => (object)$cssOnly];
+		if ($dark !== []) {
+			$extension['dark'] = (object)$dark;
 		}
 
-		$out = ['$extensions' => [self::EXTENSION => ['setId' => 'openproject-set-file', 'cssOnly' => (object)$cssOnly]]];
+		$out = ['$extensions' => [self::EXTENSION => $extension]];
 		if (is_string($document['name'] ?? null) === true) {
 			$out['$description'] = $document['name'];
 		}
 
 		return $out;
 	}//end toDocument()
+
+	/**
+	 * The roles and vocabulary of one block as declarations, each under its CSS name.
+	 *
+	 * @param array<int|string, mixed> $roles Role => value.
+	 * @param array<int|string, mixed> $vocabulary Key without the prefix => value.
+	 * @param string $path The block's place in the file, for the report.
+	 * @param array<int, array{path: string, reason: string}> $skipped Appended to.
+	 *
+	 * @return array<string, string> Name => value.
+	 */
+	private function declarations(array $roles, array $vocabulary, string $path, array &$skipped): array {
+		$out = [];
+		foreach ($roles as $role => $value) {
+			$name = (self::ROLE_TOKENS[(string)$role] ?? null);
+			$this->take(name: $name, value: $value, path: $path . 'tokens.' . $role, cssOnly: $out, skipped: $skipped);
+		}
+
+		foreach ($vocabulary as $key => $value) {
+			$name = null;
+			if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', (string)$key) === 1) {
+				$name = ShellCatalogueVocabulary::PREFIX . $key;
+			}
+
+			// A role's own name in the vocabulary would compete with the role; the role wins.
+			if ($name !== null && isset($out[$name]) === true) {
+				continue;
+			}
+
+			$this->take(name: $name, value: $value, path: $path . 'vocabulary.' . $key, cssOnly: $out, skipped: $skipped);
+		}
+
+		return $out;
+	}//end declarations()
 
 	/**
 	 * Keep one value under its name, or report why not.

@@ -1164,7 +1164,9 @@ OC.L10N.register(
         "Not set: Nextcloud's own is used.": "Not set: Nextcloud's own is used.",
         "Search the design token sets": "Search the design token sets",
         "Search by name": "Search by name",
-        "{shown} of {total} sets match": "{shown} of {total} sets match"
+        "{shown} of {total} sets match": "{shown} of {total} sets match",
+        "{count} dark values from the file are kept for dark mode.": "{count} dark values from the file are kept for dark mode.",
+        "A dark value in the file is not allowed: %s": "A dark value in the file is not allowed: %s"
     },
     "nplurals=2; plural=(n != 1);"
 )
