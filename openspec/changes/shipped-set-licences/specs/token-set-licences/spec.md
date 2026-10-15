@@ -26,6 +26,13 @@ every declared set with its source package, version, source and finding.
 - THEN it is restricted, names `@nl-design-system-unstable/epe-design-tokens` version 1.0.3 and holder Gemeente Epe
 - AND `css/tokens/epe.LICENSE.md` holds the text of that package
 
+#### Scenario: The token sync records the version it converted in the licence
+
+- GIVEN the shipped set `epe` declares its licence at version 1.0.3
+- WHEN the nightly token sync converts `epe` from version 1.1.0 of its package
+- THEN the set's `upstreamVersion` and its `licence.version` both read 1.1.0
+- AND the rest of the licence declaration stays as it was
+
 ### Requirement: An upgrade records every restricted set that is already applied
 
 On upgrade a repair step MUST find every restricted set that is applied without a confirmation (for
