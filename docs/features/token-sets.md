@@ -6,6 +6,10 @@ sidebar_position: 1
 
 Thematiq includes **39 token sets** — pre-configured themes for Dutch government organizations. Each token set defines colors, typography, border radius, and other design tokens specific to that organization.
 
+## Find a set
+
+The list holds over sixty sets. Type part of a name or id in the search field above **Design token set**. The list then shows only the sets that match, and the line beside the field says how many. Case and accents do not count: `fryslan` finds Fryslân. The set that is selected stays in the list, and searching changes nothing until you choose another set. Press Escape to see every set again.
+
 ## Available Token Sets
 
 | Organization | Primary Color | Logo |

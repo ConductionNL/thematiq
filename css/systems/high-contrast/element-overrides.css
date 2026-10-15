@@ -59,6 +59,20 @@ body .button-vue.button-vue:focus-visible {
 	opacity: 1 !important;
 }
 
+/*
+ * A FLOATING LABEL STILL HIDES ITS PLACEHOLDER. Nextcloud draws a field's
+ * label inside the box while it is at rest and hides the placeholder until
+ * the field has focus. The rule above makes every placeholder opaque with
+ * !important, so the label and the placeholder were drawn on top of each
+ * other in every labelled NcSelect and NcTextField (Zuiddrecht live round 3,
+ * dossiq's timeline filters). Colour stays as set above; only the resting
+ * floating-label case goes back to hidden.
+ */
+.input-field:not(.input-field--label-outside)
+	.input-field__input:not(:focus)::placeholder {
+	opacity: 0 !important;
+}
+
 /* Tables — visible cell and row separators. */
 table,
 th,
