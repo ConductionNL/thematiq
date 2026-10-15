@@ -42,7 +42,6 @@ The limits of every upload hold here too: 512 KB, no value that could leave its 
 | Reason | Meaning |
 |---|---|
 | `token-set-disabled` | The file's only theme has this token set switched off. |
-| `dark-colours-not-read` | The token set holds the dark colours of a light and dark file. Thematiq makes the dark variant of a set itself. |
 | `alias-cycle` | The token refers to itself through other tokens. |
 | `value-not-a-css-value` | The value is a sum over references (`{a} * 2`), a reference to a token the file does not hold, a boolean, or empty. |
 | `unmapped` | The path is not one thematiq knows. See the paths below. |
@@ -129,8 +128,9 @@ A file the plugin downloads uploads into thematiq, in all three of its formats. 
 
 - The plugin's `text` value sits at `thematiq.shell.text` (`--thematiq-shell-text`). Thematiq keeps that name and reads the `text` role from it.
 - The plugin's `menu` value sits at `thematiq.shell.menu` (`--thematiq-shell-menu`). Thematiq keeps that name, so it is in the next download, and paints it on the app navigation column: an upload copies it to `--nldesign-color-nav-background` when the file names no navigation colour. The endpoint has `menu` as a role since 14 October 2026.
-- A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style, takes the light set and names the dark one as left out.
-- The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq does not read them and does not write them. It makes the dark variant of a set itself.
+- A Tokens Studio file from the plugin has a light token set and a dark one, with a theme for each. Thematiq reads it as one house style: the light set gives the colours, the dark set the dark values.
+- The dark colours in a W3C file from the plugin sit in the plugin's own extension. Thematiq reads them as the dark values.
+- Dark values from a file are kept for the uploaded set and win over the dark colours thematiq would derive, in every dark variant it makes. The upload result says how many.
 - The plugin keeps the original text of a colour in its own extension. Thematiq reads it while it names the same colour, so the notation comes back too.
 
 ## What a round trip loses
