@@ -62,7 +62,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | purmerend | 4.60:1 | 4.5:1 | 4.60:1 | 3.0:1 | pass |
 | riddeliemers | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
 | ridderkerk | 4.63:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
-| rijkshuisstijl | — | 4.5:1 | — | 3.0:1 | unevaluated |
+| rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
 | rotterdam | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | stedebroec | 8.45:1 | 4.5:1 | 8.45:1 | 3.0:1 | pass |
 | summer-breeze | 9.08:1 | 4.5:1 | 8.47:1 | 3.0:1 | pass |
@@ -137,7 +137,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | purmerend | 15 | 0 | 0 |  |
 | riddeliemers | 15 | 0 | 0 |  |
 | ridderkerk | 15 | 0 | 0 |  |
-| rijkshuisstijl | 5 | 0 | 10 | step-current —, step-not-checked —, case-title —, case-subtitle —, badge-neutral —, nav-link —, nav-link-active —, file-link —, header-title —, footer-text — |
+| rijkshuisstijl | 15 | 0 | 0 |  |
 | rotterdam | 15 | 0 | 0 |  |
 | stedebroec | 15 | 0 | 0 |  |
 | summer-breeze | 15 | 0 | 0 |  |

@@ -24,7 +24,7 @@
 		"name": "Rijkshuisstijl",
 		"description": "Official Dutch national government design system (Rijksoverheid)",
 		"theming": {
-			"primary_color": "oklch(37.619% 0.09695 253.44)",
+			"primary_color": "#154273",
 			"background_color": "#F5F6F7",
 			"logo": "img/logos/rijkshuisstijl.svg"
 		},
@@ -36,7 +36,15 @@
 			"restricted": true
 		},
 		"upstreamPackage": "@rijkshuisstijl-community/design-tokens",
-		"upstreamVersion": "18.0.1"
+		"upstreamVersion": "18.0.1",
+		"font": {
+			"family": "RijksSansVF",
+			"selfHosted": false,
+			"licence": "restricted",
+			"licenceHolder": "Rijksoverheid",
+			"action": "upload",
+			"note": "The variable build of the Dutch State's own typeface, licensed for rijksoverheid use only. Thematiq self-hosts Fira Sans as its open stand-in, which is what this set renders until an entitled administrator uploads the real one."
+		}
 	},
 	{
 		"id": "amsterdam",

@@ -7,436 +7,436 @@
 	--rijkshuisstijl-border-radius-none: 0px;
 	--rijkshuisstijl-border-radius-round: 999px;
 	--rijkshuisstijl-border-radius-sm: 2px;
-	--rijkshuisstijl-color-bg-document: oklch(100% 0 0);
-	--rijkshuisstijl-color-border-default: oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-color-border-strong: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-color-border-subtle: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-color-bruin-100: oklch(87.1% 0.04183 90.262);
-	--rijkshuisstijl-color-bruin-200: oklch(80.647% 0.06495 91.487);
-	--rijkshuisstijl-color-bruin-300: oklch(73.999% 0.08378 90.368);
-	--rijkshuisstijl-color-bruin-400: oklch(67.529% 0.10169 90.165);
-	--rijkshuisstijl-color-bruin-50: oklch(93.663% 0.02192 92.512);
-	--rijkshuisstijl-color-bruin-500: oklch(56.785% 0.11349 86.368);
-	--rijkshuisstijl-color-cool-grey-100: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-color-cool-grey-200: oklch(92.876% 0.01262 255.51);
-	--rijkshuisstijl-color-cool-grey-300: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-color-cool-grey-400: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-color-cool-grey-50: oklch(98.415% 0.00341 247.86);
-	--rijkshuisstijl-color-cool-grey-500: oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-color-cool-grey-600: oklch(44.553% 0.03745 257.28);
-	--rijkshuisstijl-color-cool-grey-700: oklch(37.17% 0.03916 257.29);
-	--rijkshuisstijl-color-cool-grey-800: oklch(27.95% 0.03685 260.03);
-	--rijkshuisstijl-color-cool-grey-900: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-color-core-100: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-color-core-200: oklch(72.708% 0.04031 252.01);
-	--rijkshuisstijl-color-core-300: oklch(63.656% 0.05353 250.5);
-	--rijkshuisstijl-color-core-400: oklch(53.819% 0.07031 251.25);
-	--rijkshuisstijl-color-core-50: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-color-core-500: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-color-core-active: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-color-core-hover: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-color-dark-bruin-100: oklch(15% 0.04183 90.262);
-	--rijkshuisstijl-color-dark-bruin-200: oklch(20% 0.06495 91.487);
-	--rijkshuisstijl-color-dark-bruin-300: oklch(30% 0.08378 90.368);
-	--rijkshuisstijl-color-dark-bruin-400: oklch(40% 0.10169 90.165);
-	--rijkshuisstijl-color-dark-bruin-50: oklch(10% 0.02192 92.512);
-	--rijkshuisstijl-color-dark-bruin-500: oklch(65% 0.11349 86.368);
-	--rijkshuisstijl-color-dark-cool-grey-100: oklch(15% 0.00685 247.9);
-	--rijkshuisstijl-color-dark-cool-grey-200: oklch(20% 0.01262 255.51);
-	--rijkshuisstijl-color-dark-cool-grey-300: oklch(30% 0.01985 252.89);
-	--rijkshuisstijl-color-dark-cool-grey-400: oklch(40% 0.03511 256.79);
-	--rijkshuisstijl-color-dark-cool-grey-50: oklch(10% 0.00341 247.86);
-	--rijkshuisstijl-color-dark-cool-grey-500: oklch(65% 0.04072 257.42);
-	--rijkshuisstijl-color-dark-cool-grey-600: oklch(70% 0.03745 257.28);
-	--rijkshuisstijl-color-dark-cool-grey-700: oklch(75% 0.03916 257.29);
-	--rijkshuisstijl-color-dark-cool-grey-800: oklch(80% 0.03685 260.03);
-	--rijkshuisstijl-color-dark-cool-grey-900: oklch(90% 0.03982 265.75);
-	--rijkshuisstijl-color-dark-donkerblauw-100: oklch(15% 0.03915 228.62);
-	--rijkshuisstijl-color-dark-donkerblauw-200: oklch(20% 0.05961 229.57);
-	--rijkshuisstijl-color-dark-donkerblauw-300: oklch(30% 0.07861 231.2);
-	--rijkshuisstijl-color-dark-donkerblauw-400: oklch(40% 0.09536 232.46);
-	--rijkshuisstijl-color-dark-donkerblauw-50: oklch(10% 0.01939 230.71);
-	--rijkshuisstijl-color-dark-donkerblauw-500: oklch(65% 0.11351 240.39);
-	--rijkshuisstijl-color-dark-donkerblauw-600: oklch(70% 0.0857 238.6);
-	--rijkshuisstijl-color-dark-donkerblauw-700: oklch(75% 0.0666 242.1);
-	--rijkshuisstijl-color-dark-donkerbruin-100: oklch(15% 0.01789 35.341);
-	--rijkshuisstijl-color-dark-donkerbruin-200: oklch(20% 0.02847 34.982);
-	--rijkshuisstijl-color-dark-donkerbruin-300: oklch(30% 0.0397 32.893);
-	--rijkshuisstijl-color-dark-donkerbruin-400: oklch(40% 0.05269 33.378);
-	--rijkshuisstijl-color-dark-donkerbruin-50: oklch(10% 0.00886 26.023);
-	--rijkshuisstijl-color-dark-donkerbruin-500: oklch(65% 0.0777 34.12);
-	--rijkshuisstijl-color-dark-donkergeel-100: oklch(15% 0.06747 86.64);
-	--rijkshuisstijl-color-dark-donkergeel-200: oklch(20% 0.0986 87.683);
-	--rijkshuisstijl-color-dark-donkergeel-300: oklch(30% 0.12671 86.692);
-	--rijkshuisstijl-color-dark-donkergeel-400: oklch(40% 0.14832 84.924);
-	--rijkshuisstijl-color-dark-donkergeel-50: oklch(10% 0.0348 87.074);
-	--rijkshuisstijl-color-dark-donkergeel-500: oklch(65% 0.1685 78.997);
-	--rijkshuisstijl-color-dark-donkergroen-100: oklch(15% 0.02133 156.74);
-	--rijkshuisstijl-color-dark-donkergroen-200: oklch(20% 0.03405 155.14);
-	--rijkshuisstijl-color-dark-donkergroen-300: oklch(30% 0.04465 155.81);
-	--rijkshuisstijl-color-dark-donkergroen-400: oklch(40% 0.05672 154.7);
-	--rijkshuisstijl-color-dark-donkergroen-50: oklch(10% 0.01004 155.08);
-	--rijkshuisstijl-color-dark-donkergroen-500: oklch(65% 0.07856 152.03);
-	--rijkshuisstijl-color-dark-geel-100: oklch(15% 0.07444 101.91);
-	--rijkshuisstijl-color-dark-geel-200: oklch(20% 0.10943 102.07);
-	--rijkshuisstijl-color-dark-geel-300: oklch(30% 0.13889 102.52);
-	--rijkshuisstijl-color-dark-geel-400: oklch(40% 0.16222 102.24);
-	--rijkshuisstijl-color-dark-geel-50: oklch(10% 0.03916 102.41);
-	--rijkshuisstijl-color-dark-geel-500: oklch(65% 0.18368 101.29);
-	--rijkshuisstijl-color-dark-groen-100: oklch(15% 0.05573 133.62);
-	--rijkshuisstijl-color-dark-groen-200: oklch(20% 0.08581 134.66);
-	--rijkshuisstijl-color-dark-groen-300: oklch(30% 0.11337 134.83);
-	--rijkshuisstijl-color-dark-groen-400: oklch(40% 0.13931 135.66);
-	--rijkshuisstijl-color-dark-groen-50: oklch(10% 0.02714 134.97);
-	--rijkshuisstijl-color-dark-groen-500: oklch(65% 0.16526 137.86);
-	--rijkshuisstijl-color-dark-hemelblauw-100: oklch(15% 0.04976 236.19);
-	--rijkshuisstijl-color-dark-hemelblauw-200: oklch(20% 0.07586 236.92);
-	--rijkshuisstijl-color-dark-hemelblauw-300: oklch(30% 0.09931 237.91);
-	--rijkshuisstijl-color-dark-hemelblauw-400: oklch(40% 0.12087 239.6);
-	--rijkshuisstijl-color-dark-hemelblauw-50: oklch(10% 0.02517 236.84);
-	--rijkshuisstijl-color-dark-hemelblauw-500: oklch(65% 0.1475 246.59);
-	--rijkshuisstijl-color-dark-lichtblauw-100: oklch(15% 0.02265 229.08);
-	--rijkshuisstijl-color-dark-lichtblauw-200: oklch(20% 0.03362 228.33);
-	--rijkshuisstijl-color-dark-lichtblauw-300: oklch(30% 0.04367 228.77);
-	--rijkshuisstijl-color-dark-lichtblauw-400: oklch(40% 0.05526 229.82);
-	--rijkshuisstijl-color-dark-lichtblauw-50: oklch(10% 0.01097 225.98);
-	--rijkshuisstijl-color-dark-lichtblauw-500: oklch(65% 0.07312 230.01);
-	--rijkshuisstijl-color-dark-lintblauw-100: oklch(15% 0.02611 250);
-	--rijkshuisstijl-color-dark-lintblauw-200: oklch(20% 0.04031 252.01);
-	--rijkshuisstijl-color-dark-lintblauw-300: oklch(30% 0.05353 250.5);
-	--rijkshuisstijl-color-dark-lintblauw-400: oklch(40% 0.07031 251.25);
-	--rijkshuisstijl-color-dark-lintblauw-50: oklch(10% 0.01217 247.96);
-	--rijkshuisstijl-color-dark-lintblauw-500: oklch(65% 0.09695 253.44);
-	--rijkshuisstijl-color-dark-lintblauw-600: oklch(70% 0.0676 256.1);
-	--rijkshuisstijl-color-dark-lintblauw-700: oklch(75% 0.0577 258);
-	--rijkshuisstijl-color-dark-mintgroen-100: oklch(15% 0.03166 174.3);
-	--rijkshuisstijl-color-dark-mintgroen-200: oklch(20% 0.04698 174.46);
-	--rijkshuisstijl-color-dark-mintgroen-300: oklch(30% 0.06195 174.17);
-	--rijkshuisstijl-color-dark-mintgroen-400: oklch(40% 0.07554 173.42);
-	--rijkshuisstijl-color-dark-mintgroen-50: oklch(10% 0.01565 177.09);
-	--rijkshuisstijl-color-dark-mintgroen-500: oklch(65% 0.0978 171.97);
-	--rijkshuisstijl-color-dark-mosgroen-100: oklch(15% 0.048 108.67);
-	--rijkshuisstijl-color-dark-mosgroen-200: oklch(20% 0.07319 109.69);
-	--rijkshuisstijl-color-dark-mosgroen-300: oklch(30% 0.09559 109.9);
-	--rijkshuisstijl-color-dark-mosgroen-400: oklch(40% 0.1152 110.87);
-	--rijkshuisstijl-color-dark-mosgroen-50: oklch(10% 0.02386 106.85);
-	--rijkshuisstijl-color-dark-mosgroen-500: oklch(65% 0.12413 112.04);
-	--rijkshuisstijl-color-dark-oranje-100: oklch(15% 0.05798 66.118);
-	--rijkshuisstijl-color-dark-oranje-200: oklch(20% 0.08766 65.585);
-	--rijkshuisstijl-color-dark-oranje-300: oklch(30% 0.11599 64.327);
-	--rijkshuisstijl-color-dark-oranje-400: oklch(40% 0.14021 62.24);
-	--rijkshuisstijl-color-dark-oranje-50: oklch(10% 0.02922 67.463);
-	--rijkshuisstijl-color-dark-oranje-500: oklch(65% 0.16914 52.908);
-	--rijkshuisstijl-color-dark-paars-100: oklch(15% 0.03366 311.69);
-	--rijkshuisstijl-color-dark-paars-200: oklch(20% 0.0537 311.31);
-	--rijkshuisstijl-color-dark-paars-300: oklch(30% 0.07379 311.43);
-	--rijkshuisstijl-color-dark-paars-400: oklch(40% 0.0951 311.16);
-	--rijkshuisstijl-color-dark-paars-50: oklch(10% 0.01659 313.61);
-	--rijkshuisstijl-color-dark-paars-500: oklch(65% 0.12693 308.6);
-	--rijkshuisstijl-color-dark-robijnrood-100: oklch(15% 0.07749 350.23);
-	--rijkshuisstijl-color-dark-robijnrood-200: oklch(20% 0.12112 351.28);
-	--rijkshuisstijl-color-dark-robijnrood-300: oklch(30% 0.1616 353.85);
-	--rijkshuisstijl-color-dark-robijnrood-400: oklch(40% 0.19588 356.71);
-	--rijkshuisstijl-color-dark-robijnrood-50: oklch(10% 0.0378 347.99);
-	--rijkshuisstijl-color-dark-robijnrood-500: oklch(65% 0.21669 5.2);
-	--rijkshuisstijl-color-dark-rood-100: oklch(15% 0.05903 22.29);
-	--rijkshuisstijl-color-dark-rood-200: oklch(20% 0.09297 24.341);
-	--rijkshuisstijl-color-dark-rood-300: oklch(30% 0.12823 24.893);
-	--rijkshuisstijl-color-dark-rood-400: oklch(40% 0.161 26.992);
-	--rijkshuisstijl-color-dark-rood-50: oklch(10% 0.02892 22.962);
-	--rijkshuisstijl-color-dark-rood-500: oklch(65% 0.20669 29.543);
-	--rijkshuisstijl-color-dark-roze-100: oklch(15% 0.03952 340.19);
-	--rijkshuisstijl-color-dark-roze-200: oklch(20% 0.05785 340.73);
-	--rijkshuisstijl-color-dark-roze-300: oklch(30% 0.07989 340.69);
-	--rijkshuisstijl-color-dark-roze-400: oklch(40% 0.09974 341.81);
-	--rijkshuisstijl-color-dark-roze-50: oklch(10% 0.01909 338.71);
-	--rijkshuisstijl-color-dark-roze-500: oklch(65% 0.13385 342.44);
-	--rijkshuisstijl-color-dark-violet-100: oklch(15% 0.06897 343.04);
-	--rijkshuisstijl-color-dark-violet-200: oklch(20% 0.10691 345.11);
-	--rijkshuisstijl-color-dark-violet-300: oklch(30% 0.14449 346.37);
-	--rijkshuisstijl-color-dark-violet-400: oklch(40% 0.17678 348.88);
-	--rijkshuisstijl-color-dark-violet-50: oklch(10% 0.03308 342.99);
-	--rijkshuisstijl-color-dark-violet-500: oklch(65% 0.19619 355.91);
-	--rijkshuisstijl-color-dark-wit: oklch(0% 0 0);
-	--rijkshuisstijl-color-dark-zwart: oklch(100% 0 0);
-	--rijkshuisstijl-color-default-bg-document: oklch(100% 0 0);
-	--rijkshuisstijl-color-default-bg-subtle: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-color-default-border-default: oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-color-default-border-subtle: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-color-default-color-document: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-color-default-color-subtle: oklch(37.17% 0.03916 257.29);
-	--rijkshuisstijl-color-donkerblauw-100: oklch(84.583% 0.03915 228.62);
-	--rijkshuisstijl-color-donkerblauw-200: oklch(76.667% 0.05961 229.57);
-	--rijkshuisstijl-color-donkerblauw-300: oklch(68.848% 0.07861 231.2);
-	--rijkshuisstijl-color-donkerblauw-400: oklch(61.393% 0.09536 232.46);
-	--rijkshuisstijl-color-donkerblauw-50: oklch(92.214% 0.01939 230.71);
-	--rijkshuisstijl-color-donkerblauw-500: oklch(49.37% 0.11351 240.39);
-	--rijkshuisstijl-color-donkerblauw-600: oklch(38.54% 0.0857 238.6);
-	--rijkshuisstijl-color-donkerblauw-700: oklch(35.32% 0.0666 242.1);
-	--rijkshuisstijl-color-donkerbruin-100: oklch(82.53% 0.01789 35.341);
-	--rijkshuisstijl-color-donkerbruin-200: oklch(73.385% 0.02847 34.982);
-	--rijkshuisstijl-color-donkerbruin-300: oklch(64.043% 0.0397 32.893);
-	--rijkshuisstijl-color-donkerbruin-400: oklch(54.784% 0.05269 33.378);
-	--rijkshuisstijl-color-donkerbruin-50: oklch(91.272% 0.00886 26.023);
-	--rijkshuisstijl-color-donkerbruin-500: oklch(38.627% 0.0777 34.12);
-	--rijkshuisstijl-color-donkergeel-100: oklch(93.996% 0.06747 86.64);
-	--rijkshuisstijl-color-donkergeel-200: oklch(91.006% 0.0986 87.683);
-	--rijkshuisstijl-color-donkergeel-300: oklch(88.343% 0.12671 86.692);
-	--rijkshuisstijl-color-donkergeel-400: oklch(85.857% 0.14832 84.924);
-	--rijkshuisstijl-color-donkergeel-50: oklch(96.925% 0.0348 87.074);
-	--rijkshuisstijl-color-donkergeel-500: oklch(82.372% 0.1685 78.997);
-	--rijkshuisstijl-color-donkergroen-100: oklch(83.4% 0.02133 156.74);
-	--rijkshuisstijl-color-donkergroen-200: oklch(74.772% 0.03405 155.14);
-	--rijkshuisstijl-color-donkergroen-300: oklch(66.075% 0.04465 155.81);
-	--rijkshuisstijl-color-donkergroen-400: oklch(57.134% 0.05672 154.7);
-	--rijkshuisstijl-color-donkergroen-50: oklch(91.82% 0.01004 155.08);
-	--rijkshuisstijl-color-donkergroen-500: oklch(41.936% 0.07856 152.03);
-	--rijkshuisstijl-color-foreground-default: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-color-foreground-link: oklch(49.37% 0.11351 240.39);
-	--rijkshuisstijl-color-foreground-link-active: oklch(35.32% 0.0666 242.1);
-	--rijkshuisstijl-color-foreground-link-hover: oklch(38.54% 0.0857 238.6);
-	--rijkshuisstijl-color-foreground-on-dark-color: oklch(100% 0 0);
-	--rijkshuisstijl-color-foreground-on-light-color: oklch(0% 0 0);
-	--rijkshuisstijl-color-foreground-on-primary: oklch(100% 0 0);
-	--rijkshuisstijl-color-foreground-subtle: oklch(37.17% 0.03916 257.29);
-	--rijkshuisstijl-color-geel-100: oklch(96.474% 0.07444 101.91);
-	--rijkshuisstijl-color-geel-200: oklch(94.767% 0.10943 102.07);
-	--rijkshuisstijl-color-geel-300: oklch(93.421% 0.13889 102.52);
-	--rijkshuisstijl-color-geel-400: oklch(91.982% 0.16222 102.24);
-	--rijkshuisstijl-color-geel-50: oklch(98.264% 0.03916 102.41);
-	--rijkshuisstijl-color-geel-500: oklch(90.176% 0.18368 101.29);
-	--rijkshuisstijl-color-groen-100: oklch(86.449% 0.05573 133.62);
-	--rijkshuisstijl-color-groen-200: oklch(79.53% 0.08581 134.66);
-	--rijkshuisstijl-color-groen-300: oklch(72.789% 0.11337 134.83);
-	--rijkshuisstijl-color-groen-400: oklch(66.05% 0.13931 135.66);
-	--rijkshuisstijl-color-groen-50: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-color-groen-500: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-color-groen-600: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-color-groen-700: oklch(38.71% 0.1016 137.1);
-	--rijkshuisstijl-color-hemelblauw-100: oklch(86.064% 0.04976 236.19);
-	--rijkshuisstijl-color-hemelblauw-200: oklch(79.159% 0.07586 236.92);
-	--rijkshuisstijl-color-hemelblauw-300: oklch(72.44% 0.09931 237.91);
-	--rijkshuisstijl-color-hemelblauw-400: oklch(66.267% 0.12087 239.6);
-	--rijkshuisstijl-color-hemelblauw-50: oklch(93.03% 0.02517 236.84);
-	--rijkshuisstijl-color-hemelblauw-500: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-color-highlight-bg-default: oklch(96.925% 0.0348 87.074);
-	--rijkshuisstijl-color-info-50: oklch(93.03% 0.02517 236.84);
-	--rijkshuisstijl-color-info-500: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-color-lichtblauw-100: oklch(94.147% 0.02265 229.08);
-	--rijkshuisstijl-color-lichtblauw-200: oklch(91.223% 0.03362 228.33);
-	--rijkshuisstijl-color-lichtblauw-300: oklch(88.38% 0.04367 228.77);
-	--rijkshuisstijl-color-lichtblauw-400: oklch(85.523% 0.05526 229.82);
-	--rijkshuisstijl-color-lichtblauw-50: oklch(97.054% 0.01097 225.98);
-	--rijkshuisstijl-color-lichtblauw-500: oklch(80.882% 0.07312 230.01);
-	--rijkshuisstijl-color-light-bruin-100: oklch(87.1% 0.04183 90.262);
-	--rijkshuisstijl-color-light-bruin-200: oklch(80.647% 0.06495 91.487);
-	--rijkshuisstijl-color-light-bruin-300: oklch(73.999% 0.08378 90.368);
-	--rijkshuisstijl-color-light-bruin-400: oklch(67.529% 0.10169 90.165);
-	--rijkshuisstijl-color-light-bruin-50: oklch(93.663% 0.02192 92.512);
-	--rijkshuisstijl-color-light-bruin-500: oklch(56.785% 0.11349 86.368);
-	--rijkshuisstijl-color-light-cool-grey-100: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-color-light-cool-grey-200: oklch(92.876% 0.01262 255.51);
-	--rijkshuisstijl-color-light-cool-grey-300: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-color-light-cool-grey-400: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-color-light-cool-grey-50: oklch(98.415% 0.00341 247.86);
-	--rijkshuisstijl-color-light-cool-grey-500: oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-color-light-cool-grey-600: oklch(44.553% 0.03745 257.28);
-	--rijkshuisstijl-color-light-cool-grey-700: oklch(37.17% 0.03916 257.29);
-	--rijkshuisstijl-color-light-cool-grey-800: oklch(27.95% 0.03685 260.03);
-	--rijkshuisstijl-color-light-cool-grey-900: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-color-light-donkerblauw-100: oklch(84.583% 0.03915 228.62);
-	--rijkshuisstijl-color-light-donkerblauw-200: oklch(76.667% 0.05961 229.57);
-	--rijkshuisstijl-color-light-donkerblauw-300: oklch(68.848% 0.07861 231.2);
-	--rijkshuisstijl-color-light-donkerblauw-400: oklch(61.393% 0.09536 232.46);
-	--rijkshuisstijl-color-light-donkerblauw-50: oklch(92.214% 0.01939 230.71);
-	--rijkshuisstijl-color-light-donkerblauw-500: oklch(49.37% 0.11351 240.39);
-	--rijkshuisstijl-color-light-donkerblauw-600: oklch(38.54% 0.0857 238.6);
-	--rijkshuisstijl-color-light-donkerblauw-700: oklch(35.32% 0.0666 242.1);
-	--rijkshuisstijl-color-light-donkerbruin-100: oklch(82.53% 0.01789 35.341);
-	--rijkshuisstijl-color-light-donkerbruin-200: oklch(73.385% 0.02847 34.982);
-	--rijkshuisstijl-color-light-donkerbruin-300: oklch(64.043% 0.0397 32.893);
-	--rijkshuisstijl-color-light-donkerbruin-400: oklch(54.784% 0.05269 33.378);
-	--rijkshuisstijl-color-light-donkerbruin-50: oklch(91.272% 0.00886 26.023);
-	--rijkshuisstijl-color-light-donkerbruin-500: oklch(38.627% 0.0777 34.12);
-	--rijkshuisstijl-color-light-donkergeel-100: oklch(93.996% 0.06747 86.64);
-	--rijkshuisstijl-color-light-donkergeel-200: oklch(91.006% 0.0986 87.683);
-	--rijkshuisstijl-color-light-donkergeel-300: oklch(88.343% 0.12671 86.692);
-	--rijkshuisstijl-color-light-donkergeel-400: oklch(85.857% 0.14832 84.924);
-	--rijkshuisstijl-color-light-donkergeel-50: oklch(96.925% 0.0348 87.074);
-	--rijkshuisstijl-color-light-donkergeel-500: oklch(82.372% 0.1685 78.997);
-	--rijkshuisstijl-color-light-donkergroen-100: oklch(83.4% 0.02133 156.74);
-	--rijkshuisstijl-color-light-donkergroen-200: oklch(74.772% 0.03405 155.14);
-	--rijkshuisstijl-color-light-donkergroen-300: oklch(66.075% 0.04465 155.81);
-	--rijkshuisstijl-color-light-donkergroen-400: oklch(57.134% 0.05672 154.7);
-	--rijkshuisstijl-color-light-donkergroen-50: oklch(91.82% 0.01004 155.08);
-	--rijkshuisstijl-color-light-donkergroen-500: oklch(41.936% 0.07856 152.03);
-	--rijkshuisstijl-color-light-geel-100: oklch(96.474% 0.07444 101.91);
-	--rijkshuisstijl-color-light-geel-200: oklch(94.767% 0.10943 102.07);
-	--rijkshuisstijl-color-light-geel-300: oklch(93.421% 0.13889 102.52);
-	--rijkshuisstijl-color-light-geel-400: oklch(91.982% 0.16222 102.24);
-	--rijkshuisstijl-color-light-geel-50: oklch(98.264% 0.03916 102.41);
-	--rijkshuisstijl-color-light-geel-500: oklch(90.176% 0.18368 101.29);
-	--rijkshuisstijl-color-light-groen-100: oklch(86.449% 0.05573 133.62);
-	--rijkshuisstijl-color-light-groen-200: oklch(79.53% 0.08581 134.66);
-	--rijkshuisstijl-color-light-groen-300: oklch(72.789% 0.11337 134.83);
-	--rijkshuisstijl-color-light-groen-400: oklch(66.05% 0.13931 135.66);
-	--rijkshuisstijl-color-light-groen-50: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-color-light-groen-500: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-color-light-groen-600: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-color-light-groen-700: oklch(38.71% 0.1016 137.1);
-	--rijkshuisstijl-color-light-hemelblauw-100: oklch(86.064% 0.04976 236.19);
-	--rijkshuisstijl-color-light-hemelblauw-200: oklch(79.159% 0.07586 236.92);
-	--rijkshuisstijl-color-light-hemelblauw-300: oklch(72.44% 0.09931 237.91);
-	--rijkshuisstijl-color-light-hemelblauw-400: oklch(66.267% 0.12087 239.6);
-	--rijkshuisstijl-color-light-hemelblauw-50: oklch(93.03% 0.02517 236.84);
-	--rijkshuisstijl-color-light-hemelblauw-500: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-color-light-lichtblauw-100: oklch(94.147% 0.02265 229.08);
-	--rijkshuisstijl-color-light-lichtblauw-200: oklch(91.223% 0.03362 228.33);
-	--rijkshuisstijl-color-light-lichtblauw-300: oklch(88.38% 0.04367 228.77);
-	--rijkshuisstijl-color-light-lichtblauw-400: oklch(85.523% 0.05526 229.82);
-	--rijkshuisstijl-color-light-lichtblauw-50: oklch(97.054% 0.01097 225.98);
-	--rijkshuisstijl-color-light-lichtblauw-500: oklch(80.882% 0.07312 230.01);
-	--rijkshuisstijl-color-light-lintblauw-100: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-color-light-lintblauw-200: oklch(72.708% 0.04031 252.01);
-	--rijkshuisstijl-color-light-lintblauw-300: oklch(63.656% 0.05353 250.5);
-	--rijkshuisstijl-color-light-lintblauw-400: oklch(53.819% 0.07031 251.25);
-	--rijkshuisstijl-color-light-lintblauw-50: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-color-light-lintblauw-500: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-color-light-lintblauw-600: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-color-light-lintblauw-700: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-color-light-mintgroen-100: oklch(93.832% 0.03166 174.3);
-	--rijkshuisstijl-color-light-mintgroen-200: oklch(90.671% 0.04698 174.46);
-	--rijkshuisstijl-color-light-mintgroen-300: oklch(87.562% 0.06195 174.17);
-	--rijkshuisstijl-color-light-mintgroen-400: oklch(84.568% 0.07554 173.42);
-	--rijkshuisstijl-color-light-mintgroen-50: oklch(96.762% 0.01565 177.09);
-	--rijkshuisstijl-color-light-mintgroen-500: oklch(79.855% 0.0978 171.97);
-	--rijkshuisstijl-color-light-mosgroen-100: oklch(86.906% 0.048 108.67);
-	--rijkshuisstijl-color-light-mosgroen-200: oklch(80.213% 0.07319 109.69);
-	--rijkshuisstijl-color-light-mosgroen-300: oklch(73.58% 0.09559 109.9);
-	--rijkshuisstijl-color-light-mosgroen-400: oklch(67.146% 0.1152 110.87);
-	--rijkshuisstijl-color-light-mosgroen-50: oklch(93.522% 0.02386 106.85);
-	--rijkshuisstijl-color-light-mosgroen-500: oklch(56.062% 0.12413 112.04);
-	--rijkshuisstijl-color-light-oranje-100: oklch(89.031% 0.05798 66.118);
-	--rijkshuisstijl-color-light-oranje-200: oklch(83.566% 0.08766 65.585);
-	--rijkshuisstijl-color-light-oranje-300: oklch(78.604% 0.11599 64.327);
-	--rijkshuisstijl-color-light-oranje-400: oklch(73.791% 0.14021 62.24);
-	--rijkshuisstijl-color-light-oranje-50: oklch(94.607% 0.02922 67.463);
-	--rijkshuisstijl-color-light-oranje-500: oklch(66.559% 0.16914 52.908);
-	--rijkshuisstijl-color-light-paars-100: oklch(80.331% 0.03366 311.69);
-	--rijkshuisstijl-color-light-paars-200: oklch(69.878% 0.0537 311.31);
-	--rijkshuisstijl-color-light-paars-300: oklch(59.433% 0.07379 311.43);
-	--rijkshuisstijl-color-light-paars-400: oklch(48.725% 0.0951 311.16);
-	--rijkshuisstijl-color-light-paars-50: oklch(90.322% 0.01659 313.61);
-	--rijkshuisstijl-color-light-paars-500: oklch(30.782% 0.12693 308.6);
-	--rijkshuisstijl-color-light-robijnrood-100: oklch(82.953% 0.07749 350.23);
-	--rijkshuisstijl-color-light-robijnrood-200: oklch(74.709% 0.12112 351.28);
-	--rijkshuisstijl-color-light-robijnrood-300: oklch(67.241% 0.1616 353.85);
-	--rijkshuisstijl-color-light-robijnrood-400: oklch(60.869% 0.19588 356.71);
-	--rijkshuisstijl-color-light-robijnrood-50: oklch(91.407% 0.0378 347.99);
-	--rijkshuisstijl-color-light-robijnrood-500: oklch(53.943% 0.21669 5.2);
-	--rijkshuisstijl-color-light-rood-100: oklch(84.913% 0.05903 22.29);
-	--rijkshuisstijl-color-light-rood-200: oklch(77.654% 0.09297 24.341);
-	--rijkshuisstijl-color-light-rood-300: oklch(70.838% 0.12823 24.893);
-	--rijkshuisstijl-color-light-rood-400: oklch(64.638% 0.161 26.992);
-	--rijkshuisstijl-color-light-rood-50: oklch(92.432% 0.02892 22.962);
-	--rijkshuisstijl-color-light-rood-500: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-color-bg-document: #ffffff;
+	--rijkshuisstijl-color-border-default: #64748b;
+	--rijkshuisstijl-color-border-strong: #0f172a;
+	--rijkshuisstijl-color-border-subtle: #94a3b8;
+	--rijkshuisstijl-color-bruin-100: #dfd4b6;
+	--rijkshuisstijl-color-bruin-200: #cfbf90;
+	--rijkshuisstijl-color-bruin-300: #bfa96c;
+	--rijkshuisstijl-color-bruin-400: #af9447;
+	--rijkshuisstijl-color-bruin-50: #efeada;
+	--rijkshuisstijl-color-bruin-500: #94710a;
+	--rijkshuisstijl-color-cool-grey-100: #f1f5f9;
+	--rijkshuisstijl-color-cool-grey-200: #e2e8f0;
+	--rijkshuisstijl-color-cool-grey-300: #cbd5e1;
+	--rijkshuisstijl-color-cool-grey-400: #94a3b8;
+	--rijkshuisstijl-color-cool-grey-50: #f8fafc;
+	--rijkshuisstijl-color-cool-grey-500: #64748b;
+	--rijkshuisstijl-color-cool-grey-600: #475569;
+	--rijkshuisstijl-color-cool-grey-700: #334155;
+	--rijkshuisstijl-color-cool-grey-800: #1e293b;
+	--rijkshuisstijl-color-cool-grey-900: #0f172a;
+	--rijkshuisstijl-color-core-100: #b8c6d5;
+	--rijkshuisstijl-color-core-200: #95a9c0;
+	--rijkshuisstijl-color-core-300: #738eab;
+	--rijkshuisstijl-color-core-400: #4f7196;
+	--rijkshuisstijl-color-core-50: #dce3ea;
+	--rijkshuisstijl-color-core-500: #154273;
+	--rijkshuisstijl-color-core-active: #162945;
+	--rijkshuisstijl-color-core-hover: #162f50;
+	--rijkshuisstijl-color-dark-bruin-100: #120a00;
+	--rijkshuisstijl-color-dark-bruin-200: #211400;
+	--rijkshuisstijl-color-dark-bruin-300: #3e2a00;
+	--rijkshuisstijl-color-dark-bruin-400: #5d4400;
+	--rijkshuisstijl-color-dark-bruin-50: #050300;
+	--rijkshuisstijl-color-dark-bruin-500: #ae8a30;
+	--rijkshuisstijl-color-dark-cool-grey-100: #090b0e;
+	--rijkshuisstijl-color-dark-cool-grey-200: #12161c;
+	--rijkshuisstijl-color-dark-cool-grey-300: #272f38;
+	--rijkshuisstijl-color-dark-cool-grey-400: #3c495b;
+	--rijkshuisstijl-color-dark-cool-grey-50: #030304;
+	--rijkshuisstijl-color-dark-cool-grey-500: #8090a8;
+	--rijkshuisstijl-color-dark-cool-grey-600: #90a0b6;
+	--rijkshuisstijl-color-dark-cool-grey-700: #9fafc7;
+	--rijkshuisstijl-color-dark-cool-grey-800: #b0bfd6;
+	--rijkshuisstijl-color-dark-cool-grey-900: #d2def9;
+	--rijkshuisstijl-color-dark-donkerblauw-100: #000e18;
+	--rijkshuisstijl-color-dark-donkerblauw-200: #001a2b;
+	--rijkshuisstijl-color-dark-donkerblauw-300: #00334e;
+	--rijkshuisstijl-color-dark-donkerblauw-400: #004f72;
+	--rijkshuisstijl-color-dark-donkerblauw-50: #000407;
+	--rijkshuisstijl-color-dark-donkerblauw-500: #4597cd;
+	--rijkshuisstijl-color-dark-donkerblauw-600: #6aa6ce;
+	--rijkshuisstijl-color-dark-donkerblauw-700: #89b4d5;
+	--rijkshuisstijl-color-dark-donkerbruin-100: #120806;
+	--rijkshuisstijl-color-dark-donkerbruin-200: #21110d;
+	--rijkshuisstijl-color-dark-donkerbruin-300: #3f2621;
+	--rijkshuisstijl-color-dark-donkerbruin-400: #613d35;
+	--rijkshuisstijl-color-dark-donkerbruin-50: #050302;
+	--rijkshuisstijl-color-dark-donkerbruin-500: #b97e70;
+	--rijkshuisstijl-color-dark-donkergeel-100: #170700;
+	--rijkshuisstijl-color-dark-donkergeel-200: #280f00;
+	--rijkshuisstijl-color-dark-donkergeel-300: #492400;
+	--rijkshuisstijl-color-dark-donkergeel-400: #6b3c00;
+	--rijkshuisstijl-color-dark-donkergeel-50: #070300;
+	--rijkshuisstijl-color-dark-donkergeel-500: #c57f00;
+	--rijkshuisstijl-color-dark-donkergroen-100: #040e08;
+	--rijkshuisstijl-color-dark-donkergroen-200: #081b0f;
+	--rijkshuisstijl-color-dark-donkergroen-300: #1a3424;
+	--rijkshuisstijl-color-dark-donkergroen-400: #2d513a;
+	--rijkshuisstijl-color-dark-donkergroen-50: #020402;
+	--rijkshuisstijl-color-dark-donkergroen-500: #6a9d78;
+	--rijkshuisstijl-color-dark-geel-100: #120a00;
+	--rijkshuisstijl-color-dark-geel-200: #211400;
+	--rijkshuisstijl-color-dark-geel-300: #3d2c00;
+	--rijkshuisstijl-color-dark-geel-400: #5b4600;
+	--rijkshuisstijl-color-dark-geel-50: #050300;
+	--rijkshuisstijl-color-dark-geel-500: #a88f00;
+	--rijkshuisstijl-color-dark-groen-100: #030f00;
+	--rijkshuisstijl-color-dark-groen-200: #021d00;
+	--rijkshuisstijl-color-dark-groen-300: #0f3900;
+	--rijkshuisstijl-color-dark-groen-400: #1e5700;
+	--rijkshuisstijl-color-dark-groen-50: #010500;
+	--rijkshuisstijl-color-dark-groen-500: #57a537;
+	--rijkshuisstijl-color-dark-hemelblauw-100: #000d1d;
+	--rijkshuisstijl-color-dark-hemelblauw-200: #001933;
+	--rijkshuisstijl-color-dark-hemelblauw-300: #003259;
+	--rijkshuisstijl-color-dark-hemelblauw-400: #004d81;
+	--rijkshuisstijl-color-dark-hemelblauw-50: #000409;
+	--rijkshuisstijl-color-dark-hemelblauw-500: #3095e3;
+	--rijkshuisstijl-color-dark-lichtblauw-100: #020d13;
+	--rijkshuisstijl-color-dark-lichtblauw-200: #031922;
+	--rijkshuisstijl-color-dark-lichtblauw-300: #13323f;
+	--rijkshuisstijl-color-dark-lichtblauw-400: #244d60;
+	--rijkshuisstijl-color-dark-lichtblauw-50: #010405;
+	--rijkshuisstijl-color-dark-lichtblauw-500: #5e98b3;
+	--rijkshuisstijl-color-dark-lintblauw-100: #040c16;
+	--rijkshuisstijl-color-dark-lintblauw-200: #071728;
+	--rijkshuisstijl-color-dark-lintblauw-300: #182f48;
+	--rijkshuisstijl-color-dark-lintblauw-400: #294a6c;
+	--rijkshuisstijl-color-dark-lintblauw-50: #020406;
+	--rijkshuisstijl-color-dark-lintblauw-500: #6492c9;
+	--rijkshuisstijl-color-dark-lintblauw-600: #83a1c9;
+	--rijkshuisstijl-color-dark-lintblauw-700: #98b0d3;
+	--rijkshuisstijl-color-dark-mintgroen-100: #000f0a;
+	--rijkshuisstijl-color-dark-mintgroen-200: #001d15;
+	--rijkshuisstijl-color-dark-mintgroen-300: #00382b;
+	--rijkshuisstijl-color-dark-mintgroen-400: #035544;
+	--rijkshuisstijl-color-dark-mintgroen-50: #000403;
+	--rijkshuisstijl-color-dark-mintgroen-500: #45a288;
+	--rijkshuisstijl-color-dark-mosgroen-100: #0d0c00;
+	--rijkshuisstijl-color-dark-mosgroen-200: #191800;
+	--rijkshuisstijl-color-dark-mosgroen-300: #323000;
+	--rijkshuisstijl-color-dark-mosgroen-400: #4c4c00;
+	--rijkshuisstijl-color-dark-mosgroen-50: #040400;
+	--rijkshuisstijl-color-dark-mosgroen-500: #91962f;
+	--rijkshuisstijl-color-dark-oranje-100: #1a0400;
+	--rijkshuisstijl-color-dark-oranje-200: #2e0700;
+	--rijkshuisstijl-color-dark-oranje-300: #531900;
+	--rijkshuisstijl-color-dark-oranje-400: #792e00;
+	--rijkshuisstijl-color-dark-oranje-50: #080200;
+	--rijkshuisstijl-color-dark-oranje-500: #dc6b00;
+	--rijkshuisstijl-color-dark-paars-100: #100715;
+	--rijkshuisstijl-color-dark-paars-200: #1e0e28;
+	--rijkshuisstijl-color-dark-paars-300: #3a2148;
+	--rijkshuisstijl-color-dark-paars-400: #58376d;
+	--rijkshuisstijl-color-dark-paars-50: #050206;
+	--rijkshuisstijl-color-dark-paars-500: #a578ca;
+	--rijkshuisstijl-color-dark-robijnrood-100: #20000f;
+	--rijkshuisstijl-color-dark-robijnrood-200: #38001c;
+	--rijkshuisstijl-color-dark-robijnrood-300: #620033;
+	--rijkshuisstijl-color-dark-robijnrood-400: #8e004a;
+	--rijkshuisstijl-color-dark-robijnrood-50: #0a0005;
+	--rijkshuisstijl-color-dark-robijnrood-500: #f2407d;
+	--rijkshuisstijl-color-dark-rood-100: #1e0002;
+	--rijkshuisstijl-color-dark-rood-200: #350001;
+	--rijkshuisstijl-color-dark-rood-300: #5e0006;
+	--rijkshuisstijl-color-dark-rood-400: #8a030c;
+	--rijkshuisstijl-color-dark-rood-50: #0a0101;
+	--rijkshuisstijl-color-dark-rood-500: #f34c3b;
+	--rijkshuisstijl-color-dark-roze-100: #160510;
+	--rijkshuisstijl-color-dark-roze-200: #26091e;
+	--rijkshuisstijl-color-dark-roze-300: #471b3a;
+	--rijkshuisstijl-color-dark-roze-400: #6a2f57;
+	--rijkshuisstijl-color-dark-roze-50: #060205;
+	--rijkshuisstijl-color-dark-roze-500: #c66ca5;
+	--rijkshuisstijl-color-dark-violet-100: #1c0012;
+	--rijkshuisstijl-color-dark-violet-200: #330021;
+	--rijkshuisstijl-color-dark-violet-300: #5a003c;
+	--rijkshuisstijl-color-dark-violet-400: #840056;
+	--rijkshuisstijl-color-dark-violet-50: #090105;
+	--rijkshuisstijl-color-dark-violet-500: #e54e93;
+	--rijkshuisstijl-color-dark-wit: #000000;
+	--rijkshuisstijl-color-dark-zwart: #ffffff;
+	--rijkshuisstijl-color-default-bg-document: #ffffff;
+	--rijkshuisstijl-color-default-bg-subtle: #f1f5f9;
+	--rijkshuisstijl-color-default-border-default: #64748b;
+	--rijkshuisstijl-color-default-border-subtle: #94a3b8;
+	--rijkshuisstijl-color-default-color-document: #0f172a;
+	--rijkshuisstijl-color-default-color-subtle: #334155;
+	--rijkshuisstijl-color-donkerblauw-100: #b3d2e1;
+	--rijkshuisstijl-color-donkerblauw-200: #8cbbd2;
+	--rijkshuisstijl-color-donkerblauw-300: #66a4c3;
+	--rijkshuisstijl-color-donkerblauw-400: #408eb4;
+	--rijkshuisstijl-color-donkerblauw-50: #d9e8f0;
+	--rijkshuisstijl-color-donkerblauw-500: #01689b;
+	--rijkshuisstijl-color-donkerblauw-600: #01496c;
+	--rijkshuisstijl-color-donkerblauw-700: #163f5b;
+	--rijkshuisstijl-color-donkerbruin-100: #d1c2be;
+	--rijkshuisstijl-color-donkerbruin-200: #baa39d;
+	--rijkshuisstijl-color-donkerbruin-300: #a3847d;
+	--rijkshuisstijl-color-donkerbruin-400: #8d665d;
+	--rijkshuisstijl-color-donkerbruin-50: #e8e0df;
+	--rijkshuisstijl-color-donkerbruin-500: #673327;
+	--rijkshuisstijl-color-donkergeel-100: #ffe9b8;
+	--rijkshuisstijl-color-donkergeel-200: #fdde94;
+	--rijkshuisstijl-color-donkergeel-300: #fdd370;
+	--rijkshuisstijl-color-donkergeel-400: #fdc84d;
+	--rijkshuisstijl-color-donkergeel-50: #fff4db;
+	--rijkshuisstijl-color-donkergeel-500: #ffb612;
+	--rijkshuisstijl-color-donkergroen-100: #becdc3;
+	--rijkshuisstijl-color-donkergroen-200: #9db4a4;
+	--rijkshuisstijl-color-donkergroen-300: #7d9b87;
+	--rijkshuisstijl-color-donkergroen-400: #5d8269;
+	--rijkshuisstijl-color-donkergroen-50: #dfe6e1;
+	--rijkshuisstijl-color-donkergroen-500: #275937;
+	--rijkshuisstijl-color-foreground-default: #0f172a;
+	--rijkshuisstijl-color-foreground-link: #01689b;
+	--rijkshuisstijl-color-foreground-link-active: #163f5b;
+	--rijkshuisstijl-color-foreground-link-hover: #01496c;
+	--rijkshuisstijl-color-foreground-on-dark-color: #ffffff;
+	--rijkshuisstijl-color-foreground-on-light-color: #000000;
+	--rijkshuisstijl-color-foreground-on-primary: #ffffff;
+	--rijkshuisstijl-color-foreground-subtle: #334155;
+	--rijkshuisstijl-color-geel-100: #fdf6bc;
+	--rijkshuisstijl-color-geel-200: #fcf199;
+	--rijkshuisstijl-color-geel-300: #fbed78;
+	--rijkshuisstijl-color-geel-400: #fae856;
+	--rijkshuisstijl-color-geel-50: #fefbdd;
+	--rijkshuisstijl-color-geel-500: #f9e11e;
+	--rijkshuisstijl-color-groen-100: #c4dbb6;
+	--rijkshuisstijl-color-groen-200: #a5c991;
+	--rijkshuisstijl-color-groen-300: #88b76d;
+	--rijkshuisstijl-color-groen-400: #6aa549;
+	--rijkshuisstijl-color-groen-50: #e1eddb;
+	--rijkshuisstijl-color-groen-500: #39870c;
+	--rijkshuisstijl-color-groen-600: #2c5d12;
+	--rijkshuisstijl-color-groen-700: #275012;
+	--rijkshuisstijl-color-hemelblauw-100: #b3d7ee;
+	--rijkshuisstijl-color-hemelblauw-200: #8cc3e6;
+	--rijkshuisstijl-color-hemelblauw-300: #66afdd;
+	--rijkshuisstijl-color-hemelblauw-400: #409cd5;
+	--rijkshuisstijl-color-hemelblauw-50: #d9ebf7;
+	--rijkshuisstijl-color-hemelblauw-500: #007bc7;
+	--rijkshuisstijl-color-highlight-bg-default: #fff4db;
+	--rijkshuisstijl-color-info-50: #d9ebf7;
+	--rijkshuisstijl-color-info-500: #007bc7;
+	--rijkshuisstijl-color-lichtblauw-100: #ddeff8;
+	--rijkshuisstijl-color-lichtblauw-200: #cce7f4;
+	--rijkshuisstijl-color-lichtblauw-300: #bcdff0;
+	--rijkshuisstijl-color-lichtblauw-400: #abd7ed;
+	--rijkshuisstijl-color-lichtblauw-50: #eef7fb;
+	--rijkshuisstijl-color-lichtblauw-500: #8fcae7;
+	--rijkshuisstijl-color-light-bruin-100: #dfd4b6;
+	--rijkshuisstijl-color-light-bruin-200: #cfbf90;
+	--rijkshuisstijl-color-light-bruin-300: #bfa96c;
+	--rijkshuisstijl-color-light-bruin-400: #af9447;
+	--rijkshuisstijl-color-light-bruin-50: #efeada;
+	--rijkshuisstijl-color-light-bruin-500: #94710a;
+	--rijkshuisstijl-color-light-cool-grey-100: #f1f5f9;
+	--rijkshuisstijl-color-light-cool-grey-200: #e2e8f0;
+	--rijkshuisstijl-color-light-cool-grey-300: #cbd5e1;
+	--rijkshuisstijl-color-light-cool-grey-400: #94a3b8;
+	--rijkshuisstijl-color-light-cool-grey-50: #f8fafc;
+	--rijkshuisstijl-color-light-cool-grey-500: #64748b;
+	--rijkshuisstijl-color-light-cool-grey-600: #475569;
+	--rijkshuisstijl-color-light-cool-grey-700: #334155;
+	--rijkshuisstijl-color-light-cool-grey-800: #1e293b;
+	--rijkshuisstijl-color-light-cool-grey-900: #0f172a;
+	--rijkshuisstijl-color-light-donkerblauw-100: #b3d2e1;
+	--rijkshuisstijl-color-light-donkerblauw-200: #8cbbd2;
+	--rijkshuisstijl-color-light-donkerblauw-300: #66a4c3;
+	--rijkshuisstijl-color-light-donkerblauw-400: #408eb4;
+	--rijkshuisstijl-color-light-donkerblauw-50: #d9e8f0;
+	--rijkshuisstijl-color-light-donkerblauw-500: #01689b;
+	--rijkshuisstijl-color-light-donkerblauw-600: #01496c;
+	--rijkshuisstijl-color-light-donkerblauw-700: #163f5b;
+	--rijkshuisstijl-color-light-donkerbruin-100: #d1c2be;
+	--rijkshuisstijl-color-light-donkerbruin-200: #baa39d;
+	--rijkshuisstijl-color-light-donkerbruin-300: #a3847d;
+	--rijkshuisstijl-color-light-donkerbruin-400: #8d665d;
+	--rijkshuisstijl-color-light-donkerbruin-50: #e8e0df;
+	--rijkshuisstijl-color-light-donkerbruin-500: #673327;
+	--rijkshuisstijl-color-light-donkergeel-100: #ffe9b8;
+	--rijkshuisstijl-color-light-donkergeel-200: #fdde94;
+	--rijkshuisstijl-color-light-donkergeel-300: #fdd370;
+	--rijkshuisstijl-color-light-donkergeel-400: #fdc84d;
+	--rijkshuisstijl-color-light-donkergeel-50: #fff4db;
+	--rijkshuisstijl-color-light-donkergeel-500: #ffb612;
+	--rijkshuisstijl-color-light-donkergroen-100: #becdc3;
+	--rijkshuisstijl-color-light-donkergroen-200: #9db4a4;
+	--rijkshuisstijl-color-light-donkergroen-300: #7d9b87;
+	--rijkshuisstijl-color-light-donkergroen-400: #5d8269;
+	--rijkshuisstijl-color-light-donkergroen-50: #dfe6e1;
+	--rijkshuisstijl-color-light-donkergroen-500: #275937;
+	--rijkshuisstijl-color-light-geel-100: #fdf6bc;
+	--rijkshuisstijl-color-light-geel-200: #fcf199;
+	--rijkshuisstijl-color-light-geel-300: #fbed78;
+	--rijkshuisstijl-color-light-geel-400: #fae856;
+	--rijkshuisstijl-color-light-geel-50: #fefbdd;
+	--rijkshuisstijl-color-light-geel-500: #f9e11e;
+	--rijkshuisstijl-color-light-groen-100: #c4dbb6;
+	--rijkshuisstijl-color-light-groen-200: #a5c991;
+	--rijkshuisstijl-color-light-groen-300: #88b76d;
+	--rijkshuisstijl-color-light-groen-400: #6aa549;
+	--rijkshuisstijl-color-light-groen-50: #e1eddb;
+	--rijkshuisstijl-color-light-groen-500: #39870c;
+	--rijkshuisstijl-color-light-groen-600: #2c5d12;
+	--rijkshuisstijl-color-light-groen-700: #275012;
+	--rijkshuisstijl-color-light-hemelblauw-100: #b3d7ee;
+	--rijkshuisstijl-color-light-hemelblauw-200: #8cc3e6;
+	--rijkshuisstijl-color-light-hemelblauw-300: #66afdd;
+	--rijkshuisstijl-color-light-hemelblauw-400: #409cd5;
+	--rijkshuisstijl-color-light-hemelblauw-50: #d9ebf7;
+	--rijkshuisstijl-color-light-hemelblauw-500: #007bc7;
+	--rijkshuisstijl-color-light-lichtblauw-100: #ddeff8;
+	--rijkshuisstijl-color-light-lichtblauw-200: #cce7f4;
+	--rijkshuisstijl-color-light-lichtblauw-300: #bcdff0;
+	--rijkshuisstijl-color-light-lichtblauw-400: #abd7ed;
+	--rijkshuisstijl-color-light-lichtblauw-50: #eef7fb;
+	--rijkshuisstijl-color-light-lichtblauw-500: #8fcae7;
+	--rijkshuisstijl-color-light-lintblauw-100: #b8c6d5;
+	--rijkshuisstijl-color-light-lintblauw-200: #95a9c0;
+	--rijkshuisstijl-color-light-lintblauw-300: #738eab;
+	--rijkshuisstijl-color-light-lintblauw-400: #4f7196;
+	--rijkshuisstijl-color-light-lintblauw-50: #dce3ea;
+	--rijkshuisstijl-color-light-lintblauw-500: #154273;
+	--rijkshuisstijl-color-light-lintblauw-600: #162f50;
+	--rijkshuisstijl-color-light-lintblauw-700: #162945;
+	--rijkshuisstijl-color-light-mintgroen-100: #d6f2e9;
+	--rijkshuisstijl-color-light-mintgroen-200: #c1ebde;
+	--rijkshuisstijl-color-light-mintgroen-300: #ace4d3;
+	--rijkshuisstijl-color-light-mintgroen-400: #98ddc8;
+	--rijkshuisstijl-color-light-mintgroen-50: #eaf8f4;
+	--rijkshuisstijl-color-light-mintgroen-500: #76d2b6;
+	--rijkshuisstijl-color-light-mosgroen-100: #d6d7b3;
+	--rijkshuisstijl-color-light-mosgroen-200: #c1c38c;
+	--rijkshuisstijl-color-light-mosgroen-300: #adaf66;
+	--rijkshuisstijl-color-light-mosgroen-400: #999c40;
+	--rijkshuisstijl-color-light-mosgroen-50: #ebebd9;
+	--rijkshuisstijl-color-light-mosgroen-500: #777b00;
+	--rijkshuisstijl-color-light-oranje-100: #f6d4b3;
+	--rijkshuisstijl-color-light-oranje-200: #f1be8c;
+	--rijkshuisstijl-color-light-oranje-300: #eda966;
+	--rijkshuisstijl-color-light-oranje-400: #e89440;
+	--rijkshuisstijl-color-light-oranje-50: #fbead9;
+	--rijkshuisstijl-color-light-oranje-500: #e17000;
+	--rijkshuisstijl-color-light-paars-100: #c6b9cf;
+	--rijkshuisstijl-color-light-paars-200: #a995b7;
+	--rijkshuisstijl-color-light-paars-300: #8d729f;
+	--rijkshuisstijl-color-light-paars-400: #714f87;
+	--rijkshuisstijl-color-light-paars-50: #e3dce7;
+	--rijkshuisstijl-color-light-paars-500: #42145f;
+	--rijkshuisstijl-color-light-robijnrood-100: #efb3ce;
+	--rijkshuisstijl-color-light-robijnrood-200: #e78cb6;
+	--rijkshuisstijl-color-light-robijnrood-300: #df669d;
+	--rijkshuisstijl-color-light-robijnrood-400: #d74085;
+	--rijkshuisstijl-color-light-robijnrood-50: #f7d9e7;
+	--rijkshuisstijl-color-light-robijnrood-500: #ca005d;
+	--rijkshuisstijl-color-light-rood-100: #f2bfbc;
+	--rijkshuisstijl-color-light-rood-200: #ec9f99;
+	--rijkshuisstijl-color-light-rood-300: #e67f78;
+	--rijkshuisstijl-color-light-rood-400: #df6056;
+	--rijkshuisstijl-color-light-rood-50: #f9dfdd;
+	--rijkshuisstijl-color-light-rood-500: #d52b1e;
 	--rijkshuisstijl-color-light-rood-600: #9e1b16;
 	--rijkshuisstijl-color-light-rood-700: #731310;
-	--rijkshuisstijl-color-light-roze-100: oklch(92.954% 0.03952 340.19);
-	--rijkshuisstijl-color-light-roze-200: oklch(89.486% 0.05785 340.73);
-	--rijkshuisstijl-color-light-roze-300: oklch(86.014% 0.07989 340.69);
-	--rijkshuisstijl-color-light-roze-400: oklch(82.767% 0.09974 341.81);
-	--rijkshuisstijl-color-light-roze-50: oklch(96.567% 0.01909 338.71);
-	--rijkshuisstijl-color-light-roze-500: oklch(77.485% 0.13385 342.44);
-	--rijkshuisstijl-color-light-violet-100: oklch(82.032% 0.06897 343.04);
-	--rijkshuisstijl-color-light-violet-200: oklch(73.02% 0.10691 345.11);
-	--rijkshuisstijl-color-light-violet-300: oklch(64.657% 0.14449 346.37);
-	--rijkshuisstijl-color-light-violet-400: oklch(57.059% 0.17678 348.88);
-	--rijkshuisstijl-color-light-violet-50: oklch(90.978% 0.03308 342.99);
-	--rijkshuisstijl-color-light-violet-500: oklch(47.91% 0.19619 355.91);
-	--rijkshuisstijl-color-light-wit: oklch(100% 0 0);
-	--rijkshuisstijl-color-light-zwart: oklch(0% 0 0);
-	--rijkshuisstijl-color-lintblauw-100: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-color-lintblauw-200: oklch(72.708% 0.04031 252.01);
-	--rijkshuisstijl-color-lintblauw-300: oklch(63.656% 0.05353 250.5);
-	--rijkshuisstijl-color-lintblauw-400: oklch(53.819% 0.07031 251.25);
-	--rijkshuisstijl-color-lintblauw-50: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-color-lintblauw-500: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-color-lintblauw-600: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-color-lintblauw-700: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-color-mintgroen-100: oklch(93.832% 0.03166 174.3);
-	--rijkshuisstijl-color-mintgroen-200: oklch(90.671% 0.04698 174.46);
-	--rijkshuisstijl-color-mintgroen-300: oklch(87.562% 0.06195 174.17);
-	--rijkshuisstijl-color-mintgroen-400: oklch(84.568% 0.07554 173.42);
-	--rijkshuisstijl-color-mintgroen-50: oklch(96.762% 0.01565 177.09);
-	--rijkshuisstijl-color-mintgroen-500: oklch(79.855% 0.0978 171.97);
-	--rijkshuisstijl-color-mosgroen-100: oklch(86.906% 0.048 108.67);
-	--rijkshuisstijl-color-mosgroen-200: oklch(80.213% 0.07319 109.69);
-	--rijkshuisstijl-color-mosgroen-300: oklch(73.58% 0.09559 109.9);
-	--rijkshuisstijl-color-mosgroen-400: oklch(67.146% 0.1152 110.87);
-	--rijkshuisstijl-color-mosgroen-50: oklch(93.522% 0.02386 106.85);
-	--rijkshuisstijl-color-mosgroen-500: oklch(56.062% 0.12413 112.04);
-	--rijkshuisstijl-color-negative-100: oklch(84.913% 0.05903 22.29);
-	--rijkshuisstijl-color-negative-50: oklch(92.432% 0.02892 22.962);
-	--rijkshuisstijl-color-negative-500: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-color-light-roze-100: #fbdef0;
+	--rijkshuisstijl-color-light-roze-200: #f8cee8;
+	--rijkshuisstijl-color-light-roze-300: #f6bde1;
+	--rijkshuisstijl-color-light-roze-400: #f4add9;
+	--rijkshuisstijl-color-light-roze-50: #fdeff8;
+	--rijkshuisstijl-color-light-roze-500: #f092cd;
+	--rijkshuisstijl-color-light-violet-100: #e5b3d0;
+	--rijkshuisstijl-color-light-violet-200: #d88cb7;
+	--rijkshuisstijl-color-light-violet-300: #cb66a0;
+	--rijkshuisstijl-color-light-violet-400: #be4088;
+	--rijkshuisstijl-color-light-violet-50: #f2d9e7;
+	--rijkshuisstijl-color-light-violet-500: #a90061;
+	--rijkshuisstijl-color-light-wit: #ffffff;
+	--rijkshuisstijl-color-light-zwart: #000000;
+	--rijkshuisstijl-color-lintblauw-100: #b8c6d5;
+	--rijkshuisstijl-color-lintblauw-200: #95a9c0;
+	--rijkshuisstijl-color-lintblauw-300: #738eab;
+	--rijkshuisstijl-color-lintblauw-400: #4f7196;
+	--rijkshuisstijl-color-lintblauw-50: #dce3ea;
+	--rijkshuisstijl-color-lintblauw-500: #154273;
+	--rijkshuisstijl-color-lintblauw-600: #162f50;
+	--rijkshuisstijl-color-lintblauw-700: #162945;
+	--rijkshuisstijl-color-mintgroen-100: #d6f2e9;
+	--rijkshuisstijl-color-mintgroen-200: #c1ebde;
+	--rijkshuisstijl-color-mintgroen-300: #ace4d3;
+	--rijkshuisstijl-color-mintgroen-400: #98ddc8;
+	--rijkshuisstijl-color-mintgroen-50: #eaf8f4;
+	--rijkshuisstijl-color-mintgroen-500: #76d2b6;
+	--rijkshuisstijl-color-mosgroen-100: #d6d7b3;
+	--rijkshuisstijl-color-mosgroen-200: #c1c38c;
+	--rijkshuisstijl-color-mosgroen-300: #adaf66;
+	--rijkshuisstijl-color-mosgroen-400: #999c40;
+	--rijkshuisstijl-color-mosgroen-50: #ebebd9;
+	--rijkshuisstijl-color-mosgroen-500: #777b00;
+	--rijkshuisstijl-color-negative-100: #f2bfbc;
+	--rijkshuisstijl-color-negative-50: #f9dfdd;
+	--rijkshuisstijl-color-negative-500: #d52b1e;
 	--rijkshuisstijl-color-negative-active: #731310;
 	--rijkshuisstijl-color-negative-hover: #9e1b16;
-	--rijkshuisstijl-color-oranje-100: oklch(89.031% 0.05798 66.118);
-	--rijkshuisstijl-color-oranje-200: oklch(83.566% 0.08766 65.585);
-	--rijkshuisstijl-color-oranje-300: oklch(78.604% 0.11599 64.327);
-	--rijkshuisstijl-color-oranje-400: oklch(73.791% 0.14021 62.24);
-	--rijkshuisstijl-color-oranje-50: oklch(94.607% 0.02922 67.463);
-	--rijkshuisstijl-color-oranje-500: oklch(66.559% 0.16914 52.908);
-	--rijkshuisstijl-color-paars-100: oklch(80.331% 0.03366 311.69);
-	--rijkshuisstijl-color-paars-200: oklch(69.878% 0.0537 311.31);
-	--rijkshuisstijl-color-paars-300: oklch(59.433% 0.07379 311.43);
-	--rijkshuisstijl-color-paars-400: oklch(48.725% 0.0951 311.16);
-	--rijkshuisstijl-color-paars-50: oklch(90.322% 0.01659 313.61);
-	--rijkshuisstijl-color-paars-500: oklch(30.782% 0.12693 308.6);
-	--rijkshuisstijl-color-positive-100: oklch(86.449% 0.05573 133.62);
-	--rijkshuisstijl-color-positive-50: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-color-positive-500: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-color-positive-active: oklch(38.71% 0.1016 137.1);
-	--rijkshuisstijl-color-positive-hover: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-color-primary-100: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-color-primary-200: oklch(72.708% 0.04031 252.01);
-	--rijkshuisstijl-color-primary-300: oklch(63.656% 0.05353 250.5);
-	--rijkshuisstijl-color-primary-400: oklch(53.819% 0.07031 251.25);
-	--rijkshuisstijl-color-primary-50: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-color-primary-500: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-color-primary-active: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-color-primary-hover: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-color-robijnrood-100: oklch(82.953% 0.07749 350.23);
-	--rijkshuisstijl-color-robijnrood-200: oklch(74.709% 0.12112 351.28);
-	--rijkshuisstijl-color-robijnrood-300: oklch(67.241% 0.1616 353.85);
-	--rijkshuisstijl-color-robijnrood-400: oklch(60.869% 0.19588 356.71);
-	--rijkshuisstijl-color-robijnrood-50: oklch(91.407% 0.0378 347.99);
-	--rijkshuisstijl-color-robijnrood-500: oklch(53.943% 0.21669 5.2);
-	--rijkshuisstijl-color-rood-100: oklch(84.913% 0.05903 22.29);
-	--rijkshuisstijl-color-rood-200: oklch(77.654% 0.09297 24.341);
-	--rijkshuisstijl-color-rood-300: oklch(70.838% 0.12823 24.893);
-	--rijkshuisstijl-color-rood-400: oklch(64.638% 0.161 26.992);
-	--rijkshuisstijl-color-rood-50: oklch(92.432% 0.02892 22.962);
-	--rijkshuisstijl-color-rood-500: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-color-oranje-100: #f6d4b3;
+	--rijkshuisstijl-color-oranje-200: #f1be8c;
+	--rijkshuisstijl-color-oranje-300: #eda966;
+	--rijkshuisstijl-color-oranje-400: #e89440;
+	--rijkshuisstijl-color-oranje-50: #fbead9;
+	--rijkshuisstijl-color-oranje-500: #e17000;
+	--rijkshuisstijl-color-paars-100: #c6b9cf;
+	--rijkshuisstijl-color-paars-200: #a995b7;
+	--rijkshuisstijl-color-paars-300: #8d729f;
+	--rijkshuisstijl-color-paars-400: #714f87;
+	--rijkshuisstijl-color-paars-50: #e3dce7;
+	--rijkshuisstijl-color-paars-500: #42145f;
+	--rijkshuisstijl-color-positive-100: #c4dbb6;
+	--rijkshuisstijl-color-positive-50: #e1eddb;
+	--rijkshuisstijl-color-positive-500: #39870c;
+	--rijkshuisstijl-color-positive-active: #275012;
+	--rijkshuisstijl-color-positive-hover: #2c5d12;
+	--rijkshuisstijl-color-primary-100: #b8c6d5;
+	--rijkshuisstijl-color-primary-200: #95a9c0;
+	--rijkshuisstijl-color-primary-300: #738eab;
+	--rijkshuisstijl-color-primary-400: #4f7196;
+	--rijkshuisstijl-color-primary-50: #dce3ea;
+	--rijkshuisstijl-color-primary-500: #154273;
+	--rijkshuisstijl-color-primary-active: #162945;
+	--rijkshuisstijl-color-primary-hover: #162f50;
+	--rijkshuisstijl-color-robijnrood-100: #efb3ce;
+	--rijkshuisstijl-color-robijnrood-200: #e78cb6;
+	--rijkshuisstijl-color-robijnrood-300: #df669d;
+	--rijkshuisstijl-color-robijnrood-400: #d74085;
+	--rijkshuisstijl-color-robijnrood-50: #f7d9e7;
+	--rijkshuisstijl-color-robijnrood-500: #ca005d;
+	--rijkshuisstijl-color-rood-100: #f2bfbc;
+	--rijkshuisstijl-color-rood-200: #ec9f99;
+	--rijkshuisstijl-color-rood-300: #e67f78;
+	--rijkshuisstijl-color-rood-400: #df6056;
+	--rijkshuisstijl-color-rood-50: #f9dfdd;
+	--rijkshuisstijl-color-rood-500: #d52b1e;
 	--rijkshuisstijl-color-rood-600: #9e1b16;
 	--rijkshuisstijl-color-rood-700: #731310;
-	--rijkshuisstijl-color-roze-100: oklch(92.954% 0.03952 340.19);
-	--rijkshuisstijl-color-roze-200: oklch(89.486% 0.05785 340.73);
-	--rijkshuisstijl-color-roze-300: oklch(86.014% 0.07989 340.69);
-	--rijkshuisstijl-color-roze-400: oklch(82.767% 0.09974 341.81);
-	--rijkshuisstijl-color-roze-50: oklch(96.567% 0.01909 338.71);
-	--rijkshuisstijl-color-roze-500: oklch(77.485% 0.13385 342.44);
+	--rijkshuisstijl-color-roze-100: #fbdef0;
+	--rijkshuisstijl-color-roze-200: #f8cee8;
+	--rijkshuisstijl-color-roze-300: #f6bde1;
+	--rijkshuisstijl-color-roze-400: #f4add9;
+	--rijkshuisstijl-color-roze-50: #fdeff8;
+	--rijkshuisstijl-color-roze-500: #f092cd;
 	--rijkshuisstijl-color-transparent: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-color-violet-100: oklch(82.032% 0.06897 343.04);
-	--rijkshuisstijl-color-violet-200: oklch(73.02% 0.10691 345.11);
-	--rijkshuisstijl-color-violet-300: oklch(64.657% 0.14449 346.37);
-	--rijkshuisstijl-color-violet-400: oklch(57.059% 0.17678 348.88);
-	--rijkshuisstijl-color-violet-50: oklch(90.978% 0.03308 342.99);
-	--rijkshuisstijl-color-violet-500: oklch(47.91% 0.19619 355.91);
-	--rijkshuisstijl-color-warning-50: oklch(96.925% 0.0348 87.074);
-	--rijkshuisstijl-color-warning-500: oklch(82.372% 0.1685 78.997);
-	--rijkshuisstijl-color-wit: oklch(100% 0 0);
-	--rijkshuisstijl-color-zwart: oklch(0% 0 0);
+	--rijkshuisstijl-color-violet-100: #e5b3d0;
+	--rijkshuisstijl-color-violet-200: #d88cb7;
+	--rijkshuisstijl-color-violet-300: #cb66a0;
+	--rijkshuisstijl-color-violet-400: #be4088;
+	--rijkshuisstijl-color-violet-50: #f2d9e7;
+	--rijkshuisstijl-color-violet-500: #a90061;
+	--rijkshuisstijl-color-warning-50: #fff4db;
+	--rijkshuisstijl-color-warning-500: #ffb612;
+	--rijkshuisstijl-color-wit: #ffffff;
+	--rijkshuisstijl-color-zwart: #000000;
 	--rijkshuisstijl-size-2-lint: calc(2 * calc(
     2.5rem + (3rem - 2.5rem) * calc(
     (
@@ -645,7 +645,7 @@
   );
 	--ams-pagination-font-weight: 400;
 	--ams-pagination-line-height: 150%;
-	--ams-pagination-link-color: oklch(49.37% 0.11351 240.39);
+	--ams-pagination-link-color: #01689b;
 	--ams-pagination-link-current-font-weight: 700;
 	--ams-pagination-link-gap: calc(
     0.2rem + (0.25rem - 0.2rem) * calc(
@@ -656,7 +656,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--ams-pagination-link-hover-color: oklch(38.54% 0.0857 238.6);
+	--ams-pagination-link-hover-color: #01496c;
 	--ams-pagination-link-hover-text-decoration-line: underline;
 	--ams-pagination-link-outline-offset: calc(
     0.1rem + (0.125rem - 0.1rem) * calc(
@@ -708,7 +708,7 @@
 	--rijkshuisstijl-border-width-none: 0px;
 	--rijkshuisstijl-border-width-sm: 1px;
 	--rijkshuisstijl-box-shadow-md: 0 8px 16px 0 oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-breadcrumb-nav-link-current-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-breadcrumb-nav-link-current-color: #334155;
 	--rijkshuisstijl-button-border-radius: 4px;
 	--rijkshuisstijl-button-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -719,16 +719,16 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-button-default-active-background-color: oklch(27.95% 0.03685 260.03);
+	--rijkshuisstijl-button-default-active-background-color: #1e293b;
 	--rijkshuisstijl-button-default-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-default-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-default-background-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-button-default-active-color: #ffffff;
+	--rijkshuisstijl-button-default-background-color: #0f172a;
 	--rijkshuisstijl-button-default-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-default-border-width: 1px;
-	--rijkshuisstijl-button-default-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-default-disabled-background-color: oklch(92.876% 0.01262 255.51);
+	--rijkshuisstijl-button-default-color: #ffffff;
+	--rijkshuisstijl-button-default-disabled-background-color: #e2e8f0;
 	--rijkshuisstijl-button-default-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-default-disabled-color: oklch(71.067% 0.03511 256.79);
+	--rijkshuisstijl-button-default-disabled-color: #94a3b8;
 	--rijkshuisstijl-button-default-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -740,22 +740,22 @@
   )
   );
 	--rijkshuisstijl-button-default-font-weight: 600;
-	--rijkshuisstijl-button-default-hover-background-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-button-default-hover-background-color: #334155;
 	--rijkshuisstijl-button-default-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-default-hover-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-default-hover-color: #ffffff;
 	--rijkshuisstijl-button-default-line-height: 150%;
-	--rijkshuisstijl-button-default-pressed-active-background-color: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-button-default-pressed-active-border-color: oklch(27.95% 0.03685 260.03);
-	--rijkshuisstijl-button-default-pressed-active-color: oklch(27.95% 0.03685 260.03);
-	--rijkshuisstijl-button-default-pressed-background-color: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-button-default-pressed-border-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-button-default-pressed-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-button-default-pressed-disabled-background-color: oklch(92.876% 0.01262 255.51);
+	--rijkshuisstijl-button-default-pressed-active-background-color: #f1f5f9;
+	--rijkshuisstijl-button-default-pressed-active-border-color: #1e293b;
+	--rijkshuisstijl-button-default-pressed-active-color: #1e293b;
+	--rijkshuisstijl-button-default-pressed-background-color: #f1f5f9;
+	--rijkshuisstijl-button-default-pressed-border-color: #0f172a;
+	--rijkshuisstijl-button-default-pressed-color: #0f172a;
+	--rijkshuisstijl-button-default-pressed-disabled-background-color: #e2e8f0;
 	--rijkshuisstijl-button-default-pressed-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-default-pressed-disabled-color: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-button-default-pressed-hover-background-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-button-default-pressed-disabled-color: #94a3b8;
+	--rijkshuisstijl-button-default-pressed-hover-background-color: #334155;
 	--rijkshuisstijl-button-default-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-default-pressed-hover-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-default-pressed-hover-color: #ffffff;
 	--rijkshuisstijl-button-focus-background-color: #;
 	--rijkshuisstijl-button-focus-border-color: #;
 	--rijkshuisstijl-button-focus-color: #;
@@ -807,16 +807,16 @@
   )
   );
 	--rijkshuisstijl-button-min-inline-size: 48px;
-	--rijkshuisstijl-button-primary-active-background-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-button-primary-active-background-color: #162945;
 	--rijkshuisstijl-button-primary-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-primary-active-color: #ffffff;
+	--rijkshuisstijl-button-primary-background-color: #154273;
 	--rijkshuisstijl-button-primary-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-primary-border-width: 1px;
-	--rijkshuisstijl-button-primary-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-disabled-background-color: oklch(82.048% 0.02611 250);
+	--rijkshuisstijl-button-primary-color: #ffffff;
+	--rijkshuisstijl-button-primary-disabled-background-color: #b8c6d5;
 	--rijkshuisstijl-button-primary-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-disabled-color: oklch(53.819% 0.07031 251.25);
+	--rijkshuisstijl-button-primary-disabled-color: #4f7196;
 	--rijkshuisstijl-button-primary-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -828,68 +828,68 @@
   )
   );
 	--rijkshuisstijl-button-primary-font-weight: 600;
-	--rijkshuisstijl-button-primary-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-button-primary-hover-background-color: #162f50;
 	--rijkshuisstijl-button-primary-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-hover-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-primary-hover-color: #ffffff;
 	--rijkshuisstijl-button-primary-line-height: 150%;
 	--rijkshuisstijl-button-primary-negative-active-background-color: #731310;
 	--rijkshuisstijl-button-primary-negative-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-negative-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-negative-background-color: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-button-primary-negative-active-color: #ffffff;
+	--rijkshuisstijl-button-primary-negative-background-color: #d52b1e;
 	--rijkshuisstijl-button-primary-negative-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-negative-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-primary-negative-color: #ffffff;
 	--rijkshuisstijl-button-primary-negative-hover-background-color: #9e1b16;
 	--rijkshuisstijl-button-primary-negative-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-negative-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-negative-pressed-active-background-color: oklch(92.432% 0.02892 22.962);
+	--rijkshuisstijl-button-primary-negative-hover-color: #ffffff;
+	--rijkshuisstijl-button-primary-negative-pressed-active-background-color: #f9dfdd;
 	--rijkshuisstijl-button-primary-negative-pressed-active-border-color: #731310;
 	--rijkshuisstijl-button-primary-negative-pressed-active-color: #731310;
 	--rijkshuisstijl-button-primary-negative-pressed-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-negative-pressed-border-color: oklch(56.705% 0.20669 29.543);
-	--rijkshuisstijl-button-primary-negative-pressed-color: oklch(56.705% 0.20669 29.543);
-	--rijkshuisstijl-button-primary-negative-pressed-hover-background-color: oklch(92.432% 0.02892 22.962);
+	--rijkshuisstijl-button-primary-negative-pressed-border-color: #d52b1e;
+	--rijkshuisstijl-button-primary-negative-pressed-color: #d52b1e;
+	--rijkshuisstijl-button-primary-negative-pressed-hover-background-color: #f9dfdd;
 	--rijkshuisstijl-button-primary-negative-pressed-hover-border-color: #9e1b16;
 	--rijkshuisstijl-button-primary-negative-pressed-hover-color: #9e1b16;
-	--rijkshuisstijl-button-primary-positive-active-background-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-primary-positive-active-background-color: #275012;
 	--rijkshuisstijl-button-primary-positive-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-positive-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-positive-background-color: oklch(55.24% 0.16526 137.86);
+	--rijkshuisstijl-button-primary-positive-active-color: #ffffff;
+	--rijkshuisstijl-button-primary-positive-background-color: #39870c;
 	--rijkshuisstijl-button-primary-positive-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-positive-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-positive-hover-background-color: oklch(42.78% 0.1169 137.2);
+	--rijkshuisstijl-button-primary-positive-color: #ffffff;
+	--rijkshuisstijl-button-primary-positive-hover-background-color: #2c5d12;
 	--rijkshuisstijl-button-primary-positive-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-positive-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-primary-positive-pressed-active-background-color: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-button-primary-positive-pressed-active-border-color: oklch(38.71% 0.1016 137.1);
-	--rijkshuisstijl-button-primary-positive-pressed-active-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-primary-positive-hover-color: #ffffff;
+	--rijkshuisstijl-button-primary-positive-pressed-active-background-color: #e1eddb;
+	--rijkshuisstijl-button-primary-positive-pressed-active-border-color: #275012;
+	--rijkshuisstijl-button-primary-positive-pressed-active-color: #275012;
 	--rijkshuisstijl-button-primary-positive-pressed-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-positive-pressed-border-color: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-button-primary-positive-pressed-color: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-button-primary-positive-pressed-hover-background-color: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-button-primary-positive-pressed-hover-border-color: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-button-primary-positive-pressed-hover-color: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-button-primary-pressed-active-background-color: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-button-primary-pressed-active-border-color: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-button-primary-pressed-active-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-button-primary-positive-pressed-border-color: #39870c;
+	--rijkshuisstijl-button-primary-positive-pressed-color: #39870c;
+	--rijkshuisstijl-button-primary-positive-pressed-hover-background-color: #e1eddb;
+	--rijkshuisstijl-button-primary-positive-pressed-hover-border-color: #2c5d12;
+	--rijkshuisstijl-button-primary-positive-pressed-hover-color: #2c5d12;
+	--rijkshuisstijl-button-primary-pressed-active-background-color: #dce3ea;
+	--rijkshuisstijl-button-primary-pressed-active-border-color: #162945;
+	--rijkshuisstijl-button-primary-pressed-active-color: #162945;
 	--rijkshuisstijl-button-primary-pressed-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-primary-pressed-border-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-button-primary-pressed-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-button-primary-pressed-disabled-background-color: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-button-primary-pressed-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-button-primary-pressed-disabled-color: oklch(71.067% 0.03511 256.79);
-	--rijkshuisstijl-button-primary-pressed-hover-background-color: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-button-primary-pressed-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-button-primary-pressed-hover-color: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-button-secondary-active-background-color: oklch(82.048% 0.02611 250);
-	--rijkshuisstijl-button-secondary-active-border-color: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-button-secondary-active-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-button-primary-pressed-border-color: #154273;
+	--rijkshuisstijl-button-primary-pressed-color: #154273;
+	--rijkshuisstijl-button-primary-pressed-disabled-background-color: #f1f5f9;
+	--rijkshuisstijl-button-primary-pressed-disabled-border-color: #cbd5e1;
+	--rijkshuisstijl-button-primary-pressed-disabled-color: #94a3b8;
+	--rijkshuisstijl-button-primary-pressed-hover-background-color: #b8c6d5;
+	--rijkshuisstijl-button-primary-pressed-hover-border-color: #162f50;
+	--rijkshuisstijl-button-primary-pressed-hover-color: #162f50;
+	--rijkshuisstijl-button-secondary-active-background-color: #b8c6d5;
+	--rijkshuisstijl-button-secondary-active-border-color: #162945;
+	--rijkshuisstijl-button-secondary-active-color: #162945;
 	--rijkshuisstijl-button-secondary-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-border-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-secondary-border-color: #154273;
 	--rijkshuisstijl-button-secondary-border-width: 1px;
-	--rijkshuisstijl-button-secondary-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-secondary-color: #154273;
 	--rijkshuisstijl-button-secondary-disabled-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-disabled-border-color: oklch(72.708% 0.04031 252.01);
-	--rijkshuisstijl-button-secondary-disabled-color: oklch(63.656% 0.05353 250.5);
+	--rijkshuisstijl-button-secondary-disabled-border-color: #95a9c0;
+	--rijkshuisstijl-button-secondary-disabled-color: #738eab;
 	--rijkshuisstijl-button-secondary-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -901,68 +901,68 @@
   )
   );
 	--rijkshuisstijl-button-secondary-font-weight: 600;
-	--rijkshuisstijl-button-secondary-hover-background-color: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-button-secondary-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-button-secondary-hover-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-button-secondary-hover-background-color: #dce3ea;
+	--rijkshuisstijl-button-secondary-hover-border-color: #162f50;
+	--rijkshuisstijl-button-secondary-hover-color: #162f50;
 	--rijkshuisstijl-button-secondary-line-height: 150%;
-	--rijkshuisstijl-button-secondary-negative-active-background-color: oklch(84.913% 0.05903 22.29);
+	--rijkshuisstijl-button-secondary-negative-active-background-color: #f2bfbc;
 	--rijkshuisstijl-button-secondary-negative-active-border-color: #731310;
 	--rijkshuisstijl-button-secondary-negative-active-color: #731310;
 	--rijkshuisstijl-button-secondary-negative-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-negative-border-color: oklch(56.705% 0.20669 29.543);
-	--rijkshuisstijl-button-secondary-negative-color: oklch(56.705% 0.20669 29.543);
-	--rijkshuisstijl-button-secondary-negative-hover-background-color: oklch(92.432% 0.02892 22.962);
+	--rijkshuisstijl-button-secondary-negative-border-color: #d52b1e;
+	--rijkshuisstijl-button-secondary-negative-color: #d52b1e;
+	--rijkshuisstijl-button-secondary-negative-hover-background-color: #f9dfdd;
 	--rijkshuisstijl-button-secondary-negative-hover-border-color: #9e1b16;
 	--rijkshuisstijl-button-secondary-negative-hover-color: #9e1b16;
 	--rijkshuisstijl-button-secondary-negative-pressed-active-background-color: #731310;
 	--rijkshuisstijl-button-secondary-negative-pressed-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-negative-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-negative-pressed-background-color: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-button-secondary-negative-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-secondary-negative-pressed-background-color: #d52b1e;
 	--rijkshuisstijl-button-secondary-negative-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-negative-pressed-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-secondary-negative-pressed-color: #ffffff;
 	--rijkshuisstijl-button-secondary-negative-pressed-hover-background-color: #9e1b16;
 	--rijkshuisstijl-button-secondary-negative-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-negative-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-positive-active-background-color: oklch(86.449% 0.05573 133.62);
-	--rijkshuisstijl-button-secondary-positive-active-border-color: oklch(38.71% 0.1016 137.1);
-	--rijkshuisstijl-button-secondary-positive-active-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-secondary-negative-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-button-secondary-positive-active-background-color: #c4dbb6;
+	--rijkshuisstijl-button-secondary-positive-active-border-color: #275012;
+	--rijkshuisstijl-button-secondary-positive-active-color: #275012;
 	--rijkshuisstijl-button-secondary-positive-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-positive-border-color: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-button-secondary-positive-color: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-button-secondary-positive-hover-background-color: oklch(93.217% 0.02714 134.97);
-	--rijkshuisstijl-button-secondary-positive-hover-border-color: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-button-secondary-positive-hover-color: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-button-secondary-positive-pressed-active-background-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-secondary-positive-border-color: #39870c;
+	--rijkshuisstijl-button-secondary-positive-color: #39870c;
+	--rijkshuisstijl-button-secondary-positive-hover-background-color: #e1eddb;
+	--rijkshuisstijl-button-secondary-positive-hover-border-color: #2c5d12;
+	--rijkshuisstijl-button-secondary-positive-hover-color: #2c5d12;
+	--rijkshuisstijl-button-secondary-positive-pressed-active-background-color: #275012;
 	--rijkshuisstijl-button-secondary-positive-pressed-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-positive-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-positive-pressed-background-color: oklch(55.24% 0.16526 137.86);
+	--rijkshuisstijl-button-secondary-positive-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-secondary-positive-pressed-background-color: #39870c;
 	--rijkshuisstijl-button-secondary-positive-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-positive-pressed-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-positive-pressed-hover-background-color: oklch(42.78% 0.1169 137.2);
+	--rijkshuisstijl-button-secondary-positive-pressed-color: #ffffff;
+	--rijkshuisstijl-button-secondary-positive-pressed-hover-background-color: #2c5d12;
 	--rijkshuisstijl-button-secondary-positive-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-positive-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-pressed-active-background-color: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-button-secondary-pressed-active-border-color: oklch(28.03% 0.0577 258);
-	--rijkshuisstijl-button-secondary-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-pressed-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-secondary-positive-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-button-secondary-pressed-active-background-color: #162945;
+	--rijkshuisstijl-button-secondary-pressed-active-border-color: #162945;
+	--rijkshuisstijl-button-secondary-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-secondary-pressed-background-color: #154273;
 	--rijkshuisstijl-button-secondary-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-pressed-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-secondary-pressed-disabled-background-color: oklch(44.553% 0.03745 257.28);
+	--rijkshuisstijl-button-secondary-pressed-color: #ffffff;
+	--rijkshuisstijl-button-secondary-pressed-disabled-background-color: #475569;
 	--rijkshuisstijl-button-secondary-pressed-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-pressed-disabled-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-button-secondary-pressed-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-button-secondary-pressed-disabled-color: #cbd5e1;
+	--rijkshuisstijl-button-secondary-pressed-hover-background-color: #162f50;
 	--rijkshuisstijl-button-secondary-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-secondary-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-active-background-color: oklch(82.048% 0.02611 250);
+	--rijkshuisstijl-button-secondary-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-button-subtle-active-background-color: #b8c6d5;
 	--rijkshuisstijl-button-subtle-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-active-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-button-subtle-active-color: #162945;
 	--rijkshuisstijl-button-subtle-background-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-border-width: 1px;
-	--rijkshuisstijl-button-subtle-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-subtle-color: #154273;
 	--rijkshuisstijl-button-subtle-disabled-background-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-disabled-color: oklch(82.048% 0.02611 250);
+	--rijkshuisstijl-button-subtle-disabled-color: #b8c6d5;
 	--rijkshuisstijl-button-subtle-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -974,67 +974,67 @@
   )
   );
 	--rijkshuisstijl-button-subtle-font-weight: 600;
-	--rijkshuisstijl-button-subtle-hover-background-color: oklch(91.254% 0.01217 247.96);
+	--rijkshuisstijl-button-subtle-hover-background-color: #dce3ea;
 	--rijkshuisstijl-button-subtle-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-hover-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-button-subtle-hover-color: #162f50;
 	--rijkshuisstijl-button-subtle-line-height: 150%;
-	--rijkshuisstijl-button-subtle-negative-active-background-color: oklch(84.913% 0.05903 22.29);
+	--rijkshuisstijl-button-subtle-negative-active-background-color: #f2bfbc;
 	--rijkshuisstijl-button-subtle-negative-active-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-negative-active-color: #731310;
 	--rijkshuisstijl-button-subtle-negative-background-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-negative-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-negative-color: oklch(56.705% 0.20669 29.543);
-	--rijkshuisstijl-button-subtle-negative-hover-background-color: oklch(92.432% 0.02892 22.962);
+	--rijkshuisstijl-button-subtle-negative-color: #d52b1e;
+	--rijkshuisstijl-button-subtle-negative-hover-background-color: #f9dfdd;
 	--rijkshuisstijl-button-subtle-negative-hover-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-negative-hover-color: #9e1b16;
 	--rijkshuisstijl-button-subtle-negative-pressed-active-background-color: #731310;
 	--rijkshuisstijl-button-subtle-negative-pressed-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-negative-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-negative-pressed-background-color: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-button-subtle-negative-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-subtle-negative-pressed-background-color: #d52b1e;
 	--rijkshuisstijl-button-subtle-negative-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-negative-pressed-color: oklch(100% 0 0);
+	--rijkshuisstijl-button-subtle-negative-pressed-color: #ffffff;
 	--rijkshuisstijl-button-subtle-negative-pressed-hover-background-color: #9e1b16;
 	--rijkshuisstijl-button-subtle-negative-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-negative-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-positive-active-background-color: oklch(86.449% 0.05573 133.62);
+	--rijkshuisstijl-button-subtle-negative-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-button-subtle-positive-active-background-color: #c4dbb6;
 	--rijkshuisstijl-button-subtle-positive-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-active-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-subtle-positive-active-color: #275012;
 	--rijkshuisstijl-button-subtle-positive-background-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-button-subtle-positive-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-color: oklch(55.24% 0.16526 137.86);
-	--rijkshuisstijl-button-subtle-positive-hover-background-color: oklch(93.217% 0.02714 134.97);
+	--rijkshuisstijl-button-subtle-positive-color: #39870c;
+	--rijkshuisstijl-button-subtle-positive-hover-background-color: #e1eddb;
 	--rijkshuisstijl-button-subtle-positive-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-hover-color: oklch(42.78% 0.1169 137.2);
-	--rijkshuisstijl-button-subtle-positive-pressed-active-background-color: oklch(38.71% 0.1016 137.1);
+	--rijkshuisstijl-button-subtle-positive-hover-color: #2c5d12;
+	--rijkshuisstijl-button-subtle-positive-pressed-active-background-color: #275012;
 	--rijkshuisstijl-button-subtle-positive-pressed-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-positive-pressed-background-color: oklch(55.24% 0.16526 137.86);
+	--rijkshuisstijl-button-subtle-positive-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-subtle-positive-pressed-background-color: #39870c;
 	--rijkshuisstijl-button-subtle-positive-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-pressed-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-positive-pressed-hover-background-color: oklch(42.78% 0.1169 137.2);
+	--rijkshuisstijl-button-subtle-positive-pressed-color: #ffffff;
+	--rijkshuisstijl-button-subtle-positive-pressed-hover-background-color: #2c5d12;
 	--rijkshuisstijl-button-subtle-positive-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-positive-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-pressed-active-background-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-button-subtle-positive-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-button-subtle-pressed-active-background-color: #162945;
 	--rijkshuisstijl-button-subtle-pressed-active-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-pressed-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-pressed-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-button-subtle-pressed-active-color: #ffffff;
+	--rijkshuisstijl-button-subtle-pressed-background-color: #154273;
 	--rijkshuisstijl-button-subtle-pressed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-pressed-color: oklch(100% 0 0);
-	--rijkshuisstijl-button-subtle-pressed-disabled-background-color: oklch(44.553% 0.03745 257.28);
+	--rijkshuisstijl-button-subtle-pressed-color: #ffffff;
+	--rijkshuisstijl-button-subtle-pressed-disabled-background-color: #475569;
 	--rijkshuisstijl-button-subtle-pressed-disabled-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-pressed-disabled-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-button-subtle-pressed-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-button-subtle-pressed-disabled-color: #cbd5e1;
+	--rijkshuisstijl-button-subtle-pressed-hover-background-color: #162f50;
 	--rijkshuisstijl-button-subtle-pressed-hover-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-button-subtle-pressed-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-card-active-background-color: oklch(96.826% 0.00685 247.9);
+	--rijkshuisstijl-button-subtle-pressed-hover-color: #ffffff;
+	--rijkshuisstijl-card-active-background-color: #f1f5f9;
 	--rijkshuisstijl-card-active-text-decoration: underline;
-	--rijkshuisstijl-card-as-link-active-background-color: oklch(96.826% 0.00685 247.9);
+	--rijkshuisstijl-card-as-link-active-background-color: #f1f5f9;
 	--rijkshuisstijl-card-as-link-active-text-decoration: underline;
-	--rijkshuisstijl-card-as-link-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-card-as-link-border-color: oklch(86.898% 0.01985 252.89);
+	--rijkshuisstijl-card-as-link-background-color: #ffffff;
+	--rijkshuisstijl-card-as-link-border-color: #cbd5e1;
 	--rijkshuisstijl-card-as-link-border-radius: 4px;
 	--rijkshuisstijl-card-as-link-border-width: 1px;
-	--rijkshuisstijl-card-as-link-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-card-as-link-color: #0f172a;
 	--rijkshuisstijl-card-as-link-column-gap: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -1044,7 +1044,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-as-link-focus-background-color: oklch(91.254% 0.01217 247.96);
+	--rijkshuisstijl-card-as-link-focus-background-color: #dce3ea;
 	--rijkshuisstijl-card-as-link-focus-text-decoration: underline;
 	--rijkshuisstijl-card-as-link-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -1056,11 +1056,11 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-as-link-full-bleed-background-color: oklch(0% 0 0);
+	--rijkshuisstijl-card-as-link-full-bleed-background-color: #000000;
 	--rijkshuisstijl-card-as-link-full-bleed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-card-as-link-full-bleed-color: oklch(100% 0 0);
+	--rijkshuisstijl-card-as-link-full-bleed-color: #ffffff;
 	--rijkshuisstijl-card-as-link-full-bleed-opacity: 0.5;
-	--rijkshuisstijl-card-as-link-heading-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-as-link-heading-color: #154273;
 	--rijkshuisstijl-card-as-link-heading-font-size: calc(
     1.25rem + (1.5rem - 1.25rem) *
       calc(
@@ -1081,9 +1081,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-as-link-horizontal-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-as-link-horizontal-background-color: #154273;
 	--rijkshuisstijl-card-as-link-horizontal-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-card-as-link-horizontal-color: oklch(100% 0 0);
+	--rijkshuisstijl-card-as-link-horizontal-color: #ffffff;
 	--rijkshuisstijl-card-as-link-horizontal-heading-inline-size: 12.5rem;
 	--rijkshuisstijl-card-as-link-horizontal-max-block-size: 6rem;
 	--rijkshuisstijl-card-as-link-horizontal-padding-block-end: 0rem;
@@ -1106,9 +1106,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-as-link-hover-background-color: oklch(98.415% 0.00341 247.86);
+	--rijkshuisstijl-card-as-link-hover-background-color: #f8fafc;
 	--rijkshuisstijl-card-as-link-hover-text-decoration: underline;
-	--rijkshuisstijl-card-as-link-icon-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-as-link-icon-color: #154273;
 	--rijkshuisstijl-card-as-link-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -1120,11 +1120,11 @@
   )
   );
 	--rijkshuisstijl-card-as-link-link-active-text-decoration: none;
-	--rijkshuisstijl-card-as-link-link-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-card-as-link-link-color: #01689b;
 	--rijkshuisstijl-card-as-link-link-focus-text-decoration: none;
 	--rijkshuisstijl-card-as-link-link-hover-text-decoration: none;
 	--rijkshuisstijl-card-as-link-link-text-decoration: underline;
-	--rijkshuisstijl-card-as-link-metadata-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-card-as-link-metadata-color: #334155;
 	--rijkshuisstijl-card-as-link-padding-block-end: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -1170,11 +1170,11 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-card-border-color: oklch(86.898% 0.01985 252.89);
+	--rijkshuisstijl-card-background-color: #ffffff;
+	--rijkshuisstijl-card-border-color: #cbd5e1;
 	--rijkshuisstijl-card-border-radius: 4px;
 	--rijkshuisstijl-card-border-width: 1px;
-	--rijkshuisstijl-card-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-card-color: #0f172a;
 	--rijkshuisstijl-card-column-gap: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -1184,7 +1184,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-focus-background-color: oklch(91.254% 0.01217 247.96);
+	--rijkshuisstijl-card-focus-background-color: #dce3ea;
 	--rijkshuisstijl-card-focus-text-decoration: underline;
 	--rijkshuisstijl-card-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -1196,11 +1196,11 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-full-bleed-background-color: oklch(0% 0 0);
+	--rijkshuisstijl-card-full-bleed-background-color: #000000;
 	--rijkshuisstijl-card-full-bleed-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-card-full-bleed-color: oklch(100% 0 0);
+	--rijkshuisstijl-card-full-bleed-color: #ffffff;
 	--rijkshuisstijl-card-full-bleed-opacity: 0.5;
-	--rijkshuisstijl-card-heading-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-heading-color: #154273;
 	--rijkshuisstijl-card-heading-font-size: calc(
     1.25rem + (1.5rem - 1.25rem) *
       calc(
@@ -1221,9 +1221,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-horizontal-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-horizontal-background-color: #154273;
 	--rijkshuisstijl-card-horizontal-border-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-card-horizontal-color: oklch(100% 0 0);
+	--rijkshuisstijl-card-horizontal-color: #ffffff;
 	--rijkshuisstijl-card-horizontal-heading-inline-size: 12.5rem;
 	--rijkshuisstijl-card-horizontal-max-block-size: 6rem;
 	--rijkshuisstijl-card-horizontal-padding-block-end: 0rem;
@@ -1246,9 +1246,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-card-hover-background-color: oklch(98.415% 0.00341 247.86);
+	--rijkshuisstijl-card-hover-background-color: #f8fafc;
 	--rijkshuisstijl-card-hover-text-decoration: underline;
-	--rijkshuisstijl-card-icon-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-card-icon-color: #154273;
 	--rijkshuisstijl-card-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -1261,11 +1261,11 @@
   );
 	--rijkshuisstijl-card-inline-size: 20.5rem;
 	--rijkshuisstijl-card-link-active-text-decoration: none;
-	--rijkshuisstijl-card-link-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-card-link-color: #01689b;
 	--rijkshuisstijl-card-link-focus-text-decoration: none;
 	--rijkshuisstijl-card-link-hover-text-decoration: none;
 	--rijkshuisstijl-card-link-text-decoration: underline;
-	--rijkshuisstijl-card-metadata-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-card-metadata-color: #334155;
 	--rijkshuisstijl-card-padding-block-end: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -1321,21 +1321,21 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-checkbox-checked-active-background-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-checkbox-checked-active-background-color: #162945;
 	--rijkshuisstijl-checkbox-checked-active-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-checkbox-checked-active-border-width: 1px;
-	--rijkshuisstijl-checkbox-checked-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-checkbox-checked-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--rijkshuisstijl-checkbox-checked-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-checkbox-checked-disabled-color: oklch(44.553% 0.03745 257.28);
-	--rijkshuisstijl-checkbox-checked-focus-visible-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-checkbox-checked-focus-visible-border-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-checkbox-checked-active-color: #ffffff;
+	--rijkshuisstijl-checkbox-checked-disabled-background-color: #e2e8f0;
+	--rijkshuisstijl-checkbox-checked-disabled-border-color: #cbd5e1;
+	--rijkshuisstijl-checkbox-checked-disabled-color: #475569;
+	--rijkshuisstijl-checkbox-checked-focus-visible-background-color: #ffffff;
+	--rijkshuisstijl-checkbox-checked-focus-visible-border-color: #154273;
 	--rijkshuisstijl-checkbox-checked-focus-visible-border-width: 2px;
-	--rijkshuisstijl-checkbox-checked-focus-visible-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-checkbox-checked-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-checkbox-checked-focus-visible-color: #154273;
+	--rijkshuisstijl-checkbox-checked-hover-background-color: #162f50;
 	--rijkshuisstijl-checkbox-checked-hover-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-checkbox-checked-hover-border-width: 1px;
-	--rijkshuisstijl-checkbox-checked-hover-color: oklch(100% 0 0);
+	--rijkshuisstijl-checkbox-checked-hover-color: #ffffff;
 	--rijkshuisstijl-checkbox-group-padding-block-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -1363,21 +1363,21 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-checkbox-indeterminate-active-background-color: oklch(28.03% 0.0577 258);
+	--rijkshuisstijl-checkbox-indeterminate-active-background-color: #162945;
 	--rijkshuisstijl-checkbox-indeterminate-active-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-checkbox-indeterminate-active-border-width: 1px;
-	--rijkshuisstijl-checkbox-indeterminate-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-checkbox-indeterminate-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--rijkshuisstijl-checkbox-indeterminate-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-checkbox-indeterminate-disabled-color: oklch(44.553% 0.03745 257.28);
-	--rijkshuisstijl-checkbox-indeterminate-focus-visible-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-checkbox-indeterminate-focus-visible-border-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-checkbox-indeterminate-active-color: #ffffff;
+	--rijkshuisstijl-checkbox-indeterminate-disabled-background-color: #e2e8f0;
+	--rijkshuisstijl-checkbox-indeterminate-disabled-border-color: #cbd5e1;
+	--rijkshuisstijl-checkbox-indeterminate-disabled-color: #475569;
+	--rijkshuisstijl-checkbox-indeterminate-focus-visible-background-color: #ffffff;
+	--rijkshuisstijl-checkbox-indeterminate-focus-visible-border-color: #154273;
 	--rijkshuisstijl-checkbox-indeterminate-focus-visible-border-width: 2px;
-	--rijkshuisstijl-checkbox-indeterminate-focus-visible-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-checkbox-indeterminate-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--rijkshuisstijl-checkbox-indeterminate-focus-visible-color: #154273;
+	--rijkshuisstijl-checkbox-indeterminate-hover-background-color: #162f50;
 	--rijkshuisstijl-checkbox-indeterminate-hover-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-checkbox-indeterminate-hover-border-width: 1px;
-	--rijkshuisstijl-checkbox-indeterminate-hover-color: oklch(100% 0 0);
+	--rijkshuisstijl-checkbox-indeterminate-hover-color: #ffffff;
 	--rijkshuisstijl-checkbox-label-margin-block-start: 0.1vw;
 	--rijkshuisstijl-code-input-group-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -1389,7 +1389,7 @@
   )
   );
 	--rijkshuisstijl-code-input-size: 48px;
-	--rijkshuisstijl-data-badge-background-color: oklch(96.826% 0.00685 247.9);
+	--rijkshuisstijl-data-badge-background-color: #f1f5f9;
 	--rijkshuisstijl-data-badge-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-data-badge-border-radius: 2px;
 	--rijkshuisstijl-data-badge-border-width: 1px;
@@ -1402,9 +1402,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-data-badge-button-hover-background-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-data-badge-button-hover-color: oklch(100% 0 0);
-	--rijkshuisstijl-data-badge-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-data-badge-button-hover-background-color: #154273;
+	--rijkshuisstijl-data-badge-button-hover-color: #ffffff;
+	--rijkshuisstijl-data-badge-color: #0f172a;
 	--rijkshuisstijl-data-badge-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-data-badge-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -1522,9 +1522,9 @@
   )
   );
 	--rijkshuisstijl-data-summary-item-border-block-end-style: solid;
-	--rijkshuisstijl-data-summary-item-border-color: oklch(86.898% 0.01985 252.89);
+	--rijkshuisstijl-data-summary-item-border-color: #cbd5e1;
 	--rijkshuisstijl-data-summary-item-border-width: 1px;
-	--rijkshuisstijl-data-summary-item-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-data-summary-item-color: #0f172a;
 	--rijkshuisstijl-data-summary-item-key-font-weight: 700;
 	--rijkshuisstijl-data-summary-item-key-padding-block-end: calc(
     0.2rem + (0.25rem - 0.2rem) * calc(
@@ -1609,7 +1609,7 @@
 	--rijkshuisstijl-data-summary-item-value-row-padding-inline-start: 0rem;
 	--rijkshuisstijl-data-summary-line-height: 150%;
 	--rijkshuisstijl-dot-badge-border-radius: 999px;
-	--rijkshuisstijl-dot-badge-color: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-dot-badge-color: #d52b1e;
 	--rijkshuisstijl-dot-badge-size: 0.75rem;
 	--rijkshuisstijl-expandable-checkbox-group-details-margin-block-start: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -1620,7 +1620,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-expandable-checkbox-group-summary-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-expandable-checkbox-group-summary-color: #01689b;
 	--rijkshuisstijl-expandable-checkbox-group-summary-margin-block-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -1649,7 +1649,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-file-border-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-file-border-color: #154273;
 	--rijkshuisstijl-file-border-radius: 4px;
 	--rijkshuisstijl-file-border-style: solid;
 	--rijkshuisstijl-file-border-width: 1px;
@@ -1662,7 +1662,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-file-error-border-color: oklch(56.705% 0.20669 29.543);
+	--rijkshuisstijl-file-error-border-color: #d52b1e;
 	--rijkshuisstijl-file-input-column-gap: calc(
     0.625rem + (0.75rem - 0.625rem) * calc(
     (
@@ -1672,7 +1672,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-file-input-feedback-color: oklch(44.553% 0.03745 257.28);
+	--rijkshuisstijl-file-input-feedback-color: #475569;
 	--rijkshuisstijl-file-input-feedback-font-size: 1rem;
 	--rijkshuisstijl-file-input-row-gap: calc(
     0.625rem + (0.75rem - 0.625rem) * calc(
@@ -1719,9 +1719,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-file-subtitle-color: oklch(55.439% 0.04072 257.42);
-	--rijkshuisstijl-focus-inverse-outline-color: oklch(100% 0 0);
-	--rijkshuisstijl-focus-outline-color: oklch(0% 0 0);
+	--rijkshuisstijl-file-subtitle-color: #64748b;
+	--rijkshuisstijl-focus-inverse-outline-color: #ffffff;
+	--rijkshuisstijl-focus-outline-color: #000000;
 	--rijkshuisstijl-focus-outline-offset: calc(
     0.1rem + (0.125rem - 0.1rem) * calc(
     (
@@ -1762,7 +1762,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-form-field-label-suffix-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-form-field-label-suffix-color: #334155;
 	--rijkshuisstijl-form-field-label-suffix-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-form-field-label-suffix-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -1785,8 +1785,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-form-field-option-label-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-form-field-option-label-disabled-color: oklch(44.553% 0.03745 257.28);
+	--rijkshuisstijl-form-field-option-label-color: #0f172a;
+	--rijkshuisstijl-form-field-option-label-disabled-color: #475569;
 	--rijkshuisstijl-form-field-option-label-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-form-field-option-label-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -1857,35 +1857,35 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-heading-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-color: #154273;
 	--rijkshuisstijl-heading-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-font-weight: 700;
-	--rijkshuisstijl-heading-level-1-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-1-color: #154273;
 	--rijkshuisstijl-heading-level-1-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-1-font-weight: 700;
 	--rijkshuisstijl-heading-level-1-margin-block-end: 0rem;
 	--rijkshuisstijl-heading-level-1-margin-block-start: 0rem;
-	--rijkshuisstijl-heading-level-2-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-2-color: #154273;
 	--rijkshuisstijl-heading-level-2-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-2-font-weight: 700;
 	--rijkshuisstijl-heading-level-2-margin-block-end: 0rem;
 	--rijkshuisstijl-heading-level-2-margin-block-start: 0rem;
-	--rijkshuisstijl-heading-level-3-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-3-color: #154273;
 	--rijkshuisstijl-heading-level-3-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-3-font-weight: 700;
 	--rijkshuisstijl-heading-level-3-margin-block-end: 0rem;
 	--rijkshuisstijl-heading-level-3-margin-block-start: 0rem;
-	--rijkshuisstijl-heading-level-4-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-4-color: #154273;
 	--rijkshuisstijl-heading-level-4-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-4-font-weight: 700;
 	--rijkshuisstijl-heading-level-4-margin-block-end: 0rem;
 	--rijkshuisstijl-heading-level-4-margin-block-start: 0rem;
-	--rijkshuisstijl-heading-level-5-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-5-color: #154273;
 	--rijkshuisstijl-heading-level-5-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-5-font-weight: 700;
 	--rijkshuisstijl-heading-level-5-margin-block-end: 0rem;
 	--rijkshuisstijl-heading-level-5-margin-block-start: 0rem;
-	--rijkshuisstijl-heading-level-6-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-heading-level-6-color: #154273;
 	--rijkshuisstijl-heading-level-6-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-heading-level-6-font-weight: 700;
 	--rijkshuisstijl-heading-level-6-margin-block-end: 0rem;
@@ -1905,9 +1905,9 @@
 	--rijkshuisstijl-hero-heading-font-weight: 700;
 	--rijkshuisstijl-hero-heading-line-height: 125%;
 	--rijkshuisstijl-hero-inline-size: 100%;
-	--rijkshuisstijl-hero-message-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-hero-message-background-color: #154273;
 	--rijkshuisstijl-hero-message-border-radius: 20px;
-	--rijkshuisstijl-hero-message-color: oklch(100% 0 0);
+	--rijkshuisstijl-hero-message-color: #ffffff;
 	--rijkshuisstijl-hero-message-inline-size: 90%;
 	--rijkshuisstijl-hero-message-padding-block-end: calc(
     0.8rem + (1rem - 0.8rem) * calc(
@@ -2006,8 +2006,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-link-active-color: oklch(35.32% 0.0666 242.1);
-	--rijkshuisstijl-link-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-link-active-color: #163f5b;
+	--rijkshuisstijl-link-color: #01689b;
 	--rijkshuisstijl-link-column-gap: calc(
     0.2rem + (0.25rem - 0.2rem) * calc(
     (
@@ -2018,9 +2018,9 @@
   )
   );
 	--rijkshuisstijl-link-current-cursor: default;
-	--rijkshuisstijl-link-disabled-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-link-disabled-color: #334155;
 	--rijkshuisstijl-link-disabled-cursor: disabled;
-	--rijkshuisstijl-link-hover-color: oklch(38.54% 0.0857 238.6);
+	--rijkshuisstijl-link-hover-color: #01496c;
 	--rijkshuisstijl-link-hover-text-decoration-line: underline;
 	--rijkshuisstijl-link-hover-text-decoration-thickness: 0.1875em;
 	--rijkshuisstijl-link-icon-size: calc(
@@ -2033,7 +2033,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-link-list-card-background-color: oklch(100% 0 0);
+	--rijkshuisstijl-link-list-card-background-color: #ffffff;
 	--rijkshuisstijl-link-list-card-padding-block-end: calc(
     1.2rem + (1.5rem - 1.2rem) * calc(
     (
@@ -2092,7 +2092,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-logo-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-logo-color: #154273;
 	--rijkshuisstijl-logo-column-gap: calc(
     0.625rem + (0.75rem - 0.625rem) * calc(
     (
@@ -2103,7 +2103,7 @@
   )
   );
 	--rijkshuisstijl-logo-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
-	--rijkshuisstijl-logo-image-background-color: oklch(100% 0 0);
+	--rijkshuisstijl-logo-image-background-color: #ffffff;
 	--rijkshuisstijl-logo-image-block-size: calc(2 * calc(
     2.5rem + (3rem - 2.5rem) * calc(
     (
@@ -2113,7 +2113,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   ));
-	--rijkshuisstijl-logo-image-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-logo-image-color: #154273;
 	--rijkshuisstijl-logo-image-inline-size: calc(
     2.5rem + (3rem - 2.5rem) * calc(
     (
@@ -2156,10 +2156,10 @@
 	--rijkshuisstijl-logo-title-min-font-size: 0.75rem;
 	--rijkshuisstijl-logo-title-min-padding-block-start: 2.604rem;
 	--rijkshuisstijl-logo-title-padding-block-start: 3.125rem;
-	--rijkshuisstijl-message-list-item-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-message-list-item-border-color: oklch(86.898% 0.01985 252.89);
+	--rijkshuisstijl-message-list-item-background-color: #ffffff;
+	--rijkshuisstijl-message-list-item-border-color: #cbd5e1;
 	--rijkshuisstijl-message-list-item-border-width: 1px;
-	--rijkshuisstijl-message-list-item-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-message-list-item-color: #334155;
 	--rijkshuisstijl-message-list-item-column-gap: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -2197,8 +2197,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-message-list-item-heading-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-message-list-item-icon-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-message-list-item-heading-color: #0f172a;
+	--rijkshuisstijl-message-list-item-icon-color: #0f172a;
 	--rijkshuisstijl-message-list-item-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2241,10 +2241,10 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-nav-bar-background-color: oklch(100% 0 0);
+	--rijkshuisstijl-nav-bar-background-color: #ffffff;
 	--rijkshuisstijl-nav-bar-border-block-end-width: 1px;
-	--rijkshuisstijl-nav-bar-border-color: oklch(53.819% 0.07031 251.25);
-	--rijkshuisstijl-nav-bar-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-nav-bar-border-color: #4f7196;
+	--rijkshuisstijl-nav-bar-color: #154273;
 	--rijkshuisstijl-nav-bar-container-inline-size: 100%;
 	--rijkshuisstijl-nav-bar-content-column-gap: calc(
     0.8rem + (1rem - 0.8rem) * calc(
@@ -2256,8 +2256,8 @@
   )
   );
 	--rijkshuisstijl-nav-bar-heading-font-weight: 700;
-	--rijkshuisstijl-nav-bar-icon-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-nav-bar-icon-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-nav-bar-icon-active-color: #ffffff;
+	--rijkshuisstijl-nav-bar-icon-color: #0f172a;
 	--rijkshuisstijl-nav-bar-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2268,10 +2268,10 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-nav-bar-link-active-background-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-nav-bar-link-active-color: oklch(100% 0 0);
-	--rijkshuisstijl-nav-bar-link-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-nav-bar-link-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-nav-bar-link-active-background-color: #154273;
+	--rijkshuisstijl-nav-bar-link-active-color: #ffffff;
+	--rijkshuisstijl-nav-bar-link-background-color: #ffffff;
+	--rijkshuisstijl-nav-bar-link-color: #154273;
 	--rijkshuisstijl-nav-bar-link-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -2281,8 +2281,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-nav-bar-link-focus-background-color: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-nav-bar-link-focus-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-nav-bar-link-focus-background-color: #dce3ea;
+	--rijkshuisstijl-nav-bar-link-focus-color: #154273;
 	--rijkshuisstijl-nav-bar-link-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2293,8 +2293,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-nav-bar-link-hover-background-color: oklch(98.415% 0.00341 247.86);
-	--rijkshuisstijl-nav-bar-link-hover-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-nav-bar-link-hover-background-color: #f8fafc;
+	--rijkshuisstijl-nav-bar-link-hover-color: #154273;
 	--rijkshuisstijl-nav-bar-link-padding-block-end: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -2341,9 +2341,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-navigation-list-item-active-background-color: oklch(96.826% 0.00685 247.9);
-	--rijkshuisstijl-navigation-list-item-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-navigation-list-item-border-color: oklch(86.898% 0.01985 252.89);
+	--rijkshuisstijl-navigation-list-item-active-background-color: #f1f5f9;
+	--rijkshuisstijl-navigation-list-item-background-color: #ffffff;
+	--rijkshuisstijl-navigation-list-item-border-color: #cbd5e1;
 	--rijkshuisstijl-navigation-list-item-border-width: 1px;
 	--rijkshuisstijl-navigation-list-item-column-gap: calc(
     0.8rem + (1rem - 0.8rem) * calc(
@@ -2372,7 +2372,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-navigation-list-item-description-color: oklch(37.17% 0.03916 257.29);
+	--rijkshuisstijl-navigation-list-item-description-color: #334155;
 	--rijkshuisstijl-navigation-list-item-description-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2384,12 +2384,12 @@
   )
   );
 	--rijkshuisstijl-navigation-list-item-description-line-height: 150%;
-	--rijkshuisstijl-navigation-list-item-focus-background-color: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-navigation-list-item-hover-background-color: oklch(98.415% 0.00341 247.86);
-	--rijkshuisstijl-navigation-list-item-icon-end-color: oklch(37.17% 0.03916 257.29);
-	--rijkshuisstijl-navigation-list-item-icon-start-background-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-navigation-list-item-focus-background-color: #dce3ea;
+	--rijkshuisstijl-navigation-list-item-hover-background-color: #f8fafc;
+	--rijkshuisstijl-navigation-list-item-icon-end-color: #334155;
+	--rijkshuisstijl-navigation-list-item-icon-start-background-color: #0f172a;
 	--rijkshuisstijl-navigation-list-item-icon-start-border-radius: 999px;
-	--rijkshuisstijl-navigation-list-item-icon-start-color: oklch(100% 0 0);
+	--rijkshuisstijl-navigation-list-item-icon-start-color: #ffffff;
 	--rijkshuisstijl-navigation-list-item-icon-start-padding-block: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -2418,7 +2418,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-navigation-list-item-label-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-navigation-list-item-label-color: #0f172a;
 	--rijkshuisstijl-navigation-list-item-label-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-navigation-list-item-label-font-size: calc(
     1.5rem + (2rem - 1.5rem) *
@@ -2451,11 +2451,11 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-number-badge-background-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-number-badge-background-color: #154273;
 	--rijkshuisstijl-number-badge-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-number-badge-border-radius: 999px;
 	--rijkshuisstijl-number-badge-border-width: 0px;
-	--rijkshuisstijl-number-badge-color: oklch(100% 0 0);
+	--rijkshuisstijl-number-badge-color: #ffffff;
 	--rijkshuisstijl-number-badge-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-number-badge-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -2488,10 +2488,10 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-page-footer-background-color: oklch(37.619% 0.09695 253.44);
-	--rijkshuisstijl-page-footer-color: oklch(100% 0 0);
-	--rijkshuisstijl-page-footer-compact-background-color: oklch(91.254% 0.01217 247.96);
-	--rijkshuisstijl-page-footer-compact-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-page-footer-background-color: #154273;
+	--rijkshuisstijl-page-footer-color: #ffffff;
+	--rijkshuisstijl-page-footer-compact-background-color: #dce3ea;
+	--rijkshuisstijl-page-footer-compact-color: #154273;
 	--rijkshuisstijl-page-footer-compact-tagline-font-size: calc(
     1.25rem + (1.5rem - 1.25rem) *
       calc(
@@ -2607,7 +2607,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-paragraph-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-paragraph-color: #0f172a;
 	--rijkshuisstijl-paragraph-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-paragraph-font-weight: 400;
 	--rijkshuisstijl-paragraph-lead-font-size: calc(
@@ -2626,9 +2626,9 @@
 	--rijkshuisstijl-paragraph-lead-margin-block-start: 0rem;
 	--rijkshuisstijl-paragraph-margin-block-end: 0rem;
 	--rijkshuisstijl-paragraph-margin-block-start: 0rem;
-	--rijkshuisstijl-radio-button-checked-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--rijkshuisstijl-radio-button-checked-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--rijkshuisstijl-radio-button-checked-disabled-color: oklch(44.553% 0.03745 257.28);
+	--rijkshuisstijl-radio-button-checked-disabled-background-color: #e2e8f0;
+	--rijkshuisstijl-radio-button-checked-disabled-border-color: #cbd5e1;
+	--rijkshuisstijl-radio-button-checked-disabled-color: #475569;
 	--rijkshuisstijl-radio-group-padding-block-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -2685,9 +2685,9 @@
   )
   ));
 	--rijkshuisstijl-sidenav-display: flex;
-	--rijkshuisstijl-sidenav-link-active-color: oklch(30.782% 0.12693 308.6);
+	--rijkshuisstijl-sidenav-link-active-color: #42145f;
 	--rijkshuisstijl-sidenav-link-active-text-decoration: underline;
-	--rijkshuisstijl-sidenav-link-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-sidenav-link-color: #01689b;
 	--rijkshuisstijl-sidenav-link-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -2697,14 +2697,14 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-sidenav-link-current-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-sidenav-link-current-color: #0f172a;
 	--rijkshuisstijl-sidenav-link-current-font-weight: 700;
 	--rijkshuisstijl-sidenav-link-focus-background-color: rgba(0, 0, 0, 0);
-	--rijkshuisstijl-sidenav-link-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--rijkshuisstijl-sidenav-link-focus-border-color: #154273;
 	--rijkshuisstijl-sidenav-link-focus-border-radius: 4px;
 	--rijkshuisstijl-sidenav-link-focus-border-style: solid;
 	--rijkshuisstijl-sidenav-link-focus-border-width: 2px;
-	--rijkshuisstijl-sidenav-link-focus-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-sidenav-link-focus-color: #01689b;
 	--rijkshuisstijl-sidenav-link-focus-text-decoration: none;
 	--rijkshuisstijl-sidenav-link-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--rijkshuisstijl-sidenav-link-font-size: calc(
@@ -2718,7 +2718,7 @@
   )
   );
 	--rijkshuisstijl-sidenav-link-font-weight: 400;
-	--rijkshuisstijl-sidenav-link-hover-color: oklch(38.54% 0.0857 238.6);
+	--rijkshuisstijl-sidenav-link-hover-color: #01496c;
 	--rijkshuisstijl-sidenav-link-hover-text-decoration: underline;
 	--rijkshuisstijl-sidenav-link-icon-margin-inline: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -2759,8 +2759,8 @@
   )
   );
 	--rijkshuisstijl-sidenav-link-text-decoration: none;
-	--rijkshuisstijl-skip-link-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-skip-link-color: oklch(49.37% 0.11351 240.39);
+	--rijkshuisstijl-skip-link-background-color: #ffffff;
+	--rijkshuisstijl-skip-link-color: #01689b;
 	--rijkshuisstijl-skip-link-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2802,7 +2802,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--rijkshuisstijl-sub-nav-bar-background-color: oklch(96.826% 0.00685 247.9);
+	--rijkshuisstijl-sub-nav-bar-background-color: #f1f5f9;
 	--rijkshuisstijl-sub-nav-bar-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -2948,24 +2948,24 @@
 	--rijkshuisstijl-text-line-height-md: 150%;
 	--rijkshuisstijl-text-line-height-sm: 125%;
 	--rijkshuisstijl-textarea-focus-border-width: 2px;
-	--rijkshuisstijl-textarea-hover-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-textarea-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-textarea-hover-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-textbox-hover-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-textbox-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--rijkshuisstijl-textbox-hover-color: oklch(20.768% 0.03982 265.75);
-	--rijkshuisstijl-toggletip-active-background-color: oklch(100% 0 0);
-	--rijkshuisstijl-toggletip-active-border-color: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-toggletip-active-color: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-toggletip-background-color: oklch(56.621% 0.1475 246.59);
+	--rijkshuisstijl-textarea-hover-background-color: #ffffff;
+	--rijkshuisstijl-textarea-hover-border-color: #162f50;
+	--rijkshuisstijl-textarea-hover-color: #0f172a;
+	--rijkshuisstijl-textbox-hover-background-color: #ffffff;
+	--rijkshuisstijl-textbox-hover-border-color: #162f50;
+	--rijkshuisstijl-textbox-hover-color: #0f172a;
+	--rijkshuisstijl-toggletip-active-background-color: #ffffff;
+	--rijkshuisstijl-toggletip-active-border-color: #007bc7;
+	--rijkshuisstijl-toggletip-active-color: #007bc7;
+	--rijkshuisstijl-toggletip-background-color: #007bc7;
 	--rijkshuisstijl-toggletip-border-color: rgba(0, 0, 0, 0);
 	--rijkshuisstijl-toggletip-border-radius: 4px;
 	--rijkshuisstijl-toggletip-border-width: 1px;
-	--rijkshuisstijl-toggletip-color: oklch(100% 0 0);
-	--rijkshuisstijl-toggletip-focus-background-color: oklch(56.621% 0.1475 246.59);
-	--rijkshuisstijl-toggletip-focus-color: oklch(100% 0 0);
-	--rijkshuisstijl-toggletip-hover-background-color: oklch(72.44% 0.09931 237.91);
-	--rijkshuisstijl-toggletip-hover-color: oklch(20.768% 0.03982 265.75);
+	--rijkshuisstijl-toggletip-color: #ffffff;
+	--rijkshuisstijl-toggletip-focus-background-color: #007bc7;
+	--rijkshuisstijl-toggletip-focus-color: #ffffff;
+	--rijkshuisstijl-toggletip-hover-background-color: #66afdd;
+	--rijkshuisstijl-toggletip-hover-color: #0f172a;
 	--rijkshuisstijl-toggletip-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -2999,18 +2999,18 @@
   );
 	--rijkshuisstijl-viewport-size: tan(atan2(100vi, 1px));
 	--rijkshuisstijl-viewport-width: 100vw;
-	--utrecht-accordion-button-active-background-color: oklch(82.048% 0.02611 250);
+	--utrecht-accordion-button-active-background-color: #b8c6d5;
 	--utrecht-accordion-button-active-border-color: rgba(0, 0, 0, 0);
-	--utrecht-accordion-button-active-color: oklch(28.03% 0.0577 258);
+	--utrecht-accordion-button-active-color: #162945;
 	--utrecht-accordion-button-background-color: rgba(0, 0, 0, 0);
 	--utrecht-accordion-button-border-color: rgba(0, 0, 0, 0);
 	--utrecht-accordion-button-border-radius: 0px;
 	--utrecht-accordion-button-border-width: 1px;
-	--utrecht-accordion-button-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-accordion-button-color: #154273;
 	--utrecht-accordion-button-focus-visible-background-color: rgba(0, 0, 0, 0);
 	--utrecht-accordion-button-focus-visible-border-color: rgba(0, 0, 0, 0);
 	--utrecht-accordion-button-focus-visible-border-width: 1px;
-	--utrecht-accordion-button-focus-visible-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-accordion-button-focus-visible-color: #154273;
 	--utrecht-accordion-button-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -3020,9 +3020,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-accordion-button-hover-background-color: oklch(91.254% 0.01217 247.96);
+	--utrecht-accordion-button-hover-background-color: #dce3ea;
 	--utrecht-accordion-button-hover-border-color: rgba(0, 0, 0, 0);
-	--utrecht-accordion-button-hover-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-accordion-button-hover-color: #162f50;
 	--utrecht-accordion-button-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3102,9 +3102,9 @@
   )
   );
 	--utrecht-accordion-row-gap: 0rem;
-	--utrecht-accordion-section-border-color: oklch(63.656% 0.05353 250.5);
+	--utrecht-accordion-section-border-color: #738eab;
 	--utrecht-accordion-section-border-width: 1px;
-	--utrecht-accordion-section-hover-border-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-accordion-section-hover-border-color: #162f50;
 	--utrecht-accordion-section-margin-block-end: 0rem;
 	--utrecht-accordion-section-margin-block-start: 0rem;
 	--utrecht-action-activate-cursor: pointer;
@@ -3134,11 +3134,11 @@
 	--utrecht-action-inert-cursor: default;
 	--utrecht-action-navigate-cursor: pointer;
 	--utrecht-action-submit-cursor: pointer;
-	--utrecht-alert-background-color: oklch(93.03% 0.02517 236.84);
+	--utrecht-alert-background-color: #d9ebf7;
 	--utrecht-alert-border-color: rgba(0, 0, 0, 0);
 	--utrecht-alert-border-radius: 4px;
 	--utrecht-alert-border-width: 0px;
-	--utrecht-alert-color: oklch(0% 0 0);
+	--utrecht-alert-color: #000000;
 	--utrecht-alert-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -3157,14 +3157,14 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-alert-error-background-color: oklch(92.432% 0.02892 22.962);
+	--utrecht-alert-error-background-color: #f9dfdd;
 	--utrecht-alert-error-border-color: rgba(0, 0, 0, 0);
-	--utrecht-alert-error-color: oklch(0% 0 0);
-	--utrecht-alert-icon-color: oklch(56.621% 0.1475 246.59);
-	--utrecht-alert-icon-error-color: oklch(56.705% 0.20669 29.543);
-	--utrecht-alert-icon-info-color: oklch(56.621% 0.1475 246.59);
+	--utrecht-alert-error-color: #000000;
+	--utrecht-alert-icon-color: #007bc7;
+	--utrecht-alert-icon-error-color: #d52b1e;
+	--utrecht-alert-icon-info-color: #007bc7;
 	--utrecht-alert-icon-inset-block-start: 0.313rem;
-	--utrecht-alert-icon-ok-color: oklch(55.24% 0.16526 137.86);
+	--utrecht-alert-icon-ok-color: #39870c;
 	--utrecht-alert-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3175,10 +3175,10 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-alert-icon-warning-color: oklch(82.372% 0.1685 78.997);
-	--utrecht-alert-info-background-color: oklch(93.03% 0.02517 236.84);
+	--utrecht-alert-icon-warning-color: #ffb612;
+	--utrecht-alert-info-background-color: #d9ebf7;
 	--utrecht-alert-info-border-color: rgba(0, 0, 0, 0);
-	--utrecht-alert-info-color: oklch(0% 0 0);
+	--utrecht-alert-info-color: #000000;
 	--utrecht-alert-margin-block-end: calc(
     0.625rem + (0.75rem - 0.625rem) * calc(
     (
@@ -3198,9 +3198,9 @@
   )
   );
 	--utrecht-alert-message-row-gap: 0rem;
-	--utrecht-alert-ok-background-color: oklch(93.217% 0.02714 134.97);
+	--utrecht-alert-ok-background-color: #e1eddb;
 	--utrecht-alert-ok-border-color: rgba(0, 0, 0, 0);
-	--utrecht-alert-ok-color: oklch(0% 0 0);
+	--utrecht-alert-ok-color: #000000;
 	--utrecht-alert-padding-block-end: calc(
     0.8rem + (1rem - 0.8rem) * calc(
     (
@@ -3237,9 +3237,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-alert-warning-background-color: oklch(96.925% 0.0348 87.074);
+	--utrecht-alert-warning-background-color: #fff4db;
 	--utrecht-alert-warning-border-color: rgba(0, 0, 0, 0);
-	--utrecht-alert-warning-color: oklch(0% 0 0);
+	--utrecht-alert-warning-color: #000000;
 	--utrecht-article-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3252,11 +3252,11 @@
   );
 	--utrecht-article-max-inline-size: 75ch;
 	--utrecht-backdrop-background-color: rgba(0, 0, 0, 0.3);
-	--utrecht-backdrop-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-backdrop-color: #0f172a;
 	--utrecht-backdrop-fade-in-animation-duration: 400ms;
 	--utrecht-backdrop-opacity: 0.8;
 	--utrecht-backdrop-reduced-transparency-opacity: 0.98;
-	--utrecht-blockquote-attribution-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-blockquote-attribution-color: #154273;
 	--utrecht-blockquote-attribution-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3272,8 +3272,8 @@
 	--utrecht-blockquote-border-inline-start-width: 0px;
 	--utrecht-blockquote-border-radius: 0px;
 	--utrecht-blockquote-border-width: 0px;
-	--utrecht-blockquote-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-blockquote-content-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-blockquote-color: #154273;
+	--utrecht-blockquote-content-color: #154273;
 	--utrecht-blockquote-content-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3389,15 +3389,15 @@
   )
   );
 	--utrecht-breadcrumb-nav-line-height: 150%;
-	--utrecht-breadcrumb-nav-link-active-color: oklch(35.32% 0.0666 242.1);
+	--utrecht-breadcrumb-nav-link-active-color: #163f5b;
 	--utrecht-breadcrumb-nav-link-active-text-decoration: underline;
-	--utrecht-breadcrumb-nav-link-color: oklch(49.37% 0.11351 240.39);
+	--utrecht-breadcrumb-nav-link-color: #01689b;
 	--utrecht-breadcrumb-nav-link-current-font-weight: 400;
-	--utrecht-breadcrumb-nav-link-disabled-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-breadcrumb-nav-link-disabled-color: #334155;
 	--utrecht-breadcrumb-nav-link-focus-background-color: rgba(0, 0, 0, 0);
-	--utrecht-breadcrumb-nav-link-focus-color: oklch(49.37% 0.11351 240.39);
+	--utrecht-breadcrumb-nav-link-focus-color: #01689b;
 	--utrecht-breadcrumb-nav-link-focus-text-decoration: None;
-	--utrecht-breadcrumb-nav-link-hover-color: oklch(38.54% 0.0857 238.6);
+	--utrecht-breadcrumb-nav-link-hover-color: #01496c;
 	--utrecht-breadcrumb-nav-link-hover-text-decoration: underline;
 	--utrecht-breadcrumb-nav-link-icon-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3411,7 +3411,7 @@
   );
 	--utrecht-breadcrumb-nav-link-text-decoration: underline;
 	--utrecht-breadcrumb-nav-min-block-size: 48px;
-	--utrecht-breadcrumb-nav-separator-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-breadcrumb-nav-separator-color: #334155;
 	--utrecht-breadcrumb-nav-separator-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3422,14 +3422,14 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-button-active-background-color: oklch(27.95% 0.03685 260.03);
+	--utrecht-button-active-background-color: #1e293b;
 	--utrecht-button-active-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-active-color: oklch(100% 0 0);
-	--utrecht-button-background-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-button-active-color: #ffffff;
+	--utrecht-button-background-color: #0f172a;
 	--utrecht-button-border-color: rgba(0, 0, 0, 0);
 	--utrecht-button-border-radius: 4px;
 	--utrecht-button-border-width: 1px;
-	--utrecht-button-color: oklch(100% 0 0);
+	--utrecht-button-color: #ffffff;
 	--utrecht-button-column-gap: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -3439,12 +3439,12 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-button-disabled-background-color: oklch(92.876% 0.01262 255.51);
+	--utrecht-button-disabled-background-color: #e2e8f0;
 	--utrecht-button-disabled-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-disabled-color: oklch(71.067% 0.03511 256.79);
-	--utrecht-button-focus-background-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-button-disabled-color: #94a3b8;
+	--utrecht-button-focus-background-color: #334155;
 	--utrecht-button-focus-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-focus-color: oklch(100% 0 0);
+	--utrecht-button-focus-color: #ffffff;
 	--utrecht-button-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-button-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3459,9 +3459,9 @@
 	--utrecht-button-font-weight: 700;
 	--utrecht-button-group-margin-block-end: 0rem;
 	--utrecht-button-group-margin-block-start: 0rem;
-	--utrecht-button-hover-background-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-button-hover-background-color: #334155;
 	--utrecht-button-hover-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-hover-color: oklch(100% 0 0);
+	--utrecht-button-hover-color: #ffffff;
 	--utrecht-button-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3474,21 +3474,21 @@
   );
 	--utrecht-button-line-height: 150%;
 	--utrecht-button-min-inline-size: 48px;
-	--utrecht-button-pressed-background-color: oklch(27.95% 0.03685 260.03);
+	--utrecht-button-pressed-background-color: #1e293b;
 	--utrecht-button-pressed-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-pressed-color: oklch(100% 0 0);
-	--utrecht-button-primary-action-active-background-color: oklch(28.03% 0.0577 258);
+	--utrecht-button-pressed-color: #ffffff;
+	--utrecht-button-primary-action-active-background-color: #162945;
 	--utrecht-button-primary-action-active-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-active-color: oklch(100% 0 0);
-	--utrecht-button-primary-action-background-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-button-primary-action-active-color: #ffffff;
+	--utrecht-button-primary-action-background-color: #154273;
 	--utrecht-button-primary-action-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-color: oklch(100% 0 0);
-	--utrecht-button-primary-action-disabled-background-color: oklch(82.048% 0.02611 250);
+	--utrecht-button-primary-action-color: #ffffff;
+	--utrecht-button-primary-action-disabled-background-color: #b8c6d5;
 	--utrecht-button-primary-action-disabled-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-disabled-color: oklch(53.819% 0.07031 251.25);
-	--utrecht-button-primary-action-focus-background-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-primary-action-disabled-color: #4f7196;
+	--utrecht-button-primary-action-focus-background-color: #162f50;
 	--utrecht-button-primary-action-focus-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-focus-color: oklch(100% 0 0);
+	--utrecht-button-primary-action-focus-color: #ffffff;
 	--utrecht-button-primary-action-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3500,25 +3500,25 @@
   )
   );
 	--utrecht-button-primary-action-font-weight: 700;
-	--utrecht-button-primary-action-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-primary-action-hover-background-color: #162f50;
 	--utrecht-button-primary-action-hover-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-hover-color: oklch(100% 0 0);
+	--utrecht-button-primary-action-hover-color: #ffffff;
 	--utrecht-button-primary-action-line-height: 1.875rem;
-	--utrecht-button-primary-action-pressed-background-color: oklch(28.03% 0.0577 258);
+	--utrecht-button-primary-action-pressed-background-color: #162945;
 	--utrecht-button-primary-action-pressed-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-primary-action-pressed-color: oklch(100% 0 0);
-	--utrecht-button-secondary-action-active-background-color: oklch(82.048% 0.02611 250);
-	--utrecht-button-secondary-action-active-border-color: oklch(28.03% 0.0577 258);
-	--utrecht-button-secondary-action-active-color: oklch(28.03% 0.0577 258);
+	--utrecht-button-primary-action-pressed-color: #ffffff;
+	--utrecht-button-secondary-action-active-background-color: #b8c6d5;
+	--utrecht-button-secondary-action-active-border-color: #162945;
+	--utrecht-button-secondary-action-active-color: #162945;
 	--utrecht-button-secondary-action-background-color: rgba(0, 0, 0, 0);
-	--utrecht-button-secondary-action-border-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-button-secondary-action-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-button-secondary-action-border-color: #154273;
+	--utrecht-button-secondary-action-color: #154273;
 	--utrecht-button-secondary-action-disabled-background-color: rgba(0, 0, 0, 0);
-	--utrecht-button-secondary-action-disabled-border-color: oklch(72.708% 0.04031 252.01);
-	--utrecht-button-secondary-action-disabled-color: oklch(63.656% 0.05353 250.5);
-	--utrecht-button-secondary-action-focus-background-color: oklch(91.254% 0.01217 247.96);
+	--utrecht-button-secondary-action-disabled-border-color: #95a9c0;
+	--utrecht-button-secondary-action-disabled-color: #738eab;
+	--utrecht-button-secondary-action-focus-background-color: #dce3ea;
 	--utrecht-button-secondary-action-focus-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-secondary-action-focus-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-secondary-action-focus-color: #162f50;
 	--utrecht-button-secondary-action-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3530,25 +3530,25 @@
   )
   );
 	--utrecht-button-secondary-action-font-weight: 700;
-	--utrecht-button-secondary-action-hover-background-color: oklch(91.254% 0.01217 247.96);
-	--utrecht-button-secondary-action-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--utrecht-button-secondary-action-hover-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-secondary-action-hover-background-color: #dce3ea;
+	--utrecht-button-secondary-action-hover-border-color: #162f50;
+	--utrecht-button-secondary-action-hover-color: #162f50;
 	--utrecht-button-secondary-action-line-height: 1.875rem;
-	--utrecht-button-secondary-action-pressed-background-color: oklch(82.048% 0.02611 250);
-	--utrecht-button-secondary-action-pressed-border-color: oklch(28.03% 0.0577 258);
-	--utrecht-button-secondary-action-pressed-color: oklch(28.03% 0.0577 258);
-	--utrecht-button-subtle-active-background-color: oklch(82.048% 0.02611 250);
+	--utrecht-button-secondary-action-pressed-background-color: #b8c6d5;
+	--utrecht-button-secondary-action-pressed-border-color: #162945;
+	--utrecht-button-secondary-action-pressed-color: #162945;
+	--utrecht-button-subtle-active-background-color: #b8c6d5;
 	--utrecht-button-subtle-active-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-active-color: oklch(28.03% 0.0577 258);
+	--utrecht-button-subtle-active-color: #162945;
 	--utrecht-button-subtle-background-color: rgba(0, 0, 0, 0);
 	--utrecht-button-subtle-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-button-subtle-color: #154273;
 	--utrecht-button-subtle-disabled-background-color: rgba(0, 0, 0, 0);
 	--utrecht-button-subtle-disabled-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-disabled-color: oklch(82.048% 0.02611 250);
-	--utrecht-button-subtle-focus-background-color: oklch(91.254% 0.01217 247.96);
+	--utrecht-button-subtle-disabled-color: #b8c6d5;
+	--utrecht-button-subtle-focus-background-color: #dce3ea;
 	--utrecht-button-subtle-focus-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-focus-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-subtle-focus-color: #162f50;
 	--utrecht-button-subtle-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3560,46 +3560,46 @@
   )
   );
 	--utrecht-button-subtle-font-weight: 700;
-	--utrecht-button-subtle-hover-background-color: oklch(91.254% 0.01217 247.96);
+	--utrecht-button-subtle-hover-background-color: #dce3ea;
 	--utrecht-button-subtle-hover-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-hover-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-button-subtle-hover-color: #162f50;
 	--utrecht-button-subtle-line-height: 1.875rem;
-	--utrecht-button-subtle-pressed-background-color: oklch(82.048% 0.02611 250);
+	--utrecht-button-subtle-pressed-background-color: #b8c6d5;
 	--utrecht-button-subtle-pressed-border-color: rgba(0, 0, 0, 0);
-	--utrecht-button-subtle-pressed-color: oklch(28.03% 0.0577 258);
-	--utrecht-checkbox-active-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-active-border-color: oklch(28.03% 0.0577 258);
+	--utrecht-button-subtle-pressed-color: #162945;
+	--utrecht-checkbox-active-background-color: #ffffff;
+	--utrecht-checkbox-active-border-color: #162945;
 	--utrecht-checkbox-active-border-width: 1px;
-	--utrecht-checkbox-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-background-color: #ffffff;
+	--utrecht-checkbox-border-color: #154273;
 	--utrecht-checkbox-border-radius: 2px;
 	--utrecht-checkbox-border-width: 1px;
-	--utrecht-checkbox-checked-active-background-color: oklch(28.03% 0.0577 258);
+	--utrecht-checkbox-checked-active-background-color: #162945;
 	--utrecht-checkbox-checked-active-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-checked-active-border-width: 1px;
-	--utrecht-checkbox-checked-active-color: oklch(100% 0 0);
-	--utrecht-checkbox-checked-background-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-checked-active-color: #ffffff;
+	--utrecht-checkbox-checked-background-color: #154273;
 	--utrecht-checkbox-checked-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-checked-border-width: 1px;
-	--utrecht-checkbox-checked-color: oklch(100% 0 0);
-	--utrecht-checkbox-checked-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-checkbox-checked-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-checkbox-checked-disabled-color: oklch(44.553% 0.03745 257.28);
-	--utrecht-checkbox-checked-focus-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-checked-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-checked-color: #ffffff;
+	--utrecht-checkbox-checked-disabled-background-color: #e2e8f0;
+	--utrecht-checkbox-checked-disabled-border-color: #cbd5e1;
+	--utrecht-checkbox-checked-disabled-color: #475569;
+	--utrecht-checkbox-checked-focus-background-color: #ffffff;
+	--utrecht-checkbox-checked-focus-border-color: #154273;
 	--utrecht-checkbox-checked-focus-border-width: 2px;
-	--utrecht-checkbox-checked-focus-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-checkbox-checked-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-checkbox-checked-focus-color: #154273;
+	--utrecht-checkbox-checked-hover-background-color: #162f50;
 	--utrecht-checkbox-checked-hover-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-checked-hover-border-width: 1px;
-	--utrecht-checkbox-checked-hover-color: oklch(100% 0 0);
-	--utrecht-checkbox-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-checkbox-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-checkbox-focus-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-checked-hover-color: #ffffff;
+	--utrecht-checkbox-disabled-background-color: #e2e8f0;
+	--utrecht-checkbox-disabled-border-color: #cbd5e1;
+	--utrecht-checkbox-focus-background-color: #ffffff;
+	--utrecht-checkbox-focus-border-color: #154273;
 	--utrecht-checkbox-focus-border-width: 2px;
-	--utrecht-checkbox-hover-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-hover-border-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-checkbox-hover-background-color: #ffffff;
+	--utrecht-checkbox-hover-border-color: #162f50;
 	--utrecht-checkbox-hover-border-width: 1px;
 	--utrecht-checkbox-icon-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3611,27 +3611,27 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-checkbox-indeterminate-active-background-color: oklch(28.03% 0.0577 258);
+	--utrecht-checkbox-indeterminate-active-background-color: #162945;
 	--utrecht-checkbox-indeterminate-active-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-indeterminate-active-border-width: 1px;
-	--utrecht-checkbox-indeterminate-active-color: oklch(100% 0 0);
-	--utrecht-checkbox-indeterminate-background-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-indeterminate-active-color: #ffffff;
+	--utrecht-checkbox-indeterminate-background-color: #154273;
 	--utrecht-checkbox-indeterminate-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-indeterminate-border-width: 1px;
-	--utrecht-checkbox-indeterminate-color: oklch(100% 0 0);
-	--utrecht-checkbox-indeterminate-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-checkbox-indeterminate-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-checkbox-indeterminate-disabled-color: oklch(44.553% 0.03745 257.28);
-	--utrecht-checkbox-indeterminate-focus-background-color: oklch(100% 0 0);
-	--utrecht-checkbox-indeterminate-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-checkbox-indeterminate-color: #ffffff;
+	--utrecht-checkbox-indeterminate-disabled-background-color: #e2e8f0;
+	--utrecht-checkbox-indeterminate-disabled-border-color: #cbd5e1;
+	--utrecht-checkbox-indeterminate-disabled-color: #475569;
+	--utrecht-checkbox-indeterminate-focus-background-color: #ffffff;
+	--utrecht-checkbox-indeterminate-focus-border-color: #154273;
 	--utrecht-checkbox-indeterminate-focus-border-width: 2px;
-	--utrecht-checkbox-indeterminate-focus-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-checkbox-indeterminate-hover-background-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-checkbox-indeterminate-focus-color: #154273;
+	--utrecht-checkbox-indeterminate-hover-background-color: #162f50;
 	--utrecht-checkbox-indeterminate-hover-border-color: rgba(0, 0, 0, 0);
 	--utrecht-checkbox-indeterminate-hover-border-width: 1px;
-	--utrecht-checkbox-indeterminate-hover-color: oklch(100% 0 0);
-	--utrecht-checkbox-invalid-background-color: oklch(92.432% 0.02892 22.962);
-	--utrecht-checkbox-invalid-border-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-checkbox-indeterminate-hover-color: #ffffff;
+	--utrecht-checkbox-invalid-background-color: #f9dfdd;
+	--utrecht-checkbox-invalid-border-color: #d52b1e;
 	--utrecht-checkbox-invalid-border-width: 1px;
 	--utrecht-checkbox-margin-inline-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -3663,9 +3663,9 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-data-badge-background-color: oklch(91.254% 0.01217 247.96);
+	--utrecht-data-badge-background-color: #dce3ea;
 	--utrecht-data-badge-border-radius: 10px;
-	--utrecht-data-badge-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-data-badge-color: #154273;
 	--utrecht-data-badge-padding-block: calc(
     0.1rem + (0.125rem - 0.1rem) * calc(
     (
@@ -3676,14 +3676,14 @@
   )
   );
 	--utrecht-data-badge-padding-inline: 0.75rem;
-	--utrecht-document-background-color: oklch(100% 0 0);
-	--utrecht-document-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-document-background-color: #ffffff;
+	--utrecht-document-color: #0f172a;
 	--utrecht-document-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-document-font-weight: 400;
-	--utrecht-drawer-background-color: oklch(100% 0 0);
-	--utrecht-drawer-border-color: oklch(55.439% 0.04072 257.42);
+	--utrecht-drawer-background-color: #ffffff;
+	--utrecht-drawer-border-color: #64748b;
 	--utrecht-drawer-border-width: 0px;
-	--utrecht-drawer-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-drawer-color: #0f172a;
 	--utrecht-drawer-max-block-size: 15rem;
 	--utrecht-drawer-max-inline-size: 16rem;
 	--utrecht-drawer-padding-block-end: calc(
@@ -3723,7 +3723,7 @@
   )
   );
 	--utrecht-drawer-z-index: 1px;
-	--utrecht-figure-caption-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-figure-caption-color: #0f172a;
 	--utrecht-figure-caption-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3735,8 +3735,8 @@
   )
   );
 	--utrecht-figure-caption-line-height: 150%;
-	--utrecht-focus-inverse-outline-color: oklch(100% 0 0);
-	--utrecht-focus-outline-color: oklch(0% 0 0);
+	--utrecht-focus-inverse-outline-color: #ffffff;
+	--utrecht-focus-outline-color: #000000;
 	--utrecht-focus-outline-offset: calc(
     0.1rem + (0.125rem - 0.1rem) * calc(
     (
@@ -3748,7 +3748,7 @@
   );
 	--utrecht-focus-outline-style: solid;
 	--utrecht-focus-outline-width: 2px;
-	--utrecht-form-field-description-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-form-field-description-color: #334155;
 	--utrecht-form-field-description-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-form-field-description-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3780,7 +3780,7 @@
   )
   );
 	--utrecht-form-field-error-message-background-color: rgba(0, 0, 0, 0);
-	--utrecht-form-field-error-message-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-form-field-error-message-color: #d52b1e;
 	--utrecht-form-field-error-message-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-form-field-error-message-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3826,7 +3826,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-form-field-invalid-border-inline-start-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-form-field-invalid-border-inline-start-color: #d52b1e;
 	--utrecht-form-field-invalid-border-inline-start-width: 2px;
 	--utrecht-form-field-invalid-padding-inline-start: calc(
     0.8rem + (1rem - 0.8rem) * calc(
@@ -3864,7 +3864,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-form-fieldset-invalid-border-inline-start-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-form-fieldset-invalid-border-inline-start-color: #d52b1e;
 	--utrecht-form-fieldset-invalid-border-inline-start-width: 2px;
 	--utrecht-form-fieldset-invalid-padding-inline-start: calc(
     0.8rem + (1rem - 0.8rem) * calc(
@@ -3875,8 +3875,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-form-fieldset-legend-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-form-fieldset-legend-disabled-color: oklch(37.17% 0.03916 257.29);
+	--utrecht-form-fieldset-legend-color: #0f172a;
+	--utrecht-form-fieldset-legend-disabled-color: #334155;
 	--utrecht-form-fieldset-legend-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-form-fieldset-legend-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -3891,12 +3891,12 @@
 	--utrecht-form-fieldset-legend-font-weight: 700;
 	--utrecht-form-fieldset-legend-line-height: 150%;
 	--utrecht-form-fieldset-section-background-color: rgba(0, 0, 0, 0);
-	--utrecht-form-fieldset-section-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-form-label-checkbox-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-form-fieldset-section-color: #0f172a;
+	--utrecht-form-label-checkbox-color: #0f172a;
 	--utrecht-form-label-checkbox-font-weight: 400;
 	--utrecht-form-label-checked-font-weight: 400;
-	--utrecht-form-label-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-form-label-disabled-color: oklch(44.553% 0.03745 257.28);
+	--utrecht-form-label-color: #0f172a;
+	--utrecht-form-label-disabled-color: #475569;
 	--utrecht-form-label-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -3908,7 +3908,7 @@
   )
   );
 	--utrecht-form-label-font-weight: 700;
-	--utrecht-form-label-radio-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-form-label-radio-color: #0f172a;
 	--utrecht-form-label-radio-font-weight: 400;
 	--utrecht-icon-baseline-inset-block-start: 0rem;
 	--utrecht-icon-color: inherit;
@@ -3923,8 +3923,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-link-active-color: oklch(35.32% 0.0666 242.1);
-	--utrecht-link-color: oklch(49.37% 0.11351 240.39);
+	--utrecht-link-active-color: #163f5b;
+	--utrecht-link-color: #01689b;
 	--utrecht-link-column-gap: calc(
     0.2rem + (0.25rem - 0.2rem) * calc(
     (
@@ -3935,10 +3935,10 @@
   )
   );
 	--utrecht-link-focus-background-color: rgba(0, 0, 0, 0);
-	--utrecht-link-focus-color: oklch(49.37% 0.11351 240.39);
+	--utrecht-link-focus-color: #01689b;
 	--utrecht-link-focus-visible-text-decoration: none;
 	--utrecht-link-focus-visible-text-decoration-thickness: 0.0625em;
-	--utrecht-link-hover-color: oklch(38.54% 0.0857 238.6);
+	--utrecht-link-hover-color: #01496c;
 	--utrecht-link-hover-text-decoration: underline;
 	--utrecht-link-hover-text-decoration-thickness: 0.1875em;
 	--utrecht-link-icon-size: calc(
@@ -4006,14 +4006,14 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-link-visited-color: oklch(49.37% 0.11351 240.39);
-	--utrecht-listbox-background-color: oklch(100% 0 0);
-	--utrecht-listbox-border-color: oklch(71.067% 0.03511 256.79);
+	--utrecht-link-visited-color: #01689b;
+	--utrecht-listbox-background-color: #ffffff;
+	--utrecht-listbox-border-color: #94a3b8;
 	--utrecht-listbox-border-radius: 4px;
 	--utrecht-listbox-border-width: 1px;
-	--utrecht-listbox-color: oklch(0% 0 0);
+	--utrecht-listbox-color: #000000;
 	--utrecht-listbox-font-weight: 400;
-	--utrecht-listbox-group-label-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-listbox-group-label-color: #0f172a;
 	--utrecht-listbox-group-label-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -4040,14 +4040,14 @@
   );
 	--utrecht-listbox-inline-size: 16rem;
 	--utrecht-listbox-max-block-size: 40rem;
-	--utrecht-listbox-option-active-background-color: oklch(71.067% 0.03511 256.79);
-	--utrecht-listbox-option-active-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-listbox-option-active-background-color: #94a3b8;
+	--utrecht-listbox-option-active-color: #0f172a;
 	--utrecht-listbox-option-background-color: rgba(0, 0, 0, 0);
-	--utrecht-listbox-option-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-listbox-option-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-listbox-option-disabled-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-listbox-option-hover-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-listbox-option-hover-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-listbox-option-color: #0f172a;
+	--utrecht-listbox-option-disabled-background-color: #e2e8f0;
+	--utrecht-listbox-option-disabled-color: #0f172a;
+	--utrecht-listbox-option-hover-background-color: #e2e8f0;
+	--utrecht-listbox-option-hover-color: #0f172a;
 	--utrecht-listbox-option-min-block-size: 48px;
 	--utrecht-listbox-option-padding-block-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
@@ -4085,19 +4085,19 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-listbox-option-selected-background-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-listbox-option-selected-color: oklch(100% 0 0);
-	--utrecht-listbox-option-selected-hover-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-listbox-option-selected-hover-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-listbox-option-selected-background-color: #154273;
+	--utrecht-listbox-option-selected-color: #ffffff;
+	--utrecht-listbox-option-selected-hover-background-color: #e2e8f0;
+	--utrecht-listbox-option-selected-hover-color: #0f172a;
 	--utrecht-listbox-padding-block-end: 0rem;
 	--utrecht-listbox-padding-block-start: 0rem;
 	--utrecht-listbox-padding-inline-end: 0rem;
 	--utrecht-listbox-padding-inline-start: 0rem;
-	--utrecht-number-badge-background-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-number-badge-background-color: #154273;
 	--utrecht-number-badge-border-color: rgba(0, 0, 0, 0);
 	--utrecht-number-badge-border-radius: 999px;
 	--utrecht-number-badge-border-width: 0px;
-	--utrecht-number-badge-color: oklch(100% 0 0);
+	--utrecht-number-badge-color: #ffffff;
 	--utrecht-number-badge-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-number-badge-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4195,8 +4195,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-page-body-content-background-color: oklch(100% 0 0);
-	--utrecht-page-body-content-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-page-body-content-background-color: #ffffff;
+	--utrecht-page-body-content-color: #0f172a;
 	--utrecht-page-body-content-max-inline-size: 84rem;
 	--utrecht-page-body-content-padding-block-end: 0rem;
 	--utrecht-page-body-content-padding-block-start: 0rem;
@@ -4215,11 +4215,11 @@
   );
 	--utrecht-page-body-font-weight: 400;
 	--utrecht-page-body-line-height: 150%;
-	--utrecht-page-header-background-color: oklch(100% 0 0);
-	--utrecht-page-header-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-page-header-background-color: #ffffff;
+	--utrecht-page-header-color: #0f172a;
 	--utrecht-page-header-content-max-inline-size: 84rem;
 	--utrecht-pointer-target-min-size: 48px;
-	--utrecht-pre-heading-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-pre-heading-color: #0f172a;
 	--utrecht-pre-heading-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-pre-heading-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4233,46 +4233,46 @@
   );
 	--utrecht-pre-heading-font-weight: 700;
 	--utrecht-pre-heading-line-height: 125%;
-	--utrecht-radio-button-active-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-active-border-color: oklch(28.03% 0.0577 258);
+	--utrecht-radio-button-active-background-color: #ffffff;
+	--utrecht-radio-button-active-border-color: #162945;
 	--utrecht-radio-button-active-border-width: 1px;
-	--utrecht-radio-button-active-color: oklch(28.03% 0.0577 258);
-	--utrecht-radio-button-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-radio-button-active-color: #162945;
+	--utrecht-radio-button-background-color: #ffffff;
+	--utrecht-radio-button-border-color: #154273;
 	--utrecht-radio-button-border-width: 1px;
-	--utrecht-radio-button-checked-active-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-checked-active-border-color: oklch(28.03% 0.0577 258);
+	--utrecht-radio-button-checked-active-background-color: #ffffff;
+	--utrecht-radio-button-checked-active-border-color: #162945;
 	--utrecht-radio-button-checked-active-border-width: 1px;
-	--utrecht-radio-button-checked-active-color: oklch(28.03% 0.0577 258);
-	--utrecht-radio-button-checked-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-checked-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-radio-button-checked-active-color: #162945;
+	--utrecht-radio-button-checked-background-color: #ffffff;
+	--utrecht-radio-button-checked-border-color: #154273;
 	--utrecht-radio-button-checked-border-width: 1px;
-	--utrecht-radio-button-checked-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-radio-button-checked-focus-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-checked-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-radio-button-checked-color: #154273;
+	--utrecht-radio-button-checked-focus-background-color: #ffffff;
+	--utrecht-radio-button-checked-focus-border-color: #154273;
 	--utrecht-radio-button-checked-focus-border-width: 2px;
-	--utrecht-radio-button-checked-focus-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-radio-button-checked-hover-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-checked-hover-border-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-radio-button-checked-focus-color: #154273;
+	--utrecht-radio-button-checked-hover-background-color: #ffffff;
+	--utrecht-radio-button-checked-hover-border-color: #162f50;
 	--utrecht-radio-button-checked-hover-border-width: 1px;
-	--utrecht-radio-button-checked-hover-color: oklch(30.37% 0.0676 256.1);
-	--utrecht-radio-button-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-radio-button-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-radio-button-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-radio-button-disabled-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-radio-button-focus-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-radio-button-checked-hover-color: #162f50;
+	--utrecht-radio-button-color: #154273;
+	--utrecht-radio-button-disabled-background-color: #e2e8f0;
+	--utrecht-radio-button-disabled-border-color: #cbd5e1;
+	--utrecht-radio-button-disabled-color: #cbd5e1;
+	--utrecht-radio-button-focus-background-color: #ffffff;
+	--utrecht-radio-button-focus-border-color: #154273;
 	--utrecht-radio-button-focus-border-width: 2px;
-	--utrecht-radio-button-focus-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-radio-button-hover-background-color: oklch(100% 0 0);
-	--utrecht-radio-button-hover-border-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-radio-button-focus-color: #154273;
+	--utrecht-radio-button-hover-background-color: #ffffff;
+	--utrecht-radio-button-hover-border-color: #162f50;
 	--utrecht-radio-button-hover-border-width: 1px;
-	--utrecht-radio-button-hover-color: oklch(30.37% 0.0676 256.1);
+	--utrecht-radio-button-hover-color: #162f50;
 	--utrecht-radio-button-icon-size: 1rem;
-	--utrecht-radio-button-invalid-background-color: oklch(92.432% 0.02892 22.962);
-	--utrecht-radio-button-invalid-border-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-radio-button-invalid-background-color: #f9dfdd;
+	--utrecht-radio-button-invalid-border-color: #d52b1e;
 	--utrecht-radio-button-invalid-border-width: 1px;
-	--utrecht-radio-button-invalid-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-radio-button-invalid-color: #d52b1e;
 	--utrecht-radio-button-margin-inline-end: calc(
     0.4167rem + (0.5rem - 0.4167rem) * calc(
     (
@@ -4320,8 +4320,8 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-root-background-color: oklch(100% 0 0);
-	--utrecht-root-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-root-background-color: #ffffff;
+	--utrecht-root-color: #0f172a;
 	--utrecht-root-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-root-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4335,19 +4335,19 @@
   );
 	--utrecht-root-font-weight: 400;
 	--utrecht-root-line-height: 150%;
-	--utrecht-select-background-color: oklch(100% 0 0);
+	--utrecht-select-background-color: #ffffff;
 	--utrecht-select-border-block-end-width: 1px;
-	--utrecht-select-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-select-border-color: #154273;
 	--utrecht-select-border-radius: 4px;
 	--utrecht-select-border-width: 1px;
-	--utrecht-select-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-select-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-select-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-select-disabled-color: oklch(44.553% 0.03745 257.28);
-	--utrecht-select-focus-background-color: oklch(100% 0 0);
-	--utrecht-select-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-select-color: #0f172a;
+	--utrecht-select-disabled-background-color: #e2e8f0;
+	--utrecht-select-disabled-border-color: #cbd5e1;
+	--utrecht-select-disabled-color: #475569;
+	--utrecht-select-focus-background-color: #ffffff;
+	--utrecht-select-focus-border-color: #154273;
 	--utrecht-select-focus-border-width: 2px;
-	--utrecht-select-focus-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-select-focus-color: #0f172a;
 	--utrecht-select-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-select-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4360,9 +4360,9 @@
   )
   );
 	--utrecht-select-font-weight: 400;
-	--utrecht-select-hover-background-color: oklch(100% 0 0);
-	--utrecht-select-hover-border-color: oklch(30.37% 0.0676 256.1);
-	--utrecht-select-hover-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-select-hover-background-color: #ffffff;
+	--utrecht-select-hover-border-color: #162f50;
+	--utrecht-select-hover-color: #0f172a;
 	--utrecht-select-icon-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -4374,9 +4374,9 @@
   )
   );
 	--utrecht-select-image-background-position: right 0.5rem center;
-	--utrecht-select-invalid-background-color: oklch(92.432% 0.02892 22.962);
+	--utrecht-select-invalid-background-color: #f9dfdd;
 	--utrecht-select-invalid-border-block-end-width: 1px;
-	--utrecht-select-invalid-border-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-select-invalid-border-color: #d52b1e;
 	--utrecht-select-invalid-border-width: 1px;
 	--utrecht-select-line-height: 150%;
 	--utrecht-select-max-inline-size: 25rem;
@@ -4418,7 +4418,7 @@
   )
   );
 	--utrecht-separator-block-size: 2px;
-	--utrecht-separator-color: oklch(63.656% 0.05353 250.5);
+	--utrecht-separator-color: #738eab;
 	--utrecht-separator-margin-block-end: calc(
     0.625rem + (0.75rem - 0.625rem) * calc(
     (
@@ -4437,11 +4437,11 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-status-badge-background-color: oklch(92.876% 0.01262 255.51);
+	--utrecht-status-badge-background-color: #e2e8f0;
 	--utrecht-status-badge-border-color: rgba(0, 0, 0, 0);
 	--utrecht-status-badge-border-radius: 4px;
 	--utrecht-status-badge-border-width: 0px;
-	--utrecht-status-badge-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-status-badge-color: #0f172a;
 	--utrecht-status-badge-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-status-badge-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4454,13 +4454,13 @@
   )
   );
 	--utrecht-status-badge-font-weight: 700;
-	--utrecht-status-badge-informative-background-color: oklch(93.03% 0.02517 236.84);
+	--utrecht-status-badge-informative-background-color: #d9ebf7;
 	--utrecht-status-badge-informative-border-color: rgba(0, 0, 0, 0);
-	--utrecht-status-badge-informative-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-status-badge-informative-color: #0f172a;
 	--utrecht-status-badge-line-height: 150%;
-	--utrecht-status-badge-negative-background-color: oklch(92.432% 0.02892 22.962);
+	--utrecht-status-badge-negative-background-color: #f9dfdd;
 	--utrecht-status-badge-negative-border-color: rgba(0, 0, 0, 0);
-	--utrecht-status-badge-negative-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-status-badge-negative-color: #0f172a;
 	--utrecht-status-badge-padding-block: calc(
     0.1rem + (0.125rem - 0.1rem) * calc(
     (
@@ -4479,13 +4479,13 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-status-badge-positive-background-color: oklch(93.217% 0.02714 134.97);
+	--utrecht-status-badge-positive-background-color: #e1eddb;
 	--utrecht-status-badge-positive-border-color: rgba(0, 0, 0, 0);
-	--utrecht-status-badge-positive-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-status-badge-warning-background-color: oklch(96.925% 0.0348 87.074);
+	--utrecht-status-badge-positive-color: #0f172a;
+	--utrecht-status-badge-warning-background-color: #fff4db;
 	--utrecht-status-badge-warning-border-color: rgba(0, 0, 0, 0);
-	--utrecht-status-badge-warning-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-table-caption-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-status-badge-warning-color: #0f172a;
+	--utrecht-table-caption-color: #0f172a;
 	--utrecht-table-caption-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-table-caption-font-size: calc(
     1.5rem + (2rem - 1.5rem) *
@@ -4555,7 +4555,7 @@
 	--utrecht-table-container-box-inline-start-shadow-spread: 0rem;
 	--utrecht-table-container-box-inline-start-shadow-x: 0rem;
 	--utrecht-table-container-box-inline-start-shadow-y: 1rem;
-	--utrecht-table-data-cell-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-table-data-cell-color: #0f172a;
 	--utrecht-table-data-cell-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-table-data-cell-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4580,9 +4580,9 @@
   )
   );
 	--utrecht-table-footer-background-color: rgba(0, 0, 0, 0);
-	--utrecht-table-footer-border-block-end-color: oklch(86.898% 0.01985 252.89);
+	--utrecht-table-footer-border-block-end-color: #cbd5e1;
 	--utrecht-table-footer-border-block-end-width: 1px;
-	--utrecht-table-footer-cell-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-table-footer-cell-color: #0f172a;
 	--utrecht-table-footer-cell-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-table-footer-cell-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4597,9 +4597,9 @@
 	--utrecht-table-footer-cell-font-weight: 700;
 	--utrecht-table-footer-cell-line-height: 150%;
 	--utrecht-table-header-background-color: rgba(0, 0, 0, 0);
-	--utrecht-table-header-border-block-end-color: oklch(86.898% 0.01985 252.89);
+	--utrecht-table-header-border-block-end-color: #cbd5e1;
 	--utrecht-table-header-border-block-end-width: 2px;
-	--utrecht-table-header-cell-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-table-header-cell-color: #0f172a;
 	--utrecht-table-header-cell-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-table-header-cell-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4614,20 +4614,20 @@
 	--utrecht-table-header-cell-font-weight: 700;
 	--utrecht-table-header-cell-line-height: 150%;
 	--utrecht-table-row-background-color: rgba(0, 0, 0, 0);
-	--utrecht-table-row-border-block-end-color: oklch(86.898% 0.01985 252.89);
+	--utrecht-table-row-border-block-end-color: #cbd5e1;
 	--utrecht-table-row-border-block-end-width: 1px;
-	--utrecht-textarea-background-color: oklch(100% 0 0);
+	--utrecht-textarea-background-color: #ffffff;
 	--utrecht-textarea-border-block-end-width: 1px;
-	--utrecht-textarea-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-textarea-border-color: #154273;
 	--utrecht-textarea-border-radius: 4px;
 	--utrecht-textarea-border-width: 1px;
-	--utrecht-textarea-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-textarea-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-textarea-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-textarea-disabled-color: oklch(44.553% 0.03745 257.28);
-	--utrecht-textarea-focus-background-color: oklch(100% 0 0);
-	--utrecht-textarea-focus-border-color: oklch(37.619% 0.09695 253.44);
-	--utrecht-textarea-focus-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-textarea-color: #0f172a;
+	--utrecht-textarea-disabled-background-color: #e2e8f0;
+	--utrecht-textarea-disabled-border-color: #cbd5e1;
+	--utrecht-textarea-disabled-color: #475569;
+	--utrecht-textarea-focus-background-color: #ffffff;
+	--utrecht-textarea-focus-border-color: #154273;
+	--utrecht-textarea-focus-color: #0f172a;
 	--utrecht-textarea-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-textarea-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4640,11 +4640,11 @@
   )
   );
 	--utrecht-textarea-font-weight: 400;
-	--utrecht-textarea-invalid-background-color: oklch(92.432% 0.02892 22.962);
+	--utrecht-textarea-invalid-background-color: #f9dfdd;
 	--utrecht-textarea-invalid-border-block-end-width: 1px;
-	--utrecht-textarea-invalid-border-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-textarea-invalid-border-color: #d52b1e;
 	--utrecht-textarea-invalid-border-width: 1px;
-	--utrecht-textarea-invalid-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-textarea-invalid-color: #0f172a;
 	--utrecht-textarea-line-height: 150%;
 	--utrecht-textarea-max-inline-size: 25rem;
 	--utrecht-textarea-min-block-size: 48px;
@@ -4684,23 +4684,23 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-textarea-placeholder-color: oklch(55.439% 0.04072 257.42);
-	--utrecht-textarea-read-only-background-color: oklch(96.826% 0.00685 247.9);
-	--utrecht-textarea-read-only-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-textarea-read-only-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-textbox-background-color: oklch(100% 0 0);
+	--utrecht-textarea-placeholder-color: #64748b;
+	--utrecht-textarea-read-only-background-color: #f1f5f9;
+	--utrecht-textarea-read-only-border-color: #cbd5e1;
+	--utrecht-textarea-read-only-color: #0f172a;
+	--utrecht-textbox-background-color: #ffffff;
 	--utrecht-textbox-border-block-end-width: auto;
-	--utrecht-textbox-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-textbox-border-color: #154273;
 	--utrecht-textbox-border-radius: 4px;
 	--utrecht-textbox-border-width: 1px;
-	--utrecht-textbox-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-textbox-disabled-background-color: oklch(92.876% 0.01262 255.51);
-	--utrecht-textbox-disabled-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-textbox-disabled-color: oklch(44.553% 0.03745 257.28);
-	--utrecht-textbox-focus-background-color: oklch(100% 0 0);
-	--utrecht-textbox-focus-border-color: oklch(37.619% 0.09695 253.44);
+	--utrecht-textbox-color: #0f172a;
+	--utrecht-textbox-disabled-background-color: #e2e8f0;
+	--utrecht-textbox-disabled-border-color: #cbd5e1;
+	--utrecht-textbox-disabled-color: #475569;
+	--utrecht-textbox-focus-background-color: #ffffff;
+	--utrecht-textbox-focus-border-color: #154273;
 	--utrecht-textbox-focus-border-width: 2px;
-	--utrecht-textbox-focus-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-textbox-focus-color: #0f172a;
 	--utrecht-textbox-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
 	--utrecht-textbox-font-size: calc(
     1rem + (1.25rem - 1rem) *
@@ -4713,15 +4713,15 @@
   )
   );
 	--utrecht-textbox-font-weight: 400;
-	--utrecht-textbox-hover-background-color: oklch(100% 0 0);
-	--utrecht-textbox-hover-border-color: oklch(63.656% 0.05353 250.5);
+	--utrecht-textbox-hover-background-color: #ffffff;
+	--utrecht-textbox-hover-border-color: #738eab;
 	--utrecht-textbox-hover-border-width: 1px;
-	--utrecht-textbox-hover-color: oklch(20.768% 0.03982 265.75);
-	--utrecht-textbox-invalid-background-color: oklch(92.432% 0.02892 22.962);
+	--utrecht-textbox-hover-color: #0f172a;
+	--utrecht-textbox-invalid-background-color: #f9dfdd;
 	--utrecht-textbox-invalid-border-block-end-width: 1px;
-	--utrecht-textbox-invalid-border-color: oklch(56.705% 0.20669 29.543);
+	--utrecht-textbox-invalid-border-color: #d52b1e;
 	--utrecht-textbox-invalid-border-width: 1px;
-	--utrecht-textbox-invalid-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-textbox-invalid-color: #0f172a;
 	--utrecht-textbox-line-height: 150%;
 	--utrecht-textbox-max-inline-size: 25rem;
 	--utrecht-textbox-min-block-size: 48px;
@@ -4761,10 +4761,10 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-textbox-placeholder-color: oklch(55.439% 0.04072 257.42);
-	--utrecht-textbox-read-only-background-color: oklch(96.826% 0.00685 247.9);
-	--utrecht-textbox-read-only-border-color: oklch(86.898% 0.01985 252.89);
-	--utrecht-textbox-read-only-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-textbox-placeholder-color: #64748b;
+	--utrecht-textbox-read-only-background-color: #f1f5f9;
+	--utrecht-textbox-read-only-border-color: #cbd5e1;
+	--utrecht-textbox-read-only-color: #0f172a;
 	--utrecht-unordered-list-font-size: calc(
     1rem + (1.25rem - 1rem) *
       calc(
@@ -4821,7 +4821,7 @@
       (tan(atan2(1200px, 1px)) - tan(atan2(400px, 1px)))
   )
   );
-	--utrecht-unordered-list-marker-color: oklch(20.768% 0.03982 265.75);
+	--utrecht-unordered-list-marker-color: #0f172a;
 	--utrecht-unordered-list-padding-inline-start: calc(
     1.2rem + (1.5rem - 1.2rem) * calc(
     (
@@ -4840,42 +4840,43 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: rgba(0, 0, 0, 0);
-	--nldesign-color-background-darker: #000000;
-	--nldesign-color-background-hover: #000000;
-	--nldesign-color-border: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-border-dark: oklch(63.656% 0.05353 250.5);
+	--nldesign-color-background-darker: #e8e0df;
+	--nldesign-color-background-hover: #f1f5f9;
+	--nldesign-color-border: #154273;
+	--nldesign-color-border-dark: #738eab;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;
 	--nldesign-color-favorite: #f9cf00;
-	--nldesign-color-focus: oklch(0% 0 0);
-	--nldesign-color-focus-rgb: oklch(0% 0 0);
-	--nldesign-color-header-background: oklch(100% 0 0);
-	--nldesign-color-header-text: oklch(20.768% 0.03982 265.75);
-	--nldesign-color-info: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-info-rgb: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-link: oklch(49.37% 0.11351 240.39);
-	--nldesign-color-link-hover: oklch(38.54% 0.0857 238.6);
-	--nldesign-color-link-visited: oklch(49.37% 0.11351 240.39);
+	--nldesign-color-focus: rgba(0, 0, 0, 0.5);
+	--nldesign-color-focus-rgb: 0, 0, 0;
+	--nldesign-color-header-background: #ffffff;
+	--nldesign-color-header-text: #0f172a;
+	--nldesign-color-info: #154273;
+	--nldesign-color-info-rgb: 21, 66, 115;
+	--nldesign-color-link: #01689b;
+	--nldesign-color-link-hover: #01496c;
+	--nldesign-color-link-visited: #01689b;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #000000;
-	--nldesign-color-placeholder-light: #000000;
-	--nldesign-color-primary: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-primary-hover: oklch(30.37% 0.0676 256.1);
-	--nldesign-color-primary-light: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-primary-light-hover: oklch(37.619% 0.09695 253.44);
-	--nldesign-color-primary-text: oklch(100% 0 0);
+	--nldesign-color-placeholder-dark: #e8e0df;
+	--nldesign-color-placeholder-light: #f1f5f9;
+	--nldesign-color-primary: #154273;
+	--nldesign-color-primary-hover: #162f50;
+	--nldesign-color-primary-light: #e8ecf1;
+	--nldesign-color-primary-light-hover: #d0d9e3;
+	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-success: #39870c;
 	--nldesign-color-success-rgb: 57, 135, 12;
-	--nldesign-color-text: oklch(20.768% 0.03982 265.75);
-	--nldesign-color-text-light: oklch(100% 0 0);
-	--nldesign-color-text-muted: oklch(37.17% 0.03916 257.29);
+	--nldesign-color-text: #0f172a;
+	--nldesign-color-text-light: #ffffff;
+	--nldesign-color-text-muted: #334155;
 	--nldesign-color-warning: #a65600;
 	--nldesign-color-warning-rgb: 166, 86, 0;
 	--nldesign-component-table-header-background-color: transparent;
-	--nldesign-component-table-header-color: oklch(37.17% 0.03916 257.29);
+	--nldesign-component-table-header-color: #334155;
 	--nldesign-component-table-header-font-weight: 400;
 	--nldesign-font-family: 'RijksSansVF', 'Fira Sans', 'Arial', 'Verdana', sans-serif;
+	--nldesign-header-border-bottom: 1px solid #154273;
 
 	/* 4. Provenance — enough to tell two runs apart without running anything.
 	 *    input kind:      A (built theme CSS)
@@ -4885,8 +4886,8 @@
 	 *    converter:       1.0.0
 	 *    mapping table:   v1 sha256:3649f6df5fa862ef
 	 *    applied:         16
-	 *    adapted:         27
-	 *    kept:            1976
+	 *    adapted:         28
+	 *    kept:            2946
 	 *    skipped:         29
 	 */
 }
