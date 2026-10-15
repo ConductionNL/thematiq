@@ -139,6 +139,5 @@ The OpenProject plugin `openproject-thematiq` keeps one design system as a small
 |---|---|
 | `unmapped` | A role thematiq does not know, or a vocabulary key that is not a token name. |
 | `value-not-a-css-value` | Not a text value, empty, or holding a brace. |
-| `dark-colours-not-read` | The dark block. Thematiq makes a set's dark variant itself. |
 
-Every value still passes the token set validator, and the 512 KB limit holds.
+The dark block is read as well: its roles and its vocabulary become the set's dark values, which win over the dark colours thematiq would derive. Every value still passes the token set validator, a dark one too, and the 512 KB limit holds.
