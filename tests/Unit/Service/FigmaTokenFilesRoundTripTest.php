@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\DesignTokensWriter;
 use OCA\Thematiq\Service\FigmaTokenWriter;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\MultiBrandSource;
+use OCA\Thematiq\Service\OpenProjectSetFile;
 use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCP\App\IAppManager;
@@ -83,7 +84,7 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 	 *
 	 * @param string $json The file.
 	 *
-	 * @return array{declarations: array<string, string>, skipped: array<int, string>, imported: int}
+	 * @return array{declarations: array<string, string>, skipped: array<int, string>, imported: int, dark: array<string, string>}
 	 */
 	private function upload(string $json): array {
 		$appManager = $this->createMock(IAppManager::class);
@@ -99,7 +100,7 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 			}
 		}
 
-		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped, 'imported' => (int)$result['imported']];
+		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped, 'imported' => (int)$result['imported'], 'dark' => ($result['darkDeclarations'] ?? [])];
 	}//end upload()
 
 	/**
@@ -366,9 +367,20 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$this->assertCount(18, $expected, 'the plugin exported eighteen values for this design system');
 		$this->assertSame($this->normalise(value: (string)$expected['text']), $this->normalise(value: $back['declarations']['--thematiq-shell-text']));
 
-		// The dark colours are named, not taken for a second brand and not laid over the light ones.
+		// The dark colours are the set's dark values (dark-colours-from-a-file), in every format;
+		// a light and dark file is not taken for two brands, and the dark set is not laid over the light one.
+		$expectedDark = [];
+		foreach ((array)(json_decode((string)file_get_contents($directory . $id . '.roles.json'), true)['dark'] ?? []) as $role => $value) {
+			$expectedDark[OpenProjectSetFile::ROLE_TOKENS[$role]] = $value;
+		}
+
+		ksort($expectedDark);
+		$dark = $back['dark'];
+		ksort($dark);
+		$this->assertNotSame([], $expectedDark, 'the plugin exported dark colours for this design system');
+		$this->assertSame($expectedDark, array_map('strtolower', $dark), $id . ' ' . $file . ' dark');
+		$this->assertSame([], $back['skipped']);
 		if ($file !== 'w3c.tokens.json') {
-			$this->assertSame(['thematiq/dark: dark-colours-not-read'], $back['skipped']);
 			$this->assertSame([], (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file)));
 		}
 	}//end testAPluginDownloadKeepsEveryRole()

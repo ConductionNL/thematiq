@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:92a41bde13a0dc83",
+    "generated_from": "sets:908fc022085d24c8",
     "sets": [
         {
             "id": "amsterdam",
@@ -23,7 +23,8 @@
                 "field": "#767676",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/amsterdam.svg",
@@ -81,7 +82,8 @@
                     "field": "#878787",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3f3f3f",
@@ -187,7 +189,8 @@
                 "field": "#0066cc",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Open Sans, sans-serif"
+                "font-family": "Open Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -247,7 +250,8 @@
                     "field": "#3595f4",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Open Sans, sans-serif"
+                    "font-family": "Open Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -352,7 +356,8 @@
                 "field": "#ffffff",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+                "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -412,7 +417,8 @@
                     "field": "#141414",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+                    "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -517,7 +523,8 @@
                 "field": "#ced4da",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Roboto, sans-serif"
+                "font-family": "Roboto, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -577,7 +584,8 @@
                     "field": "#313940",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Roboto, sans-serif"
+                    "font-family": "Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1f242a",
@@ -682,7 +690,8 @@
                 "field": "#8095BD",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -745,7 +754,8 @@
                     "field": "#495c82",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1a2538",
@@ -851,7 +861,8 @@
                 "field": "#21468B",
                 "radius": "6px",
                 "radius-lg": "10px",
-                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                "menu": "#FFFFFF"
             },
             "logo": {
                 "file": null,
@@ -905,7 +916,8 @@
                     "field": "#6f93d6",
                     "radius": "6px",
                     "radius-lg": "10px",
-                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -1016,7 +1028,8 @@
                 "field": "#74777c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Marianne, Inter, sans-serif"
+                "font-family": "Marianne, Inter, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1069,7 +1082,8 @@
                     "field": "#828589",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Marianne, Inter, sans-serif"
+                    "font-family": "Marianne, Inter, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-action-text": "#ffffff",
@@ -1174,7 +1188,8 @@
                 "field": "#17252A",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", sans-serif"
+                "font-family": "\"Lato\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1233,7 +1248,8 @@
                     "field": "#c3d5dc",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", sans-serif"
+                    "font-family": "\"Lato\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#313131",
@@ -1338,7 +1354,8 @@
                 "field": "#7a7a7a",
                 "radius": "3px",
                 "radius-lg": "3px",
-                "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+                "font-family": "\"TheSans\", \"Fira Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/denhaag.svg",
@@ -1396,7 +1413,8 @@
                     "field": "#848484",
                     "radius": "3px",
                     "radius-lg": "3px",
-                    "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+                    "font-family": "\"TheSans\", \"Fira Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3b3b3b",
@@ -1502,7 +1520,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", Arial, sans-serif"
+                "font-family": "\"Lato\", Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/dinkelland.svg",
@@ -1562,7 +1581,8 @@
                     "field": "#878787",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", Arial, sans-serif"
+                    "font-family": "\"Lato\", Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2b2b2b",
@@ -1667,7 +1687,8 @@
                 "field": "#e0e0e0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/drechterland.svg",
@@ -1727,7 +1748,8 @@
                     "field": "#2e2e2e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -1832,7 +1854,8 @@
                 "field": "#a6abb0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1892,7 +1915,8 @@
                     "field": "#565b60",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -1997,7 +2021,8 @@
                 "field": "#2b2b2b",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+                "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2057,7 +2082,8 @@
                     "field": "#c6c6c6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+                    "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2162,7 +2188,8 @@
                 "field": "#e0e0e0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2222,7 +2249,8 @@
                     "field": "#2e2e2e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2327,7 +2355,8 @@
                 "field": "#7C7C7C",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "IBM Plex Sans, sans-serif"
+                "font-family": "IBM Plex Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2386,7 +2415,8 @@
                     "field": "#828282",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "IBM Plex Sans, sans-serif"
+                    "font-family": "IBM Plex Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -2491,7 +2521,8 @@
                 "field": "#575757",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans\""
+                "font-family": "\"Source Sans\"",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/epe.svg",
@@ -2550,7 +2581,8 @@
                     "field": "#a2a2a2",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans\""
+                    "font-family": "\"Source Sans\"",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2655,7 +2687,8 @@
                 "field": "#8A929E",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/esdoornveen.svg",
@@ -2760,7 +2793,8 @@
                     "field": "#656c78",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#966bc9",
@@ -2893,7 +2927,8 @@
                 "field": "#8F8173",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-basisschool.svg",
@@ -2953,7 +2988,8 @@
                     "field": "#8b7e72",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a2f21",
@@ -3059,7 +3095,8 @@
                 "field": "#8E858B",
                 "radius": "4px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-college.svg",
@@ -3119,7 +3156,8 @@
                     "field": "#7b7378",
                     "radius": "4px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f292d",
@@ -3225,7 +3263,8 @@
                 "field": "#8A8580",
                 "radius": "10px",
                 "radius-lg": "14px",
-                "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+                "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-gemeente.svg",
@@ -3284,7 +3323,8 @@
                     "field": "#7f7b76",
                     "radius": "10px",
                     "radius-lg": "14px",
-                    "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+                    "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#242c30",
@@ -3390,7 +3430,8 @@
                 "field": "#84909A",
                 "radius": "2px",
                 "radius-lg": "4px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-opleider.svg",
@@ -3449,7 +3490,8 @@
                     "field": "#68737d",
                     "radius": "2px",
                     "radius-lg": "4px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#262d30",
@@ -3555,7 +3597,8 @@
                 "field": "#8790A3",
                 "radius": "6px",
                 "radius-lg": "12px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-voortgezet.svg",
@@ -3615,7 +3658,8 @@
                     "field": "#60697a",
                     "radius": "6px",
                     "radius-lg": "12px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1e2531",
@@ -3721,7 +3765,8 @@
                 "field": "#75758a",
                 "radius": "4px",
                 "radius-lg": "4px",
-                "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+                "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/frankendesk.svg",
@@ -3776,7 +3821,8 @@
                     "field": "#767689",
                     "radius": "4px",
                     "radius-lg": "4px",
-                    "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+                    "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#353747",
@@ -3883,7 +3929,8 @@
                 "field": "#696969",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -3943,7 +3990,8 @@
                     "field": "#929292",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -4048,7 +4096,8 @@
                 "field": "#626266",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+                "font-family": "Sofia Pro, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4108,7 +4157,8 @@
                     "field": "#959598",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+                    "font-family": "Sofia Pro, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1c262d",
@@ -4213,7 +4263,8 @@
                 "field": "#07828d",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Calibri,Verdana,sans-serif"
+                "font-family": "Calibri,Verdana,sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4273,7 +4324,8 @@
                     "field": "#69e5f0",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Calibri,Verdana,sans-serif"
+                    "font-family": "Calibri,Verdana,sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1f1f1f",
@@ -4378,7 +4430,8 @@
                 "field": "#7A8AA0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4437,7 +4490,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#22262e",
@@ -4542,7 +4596,8 @@
                 "field": "#000000",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "'Fira Sans', sans-serif"
+                "font-family": "'Fira Sans', sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4593,7 +4648,8 @@
                     "field": "#ffffff",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "'Fira Sans', sans-serif"
+                    "font-family": "'Fira Sans', sans-serif",
+                    "menu": "#000000"
                 },
                 "vocabulary": {
                     "color-background-darker": "#4d4d4d",
@@ -4639,7 +4695,8 @@
                 "field": "#515148",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Clear Sans\", sans-serif"
+                "font-family": "\"Clear Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/hoorn.svg",
@@ -4699,7 +4756,8 @@
                     "field": "#afafa6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Clear Sans\", sans-serif"
+                    "font-family": "\"Clear Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#262829",
@@ -4804,7 +4862,8 @@
                 "field": "#302c27",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4864,7 +4923,8 @@
                     "field": "#cbc7c1",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -4969,7 +5029,8 @@
                 "field": "#75758a",
                 "radius": "4px",
                 "radius-lg": "4px",
-                "font-family": "Marianne, Inter, sans-serif"
+                "font-family": "Marianne, Inter, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5018,7 +5079,8 @@
                     "field": "#767689",
                     "radius": "4px",
                     "radius-lg": "4px",
-                    "font-family": "Marianne, Inter, sans-serif"
+                    "font-family": "Marianne, Inter, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#353747",
@@ -5122,7 +5184,8 @@
                 "field": "#5A6268",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Open Sans\", sans-serif"
+                "font-family": "\"Open Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/leiden.svg",
@@ -5182,7 +5245,8 @@
                     "field": "#939aa0",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Open Sans\", sans-serif"
+                    "font-family": "\"Open Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -5287,7 +5351,8 @@
                 "field": "#dddde4",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Open Sans, sans-serif"
+                "font-family": "Open Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5347,7 +5412,8 @@
                     "field": "#292933",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Open Sans, sans-serif"
+                    "font-family": "Open Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -5452,7 +5518,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "IBM Plex Sans, sans-serif"
+                "font-family": "IBM Plex Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5511,7 +5578,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "IBM Plex Sans, sans-serif"
+                    "font-family": "IBM Plex Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -5616,7 +5684,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5687,7 +5756,8 @@
                 "field": "#7a8aa0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/nijmegen.svg",
@@ -5747,7 +5817,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1d2328",
@@ -5852,7 +5923,8 @@
                 "field": "#003790",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+                "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\"",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/noaberkracht.svg",
@@ -5913,7 +5985,8 @@
                     "field": "#659df7",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+                    "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\"",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1d1d1d",
@@ -6019,7 +6092,8 @@
                 "field": "#b3b3b3",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Roboto\", \"Arial\", sans-serif"
+                "font-family": "\"Roboto\", \"Arial\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6079,7 +6153,8 @@
                     "field": "#545454",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Roboto\", \"Arial\", sans-serif"
+                    "font-family": "\"Roboto\", \"Arial\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#252525",
@@ -6184,7 +6259,8 @@
                 "field": "#8c8c8c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+                "font-family": "\"Roboto\", Monospace, Arial, sans-serif",
+                "menu": "#f2f7fa"
             },
             "logo": {
                 "file": "img/logos/noordwijk.svg",
@@ -6243,7 +6319,8 @@
                     "field": "#757575",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+                    "font-family": "\"Roboto\", Monospace, Arial, sans-serif",
+                    "menu": "#111f27"
                 },
                 "vocabulary": {
                     "color-background-darker": "#252525",
@@ -6348,7 +6425,8 @@
                 "field": "#8e9193",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans 3\", sans-serif"
+                "font-family": "\"Source Sans 3\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6408,7 +6486,8 @@
                     "field": "#6f7274",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans 3\", sans-serif"
+                    "font-family": "\"Source Sans 3\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2a2a2a",
@@ -6513,7 +6592,8 @@
                 "field": "#7c8b90",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/opencatalogi.svg",
@@ -6572,7 +6652,8 @@
                     "field": "#717f83",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#223337",
@@ -6678,7 +6759,8 @@
                 "field": "#89869c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/provincie-zuid-holland.svg",
@@ -6738,7 +6820,8 @@
                     "field": "#69677b",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#26252b",
@@ -6843,7 +6926,8 @@
                 "field": "#929292",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6903,7 +6987,8 @@
                     "field": "#707070",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -7008,7 +7093,8 @@
                 "field": "#696969",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7068,7 +7154,8 @@
                     "field": "#929292",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -7173,7 +7260,8 @@
                 "field": "#2b2b2b",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+                "font-family": "Lato, Helvetica Neue, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7233,7 +7321,8 @@
                     "field": "#c6c6c6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+                    "font-family": "Lato, Helvetica Neue, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141924",
@@ -7338,7 +7427,8 @@
                 "field": "#696969",
                 "radius": "0px",
                 "radius-lg": "4px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/rijkshuisstijl.svg",
@@ -7411,7 +7501,8 @@
                     "field": "#929292",
                     "radius": "0px",
                     "radius-lg": "4px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -7518,7 +7609,8 @@
                 "field": "#7C8B90",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/rotterdam.svg",
@@ -7578,7 +7670,8 @@
                     "field": "#717f83",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#223337",
@@ -7684,7 +7777,8 @@
                 "field": "#e8e8e8",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+                "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7744,7 +7838,8 @@
                     "field": "#282828",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+                    "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -7849,7 +7944,8 @@
                 "field": "#7a8b9f",
                 "radius": "12px",
                 "radius-lg": "16px",
-                "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7877,7 +7973,8 @@
                     "field": "#647386",
                     "radius": "12px",
                     "radius-lg": "16px",
-                    "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -7983,7 +8080,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial, Helvetica, sans-serif"
+                "font-family": "Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/tilburg.svg",
@@ -8043,7 +8141,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial, Helvetica, sans-serif"
+                    "font-family": "Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -8148,7 +8247,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", Arial, sans-serif"
+                "font-family": "\"Lato\", Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/tubbergen.svg",
@@ -8208,7 +8308,8 @@
                     "field": "#878787",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", Arial, sans-serif"
+                    "font-family": "\"Lato\", Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2b2b2b",
@@ -8313,7 +8414,8 @@
                 "field": "#999999",
                 "radius": "4px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/utrecht.svg",
@@ -8370,7 +8472,8 @@
                     "field": "#6a6a6a",
                     "radius": "4px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#393939",
@@ -8476,7 +8579,8 @@
                 "field": "#8A929E",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/vaartveld.svg",
@@ -8580,7 +8684,8 @@
                     "field": "#656c78",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#2f5bd7",
@@ -8713,7 +8818,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -8773,7 +8879,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -8878,7 +8985,8 @@
                 "field": "#7a8aa0",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/vng.svg",
@@ -8941,7 +9049,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2e363f",
@@ -9047,7 +9156,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -9107,7 +9217,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -9212,7 +9323,8 @@
                 "field": "#8A929E",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/warmtepompacademie.svg",
@@ -9315,7 +9427,8 @@
                     "field": "#656c78",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#79e0ec",
@@ -9447,7 +9560,8 @@
                 "field": "#33a6cc",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -9506,7 +9620,8 @@
                     "field": "#3ba2c4",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#162313",
@@ -9611,7 +9726,8 @@
                 "field": "#8A929E",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/wilgenboom.svg",
@@ -9713,7 +9829,8 @@
                     "field": "#656c78",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#8cc8a7",
@@ -9848,7 +9965,8 @@
                 "field": "rgba(0, 0, 0, 0.22)",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "neue-haas-grotesk-text, sans-serif"
+                "font-family": "neue-haas-grotesk-text, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/xxllnc.svg",
@@ -9907,7 +10025,8 @@
                     "field": "#ebebeb38",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "neue-haas-grotesk-text, sans-serif"
+                    "font-family": "neue-haas-grotesk-text, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2a2a2a",
@@ -10012,7 +10131,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10072,7 +10192,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -10177,7 +10298,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10237,7 +10359,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -10342,7 +10465,8 @@
                 "field": "#8A929E",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/zuiddrecht.svg",
@@ -10469,7 +10593,8 @@
                     "field": "#656c78",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#f43535",
@@ -10617,7 +10742,8 @@
                 "field": "#767676",
                 "radius": "2px",
                 "radius-lg": "10px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10680,7 +10806,8 @@
                     "field": "#878787",
                     "radius": "2px",
                     "radius-lg": "10px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#373737",

@@ -168,7 +168,7 @@ class ShellTokenServiceTest extends TestCase {
 		foreach (['zuiddrecht', 'nextcloud', 'rijkshuisstijl', 'summer-breeze', 'a-set-that-was-removed'] as $active) {
 			$tokens = $this->service(active: $active)->document()['tokens'];
 
-			$this->assertCount(18, $tokens, $active);
+			$this->assertCount(19, $tokens, $active);
 			foreach ($tokens as $role => $value) {
 				$this->assertIsString($value, $active . ' ' . $role);
 				$this->assertNotSame('', $value, $active . ' ' . $role);
