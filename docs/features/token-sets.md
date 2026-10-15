@@ -79,6 +79,16 @@ git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
 node scripts/sync-upstream-tokens.mjs /tmp/themes "$(git -C /tmp/themes rev-parse HEAD)" --report report.md
 ```
 
+To convert one published theme by hand, run the converter on its built CSS:
+
+```bash
+npm run convert:theme -- path/to/theme.css --slug zwolle --name "Gemeente Zwolle" --write
+```
+
+- Colours written as `oklch()` or `oklab()` become hex, the way Rijkshuisstijl 18 needs it. The report keeps the original value.
+- A theme with no primary-action colour, such as Zwolle's, takes the primary colour of the set's entry in `token-sets.json`, as the nightly sync does for buren and venray. Pass `--primary <hex>` to use another one.
+- The command line does not repair contrast. A failing pair shows up in the gate, not as a changed colour.
+
 After editing a set by hand, run `bash scripts/token-set-gate.sh`. It regenerates the dark variants, the contrast report, the token reference and the set counts in `css/public-bridge.css`. Then it runs the token-set tests.
 
 ## Adding a New Token Set
