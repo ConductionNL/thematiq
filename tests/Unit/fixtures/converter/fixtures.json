@@ -9,6 +9,7 @@
 	"fixtures": [
 		{ "name": "theme-css", "input": "tests/Unit/fixtures/converter/theme-css.input.css", "slug": "parity", "displayName": "Parity", "sourceName": "theme-css.input.css" },
 		{ "name": "raw-dump", "input": "tests/Unit/fixtures/converter/raw-dump.input.css", "slug": "parity", "displayName": "Parity", "sourceName": "raw-dump.input.css" },
-		{ "name": "style-dictionary", "input": "tests/Unit/fixtures/converter/style-dictionary.input.json", "slug": "parity", "displayName": "Parity", "sourceName": "style-dictionary.input.json" }
+		{ "name": "style-dictionary", "input": "tests/Unit/fixtures/converter/style-dictionary.input.json", "slug": "parity", "displayName": "Parity", "sourceName": "style-dictionary.input.json" },
+		{ "name": "oklch", "input": "tests/Unit/fixtures/converter/oklch.input.css", "slug": "parity", "displayName": "Parity", "sourceName": "oklch.input.css" }
 	]
 }

@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 /**
- * Hex (3, 4, 6, 8 digits), rgb()/rgba() and hsl()/hsla() in comma or space syntax, plus
+ * Hex (3, 4, 6, 8 digits), rgb()/rgba(), hsl()/hsla(), oklch() and oklab() in comma or space syntax, plus
  * the HSL conversions the contrast repair needs. Mirrors `parseColorAlpha()`,
  * `hslToRgb()`, `rgbToHsl()` and `normaliseColour()` in js/lib/tokenConverter.js.
  *
@@ -69,7 +69,7 @@ class ColourLiteralParser {
 			return $this->parseHex(digits: $hex[1]);
 		}
 
-		if (preg_match('/^(rgba?|hsla?)\(\s*([^)]*)\)$/', $trimmed, $function) !== 1) {
+		if (preg_match('/^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/', $trimmed, $function) !== 1) {
 			return null;
 		}
 
@@ -79,10 +79,11 @@ class ColourLiteralParser {
 		}
 
 		$alpha = $this->parseAlpha(part: ($parts[3] ?? '1'));
-		$channels = $this->hslChannels(parts: $parts);
-		if (str_starts_with($function[1], 'rgb') === true) {
-			$channels = $this->rgbChannels(parts: $parts);
-		}
+		$channels = match (true) {
+			str_starts_with($function[1], 'ok') => $this->oklabChannels(space: $function[1], parts: $parts),
+			str_starts_with($function[1], 'rgb') => $this->rgbChannels(parts: $parts),
+			default => $this->hslChannels(parts: $parts),
+		};
 
 		if ($channels === null || $alpha === null) {
 			return null;
@@ -311,6 +312,52 @@ class ColourLiteralParser {
 
 		return $this->hslToRgb(hue: $hue, saturation: ($saturation / 100), lightness: ($lightness / 100));
 	}//end hslChannels()
+
+	/**
+	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut per channel.
+	 *
+	 * Mirrors `oklabChannels()` in js/lib/tokenConverter.js: L takes a percentage (100% = 1),
+	 * chroma, a and b take one where 100% = 0.4, `none` is 0, and the maths is ColorSpaceConverter's.
+	 *
+	 * @param string             $space `oklch` or `oklab`.
+	 * @param array<int, string> $parts The arguments.
+	 *
+	 * @return array{0: float, 1: float, 2: float}|null The channels in [0, 255], or null when malformed.
+	 *
+	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 */
+	private function oklabChannels(string $space, array $parts): ?array {
+		$values = [];
+		foreach (array_slice($parts, 0, 3) as $index => $part) {
+			if ($part === 'none') {
+				$values[] = 0.0;
+				continue;
+			}
+
+			$number = $this->number(part: (string)preg_replace('/deg$/', '', $part));
+			if ($number === null) {
+				return null;
+			}
+
+			if (str_ends_with($part, '%') === true) {
+				$number = ($number / 100);
+				if ($index > 0) {
+					$number = ($number * 0.4);
+				}
+			}
+
+			$values[] = $number;
+		}
+
+		$srgb = (new ColorSpaceConverter())->toSrgb(space: $space, components: $values);
+		if ($srgb === null) {
+			return null;
+		}
+
+		$clip = static fn (float $channel): float => (max(0.0, min(1.0, $channel)) * 255);
+
+		return [$clip($srgb[0]), $clip($srgb[1]), $clip($srgb[2])];
+	}//end oklabChannels()
 
 	/**
 	 * A numeric argument, without a trailing `%`.
