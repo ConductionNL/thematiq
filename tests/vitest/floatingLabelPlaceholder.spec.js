@@ -16,7 +16,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const RESTING = '.input-field:not(.input-field--label-outside) .input-field__input:not(:focus)::placeholder'
+const RESTING =
+	'.input-field:not(.input-field--label-outside) .input-field__input:not(:focus)::placeholder'
 
 /**
  * Every top-level `selector { body }` pair of a stylesheet, in source order.
@@ -26,7 +27,10 @@ const RESTING = '.input-field:not(.input-field--label-outside) .input-field__inp
  */
 function rulesOf(css) {
 	const plain = css.replace(/\/\*[\s\S]*?\*\//g, '')
-	return [...plain.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selector: m[1].trim(), body: m[2] }))
+	return [...plain.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
+		selector: m[1].trim(),
+		body: m[2],
+	}))
 }
 
 describe.each([
@@ -36,8 +40,15 @@ describe.each([
 	const rules = rulesOf(fs.readFileSync(path.join(ROOT, file), 'utf8'))
 
 	it('hides the placeholder under a resting floating label after making placeholders opaque', () => {
-		const opaque = rules.findIndex((r) => r.selector === '::placeholder' && /opacity:\s*1\s*!important/.test(r.body))
-		const resting = rules.findIndex((r) => r.selector === RESTING && /opacity:\s*0\s*!important/.test(r.body))
+		const opaque = rules.findIndex(
+			(r) =>
+				r.selector === '::placeholder'
+				&& /opacity:\s*1\s*!important/.test(r.body),
+		)
+		const resting = rules.findIndex(
+			(r) =>
+				r.selector === RESTING && /opacity:\s*0\s*!important/.test(r.body),
+		)
 		expect(opaque).toBeGreaterThanOrEqual(0)
 		expect(resting).toBeGreaterThan(opaque)
 	})

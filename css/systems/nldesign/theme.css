@@ -782,7 +782,8 @@ textarea:disabled {
  * dossiq's timeline filters). Colour stays as set above; only the resting
  * floating-label case goes back to hidden.
  */
-.input-field:not(.input-field--label-outside) .input-field__input:not(:focus)::placeholder {
+.input-field:not(.input-field--label-outside)
+	.input-field__input:not(:focus)::placeholder {
 	opacity: 0 !important;
 }
 

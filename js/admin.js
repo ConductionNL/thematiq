@@ -8262,9 +8262,9 @@
 						query === ''
 							? ''
 							: t('thematiq', '{shown} of {total} sets match', {
-								shown: shown,
-								total: options.length,
-							})
+									shown: shown,
+									total: options.length,
+								})
 				}
 			}
 			input.addEventListener('input', apply)

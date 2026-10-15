@@ -22,7 +22,8 @@ const TOKEN_SETS = [
 ]
 
 function installGlobals() {
-	global.t = (app, text, vars) => (vars ? text.replace(/\{(\w+)\}/g, (m, k) => String(vars[k])) : text)
+	global.t = (app, text, vars) =>
+		vars ? text.replace(/\{(\w+)\}/g, (m, k) => String(vars[k])) : text
 	global.n = (app, singular, plural, count) => (count === 1 ? singular : plural)
 	global.OC = {
 		generateUrl: (url) => url,
@@ -31,13 +32,22 @@ function installGlobals() {
 		Notification: { showTemporary: vi.fn() },
 		dialogs: { confirm: vi.fn() },
 	}
-	const state = { tokenSets: TOKEN_SETS, currentTokenSet: 'zuiddrecht', activePreview: null }
+	const state = {
+		tokenSets: TOKEN_SETS,
+		currentTokenSet: 'zuiddrecht',
+		activePreview: null,
+	}
 	global.OCP = {
 		InitialState: {
-			loadState: (app, key, fallback) => (Object.prototype.hasOwnProperty.call(state, key) ? state[key] : fallback),
+			loadState: (app, key, fallback) =>
+				Object.prototype.hasOwnProperty.call(state, key)
+					? state[key]
+					: fallback,
 		},
 	}
-	global.fetch = vi.fn(() => Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve({}) }))
+	global.fetch = vi.fn(() =>
+		Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve({}) }),
+	)
 }
 
 function buildDom() {
@@ -85,15 +95,24 @@ describe('the token set list can be searched', () => {
 	})
 
 	it('shows every set before anything is typed', () => {
-		expect(visible()).toEqual(['rijkshuisstijl', 'fryslan', 'amsterdam', 'zuiddrecht'])
-		expect(document.getElementById('nldesign-token-set-search-status').textContent).toBe('')
+		expect(visible()).toEqual([
+			'rijkshuisstijl',
+			'fryslan',
+			'amsterdam',
+			'zuiddrecht',
+		])
+		expect(
+			document.getElementById('nldesign-token-set-search-status').textContent,
+		).toBe('')
 	})
 
 	it('hides what does not match and keeps the selected set', () => {
 		type('amster')
 
 		expect(visible()).toEqual(['amsterdam', 'zuiddrecht'])
-		expect(document.getElementById('nldesign-token-set-search-status').textContent).toBe('1 of 4 sets match')
+		expect(
+			document.getElementById('nldesign-token-set-search-status').textContent,
+		).toBe('1 of 4 sets match')
 	})
 
 	it('ignores case and accents, and matches the id too', () => {
@@ -108,16 +127,22 @@ describe('the token set list can be searched', () => {
 		type('nowhere')
 
 		expect(visible()).toEqual(['zuiddrecht'])
-		expect(document.getElementById('nldesign-token-set-search-status').textContent).toBe('0 of 4 sets match')
+		expect(
+			document.getElementById('nldesign-token-set-search-status').textContent,
+		).toBe('0 of 4 sets match')
 	})
 
 	it('empties on Escape and shows every set again', () => {
 		type('amster')
 		const input = document.getElementById('nldesign-token-set-search')
-		input.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		input.dispatchEvent(
+			new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 
 		expect(input.value).toBe('')
 		expect(visible()).toHaveLength(4)
-		expect(document.getElementById('nldesign-token-set-search-status').textContent).toBe('')
+		expect(
+			document.getElementById('nldesign-token-set-search-status').textContent,
+		).toBe('')
 	})
 })
