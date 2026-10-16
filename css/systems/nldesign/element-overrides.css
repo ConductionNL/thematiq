@@ -404,6 +404,11 @@ header nav .icon {
  * (`:not(.tile-widget div)`) let the tile's own root element match (#939). The
  * root exclusion sits in :where(), so the specificity is unchanged.
  * tests/vitest/tileWidgetOptOut.spec.js.
+ *
+ * A board-look card title (nextcloud-vue CnBoardView) is a link drawn as a
+ * heading in the main text colour. Its class rule cannot outrank these id-level
+ * selectors, so the link selectors leave it out.
+ * tests/vitest/boardCardTitleOptOut.spec.js.
  */
 body,
 #app,
@@ -423,13 +428,13 @@ div:not(#header div):not(#header * div):not(:where(.tile-widget)):not(
 li:not(#header li):not(#header * li),
 a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.tile-widget * a
-	) {
+	):not(.cn-board-view--board .cn-board-view__card-title) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
 }
 
 a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.tile-widget * a
-	) {
+	):not(.cn-board-view--board .cn-board-view__card-title) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
