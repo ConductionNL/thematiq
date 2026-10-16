@@ -83,12 +83,10 @@
 		var chevron = document.createElementNS(SVG_NS, 'svg')
 		chevron.setAttribute('class', CHIP_CLASS + '__chevron')
 		chevron.setAttribute('viewBox', '0 0 24 24')
-		chevron.setAttribute('fill', 'none')
-		chevron.setAttribute('stroke', 'currentColor')
-		chevron.setAttribute('stroke-width', '2.2')
-		chevron.setAttribute('stroke-linecap', 'round')
+		chevron.setAttribute('fill', 'currentColor')
 		var path = document.createElementNS(SVG_NS, 'path')
-		path.setAttribute('d', 'M6 9l6 6 6-6')
+		// Material Design Icons chevron-down, as the board draws it.
+		path.setAttribute('d', 'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z')
 		chevron.appendChild(path)
 		chip.appendChild(chevron)
 
