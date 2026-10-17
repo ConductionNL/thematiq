@@ -10,11 +10,12 @@
  * block and the administrator left the choice to the theme. A set that names
  * nothing never loads it, so its top bar is Nextcloud's own.
  *
- * WHAT IT DRAWS (the DqKop board). The bar of a workplace whose app
- * navigation carries the brand: no wordmark and no current-app name in the
- * bar, the app grid button at the start, the search field right beside it,
- * and at the end the bell, a thin divider and the person who is signed in:
- * an initials avatar, the name in bold, the role in grey and a chevron.
+ * WHAT IT DRAWS (the DqKop board). No wordmark and no current-app name in
+ * the bar: the app's brand block (drawn by the app at the start of the bar)
+ * or its navigation carries the brand. Then the app grid button, the search
+ * field centred in the bar, and at the end the bell, the contacts menu, a
+ * thin divider and the person who is signed in: an initials avatar, the name
+ * in bold, the role in grey and a chevron.
  *
  * The bar's height, colours and the look of the grid button and the search
  * field come from the workplace layout (css/workplace-layout.css); this sheet
@@ -31,8 +32,8 @@
  */
 
 body:not(#body-login) #header {
-	gap: 16px;
-	padding-inline: 28px;
+	gap: 0;
+	padding-inline: 14px 20px;
 }
 
 /* No wordmark and no current-app name: the app navigation carries the brand. */
@@ -57,17 +58,34 @@ body:not(#body-login) #header .app-menu__waffle.button-vue {
 
 body:not(#body-login) #header .header-end {
 	flex: 1 1 auto;
-	gap: 12px;
+	gap: 6px;
 	align-items: center;
+	justify-content: flex-end;
 	padding: 0 !important;
 }
 
-/* The search field right after the grid button, as wide as the board draws
- * it, instead of centred over the whole bar. */
+/* The search field: 560px, centred in the bar's content box (the bar's
+ * padding is 14px at the start and 20px at the end, so the centre sits 3px
+ * before the middle of the window). */
 body:not(#body-login) #header .unified-search-menu {
-	flex: 1 1 360px;
-	max-width: 560px;
-	margin-inline-end: auto;
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: calc(50% - 283px);
+	align-items: center;
+	width: 560px;
+	margin: 0;
+}
+
+/* Too narrow to centre it between the two ends: it follows the grid button
+ * and shrinks. */
+@media (max-width: 1240px) {
+	body:not(#body-login) #header .unified-search-menu {
+		position: static;
+		flex: 1 1 240px;
+		width: auto;
+		max-width: 560px;
+		margin-inline: 16px auto;
+	}
 }
 
 body:not(#body-login) #header .unified-search-input {
@@ -87,21 +105,36 @@ body:not(#body-login) #header .unified-search-input__button {
 	gap: 10px !important;
 }
 
-/* The board's line icons: the magnifier and the bell are drawn as outlines
- * (a mask in the text colour), where Nextcloud draws filled ones. The mask
- * carries only a shape; its colour is the element's own. */
+/* The board's icons (Material Design Icons: magnify, bell-outline,
+ * contacts-outline and apps) replace Nextcloud's, as a mask in the
+ * element's own colour. */
 body:not(#body-login) #header .unified-search-input__icon {
 	width: 18px !important;
 	height: 18px !important;
 	background-color: var(--color-text-maxcontrast) !important;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E")
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z'/%3E%3C/svg%3E")
 		center / contain no-repeat !important;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E")
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z'/%3E%3C/svg%3E")
 		center / contain no-repeat !important;
 }
 
+body:not(#body-login) #header .app-menu__waffle .dots-grid-icon {
+	width: 20px;
+	height: 20px;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16,20H20V16H16M16,14H20V10H16M10,8H14V4H10M16,8H20V4H16M10,14H14V10H10M4,14H8V10H4M4,20H8V16H4M10,20H14V16H10M4,8H8V4H4V8Z'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16,20H20V16H16M16,14H20V10H16M10,8H14V4H10M16,8H20V4H16M10,14H14V10H10M4,14H8V10H4M4,20H8V16H4M10,20H14V16H10M4,8H8V4H4V8Z'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+}
+
+body:not(#body-login) #header .app-menu__waffle .dots-grid-icon svg {
+	visibility: hidden;
+}
+
 body:not(#body-login) #header .unified-search-input__icon svg,
-body:not(#body-login) #header .notifications-button__icon svg {
+body:not(#body-login) #header .notifications-button__icon svg,
+body:not(#body-login) #header .contactsmenu__trigger-icon svg {
 	visibility: hidden;
 }
 
@@ -111,12 +144,11 @@ body:not(#body-login) #header .unified-search-input__label {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-/* The bell: a 40px round button with a 22px icon, the unread dot in the
- * accent. */
+/* The bell and the contacts menu: 44px round buttons with a 22px icon, the
+ * bell's unread dot in the accent. */
 body:not(#body-login) #header .header-end > #notifications {
 	display: flex;
 	align-items: center;
-	gap: 12px;
 	width: auto !important;
 	height: var(--header-height);
 }
@@ -129,18 +161,19 @@ body:not(#body-login) #header .header-end > #notifications > .header-menu {
 	height: 100%;
 }
 
-body:not(#body-login) #header #notifications .header-menu__trigger {
-	--button-size: 40px;
+body:not(#body-login) #header #notifications .header-menu__trigger,
+body:not(#body-login) #header #contactsmenu .header-menu__trigger {
+	--button-size: 44px;
 
-	width: 40px !important;
-	min-width: 40px !important;
-	height: 40px !important;
-	min-height: 40px !important;
+	width: 44px !important;
+	min-width: 44px !important;
+	height: 44px !important;
+	min-height: 44px !important;
 	position: relative !important;
 	inset-inline-start: 0 !important;
 	margin: 0 !important;
 	padding: 0 !important;
-	border-radius: 20px !important;
+	border-radius: 22px !important;
 }
 
 body:not(#body-login) #header .notifications-button__icon {
@@ -148,9 +181,22 @@ body:not(#body-login) #header .notifications-button__icon {
 	width: 22px !important;
 	height: 22px !important;
 	background-color: currentColor !important;
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E")
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 21H14C14 22.1 13.1 23 12 23S10 22.1 10 21M21 19V20H3V19L5 17V11C5 7.9 7 5.2 10 4.3V4C10 2.9 10.9 2 12 2S14 2.9 14 4V4.3C17 5.2 19 7.9 19 11V17L21 19M17 11C17 8.2 14.8 6 12 6S7 8.2 7 11V18H17V11Z'/%3E%3C/svg%3E")
 		center / contain no-repeat !important;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0'/%3E%3C/svg%3E")
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 21H14C14 22.1 13.1 23 12 23S10 22.1 10 21M21 19V20H3V19L5 17V11C5 7.9 7 5.2 10 4.3V4C10 2.9 10.9 2 12 2S14 2.9 14 4V4.3C17 5.2 19 7.9 19 11V17L21 19M17 11C17 8.2 14.8 6 12 6S7 8.2 7 11V18H17V11Z'/%3E%3C/svg%3E")
+		center / contain no-repeat !important;
+}
+
+body:not(#body-login) #header .contactsmenu__trigger-icon {
+	display: block;
+	width: 22px !important;
+	min-width: 0 !important;
+	height: 22px !important;
+	min-height: 0 !important;
+	background-color: currentColor !important;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4M20 18H4V6H20V18M4 0H20V2H4M4 22H20V24H4M12 12C13.38 12 14.5 10.88 14.5 9.5S13.38 7 12 7 9.5 8.12 9.5 9.5 10.62 12 12 12M12 8.5C12.55 8.5 13 8.95 13 9.5S12.55 10.5 12 10.5 11 10.05 11 9.5 11.45 8.5 12 8.5M17 16C17 13.9 13.69 13 12 13S7 13.9 7 16V17H17V16M8.81 15.5C9.42 15 10.84 14.5 12 14.5C13.17 14.5 14.59 15 15.2 15.5H8.81Z'/%3E%3C/svg%3E")
+		center / contain no-repeat !important;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4M20 18H4V6H20V18M4 0H20V2H4M4 22H20V24H4M12 12C13.38 12 14.5 10.88 14.5 9.5S13.38 7 12 7 9.5 8.12 9.5 9.5 10.62 12 12 12M12 8.5C12.55 8.5 13 8.95 13 9.5S12.55 10.5 12 10.5 11 10.05 11 9.5 11.45 8.5 12 8.5M17 16C17 13.9 13.69 13 12 13S7 13.9 7 16V17H17V16M8.81 15.5C9.42 15 10.84 14.5 12 14.5C13.17 14.5 14.59 15 15.2 15.5H8.81Z'/%3E%3C/svg%3E")
 		center / contain no-repeat !important;
 }
 
@@ -168,8 +214,8 @@ body:not(#body-login)
 	.header-menu__trigger:has(.notification__dot)::after {
 	content: '';
 	position: absolute;
-	top: 7px;
-	right: 8px;
+	top: 9px;
+	right: 10px;
 	width: 9px;
 	height: 9px;
 	border: 2px solid var(--color-main-background);
@@ -178,18 +224,39 @@ body:not(#body-login)
 	pointer-events: none;
 }
 
-/* The thin divider between the bell and the person. */
-body:not(#body-login) #header .header-end > #notifications::after {
+body:not(#body-login) #header .header-end > #contactsmenu {
+	display: flex;
+	align-items: center;
+	width: auto !important;
+	height: var(--header-height);
+}
+
+/* The thin divider before the person, after whichever control comes last. */
+body:not(#body-login) #header .header-end > :has(+ #user-menu) {
+	display: flex;
+	align-items: center;
+}
+
+body:not(#body-login) #header .header-end > :has(+ #user-menu)::after {
 	content: '';
 	flex: none;
 	width: 1px;
 	height: 28px;
+	margin-inline: 12px 6px;
 	background-color: var(--color-border);
 }
 
-/* The board's bar has no contacts menu. */
-body:not(#body-login) #header #contactsmenu {
-	display: none !important;
+/* The app's brand block in the bar (drawn by @conduction/nextcloud-vue):
+ * the organisation in the muted text colour, the divider in the border
+ * colour of the light bar. */
+body:not(#body-login) #header .cn-brand-bar__caption {
+	color: var(--color-text-maxcontrast);
+	opacity: 1;
+}
+
+body:not(#body-login) #header .cn-brand-bar__divider {
+	background: var(--color-border);
+	opacity: 1;
 }
 
 /* The person: only once the script has added the label. */
@@ -280,8 +347,7 @@ body:not(#body-login)
 	flex: none;
 	width: 16px;
 	height: 16px;
-	fill: none !important;
-	stroke: currentColor;
+	fill: currentColor !important;
 }
 
 /* A narrow screen keeps the avatar and drops the words. */
@@ -292,8 +358,8 @@ body:not(#body-login)
 }
 
 body:not(#body-login) #header .thematiq-user-chip__chevron path {
-	fill: none !important;
-	stroke: currentColor !important;
+	fill: currentColor !important;
+	stroke: none !important;
 }
 
 /* In the dark the set's hover blue stays a light-scheme value (#234A78 on a
