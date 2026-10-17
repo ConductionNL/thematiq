@@ -22,7 +22,7 @@
 	{
 		"id": "rijkshuisstijl",
 		"name": "Rijkshuisstijl",
-		"description": "Official Dutch national government design system (Rijksoverheid)",
+		"description": "The house style of the Dutch central government (Rijksoverheid): lintblauw #154273 for actions, donkerblauw #01689b for links, cool greys, square corners, Fira Sans in place of the restricted RijksoverheidSans. Colours, type and spacing from the community tokens 18.0.1.",
 		"theming": {
 			"primary_color": "#154273",
 			"background_color": "#F5F6F7",
@@ -31,7 +31,7 @@
 		"licence": {
 			"id": "LicenseRef-rijkshuisstijl-house-style",
 			"package": "@rijkshuisstijl-community/design-tokens",
-			"version": "",
+			"version": "18.0.1",
 			"holder": "Rijksoverheid",
 			"restricted": true
 		}
