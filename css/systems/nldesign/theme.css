@@ -458,14 +458,25 @@ body.body-login-container header {
 button:not(.action-button),
 .button {
 	font-family: var(--nldesign-component-button-font-family) !important;
-	font-weight: var(--nldesign-component-button-font-weight) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
-	border-width: var(--nldesign-component-button-border-width) !important;
 	transition:
 		background-color var(--animation-quick)
 			var(--nldesign-animation-easing, ease),
 		border-color var(--animation-quick) var(--nldesign-animation-easing, ease),
 		color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
+}
+
+/* `.cn-look-board` is excluded from the weight, corner and border width: a
+   nextcloud-vue page drawn in the board look draws its own controls (folder
+   tabs, filter chips, breadcrumb text, the neutral header buttons), and these
+   `!important` values turned the chips into tabs and every tab bold. The font
+   still reaches them, from the rule above. */
+.button-vue:not(.action-button):not(.cn-look-board *),
+.button-vue:not(.action-button):not(.cn-look-board *) .button-vue__text,
+button:not(.action-button):not(.cn-look-board *),
+.button:not(.cn-look-board *) {
+	font-weight: var(--nldesign-component-button-font-weight) !important;
+	border-radius: var(--nldesign-component-button-border-radius) !important;
+	border-width: var(--nldesign-component-button-border-width) !important;
 }
 
 /* Primary buttons.
@@ -589,10 +600,11 @@ button.primary:disabled {
 	border-color: var(--nldesign-component-button-disabled-border-color) !important;
 }
 
-/* Secondary buttons */
-.button-vue--vue-secondary,
-.button-vue--secondary,
-button.secondary {
+/* Secondary buttons. Not in the board look, which draws its secondary button
+   neutral (a grey border and the main text, DqZaak's header buttons). */
+.button-vue--vue-secondary:not(.cn-look-board *),
+.button-vue--secondary:not(.cn-look-board *),
+button.secondary:not(.cn-look-board *) {
 	background-color: var(
 		--nldesign-component-button-secondary-action-background-color
 	) !important;
@@ -603,9 +615,9 @@ button.secondary {
 	border-radius: var(--nldesign-component-button-border-radius) !important;
 }
 
-.button-vue--vue-secondary:hover,
-.button-vue--secondary:hover,
-button.secondary:hover {
+.button-vue--vue-secondary:not(.cn-look-board *):hover,
+.button-vue--secondary:not(.cn-look-board *):hover,
+button.secondary:not(.cn-look-board *):hover {
 	background-color: var(
 		--nldesign-component-button-secondary-action-hover-background-color
 	) !important;
@@ -1107,8 +1119,8 @@ button:not(.action-button):not(.cn-look-board *),
 	border-radius: var(--nldesign-border-radius) !important;
 }
 
-.button-vue:not(.action-button),
-button:not(.action-button) {
+.button-vue:not(.action-button):not(.cn-look-board *),
+button:not(.action-button):not(.cn-look-board *) {
 	border-radius: var(
 		--nldesign-component-button-border-radius,
 		var(--nldesign-border-radius)

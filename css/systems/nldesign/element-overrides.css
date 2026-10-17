@@ -619,8 +619,8 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
  * secondary button's label token — saved or previewed — never showed. Its own
  * token goes on the surface, and the spans take it from there.
  */
-.button-vue--vue-secondary,
-.button-vue--secondary {
+.button-vue--vue-secondary:not(.cn-look-board *),
+.button-vue--secondary:not(.cn-look-board *) {
 	--nldesign-color-on-surface: var(
 		--nldesign-component-button-secondary-action-color
 	);
@@ -793,9 +793,9 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
  * nothing — every Corner row in the playground still set a token this rule
  * overrode. Each token below is undeclared until an admin sets one and falls
  * back to `--nldesign-border-radius`, so a sharp theme is unaffected. */
-.button,
-button:not(.action-button),
-.button-vue:not(.action-button) {
+.button:not(.cn-look-board *),
+button:not(.action-button):not(.cn-look-board *),
+.button-vue:not(.action-button):not(.cn-look-board *) {
 	border-radius: var(
 		--nldesign-component-button-border-radius,
 		var(--nldesign-border-radius)
