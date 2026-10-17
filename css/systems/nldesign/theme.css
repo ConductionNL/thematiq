@@ -927,7 +927,9 @@ table {
 	border-width: var(--nldesign-component-table-border-width) !important;
 }
 
-th {
+/* Not in a nextcloud-vue board-look table, which draws its own header row:
+   near-white, 14px muted labels (DqZaken). */
+th:not(.cn-look-board *) {
 	background-color: var(
 		--nldesign-component-table-header-background-color
 	) !important;

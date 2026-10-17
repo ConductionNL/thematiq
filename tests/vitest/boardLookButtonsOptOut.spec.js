@@ -28,6 +28,7 @@ const FILES = [
 	'css/systems/nldesign/theme.css',
 	'css/systems/nldesign/element-overrides.css',
 ]
+const TABLE_HEAD = ['background-color', 'color', 'font-weight']
 const SHAPE = ['font-weight', 'border-radius', 'border-width']
 const SECONDARY_INK = [
 	'background-color',
@@ -94,7 +95,9 @@ describe('the button rules and the board look', () => {
 				<button id="chip" type="button" class="cn-quick-filter-bar__tab">Alles</button>
 				<button id="tab" type="button" class="cn-tabs__nav-item">Overzicht</button>
 				<button id="board-secondary" class="button-vue button-vue--secondary"><span id="board-text" class="button-vue__text">Meer</span></button>
+				<table><thead><tr><th id="board-th">Zaak</th></tr></thead></table>
 			</div>
+			<table><thead><tr><th id="plain-th">Naam</th></tr></thead></table>
 			<button id="plain" type="button">Opslaan</button>
 			<button id="secondary" class="button-vue button-vue--secondary"><span id="text" class="button-vue__text">Meer</span></button>`
 	})
@@ -123,6 +126,14 @@ describe('the button rules and the board look', () => {
 		expect(matching(document.getElementById('board-secondary'), ink)).toEqual([])
 		expect(
 			matching(document.getElementById('secondary'), ink).length,
+		).toBeGreaterThan(0)
+	})
+
+	it('leaves a board-look table header row alone and still styles one outside it', () => {
+		const head = selectorsSetting(TABLE_HEAD).filter((s) => /\bth\b/.test(s))
+		expect(matching(document.getElementById('board-th'), head)).toEqual([])
+		expect(
+			matching(document.getElementById('plain-th'), head).length,
 		).toBeGreaterThan(0)
 	})
 })
