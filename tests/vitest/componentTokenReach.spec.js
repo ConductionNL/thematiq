@@ -78,7 +78,6 @@ const NESTED = new Set([
 	'header-bar: background-color <- --nldesign-color-primary',
 	'avatar: color <- --nldesign-component-header-color',
 	'header-bar: color <- --nldesign-component-avatar-initials-color',
-	'content-card: color <- --nldesign-component-button-primary-action-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',
 	// The header's app MENU entry (`.app-menu-main .app-menu-entry.active a` in
