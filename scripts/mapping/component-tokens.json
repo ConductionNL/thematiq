@@ -983,7 +983,9 @@
 				".button-vue--primary",
 				".button-vue--vue-primary",
 				"button.primary",
-				"input[type='submit']"
+				"input[type='submit']",
+				"input.primary",
+				"a.primary"
 			],
 			"tokens": {
 				"--nldesign-component-button-primary-action-background-color": {

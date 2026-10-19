@@ -724,6 +724,8 @@ progress,
 .button-vue--vue-primary,
 button.primary,
 input[type='submit'],
+input.primary,
+a.primary,
 [data-thematiq-component='primary-button'] {
 	--color-primary-element: var(
 		--nldesign-component-button-primary-action-background-color,
