@@ -93,6 +93,16 @@
 	--nldesign-color-border: #E4E6EA;
 	--nldesign-color-border-dark: #8A929E;
 
+	/* The table header row as the workplace boards draw it (DqZaken): near-
+	 * white #FAFBFC, muted labels at 600, not the default background-dark band
+	 * with bold ink. component-scopes.css also hands this colour to
+	 * --color-text-maxcontrast inside every table, so with the default (the
+	 * body ink) every muted line in a table cell drew in ink. Muted text on
+	 * the header 5.99:1, on a white row 6.20:1, on the row hover 5.49:1. */
+	--nldesign-component-table-header-background-color: #FAFBFC;
+	--nldesign-component-table-header-color: #5E6168;
+	--nldesign-component-table-header-font-weight: 600;
+
 	/* Focus colour */
 	--nldesign-color-focus: rgba(54, 105, 165, 0.5);
 	--nldesign-color-focus-rgb: 54, 105, 165;
