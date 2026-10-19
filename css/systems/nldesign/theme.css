@@ -465,18 +465,34 @@ button:not(.action-button),
 		color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-/* `.cn-look-board` is excluded from the weight, corner and border width: a
-   nextcloud-vue page drawn in the board look draws its own controls (folder
-   tabs, filter chips, breadcrumb text, the neutral header buttons), and these
-   `!important` values turned the chips into tabs and every tab bold. The font
-   still reaches them, from the rule above. */
-.button-vue:not(.action-button):not(.cn-look-board *),
-.button-vue:not(.action-button):not(.cn-look-board *) .button-vue__text,
-button:not(.action-button):not(.cn-look-board *),
-.button:not(.cn-look-board *) {
-	font-weight: var(--nldesign-component-button-font-weight) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
-	border-width: var(--nldesign-component-button-border-width) !important;
+/* The button weight, corner and border width are tokens, not forced values.
+ *
+ * An NcButton reads its weight from --font-weight-element and its corner from
+ * --border-radius-element, so the set hands its button tokens to those two on
+ * the button itself; a component that draws a button its own way writes a
+ * plain rule (or sets the tokens), with nothing `!important` to outrank.
+ * Core's plain buttons get the same values from a rule with core's own
+ * specificity, later in the cascade, so it wins over core and loses to any
+ * component rule more specific than core's.
+ *
+ * The NcButton rule has no specificity (`:where()`), so the per-variant
+ * scopes in component-scopes.css (a primary or secondary button's own token)
+ * still decide for their variant.
+ *
+ * `.cn-look-board` is excluded: a nextcloud-vue page drawn in the board look
+ * draws its own controls (folder tabs, filter chips, the neutral header
+ * buttons). The font still reaches them, from the rule above. */
+:where(.button-vue:not(.action-button):not(.cn-look-board *)) {
+	--font-weight-element: var(--nldesign-component-button-font-weight);
+	--border-radius-element: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	border-width: var(--nldesign-component-button-border-width);
+}
+
+button:not(.button-vue, [class^='vs__']):not(.action-button, .cn-look-board *),
+.button:not(.app-navigation-entry-button, .cn-look-board *) {
+	font-weight: var(--nldesign-component-button-font-weight);
+	border-radius: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	border-width: var(--nldesign-component-button-border-width);
 }
 
 /* Primary buttons.
@@ -503,7 +519,6 @@ a.primary {
 		--nldesign-component-button-primary-action-font-weight,
 		700
 	) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
 }
 
 /* Force text color on inner spans of primary buttons (Vue scoped styles override inherited color).
@@ -612,7 +627,6 @@ button.secondary:not(.cn-look-board *) {
 	border-color: var(
 		--nldesign-component-button-secondary-action-border-color
 	) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
 }
 
 .button-vue--vue-secondary:not(.cn-look-board *):hover,
@@ -1119,14 +1133,6 @@ button:not(.action-button):not(.cn-look-board *),
 .widget,
 .tooltip {
 	border-radius: var(--nldesign-border-radius) !important;
-}
-
-.button-vue:not(.action-button):not(.cn-look-board *),
-button:not(.action-button):not(.cn-look-board *) {
-	border-radius: var(
-		--nldesign-component-button-border-radius,
-		var(--nldesign-border-radius)
-	) !important;
 }
 
 .modal-container {

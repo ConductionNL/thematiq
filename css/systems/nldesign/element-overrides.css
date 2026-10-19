@@ -792,15 +792,9 @@ button[class*='primary']:not([data-admin-theming-setting-color-picker]):not(
  * with. While both were one blanket rule, splitting theme.css alone changed
  * nothing — every Corner row in the playground still set a token this rule
  * overrode. Each token below is undeclared until an admin sets one and falls
- * back to `--nldesign-border-radius`, so a sharp theme is unaffected. */
-.button:not(.cn-look-board *),
-button:not(.action-button):not(.cn-look-board *),
-.button-vue:not(.action-button):not(.cn-look-board *) {
-	border-radius: var(
-		--nldesign-component-button-border-radius,
-		var(--nldesign-border-radius)
-	) !important;
-}
+ * back to `--nldesign-border-radius`, so a sharp theme is unaffected. Buttons
+ * are not listed: theme.css hands their corner to --border-radius-element and
+ * a plain rule, as tokens rather than a forced value. */
 
 input {
 	border-radius: var(
