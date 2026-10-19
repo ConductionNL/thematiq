@@ -218,4 +218,9 @@
 	--nldesign-hero-action-color: #ffffff;
 	/* The portal names the set's emblem in --nldesign-emblem-url. */
 	--nldesign-hero-decoration-image: var(--nldesign-emblem-url);
+
+	/* The set follows Cunningham's cards: a dashboard card carries its title and
+	 * body on one surface, with no rule between them (as the lasuite and
+	 * cunningham systems draw it). */
+	--nldesign-component-dashboard-card-header-border-style: none;
 }
