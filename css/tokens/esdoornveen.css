@@ -228,4 +228,9 @@
 	 * (school-design esdoornveen, Home); portaliq hero-aside reads it
 	 * (openspec/changes/esdoornveen-hero-image-corner). */
 	--nldesign-hero-image-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 120px), calc(100% - 75px) 100%, 0 100%);
+
+	/* The set follows Cunningham's cards: a dashboard card carries its title and
+	 * body on one surface, with no rule between them (as the lasuite and
+	 * cunningham systems draw it). */
+	--nldesign-component-dashboard-card-header-border-style: none;
 }

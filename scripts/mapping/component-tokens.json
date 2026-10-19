@@ -365,10 +365,11 @@
 			"tokens": {
 				"--nldesign-component-table-header-color": {
 					"global": "--color-text-maxcontrast",
+					"paint": { "property": "color", "selectors": ["th"], "fallback": "inherit" },
 					"label": "Table header label",
 					"type": "color",
 					"primary": false,
-					"paints": "Header row labels and secondary cells",
+					"paints": "Header row labels",
 					"callout": 1
 				},
 				"--nldesign-component-table-header-background-color": {
@@ -982,7 +983,9 @@
 				".button-vue--primary",
 				".button-vue--vue-primary",
 				"button.primary",
-				"input[type='submit']"
+				"input[type='submit']",
+				"input.primary",
+				"a.primary"
 			],
 			"tokens": {
 				"--nldesign-component-button-primary-action-background-color": {

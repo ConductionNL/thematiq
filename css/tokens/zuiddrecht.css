@@ -280,4 +280,9 @@
 	--nldesign-website-attention-background-color: #FFF4DE;
 	--nldesign-website-attention-border-color: #E8C77D;
 	--nldesign-website-attention-color: #1A1A1A;
+
+	/* The set follows Cunningham's cards: a dashboard card carries its title and
+	 * body on one surface, with no rule between them (as the lasuite and
+	 * cunningham systems draw it). */
+	--nldesign-component-dashboard-card-header-border-style: none;
 }

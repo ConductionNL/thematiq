@@ -352,10 +352,6 @@ body,
 /* table */
 table,
 [data-thematiq-component='table'] {
-	--color-text-maxcontrast: var(
-		--nldesign-component-table-header-color,
-		var(--thematiq-global-color-text-maxcontrast)
-	);
 	--color-border: var(
 		--nldesign-component-table-border-color,
 		var(--thematiq-global-color-border)
@@ -371,6 +367,7 @@ table,
 }
 
 th {
+	color: var(--nldesign-component-table-header-color, inherit);
 	background-color: var(--nldesign-component-table-header-background-color, transparent);
 	font-weight: var(--nldesign-component-table-header-font-weight, normal);
 }
@@ -727,6 +724,8 @@ progress,
 .button-vue--vue-primary,
 button.primary,
 input[type='submit'],
+input.primary,
+a.primary,
 [data-thematiq-component='primary-button'] {
 	--color-primary-element: var(
 		--nldesign-component-button-primary-action-background-color,

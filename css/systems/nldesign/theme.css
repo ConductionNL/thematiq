@@ -465,129 +465,53 @@ button:not(.action-button),
 		color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-/* `.cn-look-board` is excluded from the weight, corner and border width: a
-   nextcloud-vue page drawn in the board look draws its own controls (folder
-   tabs, filter chips, breadcrumb text, the neutral header buttons), and these
-   `!important` values turned the chips into tabs and every tab bold. The font
-   still reaches them, from the rule above. */
-.button-vue:not(.action-button):not(.cn-look-board *),
-.button-vue:not(.action-button):not(.cn-look-board *) .button-vue__text,
-button:not(.action-button):not(.cn-look-board *),
-.button:not(.cn-look-board *) {
-	font-weight: var(--nldesign-component-button-font-weight) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
-	border-width: var(--nldesign-component-button-border-width) !important;
-}
-
-/* Primary buttons.
+/* The button weight, corner and border width are tokens, not forced values.
  *
- * Nextcloud 33 and later render each Settings › Theming colour field as a
- * primary NcButton whose background IS the colour being chosen, set inline as
- * its own --color-primary-element (`ColorPickerField.vue`). Core gives it only
- * a CSS-module class, `_colorPickerField__button_<hash>`, and no data
- * attribute, so it is excluded by that class. `:where()` keeps the exclusion
- * at zero specificity, so this rule outranks exactly what it did before. */
-.button-vue--vue-primary:not(:where([class*='_colorPickerField__button'])),
-.button-vue--primary:not(:where([class*='_colorPickerField__button'])),
-button.primary,
-input.primary,
-a.primary {
-	background-color: var(
-		--nldesign-component-button-primary-action-background-color
-	) !important;
-	border-color: var(
-		--nldesign-component-button-primary-action-border-color
-	) !important;
-	color: var(--nldesign-component-button-primary-action-color) !important;
-	font-weight: var(
-		--nldesign-component-button-primary-action-font-weight,
-		700
-	) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
-}
-
-/* Force text color on inner spans of primary buttons (Vue scoped styles override inherited color).
+ * An NcButton reads its weight from --font-weight-element and its corner from
+ * --border-radius-element, so the set hands its button tokens to those two on
+ * the button itself; a component that draws a button its own way writes a
+ * plain rule (or sets the tokens), with nothing `!important` to outrank.
+ * Core's plain buttons get the same values from a rule with core's own
+ * specificity, later in the cascade, so it wins over core and loses to any
+ * component rule more specific than core's.
  *
- * EXCEPT Nextcloud's own colour pickers. Settings › Theming renders each colour
- * field as an NcButton `type="primary"` whose background IS the colour being
- * chosen, with a text colour core computes for legibility
- * (`ColorPickerField.vue`: `colord(value).isLight() ? '#000000' : '#ffffff'`).
- * Core's `.field__button[data-v-…]` rule keeps the BUTTON right, but declares
- * nothing for its children — so this rule captured the `<span>` holding the hex
- * and painted it the theme's primary text colour: white lettering on a white
- * swatch, measured with #ffffff selected. The `#content` prefix makes this
- * (1,2,0), which no sane opt-out rule can outrank, so the pickers are excluded
- * here instead of overridden later. */
-#body-login
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__text,
-#body-login
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__wrapper,
-#content
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__text,
-#content
-	.button-vue--vue-primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__wrapper,
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	):not(:where([class*='_colorPickerField__button']))
-	.button-vue__text,
-.button-vue.button-vue--vue-primary:not(
-		[data-admin-theming-setting-color-picker]
-	):not(:where([class*='_colorPickerField__button']))
-	.button-vue__wrapper,
-#body-login
-	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__text,
-#body-login
-	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__wrapper,
-#content
-	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__text,
-#content
-	.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__wrapper,
-.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__text,
-.button-vue.button-vue--primary:not([data-admin-theming-setting-color-picker]):not(
-		:where([class*='_colorPickerField__button'])
-	)
-	.button-vue__wrapper {
-	color: var(--nldesign-component-button-primary-action-color) !important;
+ * The NcButton rule has no specificity (`:where()`), so the per-variant
+ * scopes in component-scopes.css (a primary or secondary button's own token)
+ * still decide for their variant.
+ *
+ * `.cn-look-board` is excluded: a nextcloud-vue page drawn in the board look
+ * draws its own controls (folder tabs, filter chips, the neutral header
+ * buttons). The font still reaches them, from the rule above. */
+:where(.button-vue:not(.action-button):not(.cn-look-board *)) {
+	--font-weight-element: var(--nldesign-component-button-font-weight);
+	--border-radius-element: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	border-width: var(--nldesign-component-button-border-width);
 }
 
-.button-vue--vue-primary:hover:not(:where([class*='_colorPickerField__button'])),
-.button-vue--primary:hover:not(:where([class*='_colorPickerField__button'])),
-button.primary:hover,
-input.primary:hover,
-a.primary:hover {
-	background-color: var(
-		--nldesign-component-button-primary-action-hover-background-color
-	) !important;
-	border-color: var(
-		--nldesign-component-button-primary-action-hover-background-color
-	) !important;
+button:not(.button-vue, [class^='vs__']):not(.action-button, .cn-look-board *),
+.button:not(.app-navigation-entry-button, .cn-look-board *) {
+	font-weight: var(--nldesign-component-button-font-weight);
+	border-radius: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	border-width: var(--nldesign-component-button-border-width);
+}
+
+/* Primary buttons: tokens, not forced values.
+ *
+ * The primary button's ground, label, hover, border, corner and weight come
+ * from the set's tokens through the variables Nextcloud's buttons read
+ * (--color-primary-element, --color-primary-element-text, -hover,
+ * --border-radius-element, --font-weight-element), declared per variant in
+ * component-scopes.css. Nothing is forced here, so an app or the board look
+ * that draws its primary button its own way decides.
+ *
+ * The label's spans follow the button's own text colour: the body-ink rule in
+ * element-overrides.css reads --nldesign-color-on-surface, and the primary
+ * button hands it the primary label colour. Nextcloud's own colour pickers
+ * (Settings › Theming renders each colour field as a primary NcButton whose
+ * background IS the colour being chosen, with a legible text colour core
+ * computes) are left out, so their label keeps core's colour. */
+:where(.button-vue--vue-primary, .button-vue--primary):not([data-admin-theming-setting-color-picker]):not(:where([class*='_colorPickerField__button'])) {
+	--nldesign-color-on-surface: var(--color-primary-element-text);
 }
 
 .button-vue--vue-primary:disabled,
@@ -612,7 +536,6 @@ button.secondary:not(.cn-look-board *) {
 	border-color: var(
 		--nldesign-component-button-secondary-action-border-color
 	) !important;
-	border-radius: var(--nldesign-component-button-border-radius) !important;
 }
 
 .button-vue--vue-secondary:not(.cn-look-board *):hover,
@@ -1059,11 +982,11 @@ header nav svg radialGradient,
 .button-vue--secondary:not(.cn-look-board *),
 button:not(.action-button):not(.cn-look-board *),
 .button:not(.cn-look-board *) {
-	padding: 8px 16px !important;
-	min-width: max-content !important;
-	white-space: nowrap !important;
-	overflow: visible !important;
-	text-overflow: clip !important;
+	padding: 8px 16px;
+	min-width: max-content;
+	white-space: nowrap;
+	overflow: visible;
+	text-overflow: clip;
 }
 
 .button-vue__text,
@@ -1119,14 +1042,6 @@ button:not(.action-button):not(.cn-look-board *),
 .widget,
 .tooltip {
 	border-radius: var(--nldesign-border-radius) !important;
-}
-
-.button-vue:not(.action-button):not(.cn-look-board *),
-button:not(.action-button):not(.cn-look-board *) {
-	border-radius: var(
-		--nldesign-component-button-border-radius,
-		var(--nldesign-border-radius)
-	) !important;
 }
 
 .modal-container {

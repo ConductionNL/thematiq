@@ -1378,3 +1378,17 @@ footer.guest-box {
 	background-color: transparent !important;
 	background-image: none !important;
 }
+
+/* ============================================
+   DASHBOARD CARD TITLES — no rule under the title
+   Cunningham's cards carry their title and body on one surface, with no
+   divider between them; the boards drawn on it show the same (DqMijnWerk,
+   DqDashboard). nextcloud-vue's widget card draws a 1px rule under its
+   header, so on a dashboard this layer takes it away for every set built on
+   Cunningham. The Nextcloud dashboard chrome and a chromeless card draw no
+   rule of their own and are left alone.
+   ============================================ */
+
+.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header {
+	border-bottom: none;
+}

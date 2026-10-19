@@ -109,13 +109,25 @@ describe('the button rules and the board look', () => {
 		}
 	})
 
-	it('still forces them on a button outside the board look', () => {
-		const shape = selectorsSetting(SHAPE)
+	it('still hands the button tokens to a button outside the board look, without forcing them', () => {
+		const tokens = []
+		for (const file of FILES) {
+			postcss.parse(fs.readFileSync(path.join(root, file), 'utf8')).walkRules((rule) => {
+				const hands = rule.nodes.some((node) => node.type === 'decl'
+					&& /var\(--nldesign-component-button-(font-weight|border-radius)/.test(node.value)
+					&& ['font-weight', 'border-radius', '--font-weight-element', '--border-radius-element'].includes(node.prop))
+				if (hands) {
+					tokens.push(...rule.selectors.map((sel) => sel.trim()))
+				}
+			})
+		}
+		for (const id of ['plain', 'secondary']) {
+			expect(matching(document.getElementById(id), tokens).length, id).toBeGreaterThan(0)
+		}
+		const forced = selectorsSetting(['font-weight', 'border-radius', 'border-width'])
+			.filter((sel) => !sel.includes('primary'))
 		for (const id of ['plain', 'secondary', 'text']) {
-			expect(
-				matching(document.getElementById(id), shape).length,
-				id,
-			).toBeGreaterThan(0)
+			expect(matching(document.getElementById(id), forced), id).toEqual([])
 		}
 	})
 
