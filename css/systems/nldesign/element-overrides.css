@@ -358,6 +358,9 @@ header nav .icon {
  * `[class*='widget']` reached every one of them with ID-level specificity
  * (through `:not(#header *)`) and painted grounds the library leaves
  * transparent, such as a borderless widget or `.cn-reports-page__widgets`.
+ * The `[class*='panel']` catch-all skips them for the same reason: it caught
+ * nextcloud-vue's index page with a side panel (`cn-index-page--with-side-
+ * panel`) and painted the whole page the card colour over the workspace.
  */
 .panel:not(#header *),
 .widget:not(#header *),
@@ -365,7 +368,7 @@ header nav .icon {
 .widget-default:not(#header *),
 .widget-custom:not(#header *),
 .widget-access:not(#header *),
-[class*='panel']:not(#header *),
+[class*='panel']:not(#header *):not([class*='cn-']),
 #app-content,
 .app-content {
 	background: var(--color-main-background);
