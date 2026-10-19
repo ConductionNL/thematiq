@@ -166,6 +166,37 @@ const FAMILIES = [
 		],
 	},
 	{
+		family: 'Source Sans',
+		spdx: 'OFL-1.1',
+		copyright:
+			"2010-2020 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'",
+		upstream: '@fontsource/source-sans-3 5.3.0',
+		note: 'Epe names the design without a release number; the Source Sans 3 files are served under that name.',
+		faces: [
+			{
+				weight: 400,
+				style: 'normal',
+				local: 'Source Sans 3',
+				file: 'source-sans-3-latin-400-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 600,
+				style: 'normal',
+				local: 'Source Sans 3 SemiBold',
+				file: 'source-sans-3-latin-600-normal',
+				formats: ['woff2'],
+			},
+			{
+				weight: 700,
+				style: 'normal',
+				local: 'Source Sans 3 Bold',
+				file: 'source-sans-3-latin-700-normal',
+				formats: ['woff2'],
+			},
+		],
+	},
+	{
 		family: 'Source Sans Pro',
 		spdx: 'OFL-1.1',
 		copyright:
