@@ -1128,3 +1128,17 @@ body {
 	position: relative !important;
 	z-index: auto !important;
 }
+
+/* ============================================
+   DASHBOARD CARD TITLES — the set decides the rule
+   ============================================ */
+
+/* A set that follows Cunningham's cards declares
+ * --nldesign-component-dashboard-card-header-border-style: none, and a
+ * nextcloud-vue dashboard card then draws no rule under its title. A set that
+ * declares nothing keeps the card's own rule (`solid`, the width and colour
+ * stay the card's). The Nextcloud dashboard chrome and a chromeless card draw
+ * no rule of their own and are left alone. */
+.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header {
+	border-bottom-style: var(--nldesign-component-dashboard-card-header-border-style, solid);
+}
