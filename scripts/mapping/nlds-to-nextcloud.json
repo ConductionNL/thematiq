@@ -564,7 +564,7 @@
 			"(the badge), and a mid-tone fill makes that impossible for any text colour.",
 			"`replaceInvalid` tokens whose value is not a visible colour (an upstream reference",
 			"written as text, `transparent` for a fill) get their default before anything is measured.",
-			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures. They",
+			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures, and the field borders at 3:1 (WCAG 1.4.11). They",
 			"apply only to a foreground the theme declares in its own component layer (thematiq#1006)."
 		],
 		"page": "#ffffff",
@@ -575,7 +575,8 @@
 			"--nldesign-color-primary-light-hover": "#d4e4f2",
 			"--nldesign-color-text": "#333333",
 			"--nldesign-color-text-muted": "#696969",
-			"--nldesign-color-header-background": ["--nldesign-color-primary", "#ffffff"]
+			"--nldesign-color-header-background": ["--nldesign-color-primary", "#ffffff"],
+			"--utrecht-textbox-background-color": ["--nldesign-color-background", "#ffffff"]
 		},
 		"replaceInvalid": [
 			"--nldesign-color-background-dark",
@@ -591,7 +592,8 @@
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness", "repair": "background" },
 			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
-			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" }
+			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--nldesign-color-border-dark", "background": "--nldesign-color-background", "min": 3, "adjust": "lightness" }
 		],
 		"componentPairs": [
 			{ "foreground": "--denhaag-step-marker-current-color", "background": "--denhaag-step-marker-current-background-color", "min": 4.5, "adjust": "flip" },
@@ -608,7 +610,9 @@
 			{ "foreground": "--denhaag-side-navigation-link-active-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--denhaag-file-link-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--tilburg-header-logo-text-color", "background": "--tilburg-header-background-color", "min": 4.5, "adjust": "flip" },
-			{ "foreground": "--tilburg-footer-color", "background": "--tilburg-footer-background-color", "min": 4.5, "adjust": "flip" }
+			{ "foreground": "--tilburg-footer-color", "background": "--tilburg-footer-background-color", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--utrecht-textbox-border-color", "background": "--utrecht-textbox-background-color", "min": 3, "adjust": "lightness" },
+			{ "foreground": "--utrecht-form-input-border-color", "background": "--utrecht-textbox-background-color", "min": 3, "adjust": "lightness" }
 		]
 	},
 	"never": [

@@ -74,7 +74,7 @@
 	--utrecht-document-color: #002e52;
 	--utrecht-document-font-family: "Droid Sans W01",-apple-system,"BlinkMacSystemFont","Segoe UI","Roboto","Helvetica Neue","Arial","Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 	--utrecht-form-input-background-color: #ffffff;
-	--utrecht-form-input-border-color: #ffffff;
+	--utrecht-form-input-border-color: #949494;
 	--utrecht-form-input-border-radius: 2px;
 	--utrecht-form-input-border-width: 1px;
 	--utrecht-form-input-padding-block-end: 12px;
@@ -113,7 +113,7 @@
 	--nldesign-color-background-darker: #e6e6e6;
 	--nldesign-color-background-hover: #ffffff;
 	--nldesign-color-border: #e6e6e6;
-	--nldesign-color-border-dark: #ffffff;
+	--nldesign-color-border-dark: #949494;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;

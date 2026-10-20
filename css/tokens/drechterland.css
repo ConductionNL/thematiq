@@ -86,7 +86,7 @@
 	--utrecht-document-font-family: Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
 	--utrecht-form-field-margin-block-end: 4px;
 	--utrecht-form-field-margin-block-start: 4px;
-	--utrecht-form-input-border-color: #e0e0e0;
+	--utrecht-form-input-border-color: #939393;
 	--utrecht-form-input-color: #999999;
 	--utrecht-form-input-font-family: Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
 	--utrecht-form-input-line-height: 1.75;
@@ -140,7 +140,7 @@
 	--utrecht-textarea-padding-inline-end: 0.5ch;
 	--utrecht-textarea-padding-inline-start: 0.5ch;
 	--utrecht-textbox-border-bottom-width: 1px;
-	--utrecht-textbox-border-color: #e0e0e0;
+	--utrecht-textbox-border-color: #939393;
 	--utrecht-textbox-border-radius: 2px;
 	--utrecht-textbox-border-width: 1px;
 	--utrecht-textbox-color: #999999;
@@ -171,7 +171,7 @@
 	--nldesign-color-background-darker: #e6e6e6;
 	--nldesign-color-background-hover: #fafafa;
 	--nldesign-color-border: #e0e0e0;
-	--nldesign-color-border-dark: #e0e0e0;
+	--nldesign-color-border-dark: #939393;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;

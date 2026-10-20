@@ -165,7 +165,7 @@
 	);
 	--nldesign-component-textbox-border-color: var(
 		--utrecht-textbox-border-color,
-		var(--utrecht-form-input-border-color, var(--nldesign-color-border))
+		var(--utrecht-form-input-border-color, var(--nldesign-color-border-dark))
 	);
 	--nldesign-component-textbox-border-width: var(
 		--utrecht-textbox-border-width,
