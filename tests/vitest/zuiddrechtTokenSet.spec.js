@@ -331,6 +331,14 @@ describe('zuiddrecht: the palette', () => {
 		).toBe('#CC0000')
 	})
 
+	it("draws a site card's line in the boards' grey, and a dark one in both dark scopes", () => {
+		expect(LIGHT['--nldesign-website-card-border-color']).toBe('#D3D8DF')
+		for (const scope of [GENERATED.media, GENERATED.explicit]) {
+			expect(scope['--nldesign-website-card-border-color']).toBeDefined()
+			expect(scope['--nldesign-website-card-border-color']).not.toBe('#D3D8DF')
+		}
+	})
+
 	it("carries Nextcloud's radius scale: 8px controls, 12px containers", () => {
 		expect(LIGHT['--nldesign-border-radius']).toBe('8px')
 		expect(LIGHT['--nldesign-border-radius-small']).toBe('4px')
