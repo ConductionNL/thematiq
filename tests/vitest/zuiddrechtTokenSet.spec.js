@@ -403,9 +403,13 @@ describe('zuiddrecht: the dark workspace', () => {
 		expect(literals).toEqual([])
 
 		for (const scope of [OVERRIDES.media, OVERRIDES.explicit]) {
+			// The page and surface, and the two status tints the generated dark
+			// file leaves under AA for badge text (statusHueTints.spec.js).
 			expect(Object.keys(scope).sort()).toEqual([
 				'--color-background-plain',
 				'--color-background-plain-text',
+				'--nl-color-purple-light',
+				'--nl-color-teal-light',
 				SURFACE,
 			])
 			expect(scope['--color-background-plain']).toBe(scope[SURFACE])
