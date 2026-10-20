@@ -89,9 +89,10 @@
 
 	/* Border colours. The hairline is for cards and dividers. The design's
 	 * field border #C4C7CB is 1.7:1 against white, under the 3:1 a control
-	 * border needs, so controls take zuiddrecht's #8A929E (3.14). */
+	 * border needs, so controls take zuiddrecht's #828A95 (3:1 on every
+	 * ground a control sits on, white included). */
 	--nldesign-color-border: #E4E6EA;
-	--nldesign-color-border-dark: #8A929E;
+	--nldesign-color-border-dark: #828A95;
 
 	/* Focus colour */
 	--nldesign-color-focus: rgba(31, 79, 216, 0.5);
