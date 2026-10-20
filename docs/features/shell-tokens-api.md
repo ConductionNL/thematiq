@@ -37,7 +37,7 @@ You need no account and no session. The answer holds theme values only, the same
     "soft": "#EDEFF2",
     "ground": "#F5F6F8",
     "chip": "#F0F1F3",
-    "field": "#8A929E",
+    "field": "#828A95",
     "radius": "8px",
     "radius-lg": "12px",
     "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"

@@ -192,7 +192,7 @@ body#body-login input:not([type='checkbox']) {
 
 /* The fields as the board draws them: the label above the field, 14px
  * semibold, and the field 44px with a 1px edge in the darker border colour
- * (3:1 against white on Zuiddrecht, #8A929E, where the light border is not),
+ * (3:1 on Zuiddrecht, #828A95, where the light border is not),
  * the controls' radius. Nextcloud floats its label inside the field's edge;
  * the NL Design sheet draws the edge around the field's wrapper, so the edge
  * moves to the field itself and the wrapper keeps room for the label above.

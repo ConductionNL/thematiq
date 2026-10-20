@@ -89,9 +89,11 @@
 	--nldesign-color-info-rgb: 54, 105, 165;
 
 	/* Border colours. The hairline is for cards and dividers; the dark step
-	 * is for control borders, which need 3:1 against white (#8A929E is 3.14). */
+	 * is for control borders, which need 3:1 against every ground a control
+	 * sits on: white (3.49), the page ground #F5F6F8 (3.23), the bulk band
+	 * #EAF0F7 (3.04) and the switch ground #ECEEF1 (3.00). */
 	--nldesign-color-border: #E4E6EA;
-	--nldesign-color-border-dark: #8A929E;
+	--nldesign-color-border-dark: #828A95;
 
 	/* Focus colour */
 	--nldesign-color-focus: rgba(54, 105, 165, 0.5);
