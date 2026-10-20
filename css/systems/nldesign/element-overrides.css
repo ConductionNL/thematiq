@@ -383,56 +383,18 @@ header nav .icon {
    ============================================ */
 
 /*
- * This rule forces the body text colour onto essentially every text-bearing
- * element, with `!important` and ID-level specificity (each `:not(#header …)`
- * contributes an ID to the total, so the span selector scores 2-4-6). Nothing
- * downstream can outrank it by writing a more specific `color` rule.
+ * The body text colour is set on `body` alone, with zero specificity and no
+ * `!important`, and every element inherits it. A component that asks for its
+ * own colour (muted text through `--color-text-maxcontrast`, a label on a
+ * coloured fill, a tile widget) is drawn in that colour, because any rule of
+ * its own outranks an inherited value.
  *
- * That is a problem wherever a surface paints itself with a saturated colour
- * and relies on its own light-on-dark pairing — Nextcloud's dashboard heading
- * on the plain background, the Appearance preview card header on the primary
- * colour. Those used to be handled by adding another `:not()` to the list, which
- * is an allowlist of the dark surfaces somebody happened to remember; the next
- * one to appear inherits near-black text and fails WCAG AA silently.
- *
- * So the forced value is INDIRECT. Any surface can opt out by setting
- * `--nldesign-color-on-surface` on itself; because custom properties inherit,
- * the opt-out reaches every descendant without competing on specificity, and a
- * nested light surface opts back in by resetting the same property. The
- * pairings live in css/error-contrast.css next to the other on-fill fixes.
- *
- * `.tile-widget` is the one per-app exclusion the css-architecture spec keeps:
- * the tile AND everything in it keep their app's colours. Each exclusion names
- * the tile itself next to its descendants: the descendant form alone
- * (`:not(.tile-widget div)`) let the tile's own root element match (#939). The
- * root exclusion sits in :where(), so the specificity is unchanged.
- * tests/vitest/tileWidgetOptOut.spec.js.
- *
- * A board-look card title (nextcloud-vue CnBoardView) is a link drawn as a
- * heading in the main text colour. Its class rule cannot outrank these id-level
- * selectors, so the link selectors leave it out.
- * tests/vitest/boardCardTitleOptOut.spec.js.
+ * `--nldesign-color-on-surface` names the ink of a painted surface for the
+ * rules that still read it (headings, links, the dashboard); everywhere else a
+ * surface sets `color` and its descendants inherit it.
  */
-body,
-#app,
-#content,
-.app-content,
-p,
-span:not(#header span):not(#header * span):not(:where(.tile-widget)):not(
-		.tile-widget span
-	):not(.tile-widget * span):not(.button-vue--vue-primary span):not(
-		.button-vue--vue-primary *
-	):not(.button-vue--primary span):not(.button-vue--primary *),
-div:not(#header div):not(#header * div):not(:where(.tile-widget)):not(
-		.tile-widget div
-	):not(.tile-widget * div):not(.button-vue--vue-primary div):not(
-		.button-vue--primary div
-	),
-li:not(#header li):not(#header * li),
-a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
-		.tile-widget * a
-	):not(.cn-board-view--board .cn-board-view__card-title) {
-	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
+:where(body) {
+	color: var(--nldesign-color-on-surface, var(--nldesign-color-text));
 }
 
 a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
@@ -609,6 +571,8 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 #app-dashboard [class*='panel'],
 #app-dashboard [class*='widget'] {
 	--nldesign-color-on-surface: initial;
+
+	color: var(--nldesign-color-text);
 }
 
 .preview-card__header {
