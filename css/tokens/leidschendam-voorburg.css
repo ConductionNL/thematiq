@@ -81,7 +81,7 @@
 	--utrecht-document-font-family: Open Sans, sans-serif;
 	--utrecht-form-field-margin-block-end: 4px;
 	--utrecht-form-field-margin-block-start: 4px;
-	--utrecht-form-input-border-color: #dddde4;
+	--utrecht-form-input-border-color: #9393a9;
 	--utrecht-form-input-color: #000000;
 	--utrecht-form-input-font-family: Open Sans, sans-serif;
 	--utrecht-form-input-line-height: 18px;
@@ -140,7 +140,7 @@
 	--utrecht-textarea-padding-inline-end: 0.5ch;
 	--utrecht-textarea-padding-inline-start: 0.5ch;
 	--utrecht-textbox-border-bottom-width: 1px;
-	--utrecht-textbox-border-color: #dddde4;
+	--utrecht-textbox-border-color: #9393a9;
 	--utrecht-textbox-border-radius: 2px;
 	--utrecht-textbox-border-width: 1px;
 	--utrecht-textbox-color: #000000;
@@ -171,7 +171,7 @@
 	--nldesign-color-background-darker: #e6e6e6;
 	--nldesign-color-background-hover: #ffffff;
 	--nldesign-color-border: #dddde4;
-	--nldesign-color-border-dark: #dddde4;
+	--nldesign-color-border-dark: #9393a9;
 	--nldesign-color-error: #d70d0d;
 	--nldesign-color-error-hover: #c20c0c;
 	--nldesign-color-error-rgb: 215, 13, 13;

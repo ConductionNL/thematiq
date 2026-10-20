@@ -290,7 +290,9 @@
 
 	--nldesign-component-textbox-background-color: #ffffff;
 	--nldesign-component-textbox-color: var(--nldesign-color-text);
-	--nldesign-component-textbox-border-color: var(--nldesign-color-border);
+	/* The field's edge is the control step, 3:1 against its ground (WCAG
+	 * 1.4.11); the hairline border is for cards and dividers. */
+	--nldesign-component-textbox-border-color: var(--nldesign-color-border-dark);
 	--nldesign-component-textbox-border-width: 1px;
 	--nldesign-component-textbox-border-radius: var(--nldesign-border-radius);
 	--nldesign-component-textbox-font-family: var(--nldesign-font-family);

@@ -201,7 +201,7 @@
             "--nldesign-component-button-secondary-action-hover-background-color": "var(\n\t\t--nldesign-color-primary-light\n\t)",
             "--nldesign-component-textbox-background-color": "#ffffff",
             "--nldesign-component-textbox-color": "var(--nldesign-color-text)",
-            "--nldesign-component-textbox-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-textbox-border-color": "var(--nldesign-color-border-dark)",
             "--nldesign-component-textbox-border-width": "1px",
             "--nldesign-component-textbox-border-radius": "var(--nldesign-border-radius)",
             "--nldesign-component-textbox-font-family": "var(--nldesign-font-family)",

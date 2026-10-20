@@ -103,7 +103,7 @@
 		--nldesign-component-table-header-color: #e2e3e4;
 		--nldesign-component-table-row-hover-background-color: #1d1f23;
 		--nldesign-component-textbox-background-color: #141414;
-		--nldesign-component-textbox-border-color: #5d6474;
+		--nldesign-component-textbox-border-color: #6d747e;
 		--nldesign-component-textbox-color: #e2e3e4;
 		--nldesign-component-textbox-disabled-background-color: #2a2a2a;
 		--nldesign-component-textbox-disabled-color: #9e9e9e;
@@ -236,7 +236,7 @@ body[data-themes*=dark] {
 	--nldesign-component-table-header-color: #e2e3e4;
 	--nldesign-component-table-row-hover-background-color: #1d1f23;
 	--nldesign-component-textbox-background-color: #141414;
-	--nldesign-component-textbox-border-color: #5d6474;
+	--nldesign-component-textbox-border-color: #6d747e;
 	--nldesign-component-textbox-color: #e2e3e4;
 	--nldesign-component-textbox-disabled-background-color: #2a2a2a;
 	--nldesign-component-textbox-disabled-color: #9e9e9e;
