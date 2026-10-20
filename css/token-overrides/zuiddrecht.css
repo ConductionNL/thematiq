@@ -202,17 +202,6 @@ div.guest-box.login-box::after {
 	color: var(--color-main-background) !important;
 }
 
-#content
-	#app-content-vue
-	.cn-quick-filter-bar__tab--active
-	.cn-quick-filter-bar__count {
-	background-color: color-mix(
-		in srgb,
-		var(--color-main-background) 22%,
-		transparent
-	);
-}
-
 /* The table (DqZaken): a quiet 14px header in grey on a near-white row, 14px cells. */
 #app-content-vue .cn-data-table thead th {
 	font-size: 14px;
