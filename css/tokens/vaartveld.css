@@ -179,6 +179,18 @@
 	--nldesign-component-status-badge-error-background-color: #FCEDEC;
 	--nldesign-component-status-badge-error-color: #A30000;
 
+	/* The NL Design System hue tints a status colour is painted on (dossiq's
+	 * status pills and board columns): received is the primary's own tint, as on the status pills above. A badge's text is its
+	 * hue mixed 65% into the ink, and reaches AA on each tint: blue 7.12,
+	 * purple 9.03, green 6.41, orange 5.27, red 7.23, teal 8.83, grey 7.36. */
+	--nl-color-blue-light: #E8EEFC;
+	--nl-color-purple-light: #E8E6F6;
+	--nl-color-green-light: #E7F3EA;
+	--nl-color-orange-light: #FFF4DE;
+	--nl-color-red-light: #FCEDEC;
+	--nl-color-teal-light: #E3F1F3;
+	--nl-color-grey-light: #F0F1F3;
+
 	/* The login watermark: the emblem in grey, large and faint, in the bottom
 	 * corner of the login page while the workplace layout is light. */
 	--nldesign-login-watermark-image: url('../../img/logos/vaartveld-emblem-grey.svg');
