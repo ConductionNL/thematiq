@@ -5,7 +5,8 @@
  * The workplace sets paint a status colour on the boards' tints.
  *
  * dossiq draws a status pill as the NL Design System hue's light tint
- * (`--nl-color-<hue>-light`) with the hue mixed 65% into the ink as its text.
+ * (`--nl-color-<hue>-light`) with `--nl-color-<hue>-text` as its text, or,
+ * where a set names no text, the hue mixed 65% into the ink.
  * Without the tint tokens the pill fell back to the NL Design System's own
  * tints, which differ from the boards' (purple #F2EAF5 against #E8E6F6). The
  * five workplace sets declare the boards' tints, and the text reaches AA on
@@ -28,7 +29,11 @@ const SETS = ['zuiddrecht', 'vaartveld', 'wilgenboom', 'esdoornveen', 'warmtepom
 const TINTS = { purple: '#E8E6F6', green: '#E7F3EA', orange: '#FFF4DE', red: '#FCEDEC', teal: '#E3F1F3', grey: '#F0F1F3' }
 const BLUE = { zuiddrecht: '#EAF0F7', vaartveld: '#E8EEFC', wilgenboom: '#E8F1EB', esdoornveen: '#F0EAF7', warmtepompacademie: '#E3F1F3' }
 
-/** The hue a status badge mixes into the ink: dossiq's NL Design System fallbacks. */
+/** The boards' pill text per hue; blue is the set's own received text for the four school sets. */
+const TEXTS = { purple: '#4A3F8F', green: '#1E6B2A', orange: '#7A4F00', red: '#A30000', teal: '#1D5E66', grey: '#3D4047' }
+const BLUE_TEXT = { zuiddrecht: '#234A78', vaartveld: '#14338F', wilgenboom: '#1F4A33', esdoornveen: '#43206E', warmtepompacademie: '#084F58' }
+
+/** The hue a status badge mixes into the ink when a set names no text: dossiq's NL Design System fallbacks. */
 const HUES = { blue: '#0b71ab', purple: '#762f8e', green: '#39870c', orange: '#e17000', red: '#d52b1e', teal: '#1d5e66', grey: '#696969' }
 
 /**
@@ -68,6 +73,16 @@ describe.each(SETS)('%s status tints', (set) => {
 		}
 	})
 
+	it('declares the boards\' pill text for every hue, at AA on its tint', () => {
+		expect(light['--nl-color-blue-text']).toBe(BLUE_TEXT[set])
+		for (const [hue, text] of Object.entries(TEXTS)) {
+			expect(light[`--nl-color-${hue}-text`], hue).toBe(text)
+		}
+		for (const hue of Object.keys(HUES)) {
+			expect(ratio(rgb(light[`--nl-color-${hue}-text`]), rgb(light[`--nl-color-${hue}-light`])), hue).toBeGreaterThanOrEqual(4.5)
+		}
+	})
+
 	it('keeps the badge text at AA on every tint in the light', () => {
 		const ink = light['--nldesign-color-text']
 		for (const hue of Object.keys(HUES)) {
@@ -86,6 +101,9 @@ describe.each(SETS)('%s status tints', (set) => {
 			const tint = dark[`--nl-color-${hue}-light`]
 			expect(tint, hue).toMatch(/^#[0-9a-f]{6}$/i)
 			expect(ratio(badgeText(hue, ink), rgb(tint)), hue).toBeGreaterThanOrEqual(4.5)
+			const text = dark[`--nl-color-${hue}-text`]
+			expect(text, hue + ' text').toMatch(/^#[0-9a-f]{6}$/i)
+			expect(ratio(rgb(text), rgb(tint)), hue + ' text').toBeGreaterThanOrEqual(4.5)
 		}
 	})
 })
