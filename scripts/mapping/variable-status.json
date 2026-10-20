@@ -1138,7 +1138,7 @@
 		"--color-primary-element-light-text": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-primary",
+			"token": "--nldesign-color-primary-light-text",
 			"category": "Primary Colors",
 			"note": "Deprecated alias"
 		},
@@ -1180,7 +1180,7 @@
 		"--color-primary-light-text": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-primary",
+			"token": "--nldesign-color-primary-light-text",
 			"category": "Primary Colors",
 			"note": "Text on light primary; uses brand color"
 		},

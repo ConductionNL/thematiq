@@ -114,6 +114,7 @@
             "--nldesign-color-primary-text": "#ffffff",
             "--nldesign-color-primary-hover": "#1d5499",
             "--nldesign-color-primary-light": "#e8f0f8",
+            "--nldesign-color-primary-light-text": "var(--nldesign-color-primary)",
             "--nldesign-color-primary-light-hover": "#d4e4f2",
             "--nldesign-color-error": "#d52b1e",
             "--nldesign-color-error-rgb": "213, 43, 30",

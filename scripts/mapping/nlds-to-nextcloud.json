@@ -564,6 +564,7 @@
 			"(the badge), and a mid-tone fill makes that impossible for any text colour.",
 			"`replaceInvalid` tokens whose value is not a visible colour (an upstream reference",
 			"written as text, `transparent` for a fill) get their default before anything is measured.",
+			"A pair with `from` measures that token when the set does not declare its foreground, and writes the foreground only when it is repaired (the light-text step: the primary where it passes on the light primary, a deeper shade where not).",
 			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures, and the field borders at 3:1 (WCAG 1.4.11). They",
 			"apply only to a foreground the theme declares in its own component layer (thematiq#1006)."
 		],
@@ -593,7 +594,9 @@
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness", "repair": "background" },
 			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" },
-			{ "foreground": "--nldesign-color-border-dark", "background": "--nldesign-color-background", "min": 3, "adjust": "lightness" }
+			{ "foreground": "--nldesign-color-border-dark", "background": "--nldesign-color-background", "min": 3, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary-light-text", "from": "--nldesign-color-primary", "background": "--nldesign-color-primary-light", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary-light-text", "from": "--nldesign-color-primary", "background": "--nldesign-color-primary-light-hover", "min": 4.5, "adjust": "lightness" }
 		],
 		"componentPairs": [
 			{ "foreground": "--denhaag-step-marker-current-color", "background": "--denhaag-step-marker-current-background-color", "min": 4.5, "adjust": "flip" },

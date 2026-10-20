@@ -988,6 +988,11 @@
 		var foregroundName = String(pair.foreground)
 		var backgroundName = String(pair.background)
 		var value = semantic[foregroundName]
+		// A step the set does not declare is measured as the token it falls
+		// back to (`from`), and written only when it needs a repair.
+		if (value === undefined && pair.from !== undefined) {
+			value = semantic[String(pair.from)]
+		}
 		var backgroundValue = semantic[backgroundName]
 		if (backgroundValue === undefined) {
 			backgroundValue = fallbackValue(backgroundName, semantic, defaults)
@@ -1165,7 +1170,10 @@
 				}
 
 				if (originals[repaired.name] === undefined) {
-					originals[repaired.name] = semantic[repaired.name]
+					originals[repaired.name] =
+						semantic[repaired.name] !== undefined
+							? semantic[repaired.name]
+							: semantic[String(pair.from)]
 				}
 
 				semantic[repaired.name] = toHex(repaired.rgb)

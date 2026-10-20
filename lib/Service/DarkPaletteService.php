@@ -360,6 +360,19 @@ class DarkPaletteService {
 			'threshold' => 4.5,
 		],
 		[
+			// The light-text step a set declares where its primary misses
+			// 4.5:1 on the light primary (theme.css maps Nextcloud's
+			// light-text variables to it).
+			'fg' => '--nldesign-color-primary-light-text',
+			'bg' => '--nldesign-color-primary-light',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-color-primary-light-text',
+			'bg' => '--nldesign-color-primary-light-hover',
+			'threshold' => 4.5,
+		],
+		[
 			'fg' => '--nldesign-component-button-secondary-action-color',
 			'bg' => '--nldesign-component-button-secondary-action-background-color',
 			'threshold' => 4.5,

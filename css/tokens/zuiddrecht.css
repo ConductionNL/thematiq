@@ -33,6 +33,9 @@
 	--nldesign-color-primary-hover: #234A78;
 	--nldesign-color-primary-light: #EAF0F7;
 	--nldesign-color-primary-light-hover: #DCE6F2;
+	/* Text on the light primary: the board's deep primary (7.88:1 on #EAF0F7,
+	 * 7.17:1 on #DCE6F2), its hover colour. */
+	--nldesign-color-primary-light-text: #234A78;
 
 	/* Zuiddrecht palette */
 	--zuiddrecht-color-red: #CC0000;
