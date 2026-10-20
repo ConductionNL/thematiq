@@ -1398,10 +1398,6 @@
 	font-size: 8px;
 	/* Both, because the entry is a `span`: nldesign's blanket text rule claims
 	   every span with `!important` and reads this property first. */
-	--nldesign-color-on-surface: var(
-		--nldesign-component-navigation-color,
-		var(--prev-text)
-	);
 	color: var(--nldesign-component-navigation-color, var(--prev-text));
 	padding: 4px 7px;
 	border-radius: var(
@@ -1424,7 +1420,6 @@
 		--nldesign-component-navigation-active-background-color,
 		var(--prev-primary)
 	);
-	--nldesign-color-on-surface: var(--prev-primary-text);
 	color: var(--prev-primary-text);
 	font-weight: 700;
 }
@@ -1596,8 +1591,7 @@
 
 /* The status components in miniature, each painted from its own component
    tokens and falling back to the Nextcloud colour the component reads when it
-   has none. Text in them is a `span`, so each also sets the on-surface
-   property nldesign's blanket text rule reads first. */
+   has none. */
 
 /* Badge: a counter beside the dialog title, and the favourite star. */
 .nl-mini__counter {
@@ -1611,10 +1605,6 @@
 		--nldesign-component-badge-background-color,
 		var(--prev-primary)
 	);
-	--nldesign-color-on-surface: var(
-		--nldesign-component-badge-color,
-		var(--prev-primary-text)
-	);
 	color: var(--nldesign-component-badge-color, var(--prev-primary-text));
 	font-size: 7px;
 	font-weight: 700;
@@ -1623,10 +1613,6 @@
 }
 .nl-mini__star {
 	margin-left: 4px;
-	--nldesign-color-on-surface: var(
-		--nldesign-component-badge-favorite-color,
-		var(--color-favorite, #a08b00)
-	);
 	color: var(
 		--nldesign-component-badge-favorite-color,
 		var(--color-favorite, #a08b00)
@@ -1798,9 +1784,7 @@
 	);
 }
 
-/* Breadcrumbs: a link crumb, a hovered one and the current one. They are
-   spans, so each sets the on-surface property nldesign's blanket text rule
-   reads first as well as its colour. */
+/* Breadcrumbs: a link crumb, a hovered one and the current one. */
 .nl-mini__crumbs {
 	display: flex;
 	align-items: center;
@@ -1811,10 +1795,6 @@
 .nl-mini__crumb {
 	padding: 1px 5px;
 	border-radius: var(--prev-radius-pill);
-	--nldesign-color-on-surface: var(
-		--nldesign-component-breadcrumb-color,
-		var(--color-primary, var(--prev-primary))
-	);
 	color: var(
 		--nldesign-component-breadcrumb-color,
 		var(--color-primary, var(--prev-primary))
@@ -1827,15 +1807,10 @@
 	);
 }
 .nl-mini__crumb--current {
-	--nldesign-color-on-surface: var(--prev-text);
 	color: var(--prev-text);
 	font-weight: 700;
 }
 .nl-mini__crumb-sep {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-breadcrumb-separator-color,
-		var(--color-text-maxcontrast, var(--prev-muted))
-	);
 	color: var(
 		--nldesign-component-breadcrumb-separator-color,
 		var(--color-text-maxcontrast, var(--prev-muted))
@@ -1907,18 +1882,15 @@
 	);
 }
 
-/* Typography in the dialog: each text painted from its own token. They are
-   divs and spans, so each sets the on-surface property as well. */
+/* Typography in the dialog: each text painted from its own token. The link is
+   an `a`, which nldesign's link rule colours from the on-surface property, so
+   it sets that property as well as its colour. */
 .nl-mini__type {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 .nl-mini__type-heading {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-heading-color,
-		var(--color-main-text, var(--prev-text))
-	);
 	color: var(
 		--nldesign-component-heading-color,
 		var(--color-main-text, var(--prev-text))
@@ -1935,10 +1907,6 @@
 	line-height: 1.2;
 }
 .nl-mini__type-paragraph {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-paragraph-color,
-		var(--color-main-text, var(--prev-text))
-	);
 	color: var(
 		--nldesign-component-paragraph-color,
 		var(--color-main-text, var(--prev-text))
@@ -1982,60 +1950,36 @@
 	font-size: 9px;
 }
 .nl-mini__type-muted {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-muted-color,
-		var(--color-text-maxcontrast, var(--prev-muted))
-	);
 	color: var(
 		--nldesign-component-text-muted-color,
 		var(--color-text-maxcontrast, var(--prev-muted))
 	);
 }
 .nl-mini__type-light {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-light-color,
-		var(--color-text-light, var(--prev-muted))
-	);
 	color: var(
 		--nldesign-component-text-light-color,
 		var(--color-text-light, var(--prev-muted))
 	);
 }
 .nl-mini__type-lighter {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-lighter-color,
-		var(--color-text-lighter, var(--prev-muted))
-	);
 	color: var(
 		--nldesign-component-text-lighter-color,
 		var(--color-text-lighter, var(--prev-muted))
 	);
 }
 .nl-mini__type-error {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-error-color,
-		var(--color-text-error, var(--prev-error))
-	);
 	color: var(
 		--nldesign-component-text-error-color,
 		var(--color-text-error, var(--prev-error))
 	);
 }
 .nl-mini__type-warning {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-warning-color,
-		var(--color-text-warning, var(--prev-warning))
-	);
 	color: var(
 		--nldesign-component-text-warning-color,
 		var(--color-text-warning, var(--prev-warning))
 	);
 }
 .nl-mini__type-success {
-	--nldesign-color-on-surface: var(
-		--nldesign-component-text-success-color,
-		var(--color-text-success, #2d7b41)
-	);
 	color: var(
 		--nldesign-component-text-success-color,
 		var(--color-text-success, #2d7b41)
