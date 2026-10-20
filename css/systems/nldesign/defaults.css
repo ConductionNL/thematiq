@@ -33,6 +33,10 @@
 	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-primary-hover: #1d5499;
 	--nldesign-color-primary-light: #e8f0f8;
+	/* Text on the light primary and its hover: the primary where it reaches
+	 * 4.5:1 there, otherwise a set declares a deeper shade of the same hue (the
+	 * converter's contrast repair writes it). */
+	--nldesign-color-primary-light-text: var(--nldesign-color-primary);
 	--nldesign-color-primary-light-hover: #d4e4f2;
 
 	/* ===================================================================

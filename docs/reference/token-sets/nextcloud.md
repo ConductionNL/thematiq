@@ -2,7 +2,7 @@
 
 # Nextcloud (Base)
 
-Token set `nextcloud`: 52 declared by this set, 119 from the defaults layer.
+Token set `nextcloud`: 52 declared by this set, 120 from the defaults layer.
 
 Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 
@@ -40,6 +40,7 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233285b1%22%2F%3E%3C%2Fsvg%3E) `#3285b1` | | this set | Primary button hover, Primary element hover, Primary hover color |
 | `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5eff5%22%2F%3E%3C%2Fsvg%3E) `#e5eff5` | | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
 | `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cfe0ec%22%2F%3E%3C%2Fsvg%3E) `#cfe0ec` | | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-primary-light-text` | `var(--nldesign-color-primary)` | | defaults | Primary element light text, Primary light text |
 | `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Badge number, Primary button label, Primary element text, Primary text color |
 | `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2346ba61%22%2F%3E%3C%2Fsvg%3E) `#46ba61` | | this set | Border success, Element success, Success color, Text success |
 | `--nldesign-color-success-rgb` | `70, 186, 97` | | this set | Success hover color |

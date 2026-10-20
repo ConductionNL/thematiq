@@ -141,13 +141,13 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-primary-element-hover` | mapped | `--nldesign-color-primary-hover` | `#00507a` | `#17a2ff` | Interactive element hover |
 | `--color-primary-element-light` | mapped | `--nldesign-color-primary-light` | `var(--color-primary-light)` | `var(--color-primary-light)` | Deprecated alias for primary-light |
 | `--color-primary-element-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `var(--color-primary-light-hover)` | `var(--color-primary-light-hover)` | Deprecated alias |
-| `--color-primary-element-light-text` | mapped | `--nldesign-color-primary` | `var(--color-primary-light-text)` | `var(--color-primary-light-text)` | Deprecated alias |
+| `--color-primary-element-light-text` | mapped | `--nldesign-color-primary-light-text` | `var(--color-primary-light-text)` | `var(--color-primary-light-text)` | Deprecated alias |
 | `--color-primary-element-text` | mapped | `--nldesign-color-primary-text` | `#ffffff` | `#000000` | Text on primary element |
 | `--color-primary-element-text-dark` | mapped |  | `#ededed` | `#121212` | Dark variant of primary element text; no NL Design equivalent |
 | `--color-primary-hover` | mapped | `--nldesign-color-primary-hover` | `#3285b1` | `#045783` | Primary hover state |
 | `--color-primary-light` | mapped | `--nldesign-color-primary-light` | `#e5eff5` | `#14232c` | Light variant of primary |
 | `--color-primary-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `#d9e3e8` | `#1f2e36` | Light primary hover |
-| `--color-primary-light-text` | mapped | `--nldesign-color-primary` | `#00293f` | `#99c2d8` | Text on light primary; uses brand color |
+| `--color-primary-light-text` | mapped | `--nldesign-color-primary-light-text` | `#00293f` | `#99c2d8` | Text on light primary; uses brand color |
 | `--color-primary-text` | mapped | `--nldesign-color-primary-text` | `#ffffff` | `#ffffff` | Text on primary background |
 
 ### Shadows

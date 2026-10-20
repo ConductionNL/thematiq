@@ -134,8 +134,41 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 		$this->assertSame('#333333', $semantic['--nldesign-color-text']);
 		$this->assertNotSame('#f0b800', $semantic['--nldesign-color-primary']);
 		$this->assertSame($semantic['--nldesign-color-primary'], $manifest['theming.primary_color']);
-		$this->assertSame(['--nldesign-color-primary'], array_column($report, 'target'));
+		// The repaired primary passes on the page but not on the light primary band,
+		// so the light-text step is written as a deeper shade of it.
+		$this->assertSame(['--nldesign-color-primary', '--nldesign-color-primary-light-text'], array_column($report, 'target'));
+		$this->assertGreaterThanOrEqual(
+			4.5,
+			(new ContrastService())->measure(foreground: $semantic['--nldesign-color-primary-light-text'], background: '#e8f0f8')
+		);
 	}//end testRepairsOnlyWhatFails()
+
+	/**
+	 * A primary that reaches 4.5:1 on the light primary and its hover writes no light-text step.
+	 *
+	 * @spec openspec/changes/primary-light-text-step/specs/primary-light-text-step/spec.md#requirement-text-on-the-light-primary-reaches-4-5-1
+	 */
+	public function testAPassingPrimaryWritesNoLightTextStep(): void {
+		$repair = new ConverterColourRepair(contrast: new ContrastService());
+		$table = json_decode((string)file_get_contents(\dirname(__DIR__, 3) . '/scripts/mapping/nlds-to-nextcloud.json'), true);
+		$manifest = [];
+		$report = [];
+
+		$semantic = $repair->repairContrast(
+			semantic: [
+				'--nldesign-color-primary' => '#154273',
+				'--nldesign-color-primary-light' => '#e8f0f8',
+				'--nldesign-color-primary-light-hover' => '#d4e4f2',
+				'--nldesign-color-text' => '#333333',
+			],
+			table: $table,
+			manifest: $manifest,
+			report: $report
+		);
+
+		$this->assertArrayNotHasKey('--nldesign-color-primary-light-text', $semantic);
+		$this->assertSame([], $report);
+	}//end testAPassingPrimaryWritesNoLightTextStep()
 
 	/**
 	 * hsl(), hsla() and an 8-digit hex are written the way every reader takes them.

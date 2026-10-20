@@ -53,6 +53,7 @@
 	--nldesign-color-primary-hover: #395793;
 	--nldesign-color-primary-light: #e3e9f5;
 	--nldesign-color-primary-light-hover: #c7d3eb;
+	--nldesign-color-primary-light-text: #3a5997;
 
 	/* Header — no header token in the theme: the primary, the Nextcloud way */
 	--nldesign-color-header-background: #476db8;

@@ -31,6 +31,7 @@
 		--nldesign-color-primary-hover: #035030;
 		--nldesign-color-primary-light: #202d28;
 		--nldesign-color-primary-light-hover: #2d4139;
+		--nldesign-color-primary-light-text: #a6fcd8;
 		--nldesign-color-primary-text: #111111;
 		--nldesign-color-success: #9ceb6f;
 		--nldesign-color-success-rgb: 156, 235, 111;
@@ -160,6 +161,7 @@ body[data-themes*=dark] {
 	--nldesign-color-primary-hover: #035030;
 	--nldesign-color-primary-light: #202d28;
 	--nldesign-color-primary-light-hover: #2d4139;
+	--nldesign-color-primary-light-text: #a6fcd8;
 	--nldesign-color-primary-text: #111111;
 	--nldesign-color-success: #9ceb6f;
 	--nldesign-color-success-rgb: 156, 235, 111;

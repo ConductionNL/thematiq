@@ -197,7 +197,7 @@ class ConverterColourRepair {
 			[$name, $repaired] = $result;
 
 			if (isset($originals[$name]) === false) {
-				$originals[$name] = $semantic[$name];
+				$originals[$name] = ($semantic[$name] ?? $semantic[(string)(((array)$pair)['from'] ?? '')] ?? '');
 			}
 
 			$semantic[$name] = $this->parser->toHex(rgb: $repaired);
@@ -224,6 +224,12 @@ class ConverterColourRepair {
 		$foregroundName = (string)($pair['foreground'] ?? '');
 		$backgroundName = (string)($pair['background'] ?? '');
 		$value = ($semantic[$foregroundName] ?? null);
+		// A step the set does not declare is measured as the token it falls
+		// back to (`from`), and written only when it needs a repair.
+		if ($value === null && isset($pair['from']) === true) {
+			$value = ($semantic[(string)$pair['from']] ?? null);
+		}
+
 		$backgroundValue = ($semantic[$backgroundName] ?? $this->fallbackValue(name: $backgroundName, semantic: $semantic, defaults: $context['defaults']));
 		if ($value === null || $backgroundValue === null) {
 			return null;

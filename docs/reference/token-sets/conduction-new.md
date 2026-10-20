@@ -2,7 +2,7 @@
 
 # Conduction 2026
 
-Token set `conduction-new`: 400 declared by this set, 141 from the defaults layer.
+Token set `conduction-new`: 400 declared by this set, 142 from the defaults layer.
 
 Contrast: primary text on primary 9.08:1, primary on background 9.08:1 (pass).
 
@@ -40,6 +40,7 @@ Contrast: primary text on primary 9.08:1, primary on background 9.08:1 (pass).
 | `--nldesign-color-primary-hover` | `var(--c-cobalt-600)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231b3a75%22%2F%3E%3C%2Fsvg%3E) `#1b3a75` | this set | Primary button hover, Primary element hover, Primary hover color |
 | `--nldesign-color-primary-light` | `var(--c-cobalt-50)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23131c2a%22%2F%3E%3C%2Fsvg%3E) `#131c2a` | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
 | `--nldesign-color-primary-light-hover` | `var(--c-cobalt-100)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231a2538%22%2F%3E%3C%2Fsvg%3E) `#1a2538` | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-primary-light-text` | `var(--nldesign-color-primary)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237499de%22%2F%3E%3C%2Fsvg%3E) `#7499de` | defaults | Primary element light text, Primary light text |
 | `--nldesign-color-primary-text` | `var(--conduction-color-text-inverse)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23111111%22%2F%3E%3C%2Fsvg%3E) `#111111` | this set | Badge number, Primary button label, Primary element text, Primary text color |
 | `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339870c%22%2F%3E%3C%2Fsvg%3E) `#39870c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239ceb6f%22%2F%3E%3C%2Fsvg%3E) `#9ceb6f` | this set | Border success, Element success, Success color, Text success |
 | `--nldesign-color-success-rgb` | `57, 135, 12` | `156, 235, 111` | this set | Success hover color |
