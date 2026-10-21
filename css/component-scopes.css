@@ -986,6 +986,14 @@ body .notecard.success {
 		--nldesign-component-status-badge-error-color,
 		var(--thematiq-global-color-error-text)
 	);
+	--color-background-dark: var(
+		--nldesign-component-status-badge-neutral-background-color,
+		var(--thematiq-global-color-background-dark)
+	);
+	--color-main-text: var(
+		--nldesign-component-status-badge-neutral-color,
+		var(--thematiq-global-color-main-text)
+	);
 }
 
 /* toast */

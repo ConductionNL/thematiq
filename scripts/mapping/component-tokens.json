@@ -1449,6 +1449,22 @@
 					"primary": false,
 					"paints": "Its label",
 					"callout": 3
+				},
+				"--nldesign-component-status-badge-neutral-background-color": {
+					"global": "--color-background-dark",
+					"label": "Neutral pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The fill of a pill without a status colour",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-neutral-color": {
+					"global": "--color-main-text",
+					"label": "Neutral pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
 				}
 			}
 		},

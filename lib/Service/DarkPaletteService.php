@@ -348,6 +348,11 @@ class DarkPaletteService {
 			'threshold' => 4.5,
 		],
 		[
+			'fg' => '--nldesign-component-status-badge-neutral-color',
+			'bg' => '--nldesign-component-status-badge-neutral-background-color',
+			'threshold' => 4.5,
+		],
+		[
 			// Nextcloud's own secondary button: overrides.css maps its label
 			// to the primary colour and its fill to the primary-light wash.
 			'fg' => '--nldesign-color-primary',

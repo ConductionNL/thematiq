@@ -107,3 +107,40 @@ describe.each(SETS)('%s status tints', (set) => {
 		}
 	})
 })
+
+/*
+ * A neutral status pill (the badge's default tone: a priority, an on/off
+ * state, a status without a colour) is the boards' grey tint with the grey
+ * pill text. Nextcloud's own tone for it is the dark background with the main
+ * text, so the status-badge scope re-points both from a component token pair
+ * and the workplace sets declare it.
+ */
+describe('the neutral status pill', () => {
+	const mapping = JSON.parse(read('scripts/mapping/component-tokens.json'))
+	const badge = Object.values(mapping.components).find((c) => c.selectors.includes('.cn-status-badge'))
+
+	it('re-scopes the default tone from a component token pair', () => {
+		expect(badge.tokens['--nldesign-component-status-badge-neutral-background-color'].global).toBe('--color-background-dark')
+		expect(badge.tokens['--nldesign-component-status-badge-neutral-color'].global).toBe('--color-main-text')
+		const scope = decls(read('css/component-scopes.css'), (selector) => selector.split(',').map((s) => s.trim()).includes('.cn-status-badge'))
+		expect(scope['--color-background-dark']).toMatch(/--nldesign-component-status-badge-neutral-background-color/)
+		expect(scope['--color-main-text']).toMatch(/--nldesign-component-status-badge-neutral-color/)
+	})
+
+	it.each(SETS)('%s draws it in the grey tint and pill text, at AA in the light and both dark scopes', (set) => {
+		const light = decls(read(`css/tokens/${set}.css`), (selector) => selector.trim() === ':root')
+		expect(light['--nldesign-component-status-badge-neutral-background-color']).toBe(TINTS.grey)
+		expect(light['--nldesign-component-status-badge-neutral-color']).toBe(TEXTS.grey)
+		for (const pick of [
+			(selector, parent) => parent.type === 'atrule' && selector.includes(':not([data-theme-dark])'),
+			(selector, parent) => parent.type !== 'atrule' && selector.includes('[data-theme-dark]'),
+		]) {
+			const dark = { ...decls(read(`css/tokens/dark/${set}.css`), pick), ...decls(read(`css/token-overrides/${set}.css`), pick) }
+			const bg = dark['--nldesign-component-status-badge-neutral-background-color']
+			const fg = dark['--nldesign-component-status-badge-neutral-color']
+			expect(bg).toMatch(/^#[0-9a-f]{6}$/i)
+			expect(fg).toMatch(/^#[0-9a-f]{6}$/i)
+			expect(ratio(rgb(fg), rgb(bg))).toBeGreaterThanOrEqual(4.5)
+		}
+	})
+})

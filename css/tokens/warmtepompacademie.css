@@ -180,6 +180,9 @@
 	--nldesign-component-status-badge-warning-color: #7A4F00;
 	--nldesign-component-status-badge-error-background-color: #FCEDEC;
 	--nldesign-component-status-badge-error-color: #A30000;
+	/* A pill without a status colour: the grey tint and pill text (9.19:1). */
+	--nldesign-component-status-badge-neutral-background-color: #F0F1F3;
+	--nldesign-component-status-badge-neutral-color: #3D4047;
 
 	/* The NL Design System hue tints a status colour is painted on (dossiq's
 	 * status pills and board columns): received is the primary's own tint, as on the status pills above. A badge's text is its
