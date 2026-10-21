@@ -647,7 +647,7 @@ describe('the Zuiddrecht controls follow the Mijn Zuiddrecht boards', () => {
 
 	it('draws a status tag 28px high in 15px text, padded 12px', () => {
 		expect(token('zuiddrecht', '--nl-data-badge-font-size')).toBe('15px')
-		expect(token('zuiddrecht', '--nl-data-badge-line-height')).toBe('26px')
+		expect(token('zuiddrecht', '--nl-data-badge-line-height')).toBe('22px')
 		expect(token('zuiddrecht', '--nl-data-badge-padding-inline')).toBe('12px')
 		expect(token('wilgenboom', '--nl-data-badge-font-size')).toBeNull()
 	})
