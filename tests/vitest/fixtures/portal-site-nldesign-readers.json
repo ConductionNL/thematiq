@@ -24,6 +24,7 @@
 		"--nldesign-website-band-max-width",
 		"--nldesign-website-border-radius",
 		"--nldesign-website-border-radius-large",
+		"--nldesign-website-card-border-color",
 		"--nldesign-website-content-font-size",
 		"--nldesign-website-header-gutter",
 		"--nldesign-website-header-max-width",
