@@ -87,6 +87,9 @@ describe("the website tokens are Zuiddrecht's alone (the control)", () => {
 		'--nldesign-website-control-border-color',
 		'--nldesign-website-button-padding-block',
 		'--nldesign-website-button-padding-inline',
+		'--nldesign-website-badge-font-size',
+		'--nldesign-website-badge-line-height',
+		'--nldesign-website-badge-padding-inline',
 	]
 	// The four school sets follow their own portal boards and name the content
 	// size those boards draw (openspec change school-sets-type-scale, #1187),

@@ -645,6 +645,13 @@ describe('the Zuiddrecht controls follow the Mijn Zuiddrecht boards', () => {
 		expect(token('zuiddrecht', '--utrecht-select-border-width')).toBe('2px')
 	})
 
+	it('draws a status tag 28px high in 15px text, padded 12px', () => {
+		expect(token('zuiddrecht', '--nl-data-badge-font-size')).toBe('15px')
+		expect(token('zuiddrecht', '--nl-data-badge-line-height')).toBe('26px')
+		expect(token('zuiddrecht', '--nl-data-badge-padding-inline')).toBe('12px')
+		expect(token('wilgenboom', '--nl-data-badge-font-size')).toBeNull()
+	})
+
 	it('leaves every other set on the values it had', () => {
 		for (const set of ['wilgenboom', 'vaartveld', 'esdoornveen']) {
 			expect(token(set, '--utrecht-button-padding-inline-start')).toBe('16px')

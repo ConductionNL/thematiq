@@ -1122,6 +1122,9 @@
 	 *                                                      and below its label
 	 *   --nldesign-website-button-padding-inline           and beside it
 	 *   --nldesign-website-badge-border-radius             a data badge (a status tag)
+	 *   --nldesign-website-badge-font-size                 its text size
+	 *   --nldesign-website-badge-line-height               its line (sets its height)
+	 *   --nldesign-website-badge-padding-inline            its padding beside the text
 	 *   --nldesign-website-step-marker-size                a process step's marker
 	 *   --nldesign-website-step-done-color                 a done step's fill, ring and line
 	 *   --nldesign-website-step-done-mark-color            the tick on that fill
@@ -1167,13 +1170,16 @@
 	 * notice border width and the Den Haag step marker roles fall back to
 	 * what they were (the marker roles are wrapped by
 	 * scripts/generate-denhaag-bridge.mjs from the `website` section of the
-	 * mapping). The notice ground, border and text, the data badge radius (no
+	 * mapping). The notice ground, border and text, the data badge radius, size, line and padding (no
 	 * pinned Den Haag stylesheet reads it; the portal's badge does), the two
 	 * tab roles, the page title roles, the surface and the attention roles below carry no
 	 * fallback on purpose: unset, a consumer's own fallback applies, as with
 	 * the website radii above.
 	 */
 	--nl-data-badge-border-radius: var(--nldesign-website-badge-border-radius);
+	--nl-data-badge-font-size: var(--nldesign-website-badge-font-size);
+	--nl-data-badge-line-height: var(--nldesign-website-badge-line-height);
+	--nl-data-badge-padding-inline: var(--nldesign-website-badge-padding-inline);
 	--thematiq-tab-line-color: var(--nldesign-website-tab-line-color);
 	--thematiq-tab-current-color: var(--nldesign-website-tab-current-color);
 	--thematiq-page-title-font-size: var(--nldesign-website-page-title-size);

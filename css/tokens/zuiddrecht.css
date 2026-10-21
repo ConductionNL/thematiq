@@ -254,6 +254,11 @@
 	--nldesign-website-button-padding-inline: 20px;
 	/* A status tag is a pill. */
 	--nldesign-website-badge-border-radius: 14px;
+	/* 28px high with its 1px edge: 15px text in 600, 12px either side
+	 * (Machtigingen "Wacht op antwoord", MijnTaken "Nog 3 dagen"). */
+	--nldesign-website-badge-font-size: 15px;
+	--nldesign-website-badge-line-height: 26px;
+	--nldesign-website-badge-padding-inline: 12px;
 	/* Process steps: 36px markers; a done step is filled blue with a white
 	 * tick (5.64:1), the current step white with a red ring and a red
 	 * number (5.89:1); the line after a done step is blue. */
