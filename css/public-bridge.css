@@ -768,8 +768,11 @@
 	--utrecht-textbox-read-only-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-select-background-color: var(--nldesign-color-background, #fff);
 	--utrecht-select-border-color: var(
-		--nldesign-color-border-dark,
-		var(--nldesign-color-background-darker, #8a929e)
+		--nldesign-website-control-border-color,
+		var(
+			--nldesign-color-border-dark,
+			var(--nldesign-color-background-darker, #8a929e)
+		)
 	);
 	--utrecht-select-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-select-disabled-background-color: var(
@@ -974,7 +977,7 @@
 	--utrecht-radio-button-label-line-height: 150%;
 	--utrecht-radio-button-min-block-size: 16px;
 	--utrecht-radio-button-min-inline-size: 16px;
-	--utrecht-select-border-width: 1px;
+	--utrecht-select-border-width: var(--nldesign-website-control-border-width, 1px);
 	--utrecht-select-font-size: var(--nldesign-website-control-font-size, 16px);
 	--utrecht-select-hover-border-width: 2px;
 	--utrecht-select-max-inline-size: 400px;
@@ -1111,7 +1114,7 @@
 	 *
 	 *   --nldesign-website-heading-1-font-size, -2-, -3-   the three heading sizes
 	 *   --nldesign-website-control-border-width            buttons and text boxes
-	 *   --nldesign-website-control-border-color            a text box's edge
+	 *   --nldesign-website-control-border-color            a text box's and a select's edge
 	 *   --nldesign-website-control-font-size               the text in buttons, text
 	 *                                                      boxes and selects
 	 *   --nldesign-website-control-min-block-size          a text box's height

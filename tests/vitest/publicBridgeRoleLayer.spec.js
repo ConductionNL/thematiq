@@ -641,6 +641,8 @@ describe('the Zuiddrecht controls follow the Mijn Zuiddrecht boards', () => {
 		expect(token('zuiddrecht', '--utrecht-button-padding-block-start')).toBe('9px')
 		expect(token('zuiddrecht', '--utrecht-pointer-target-min-size')).toBe('48px')
 		expect(token('zuiddrecht', '--utrecht-textbox-border-color')).toBe('#5C6470')
+		expect(token('zuiddrecht', '--utrecht-select-border-color')).toBe('#5C6470')
+		expect(token('zuiddrecht', '--utrecht-select-border-width')).toBe('2px')
 	})
 
 	it('leaves every other set on the values it had', () => {
