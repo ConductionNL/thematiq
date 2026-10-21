@@ -260,6 +260,9 @@
 	/* Tabs: a grey line, the tab on screen marked red. */
 	--nldesign-website-tab-line-color: #D3D8DF;
 	--nldesign-website-tab-current-color: #CC0000;
+	/* Cards: the same grey line (1.43:1 on white). It only frames a card; the
+	 * links and controls in it carry their own marks, so 3:1 does not apply. */
+	--nldesign-website-card-border-color: #D3D8DF;
 
 	/* THE PUBLIC SITE (openspec/changes/zuiddrecht-site-page-title-notice-surface),
 	 * as the Kop, Home and Contentpagina boards draw it. Read by
