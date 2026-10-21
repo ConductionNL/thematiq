@@ -316,6 +316,15 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 		)
 	})
 
+	it('heads a boxed table with the surface, and leaves a set without one transparent', () => {
+		expect(token('zuiddrecht', '--utrecht-table-header-background-color')).toBe(
+			'#F4F6F9',
+		)
+		expect(token('amsterdam', '--utrecht-table-header-background-color')).toBe(
+			'transparent',
+		)
+	})
+
 	it('zuiddrecht: semibold buttons, the menu mark in the red line, its columns, its own grey and the photo ground', () => {
 		for (const role of [
 			'--utrecht-button-font-weight',
