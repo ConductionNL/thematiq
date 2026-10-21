@@ -329,7 +329,10 @@
 	--utrecht-button-font-family: var(--nldesign-font-family, system-ui, sans-serif);
 
 	/* Form controls */
-	--utrecht-textbox-border-color: var(--nldesign-color-background-darker, #c5c6d5);
+	--utrecht-textbox-border-color: var(
+		--nldesign-website-control-border-color,
+		var(--nldesign-color-background-darker, #c5c6d5)
+	);
 	--utrecht-textbox-color: var(--nldesign-color-text, #1b1b23);
 	--utrecht-textbox-font-family: var(
 		--nldesign-font-family,
@@ -895,16 +898,19 @@
 		var(--utrecht-alert-border-width)
 	);
 	--utrecht-button-border-width: var(--nldesign-website-control-border-width, 1px);
-	--utrecht-button-font-size: 16px;
+	--utrecht-button-font-size: var(--nldesign-website-control-font-size, 16px);
 	--utrecht-button-font-weight: var(--nldesign-website-button-font-weight, 700);
 	--utrecht-button-icon-size: 24px;
 	--utrecht-button-line-height: 150%;
 	--utrecht-button-min-block-size: 48px;
 	--utrecht-button-min-inline-size: 48px;
-	--utrecht-button-padding-block-end: 12px;
-	--utrecht-button-padding-block-start: 12px;
-	--utrecht-button-padding-inline-end: 16px;
-	--utrecht-button-padding-inline-start: 16px;
+	--utrecht-button-padding-block-end: var(--nldesign-website-button-padding-block, 12px);
+	--utrecht-button-padding-block-start: var(--nldesign-website-button-padding-block, 12px);
+	--utrecht-button-padding-inline-end: var(--nldesign-website-button-padding-inline, 16px);
+	--utrecht-button-padding-inline-start: var(
+		--nldesign-website-button-padding-inline,
+		16px
+	);
 	--utrecht-button-primary-action-font-weight: var(
 		--nldesign-website-button-font-weight,
 		700
@@ -969,7 +975,7 @@
 	--utrecht-radio-button-min-block-size: 16px;
 	--utrecht-radio-button-min-inline-size: 16px;
 	--utrecht-select-border-width: 1px;
-	--utrecht-select-font-size: 16px;
+	--utrecht-select-font-size: var(--nldesign-website-control-font-size, 16px);
 	--utrecht-select-hover-border-width: 2px;
 	--utrecht-select-max-inline-size: 400px;
 	--utrecht-separator-margin-block-end: 32px;
@@ -980,9 +986,10 @@
 		--nldesign-website-control-border-width,
 		1px
 	);
-	--utrecht-textbox-font-size: 16px;
+	--utrecht-textbox-font-size: var(--nldesign-website-control-font-size, 16px);
 	--utrecht-textbox-font-weight: 400;
 	--utrecht-textbox-max-inline-size: 400px;
+	--utrecht-pointer-target-min-size: var(--nldesign-website-control-min-block-size, 44px);
 	--utrecht-textbox-padding-block-start: 12px;
 	--utrecht-textbox-padding-inline-end: 12px;
 	--utrecht-textbox-padding-inline-start: 12px;
@@ -1104,6 +1111,13 @@
 	 *
 	 *   --nldesign-website-heading-1-font-size, -2-, -3-   the three heading sizes
 	 *   --nldesign-website-control-border-width            buttons and text boxes
+	 *   --nldesign-website-control-border-color            a text box's edge
+	 *   --nldesign-website-control-font-size               the text in buttons, text
+	 *                                                      boxes and selects
+	 *   --nldesign-website-control-min-block-size          a text box's height
+	 *   --nldesign-website-button-padding-block            a button's padding above
+	 *                                                      and below its label
+	 *   --nldesign-website-button-padding-inline           and beside it
 	 *   --nldesign-website-badge-border-radius             a data badge (a status tag)
 	 *   --nldesign-website-step-marker-size                a process step's marker
 	 *   --nldesign-website-step-done-color                 a done step's fill, ring and line

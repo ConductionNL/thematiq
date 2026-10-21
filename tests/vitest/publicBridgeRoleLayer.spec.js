@@ -631,3 +631,23 @@ describe('the school sets follow their boards (school-sets-follow-their-boards)'
 		)
 	})
 })
+
+describe('the Zuiddrecht controls follow the Mijn Zuiddrecht boards', () => {
+	it('draws buttons and text boxes 48px high in the running text size', () => {
+		expect(token('zuiddrecht', '--utrecht-button-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-textbox-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-select-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-button-padding-inline-start')).toBe('20px')
+		expect(token('zuiddrecht', '--utrecht-button-padding-block-start')).toBe('9px')
+		expect(token('zuiddrecht', '--utrecht-pointer-target-min-size')).toBe('48px')
+		expect(token('zuiddrecht', '--utrecht-textbox-border-color')).toBe('#5C6470')
+	})
+
+	it('leaves every other set on the values it had', () => {
+		for (const set of ['wilgenboom', 'vaartveld', 'esdoornveen']) {
+			expect(token(set, '--utrecht-button-padding-inline-start')).toBe('16px')
+			expect(token(set, '--utrecht-button-padding-block-start')).toBe('12px')
+			expect(token(set, '--utrecht-pointer-target-min-size')).toBe('44px')
+		}
+	})
+})

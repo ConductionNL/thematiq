@@ -242,6 +242,16 @@
 	--nldesign-website-heading-3-font-size: 26px;
 	/* Controls carry a 2px border: an outlined button is blue on white (5.64:1). */
 	--nldesign-website-control-border-width: 2px;
+	/* Controls are 48px high with their text at the running text's 17px
+	 * (Mijn account "Naam opslaan", Woo-verzoek "Volgende stap"): a button
+	 * pads its label 20px at the sides, a text box draws its edge in #5C6470,
+	 * 6.0:1 on white, where the card grey #D3D8DF would miss the 3:1 a
+	 * control's edge needs. */
+	--nldesign-website-control-font-size: 17px;
+	--nldesign-website-control-min-block-size: 48px;
+	--nldesign-website-control-border-color: #5C6470;
+	--nldesign-website-button-padding-block: 9px;
+	--nldesign-website-button-padding-inline: 20px;
 	/* A status tag is a pill. */
 	--nldesign-website-badge-border-radius: 14px;
 	/* Process steps: 36px markers; a done step is filled blue with a white
