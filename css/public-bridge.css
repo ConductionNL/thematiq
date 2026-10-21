@@ -1164,6 +1164,12 @@
 		--nldesign-website-page-title-line-height
 	);
 	--thematiq-surface-color: var(--nldesign-color-surface);
+	/* A boxed table's header row is the surface (the Zuiddrecht Contact board,
+	   #F4F6F9). A set without a surface keeps Utrecht's transparent header. */
+	--utrecht-table-header-background-color: var(
+		--nldesign-color-surface,
+		transparent
+	);
 	--thematiq-attention-background-color: var(
 		--nldesign-website-attention-background-color
 	);
