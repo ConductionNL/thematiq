@@ -512,17 +512,19 @@ body#body-login .thematiq-login-divider::after {
 }
 
 /* With an SSO button the password form is the second way in: its button is
- * outlined on the card, as the board draws "Inloggen". */
+ * outlined on the card, as the board draws "Inloggen". The text takes the
+ * global token because the primary-button scope repoints --color-main-text
+ * at the focus border colour. */
 body#body-login
 	.guest-box.login-box[data-thematiq-sso]:not(#header)
 	.login-form
 	button[type='submit'] {
-	--nldesign-color-on-surface: var(--color-main-text);
+	--nldesign-color-on-surface: var(--thematiq-global-color-main-text);
 
 	border: 1px solid
 		var(--nldesign-login-secondary-border-color, var(--color-border-dark)) !important;
 	background-color: var(--color-main-background) !important;
-	color: var(--color-main-text) !important;
+	color: var(--thematiq-global-color-main-text) !important;
 }
 
 body#body-login
@@ -530,7 +532,7 @@ body#body-login
 	.login-form
 	button[type='submit']
 	.button-vue__text {
-	color: var(--color-main-text) !important;
+	color: var(--thematiq-global-color-main-text) !important;
 }
 
 /* The board's "Inloggen" carries no arrow. */
