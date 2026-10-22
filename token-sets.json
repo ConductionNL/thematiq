@@ -1118,7 +1118,8 @@
 			"primary_color": "#3669A5",
 			"background_color": "#F5F6F8",
 			"logo": "img/logos/zuiddrecht.svg",
-			"logo_dark": "img/logos/zuiddrecht-dark.svg"
+			"logo_dark": "img/logos/zuiddrecht-dark.svg",
+			"favicon": "img/logos/zuiddrecht-emblem.svg"
 		},
 		"layout": {
 			"workplace_layout": "light",
