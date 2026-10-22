@@ -88,6 +88,7 @@
         "{pair}: contrast {ratio}:1 is below the WCAG 2.1 AA threshold of {threshold}:1.": "{pair}: contrast {ratio}:1 ligt onder de WCAG 2.1 AA-drempel van {threshold}:1.",
         "{pair}: contrast could not be evaluated (non-literal color).": "{pair}: contrast kon niet worden berekend (geen letterlijke kleurwaarde).",
         "Contrast warning": "Contrastwaarschuwing",
+        "Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.": "Contrast {ratio}:1 op de paginaachtergrond, onder 4,5:1. Opgeslagen een stap donkerder, zodat tekst leesbaar blijft.",
         "Custom token set deleted. Reload the page to refresh the dropdown.": "Aangepaste token set verwijderd. Herlaad de pagina om de keuzelijst te vernieuwen.",
         "Delete": "Verwijderen",
         "Delete custom token set": "Aangepaste token set verwijderen",
