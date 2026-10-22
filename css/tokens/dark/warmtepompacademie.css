@@ -88,7 +88,7 @@
 		--nldesign-component-content-surface-background-color: #171a20;
 		--nldesign-component-form-field-label-color: #e2e3e4;
 		--nldesign-component-form-fieldset-border-color: #24272d;
-		--nldesign-component-form-select-border-color: #24272d;
+		--nldesign-component-form-select-border-color: #6d747e;
 		--nldesign-component-form-select-focus-border-color: #79e0ec;
 		--nldesign-component-heading-1-color: #e2e3e4;
 		--nldesign-component-heading-2-color: #e2e3e4;
@@ -236,7 +236,7 @@ body[data-themes*=dark] {
 	--nldesign-component-content-surface-background-color: #171a20;
 	--nldesign-component-form-field-label-color: #e2e3e4;
 	--nldesign-component-form-fieldset-border-color: #24272d;
-	--nldesign-component-form-select-border-color: #24272d;
+	--nldesign-component-form-select-border-color: #6d747e;
 	--nldesign-component-form-select-focus-border-color: #79e0ec;
 	--nldesign-component-heading-1-color: #e2e3e4;
 	--nldesign-component-heading-2-color: #e2e3e4;
