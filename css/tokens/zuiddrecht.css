@@ -86,6 +86,9 @@
 	--nldesign-color-error-hover: #A30000;
 	--nldesign-color-warning: #7A4F00;
 	--nldesign-color-warning-rgb: 122, 79, 0;
+	/* Warning text on a warning note is the warning ink itself, as the
+	 * boards draw it; Nextcloud would derive a darker #664700. */
+	--nldesign-nc-color-warning-text: #7A4F00;
 	--nldesign-color-success: #1E6B2A;
 	--nldesign-color-success-rgb: 30, 107, 42;
 	--nldesign-color-info: #3669A5;
