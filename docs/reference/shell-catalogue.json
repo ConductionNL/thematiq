@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:73f738d91845dc01",
+    "generated_from": "sets:2ee40fb1bbfecca9",
     "sets": [
         {
             "id": "amsterdam",
@@ -10670,6 +10670,7 @@
                 "hero-title-color": "#1B1C1D",
                 "login-card-shadow-color": "rgba(27, 28, 29, 0.06)",
                 "logo-width": "150px",
+                "nc-color-warning-text": "#7A4F00",
                 "website-attention-background-color": "#FFF4DE",
                 "website-attention-border-color": "#E8C77D",
                 "website-attention-color": "#1A1A1A",
@@ -10847,6 +10848,7 @@
                     "hero-body-color": "#111111",
                     "hero-title-color": "#111111",
                     "login-card-shadow-color": "#d2d3d40f",
+                    "nc-color-warning-text": "#ffd485",
                     "website-attention-background-color": "#412d03",
                     "website-attention-border-color": "#8a691f",
                     "website-attention-color": "#e5e5e5",
