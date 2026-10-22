@@ -473,10 +473,58 @@ function selfOnlyRules(component) {
 	]
 }
 
+/*
+ * State tokens: a redirect for one state of the component's own box.
+ *
+ * The focus ring of a button is painted from `--color-main-text`, and so is
+ * any label, icon or outline drawn inside or on that button. Redirecting the
+ * variable on the button itself would hand the ring colour to all of them,
+ * and a translucent ring colour turns the label into one that reads as
+ * disabled. A token with a `state` therefore redirects its global only while
+ * the component is in that state, `:focus-visible` for a focus ring, and a
+ * second rule hands the global back to the component's children, so nothing
+ * inside the button changes colour when it takes focus. `:where()` gives that
+ * rule no specificity, as for a self-only token. With the token unset both
+ * rules resolve to the captured global, the value the button had anyway.
+ */
+function stateRules(id, component) {
+	const states = new Map()
+	for (const [name, token] of Object.entries(component.tokens)) {
+		if (token.state === undefined || token.paint !== undefined) {
+			continue
+		}
+		if (states.has(token.state) === false) {
+			states.set(token.state, [])
+		}
+		states.get(token.state).push([name, token])
+	}
+
+	const lines = []
+	for (const [state, tokens] of states) {
+		const selectors = component.selectors.concat(specimenSelector(id)).map((selector) => selector + state)
+		lines.push(selectors.join(',\n') + ' {')
+		for (const [name, token] of tokens) {
+			for (const global of globalsOf(token)) {
+				lines.push('\t' + global + ': var(', '\t\t' + name + ',', '\t\t' + redirectFallback(token, global), '\t);')
+			}
+		}
+		lines.push('}', '')
+		lines.push(':where(' + selectors.join(', ') + ') > * {')
+		for (const [, token] of tokens) {
+			for (const global of globalsOf(token)) {
+				lines.push('\t' + global + ': var(' + captureName(global) + ');')
+			}
+		}
+		lines.push('}', '')
+	}
+
+	return lines
+}
+
 for (const [id, component] of Object.entries(mapping.components)) {
 	const declarations = []
 	for (const [name, token] of Object.entries(component.tokens)) {
-		if (token.paint !== undefined) {
+		if (token.paint !== undefined || token.state !== undefined) {
 			continue
 		}
 		for (const global of globalsOf(token)) {
@@ -503,6 +551,8 @@ for (const [id, component] of Object.entries(mapping.components)) {
 	}
 
 	scopes.push(...selfOnlyRules(component))
+
+	scopes.push(...stateRules(id, component))
 
 	scopes.push(...paintRules(component))
 }
