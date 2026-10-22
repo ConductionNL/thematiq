@@ -63,6 +63,12 @@ body {
 	--border-radius-pill: var(--nldesign-border-radius-pill) !important;
 }
 
+/* The app shell (NcContent) is the solid main background, not Nextcloud's
+   translucent frosted surface. The login card keeps its frosted look. */
+body:not(#body-login) {
+	--color-main-background-blur: var(--color-main-background) !important;
+}
+
 /* ============================================
    HEADER - Most visible branding element
    ============================================ */

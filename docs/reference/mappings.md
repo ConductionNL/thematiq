@@ -121,7 +121,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-background-plain` | mapped |  | `#00679e` | `#00679e` | Admin/user configured background; should respect user settings |
 | `--color-background-plain-text` | settable | `--nldesign-nc-color-background-plain-text` | `#ffffff` | `#ffffff` | Text on plain background; auto-calculated by Nextcloud |
 | `--color-main-background` | settable | `--nldesign-nc-color-main-background` | `#ffffff` | `#171717` | Core page background; overriding breaks dark mode and accessibility themes |
-| `--color-main-background-blur` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Blur variant; depends on --color-main-background-rgb |
+| `--color-main-background-blur` | mapped | `--color-main-background` | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | The solid main background outside the login page: nldesign has no frosted app shell |
 | `--color-main-background-rgb` | mapped |  | `255,255,255` | `23,23,23` | RGB variant for rgba() usage; depends on --color-main-background |
 | `--color-main-background-translucent` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Translucent variant; depends on --color-main-background-rgb |
 
