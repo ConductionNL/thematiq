@@ -70,7 +70,7 @@
 	/* --color-main-background: intentionally not overridden — overriding breaks dark mode */
 	/* --color-main-background-rgb: intentionally not overridden — depends on main-background */
 	/* --color-main-background-translucent: intentionally not overridden — depends on main-background-rgb */
-	/* --color-main-background-blur: intentionally not overridden — depends on main-background-rgb */
+	/* --color-main-background-blur: set in theme.css to the solid main background outside the login page */
 	/* --color-background-plain: intentionally not overridden — admin/user configured */
 	/* --color-background-plain-text: intentionally not overridden — auto-calculated by Nextcloud */
 

@@ -1038,10 +1038,10 @@
 		},
 		"--color-main-background-blur": {
 			"status": "mapped",
-			"via": "nextcloud-theming",
-			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"via": "stylesheet",
+			"token": "--color-main-background",
 			"category": "Main Background",
-			"note": "Blur variant; depends on --color-main-background-rgb"
+			"note": "The solid main background outside the login page: nldesign has no frosted app shell"
 		},
 		"--color-main-background-rgb": {
 			"status": "mapped",
