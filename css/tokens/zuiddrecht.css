@@ -84,6 +84,9 @@
 	--nldesign-color-error: #CC0000;
 	--nldesign-color-error-rgb: 204, 0, 0;
 	--nldesign-color-error-hover: #A30000;
+	/* Error text on the page is the error ink the boards draw late deadlines
+	 * in ("1 dag te laat"), darker than the #CC0000 fill: 7.22:1 on white. */
+	--nldesign-color-error-text: #A30000;
 	--nldesign-color-warning: #7A4F00;
 	--nldesign-color-warning-rgb: 122, 79, 0;
 	/* Warning text on a warning note is the warning ink itself, as the
