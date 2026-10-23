@@ -143,7 +143,7 @@ class OverridesCssBuilder {
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
-		$own    = ($own ?? new OwnTokenCss());
+		$own = ($own ?? new OwnTokenCss());
 		$tokens = $this->withReadableText(tokens: $tokens);
 		$lines = array_merge(
 			$this->declarationLines(tokens: $this->withMotionTwins(tokens: $tokens), important: true),
@@ -241,8 +241,8 @@ class OverridesCssBuilder {
 	 */
 	public function withReadableText(array $tokens): array {
 		$ownBackground = isset($tokens['--color-main-background']);
-		$declarations  = ($tokens + ['--color-main-background' => self::DEFAULT_PAGE_BACKGROUND]);
-		$repaired      = $this->darkPalette->verifyAndRepair(declarations: $declarations, pairs: self::LIGHT_TEXT_PAIRS)['declarations'];
+		$declarations = ($tokens + ['--color-main-background' => self::DEFAULT_PAGE_BACKGROUND]);
+		$repaired = $this->darkPalette->verifyAndRepair(declarations: $declarations, pairs: self::LIGHT_TEXT_PAIRS)['declarations'];
 		if ($ownBackground === false) {
 			unset($repaired['--color-main-background']);
 		}
