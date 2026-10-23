@@ -599,11 +599,11 @@ describe('workplace layout: the top bar', () => {
 		)
 	})
 
-	it('draws the search field as a 44px pill on the workspace colour with a muted regular label', () => {
+	it('draws the search field as a 44px pill on the workspace colour with a control edge and a muted regular label', () => {
 		const [search] = withSelector(rules, '.unified-search__button')
 		expect(search.decls.height).toBe('44px !important')
 		expect(search.decls['border-radius']).toBe('22px !important')
-		expect(search.decls.border).toBe('1px solid var(--color-border) !important')
+		expect(search.decls.border).toBe('1px solid var(--color-border-maxcontrast) !important')
 		expect(search.decls['font-weight']).toBe('400 !important')
 		expect(search.decls.color).toBe('var(--color-text-maxcontrast) !important')
 	})

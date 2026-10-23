@@ -194,14 +194,15 @@ Design link rule `a:not(#header a)…` (one id and three classes at least).
 While the layout is `light`, the top bar MUST be 68px high through `--header-height` on the body, the
 app grid button MUST be a 40px square on the workspace colour with the controls' radius, said through
 `--button-size`, and the search field MUST be a 44px pill on the workspace colour with a 1px border in
-the scheme's border colour and a regular-weight muted label. The dashboard's panel row MUST stay
+the scheme's control border colour (`--color-border-maxcontrast`, 3:1 like every other field edge) and a
+regular-weight muted label. The dashboard's panel row MUST stay
 transparent.
 
 #### Scenario: The bar, the grid button and the search field
 @e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the rules
 - GIVEN `css/workplace-layout.css`
 - WHEN the top bar rules are read
-- THEN the body MUST set `--header-height` to 68px, the grid button MUST be 40px square and the search field MUST be a 44px pill with a muted regular label
+- THEN the body MUST set `--header-height` to 68px, the grid button MUST be 40px square and the search field MUST be a 44px pill with a control border and a muted regular label
 
 ### Requirement: The Navigation Width Is An Admin Option
 The app MUST store four further layout choices in the app config: `navigation_width` (a whole
