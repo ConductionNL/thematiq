@@ -1,4 +1,6 @@
 /**
+ * @vitest-environment jsdom
+ *
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  * SPDX-License-Identifier: EUPL-1.2
  *
@@ -73,16 +75,27 @@ describe('navigation width', () => {
 	})
 
 	it('says the width outright on the panel, with weight, as the component rule does', () => {
-		const panel = sheet.find((rule) =>
-			split(rule.selector).includes('#app-navigation-vue'),
-		)
+		const panel = sheet.find((rule) => 'width' in rule.decls)
 		expect(split(panel.selector)).toEqual([
-			'#app-navigation-vue',
+			'#app-navigation-vue:not(.app-navigation__content)',
 			'.app-navigation',
 		])
 		for (const prop of ['width', 'min-width', 'flex']) {
 			expect(panel.decls[prop].important, prop).toBe(true)
 		}
+	})
+
+	it("leaves the panel's inner list alone, so it does not cover the panel's end border", () => {
+		// Nextcloud 34 gives the panel's inner <nav> the id; sized to the full
+		// width it overflows the 1px border-box edge and paints over it.
+		document.body.innerHTML =
+			'<div class="app-navigation"><nav id="app-navigation-vue" class="app-navigation__content"></nav></div>'
+		const inner = document.getElementById('app-navigation-vue')
+		const sized = sheet.filter((rule) => 'width' in rule.decls)
+		for (const rule of sized) {
+			expect(inner.matches(rule.selector), rule.selector).toBe(false)
+		}
+		expect(document.querySelector('.app-navigation').matches(sized[0].selector)).toBe(true)
 	})
 })
 
