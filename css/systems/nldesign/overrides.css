@@ -99,7 +99,9 @@
 	/* --color-text-maxcontrast-background-blur: unmapped — blur-adjusted maxcontrast, auto-calculated */
 	--color-text-light: var(--nldesign-color-text-light) !important;
 	--color-text-lighter: var(--nldesign-color-text-muted) !important;
-	--color-text-error: var(--nldesign-color-error) !important;
+	/* Error text on the page: a set's error ink when it has one (darker than
+	 * the fill behind buttons and badges), else its error colour. */
+	--color-text-error: var(--nldesign-color-error-text, var(--nldesign-color-error)) !important;
 	--color-text-success: var(--nldesign-color-success) !important;
 	--color-text-warning: var(--nldesign-color-warning) !important;
 

@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:2ee40fb1bbfecca9",
+    "generated_from": "sets:c7a96d023befda11",
     "sets": [
         {
             "id": "amsterdam",
@@ -10630,6 +10630,7 @@
                 "color-error": "#CC0000",
                 "color-error-hover": "#A30000",
                 "color-error-rgb": "204, 0, 0",
+                "color-error-text": "#A30000",
                 "color-focus": "rgba(54, 105, 165, 0.5)",
                 "color-focus-rgb": "54, 105, 165",
                 "color-footer-background": "#234A78",
@@ -10755,6 +10756,7 @@
                     "color-error": "#f43535",
                     "color-error-hover": "#f65656",
                     "color-error-rgb": "244, 53, 53",
+                    "color-error-text": "#ff5c5c",
                     "color-favorite": "#f48c25",
                     "color-focus": "#5b8ac280",
                     "color-focus-rgb": "91, 138, 194",

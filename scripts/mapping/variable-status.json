@@ -1243,7 +1243,7 @@
 			"via": "stylesheet",
 			"token": "--nldesign-color-error",
 			"category": "Text Colors",
-			"note": "Error message text"
+			"note": "Error message text; a set's --nldesign-color-error-text ink when it has one"
 		},
 		"--color-text-light": {
 			"status": "mapped",
