@@ -523,6 +523,16 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 	text-decoration: none !important;
 }
 
+/* A link item in an action menu (NcActionLink: "Een bug melden",
+ * "Documentatie") is a menu entry, not a link in prose: it keeps the menu's
+ * main text colour and no underline, like the button items beside it. The ink
+ * goes through --nldesign-color-on-surface, which the link rule above reads;
+ * the underline needs a class-level rule to beat theme.css's `a`. */
+.action-link {
+	--nldesign-color-on-surface: var(--color-main-text);
+	text-decoration: none !important;
+}
+
 /* A tertiary button in the navigation (NcAppNavigationSettings' fold-out
  * toggle) is navigation chrome: it keeps the navigation's text colour, like
  * the entries beside it, instead of the tertiary-button colour from
