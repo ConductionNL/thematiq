@@ -97,6 +97,28 @@ class OverridesCssBuilder {
 	];
 
 	/**
+	 * Page text among Nextcloud's own variables, measured against the page
+	 * background in the light scope. The editor's muted grey #75758a sat on
+	 * white at 4.49:1, under WCAG 1.4.3, on every caption that reads
+	 * --color-text-maxcontrast; the written value is stepped until it reaches
+	 * 4.5:1. The background is the editor's own when it sets one, else white.
+	 *
+	 * @var array<int, array{fg: string, bg: string, threshold: float}>
+	 */
+	public const LIGHT_TEXT_PAIRS = [
+		['fg' => '--color-main-text', 'bg' => '--color-main-background', 'threshold' => 4.5],
+		['fg' => '--color-text-maxcontrast', 'bg' => '--color-main-background', 'threshold' => 4.5],
+		['fg' => '--color-text-lighter', 'bg' => '--color-main-background', 'threshold' => 4.5],
+	];
+
+	/**
+	 * The page background Nextcloud draws when the editor sets none.
+	 *
+	 * @var string
+	 */
+	private const DEFAULT_PAGE_BACKGROUND = '#ffffff';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
@@ -122,6 +144,7 @@ class OverridesCssBuilder {
 	 */
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
 		$own = ($own ?? new OwnTokenCss());
+		$tokens = $this->withReadableText(tokens: $tokens);
 		$lines = array_merge(
 			$this->declarationLines(tokens: $this->withMotionTwins(tokens: $tokens), important: true),
 			$own->lightLines()
@@ -206,6 +229,26 @@ class OverridesCssBuilder {
 		// own dark value is not in this map, so it is never rewritten.
 		return $this->darkPalette->verifyAndRepair(declarations: $dark, pairs: self::DARK_PAIRS)['declarations'];
 	}//end darkValues()
+
+	/**
+	 * The tokens with every page text colour stepped to 4.5:1 on the page background.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens.
+	 *
+	 * @return array<string, string> The tokens, page text repaired where it fell short.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md
+	 */
+	public function withReadableText(array $tokens): array {
+		$ownBackground = isset($tokens['--color-main-background']);
+		$declarations = ($tokens + ['--color-main-background' => self::DEFAULT_PAGE_BACKGROUND]);
+		$repaired = $this->darkPalette->verifyAndRepair(declarations: $declarations, pairs: self::LIGHT_TEXT_PAIRS)['declarations'];
+		if ($ownBackground === false) {
+			unset($repaired['--color-main-background']);
+		}
+
+		return $repaired;
+	}//end withReadableText()
 
 	/**
 	 * The tokens plus the thematiq twin of each motion token, with the same value.

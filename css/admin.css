@@ -948,6 +948,13 @@
 .nldesign-token-row > .nldesign-reset-btn {
 	grid-column: -2;
 }
+/* A page text colour under 4.5:1: the note spans the row, under the controls. */
+.nldesign-token-row > .nldesign-token-contrast-warning {
+	grid-column: 1 / -1;
+	margin: 0;
+	color: var(--color-warning-text, var(--color-main-text));
+	font-size: 0.9em;
+}
 .nldesign-token-row > .nldesign-token-dark {
 	grid-column: -3;
 }
