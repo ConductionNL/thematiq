@@ -523,6 +523,16 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 	text-decoration: none !important;
 }
 
+/* A tertiary button in the navigation (NcAppNavigationSettings' fold-out
+ * toggle) is navigation chrome: it keeps the navigation's text colour, like
+ * the entries beside it, instead of the tertiary-button colour from
+ * component-scopes.css, which most sets resolve to their brand primary. */
+#app-navigation .button-vue--tertiary,
+#app-navigation-vue .button-vue--tertiary,
+.app-navigation .button-vue--tertiary {
+	--color-main-text: inherit;
+}
+
 /* ============================================
    ON-SURFACE PAIRINGS (WCAG AA)
    ============================================ */
