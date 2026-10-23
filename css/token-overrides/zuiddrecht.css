@@ -186,8 +186,9 @@ div.guest-box.login-box::after {
 	letter-spacing: -0.01em;
 }
 
-/* Views on a list (DqZaken): 38px pills, the chosen one ink on white. */
-#app-content-vue .cn-quick-filter-bar__tab {
+/* Views on a list (DqZaken): 38px pills, the chosen one ink on white. A
+ * conversation thread's channel chips keep the library's size (DqZaakContact). */
+#app-content-vue .cn-quick-filter-bar__tab:not(.cn-conversation-thread *) {
 	min-height: 38px;
 	border-radius: 19px;
 	font-size: 14px;
