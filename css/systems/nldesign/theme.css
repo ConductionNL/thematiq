@@ -588,22 +588,53 @@ button.secondary:not(.cn-look-board *):hover {
    ============================================ */
 
 a {
-	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
+}
+
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
+	text-decoration: var(--nldesign-component-link-text-decoration) !important;
+}
+
+/* A link drawn as a button (NcButton with href or to, a core `a.button`,
+ * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button)
+ * is a button: the link rules here and in element-overrides.css leave it out,
+ * so it keeps its button's own text colour, and its text is never underlined,
+ * in any state. */
+a.button-vue,
+a.button,
+a[role='button'],
+a.cn-banner-widget__action,
+a.cn-link-button-widget__button,
+a.button-vue:hover,
+a.button:hover,
+a[role='button']:hover,
+a.cn-banner-widget__action:hover,
+a.cn-link-button-widget__button:hover,
+a.button-vue:visited,
+a.button:visited,
+a[role='button']:visited,
+a.cn-banner-widget__action:visited,
+a.cn-link-button-widget__button:visited,
+a.button-vue:focus,
+a.button:focus,
+a[role='button']:focus,
+a.cn-banner-widget__action:focus,
+a.cn-link-button-widget__button:focus {
+	text-decoration: none !important;
 }
 
 /* A `.tile-widget` keeps its app's link colours (css-architecture spec, #939).
  * :where() keeps these rules at the specificity of a bare `a`, so every rule
  * that outranked them before still does. */
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)) {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):hover {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):visited {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 

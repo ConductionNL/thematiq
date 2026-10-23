@@ -202,6 +202,9 @@ function ratio(a, b) {
 	return (hi + 0.05) / (lo + 0.05)
 }
 
+/** The body link rule: every `a` except a link drawn as a button. */
+const BODY_LINK = "a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button))"
+
 /**
  * What a page looks like in an environment: the variables on body, and the
  * resolved paint of the elements the system styles directly.
@@ -219,7 +222,7 @@ function page(env) {
 		v: (name) => resolve(vars[name], vars),
 		header: resolve(element('#header').background, vars),
 		headerText: resolve(element('#header *').color, vars),
-		link: resolve(element('a').color, vars),
+		link: resolve(element(BODY_LINK).color, vars),
 		placeholder: resolve(element('::placeholder').color, vars),
 		focusColour: colour,
 		focusWidth: Number(focus['outline-width']?.match(/\d+/)?.[0] ?? width),
