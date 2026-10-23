@@ -399,7 +399,9 @@ header nav .icon {
 
 a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.tile-widget * a
-	):not(.cn-board-view--board .cn-board-view__card-title) {
+	):not(.cn-board-view--board .cn-board-view__card-title):not(
+		.cn-look-board .cn-index-page__page-tab
+	) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
