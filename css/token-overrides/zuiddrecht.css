@@ -144,8 +144,8 @@ div.guest-box.login-box::after {
 }
 
 /* The attention card: a 20px title (an h3, 18 by the token) under a 13px
- * kicker in the accent's dark step (DqDashboard "Vandaag eerst"); the
- * paragraph sheet otherwise sizes the kicker as body text. */
+ * kicker in the accent's dark step, untracked (DqDashboard "Vandaag eerst");
+ * the paragraph sheet otherwise sizes the kicker as body text. */
 #app-content-vue .cn-banner-widget__title {
 	font-size: 20px !important;
 	line-height: 1.3;
@@ -154,7 +154,6 @@ div.guest-box.login-box::after {
 #app-content-vue .cn-banner-widget__kicker {
 	font-size: 13px !important;
 	font-weight: 700;
-	letter-spacing: 0.06em;
 }
 
 #app-content-vue .cn-banner-widget--error .cn-banner-widget__kicker {
