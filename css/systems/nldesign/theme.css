@@ -875,13 +875,26 @@ h6 {
 	font-family: var(--nldesign-component-heading-font-family) !important;
 }
 
-/* Paragraphs */
-p {
+/* Paragraphs. Outside the nextcloud-vue board look the paragraph token is
+   forced, as the headings are. Inside it, a component's subtitle, note or
+   caption is a <p> drawn at the board's size (a 13px note, a 14px subtitle),
+   and a forced 15px/22.5px overrode every one of them; there the token is a
+   default at no weight, so a paragraph with no size of its own still takes
+   it and a component's own size wins. */
+p:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-paragraph-font-size) !important;
 	line-height: var(--nldesign-component-paragraph-line-height) !important;
 	color: var(--nldesign-component-paragraph-color) !important;
 	font-family: var(--nldesign-component-paragraph-font-family) !important;
 	font-weight: var(--nldesign-component-paragraph-font-weight) !important;
+}
+
+:where(.cn-look-board) :where(p) {
+	font-size: var(--nldesign-component-paragraph-font-size);
+	line-height: var(--nldesign-component-paragraph-line-height);
+	color: var(--nldesign-component-paragraph-color);
+	font-family: var(--nldesign-component-paragraph-font-family);
+	font-weight: var(--nldesign-component-paragraph-font-weight);
 }
 
 /* Tables */
