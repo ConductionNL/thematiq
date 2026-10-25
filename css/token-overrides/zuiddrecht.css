@@ -176,8 +176,14 @@ div.guest-box.login-box::after {
  * every tile 18px taller. The value rule names the stat widget's own class:
  * the countdown tile in a case's side column shares `.cn-kpi-card__value`. */
 #app-content-vue .cn-kpi-card__title {
-	font-weight: 400;
 	color: var(--color-text-maxcontrast);
+}
+
+/* The label at 400, except on the tile with its icon in a circle at the end,
+ * which the boards set at 600 (DqDashboard, DqMijnTeam): the library sets that
+ * weight on that tile, and this id rule would beat it. */
+#app-content-vue .cn-kpi-card:not(:has(.cn-kpi-card__title--badge-end)) .cn-kpi-card__title {
+	font-weight: 400;
 }
 
 #app-content-vue .cn-stat-widget__value {
