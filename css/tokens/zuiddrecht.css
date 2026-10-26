@@ -51,6 +51,8 @@
 
 	/* Logo image */
 	--nldesign-logo-url: url('../../img/logos/zuiddrecht.svg');
+	/* The shield without the wordmark, drawn small beside a page title. */
+	--nldesign-emblem-url: url('../../img/logos/zuiddrecht-emblem.svg');
 	/* The logo is a wordmark, 4.7 times as wide as it is high. In Nextcloud's
 	 * 62px slot it would be 13px high; 150px gives it 32px. */
 	--nldesign-logo-width: 150px;
