@@ -55,6 +55,13 @@ class LogoLayerService {
 	private const WATERMARK_SUFFIX = '-emblem-grey';
 
 	/**
+	 * What a set's coloured emblem file is called, after the set id.
+	 *
+	 * @var string
+	 */
+	private const EMBLEM_SUFFIX = '-emblem';
+
+	/**
 	 * What a bundle that masks the header logo reads when a logo exists.
 	 *
 	 * The La Suite element overrides, which Cunningham shares, paint
@@ -159,7 +166,7 @@ class LogoLayerService {
 		if ($relative !== null) {
 			return $this->inlineLayer(
 				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES
-					. $this->watermarkDeclaration(tokenSet: $tokenSet) . '}'
+					. $this->watermarkDeclaration(tokenSet: $tokenSet) . $this->emblemDeclaration(tokenSet: $tokenSet) . '}'
 			);
 		}
 
@@ -283,6 +290,27 @@ class LogoLayerService {
 
 		return ';--nldesign-login-watermark-image:url(' . $this->files->url(name: $watermark) . ')';
 	}//end watermarkDeclaration()
+
+	/**
+	 * The emblem of a set, as an absolute url, or nothing.
+	 *
+	 * A set that ships its mark without the wordmark, `img/logos/<set>-emblem.svg`,
+	 * names it in `--nldesign-emblem-url`, which nextcloud-vue draws beside a page
+	 * title and at the top of the app navigation. Those rules sit in the apps'
+	 * own stylesheets, so only an absolute url resolves there.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 *
+	 * @return string One declaration starting with `;`, or the empty string.
+	 */
+	private function emblemDeclaration(string $tokenSet): string {
+		$emblem = $this->shippedLogo(name: $tokenSet . self::EMBLEM_SUFFIX);
+		if ($emblem === null) {
+			return '';
+		}
+
+		return ';--nldesign-emblem-url:url(' . $this->files->url(name: $emblem) . ')';
+	}//end emblemDeclaration()
 
 	/**
 	 * The dark logo layer as a list the injector can append: none when an
