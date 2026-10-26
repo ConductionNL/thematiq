@@ -340,12 +340,14 @@ class SetLogoReachTest extends TestCase {
 	 *
 	 * @return string The layer CSS.
 	 */
-	private function layerWithEmblem(bool $emblemShipped): string {
+	private function layerWithEmblem(bool $emblemShipped, bool $colourEmblemShipped = false): string {
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
 		$files = $this->createMock(RuntimeFileLocator::class);
 		$files->method('exists')->willReturnCallback(
-			static fn (string $name): bool => $name === 'img/logos/zuiddrecht.svg' || ($emblemShipped === true && $name === 'img/logos/zuiddrecht-emblem-grey.svg')
+			static fn (string $name): bool => $name === 'img/logos/zuiddrecht.svg'
+				|| ($emblemShipped === true && $name === 'img/logos/zuiddrecht-emblem-grey.svg')
+				|| ($colourEmblemShipped === true && $name === 'img/logos/zuiddrecht-emblem.svg')
 		);
 		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
 
@@ -379,6 +381,18 @@ class SetLogoReachTest extends TestCase {
 	public function testWithoutAGreyEmblemThereIsNoWatermark(): void {
 		$this->assertStringNotContainsString('watermark', $this->layerWithEmblem(emblemShipped: false));
 	}//end testWithoutAGreyEmblemThereIsNoWatermark()
+
+	/**
+	 * A set that ships its coloured emblem names it as an absolute url in
+	 * --nldesign-emblem-url, because the rules that draw it live in the apps'
+	 * stylesheets; a set without one gets no declaration.
+	 */
+	public function testAColouredEmblemBecomesTheEmblemUrl(): void {
+		$css = $this->layerWithEmblem(emblemShipped: true, colourEmblemShipped: true);
+		$this->assertStringContainsString(';--nldesign-emblem-url:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem.svg)}', $css);
+
+		$this->assertStringNotContainsString('--nldesign-emblem-url', $this->layerWithEmblem(emblemShipped: true));
+	}//end testAColouredEmblemBecomesTheEmblemUrl()
 
 	/**
 	 * Only Zuiddrecht and its four demo schools ship a grey emblem, so only
