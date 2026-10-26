@@ -3290,6 +3290,7 @@
 			})
 
 			wireTokenRows(container)
+			paintContrastWarnings(container)
 
 			wireTokenGroups(container)
 
@@ -4649,6 +4650,67 @@
 			schedulePreviewRepaint()
 		}
 
+		/**
+		 * Say beside each page text colour when it falls under 4.5:1 on the
+		 * page background (WCAG 1.4.3), and that the saved file steps it to
+		 * 4.5:1 (OverridesCssBuilder::withReadableText). The note is tied to
+		 * the colour field with aria-describedby.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @return {void}
+		 */
+		function paintContrastWarnings(container) {
+			if (typeof TT.textContrastShortfall !== 'function') {
+				return
+			}
+			var valueOf = function (token) {
+				var state = tokenEditorState[token]
+				return state ? (state.current || state.resolved || '') : ''
+			}
+			var background = valueOf('--color-main-background')
+			TT.TEXT_CONTRAST_TOKENS.forEach(function (name) {
+				var row = container.querySelector('[data-token-row="' + name + '"]')
+				if (row === null) {
+					return
+				}
+				var id = 'nldesign-contrast-' + name.replace(/^-+/, '')
+				var note = row.querySelector('#' + id)
+				var field = row.querySelector('.nldesign-color-text')
+				var ratio = TT.textContrastShortfall(name, valueOf(name), background)
+				if (ratio === null) {
+					if (note !== null) {
+						note.remove()
+					}
+					if (field !== null) {
+						var rest = (field.getAttribute('aria-describedby') || '').split(' ').filter(function (ref) {
+							return ref !== '' && ref !== id
+						})
+						if (rest.length > 0) {
+							field.setAttribute('aria-describedby', rest.join(' '))
+						} else {
+							field.removeAttribute('aria-describedby')
+						}
+					}
+					return
+				}
+				if (note === null) {
+					note = document.createElement('p')
+					note.id = id
+					note.className = 'nldesign-token-contrast-warning'
+					note.setAttribute('role', 'status')
+					row.appendChild(note)
+				}
+				note.textContent = t('thematiq', 'Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.', { ratio: ratio.toFixed(2) })
+				if (field !== null) {
+					var refs = (field.getAttribute('aria-describedby') || '').split(' ').filter(Boolean)
+					if (refs.indexOf(id) === -1) {
+						refs.push(id)
+						field.setAttribute('aria-describedby', refs.join(' '))
+					}
+				}
+			})
+		}
+
 		function markDirty(name, value, container) {
 			if (tokenEditorState[name] === undefined) {
 				tokenEditorState[name] = {
@@ -4661,6 +4723,7 @@
 			tokenEditorState[name].current = value
 			tokenEditorState[name].isDirty = true
 			paintSwatches(name, value)
+			paintContrastWarnings(container)
 
 			var row = container.querySelector('[data-token-row="' + name + '"]')
 			var label =

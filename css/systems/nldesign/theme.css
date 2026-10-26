@@ -63,6 +63,12 @@ body {
 	--border-radius-pill: var(--nldesign-border-radius-pill) !important;
 }
 
+/* The app shell (NcContent) is the solid main background, not Nextcloud's
+   translucent frosted surface. The login card keeps its frosted look. */
+body:not(#body-login) {
+	--color-main-background-blur: var(--color-main-background) !important;
+}
+
 /* ============================================
    HEADER - Most visible branding element
    ============================================ */
@@ -582,22 +588,53 @@ button.secondary:not(.cn-look-board *):hover {
    ============================================ */
 
 a {
-	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
+}
+
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
+	text-decoration: var(--nldesign-component-link-text-decoration) !important;
+}
+
+/* A link drawn as a button (NcButton with href or to, a core `a.button`,
+ * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button)
+ * is a button: the link rules here and in element-overrides.css leave it out,
+ * so it keeps its button's own text colour, and its text is never underlined,
+ * in any state. */
+a.button-vue,
+a.button,
+a[role='button'],
+a.cn-banner-widget__action,
+a.cn-link-button-widget__button,
+a.button-vue:hover,
+a.button:hover,
+a[role='button']:hover,
+a.cn-banner-widget__action:hover,
+a.cn-link-button-widget__button:hover,
+a.button-vue:visited,
+a.button:visited,
+a[role='button']:visited,
+a.cn-banner-widget__action:visited,
+a.cn-link-button-widget__button:visited,
+a.button-vue:focus,
+a.button:focus,
+a[role='button']:focus,
+a.cn-banner-widget__action:focus,
+a.cn-link-button-widget__button:focus {
+	text-decoration: none !important;
 }
 
 /* A `.tile-widget` keeps its app's link colours (css-architecture spec, #939).
  * :where() keeps these rules at the specificity of a bare `a`, so every rule
  * that outranked them before still does. */
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)) {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):hover {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):visited {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 
@@ -838,13 +875,26 @@ h6 {
 	font-family: var(--nldesign-component-heading-font-family) !important;
 }
 
-/* Paragraphs */
-p {
+/* Paragraphs. Outside the nextcloud-vue board look the paragraph token is
+   forced, as the headings are. Inside it, a component's subtitle, note or
+   caption is a <p> drawn at the board's size (a 13px note, a 14px subtitle),
+   and a forced 15px/22.5px overrode every one of them; there the token is a
+   default at no weight, so a paragraph with no size of its own still takes
+   it and a component's own size wins. */
+p:not(.cn-look-board *) {
 	font-size: var(--nldesign-component-paragraph-font-size) !important;
 	line-height: var(--nldesign-component-paragraph-line-height) !important;
 	color: var(--nldesign-component-paragraph-color) !important;
 	font-family: var(--nldesign-component-paragraph-font-family) !important;
 	font-weight: var(--nldesign-component-paragraph-font-weight) !important;
+}
+
+:where(.cn-look-board) :where(p) {
+	font-size: var(--nldesign-component-paragraph-font-size);
+	line-height: var(--nldesign-component-paragraph-line-height);
+	color: var(--nldesign-component-paragraph-color);
+	font-family: var(--nldesign-component-paragraph-font-family);
+	font-weight: var(--nldesign-component-paragraph-font-weight);
 }
 
 /* Tables */

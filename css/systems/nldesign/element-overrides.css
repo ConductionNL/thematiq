@@ -399,7 +399,9 @@ header nav .icon {
 
 a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.tile-widget * a
-	):not(.cn-board-view--board .cn-board-view__card-title) {
+	):not(.cn-board-view--board .cn-board-view__card-title):not(
+		.cn-look-board .cn-index-page__page-tab
+	):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
@@ -519,6 +521,26 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 .app-navigation a,
 #app-settings a {
 	text-decoration: none !important;
+}
+
+/* A link item in an action menu (NcActionLink: "Een bug melden",
+ * "Documentatie") is a menu entry, not a link in prose: it keeps the menu's
+ * main text colour and no underline, like the button items beside it. The ink
+ * goes through --nldesign-color-on-surface, which the link rule above reads;
+ * the underline needs a class-level rule to beat theme.css's `a`. */
+.action-link {
+	--nldesign-color-on-surface: var(--color-main-text);
+	text-decoration: none !important;
+}
+
+/* A tertiary button in the navigation (NcAppNavigationSettings' fold-out
+ * toggle) is navigation chrome: it keeps the navigation's text colour, like
+ * the entries beside it, instead of the tertiary-button colour from
+ * component-scopes.css, which most sets resolve to their brand primary. */
+#app-navigation .button-vue--tertiary,
+#app-navigation-vue .button-vue--tertiary,
+.app-navigation .button-vue--tertiary {
+	--color-main-text: inherit;
 }
 
 /* ============================================

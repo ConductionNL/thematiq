@@ -206,7 +206,7 @@
 	);
 	--nldesign-component-form-select-border-color: var(
 		--utrecht-select-border-color,
-		var(--nldesign-color-border)
+		var(--utrecht-form-input-border-color, var(--nldesign-color-border-dark))
 	);
 	--nldesign-component-form-select-border-radius: var(
 		--utrecht-select-border-radius,

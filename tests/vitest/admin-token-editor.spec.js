@@ -184,6 +184,7 @@ async function flush(rounds = 10) {
  * @param {boolean} [options.primaryDrives] Whether the primary-drives box starts ticked.
  * @param {boolean} [options.withSelect] Whether the page has the token set dropdown.
  * @param {string} [options.extraHtml] More of the settings page, inside the section.
+ * @param {object} [options.registry] The token registry the editor loads.
  */
 async function mount({
 	current = 'rijkshuisstijl',
@@ -192,6 +193,7 @@ async function mount({
 	primaryDrives = false,
 	withSelect = true,
 	extraHtml = '',
+	registry = REGISTRY,
 } = {}) {
 	installInitialState({
 		tokenSets: TOKEN_SETS,
@@ -220,7 +222,7 @@ async function mount({
 	}
 	answer('GET', '/settings/overrides?', 200, {
 		overrides,
-		registry: REGISTRY,
+		registry,
 		tabs: { content: 'Content', status: 'Status', typography: 'Type' },
 	})
 
@@ -1643,5 +1645,44 @@ describe('admin.js theming sync rows', () => {
 		)
 
 		expect(overlay).toBeNull()
+	})
+})
+
+describe('token editor — page text contrast', () => {
+	const MUTED = '--color-text-maxcontrast'
+	const withMuted = { ...REGISTRY, [MUTED]: { tab: 'content', type: 'color', label: 'Muted text', group: 'internal' } }
+
+	beforeEach(() => {
+		requests = []
+		routes = []
+		installGlobals()
+		installFetch()
+		if (typeof global.requestAnimationFrame !== 'function') {
+			global.requestAnimationFrame = (cb) => setTimeout(cb, 0)
+		}
+	})
+
+	afterEach(() => {
+		document.head.innerHTML = ''
+		document.body.innerHTML = ''
+		document.documentElement.removeAttribute('style')
+		vi.restoreAllMocks()
+	})
+
+	it('warns beside a muted text colour under 4.5:1 and ties the note to the field', async () => {
+		await mount({ registry: withMuted, overrides: { [MUTED]: '#75758a' } })
+		const { el, text } = row(MUTED)
+		const note = el.querySelector('.nldesign-token-contrast-warning')
+		expect(note).not.toBeNull()
+		expect(note.textContent).toContain('4.49:1')
+		expect(text.getAttribute('aria-describedby')).toContain(note.id)
+	})
+
+	it('drops the warning once the colour is readable', async () => {
+		await mount({ registry: withMuted, overrides: { [MUTED]: '#75758a' } })
+		const { el, text } = row(MUTED)
+		type(text, '#5e6168')
+		expect(el.querySelector('.nldesign-token-contrast-warning')).toBeNull()
+		expect(text.getAttribute('aria-describedby') || '').not.toContain('nldesign-contrast-')
 	})
 })

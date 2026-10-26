@@ -338,7 +338,57 @@
 		return hex + ('0' + Math.round((percent / 100) * 255).toString(16)).slice(-2)
 	}
 
+	/**
+	 * Page text among Nextcloud's own variables; the editor measures each
+	 * against the page background (OverridesCssBuilder::LIGHT_TEXT_PAIRS).
+	 */
+	var TEXT_CONTRAST_TOKENS = ['--color-main-text', '--color-text-maxcontrast', '--color-text-lighter']
+
+	/**
+	 * Relative luminance of a #rrggbb colour (WCAG 2).
+	 *
+	 * @param {string} hex `#rrggbb`.
+	 * @return {number} The luminance.
+	 */
+	function luminance(hex) {
+		var channels = [1, 3, 5].map(function (start) {
+			var value = parseInt(hex.slice(start, start + 2), 16) / 255
+			return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4)
+		})
+		return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+	}
+
+	/**
+	 * The contrast of a page text colour on the page background, when it falls
+	 * under 4.5:1 (WCAG 1.4.3). The server steps such a value when it writes
+	 * the file; the editor says so beside the field.
+	 *
+	 * @param {string} name The token.
+	 * @param {string} value Its colour.
+	 * @param {string} background The page background; white when it is not a colour.
+	 * @return {?number} The ratio to two decimals (floored), or null when it passes or cannot be measured.
+	 */
+	function textContrastShortfall(name, value, background) {
+		if (TEXT_CONTRAST_TOKENS.indexOf(name) === -1) {
+			return null
+		}
+		var foreground = value ? normaliseColorForPicker(value) : null
+		if (foreground === null) {
+			return null
+		}
+		var page = (background ? normaliseColorForPicker(background) : null) || '#ffffff'
+		var light = Math.max(luminance(foreground), luminance(page))
+		var dark = Math.min(luminance(foreground), luminance(page))
+		var ratio = (light + 0.05) / (dark + 0.05)
+		if (ratio >= 4.5) {
+			return null
+		}
+		return Math.floor(ratio * 100) / 100
+	}
+
 	return {
+		TEXT_CONTRAST_TOKENS: TEXT_CONTRAST_TOKENS,
+		textContrastShortfall: textContrastShortfall,
 		isValidTokenValue: isValidTokenValue,
 		splitAlpha: splitAlpha,
 		joinAlpha: joinAlpha,

@@ -179,6 +179,7 @@ class CssInjectionService {
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
 	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
 	 * @param AppMenuService|null $appMenu The sections of the apps menu in the workplace top bar; null keeps one grid.
+	 * @param SearchPlaceholderService|null $searchPlaceholder The words in the top bar's search field per app; null keeps Nextcloud's.
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
 	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
@@ -200,6 +201,7 @@ class CssInjectionService {
 		?LayoutOptionsService $layoutOptions = null,
 		private readonly ?HeaderUserService $headerUser = null,
 		private readonly ?AppMenuService $appMenu = null,
+		private readonly ?SearchPlaceholderService $searchPlaceholder = null,
 	) {
 		$this->config = $config;
 		$this->designSystemService = $designSystemService;
@@ -328,6 +330,7 @@ class CssInjectionService {
 		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
 		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
 		$this->runLayer(layer: 'app-menu', work: fn () => $this->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'search-placeholder', work: fn () => $this->searchPlaceholder?->inject(appId: $appId));
 
 		// 6. Preview banner: only with a preview active for this user; others pay nothing.
 		$this->runLayer(
