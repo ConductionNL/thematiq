@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Controller\WorkspaceIconController;
 use OCA\Thematiq\Listener\WorkspaceIconListener;
+use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\ImageSniffer;
 use OCA\Thematiq\Service\WorkspaceIconService;
@@ -37,6 +38,7 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -277,11 +279,22 @@ final class WorkspaceIconServiceTest extends TestCase {
 	 * @param WorkspaceIconService $service The service.
 	 * @param array<int, array<string, mixed>> $tags Filled with the emitted tags.
 	 * @param LoggerInterface|null $logger The logger.
+	 * @param array<string, mixed> $setMeta The active set's manifest entry.
 	 *
 	 * @return WorkspaceIconListener
 	 */
-	private function listener(WorkspaceIconService $service, array &$tags, ?LoggerInterface $logger = null): WorkspaceIconListener {
-		return new class($service, ($logger ?? $this->createMock(LoggerInterface::class)), $tags) extends WorkspaceIconListener {
+	private function listener(WorkspaceIconService $service, array &$tags, ?LoggerInterface $logger = null, array $setMeta = []): WorkspaceIconListener {
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturn('zuiddrecht');
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
+		$designSystems->method('getTokenSetMeta')->willReturn($setMeta);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
+		$urls->method('imagePath')->willReturnCallback(
+			fn (string $appName, string $file): string => '/custom_apps/' . $appName . '/img/' . $file
+		);
+		$logger = ($logger ?? $this->createMock(originalClassName: LoggerInterface::class));
+
+		return new class($service, $logger, $tags, $config, $designSystems, $urls) extends WorkspaceIconListener {
 			/**
 			 * The captured tags.
 			 *
@@ -295,9 +308,19 @@ final class WorkspaceIconServiceTest extends TestCase {
 			 * @param WorkspaceIconService $icons The images.
 			 * @param LoggerInterface $logger The logger.
 			 * @param array<int, array<string, mixed>> $tags Filled with the tags.
+			 * @param IConfig $config The config.
+			 * @param DesignSystemService $designSystems The set manifest.
+			 * @param IURLGenerator $urls The URL generator.
 			 */
-			public function __construct(WorkspaceIconService $icons, LoggerInterface $logger, array &$tags) {
-				parent::__construct(icons: $icons, logger: $logger);
+			public function __construct(
+				WorkspaceIconService $icons,
+				LoggerInterface $logger,
+				array &$tags,
+				IConfig $config,
+				DesignSystemService $designSystems,
+				IURLGenerator $urls,
+			) {
+				parent::__construct(icons: $icons, logger: $logger, config: $config, designSystems: $designSystems, urls: $urls);
 				$this->captured = &$tags;
 			}//end __construct()
 
@@ -366,4 +389,39 @@ final class WorkspaceIconServiceTest extends TestCase {
 
 		$this->assertSame([], $tags);
 	}//end testTheListenerFailsOpen()
+
+	/**
+	 * Scenario: a set that declares an SVG favicon gets a `<link rel="icon">` to it on every page.
+	 *
+	 * @return void
+	 */
+	public function testTheListenerLinksTheSetFavicon(): void {
+		$tags = [];
+		$setMeta = ['theming' => ['favicon' => 'img/logos/zuiddrecht-emblem.svg']];
+
+		$event = $this->createMock(originalClassName: BeforeLoginTemplateRenderedEvent::class);
+		$this->listener(service: $this->service(), tags: $tags, setMeta: $setMeta)->handle(event: $event);
+
+		$href = '/custom_apps/thematiq/img/logos/zuiddrecht-emblem.svg';
+		$this->assertSame(
+			expected: [['tag' => 'link', 'attributes' => ['rel' => 'icon', 'type' => 'image/svg+xml', 'href' => $href], 'text' => '']],
+			actual: $tags
+		);
+	}//end testTheListenerLinksTheSetFavicon()
+
+	/**
+	 * Scenario: no favicon, a raster one or a path outside img/logos/ adds no icon link.
+	 *
+	 * @return void
+	 */
+	public function testTheListenerSkipsAnUnusableSetFavicon(): void {
+		$unusable = ['img/logos/x.png', 'img/logos/../../x.svg', 'img/backgrounds/x.svg'];
+		$cases = array_merge([[]], array_map(fn (string $path): array => ['theming' => ['favicon' => $path]], $unusable));
+		foreach ($cases as $setMeta) {
+			$tags = [];
+			$event = $this->createMock(originalClassName: BeforeTemplateRenderedEvent::class);
+			$this->listener(service: $this->service(), tags: $tags, setMeta: $setMeta)->handle(event: $event);
+			$this->assertSame(expected: [], actual: $tags, message: (string)json_encode($setMeta));
+		}
+	}//end testTheListenerSkipsAnUnusableSetFavicon()
 }//end class
