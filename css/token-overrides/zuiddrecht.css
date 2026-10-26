@@ -218,7 +218,8 @@ div.guest-box.login-box::after {
 	color: var(--color-main-background) !important;
 }
 
-/* The table (DqZaken): a quiet 14px header in grey on a near-white row, 14px cells. */
+/* The table (DqZaken): a quiet 14px header in grey on a near-white row, 14px
+   cells. The title cell keeps the library's 15px (the boards' row title). */
 #app-content-vue .cn-data-table thead th {
 	font-size: 14px;
 	font-weight: 600;
@@ -230,7 +231,7 @@ div.guest-box.login-box::after {
 	);
 }
 
-#app-content-vue .cn-data-table tbody td {
+#app-content-vue .cn-data-table tbody td:not(.cn-table-col--title) {
 	font-size: 14px;
 }
 
