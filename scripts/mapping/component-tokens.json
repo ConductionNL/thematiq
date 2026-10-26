@@ -1023,6 +1023,7 @@
 				},
 				"--nldesign-component-button-focus-border-color": {
 					"global": "--color-main-text",
+					"state": ":focus-visible",
 					"label": "Button focus ring",
 					"type": "color",
 					"primary": false,

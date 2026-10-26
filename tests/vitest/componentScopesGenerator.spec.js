@@ -218,18 +218,45 @@ describe('workplace component tokens: a surface token does not reach the cards',
 		})
 	})
 
-	it('emits a restore rule for a selfOnly token only', () => {
+	it('emits a restore rule for a selfOnly or a state token only', () => {
 		const restores = []
 		SCOPES.walkRules((rule) => {
 			if (/^:where\(.*\) > \*$/.test(rule.selector.trim())) {
 				restores.push(rule.selector.trim())
 			}
 		})
-		const selfOnly = Object.values(MAPPING.components).filter((component) =>
-			Object.values(component.tokens).some((entry) => entry.selfOnly === true),
+		const restoring = Object.values(MAPPING.components).filter((component) =>
+			Object.values(component.tokens).some((entry) => entry.selfOnly === true || entry.state !== undefined),
 		)
-		expect(restores.length).toBe(selfOnly.length)
-		expect(selfOnly.length).toBe(1)
+		expect(restores.length).toBe(restoring.length)
+		expect(restoring.length).toBe(2)
+	})
+})
+
+describe('workplace component tokens: the button focus ring colours the ring only', () => {
+	const button = MAPPING.components['primary-button']
+	const token = '--nldesign-component-button-focus-border-color'
+	const focused = button.selectors
+		.concat("[data-thematiq-component='primary-button']")
+		.map((selector) => selector + ':focus-visible')
+
+	it('leaves the main text colour alone on a primary button at rest', () => {
+		expect(button.tokens[token].state).toBe(':focus-visible')
+		expect(componentRule('primary-button')['--color-main-text']).toBeUndefined()
+	})
+
+	it('redirects the main text colour, which the ring is drawn in, while the button has keyboard focus', () => {
+		for (const selector of focused) {
+			expect(ruleFor(selector), selector).toEqual({
+				'--color-main-text': 'var(' + token + ', var(--thematiq-global-color-main-text))',
+			})
+		}
+	})
+
+	it("hands the captured main text colour back to the focused button's children, with no specificity", () => {
+		expect(ruleFor(':where(' + focused.join(', ') + ') > *')).toEqual({
+			'--color-main-text': 'var(--thematiq-global-color-main-text)',
+		})
 	})
 })
 
