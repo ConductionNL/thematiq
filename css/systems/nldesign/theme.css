@@ -591,7 +591,7 @@ a {
 	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 }
 
@@ -605,36 +605,40 @@ a.button,
 a[role='button'],
 a.cn-banner-widget__action,
 a.cn-link-button-widget__button,
+a.cn-week-strip__item,
 a.button-vue:hover,
 a.button:hover,
 a[role='button']:hover,
 a.cn-banner-widget__action:hover,
 a.cn-link-button-widget__button:hover,
+a.cn-week-strip__item:hover,
 a.button-vue:visited,
 a.button:visited,
 a[role='button']:visited,
 a.cn-banner-widget__action:visited,
 a.cn-link-button-widget__button:visited,
+a.cn-week-strip__item:visited,
 a.button-vue:focus,
 a.button:focus,
 a[role='button']:focus,
 a.cn-banner-widget__action:focus,
-a.cn-link-button-widget__button:focus {
+a.cn-link-button-widget__button:focus,
+a.cn-week-strip__item:focus {
 	text-decoration: none !important;
 }
 
 /* A `.tile-widget` keeps its app's link colours (css-architecture spec, #939).
  * :where() keeps these rules at the specificity of a bare `a`, so every rule
  * that outranked them before still does. */
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)) {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):hover {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):visited {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 
