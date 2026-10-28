@@ -5,7 +5,8 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * A link drawn as a button (NcButton with href or to, a core `a.button`,
- * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button)
+ * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button,
+ * a CnWeekStripWidget item card: DqMijnWerk "Termijnen deze week")
  * reads as a button: the link colour rules leave it to its button's own text
  * colour, and its text is never underlined, in any state.
  *
@@ -68,6 +69,7 @@ const BUTTONS = {
 	'banner primary action': '<a class="cn-banner-widget__action cn-banner-widget__action--primary" href="#">Zaak openen</a>',
 	'banner secondary action': '<a class="cn-banner-widget__action cn-banner-widget__action--secondary" href="#">Open deze zaken</a>',
 	'link button widget': '<a class="cn-link-button-widget__button" href="#">Naar het portaal</a>',
+	'week strip item': '<a class="cn-week-strip__item cn-week-strip__item--link" href="#"><strong class="cn-week-strip__title">Parkeervergunningen binnenstad</strong><span class="cn-week-strip__meta">2026-4837</span></a>',
 }
 
 beforeAll(() => {

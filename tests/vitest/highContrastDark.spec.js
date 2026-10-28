@@ -203,7 +203,7 @@ function ratio(a, b) {
 }
 
 /** The body link rule: every `a` except a link drawn as a button. */
-const BODY_LINK = "a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button))"
+const BODY_LINK = "a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item))"
 
 /**
  * What a page looks like in an environment: the variables on body, and the
