@@ -7280,20 +7280,20 @@
 			"id": "sur-assistant-logo",
 			"area": "surfaces",
 			"name": "Show the organisation's logo as an approved mark inside the AI assistant, so users can see the assistant is the one their organisation sanctioned.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "no",
 			"built": {
-				"state": "specified",
-				"evidence": "thematiq half built and its change archived (2026-10-02-surfaces-assistant-approved-mark, all tasks ticked): lib/Service/AssistantMarkService.php:146 forUser() returns the mark (off by default, organisation name, logo, translated label); GET /api/assistant-mark (appinfo/routes.php:30, lib/Controller/AssistantMarkController.php:71, #[NoAdminRequired]); the AI assistant block on Settings > Administration > Theming (templates/settings/admin.php:1109-1116, js/admin-assistant-mark.js). Nothing draws it in the assistant: git grep 'assistant-mark' in nextcloud-vue origin/development 3eefb4f00 src/ finds no caller, and ConductionNL/nextcloud-vue#1298 is open",
+				"state": "built",
+				"evidence": "thematiq half: lib/Service/AssistantMarkService.php forUser(), GET /api/assistant-mark (appinfo/routes.php, lib/Controller/AssistantMarkController.php, #[NoAdminRequired]), the AI assistant block on Settings > Administration > Theming (change archived as 2026-10-02-surfaces-assistant-approved-mark). nextcloud-vue half, on its default branch main since 0d69eaf48a (#1396, 2026-10-09): src/utils/assistantMark.js fetches /apps/thematiq/api/assistant-mark, src/components/CnAiCompanion/CnAiChatPanel.vue draws it in the panel footer (data-testid cn-ai-panel-mark), tests/utils/assistantMark.spec.js and tests/components/CnAiChatPanelMark.spec.js. Released: the endpoint call is in dist/nextcloud-vue.cjs.js of @conduction/nextcloud-vue 2.56.0-beta.24 and of 2.165.0 (npm, read 2026-10-30). The nextcloud-vue change ai-panel-approved-mark is 4/4 ticked; issue ConductionNL/nextcloud-vue#1298 is still open and can be closed.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"change": "nextcloud-vue/ai-panel-approved-mark",
-				"note": "Missing, and owed by nextcloud-vue (sibling-needs): CnAiChatPanel drawing the mark (nextcloud-vue#1298, no change written there yet). Until it lands, a user sees the mark only in the admin preview. Missing half specified in nextcloud-vue/ai-panel-approved-mark (spec round part 3, 2026-10-07); delivered half: surfaces-assistant-approved-mark.",
-				"readOn": "2026-10-07"
+				"note": "Built 2026-10-30 (coverage lane): the panel footer mark shipped in nextcloud-vue; the earlier note said it was owed by nextcloud-vue#1298, which the shipped code now covers.",
+				"readOn": "2026-10-30"
 			},
 			"reachedOn": "Settings > Administration > Theming, AI assistant; GET /apps/thematiq/api/assistant-mark",
 			"evidence": {
