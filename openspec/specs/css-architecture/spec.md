@@ -620,6 +620,41 @@ inline on `<html>`.
   inserted before `custom-overrides.css`
 - AND after the second swap no Thematiq set layer MUST remain
 
+### Requirement: The solid background reaches only Nextcloud's own panels and widgets
+
+The nldesign solid-background rule SHALL paint Nextcloud's panels, its dashboard widget and its reference widget cards with `var(--color-main-background)`, and SHALL NOT select an element by a substring of its class name "widget". A widget drawn by an app or by nextcloud-vue keeps the ground it draws.
+
+#### Scenario: A nextcloud-vue widget area keeps its own ground
+@e2e exclude a cascade defect over the shipped stylesheet; tests/vitest/widgetPartsKeepTheirColour.spec.js matches every background selector against Nextcloud, nextcloud-vue and app fixtures, and the live check was made on :8080 with computed styles
+- **GIVEN** the nldesign design system is active
+- **WHEN** a page renders `.cn-reports-page__widgets`, a borderless `.cn-widget-wrapper`, a `.cn-stages-widget` or an app's `.dq-case-widget`
+- **THEN** the solid-background rule SHALL NOT match them
+- **AND** a `.dashboard-widget`, `.widget-default`, `.widget-custom`, `.widget-access` and `.panel` outside the header SHALL still get `var(--color-main-background)`
+
+### Requirement: A link drawn as a button reads as a button
+
+An anchor drawn as a button (`a.button-vue`, `a.button`, `a[role="button"]`,
+`a.cn-banner-widget__action`, `a.cn-link-button-widget__button`) SHALL keep its
+button's own text colour for every variant and SHALL NOT be underlined, in any
+state (rest, hover, focus, visited), under every nldesign set and the
+high-contrast system. A link in prose SHALL keep the link colour and the set's
+link decoration.
+
+#### Scenario: the Vandaag eerst card on Mijn werk
+- GIVEN dossiq's Mijn werk card "Vandaag eerst" with the link actions "Open deze zaken", "Naar het werkbord", "Zaak openen" and the button "Termijn opschorten"
+- WHEN it renders under the Zuiddrecht set
+- THEN no action text is underlined
+- AND the outlined actions read in the main ink, like "Termijn opschorten"
+- AND the primary action "Zaak openen" reads white on the primary fill
+
+### Requirement: a week strip item card keeps its own ink
+
+A CnWeekStripWidget item (`a.cn-week-strip__item`) MUST NOT be painted by a forced link colour rule and MUST NOT be underlined, in any state; its frame marks it as a control.
+
+#### Scenario: DqMijnWerk Termijnen deze week
+- GIVEN the case "Parkeervergunningen binnenstad" in Wednesday's column
+- THEN its title reads in the body ink, not underlined
+
 ## Current Implementation Status
 
 **Fully implemented:**

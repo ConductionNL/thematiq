@@ -27,7 +27,7 @@ namespace OCA\Thematiq\Service;
  * `$themes` and `$metadata`, every value a string. `tokens-studio-legacy` is that file
  * in the `value` and `type` spelling. A token keeps its path in all of them.
  *
- * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+ * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
  */
 class FigmaTokenWriter {
 
@@ -69,7 +69,7 @@ class FigmaTokenWriter {
 	 *
 	 * @return array<string, mixed> The document to encode as JSON.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function write(array $document, array $declarations, string $format, string $setId, string $setName): array {
 		if ($format !== 'figma' && $format !== 'tokens-studio' && $format !== 'tokens-studio-legacy') {
@@ -113,7 +113,7 @@ class FigmaTokenWriter {
 	 *
 	 * @return string The file name.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function fileName(string $setId, string $format): string {
 		if ($format === 'tokens-studio' || $format === 'tokens-studio-legacy') {

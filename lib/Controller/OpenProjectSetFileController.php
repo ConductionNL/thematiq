@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use OCP\IRequest;
 /**
  * The set file of one set.
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
  */
 class OpenProjectSetFileController extends Controller {
 
@@ -69,7 +69,7 @@ class OpenProjectSetFileController extends Controller {
 	 *
 	 * @return JSONResponse The set file with an attachment name, or 404.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function export(string $id): JSONResponse {

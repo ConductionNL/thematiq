@@ -41,7 +41,7 @@ use Throwable;
  *
  * @template-implements IEventListener<Event>
  *
- * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+ * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
  */
 class WorkspaceIconListener implements IEventListener {
 
@@ -77,7 +77,7 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	public function handle(Event $event): void {
 		if (($event instanceof BeforeTemplateRenderedEvent) === false && ($event instanceof BeforeLoginTemplateRenderedEvent) === false) {
@@ -144,7 +144,7 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) \OCP\Util::addHeader() is the Nextcloud API for header injection.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	protected function emit(string $tag, array $attributes, string $text): void {
 		\OCP\Util::addHeader(tag: $tag, attributes: $attributes, text: $text);

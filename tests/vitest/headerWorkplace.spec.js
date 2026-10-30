@@ -6,7 +6,7 @@
  * field centred, the bell and the contacts menu as 44px round buttons, a
  * divider before the person.
  *
- * @spec openspec/changes/workplace-header-dqkop/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 import fs from 'node:fs'

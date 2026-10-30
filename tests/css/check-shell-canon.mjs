@@ -24,7 +24,7 @@
  * Exit codes: 0 every part matches the canon or its recorded gap; 1 a part
  * differs; 2 the page could not be opened.
  *
- * @spec openspec/changes/shell-canon-check/specs/shell-canon-check/spec.md#requirement-the-shell-is-measured-against-the-canon
+ * @spec openspec/specs/shell-canon-check/spec.md#requirement-the-shell-is-measured-against-the-canon
  */
 
 /**

@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
  * extension of the document handed on, where the converter lifts them out. A reference or a sum is
  * dropped here; every value is validated after.
  *
- * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+ * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
  */
 class FileDarkValues {
 
@@ -57,7 +57,7 @@ class FileDarkValues {
 	 *
 	 * @return string The content.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function withDark(string $content, array $document, array $dark): string {
 		if ($dark === []) {
@@ -76,7 +76,7 @@ class FileDarkValues {
 	 *
 	 * @return array<string, string> Name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function pluginDark(array $document): array {
 		$out = [];
@@ -98,7 +98,7 @@ class FileDarkValues {
 	 *
 	 * @return array<string, string> Name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function fromTree(array $tree): array {
 		$leaves = [];

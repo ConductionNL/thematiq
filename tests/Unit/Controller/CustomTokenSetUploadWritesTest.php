@@ -633,7 +633,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function testDarkValuesFromAFileAreKept(): void {
 		$file = (string)file_get_contents(\dirname(__DIR__, 3) . '/tests/fixtures/openproject/cunningham.json');
@@ -657,7 +657,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function testAForbiddenDarkValueIsRefused(): void {
 		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#154273'], 'dark' => ['tokens' => ['primary' => 'expression(alert(1))']]];

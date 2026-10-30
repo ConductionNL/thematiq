@@ -341,7 +341,7 @@ function main() {
  * @param {Object} options The parsed options.
  * @return {string} The input, with the primary added when the theme had none.
  *
- * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-a-theme-without-a-primary-colour-takes-the-sets-own
+ * @spec openspec/specs/token-set-converter/spec.md#requirement-a-theme-without-a-primary-colour-takes-the-sets-own
  */
 export function withPrimary(css, inputPath, options) {
 	if (inputPath.endsWith('.css') === false) {

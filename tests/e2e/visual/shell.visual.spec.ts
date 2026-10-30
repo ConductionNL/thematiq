@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/shell-pixel-check/specs/shell-pixel-check/spec.md
+ * @e2e openspec/specs/shell-pixel-check/spec.md
  *
  * The pixel check of the shell, as the OpenProject plugin has one for its own
  * (`docs/pixel-check.md` there): the top bar and the navigation of Files at

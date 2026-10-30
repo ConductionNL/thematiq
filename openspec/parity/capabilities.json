@@ -1123,7 +1123,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/token-set-dropdown",
-				"change": "token-set-picker-search"
+				"change": "openspec/changes/archive/2026-10-30-token-set-picker-search"
 			},
 			"reachedOn": "Settings > Administration > Theming, search field above the 'Design token set' dropdown",
 			"evidence": {
@@ -2285,7 +2285,8 @@
 				"evidence": "lib/Controller/OpenProjectSetFileController.php export() at GET /settings/tokensets/{id}/set-file writes OpenProjectSetFileWriter::setFile(); lib/Service/OpenProjectSetFile.php reads an uploaded set file in TokenSetConverterService::convert(); tests/Unit/Service/OpenProjectSetFileTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openproject-set-file"
+				"change": "openspec/changes/archive/2026-10-30-openproject-set-file",
+				"spec": "openspec/specs/openproject-set-file"
 			},
 			"reachedOn": "Settings > Administration > Theming, format list next to 'Download as design tokens'; Custom token sets upload",
 			"evidence": {
@@ -2320,7 +2321,8 @@
 				"evidence": "lib/Service/OpenProjectSetFile.php and lib/Service/FileDarkValues.php read the dark block, the plugin W3C dark extension and a Tokens Studio dark set; lib/Service/DarkPins.php keeps them per uploaded set; DarkPaletteService::generateForSet() merges them; tests/Unit/Controller/CustomTokenSetUploadWritesTest.php testDarkValuesFromAFileAreKept",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "dark-colours-from-a-file"
+				"change": "openspec/changes/archive/2026-10-30-dark-colours-from-a-file",
+				"spec": "openspec/specs/dark-colours-from-a-file"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload",
 			"evidence": {
@@ -2355,7 +2357,8 @@
 				"evidence": "lib/Service/ShellRoleMapper.php role menu (reads --thematiq-shell-menu, then the navigation column tokens); lib/Service/TokenSetConverterService.php copies an uploaded menu colour to --nldesign-color-nav-background; tests/Unit/Service/ShellRoleMapperTest.php testTheMenuIsTheNavigationColumn",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "menu-role"
+				"change": "openspec/changes/archive/2026-10-30-menu-role",
+				"spec": "openspec/specs/menu-role"
 			},
 			"reachedOn": "GET /apps/thematiq/api/shell-tokens (tokens.menu), the shell catalogue and the set file",
 			"evidence": {
@@ -2390,7 +2393,8 @@
 				"evidence": "lib/Service/DesignTokensWriter.php writes the original text in $extensions[nl.conduction.thematiq].css; lib/Service/DesignTokensMapper.php originalText() reads it, or the OpenProject plugin copy, while it names the same colour; tests/Unit/Service/ColourNotationTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "colour-notation-kept"
+				"change": "openspec/changes/archive/2026-10-30-colour-notation-kept",
+				"spec": "openspec/specs/colour-notation-kept"
 			},
 			"reachedOn": "Download as design tokens, then the Custom token sets upload",
 			"evidence": {
@@ -3967,7 +3971,8 @@
 				"evidence": "tests/e2e/visual/shell.visual.spec.ts compares the Files top bar and navigation at 1440x1000 with committed references (0.5% and 1% of pixels may differ), as ConductionNL/openproject-thematiq does for OpenProject",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "shell-pixel-check"
+				"change": "openspec/changes/archive/2026-10-30-shell-pixel-check",
+				"spec": "openspec/specs/shell-pixel-check"
 			},
 			"reachedOn": "PW_VISUAL=1 npx playwright test tests/e2e/visual/shell.visual.spec.ts --project=visual",
 			"evidence": {
@@ -4002,7 +4007,8 @@
 				"evidence": "tests/css/check-shell-canon.mjs measures the Files page at 1440x1000 (top bar, navigation, navigation item, primary button, table rows, body text) against the OpenProject plugin canon, with recorded gaps; tests/e2e/spec-coverage/shell-canon.spec.ts runs it in CI on the Zuiddrecht set",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "shell-canon-check"
+				"change": "openspec/changes/archive/2026-10-30-shell-canon-check",
+				"spec": "openspec/specs/shell-canon-check"
 			},
 			"reachedOn": "npm run check:shell-canon, and the CI end-to-end suite",
 			"evidence": {
@@ -6830,7 +6836,8 @@
 				"evidence": "lib/Service/WorkspaceIconService.php stores a mobile logo and a square PNG touch icon in app data; lib/Listener/WorkspaceIconListener.php adds <link rel=apple-touch-icon sizes=180x180> and a header-logo rule inside @media (max-width:1024px) to every page and the login page; lib/Controller/WorkspaceIconController.php; tests/Unit/Service/WorkspaceIconServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "mobile-logo-and-touch-icon"
+				"change": "openspec/changes/archive/2026-10-30-mobile-logo-and-touch-icon",
+				"spec": "openspec/specs/mobile-logo-and-touch-icon"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Mobile logo and home screen icon'",
 			"evidence": {

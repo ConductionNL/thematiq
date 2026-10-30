@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -47,7 +47,7 @@ use Throwable;
  * words stay. Presentation, never a dependency: a failure is logged and the
  * page keeps Nextcloud's words.
  *
- * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class SearchPlaceholderService {
 
@@ -103,7 +103,7 @@ class SearchPlaceholderService {
 	 *
 	 * @return string|null The words.
 	 *
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	public function placeholderFor(?string $appId): ?string {
 		$map = $this->themeMap();
@@ -134,7 +134,7 @@ class SearchPlaceholderService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	public function inject(?string $appId): void {
 		try {
@@ -158,7 +158,7 @@ class SearchPlaceholderService {
 	 *
 	 * @return array<string, string> App id (or `*`) to text.
 	 *
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	private function themeMap(): array {
 		$raw = $this->appConfig->getValueString(Application::APP_ID, self::CONFIG_KEY, '');
@@ -189,7 +189,7 @@ class SearchPlaceholderService {
 	 *
 	 * @return string The words in the person's language, or the text itself.
 	 *
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	private function translate(string $appId, string $text): string {
 		$translated = $this->l10nFactory->get($appId)->t($text);
@@ -207,7 +207,7 @@ class SearchPlaceholderService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
 	 *
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);

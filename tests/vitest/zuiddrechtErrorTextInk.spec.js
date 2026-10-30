@@ -7,7 +7,7 @@
  * #A30000, while the error fill behind buttons and badges stays #CC0000.
  * A set without an error ink keeps reading its error colour.
  *
- * @spec openspec/changes/error-text-ink/specs/error-text-ink/spec.md
+ * @spec openspec/specs/error-text-ink/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

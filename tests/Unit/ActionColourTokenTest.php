@@ -216,7 +216,7 @@ class ActionColourTokenTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/action-colour-main-button-only/specs/action-colour/spec.md#requirement-the-action-colour-reaches-the-main-button-and-nothing-else
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-action-colour-reaches-the-main-button-and-nothing-else
 	 */
 	public function testThePrimaryElementVariablesStayWithThePrimary(): void {
 		foreach (self::ELEMENT_VARIABLES as $file => $declarations) {

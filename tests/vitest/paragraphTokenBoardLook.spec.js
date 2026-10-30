@@ -7,7 +7,7 @@
  * note, a 14px subtitle) wins there and a plain paragraph still takes the
  * token.
  *
- * @spec openspec/changes/paragraph-token-yields-in-board-look/specs/paragraph-token/spec.md
+ * @spec openspec/specs/paragraph-token/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

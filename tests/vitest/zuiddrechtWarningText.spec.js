@@ -6,7 +6,7 @@
  * boards draw on a warning note ("Advies gevraagd", DqZaaktypeOverzicht).
  * Left unset, Nextcloud derives #664700 from the warning colour.
  *
- * @spec openspec/changes/zuiddrecht-warning-text/specs/zuiddrecht-warning-text/spec.md
+ * @spec openspec/specs/zuiddrecht-warning-text/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

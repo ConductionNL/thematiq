@@ -5,7 +5,7 @@
  * The Cunningham layer (systems/lasuite, loaded by every set on the lasuite or
  * cunningham design system) draws no rule under a dashboard card's title.
  *
- * @spec openspec/changes/cunningham-dashboard-card-header-rule/specs/cunningham-dashboard-card-header-rule/spec.md
+ * @spec openspec/specs/cunningham-dashboard-card-header-rule/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

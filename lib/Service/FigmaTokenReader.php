@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
  * The file is hostile input. This class only moves values around; every value still
  * passes the mapper and the token set validator afterwards.
  *
- * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+ * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
  */
 class FigmaTokenReader {
 
@@ -78,7 +78,7 @@ class FigmaTokenReader {
 	 *
 	 * @return string The rewritten document, or the content itself when it is neither kind.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function normalise(string $content, array &$skipped): string {
 		$trimmed = ltrim($content);

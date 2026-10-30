@@ -132,7 +132,7 @@ final class DtcgExportControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function testTheFigmaFormatWritesColoursAsText(): void {
 		$response = $this->controller(format: 'figma')->export(id: 'amsterdam');
@@ -150,7 +150,7 @@ final class DtcgExportControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function testTheTokensStudioFormatsWrapTheSet(): void {
 		$dollar = json_decode((string)json_encode($this->controller(format: 'tokens-studio')->export(id: 'amsterdam')->getData()), true);
@@ -177,7 +177,7 @@ final class DtcgExportControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function testAnUnknownFormatIsRefused(): void {
 		$response = $this->controller(format: 'sketch')->export(id: 'amsterdam');

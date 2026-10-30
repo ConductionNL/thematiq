@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);

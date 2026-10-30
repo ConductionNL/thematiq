@@ -7,7 +7,7 @@
  * nldesign layer reads that token for a dashboard card's header rule; a set
  * that declares nothing keeps the card's own rule.
  *
- * @spec openspec/changes/cunningham-cards-token/specs/cunningham-cards-token/spec.md
+ * @spec openspec/specs/cunningham-cards-token/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

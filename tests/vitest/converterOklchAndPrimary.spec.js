@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 import { describe, expect, it } from 'vitest'

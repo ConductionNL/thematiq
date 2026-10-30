@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/colour-notation-kept/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
+ * @spec openspec/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * The writer keeps the text, the mapper reads it back while it still names the colour.
  *
- * @spec openspec/changes/colour-notation-kept/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
+ * @spec openspec/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
  */
 final class ColourNotationTest extends TestCase {
 

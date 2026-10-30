@@ -15,7 +15,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * oklch() and oklab() literals.
  *
- * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 final class ColourLiteralParserOklchTest extends TestCase {
 

@@ -7,7 +7,7 @@
  * every table cell the header's colour, in every set that sets the token
  * (and the body ink where the defaults set it).
  *
- * @spec openspec/changes/table-header-colour-scope/specs/table-header-colour-scope/spec.md
+ * @spec openspec/specs/table-header-colour-scope/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

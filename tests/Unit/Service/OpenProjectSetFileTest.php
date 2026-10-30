@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
  */
 
 declare(strict_types=1);
@@ -38,7 +38,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Download a set file, upload it, compare the roles; and upload the plugin's own files.
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
  */
 final class OpenProjectSetFileTest extends TestCase {
 
@@ -121,7 +121,7 @@ final class OpenProjectSetFileTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
 	 */
 	#[DataProvider('shippedSets')]
 	public function testASetFileComesBackWithTheSameRoles(string $id): void {
@@ -229,7 +229,7 @@ final class OpenProjectSetFileTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/menu-role/specs/menu-role/spec.md#requirement-the-main-menu-colour-is-a-shell-role
+	 * @spec openspec/specs/menu-role/spec.md#requirement-the-main-menu-colour-is-a-shell-role
 	 */
 	public function testTheMenuColourBecomesTheNavigationColour(): void {
 		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#123456', 'menu' => '#20242a']];

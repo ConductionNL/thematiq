@@ -36,7 +36,7 @@ use OCP\IURLGenerator;
  * Both live in app data `workspace-icons/<kind>.<ext>`, at most 1 MB, the type read from the
  * first bytes.
  *
- * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+ * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
  */
 class WorkspaceIconService {
 
@@ -111,7 +111,7 @@ class WorkspaceIconService {
 	 *
 	 * @throws AppBrandException 404 for an unknown kind, 413 when too large, 422 when not an accepted image.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	public function store(string $kind, string $bytes): array {
 		$this->known(kind: $kind);
@@ -140,7 +140,7 @@ class WorkspaceIconService {
 	 *
 	 * @return array{bytes: string, mime: string}|null The image, or null when none is stored.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	public function read(string $kind): ?array {
 		if (isset(self::KINDS[$kind]) === false) {
@@ -168,7 +168,7 @@ class WorkspaceIconService {
 	 *
 	 * @throws AppBrandException 404 for an unknown kind.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	public function remove(string $kind): void {
 		$this->known(kind: $kind);
@@ -185,7 +185,7 @@ class WorkspaceIconService {
 	 *
 	 * @return array<string, string|null> Kind to address, or null when not set.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	public function status(): array {
 		$out = [];
@@ -207,7 +207,7 @@ class WorkspaceIconService {
 	 *
 	 * @return string The stylesheet.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	public function mobileLogoCss(string $url): string {
 		$url = (string)preg_replace('/[^A-Za-z0-9\/._?=&%-]/', '', $url);

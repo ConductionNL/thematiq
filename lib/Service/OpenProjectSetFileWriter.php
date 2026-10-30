@@ -25,7 +25,7 @@ use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
  * logo verdict of the catalogue. An uploaded set names no logo: the file travels without
  * pictures, and the plugin keeps its own.
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
  */
 class OpenProjectSetFileWriter {
 
@@ -64,7 +64,7 @@ class OpenProjectSetFileWriter {
 	 *
 	 * @return array<string, mixed> The set file.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
 	 */
 	public function setFile(string $appPath, string $id, string $name, ?RuntimeFileStore $store): array {
 		$logo = self::NO_LOGO;

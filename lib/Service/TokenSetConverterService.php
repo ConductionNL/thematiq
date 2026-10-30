@@ -479,7 +479,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string> Name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	private function darkFrom(string $content): array {
 		$decoded = json_decode($content, true);
