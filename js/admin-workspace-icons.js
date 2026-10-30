@@ -123,7 +123,7 @@
 				remove.className = 'button'
 				remove.id = id + '-remove'
 				remove.setAttribute('aria-labelledby', remove.id + ' ' + label.id)
-				remove.textContent = t('thematiq', 'Remove')
+				remove.textContent = t('thematiq', 'Remove image')
 				remove.addEventListener('click', function () {
 					request(base + '/' + item.kind, { method: 'DELETE' }).then(
 						function (result) {
