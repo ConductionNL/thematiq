@@ -1015,7 +1015,8 @@
 				"evidence": "token-sets.json has utrecht, amsterdam, denhaag, rotterdam entries; each has its own theming/design_system block; reachable from the same dropdown",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/extended-token-sets"
+				"spec": "openspec/specs/extended-token-sets",
+				"requirement": "Support All Available Token Sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -1545,7 +1546,8 @@
 				"evidence": "js/admin.js:3032 '<input type=\"checkbox\" class=\"nldesign-apply-check\" data-token=...' per row in the apply dialog table, plus 'Select all'/'Deselect all' toggles (js/admin.js:3164-3180); only checked rows are sent (js/admin.js:3142-3160 reads .nldesign-apply-check state before POST)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/token-set-apply-dialog"
+				"spec": "openspec/specs/token-set-apply-dialog",
+				"requirement": "Checkbox Selection"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog: per-row checkboxes",
 			"evidence": {
@@ -2297,7 +2299,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove.",
+			"screen": {
+				"board": "TqTheming",
+				"note": "board update pending: the OpenProject set file entry next to \"Downloaden als design tokens\" (coverage matrix list (b))"
+			}
 		},
 		{
 			"id": "aut-dark-colours-from-file",
@@ -2328,7 +2334,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove.",
+			"screen": {
+				"board": "TqSetUploaden",
+				"note": "board update pending: the upload result sentence on kept dark values (coverage matrix list (b))"
+			}
 		},
 		{
 			"id": "int-menu-colour-role",
@@ -2359,7 +2369,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove.",
+			"screen": {
+				"board": null,
+				"reason": "no screen of its own: the app navigation column takes the colour a file brings"
+			}
 		},
 		{
 			"id": "aut-colour-notation-kept",
@@ -2390,7 +2404,11 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove.",
+			"screen": {
+				"board": null,
+				"reason": "no screen: the upload result lists the same values in the notation they were written in"
+			}
 		},
 		{
 			"id": "aut-convert-nlds-theme",
@@ -3262,7 +3280,9 @@
 				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/token-editor-ui"
+				"spec": "openspec/specs/token-editor-ui",
+				"change": "openspec/changes/house-style-font-size-and-weight",
+				"requirement": "Font family, size and weight come from the house style"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor 'Typography' tab (font family); size/weight are per-house-style tokens, not user-editable overrides",
 			"evidence": {
@@ -3431,7 +3451,8 @@
 				"evidence": "Upload happens on Nextcloud core's own Theming admin page, not a thematiq page: apps/theming/src/components/AdminSectionThemingAdvanced.vue and apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS=['background','logo','logoheader','favicon']. thematiq composes with it: lib/Service/CssInjectionService.php:673-681,730-735 checks theming.logoheaderMime/logoMime and, when an admin uploaded a logo through core, shows it as-is instead of the token set's own logo.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "An uploaded core logo wins over the set's logo (REQ-TPLAT-001)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
 			"evidence": {
@@ -3466,7 +3487,8 @@
 				"evidence": "Same core Theming panel and ImageManager as ast-upload-logo (apps/theming/lib/ImageManager.php:25 includes 'background'); thematiq's own resetToDefaults()/RESETTABLE (lib/Service/ThemingService.php:255-277) treats 'background' as one of the settings it can undo, confirming it shares the same core slot.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "The login background is a core image slot (REQ-TPLAT-002)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
 			"evidence": {
@@ -3498,10 +3520,11 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "apps/theming/lib/ImageManager.php:25,57,332-345 and apps/theming/src/components/AdminSectionThemingAdvanced.vue:107 ('favicon' field) implement favicon upload/generation in Nextcloud core. thematiq does not sync or touch the favicon key at all: lib/Service/ThemingService.php only ever touches 'logo'/'background'/'primary_color'/'background_color' (grep -F 'favicon' lib js/admin.js templates/settings/admin.php found nothing in thematiq's own code).",
+				"evidence": "apps/theming/lib/ImageManager.php:25,57,332-345 and apps/theming/src/components/AdminSectionThemingAdvanced.vue:107 ('favicon' field) implement favicon upload/generation in Nextcloud core. thematiq serves no favicon of its own; its theming sync hands a set's favicon to core through lib/Service/ThemingService.php applyImages() (image keys logo, logoheader, favicon, background) and RESETTABLE, so core stays the owner of the slot.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "The favicon is a core image slot the theming sync may fill (REQ-TPLAT-003)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
 			"evidence": {
@@ -3923,7 +3946,11 @@
 			"providerHow": "read-from-code",
 			"feature": "every-page-styled",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Module paths not checked against a running OpenProject."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Module paths not checked against a running OpenProject.",
+			"screen": {
+				"board": "openproject/OpGlobalMenu",
+				"note": "the apps list is drawn; the admin block \"OpenProject in the apps menu\" on TqTheming is a pending board update (coverage matrix list (b))"
+			}
 		},
 		{
 			"id": "sur-shell-pixel-check",
@@ -3954,7 +3981,11 @@
 			"providerHow": "read-from-code",
 			"feature": "every-page-styled",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Opt-in, not in CI: references are host specific."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Opt-in, not in CI: references are host specific.",
+			"screen": {
+				"board": null,
+				"reason": "CI check: compares the shell with reference images, no screen"
+			}
 		},
 		{
 			"id": "sur-shell-canon-check",
@@ -3985,7 +4016,11 @@
 			"providerHow": "read-from-code",
 			"feature": "every-page-styled",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. On 2026-10-15 Ruben decided OpenProject follows Nextcloud for the primary button (48), the table row (44) and the body text (15): those are the canon now, and thematiq matches every part."
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. On 2026-10-15 Ruben decided OpenProject follows Nextcloud for the primary button (48), the table row (44) and the body text (15): those are the canon now, and thematiq matches every part.",
+			"screen": {
+				"board": null,
+				"reason": "CI check: measures the Files page against the canon, no screen"
+			}
 		},
 		{
 			"id": "sur-menu-labels",
@@ -4372,7 +4407,8 @@
 				"evidence": "Serving on a custom domain is a Nextcloud server/hosting property (config.php trusted_domains / overwrite.cli.url), independent of any app; a self-hosted instance running thematiq can be reached on any domain the operator points at it. No thematiq or core-Theming code participates.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "The workspace domain is server configuration (REQ-TPLAT-004)"
 			},
 			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
 			"evidence": {
@@ -4407,7 +4443,8 @@
 				"evidence": "apps/theming/lib/ThemingDefaults.php:162-177 builds 'legalLinks' (Imprint/Privacy, from 'imprintUrl'/'privacyUrl') into getFooter(), which core renders both in the app footer and on the login page. thematiq does not add, remove or touch these fields (grep -niF 'legal notice|privacy|imprint|accessibility statement' in lib/, templates/settings/admin.php, js/admin.js found nothing).",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "Legal links are core Theming fields (REQ-TPLAT-005)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
 			"evidence": {
@@ -4442,7 +4479,8 @@
 				"evidence": "apps/theming/lib/Capabilities.php:47-51 (name, productName, url, slogan) are standard core Theming admin-settings fields. thematiq's own sync never touches them (lib/Service/ThemingService.php only handles primary_color/background_color/logo/background).",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "Name, slogan and web address are core Theming fields (REQ-TPLAT-006)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
 			"evidence": {
@@ -4614,7 +4652,8 @@
 				"evidence": "Nextcloud core's personal Appearance settings let a user pick light/dark/high-contrast, which core marks on the page as 'body[data-theme-dark]'/'body[data-theme-light-highcontrast]' etc. thematiq's own generated dark stylesheets explicitly target those same attributes: css/tokens/dark/amsterdam.css:2-3,105-106 'body:not([data-theme-light]):not([data-theme-dark])...' for auto and 'body[data-theme-dark], body[data-themes*=dark]' for the explicit choice.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "Each user's theme choice comes from core (REQ-TPLAT-007)"
 			},
 			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
 			"evidence": {
@@ -5425,7 +5464,8 @@
 				"evidence": "lib/Settings/Admin.php:38 'class Admin implements IDelegatedSettings' with docblock 'Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class'; this is Nextcloud core's settings-admin-delegation mechanism (Settings > Administration > Security, 'Administration privileges' per group)",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "Theming can be delegated through core's admin delegation (REQ-TPLAT-008)"
 			},
 			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
 			"evidence": {
@@ -5734,7 +5774,8 @@
 				"evidence": "appinfo/info.xml:71 <category>customization</category>, three <screenshot> URLs; .github/workflows/release.yml calls the org's reusable ConductionNL/.github/.github/workflows/release.yml@main which publishes releases to the Nextcloud App Store (per this repo's own comments about 'the store accepts' releases at line ~90)",
 				"owner": "nextcloud/server",
 				"origin": "own",
-				"spec": "none"
+				"change": "openspec/changes/platform-properties",
+				"requirement": "thematiq installs and updates from the Nextcloud app store (REQ-TPLAT-009)"
 			},
 			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
 			"evidence": {
@@ -6805,7 +6846,11 @@
 			"featureConfidence": "medium",
 			"origin": "changelog",
 			"originUrl": "https://gitlab.opencode.de/bmi/opendesk/deployment/opendesk/-/blob/v1.18.2/CHANGELOG.md",
-			"note": "Built 2026-10-14 (wave T of the OpenProject plugin parity map). Reopened 2026-10-12 (Ruben): add, never remove. An Android home screen keeps Nextcloud's manifest icon, which the theming app writes from the favicon. Before: decided no 2026-09-28."
+			"note": "Built 2026-10-14 (wave T of the OpenProject plugin parity map). Reopened 2026-10-12 (Ruben): add, never remove. An Android home screen keeps Nextcloud's manifest icon, which the theming app writes from the favicon. Before: decided no 2026-09-28.",
+			"screen": {
+				"board": "TqMerkPerApp",
+				"note": "board update pending: the block \"Mobiel logo en startschermpictogram\" above \"Merk per app\" (coverage matrix list (b))"
+			}
 		},
 		{
 			"id": "gov-environment-marker",
@@ -7251,7 +7296,8 @@
 				"evidence": "every group stays locked to the administrator's choice unless the administrator marks its mapping as delegated (lib/Service/GroupThemingService.php: delegated and allowedTokenSets on an entry, validated); a subadmin of a delegated group picks its set from the allowed list (lib/Service/DelegatedGroupThemingService.php, lib/Controller/MyGroupsController.php #[NoAdminRequired] with a per-group subadmin check through OCP\\Group\\ISubAdmin, audited token_set_changed with the group); lib/Settings/Personal.php shows the choice only to subadmins of a delegated group",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "scoping-delegated-group-house-style"
+				"change": "scoping-delegated-group-house-style",
+				"requirement": "An administrator delegates a group mapping; Locking a group back keeps its current set"
 			},
 			"reachedOn": "Settings > Administration > Theming, Group theming, Subadmins choose; Personal settings, Appearance and accessibility, House style of my groups",
 			"evidence": {
