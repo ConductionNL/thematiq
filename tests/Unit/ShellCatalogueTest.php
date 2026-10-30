@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
  */
 
 declare(strict_types=1);
@@ -36,7 +36,7 @@ use PHPUnit\Framework\TestCase;
  * or a font may only be marked redistributable when the statement that makes
  * it so is still in the repository.
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
  */
 class ShellCatalogueTest extends TestCase {
 
@@ -168,7 +168,7 @@ class ShellCatalogueTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
 	 */
 	public function testASetWithADarkVariantHasDarkRoles(): void {
 		$sets = $this->setsById(catalogue: $this->catalogue());
@@ -215,7 +215,7 @@ class ShellCatalogueTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
 	 */
 	public function testTheDarkRolesReadOnEachOther(): void {
 		$contrast = new ContrastService();

@@ -845,7 +845,7 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function testDarkValuesFromAFileWin(): void {
 		file_put_contents($this->appDir . '/css/tokens/custom-x.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n");

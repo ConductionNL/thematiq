@@ -26,7 +26,7 @@ use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
  * Only for an uploaded set: a shipped set authors its dark values in its own dark block. The caller
  * has validated the declarations.
  *
- * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+ * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
  */
 class DarkPins {
 
@@ -57,7 +57,7 @@ class DarkPins {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function write(string $setId, array $declarations): void {
 		if ($this->isUploaded(setId: $setId) === false) {
@@ -86,7 +86,7 @@ class DarkPins {
 	 *
 	 * @return array<string, string> Token name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function read(string $setId): array {
 		if ($this->isUploaded(setId: $setId) === false) {
@@ -108,7 +108,7 @@ class DarkPins {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function delete(string $setId): void {
 		if ($this->isUploaded(setId: $setId) === true) {

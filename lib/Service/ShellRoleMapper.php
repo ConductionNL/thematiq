@@ -275,7 +275,7 @@ class ShellRoleMapper {
 	 *
 	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
 	 */
 	public function mapDark(array $tokens): array {
 		$roles = $this->map(tokens: $tokens);

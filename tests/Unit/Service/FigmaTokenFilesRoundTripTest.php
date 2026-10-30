@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-round-trip-keeps-every-token-the-format-carries
+ * @spec openspec/specs/figma-token-files/spec.md#requirement-a-round-trip-keeps-every-token-the-format-carries
  */
 
 declare(strict_types=1);
@@ -40,7 +40,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Download, upload, compare, for every shipped set and every Figma format.
  *
- * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-round-trip-keeps-every-token-the-format-carries
+ * @spec openspec/specs/figma-token-files/spec.md#requirement-a-round-trip-keeps-every-token-the-format-carries
  */
 final class FigmaTokenFilesRoundTripTest extends TestCase {
 
@@ -342,7 +342,7 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
 	 */
 	#[DataProvider('pluginFiles')]
 	public function testAPluginDownloadKeepsEveryRole(string $id, string $file): void {

@@ -28,7 +28,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
  */
 
 declare(strict_types=1);

@@ -22,7 +22,7 @@ namespace OCA\Thematiq\Service;
  * Tokens Studio keeps each token set under its own key in a single file. A reference
  * names the token, not the set, so the sets have to be merged before anything resolves.
  *
- * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+ * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
  */
 class TokensStudioSets {
 
@@ -41,7 +41,7 @@ class TokensStudioSets {
 	 *
 	 * @return array<int|string, mixed> The themes.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
 	 */
 	public function brandThemes(array $document): array {
 		$themes = ($document['$themes'] ?? null);
@@ -59,7 +59,7 @@ class TokensStudioSets {
 	 *
 	 * @return bool True for a single file.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function isSingleFile(array $document): bool {
 		return (array_key_exists('$themes', $document) === true || array_key_exists('$metadata', $document) === true);
@@ -75,7 +75,7 @@ class TokensStudioSets {
 	 *
 	 * @return array<int, string>|null The names, or null when the file is not a light and dark file.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function darkSets(array $document): ?array {
 		$themes = array_values(array_filter((array)($document['$themes'] ?? []), 'is_array'));
@@ -167,7 +167,7 @@ class TokensStudioSets {
 	 *
 	 * @return array<string, mixed> The merged tree.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function merged(array $document, array &$skipped): array {
 		$selected = $this->selection(document: $document);
@@ -203,7 +203,7 @@ class TokensStudioSets {
 	 *
 	 * @return array<string, mixed> The merged dark tree.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function darkTree(array $document): array {
 		$dark = ($this->darkSets(document: $document) ?? []);
@@ -247,7 +247,7 @@ class TokensStudioSets {
 	 *
 	 * @return bool True for a token.
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function isToken(array $node): bool {
 		if (array_key_exists('$value', $node) === true) {

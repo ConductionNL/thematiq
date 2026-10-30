@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
  * The file is hostile input. This class only moves values; each one still passes the mapper's
  * name check and the token set validator.
  *
- * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
  */
 class OpenProjectSetFile {
 
@@ -81,7 +81,7 @@ class OpenProjectSetFile {
 	 *
 	 * @return string The content.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function normalise(string $content, array &$skipped): string {
 		$document = json_decode(trim($content), true);
@@ -99,7 +99,7 @@ class OpenProjectSetFile {
 	 *
 	 * @return bool True for a set file.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function isSetFile(array $document): bool {
 		return is_string($document['id'] ?? null) === true
@@ -115,7 +115,7 @@ class OpenProjectSetFile {
 	 *
 	 * @return array<string, mixed> The document.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function toDocument(array $document, array &$skipped): array {
 		$cssOnly = $this->declarations(roles: (array)$document['tokens'], vocabulary: (array)($document['vocabulary'] ?? []), path: '', skipped: $skipped);

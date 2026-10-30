@@ -360,7 +360,7 @@ class ShellRoleMapperTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
 	 */
 	public function testOnADarkPageTheSelectedItemsTextReads(): void {
 		$dark = [

@@ -106,7 +106,7 @@ class Application extends App implements IBootstrap {
 	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
 	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-capability/spec.md
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	public function register(IRegistrationContext $context): void {
 		// Load the app's composer autoloader so this app's classes are resolvable

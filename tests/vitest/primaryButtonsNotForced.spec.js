@@ -7,7 +7,7 @@
  * follow the button through --nldesign-color-on-surface, and core's
  * `input.primary` and `a.primary` take the primary scope like the others.
  *
- * @spec openspec/changes/primary-buttons-not-forced/specs/primary-buttons-not-forced/spec.md
+ * @spec openspec/specs/primary-buttons-not-forced/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

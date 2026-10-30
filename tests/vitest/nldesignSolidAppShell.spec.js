@@ -6,7 +6,7 @@
  * is the solid main background, not Nextcloud's translucent frosted surface.
  * The login page keeps its frosted card.
  *
- * @spec openspec/changes/nldesign-solid-app-shell/specs/nldesign-solid-app-shell/spec.md
+ * @spec openspec/specs/nldesign-solid-app-shell/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

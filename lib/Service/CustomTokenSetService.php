@@ -299,7 +299,7 @@ class CustomTokenSetService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function keepDarkValues(string $id, array $declarations): void {
 		(new DarkPins(store: $this->store))->write(setId: $id, declarations: $declarations);

@@ -10,7 +10,7 @@
  * reads as a button: the link colour rules leave it to its button's own text
  * colour, and its text is never underlined, in any state.
  *
- * @spec openspec/changes/anchor-buttons-keep-button-text/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 import fs from 'fs'

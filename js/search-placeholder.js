@@ -12,7 +12,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqSearchPlaceholderInit() {
 	if (document.readyState === 'loading') {
@@ -26,7 +26,7 @@
 	 *
 	 * @param {string} text The words.
 	 * @return {void}
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function apply(text) {
 		document.querySelectorAll('.unified-search-input__label').forEach(function (label) {
@@ -50,7 +50,7 @@
 	 * Read the words and keep them in the search field.
 	 *
 	 * @return {void}
-	 * @spec openspec/changes/unified-search-placeholder/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqSearchPlaceholderMain() {
 		if (

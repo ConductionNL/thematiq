@@ -324,7 +324,7 @@ class ColourLiteralParser {
 	 *
 	 * @return array{0: float, 1: float, 2: float}|null The channels in [0, 255], or null when malformed.
 	 *
-	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	private function oklabChannels(string $space, array $parts): ?array {
 		$values = [];

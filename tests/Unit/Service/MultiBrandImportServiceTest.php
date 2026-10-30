@@ -369,7 +369,7 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/figma-token-files/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-the-openproject-plugin-uploads-into-thematiq
 	 */
 	public function testALightAndDarkFileIsNotTwoBrands(): void {
 		$file = (string)file_get_contents(\dirname(__DIR__, 3) . '/tests/fixtures/figma/plugin/cunningham.tokens-studio.json');

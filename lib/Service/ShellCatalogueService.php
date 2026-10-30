@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
  */
 
 declare(strict_types=1);
@@ -39,7 +39,7 @@ use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
  * statement for an organisation's logo: it labels every file nobody claimed,
  * and nobody wrote down whose artwork a municipality's logo is.
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
  */
 class ShellCatalogueService {
 
@@ -120,7 +120,7 @@ class ShellCatalogueService {
 	 *
 	 * @return array{version: int, generated_from: string, sets: array<int, array<string, mixed>>, fonts: array<int, array<string, mixed>>}
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
 	public function build(string $appPath, ?string $generatedFrom = null): array {
 		$manifest = $this->manifest(appPath: $appPath);
@@ -177,7 +177,7 @@ class ShellCatalogueService {
 	 *
 	 * @return array<string, mixed> The entry.
 	 *
-	 * @spec openspec/changes/openproject-set-file/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
 	 */
 	public function entry(string $appPath, string $id, string $name, ?RuntimeFileStore $store): array {
 		$light = $this->declarations->resolveDeclarations(appPath: $appPath, id: $id, theming: []);
@@ -224,7 +224,7 @@ class ShellCatalogueService {
 	 *
 	 * @return string The JSON.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-catalogue-is-reproducible
 	 */
 	public function render(array $catalogue): string {
 		return json_encode($catalogue, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . "\n";
@@ -237,7 +237,7 @@ class ShellCatalogueService {
 	 *
 	 * @return string[] The paths, sorted.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
 	 */
 	public function redistributableLogos(array $catalogue): array {
 		$files = [];
@@ -348,7 +348,7 @@ class ShellCatalogueService {
 	 *
 	 * @return array{file: string|null, inverse_file: string|null, licence: string|null, redistributable: bool|null, basis: string|null} The block.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
 	public function logoOf(string $appPath, string $id, array $meta, array $annotations): array {
 		$file = $this->logoFile(appPath: $appPath, name: $id);

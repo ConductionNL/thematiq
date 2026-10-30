@@ -1023,7 +1023,7 @@ class DarkPaletteService {
 	 *
 	 * @return array<string, string> The declarations, with `--nldesign-color-action-text` when an action colour needs one.
 	 *
-	 * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
 	 */
 	private function withActionText(array $lightDeclarations): array {
 		if (isset($lightDeclarations['--nldesign-color-action']) === false
@@ -1051,7 +1051,7 @@ class DarkPaletteService {
 	 *              an action colour is a choice a set made on purpose, so it is only
 	 *              kept on evidence.
 	 *
-	 * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
 	 */
 	private function actionPasses(array $lightDeclarations): bool {
 		$background = ($lightDeclarations['--nldesign-color-action'] ?? null);

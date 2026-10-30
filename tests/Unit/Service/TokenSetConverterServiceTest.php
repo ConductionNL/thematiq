@@ -225,7 +225,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testAThemeWithoutAnActionColourGetsNone(): void {
 		$result = $this->convert($this->theme([
@@ -245,7 +245,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testAThemesActionColourIsConverted(): void {
 		$bare = $this->convert($this->theme([
@@ -278,7 +278,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/import-action-colour/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
+	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testADtcgDocumentBringsItsActionColour(): void {
 		$result = $this->convert((string)json_encode([

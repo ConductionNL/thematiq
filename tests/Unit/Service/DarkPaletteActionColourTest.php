@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+ * @spec openspec/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ use Psr\Log\LoggerInterface;
  * The generator is run on declaration maps, the way `generateForSet()` runs
  * it: derive, then verify and repair. No file is written.
  *
- * @spec openspec/changes/dark-action-colour/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
+ * @spec openspec/specs/dark-mode/spec.md#requirement-the-action-colour-is-treated-as-the-primary-in-a-dark-variant
  */
 class DarkPaletteActionColourTest extends TestCase {
 

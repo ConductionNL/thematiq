@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
  * them on. It is not when the repository says so: a restriction written down
  * beside the files, or a set's own `font` block. Otherwise the answer is null.
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
  */
 class ShellCatalogueFonts {
 
@@ -65,7 +65,7 @@ class ShellCatalogueFonts {
 	 *
 	 * @return string[] The family names, in the stack's order.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
 	 */
 	public function familiesIn(string $stack): array {
 		$families = [];
@@ -89,7 +89,7 @@ class ShellCatalogueFonts {
 	 *
 	 * @return array<int, array<string, mixed>> The entries, by family name.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
 	 */
 	public function fontsOf(string $appPath, array $families, array $manifest, array $annotations): array {
 		$shipped = $this->fontFiles(appPath: $appPath);

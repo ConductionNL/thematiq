@@ -718,7 +718,7 @@ class DesignTokensMapper {
 	 *
 	 * @return mixed The text, or the value as it was.
 	 *
-	 * @spec openspec/changes/colour-notation-kept/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
+	 * @spec openspec/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
 	 */
 	private function originalText(array $leaf, mixed $value, string $type): mixed {
 		$text = $leaf['css'] ?? null;

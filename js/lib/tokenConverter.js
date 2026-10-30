@@ -665,7 +665,7 @@
 	 * @param {Array<string>} parts The three or four arguments.
 	 * @return {Array<number>|null} Unrounded channels in [0, 255], or null.
 	 *
-	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	function oklabChannels(space, parts) {
 		var values = parts.slice(0, 3).map(function (part, index) {
@@ -721,7 +721,7 @@
 	 * @param {Array<number>} vector The vector.
 	 * @return {Array<number>} The product.
 	 *
-	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	function multiply(matrix, vector) {
 		return matrix.map(function (row) {

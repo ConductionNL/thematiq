@@ -5,7 +5,7 @@
  * A native select's edge defaults to the control border, the same step a text
  * box takes, not the card hairline.
  *
- * @spec openspec/changes/nldesign-select-border-control-step/specs/nldesign-select-border-control-step/spec.md
+ * @spec openspec/specs/nldesign-select-border-control-step/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
