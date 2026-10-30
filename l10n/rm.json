@@ -562,6 +562,7 @@
         "Recorded {count} deprecations.": "Recorded {count} deprecations.",
         "removal {date}": "removal {date}",
         "Remove": "Remove",
+        "Remove image": "Remove",
         "Remove {name}": "Remove {name}",
         "Remove {name}? Custom CSS or apps that read it lose its value.": "Remove {name}? Custom CSS or apps that read it lose its value.",
         "Remove {name}? It is deprecated ({severity}). Its deprecation is kept, marked as removed.": "Remove {name}? It is deprecated ({severity}). Its deprecation is kept, marked as removed.",
