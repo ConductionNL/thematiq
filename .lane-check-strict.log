@@ -1,0 +1,572 @@
+
+=== lint ===
+No syntax errors detected in ./tests/bootstrap.php
+No syntax errors detected in ./tests/css/internal-scopes.php
+No syntax errors detected in ./tests/Unit/ShippedSetLicencesTest.php
+No syntax errors detected in ./tests/Unit/NoteCardFillContrastTest.php
+No syntax errors detected in ./tests/Unit/BackgroundJob/UpstreamFreshnessJobTest.php
+No syntax errors detected in ./tests/Unit/BackgroundJob/ScheduledSwitchJobTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerThemingSyncTest.php
+No syntax errors detected in ./tests/Unit/Controller/OpenProjectSetFileControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/OpenProjectLinkControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/OverridesControllerAuditTest.php
+No syntax errors detected in ./tests/Unit/Controller/TokenSetLicenceControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/OverridesControllerCaptureTest.php
+No syntax errors detected in ./tests/Unit/Controller/CustomTokenSetControllerCaptureTest.php
+No syntax errors detected in ./tests/Unit/Controller/OverridesControllerPerSetReadTest.php
+No syntax errors detected in ./tests/Unit/Controller/OwnTokenControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/ShellTokenControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerGroupThemingTest.php
+No syntax errors detected in ./tests/Unit/Controller/HealthControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/LayoutControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/BrandFormControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/ContrastControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerUpstreamFreshnessTest.php
+No syntax errors detected in ./tests/Unit/Controller/PreviewControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerAuditTest.php
+No syntax errors detected in ./tests/Unit/Controller/LayerControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/IconControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerEndpointsTest.php
+No syntax errors detected in ./tests/Unit/Controller/CustomTokenSetControllerAuditTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerMarianneTest.php
+No syntax errors detected in ./tests/Unit/Controller/ErrorStatusTraitTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerDarkVariantsTest.php
+No syntax errors detected in ./tests/Unit/Controller/SettingsControllerComplianceReportTest.php
+No syntax errors detected in ./tests/Unit/Controller/ScheduledSwitchControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/CatalogControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/GalleryControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/MetricsControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/OverridesControllerValidationTest.php
+No syntax errors detected in ./tests/Unit/Controller/CustomTokenSetControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/AuditControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/TokenReferenceControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/FontControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/CustomTokenSetUploadWritesTest.php
+No syntax errors detected in ./tests/Unit/Controller/CustomCssControllerAuditTest.php
+No syntax errors detected in ./tests/Unit/Controller/ConfigBundleControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/RestrictedSetRequestPathTest.php
+No syntax errors detected in ./tests/Unit/Controller/ControllersStandaloneTest.php
+No syntax errors detected in ./tests/Unit/Controller/DtcgExportControllerTest.php
+No syntax errors detected in ./tests/Unit/Controller/HealthControllerEngineResultTest.php
+No syntax errors detected in ./tests/Unit/Middleware/ConfigSourceLockMiddlewareTest.php
+No syntax errors detected in ./tests/Unit/Repair/MigrateUserPreferencesTest.php
+No syntax errors detected in ./tests/Unit/Repair/MigrateStoredClassNamesTest.php
+No syntax errors detected in ./tests/Unit/Repair/RecordRestrictedSetsAwaitingConfirmationTest.php
+No syntax errors detected in ./tests/Unit/Repair/MigrateOverrideValueTypesTest.php
+No syntax errors detected in ./tests/Unit/Repair/MigrateAppConfigKeysTest.php
+No syntax errors detected in ./tests/Unit/Repair/MigrateSchemaApplicationIdTest.php
+No syntax errors detected in ./tests/Unit/TokenSetVocabularyTest.php
+No syntax errors detected in ./tests/Unit/OrgTokenPrefixReservedTest.php
+No syntax errors detected in ./tests/Unit/LasuiteDesignStackTest.php
+No syntax errors detected in ./tests/Unit/MarianneFontTest.php
+No syntax errors detected in ./tests/Unit/TokenCssShapeTest.php
+No syntax errors detected in ./tests/Unit/TokenSetContrastAuditTest.php
+No syntax errors detected in ./tests/Unit/AppInfo/NoTokenSetReadRouteTest.php
+No syntax errors detected in ./tests/Unit/AppInfo/ApplicationTest.php
+No syntax errors detected in ./tests/Unit/AppInfo/OpenRegisterAutoloaderTest.php
+No syntax errors detected in ./tests/Unit/Templates/AdminComplianceReportTest.php
+No syntax errors detected in ./tests/Unit/Templates/AdminEnvironmentLineTest.php
+No syntax errors detected in ./tests/Unit/Templates/AdminFontNoticeTest.php
+No syntax errors detected in ./tests/Unit/ActionColourTokenTest.php
+No syntax errors detected in ./tests/Unit/ContrastServiceEvaluateTest.php
+No syntax errors detected in ./tests/Unit/Service/OwnComponentServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/FontValidatorTest.php
+No syntax errors detected in ./tests/Unit/Service/GroupThemingServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/DenhaagContrastPairsTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomTokenSetValidatorTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomTokenSetLogoAssetTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterContrastRepairTest.php
+No syntax errors detected in ./tests/Unit/Service/FigmaTokenReaderTest.php
+No syntax errors detected in ./tests/Unit/Service/AppBrandLogoReachTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignTokensWriterTest.php
+No syntax errors detected in ./tests/Unit/Service/WorkspaceIconServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/LasuiteShellGeometryTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomOverridesServiceDarkScopesTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignSystemDocumentationTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetPreviewServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenReferenceServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemeGalleryServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemePreviewServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterProvenanceTest.php
+No syntax errors detected in ./tests/Unit/Service/LayoutOptionsServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/SetLogoReachTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServiceWarningsCacheTest.php
+No syntax errors detected in ./tests/Unit/Service/AppMenuServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServiceCapturedThemingTest.php
+No syntax errors detected in ./tests/Unit/Service/UpstreamFreshnessServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/InternalScopesServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/GalleryInstallServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetVocabularyNldesignPathTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignSystemServiceHasDarkVariantTest.php
+No syntax errors detected in ./tests/Unit/Service/EnvironmentMarkerServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/RestrictedSetGateTest.php
+No syntax errors detected in ./tests/Unit/Service/SummerBreezeContrastTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomOverridesServiceSettableTest.php
+No syntax errors detected in ./tests/Unit/Service/FontServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/AppThemingServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ConfigSourceServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/CssParserServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignTokensRoundTripTest.php
+No syntax errors detected in ./tests/Unit/Service/SettableContrastPairsTest.php
+No syntax errors detected in ./tests/Unit/Service/OverridesCssBuilderMotionThemesTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetSelectionPolicyTest.php
+No syntax errors detected in ./tests/Unit/Service/DelegatedGroupThemingServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/RestrictedSetWiringTest.php
+No syntax errors detected in ./tests/Unit/Service/EmailThemingServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/BrandingPackageServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemeVersionRestoreServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServiceSelectableTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenRegistrySingleSourceTest.php
+No syntax errors detected in ./tests/Unit/Service/DtcgImportPipelineTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServiceProvenanceTest.php
+No syntax errors detected in ./tests/Unit/Service/StockTokensServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignSystemServiceCustomMetaTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomOverridesServicePerSetTest.php
+No syntax errors detected in ./tests/Unit/Service/ColourNotationTest.php
+No syntax errors detected in ./tests/Unit/Service/ShippedDarkLogoTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServicePublicCatalogueTest.php
+No syntax errors detected in ./tests/Unit/Service/DarkPaletteActionColourTest.php
+No syntax errors detected in ./tests/Unit/Service/ColourLiteralParserOklchTest.php
+No syntax errors detected in ./tests/Unit/Service/ShellRoleMapperTest.php
+No syntax errors detected in ./tests/Unit/Service/HeaderUserServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/CssInjectionServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemePreviewBannerServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ConfigBundleServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ContrastVerdictDocumentTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenValueValidatorTest.php
+No syntax errors detected in ./tests/Unit/Service/NotFoundCopyServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetFontAuditTest.php
+No syntax errors detected in ./tests/Unit/Service/OverridesCssBuilderReadableTextTest.php
+No syntax errors detected in ./tests/Unit/Service/RuntimeFile/RuntimeFileWiringTest.php
+No syntax errors detected in ./tests/Unit/Service/RuntimeFile/RuntimeFileStorageTest.php
+No syntax errors detected in ./tests/Unit/Service/ShippedDarkContrastTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomCssValidatorTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterStyleDictionaryTest.php
+No syntax errors detected in ./tests/Unit/Service/BrandingCaptureServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetLicenceServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterRampContrastTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenRegistryTest.php
+No syntax errors detected in ./tests/Unit/Service/DesignTokensMapperTest.php
+No syntax errors detected in ./tests/Unit/Service/DarkPaletteServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/BrandFormServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetVocabularyAuditServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemingServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ColourFunctionEvaluatorTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenDeprecationServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/OwnTokenServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/DocumentStyleServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ColorSpaceConverterTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetServiceMergeTest.php
+No syntax errors detected in ./tests/Unit/Service/ShellCatalogueVocabularyTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterParityTest.php
+No syntax errors detected in ./tests/Unit/Service/AssistantMarkServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/MultiBrandImportServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/LoginCopyServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ScheduledSwitchServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ContrastServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomCssServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ComplianceReportServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemingAuditServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomTokenSetServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ShellTokenServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterMultiBrandTest.php
+No syntax errors detected in ./tests/Unit/Service/Config/NlDesignThemeShareableConfigTypeTest.php
+No syntax errors detected in ./tests/Unit/Service/OpenProjectSetFileTest.php
+No syntax errors detected in ./tests/Unit/Service/FigmaTokenFilesRoundTripTest.php
+No syntax errors detected in ./tests/Unit/Service/PlaygroundStateServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/WcagCachePrefixPairingTest.php
+No syntax errors detected in ./tests/Unit/Service/ThemeVersionServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/ActiveTokenSetServiceTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomOverridesServiceOwnTokensTest.php
+No syntax errors detected in ./tests/Unit/Service/CustomOverridesServiceEveryTokenTest.php
+No syntax errors detected in ./tests/Unit/Service/TokenSetConverterLogoTest.php
+No syntax errors detected in ./tests/Unit/Service/AppBrandServiceTest.php
+No syntax errors detected in ./tests/Unit/RijkshuisstijlTokenSetTest.php
+No syntax errors detected in ./tests/Unit/ErrorForegroundContrastTest.php
+No syntax errors detected in ./tests/Unit/TokenSetProvenanceTest.php
+No syntax errors detected in ./tests/Unit/ShellCatalogueTest.php
+No syntax errors detected in ./tests/Unit/MotionTokensReachTransitionsTest.php
+No syntax errors detected in ./tests/Unit/Mail/NLDesignEMailTemplateTest.php
+No syntax errors detected in ./tests/Unit/Gallery/GalleryIndexSchemaTest.php
+No syntax errors detected in ./tests/Unit/Listener/ThemeInjectionListenerTest.php
+No syntax errors detected in ./tests/Unit/ClaimAccuracyTest.php
+No syntax errors detected in ./tests/Unit/Support/RestrictedSetFixture.php
+No syntax errors detected in ./tests/Unit/TokenReferenceDocsTest.php
+No syntax errors detected in ./tests/Unit/Command/GenerateDarkVariantsTest.php
+No syntax errors detected in ./tests/Unit/Command/ConfigImportTest.php
+No syntax errors detected in ./tests/Unit/Command/ConfigApplyTest.php
+No syntax errors detected in ./tests/Unit/Command/ThemeCommandsTest.php
+No syntax errors detected in ./tests/Unit/Command/CommandNamesTest.php
+No syntax errors detected in ./tests/Unit/Command/ComplianceReportTest.php
+No syntax errors detected in ./tests/Unit/Command/ConfigVersionCommandsTest.php
+No syntax errors detected in ./tests/Unit/DesignSystemServiceTest.php
+No syntax errors detected in ./tests/Unit/TokenValueTypesTest.php
+No syntax errors detected in ./tests/Unit/CapabilitiesTest.php
+No syntax errors detected in ./tests/Unit/IconAssetsTest.php
+No syntax errors detected in ./tests/Unit/Settings/AdminInitialStateTest.php
+No syntax errors detected in ./tests/Unit/Settings/AdminDelegationTest.php
+No syntax errors detected in ./templates/settings/admin.php
+No syntax errors detected in ./templates/settings/group-house-style.php
+No syntax errors detected in ./scripts/generate-dark-variants.php
+No syntax errors detected in ./scripts/generate-shell-catalogue.php
+No syntax errors detected in ./scripts/coverage-guard.php
+No syntax errors detected in ./scripts/generate-token-reference.php
+No syntax errors detected in ./scripts/generate-contrast-report.php
+No syntax errors detected in ./scripts/generate-brand-form-fixture.php
+No syntax errors detected in ./appinfo/routes.php
+No syntax errors detected in ./lib/BackgroundJob/UpstreamFreshnessJob.php
+No syntax errors detected in ./lib/BackgroundJob/ConfigSourceJob.php
+No syntax errors detected in ./lib/BackgroundJob/ScheduledSwitchJob.php
+No syntax errors detected in ./lib/Controller/HealthController.php
+No syntax errors detected in ./lib/Controller/CatalogController.php
+No syntax errors detected in ./lib/Controller/SettingsController.php
+No syntax errors detected in ./lib/Controller/LayerController.php
+No syntax errors detected in ./lib/Controller/AuditController.php
+No syntax errors detected in ./lib/Controller/ErrorStatusTrait.php
+No syntax errors detected in ./lib/Controller/ConfigSourceController.php
+No syntax errors detected in ./lib/Controller/MyGroupsController.php
+No syntax errors detected in ./lib/Controller/WorkspaceIconController.php
+No syntax errors detected in ./lib/Controller/DtcgExportController.php
+No syntax errors detected in ./lib/Controller/TokenReferenceController.php
+No syntax errors detected in ./lib/Controller/FontController.php
+No syntax errors detected in ./lib/Controller/ConfigBundleController.php
+No syntax errors detected in ./lib/Controller/ContrastController.php
+No syntax errors detected in ./lib/Controller/OpenProjectSetFileController.php
+No syntax errors detected in ./lib/Controller/OverridesController.php
+No syntax errors detected in ./lib/Controller/RuntimeFileController.php
+No syntax errors detected in ./lib/Controller/ScheduledSwitchController.php
+No syntax errors detected in ./lib/Controller/TokenDeprecationController.php
+No syntax errors detected in ./lib/Controller/TokenSetLicenceController.php
+No syntax errors detected in ./lib/Controller/AssistantMarkController.php
+No syntax errors detected in ./lib/Controller/PreviewController.php
+No syntax errors detected in ./lib/Controller/DocumentStyleController.php
+No syntax errors detected in ./lib/Controller/AppBrandController.php
+No syntax errors detected in ./lib/Controller/BrandFormController.php
+No syntax errors detected in ./lib/Controller/OwnTokenController.php
+No syntax errors detected in ./lib/Controller/LayoutController.php
+No syntax errors detected in ./lib/Controller/GalleryController.php
+No syntax errors detected in ./lib/Controller/IconController.php
+No syntax errors detected in ./lib/Controller/OwnComponentController.php
+No syntax errors detected in ./lib/Controller/MetricsController.php
+No syntax errors detected in ./lib/Controller/OpenProjectLinkController.php
+No syntax errors detected in ./lib/Controller/CustomCssController.php
+No syntax errors detected in ./lib/Controller/CustomTokenSetController.php
+No syntax errors detected in ./lib/Controller/ShellTokenController.php
+No syntax errors detected in ./lib/Controller/TokenSourceController.php
+No syntax errors detected in ./lib/Middleware/ConfigSourceLockMiddleware.php
+No syntax errors detected in ./lib/Repair/MoveRuntimeFilesToAppData.php
+No syntax errors detected in ./lib/Repair/MigrateAppConfigKeys.php
+No syntax errors detected in ./lib/Repair/MigrateUserPreferences.php
+No syntax errors detected in ./lib/Repair/RecordRestrictedSetsAwaitingConfirmation.php
+No syntax errors detected in ./lib/Repair/MigrateSchemaApplicationId.php
+No syntax errors detected in ./lib/Repair/MigrateOverrideValueTypes.php
+No syntax errors detected in ./lib/Repair/ApplyConfigSource.php
+No syntax errors detected in ./lib/Repair/MigrateStoredClassNames.php
+No syntax errors detected in ./lib/AppInfo/OpenRegisterAutoloader.php
+No syntax errors detected in ./lib/AppInfo/Application.php
+No syntax errors detected in ./lib/Service/CustomTokenSetService.php
+No syntax errors detected in ./lib/Service/FileDarkValues.php
+No syntax errors detected in ./lib/Service/LogoLayerService.php
+No syntax errors detected in ./lib/Service/TokenReferenceService.php
+No syntax errors detected in ./lib/Service/HeaderUserService.php
+No syntax errors detected in ./lib/Service/TokenValueValidator.php
+No syntax errors detected in ./lib/Service/TokenSetFontAuditService.php
+No syntax errors detected in ./lib/Service/CssParserService.php
+No syntax errors detected in ./lib/Service/ConfigBundleService.php
+No syntax errors detected in ./lib/Service/RestrictedSetGate.php
+No syntax errors detected in ./lib/Service/TokenSetConverterService.php
+No syntax errors detected in ./lib/Service/ShellCatalogueVocabulary.php
+No syntax errors detected in ./lib/Service/CssBlockReader.php
+No syntax errors detected in ./lib/Service/StockTokensService.php
+No syntax errors detected in ./lib/Service/UserTokenSetResolver.php
+No syntax errors detected in ./lib/Service/TokenSetSelectionPolicy.php
+No syntax errors detected in ./lib/Service/FontValidator.php
+No syntax errors detected in ./lib/Service/ContrastVerdictDocument.php
+No syntax errors detected in ./lib/Service/ColourLiteralParser.php
+No syntax errors detected in ./lib/Service/CustomTokenSetValidator.php
+No syntax errors detected in ./lib/Service/ThemingService.php
+No syntax errors detected in ./lib/Service/MultiBrandImportService.php
+No syntax errors detected in ./lib/Service/DtcgValueTyper.php
+No syntax errors detected in ./lib/Service/AppBrandService.php
+No syntax errors detected in ./lib/Service/ReuseLicences.php
+No syntax errors detected in ./lib/Service/GroupThemingService.php
+No syntax errors detected in ./lib/Service/ScheduledCoreThemingSync.php
+No syntax errors detected in ./lib/Service/DesignSystemService.php
+No syntax errors detected in ./lib/Service/ThemingAuditService.php
+No syntax errors detected in ./lib/Service/EnvironmentMarkerService.php
+No syntax errors detected in ./lib/Service/MultiBrandSource.php
+No syntax errors detected in ./lib/Service/ContrastService.php
+No syntax errors detected in ./lib/Service/AppBrandLogoStore.php
+No syntax errors detected in ./lib/Service/DocumentStyleService.php
+No syntax errors detected in ./lib/Service/ColourContrastAdjuster.php
+No syntax errors detected in ./lib/Service/OpenProjectSetFile.php
+No syntax errors detected in ./lib/Service/ThemeGalleryService.php
+No syntax errors detected in ./lib/Service/RestrictedSetsInBundle.php
+No syntax errors detected in ./lib/Service/ScheduledSwitchOrder.php
+No syntax errors detected in ./lib/Service/WorkspaceIconService.php
+No syntax errors detected in ./lib/Service/TokenLifecycleBundleSection.php
+No syntax errors detected in ./lib/Service/DarkPins.php
+No syntax errors detected in ./lib/Service/DesignTokensMapper.php
+No syntax errors detected in ./lib/Service/DenhaagContrastPairs.php
+No syntax errors detected in ./lib/Service/FontService.php
+No syntax errors detected in ./lib/Service/InternalScopesService.php
+No syntax errors detected in ./lib/Service/TokenSetService.php
+No syntax errors detected in ./lib/Service/CustomCssValidator.php
+No syntax errors detected in ./lib/Service/ConverterColourRepair.php
+No syntax errors detected in ./lib/Service/DarkPaletteService.php
+No syntax errors detected in ./lib/Service/AssistantMarkService.php
+No syntax errors detected in ./lib/Service/ColourFunctionEvaluator.php
+No syntax errors detected in ./lib/Service/ShellCatalogueService.php
+No syntax errors detected in ./lib/Service/ColorSpaceConverter.php
+No syntax errors detected in ./lib/Service/DesignTokensWriter.php
+No syntax errors detected in ./lib/Service/BrandingPackageReader.php
+No syntax errors detected in ./lib/Service/UpstreamFreshnessService.php
+No syntax errors detected in ./lib/Service/TokenSetPreviewService.php
+No syntax errors detected in ./lib/Service/GalleryInstallService.php
+No syntax errors detected in ./lib/Service/TokenDeprecationService.php
+No syntax errors detected in ./lib/Service/DesignTokensAliasResolver.php
+No syntax errors detected in ./lib/Service/OpenProjectSetFileWriter.php
+No syntax errors detected in ./lib/Service/BrandFormService.php
+No syntax errors detected in ./lib/Service/BrandingCaptureService.php
+No syntax errors detected in ./lib/Service/ThemeVersionService.php
+No syntax errors detected in ./lib/Service/ConverterComponentRepair.php
+No syntax errors detected in ./lib/Service/ThematiqExportLayers.php
+No syntax errors detected in ./lib/Service/OwnTokenService.php
+No syntax errors detected in ./lib/Service/PlaygroundStateService.php
+No syntax errors detected in ./lib/Service/TokensStudioSets.php
+No syntax errors detected in ./lib/Service/EmailThemingService.php
+No syntax errors detected in ./lib/Service/OverridesCssBuilder.php
+No syntax errors detected in ./lib/Service/ThemePreviewService.php
+No syntax errors detected in ./lib/Service/ScheduledSwitchStore.php
+No syntax errors detected in ./lib/Service/ShellTokenService.php
+No syntax errors detected in ./lib/Service/TokenSetLicenceService.php
+No syntax errors detected in ./lib/Service/RuntimeFile/DirectoryRuntimeFileStore.php
+No syntax errors detected in ./lib/Service/RuntimeFile/SetFileReader.php
+No syntax errors detected in ./lib/Service/RuntimeFile/RuntimeFileNames.php
+No syntax errors detected in ./lib/Service/RuntimeFile/AppDataRuntimeFileStore.php
+No syntax errors detected in ./lib/Service/RuntimeFile/RuntimeFileLocator.php
+No syntax errors detected in ./lib/Service/RuntimeFile/RuntimeFileStore.php
+No syntax errors detected in ./lib/Service/CustomOverridesService.php
+No syntax errors detected in ./lib/Service/GalleryEntryValidator.php
+No syntax errors detected in ./lib/Service/TokenRegistryInterface.php
+No syntax errors detected in ./lib/Service/ThemeVersionRestoreService.php
+No syntax errors detected in ./lib/Service/DelegatedGroupThemingService.php
+No syntax errors detected in ./lib/Service/BrandingPackageService.php
+No syntax errors detected in ./lib/Service/DocumentAssetService.php
+No syntax errors detected in ./lib/Service/FigmaTokenReader.php
+No syntax errors detected in ./lib/Service/ThemePreviewBannerService.php
+No syntax errors detected in ./lib/Service/TokenRegistry.php
+No syntax errors detected in ./lib/Service/AppThemingService.php
+No syntax errors detected in ./lib/Service/SettableContrastPairs.php
+No syntax errors detected in ./lib/Service/DtcgValueChecker.php
+No syntax errors detected in ./lib/Service/FigmaTokenWriter.php
+No syntax errors detected in ./lib/Service/ShellRoleMapper.php
+No syntax errors detected in ./lib/Service/ImageSniffer.php
+No syntax errors detected in ./lib/Service/ShellCatalogueFonts.php
+No syntax errors detected in ./lib/Service/CustomCssService.php
+No syntax errors detected in ./lib/Service/GroupDelegationRules.php
+No syntax errors detected in ./lib/Service/CopyValues.php
+No syntax errors detected in ./lib/Service/LayoutOptionValues.php
+No syntax errors detected in ./lib/Service/NotFoundCopyService.php
+No syntax errors detected in ./lib/Service/AppMenuService.php
+No syntax errors detected in ./lib/Service/OwnComponentService.php
+No syntax errors detected in ./lib/Service/Exception/FooterValidationException.php
+No syntax errors detected in ./lib/Service/Exception/AppBrandException.php
+No syntax errors detected in ./lib/Service/Exception/RestrictedSetNotConfirmedException.php
+No syntax errors detected in ./lib/Service/Exception/AssistantMarkException.php
+No syntax errors detected in ./lib/Service/Exception/ConfigSourceLockedException.php
+No syntax errors detected in ./lib/Service/Exception/ForeignMailTemplateClassException.php
+No syntax errors detected in ./lib/Service/Exception/GroupThemingValidationException.php
+No syntax errors detected in ./lib/Service/Exception/ScheduledSwitchException.php
+No syntax errors detected in ./lib/Service/Exception/ScheduledSwitchNotFoundException.php
+No syntax errors detected in ./lib/Service/Exception/GalleryException.php
+No syntax errors detected in ./lib/Service/Exception/RestrictedSetInUseException.php
+No syntax errors detected in ./lib/Service/Exception/DelegationRefusedException.php
+No syntax errors detected in ./lib/Service/Exception/ConfigReadOnlyException.php
+No syntax errors detected in ./lib/Service/AuditArrayDiff.php
+No syntax errors detected in ./lib/Service/Config/NlDesignThemeShareableConfigType.php
+No syntax errors detected in ./lib/Service/DeprecationRecords.php
+No syntax errors detected in ./lib/Service/OwnTokenCss.php
+No syntax errors detected in ./lib/Service/ScheduledSwitchService.php
+No syntax errors detected in ./lib/Service/OpenProjectModules.php
+No syntax errors detected in ./lib/Service/CssColorParser.php
+No syntax errors detected in ./lib/Service/ComplianceReportService.php
+No syntax errors detected in ./lib/Service/LayoutOptionsService.php
+No syntax errors detected in ./lib/Service/ConfigSourceService.php
+No syntax errors detected in ./lib/Service/TokenReferenceCells.php
+No syntax errors detected in ./lib/Service/CssInjectionService.php
+No syntax errors detected in ./lib/Service/ActiveTokenSetService.php
+No syntax errors detected in ./lib/Service/LoginCopyService.php
+No syntax errors detected in ./lib/Service/ProvidesLicenceGate.php
+No syntax errors detected in ./lib/Service/TokenSetVocabularyAuditService.php
+No syntax errors detected in ./lib/Service/ShippedTokenSetAuditService.php
+No syntax errors detected in ./lib/Service/BundleExtraSections.php
+No syntax errors detected in ./lib/Mail/NLDesignEMailTemplate.php
+No syntax errors detected in ./lib/Listener/ThemeInjectionListener.php
+No syntax errors detected in ./lib/Listener/WorkspaceIconListener.php
+No syntax errors detected in ./lib/Listener/ShareableConfigTypeListener.php
+No syntax errors detected in ./lib/Migration/GenerateDarkVariantsRepairStep.php
+No syntax errors detected in ./lib/Capabilities.php
+No syntax errors detected in ./lib/Command/ThemeList.php
+No syntax errors detected in ./lib/Command/ComplianceReport.php
+No syntax errors detected in ./lib/Command/ThemeGet.php
+No syntax errors detected in ./lib/Command/ConfigImport.php
+No syntax errors detected in ./lib/Command/ThemeSet.php
+No syntax errors detected in ./lib/Command/ConfigApply.php
+No syntax errors detected in ./lib/Command/ConfigExport.php
+No syntax errors detected in ./lib/Command/GenerateDarkVariants.php
+No syntax errors detected in ./lib/Command/ConfigVersions.php
+No syntax errors detected in ./lib/Command/ConfigRestore.php
+No syntax errors detected in ./lib/Settings/Admin.php
+No syntax errors detected in ./lib/Settings/GroupHouseStyle.php
+No syntax errors detected in ./.php-cs-fixer.dist.php
+No syntax errors detected in ./stubs/openregister-config.php
+No syntax errors detected in ./stubs/nextcloud-legacy.php
+No syntax errors detected in ./stubs/nextcloud-mail.php
+No syntax errors detected in ./stubs/nextcloud-theming.php
+No syntax errors detected in ./phpstan-bootstrap.php
+
+=== phpcs ===
+................[33mW[0m........................................... 60 / 69 (87%)
+.........                                                    69 / 69 (100%)
+
+
+
+[1mFILE: ...ns/round6/R20/NCV-CONTROLS/thematiq/lib/AppInfo/OpenRegisterAutoloader.php[0m
+--------------------------------------------------------------------------------
+[1mFOUND 0 ERRORS AND 2 WARNINGS AFFECTING 2 LINES[0m
+--------------------------------------------------------------------------------
+ 163 | [33mWARNING[0m | Public method OpenRegisterAutoloader::unregister() is missing
+     |         | @spec PHPDoc tag — link back to
+     |         | openspec/specs/{capability}/spec.md#requirement-{slug}
+ 181 | [33mWARNING[0m | Public method OpenRegisterAutoloader::classFile() is missing
+     |         | @spec PHPDoc tag — link back to
+     |         | openspec/specs/{capability}/spec.md#requirement-{slug}
+--------------------------------------------------------------------------------
+
+Time: 1.17 secs; Memory: 6MB
+
+=== cs:check ===
+PHP CS Fixer 3.95.18 (d1fc711) Adalbertus by Fabien Potencier, Dariusz Ruminski and contributors.
+PHP runtime: 8.3.6
+Loaded config conduction from "/home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/.php-cs-fixer.dist.php".
+Running analysis on 5 cores with 10 files per process.
+   0/412 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+  41/412 [▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░]   9%
+  83/412 [▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░]  20%
+ 124/412 [▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░]  30%
+ 165/412 [▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░]  40%
+ 206/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░]  50%
+ 248/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░]  60%
+ 289/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░]  70%
+ 330/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░]  80%
+ 371/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░]  90%
+ 412/412 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+   1) lib/AppInfo/OpenRegisterAutoloader.php
+      ---------- begin diff ----------
+--- /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/AppInfo/OpenRegisterAutoloader.php
++++ /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/AppInfo/OpenRegisterAutoloader.php
+@@ -174,7 +174,7 @@
+ 	 * never answers for (and shadows) names another loader owns.
+ 	 *
+ 	 * @param string $appPath Absolute path to the openregister app, no trailing slash.
+-	 * @param string $class   The fully qualified class name being resolved.
++	 * @param string $class The fully qualified class name being resolved.
+ 	 *
+ 	 * @return string|null The candidate file, or null when not OpenRegister's.
+ 	 */
+
+      ----------- end diff -----------
+
+   2) lib/Capabilities.php
+      ---------- begin diff ----------
+--- /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/Capabilities.php
++++ /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/Capabilities.php
+@@ -140,7 +140,7 @@
+ 	 * to read one name. `name` falls back to the id and `version` is null when
+ 	 * the active set has no manifest entry (custom/unknown set).
+ 	 *
+-	 * @param string               $tokenSetId   The active token set id (appconfig `token_set`).
++	 * @param string $tokenSetId The active token set id (appconfig `token_set`).
+ 	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for an unknown set).
+ 	 *
+ 	 * @return array{id: string, name: string, version: string|null} The token set descriptor.
+
+      ----------- end diff -----------
+
+   3) tests/Unit/AppInfo/OpenRegisterAutoloaderTest.php
+      ---------- begin diff ----------
+--- /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/tests/Unit/AppInfo/OpenRegisterAutoloaderTest.php
++++ /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/tests/Unit/AppInfo/OpenRegisterAutoloaderTest.php
+@@ -65,8 +65,8 @@
+ 	 * Only public API and plain PHP may be used.
+ 	 */
+ 	public function testSourceUsesNoPrivateOcAppApi(): void {
+-		$source = (string) file_get_contents(__DIR__ . '/../../../lib/AppInfo/OpenRegisterAutoloader.php');
+-		$code   = (string) preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $source);
++		$source = (string)file_get_contents(__DIR__ . '/../../../lib/AppInfo/OpenRegisterAutoloader.php');
++		$code = (string)preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $source);
+ 		$this->assertStringNotContainsString('OC_App', $code);
+ 	}//end testSourceUsesNoPrivateOcAppApi()
+ 
+
+      ----------- end diff -----------
+
+
+Found 3 of 412 files that can be fixed in 6.161 seconds, 142.00 MB memory used
+Script php-cs-fixer fix --dry-run --diff --using-cache=no handling the cs:check event returned with error code 8
+
+=== phpmd ===
+/home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/Service/ConverterColourRepair.php:223  CyclomaticComplexity  The method repairPair() has a Cyclomatic Complexity of 11. The configured cyclomatic complexity threshold is 10.
+/home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/lib/Service/ConverterColourRepair.php:223  NPathComplexity       The method repairPair() has an NPath complexity of 216. The configured NPath complexity threshold is 200.
+Script E=0; php -d memory_limit=2G ./vendor/bin/phpmd lib text phpmd.xml || E=$?; php -d memory_limit=2G ./vendor/bin/phpmd lib text vendor/conduction/hydra-gates/quality-config/phpmd-unusedparams.xml || E=$?; exit $E handling the phpmd event returned with error code 2
+
+=== psalm ===
+Target PHP version: 8.3 (inferred from composer.json).
+Scanning files...
+Analyzing files...
+
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  60 / 205 (29%)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 120 / 205 (58%)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 180 / 205 (87%)
+░░░░░░░░░░░░░░░░░░░░░░░░░
+
+------------------------------
+[42;2m                              [0m
+[42;30;2m       No errors found!       [0m
+[42;2m                              [0m
+------------------------------
+769 other issues found.
+You can display them with [30;48;5;195m--show-info=true[0m
+------------------------------
+
+Checks took 25.51 seconds and used 204.711MB of memory
+Psalm was able to infer types for 96.6440% of the codebase
+
+=== phpstan ===
+Note: Using configuration file /home/rubenlinde/memcap-work/screens/round6/R20/NCV-CONTROLS/thematiq/phpstan.neon.
+   0/204 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+ 204/204 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+
+ [OK] No errors                                                                 
+
+
+=== test:all ===
+SKIPPED: the unit suite DID NOT RUN - it needs a Nextcloud server tree (../../lib/base.php not found).
+  Verbatim failure in a bare checkout (measured 2026-08-04, PHP 8.4.22):
+    Interface "OCP\Files\AppData\IAppDataFactory" not found
+    at tests/Unit/Controller/SettingsControllerAuditTest.php:40 -- phpunit exits 255
+  A 255 is an ABORT, not a test verdict: the suite type-hints OCP interfaces that
+  only a Nextcloud server checkout provides. Do NOT "fix" this by deleting the
+  guard - that trades a documented skip for a crash that still runs zero tests.
+  Measured with a server tree present: a failing suite exits 1 and a passing one
+  exits 0, so this guard does not weaken a real run. Run from inside a Nextcloud
+  checkout, or rely on the CI PHPUnit job, for a real test verdict.
+
+SOME CHECKS FAILED (see above)
+Script E=0; for CMD in lint phpcs cs:check phpmd psalm phpstan test:all; do echo; echo "=== $CMD ==="; composer $CMD || E=1; done; echo; if [ $E -ne 0 ]; then echo "SOME CHECKS FAILED (see above)"; elif [ ! -f ../../lib/base.php ]; then echo "ALL CHECKS PASSED - EXCEPT test:all, WHICH DID NOT RUN."; echo "The unit suite needs a Nextcloud server tree (../../lib/base.php). In a bare"; echo "checkout it is skipped, so this green says NOTHING about the tests. Verified"; echo "by experiment: with the server tree absent, a phpunit that exits 1 still"; echo "produces this exact line. Run check:strict from inside a Nextcloud checkout,"; echo "or rely on the CI PHPUnit job, for a real test verdict."; else echo "ALL CHECKS PASSED"; fi; exit $E handling the check:strict event returned with error code 1
+EXIT 1
