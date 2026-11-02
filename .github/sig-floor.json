@@ -5,11 +5,12 @@
  "tools": {
   "lizard": "1.24.3"
  },
- "measured_at": "c0f7f80c7e57ce5fa8ac609b240ebe718d247478",
+ "measured_at": "7e4f0134f7212489673e930cefe2d6288670c0f9",
  "checks": [
   "javascript duplication",
   "javascript unit_complexity >10",
   "javascript unit_complexity >25",
+  "javascript unit_complexity >5",
   "javascript unit_interfacing >2",
   "javascript unit_interfacing >4",
   "javascript unit_interfacing >6",
