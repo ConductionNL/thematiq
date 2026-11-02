@@ -101,8 +101,45 @@ class BrandFormController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('A token set name is required.')], 400);
 		}
 
+		$input = $this->formInput();
+		if ($input instanceof JSONResponse) {
+			return $input;
+		}
+
+		return $this->storeDerived(name: $name, input: $input);
+	}//end create()
+
+	/**
+	 * The set derived from the posted colours, and the uploaded logo.
+	 *
+	 * @return array{derived: array<string, mixed>, logo: array{path: string, contents: string}|null}|JSONResponse The input, or the refusal.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function formInput(): array|JSONResponse {
+		$derived = $this->deriveFromRequest();
+		if ($derived instanceof JSONResponse) {
+			return $derived;
+		}
+
+		$logo = $this->readLogo();
+		if ($logo instanceof JSONResponse) {
+			return $logo;
+		}
+
+		return ['derived' => $derived, 'logo' => $logo];
+	}//end formInput()
+
+	/**
+	 * Derive the token set from the posted colours.
+	 *
+	 * @return array<string, mixed>|JSONResponse The derived declarations and ratios, or the 400 refusal.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function deriveFromRequest(): array|JSONResponse {
 		try {
-			$derived = $this->brandForm->derive(
+			return $this->brandForm->derive(
 				appPath: $this->apps->getAppPath('thematiq'),
 				primary: (string)$this->request->getParam('primary', ''),
 				background: (string)$this->request->getParam('background', ''),
@@ -111,42 +148,74 @@ class BrandFormController extends Controller {
 		} catch (InvalidArgumentException $e) {
 			return new JSONResponse(['error' => $this->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
 		}
+	}//end deriveFromRequest()
 
-		$logo = $this->readLogo();
-		if ($logo instanceof JSONResponse) {
-			return $logo;
-		}
-
-		$primary = $derived['declarations']['--nldesign-color-primary'];
-		try {
-			$result = $this->store->store(
-				displayName: $name,
-				description: trim((string)$this->request->getParam('description', '')),
-				declarations: $derived['declarations'],
-				theming: ['primary_color' => $primary, 'background_color' => $derived['declarations']['--nldesign-color-nav-background']],
-				logoAsset: $logo
-			);
-		} catch (RuntimeException $e) {
-			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
+	/**
+	 * Store the derived set, audit it and answer with its contrast figures.
+	 *
+	 * @param string $name The display name.
+	 * @param array{derived: array<string, mixed>, logo: array{path: string, contents: string}|null} $input The derived set and the logo.
+	 *
+	 * @return JSONResponse
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function storeDerived(string $name, array $input): JSONResponse {
+		$result = $this->storeSet(name: $name, input: $input);
+		if ($result instanceof JSONResponse) {
+			return $result;
 		}
 
 		$this->audit->log(
 			action: 'custom_set_uploaded',
-			context: ['id' => $result['id'], 'name' => $name, 'declarationCount' => count($derived['declarations'])]
+			context: ['id' => $result['id'], 'name' => $name, 'declarationCount' => count($input['derived']['declarations'])]
 		);
 
-		return new JSONResponse(
-			[
-				'id' => $result['id'],
-				'textOnPrimary' => $derived['textOnPrimary'],
-				'textRatio' => $derived['textRatio'],
-				'uiRatio' => $derived['uiRatio'],
-				'textOnAction' => $derived['textOnAction'],
-				'actionTextRatio' => $derived['actionTextRatio'],
-				'warnings' => $result['warnings'],
-			]
-		);
-	}//end create()
+		return new JSONResponse(['id' => $result['id']] + $this->contrastFigures(derived: $input['derived']) + ['warnings' => $result['warnings']]);
+	}//end storeDerived()
+
+	/**
+	 * Store the derived set through the upload path, with the brand primary and navigation background as theming.
+	 *
+	 * @param string $name The display name.
+	 * @param array{derived: array<string, mixed>, logo: array{path: string, contents: string}|null} $input The derived set and the logo.
+	 *
+	 * @return array{id: string, warnings: array<int, array<string, mixed>>}|JSONResponse The stored set, or the refusal.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function storeSet(string $name, array $input): array|JSONResponse {
+		$declarations = $input['derived']['declarations'];
+		try {
+			return $this->store->store(
+				displayName: $name,
+				description: trim((string)$this->request->getParam('description', '')),
+				declarations: $declarations,
+				theming: ['primary_color' => $declarations['--nldesign-color-primary'], 'background_color' => $declarations['--nldesign-color-nav-background']],
+				logoAsset: $input['logo']
+			);
+		} catch (RuntimeException $e) {
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
+		}
+	}//end storeSet()
+
+	/**
+	 * The contrast figures of a derived set: the text colours on primary and action, and their ratios.
+	 *
+	 * @param array<string, mixed> $derived The derived declarations and ratios.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function contrastFigures(array $derived): array {
+		$figures = [];
+		foreach (['textOnPrimary', 'textRatio', 'uiRatio', 'textOnAction', 'actionTextRatio'] as $key) {
+			$figures[$key] = $derived[$key];
+		}
+
+		return $figures;
+	}//end contrastFigures()
 
 	/**
 	 * The optional logo upload, checked for type, size and the obvious forms of active content.
