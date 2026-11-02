@@ -27,6 +27,7 @@ use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
@@ -50,6 +51,7 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\SettingsController
+ * @covers \OCA\Thematiq\Service\EmailThemingSettings
  * @uses   \OCA\Thematiq\Service\Exception\ConfigReadOnlyException
  * @uses   \OCA\Thematiq\Service\Exception\FooterValidationException
  * @uses   \OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException
@@ -166,7 +168,7 @@ class EmailThemingSettingsGoldenTest extends TestCase {
 			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
 			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
 			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
-			emailThemingService: $email,
+			emailTheming: new EmailThemingSettings(emailThemingService: $email),
 			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
 			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
 			activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class)

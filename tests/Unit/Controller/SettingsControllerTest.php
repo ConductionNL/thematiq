@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ThemingAuditService;
@@ -53,7 +54,7 @@ class SettingsControllerTest extends TestCase {
 			$this->createMock(AppThemingService::class),
 			$this->createMock(ComplianceReportService::class),
 			$this->createMock(ThemingAuditService::class),
-			$emailThemingService,
+			new EmailThemingSettings(emailThemingService: $emailThemingService),
 			$this->createMock(UpstreamFreshnessService::class),
 			$this->createMock(GroupThemingService::class),
 			$this->createMock(ActiveTokenSetService::class)
