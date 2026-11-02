@@ -51,6 +51,15 @@ use OCP\ServerVersion;
  * {@see self::SCOPE_STATEMENT} — never a WCAG-EM audit or a full WCAG
  * evaluation (claim-accuracy discipline, `openspec/specs/claim-accuracy/spec.md`).
  *
+ * @phpstan-type CssMap array<string, string>
+ * @phpstan-type Resolution array{value: string|null, unresolved: string|null}
+ * @phpstan-type ColourLayers array{customOverrides: CssMap, mapping: CssMap, declarations: CssMap, designSystemId: string}
+ * @phpstan-type PairSide array{token: string, resolved: Resolution, color: array{0: int, 1: int, 2: int}|null}
+ * @psalm-type   CssMap array<string, string>
+ * @psalm-type   Resolution array{value: string|null, unresolved: string|null}
+ * @psalm-type   ColourLayers array{customOverrides: CssMap, mapping: CssMap, declarations: CssMap, designSystemId: string}
+ * @psalm-type   PairSide array{token: string, resolved: Resolution, color: array{0: int, 1: int, 2: int}|null}
+ *
  * @spec openspec/specs/compliance-evidence/spec.md
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - The complexity is the 18-pair WCAG
@@ -258,16 +267,10 @@ class ComplianceReportService {
 		$mapping = $this->parseCssFile(path: $appPath . '/css/systems/nldesign/overrides.css');
 		$customOverrides = $this->overridesService->read();
 
+		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
 		foreach (self::PAIR_MATRIX as $pairDef) {
-			$pairs[] = $this->evaluatePair(
-				pairDef: $pairDef,
-				customOverrides: $customOverrides,
-				mapping: $mapping,
-				declarations: $declarations,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId
-			);
+			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $tokenSetMeta);
 		}
 
 		return [
@@ -420,43 +423,22 @@ class ComplianceReportService {
 	 * Evaluate a single pair-matrix entry into its full report row.
 	 *
 	 * @param array{fg: string, bg: string, threshold: float, basis: string} $pairDef The matrix entry.
-	 * @param array<string, string> $customOverrides The custom-overrides layer.
-	 * @param array<string, string> $mapping The --color-* => --nldesign-* mapping.
-	 * @param array<string, string> $declarations The layered --nldesign-* declarations.
+	 * @param ColourLayers $layers The custom-overrides layer, the --color-* => --nldesign-* mapping, the layered
+	 *                             --nldesign-* declarations and the active design system id.
 	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
 	 *
 	 * @return array<string, mixed> The evaluated pair row.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function evaluatePair(
-		array $pairDef,
-		array $customOverrides,
-		array $mapping,
-		array $declarations,
-		array $tokenSetMeta,
-		string $designSystemId,
-	): array {
-		$fgResolved = $this->resolveColorToken(
-			token: $pairDef['fg'],
-			customOverrides: $customOverrides,
-			mapping: $mapping,
-			declarations: $declarations,
-			designSystemId: $designSystemId
-		);
+	private function evaluatePair(array $pairDef, array $layers, array $tokenSetMeta): array {
+		$fgResolved = $this->resolveColorToken(token: $pairDef['fg'], layers: $layers);
 
-		$bgResolved = $this->resolveColorToken(
-			token: $pairDef['bg'],
-			customOverrides: $customOverrides,
-			mapping: $mapping,
-			declarations: $declarations,
-			designSystemId: $designSystemId
-		);
+		$bgResolved = $this->resolveColorToken(token: $pairDef['bg'], layers: $layers);
 		if ($pairDef['bg'] === self::MAIN_BACKGROUND_TOKEN) {
 			$bgResolved = $this->resolveMainBackground(
-				customOverrides: $customOverrides,
-				declarations: $declarations,
+				customOverrides: $layers['customOverrides'],
+				declarations: $layers['declarations'],
 				tokenSetMeta: $tokenSetMeta
 			);
 		}
@@ -485,12 +467,8 @@ class ComplianceReportService {
 
 		if ($fgColor === null || $bgColor === null) {
 			$entry['note'] = $this->describeUnresolvedPair(
-				fgToken: $pairDef['fg'],
-				fgResolved: $fgResolved,
-				fgColor: $fgColor,
-				bgToken: $pairDef['bg'],
-				bgResolved: $bgResolved,
-				bgColor: $bgColor
+				foreground: ['token' => $pairDef['fg'], 'resolved' => $fgResolved, 'color' => $fgColor],
+				background: ['token' => $pairDef['bg'], 'resolved' => $bgResolved, 'color' => $bgColor]
 			);
 
 			return $entry;
@@ -515,34 +493,26 @@ class ComplianceReportService {
 	 * resolved transitively against the layered declarations.
 	 *
 	 * @param string $token The --color-* token name.
-	 * @param array<string, string> $customOverrides The custom-overrides layer.
-	 * @param array<string, string> $mapping The --color-* => --nldesign-* mapping.
-	 * @param array<string, string> $declarations The layered --nldesign-* declarations.
-	 * @param string $designSystemId The active design system id (for the diagnostic note).
+	 * @param ColourLayers $layers The custom-overrides layer, the --color-* => --nldesign-* mapping, the layered
+	 *                             --nldesign-* declarations and the active design system id (for the diagnostic note).
 	 *
 	 * @return array{value: string|null, unresolved: string|null} The resolution result.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function resolveColorToken(
-		string $token,
-		array $customOverrides,
-		array $mapping,
-		array $declarations,
-		string $designSystemId,
-	): array {
-		if (array_key_exists($token, $customOverrides) === true) {
-			return ['value' => $customOverrides[$token], 'unresolved' => null];
+	private function resolveColorToken(string $token, array $layers): array {
+		if (array_key_exists($token, $layers['customOverrides']) === true) {
+			return ['value' => $layers['customOverrides'][$token], 'unresolved' => null];
 		}
 
-		if (array_key_exists($token, $mapping) === false) {
+		if (array_key_exists($token, $layers['mapping']) === false) {
 			return [
 				'value' => null,
-				'unresolved' => $token . ' (no nldesign token mapping for design system "' . $designSystemId . '")',
+				'unresolved' => $token . ' (no nldesign token mapping for design system "' . $layers['designSystemId'] . '")',
 			];
 		}
 
-		return $this->resolveVarChain(value: $mapping[$token], declarations: $declarations);
+		return $this->resolveVarChain(value: $layers['mapping'][$token], declarations: $layers['declarations']);
 	}//end resolveColorToken()
 
 	/**
@@ -609,33 +579,22 @@ class ComplianceReportService {
 	/**
 	 * Build the diagnostic note for a pair with an unresolved side.
 	 *
-	 * @param string $fgToken The foreground token name.
-	 * @param array{value: string|null, unresolved: string|null} $fgResolved The foreground resolution result.
-	 * @param array{0: int, 1: int, 2: int}|null $fgColor The parsed foreground colour, or null.
-	 * @param string $bgToken The background token name.
-	 * @param array{value: string|null, unresolved: string|null} $bgResolved The background resolution result.
-	 * @param array{0: int, 1: int, 2: int}|null $bgColor The parsed background colour, or null.
+	 * @param PairSide $foreground The foreground token name, its resolution result and its parsed colour (null when unparsed).
+	 * @param PairSide $background The background token name, its resolution result and its parsed colour (null when unparsed).
 	 *
 	 * @return string The human-readable diagnostic note.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function describeUnresolvedPair(
-		string $fgToken,
-		array $fgResolved,
-		?array $fgColor,
-		string $bgToken,
-		array $bgResolved,
-		?array $bgColor,
-	): string {
+	private function describeUnresolvedPair(array $foreground, array $background): string {
 		$problems = [];
 
-		if ($fgColor === null) {
-			$problems[] = $this->describeUnresolvedSide(token: $fgToken, resolved: $fgResolved);
+		if ($foreground['color'] === null) {
+			$problems[] = $this->describeUnresolvedSide(token: $foreground['token'], resolved: $foreground['resolved']);
 		}
 
-		if ($bgColor === null) {
-			$problems[] = $this->describeUnresolvedSide(token: $bgToken, resolved: $bgResolved);
+		if ($background['color'] === null) {
+			$problems[] = $this->describeUnresolvedSide(token: $background['token'], resolved: $background['resolved']);
 		}
 
 		return implode('; ', $problems);
