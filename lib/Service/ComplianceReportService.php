@@ -21,10 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
-use OCP\IURLGenerator;
 use OCP\ServerVersion;
 
 /**
@@ -125,69 +121,6 @@ class ComplianceReportService {
 	];
 
 	/**
-	 * The WCAG contrast math service (relative luminance, colour parsing).
-	 *
-	 * @var ContrastService
-	 */
-	private ContrastService $contrast;
-
-	/**
-	 * The shared CSS custom-property parser.
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
-	 * The custom-overrides read service (top cascade layer).
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
-
-	/**
-	 * The design-system / shipped token-set metadata service.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystemService;
-
-	/**
-	 * The custom (admin-uploaded) token-set manifest service.
-	 *
-	 * @var CustomTokenSetService
-	 */
-	private CustomTokenSetService $customSetService;
-
-	/**
-	 * The app manager for resolving the app's on-disk CSS files.
-	 *
-	 * @var IAppManager
-	 */
-	private IAppManager $appManager;
-
-	/**
-	 * The config service for the active token-set setting and instance id.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The URL generator for the instance base URL.
-	 *
-	 * @var IURLGenerator
-	 */
-	private IURLGenerator $urlGenerator;
-
-	/**
-	 * The injectable clock for the deterministic generation timestamp.
-	 *
-	 * @var ITimeFactory
-	 */
-	private ITimeFactory $timeFactory;
-
-	/**
 	 * The running server's version (public since NC 31, below this app's floor of 32).
 	 *
 	 * Null only when constructed without it (isolated unit tests).
@@ -199,40 +132,17 @@ class ComplianceReportService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ContrastService $contrast The WCAG contrast math service.
-	 * @param CssParserService $cssParser The shared CSS custom-property parser.
-	 * @param CustomOverridesService $overridesService The custom-overrides read service.
-	 * @param DesignSystemService $designSystemService The shipped token-set metadata service.
-	 * @param CustomTokenSetService $customSetService The custom token-set manifest service.
-	 * @param IAppManager $appManager The app manager.
-	 * @param IConfig $config The config service.
-	 * @param IURLGenerator $urlGenerator The URL generator.
-	 * @param ITimeFactory $timeFactory The injectable clock.
+	 * @param ContrastTools $measuring The contrast maths and the custom property parser.
+	 * @param ThemeSelectionSources $theme The custom overrides, the shipped design systems and the custom token sets.
+	 * @param InstanceReportContext $instance The app manager, the config, the URL generator and the clock.
 	 * @param ServerVersion|null $serverVersion The running server's version.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator backs one part of the report.
 	 */
 	public function __construct(
-		ContrastService $contrast,
-		CssParserService $cssParser,
-		CustomOverridesService $overridesService,
-		DesignSystemService $designSystemService,
-		CustomTokenSetService $customSetService,
-		IAppManager $appManager,
-		IConfig $config,
-		IURLGenerator $urlGenerator,
-		ITimeFactory $timeFactory,
+		private readonly ContrastTools $measuring,
+		private readonly ThemeSelectionSources $theme,
+		private readonly InstanceReportContext $instance,
 		?ServerVersion $serverVersion = null,
 	) {
-		$this->contrast = $contrast;
-		$this->cssParser = $cssParser;
-		$this->overridesService = $overridesService;
-		$this->designSystemService = $designSystemService;
-		$this->customSetService = $customSetService;
-		$this->appManager = $appManager;
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-		$this->timeFactory = $timeFactory;
 		$this->serverVersion = $serverVersion;
 	}//end __construct()
 
@@ -246,9 +156,9 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	public function generate(): array {
-		$appPath = $this->appManager->getAppPath('thematiq');
+		$appPath = $this->instance->appManager->getAppPath('thematiq');
 
-		$activeTokenSetId = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$activeTokenSetId = $this->instance->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
 		$tokenSetMeta = $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId);
 		$designSystemId = ($tokenSetMeta['design_system'] ?? 'nldesign');
 
@@ -260,12 +170,12 @@ class ComplianceReportService {
 		if ($designSystemId !== 'none') {
 			$declarations = array_merge(
 				$this->parseCssFile(path: $appPath . '/css/systems/' . $designSystemId . '/defaults.css'),
-				($this->cssParser->parseDeclarations(content: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css')) ?? [])
+				($this->measuring->cssParser->parseDeclarations(content: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css')) ?? [])
 			);
 		}
 
 		$mapping = $this->parseCssFile(path: $appPath . '/css/systems/nldesign/overrides.css');
-		$customOverrides = $this->overridesService->read();
+		$customOverrides = $this->theme->overrides->read();
 
 		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
@@ -387,12 +297,12 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveTokenSetMeta(string $tokenSetId): array {
-		$shipped = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSetId);
+		$shipped = $this->theme->designSystems->getTokenSetMeta(tokenSetId: $tokenSetId);
 		if (empty($shipped) === false) {
 			return $shipped;
 		}
 
-		$custom = $this->customSetService->getManifest();
+		$custom = $this->theme->customSets->getManifest();
 
 		return ($custom[$tokenSetId] ?? []);
 	}//end resolveTokenSetMeta()
@@ -416,7 +326,7 @@ class ComplianceReportService {
 			return [];
 		}
 
-		return ($this->cssParser->parseDeclarations(content: $content) ?? []);
+		return ($this->measuring->cssParser->parseDeclarations(content: $content) ?? []);
 	}//end parseCssFile()
 
 	/**
@@ -445,12 +355,12 @@ class ComplianceReportService {
 
 		$fgColor = null;
 		if ($fgResolved['value'] !== null) {
-			$fgColor = $this->contrast->parseColor(value: $fgResolved['value']);
+			$fgColor = $this->measuring->contrast->parseColor(value: $fgResolved['value']);
 		}
 
 		$bgColor = null;
 		if ($bgResolved['value'] !== null) {
-			$bgColor = $this->contrast->parseColor(value: $bgResolved['value']);
+			$bgColor = $this->measuring->contrast->parseColor(value: $bgResolved['value']);
 		}
 
 		$entry = [
@@ -476,7 +386,7 @@ class ComplianceReportService {
 
 		// Measured as it renders, so a translucent colour is blended first. Both
 		// values parsed above, so measure() cannot answer null here.
-		$ratio = round(($this->contrast->measure(foreground: (string)$fgResolved['value'], background: (string)$bgResolved['value']) ?? 0.0), 2);
+		$ratio = round(($this->measuring->contrast->measure(foreground: (string)$fgResolved['value'], background: (string)$bgResolved['value']) ?? 0.0), 2);
 
 		$entry['ratio'] = $ratio;
 		$entry['verdict'] = 'fail';
@@ -681,9 +591,9 @@ class ComplianceReportService {
 	 */
 	private function buildMetadata(string $tokenSetId, array $tokenSetMeta, string $designSystemId, array $customOverrides): array {
 		return [
-			'instanceId' => $this->config->getSystemValue('instanceid', ''),
-			'instanceUrl' => $this->urlGenerator->getBaseUrl(),
-			'appVersion' => $this->appManager->getAppVersion('thematiq'),
+			'instanceId' => $this->instance->config->getSystemValue('instanceid', ''),
+			'instanceUrl' => $this->instance->urlGenerator->getBaseUrl(),
+			'appVersion' => $this->instance->appManager->getAppVersion('thematiq'),
 			'nextcloudVersion' => $this->resolveNextcloudVersion(),
 			'tokenSet' => [
 				'id' => $tokenSetId,
@@ -691,7 +601,7 @@ class ComplianceReportService {
 				'version' => ($tokenSetMeta['version'] ?? 'unversioned'),
 			],
 			'designSystem' => $designSystemId,
-			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->timeFactory->getTime()),
+			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->instance->timeFactory->getTime()),
 			'overridesHash' => $this->computeOverridesHash(overrides: $customOverrides),
 		];
 	}//end buildMetadata()
@@ -783,7 +693,7 @@ class ComplianceReportService {
 	private function setCss(string $appPath, string $name): ?string {
 		// An uploaded set lives in app data; its own service reads it.
 		if (preg_match('#^css/tokens/(custom-[a-z0-9-]+)\.css$#', $name, $match) === 1) {
-			return $this->customSetService->getRawContent(id: $match[1]);
+			return $this->theme->customSets->getRawContent(id: $match[1]);
 		}
 
 		$path = $appPath . '/' . $name;

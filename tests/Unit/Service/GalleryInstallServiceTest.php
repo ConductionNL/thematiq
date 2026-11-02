@@ -31,11 +31,14 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\Exception\GalleryException;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\GalleryDownloadSources;
+use OCA\Thematiq\Service\GalleryInstallRecords;
 use OCA\Thematiq\Service\GalleryInstallService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemeGalleryService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Service\TokenSetUploadPipeline;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
@@ -223,16 +226,22 @@ class GalleryInstallServiceTest extends TestCase {
 		$time->method('getTime')->willReturn(1_800_000_000);
 
 		return new GalleryInstallService(
-			$gallery,
-			$clientService,
-			$converter,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$this->customSets,
-			$audit,
-			$this->config,
-			$l10n,
-			$time
+			downloads: new GalleryDownloadSources(
+				gallery: $gallery,
+				clientService: $clientService
+			),
+			pipeline: new TokenSetUploadPipeline(
+				converter: $converter,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService()
+			),
+			records: new GalleryInstallRecords(
+				customSets: $this->customSets,
+				audit: $audit,
+				config: $this->config,
+				time: $time
+			),
+			l10n: $l10n
 		);
 	}//end service()
 
