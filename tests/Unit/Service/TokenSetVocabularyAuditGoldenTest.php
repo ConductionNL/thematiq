@@ -100,7 +100,7 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 			$random = new Randomizer(new Mt19937($seed));
 			$css = ":root {\n";
 			foreach ($random->pickArrayKeys(array_flip(array_merge($vocabulary, TokenSetVocabularyAuditService::REQUIRED_TOKENS)), $random->getInt(1, 40)) as $name) {
-				$css .= "\t" . $name . ": #" . $random->getBytesFromString('0123456789abcdef', 6) . ";\n";
+				$css .= "\t" . $name . ': #' . $random->getBytesFromString('0123456789abcdef', 6) . ";\n";
 			}
 
 			if ($random->getInt(0, 2) === 0) {
