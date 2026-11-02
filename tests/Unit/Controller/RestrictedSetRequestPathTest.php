@@ -31,11 +31,15 @@ use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ColourFunctionEvaluator;
 use OCA\Thematiq\Service\ComplianceReportService;
+use OCA\Thematiq\Service\ConfigBundleAppSettings;
+use OCA\Thematiq\Service\ConfigBundleBranding;
+use OCA\Thematiq\Service\ConfigBundleSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigBundleTokenSources;
 use OCA\Thematiq\Service\ConfigSourceService;
 use OCA\Thematiq\Service\CustomOverridesService;
-use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
+use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DenhaagContrastPairs;
 use OCA\Thematiq\Service\DeprecationRecords;
@@ -145,6 +149,10 @@ use ReflectionProperty;
 #[UsesClass(BundleExtraSections::class)]
 #[UsesClass(ColourFunctionEvaluator::class)]
 #[UsesClass(ConfigBundleService::class)]
+#[UsesClass(ConfigBundleAppSettings::class)]
+#[UsesClass(ConfigBundleBranding::class)]
+#[UsesClass(ConfigBundleSections::class)]
+#[UsesClass(ConfigBundleTokenSources::class)]
 #[UsesClass(ConfigSourceService::class)]
 #[UsesClass(CustomOverridesService::class)]
 #[UsesClass(CustomTokenSetService::class)]

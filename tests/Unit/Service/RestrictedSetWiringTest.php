@@ -19,13 +19,17 @@ use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\BundleExtraSections;
+use OCA\Thematiq\Service\ConfigBundleAppSettings;
+use OCA\Thematiq\Service\ConfigBundleBranding;
+use OCA\Thematiq\Service\ConfigBundleSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigBundleTokenSources;
 use OCA\Thematiq\Service\CssDeclarationScanner;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -82,6 +86,10 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(ScheduledSwitchService::class)]
 #[CoversClass(AppBrandService::class)]
 #[CoversClass(ConfigBundleService::class)]
+#[UsesClass(ConfigBundleAppSettings::class)]
+#[UsesClass(ConfigBundleBranding::class)]
+#[UsesClass(ConfigBundleSections::class)]
+#[UsesClass(ConfigBundleTokenSources::class)]
 #[CoversClass(CustomTokenSetsBundleSection::class)]
 #[CoversClass(ThemeSet::class)]
 #[CoversClass(TokenSetService::class)]
@@ -437,24 +445,32 @@ class RestrictedSetWiringTest extends TestCase {
 	 */
 	private function bundles(): ConfigBundleService {
 		return new ConfigBundleService(
-			$this->config,
-			$this->createMock(IAppManager::class),
-			$this->tokenSets,
-			$this->createMock(CustomOverridesService::class),
-			new CustomTokenSetsBundleSection(
-				customSets: $this->createMock(originalClassName: CustomTokenSetService::class),
-				validator: $this->createMock(originalClassName: CustomTokenSetValidator::class),
-				cssParser: $this->createMock(originalClassName: CssParserService::class),
-				appManager: $this->createMock(originalClassName: IAppManager::class)
+			appSettings: new ConfigBundleAppSettings(
+				config: $this->config,
+				appManager: $this->createMock(IAppManager::class),
+				appThemingService: $this->createMock(AppThemingService::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
 			),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(CssParserService::class),
-			$this->createMock(EmailThemingService::class),
-			$this->createMock(FontService::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			new ScheduledSwitchStore($this->config),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(BundleExtraSections::class)
+			tokenSources: new ConfigBundleTokenSources(
+				tokenSetService: $this->tokenSets,
+				overridesService: $this->createMock(CustomOverridesService::class),
+				scheduledSwitches: new ScheduledSwitchStore($this->config),
+				cssParser: $this->createMock(CssParserService::class)
+			),
+			sections: new ConfigBundleSections(
+				customTokenSets: new CustomTokenSetsBundleSection(
+					customSets: $this->createMock(originalClassName: CustomTokenSetService::class),
+					validator: $this->createMock(originalClassName: CustomTokenSetValidator::class),
+					cssParser: $this->createMock(originalClassName: CssParserService::class),
+					appManager: $this->createMock(originalClassName: IAppManager::class)
+				),
+				extraSections: $this->createMock(BundleExtraSections::class)
+			),
+			branding: new ConfigBundleBranding(
+				emailThemingService: $this->createMock(EmailThemingService::class),
+				fontService: $this->createMock(FontService::class),
+				logger: $this->createMock(LoggerInterface::class)
+			)
 		);
 	}//end bundles()
 }//end class
