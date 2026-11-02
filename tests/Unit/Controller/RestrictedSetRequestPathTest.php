@@ -46,6 +46,7 @@ use OCA\Thematiq\Service\DesignTokensMapping;
 use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
@@ -158,6 +159,7 @@ use ReflectionProperty;
 #[UsesClass(DocumentAssetService::class)]
 #[UsesClass(DtcgValueChecker::class)]
 #[UsesClass(EmailThemingService::class)]
+#[UsesClass(EmailThemingSettings::class)]
 #[UsesClass(FontService::class)]
 #[UsesClass(OverridesCssBuilder::class)]
 #[UsesClass(OwnTokenService::class)]
@@ -445,7 +447,7 @@ class RestrictedSetRequestPathTest extends TestCase {
 			$this->createMock(AppThemingService::class),
 			$this->createMock(ComplianceReportService::class),
 			$audit,
-			$this->createMock(EmailThemingService::class),
+			$this->createMock(originalClassName: EmailThemingSettings::class),
 			$this->createMock(UpstreamFreshnessService::class),
 			new GroupThemingService(
 				$this->config,
