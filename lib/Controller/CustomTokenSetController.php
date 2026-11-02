@@ -601,30 +601,24 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function readInput() {
 		$file = $this->request->getUploadedFile(key: 'file');
-
 		if (empty($file) === false && isset($file['tmp_name']) === true) {
-			$content = $this->readUpload(file: $file);
-			if ($content instanceof JSONResponse) {
-				return $content;
-			}
-
-			$fileName = trim((string)($file['name'] ?? ''));
-			if ($fileName === '') {
-				$fileName = null;
-			}
-
-			return [
-				'content' => $content,
-				'sourceName' => $fileName,
-			];
+			return $this->readUpload(file: $file);
 		}
 
+		return $this->pastedInput();
+	}//end readInput()
+
+	/**
+	 * The import payload from the paste box.
+	 *
+	 * @return array{content: string, sourceName: string|null}|JSONResponse The payload, or the error response.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function pastedInput(): array|JSONResponse {
 		$pasted = (string)($this->request->getParam('content', ''));
 		if (trim($pasted) === '') {
-			return new JSONResponse(
-				['error' => $this->l->t('Choose a file or paste the contents of a theme file.')],
-				400
-			);
+			return new JSONResponse(['error' => $this->l->t('Choose a file or paste the contents of a theme file.')], 400);
 		}
 
 		if (strlen($pasted) > CustomTokenSetValidator::MAX_SIZE) {
@@ -640,14 +634,14 @@ class CustomTokenSetController extends Controller {
 			'content' => $pasted,
 			'sourceName' => $sourceName,
 		];
-	}//end readInput()
+	}//end pastedInput()
 
 	/**
-	 * Validate the uploaded file envelope and read its content.
+	 * The import payload from the file picker: the envelope validated, the content read.
 	 *
 	 * @param array<string, mixed>|null $file The uploaded file array from the request.
 	 *
-	 * @return string|JSONResponse The raw content, or the error response.
+	 * @return array{content: string, sourceName: string|null}|JSONResponse The payload, or the error response.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
@@ -665,7 +659,15 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Could not read the uploaded file.')], 400);
 		}
 
-		return $content;
+		$fileName = trim((string)($file['name'] ?? ''));
+		if ($fileName === '') {
+			$fileName = null;
+		}
+
+		return [
+			'content' => $content,
+			'sourceName' => $fileName,
+		];
 	}//end readUpload()
 
 	/**
@@ -927,53 +929,51 @@ class CustomTokenSetController extends Controller {
 		}
 
 		$activeBefore = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$servedCss = $this->service->getRawContent(id: $id);
+		$contentHash = $this->servedHash(id: $id);
 
 		if ($this->service->delete(id: $id) === false) {
 			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
 		}
 
-		// The source record of a multi-brand import goes with its last brand.
+		// The source record of a multi-brand import goes with its last brand, and
+		// the branding it captured, and the images copied for it, go with it.
 		$this->multiBrand?->forgetSet(id: $id);
+		$this->brandingCapture?->forget(setId: $id);
 
-		// The branding it captured, and the images copied for it, go with it.
-		if ($this->brandingCapture !== null) {
-			$this->brandingCapture->forget(setId: $id);
-		}
-
-		$contentHash = null;
-		if ($servedCss !== null) {
-			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
-		}
-
-		// Deleting the ACTIVE set puts the instance back on stock, and stock
-		// means Nextcloud's own colours and logo — not the deleted set's,
-		// stranded in core theming with no set left to explain them. The service
-		// resets the `token_set` app value; the sync it pushed into core has to
-		// be undone here, exactly as selecting the stock set does.
 		$activeReset = ($activeBefore === $id);
 		if ($activeReset === true) {
-			$this->themingService->resetToDefaults();
-
-			// Nothing is synced any more, so nothing is remembered as synced.
-			foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
-				$this->config->deleteAppValue(
-					Application::APP_ID,
-					SettingsController::SYNCED_IMAGE_PREFIX . $imageKey
-				);
-			}
+			$this->resetActiveTheming();
 		}
 
 		$this->auditService->log(
 			action: 'custom_set_deleted',
-			context: [
-				'id' => $id,
-				'activeReset' => $activeReset,
-				'themingReset' => $activeReset,
-				'contentHash' => $contentHash,
-			]
+			context: ['id' => $id, 'activeReset' => $activeReset, 'themingReset' => $activeReset, 'contentHash' => $contentHash]
 		);
 
 		return new JSONResponse(['status' => 'ok']);
 	}//end delete()
+
+	/**
+	 * Put Nextcloud's own colours and logo back after the active set was deleted.
+	 *
+	 * Deleting the ACTIVE set puts the instance back on stock, and stock
+	 * means Nextcloud's own colours and logo, not the deleted set's,
+	 * stranded in core theming with no set left to explain them. The service
+	 * resets the `token_set` app value; the sync it pushed into core has to
+	 * be undone here, exactly as selecting the stock set does. Nothing is
+	 * synced any more, so nothing is remembered as synced.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function resetActiveTheming(): void {
+		$this->themingService->resetToDefaults();
+		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
+			$this->config->deleteAppValue(
+				Application::APP_ID,
+				SettingsController::SYNCED_IMAGE_PREFIX . $imageKey
+			);
+		}
+	}//end resetActiveTheming()
 }//end class
