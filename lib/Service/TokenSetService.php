@@ -209,61 +209,24 @@ class TokenSetService {
 	 */
 	public function getAvailableTokenSets(): array {
 		$appPath = $this->getAppPath();
-		$manifestPath = $appPath . '/token-sets.json';
-
-		// Read metadata from token-sets.json (shipped sets).
-		$metadata = $this->readManifest(manifestPath: $manifestPath);
-
-		// Read metadata for admin-uploaded custom sets from appconfig.
-		$customMetadata = $this->readCustomManifest();
-
-		// Nextcloud branding a set captured when it was saved (see
-		// BrandingCaptureService). It replaces the set's own theming block:
-		// it is what the admin had on when they saved this theme, which is
-		// what applying the theme is meant to bring back.
-		$captured = $this->readCapturedTheming();
+		// Shipped metadata (token-sets.json), uploaded metadata (appconfig), and
+		// the Nextcloud branding each set captured when it was saved (see
+		// BrandingCaptureService): what the admin had on when they saved this
+		// theme, which is what applying the theme is meant to bring back.
+		$sources = [
+			'appPath' => $appPath,
+			'shipped' => $this->readManifest(manifestPath: $appPath . '/token-sets.json'),
+			'custom' => $this->readCustomManifest(),
+			'captured' => $this->readCapturedTheming(),
+		];
 
 		// Scan the release for shipped sets and the store for uploaded ones.
 		$tokenSets = [];
-		$files = $this->files->fileNames(appPath: $appPath, directory: 'css/tokens', store: $this->store);
-		if ($files !== []) {
-			foreach ($files as $file) {
-				if (str_ends_with($file, '.css') === true) {
-					$id = basename($file, '.css');
-					$isCustom = str_starts_with($id, 'custom-');
-
-					// Shipped manifest takes precedence on an (impossible) id
-					// collision; log it so the operator can investigate.
-					$shippedMeta = $metadata[$id] ?? null;
-					$meta = $this->resolveMeta(id: $id, shippedMeta: $shippedMeta, customMeta: ($customMetadata[$id] ?? null));
-
-					$tokenSet = [
-						'id' => $id,
-						'name' => $meta['name'] ?? $this->formatName(id: $id),
-						'description' => $meta['description'] ?? 'Design tokens for ' . $this->formatName(id: $id),
-						'design_system' => $meta['design_system'] ?? 'nldesign',
-					];
-					if (isset($meta['theming']) === true && is_array($meta['theming']) === true) {
-						$tokenSet['theming'] = $meta['theming'];
-					}
-
-					if (isset($captured[$id]) === true && is_array($captured[$id]) === true) {
-						$tokenSet['theming'] = $captured[$id];
-					}
-
-					$tokenSet = $this->applyProvenance(tokenSet: $tokenSet, meta: ($meta ?? []));
-					$tokenSet = $this->applyWarnings(
-						tokenSet: $tokenSet,
-						meta: ($meta ?? []),
-						appPath: $appPath,
-						id: $id,
-						isCustom: ($isCustom === true && $shippedMeta === null)
-					);
-
-					$tokenSets[] = $tokenSet;
-				}//end if
-			}//end foreach
-		}//end if
+		foreach ($this->files->fileNames(appPath: $appPath, directory: 'css/tokens', store: $this->store) as $file) {
+			if (str_ends_with($file, '.css') === true) {
+				$tokenSets[] = $this->catalogueEntry(id: basename($file, '.css'), sources: $sources);
+			}
+		}
 
 		// Sort alphabetically by name.
 		usort($tokenSets, fn ($a, $b) => strcasecmp($a['name'], $b['name']));
@@ -370,6 +333,77 @@ class TokenSetService {
 
 		return $tokenSet;
 	}//end applyProvenance()
+
+	/**
+	 * The catalogue entry of one discovered set file.
+	 *
+	 * @param string $id The token set id (the file name without `.css`).
+	 * @param array<string, mixed> $sources The app path, and the shipped and uploaded metadata and captured branding by id.
+	 *
+	 * @return array<string, mixed> The entry.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function catalogueEntry(string $id, array $sources): array {
+		// Shipped manifest takes precedence on an (impossible) id collision;
+		// resolveMeta() logs it so the operator can investigate.
+		$shippedMeta = ($sources['shipped'][$id] ?? null);
+		$meta = $this->resolveMeta(id: $id, shippedMeta: $shippedMeta, customMeta: ($sources['custom'][$id] ?? null));
+
+		$tokenSet = $this->baseEntry(id: $id, meta: $meta);
+		$theming = $this->entryTheming(candidates: [($sources['captured'][$id] ?? null), ($meta['theming'] ?? null)]);
+		if ($theming !== null) {
+			$tokenSet['theming'] = $theming;
+		}
+
+		return $this->applyWarnings(
+			tokenSet: $this->applyProvenance(tokenSet: $tokenSet, meta: ($meta ?? [])),
+			meta: ($meta ?? []),
+			appPath: $sources['appPath'],
+			id: $id,
+			isCustom: (str_starts_with($id, 'custom-') === true && $shippedMeta === null)
+		);
+	}//end catalogueEntry()
+
+	/**
+	 * The id, name, description and design system of a catalogue entry, with
+	 * defaults where the metadata has none.
+	 *
+	 * @param string $id The token set id.
+	 * @param array<string, mixed>|null $meta The resolved metadata.
+	 *
+	 * @return array<string, mixed> The entry.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function baseEntry(string $id, ?array $meta): array {
+		return [
+			'id' => $id,
+			'name' => $meta['name'] ?? $this->formatName(id: $id),
+			'description' => $meta['description'] ?? 'Design tokens for ' . $this->formatName(id: $id),
+			'design_system' => $meta['design_system'] ?? 'nldesign',
+		];
+	}//end baseEntry()
+
+	/**
+	 * The theming block of a catalogue entry: the captured branding when the
+	 * set has one, else the manifest's own block.
+	 *
+	 * @param array<int, mixed> $candidates The captured branding, then the manifest's block.
+	 *
+	 * @return array<string, mixed>|null The first candidate that is a block, or null.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	private function entryTheming(array $candidates): ?array {
+		foreach ($candidates as $theming) {
+			if (is_array($theming) === true) {
+				return $theming;
+			}
+		}
+
+		return null;
+	}//end entryTheming()
 
 	/**
 	 * Resolve the merged metadata for one discovered id, logging (and
