@@ -191,6 +191,7 @@ class TokenSetConverterGoldenTest extends TestCase {
 		$inputs['export-without-shell-menu'] = (string)json_encode(
 			(new DesignTokensWriter())->write(declarations: ['--nldesign-color-primary' => 'var(--x-blue)', '--x-blue' => '#0b71a1'], setId: 'g', setName: 'G', appVersion: 'golden')
 		);
+		$inputs['export-without-tokens'] = (string)json_encode((new DesignTokensWriter())->write(declarations: [], setId: 'e', setName: 'E', appVersion: 'golden'));
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
 		$inputs['root-set-with-logo'] = ":root {\n  --nldesign-color-primary: #154273;\n  --conduction-logo-header-background-image: url(\"data:image/svg+xml;base64,"
