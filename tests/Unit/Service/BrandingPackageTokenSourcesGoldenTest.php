@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\FontValidator;
+use OCA\Thematiq\Service\PackageTokenSourceConverter;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use PHPUnit\Framework\TestCase;
 use Random\Engine\Mt19937;
@@ -44,6 +45,7 @@ use RuntimeException;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\BrandingPackageService
+ * @covers \OCA\Thematiq\Service\PackageTokenSourceConverter
  */
 class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 
@@ -67,9 +69,9 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testTokenSourcesMatchTheGoldenRecording()
 
@@ -90,10 +92,10 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 			'hash' => 'sha256:' . $random->getInt(100, 999),
 		];
 
-		$reader = $this->createMock(BrandingPackageReader::class);
+		$reader = $this->createMock(originalClassName: BrandingPackageReader::class);
 		$reader->method('read')->willReturn($package);
 
-		$bundles = $this->createMock(ConfigBundleService::class);
+		$bundles = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundles->method('import')->willReturnCallback(
 			static function (array $bundle, bool $dryRun = false) use (&$calls): array {
 				$calls[] = ['bundle', $bundle, $dryRun];
@@ -101,19 +103,30 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 			}
 		);
 
-		$fonts = $this->createMock(FontService::class);
+		$fonts = $this->createMock(originalClassName: FontService::class);
 		$fonts->method('getManifest')->willReturn([]);
 
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('convert')->willReturnCallback(
-			static function (string $content, string $slug, string $displayName, ?string $sourceName = null, ?string $assetName = null) use (&$calls): array {
+			static function (
+				string $content,
+				string $slug,
+				string $displayName,
+				?string $sourceName = null,
+				?string $assetName = null
+			) use (&$calls): array {
 				$calls[] = ['convert', compact('content', 'slug', 'displayName', 'sourceName', 'assetName')];
 				$mode = (json_decode($content, true)['mode'] ?? 'ok');
 				if ($mode === 'throw') {
 					throw new RuntimeException('broken source for ' . $slug);
 				}
 
-				$result = ['css' => ":root {\n  --nldesign-color-primary: #" . substr(md5($slug), 0, 6) . ";\n}\n", 'errors' => [], 'importWarnings' => ['w-' . $slug], 'manifestEntry' => []];
+				$result = [
+					'css' => ":root {\n  --nldesign-color-primary: #" . substr(md5($slug), 0, 6) . ";\n}\n",
+					'errors' => [],
+					'importWarnings' => ['w-' . $slug],
+					'manifestEntry' => [],
+				];
 				if ($mode === 'blank') {
 					$result['css'] = "  \n";
 				}
@@ -130,12 +143,12 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 			}
 		);
 
-		$customSets = $this->createMock(CustomTokenSetService::class);
+		$customSets = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$customSets->method('isCustomId')->willReturnCallback(
 			static fn (string $id): bool => preg_match('/^custom-[a-z0-9][a-z0-9-]*$/', $id) === 1
 		);
 
-		$values = $this->createMock(DtcgValueChecker::class);
+		$values = $this->createMock(originalClassName: DtcgValueChecker::class);
 		$values->method('findInvalidColours')->willReturnCallback(
 			static fn (array $document): array => array_map('strval', (array)($document['bad'] ?? []))
 		);
@@ -167,7 +180,13 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 		CustomTokenSetService $customSets,
 		DtcgValueChecker $values,
 	): BrandingPackageService {
-		return new BrandingPackageService($reader, $bundles, $fonts, new FontValidator(), $converter, $customSets, $values);
+		return new BrandingPackageService(
+			reader: $reader,
+			bundleService: $bundles,
+			fontService: $fonts,
+			fontValidator: new FontValidator(),
+			tokenSources: new PackageTokenSourceConverter(converter: $converter, customSets: $customSets, values: $values)
+		);
 	}//end service()
 
 	/**
