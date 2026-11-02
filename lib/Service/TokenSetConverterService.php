@@ -56,7 +56,11 @@ use RuntimeException;
  * gets 26 tokens back needs to be told what happened to the other 671.
  *
  * @phpstan-type ReportEntry array{source: string, target: string, action: string, reason: string|null, value: string|null, original?: string}
+ * @phpstan-type RuleInput array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
+ * @phpstan-type SetSource array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
  * @psalm-type   ReportEntry array{source: string, target: string, action: string, reason: string|null, value: string|null, original?: string}
+ * @psalm-type   RuleInput array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
+ * @psalm-type   SetSource array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
  *
  * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
  *
@@ -291,14 +295,9 @@ class TokenSetConverterService {
 		$declarations = [];
 
 		if ($isJson === true) {
-			$decoded = json_decode($content, true);
-			$declarations = $this->declarationsFromJson(
-				decoded: $decoded,
-				kind: $inputKind,
-				slug: $slug,
-				version: $sourceVersion,
-				report: $report
-			);
+			$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $inputKind, slug: $slug, report: $report);
+			$declarations = $parsed['declarations'];
+			$sourceVersion = $parsed['version'];
 		}
 
 		if ($isJson === false) {
@@ -309,10 +308,7 @@ class TokenSetConverterService {
 		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
 			return ['darkDeclarations' => $this->darkFrom(content: $content)] + $this->thematiqExportResult(
 				declarations: $declarations,
-				slug: $slug,
-				displayName: $displayName,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
+				source: ['slug' => $slug, 'displayName' => $displayName, 'sourceName' => $sourceName, 'sourceVersion' => $sourceVersion],
 				report: $report
 			);
 		}
@@ -387,9 +383,8 @@ class TokenSetConverterService {
 		// being read before `runRules()` has written it.
 		$manifest = [];
 		$semantic = $this->runRules(
-			declarations: $declarations,
+			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $slug],
 			existing: $sections['semantic'],
-			slug: $slug,
 			manifest: $manifest,
 			report: $report
 		);
@@ -411,15 +406,12 @@ class TokenSetConverterService {
 		}
 
 		$counts = $this->countActions(report: $report);
+		$source = ['slug' => $slug, 'displayName' => $displayName, 'sourceName' => $sourceName, 'sourceVersion' => $sourceVersion];
 
 		$css = $this->buildCss(
-			palette: $sections['palette'],
-			component: $sections['component'],
-			semantic: $semantic,
-			slug: $slug,
+			layers: ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic],
+			source: $source,
 			inputKind: $inputKind,
-			sourceName: $sourceName,
-			sourceVersion: $sourceVersion,
 			counts: $counts
 		);
 
@@ -434,15 +426,7 @@ class TokenSetConverterService {
 		return [
 			'css' => $css,
 			'imported' => $importedCount,
-			'manifestEntry' => $this->buildManifestEntry(
-				slug: $slug,
-				displayName: $displayName,
-				semantic: $semantic,
-				manifest: $manifest,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
-				logo: $logo
-			),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $semantic, manifest: $manifest, logo: $logo),
 			'report' => $report,
 			'inputKind' => $inputKind,
 			'counts' => $counts,
@@ -498,24 +482,14 @@ class TokenSetConverterService {
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
 	 * @param array<string, string> $declarations The mapped declarations.
-	 * @param string $slug The new set's slug.
-	 * @param string $displayName The new set's name.
-	 * @param string|null $sourceName The file name.
-	 * @param string|null $sourceVersion The document's package version.
+	 * @param SetSource $source The new set's slug and name, the file name and the document's package version.
 	 * @param array<int, array<string, mixed>> $report The report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(
-		array $declarations,
-		string $slug,
-		string $displayName,
-		?string $sourceName,
-		?string $sourceVersion,
-		array $report,
-	): array {
+	private function thematiqExportResult(array $declarations, array $source, array $report): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
 
 		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
@@ -525,7 +499,7 @@ class TokenSetConverterService {
 			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
 		}
 
-		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
+		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $source['slug'], report: $report);
 		$counts = $this->countActions(report: $report);
 		$manifest = [];
 		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
@@ -534,25 +508,9 @@ class TokenSetConverterService {
 		}
 
 		return [
-			'css' => $this->buildCss(
-				palette: $layers['palette'],
-				component: $layers['component'],
-				semantic: $layers['semantic'],
-				slug: $slug,
-				inputKind: 'B',
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
-				counts: $counts
-			),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: 'B', counts: $counts),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(
-				slug: $slug,
-				displayName: $displayName,
-				semantic: [],
-				manifest: $manifest,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion
-			),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: [], manifest: $manifest),
 			'report' => $report,
 			'inputKind' => 'B',
 			'counts' => $counts,
@@ -839,15 +797,14 @@ class TokenSetConverterService {
 	 * @param array<mixed> $decoded The decoded JSON.
 	 * @param string $kind `B` or `C`.
 	 * @param string $slug The brand prefix for input C names.
-	 * @param string|null $version Set to the declared package version when the input carries one.
 	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
-	 * @return array<string, string> Declaration name => value.
+	 * @return array{declarations: array<string, string>, version: string|null} Declaration name => value, and the
+	 *                                                                           package version when the input declares one.
 	 */
-	private function declarationsFromJson(array $decoded, string $kind, string $slug, ?string &$version, array &$report): array {
+	private function declarationsFromJson(array $decoded, string $kind, string $slug, array &$report): array {
 		if ($kind === 'B') {
 			$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
-			$version = $mapped['packageVersion'];
 			$this->importWarnings = $mapped['warnings'];
 			$this->mapperErrors = $mapped['errors'];
 
@@ -873,13 +830,12 @@ class TokenSetConverterService {
 				];
 			}
 
-			return $mapped['declarations'];
+			return ['declarations' => $mapped['declarations'], 'version' => $mapped['packageVersion']];
 		}
 
-		$declarations = [];
-		$this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug, declarations: $declarations);
+		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug);
 
-		return $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug);
+		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug), 'version' => null];
 	}//end declarationsFromJson()
 
 	/**
@@ -964,32 +920,31 @@ class TokenSetConverterService {
 	 * @param mixed $node The current node.
 	 * @param array<int, string> $path The path walked so far.
 	 * @param string $slug The brand prefix.
-	 * @param array<string, string> $declarations Collected declarations, by reference.
 	 * @param int $depth Current recursion depth.
 	 *
-	 * @return void
-	 *
+	 * @return array<string, string> The declarations under this node, in document order.
 	 */
-	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, array &$declarations, int $depth = 0): void {
+	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, int $depth = 0): array {
 		if (is_array($node) === false || $depth > 12) {
-			return;
+			return [];
 		}
 
 		if (array_key_exists('value', $node) === true && is_array($node['value']) === false) {
 			// A reference-only token (a Tokens Studio `source` set) is not part of the brand.
 			if (in_array(implode('.', $path), $this->referenceOnlyPaths, true) === true) {
-				return;
+				return [];
 			}
 
 			$prefixed = $this->styleDictionaryName(path: $path, slug: $slug);
 			if ($prefixed === null) {
-				return;
+				return [];
 			}
 
-			$declarations[$prefixed] = trim((string)$node['value']);
-
-			return;
+			return [$prefixed => trim((string)$node['value'])];
 		}
+
+		// A later leaf that gets the same name replaces the value and keeps the first one's place.
+		$declarations = [];
 
 		foreach ($node as $key => $child) {
 			// PHP turns a numeric key such as a palette step ("500") into an int; it is still a path segment.
@@ -998,14 +953,13 @@ class TokenSetConverterService {
 				continue;
 			}
 
-			$this->collectStyleDictionaryLeaves(
-				node: $child,
-				path: array_merge($path, [$key]),
-				slug: $slug,
-				declarations: $declarations,
-				depth: ($depth + 1)
+			$declarations = array_replace(
+				$declarations,
+				$this->collectStyleDictionaryLeaves(node: $child, path: array_merge($path, [$key]), slug: $slug, depth: ($depth + 1))
 			);
 		}
+
+		return $declarations;
 	}//end collectStyleDictionaryLeaves()
 
 	/**
@@ -1819,9 +1773,8 @@ class TokenSetConverterService {
 	 * fallback runs and the entry is `adapted`, never `applied` — an admin has
 	 * to be able to tell the theme's own value from one this app invented.
 	 *
-	 * @param array<string, string> $declarations The resolved input.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 * @param array<string, string> $existing Values the input already declared (input D wins).
-	 * @param string $slug The brand slug.
 	 * @param array<string, string> $manifest Manifest targets, written by reference.
 	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
@@ -1834,7 +1787,7 @@ class TokenSetConverterService {
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
 	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
 	 */
-	private function runRules(array $declarations, array $existing, string $slug, array &$manifest, array &$report): array {
+	private function runRules(array $input, array $existing, array &$manifest, array &$report): array {
 		$semantic = $existing;
 		$manifest = [];
 
@@ -1864,8 +1817,7 @@ class TokenSetConverterService {
 
 			$sourceName = '';
 
-			$byRole = $this->indexByRole(declarations: $declarations);
-			$declared = $this->firstDeclaredSource(rule: $rule, declarations: $declarations, byRole: $byRole, slug: $slug);
+			$declared = $this->firstDeclaredSource(rule: $rule, input: $input);
 			if ($declared !== null) {
 				$value = $declared['value'];
 				$sourceName = $declared['source'];
@@ -1875,7 +1827,7 @@ class TokenSetConverterService {
 				$derived = $this->applyFallback(
 					fallback: ($rule['fallback'] ?? null),
 					semantic: $semantic,
-					declarations: $declarations
+					declarations: $input['declarations']
 				);
 
 				if ($derived === null) {
@@ -1911,7 +1863,7 @@ class TokenSetConverterService {
 				$guarded = $this->applyGuard(
 					guard: $rule['guard'],
 					value: $value,
-					semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $semantic, declarations: $declarations, byRole: $byRole, slug: $slug)
+					semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $semantic, input: $input)
 				);
 				if ($guarded['value'] !== $value) {
 					$entry['original'] = $value;
@@ -1948,25 +1900,23 @@ class TokenSetConverterService {
 	 * Mirrors `firstDeclaredSource()` in js/lib/tokenConverter.js.
 	 *
 	 * @param array<string, mixed> $rule The table rule.
-	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $byRole The input indexed by role.
-	 * @param string $slug The brand slug.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 *
 	 * @return array{value: string, source: string}|null The value and where it came from, or null.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
-	private function firstDeclaredSource(array $rule, array $declarations, array $byRole, string $slug): ?array {
+	private function firstDeclaredSource(array $rule, array $input): ?array {
 		foreach (($rule['sources'] ?? []) as $candidate) {
-			$concrete = $this->withSlug(name: (string)$candidate, slug: $slug);
+			$concrete = $this->withSlug(name: (string)$candidate, slug: $input['slug']);
 
-			if (array_key_exists($concrete, $declarations) === true) {
-				return ['value' => $declarations[$concrete], 'source' => $concrete];
+			if (array_key_exists($concrete, $input['declarations']) === true) {
+				return ['value' => $input['declarations'][$concrete], 'source' => $concrete];
 			}
 
 			$role = $this->roleOf(name: $concrete);
-			if ($role !== '' && array_key_exists($role, $byRole) === true) {
-				return ['value' => $byRole[$role], 'source' => $role . ' (by role)'];
+			if ($role !== '' && array_key_exists($role, $input['byRole']) === true) {
+				return ['value' => $input['byRole'][$role], 'source' => $role . ' (by role)'];
 			}
 		}
 
@@ -1984,15 +1934,13 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, mixed> $guard The rule's guard.
 	 * @param array<string, string> $semantic The semantic layer so far.
-	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $byRole The input indexed by role.
-	 * @param string $slug The brand slug.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 *
 	 * @return array<string, string> The semantic layer, with the partner filled in when the theme declares it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
-	private function guardSemantic(array $guard, array $semantic, array $declarations, array $byRole, string $slug): array {
+	private function guardSemantic(array $guard, array $semantic, array $input): array {
 		$against = (string)($guard['against'] ?? '');
 		if (($guard['kind'] ?? '') !== 'contrast' || $against === '' || array_key_exists($against, $semantic) === true) {
 			return $semantic;
@@ -2003,7 +1951,7 @@ class TokenSetConverterService {
 				continue;
 			}
 
-			$declared = $this->firstDeclaredSource(rule: $partner, declarations: $declarations, byRole: $byRole, slug: $slug);
+			$declared = $this->firstDeclaredSource(rule: $partner, input: $input);
 			if ($declared !== null) {
 				$semantic[$against] = $declared['value'];
 			}
@@ -2587,27 +2535,18 @@ class TokenSetConverterService {
 	 * the same reason. No at-rules and exactly one selector, which is what
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
-	 * @param array<string, string> $palette The brand palette section.
-	 * @param array<string, string> $component The component layer.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param string $slug The brand slug.
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The
+	 *        brand palette, the component layer and the semantic layer.
+	 * @param SetSource $source The brand slug, the source label and the source package version.
 	 * @param string $inputKind The detected input kind.
-	 * @param string|null $sourceName The source label, when known.
-	 * @param string|null $sourceVersion The source package version, when declared.
 	 * @param array<string, int> $counts The action tally.
 	 *
 	 * @return string The complete CSS file.
 	 */
-	private function buildCss(
-		array $palette,
-		array $component,
-		array $semantic,
-		string $slug,
-		string $inputKind,
-		?string $sourceName,
-		?string $sourceVersion,
-		array $counts,
-	): string {
+	private function buildCss(array $layers, array $source, string $inputKind, array $counts): string {
+		$palette = $layers['palette'];
+		$component = $layers['component'];
+		$semantic = $layers['semantic'];
 		ksort($palette);
 		ksort($component);
 		ksort($semantic);
@@ -2650,9 +2589,9 @@ class TokenSetConverterService {
 		// `[a-z0-9-]` by `CustomTokenSetService::slugify()`, the converter and
 		// table versions come from the repository's own mapping table, and the
 		// counts are integers.
-		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($sourceName ?? '(pasted)'));
-		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($sourceVersion ?? '(not declared)'));
-		$lines[] = "\t *    slug:            " . $slug;
+		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($source['sourceName'] ?? '(pasted)'));
+		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($source['sourceVersion'] ?? '(not declared)'));
+		$lines[] = "\t *    slug:            " . $source['slug'];
 		$lines[] = "\t *    converter:       " . (string)($table['converterVersion'] ?? '0');
 		$lines[] = "\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16);
 		$lines[] = "\t *    applied:         " . $counts['applied'];
@@ -2757,25 +2696,14 @@ class TokenSetConverterService {
 	 * `--color-main-background`, which stays Nextcloud-owned so dark mode keeps
 	 * working.
 	 *
-	 * @param string $slug The set slug.
-	 * @param string $displayName The display name.
+	 * @param SetSource $source The set slug and display name, the source label and the source version.
 	 * @param array<string, string> $semantic The semantic layer.
 	 * @param array<string, string> $manifest Manifest values produced by the rules.
-	 * @param string|null $sourceName The source label, when known.
-	 * @param string|null $sourceVersion The source version, when declared.
 	 * @param array<string, mixed>|null $logo The extracted logo, from {@see self::extractLogo()}.
 	 *
 	 * @return array<string, mixed> The manifest entry.
 	 */
-	private function buildManifestEntry(
-		string $slug,
-		string $displayName,
-		array $semantic,
-		array $manifest,
-		?string $sourceName,
-		?string $sourceVersion,
-		?array $logo = null,
-	): array {
+	private function buildManifestEntry(array $source, array $semantic, array $manifest, ?array $logo = null): array {
 		$theming = [];
 
 		$primary = ($manifest['theming.primary_color'] ?? ($semantic['--nldesign-color-primary'] ?? null));
@@ -2794,9 +2722,9 @@ class TokenSetConverterService {
 		}
 
 		$entry = [
-			'id' => $slug,
-			'name' => $displayName,
-			'description' => 'Converted from ' . ($sourceName ?? 'a pasted design-system theme') . '.',
+			'id' => $source['slug'],
+			'name' => $source['displayName'],
+			'description' => 'Converted from ' . ($source['sourceName'] ?? 'a pasted design-system theme') . '.',
 			'design_system' => 'nldesign',
 		];
 
@@ -2804,12 +2732,12 @@ class TokenSetConverterService {
 			$entry['theming'] = $theming;
 		}
 
-		if ($sourceName !== null) {
-			$entry['upstreamRef'] = $sourceName;
+		if ($source['sourceName'] !== null) {
+			$entry['upstreamRef'] = $source['sourceName'];
 		}
 
-		if ($sourceVersion !== null) {
-			$entry['upstreamVersion'] = $sourceVersion;
+		if ($source['sourceVersion'] !== null) {
+			$entry['upstreamVersion'] = $source['sourceVersion'];
 		}
 
 		return $entry;
