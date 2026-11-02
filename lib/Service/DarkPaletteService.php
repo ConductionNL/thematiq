@@ -1637,37 +1637,73 @@ class DarkPaletteService {
 		}
 
 		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
-		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
+		$run = ['meta' => $meta, 'light' => $light, 'derived' => $this->deriveDarkDeclarations(lightDeclarations: $light)];
 		// The dark values an uploaded file brought (dark-colours-from-a-file) win over the derived
 		// ones and are protected from repair, like a hand-authored dark block; the block wins over them.
 		$pins = (new DarkPins(store: $this->store, parser: $this->parser))->read(setId: $setId);
-		$overrides = array_merge($pins, $this->parser->parseDarkBlock(css: $tokenCss));
+		$run['overrides'] = array_merge($pins, $this->parser->parseDarkBlock(css: $tokenCss));
 
+		$repaired = $this->repairedDarkPalette(run: $run, merged: $this->mergedDarkPalette(run: $run));
+
+		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
+		$css = $this->renderDarkCss(setId: $setId, declarations: $repaired['declarations'], sourceHash: $sourceHash);
+
+		return ['css' => $css, 'warnings' => $repaired['warnings']];
+	}//end generateForSet()
+
+	/**
+	 * The derived dark values with the set's own dark values on top, the
+	 * error label, and the dark logo when the set has one.
+	 *
+	 * @param array<string, mixed> $run The set's meta, light, derived and override declarations.
+	 *
+	 * @return array<string, string> The merged dark declarations.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function mergedDarkPalette(array $run): array {
 		$merged = $this->withErrorLabel(
-			declarations: array_merge($derived, $overrides),
-			designSystemId: $meta['design_system'],
-			protectedTokens: array_keys($overrides)
+			declarations: array_merge($run['derived'], $run['overrides']),
+			designSystemId: $run['meta']['design_system'],
+			protectedTokens: array_keys($run['overrides'])
 		);
 
-		if (isset($meta['theming']['logo_dark']) === true && is_string($meta['theming']['logo_dark']) === true) {
-			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $meta['theming']['logo_dark']) . "')";
+		$logoDark = ($run['meta']['theming']['logo_dark'] ?? null);
+		if (is_string($logoDark) === true) {
+			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $logoDark) . "')";
 		}
 
-		// A fill that is transparent in light (a secondary button at rest) is
-		// not a colour, so it derives nothing; its label still has to read on
-		// the page it shows. It joins the repair as `transparent` and leaves
-		// before rendering, so the light value keeps applying (thematiq#969).
-		$transparentFills = $this->transparentFills(light: $light, dark: $merged);
+		return $merged;
+	}//end mergedDarkPalette()
+
+	/**
+	 * Repair the merged dark declarations, then check the error label again
+	 * against the fill that ships, sorted by token name.
+	 *
+	 * A fill that is transparent in light (a secondary button at rest) is
+	 * not a colour, so it derives nothing; its label still has to read on
+	 * the page it shows. It joins the repair as `transparent` and leaves
+	 * before rendering, so the light value keeps applying (thematiq#969).
+	 *
+	 * @param array<string, mixed> $run The set's meta, light and override declarations.
+	 * @param array<string, string> $merged The merged dark declarations.
+	 *
+	 * @return array{declarations: array<string, string>, warnings: array<int, mixed>} The repaired palette.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairedDarkPalette(array $run, array $merged): array {
+		$transparentFills = $this->transparentFills(light: $run['light'], dark: $merged);
 		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
-		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($run['overrides']));
 		// The repair may move the error fill itself (summer-breeze repairs
 		// --summer-color-error as text on its surface), so the label is
 		// checked again against the fill that ships.
 		$repaired['declarations'] = $this->withErrorLabel(
 			declarations: $repaired['declarations'],
-			designSystemId: $meta['design_system'],
-			protectedTokens: array_keys($overrides)
+			designSystemId: $run['meta']['design_system'],
+			protectedTokens: array_keys($run['overrides'])
 		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
@@ -1675,11 +1711,8 @@ class DarkPaletteService {
 
 		ksort($repaired['declarations']);
 
-		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
-		$css = $this->renderDarkCss(setId: $setId, declarations: $repaired['declarations'], sourceHash: $sourceHash);
-
-		return ['css' => $css, 'warnings' => $repaired['warnings']];
-	}//end generateForSet()
+		return $repaired;
+	}//end repairedDarkPalette()
 
 	/**
 	 * Give the error label a dark value that reads on the error fill (thematiq#1027).
