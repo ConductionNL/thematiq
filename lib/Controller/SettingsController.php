@@ -36,10 +36,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
-use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
-use OCA\Thematiq\Service\Exception\FooterValidationException;
-use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\GroupThemingService;
@@ -146,11 +143,11 @@ class SettingsController extends Controller {
 	private ThemingAuditService $auditService;
 
 	/**
-	 * The email theming service.
+	 * The email theming settings: the read and save answers.
 	 *
-	 * @var EmailThemingService
+	 * @var EmailThemingSettings
 	 */
-	private EmailThemingService $emailThemingService;
+	private EmailThemingSettings $emailTheming;
 
 	/**
 	 * The upstream token freshness service.
@@ -185,7 +182,7 @@ class SettingsController extends Controller {
 	 * @param AppThemingService $appThemingService The per-app theming service.
 	 * @param ComplianceReportService $complianceService The compliance evidence report service.
 	 * @param ThemingAuditService $auditService The theming audit trail service.
-	 * @param EmailThemingService $emailThemingService The email theming service.
+	 * @param EmailThemingSettings $emailTheming The email theming settings.
 	 * @param UpstreamFreshnessService $freshnessService The upstream token freshness service.
 	 * @param GroupThemingService $groupThemingService The group theming mapping/resolution service.
 	 * @param ActiveTokenSetService $activeTokenSet The token set write path.
@@ -206,7 +203,7 @@ class SettingsController extends Controller {
 		AppThemingService $appThemingService,
 		ComplianceReportService $complianceService,
 		ThemingAuditService $auditService,
-		EmailThemingService $emailThemingService,
+		EmailThemingSettings $emailTheming,
 		UpstreamFreshnessService $freshnessService,
 		GroupThemingService $groupThemingService,
 		ActiveTokenSetService $activeTokenSet,
@@ -219,7 +216,7 @@ class SettingsController extends Controller {
 		$this->appThemingService = $appThemingService;
 		$this->complianceService = $complianceService;
 		$this->auditService = $auditService;
-		$this->emailThemingService = $emailThemingService;
+		$this->emailTheming = $emailTheming;
 		$this->freshnessService = $freshnessService;
 		$this->groupThemingService = $groupThemingService;
 		$this->activeTokenSet = $activeTokenSet;
@@ -786,14 +783,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getEmailTheming(): JSONResponse {
-		return new JSONResponse(
-			[
-				'state' => $this->emailThemingService->getState(),
-				'footer' => $this->emailThemingService->getFooterConfig(),
-				'occEnable' => EmailThemingService::OCC_ENABLE_COMMAND,
-				'occDisable' => EmailThemingService::OCC_DISABLE_COMMAND,
-			]
-		);
+		return new JSONResponse($this->emailTheming->read());
 	}//end getEmailTheming()
 
 	/**
@@ -820,55 +810,12 @@ class SettingsController extends Controller {
 		string $accessibilityUrl = '',
 		string $privacyUrl = '',
 	): JSONResponse {
-		try {
-			$this->emailThemingService->setFooterConfig($orgName, $accessibilityUrl, $privacyUrl);
-		} catch (FooterValidationException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'invalid_footer',
-					'field' => $e->getField(),
-					'message' => $e->getMessage(),
-				],
-				422
-			);
-		}
-
-		try {
-			if ($enabled === true) {
-				$this->emailThemingService->enable();
-			}
-
-			if ($enabled === false) {
-				$this->emailThemingService->disable();
-			}
-		} catch (ConfigReadOnlyException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'config_read_only',
-					'occEnable' => $e->getOccEnableCommand(),
-					'occDisable' => $e->getOccDisableCommand(),
-					'footer' => $this->emailThemingService->getFooterConfig(),
-				],
-				409
-			);
-		} catch (ForeignMailTemplateClassException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'foreign_mail_template_class',
-					'class' => $e->getForeignClass(),
-					'footer' => $this->emailThemingService->getFooterConfig(),
-				],
-				409
-			);
-		}//end try
-
-		return new JSONResponse(
-			[
-				'status' => 'ok',
-				'state' => $this->emailThemingService->getState(),
-				'footer' => $this->emailThemingService->getFooterConfig(),
-			]
+		$answer = $this->emailTheming->save(
+			enabled: $enabled,
+			footer: ['orgName' => $orgName, 'accessibilityUrl' => $accessibilityUrl, 'privacyUrl' => $privacyUrl]
 		);
+
+		return new JSONResponse($answer['body'], $answer['status']);
 	}//end setEmailTheming()
 
 	/**

@@ -29,7 +29,7 @@ use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
-use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\GroupThemingService;
@@ -430,7 +430,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			$this->createMock(AppThemingService::class),
 			$this->createMock(ComplianceReportService::class),
 			$this->createMock(ThemingAuditService::class),
-			$this->createMock(EmailThemingService::class),
+			$this->createMock(originalClassName: EmailThemingSettings::class),
 			$this->createMock(UpstreamFreshnessService::class),
 			$this->groupTheming(),
 			$this->createMock(ActiveTokenSetService::class)
