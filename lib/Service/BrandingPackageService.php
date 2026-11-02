@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use RuntimeException;
-use Throwable;
 
 /**
  * Applies a branding package (bundle, fonts, DTCG sources) and writes one.
@@ -50,18 +49,14 @@ class BrandingPackageService {
 	 * @param ConfigBundleService $bundleService The existing bundle import and export.
 	 * @param FontService $fontService Font storage.
 	 * @param FontValidator $fontValidator The upload rules for fonts.
-	 * @param TokenSetConverterService $converter DTCG to token set conversion.
-	 * @param CustomTokenSetService $customSets For the custom set id rules.
-	 * @param DtcgValueChecker $values The value rules the editor and the overrides API apply.
+	 * @param PackageTokenSourceConverter $tokenSources Converts the DTCG sources into bundle custom sets.
 	 */
 	public function __construct(
 		private readonly BrandingPackageReader $reader,
 		private readonly ConfigBundleService $bundleService,
 		private readonly FontService $fontService,
 		private readonly FontValidator $fontValidator,
-		private readonly TokenSetConverterService $converter,
-		private readonly CustomTokenSetService $customSets,
-		private readonly DtcgValueChecker $values,
+		private readonly PackageTokenSourceConverter $tokenSources,
 	) {
 	}//end __construct()
 
@@ -142,7 +137,7 @@ class BrandingPackageService {
 		}
 
 		$errors = [];
-		$bundle = $this->convertTokenSources(package: $package, errors: $errors);
+		$bundle = $this->tokenSources->intoBundle(package: $package, errors: $errors);
 		$fonts = $this->validateFonts(bundle: $bundle, files: $package['fonts'], errors: $errors);
 
 		$check = $this->bundleService->import(bundle: $bundle, dryRun: true);
@@ -191,166 +186,8 @@ class BrandingPackageService {
 	public function readBundle(string $path): array {
 		$errors = [];
 
-		return $this->convertTokenSources(package: $this->reader->read(path: $path), errors: $errors);
+		return $this->tokenSources->intoBundle(package: $this->reader->read(path: $path), errors: $errors);
 	}//end readBundle()
-
-	/**
-	 * Convert every `tokens/<id>.json` and put it in the bundle as the custom set of that id.
-	 *
-	 * @param array<string, mixed> $package The read package.
-	 * @param array<int, array<string, mixed>> $errors Accumulator.
-	 *
-	 * @return array<string, mixed> The bundle with the converted sets.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function convertTokenSources(array $package, array &$errors): array {
-		$bundle = $package['bundle'];
-		$sets = $bundle['customTokenSets'] ?? [];
-		if (is_array($sets) === false) {
-			return $bundle;
-		}
-
-		$sets = array_values($sets);
-		foreach ($package['tokens'] as $id => $content) {
-			$index = $this->findSet(sets: $sets, id: (string)$id);
-			$converted = $this->convertOne(id: (string)$id, content: $content, existing: ($sets[$index] ?? null), errors: $errors);
-			if ($converted === null) {
-				continue;
-			}
-
-			if ($index === null) {
-				$sets[] = $converted;
-				continue;
-			}
-
-			$sets[$index] = $converted;
-		}
-
-		$bundle['customTokenSets'] = $sets;
-
-		return $bundle;
-	}//end convertTokenSources()
-
-	/**
-	 * Convert one DTCG source into a bundle `customTokenSets[]` entry.
-	 *
-	 * @param string $id The custom set id (the file name without `.json`).
-	 * @param string $content The DTCG document.
-	 * @param array<string, mixed>|null $existing The bundle entry of the same id, if any.
-	 * @param array<int, array<string, mixed>> $errors Accumulator.
-	 *
-	 * @return array<string, mixed>|null The entry, or null on failure.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function convertOne(string $id, string $content, ?array $existing, array &$errors): ?array {
-		if ($this->customSets->isCustomId(id: $id) === false) {
-			$errors[] = [
-				'section' => 'tokens',
-				'id' => $id,
-				'message' => 'tokens/' . $id . '.json: the file name must be a custom token set id (custom-<name>).',
-			];
-
-			return null;
-		}
-
-		$invalid = $this->invalidValueErrors(id: $id, content: $content);
-		if ($invalid !== []) {
-			array_push($errors, ...$invalid);
-
-			return null;
-		}
-
-		$slug = substr($id, strlen(CustomTokenSetService::ID_PREFIX));
-		$name = trim((string)($existing['name'] ?? ''));
-		if ($name === '') {
-			$name = $slug;
-		}
-
-		try {
-			$result = $this->converter->convert(
-				content: $content,
-				slug: $slug,
-				displayName: $name,
-				sourceName: $id . '.json',
-				assetName: $id
-			);
-		} catch (Throwable $e) {
-			$errors[] = ['section' => 'tokens', 'id' => $id, 'message' => 'tokens/' . $id . '.json: ' . $e->getMessage()];
-
-			return null;
-		}
-
-		if (trim((string)$result['css']) === '' || $result['errors'] !== []) {
-			$errors[] = ['section' => 'tokens', 'id' => $id, 'message' => 'tokens/' . $id . '.json: the document could not be converted into a token set.'];
-
-			return null;
-		}
-
-		$entry = ($existing ?? []);
-		$entry['id'] = $id;
-		$entry['name'] = $name;
-		$entry['css'] = $result['css'];
-		$entry['theming'] = ($result['manifestEntry']['theming'] ?? ($entry['theming'] ?? []));
-		$entry['importWarnings'] = $result['importWarnings'];
-		if (isset($result['manifestEntry']['upstreamVersion']) === true) {
-			$entry['version'] = $result['manifestEntry']['upstreamVersion'];
-		}
-
-		return $entry;
-	}//end convertOne()
-
-	/**
-	 * One error per DTCG colour token whose value is not a colour.
-	 *
-	 * The same value rules as the editor and the overrides API (#809): a
-	 * colour that is not one would otherwise be served as it is (#941).
-	 *
-	 * @param string $id The custom set id.
-	 * @param string $content The DTCG document.
-	 *
-	 * @return array<int, array{section: string, id: string, message: string}> The errors, naming each token.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function invalidValueErrors(string $id, string $content): array {
-		$decoded = json_decode($content, true);
-		if (is_array($decoded) === false) {
-			return [];
-		}
-
-		$errors = [];
-		foreach ($this->values->findInvalidColours(document: $decoded) as $path => $value) {
-			$errors[] = [
-				'section' => 'tokens',
-				'id' => $id,
-				'message' => 'tokens/' . $id . '.json: ' . $path . ': "' . $value . '" is not a valid color value.',
-			];
-		}
-
-		return $errors;
-	}//end invalidValueErrors()
-
-	/**
-	 * The index of the set with an id in a list of bundle sets.
-	 *
-	 * @param array<int, mixed> $sets The bundle sets.
-	 * @param string $id The id.
-	 *
-	 * @return int|null The index, or null when absent.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function findSet(array $sets, string $id): ?int {
-		foreach ($sets as $index => $set) {
-			if (is_array($set) === true && ($set['id'] ?? null) === $id) {
-				return $index;
-			}
-		}
-
-		return null;
-	}//end findSet()
 
 	/**
 	 * Check every `customFonts` entry against its file in the package.
