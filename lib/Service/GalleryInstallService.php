@@ -86,11 +86,77 @@ class GalleryInstallService {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-updates-are-offered-never-applied
 	 */
 	public function install(string $galleryId): array {
+		$install = $this->prepareInstall(galleryId: $galleryId);
+		$install['wasActive'] = $this->retire(existing: $install['existing']);
+		$stored = $this->storeInstall(install: $install);
+		$this->recordInstall(install: $install, stored: $stored);
+
+		return [
+			'id' => $stored['id'],
+			'updated' => ($install['existing'] !== null),
+			'imported' => (int)($install['prepared']['converted']['imported'] ?? 0),
+			'warnings' => $stored['warnings'],
+		];
+	}//end install()
+
+	/**
+	 * Find the entry, download and check its file, and convert it, before anything is changed.
+	 *
+	 * @param string $galleryId The entry id.
+	 *
+	 * @return array{galleryId: string, entry: array<string, mixed>, existing: array<string, mixed>|null, name: string, prepared: array<string, mixed>}
+	 *
+	 * @throws GalleryException 404 unknown entry, 502 download failed, 422 mismatch or refused by the upload path.
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
+	 */
+	private function prepareInstall(string $galleryId): array {
+		$entry = $this->entryOrFail(galleryId: $galleryId);
+		$content = $this->downloadVerified(entry: $entry);
+		$existing = $this->gallery->installedFor(galleryId: $galleryId);
+		$name = $this->nameFor(entry: $entry, existing: $existing);
+
+		return [
+			'galleryId' => $galleryId,
+			'entry' => $entry,
+			'existing' => $existing,
+			'name' => $name,
+			'prepared' => $this->prepare(name: $name, content: $content, fileUrl: (string)$entry['fileUrl']),
+		];
+	}//end prepareInstall()
+
+	/**
+	 * The gallery entry of this id.
+	 *
+	 * @param string $galleryId The entry id.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @throws GalleryException 404 when the gallery has no such entry.
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
+	 */
+	private function entryOrFail(string $galleryId): array {
 		$entry = $this->gallery->findEntry(galleryId: $galleryId);
 		if ($entry === null) {
 			throw new GalleryException(message: $this->l10n->t('This house style is not in the gallery.'), code: 404);
 		}
 
+		return $entry;
+	}//end entryOrFail()
+
+	/**
+	 * Download an entry's file and check it against the checksum the gallery index gives.
+	 *
+	 * @param array<string, mixed> $entry The gallery entry.
+	 *
+	 * @return string The file content.
+	 *
+	 * @throws GalleryException 502 download failed, 422 too large or mismatch.
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
+	 */
+	private function downloadVerified(array $entry): string {
 		$content = $this->download(url: (string)$entry['fileUrl']);
 		if (hash_equals((string)$entry['sha256'], hash('sha256', $content)) === false) {
 			throw new GalleryException(
@@ -99,68 +165,145 @@ class GalleryInstallService {
 			);
 		}
 
-		$existing = $this->gallery->installedFor(galleryId: $galleryId);
+		return $content;
+	}//end downloadVerified()
+
+	/**
+	 * The name the set is stored under: the installed set's own name on an update, else the entry's.
+	 *
+	 * @param array<string, mixed> $entry The gallery entry.
+	 * @param array<string, mixed>|null $existing The installed set, if any.
+	 *
+	 * @return string
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-updates-are-offered-never-applied
+	 */
+	private function nameFor(array $entry, ?array $existing): string {
 		$name = (string)$entry['name'];
 		if ($existing !== null) {
 			$name = (string)($existing['name'] ?? $name);
 		}
 
-		$prepared = $this->prepare(name: $name, content: $content, fileUrl: (string)$entry['fileUrl']);
+		return $name;
+	}//end nameFor()
 
-		$wasActive = false;
-		if ($existing !== null) {
-			$wasActive = ($this->config->getAppValue(Application::APP_ID, 'token_set', '') === $existing['id']);
-			$this->customSets->delete(id: (string)$existing['id']);
+	/**
+	 * Delete the installed set an update replaces.
+	 *
+	 * @param array<string, mixed>|null $existing The installed set, if any.
+	 *
+	 * @return bool Whether it was the active token set.
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-updates-are-offered-never-applied
+	 */
+	private function retire(?array $existing): bool {
+		if ($existing === null) {
+			return false;
 		}
 
+		$wasActive = ($this->config->getAppValue(Application::APP_ID, 'token_set', '') === $existing['id']);
+		$this->customSets->delete(id: (string)$existing['id']);
+
+		return $wasActive;
+	}//end retire()
+
+	/**
+	 * Store the converted set through the upload path.
+	 *
+	 * @param array<string, mixed> $install The prepared install.
+	 *
+	 * @return array{id: string, warnings: array<int, array<string, mixed>>}
+	 *
+	 * @throws GalleryException 422 when the upload path refuses the set.
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
+	 */
+	private function storeInstall(array $install): array {
 		try {
-			$stored = $this->customSets->store(
-				displayName: $name,
-				description: (string)$entry['description'],
-				declarations: $prepared['accepted'],
-				version: ($prepared['converted']['manifestEntry']['upstreamVersion'] ?? null),
-				importWarnings: ($prepared['converted']['importWarnings'] ?? []),
-				css: $prepared['converted']['css'],
-				theming: ($prepared['converted']['manifestEntry']['theming'] ?? []),
-				logoAsset: ($prepared['converted']['logoAsset'] ?? null)
-			);
+			return $this->customSets->store(...$this->storeArguments(install: $install));
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $e->getMessage(), code: 422, previous: $e);
 		}
+	}//end storeInstall()
 
-		$this->recordProvenance(
-			id: $stored['id'],
-			provenance: [
-				'galleryId' => $galleryId,
-				'sourceUrl' => (string)$entry['sourceUrl'],
-				'licence' => (string)$entry['licence'],
-				'sha256' => (string)$entry['sha256'],
-				'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime()),
-			]
-		);
+	/**
+	 * The named arguments {@see CustomTokenSetService::store()} gets for a prepared install.
+	 *
+	 * @param array<string, mixed> $install The prepared install.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function storeArguments(array $install): array {
+		$converted = $install['prepared']['converted'];
 
-		if ($wasActive === true) {
+		return [
+			'displayName' => $install['name'],
+			'description' => (string)$install['entry']['description'],
+			'declarations' => $install['prepared']['accepted'],
+			'version' => ($converted['manifestEntry']['upstreamVersion'] ?? null),
+			'importWarnings' => ($converted['importWarnings'] ?? []),
+			'css' => $converted['css'],
+			'theming' => ($converted['manifestEntry']['theming'] ?? []),
+			'logoAsset' => ($converted['logoAsset'] ?? null),
+		];
+	}//end storeArguments()
+
+	/**
+	 * Record where the stored set came from, make it active again on an update of the active set, and audit it.
+	 *
+	 * @param array<string, mixed> $install The prepared install.
+	 * @param array{id: string, warnings: array<int, array<string, mixed>>} $stored The stored set.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
+	 */
+	private function recordInstall(array $install, array $stored): void {
+		$this->recordProvenance(id: $stored['id'], provenance: $this->provenanceOf(install: $install));
+
+		if ($install['wasActive'] === true) {
 			$this->config->setAppValue(Application::APP_ID, 'token_set', $stored['id']);
 		}
 
-		$this->audit->log(
-			action: 'custom_set_uploaded',
-			context: [
-				'id' => $stored['id'],
-				'name' => $name,
-				'galleryId' => $galleryId,
-				'declarationCount' => (int)($prepared['converted']['imported'] ?? 0),
-				'contentHash' => 'sha256:' . substr((string)$entry['sha256'], 0, 12),
-			]
-		);
+		$this->audit->log(action: 'custom_set_uploaded', context: $this->auditContext(install: $install, id: $stored['id']));
+	}//end recordInstall()
+
+	/**
+	 * Where an installed set came from: gallery id, source, licence, checksum and install date.
+	 *
+	 * @param array<string, mixed> $install The prepared install.
+	 *
+	 * @return array<string, string>
+	 */
+	private function provenanceOf(array $install): array {
+		$entry = $install['entry'];
 
 		return [
-			'id' => $stored['id'],
-			'updated' => ($existing !== null),
-			'imported' => (int)($prepared['converted']['imported'] ?? 0),
-			'warnings' => $stored['warnings'],
+			'galleryId' => $install['galleryId'],
+			'sourceUrl' => (string)$entry['sourceUrl'],
+			'licence' => (string)$entry['licence'],
+			'sha256' => (string)$entry['sha256'],
+			'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime()),
 		];
-	}//end install()
+	}//end provenanceOf()
+
+	/**
+	 * What the audit log records about an install.
+	 *
+	 * @param array<string, mixed> $install The prepared install.
+	 * @param string $id The stored set id.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function auditContext(array $install, string $id): array {
+		return [
+			'id' => $id,
+			'name' => $install['name'],
+			'galleryId' => $install['galleryId'],
+			'declarationCount' => (int)($install['prepared']['converted']['imported'] ?? 0),
+			'contentHash' => 'sha256:' . substr((string)$install['entry']['sha256'], 0, 12),
+		];
+	}//end auditContext()
 
 	/**
 	 * Add where the set came from to its manifest entry, which the custom token sets list shows.
