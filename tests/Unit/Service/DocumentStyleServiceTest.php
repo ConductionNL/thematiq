@@ -27,6 +27,8 @@ use OCA\Thematiq\Controller\DocumentStyleController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Service\DocumentBrandAssets;
+use OCA\Thematiq\Service\DocumentSetSources;
 use OCA\Thematiq\Service\DocumentStyleService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
@@ -186,15 +188,19 @@ class DocumentStyleServiceTest extends TestCase {
 		$urls->method('imagePath')->willReturnCallback(fn (string $app, string $file): string => '/apps/' . $app . '/img/' . $file);
 
 		return new DocumentStyleService(
-			$resolver,
-			$tokenSets,
-			new TokenSetPreviewService($tokenApp),
-			new DesignSystemService($repo, $this->config()),
-			$fonts,
-			$email,
-			$this->assets(),
-			new ContrastService(),
-			$urls
+			setSources: new DocumentSetSources(
+				resolver: $resolver,
+				tokenSets: $tokenSets,
+				preview: new TokenSetPreviewService($tokenApp),
+				designSystem: new DesignSystemService($repo, $this->config())
+			),
+			brandAssets: new DocumentBrandAssets(
+				fonts: $fonts,
+				emailTheming: $email,
+				assets: $this->assets(),
+				urls: $urls
+			),
+			contrast: new ContrastService()
 		);
 	}//end service()
 

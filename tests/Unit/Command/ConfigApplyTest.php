@@ -17,7 +17,10 @@ use OCA\Thematiq\Command\ConfigApply;
 use OCA\Thematiq\Service\BrandingPackageReader;
 use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigSourceClock;
+use OCA\Thematiq\Service\ConfigSourceLock;
 use OCA\Thematiq\Service\ConfigSourceService;
+use OCA\Thematiq\Service\ConfigSourceSteps;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
@@ -158,15 +161,21 @@ class ConfigApplyTest extends TestCase {
 		$time->method('getTime')->willReturn(1790000000);
 
 		$source = new ConfigSourceService(
-			$config,
-			new BrandingPackageReader(),
-			$packages,
-			$bundles,
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(ILockingProvider::class),
-			$time,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(IAppConfig::class)
+			config: $config,
+			steps: new ConfigSourceSteps(
+				reader: new BrandingPackageReader(),
+				packageService: $packages,
+				bundleService: $bundles,
+				audit: $this->createMock(ThemingAuditService::class)
+			),
+			lock: new ConfigSourceLock(
+				locking: $this->createMock(ILockingProvider::class),
+				appConfig: $this->createMock(IAppConfig::class)
+			),
+			clock: new ConfigSourceClock(
+				time: $time,
+				logger: $this->createMock(LoggerInterface::class)
+			)
 		);
 
 		$tester = new CommandTester(new ConfigApply($source));

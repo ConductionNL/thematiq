@@ -21,12 +21,9 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -99,27 +96,15 @@ class ConfigSourceService {
 	 * Constructor.
 	 *
 	 * @param IConfig $config System and app config.
-	 * @param BrandingPackageReader $reader Hashes the package.
-	 * @param BrandingPackageService $packageService Applies the package.
-	 * @param ConfigBundleService $bundleService Exports the running configuration, for drift.
-	 * @param ThemingAuditService $audit The audit log.
-	 * @param ILockingProvider $locking The Nextcloud lock.
-	 * @param ITimeFactory $time The clock.
-	 * @param LoggerInterface $logger The logger.
-	 * @param IAppConfig $appConfig Re-read under the lock, for what another replica applied.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator is one step of an apply.
+	 * @param ConfigSourceSteps $steps The package reader, the package service, the bundle service and the audit log.
+	 * @param ConfigSourceLock $lock The locking provider and the app config.
+	 * @param ConfigSourceClock $clock The clock and the logger.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
-		private readonly BrandingPackageReader $reader,
-		private readonly BrandingPackageService $packageService,
-		private readonly ConfigBundleService $bundleService,
-		private readonly ThemingAuditService $audit,
-		private readonly ILockingProvider $locking,
-		private readonly ITimeFactory $time,
-		private readonly LoggerInterface $logger,
-		private readonly IAppConfig $appConfig,
+		private readonly ConfigSourceSteps $steps,
+		private readonly ConfigSourceLock $lock,
+		private readonly ConfigSourceClock $clock,
 	) {
 	}//end __construct()
 
@@ -169,7 +154,7 @@ class ConfigSourceService {
 		}
 
 		try {
-			$hash = $this->reader->hash(path: $path);
+			$hash = $this->steps->reader->hash(path: $path);
 		} catch (RuntimeException $e) {
 			return $this->fail(errors: [['section' => 'package', 'message' => $e->getMessage()]], hash: 'unreadable:' . $path);
 		}
@@ -180,7 +165,7 @@ class ConfigSourceService {
 		}
 
 		try {
-			$this->locking->acquireLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
+			$this->lock->locking->acquireLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
 		} catch (LockedException $e) {
 			return ['status' => 'busy'];
 		}
@@ -190,14 +175,14 @@ class ConfigSourceService {
 			// another one was applying this package would apply it a second
 			// time, with a second `config_imported` entry and version. The
 			// cached app config of this request predates that apply.
-			$this->appConfig->clearCache();
+			$this->lock->appConfig->clearCache();
 			if ($force === false && $hash === $this->getApp(key: self::KEY_HASH)) {
 				return ['status' => 'unchanged', 'hash' => $hash];
 			}
 
 			return $this->apply(path: $path, hash: $hash);
 		} finally {
-			$this->locking->releaseLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
+			$this->lock->locking->releaseLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
 		}
 	}//end applyIfChanged()
 
@@ -248,7 +233,7 @@ class ConfigSourceService {
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
 	private function apply(string $path, string $hash): array {
-		$result = $this->packageService->import(path: $path);
+		$result = $this->steps->packageService->import(path: $path);
 		if ($result['valid'] === false) {
 			return $this->fail(errors: $result['errors'], hash: $hash);
 		}
@@ -256,11 +241,11 @@ class ConfigSourceService {
 		$revision = (string)($result['revision'] ?? '');
 		$this->setApp(key: self::KEY_HASH, value: $hash);
 		$this->setApp(key: self::KEY_REVISION, value: $revision);
-		$this->setApp(key: self::KEY_APPLIED_AT, value: (string)$this->time->getTime());
+		$this->setApp(key: self::KEY_APPLIED_AT, value: (string)$this->clock->time->getTime());
 		$this->setApp(key: self::KEY_STATE, value: $this->stateFingerprint());
 		$this->config->deleteAppValue(Application::APP_ID, self::KEY_ERROR);
 
-		$this->audit->log(
+		$this->steps->audit->log(
 			action: 'config_imported',
 			context: [
 				'actor' => 'system',
@@ -269,7 +254,7 @@ class ConfigSourceService {
 				'hash' => $hash,
 			]
 		);
-		$this->logger->info('thematiq: applied the branding package from ' . $path . ' (' . ($this->nullIfEmpty(value: $revision) ?? $hash) . ').');
+		$this->clock->logger->info('thematiq: applied the branding package from ' . $path . ' (' . ($this->nullIfEmpty(value: $revision) ?? $hash) . ').');
 
 		return ['status' => 'applied', 'revision' => $this->nullIfEmpty(value: $revision), 'hash' => $hash];
 	}//end apply()
@@ -305,10 +290,10 @@ class ConfigSourceService {
 		$previous = json_decode($this->getApp(key: self::KEY_ERROR), true);
 		if (is_array($previous) === false || ($previous['hash'] ?? null) !== $hash) {
 			$messages = array_map(static fn (array $error): string => (string)($error['message'] ?? ''), $errors);
-			$this->logger->error('thematiq: the branding package was not applied, nothing changed: ' . implode(' ', $messages));
+			$this->clock->logger->error('thematiq: the branding package was not applied, nothing changed: ' . implode(' ', $messages));
 			$this->setApp(
 				key: self::KEY_ERROR,
-				value: (string)json_encode(['hash' => $hash, 'at' => gmdate('c', $this->time->getTime()), 'errors' => $errors], JSON_UNESCAPED_SLASHES)
+				value: (string)json_encode(['hash' => $hash, 'at' => gmdate('c', $this->clock->time->getTime()), 'errors' => $errors], JSON_UNESCAPED_SLASHES)
 			);
 		}
 
@@ -343,7 +328,7 @@ class ConfigSourceService {
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
 	private function stateFingerprint(): string {
-		$state = $this->bundleService->export();
+		$state = $this->steps->bundleService->export();
 		unset($state['exportedAt'], $state['app']);
 
 		$fonts = [];
