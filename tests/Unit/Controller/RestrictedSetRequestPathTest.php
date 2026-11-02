@@ -32,10 +32,13 @@ use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ColourFunctionEvaluator;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigSourceClock;
+use OCA\Thematiq\Service\ConfigSourceLock;
 use OCA\Thematiq\Service\ConfigSourceService;
+use OCA\Thematiq\Service\ConfigSourceSteps;
 use OCA\Thematiq\Service\CustomOverridesService;
-use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
+use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DenhaagContrastPairs;
 use OCA\Thematiq\Service\DeprecationRecords;
@@ -62,8 +65,10 @@ use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
+use OCA\Thematiq\Service\ScheduledSwitchRuntime;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
+use OCA\Thematiq\Service\ScheduledSwitchTargets;
 use OCA\Thematiq\Service\SettableContrastPairs;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\ThemePreviewService;
@@ -125,6 +130,8 @@ use ReflectionProperty;
 #[UsesClass(GroupDelegationRules::class)]
 #[UsesClass(ThemePreviewService::class)]
 #[UsesClass(ScheduledSwitchService::class)]
+#[UsesClass(ScheduledSwitchRuntime::class)]
+#[UsesClass(ScheduledSwitchTargets::class)]
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(TokenSetLicenceService::class)]
 #[UsesClass(TokenSetService::class)]
@@ -146,6 +153,9 @@ use ReflectionProperty;
 #[UsesClass(ColourFunctionEvaluator::class)]
 #[UsesClass(ConfigBundleService::class)]
 #[UsesClass(ConfigSourceService::class)]
+#[UsesClass(ConfigSourceClock::class)]
+#[UsesClass(ConfigSourceLock::class)]
+#[UsesClass(ConfigSourceSteps::class)]
 #[UsesClass(CustomOverridesService::class)]
 #[UsesClass(CustomTokenSetService::class)]
 #[UsesClass(CustomTokenSetsBundleSection::class)]
@@ -346,15 +356,19 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
 		$service = new ScheduledSwitchService(
-			new ScheduledSwitchStore($this->config),
-			new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
-			$this->tokenSets,
-			$this->createMock(ScheduledCoreThemingSync::class),
-			$audit,
-			$this->config,
-			$time,
-			$l10n,
-			$this->createMock(LoggerInterface::class)
+			store: new ScheduledSwitchStore($this->config),
+			targets: new ScheduledSwitchTargets(
+				activeTokenSet: new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
+				tokenSets: $this->tokenSets,
+				coreSync: $this->createMock(ScheduledCoreThemingSync::class)
+			),
+			runtime: new ScheduledSwitchRuntime(
+				auditService: $audit,
+				config: $this->config,
+				time: $time,
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			l10n: $l10n
 		);
 		$controller = new ScheduledSwitchController('thematiq', $this->request, $service, Server::get(IUserSession::class));
 		$plan = ['tokenSet' => 'owned', 'startAt' => '2026-10-13T09:00:00+00:00'];

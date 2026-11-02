@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\IConfig;
 use RuntimeException;
 
 /**
@@ -54,26 +53,14 @@ class MultiBrandImportService {
 	/**
 	 * Constructor.
 	 *
-	 * @param MultiBrandSource $source Finds and cuts brands.
-	 * @param TokenSetConverterService $converter Converts one brand.
-	 * @param CustomTokenSetValidator $validator Judges the converted file.
-	 * @param CustomTokenSetService $customSets Stores and replaces sets.
-	 * @param CssParserService $cssParser Reads the converted file.
-	 * @param ContrastService $contrast Contrast warnings on update.
-	 * @param DarkPaletteService $darkPalette Dark variants on update.
-	 * @param IConfig $config The source records.
-	 * @param ThemingAuditService $audit The audit trail.
+	 * @param BrandConversion $conversion The brand source, the converter, the CSS whitelist and the CSS parser.
+	 * @param BrandSetStorage $storage Custom set storage, the contrast maths and the dark palette.
+	 * @param BrandImportRecords $records The app config and the audit trail.
 	 */
 	public function __construct(
-		private readonly MultiBrandSource $source,
-		private readonly TokenSetConverterService $converter,
-		private readonly CustomTokenSetValidator $validator,
-		private readonly CustomTokenSetService $customSets,
-		private readonly CssParserService $cssParser,
-		private readonly ContrastService $contrast,
-		private readonly DarkPaletteService $darkPalette,
-		private readonly IConfig $config,
-		private readonly ThemingAuditService $audit,
+		private readonly BrandConversion $conversion,
+		private readonly BrandSetStorage $storage,
+		private readonly BrandImportRecords $records,
 	) {
 	}//end __construct()
 
@@ -87,7 +74,7 @@ class MultiBrandImportService {
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	public function brands(string $content): array {
-		return $this->source->detectBrands(content: $content);
+		return $this->conversion->source->detectBrands(content: $content);
 	}//end brands()
 
 	/**
@@ -109,7 +96,7 @@ class MultiBrandImportService {
 		$detected = array_column($this->brands(content: $content), null, 'key');
 		$keys = $this->checkedKeys(keys: $keys, detected: array_keys($detected));
 
-		$sourceId = $this->customSets->slugify(name: $sourceName);
+		$sourceId = $this->storage->customSets->slugify(name: $sourceName);
 		if ($sourceId === '' || isset($this->records()[$sourceId]) === true) {
 			throw new RuntimeException('A source named "' . $sourceName . '" already exists. Update it instead.', 409);
 		}
@@ -117,8 +104,8 @@ class MultiBrandImportService {
 		$plans = [];
 		foreach ($keys as $key) {
 			$displayName = $sourceName . ': ' . (string)$detected[$key]['name'];
-			$id = CustomTokenSetService::ID_PREFIX . $this->customSets->slugify(name: $displayName);
-			if (isset($this->customSets->getManifest()[$id]) === true || $this->customSets->getRawContent(id: $id) !== null) {
+			$id = CustomTokenSetService::ID_PREFIX . $this->storage->customSets->slugify(name: $displayName);
+			if (isset($this->storage->customSets->getManifest()[$id]) === true || $this->storage->customSets->getRawContent(id: $id) !== null) {
 				throw new RuntimeException('The brand "' . $detected[$key]['name'] . '" would replace the existing set ' . $id . '.', 409);
 			}
 
@@ -193,16 +180,16 @@ class MultiBrandImportService {
 		$present = array_intersect_key($listed, $detected);
 		$plans = [];
 		foreach ($present as $key => $id) {
-			$manifest = ($this->customSets->getManifest()[$id] ?? ['name' => $id]);
+			$manifest = ($this->storage->customSets->getManifest()[$id] ?? ['name' => $id]);
 			$converted = $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
 			$plans[$key] = ['id' => $id, 'entry' => $manifest] + $converted;
 		}
 
 		foreach ($plans as $plan) {
 			$entry = $plan['entry'];
-			$entry['warnings'] = $this->contrast->check(declarations: $plan['accepted']);
+			$entry['warnings'] = $this->storage->contrast->check(declarations: $plan['accepted']);
 			$entry['theming'] = array_merge((array)($entry['theming'] ?? []), $plan['theming']);
-			$this->customSets->replace(id: $plan['id'], entry: $entry, css: $plan['css']);
+			$this->storage->customSets->replace(id: $plan['id'], entry: $entry, css: $plan['css']);
 			$this->regenerateDark(id: $plan['id']);
 		}
 
@@ -217,7 +204,7 @@ class MultiBrandImportService {
 		$records[$sourceId]['updatedAt'] = gmdate(DATE_ATOM);
 		$this->saveRecords(records: $records);
 
-		$this->audit->log(
+		$this->records->audit->log(
 			action: 'custom_source_updated',
 			context: ['sourceId' => $sourceId, 'old' => $oldHash, 'new' => $records[$sourceId]['contentHash']] + $result
 		);
@@ -261,7 +248,7 @@ class MultiBrandImportService {
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-a-brand-is-a-custom-token-set-linked-to-its-source
 	 */
 	public function records(): array {
-		$decoded = json_decode($this->config->getAppValue(Application::APP_ID, self::SOURCES_KEY, '{}'), true);
+		$decoded = json_decode($this->records->config->getAppValue(Application::APP_ID, self::SOURCES_KEY, '{}'), true);
 
 		if (is_array($decoded) === false) {
 			return [];
@@ -283,10 +270,10 @@ class MultiBrandImportService {
 	 * @throws RuntimeException 422 naming the brand.
 	 */
 	private function convertBrand(string $content, string $key, string $displayName, ?string $fileName): array {
-		$slug = $this->customSets->slugify(name: $displayName);
-		$cut = $this->source->cut(content: $content, key: $key);
+		$slug = $this->storage->customSets->slugify(name: $displayName);
+		$cut = $this->conversion->source->cut(content: $content, key: $key);
 		try {
-			$converted = $this->converter->convert(
+			$converted = $this->conversion->converter->convert(
 				content: $cut['content'],
 				slug: $slug,
 				displayName: $displayName,
@@ -298,9 +285,10 @@ class MultiBrandImportService {
 			throw new RuntimeException('Brand "' . $key . '": ' . $e->getMessage(), 422);
 		}
 
-		$split = $this->validator->validateDeclarations(declarations: $this->cssParser->parseRootBlock(css: (string)$converted['css']), slug: $slug);
+		$declarations = $this->conversion->cssParser->parseRootBlock(css: (string)$converted['css']);
+		$split = $this->conversion->validator->validateDeclarations(declarations: $declarations, slug: $slug);
 		if ($split === null || (string)$converted['css'] === '') {
-			$error = $this->validator->getLastError();
+			$error = $this->conversion->validator->getLastError();
 			throw new RuntimeException('Brand "' . $key . '": ' . (string)($error['message'] ?? 'nothing in it maps onto a Nextcloud token.'), 422);
 		}
 
@@ -324,7 +312,7 @@ class MultiBrandImportService {
 	 * @return array<string, mixed> The brand key, the set id and the warnings.
 	 */
 	private function storeBrand(string $sourceId, string $key, array $plan, ?string $fileName): array {
-		$result = $this->customSets->store(
+		$result = $this->storage->customSets->store(
 			displayName: $plan['displayName'],
 			description: '',
 			declarations: $plan['accepted'],
@@ -332,11 +320,11 @@ class MultiBrandImportService {
 			theming: $plan['theming']
 		);
 
-		$entry = ($this->customSets->getManifest()[$result['id']] ?? []);
+		$entry = ($this->storage->customSets->getManifest()[$result['id']] ?? []);
 		$entry['source'] = ['id' => $sourceId, 'brand' => $key];
-		$this->customSets->replace(id: $result['id'], entry: $entry, css: $plan['css']);
+		$this->storage->customSets->replace(id: $result['id'], entry: $entry, css: $plan['css']);
 
-		$this->audit->log(
+		$this->records->audit->log(
 			action: 'custom_set_uploaded',
 			context: [
 				'id' => $result['id'],
@@ -360,7 +348,7 @@ class MultiBrandImportService {
 	 */
 	private function regenerateDark(string $id): void {
 		try {
-			$this->darkPalette->generateAndWrite(setId: $id, force: true);
+			$this->storage->darkPalette->generateAndWrite(setId: $id, force: true);
 		} catch (\Throwable) {
 			// Presentation, not a hard dependency: see openspec/specs/dark-mode/spec.md.
 			return;
@@ -387,6 +375,6 @@ class MultiBrandImportService {
 	 */
 	private function saveRecords(array $records): void {
 		ksort($records);
-		$this->config->setAppValue(Application::APP_ID, self::SOURCES_KEY, (string)json_encode($records, JSON_UNESCAPED_SLASHES));
+		$this->records->config->setAppValue(Application::APP_ID, self::SOURCES_KEY, (string)json_encode($records, JSON_UNESCAPED_SLASHES));
 	}//end saveRecords()
 }//end class

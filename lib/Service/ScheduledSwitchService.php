@@ -24,10 +24,7 @@ use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
 use OCP\IL10N;
-use Psr\Log\LoggerInterface;
 
 /**
  * Plans, applies, reverts and cancels timed token set switches.
@@ -78,25 +75,15 @@ class ScheduledSwitchService {
 	 * Constructor.
 	 *
 	 * @param ScheduledSwitchStore $store The stored plans.
-	 * @param ActiveTokenSetService $activeTokenSet The one token set write path.
-	 * @param TokenSetService $tokenSets Validates a set on planning.
-	 * @param ScheduledCoreThemingSync $coreSync Syncs core logo and colours with every switch.
-	 * @param ThemingAuditService $auditService Records a failed switch.
-	 * @param IConfig $config Last run and cron mode.
-	 * @param ITimeFactory $time The clock.
+	 * @param ScheduledSwitchTargets $targets The active token set, the set list and the core theming sync.
+	 * @param ScheduledSwitchRuntime $runtime The audit trail, the config, the clock and the logger.
 	 * @param IL10N $l10n The translator.
-	 * @param LoggerInterface $logger The logger.
 	 */
 	public function __construct(
 		private readonly ScheduledSwitchStore $store,
-		private readonly ActiveTokenSetService $activeTokenSet,
-		private readonly TokenSetService $tokenSets,
-		private readonly ScheduledCoreThemingSync $coreSync,
-		private readonly ThemingAuditService $auditService,
-		private readonly IConfig $config,
-		private readonly ITimeFactory $time,
+		private readonly ScheduledSwitchTargets $targets,
+		private readonly ScheduledSwitchRuntime $runtime,
 		private readonly IL10N $l10n,
-		private readonly LoggerInterface $logger,
 	) {
 	}//end __construct()
 
@@ -131,12 +118,12 @@ class ScheduledSwitchService {
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
 	public function create(string $tokenSet, string $startAt, ?string $endAt, string $createdBy): array {
-		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
+		if ($this->targets->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
 
 		// A restricted set nobody confirmed is refused here too; the controller answers 403.
-		$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
+		$this->targets->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
 
 		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
 
@@ -193,7 +180,7 @@ class ScheduledSwitchService {
 		// A window that is already over would be applied and reverted on the
 		// next run: a core theming reset, two audit entries and two versions
 		// for a switch nobody sees.
-		if ($this->store->hasEnded(end: $end, now: $this->time->getTime()) === true) {
+		if ($this->store->hasEnded(end: $end, now: $this->runtime->time->getTime()) === true) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be in the future.'));
 		}
 
@@ -244,7 +231,7 @@ class ScheduledSwitchService {
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-app-applies-a-due-switch-and-switches-back
 	 */
 	public function runDue(): void {
-		$now = $this->time->getTime();
+		$now = $this->runtime->time->getTime();
 		$entries = array_values($this->store->all());
 
 		// Ends before starts, in due order, not stored order (#825).
@@ -259,7 +246,7 @@ class ScheduledSwitchService {
 		$kept = array_values(array_filter($advanced, fn (?array $entry): bool => $entry !== null));
 
 		$this->store->save(entries: $kept);
-		$this->config->setAppValue(Application::APP_ID, self::LAST_RUN_KEY, $this->nowIso());
+		$this->runtime->config->setAppValue(Application::APP_ID, self::LAST_RUN_KEY, $this->nowIso());
 	}//end runDue()
 
 	/**
@@ -281,15 +268,15 @@ class ScheduledSwitchService {
 			}
 		}
 
-		$lastRun = $this->config->getAppValue(Application::APP_ID, self::LAST_RUN_KEY, '');
+		$lastRun = $this->runtime->config->getAppValue(Application::APP_ID, self::LAST_RUN_KEY, '');
 		if ($lastRun === '') {
 			$lastRun = null;
 		}
 
-		$cronMode = $this->config->getAppValue('core', 'backgroundjobs_mode', 'ajax');
+		$cronMode = $this->runtime->config->getAppValue('core', 'backgroundjobs_mode', 'ajax');
 
 		return [
-			'activeTokenSet' => $this->activeTokenSet->getActive(),
+			'activeTokenSet' => $this->targets->activeTokenSet->getActive(),
 			'runningTokenSet' => $runningTokenSet,
 			'activeUntil' => $activeUntil,
 			'revertTo' => $revertTo,
@@ -357,14 +344,14 @@ class ScheduledSwitchService {
 	 */
 	private function keepApplied(array $entry): array {
 		$tokenSet = (string)$entry['tokenSet'];
-		if ($this->activeTokenSet->getActive() === $tokenSet) {
+		if ($this->targets->activeTokenSet->getActive() === $tokenSet) {
 			return $entry;
 		}
 
 		try {
 			$this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true]);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->warning(
+			$this->runtime->logger->warning(
 				'thematiq: running switch {id} could not keep {set} active: the set does not exist',
 				['id' => $entry['id'], 'set' => $tokenSet]
 			);
@@ -388,9 +375,9 @@ class ScheduledSwitchService {
 		$tokenSet = (string)$entry['tokenSet'];
 		if ($entry['endAt'] !== null
 			&& $this->changesCoreTheming(entry: $entry) === true
-			&& $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true
+			&& $this->targets->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true
 		) {
-			$this->coreSync->snapshot(switchId: (string)$entry['id']);
+			$this->targets->coreSync->snapshot(switchId: (string)$entry['id']);
 			$entry['coreSnapshot'] = true;
 		}
 
@@ -399,13 +386,13 @@ class ScheduledSwitchService {
 		} catch (\InvalidArgumentException $e) {
 			$reason = $this->l10n->t(self::START_REFUSALS[(int)($e instanceof RestrictedSetNotConfirmedException)], ['set' => $tokenSet]);
 
-			$this->logger->warning(
+			$this->runtime->logger->warning(
 				'thematiq: planned switch {id} to {set} failed: {why}',
 				['id' => $entry['id'], 'set' => $tokenSet, 'why' => $e->getMessage()]
 			);
-			$this->auditService->log(
+			$this->runtime->auditService->log(
 				action: self::AUDIT_ACTION,
-				context: ['old' => $this->activeTokenSet->getActive(), 'new' => null, 'actor' => 'system', 'switchId' => $entry['id'], 'reason' => $reason]
+				context: ['old' => $this->targets->activeTokenSet->getActive(), 'new' => null, 'actor' => 'system', 'switchId' => $entry['id'], 'reason' => $reason]
 			);
 			$entry['status'] = 'failed';
 			$entry['failureReason'] = $reason;
@@ -437,15 +424,15 @@ class ScheduledSwitchService {
 		$revertTo = (string)($entry['revertTo'] ?? '');
 		$context = ['actor' => 'system', 'switchId' => $entry['id']];
 		if (($entry['coreSnapshot'] ?? false) === true) {
-			$context['coreThemingRestored'] = $this->coreSync->restore(switchId: (string)$entry['id']);
+			$context['coreThemingRestored'] = $this->targets->coreSync->restore(switchId: (string)$entry['id']);
 		} elseif (($entry['syncCoreTheming'] ?? false) === true) {
-			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $revertTo);
+			$context['coreThemingSynced'] = $this->targets->coreSync->sync(tokenSetId: $revertTo);
 		}
 
 		try {
-			$this->activeTokenSet->switchTo(tokenSet: $revertTo, auditAction: self::AUDIT_ACTION, auditContext: $context);
+			$this->targets->activeTokenSet->switchTo(tokenSet: $revertTo, auditAction: self::AUDIT_ACTION, auditContext: $context);
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->warning('thematiq: planned switch {id} could not go back to {set}', ['id' => $entry['id'], 'set' => $revertTo]);
+			$this->runtime->logger->warning('thematiq: planned switch {id} could not go back to {set}', ['id' => $entry['id'], 'set' => $revertTo]);
 			return false;
 		}
 
@@ -476,10 +463,10 @@ class ScheduledSwitchService {
 		if ($this->changesCoreTheming(entry: $entry) === true) {
 			// A set that no longer exists has no theming block, so this writes
 			// nothing, and switchTo() below refuses it.
-			$context['coreThemingSynced'] = $this->coreSync->sync(tokenSetId: $tokenSet);
+			$context['coreThemingSynced'] = $this->targets->coreSync->sync(tokenSetId: $tokenSet);
 		}
 
-		return $this->activeTokenSet->switchTo(tokenSet: $tokenSet, auditAction: self::AUDIT_ACTION, auditContext: $context);
+		return $this->targets->activeTokenSet->switchTo(tokenSet: $tokenSet, auditAction: self::AUDIT_ACTION, auditContext: $context);
 	}//end applySet()
 
 	/**
@@ -505,6 +492,6 @@ class ScheduledSwitchService {
 	 * @return string The time.
 	 */
 	private function nowIso(): string {
-		return gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime());
+		return gmdate('Y-m-d\TH:i:s\Z', $this->runtime->time->getTime());
 	}//end nowIso()
 }//end class
