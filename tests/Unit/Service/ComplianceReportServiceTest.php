@@ -262,6 +262,7 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$customTokenSetService = $this->createMock(CustomTokenSetService::class);
 		$customTokenSetService->method('getManifest')->willReturnCallback(fn () => $this->customManifest);
+		$customTokenSetService->method('getRawContent')->willReturnMap(valueMap: [['custom-foo', ":root {\n  --nldesign-color-text: #222222;\n}\n"]]);
 
 		return new ComplianceReportService(
 			measuring: new ContrastTools(contrast: new ContrastService(), cssParser: new CssParserService()),
@@ -516,6 +517,21 @@ class ComplianceReportServiceTest extends TestCase {
 		// "nldesign", matching Application::injectThemeCSS()'s own default.
 		$this->assertSame('nldesign', $data['metadata']['designSystem']);
 	}//end testCustomSetManifestVersionIsUsedWhenPresent()
+
+	/**
+	 * An uploaded set's colours are read from its stored file, which wins over the design system defaults.
+	 *
+	 * @return void
+	 */
+	public function testUploadedSetColoursComeFromItsStoredFile(): void {
+		$this->activeTokenSetId = 'custom-foo';
+		$this->tokenSetMeta = [];
+		$this->customManifest = ['custom-foo' => ['name' => 'Custom Foo', 'theming' => ['background_color' => '#ffffff']]];
+
+		$pair = $this->findPair(pairs: $this->service->generate()['pairs'], foreground: '--color-main-text');
+
+		$this->assertSame(expected: '#222222', actual: $pair['foregroundValue']);
+	}//end testUploadedSetColoursComeFromItsStoredFile()
 
 	/**
 	 * Regeneration with an unchanged configuration and a frozen clock is
