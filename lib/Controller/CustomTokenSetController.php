@@ -391,17 +391,54 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
 	 */
 	private function storeConverted(string $name, string $slug, array $read): JSONResponse {
+		$converted = $this->convertUpload(upload: $read + ['name' => $name, 'slug' => $slug]);
+		if ($converted instanceof JSONResponse) {
+			return $converted;
+		}
+
+		$parsed = $this->parsedUpload(converted: $converted, slug: $slug);
+		if ($parsed instanceof JSONResponse) {
+			return $parsed;
+		}
+
+		return $this->persist(name: $name, parsed: $parsed);
+	}//end storeConverted()
+
+	/**
+	 * Validate the emitted file and add what the conversion and the dark values brought.
+	 *
+	 * @param array<string, mixed> $converted The converter result.
+	 * @param string $slug The slug derived from the name.
+	 *
+	 * @return array<string, mixed>|JSONResponse The validated upload, or the refusal.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function parsedUpload(array $converted, string $slug): array|JSONResponse {
+		// The validator sees the EMITTED file, which is the thing being stored.
+		$parsed = $this->mapFromCss(content: $converted['css'], slug: $slug);
+		if ($parsed instanceof JSONResponse) {
+			return $parsed;
+		}
+
+		return $this->withDarkPins(
+			parsed: $this->withDiagnostics(parsed: $this->withConversion(parsed: $parsed, converted: $converted), converted: $converted),
+			dark: ['declarations' => ($converted['darkDeclarations'] ?? []), 'slug' => $slug]
+		);
+	}//end parsedUpload()
+
+	/**
+	 * Run the converter on an upload, refusing a document that yields nothing.
+	 *
+	 * @param array{content: string, sourceName: string|null, name: string, slug: string} $upload The payload, name and slug.
+	 *
+	 * @return array<string, mixed>|JSONResponse The converter result, or the error response.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function convertUpload(array $upload): array|JSONResponse {
 		try {
-			$converted = $this->converter->convert(
-				content: $read['content'],
-				slug: $slug,
-				displayName: $name,
-				sourceName: $read['sourceName'],
-				// An extracted logo lands under the SET's id, not the bare
-				// slug, so an uploaded theme named "Amsterdam" can never
-				// overwrite the shipped img/logos/amsterdam.svg.
-				assetName: CustomTokenSetService::ID_PREFIX . $slug
-			);
+			$converted = $this->callConverter(upload: $upload);
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 422));
 		}
@@ -411,38 +448,77 @@ class CustomTokenSetController extends Controller {
 		// converter fills every unmapped target from the mapping table's
 		// fallbacks, so the emitted file is always the complete semantic layer
 		// and says nothing about what was uploaded.
-		$imported = (int)($converted['imported'] ?? 0);
-		$skipped = $this->skippedFrom(report: $converted['report']);
-
-		// Zero yield is a fixable mistake on the admin's side, so it is refused
-		// WITH the findings rather than with a bare message.
-		if ($imported === 0) {
-			return new JSONResponse(
-				[
-					'error' => $this->l->t(
-						'Nothing in this document maps onto a Nextcloud token. The skipped list'
-						. ' shows what was found and why each token could not be used.'
-					),
-					'imported' => 0,
-					'skipped' => $skipped,
-					'errors' => $converted['errors'],
-				],
-				422
-			);
+		if ((int)($converted['imported'] ?? 0) === 0) {
+			return $this->nothingImported(converted: $converted);
 		}
 
-		// The validator sees the EMITTED file, which is the thing being stored.
-		$parsed = $this->mapFromCss(content: $converted['css'], slug: $slug);
-		if ($parsed instanceof JSONResponse) {
-			return $parsed;
-		}
+		return $converted;
+	}//end convertUpload()
 
-		// What the admin's document yielded, and what of it could not be used.
-		// Both describe the UPLOAD, so they replace the validator's split, which
-		// describes the emitted file.
-		$parsed['imported'] = $imported;
-		$parsed['skipped'] = $skipped;
+	/**
+	 * Run the converter on an upload.
+	 *
+	 * @param array{content: string, sourceName: string|null, name: string, slug: string} $upload The payload, name and slug.
+	 *
+	 * @return array<string, mixed> The converter result.
+	 *
+	 * @throws RuntimeException When the document cannot be converted.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function callConverter(array $upload): array {
+		return $this->converter->convert(
+			content: $upload['content'],
+			slug: $upload['slug'],
+			displayName: $upload['name'],
+			sourceName: $upload['sourceName'],
+			// An extracted logo lands under the SET's id, not the bare
+			// slug, so an uploaded theme named "Amsterdam" can never
+			// overwrite the shipped img/logos/amsterdam.svg.
+			assetName: CustomTokenSetService::ID_PREFIX . $upload['slug']
+		);
+	}//end callConverter()
 
+	/**
+	 * The refusal of a document that yields no token: a fixable mistake, so it carries the findings.
+	 *
+	 * @param array<string, mixed> $converted The converter result.
+	 *
+	 * @return JSONResponse
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function nothingImported(array $converted): JSONResponse {
+		return new JSONResponse(
+			[
+				'error' => $this->l->t(
+					'Nothing in this document maps onto a Nextcloud token. The skipped list'
+					. ' shows what was found and why each token could not be used.'
+				),
+				'imported' => 0,
+				'skipped' => $this->skippedFrom(report: $converted['report']),
+				'errors' => $converted['errors'],
+			],
+			422
+		);
+	}//end nothingImported()
+
+	/**
+	 * Add what the conversion produced to the validated split.
+	 *
+	 * What the admin's document yielded, and what of it could not be used, describe the UPLOAD,
+	 * so they replace the validator's split, which describes the emitted file.
+	 *
+	 * @param array<string, mixed> $parsed The validated split of the emitted file.
+	 * @param array<string, mixed> $converted The converter result.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function withConversion(array $parsed, array $converted): array {
+		$parsed['imported'] = (int)($converted['imported'] ?? 0);
+		$parsed['skipped'] = $this->skippedFrom(report: $converted['report']);
 		$parsed['css'] = $converted['css'];
 		$parsed['theming'] = ($converted['manifestEntry']['theming'] ?? []);
 		$parsed['logoAsset'] = ($converted['logoAsset'] ?? null);
@@ -450,13 +526,28 @@ class CustomTokenSetController extends Controller {
 		$parsed['counts'] = $converted['counts'];
 		$parsed['inputKind'] = $converted['inputKind'];
 		$parsed['reasons'] = $this->converter->getReasons();
+
+		return $parsed;
+	}//end withConversion()
+
+	/**
+	 * Add the declared version and the DTCG-only diagnostics.
+	 *
+	 * `$deprecated` notices about the SOURCE document and hard mapping errors keep the shape of the
+	 * pre-converter upload path, separate from the conversion report.
+	 *
+	 * @param array<string, mixed> $parsed The upload so far.
+	 * @param array<string, mixed> $converted The converter result.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function withDiagnostics(array $parsed, array $converted): array {
 		if (isset($converted['manifestEntry']['upstreamVersion']) === true) {
 			$parsed['version'] = $converted['manifestEntry']['upstreamVersion'];
 		}
 
-		// DTCG-only diagnostics, unchanged in shape from the pre-converter
-		// upload path: `$deprecated` notices about the SOURCE document, and
-		// hard mapping errors. Both stay separate from the conversion report.
 		if (empty($converted['importWarnings']) === false) {
 			$parsed['importWarnings'] = $converted['importWarnings'];
 		}
@@ -465,21 +556,37 @@ class CustomTokenSetController extends Controller {
 			$parsed['errors'] = $converted['errors'];
 		}
 
-		// Dark values the file brought (dark-colours-from-a-file): judged like the light ones.
-		// One that the validator refuses refuses the upload, as a light value does.
-		if (empty($converted['darkDeclarations']) === false) {
-			$dark = $this->validator->validateDeclarations(declarations: $converted['darkDeclarations'], slug: $slug);
-			if ($dark === null) {
-				$error = $this->validator->getLastError();
+		return $parsed;
+	}//end withDiagnostics()
 
-				return new JSONResponse(['error' => $this->l->t('A dark value in the file is not allowed: %s', [(string)($error['property'] ?? '')])], 422);
-			}
-
-			$parsed['darkPins'] = $dark['accepted'];
+	/**
+	 * Judge the dark values the file brought like the light ones, and keep the accepted ones.
+	 *
+	 * One that the validator refuses refuses the upload, as a light value does.
+	 *
+	 * @param array<string, mixed> $parsed The upload so far.
+	 * @param array{declarations: array<string, string>, slug: string} $dark The file's dark declarations and the slug.
+	 *
+	 * @return array<string, mixed>|JSONResponse The upload with its dark pins, or the refusal.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 */
+	private function withDarkPins(array $parsed, array $dark): array|JSONResponse {
+		if (empty($dark['declarations']) === true) {
+			return $parsed;
 		}
 
-		return $this->persist(name: $name, parsed: $parsed);
-	}//end storeConverted()
+		$split = $this->validator->validateDeclarations(declarations: $dark['declarations'], slug: $dark['slug']);
+		if ($split === null) {
+			$error = $this->validator->getLastError();
+
+			return new JSONResponse(['error' => $this->l->t('A dark value in the file is not allowed: %s', [(string)($error['property'] ?? '')])], 422);
+		}
+
+		$parsed['darkPins'] = $split['accepted'];
+
+		return $parsed;
+	}//end withDarkPins()
 
 	/**
 	 * Read the import payload from either the file picker or the paste box.
@@ -646,19 +753,7 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
-			$result = $this->service->store(
-				displayName: $name,
-				description: trim((string)($this->request->getParam('description', ''))),
-				declarations: $parsed['accepted'],
-				version: ($parsed['version'] ?? null),
-				importWarnings: ($parsed['importWarnings'] ?? []),
-				// The converter's own file, so its four sections and provenance
-				// block are what lands on disk rather than a flat re-serialise.
-				css: ($parsed['css'] ?? null),
-				theming: ($parsed['theming'] ?? []),
-				logoAsset: ($parsed['logoAsset'] ?? null),
-				designSystem: ($parsed['designSystem'] ?? null)
-			);
+			$result = $this->service->store(...$this->storeArguments(name: $name, parsed: $parsed));
 			if (empty($parsed['darkPins']) === false) {
 				$this->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
 			}
@@ -666,22 +761,88 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
-		$servedCss = $this->service->getRawContent(id: $result['id']);
-		$contentHash = null;
-		if ($servedCss !== null) {
-			$contentHash = 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
+		$this->auditService->log(action: 'custom_set_uploaded', context: $this->auditContext(parsed: $parsed, stored: $result + ['name' => $name]));
+
+		return new JSONResponse($this->uploadResponse(parsed: $parsed, result: $result));
+	}//end persist()
+
+	/**
+	 * The named arguments {@see CustomTokenSetService::store()} gets for an upload.
+	 *
+	 * @param string $name The display name.
+	 * @param array<string, mixed> $parsed The validated upload.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function storeArguments(string $name, array $parsed): array {
+		return [
+			'displayName' => $name,
+			'description' => trim((string)($this->request->getParam('description', ''))),
+			'declarations' => $parsed['accepted'],
+			'version' => ($parsed['version'] ?? null),
+			'importWarnings' => ($parsed['importWarnings'] ?? []),
+			// The converter's own file, so its four sections and provenance
+			// block are what lands on disk rather than a flat re-serialise.
+			'css' => ($parsed['css'] ?? null),
+			'theming' => ($parsed['theming'] ?? []),
+			'logoAsset' => ($parsed['logoAsset'] ?? null),
+			'designSystem' => ($parsed['designSystem'] ?? null),
+		];
+	}//end storeArguments()
+
+	/**
+	 * What the audit log records about an upload.
+	 *
+	 * @param array<string, mixed> $parsed The validated upload.
+	 * @param array{id: string, name: string} $stored The stored set's id and display name.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function auditContext(array $parsed, array $stored): array {
+		return [
+			'id' => $stored['id'],
+			'name' => $stored['name'],
+			'declarationCount' => (int)($parsed['imported'] ?? 0),
+			'contentHash' => $this->servedHash(id: $stored['id']),
+		];
+	}//end auditContext()
+
+	/**
+	 * A short hash of the CSS the stored set serves, for the audit log.
+	 *
+	 * @param string $id The stored set id.
+	 *
+	 * @return string|null `sha256:` and 12 hex digits, or null when the set serves nothing.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function servedHash(string $id): ?string {
+		$servedCss = $this->service->getRawContent(id: $id);
+		if ($servedCss === null) {
+			return null;
 		}
 
-		$this->auditService->log(
-			action: 'custom_set_uploaded',
-			context: [
-				'id' => $result['id'],
-				'name' => $name,
-				'declarationCount' => (int)($parsed['imported'] ?? 0),
-				'contentHash' => $contentHash,
-			]
-		);
+		return 'sha256:' . substr(hash(algo: 'sha256', data: $servedCss), 0, 12);
+	}//end servedHash()
 
+	/**
+	 * The upload result: id, yield, contrast warnings and dark values, plus what the upload carried.
+	 *
+	 * The conversion report says what the theme asked for that Nextcloud will not do, and why;
+	 * `reasons` carries the human sentence per code so the panel keeps no copy of the mapping table.
+	 *
+	 * @param array<string, mixed> $parsed The validated upload.
+	 * @param array{id: string, warnings: array<int, array<string, mixed>>} $result The stored set.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function uploadResponse(array $parsed, array $result): array {
 		$response = [
 			'id' => $result['id'],
 			'imported' => (int)($parsed['imported'] ?? 0),
@@ -690,31 +851,29 @@ class CustomTokenSetController extends Controller {
 			'darkValues' => count(($parsed['darkPins'] ?? [])),
 		];
 
-		if (isset($parsed['errors']) === true) {
-			$response['errors'] = $parsed['errors'];
-		}
+		return $response + $this->carriedFields(parsed: $parsed) + ['selectable' => true];
+	}//end uploadResponse()
 
-		if (isset($parsed['importWarnings']) === true) {
-			$response['importWarnings'] = $parsed['importWarnings'];
-		}
-
-		if (array_key_exists('version', $parsed) === true) {
-			$response['version'] = $parsed['version'];
-		}
-
-		// The conversion report: what the theme asked for that Nextcloud will
-		// not do, and why. `reasons` carries the human sentence per code so the
-		// panel does not have to keep its own copy of the mapping table.
-		foreach (['report', 'counts', 'inputKind', 'reasons'] as $key) {
-			if (isset($parsed[$key]) === true) {
-				$response[$key] = $parsed[$key];
+	/**
+	 * What an upload carried beyond its yield: DTCG errors and import warnings, the declared version
+	 * (kept even when null) and the conversion report.
+	 *
+	 * @param array<string, mixed> $parsed The validated upload.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function carriedFields(array $parsed): array {
+		$fields = [];
+		foreach (['errors', 'importWarnings', 'version', 'report', 'counts', 'inputKind', 'reasons'] as $key) {
+			if (isset($parsed[$key]) === true || ($key === 'version' && array_key_exists('version', $parsed) === true)) {
+				$fields[$key] = $parsed[$key];
 			}
 		}
 
-		$response['selectable'] = true;
-
-		return new JSONResponse($response);
-	}//end persist()
+		return $fields;
+	}//end carriedFields()
 
 	/**
 	 * List stored custom token sets with their metadata and contrast warnings.

@@ -232,14 +232,36 @@ class OverridesController extends Controller {
 			return $this->resetToStock();
 		}
 
-		$overrides = $params['overrides'] ?? [];
+		$tokens = $this->requestedTokens(params: $params);
+		if ($tokens instanceof JSONResponse) {
+			return $tokens;
+		}
 
+		$refused = $this->writeOverrides(tokens: $tokens);
+		if ($refused !== null) {
+			return $refused;
+		}
+
+		return new JSONResponse($this->savedResponse(tokens: $tokens));
+	}//end setOverrides()
+
+	/**
+	 * The posted light and dark overrides and the set they are for, refused as a whole when either
+	 * is no object or any token would be dropped, so the answer, the written count and the audit
+	 * entry all describe what reached the file.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 *
+	 * @return array{overrides: array<string, mixed>, darkOverrides: array<string, mixed>, tokenSet: ?string}|JSONResponse The input.
+	 *
+	 * @spec openspec/specs/custom-css-overrides/spec.md
+	 */
+	private function requestedTokens(array $params): array|JSONResponse {
+		$overrides = $params['overrides'] ?? [];
 		if (is_array($overrides) === false) {
 			return new JSONResponse(['error' => 'overrides must be an object'], 400);
 		}
 
-		// Refuse the whole save when any token would be dropped, so the answer,
-		// the written count and the audit entry all describe what reached the file.
 		$darkOverrides = ($params['darkOverrides'] ?? []);
 		if (is_array($darkOverrides) === false) {
 			return new JSONResponse(['error' => 'darkOverrides must be an object'], 400);
@@ -250,30 +272,48 @@ class OverridesController extends Controller {
 			return $this->rejectedResponse(rejected: $rejected);
 		}
 
-		$tokenSet = $this->requestedTokenSet();
-		$before = $this->overridesService->read(tokenSet: $tokenSet);
+		return ['overrides' => $overrides, 'darkOverrides' => $darkOverrides, 'tokenSet' => $this->requestedTokenSet()];
+	}//end requestedTokens()
+
+	/**
+	 * Write the overrides for the token set and audit the change.
+	 *
+	 * @param array{overrides: array<string, mixed>, darkOverrides: array<string, mixed>, tokenSet: string|null} $tokens The overrides.
+	 *
+	 * @return JSONResponse|null The 500 answer when the file cannot be written, or null.
+	 *
+	 * @spec openspec/specs/custom-css-overrides/spec.md
+	 */
+	private function writeOverrides(array $tokens): ?JSONResponse {
+		$before = $this->overridesService->read(tokenSet: $tokens['tokenSet']);
 
 		try {
-			$this->overridesService->write(tokens: $overrides, tokenSet: $tokenSet, darkTokens: $darkOverrides);
+			$this->overridesService->write(tokens: $tokens['overrides'], tokenSet: $tokens['tokenSet'], darkTokens: $tokens['darkOverrides']);
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
-		$this->auditService->log(
-			action: 'overrides_written',
-			context: [
-				'old' => $before,
-				'new' => $overrides,
-			]
-		);
+		$this->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => $tokens['overrides']]);
 
-		$response = ['status' => 'ok', 'written' => count($overrides)];
+		return null;
+	}//end writeOverrides()
 
-		// Saving a theme keeps the Nextcloud branding that is on now —
-		// colours, background, logos, favicon — with it, so applying the
-		// theme later brings that back as well. Not for the stock set: its
-		// branding IS Nextcloud's own settings, and applying stock resets them.
-		$setId = ($tokenSet ?? $this->config->getAppValue(Application::APP_ID, 'token_set', CssInjectionService::STOCK_TOKEN_SET));
+	/**
+	 * The answer to a save: the written count, and the captured branding when asked for.
+	 *
+	 * Saving a theme keeps the Nextcloud branding that is on now (colours, background, logos,
+	 * favicon) with it, so applying the theme later brings that back as well. Not for the stock
+	 * set: its branding IS Nextcloud's own settings, and applying stock resets them.
+	 *
+	 * @param array{overrides: array<string, mixed>, darkOverrides: array<string, mixed>, tokenSet: string|null} $tokens The overrides.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/custom-css-overrides/spec.md
+	 */
+	private function savedResponse(array $tokens): array {
+		$response = ['status' => 'ok', 'written' => count($tokens['overrides'])];
+		$setId = ($tokens['tokenSet'] ?? $this->config->getAppValue(Application::APP_ID, 'token_set', CssInjectionService::STOCK_TOKEN_SET));
 		if ($this->request->getParam('captureTheming', false) === true
 			&& $this->brandingCapture !== null
 			&& $setId !== CssInjectionService::STOCK_TOKEN_SET
@@ -281,8 +321,8 @@ class OverridesController extends Controller {
 			$response['theming'] = $this->brandingCapture->capture(setId: $setId);
 		}
 
-		return new JSONResponse($response);
-	}//end setOverrides()
+		return $response;
+	}//end savedResponse()
 
 	/**
 	 * The 400 for a refused save: every token with its reason, which names the type.
