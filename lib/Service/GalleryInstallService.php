@@ -22,9 +22,6 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\GalleryException;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 use OCP\IL10N;
 use RuntimeException;
 use Throwable;
@@ -46,30 +43,16 @@ class GalleryInstallService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ThemeGalleryService $gallery The index.
-	 * @param IClientService $clientService The HTTP client service.
-	 * @param TokenSetConverterService $converter The converter every upload runs through.
-	 * @param CustomTokenSetValidator $validator The CSS whitelist.
-	 * @param CssParserService $cssParser The CSS parser.
-	 * @param CustomTokenSetService $customSets Custom set storage.
-	 * @param ThemingAuditService $audit The audit trail.
-	 * @param IConfig $config App config, for the active token set.
+	 * @param GalleryDownloadSources $downloads The gallery index and the HTTP client service.
+	 * @param TokenSetUploadPipeline $pipeline The converter, the CSS whitelist and the CSS parser.
+	 * @param GalleryInstallRecords $records Custom set storage, the audit trail, the app config and the clock.
 	 * @param IL10N $l10n Translations.
-	 * @param ITimeFactory $time The clock.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - see the class comment: the upload path's own collaborators.
 	 */
 	public function __construct(
-		private ThemeGalleryService $gallery,
-		private IClientService $clientService,
-		private TokenSetConverterService $converter,
-		private CustomTokenSetValidator $validator,
-		private CssParserService $cssParser,
-		private CustomTokenSetService $customSets,
-		private ThemingAuditService $audit,
-		private IConfig $config,
+		private readonly GalleryDownloadSources $downloads,
+		private readonly TokenSetUploadPipeline $pipeline,
+		private readonly GalleryInstallRecords $records,
 		private IL10N $l10n,
-		private ITimeFactory $time,
 	) {
 	}//end __construct()
 
@@ -113,7 +96,7 @@ class GalleryInstallService {
 	private function prepareInstall(string $galleryId): array {
 		$entry = $this->entryOrFail(galleryId: $galleryId);
 		$content = $this->downloadVerified(entry: $entry);
-		$existing = $this->gallery->installedFor(galleryId: $galleryId);
+		$existing = $this->downloads->gallery->installedFor(galleryId: $galleryId);
 		$name = $this->nameFor(entry: $entry, existing: $existing);
 
 		return [
@@ -137,7 +120,7 @@ class GalleryInstallService {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
 	 */
 	private function entryOrFail(string $galleryId): array {
-		$entry = $this->gallery->findEntry(galleryId: $galleryId);
+		$entry = $this->downloads->gallery->findEntry(galleryId: $galleryId);
 		if ($entry === null) {
 			throw new GalleryException(message: $this->l10n->t('This house style is not in the gallery.'), code: 404);
 		}
@@ -201,8 +184,8 @@ class GalleryInstallService {
 			return false;
 		}
 
-		$wasActive = ($this->config->getAppValue(Application::APP_ID, 'token_set', '') === $existing['id']);
-		$this->customSets->delete(id: (string)$existing['id']);
+		$wasActive = ($this->records->config->getAppValue(Application::APP_ID, 'token_set', '') === $existing['id']);
+		$this->records->customSets->delete(id: (string)$existing['id']);
 
 		return $wasActive;
 	}//end retire()
@@ -220,7 +203,7 @@ class GalleryInstallService {
 	 */
 	private function storeInstall(array $install): array {
 		try {
-			return $this->customSets->store(...$this->storeArguments(install: $install));
+			return $this->records->customSets->store(...$this->storeArguments(install: $install));
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $e->getMessage(), code: 422, previous: $e);
 		}
@@ -262,10 +245,10 @@ class GalleryInstallService {
 		$this->recordProvenance(id: $stored['id'], provenance: $this->provenanceOf(install: $install));
 
 		if ($install['wasActive'] === true) {
-			$this->config->setAppValue(Application::APP_ID, 'token_set', $stored['id']);
+			$this->records->config->setAppValue(Application::APP_ID, 'token_set', $stored['id']);
 		}
 
-		$this->audit->log(action: 'custom_set_uploaded', context: $this->auditContext(install: $install, id: $stored['id']));
+		$this->records->audit->log(action: 'custom_set_uploaded', context: $this->auditContext(install: $install, id: $stored['id']));
 	}//end recordInstall()
 
 	/**
@@ -283,7 +266,7 @@ class GalleryInstallService {
 			'sourceUrl' => (string)$entry['sourceUrl'],
 			'licence' => (string)$entry['licence'],
 			'sha256' => (string)$entry['sha256'],
-			'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime()),
+			'installedOn' => gmdate('Y-m-d\TH:i:s\Z', $this->records->time->getTime()),
 		];
 	}//end provenanceOf()
 
@@ -315,14 +298,14 @@ class GalleryInstallService {
 	 * @return void
 	 */
 	private function recordProvenance(string $id, array $provenance): void {
-		$entry = ($this->customSets->getManifest()[$id] ?? []);
-		$css = $this->customSets->getRawContent(id: $id);
+		$entry = ($this->records->customSets->getManifest()[$id] ?? []);
+		$css = $this->records->customSets->getRawContent(id: $id);
 		if (is_array($entry) === false || $css === null) {
 			return;
 		}
 
 		$entry['provenance'] = $provenance;
-		$this->customSets->replace(id: $id, entry: $entry, css: $css);
+		$this->records->customSets->replace(id: $id, entry: $entry, css: $css);
 	}//end recordProvenance()
 
 	/**
@@ -336,7 +319,7 @@ class GalleryInstallService {
 	 */
 	private function download(string $url): string {
 		try {
-			$response = $this->clientService->newClient()->get($url, ['timeout' => ThemeGalleryService::TIMEOUT_SECONDS]);
+			$response = $this->downloads->clientService->newClient()->get($url, ['timeout' => ThemeGalleryService::TIMEOUT_SECONDS]);
 		} catch (Throwable $e) {
 			throw new GalleryException(message: $this->l10n->t('The file could not be downloaded. Try again later.'), code: 502, previous: $e);
 		}
@@ -365,9 +348,9 @@ class GalleryInstallService {
 	 * @throws GalleryException 422 when the upload path refuses the file.
 	 */
 	private function prepare(string $name, string $content, string $fileUrl): array {
-		$slug = $this->customSets->slugify(name: $name);
+		$slug = $this->records->customSets->slugify(name: $name);
 		try {
-			$converted = $this->converter->convert(
+			$converted = $this->pipeline->converter->convert(
 				content: $content,
 				slug: $slug,
 				displayName: $name,
@@ -383,13 +366,13 @@ class GalleryInstallService {
 		}
 
 		$css = (string)$converted['css'];
-		if ($this->validator->hasDisallowedSelector(css: $css) === true) {
+		if ($this->pipeline->validator->hasDisallowedSelector(css: $css) === true) {
 			throw new GalleryException(message: $this->refused(reason: $this->l10n->t('it contains a selector other than :root')), code: 422);
 		}
 
-		$split = $this->validator->validateDeclarations(declarations: $this->cssParser->parseRootBlock(css: $css), slug: $slug);
+		$split = $this->pipeline->validator->validateDeclarations(declarations: $this->pipeline->cssParser->parseRootBlock(css: $css), slug: $slug);
 		if ($split === null) {
-			$error = $this->validator->getLastError();
+			$error = $this->pipeline->validator->getLastError();
 			throw new GalleryException(message: $this->refused(reason: (string)($error['message'] ?? '')), code: 422);
 		}
 

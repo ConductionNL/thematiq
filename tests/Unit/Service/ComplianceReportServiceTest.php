@@ -15,11 +15,14 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\ContrastTools;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\InstanceReportContext;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\ThemeSelectionSources;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -261,15 +264,18 @@ class ComplianceReportServiceTest extends TestCase {
 		$customTokenSetService->method('getManifest')->willReturnCallback(fn () => $this->customManifest);
 
 		return new ComplianceReportService(
-			new ContrastService(),
-			new CssParserService(),
-			$overridesService,
-			$designSystemService,
-			$customTokenSetService,
-			$appManager,
-			$config,
-			$urlGenerator,
-			$timeFactory
+			measuring: new ContrastTools(contrast: new ContrastService(), cssParser: new CssParserService()),
+			theme: new ThemeSelectionSources(
+				overrides: $overridesService,
+				designSystems: $designSystemService,
+				customSets: $customTokenSetService
+			),
+			instance: new InstanceReportContext(
+				appManager: $appManager,
+				config: $config,
+				urlGenerator: $urlGenerator,
+				timeFactory: $timeFactory
+			)
 		);
 	}//end buildService()
 

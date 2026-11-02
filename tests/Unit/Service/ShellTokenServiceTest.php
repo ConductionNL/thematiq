@@ -27,8 +27,11 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\LogoLayerService;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
+use OCA\Thematiq\Service\ShellLogoSources;
 use OCA\Thematiq\Service\ShellRoleMapper;
+use OCA\Thematiq\Service\ShellSetSources;
 use OCA\Thematiq\Service\ShellTokenService;
+use OCA\Thematiq\Service\ShellValueSources;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -124,17 +127,23 @@ class ShellTokenServiceTest extends TestCase {
 		);
 
 		return new ShellTokenService(
-			activeSet: $activeSet,
-			tokenSets: $tokenSets,
-			designSystems: $designSystems,
-			declarations: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
-			stockTokens: $stockTokens,
-			overrides: $overridesService,
-			mapper: new ShellRoleMapper(colours: new ContrastService()),
-			logos: $logos,
-			files: $files,
-			config: $config,
-			urlGenerator: $urlGenerator,
+			setSources: new ShellSetSources(
+				activeSet: $activeSet,
+				tokenSets: $tokenSets,
+				designSystems: $designSystems,
+				overrides: $overridesService
+			),
+			valueSources: new ShellValueSources(
+				declarations: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
+				stockTokens: $stockTokens,
+				mapper: new ShellRoleMapper(colours: new ContrastService())
+			),
+			logoSources: new ShellLogoSources(
+				logos: $logos,
+				files: $files,
+				config: $config,
+				urlGenerator: $urlGenerator
+			)
 		);
 	}//end service()
 
