@@ -22,7 +22,10 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\BrandingPackageReader;
 use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigSourceClock;
+use OCA\Thematiq\Service\ConfigSourceLock;
 use OCA\Thematiq\Service\ConfigSourceService;
+use OCA\Thematiq\Service\ConfigSourceSteps;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
@@ -194,15 +197,21 @@ class ConfigSourceServiceTest extends TestCase {
 		);
 
 		return new ConfigSourceService(
-			$config,
-			new BrandingPackageReader(),
-			$packages,
-			$bundles,
-			$audit,
-			$locking,
-			$time,
-			$logger,
-			$this->createMock(IAppConfig::class)
+			config: $config,
+			steps: new ConfigSourceSteps(
+				reader: new BrandingPackageReader(),
+				packageService: $packages,
+				bundleService: $bundles,
+				audit: $audit
+			),
+			lock: new ConfigSourceLock(
+				locking: $locking,
+				appConfig: $this->createMock(IAppConfig::class)
+			),
+			clock: new ConfigSourceClock(
+				time: $time,
+				logger: $logger
+			)
 		);
 	}//end service()
 
@@ -230,6 +239,7 @@ class ConfigSourceServiceTest extends TestCase {
 		$this->assertSame('applied', $result['status']);
 		$this->assertSame(1, $this->imports);
 		$this->assertSame('3f2a9c1', $this->app['config_source_applied_revision']);
+		$this->assertSame(expected: '1790000000', actual: $this->app['config_source_applied_at']);
 		$this->assertCount(1, $this->audited);
 		$this->assertSame('config_imported', $this->audited[0][0]);
 		$this->assertSame('system', $this->audited[0][1]['actor']);
@@ -272,6 +282,7 @@ class ConfigSourceServiceTest extends TestCase {
 		$this->assertCount(1, $this->errors, 'One log line per distinct package hash.');
 		$status = $this->service()->getStatus();
 		$this->assertSame('custom-gemeente', $status['lastError']['errors'][0]['id']);
+		$this->assertSame(expected: gmdate(format: 'c', timestamp: 1790000000), actual: $status['lastError']['at']);
 
 		file_put_contents($this->dir . '/REVISION', 'next');
 		$this->service()->applyIfChanged();
