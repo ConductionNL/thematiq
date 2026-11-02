@@ -97,6 +97,13 @@ class CssInjectionGoldenTest extends TestCase {
 	private string $dir = '';
 
 	/**
+	 * Every set a case can render.
+	 *
+	 * @var array<int, string>
+	 */
+	private array $sets = [];
+
+	/**
 	 * Every case renders and lists what was recorded.
 	 *
 	 * @return void
@@ -110,6 +117,7 @@ class CssInjectionGoldenTest extends TestCase {
 		sort($sets);
 		$sets[] = self::CUSTOM_SET;
 		$sets[] = 'missing-set';
+		$this->sets = $sets;
 
 		$actual = [];
 		foreach ($sets as $index => $set) {
@@ -156,7 +164,7 @@ class CssInjectionGoldenTest extends TestCase {
 
 		$store = new DirectoryRuntimeFileStore($this->dir);
 		$this->seedStore(store: $store, chance: $chance, set: $set);
-		$failing = $pick(['', '', '', '', '', '', 'brand', 'scopes', 'custom-css', 'banner', 'header', 'menu', 'search', 'fonts', 'stock']);
+		$failing = $pick(['', '', '', '', '', '', 'brand', 'scopes', 'custom-css', 'banner', 'header', 'menu', 'search', 'fonts', 'stock', 'meta']);
 		if ($plain === true) {
 			$failing = '';
 		}
@@ -169,7 +177,7 @@ class CssInjectionGoldenTest extends TestCase {
 				'store' => $store,
 				'signedIn' => ($plain === true || $random->getInt(0, 1) === 1),
 				'preview' => $chance(6) ? $pick(['amsterdam', 'lasuite', 'nextcloud', self::CUSTOM_SET]) : null,
-				'brand' => $chance(3) ? $pick(['denhaag', 'lasuite', 'nextcloud', 'hoog-contrast', self::CUSTOM_SET]) : null,
+				'brand' => $chance(3) ? $pick($this->sets) : null,
 				'brandLogo' => $chance(2),
 				'collaborators' => ($plain === false && $random->getInt(0, 3) !== 0),
 			]
@@ -257,26 +265,42 @@ class CssInjectionGoldenTest extends TestCase {
 		);
 		$store->write(name: 'css/tokens/' . self::CUSTOM_SET . '.css', content: ":root {\n  --nldesign-color-primary: #123456;\n}\n");
 		if ($chance(2) === true) {
-			$store->write(name: 'css/tokens/dark/' . self::CUSTOM_SET . '.css', content: ":root {\n  --nldesign-color-primary: #abcdef;\n}\n");
+			$store->write(name: 'css/tokens/dark/' . self::CUSTOM_SET . '.css', content: $this->darkCss(internal: $chance(2)));
 		}
 
 		if ($chance(4) === true) {
-			$store->write(name: 'css/tokens/' . $set . '.css', content: ":root {\n  --nldesign-color-primary: #654321;\n}\n");
+			$store->write(name: 'css/tokens/' . $set . '.css', content: ":root {\n  --nldesign-color-primary: #654321;\n  --nldesign-cn-email-accent: #222222;\n}\n");
 		}
 
 		if ($chance(4) === true) {
-			$store->write(name: 'css/tokens/dark/' . $set . '.css', content: ":root {\n  --nldesign-color-primary: #fedcba;\n}\n");
+			$store->write(name: 'css/tokens/dark/' . $set . '.css', content: $this->darkCss(internal: $chance(2)));
 		}
 
 		foreach (['nldesign', 'none'] as $system) {
 			if ($chance(2) === true) {
 				$store->write(
 					name: 'css/' . CustomOverridesService::fileFor(tokenSet: $set, designSystemId: $system) . '.css',
-					content: ":root {\n  --nldesign-component-button-primary-background-color: #010203;\n  --nldesign-color-primary: #0a0b0c;\n}\n"
+					content: ":root {\n  --nldesign-component-button-primary-background-color: #010203;\n  --nldesign-cn-color-swatch-checker: #0a0b0c;\n}\n"
 				);
 			}
 		}
 	}//end seedStore()
+
+	/**
+	 * A dark variant, with or without an internal token only the dark variant gives a value.
+	 *
+	 * @param bool $internal Whether to declare the internal token.
+	 *
+	 * @return string The CSS.
+	 */
+	private function darkCss(bool $internal): string {
+		$extra = '';
+		if ($internal === true) {
+			$extra = "  --nldesign-cn-ai-pointer-offset: 3px;\n";
+		}
+
+		return ":root {\n  --nldesign-color-primary: #abcdef;\n" . $extra . "}\n";
+	}//end darkCss()
 
 	/**
 	 * The service of one case, with its stylesheet emitters and collaborators recorded.
@@ -341,7 +365,7 @@ class CssInjectionGoldenTest extends TestCase {
 			->setConstructorArgs(
 				[
 					$config,
-					new DesignSystemService($repo, $config, $case['store']),
+					$this->designSystems(repo: $repo, config: $config, case: $case),
 					$customCss,
 					$fonts,
 					$urls,
@@ -377,6 +401,35 @@ class CssInjectionGoldenTest extends TestCase {
 
 		return $service;
 	}//end service()
+
+	/**
+	 * The real design system service; with failing `meta` it reads no token set metadata,
+	 * as when token-sets.json cannot be read.
+	 *
+	 * @param IAppManager $repo The app manager pointing at the repository.
+	 * @param IConfig $config The config.
+	 * @param array<string, mixed> $case The case options.
+	 *
+	 * @return DesignSystemService The service.
+	 */
+	private function designSystems(IAppManager $repo, IConfig $config, array $case): DesignSystemService {
+		if ($case['failing'] !== 'meta') {
+			return new DesignSystemService($repo, $config, $case['store']);
+		}
+
+		return new class($repo, $config, $case['store']) extends DesignSystemService {
+			/**
+			 * No metadata for any set.
+			 *
+			 * @param string $tokenSetId The token set.
+			 *
+			 * @return array<string, mixed> Nothing.
+			 */
+			public function getTokenSetMeta(string $tokenSetId): array {
+				return [];
+			}//end getTokenSetMeta()
+		};
+	}//end designSystems()
 
 	/**
 	 * The real per-group resolution over a seeded session, mapping and preview.
