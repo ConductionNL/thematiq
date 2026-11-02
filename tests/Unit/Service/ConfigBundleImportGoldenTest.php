@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\FontService;
@@ -55,6 +56,7 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ConfigBundleService
+ * @covers \OCA\Thematiq\Service\CustomTokenSetsBundleSection
  * @uses   \OCA\Thematiq\Service\Exception\FooterValidationException
  * @uses   \OCA\Thematiq\Service\LayoutOptionValues
  * @uses   \OCA\Thematiq\Service\LayoutOptionsService
@@ -390,8 +392,12 @@ class ConfigBundleImportGoldenTest extends TestCase {
 			appManager: $c['appManager'],
 			tokenSetService: $c['tokenSets'],
 			overridesService: $c['overrides'],
-			customTokenSetService: $c['customSets'],
-			customTokenSetValidator: $c['validator'],
+			customTokenSets: new CustomTokenSetsBundleSection(
+				customSets: $c['customSets'],
+				validator: $c['validator'],
+				cssParser: $c['cssParser'],
+				appManager: $c['appManager']
+			),
 			appThemingService: $c['appTheming'],
 			cssParser: $c['cssParser'],
 			emailThemingService: $c['email'],

@@ -35,6 +35,7 @@ use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ConfigSourceService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DenhaagContrastPairs;
 use OCA\Thematiq\Service\DeprecationRecords;
@@ -145,6 +146,7 @@ use ReflectionProperty;
 #[UsesClass(ConfigSourceService::class)]
 #[UsesClass(CustomOverridesService::class)]
 #[UsesClass(CustomTokenSetService::class)]
+#[UsesClass(CustomTokenSetsBundleSection::class)]
 #[UsesClass(DarkPaletteService::class)]
 #[UsesClass(DenhaagContrastPairs::class)]
 #[UsesClass(DeprecationRecords::class)]
