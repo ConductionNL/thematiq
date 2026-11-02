@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\FontValidator;
+use OCA\Thematiq\Service\PackageTokenSourceConverter;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenValueValidator;
@@ -135,9 +136,11 @@ class ConfigApplyTest extends TestCase {
 			$bundles,
 			$fonts,
 			new FontValidator(),
-			$converter,
-			$customSets,
-			new DtcgValueChecker(new TokenValueValidator())
+			new PackageTokenSourceConverter(
+				converter: $converter,
+				customSets: $customSets,
+				values: new DtcgValueChecker(values: new TokenValueValidator())
+			)
 		);
 
 		$app = [];
