@@ -20,6 +20,7 @@ use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\CssDeclarationScanner;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
@@ -94,6 +95,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(ScheduledSwitchOrder::class)]
 #[UsesClass(LayoutOptionValues::class)]
 #[UsesClass(CssParserService::class)]
+#[UsesClass(CssDeclarationScanner::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;

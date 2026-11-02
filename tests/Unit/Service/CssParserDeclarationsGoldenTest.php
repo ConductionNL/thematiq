@@ -36,12 +36,17 @@ use RecursiveIteratorIterator;
  * recording. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\CssParserService
+ * @covers \OCA\Thematiq\Service\CssDeclarationScanner
  */
 class CssParserDeclarationsGoldenTest extends TestCase {
 
 	private const FIXTURE = __DIR__ . '/../fixtures/golden/css-parser-declarations.golden.json';
 
-	private const PIECES = ['--a', '--b-c', ':', ' ', ';', '}', '{', '(', ')', '"', "'", '\\', '/*', '*/', '/', '*', 'url(', 'x', '1px', '!important', '! important', "\n", ':root {', 'data:a;b', '', '--a: v;', '--b:"x;y"', "--c: url('a;b')", '--d: 2px ', '--e:', ' --f : g }'];
+	private const PIECES = [
+		'--a', '--b-c', ':', ' ', ';', '}', '{', '(', ')', '"', "'", '\\', '/*', '*/', '/', '*', 'url(', 'x', '1px',
+		'!important', '! important', "\n", ':root {', 'data:a;b', '', '--a: v;', '--b:"x;y"', "--c: url('a;b')", '--d: 2px ',
+		'--e:', ' --f : g }',
+	];
 
 	/**
 	 * Every case parses to the recorded result.
