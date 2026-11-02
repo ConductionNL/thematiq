@@ -39,7 +39,9 @@ use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DenhaagContrastPairs;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\DesignTokenRef;
 use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\DesignTokensMapping;
 use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\EmailThemingService;
@@ -148,6 +150,8 @@ use ReflectionProperty;
 #[UsesClass(DeprecationRecords::class)]
 #[UsesClass(DesignSystemService::class)]
 #[UsesClass(DesignTokensMapper::class)]
+#[UsesClass(DesignTokensMapping::class)]
+#[UsesClass(DesignTokenRef::class)]
 #[UsesClass(DocumentAssetService::class)]
 #[UsesClass(DtcgValueChecker::class)]
 #[UsesClass(EmailThemingService::class)]
