@@ -37,6 +37,9 @@ use Random\Randomizer;
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
+ * @uses   \OCA\Thematiq\Service\CssColorParser
+ * @uses   \OCA\Thematiq\Service\DesignTokenRef
+ * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
  */
@@ -149,6 +152,14 @@ class DesignTokensMapperGoldenTest extends TestCase {
 		$cases['export'] = ['document' => json_decode((string)json_encode($document), true), 'referenceOnly' => []];
 		$cases['out-of-gamut'] = [
 			'document' => ['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]], '$deprecated' => 'Old']]],
+			'referenceOnly' => [],
+		];
+
+		$cases['typography-after-font-family'] = [
+			'document' => [
+				'fontfamily' => ['base' => ['$type' => 'fontFamily', '$value' => 'Arial']],
+				'typography' => ['heading' => ['$type' => 'typography', '$value' => ['fontFamily' => 'Fira Sans', 'fontSize' => '16px'], '$deprecated' => 'Old']],
+			],
 			'referenceOnly' => [],
 		];
 
