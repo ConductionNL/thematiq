@@ -48,6 +48,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\ConverterColourRepair
  * @uses   \OCA\Thematiq\Service\ConverterComponentRepair
+ * @uses   \OCA\Thematiq\Service\ConverterPairRepair
  * @uses   \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
