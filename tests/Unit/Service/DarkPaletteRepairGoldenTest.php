@@ -40,6 +40,10 @@ use ReflectionClassConstant;
  * tokens protected at random, and the editor's own pairs instead of the brand pairs.
  * Records the declarations that changed and the final warnings of each case.
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
+ *
+ * @covers \OCA\Thematiq\Service\DarkPaletteService
+ * @uses   \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\CssParserService
  */
 class DarkPaletteRepairGoldenTest extends TestCase {
 
