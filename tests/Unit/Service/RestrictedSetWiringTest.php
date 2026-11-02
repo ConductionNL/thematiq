@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -81,6 +82,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(ScheduledSwitchService::class)]
 #[CoversClass(AppBrandService::class)]
 #[CoversClass(ConfigBundleService::class)]
+#[CoversClass(CustomTokenSetsBundleSection::class)]
 #[CoversClass(ThemeSet::class)]
 #[CoversClass(TokenSetService::class)]
 #[CoversClass(RestrictedSetGate::class)]
@@ -439,8 +441,12 @@ class RestrictedSetWiringTest extends TestCase {
 			$this->createMock(IAppManager::class),
 			$this->tokenSets,
 			$this->createMock(CustomOverridesService::class),
-			$this->createMock(CustomTokenSetService::class),
-			$this->createMock(CustomTokenSetValidator::class),
+			new CustomTokenSetsBundleSection(
+				customSets: $this->createMock(originalClassName: CustomTokenSetService::class),
+				validator: $this->createMock(originalClassName: CustomTokenSetValidator::class),
+				cssParser: $this->createMock(originalClassName: CssParserService::class),
+				appManager: $this->createMock(originalClassName: IAppManager::class)
+			),
 			$this->createMock(AppThemingService::class),
 			$this->createMock(CssParserService::class),
 			$this->createMock(EmailThemingService::class),
