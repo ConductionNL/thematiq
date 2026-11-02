@@ -1,0 +1,1760 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`codeEditor mount golden > options {"height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":"code-label","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":"code-label","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"labelledBy":"code-label"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":"code-label","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":"code-label","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"","labelledBy":"code-label"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":"code-label","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":"code-label","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "320px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css","labelledBy":"code-label"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"css"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":"code-label","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":"code-label","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "320px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html","labelledBy":"code-label"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"html"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "html",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":"","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":"","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":"code-label","height":""} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":"code-label","height":"320px"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "320px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json","labelledBy":"code-label"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": "code-label",
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {"language":"json"} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "json",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > options {} 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;
+
+exports[`codeEditor mount golden > supports 1`] = `
+[
+  true,
+  false,
+  true,
+  true,
+  false,
+  false,
+]
+`;
+
+exports[`codeEditor mount golden > without options 1`] = `
+{
+  "edited": {
+    "content": "<h1>Nieuw</h1>",
+    "fieldValue": "<h1>Nieuw</h1>",
+    "inputs": [
+      true,
+    ],
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<h1>Nieuw</h1>",
+      },
+    ],
+  },
+  "mounted": {
+    "hidden": true,
+    "hostClass": "nldesign-code-editor",
+    "hostIsNextSibling": true,
+    "labelledBy": null,
+    "renders": [
+      {
+        "height": "180px",
+        "language": "text",
+        "value": "<p>Tekst</p>",
+      },
+    ],
+  },
+  "unmounted": {
+    "fieldValue": "<h1>Nieuw</h1>",
+    "hidden": false,
+    "hostGone": true,
+    "result": undefined,
+  },
+}
+`;

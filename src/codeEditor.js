@@ -37,6 +37,56 @@ function supports(language) {
 }
 
 /**
+ * The language to highlight: the requested one when the installed CnJsonViewer
+ * knows it, plain text otherwise.
+ *
+ * @param {string} [language] The requested language.
+ * @return {string}
+ */
+function editorLanguage(language) {
+	return language && supports(language) ? language : 'text'
+}
+
+/**
+ * The Vue app that renders CnJsonViewer for a text area and writes every edit
+ * back to it with an `input` event.
+ *
+ * @param {HTMLTextAreaElement} textarea The field the editor stands in for.
+ * @param {{language: string, height: string}} props The viewer's language and height.
+ * @return {object} The Vue app, not mounted yet.
+ */
+function editorApp(textarea, props) {
+	const value = ref(textarea.value)
+	return createApp({
+		render() {
+			return h(CnJsonViewer, {
+				value: value.value,
+				language: props.language,
+				height: props.height,
+				'onUpdate:value': (next) => {
+					value.value = next
+					textarea.value = next
+					textarea.dispatchEvent(new Event('input', { bubbles: true }))
+				},
+			})
+		},
+	})
+}
+
+/**
+ * Name the editable region by the text area's own label.
+ *
+ * @param {HTMLElement} host The element the editor is mounted in.
+ * @param {string} [labelledBy] The id of the field's visible label.
+ */
+function labelEditor(host, labelledBy) {
+	const content = host.querySelector('.cm-content')
+	if (content !== null && labelledBy) {
+		content.setAttribute('aria-labelledby', labelledBy)
+	}
+}
+
+/**
  * Mount an editor over a text area.
  *
  * @param {HTMLTextAreaElement} textarea The field the editor stands in for.
@@ -52,30 +102,12 @@ function mount(textarea, options = {}) {
 	textarea.after(host)
 	textarea.hidden = true
 
-	const value = ref(textarea.value)
-	const language =
-		options.language && supports(options.language) ? options.language : 'text'
-	const app = createApp({
-		render() {
-			return h(CnJsonViewer, {
-				value: value.value,
-				language,
-				height: options.height || '180px',
-				'onUpdate:value': (next) => {
-					value.value = next
-					textarea.value = next
-					textarea.dispatchEvent(new Event('input', { bubbles: true }))
-				},
-			})
-		},
+	const app = editorApp(textarea, {
+		language: editorLanguage(options.language),
+		height: options.height || '180px',
 	})
 	app.mount(host)
-
-	// The editable region is named by the text area's own label.
-	const content = host.querySelector('.cm-content')
-	if (content !== null && options.labelledBy) {
-		content.setAttribute('aria-labelledby', options.labelledBy)
-	}
+	labelEditor(host, options.labelledBy)
 
 	return {
 		unmount() {
