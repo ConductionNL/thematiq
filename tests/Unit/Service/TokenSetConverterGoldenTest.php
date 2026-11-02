@@ -50,8 +50,10 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ConverterComponentRepair
  * @uses   \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\CssParserService
+ * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
  * @uses   \OCA\Thematiq\Service\FigmaTokenReader
@@ -192,6 +194,13 @@ class TokenSetConverterGoldenTest extends TestCase {
 		$inputs['root-set-logo-on-disk'] = ":root {\n  --nldesign-color-primary: #0b71a1;\n  --nldesign-logo-url: url('../../img/logos/rijkshuisstijl.svg');\n}\n";
 		$inputs['theme-block'] = ".demo-theme {\n  --demo-color-primary: hsl(210, 70%, 30%);\n  --demo-color-text: #ffffffcc;\n"
 			. "  --utrecht-button-primary-action-background-color: var(--demo-color-primary);\n  --utrecht-document-font-family: 'Fira Sans', sans-serif;\n}\n";
+		$inputs['style-dictionary-same-name-twice'] = (string)json_encode(
+			[
+				'color' => ['brand' => ['value' => ' #111111 '], 'text' => ['value' => '#ffffff']],
+				'color-brand' => ['value' => '#222222'],
+				'utrecht' => ['button' => ['primary-action' => ['background-color' => ['value' => '{color.brand}']]]],
+			]
+		);
 		$inputs['nothing'] = 'no custom properties here';
 		$inputs['empty-json'] = '{}';
 
