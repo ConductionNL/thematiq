@@ -38,6 +38,7 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ConverterColourRepair
+ * @covers \OCA\Thematiq\Service\ConverterPairRepair
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
  * @uses   \OCA\Thematiq\Service\ContrastService
