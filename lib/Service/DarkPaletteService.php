@@ -2032,7 +2032,7 @@ class DarkPaletteService {
 		$lightness = $this->clamp(value: $lightness, min: 0.0, max: 1.0);
 
 		if ($saturation === 0.0) {
-			$v = (int)round($lightness * 255);
+			$v = $this->toByte(unit: $lightness);
 
 			return [$v, $v, $v];
 		}
@@ -2055,9 +2055,9 @@ class DarkPaletteService {
 		$b = $this->hueToRgbChannel(p: $p, q: $q, t: ($hNorm - (1 / 3)));
 
 		return [
-			(int)round($r * 255),
-			(int)round($g * 255),
-			(int)round($b * 255),
+			$this->toByte(unit: $r),
+			$this->toByte(unit: $g),
+			$this->toByte(unit: $b),
 		];
 	}//end hslToRgb()
 
@@ -2124,7 +2124,7 @@ class DarkPaletteService {
 			return '';
 		}
 
-		return sprintf('%02x', $this->clampInt(value: (int)round($alpha * 255)));
+		return sprintf('%02x', $this->clampInt(value: $this->toByte(unit: $alpha)));
 	}//end alphaSuffix()
 
 	/**
@@ -2139,6 +2139,27 @@ class DarkPaletteService {
 	private function clamp(float $value, float $min, float $max): float {
 		return max($min, min($max, $value));
 	}//end clamp()
+
+	/**
+	 * Scale a [0, 1] value to a 0-255 channel, halves rounded up.
+	 *
+	 * The product is first rounded to 15 significant digits, so float noise such as
+	 * 101.49999999999999 gives the same channel on every PHP version: PHP 8.3's round()
+	 * did this pre-rounding itself, PHP 8.4's round() does not.
+	 *
+	 * @param float $unit The value, normalised to [0, 1].
+	 *
+	 * @return int The channel value.
+	 */
+	private function toByte(float $unit): int {
+		$value = ($unit * 255);
+		if (abs($value) < 1.0E-9) {
+			return 0;
+		}
+
+		$scale = (10 ** (14 - (int)floor(log10(abs($value)))));
+		return (int)round(round($value * $scale) / $scale);
+	}//end toByte()
 
 	/**
 	 * Clamp an int channel into [0, 255].
