@@ -34,12 +34,13 @@ use Random\Randomizer;
  * seeded variants: pair colours replaced with light, dark, translucent and unparseable values,
  * pair tokens removed so the `from` step or a default chain stands in, and the table's pairs
  * varied in threshold, adjustment, repaired side and fallback. Records the declarations that
- * changed, the manifest and the report of each case.
+ * changed, the manifest, the repaired component layer and the report of each case.
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ConverterColourRepair
  * @covers \OCA\Thematiq\Service\ConverterPairRepair
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
+ * @uses   \OCA\Thematiq\Service\ConverterComponentRepair
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\CssParserService
@@ -74,7 +75,7 @@ class ConverterColourRepairGoldenTest extends TestCase {
 
 		$actual = [];
 		foreach ($bases as $id => $declarations) {
-			$actual['set:' . $id] = $this->repairCase(service: $service, case: ['semantic' => $declarations, 'table' => $table]);
+			$actual['set:' . $id] = $this->repairCase(service: $service, case: ['semantic' => $declarations, 'table' => $table, 'component' => []]);
 		}
 
 		$tokens = $this->pairTokens(spec: $table['contrastRepair']);
@@ -93,7 +94,11 @@ class ConverterColourRepairGoldenTest extends TestCase {
 
 			$actual['seed:' . $seed] = $this->repairCase(
 				service: $service,
-				case: ['semantic' => $semantic, 'table' => $this->variedTable(table: $table, random: $random)]
+				case: [
+					'semantic' => $semantic,
+					'table' => $this->variedTable(table: $table, random: $random),
+					'component' => $this->componentLayer(spec: $table['contrastRepair'], random: $random),
+				]
 			);
 		}//end for
 
@@ -179,6 +184,33 @@ class ConverterColourRepairGoldenTest extends TestCase {
 	}//end variedPair()
 
 	/**
+	 * A seeded component layer over the table's component pairs: declared, missing or transparent.
+	 *
+	 * @param array<string, mixed> $spec The contrast repair section.
+	 * @param Randomizer $random The case's randomizer.
+	 *
+	 * @return array<string, string> The component layer.
+	 */
+	private function componentLayer(array $spec, Randomizer $random): array {
+		$component = [];
+		foreach ($spec['componentPairs'] as $pair) {
+			foreach (['foreground', 'background'] as $side) {
+				$draw = $random->getInt(0, 4);
+				if ($draw === 0) {
+					continue;
+				}
+
+				$component[(string)$pair[$side]] = self::COLOURS[$random->getInt(0, (count(self::COLOURS) - 1))];
+				if ($draw === 1) {
+					$component[(string)$pair[$side]] = 'transparent';
+				}
+			}
+		}
+
+		return $component;
+	}//end componentLayer()
+
+	/**
 	 * Every token a pair of the table names.
 	 *
 	 * @param array<string, mixed> $spec The contrast repair section.
@@ -204,7 +236,7 @@ class ConverterColourRepairGoldenTest extends TestCase {
 	 * One repair, as JSON text: the declarations that changed, the manifest and the report.
 	 *
 	 * @param ConverterColourRepair $service The service.
-	 * @param array{semantic: array<string, string>, table: array<string, mixed>} $case The input.
+	 * @param array{semantic: array<string, string>, table: array<string, mixed>, component: array<string, string>} $case The input.
 	 *
 	 * @return string
 	 */
@@ -223,8 +255,15 @@ class ConverterColourRepairGoldenTest extends TestCase {
 			}
 		}
 
+		$components = [];
+		foreach ($service->repairComponents(component: $case['component'], semantic: $result, table: $case['table'], report: $report) as $token => $value) {
+			if (($case['component'][$token] ?? null) !== $value) {
+				$components[$token] = $value;
+			}
+		}
+
 		return (string)json_encode(
-			['changed' => $changed, 'keys' => count($result), 'manifest' => $manifest, 'report' => $report],
+			['changed' => $changed, 'keys' => count($result), 'manifest' => $manifest, 'components' => $components, 'report' => $report],
 			(JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION)
 		);
 	}//end repairCase()

@@ -176,7 +176,7 @@ class ConverterColourRepair {
 			return $component;
 		}
 
-		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster))->repair(
+		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster, pairs: $this->pairs))->repair(
 			component: $component,
 			semantic: $semantic,
 			spec: $spec,
