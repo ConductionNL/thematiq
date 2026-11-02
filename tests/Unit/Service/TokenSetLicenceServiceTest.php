@@ -16,6 +16,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use DateTime;
 use InvalidArgumentException;
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\CssDeclarationScanner;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
 use OCA\Thematiq\Service\RestrictedSetGate;
@@ -45,6 +46,7 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
 #[UsesClass(CssParserService::class)]
+#[UsesClass(CssDeclarationScanner::class)]
 class TokenSetLicenceServiceTest extends TestCase {
 
 	use RestrictedSetFixture;

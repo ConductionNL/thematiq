@@ -47,6 +47,7 @@ use ReflectionClassConstant;
  * @covers \OCA\Thematiq\Service\ComplianceReportService
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\CssParserService
+ * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\CssColorParser
  */
 class ComplianceReportGoldenTest extends TestCase {

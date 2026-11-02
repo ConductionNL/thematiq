@@ -50,6 +50,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ConverterComponentRepair
  * @uses   \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\CssParserService
+ * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
