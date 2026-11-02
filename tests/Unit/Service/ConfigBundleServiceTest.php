@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -214,8 +215,12 @@ class ConfigBundleServiceTest extends TestCase {
 			$appManager,
 			$this->tokenSetService,
 			$this->overridesService,
-			$this->customTokenSetService,
-			$customTokenSetValidator,
+			new CustomTokenSetsBundleSection(
+				customSets: $this->customTokenSetService,
+				validator: $customTokenSetValidator,
+				cssParser: $cssParser,
+				appManager: $appManager
+			),
 			$appThemingService,
 			$cssParser,
 			$emailThemingService,
