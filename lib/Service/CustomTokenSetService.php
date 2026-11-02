@@ -186,10 +186,6 @@ class CustomTokenSetService {
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - storing writes files and a manifest entry in one transaction-like order; every branch is
-	 *   a precondition that must fail before anything is written.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - storing writes files and a manifest entry in one transaction-like order; every branch is a
-	 *   precondition that must fail before anything is written.
 	 */
 	public function store(
 		string $displayName,
@@ -202,20 +198,9 @@ class CustomTokenSetService {
 		?array $logoAsset = null,
 		?string $designSystem = null,
 	): array {
-		$slug = $this->slugify(name: $displayName);
-		if ($slug === '') {
-			throw new RuntimeException(message: 'A token set name must contain at least one letter or digit.', code: 422);
-		}
-
-		$id = self::ID_PREFIX . $slug;
-		$name = $this->getCssPath(id: $id);
-
-		if ($this->store->exists(name: $name) === true || isset($this->getManifest()[$id]) === true) {
-			throw new RuntimeException(message: 'A custom token set named "' . $displayName . '" already exists. Delete or rename it first.', code: 409);
-		}
-
+		$id = $this->reserveId(displayName: $displayName);
 		$this->writeFile(
-			name: $name,
+			name: $this->getCssPath(id: $id),
 			contents: ($css ?? $this->validator->serialize(declarations: $declarations))
 		);
 
@@ -224,70 +209,148 @@ class CustomTokenSetService {
 		// manifest entry naming a file that was never written would fail the
 		// sync with "Image file not found" instead of updating the logo.
 		if ($logoAsset !== null) {
-			$logoPath = $this->writeLogoAsset(id: $id, asset: $logoAsset);
-			unset($theming['logo']);
-			if ($logoPath !== null) {
-				$theming['logo'] = $logoPath;
-			}
+			$theming = $this->withLogoAsset(theming: $theming, logo: ['id' => $id, 'asset' => $logoAsset]);
 		}
 
 		$warnings = $this->contrast->check(declarations: $declarations);
-
-		$resolvedDescription = $description;
-		if ($resolvedDescription === '') {
-			$resolvedDescription = 'Custom token set: ' . $displayName;
-		}
-
-		$entry = [
-			'name' => $displayName,
-			'description' => $resolvedDescription,
-			'theming' => array_merge($this->deriveTheming(declarations: $declarations), $theming),
-			'warnings' => $warnings,
-		];
-
-		if ($version !== null) {
-			$entry['version'] = $version;
-		}
-
-		if (empty($importWarnings) === false) {
-			$entry['importWarnings'] = $importWarnings;
-		}
-
-		// The design system this set was MADE from, when the caller knows it.
-		//
-		// Without it every custom set resolved to `nldesign`, so a theme saved
-		// from the stock Nextcloud set came back with the whole NL Design System
-		// layer on top of it — fonts, defaults.css, element-overrides.css — and
-		// an admin who had changed one colour found their instance rebuilt.
-		// Recording it keeps "save this as a theme" faithful to what was saved.
-		//
-		// Left unset when the caller has no opinion (an upload of an unknown
-		// document is exactly that), and an unset value still resolves to
-		// `nldesign` downstream, which is what every set written before this
-		// field existed already was.
-		if ($designSystem !== null && $designSystem !== '') {
-			$entry['design_system'] = $designSystem;
-		}
-
-		$manifest = $this->getManifest();
-		$manifest[$id] = $entry;
-		$this->saveManifest(manifest: $manifest);
-
-		// Best-effort dark-variant generation at upload time (never allowed
-		// to fail the upload itself — theming is presentation, not a hard
-		// dependency; see openspec/specs/dark-mode/spec.md).
-		try {
-			$this->darkPalette->generateAndWrite(setId: $id, force: true);
-		} catch (\Throwable $e) {
-			// Swallow: a dark-variant generation failure must never break
-			// the (already-persisted) custom token set upload.
-		}
+		$entry = $this->withOptionalFields(
+			entry: [
+				'name' => $displayName,
+				'description' => $this->describe(description: $description, displayName: $displayName),
+				'theming' => array_merge($this->deriveTheming(declarations: $declarations), $theming),
+				'warnings' => $warnings,
+			],
+			optional: ['version' => $version, 'importWarnings' => $importWarnings, 'designSystem' => $designSystem]
+		);
+		$this->register(id: $id, entry: $entry);
 
 		return [
 			'id' => $id,
 			'warnings' => $warnings,
 		];
 	}//end store()
+
+	/**
+	 * The id a new set of this name gets, refused when the name slugs to nothing or is taken.
+	 *
+	 * @param string $displayName The admin display name.
+	 *
+	 * @return string The set id.
+	 *
+	 * @throws RuntimeException When the slug is empty (422) or the id collides (409).
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function reserveId(string $displayName): string {
+		$slug = $this->slugify(name: $displayName);
+		if ($slug === '') {
+			throw new RuntimeException(message: 'A token set name must contain at least one letter or digit.', code: 422);
+		}
+
+		$id = self::ID_PREFIX . $slug;
+		if ($this->store->exists(name: $this->getCssPath(id: $id)) === true || isset($this->getManifest()[$id]) === true) {
+			throw new RuntimeException(message: 'A custom token set named "' . $displayName . '" already exists. Delete or rename it first.', code: 409);
+		}
+
+		return $id;
+	}//end reserveId()
+
+	/**
+	 * Write a converter-decoded logo and point the theming at it.
+	 *
+	 * A logo the store refuses (or an unsupported extension) drops any `logo` the theming named.
+	 *
+	 * @param array<string, string> $theming The theming overrides.
+	 * @param array{id: string, asset: array{path: string, contents: string}} $logo The set id and the decoded asset.
+	 *
+	 * @return array<string, string> The theming overrides with the logo path.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function withLogoAsset(array $theming, array $logo): array {
+		$logoPath = $this->writeLogoAsset(id: $logo['id'], asset: $logo['asset']);
+		unset($theming['logo']);
+		if ($logoPath !== null) {
+			$theming['logo'] = $logoPath;
+		}
+
+		return $theming;
+	}//end withLogoAsset()
+
+	/**
+	 * The description a set is listed with: the given one, or one naming the set.
+	 *
+	 * @param string $description The given description, possibly empty.
+	 * @param string $displayName The admin display name.
+	 *
+	 * @return string
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function describe(string $description, string $displayName): string {
+		if ($description === '') {
+			return 'Custom token set: ' . $displayName;
+		}
+
+		return $description;
+	}//end describe()
+
+	/**
+	 * Add the fields a caller may leave out to a manifest entry.
+	 *
+	 * The design system is the one the set was MADE from, when the caller knows it. Without it
+	 * every custom set resolved to `nldesign`, so a theme saved from the stock Nextcloud set came
+	 * back with the whole NL Design System layer on top of it. Left unset when the caller has no
+	 * opinion (an upload of an unknown document), which still resolves to `nldesign` downstream.
+	 *
+	 * @param array<string, mixed> $entry The manifest entry.
+	 * @param array{version: string|null, importWarnings: array<int, array<string, mixed>>, designSystem: string|null} $optional The optional fields.
+	 *
+	 * @return array<string, mixed> The entry with the given optional fields.
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function withOptionalFields(array $entry, array $optional): array {
+		if ($optional['version'] !== null) {
+			$entry['version'] = $optional['version'];
+		}
+
+		if ($optional['importWarnings'] !== []) {
+			$entry['importWarnings'] = $optional['importWarnings'];
+		}
+
+		if ($optional['designSystem'] !== null && $optional['designSystem'] !== '') {
+			$entry['design_system'] = $optional['designSystem'];
+		}
+
+		return $entry;
+	}//end withOptionalFields()
+
+	/**
+	 * Add the entry to the manifest and make the set's dark variant.
+	 *
+	 * Dark-variant generation is best effort: theming is presentation, not a hard dependency, so
+	 * a failure never breaks the already-persisted upload (openspec/specs/dark-mode/spec.md).
+	 *
+	 * @param string $id The set id.
+	 * @param array<string, mixed> $entry The manifest entry.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function register(string $id, array $entry): void {
+		$manifest = $this->getManifest();
+		$manifest[$id] = $entry;
+		$this->saveManifest(manifest: $manifest);
+
+		try {
+			$this->darkPalette->generateAndWrite(setId: $id, force: true);
+		} catch (\Throwable $e) {
+			// Swallow: a dark-variant generation failure must never break
+			// the (already-persisted) custom token set upload.
+		}
+	}//end register()
 
 	/**
 	 * Keep the dark values an uploaded file brought for a stored set, and make its dark variant again.

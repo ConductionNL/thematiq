@@ -203,18 +203,54 @@ class TokenSetVocabularyAuditService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
 	public function auditSet(string $appPath, string $id, array $meta): array {
-		$designSystem = ($meta['design_system'] ?? 'nldesign');
-		if (is_string($designSystem) === false) {
-			$designSystem = 'nldesign';
-		}
-
+		$designSystem = $this->designSystemOf(meta: $meta);
 		if (isset(self::OWN_VOCABULARIES[$designSystem]) === true) {
 			return $this->auditOwnVocabulary(appPath: $appPath, id: $id, designSystem: $designSystem, meta: $meta);
 		}
 
 		$auditable = in_array($designSystem, $this->nldesignConsumingSystems(appPath: $appPath), true);
-
 		$declarations = $this->declarationsOf(filePath: $appPath . '/css/tokens/' . $id . '.css');
+		$verdict = $this->vocabularyFindings(appPath: $appPath, declarations: $declarations)
+			+ $this->primaryFindings(meta: $meta, declarations: $declarations);
+
+		// A set whose design system never reads the --nldesign-* vocabulary has
+		// no findings to report, only an absent verdict. Leaving the computed
+		// lists in place said "26 required tokens are missing" about a set that
+		// was never judged, which reads as a defect rather than as a set the
+		// audit does not apply to.
+		if ($auditable === false) {
+			$verdict = array_merge($verdict, ['missingRequired' => [], 'foreignNldesignNames' => [], 'primaryMismatch' => false]);
+		}
+
+		return ['id' => $id, 'designSystem' => $designSystem, 'auditable' => $auditable] + $verdict
+			+ ['complete' => ($verdict['missingRequired'] === [] && $verdict['foreignNldesignNames'] === [] && $verdict['primaryMismatch'] === false)];
+	}//end auditSet()
+
+	/**
+	 * The design system a manifest entry names, `nldesign` when it names none or no string.
+	 *
+	 * @param array<string, mixed> $meta The set's manifest entry.
+	 *
+	 * @return string
+	 */
+	private function designSystemOf(array $meta): string {
+		$designSystem = ($meta['design_system'] ?? 'nldesign');
+		if (is_string($designSystem) === false) {
+			return 'nldesign';
+		}
+
+		return $designSystem;
+	}//end designSystemOf()
+
+	/**
+	 * The required tokens a set file leaves out, and the names it declares outside the vocabulary.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param array<string, string> $declarations The set file's --nldesign-* declarations.
+	 *
+	 * @return array{missingRequired: array<int, string>, foreignNldesignNames: array<int, string>}
+	 */
+	private function vocabularyFindings(string $appPath, array $declarations): array {
 		$declaredNames = array_keys($declarations);
 
 		$missingRequired = array_values(array_filter(
@@ -229,41 +265,31 @@ class TokenSetVocabularyAuditService {
 		));
 		sort($foreign);
 
+		return ['missingRequired' => $missingRequired, 'foreignNldesignNames' => $foreign];
+	}//end vocabularyFindings()
+
+	/**
+	 * Whether the manifest's primary colour and the set file's disagree, with both values.
+	 *
+	 * A missing or non-literal --nldesign-color-primary is already reported as a missing required
+	 * token; only a genuine disagreement between two resolvable values is a mismatch, so the two
+	 * findings never double-count the same defect.
+	 *
+	 * @param array<string, mixed> $meta The set's manifest entry.
+	 * @param array<string, string> $declarations The set file's --nldesign-* declarations.
+	 *
+	 * @return array{primaryMismatch: bool, declaredPrimary: string|null, cssPrimary: string|null}
+	 */
+	private function primaryFindings(array $meta, array $declarations): array {
 		$declaredPrimary = $this->normaliseHex(value: ($meta['theming']['primary_color'] ?? null));
 		$cssPrimary = $this->normaliseHex(value: ($declarations['--nldesign-color-primary'] ?? null));
 
-		// A missing or non-literal --nldesign-color-primary is already reported
-		// as a missing required token; only a genuine disagreement between two
-		// resolvable values is a mismatch, so the two findings never
-		// double-count the same defect.
-		$primaryMismatch = ($declaredPrimary !== null && $cssPrimary !== null && $declaredPrimary !== $cssPrimary);
-
-		$complete = ($auditable === false
-			|| ($missingRequired === [] && $foreign === [] && $primaryMismatch === false));
-
-		// A set whose design system never reads the --nldesign-* vocabulary has
-		// no findings to report, only an absent verdict. Leaving the computed
-		// lists in place said "26 required tokens are missing" about a set that
-		// was never judged, which reads as a defect rather than as a set the
-		// audit does not apply to.
-		if ($auditable === false) {
-			$missingRequired = [];
-			$foreign = [];
-			$primaryMismatch = false;
-		}
-
 		return [
-			'id' => $id,
-			'designSystem' => $designSystem,
-			'auditable' => $auditable,
-			'missingRequired' => $missingRequired,
-			'foreignNldesignNames' => $foreign,
-			'primaryMismatch' => $primaryMismatch,
+			'primaryMismatch' => ($declaredPrimary !== null && $cssPrimary !== null && $declaredPrimary !== $cssPrimary),
 			'declaredPrimary' => $declaredPrimary,
 			'cssPrimary' => $cssPrimary,
-			'complete' => $complete,
 		];
-	}//end auditSet()
+	}//end primaryFindings()
 
 	/**
 	 * Audit a set of a design system that reads its own vocabulary

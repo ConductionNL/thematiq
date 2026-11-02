@@ -1219,51 +1219,111 @@ class DarkPaletteService {
 
 		for ($round = 0; $round < self::MAX_REPAIR_ROUNDS; $round++) {
 			$warnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
-			$fixableFound = false;
-
-			foreach ($warnings as $warning) {
-				if (($warning['unevaluated'] ?? false) === true) {
-					continue;
-				}
-
-				[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
-				if (isset($protected[$fgName]) === true || isset($protected[$bgName]) === true) {
-					// Hand-authored failure: warn only, never rewritten.
-					continue;
-				}
-
-				// An earlier repair in this round may already have fixed this pair
-				// through a shared foreground; repairing again would overshoot it.
-				$bgValue = (string)$this->pairBackground(declarations: $declarations, token: $bgName);
-				$ratio = $this->contrast->measure(
-					foreground: $declarations[$fgName],
-					background: $bgValue,
-					page: ($declarations['--nldesign-color-background'] ?? null)
-				);
-				if ($ratio !== null && $ratio >= $warning['threshold']) {
-					continue;
-				}
-
-				$fixableFound = true;
-				$declarations[$fgName] = $this->repairForeground(
-					fgValue: $declarations[$fgName],
-					bgValue: $bgValue,
-					threshold: $warning['threshold']
-				);
-			}//end foreach
-
-			if ($fixableFound === false) {
+			$repaired = $this->repairRound(
+				declarations: $declarations,
+				warnings: $this->repairableWarnings(warnings: $warnings, protected: $protected)
+			);
+			if ($repaired === null) {
 				break;
 			}
-		}//end for
 
-		$finalWarnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
+			$declarations = $repaired;
+		}
 
 		return [
 			'declarations' => $declarations,
-			'warnings' => $finalWarnings,
+			'warnings' => $this->failingPairs(declarations: $declarations, pairs: $pairs),
 		];
 	}//end verifyAndRepair()
+
+	/**
+	 * The failing pairs the repair may rewrite: evaluated, and naming no protected token.
+	 *
+	 * A hand-authored (protected) failure stays a warning and is never rewritten.
+	 *
+	 * @param array<int, array<string, mixed>> $warnings The failing pairs of this round.
+	 * @param array<string, int> $protected Protected token names as keys.
+	 *
+	 * @return array<int, array<string, mixed>> The repairable pairs, in order.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairableWarnings(array $warnings, array $protected): array {
+		$repairable = [];
+		foreach ($warnings as $warning) {
+			if (($warning['unevaluated'] ?? false) === true) {
+				continue;
+			}
+
+			[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
+			if (isset($protected[$fgName]) === false && isset($protected[$bgName]) === false) {
+				$repairable[] = $warning;
+			}
+		}
+
+		return $repairable;
+	}//end repairableWarnings()
+
+	/**
+	 * Repair each failing pair once, in order.
+	 *
+	 * @param array<string, string> $declarations The candidate dark declarations.
+	 * @param array<int, array<string, mixed>> $warnings The repairable pairs.
+	 *
+	 * @return array<string, string>|null The repaired declarations, or null when no pair still failed.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairRound(array $declarations, array $warnings): ?array {
+		$fixableFound = false;
+		foreach ($warnings as $warning) {
+			$repaired = $this->repairPair(declarations: $declarations, warning: $warning);
+			if ($repaired !== null) {
+				$declarations = $repaired;
+				$fixableFound = true;
+			}
+		}
+
+		if ($fixableFound === false) {
+			return null;
+		}
+
+		return $declarations;
+	}//end repairRound()
+
+	/**
+	 * Repair one failing pair's foreground.
+	 *
+	 * An earlier repair in the same round may already have fixed the pair through a shared
+	 * foreground, so the pair is measured again first; repairing it again would overshoot.
+	 *
+	 * @param array<string, string> $declarations The candidate dark declarations.
+	 * @param array<string, mixed> $warning The failing pair.
+	 *
+	 * @return array<string, string>|null The declarations with the foreground repaired, or null when the pair passes.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairPair(array $declarations, array $warning): ?array {
+		[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
+		$bgValue = (string)$this->pairBackground(declarations: $declarations, token: $bgName);
+		$ratio = $this->contrast->measure(
+			foreground: $declarations[$fgName],
+			background: $bgValue,
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+		if ($ratio !== null && $ratio >= $warning['threshold']) {
+			return null;
+		}
+
+		$declarations[$fgName] = $this->repairForeground(
+			fgValue: $declarations[$fgName],
+			bgValue: $bgValue,
+			threshold: $warning['threshold']
+		);
+
+		return $declarations;
+	}//end repairPair()
 
 	/**
 	 * The failing pairs of a dark declaration map: {@see ContrastService::check()}'s
