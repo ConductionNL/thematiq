@@ -75,6 +75,8 @@ class CssInjectionGoldenTest extends TestCase {
 
 	private const CUSTOM_SET = 'custom-golden';
 
+	private const FAILURES = ['brand', 'scopes', 'custom-css', 'banner', 'header', 'menu', 'search', 'fonts', 'stock', 'meta'];
+
 	/**
 	 * The app config of the current case.
 	 *
@@ -95,6 +97,20 @@ class CssInjectionGoldenTest extends TestCase {
 	 * @var string
 	 */
 	private string $dir = '';
+
+	/**
+	 * The seeded randomizer of the current case.
+	 *
+	 * @var Randomizer
+	 */
+	private Randomizer $random;
+
+	/**
+	 * Whether the current case keeps every option at its default.
+	 *
+	 * @var boolean
+	 */
+	private bool $plain = true;
 
 	/**
 	 * Every set a case can render.
@@ -126,8 +142,12 @@ class CssInjectionGoldenTest extends TestCase {
 
 		$special = ['nextcloud', 'summer-breeze', 'hoog-contrast', 'lasuite', 'frankendesk', 'cunningham', self::CUSTOM_SET, 'missing-set'];
 		for ($seed = 1; $seed <= 300; $seed++) {
-			$random = new Randomizer(new Mt19937($seed));
-			$pool = ($random->getInt(0, 1) === 1) ? $special : $sets;
+			$random = new Randomizer(engine: new Mt19937(seed: $seed));
+			$pool = $sets;
+			if ($random->getInt(0, 1) === 1) {
+				$pool = $special;
+			}
+
 			$actual['seed:' . $seed] = $this->runCase(seed: $seed, set: $pool[$random->getInt(0, (count($pool) - 1))], plain: false);
 		}
 
@@ -136,9 +156,9 @@ class CssInjectionGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testCascadeMatchesTheGoldenRecording()
 
@@ -152,49 +172,57 @@ class CssInjectionGoldenTest extends TestCase {
 	 * @return string The record as JSON text.
 	 */
 	private function runCase(int $seed, string $set, bool $plain): string {
-		$random = new Randomizer(new Mt19937($seed));
-		$pick = fn (array $options) => $options[$random->getInt(0, (count($options) - 1))];
-		$chance = fn (int $outOf): bool => ($plain === false && $random->getInt(1, $outOf) === 1);
+		$this->random = new Randomizer(engine: new Mt19937(seed: $seed));
+		$this->plain = $plain;
 		$this->log = [];
 		$this->dir = sys_get_temp_dir() . '/thematiq-css-golden-' . bin2hex(random_bytes(4));
 		$this->app = ['token_set' => $set];
 		if ($plain === false) {
-			$this->seedConfig(pick: $pick, chance: $chance);
+			$this->seedConfig();
 		}
 
-		$store = new DirectoryRuntimeFileStore($this->dir);
-		$this->seedStore(store: $store, chance: $chance, set: $set);
-		$failing = $pick(['', '', '', '', '', '', 'brand', 'scopes', 'custom-css', 'banner', 'header', 'menu', 'search', 'fonts', 'stock', 'meta']);
+		$store = new DirectoryRuntimeFileStore(root: $this->dir);
+		$this->seedStore(store: $store, set: $set);
+		$failing = $this->pick(options: array_merge(array_fill(0, 6, ''), self::FAILURES));
 		if ($plain === true) {
 			$failing = '';
 		}
 
-		$service = $this->service(
-			case: [
-				'random' => $random,
-				'plain' => $plain,
-				'failing' => $failing,
-				'store' => $store,
-				'signedIn' => ($plain === true || $random->getInt(0, 1) === 1),
-				'preview' => $chance(6) ? $pick(['amsterdam', 'lasuite', 'nextcloud', self::CUSTOM_SET]) : null,
-				'brand' => $chance(3) ? $pick($this->sets) : null,
-				'brandLogo' => $chance(2),
-				'collaborators' => ($plain === false && $random->getInt(0, 3) !== 0),
-			]
-		);
-		$context = $plain ? 'user' : $pick(self::CONTEXTS);
-		$appId = $plain ? null : $pick([null, 'files', 'collectives', '']);
+		$case = ['failing' => $failing, 'store' => $store, 'signedIn' => ($plain === true || $this->random->getInt(0, 1) === 1), 'preview' => null];
+		if ($this->chance(outOf: 6) === true) {
+			$case['preview'] = $this->pick(options: ['amsterdam', 'lasuite', 'nextcloud', self::CUSTOM_SET]);
+		}
+
+		$case['brand'] = null;
+		if ($this->chance(outOf: 3) === true) {
+			$case['brand'] = $this->pick(options: $this->sets);
+		}
+
+		$case['brandLogo'] = $this->chance(outOf: 2);
+		$case['collaborators'] = ($plain === false && $this->random->getInt(0, 3) !== 0);
+		$service = $this->service(case: $case);
+		$context = 'user';
+		$appId = null;
+		if ($plain === false) {
+			$context = $this->pick(options: self::CONTEXTS);
+			$appId = $this->pick(options: [null, 'files', 'collectives', '']);
+		}
+
 		$record = ['failing' => $failing, 'context' => $context, 'appId' => $appId];
 		$record['themed'] = '';
 		foreach (self::CONTEXTS as $name) {
-			$record['themed'] .= ($service->isContextThemed(context: $name) === true) ? '1' : '0';
+			$record['themed'] .= (int)$service->isContextThemed(context: $name);
 		}
 
 		$record['manifestBefore'] = $this->manifest(service: $service, set: $set);
 		$service->inject(context: $context, appId: $appId);
 		$record['inject'] = $this->log;
 		$this->log = [];
-		$other = $plain ? $set : $pick(['amsterdam', 'lasuite', 'nextcloud', 'hoog-contrast', 'summer-breeze', $set]);
+		$other = $set;
+		if ($plain === false) {
+			$other = $this->pick(options: ['amsterdam', 'lasuite', 'nextcloud', 'hoog-contrast', 'summer-breeze', $set]);
+		}
+
 		$record['manifestAfter'] = $this->manifest(service: $service, set: $other);
 		$record['afterLog'] = $this->log;
 		$this->removeDir(path: $this->dir);
@@ -207,14 +235,33 @@ class CssInjectionGoldenTest extends TestCase {
 	}//end runCase()
 
 	/**
-	 * Seeds the app config of a varied case.
+	 * One of a list, drawn from the case's randomizer.
 	 *
-	 * @param callable $pick Picks one of a list.
-	 * @param callable $chance True one time in N.
+	 * @param array<int, mixed> $options The list.
+	 *
+	 * @return mixed The pick.
+	 */
+	private function pick(array $options): mixed {
+		return $options[$this->random->getInt(0, (count($options) - 1))];
+	}//end pick()
+
+	/**
+	 * True one time in N for a varied case, never for a plain one.
+	 *
+	 * @param int $outOf The N.
+	 *
+	 * @return bool The draw.
+	 */
+	private function chance(int $outOf): bool {
+		return ($this->plain === false && $this->random->getInt(1, $outOf) === 1);
+	}//end chance()
+
+	/**
+	 * Seeds the app config of a varied case.
 	 *
 	 * @return void
 	 */
-	private function seedConfig(callable $pick, callable $chance): void {
+	private function seedConfig(): void {
 		$optional = [
 			'dark_variants' => ['0', '1', 'x'],
 			'marianne_enabled' => ['0', '1'],
@@ -235,16 +282,16 @@ class CssInjectionGoldenTest extends TestCase {
 			'installed_version' => ['1.2.3', '0.9.0-beta'],
 		];
 		foreach ($optional as $key => $values) {
-			if ($chance(2) === true) {
-				$this->app[$key] = $pick($values);
+			if ($this->chance(outOf: 2) === true) {
+				$this->app[$key] = $this->pick(options: $values);
 			}
 		}
 
-		if ($chance(3) === true) {
+		if ($this->chance(outOf: 3) === true) {
 			$this->app['group_token_sets'] = (string)json_encode(
 				[
-					['group' => 'gemeente-a', 'tokenSet' => $pick(['amsterdam', 'lasuite', 'nextcloud', self::CUSTOM_SET, 'gone-set'])],
-					['group' => 'staff', 'tokenSet' => $pick(['denhaag', 'hoog-contrast', 'summer-breeze'])],
+					['group' => 'gemeente-a', 'tokenSet' => $this->pick(options: ['amsterdam', 'lasuite', 'nextcloud', self::CUSTOM_SET, 'gone-set'])],
+					['group' => 'staff', 'tokenSet' => $this->pick(options: ['denhaag', 'hoog-contrast', 'summer-breeze'])],
 				]
 			);
 		}
@@ -254,30 +301,36 @@ class CssInjectionGoldenTest extends TestCase {
 	 * Seeds the runtime files of a case: the uploaded set, dark variants and overrides.
 	 *
 	 * @param DirectoryRuntimeFileStore $store The store.
-	 * @param callable $chance True one time in N.
 	 * @param string $set The default set.
 	 *
 	 * @return void
 	 */
-	private function seedStore(DirectoryRuntimeFileStore $store, callable $chance, string $set): void {
-		$this->app['custom_token_sets'] = (string)json_encode(
-			[self::CUSTOM_SET => ['id' => self::CUSTOM_SET, 'name' => 'Golden', 'design_system' => ($chance(2) ? 'none' : 'nldesign')]]
-		);
+	private function seedStore(DirectoryRuntimeFileStore $store, string $set): void {
+		$system = 'nldesign';
+		if ($this->chance(outOf: 2) === true) {
+			$system = 'none';
+		}
+
+		$custom = ['id' => self::CUSTOM_SET, 'name' => 'Golden', 'design_system' => $system];
+		$this->app['custom_token_sets'] = (string)json_encode([self::CUSTOM_SET => $custom]);
 		$store->write(name: 'css/tokens/' . self::CUSTOM_SET . '.css', content: ":root {\n  --nldesign-color-primary: #123456;\n}\n");
-		if ($chance(2) === true) {
-			$store->write(name: 'css/tokens/dark/' . self::CUSTOM_SET . '.css', content: $this->darkCss(internal: $chance(2)));
+		if ($this->chance(outOf: 2) === true) {
+			$store->write(name: 'css/tokens/dark/' . self::CUSTOM_SET . '.css', content: $this->darkCss(internal: $this->chance(outOf: 2)));
 		}
 
-		if ($chance(4) === true) {
-			$store->write(name: 'css/tokens/' . $set . '.css', content: ":root {\n  --nldesign-color-primary: #654321;\n  --nldesign-cn-email-accent: #222222;\n}\n");
+		if ($this->chance(outOf: 4) === true) {
+			$store->write(
+				name: 'css/tokens/' . $set . '.css',
+				content: ":root {\n  --nldesign-color-primary: #654321;\n  --nldesign-cn-email-accent: #222222;\n}\n"
+			);
 		}
 
-		if ($chance(4) === true) {
-			$store->write(name: 'css/tokens/dark/' . $set . '.css', content: $this->darkCss(internal: $chance(2)));
+		if ($this->chance(outOf: 4) === true) {
+			$store->write(name: 'css/tokens/dark/' . $set . '.css', content: $this->darkCss(internal: $this->chance(outOf: 2)));
 		}
 
 		foreach (['nldesign', 'none'] as $system) {
-			if ($chance(2) === true) {
+			if ($this->chance(outOf: 2) === true) {
 				$store->write(
 					name: 'css/' . CustomOverridesService::fileFor(tokenSet: $set, designSystemId: $system) . '.css',
 					content: ":root {\n  --nldesign-component-button-primary-background-color: #010203;\n  --nldesign-cn-color-swatch-checker: #0a0b0c;\n}\n"
@@ -310,45 +363,62 @@ class CssInjectionGoldenTest extends TestCase {
 	 * @return CssInjectionService The service.
 	 */
 	private function service(array $case): CssInjectionService {
-		$random = $case['random'];
+		$random = $this->random;
 		$failing = $case['failing'];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
 		$config->method('getSystemValueString')->willReturnCallback(fn (string $key, string $default = '') => ($this->app[$key] ?? $default));
 
-		$repo = $this->createMock(IAppManager::class);
+		$repo = $this->createMock(originalClassName: IAppManager::class);
 		$repo->method('getAppPath')->willReturn(dirname(__DIR__, 3));
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkTo')->willReturnCallback(fn (string $app, string $file): string => '/apps/' . $app . '/' . $file);
 		$urls->method('linkToRoute')->willReturnCallback(
-			fn (string $route, array $args = []): string => '/route/' . $route . ($args === [] ? '' : '/' . http_build_query($args))
+			function (string $route, array $args = []): string {
+				if ($args === []) {
+					return '/route/' . $route;
+				}
+
+				return '/route/' . $route . '/' . http_build_query($args);
+			}
 		);
 		$urls->method('imagePath')->willReturnCallback(fn (string $app, string $file): string => '/img/' . $app . '/' . $file);
 		$urls->method('getAbsoluteURL')->willReturnCallback(fn (string $url): string => 'https://cloud.example' . $url);
-		$runtimeFiles = new RuntimeFileLocator($repo, $case['store'], $urls, $this->createMock(ITempManager::class));
-		$logger = $this->createMock(LoggerInterface::class);
+		$runtimeFiles = new RuntimeFileLocator(
+			appManager: $repo,
+			store: $case['store'],
+			urlGenerator: $urls,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
+		);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->method('warning')->willReturnCallback(
 			function (string $message, array $context = []): void {
 				$this->log[] = 'warning:' . $message . '|' . ($context['layer'] ?? '') . '|' . $this->describe(error: ($context['exception'] ?? null));
 			}
 		);
 
-		$customCss = $this->createMock(CustomCssService::class);
-		$customCss->method('isEnabled')->willReturnCallback(fn (): bool => ($failing === 'custom-css') ? throw new RuntimeException('custom css') : true);
-		$customCss->method('hasContent')->willReturn(($case['plain'] === false && $random->getInt(0, 1) === 1));
-		$fonts = $this->createMock(FontService::class);
-		$hasFonts = ($case['plain'] === false && $random->getInt(0, 1) === 1);
-		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => ($failing === 'fonts') ? throw new RuntimeException('fonts') : $hasFonts);
+		$customCss = $this->createMock(originalClassName: CustomCssService::class);
+		$customCss->method('isEnabled')->willReturnCallback(
+			fn (): bool => $this->failOr(failing: ($failing === 'custom-css'), message: 'custom css', value: true)
+		);
+		$customCss->method('hasContent')->willReturn(($this->plain === false && $random->getInt(0, 1) === 1));
+		$fonts = $this->createMock(originalClassName: FontService::class);
+		$hasFonts = ($this->plain === false && $random->getInt(0, 1) === 1);
+		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => $this->failOr(failing: ($failing === 'fonts'), message: 'fonts', value: $hasFonts));
 		$fonts->method('getRevision')->willReturn($random->getInt(1, 9));
-		$stock = $this->createMock(StockTokensService::class);
-		$stockCss = ($random->getInt(0, 1) === 1) ? ":root {\n  --nldesign-color-primary: #0082c9;\n}\n" : null;
-		$stock->method('getCss')->willReturnCallback(fn (): ?string => ($failing === 'stock') ? throw new RuntimeException('stock') : $stockCss);
+		$stock = $this->createMock(originalClassName: StockTokensService::class);
+		$stockCss = null;
+		if ($random->getInt(0, 1) === 1) {
+			$stockCss = ":root {\n  --nldesign-color-primary: #0082c9;\n}\n";
+		}
 
-		$banner = $this->createMock(ThemePreviewBannerService::class);
+		$stock->method('getCss')->willReturnCallback(fn (): ?string => $this->failOr(failing: ($failing === 'stock'), message: 'stock', value: $stockCss));
+
+		$banner = $this->createMock(originalClassName: ThemePreviewBannerService::class);
 		$banner->method('inject')->willReturnCallback(
 			function (string $tokenSet, array $tokenSetMeta) use ($failing): void {
 				if ($failing === 'banner') {
-					throw new RuntimeException('banner');
+					throw new RuntimeException(message: 'banner');
 				}
 
 				$this->log[] = 'banner:' . $tokenSet . '|' . json_encode($tokenSetMeta);
@@ -357,11 +427,11 @@ class CssInjectionGoldenTest extends TestCase {
 
 		$scopes = null;
 		if ($failing === 'scopes') {
-			$scopes = $this->createMock(InternalScopesService::class);
-			$scopes->method('forSet')->willThrowException(new RuntimeException('scopes'));
+			$scopes = $this->createMock(originalClassName: InternalScopesService::class);
+			$scopes->method('forSet')->willThrowException(new RuntimeException(message: 'scopes'));
 		}
 
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$config,
@@ -374,7 +444,7 @@ class CssInjectionGoldenTest extends TestCase {
 					$logger,
 					$stock,
 					$runtimeFiles,
-					new LogoLayerService($config, $urls, $logger, $runtimeFiles),
+					new LogoLayerService(config: $config, urlGenerator: $urls, logger: $logger, files: $runtimeFiles),
 					$this->brands(case: $case),
 					$scopes,
 					null,
@@ -414,7 +484,7 @@ class CssInjectionGoldenTest extends TestCase {
 	 */
 	private function designSystems(IAppManager $repo, IConfig $config, array $case): DesignSystemService {
 		if ($case['failing'] !== 'meta') {
-			return new DesignSystemService($repo, $config, $case['store']);
+			return new DesignSystemService(appManager: $repo, config: $config, store: $case['store']);
 		}
 
 		return new class($repo, $config, $case['store']) extends DesignSystemService {
@@ -440,23 +510,34 @@ class CssInjectionGoldenTest extends TestCase {
 	 * @return GroupThemingService The service.
 	 */
 	private function groupTheming(IConfig $config, array $case): GroupThemingService {
-		$session = $this->createMock(IUserSession::class);
-		$user = $this->createMock(IUser::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('piet');
-		$session->method('getUser')->willReturn($case['signedIn'] === true ? $user : null);
-		$groups = $this->createMock(IGroupManager::class);
+		$session->method('getUser')->willReturnCallback(fn (): ?IUser => $this->userIf(signedIn: $case['signedIn'], user: $user));
+		$groups = $this->createMock(originalClassName: IGroupManager::class);
 		$groups->method('getUserGroupIds')->willReturn(['staff', 'gemeente-a']);
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturnCallback(fn (string $id): bool => ($id !== 'gone-set'));
-		$preview = $this->createMock(ThemePreviewService::class);
+		$preview = $this->createMock(originalClassName: ThemePreviewService::class);
 		$previewSet = $case['preview'];
 		$preview->method('resolveEffectiveTokenSet')->willReturnCallback(
-			fn (IUserSession $s, string $active): array => ['tokenSet' => ($previewSet ?? $active), 'previewActive' => ($previewSet !== null), 'expiresAt' => null]
+			fn (IUserSession $s, string $active): array => [
+				'tokenSet' => ($previewSet ?? $active),
+				'previewActive' => ($previewSet !== null),
+				'expiresAt' => null,
+			]
 		);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
-		return new GroupThemingService($config, $groups, $session, $tokenSets, $preview, $cacheFactory);
+		return new GroupThemingService(
+			config: $config,
+			groupManager: $groups,
+			userSession: $session,
+			tokenSetService: $tokenSets,
+			previewService: $preview,
+			cacheFactory: $cacheFactory
+		);
 	}//end groupTheming()
 
 	/**
@@ -467,13 +548,13 @@ class CssInjectionGoldenTest extends TestCase {
 	 * @return AppBrandService The double.
 	 */
 	private function brands(array $case): AppBrandService {
-		$brands = $this->createMock(AppBrandService::class);
+		$brands = $this->createMock(originalClassName: AppBrandService::class);
 		$brandSet = $case['brand'];
 		$failing = $case['failing'];
 		$brands->method('brandFor')->willReturnCallback(
 			function (?string $appId) use ($brandSet, $failing): ?array {
 				if ($failing === 'brand') {
-					throw new RuntimeException('brand');
+					throw new RuntimeException(message: 'brand');
 				}
 
 				if ($appId !== 'collectives' || $brandSet === null) {
@@ -490,7 +571,9 @@ class CssInjectionGoldenTest extends TestCase {
 					return null;
 				}
 
-				return ['layer' => 'logo', 'kind' => 'inline', 'css' => ':root { --brand-logo: url(' . $brand['large'] . '); } /* ' . $tokenSet . ' */', 'id' => $styleId];
+				$css = ':root { --brand-logo: url(' . $brand['large'] . '); } /* ' . $tokenSet . ' */';
+
+				return ['layer' => 'logo', 'kind' => 'inline', 'css' => $css, 'id' => $styleId];
 			}
 		);
 
@@ -510,31 +593,31 @@ class CssInjectionGoldenTest extends TestCase {
 		}
 
 		$failing = $case['failing'];
-		$header = $this->createMock(HeaderUserService::class);
+		$header = $this->createMock(originalClassName: HeaderUserService::class);
 		$header->method('inject')->willReturnCallback(
 			function (string $tokenSet, LayoutOptionsService $layoutOptions) use ($failing): void {
 				if ($failing === 'header') {
-					throw new RuntimeException('header');
+					throw new RuntimeException(message: 'header');
 				}
 
 				$this->log[] = 'header:' . $tokenSet . '|' . json_encode($layoutOptions->resolved(tokenSet: $tokenSet));
 			}
 		);
-		$menu = $this->createMock(AppMenuService::class);
+		$menu = $this->createMock(originalClassName: AppMenuService::class);
 		$menu->method('inject')->willReturnCallback(
 			function (string $tokenSet, LayoutOptionsService $layoutOptions) use ($failing): void {
 				if ($failing === 'menu') {
-					throw new RuntimeException('menu');
+					throw new RuntimeException(message: 'menu');
 				}
 
 				$this->log[] = 'menu:' . $tokenSet . '|' . $layoutOptions->workplaceLayout(tokenSet: $tokenSet);
 			}
 		);
-		$search = $this->createMock(SearchPlaceholderService::class);
+		$search = $this->createMock(originalClassName: SearchPlaceholderService::class);
 		$search->method('inject')->willReturnCallback(
 			function (?string $appId) use ($failing): void {
 				if ($failing === 'search') {
-					throw new RuntimeException('search');
+					throw new RuntimeException(message: 'search');
 				}
 
 				$this->log[] = 'search:' . var_export($appId, true);
@@ -564,11 +647,51 @@ class CssInjectionGoldenTest extends TestCase {
 				$layer['css'] = $this->shorten(text: $layer['css']);
 			}
 
-			$manifest['layers'][$index] = implode('|', array_map(fn (string $key, $value): string => $key . '=' . var_export($value, true), array_keys($layer), $layer));
+			$parts = [];
+			foreach ($layer as $key => $value) {
+				$parts[] = $key . '=' . var_export($value, true);
+			}
+
+			$manifest['layers'][$index] = implode('|', $parts);
 		}
 
 		return $manifest;
 	}//end manifest()
+
+	/**
+	 * A collaborator's answer, or the failure the case asks for.
+	 *
+	 * @param bool $failing Whether to fail.
+	 * @param string $message The failure's message.
+	 * @param mixed $value The answer.
+	 *
+	 * @return mixed The answer.
+	 *
+	 * @throws RuntimeException When failing.
+	 */
+	private function failOr(bool $failing, string $message, mixed $value): mixed {
+		if ($failing === true) {
+			throw new RuntimeException(message: $message);
+		}
+
+		return $value;
+	}//end failOr()
+
+	/**
+	 * The user of a signed-in request, or null.
+	 *
+	 * @param bool $signedIn Whether a user is signed in.
+	 * @param IUser $user The user.
+	 *
+	 * @return IUser|null The user.
+	 */
+	private function userIf(bool $signedIn, IUser $user): ?IUser {
+		if ($signedIn === true) {
+			return $user;
+		}
+
+		return null;
+	}//end userIf()
 
 	/**
 	 * Long CSS as its length and hash, short CSS as it is.
@@ -612,13 +735,18 @@ class CssInjectionGoldenTest extends TestCase {
 			return;
 		}
 
-		foreach (scandir($path) ?: [] as $entry) {
+		foreach ((array)scandir($path) as $entry) {
 			if ($entry === '.' || $entry === '..') {
 				continue;
 			}
 
 			$full = $path . '/' . $entry;
-			is_dir($full) ? $this->removeDir(path: $full) : unlink($full);
+			if (is_dir($full) === true) {
+				$this->removeDir(path: $full);
+				continue;
+			}
+
+			unlink($full);
 		}
 
 		rmdir($path);
