@@ -54,6 +54,7 @@ use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\OverridesCssBuilder;
 use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\PackageTokenSourceConverter;
 use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -158,6 +159,7 @@ use ReflectionProperty;
 #[UsesClass(FontService::class)]
 #[UsesClass(OverridesCssBuilder::class)]
 #[UsesClass(OwnTokenService::class)]
+#[UsesClass(PackageTokenSourceConverter::class)]
 #[UsesClass(AppDataRuntimeFileStore::class)]
 #[UsesClass(RuntimeFileLocator::class)]
 #[UsesClass(SettableContrastPairs::class)]
