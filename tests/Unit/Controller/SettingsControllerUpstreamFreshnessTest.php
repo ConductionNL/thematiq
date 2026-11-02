@@ -17,7 +17,7 @@ use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
-use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -85,7 +85,7 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 			$this->createMock(AppThemingService::class),
 			$this->createMock(ComplianceReportService::class),
 			$this->createMock(ThemingAuditService::class),
-			$this->createMock(EmailThemingService::class),
+			$this->createMock(originalClassName: EmailThemingSettings::class),
 			$upstreamFreshnessService,
 			$this->createMock(GroupThemingService::class),
 			$this->createMock(ActiveTokenSetService::class)
