@@ -26,10 +26,13 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\Exception\GalleryException;
+use OCA\Thematiq\Service\GalleryDownloadSources;
+use OCA\Thematiq\Service\GalleryInstallRecords;
 use OCA\Thematiq\Service\GalleryInstallService;
 use OCA\Thematiq\Service\ThemeGalleryService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Service\TokenSetUploadPipeline;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -53,6 +56,9 @@ use RuntimeException;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\GalleryInstallService
+ * @uses   \OCA\Thematiq\Service\GalleryDownloadSources
+ * @uses   \OCA\Thematiq\Service\GalleryInstallRecords
+ * @uses   \OCA\Thematiq\Service\TokenSetUploadPipeline
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\Exception\GalleryException
  */
@@ -133,16 +139,22 @@ class GalleryInstallGoldenTest extends TestCase {
 		$activeSet = ['custom-earlier', 'other', ''][$random->getInt(0, 2)];
 
 		$service = new GalleryInstallService(
-			gallery: $this->gallery(entry: $entry, existing: $existing),
-			clientService: $this->clientService(random: $random, body: $body),
-			converter: $this->converter(random: $random),
-			validator: new CustomTokenSetValidator(),
-			cssParser: $this->cssParser(random: $random),
-			customSets: $this->customSets(random: $random),
-			audit: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
-			config: $this->recorder(class: IConfig::class, methods: ['getAppValue' => $activeSet, 'setAppValue' => null]),
-			l10n: $this->l10n(),
-			time: $this->recorder(class: ITimeFactory::class, methods: ['getTime' => 1_800_000_000])
+			downloads: new GalleryDownloadSources(
+				gallery: $this->gallery(entry: $entry, existing: $existing),
+				clientService: $this->clientService(random: $random, body: $body)
+			),
+			pipeline: new TokenSetUploadPipeline(
+				converter: $this->converter(random: $random),
+				validator: new CustomTokenSetValidator(),
+				cssParser: $this->cssParser(random: $random)
+			),
+			records: new GalleryInstallRecords(
+				customSets: $this->customSets(random: $random),
+				audit: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
+				config: $this->recorder(class: IConfig::class, methods: ['getAppValue' => $activeSet, 'setAppValue' => null]),
+				time: $this->recorder(class: ITimeFactory::class, methods: ['getTime' => 1_800_000_000])
+			),
+			l10n: $this->l10n()
 		);
 
 		try {

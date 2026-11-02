@@ -15,11 +15,14 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\ContrastTools;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\InstanceReportContext;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\ThemeSelectionSources;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -259,17 +262,21 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$customTokenSetService = $this->createMock(CustomTokenSetService::class);
 		$customTokenSetService->method('getManifest')->willReturnCallback(fn () => $this->customManifest);
+		$customTokenSetService->method('getRawContent')->willReturnMap(valueMap: [['custom-foo', ":root {\n  --nldesign-color-text: #222222;\n}\n"]]);
 
 		return new ComplianceReportService(
-			new ContrastService(),
-			new CssParserService(),
-			$overridesService,
-			$designSystemService,
-			$customTokenSetService,
-			$appManager,
-			$config,
-			$urlGenerator,
-			$timeFactory
+			measuring: new ContrastTools(contrast: new ContrastService(), cssParser: new CssParserService()),
+			theme: new ThemeSelectionSources(
+				overrides: $overridesService,
+				designSystems: $designSystemService,
+				customSets: $customTokenSetService
+			),
+			instance: new InstanceReportContext(
+				appManager: $appManager,
+				config: $config,
+				urlGenerator: $urlGenerator,
+				timeFactory: $timeFactory
+			)
 		);
 	}//end buildService()
 
@@ -510,6 +517,21 @@ class ComplianceReportServiceTest extends TestCase {
 		// "nldesign", matching Application::injectThemeCSS()'s own default.
 		$this->assertSame('nldesign', $data['metadata']['designSystem']);
 	}//end testCustomSetManifestVersionIsUsedWhenPresent()
+
+	/**
+	 * An uploaded set's colours are read from its stored file, which wins over the design system defaults.
+	 *
+	 * @return void
+	 */
+	public function testUploadedSetColoursComeFromItsStoredFile(): void {
+		$this->activeTokenSetId = 'custom-foo';
+		$this->tokenSetMeta = [];
+		$this->customManifest = ['custom-foo' => ['name' => 'Custom Foo', 'theming' => ['background_color' => '#ffffff']]];
+
+		$pair = $this->findPair(pairs: $this->service->generate()['pairs'], foreground: '--color-main-text');
+
+		$this->assertSame(expected: '#222222', actual: $pair['foregroundValue']);
+	}//end testUploadedSetColoursComeFromItsStoredFile()
 
 	/**
 	 * Regeneration with an unchanged configuration and a frozen clock is

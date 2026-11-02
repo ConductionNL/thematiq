@@ -19,8 +19,10 @@ use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
+use OCA\Thematiq\Service\ScheduledSwitchRuntime;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
+use OCA\Thematiq\Service\ScheduledSwitchTargets;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -169,15 +171,19 @@ class ScheduledSwitchServiceTest extends TestCase {
 		);
 
 		$this->service = new ScheduledSwitchService(
-			new ScheduledSwitchStore($config),
-			new ActiveTokenSetService($config, $tokenSets, $auditService),
-			$tokenSets,
-			new ScheduledCoreThemingSync($this->theming, $tokenSets, $config, $branding),
-			$auditService,
-			$config,
-			$time,
-			$l10n,
-			$this->createMock(LoggerInterface::class)
+			store: new ScheduledSwitchStore($config),
+			targets: new ScheduledSwitchTargets(
+				activeTokenSet: new ActiveTokenSetService($config, $tokenSets, $auditService),
+				tokenSets: $tokenSets,
+				coreSync: new ScheduledCoreThemingSync($this->theming, $tokenSets, $config, $branding)
+			),
+			runtime: new ScheduledSwitchRuntime(
+				auditService: $auditService,
+				config: $config,
+				time: $time,
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			l10n: $l10n
 		);
 	}//end setUp()
 

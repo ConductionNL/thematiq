@@ -24,6 +24,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Controller\TokenSourceController;
+use OCA\Thematiq\Service\BrandConversion;
+use OCA\Thematiq\Service\BrandImportRecords;
+use OCA\Thematiq\Service\BrandSetStorage;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
@@ -123,7 +126,16 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$this->sets = new CustomTokenSetService($store, $this->config, new CustomTokenSetValidator(), new ContrastService(), $dark);
 		$this->audit = $this->createMock(ThemingAuditService::class);
 		$converter = new TokenSetConverterService($repoApp, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
-		$this->imports = new MultiBrandImportService(new MultiBrandSource(), $converter, new CustomTokenSetValidator(), $this->sets, $parser, new ContrastService(), $dark, $this->config, $this->audit);
+		$this->imports = new MultiBrandImportService(
+			conversion: new BrandConversion(
+				source: new MultiBrandSource(),
+				converter: $converter,
+				validator: new CustomTokenSetValidator(),
+				cssParser: $parser
+			),
+			storage: new BrandSetStorage(customSets: $this->sets, contrast: new ContrastService(), darkPalette: $dark),
+			records: new BrandImportRecords(config: $this->config, audit: $this->audit)
+		);
 	}//end setUp()
 
 	/**
@@ -326,6 +338,22 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$this->assertNotSame([], $warnings['licht']);
 		$this->assertNotSame(count($warnings['licht']), count($warnings['donker']));
 	}//end testEachBrandCarriesItsOwnContrastWarnings()
+
+	/**
+	 * An update measures each replaced brand again: a brand whose new colours fail contrast carries the warnings.
+	 *
+	 * @return void
+	 */
+	public function testUpdateRecomputesTheContrastWarnings(): void {
+		$good = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n"
+			. ".donker-theme { --nldesign-color-primary: #0b2a4a; --nldesign-color-primary-text: #ffffff; }\n";
+		$this->imports->import(sourceName: 'Proef', content: $good, keys: ['licht', 'donker']);
+		$before = $this->sets->getManifest()['custom-proef-licht']['warnings'];
+
+		$this->imports->update(sourceId: 'proef', content: str_replace(search: '#154273', replace: '#ffff00', subject: $good));
+
+		$this->assertNotSame(expected: $before, actual: $this->sets->getManifest()['custom-proef-licht']['warnings']);
+	}//end testUpdateRecomputesTheContrastWarnings()
 
 	/**
 	 * Task 5.4: a dark variant is written per brand on import.

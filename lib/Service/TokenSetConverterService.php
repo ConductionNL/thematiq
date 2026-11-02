@@ -258,10 +258,6 @@ class TokenSetConverterService {
 	 *
 	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$repairContrast` switches one optional stage of the pipeline on for the
 	 *   nightly sync; the upload path is the same pipeline without it, not a second responsibility.
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the conversion pipeline reads top to bottom as the order it runs in — detect, parse,
-	 *   classify, map, emit — and is far easier to follow whole than chased across a dozen private methods.
 	 */
 	public function convert(
 		string $content,
@@ -273,168 +269,237 @@ class TokenSetConverterService {
 		bool $repairContrast = false,
 	): array {
 		$this->referenceOnlyPaths = $referenceOnlyPaths;
-		$report = [];
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
+		$run = new ConversionRun(slug: $slug, displayName: $displayName);
+		$run->sourceName = $sourceName;
+		$run->assetName = ($assetName ?? $slug);
+		$run->repairContrast = $repairContrast;
 
-		// The OpenProject plugin's set file, then a file from a Figma tool: token sets merged, the `value` spelling respelled,
-		// thematiq's own paths given their CSS names back. Any other content is untouched.
-		$leftOut = [];
-		$content = (new OpenProjectSetFile())->normalise(content: $content, skipped: $leftOut);
-		$content = (new FigmaTokenReader())->normalise(content: $content, skipped: $leftOut);
-		foreach ($leftOut as $entry) {
-			$report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];
+		// Detect, parse, then the two outcomes that end early; after that the app's own layers are built.
+		$declarations = $this->readDeclarations(content: $content, run: $run);
+		$early = $this->earlyResult(declarations: $declarations, run: $run);
+		if ($early !== null) {
+			return $early;
 		}
 
-		$inputKind = $this->detectInput(content: $content);
-		$sourceVersion = null;
-
-		// Two guards rather than if/else: only one of them can run, and the
-		// report must not be appended to twice.
-		$isJson = ($inputKind === 'B' || $inputKind === 'C');
-		$declarations = [];
-
-		if ($isJson === true) {
-			$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $inputKind, slug: $slug, report: $report);
-			$declarations = $parsed['declarations'];
-			$sourceVersion = $parsed['version'];
-		}
-
-		if ($isJson === false) {
-			$declarations = $this->parseCssBlocks(content: $content, report: $report);
-		}
-
-		// Thematiq's own export comes back as it went out, without the conversion rules.
-		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
-			return ['darkDeclarations' => $this->darkFrom(content: $content)] + $this->thematiqExportResult(
-				declarations: $declarations,
-				source: ['slug' => $slug, 'displayName' => $displayName, 'sourceName' => $sourceName, 'sourceVersion' => $sourceVersion],
-				report: $report
-			);
-		}
-
-		if (empty($declarations) === true) {
-			// A document we UNDERSTOOD but could map nothing out of is a
-			// reportable OUTCOME, not an exceptional one: the admin made a
-			// fixable mistake and needs the per-token reasons to fix it. An
-			// exception carries a message and nothing else, which is why the
-			// diagnostics used to die here. Content we could not read at all
-			// still throws — that is the malformed case the spec separates.
-			if ($report !== []) {
-				return $this->zeroYieldResult(report: $report, inputKind: $inputKind);
-			}
-
-			throw new RuntimeException(
-				'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
-				. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
-				. ' tokens.json, or an existing :root token set.',
-				422
-			);
-		}
-
-		// A value pointing at a remote host never reaches the emitted file: a
-		// token set is served to every anonymous visitor, so an external url()
-		// would be a third-party request on the login page.
-		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
-
-		// Resolve `var()` chains to literals so the file stands on its own. A
-		// token set is also served on the login page and in e-mails, where the
-		// source theme's own variables do not exist.
-		$declarations = $this->resolveVars(declarations: $declarations, report: $report);
-
-		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
-		// so they can be measured and given a dark variant (thematiq#993).
-		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
-		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $report);
-
-		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
-		// the sections are built: Nextcloud's core theming takes a logo as a
-		// path on disk, never as a data URI, so this is the only step that can
-		// give a converted theme a `theming.logo` at all.
-		$logo = $this->extractLogo(
-			declarations: $declarations,
-			slug: $slug,
-			assetName: ($assetName ?? $slug),
-			report: $report
-		);
-
-		if ($logo !== null) {
-			// The source declaration is re-emitted from `$logo['css']` after the
-			// rules run; every other slot carrying the same artwork points at it
-			// instead of repeating the payload (the shape opencatalogi.css uses).
-			unset($declarations[$logo['source']]);
-			foreach ($logo['aliases'] as $alias) {
-				$declarations[$alias] = 'var(--nldesign-logo-url)';
-			}
-		}
+		$declarations = $this->prepareDeclarations(declarations: $declarations, run: $run);
 
 		// How many declarations the admin's document actually yielded. This is
 		// what 'imported' means to an admin — what THEY supplied that could be
 		// used — and it is counted here, where the input parse ends, because
 		// everything after this point is the app's own emitted layer.
-		$importedCount = count($declarations);
+		$run->imported = count($declarations);
 
-		// Split the input into the three emitted sections.
-		$sections = $this->classify(declarations: $declarations, slug: $slug, report: $report);
+		return $this->conversionResult(layers: $this->emittedLayers(declarations: $declarations, run: $run), run: $run);
+	}//end convert()
+
+	/**
+	 * Read the document into custom property declarations: normalise a plugin or Figma file,
+	 * detect the input kind and parse it.
+	 *
+	 * @param string $content The raw content.
+	 * @param ConversionRun $run The conversion; gets the input kind, the package version and,
+	 *                           for a thematiq export, its dark values.
+	 *
+	 * @return array<string, string> The declarations, empty when nothing could be read.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function readDeclarations(string $content, ConversionRun $run): array {
+		$leftOut = [];
+		$content = (new ToolTokenFileNormaliser())->normalise(content: $content, skipped: $leftOut);
+		foreach ($leftOut as $entry) {
+			$run->report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];
+		}
+
+		$run->inputKind = $this->detectInput(content: $content);
+		if ($run->inputKind !== 'B' && $run->inputKind !== 'C') {
+			return $this->parseCssBlocks(content: $content, report: $run->report);
+		}
+
+		$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $run->inputKind, slug: $run->slug, report: $run->report);
+		$run->sourceVersion = $parsed['version'];
+
+		// Thematiq's own export comes back as it went out, without the conversion rules.
+		if ($parsed['declarations'] !== [] && $this->isThematiqExport(content: $content) === true) {
+			$run->exportDark = $this->darkFrom(content: $content);
+		}
+
+		return $parsed['declarations'];
+	}//end readDeclarations()
+
+	/**
+	 * The result for a thematiq export or for a document that yielded nothing, or null to go on.
+	 *
+	 * @param array<string, string> $declarations The declarations read.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 *
+	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function earlyResult(array $declarations, ConversionRun $run): ?array {
+		if ($run->exportDark !== null) {
+			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(
+				declarations: $declarations,
+				source: $run->source(),
+				report: $run->report
+			);
+		}
+
+		if ($declarations !== []) {
+			return null;
+		}
+
+		// A document we UNDERSTOOD but could map nothing out of is a
+		// reportable OUTCOME, not an exceptional one: the admin made a
+		// fixable mistake and needs the per-token reasons to fix it. An
+		// exception carries a message and nothing else, which is why the
+		// diagnostics used to die here. Content we could not read at all
+		// still throws — that is the malformed case the spec separates.
+		if ($run->report !== []) {
+			return $this->zeroYieldResult(report: $run->report, inputKind: $run->inputKind);
+		}
+
+		throw new RuntimeException(
+			'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
+			. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
+			. ' tokens.json, or an existing :root token set.',
+			422
+		);
+	}//end earlyResult()
+
+	/**
+	 * Make the declarations stand on their own: no remote url(), no var() chains, measurable
+	 * colours, and the logo lifted out into a file.
+	 *
+	 * @param array<string, string> $declarations The declarations read.
+	 * @param ConversionRun $run The conversion; gets the extracted logo.
+	 *
+	 * @return array<string, string>
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function prepareDeclarations(array $declarations, ConversionRun $run): array {
+		// A value pointing at a remote host never reaches the emitted file: a
+		// token set is served to every anonymous visitor, so an external url()
+		// would be a third-party request on the login page.
+		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $run->report);
+
+		// Resolve `var()` chains to literals so the file stands on its own. A
+		// token set is also served on the login page and in e-mails, where the
+		// source theme's own variables do not exist.
+		$declarations = $this->resolveVars(declarations: $declarations, report: $run->report);
+
+		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
+		// so they can be measured and given a dark variant (thematiq#993).
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $run->report);
+
+		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
+		// the sections are built: Nextcloud's core theming takes a logo as a
+		// path on disk, never as a data URI, so this is the only step that can
+		// give a converted theme a `theming.logo` at all.
+		$run->logo = $this->extractLogo(
+			declarations: $declarations,
+			slug: $run->slug,
+			assetName: $run->assetName,
+			report: $run->report
+		);
+
+		if ($run->logo !== null) {
+			// The source declaration is re-emitted from `$logo['css']` after the
+			// rules run; every other slot carrying the same artwork points at it
+			// instead of repeating the payload (the shape opencatalogi.css uses).
+			unset($declarations[$run->logo['source']]);
+			foreach ($run->logo['aliases'] as $alias) {
+				$declarations[$alias] = 'var(--nldesign-logo-url)';
+			}
+		}
+
+		return $declarations;
+	}//end prepareDeclarations()
+
+	/**
+	 * The three emitted layers: the input split into palette and component, and the semantic
+	 * layer the rules derive.
+	 *
+	 * @param array<string, string> $declarations The prepared declarations.
+	 * @param ConversionRun $run The conversion; gets the manifest the rules write.
+	 *
+	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function emittedLayers(array $declarations, ConversionRun $run): array {
+		$sections = $this->classify(declarations: $declarations, slug: $run->slug, report: $run->report);
 
 		// The semantic layer, from the table. `existing` carries input D's
 		// hand-authored values, which win over anything the rules derive.
-		// `$manifest` is an out-parameter; declaring it first keeps it from
-		// being read before `runRules()` has written it.
-		$manifest = [];
 		$semantic = $this->runRules(
-			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $slug],
+			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $run->slug],
 			existing: $sections['semantic'],
-			manifest: $manifest,
-			report: $report
+			manifest: $run->manifest,
+			report: $run->report
 		);
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
 		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
-		if ($repairContrast === true) {
-			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+		if ($run->repairContrast === true) {
+			$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $run->manifest, report: $run->report);
 			$sections['component'] = $colourRepair->repairComponents(
 				component: $sections['component'],
 				semantic: $semantic,
 				table: $this->table(),
-				report: $report
+				report: $run->report
 			);
 		}
 
-		if ($logo !== null) {
-			$semantic['--nldesign-logo-url'] = $logo['css'];
+		if ($run->logo !== null) {
+			$semantic['--nldesign-logo-url'] = $run->logo['css'];
 		}
 
-		$counts = $this->countActions(report: $report);
-		$source = ['slug' => $slug, 'displayName' => $displayName, 'sourceName' => $sourceName, 'sourceVersion' => $sourceVersion];
+		return ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
+	}//end emittedLayers()
 
-		$css = $this->buildCss(
-			layers: ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic],
-			source: $source,
-			inputKind: $inputKind,
-			counts: $counts
-		);
+	/**
+	 * The converted set: the stylesheet, its manifest entry, the report and the logo file.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The emitted layers.
+	 * @param ConversionRun $run The finished conversion.
+	 *
+	 * @return array<string, mixed> The shape convert() returns.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function conversionResult(array $layers, ConversionRun $run): array {
+		$counts = $this->countActions(report: $run->report);
+		$source = $run->source();
 
 		// Only set when the logo was DECODED out of the theme, so the caller has
 		// bytes to write. A theme that already pointed at a file on disk yields
 		// a `theming.logo` with no asset to create.
 		$logoAsset = null;
-		if ($logo !== null && $logo['contents'] !== null) {
-			$logoAsset = ['path' => $logo['path'], 'contents' => $logo['contents']];
+		if ($run->logo !== null && $run->logo['contents'] !== null) {
+			$logoAsset = ['path' => $run->logo['path'], 'contents' => $run->logo['contents']];
 		}
 
 		return [
-			'css' => $css,
-			'imported' => $importedCount,
-			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $semantic, manifest: $manifest, logo: $logo),
-			'report' => $report,
-			'inputKind' => $inputKind,
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: $run->inputKind, counts: $counts),
+			'imported' => $run->imported,
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $layers['semantic'], manifest: $run->manifest, logo: $run->logo),
+			'report' => $run->report,
+			'inputKind' => $run->inputKind,
 			'counts' => $counts,
 			'logoAsset' => $logoAsset,
 			'importWarnings' => $this->importWarnings,
 			'errors' => $this->mapperErrors,
 		];
-	}//end convert()
+	}//end conversionResult()
 
 	/**
 	 * Whether a document is one thematiq itself exported: its root carries the

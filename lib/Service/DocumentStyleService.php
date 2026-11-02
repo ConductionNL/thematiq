@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\IURLGenerator;
 
 /**
  * The values a generated document needs to follow the house style: the
@@ -57,28 +56,14 @@ class DocumentStyleService {
 	/**
 	 * Constructor.
 	 *
-	 * @param UserTokenSetResolver $resolver The set that applies to a user.
-	 * @param TokenSetService $tokenSets Set names.
-	 * @param TokenSetPreviewService $preview A set's resolved tokens.
-	 * @param DesignSystemService $designSystem A set's theming metadata (logo).
-	 * @param FontService $fonts Uploaded fonts by role.
-	 * @param EmailThemingService $emailTheming The footer settings.
-	 * @param DocumentAssetService $assets The document logo, cover and footer line.
+	 * @param DocumentSetSources $setSources The set resolver, the set list, the token preview and the design systems.
+	 * @param DocumentBrandAssets $brandAssets The fonts, the footer settings, the document assets and the URL generator.
 	 * @param ContrastService $contrast WCAG contrast.
-	 * @param IURLGenerator $urls URLs.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - one collaborator per part of the profile.
 	 */
 	public function __construct(
-		private readonly UserTokenSetResolver $resolver,
-		private readonly TokenSetService $tokenSets,
-		private readonly TokenSetPreviewService $preview,
-		private readonly DesignSystemService $designSystem,
-		private readonly FontService $fonts,
-		private readonly EmailThemingService $emailTheming,
-		private readonly DocumentAssetService $assets,
+		private readonly DocumentSetSources $setSources,
+		private readonly DocumentBrandAssets $brandAssets,
 		private readonly ContrastService $contrast,
-		private readonly IURLGenerator $urls,
 	) {
 	}//end __construct()
 
@@ -92,12 +77,12 @@ class DocumentStyleService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	public function forUser(?string $uid): array {
-		$setId = $this->resolver->forUser(uid: $uid);
-		$tokens = $this->preview->getResolvedTokens(tokenSetId: $setId);
-		$footer = $this->emailTheming->getFooterConfig();
+		$setId = $this->setSources->resolver->forUser(uid: $uid);
+		$tokens = $this->setSources->preview->getResolvedTokens(tokenSetId: $setId);
+		$footer = $this->brandAssets->emailTheming->getFooterConfig();
 		$colours = $this->colours(tokens: $tokens);
 		$lines = array_filter(
-			[(string)($footer['orgName'] ?? ''), $this->assets->getFooterLine()],
+			[(string)($footer['orgName'] ?? ''), $this->brandAssets->assets->getFooterLine()],
 			static fn (string $line): bool => $line !== ''
 		);
 
@@ -187,11 +172,11 @@ class DocumentStyleService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function font(string $role, ?string $fallback, array $tokens): array {
-		foreach ($this->fonts->getManifest() as $id => $entry) {
+		foreach ($this->brandAssets->fonts->getManifest() as $id => $entry) {
 			if (is_array($entry) === true && ($entry['role'] ?? 'body') === $role) {
 				return [
 					'family' => (string)($entry['name'] ?? $id),
-					'url' => $this->urls->linkToRoute('thematiq.font.serve', ['id' => (string)$id]),
+					'url' => $this->brandAssets->urls->linkToRoute('thematiq.font.serve', ['id' => (string)$id]),
 				];
 			}
 		}
@@ -209,13 +194,13 @@ class DocumentStyleService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function asset(string $kind): ?array {
-		$meta = ($this->assets->getAssets()[$kind] ?? null);
+		$meta = ($this->brandAssets->assets->getAssets()[$kind] ?? null);
 		if (is_array($meta) === false) {
 			return null;
 		}
 
 		return [
-			'url' => $this->urls->linkToRoute('thematiq.documentStyle.asset', ['kind' => $kind, 'v' => (int)($meta['uploadedAt'] ?? 0)]),
+			'url' => $this->brandAssets->urls->linkToRoute('thematiq.documentStyle.asset', ['kind' => $kind, 'v' => (int)($meta['uploadedAt'] ?? 0)]),
 			'mime' => (string)$meta['mime'],
 		];
 	}//end asset()
@@ -230,7 +215,7 @@ class DocumentStyleService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function setLogo(string $setId): ?array {
-		$path = ($this->designSystem->getTokenSetMeta(tokenSetId: $setId)['theming']['logo'] ?? null);
+		$path = ($this->setSources->designSystem->getTokenSetMeta(tokenSetId: $setId)['theming']['logo'] ?? null);
 		if (is_string($path) === false || $path === '') {
 			return null;
 		}
@@ -244,7 +229,7 @@ class DocumentStyleService {
 		$extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
 
 		return [
-			'url' => $this->urls->imagePath(Application::APP_ID, $relative),
+			'url' => $this->brandAssets->urls->imagePath(Application::APP_ID, $relative),
 			'mime' => ($mimes[$extension] ?? 'application/octet-stream'),
 		];
 	}//end setLogo()
@@ -259,7 +244,7 @@ class DocumentStyleService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function setName(string $setId): string {
-		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
+		foreach ($this->setSources->tokenSets->getAvailableTokenSets() as $set) {
 			if (($set['id'] ?? null) === $setId) {
 				return (string)($set['name'] ?? $setId);
 			}
