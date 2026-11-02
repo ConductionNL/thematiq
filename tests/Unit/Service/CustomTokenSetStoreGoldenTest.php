@@ -50,6 +50,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\DarkPaletteService
+ * @uses   \OCA\Thematiq\Service\DarkPins
  */
 class CustomTokenSetStoreGoldenTest extends TestCase {
 
@@ -241,7 +242,9 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 			 *
 			 * @param array<int, string> $refused Name prefixes whose writes throw.
 			 */
-			public function __construct(private array $refused) {
+			public function __construct(
+				private array $refused,
+			) {
 			}
 
 			public function read(string $name): ?string {
