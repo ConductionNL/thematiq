@@ -26,6 +26,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\Migration\IOutput;
@@ -65,7 +66,13 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $dark);
+		$this->overrides = new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($this->appDir),
+				cssParser: $parser,
+				darkPalette: $dark
+			)
+		);
 
 		// What the editor wrote before typed values: one :root block, no twin, no dark scope.
 		file_put_contents(

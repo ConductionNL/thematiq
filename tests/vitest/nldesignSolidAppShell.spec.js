@@ -13,7 +13,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const css = fs.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const css = fs
+	.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8')
+	.replace(/\/\*[\s\S]*?\*\//g, '')
 
 /** The declaration blocks whose selector list is exactly `selector`. */
 function blocks(selector) {
@@ -36,7 +38,9 @@ describe('the nldesign app shell', () => {
 	})
 
 	it('leaves the login page frosted', () => {
-		expect(blocks('body[data-themes], body')).not.toContain('--color-main-background-blur')
+		expect(blocks('body[data-themes], body')).not.toContain(
+			'--color-main-background-blur',
+		)
 		expect(blocks('#body-login')).not.toContain('--color-main-background-blur')
 	})
 })

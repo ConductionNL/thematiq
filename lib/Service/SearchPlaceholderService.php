@@ -82,10 +82,10 @@ class SearchPlaceholderService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppConfig      $appConfig    Reads the theme's map and the app's own text.
-	 * @param IFactory        $l10nFactory  Translates through the app's catalogue.
-	 * @param IInitialState   $initialState The initial state channel.
-	 * @param LoggerInterface $logger       Records a swallowed failure.
+	 * @param IAppConfig $appConfig Reads the theme's map and the app's own text.
+	 * @param IFactory $l10nFactory Translates through the app's catalogue.
+	 * @param IInitialState $initialState The initial state channel.
+	 * @param LoggerInterface $logger Records a swallowed failure.
 	 */
 	public function __construct(
 		private readonly IAppConfig $appConfig,
@@ -185,7 +185,7 @@ class SearchPlaceholderService {
 	 * Translate a source string through an app's catalogue.
 	 *
 	 * @param string $appId The app whose catalogue holds the text.
-	 * @param string $text  The English source string.
+	 * @param string $text The English source string.
 	 *
 	 * @return string The words in the person's language, or the text itself.
 	 *
@@ -193,7 +193,7 @@ class SearchPlaceholderService {
 	 */
 	private function translate(string $appId, string $text): string {
 		$translated = $this->l10nFactory->get($appId)->t($text);
-		if ($translated === '') {
+		if (strlen($translated) === 0) {
 			return $text;
 		}
 

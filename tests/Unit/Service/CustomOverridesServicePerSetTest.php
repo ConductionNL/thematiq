@@ -16,6 +16,8 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\OverridesSetContext;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -77,11 +79,15 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
 
 		$this->service = new CustomOverridesService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$parser,
-			$darkPalette,
-			$config,
-			new DesignSystemService($appManager, $config)
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				cssParser: $parser,
+				darkPalette: $darkPalette
+			),
+			setContext: new OverridesSetContext(
+				config: $config,
+				designSystems: new DesignSystemService($appManager, $config)
+			)
 		);
 	}//end setUp()
 
@@ -157,11 +163,15 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$config->expects($this->never())->method('deleteAppValue');
 		$parser = new CssParserService();
 		$service = new CustomOverridesService(
-			new DirectoryRuntimeFileStore($this->appDir),
-			$parser,
-			new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class)),
-			$config,
-			new DesignSystemService($appManager, $config)
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($this->appDir),
+				cssParser: $parser,
+				darkPalette: new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class))
+			),
+			setContext: new OverridesSetContext(
+				config: $config,
+				designSystems: new DesignSystemService($appManager, $config)
+			)
 		);
 
 		$service->ensureExists();

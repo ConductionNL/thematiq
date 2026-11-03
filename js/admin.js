@@ -4665,7 +4665,7 @@
 			}
 			var valueOf = function (token) {
 				var state = tokenEditorState[token]
-				return state ? (state.current || state.resolved || '') : ''
+				return state ? state.current || state.resolved || '' : ''
 			}
 			var background = valueOf('--color-main-background')
 			TT.TEXT_CONTRAST_TOKENS.forEach(function (name) {
@@ -4682,9 +4682,11 @@
 						note.remove()
 					}
 					if (field !== null) {
-						var rest = (field.getAttribute('aria-describedby') || '').split(' ').filter(function (ref) {
-							return ref !== '' && ref !== id
-						})
+						var rest = (field.getAttribute('aria-describedby') || '')
+							.split(' ')
+							.filter(function (ref) {
+								return ref !== '' && ref !== id
+							})
 						if (rest.length > 0) {
 							field.setAttribute('aria-describedby', rest.join(' '))
 						} else {
@@ -4700,9 +4702,15 @@
 					note.setAttribute('role', 'status')
 					row.appendChild(note)
 				}
-				note.textContent = t('thematiq', 'Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.', { ratio: ratio.toFixed(2) })
+				note.textContent = t(
+					'thematiq',
+					'Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.',
+					{ ratio: ratio.toFixed(2) },
+				)
 				if (field !== null) {
-					var refs = (field.getAttribute('aria-describedby') || '').split(' ').filter(Boolean)
+					var refs = (field.getAttribute('aria-describedby') || '')
+						.split(' ')
+						.filter(Boolean)
 					if (refs.indexOf(id) === -1) {
 						refs.push(id)
 						field.setAttribute('aria-describedby', refs.join(' '))

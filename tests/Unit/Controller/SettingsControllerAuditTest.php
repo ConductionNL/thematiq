@@ -19,6 +19,9 @@ use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -89,19 +92,25 @@ class SettingsControllerAuditTest extends TestCase {
 		$this->auditService = $this->createMock(ThemingAuditService::class);
 
 		$this->controller = new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->makeConfigMock(),
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->auditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $this->auditService)
+			appName: 'nldesign',
+			request: $this->createMock(IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $this->makeConfigMock(),
+				auditService: $this->auditService,
+				appThemingService: $this->createMock(AppThemingService::class),
+				groupThemingService: $this->createMock(GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSetService,
+				previewService: $this->createMock(TokenSetPreviewService::class),
+				activeTokenSet: new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $this->auditService),
+				themingService: $this->createMock(ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+			)
 		);
 	}//end setUp()
 
@@ -161,19 +170,25 @@ class SettingsControllerAuditTest extends TestCase {
 		);
 
 		$controller = new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->makeConfigMock(),
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$realAuditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $realAuditService)
+			appName: 'nldesign',
+			request: $this->createMock(IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $this->makeConfigMock(),
+				auditService: $realAuditService,
+				appThemingService: $this->createMock(AppThemingService::class),
+				groupThemingService: $this->createMock(GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSetService,
+				previewService: $this->createMock(TokenSetPreviewService::class),
+				activeTokenSet: new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $realAuditService),
+				themingService: $this->createMock(ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+			)
 		);
 
 		$response = $controller->setTokenSet(tokenSet: 'amsterdam');

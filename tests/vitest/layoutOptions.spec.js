@@ -95,7 +95,9 @@ describe('navigation width', () => {
 		for (const rule of sized) {
 			expect(inner.matches(rule.selector), rule.selector).toBe(false)
 		}
-		expect(document.querySelector('.app-navigation').matches(sized[0].selector)).toBe(true)
+		expect(
+			document.querySelector('.app-navigation').matches(sized[0].selector),
+		).toBe(true)
 	})
 })
 
