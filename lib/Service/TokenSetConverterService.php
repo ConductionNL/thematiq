@@ -310,7 +310,7 @@ class TokenSetConverterService {
 		$leftOut = [];
 		$content = (new ToolTokenFileNormaliser())->normalise(content: $content, skipped: $leftOut);
 		foreach ($leftOut as $entry) {
-			$run->report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];
+			$run->report[] = $this->reportEntry(route: [$entry['path'], ''], outcome: ['skipped', $entry['reason'], null]);
 		}
 
 		$run->inputKind = $this->detectInput(content: $content);
@@ -943,11 +943,8 @@ class TokenSetConverterService {
 			return null;
 		}
 
-		foreach (self::COMPONENT_PREFIXES as $prefix) {
-			$bare = trim($prefix, '-');
-			if (str_starts_with($joined, $bare . '-') === true) {
-				return '--' . $joined;
-			}
+		if ($this->hasComponentPrefix(name: '--' . $joined) === true) {
+			return '--' . $joined;
 		}
 
 		return '--' . $slug . '-' . $joined;
@@ -973,21 +970,30 @@ class TokenSetConverterService {
 		foreach ($declarations as $name => $value) {
 			$resolved[$name] = (string)preg_replace_callback(
 				'/\{([^{}]+)\}/',
-				function (array $match) use ($slug): string {
-					$target = $this->styleDictionaryName(path: explode('.', trim($match[1])), slug: $slug);
-
-					if ($target === null) {
-						return $match[0];
-					}
-
-					return 'var(' . $target . ')';
-				},
+				fn (array $match): string => $this->aliasReference(match: $match, slug: $slug),
 				$value
 			);
 		}
 
 		return $resolved;
 	}//end resolveStyleDictionaryAliases()
+
+	/**
+	 * One `{a.b.c}` alias as a var() of the custom property it names, or the alias unchanged.
+	 *
+	 * @param array<int, string> $match The whole alias and its dotted path.
+	 * @param string $slug The brand slug.
+	 *
+	 * @return string
+	 */
+	private function aliasReference(array $match, string $slug): string {
+		$target = $this->styleDictionaryName(path: explode('.', trim($match[1])), slug: $slug);
+		if ($target === null) {
+			return $match[0];
+		}
+
+		return 'var(' . $target . ')';
+	}//end aliasReference()
 
 	/**
 	 * Flatten a Style Dictionary tree into custom-property declarations.
@@ -1059,13 +1065,7 @@ class TokenSetConverterService {
 
 		foreach ($declarations as $name => $value) {
 			if (preg_match('#url\(\s*[\'"]?(?:https?:)?//#i', $value) === 1) {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => 'external-url-blocked',
-					'value' => null,
-				];
+				$report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', 'external-url-blocked', null]);
 				continue;
 			}
 
@@ -1671,9 +1671,9 @@ class TokenSetConverterService {
 	 * One report entry.
 	 *
 	 * @param array{0: string, 1: string} $route The source token and the target it went to ('' when dropped).
-	 * @param array{0: string, 1: string, 2: string} $outcome The action, the reason code and the value.
+	 * @param array{0: string, 1: string, 2: string|null} $outcome The action, the reason code and the value.
 	 *
-	 * @return array{source: string, target: string, action: string, reason: string, value: string}
+	 * @return array{source: string, target: string, action: string, reason: string, value: string|null}
 	 */
 	private function reportEntry(array $route, array $outcome): array {
 		return ['source' => $route[0], 'target' => $route[1], 'action' => $outcome[0], 'reason' => $outcome[1], 'value' => $outcome[2]];
@@ -1732,18 +1732,29 @@ class TokenSetConverterService {
 
 		$names = [];
 		foreach ($this->vocabularyFiles(directory: $this->appManager->getAppPath('thematiq') . '/css') as $path) {
-			$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents($path));
-			if (preg_match_all('/(--nldesign-[\w-]+)/', $css, $matches) > 0) {
-				foreach ($matches[1] as $name) {
-					$names[$name] = true;
-				}
-			}
+			$names += $this->vocabularyIn(path: $path);
 		}
 
 		$this->knownVocabulary = $names;
 
 		return $this->knownVocabulary;
 	}//end vocabulary()
+
+	/**
+	 * The `--nldesign-*` names one stylesheet uses outside its comments.
+	 *
+	 * @param string $path The stylesheet.
+	 *
+	 * @return array<string, true> Name => true.
+	 */
+	private function vocabularyIn(string $path): array {
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents($path));
+		if (preg_match_all('/(--nldesign-[\w-]+)/', $css, $matches) === 0) {
+			return [];
+		}
+
+		return array_fill_keys($matches[1], true);
+	}//end vocabularyIn()
 
 	/**
 	 * Every stylesheet under a directory, skipping `tokens/` and the runtime files, sorted.
