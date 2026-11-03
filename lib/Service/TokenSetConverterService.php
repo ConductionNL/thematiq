@@ -403,12 +403,7 @@ class TokenSetConverterService {
 		// the sections are built: Nextcloud's core theming takes a logo as a
 		// path on disk, never as a data URI, so this is the only step that can
 		// give a converted theme a `theming.logo` at all.
-		$run->logo = $this->extractLogo(
-			declarations: $declarations,
-			slug: $run->slug,
-			assetName: $run->assetName,
-			report: $run->report
-		);
+		$run->logo = $this->extractLogo(declarations: $declarations, run: $run);
 
 		if ($run->logo !== null) {
 			// The source declaration is re-emitted from `$logo['css']` after the
@@ -1177,79 +1172,117 @@ class TokenSetConverterService {
 	 * Returns the extracted logo, or null when the theme declares none.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string $slug The brand slug, substituted for `{p}`.
-	 * @param string $assetName Base name for the written file, without extension.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion: the slug substituted for `{p}`, the base name for the written
+	 *                           file and the report.
 	 *
 	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
-	private function extractLogo(array $declarations, string $slug, string $assetName, array &$report): ?array {
+	private function extractLogo(array $declarations, ConversionRun $run): ?array {
 		$spec = ($this->table()['logo'] ?? null);
 		if (is_array($spec) === false) {
 			return null;
 		}
 
-		foreach ($this->logoCandidates(declarations: $declarations, slug: $slug, spec: $spec) as $name) {
-			$value = $declarations[$name];
-
-			$target = null;
-			if (preg_match('/url\(\s*([\'"]?)(.*?)\1\s*\)/is', $value, $matches) === 1) {
-				$target = trim($matches[2]);
+		foreach ($this->logoCandidates(declarations: $declarations, slug: $run->slug, spec: $spec) as $name) {
+			$logo = $this->logoFrom(step: ['name' => $name, 'declarations' => $declarations, 'spec' => $spec], run: $run);
+			if ($logo !== null) {
+				return $logo;
 			}
-
-			if ($target === null || $target === '' || strcasecmp($target, 'none') === 0) {
-				continue;
-			}
-
-			$decoded = $this->decodeLogoUri(uri: $target, spec: $spec);
-
-			if ($decoded === null) {
-				// A local path the theme already resolved: keep it, no bytes.
-				$path = $this->localLogoPath(target: $target, spec: $spec);
-				if ($path === null) {
-					$report[] = [
-						'source' => $name,
-						'target' => '--nldesign-logo-url',
-						'action' => 'skipped',
-						'reason' => 'logo-format-unsupported',
-						'value' => $this->logoValueLabel(value: $value),
-					];
-					continue;
-				}
-
-				return [
-					'source' => $name,
-					'aliases' => $this->logoAliases(declarations: $declarations, source: $name, value: $value),
-					'path' => $path,
-					'css' => "url('../../" . $path . "')",
-					'contents' => null,
-				];
-			}//end if
-
-			$path = (string)$spec['directory'] . '/' . $assetName . '.' . $decoded['extension'];
-
-			$report[] = [
-				'source' => $name,
-				'target' => '--nldesign-logo-url',
-				'action' => 'applied',
-				'reason' => (string)($spec['reason'] ?? 'logo-extracted'),
-				'value' => $path,
-			];
-
-			return [
-				'source' => $name,
-				'aliases' => $this->logoAliases(declarations: $declarations, source: $name, value: $value),
-				'path' => $path,
-				'css' => "url('../../" . $path . "')",
-				'contents' => $decoded['contents'],
-			];
-		}//end foreach
+		}
 
 		return null;
 	}//end extractLogo()
+
+	/**
+	 * The logo one candidate declaration carries, or null to try the next.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>} $step The candidate,
+	 *                                                                                                   the declarations and the table's logo spec.
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
+	 */
+	private function logoFrom(array $step, ConversionRun $run): ?array {
+		$target = $this->logoTarget(value: $step['declarations'][$step['name']]);
+		if ($target === null) {
+			return null;
+		}
+
+		$decoded = $this->decodeLogoUri(uri: $target, spec: $step['spec']);
+		if ($decoded === null) {
+			return $this->localLogo(step: $step + ['target' => $target], run: $run);
+		}
+
+		$path = (string)$step['spec']['directory'] . '/' . $run->assetName . '.' . $decoded['extension'];
+		$reason = (string)($step['spec']['reason'] ?? 'logo-extracted');
+		$run->report[] = $this->reportEntry(route: [$step['name'], '--nldesign-logo-url'], outcome: ['applied', $reason, $path]);
+
+		return $this->logoResult(step: $step, file: ['path' => $path, 'contents' => $decoded['contents']]);
+	}//end logoFrom()
+
+	/**
+	 * The address inside a declaration's url(), or null when it holds none.
+	 *
+	 * @param string $value The declaration's value.
+	 *
+	 * @return string|null
+	 */
+	private function logoTarget(string $value): ?string {
+		if (preg_match('/url\(\s*([\'"]?)(.*?)\1\s*\)/is', $value, $matches) !== 1) {
+			return null;
+		}
+
+		$target = trim($matches[2]);
+		if ($target === '' || strcasecmp($target, 'none') === 0) {
+			return null;
+		}
+
+		return $target;
+	}//end logoTarget()
+
+	/**
+	 * A logo the theme already resolved to a local path: kept, no bytes. Reported and skipped
+	 * when the path is not one the table accepts.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>, target: string} $step The candidate and its address.
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
+	 */
+	private function localLogo(array $step, ConversionRun $run): ?array {
+		$path = $this->localLogoPath(target: $step['target'], spec: $step['spec']);
+		if ($path !== null) {
+			return $this->logoResult(step: $step, file: ['path' => $path, 'contents' => null]);
+		}
+
+		$label = $this->logoValueLabel(value: $step['declarations'][$step['name']]);
+		$run->report[] = $this->reportEntry(route: [$step['name'], '--nldesign-logo-url'], outcome: ['skipped', 'logo-format-unsupported', $label]);
+
+		return null;
+	}//end localLogo()
+
+	/**
+	 * The extracted logo: its source token, the tokens that repeat it, the file and its stylesheet reference.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>, target?: string} $step The candidate.
+	 * @param array{path: string, contents: string|null} $file The logo file's path and its bytes, when decoded.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}
+	 */
+	private function logoResult(array $step, array $file): array {
+		$value = $step['declarations'][$step['name']];
+
+		return [
+			'source' => $step['name'],
+			'aliases' => $this->logoAliases(declarations: $step['declarations'], source: $step['name'], value: $value),
+			'path' => $file['path'],
+			'css' => "url('../../" . $file['path'] . "')",
+			'contents' => $file['contents'],
+		];
+	}//end logoResult()
 
 	/**
 	 * The logo tokens to try, in the table's priority order.
