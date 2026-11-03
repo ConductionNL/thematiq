@@ -401,9 +401,7 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.tile-widget * a
 	):not(.cn-board-view--board .cn-board-view__card-title):not(
 		.cn-look-board .cn-index-page__page-tab
-	):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+	):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
@@ -1127,13 +1125,6 @@ body {
  * declares nothing keeps the card's own rule (`solid`, the width and colour
  * stay the card's). The Nextcloud dashboard chrome and a chromeless card draw
  * no rule of their own and are left alone. */
-.cn-dashboard-page
-	.cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(
-		.cn-widget-wrapper--chromeless
-	)
-	> .cn-widget-wrapper__header {
-	border-bottom-style: var(
-		--nldesign-component-dashboard-card-header-border-style,
-		solid
-	);
+.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header {
+	border-bottom-style: var(--nldesign-component-dashboard-card-header-border-style, solid);
 }

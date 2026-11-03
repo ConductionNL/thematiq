@@ -93,18 +93,12 @@ header#header {
 /* Body links — black and always underlined (never colour alone). A link
  * drawn as a button keeps its button's own text colour and no underline: its
  * edge or fill marks it, as on a <button>. */
-a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
 	color: var(--nldesign-color-text) !important;
 	text-decoration: underline !important;
 }
 
-a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(
-		:where(.cn-week-strip__item)
-	):hover {
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):hover {
 	color: var(--nldesign-color-text) !important;
 	text-decoration: underline !important;
 }
@@ -181,21 +175,9 @@ body .button-vue.button-vue:focus-visible {
 		outline-offset: 2px !important;
 	}
 
-	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-			:where(.cn-banner-widget__action)
-		):not(:where(.cn-link-button-widget__button)):not(
-			:where(.cn-week-strip__item)
-		),
-	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-			:where(.cn-banner-widget__action)
-		):not(:where(.cn-link-button-widget__button)):not(
-			:where(.cn-week-strip__item)
-		):hover,
-	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
-			:where(.cn-banner-widget__action)
-		):not(:where(.cn-link-button-widget__button)):not(
-			:where(.cn-week-strip__item)
-		):visited {
+	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)),
+	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):hover,
+	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):visited {
 		color: LinkText !important;
 		text-decoration: underline !important;
 	}

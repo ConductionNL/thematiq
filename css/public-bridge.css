@@ -907,18 +907,9 @@
 	--utrecht-button-line-height: 150%;
 	--utrecht-button-min-block-size: 48px;
 	--utrecht-button-min-inline-size: 48px;
-	--utrecht-button-padding-block-end: var(
-		--nldesign-website-button-padding-block,
-		12px
-	);
-	--utrecht-button-padding-block-start: var(
-		--nldesign-website-button-padding-block,
-		12px
-	);
-	--utrecht-button-padding-inline-end: var(
-		--nldesign-website-button-padding-inline,
-		16px
-	);
+	--utrecht-button-padding-block-end: var(--nldesign-website-button-padding-block, 12px);
+	--utrecht-button-padding-block-start: var(--nldesign-website-button-padding-block, 12px);
+	--utrecht-button-padding-inline-end: var(--nldesign-website-button-padding-inline, 16px);
 	--utrecht-button-padding-inline-start: var(
 		--nldesign-website-button-padding-inline,
 		16px
@@ -1001,10 +992,7 @@
 	--utrecht-textbox-font-size: var(--nldesign-website-control-font-size, 16px);
 	--utrecht-textbox-font-weight: 400;
 	--utrecht-textbox-max-inline-size: 400px;
-	--utrecht-pointer-target-min-size: var(
-		--nldesign-website-control-min-block-size,
-		44px
-	);
+	--utrecht-pointer-target-min-size: var(--nldesign-website-control-min-block-size, 44px);
 	--utrecht-textbox-padding-block-start: 12px;
 	--utrecht-textbox-padding-inline-end: 12px;
 	--utrecht-textbox-padding-inline-start: 12px;
