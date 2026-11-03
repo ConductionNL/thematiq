@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:c7a96d023befda11",
+    "generated_from": "sets:dc58f40580d90997",
     "sets": [
         {
             "id": "amsterdam",
@@ -8677,7 +8677,7 @@
         },
         {
             "id": "vaartveld",
-            "name": "Vaartveld College",
+            "name": "Zuiddrecht College",
             "tokens": {
                 "primary": "#1F4FD8",
                 "primary-deep": "#14338F",

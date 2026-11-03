@@ -21,7 +21,7 @@ const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '')
 
 /** The layer portaliq links for a public site; build-fonts.js emits it. */
 const PUBLIC_SITE_LAYER = 'css/fonts.css'
-/** Linked by the set layers (TokenSetLayers) only when the admin turns Marianne on. */
+/** Linked by TokenSetLayers only when the admin turns Marianne on. */
 const OPT_IN_LAYER = 'css/systems/lasuite/marianne.css'
 
 /**

@@ -1309,7 +1309,7 @@
 	},
 	{
 		"id": "vaartveld",
-		"name": "Vaartveld College",
+		"name": "Zuiddrecht College",
 		"description": "A secondary school (vmbo-t, havo, vwo) in the demo town of Zuiddrecht, which does not exist. Cobalt #1F4FD8 for actions, aqua #1FB5A8 as the accent, Red Hat Display over Red Hat Text. A light workplace.",
 		"design_system": "nldesign",
 		"theming": {
@@ -1327,8 +1327,8 @@
 				"en": "Log in to the workplace"
 			},
 			"subtitle": {
-				"nl": "Voor medewerkers van Vaartveld College.",
-				"en": "For staff of Vaartveld College."
+				"nl": "Voor medewerkers van Zuiddrecht College.",
+				"en": "For staff of Zuiddrecht College."
 			},
 			"sso_label": {
 				"nl": "Inloggen met uw schoolaccount",
@@ -1343,8 +1343,8 @@
 				"en": "or"
 			},
 			"footer": {
-				"nl": "Vaartveld College · werkplek op Nextcloud",
-				"en": "Vaartveld College · workplace on Nextcloud"
+				"nl": "Zuiddrecht College · werkplek op Nextcloud",
+				"en": "Zuiddrecht College · workplace on Nextcloud"
 			}
 		}
 	},
