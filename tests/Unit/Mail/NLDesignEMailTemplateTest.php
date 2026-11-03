@@ -93,7 +93,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->themingDefaults = $this->createMock(Defaults::class);
+		$this->themingDefaults = $this->createMock(originalClassName: Defaults::class);
 		$this->themingDefaults->method('getDefaultColorPrimary')->willReturn('#0082c9');
 		$this->themingDefaults->method('getDefaultTextColorPrimary')->willReturn('#ffffff');
 		$this->themingDefaults->method('getLogo')->willReturn('/core/img/logo/logo.svg');
@@ -180,8 +180,28 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$html = $template->renderHtml();
 
 		$this->assertStringContainsString(needle: '#154273', haystack: $html);
+		$this->assertStringNotContainsString(needle: '#0082c9', haystack: $html);
 		$this->assertStringContainsString(needle: 'https://cloud.example.com/apps/thematiq/img/logos/test.svg', haystack: $html);
 	}//end testHeaderAndButtonUseActiveTokenSetTheme()
+
+	/**
+	 * A body button takes the active token set's colours on its own, without a header.
+	 *
+	 * @return void
+	 */
+	public function testBodyButtonUsesActiveTokenSetColours(): void {
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$service->method('getActiveEmailTheme')->willReturn(['primaryColor' => '#154273', 'primaryTextColor' => '#fefefe', 'logoUrl' => null]);
+		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
+
+		$template = $this->makeTemplate(service: $service);
+		$template->addBodyButton('Click', 'https://example.org/action');
+		$html = $template->renderHtml();
+
+		$this->assertStringContainsString(needle: '#154273', haystack: $html);
+		$this->assertStringContainsString(needle: '#fefefe', haystack: $html);
+		$this->assertStringNotContainsString(needle: '#0082c9', haystack: $html);
+	}//end testBodyButtonUsesActiveTokenSetColours()
 
 	/**
 	 * (b) Configured footer org name and both URLs appear in the HTML part
@@ -284,7 +304,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 			[
 				'orgName' => '<script>alert(1)</script>',
 				'accessibilityUrl' => 'https://voorbeeld.nl/a"onclick="x',
-				'privacyUrl' => '',
+				'privacyUrl' => 'https://voorbeeld.nl/p"onmouseover="y',
 			]
 		);
 
@@ -297,5 +317,6 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '<script>', haystack: $html);
 		$this->assertStringContainsString(needle: '&lt;script&gt;', haystack: $html);
 		$this->assertStringNotContainsString(needle: '"onclick="x"', haystack: $html);
+		$this->assertStringNotContainsString(needle: '"onmouseover="y"', haystack: $html);
 	}//end testFooterValuesAreOutputEncoded()
 }//end class

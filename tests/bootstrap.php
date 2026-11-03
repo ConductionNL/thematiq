@@ -106,6 +106,20 @@ spl_autoload_register(static function (string $class): void {
 	}
 });
 
+// Without a booted server, the test doubles under tests/doubles/OC/ stand in
+// for the private classes the app extends (OC\Mail\EMailTemplate). A booted
+// server defines \OC, and then its own autoloader supplies the real class.
+spl_autoload_register(static function (string $class): void {
+	if (str_starts_with($class, 'OC\\') === false || class_exists('OC', false) === true) {
+		return;
+	}
+
+	$path = __DIR__ . '/doubles/' . str_replace('\\', '/', $class) . '.php';
+	if (is_file($path) === true) {
+		require_once $path;
+	}
+});
+
 /**
  * Tell whether a Nextcloud root is an INSTALLED instance, not just a source tree.
  *
