@@ -28,6 +28,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -86,7 +87,13 @@ class TokenValueTypesTest extends TestCase {
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$this->darkPalette = new DarkPaletteService(new ContrastService(), $parser, $this->appManager, $this->createMock(LoggerInterface::class));
-		$this->overrides = new CustomOverridesService(new DirectoryRuntimeFileStore($this->appDir), $parser, $this->darkPalette);
+		$this->overrides = new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($this->appDir),
+				cssParser: $parser,
+				darkPalette: $this->darkPalette
+			)
+		);
 		$this->overrides->write(tokens: ['--color-primary' => '#000000']);
 	}//end setUp()
 

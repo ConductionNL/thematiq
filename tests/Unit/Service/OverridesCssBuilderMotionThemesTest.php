@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
@@ -47,7 +48,13 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
 		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->service = new CustomOverridesService(new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')), $parser, $darkPalette);
+		$this->service = new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				cssParser: $parser,
+				darkPalette: $darkPalette
+			)
+		);
 	}//end setUp()
 
 	protected function tearDown(): void {
