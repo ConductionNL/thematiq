@@ -10,12 +10,11 @@
  * @spec openspec/specs/error-text-ink/spec.md
  */
 import { describe, expect, it } from 'vitest'
-import fs from 'node:fs'
 import path from 'node:path'
+import { readCss } from './support/cssText.js'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const read = (file) =>
-	fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const read = (file) => readCss(path.join(ROOT, file))
 
 describe('the error text ink', () => {
 	it('is what --color-text-error reads, the error colour without one', () => {
