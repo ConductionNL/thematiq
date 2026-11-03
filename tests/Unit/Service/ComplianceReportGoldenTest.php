@@ -60,6 +60,8 @@ class ComplianceReportGoldenTest extends TestCase {
 
 	private const FIXTURE = __DIR__ . '/../fixtures/golden/compliance-report.golden.json';
 
+	private const MARKDOWN_FIXTURE = __DIR__ . '/../fixtures/golden/compliance-report-markdown.golden.json';
+
 	private const COLOURS = ['#000000', '#ffffff', '#154273', '#767676', '#fff', 'rgb(0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'transparent', 'not-a-colour', 'red', '#12345'];
 
 	private const NLDESIGN = ['--nldesign-color-primary', '--nldesign-color-primary-text', '--nldesign-color-background', '--nldesign-color-text', '--nldesign-color-a', '--nldesign-color-b', '--nldesign-color-c'];
@@ -84,7 +86,7 @@ class ComplianceReportGoldenTest extends TestCase {
 	public function testPairsMatchTheGoldenRecording(): void {
 		$actual = [];
 		for ($seed = 1; $seed <= 60; $seed++) {
-			$report = $this->report(random: new Randomizer(new Mt19937($seed)));
+			$report = $this->report(random: new Randomizer(new Mt19937($seed)))->generate();
 			$actual['seed:' . $seed] = (string)json_encode(['pairs' => $report['pairs'], 'summary' => $report['summary']], (JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION));
 		}
 
@@ -100,13 +102,36 @@ class ComplianceReportGoldenTest extends TestCase {
 	}//end testPairsMatchTheGoldenRecording()
 
 	/**
+	 * The Markdown rendering of the same seeded reports, compared with its recording.
+	 * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
+	 *
+	 * @return void
+	 */
+	public function testMarkdownMatchesTheGoldenRecording(): void {
+		$actual = [];
+		for ($seed = 1; $seed <= 20; $seed++) {
+			$actual['seed:' . $seed] = $this->report(random: new Randomizer(new Mt19937($seed)))->renderMarkdown();
+		}
+
+		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
+			file_put_contents(self::MARKDOWN_FIXTURE, json_encode($actual, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . "\n");
+		}
+
+		$expected = json_decode((string)file_get_contents(self::MARKDOWN_FIXTURE), true);
+		self::assertSame(array_keys($expected), array_keys($actual));
+		foreach ($expected as $name => $markdown) {
+			self::assertSame($markdown, $actual[$name], 'case ' . $name);
+		}
+	}//end testMarkdownMatchesTheGoldenRecording()
+
+	/**
 	 * One report over a seeded app directory.
 	 *
 	 * @param Randomizer $random The seeded source.
 	 *
-	 * @return array<string, mixed>
+	 * @return ComplianceReportService The service over the seeded directory.
 	 */
-	private function report(Randomizer $random): array {
+	private function report(Randomizer $random): ComplianceReportService {
 		$this->removeDirectory();
 		$this->directory = sys_get_temp_dir() . '/thematiq-compliance-golden-' . getmypid();
 		mkdir($this->directory . '/css/systems/nldesign', 0777, true);
@@ -158,7 +183,7 @@ class ComplianceReportGoldenTest extends TestCase {
 		$this->writeCss(name: 'css/systems/nldesign/overrides.css', declarations: $mapping);
 		$this->writeCss(name: 'css/tokens/golden.css', declarations: $set);
 
-		return $this->service(meta: $meta, overrides: $overrides)->generate();
+		return $this->service(meta: $meta, overrides: $overrides);
 	}//end report()
 
 	/**
