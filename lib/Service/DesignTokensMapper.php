@@ -249,10 +249,7 @@ class DesignTokensMapper {
 			return;
 		}
 
-		$ownType = null;
-		if (isset($node['$type']) === true && is_string($node['$type']) === true) {
-			$ownType = $node['$type'];
-		}
+		$ownType = $this->stringMember(map: $node, key: '$type');
 
 		if (array_key_exists('$value', $node) === true) {
 			$leaves[$prefix] = $this->buildLeafEntry(node: $node, ownType: $ownType, inheritedType: $inheritedType);
@@ -262,19 +259,57 @@ class DesignTokensMapper {
 
 		$effectiveInherited = ($ownType ?? $inheritedType);
 
-		foreach ($node as $key => $child) {
-			if (is_string($key) === true && str_starts_with($key, '$') === true) {
-				continue;
-			}
-
-			$path = $prefix . '.' . $key;
-			if ($prefix === '') {
-				$path = (string)$key;
-			}
-
-			$this->collectLeaves(node: $child, prefix: $path, inheritedType: $effectiveInherited, leaves: $leaves);
+		foreach ($this->groupChildren(node: $node) as $key => $child) {
+			$this->collectLeaves(node: $child, prefix: $this->childPath(prefix: $prefix, key: $key), inheritedType: $effectiveInherited, leaves: $leaves);
 		}
 	}//end collectLeaves()
+
+	/**
+	 * A group's children, without its `$` metadata keys.
+	 *
+	 * @param array<mixed> $node The group.
+	 *
+	 * @return array<mixed> The children, keyed as in the group.
+	 */
+	private function groupChildren(array $node): array {
+		return array_filter(
+			$node,
+			static fn ($key): bool => is_string($key) === false || str_starts_with($key, '$') === false,
+			ARRAY_FILTER_USE_KEY
+		);
+	}//end groupChildren()
+
+	/**
+	 * The dotted path of a group's child.
+	 *
+	 * @param string $prefix The group's path, empty at the document root.
+	 * @param int|string $key The child's key.
+	 *
+	 * @return string The child's path.
+	 */
+	private function childPath(string $prefix, int|string $key): string {
+		if ($prefix === '') {
+			return (string)$key;
+		}
+
+		return $prefix . '.' . $key;
+	}//end childPath()
+
+	/**
+	 * A member of a map when it is a string.
+	 *
+	 * @param array<mixed> $map The map.
+	 * @param string $key The member's key.
+	 *
+	 * @return string|null The member, or null when it is absent or not a string.
+	 */
+	private function stringMember(array $map, string $key): ?string {
+		if (isset($map[$key]) === true && is_string($map[$key]) === true) {
+			return $map[$key];
+		}
+
+		return null;
+	}//end stringMember()
 
 	/**
 	 * Build a single leaf-table entry from a `$value`-bearing DTCG node.
@@ -486,12 +521,7 @@ class DesignTokensMapper {
 	private function assignSingleTarget(DesignTokenRef $token, array $result, DesignTokensMapping $mapping): void {
 		$path = $token->path;
 		if ($result['ok'] !== true) {
-			$entry = ['path' => $path, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
-			if (isset($result['detail']) === true) {
-				$entry['detail'] = $result['detail'];
-			}
-
-			$mapping->errors[] = $entry;
+			$mapping->errors[] = $this->errorEntry(path: $path, result: $result);
 
 			return;
 		}
@@ -521,6 +551,23 @@ class DesignTokensMapper {
 	}//end assignSingleTarget()
 
 	/**
+	 * The error entry for a token whose value could not be serialized.
+	 *
+	 * @param string $path The token's dotted path.
+	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
+	 *
+	 * @return array<string, mixed> The error entry.
+	 */
+	private function errorEntry(string $path, array $result): array {
+		$entry = ['path' => $path, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
+		if (isset($result['detail']) === true) {
+			$entry['detail'] = $result['detail'];
+		}
+
+		return $entry;
+	}//end errorEntry()
+
+	/**
 	 * Map a composite `typography` token's sub-properties individually.
 	 *
 	 * Each sub-property (`fontFamily`, `fontSize`, `fontWeight`, `lineHeight`,
@@ -544,44 +591,62 @@ class DesignTokensMapper {
 			return;
 		}
 
-		$anyMapped = false;
+		$mapped = 0;
+		$members = array_filter($value, static fn ($key): bool => is_string($key), ARRAY_FILTER_USE_KEY);
+		foreach ($members as $subKey => $subValue) {
+			$member = ['path' => $path . '.' . $subKey, 'key' => $subKey, 'value' => $subValue];
+			$mapped += (int)$this->mapTypographyMember(mapping: $mapping, member: $member);
+		}
 
-		foreach ($value as $subKey => $subValue) {
-			if (is_string($subKey) === false) {
-				continue;
-			}
-
-			$subPath = $path . '.' . $subKey;
-			$target = (self::TYPOGRAPHY_SUBPROPERTY_TARGETS[$subKey] ?? null);
-
-			if ($target === null) {
-				$mapping->skipped[] = ['path' => $subPath, 'reason' => 'unmapped-path'];
-				continue;
-			}
-
-			$result = ['ok' => false, 'reason' => 'unsupported-value-shape'];
-			if ($subKey === 'fontFamily') {
-				$result = $this->serializeFontFamily(value: $subValue);
-			}
-
-			if ($result['ok'] !== true) {
-				$mapping->errors[] = ['path' => $subPath, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
-				continue;
-			}
-
-			if (isset($mapping->declarations[$target]) === true) {
-				$mapping->skipped[] = ['path' => $subPath, 'reason' => 'duplicate-target', 'detail' => $target];
-				continue;
-			}
-
-			$mapping->declarations[$target] = $result['value'];
-			$anyMapped = true;
-		}//end foreach
-
-		if ($anyMapped === true) {
+		if ($mapped > 0) {
 			$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings);
 		}
 	}//end processTypographyComposite()
+
+	/**
+	 * Map one typography sub-property to its fixed target, or record why it was not.
+	 *
+	 * @param DesignTokensMapping $mapping The outcome of the run so far.
+	 * @param array{path: string, key: string, value: mixed} $member The sub-property's path, key and value.
+	 *
+	 * @return bool True when the sub-property was mapped.
+	 */
+	private function mapTypographyMember(DesignTokensMapping $mapping, array $member): bool {
+		$target = (self::TYPOGRAPHY_SUBPROPERTY_TARGETS[$member['key']] ?? null);
+		if ($target === null) {
+			$mapping->skipped[] = ['path' => $member['path'], 'reason' => 'unmapped-path'];
+			return false;
+		}
+
+		$result = $this->typographyMemberResult(member: $member);
+		if ($result['ok'] !== true) {
+			$mapping->errors[] = ['path' => $member['path'], 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
+			return false;
+		}
+
+		if (isset($mapping->declarations[$target]) === true) {
+			$mapping->skipped[] = ['path' => $member['path'], 'reason' => 'duplicate-target', 'detail' => $target];
+			return false;
+		}
+
+		$mapping->declarations[$target] = $result['value'];
+		return true;
+	}//end mapTypographyMember()
+
+	/**
+	 * A typography sub-property serialized: only `fontFamily` has a serializer.
+	 *
+	 * @param array{path: string, key: string, value: mixed} $member The sub-property's path, key and value.
+	 *
+	 * @return array{ok: bool, value?: string, reason?: string} The serializer result.
+	 */
+	private function typographyMemberResult(array $member): array {
+		if ($member['key'] === 'fontFamily') {
+			return $this->serializeFontFamily(value: $member['value']);
+		}
+
+		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+	}//end typographyMemberResult()
 
 	/**
 	 * Record a deprecation warning for a successfully imported token.
@@ -607,19 +672,7 @@ class DesignTokensMapper {
 			return;
 		}
 
-		$warning = ['path' => $path, 'message' => null];
-		if (is_array($deprecated) === true) {
-			$warning['severity'] = 'warning';
-			if (($deprecated['severity'] ?? '') === 'error') {
-				$warning['severity'] = 'critical';
-			}
-
-			$deprecated = ($deprecated['message'] ?? null);
-		}
-
-		if (is_string($deprecated) === true && trim($deprecated) !== '') {
-			$warning['message'] = $deprecated;
-		}
+		$warning = $this->deprecationWarning(path: $path, deprecated: $deprecated);
 
 		if ($token !== null) {
 			$warning['token'] = $token;
@@ -627,6 +680,29 @@ class DesignTokensMapper {
 
 		$warnings[] = $warning;
 	}//end maybeWarnDeprecated()
+
+	/**
+	 * The deprecation warning for a `$deprecated` value: its message, and for the
+	 * Tokens Studio object form its severity (`error` becomes `critical`).
+	 *
+	 * @param string $path The token's dotted path.
+	 * @param mixed $deprecated The raw `$deprecated` value.
+	 *
+	 * @return array<string, mixed> The warning.
+	 */
+	private function deprecationWarning(string $path, mixed $deprecated): array {
+		$warning = ['path' => $path, 'message' => null];
+		if (is_array($deprecated) === true) {
+			$warning['severity'] = ((($deprecated['severity'] ?? '') === 'error') ? 'critical' : 'warning');
+			$deprecated = ($deprecated['message'] ?? null);
+		}
+
+		if (is_string($deprecated) === true && trim($deprecated) !== '') {
+			$warning['message'] = $deprecated;
+		}
+
+		return $warning;
+	}//end deprecationWarning()
 
 	/**
 	 * A colour's original text instead of its object, when the token carries one and it is the same colour.
@@ -644,26 +720,54 @@ class DesignTokensMapper {
 	 * @spec openspec/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
 	 */
 	private function originalText(array $leaf, mixed $value, string $type): mixed {
-		$text = $leaf['css'] ?? null;
-		if ($type !== 'color' || is_array($value) === false || is_string($text) === false || trim($text) === '') {
+		if ($type !== 'color' || is_array($value) === false) {
 			return $value;
 		}
 
+		$text = $leaf['css'] ?? null;
+		if (is_string($text) === false || trim($text) === '') {
+			return $value;
+		}
+
+		return ($this->sameColourText(text: $text, value: $value) ?? $value);
+	}//end originalText()
+
+	/**
+	 * The CSS text of a colour object, when it is an sRGB notation of the same colour.
+	 *
+	 * Only the sRGB notations: a lab(), lch() or color() value keeps its conversion to sRGB, which
+	 * the upload reports and the contrast checks read.
+	 *
+	 * @param string $text The CSS text the exporter wrote alongside the object.
+	 * @param array<string, mixed> $value The colour object.
+	 *
+	 * @return string|null The trimmed text, or null when the object is to be kept.
+	 */
+	private function sameColourText(string $text, array $value): ?string {
 		$parsed = (new CssColorParser())->parse(value: $text);
 		$object = $this->serializeColorObject(value: $value);
-		// Only the sRGB notations: a lab(), lch() or color() value keeps its conversion to sRGB, which
-		// the upload reports and the contrast checks read.
-		if ($parsed === null || in_array($parsed['space'], ['srgb', 'hsl', 'hwb'], true) === false || ($object['ok'] ?? false) !== true) {
-			return $value;
+		if ($this->isSrgbNotation(parsed: $parsed) === false || ($object['ok'] ?? false) !== true) {
+			return null;
 		}
 
 		$rgb = (array)$this->colorSpaces->toSrgb(space: $parsed['space'], components: $parsed['components']);
 		if (strtolower($this->colorSpaces->toHex(rgb: $rgb, alpha: $parsed['alpha'])) !== strtolower((string)$object['value'])) {
-			return $value;
+			return null;
 		}
 
 		return trim($text);
-	}//end originalText()
+	}//end sameColourText()
+
+	/**
+	 * Whether a parsed CSS colour is written in an sRGB notation (hex or rgb(), hsl(), hwb()).
+	 *
+	 * @param array<string, mixed>|null $parsed The parsed colour, or null when it did not parse.
+	 *
+	 * @return bool True for an sRGB notation.
+	 */
+	private function isSrgbNotation(?array $parsed): bool {
+		return $parsed !== null && in_array($parsed['space'], ['srgb', 'hsl', 'hwb'], true) === true;
+	}//end isSrgbNotation()
 
 	/**
 	 * Serialize a `color` value: legacy string literal passthrough, or the
@@ -704,22 +808,60 @@ class DesignTokensMapper {
 			return ['ok' => false, 'reason' => 'unsupported-color-space', 'detail' => ($value['colorSpace'] ?? 'unknown')];
 		}
 
-		$alphaHex = $this->alphaToHex(alpha: $value['alpha'] ?? null);
-		$hex = $this->hexMember(value: $value);
-		$components = $value['components'] ?? null;
-		if ($colorSpace === 'srgb' && $hex !== null) {
-			return ['ok' => true, 'value' => $hex . $alphaHex];
+		if ($this->usesHexMember(value: $value, colorSpace: $colorSpace) === true) {
+			return $this->hexMemberColour(value: $value);
 		}
 
-		if (is_array($components) === false || count($components) < 3) {
-			if ($hex !== null) {
-				return ['ok' => true, 'value' => $hex . $alphaHex];
-			}
+		return $this->componentsColour(value: $value, colorSpace: $colorSpace);
+	}//end serializeColorObject()
 
+	/**
+	 * Whether a colour object is serialized from its `hex` member: an sRGB object that has one,
+	 * or an object without three components.
+	 *
+	 * @param array<string, mixed> $value The colour object.
+	 * @param string $colorSpace The lower-cased colour space.
+	 *
+	 * @return bool True when the `hex` member decides the value.
+	 */
+	private function usesHexMember(array $value, string $colorSpace): bool {
+		$components = $value['components'] ?? null;
+		if ($colorSpace === 'srgb' && $this->hexMember(value: $value) !== null) {
+			return true;
+		}
+
+		return is_array($components) === false || count($components) < 3;
+	}//end usesHexMember()
+
+	/**
+	 * A colour object serialized from its `hex` member and alpha.
+	 *
+	 * @param array<string, mixed> $value The colour object.
+	 *
+	 * @return array{ok: bool, value?: string, reason?: string} The serialized value, or the reason it has none.
+	 */
+	private function hexMemberColour(array $value): array {
+		$hex = $this->hexMember(value: $value);
+		if ($hex === null) {
 			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
 		}
 
-		$rgb = (array)$this->colorSpaces->toSrgb(space: $colorSpace, components: array_values($components));
+		return ['ok' => true, 'value' => $hex . $this->alphaToHex(alpha: $value['alpha'] ?? null)];
+	}//end hexMemberColour()
+
+	/**
+	 * A colour object serialized from its components, converted to sRGB; out of gamut, the
+	 * `hex` member or the clipped channels, reported as adapted.
+	 *
+	 * @param array<string, mixed> $value The colour object, with at least three components.
+	 * @param string $colorSpace The lower-cased colour space.
+	 *
+	 * @return array{ok: bool, value: string, adapted?: array<string, mixed>} The serialized value.
+	 */
+	private function componentsColour(array $value, string $colorSpace): array {
+		$alphaHex = $this->alphaToHex(alpha: $value['alpha'] ?? null);
+		$hex = $this->hexMember(value: $value);
+		$rgb = (array)$this->colorSpaces->toSrgb(space: $colorSpace, components: array_values($value['components']));
 		if ($this->colorSpaces->isInGamut(rgb: $rgb) === true) {
 			return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex];
 		}
@@ -734,7 +876,7 @@ class DesignTokensMapper {
 		}
 
 		return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex, 'adapted' => $adapted];
-	}//end serializeColorObject()
+	}//end componentsColour()
 
 	/**
 	 * A colour object's `hex` member as `#rrggbb`, or null when it has none.
@@ -787,17 +929,27 @@ class DesignTokensMapper {
 			return ['ok' => true, 'value' => trim($value)];
 		}
 
-		if (is_array($value) === true
-			&& array_key_exists('value', $value) === true
-			&& array_key_exists('unit', $value) === true
-			&& is_scalar($value['value']) === true
-			&& is_string($value['unit']) === true
-		) {
+		if ($this->isUnitObject(value: $value) === true) {
 			return ['ok' => true, 'value' => $value['value'] . $value['unit']];
 		}
 
 		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
 	}//end serializeDimension()
+
+	/**
+	 * Whether a dimension value is the `{value, unit}` object form.
+	 *
+	 * @param mixed $value The raw `$value`.
+	 *
+	 * @return bool True for a scalar value with a string unit.
+	 */
+	private function isUnitObject(mixed $value): bool {
+		return is_array($value) === true
+			&& array_key_exists('value', $value) === true
+			&& array_key_exists('unit', $value) === true
+			&& is_scalar($value['value']) === true
+			&& is_string($value['unit']) === true;
+	}//end isUnitObject()
 
 	/**
 	 * Serialize a `fontFamily` value: a bare string, or an array serialized
@@ -816,34 +968,42 @@ class DesignTokensMapper {
 		}
 
 		if (is_array($value) === true) {
-			$parts = [];
-			foreach ($value as $font) {
-				if (is_string($font) === false) {
-					continue;
-				}
-
-				$font = trim($font);
-				if ($font === '') {
-					continue;
-				}
-
-				$quoted = $font;
-				if (str_contains($font, ' ') === true) {
-					$quoted = "'" . $font . "'";
-				}
-
-				$parts[] = $quoted;
-			}//end foreach
-
+			$parts = $this->fontFamilyParts(fonts: $value);
 			if (empty($parts) === true) {
 				return ['ok' => false, 'reason' => 'unsupported-value-shape'];
 			}
 
 			return ['ok' => true, 'value' => implode(', ', $parts)];
-		}//end if
+		}
 
 		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
 	}//end serializeFontFamily()
+
+	/**
+	 * The non-empty string families of a font list, trimmed, a name with a space quoted.
+	 *
+	 * @param array<mixed> $fonts The font list.
+	 *
+	 * @return array<int, string> The families.
+	 */
+	private function fontFamilyParts(array $fonts): array {
+		$parts = [];
+		foreach ($fonts as $font) {
+			if (is_string($font) === false || trim($font) === '') {
+				continue;
+			}
+
+			$font = trim($font);
+			$quoted = $font;
+			if (str_contains($font, ' ') === true) {
+				$quoted = "'" . $font . "'";
+			}
+
+			$parts[] = $quoted;
+		}
+
+		return $parts;
+	}//end fontFamilyParts()
 
 	/**
 	 * Serialize a `fontWeight` value: a number, or a v2025.10 weight keyword
@@ -905,20 +1065,9 @@ class DesignTokensMapper {
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function extractPackageVersion(array $document): ?string {
-		if (isset($document['$version']) === true && is_string($document['$version']) === true) {
-			return $document['$version'];
-		}
-
-		$fromExtensions = $this->extensionVersion(extensions: ($document['$extensions'] ?? null));
-		if ($fromExtensions !== null) {
-			return $fromExtensions;
-		}
-
-		if (isset($document['version']) === true && is_string($document['version']) === true) {
-			return $document['version'];
-		}
-
-		return null;
+		return ($this->stringMember(map: $document, key: '$version')
+			?? $this->extensionVersion(extensions: ($document['$extensions'] ?? null))
+			?? $this->stringMember(map: $document, key: 'version'));
 	}//end extractPackageVersion()
 
 	/**
@@ -934,8 +1083,9 @@ class DesignTokensMapper {
 		}
 
 		foreach (['nl.nldesign.version', 'org.nldesign.version'] as $key) {
-			if (isset($extensions[$key]) === true && is_string($extensions[$key]) === true) {
-				return $extensions[$key];
+			$version = $this->stringMember(map: $extensions, key: $key);
+			if ($version !== null) {
+				return $version;
 			}
 		}
 
