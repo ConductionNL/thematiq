@@ -69,10 +69,6 @@ class BrandingCaptureServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped(message: 'OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
-		}
-
 		$this->appDir = sys_get_temp_dir() . '/thematiq-capture-test-' . uniqid();
 		mkdir($this->appDir, 0777, true);
 

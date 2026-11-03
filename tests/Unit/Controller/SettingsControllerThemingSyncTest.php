@@ -109,10 +109,6 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped(message: 'OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
-		}
-
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$app . '|' . $key] ?? $default)

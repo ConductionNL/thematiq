@@ -95,10 +95,6 @@ class ThemingServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped(message: 'OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
-		}
-
 		$this->appDir = sys_get_temp_dir() . '/thematiq-theming-test-' . uniqid();
 		mkdir($this->appDir . '/img/logos', 0777, true);
 		mkdir($this->appDir . '/img/backgrounds', 0777, true);

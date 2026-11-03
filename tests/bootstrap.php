@@ -6,7 +6,7 @@ define('PHPUNIT_RUN', 1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// vendor/ is a symlink into a shared checkout (e.g. a git worktree's vendor/
+// The vendor/ directory is a symlink into a shared checkout (e.g. a git worktree's vendor/
 // points at the main checkout so `composer install` never has to run twice).
 // Composer's generated autoload_psr4.php computes its base directory from
 // __DIR__, which PHP resolves through that symlink — so without this fix the
@@ -106,11 +106,13 @@ spl_autoload_register(static function (string $class): void {
 	}
 });
 
-// Without a booted server, the test doubles under tests/doubles/OC/ stand in
-// for the private classes the app extends (OC\Mail\EMailTemplate). A booted
-// server defines \OC, and then its own autoloader supplies the real class.
+// Without a booted server, the test doubles under tests/doubles/ stand in for
+// the server classes the app extends or mocks (OC\Mail\EMailTemplate and the
+// theming app's OCA\Theming classes). A booted server defines \OC, and then
+// its own autoloaders supply the real classes.
 spl_autoload_register(static function (string $class): void {
-	if (str_starts_with($class, 'OC\\') === false || class_exists('OC', false) === true) {
+	$served = (str_starts_with($class, 'OC\\') === true || str_starts_with($class, 'OCA\\Theming\\') === true);
+	if ($served === false || class_exists('OC', false) === true) {
 		return;
 	}
 

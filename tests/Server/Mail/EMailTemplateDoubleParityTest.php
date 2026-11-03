@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Server\Mail;
 
 use OC\Mail\EMailTemplate;
+use OCA\Thematiq\Tests\Server\Support\MethodSignature;
 use OCP\Defaults;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -79,8 +80,8 @@ class EMailTemplateDoubleParityTest extends TestCase {
 			$name = $method->getName();
 			$this->assertTrue(condition: $double->hasMethod(name: $name), message: 'missing method ' . $name);
 			$this->assertSame(
-				expected: $this->describeMethod(method: $method),
-				actual: $this->describeMethod(method: $double->getMethod(name: $name)),
+				expected: MethodSignature::of(method: $method),
+				actual: MethodSignature::of(method: $double->getMethod(name: $name)),
 				message: 'signature of ' . $name
 			);
 		}
@@ -171,34 +172,4 @@ class EMailTemplateDoubleParityTest extends TestCase {
 
 		return ['subject' => $template->renderSubject(), 'text' => $template->renderText(), 'html' => $template->renderHtml()];
 	}//end render()
-
-	/**
-	 * A comparable description of a method: visibility, static, parameters and return type.
-	 *
-	 * @param \ReflectionMethod $method The method.
-	 *
-	 * @return array<string, mixed>
-	 */
-	private function describeMethod(\ReflectionMethod $method): array {
-		$parameters = [];
-		foreach ($method->getParameters() as $parameter) {
-			$parameters[] = [
-				'name' => $parameter->getName(),
-				'type' => (string)$parameter->getType(),
-				'optional' => $parameter->isOptional(),
-				'default' => match ($parameter->isDefaultValueAvailable()) {
-					true => var_export($parameter->getDefaultValue(), true),
-					default => null,
-				},
-				'promoted' => $parameter->isPromoted(),
-			];
-		}
-
-		return [
-			'public' => $method->isPublic(),
-			'static' => $method->isStatic(),
-			'parameters' => $parameters,
-			'return' => (string)$method->getReturnType(),
-		];
-	}//end describeMethod()
 }//end class
