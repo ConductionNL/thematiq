@@ -52,7 +52,12 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),

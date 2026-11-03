@@ -239,7 +239,10 @@ class EnvironmentMarkerServiceTest extends TestCase {
 			$this->assertGreaterThanOrEqual(expected: 4.5, actual: $ratio, message: "$style: label on stripe is below 4.5:1.");
 
 			$this->assertMatchesRegularExpression(
-				pattern: '/\.thematiq-env-marker--' . $style . '\s*\{[^}]*background-color:\s*' . preg_quote($pair['background'], '/') . ';[^}]*color:\s*' . preg_quote($pair['text'], '/') . ';/i',
+				pattern: '/\.thematiq-env-marker--' . $style . '\s*\{[^}]*background-color:\s*' . preg_quote(
+					$pair['background'],
+					'/'
+				) . ';[^}]*color:\s*' . preg_quote($pair['text'], '/') . ';/i',
 				string: $css,
 				message: "$style: css/environment-marker.css must use the service's colours."
 			);

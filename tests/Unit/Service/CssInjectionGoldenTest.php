@@ -404,7 +404,11 @@ class CssInjectionGoldenTest extends TestCase {
 		$customCss->method('hasContent')->willReturn(($this->plain === false && $random->getInt(0, 1) === 1));
 		$fonts = $this->createMock(originalClassName: FontService::class);
 		$hasFonts = ($this->plain === false && $random->getInt(0, 1) === 1);
-		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => $this->failOr(failing: ($failing === 'fonts'), message: 'fonts', value: $hasFonts));
+		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => $this->failOr(
+			failing: ($failing === 'fonts'),
+			message: 'fonts',
+			value: $hasFonts
+		));
 		$fonts->method('getRevision')->willReturn($random->getInt(1, 9));
 		$stock = $this->createMock(originalClassName: StockTokensService::class);
 		$stockCss = null;
@@ -412,7 +416,11 @@ class CssInjectionGoldenTest extends TestCase {
 			$stockCss = ":root {\n  --nldesign-color-primary: #0082c9;\n}\n";
 		}
 
-		$stock->method('getCss')->willReturnCallback(fn (): ?string => $this->failOr(failing: ($failing === 'stock'), message: 'stock', value: $stockCss));
+		$stock->method('getCss')->willReturnCallback(fn (): ?string => $this->failOr(
+			failing: ($failing === 'stock'),
+			message: 'stock',
+			value: $stockCss
+		));
 
 		$banner = $this->createMock(originalClassName: ThemePreviewBannerService::class);
 		$banner->method('inject')->willReturnCallback(

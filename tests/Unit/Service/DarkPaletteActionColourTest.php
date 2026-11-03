@@ -99,7 +99,11 @@ class DarkPaletteActionColourTest extends TestCase {
 			$this->assertStringNotContainsString(needle: 'color-action', haystack: $token);
 		}
 
-		$this->assertSame(expected: '#1a67a3', actual: $dark['--nldesign-color-primary'], message: 'the primary keeps its light value: white reads on it');
+		$this->assertSame(
+			expected: '#1a67a3',
+			actual: $dark['--nldesign-color-primary'],
+			message: 'the primary keeps its light value: white reads on it'
+		);
 	}//end testASetWithoutAnActionColourIsUntouched()
 
 	/**
@@ -130,7 +134,11 @@ class DarkPaletteActionColourTest extends TestCase {
 
 		$this->assertSame(expected: '#1a7f37', actual: $dark['--nldesign-color-action']);
 		$this->assertSame(expected: '#ffffff', actual: $dark['--nldesign-color-action-text']);
-		$this->assertArrayNotHasKey(key: '--nldesign-color-action-hover', array: $dark, message: 'the stylesheet darkens the dark action colour itself');
+		$this->assertArrayNotHasKey(
+			key: '--nldesign-color-action-hover',
+			array: $dark,
+			message: 'the stylesheet darkens the dark action colour itself'
+		);
 	}//end testAnActionColourWithoutATextGetsOne()
 
 	/**
@@ -144,7 +152,11 @@ class DarkPaletteActionColourTest extends TestCase {
 	 */
 	public function testAnUnreadableActionColourIsRepaired(): void {
 		$light = (self::LIGHT + ['--nldesign-color-action' => '#7bd88f']);
-		$this->assertLessThan(expected: 4.5, actual: $this->ratio(foreground: '#ffffff', background: '#7bd88f'), message: 'white on this green does not read in light');
+		$this->assertLessThan(
+			expected: 4.5,
+			actual: $this->ratio(foreground: '#ffffff', background: '#7bd88f'),
+			message: 'white on this green does not read in light'
+		);
 
 		$dark = $this->dark(light: $light);
 

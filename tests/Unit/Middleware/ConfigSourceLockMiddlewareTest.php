@@ -124,7 +124,11 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 
 		$source = $this->createMock(originalClassName: ConfigSourceService::class);
 		$source->method('getStatus')->willReturn(['managed' => true, 'path' => '/srv/branding']);
-		$controller = new ConfigSourceController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), source: $source);
+		$controller = new ConfigSourceController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			source: $source
+		);
 		$this->assertSame(expected: '/srv/branding', actual: $controller->status()->getData()['path']);
 	}//end testStatusEndpointIsAdminOnly()
 

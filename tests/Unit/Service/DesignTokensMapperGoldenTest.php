@@ -210,7 +210,10 @@ class DesignTokensMapperGoldenTest extends TestCase {
 			}
 
 			if ($random->getInt(0, 6) === 0) {
-				$leaf['$extensions'] = ['nl.conduction.thematiq' => ['cssVariable' => ['--nldesign-color-primary', '--x-custom-' . $index, 'not-a-name'][$random->getInt(0, 2)]]];
+				$leaf['$extensions'] = ['nl.conduction.thematiq' => ['cssVariable' => ['--nldesign-color-primary', '--x-custom-' . $index, 'not-a-name'][$random->getInt(
+					0,
+					2
+				)]]];
 			}
 
 			$this->place(document: $document, path: $path, leaf: $leaf);

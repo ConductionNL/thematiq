@@ -156,7 +156,11 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheInstanceWideSwitchRefusesAndThenAccepts(): void {
-		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
 
 		try {
 			$active->switchTo('owned');
@@ -179,7 +183,11 @@ class RestrictedSetWiringTest extends TestCase {
 	 */
 	public function testTheActiveSetChosenAgainIsNotANewUse(): void {
 		$this->appValues['token_set'] = 'owned';
-		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
 
 		$this->assertSame(expected: 'owned', actual: $active->switchTo('owned'));
 	}//end testTheActiveSetChosenAgainIsNotANewUse()
@@ -190,8 +198,16 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheCommandLineSwitchRefuses(): void {
-		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
-		$tester = new CommandTester(new ThemeSet(active: $active, tokenSets: $this->tokenSets, coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
+		$tester = new CommandTester(new ThemeSet(
+			active: $active,
+			tokenSets: $this->tokenSets,
+			coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)
+		));
 
 		$this->assertSame(expected: Command::FAILURE, actual: $tester->execute(['token-set' => 'owned']));
 		$this->assertStringContainsString(needle: 'Nothing was changed', haystack: $tester->getDisplay());
@@ -394,12 +410,20 @@ class RestrictedSetWiringTest extends TestCase {
 		foreach ($places as $place => $bundle) {
 			$result = $bundles->import($bundle, true);
 			$this->assertFalse(condition: $result['valid'], message: $place);
-			$this->assertStringContainsString(needle: '"owned" is restricted to its owner', haystack: implode("\n", array_column($result['errors'], 'message')), message: $place);
+			$this->assertStringContainsString(
+				needle: '"owned" is restricted to its owner',
+				haystack: implode("\n", array_column($result['errors'], 'message')),
+				message: $place
+			);
 		}
 
 		$this->confirmSet(tokenSetId: 'owned');
 		foreach ($places as $place => $bundle) {
-			$this->assertStringNotContainsString(needle: 'restricted to its owner', haystack: (string)json_encode($bundles->import($bundle, true)), message: $place);
+			$this->assertStringNotContainsString(
+				needle: 'restricted to its owner',
+				haystack: (string)json_encode($bundles->import($bundle, true)),
+				message: $place
+			);
 		}
 	}//end testAConfigurationBundleRefusesEveryPlaceItNamesTheSet()
 
@@ -462,7 +486,12 @@ class RestrictedSetWiringTest extends TestCase {
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('isAdmin')->willReturn(true);
 
-		return new ThemePreviewService(config: $this->config, groupManager: $groupManager, tokenSetService: $this->tokenSets, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		return new ThemePreviewService(
+			config: $this->config,
+			groupManager: $groupManager,
+			tokenSetService: $this->tokenSets,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 	}//end preview()
 
 	/**

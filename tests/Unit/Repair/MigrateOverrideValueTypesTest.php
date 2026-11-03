@@ -65,7 +65,12 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$dark = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$dark = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $this->appDir),
@@ -170,7 +175,10 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		// The write's own PHP warning is expected; the step must turn the failure into output.
 		set_error_handler(static fn (): bool => true, E_WARNING);
 		try {
-			(new MigrateOverrideValueTypes(overrides: $this->overrides, logger: $this->createMock(originalClassName: LoggerInterface::class)))->run($output);
+			(new MigrateOverrideValueTypes(
+				overrides: $this->overrides,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			))->run($output);
 		} finally {
 			restore_error_handler();
 			chmod($this->appDir . '/css/custom-overrides.css', 0644);

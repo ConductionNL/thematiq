@@ -166,7 +166,10 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 		$this->assertSame(expected: '#21468b', actual: $result['cssPrimary']);
 		$this->assertSame(expected: '#2874d1', actual: $result['declaredPrimary']);
 		$this->assertFalse(condition: $result['complete']);
-		$this->assertNotSame(expected: [], actual: $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'summer-breeze']));
+		$this->assertNotSame(
+			expected: [],
+			actual: $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'summer-breeze'])
+		);
 
 		// The control: declare what is read, drop what is not, agree on the primary.
 		file_put_contents(

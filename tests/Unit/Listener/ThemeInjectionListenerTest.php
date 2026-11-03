@@ -379,7 +379,14 @@ class ThemeInjectionListenerTest extends TestCase {
 			loginCopy: $loginCopy
 		);
 
-		$response = new TemplateResponse('core', 'login', [], $login === true ? TemplateResponse::RENDER_AS_GUEST : TemplateResponse::RENDER_AS_USER);
+		$response = new TemplateResponse(
+			'core',
+			'login',
+			[],
+			match ($login === true) {
+				true => TemplateResponse::RENDER_AS_GUEST, default => TemplateResponse::RENDER_AS_USER
+			}
+		);
 		$event = new BeforeTemplateRenderedEvent(true, $response);
 		if ($login === true) {
 			$event = new BeforeLoginTemplateRenderedEvent($response);

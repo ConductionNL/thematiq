@@ -225,8 +225,14 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam', '--dry-run' => true, '--sync-core' => true]));
-		$this->assertStringContainsString(needle: 'would switch the active token set from rijkshuisstijl to amsterdam', haystack: $tester->getDisplay());
+		$this->assertSame(
+			expected: Command::SUCCESS,
+			actual: $tester->execute(['token-set' => 'amsterdam', '--dry-run' => true, '--sync-core' => true])
+		);
+		$this->assertStringContainsString(
+			needle: 'would switch the active token set from rijkshuisstijl to amsterdam',
+			haystack: $tester->getDisplay()
+		);
 		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store['token_set']);
 	}//end testDryRunWritesNothing()
 
@@ -241,7 +247,10 @@ class ThemeCommandsTest extends TestCase {
 		$tester = $this->setCommand();
 
 		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]));
-		$this->assertStringContainsString(needle: 'Applied to Nextcloud theming: primary_color, background_color, logo.', haystack: $tester->getDisplay());
+		$this->assertStringContainsString(
+			needle: 'Applied to Nextcloud theming: primary_color, background_color, logo.',
+			haystack: $tester->getDisplay()
+		);
 	}//end testSyncCoreAppliesAndListsTheValues()
 
 	/**
@@ -252,7 +261,9 @@ class ThemeCommandsTest extends TestCase {
 	public function testSyncCoreSaysWhenTheValuesDidNotValidate(): void {
 		$this->coreSync->method('sync')->willReturn([]);
 		$this->coreSync->method('themingParams')->willReturnCallback(
-			fn (string $tokenSetId): array => ($tokenSetId === 'amsterdam' ? ['primary_color' => 'not a colour'] : [])
+			fn (string $tokenSetId): array => (match ($tokenSetId === 'amsterdam') {
+				true => ['primary_color' => 'not a colour'], default => []
+			})
 		);
 
 		$tester = $this->setCommand();

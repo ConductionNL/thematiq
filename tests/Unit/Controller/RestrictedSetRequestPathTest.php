@@ -300,7 +300,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 	private function send(Controller $controller, string $method, array $params): array {
 		$this->request->setUrlParameters($params);
 		$result = $this->dispatcher->dispatch($controller, $method);
-		$this->assertSame(expected: 1, actual: preg_match('/^HTTP\/1\.\d (\d{3})/', (string)$result[0], $match), message: 'no status line: ' . (string)$result[0]);
+		$this->assertSame(
+			expected: 1,
+			actual: preg_match('/^HTTP\/1\.\d (\d{3})/', (string)$result[0], $match),
+			message: 'no status line: ' . (string)$result[0]
+		);
 
 		return ['status' => (int)$match[1], 'body' => (array)json_decode((string)$result[3], true)];
 	}//end send()
@@ -333,12 +337,19 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: ['error' => 'restricted_set_not_confirmed', 'tokenSet' => 'owned'], actual: $sent['body']);
 		$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 
-		$this->assertSame(expected: 400, actual: $this->send(controller: $this->licenceController(), method: 'confirm', params: ['id' => 'owned'])['status'], message: 'no statement, no confirmation');
+		$this->assertSame(
+			expected: 400,
+			actual: $this->send(controller: $this->licenceController(), method: 'confirm', params: ['id' => 'owned'])['status'],
+			message: 'no statement, no confirmation'
+		);
 		$confirmed = $this->send(controller: $this->licenceController(), method: 'confirm', params: ['id' => 'owned', 'confirmed' => true]);
 		$this->assertSame(expected: 200, actual: $confirmed['status']);
 		$this->assertSame(expected: self::ADMIN_UID, actual: $confirmed['body']['confirmation']['uid']);
 
-		$this->assertSame(expected: 200, actual: $this->send(controller: $this->settingsController(), method: 'setTokenSet', params: ['tokenSet' => 'owned'])['status']);
+		$this->assertSame(
+			expected: 200,
+			actual: $this->send(controller: $this->settingsController(), method: 'setTokenSet', params: ['tokenSet' => 'owned'])['status']
+		);
 		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 
 		$withdrawn = $this->send(controller: $this->licenceController(), method: 'withdraw', params: ['id' => 'owned']);
@@ -361,7 +372,10 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertArrayNotHasKey(key: 'group_token_sets', array: $this->appValues);
 
 		$this->confirmSet(tokenSetId: 'owned');
-		$this->assertSame(expected: 200, actual: $this->send(controller: $this->settingsController(), method: 'setGroupTheming', params: $mapping)['status']);
+		$this->assertSame(
+			expected: 200,
+			actual: $this->send(controller: $this->settingsController(), method: 'setGroupTheming', params: $mapping)['status']
+		);
 	}//end testAGroupMappingIsDeliveredAs403()
 
 	/**
@@ -370,7 +384,12 @@ class RestrictedSetRequestPathTest extends TestCase {
 	 * @return void
 	 */
 	public function testAPreviewIsDeliveredAs403(): void {
-		$controller = new PreviewController(appName: 'thematiq', request: $this->request, previewService: $this->previewService(), userSession: Server::get(IUserSession::class));
+		$controller = new PreviewController(
+			appName: 'thematiq',
+			request: $this->request,
+			previewService: $this->previewService(),
+			userSession: Server::get(IUserSession::class)
+		);
 
 		$sent = $this->send(controller: $controller, method: 'start', params: ['tokenSet' => 'owned']);
 		$this->assertSame(expected: 403, actual: $sent['status']);
@@ -411,7 +430,12 @@ class RestrictedSetRequestPathTest extends TestCase {
 			),
 			l10n: $l10n
 		);
-		$controller = new ScheduledSwitchController(appName: 'thematiq', request: $this->request, service: $service, userSession: Server::get(IUserSession::class));
+		$controller = new ScheduledSwitchController(
+			appName: 'thematiq',
+			request: $this->request,
+			service: $service,
+			userSession: Server::get(IUserSession::class)
+		);
 		$plan = ['tokenSet' => 'owned', 'startAt' => '2026-10-13T09:00:00+00:00'];
 
 		$sent = $this->send(controller: $controller, method: 'create', params: $plan);
@@ -455,7 +479,10 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: 'restricted_set_not_confirmed', actual: $sent['body']['reason']);
 
 		$this->confirmSet(tokenSetId: 'owned');
-		$this->assertSame(expected: 200, actual: $this->send(controller: $controller, method: 'save', params: ['appId' => 'collectives', 'tokenSet' => 'owned'])['status']);
+		$this->assertSame(
+			expected: 200,
+			actual: $this->send(controller: $controller, method: 'save', params: ['appId' => 'collectives', 'tokenSet' => 'owned'])['status']
+		);
 	}//end testAnAppBrandIsDeliveredAs403()
 
 	/**
@@ -467,7 +494,12 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('isAdmin')->willReturn(true);
 
-		return new ThemePreviewService(config: $this->config, groupManager: $groupManager, tokenSetService: $this->tokenSets, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		return new ThemePreviewService(
+			config: $this->config,
+			groupManager: $groupManager,
+			tokenSetService: $this->tokenSets,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 	}//end previewService()
 
 	/**

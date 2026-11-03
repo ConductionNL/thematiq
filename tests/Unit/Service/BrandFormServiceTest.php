@@ -113,8 +113,14 @@ class BrandFormServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testMidToneAndDarkPrimaries(): void {
-		$this->assertSame(expected: '#000000', actual: $this->service->derive(appPath: $this->root, primary: '#808080', background: '#ffffff')['textOnPrimary']);
-		$this->assertSame(expected: '#ffffff', actual: $this->service->derive(appPath: $this->root, primary: '#154273', background: '#ffffff')['textOnPrimary']);
+		$this->assertSame(
+			expected: '#000000',
+			actual: $this->service->derive(appPath: $this->root, primary: '#808080', background: '#ffffff')['textOnPrimary']
+		);
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->service->derive(appPath: $this->root, primary: '#154273', background: '#ffffff')['textOnPrimary']
+		);
 	}//end testMidToneAndDarkPrimaries()
 
 	/**
@@ -146,11 +152,20 @@ class BrandFormServiceTest extends TestCase {
 	public function testParityFixtureMatchesPhp(): void {
 		$fixture = json_decode((string)file_get_contents($this->root . '/tests/Unit/fixtures/brand-form-parity.json'), true);
 
-		$this->assertSame(expected: $this->service->inputs(appPath: $this->root), actual: $fixture['inputs'], message: 'Regenerate the fixture: rules or defaults changed');
+		$this->assertSame(
+			expected: $this->service->inputs(appPath: $this->root),
+			actual: $fixture['inputs'],
+			message: 'Regenerate the fixture: rules or defaults changed'
+		);
 		foreach ($fixture['cases'] as $case) {
 			$this->assertSame(
 				expected: $case['expected'],
-				actual: $this->service->derive(appPath: $this->root, primary: $case['primary'], background: $case['background'], action: $case['action']),
+				actual: $this->service->derive(
+					appPath: $this->root,
+					primary: $case['primary'],
+					background: $case['background'],
+					action: $case['action']
+				),
 				message: $case['primary'] . ' on ' . $case['background'] . ' with ' . ($case['action'] ?? 'no action colour')
 			);
 		}
@@ -187,15 +202,26 @@ class BrandFormServiceTest extends TestCase {
 		$green = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#1F883D');
 
 		$this->assertSame(expected: '#1f883d', actual: $green['declarations']['--nldesign-color-action']);
-		$this->assertSame(expected: '#1a7434', actual: $green['declarations']['--nldesign-color-action-hover'], message: '15% darker, the step the stylesheet would derive');
+		$this->assertSame(
+			expected: '#1a7434',
+			actual: $green['declarations']['--nldesign-color-action-hover'],
+			message: '15% darker, the step the stylesheet would derive'
+		);
 		$this->assertSame(expected: $green['textOnAction'], actual: $green['declarations']['--nldesign-color-action-text']);
 		$this->assertContains(needle: $green['textOnAction'], haystack: ['#ffffff', '#000000']);
 		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $green['actionTextRatio']);
 
 		// Everything else is what the form made without it.
-		$rest = array_diff_key($green['declarations'], array_flip(['--nldesign-color-action', '--nldesign-color-action-hover', '--nldesign-color-action-text']));
+		$rest = array_diff_key(
+			$green['declarations'],
+			array_flip(['--nldesign-color-action', '--nldesign-color-action-hover', '--nldesign-color-action-text'])
+		);
 		$this->assertSame(expected: $plain['declarations'], actual: $rest);
-		$this->assertSame(expected: '#1a67a3', actual: $green['declarations']['--nldesign-color-header-background'], message: 'the header stays with the primary');
+		$this->assertSame(
+			expected: '#1a67a3',
+			actual: $green['declarations']['--nldesign-color-header-background'],
+			message: 'the header stays with the primary'
+		);
 
 		$yellow = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#ffd200');
 		$this->assertSame(expected: '#000000', actual: $yellow['declarations']['--nldesign-color-action-text'], message: 'black reads on yellow');
@@ -214,7 +240,11 @@ class BrandFormServiceTest extends TestCase {
 		$tree = $this->appTreeWith(css: (new CustomTokenSetValidator())->serialize(declarations: $declarations));
 
 		try {
-			$audit = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(appPath: $tree, id: 'custom-brand-form', meta: []);
+			$audit = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(
+				appPath: $tree,
+				id: 'custom-brand-form',
+				meta: []
+			);
 			$this->assertSame(expected: [], actual: $audit['missingRequired']);
 		} finally {
 			exec('rm -rf ' . escapeshellarg($tree));
@@ -228,8 +258,17 @@ class BrandFormServiceTest extends TestCase {
 	 */
 	public function testDarkVariantKeepsTextOnPrimaryReadable(): void {
 		$contrast = new ContrastService();
-		$dark = (new DarkPaletteService(contrast: $contrast, parser: new CssParserService(), appManager: $this->createMock(originalClassName: IAppManager::class), logger: $this->createMock(originalClassName: LoggerInterface::class)))
-			->deriveDarkDeclarations(lightDeclarations: $this->service->derive(appPath: $this->root, primary: '#c8102e', background: '#ffffff')['declarations']);
+		$dark = (new DarkPaletteService(
+			contrast: $contrast,
+			parser: new CssParserService(),
+			appManager: $this->createMock(originalClassName: IAppManager::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))
+			->deriveDarkDeclarations(lightDeclarations: $this->service->derive(
+				appPath: $this->root,
+				primary: '#c8102e',
+				background: '#ffffff'
+			)['declarations']);
 
 		$primary = $contrast->parseColor(value: $dark['--nldesign-color-primary']);
 		$text = $contrast->parseColor(value: $dark['--nldesign-color-primary-text']);

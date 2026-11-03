@@ -58,7 +58,12 @@ class TokenSetLicenceControllerTest extends TestCase {
 			$session->method('getUser')->willReturn($user);
 		}
 
-		return new TokenSetLicenceController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), licences: $this->licences, userSession: $session);
+		return new TokenSetLicenceController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			licences: $this->licences,
+			userSession: $session
+		);
 	}//end controller()
 
 	/**
@@ -87,8 +92,14 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$routes = (require __DIR__ . '/../../../appinfo/routes.php')['routes'];
 		$named = array_column($routes, null, 'name');
 
-		$this->assertSame(expected: ['GET', '/settings/tokensets/licences'], actual: [$named['tokenSetLicence#index']['verb'], $named['tokenSetLicence#index']['url']]);
-		$this->assertSame(expected: ['GET', '/settings/tokensets/{id}/licence'], actual: [$named['tokenSetLicence#show']['verb'], $named['tokenSetLicence#show']['url']]);
+		$this->assertSame(
+			expected: ['GET', '/settings/tokensets/licences'],
+			actual: [$named['tokenSetLicence#index']['verb'], $named['tokenSetLicence#index']['url']]
+		);
+		$this->assertSame(
+			expected: ['GET', '/settings/tokensets/{id}/licence'],
+			actual: [$named['tokenSetLicence#show']['verb'], $named['tokenSetLicence#show']['url']]
+		);
 		$this->assertSame(expected: 'POST', actual: $named['tokenSetLicence#confirm']['verb']);
 		$this->assertSame(expected: 'DELETE', actual: $named['tokenSetLicence#withdraw']['verb']);
 		$this->assertSame(expected: $named['tokenSetLicence#confirm']['url'], actual: $named['tokenSetLicence#withdraw']['url']);
@@ -184,7 +195,10 @@ class TokenSetLicenceControllerTest extends TestCase {
 	 */
 	public function testAWithdrawalWhileAppliedAnswers409WithThePlaces(): void {
 		$controller = $this->controller();
-		$this->licences->method('withdraw')->willThrowException(new RestrictedSetInUseException(tokenSetId: 'owned', appliedIn: [['kind' => 'instance', 'id' => '']]));
+		$this->licences->method('withdraw')->willThrowException(new RestrictedSetInUseException(
+			tokenSetId: 'owned',
+			appliedIn: [['kind' => 'instance', 'id' => '']]
+		));
 
 		$response = $controller->withdraw('owned');
 

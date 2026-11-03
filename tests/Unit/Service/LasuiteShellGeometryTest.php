@@ -62,7 +62,9 @@ class LasuiteShellGeometryTest extends TestCase {
 	private function service(string $serverVersion): CssInjectionService {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = ''): string => ($key === 'version' ? $serverVersion : $default)
+			static fn (string $key, string $default = ''): string => (match ($key === 'version') {
+				true => $serverVersion, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, string $default = ''): string => $default
@@ -148,7 +150,11 @@ class LasuiteShellGeometryTest extends TestCase {
 	 */
 	public function testAnUnknownNextcloudMajorGetsNoShellLayer(): void {
 		foreach (['34.0.5.0', '36.0.0.0', ''] as $version) {
-			$this->assertNotContains(needle: self::SHELL_NC35, haystack: $this->files(tokenSet: 'lasuite', serverVersion: $version), message: "version '$version'");
+			$this->assertNotContains(
+				needle: self::SHELL_NC35,
+				haystack: $this->files(tokenSet: 'lasuite', serverVersion: $version),
+				message: "version '$version'"
+			);
 		}
 	}//end testAnUnknownNextcloudMajorGetsNoShellLayer()
 
@@ -174,7 +180,11 @@ class LasuiteShellGeometryTest extends TestCase {
 		$declared = 0;
 		foreach ($systems as $system) {
 			foreach (($system['versioned_stylesheets'] ?? []) as $major => $stylesheets) {
-				$this->assertMatchesRegularExpression(pattern: '/^\d+$/', string: (string)$major, message: "{$system['id']}: keys are Nextcloud majors.");
+				$this->assertMatchesRegularExpression(
+					pattern: '/^\d+$/',
+					string: (string)$major,
+					message: "{$system['id']}: keys are Nextcloud majors."
+				);
 				foreach ($stylesheets as $stylesheet) {
 					$declared++;
 					$this->assertFileExists(filename: $this->root() . '/css/' . $stylesheet . '.css');
@@ -205,11 +215,23 @@ class LasuiteShellGeometryTest extends TestCase {
 	 */
 	public function testTheSharedOverridesFollowTheHeaderHeight(): void {
 		$css = (string)file_get_contents($this->root() . '/css/systems/lasuite/element-overrides.css');
-		$this->assertDoesNotMatchRegularExpression(pattern: '/margin:\s*50px\s+0\s+0/', string: $css, message: '#content must clear var(--header-height), not 50px.');
-		$this->assertDoesNotMatchRegularExpression(pattern: '/inset-block-start:\s*8px/', string: $css, message: 'The search field must centre on var(--header-height).');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/margin:\s*50px\s+0\s+0/',
+			string: $css,
+			message: '#content must clear var(--header-height), not 50px.'
+		);
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/inset-block-start:\s*8px/',
+			string: $css,
+			message: 'The search field must centre on var(--header-height).'
+		);
 		// #932: core centres the field's row on NC 35, so the field sits on it
 		// with inset-block: 0 and auto block margins instead of a fixed offset.
-		$this->assertDoesNotMatchRegularExpression(pattern: '/inset-block-start:\s*15px/', string: $css, message: 'A fixed 15px offset pushes the field below the centre of the 64px header.');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/inset-block-start:\s*15px/',
+			string: $css,
+			message: 'A fixed 15px offset pushes the field below the centre of the 64px header.'
+		);
 		$this->assertStringContainsString(needle: 'inset-block: 0 !important;', haystack: $css);
 		$this->assertStringContainsString(needle: 'margin-block: auto !important;', haystack: $css);
 	}//end testTheSharedOverridesFollowTheHeaderHeight()

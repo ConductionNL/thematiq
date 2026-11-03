@@ -165,7 +165,10 @@ class ShellTokenServiceTest extends TestCase {
 		$this->assertSame(expected: '#F5F6F8', actual: $document['tokens']['ground']);
 		$this->assertSame(expected: ['url', 'inverse_url'], actual: array_keys($document['logo']));
 		$this->assertSame(expected: 'https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht.svg', actual: $document['logo']['url']);
-		$this->assertSame(expected: 'https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht-dark.svg', actual: $document['logo']['inverse_url']);
+		$this->assertSame(
+			expected: 'https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht-dark.svg',
+			actual: $document['logo']['inverse_url']
+		);
 	}//end testTheDocumentHasTheContractsShape()
 
 	/**
@@ -263,7 +266,11 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheRevisionMovesWithEveryValue(): void {
 		$base = $this->service(active: 'zuiddrecht')->document()['revision'];
 
-		$this->assertSame(expected: $base, actual: $this->service(active: 'zuiddrecht')->document()['revision'], message: 'the same document, the same revision');
+		$this->assertSame(
+			expected: $base,
+			actual: $this->service(active: 'zuiddrecht')->document()['revision'],
+			message: 'the same document, the same revision'
+		);
 
 		$changed = [
 			'another set' => $this->service(active: 'wilgenboom'),
@@ -296,10 +303,18 @@ class ShellTokenServiceTest extends TestCase {
 			active: 'cunningham',
 			theming: ['logoMime' => 'image/png', 'logoheaderMime' => 'image/svg+xml', 'cachebuster' => '7']
 		)->document()['logo'];
-		$this->assertSame(expected: 'https://cloud.example.org/apps/theming/image/logoheader?v=7', actual: $header['url'], message: 'the header logo comes first');
+		$this->assertSame(
+			expected: 'https://cloud.example.org/apps/theming/image/logoheader?v=7',
+			actual: $header['url'],
+			message: 'the header logo comes first'
+		);
 
 		$own = $this->service(active: 'zuiddrecht', theming: ['logoMime' => 'image/png'])->document()['logo'];
-		$this->assertStringEndsWith(suffix: '/img/logos/zuiddrecht.svg', string: (string)$own['url'], message: "the set's own logo comes before the upload");
+		$this->assertStringEndsWith(
+			suffix: '/img/logos/zuiddrecht.svg',
+			string: (string)$own['url'],
+			message: "the set's own logo comes before the upload"
+		);
 	}//end testASetWithoutALogoOffersTheUploadedLogo()
 
 	/**

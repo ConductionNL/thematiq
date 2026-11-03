@@ -328,7 +328,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
 
 		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsMappedSetForSingleGroupMatch()
@@ -358,7 +363,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'bob'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam', 'utrecht']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam', 'utrecht'])
+		);
 
 		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsEarliestEntryForMultiGroupUser()
@@ -389,7 +399,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'dana'));
 
 		// "custom-gone" is not in the available set — dead entry.
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['utrecht']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['utrecht'])
+		);
 
 		$this->assertSame(expected: 'utrecht', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveSkipsDeadSetEntryAndContinues()
@@ -413,7 +428,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'erik'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: []));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: [])
+		);
 
 		$this->assertSame(expected: 'rijkshuisstijl', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveDeadSetOnlyMatchFallsBackToDefault()
@@ -437,7 +457,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'carol'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
 
 		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsDefaultForUnmappedUser()
@@ -462,7 +487,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn(null);
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
 
 		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsDefaultForNoSessionWithoutGroupLookup()
@@ -520,7 +550,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'greta'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
 
 		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveFailsOpenOnGroupBackendException()
@@ -549,7 +584,12 @@ class GroupThemingServiceTest extends TestCase {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
 
 		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());

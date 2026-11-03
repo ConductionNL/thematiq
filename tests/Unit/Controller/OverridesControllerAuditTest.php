@@ -128,7 +128,9 @@ class OverridesControllerAuditTest extends TestCase {
 	public function testResetEmptiesBothFilesAndReturnsToStock(): void {
 		$this->request->method('getParams')->willReturn(['reset' => true]);
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			})
 		);
 		$this->overridesService->method('read')->willReturnMap(
 			[

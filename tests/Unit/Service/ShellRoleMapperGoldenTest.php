@@ -75,7 +75,10 @@ class ShellRoleMapperGoldenTest extends TestCase {
 				}
 			}
 
-			$actual['seed:' . $seed] = (string)json_encode(['tokens' => $tokens, 'overrides' => $overrides, 'roles' => $mapper->map(tokens: $tokens, overrides: $overrides)], JSON_UNESCAPED_SLASHES);
+			$actual['seed:' . $seed] = (string)json_encode(
+				['tokens' => $tokens, 'overrides' => $overrides, 'roles' => $mapper->map(tokens: $tokens, overrides: $overrides)],
+				JSON_UNESCAPED_SLASHES
+			);
 		}
 
 		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {

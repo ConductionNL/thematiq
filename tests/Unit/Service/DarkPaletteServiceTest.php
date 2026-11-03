@@ -150,7 +150,9 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$delta = ($max - $min);
 		if ($max === $r) {
-			$h = ((($g - $b) / $delta) + (($g < $b) ? 6 : 0));
+			$h = ((($g - $b) / $delta) + (match ($g < $b) {
+				true => 6, default => 0
+			}));
 		} elseif ($max === $g) {
 			$h = ((($b - $r) / $delta) + 2);
 		} else {
@@ -159,7 +161,9 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$h = fmod($h * 60, 360);
 
-		return ($h < 0) ? ($h + 360) : $h;
+		return match ($h < 0) {
+			true => $h + 360, default => $h
+		};
 	}//end hueOf()
 
 	/**
@@ -525,7 +529,11 @@ class DarkPaletteServiceTest extends TestCase {
 			['--nldesign-component-button-primary-action-hover-color', '--nldesign-component-button-primary-action-hover-background-color'],
 			['--nldesign-component-textbox-color', '--nldesign-component-textbox-background-color'],
 		] as [$fg, $bg]) {
-			$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), message: $fg . ' on ' . $bg);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]),
+				message: $fg . ' on ' . $bg
+			);
 		}
 	}//end testTheRepairLoopFixesControlLabels()
 
@@ -551,7 +559,11 @@ class DarkPaletteServiceTest extends TestCase {
 		$this->assertSame(expected: [], actual: $result['warnings']);
 		$text = $result['declarations']['--nldesign-color-text'];
 		foreach (['16%' => '#31343a', '22%' => '#3b3f47'] as $share => $wash) {
-			$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $text, background: $wash), message: $text . ' on the ' . $share . ' wash ' . $wash);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $text, background: $wash),
+				message: $text . ' on the ' . $share . ' wash ' . $wash
+			);
 		}
 	}//end testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash()
 
@@ -792,7 +804,11 @@ class DarkPaletteServiceTest extends TestCase {
 		$fill = [];
 		$label = [];
 		$this->assertSame(expected: 1, actual: preg_match('/--nldesign-color-error: (#[0-9a-f]{6});/', $generated['css'], $fill));
-		$this->assertSame(expected: 1, actual: preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label), message: 'no error label in the dark variant');
+		$this->assertSame(
+			expected: 1,
+			actual: preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label),
+			message: 'no error label in the dark variant'
+		);
 		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $label[1], background: $fill[1]));
 	}//end testGenerateForSetGivesTheErrorLabelAReadableColour()
 
@@ -922,27 +938,46 @@ class DarkPaletteServiceTest extends TestCase {
 	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function testDarkValuesFromAFileWin(): void {
-		file_put_contents($this->appDir . '/css/tokens/custom-x.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n");
+		file_put_contents(
+			$this->appDir . '/css/tokens/custom-x.css',
+			":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n"
+		);
 		$this->assertSame(expected: [], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'));
 
-		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8', '--nldesign-color-background' => '#202124']);
-		$this->assertSame(expected: ['--nldesign-color-background' => '#202124', '--nldesign-color-primary' => '#8ab4f8'], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'));
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'custom-x',
+			declarations: ['--nldesign-color-primary' => '#8ab4f8', '--nldesign-color-background' => '#202124']
+		);
+		$this->assertSame(
+			expected: ['--nldesign-color-background' => '#202124', '--nldesign-color-primary' => '#8ab4f8'],
+			actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x')
+		);
 
 		$css = (string)($this->service->generateForSet(setId: 'custom-x')['css'] ?? '');
 		$this->assertStringContainsString(needle: '--nldesign-color-primary: #8ab4f8;', haystack: $css);
 		$this->assertStringContainsString(needle: '--nldesign-color-background: #202124;', haystack: $css);
 
 		// A shipped set keeps its own dark block; nothing is written for it.
-		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(setId: 'example', declarations: ['--nldesign-color-primary' => '#000000']);
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'example',
+			declarations: ['--nldesign-color-primary' => '#000000']
+		);
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark-pins/example.css');
 		$this->assertSame(expected: [], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'example'));
 
 		$this->service->deleteDarkVariant(setId: 'custom-x');
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark-pins/custom-x.css');
 
-		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8']);
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'custom-x',
+			declarations: ['--nldesign-color-primary' => '#8ab4f8']
+		);
 		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(setId: 'custom-x', declarations: []);
-		$this->assertSame(expected: [], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'), message: 'an empty map removes the file');
+		$this->assertSame(
+			expected: [],
+			actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'),
+			message: 'an empty map removes the file'
+		);
 	}//end testDarkValuesFromAFileWin()
 
 	/**
@@ -1058,7 +1093,11 @@ class DarkPaletteServiceTest extends TestCase {
 			['--nldesign-color-link', '--nldesign-color-background'],
 			['--nldesign-color-link-hover', '--nldesign-color-background'],
 		] as [$fg, $bg]) {
-			$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), message: $fg . ' on ' . $bg);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]),
+				message: $fg . ' on ' . $bg
+			);
 		}
 	}//end testTheRepairLoopFixesTheHeroAndFooterForegrounds()
 
@@ -1080,7 +1119,10 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$parser = new CssParserService();
 		$light = ($parser->parseDeclarations(content: (string)file_get_contents($realAppRoot . '/css/tokens/frankendesk.css')) ?? []);
-		$this->assertSame(expected: 1, actual: preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block));
+		$this->assertSame(
+			expected: 1,
+			actual: preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block)
+		);
 		$dark = array_merge($light, ($parser->parseDeclarations(content: $block[1]) ?? []));
 
 		$pairs = [

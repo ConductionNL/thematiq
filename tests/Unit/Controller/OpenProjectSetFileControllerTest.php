@@ -64,8 +64,18 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 		$cache->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$parser = new CssParserService();
 		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser);
-		$tokenSets = new TokenSetService(appManager: $appManager, config: $config, logger: $this->createMock(originalClassName: LoggerInterface::class), audit: $audit, cacheFactory: $cache, vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser));
-		$writer = new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(declarations: $audit, mapper: new ShellRoleMapper(colours: new ContrastService())));
+		$tokenSets = new TokenSetService(
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $audit,
+			cacheFactory: $cache,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser)
+		);
+		$writer = new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
+			declarations: $audit,
+			mapper: new ShellRoleMapper(colours: new ContrastService())
+		));
 		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 

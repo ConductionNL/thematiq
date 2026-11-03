@@ -77,7 +77,11 @@ class GalleryIndexSchemaTest extends TestCase {
 		foreach ($cases as $label => [$entry, $expected]) {
 			$document = json_decode((string)json_encode(['entries' => [$entry]]));
 			$this->assertSame(expected: $expected, actual: $this->valid(document: $document), message: "schema on: {$label}");
-			$this->assertSame(expected: $expected, actual: (new GalleryEntryValidator())->validate(raw: $entry) !== null, message: "runtime on: {$label}");
+			$this->assertSame(
+				expected: $expected,
+				actual: (new GalleryEntryValidator())->validate(raw: $entry) !== null,
+				message: "runtime on: {$label}"
+			);
 		}
 	}//end testTheSchemaAndTheRuntimeAgree()
 }//end class

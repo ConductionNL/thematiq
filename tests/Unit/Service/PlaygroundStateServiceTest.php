@@ -180,7 +180,11 @@ class PlaygroundStateServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame(expected: [], actual: $missing, message: 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.');
+		$this->assertSame(
+			expected: [],
+			actual: $missing,
+			message: 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.'
+		);
 	}//end testEveryChromeStringIsInTheCatalogueWithADutchTranslation()
 
 	/**

@@ -162,12 +162,19 @@ final class OwnComponentServiceTest extends TestCase {
 	public function testControllerPosture(): void {
 		foreach (['list', 'save', 'delete'] as $method) {
 			$reflection = new ReflectionMethod(OwnComponentController::class, $method);
-			$this->assertSame(expected: Admin::class, actual: ($reflection->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null), message: $method);
+			$this->assertSame(
+				expected: Admin::class,
+				actual: ($reflection->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null),
+				message: $method
+			);
 			$this->assertSame(expected: [], actual: $reflection->getAttributes(NoAdminRequired::class));
 		}
 
 		$request = $this->createMock(originalClassName: IRequest::class);
-		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ['name' => 'Groot', 'html' => str_repeat('a', 70000), 'css' => ''][$key] ?? $default);
+		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ['name' => 'Groot', 'html' => str_repeat(
+			'a',
+			70000
+		), 'css' => ''][$key] ?? $default);
 		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 		$controller = new OwnComponentController(appName: 'thematiq', request: $request, components: $this->service, l: $l);

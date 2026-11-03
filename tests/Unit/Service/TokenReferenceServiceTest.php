@@ -100,9 +100,15 @@ class TokenReferenceServiceTest extends TestCase {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md');
 
 		$this->assertStringContainsString(needle: '# Gemeente Voorbeeld', haystack: $md);
-		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-color-primary` \| .*`#24578F` \| .*`#8fb4e0` \| this set \| Primary element color \|$/m', string: $md);
+		$this->assertMatchesRegularExpression(
+			pattern: '/^\| `--nldesign-color-primary` \| .*`#24578F` \| .*`#8fb4e0` \| this set \| Primary element color \|$/m',
+			string: $md
+		);
 		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-color-primary-text` \| .*`#ffffff` \| \| defaults \| /m', string: $md);
-		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| Font family \|$/m', string: $md);
+		$this->assertMatchesRegularExpression(
+			pattern: '/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| Font family \|$/m',
+			string: $md
+		);
 		$this->assertStringContainsString(needle: '2 declared by this set, 3 from the defaults layer', haystack: $md);
 	}//end testMarkdownMarksDeclaredAndDefaultTokensAndWhatTheyPaint()
 
@@ -139,7 +145,10 @@ class TokenReferenceServiceTest extends TestCase {
 
 		$apart = substr($md, (int)strpos($md, '## Tokens nothing reads'));
 		$this->assertStringContainsString(needle: '`--voorbeeld-unused-token`', haystack: $apart);
-		$this->assertStringNotContainsString(needle: '`--voorbeeld-unused-token`', haystack: substr($md, 0, (int)strpos($md, '## Tokens nothing reads')));
+		$this->assertStringNotContainsString(
+			needle: '`--voorbeeld-unused-token`',
+			haystack: substr($md, 0, (int)strpos($md, '## Tokens nothing reads'))
+		);
 	}//end testTokensNothingReadsAreListedApart()
 
 	/**
@@ -154,7 +163,10 @@ class TokenReferenceServiceTest extends TestCase {
 		$this->assertStringContainsString(needle: '<html lang="en">', haystack: $html);
 		$this->assertStringContainsString(needle: '<title>Gemeente Voorbeeld token reference</title>', haystack: $html);
 		$this->assertStringContainsString(needle: '<th scope="col">Token</th>', haystack: $html);
-		$this->assertMatchesRegularExpression(pattern: '/<span class="swatch" aria-hidden="true" style="background:#24578F"><\/span> <code>#24578F<\/code>/', string: $html);
+		$this->assertMatchesRegularExpression(
+			pattern: '/<span class="swatch" aria-hidden="true" style="background:#24578F"><\/span> <code>#24578F<\/code>/',
+			string: $html
+		);
 		$this->assertStringContainsString(needle: '<details>', haystack: $html);
 	}//end testHtmlIsAnAccessiblePage()
 

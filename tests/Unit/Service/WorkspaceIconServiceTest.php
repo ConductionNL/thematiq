@@ -143,13 +143,22 @@ final class WorkspaceIconServiceTest extends TestCase {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>';
 
 		$this->assertSame(expected: ['mobile-logo' => null, 'touch-icon' => null], actual: $service->status());
-		$this->assertSame(expected: ['kind' => 'mobile-logo', 'mime' => 'image/svg+xml', 'size' => strlen($svg)], actual: $service->store(kind: 'mobile-logo', bytes: $svg));
+		$this->assertSame(
+			expected: ['kind' => 'mobile-logo', 'mime' => 'image/svg+xml', 'size' => strlen($svg)],
+			actual: $service->store(kind: 'mobile-logo', bytes: $svg)
+		);
 		$this->assertSame(expected: 'image/png', actual: $service->store(kind: 'touch-icon', bytes: self::png(width: 180, height: 180))['mime']);
 
 		$this->assertSame(expected: ['bytes' => $svg, 'mime' => 'image/svg+xml'], actual: $service->read(kind: 'mobile-logo'));
 		$status = $service->status();
-		$this->assertMatchesRegularExpression(pattern: '#^/apps/thematiq/api/workspace-icons/mobile-logo\?v=[0-9a-f]{8}$#', string: (string)$status['mobile-logo']);
-		$this->assertMatchesRegularExpression(pattern: '#^/apps/thematiq/api/workspace-icons/touch-icon\?v=[0-9a-f]{8}$#', string: (string)$status['touch-icon']);
+		$this->assertMatchesRegularExpression(
+			pattern: '#^/apps/thematiq/api/workspace-icons/mobile-logo\?v=[0-9a-f]{8}$#',
+			string: (string)$status['mobile-logo']
+		);
+		$this->assertMatchesRegularExpression(
+			pattern: '#^/apps/thematiq/api/workspace-icons/touch-icon\?v=[0-9a-f]{8}$#',
+			string: (string)$status['touch-icon']
+		);
 
 		// A new upload replaces the old one, whatever its type.
 		$service->store(kind: 'mobile-logo', bytes: self::png(width: 400, height: 100));
@@ -166,15 +175,40 @@ final class WorkspaceIconServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnUnusableImageIsRefused(): void {
-		$this->assertSame(expected: [AppBrandException::TOO_LARGE, 413], actual: $this->refusal(kind: 'mobile-logo', bytes: str_repeat('x', (WorkspaceIconService::MAX_BYTES + 1))));
+		$this->assertSame(
+			expected: [AppBrandException::TOO_LARGE, 413],
+			actual: $this->refusal(kind: 'mobile-logo', bytes: str_repeat('x', (WorkspaceIconService::MAX_BYTES + 1)))
+		);
 		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'mobile-logo', bytes: 'GIF89a'));
-		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'mobile-logo', bytes: '<svg><script>alert(1)</script></svg>'));
-		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'touch-icon', bytes: "\xFF\xD8\xFF\xE0"), message: 'a touch icon is a PNG');
-		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 180, height: 120)), message: 'not square');
-		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 64, height: 64)), message: 'too small');
-		$this->assertSame(expected: [AppBrandException::BAD_IMAGE, 422], actual: $this->refusal(kind: 'touch-icon', bytes: "\x89PNG\r\n\x1a\n"), message: 'no header to read');
+		$this->assertSame(
+			expected: [AppBrandException::BAD_IMAGE, 422],
+			actual: $this->refusal(kind: 'mobile-logo', bytes: '<svg><script>alert(1)</script></svg>')
+		);
+		$this->assertSame(
+			expected: [AppBrandException::BAD_IMAGE, 422],
+			actual: $this->refusal(kind: 'touch-icon', bytes: "\xFF\xD8\xFF\xE0"),
+			message: 'a touch icon is a PNG'
+		);
+		$this->assertSame(
+			expected: [AppBrandException::BAD_IMAGE, 422],
+			actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 180, height: 120)),
+			message: 'not square'
+		);
+		$this->assertSame(
+			expected: [AppBrandException::BAD_IMAGE, 422],
+			actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 64, height: 64)),
+			message: 'too small'
+		);
+		$this->assertSame(
+			expected: [AppBrandException::BAD_IMAGE, 422],
+			actual: $this->refusal(kind: 'touch-icon', bytes: "\x89PNG\r\n\x1a\n"),
+			message: 'no header to read'
+		);
 		$this->assertSame(expected: ['unknown_kind', 404], actual: $this->refusal(kind: 'favicon', bytes: self::png(width: 180, height: 180)));
-		$this->assertNull(actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 120, height: 120)), message: 'the smallest size is taken');
+		$this->assertNull(
+			actual: $this->refusal(kind: 'touch-icon', bytes: self::png(width: 120, height: 120)),
+			message: 'the smallest size is taken'
+		);
 		$this->assertSame(expected: [], actual: array_diff(array_keys($this->files), ['touch-icon.png']));
 
 		$this->expectException(exception: AppBrandException::class);
@@ -189,10 +223,19 @@ final class WorkspaceIconServiceTest extends TestCase {
 	public function testTheMobileLogoRuleStaysInsideItsMediaQuery(): void {
 		$css = $this->service()->mobileLogoCss(url: '/apps/thematiq/api/workspace-icons/mobile-logo?v=abc12345');
 
-		$this->assertStringStartsWith(prefix: '@media (max-width:1024px){#header #nextcloud .logo{background-image:url(/apps/thematiq/api/workspace-icons/mobile-logo?v=abc12345) !important;', string: $css);
+		$this->assertStringStartsWith(
+			prefix: '@media (max-width:1024px){#header #nextcloud .logo{background-image:url(/apps/thematiq/api/workspace-icons/mobile-logo?v=abc12345) !important;',
+			string: $css
+		);
 		$this->assertStringEndsWith(suffix: '}}', string: $css);
-		$this->assertStringNotContainsString(needle: '</style', haystack: $this->service()->mobileLogoCss(url: '/x);} body{display:none}</style><script>'));
-		$this->assertStringContainsString(needle: 'url(/xbodydisplaynone/stylescript)', haystack: $this->service()->mobileLogoCss(url: '/x);} body{display:none}</style><script>'));
+		$this->assertStringNotContainsString(
+			needle: '</style',
+			haystack: $this->service()->mobileLogoCss(url: '/x);} body{display:none}</style><script>')
+		);
+		$this->assertStringContainsString(
+			needle: 'url(/xbodydisplaynone/stylescript)',
+			haystack: $this->service()->mobileLogoCss(url: '/x);} body{display:none}</style><script>')
+		);
 	}//end testTheMobileLogoRuleStaysInsideItsMediaQuery()
 
 	/**
@@ -232,13 +275,22 @@ final class WorkspaceIconServiceTest extends TestCase {
 	 */
 	public function testTheControllerUploadsServesAndRemoves(): void {
 		$this->assertSame(expected: 400, actual: $this->controller()->upload(kind: 'touch-icon')->getStatus());
-		$this->assertSame(expected: 400, actual: $this->controller(upload: ['tmp_name' => '/nowhere', 'error' => 4])->upload(kind: 'touch-icon')->getStatus());
+		$this->assertSame(
+			expected: 400,
+			actual: $this->controller(upload: ['tmp_name' => '/nowhere', 'error' => 4])->upload(kind: 'touch-icon')->getStatus()
+		);
 
 		$refused = $this->controller(upload: $this->upload(bytes: self::png(width: 100, height: 50)))->upload(kind: 'touch-icon');
 		$this->assertSame(expected: 422, actual: $refused->getStatus());
 		$this->assertSame(expected: 'Upload a square PNG of at least 120 by 120 pixels; 180 by 180 is best.', actual: $refused->getData()['error']);
-		$this->assertSame(expected: 'Upload a PNG, JPEG or WebP image, or an SVG without script.', actual: $this->controller(upload: $this->upload(bytes: 'nope'))->upload(kind: 'mobile-logo')->getData()['error']);
-		$this->assertSame(expected: 404, actual: $this->controller(upload: $this->upload(bytes: self::png(width: 180, height: 180)))->upload(kind: 'favicon')->getStatus());
+		$this->assertSame(
+			expected: 'Upload a PNG, JPEG or WebP image, or an SVG without script.',
+			actual: $this->controller(upload: $this->upload(bytes: 'nope'))->upload(kind: 'mobile-logo')->getData()['error']
+		);
+		$this->assertSame(
+			expected: 404,
+			actual: $this->controller(upload: $this->upload(bytes: self::png(width: 180, height: 180)))->upload(kind: 'favicon')->getStatus()
+		);
 
 		$stored = $this->controller(upload: $this->upload(bytes: self::png(width: 180, height: 180)))->upload(kind: 'touch-icon');
 		$this->assertSame(expected: 200, actual: $stored->getStatus());
@@ -380,12 +432,20 @@ final class WorkspaceIconServiceTest extends TestCase {
 	public function testTheListenerFailsOpen(): void {
 		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willThrowException(new RuntimeException('storage down'));
-		$service = new WorkspaceIconService(appData: $appData, sniffer: new ImageSniffer(), urls: $this->createMock(originalClassName: IURLGenerator::class));
+		$service = new WorkspaceIconService(
+			appData: $appData,
+			sniffer: new ImageSniffer(),
+			urls: $this->createMock(originalClassName: IURLGenerator::class)
+		);
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('warning');
 		$tags = [];
 
-		$this->listener(service: $service, tags: $tags, logger: $logger)->handle(event: $this->createMock(originalClassName: BeforeTemplateRenderedEvent::class));
+		$this->listener(
+			service: $service,
+			tags: $tags,
+			logger: $logger
+		)->handle(event: $this->createMock(originalClassName: BeforeTemplateRenderedEvent::class));
 
 		$this->assertSame(expected: [], actual: $tags);
 	}//end testTheListenerFailsOpen()

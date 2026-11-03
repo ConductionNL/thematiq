@@ -51,7 +51,10 @@ final class ColourNotationTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function download(): array {
-		return (array)json_decode((string)json_encode((new DesignTokensWriter())->write(declarations: self::DECLARATIONS, setId: 'x', setName: 'X', appVersion: '1')), true);
+		return (array)json_decode(
+			(string)json_encode((new DesignTokensWriter())->write(declarations: self::DECLARATIONS, setId: 'x', setName: 'X', appVersion: '1')),
+			true
+		);
 	}//end download()
 
 	/**
@@ -63,7 +66,11 @@ final class ColourNotationTest extends TestCase {
 		$document = $this->download();
 
 		$this->assertSame(expected: 'rgb(54, 105, 165)', actual: $document['nldesign']['color']['a']['$extensions']['nl.conduction.thematiq']['css']);
-		$this->assertArrayNotHasKey(key: 'css', array: $document['nldesign']['color']['e']['$extensions']['nl.conduction.thematiq'], message: 'a hex needs no copy');
+		$this->assertArrayNotHasKey(
+			key: 'css',
+			array: $document['nldesign']['color']['e']['$extensions']['nl.conduction.thematiq'],
+			message: 'a hex needs no copy'
+		);
 		$this->assertSame(expected: self::DECLARATIONS, actual: (new DesignTokensMapper())->map(document: $document)['declarations']);
 	}//end testEveryNotationComesBack()
 
@@ -103,6 +110,9 @@ final class ColourNotationTest extends TestCase {
 			],
 		];
 
-		$this->assertSame(expected: ['--nldesign-color-primary' => 'rgb(54 105 165)'], actual: (new DesignTokensMapper())->map(document: $document)['declarations']);
+		$this->assertSame(
+			expected: ['--nldesign-color-primary' => 'rgb(54 105 165)'],
+			actual: (new DesignTokensMapper())->map(document: $document)['declarations']
+		);
 	}//end testThePluginsTextIsReadToo()
 }//end class

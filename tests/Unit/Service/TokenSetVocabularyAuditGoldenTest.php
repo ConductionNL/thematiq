@@ -100,7 +100,10 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 		for ($seed = 1; $seed <= 90; $seed++) {
 			$random = new Randomizer(new Mt19937($seed));
 			$css = ":root {\n";
-			foreach ($random->pickArrayKeys(array_flip(array_merge($vocabulary, TokenSetVocabularyAuditService::REQUIRED_TOKENS)), $random->getInt(1, 40)) as $name) {
+			foreach ($random->pickArrayKeys(
+				array_flip(array_merge($vocabulary, TokenSetVocabularyAuditService::REQUIRED_TOKENS)),
+				$random->getInt(1, 40)
+			) as $name) {
 				$css .= "\t" . $name . ': #' . $random->getBytesFromString('0123456789abcdef', 6) . ";\n";
 			}
 
@@ -120,7 +123,10 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 			}
 
 			file_put_contents($synthetic . '/css/tokens/golden-' . $seed . '.css', $css . "}\n");
-			$meta = ['design_system' => self::SYSTEMS[$random->getInt(0, 3)], 'theming' => ['primary_color' => self::PRIMARIES[$random->getInt(0, (count(self::PRIMARIES) - 1))]]];
+			$meta = ['design_system' => self::SYSTEMS[$random->getInt(0, 3)], 'theming' => ['primary_color' => self::PRIMARIES[$random->getInt(
+				0,
+				(count(self::PRIMARIES) - 1)
+			)]]];
 			$actual['synthetic:' . $seed] = (string)json_encode(
 				['meta' => $meta, 'audit' => $service->auditSet(appPath: $synthetic, id: 'golden-' . $seed, meta: $meta)],
 				JSON_UNESCAPED_SLASHES

@@ -257,7 +257,10 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 		);
 
 		$this->assertCount(expectedCount: 1, haystack: $warnings);
-		$this->assertSame(expected: ['kind', 'missing', 'foreign', 'primaryMismatch', 'declaredPrimary', 'cssPrimary'], actual: array_keys($warnings[0]));
+		$this->assertSame(
+			expected: ['kind', 'missing', 'foreign', 'primaryMismatch', 'declaredPrimary', 'cssPrimary'],
+			actual: array_keys($warnings[0])
+		);
 		$this->assertSame(expected: 'incomplete', actual: $warnings[0]['kind']);
 		$this->assertContains(needle: '--nldesign-color-text', haystack: $warnings[0]['missing']);
 		$this->assertSame(expected: ['--nldesign-color-blue-40'], actual: $warnings[0]['foreign']);
@@ -275,6 +278,13 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 
 		// A complete set emits nothing.
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet());
-		$this->assertSame(expected: [], actual: $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]));
+		$this->assertSame(
+			expected: [],
+			actual: $service->warningsFor(
+				appPath: $this->appDir,
+				id: 'example',
+				meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]
+			)
+		);
 	}//end testTheVocabularyFindingHasItsOwnKindAndShape()
 }//end class

@@ -156,7 +156,11 @@ class HealthControllerEngineResultTest extends TestCase {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('1.0.0');
 
-		$response = (new HealthController(request: $this->createMock(originalClassName: IRequest::class), config: $config, container: $container))->index();
+		$response = (new HealthController(
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $config,
+			container: $container
+		))->index();
 
 		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(

@@ -298,7 +298,10 @@ class LayoutOptionsServiceTest extends TestCase {
 			expected: ['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
 			actual: $this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
-		$this->assertSame(expected: ':root { --thematiq-navigation-width: 320px; }', actual: $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']);
+		$this->assertSame(
+			expected: ':root { --thematiq-navigation-width: 320px; }',
+			actual: $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']
+		);
 
 		$this->assertSame(expected: '320', actual: $this->service->setOption(key: 'navigation_width', value: ''));
 		$this->assertSame(expected: 'login', actual: $this->service->setOption(key: 'brand_stripe_placement', value: 'header'));

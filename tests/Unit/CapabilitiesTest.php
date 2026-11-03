@@ -149,13 +149,23 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$payload = $capabilities->getCapabilities();
 
 		$this->assertArrayHasKey(key: 'nldesign', array: $payload);
 		$nldesign = $payload['nldesign'];
 
-		$this->assertSame(expected: self::ALLOWED_KEYS, actual: array_keys($nldesign), message: 'Payload must contain exactly the eight allowlisted keys, in shape.');
+		$this->assertSame(
+			expected: self::ALLOWED_KEYS,
+			actual: array_keys($nldesign),
+			message: 'Payload must contain exactly the eight allowlisted keys, in shape.'
+		);
 		$this->assertSame(expected: '3.4.0', actual: $nldesign['version']);
 		$this->assertSame(expected: ['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl', 'version' => null], actual: $nldesign['tokenSet']);
 		$this->assertSame(expected: 'nldesign', actual: $nldesign['designSystem']);
@@ -200,7 +210,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$logos = $capabilities->getCapabilities()['nldesign']['logos'];
 
 		$this->assertFileExists(filename: dirname(__DIR__, 2) . '/img/logos/zuiddrecht-emblem.svg');
@@ -235,14 +251,24 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: 'nextcloud', actual: $nldesign['tokenSet']['id']);
 		$this->assertSame(expected: 'none', actual: $nldesign['designSystem']);
 		$this->assertSame(expected: [], actual: $nldesign['iconPacks']);
 		$this->assertEquals(expected: new \stdClass(), actual: $nldesign['logos']);
-		$this->assertSame(expected: '{}', actual: json_encode($nldesign['logos']), message: 'Empty logos must serialize as a JSON object, never an array.');
+		$this->assertSame(
+			expected: '{}',
+			actual: json_encode($nldesign['logos']),
+			message: 'Empty logos must serialize as a JSON object, never an array.'
+		);
 		$this->assertNull(actual: $nldesign['wcagLevel']);
 		$this->assertFalse(condition: $nldesign['hideSlogan']);
 		$this->assertFalse(condition: $nldesign['showMenuLabels']);
@@ -272,7 +298,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: 'lasuite', actual: $nldesign['designSystem']);
@@ -302,7 +334,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: 'custom-onbekend', actual: $nldesign['tokenSet']['id']);
@@ -342,7 +380,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: ['id' => 'utrecht', 'name' => 'Gemeente Utrecht', 'version' => '1.2.0'], actual: $nldesign['tokenSet']);
@@ -372,7 +416,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->expects($this->once())->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 
 		$first = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
 		$second = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
@@ -405,7 +455,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'pass']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: 'AAA', actual: $nldesign['wcagLevel']);
@@ -434,7 +490,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->method('auditSet')->willReturn(['verdict' => 'fail']);
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 		$nldesign = $capabilities->getCapabilities()['nldesign'];
 
 		$this->assertSame(expected: 'fail', actual: $nldesign['wcagLevel']);
@@ -460,7 +522,13 @@ class CapabilitiesTest extends TestCase {
 		$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$auditService->expects($this->never())->method('auditSet');
 
-		$capabilities = $this->buildCapabilities(config: $config, appManager: $appManager, urlGenerator: $urlGenerator, designSystemService: $designSystemService, auditService: $auditService);
+		$capabilities = $this->buildCapabilities(
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService
+		);
 
 		$payload = $capabilities->getCapabilities();
 

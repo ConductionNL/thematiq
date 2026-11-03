@@ -125,7 +125,11 @@ class TokenSetFontAuditTest extends TestCase {
 			['design_system' => 'nldesign']
 		);
 
-		$this->assertStringContainsString(needle: 'var(', haystack: (string)$result['stack'], message: 'The set must still write its family as a var().');
+		$this->assertStringContainsString(
+			needle: 'var(',
+			haystack: (string)$result['stack'],
+			message: 'The set must still write its family as a var().'
+		);
 		$this->assertSame(expected: 'Figtree', actual: $result['family']);
 		$this->assertSame(expected: 'self-hosted', actual: $result['kind']);
 	}//end testAFamilyBehindAVarChainIsResolved()
@@ -187,7 +191,11 @@ class TokenSetFontAuditTest extends TestCase {
 			}
 		}
 
-		$this->assertSame(expected: [], actual: $drift, message: "A font block has drifted from the set it describes:\n  - " . implode("\n  - ", $drift));
+		$this->assertSame(
+			expected: [],
+			actual: $drift,
+			message: "A font block has drifted from the set it describes:\n  - " . implode("\n  - ", $drift)
+		);
 	}//end testADeclaredFontBlockMatchesTheSetsOwnCss()
 
 	/**

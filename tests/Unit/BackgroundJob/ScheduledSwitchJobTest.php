@@ -67,7 +67,11 @@ class ScheduledSwitchJobTest extends TestCase {
 		$service = $this->createMock(originalClassName: ScheduledSwitchService::class);
 		$service->expects($this->once())->method('runDue');
 
-		$this->invokeRun(job: new ScheduledSwitchJob(time: $this->createMock(originalClassName: ITimeFactory::class), service: $service, logger: $this->createMock(originalClassName: LoggerInterface::class)));
+		$this->invokeRun(job: new ScheduledSwitchJob(
+			time: $this->createMock(originalClassName: ITimeFactory::class),
+			service: $service,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		));
 	}//end testRunDelegatesToTheService()
 
 	/**
@@ -81,7 +85,11 @@ class ScheduledSwitchJobTest extends TestCase {
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('error');
 
-		$this->invokeRun(job: new ScheduledSwitchJob(time: $this->createMock(originalClassName: ITimeFactory::class), service: $service, logger: $logger));
+		$this->invokeRun(job: new ScheduledSwitchJob(
+			time: $this->createMock(originalClassName: ITimeFactory::class),
+			service: $service,
+			logger: $logger
+		));
 	}//end testAThrowIsContained()
 
 	/**

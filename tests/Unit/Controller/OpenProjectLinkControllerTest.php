@@ -61,7 +61,12 @@ final class OpenProjectLinkControllerTest extends TestCase {
 		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		return new OpenProjectLinkController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), modules: new OpenProjectModules(config: $config), l: $l);
+		return new OpenProjectLinkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			modules: new OpenProjectModules(config: $config),
+			l: $l
+		);
 	}//end controller()
 
 	/**
@@ -70,13 +75,20 @@ final class OpenProjectLinkControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheAddressIsSavedReadAndCleared(): void {
-		$this->assertSame(expected: ['url' => '', 'modules' => OpenProjectModules::DEFAULT, 'available' => array_keys(OpenProjectModules::MODULES)], actual: $this->controller()->show()->getData());
+		$this->assertSame(
+			expected: ['url' => '', 'modules' => OpenProjectModules::DEFAULT, 'available' => array_keys(OpenProjectModules::MODULES)],
+			actual: $this->controller()->show()->getData()
+		);
 
 		$saved = $this->controller()->save(url: 'https://op.example.org/', modules: 'boards,meetings,nope')->getData();
 		$this->assertSame(expected: 'https://op.example.org', actual: $saved['url']);
 		$this->assertSame(expected: ['boards', 'meetings'], actual: $saved['modules']);
 
-		$this->assertSame(expected: ['boards', 'meetings'], actual: $this->controller()->save(url: 'https://op.example.org')->getData()['modules'], message: 'modules left out stay');
+		$this->assertSame(
+			expected: ['boards', 'meetings'],
+			actual: $this->controller()->save(url: 'https://op.example.org')->getData()['modules'],
+			message: 'modules left out stay'
+		);
 
 		$refused = $this->controller()->save(url: 'javascript:alert(1)');
 		$this->assertSame(expected: 400, actual: $refused->getStatus());

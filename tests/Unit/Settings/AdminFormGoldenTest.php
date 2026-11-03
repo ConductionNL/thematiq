@@ -113,7 +113,9 @@ class AdminFormGoldenTest extends TestCase {
 		$environment = ['', ' Test ', 'production'][$random->getInt(0, 2)];
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+			static fn (string $key, string $default = '') => (match ($key === 'thematiq.environment') {
+				true => $environment, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ($values[$key] ?? $default)
@@ -141,7 +143,9 @@ class AdminFormGoldenTest extends TestCase {
 		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$packs = [['remixicon'], ['lucide', 'remixicon'], []][$random->getInt(0, 2)];
 		$designSystems->method('resolveActiveIconPacks')->willReturnCallback(
-			static fn (string $tokenSetId): array => ($tokenSetId === 'lasuite') ? ['lucide'] : $packs
+			static fn (string $tokenSetId): array => match ($tokenSetId === 'lasuite') {
+				true => ['lucide'], default => $packs
+			}
 		);
 		$designSystems->method('getDesignSystems')->willReturn(
 			[
@@ -167,7 +171,17 @@ class AdminFormGoldenTest extends TestCase {
 			static fn (string $tokenSetId): array => ['playgroundSet' => $tokenSetId, 'playgroundVersion' => 34]
 		);
 
-		$admin = new Admin(config: $config, tokenSetService: $tokenSetService, emailThemingService: $email, previewService: $previewService, userSession: $userSession, designSystemService: $designSystems, initialState: $initialState, request: $request, playgroundState: $playground);
+		$admin = new Admin(
+			config: $config,
+			tokenSetService: $tokenSetService,
+			emailThemingService: $email,
+			previewService: $previewService,
+			userSession: $userSession,
+			designSystemService: $designSystems,
+			initialState: $initialState,
+			request: $request,
+			playgroundState: $playground
+		);
 		$response = $admin->getForm();
 
 		return (string)json_encode(

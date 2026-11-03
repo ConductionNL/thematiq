@@ -142,7 +142,9 @@ class TokenSetConverterParityTest extends TestCase {
 			'target' => (string)$entry['target'],
 			'action' => (string)$entry['action'],
 			'reason' => $entry['reason'] ?? null,
-			'value' => (isset($entry['value']) === true ? (string)$entry['value'] : null),
+			'value' => (match (isset($entry['value']) === true) {
+				true => (string)$entry['value'], default => null
+			}),
 		];
 
 		$this->assertSame(expected: array_map($shape, $expected['report']), actual: array_map($shape, $result['report']));
@@ -167,7 +169,9 @@ class TokenSetConverterParityTest extends TestCase {
 		$logo = $result['logoAsset'];
 		$this->assertSame(
 			expected: $expected['logoAsset'],
-			actual: ($logo === null) ? null : ['path' => $logo['path'], 'base64' => base64_encode($logo['contents'])]
+			actual: match ($logo === null) {
+				true => null, default => ['path' => $logo['path'], 'base64' => base64_encode($logo['contents'])]
+			}
 		);
 	}//end testTheManifestEntryAndLogoAgree()
 }//end class

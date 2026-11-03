@@ -68,7 +68,10 @@ class InternalScopesServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testASetTokenAndAnOverrideProduceExactlyTwoRules(): void {
-		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
+		$this->store->write(
+			'css/tokens/custom-test.css',
+			":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n"
+		);
 		$this->store->write('css/custom-overrides.css', ":root {\n\t--nldesign-nc-plyr-audio-control-background-hover: #f4f1ea !important;\n}\n");
 
 		$css = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
@@ -76,7 +79,10 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertSame(expected: 2, actual: substr_count($css, '{'), message: $css);
 		$this->assertStringContainsString(needle: '--dp-hover-color: var(--nldesign-nc-dp-hover-color);', haystack: $css);
 		$this->assertStringContainsString(needle: '.dp__theme_light', haystack: $css);
-		$this->assertStringContainsString(needle: ':is(body)' . InternalScopesService::BUMP . " {\n\t--plyr-audio-control-background-hover: var(--nldesign-nc-plyr-audio-control-background-hover);", haystack: $css);
+		$this->assertStringContainsString(
+			needle: ':is(body)' . InternalScopesService::BUMP . " {\n\t--plyr-audio-control-background-hover: var(--nldesign-nc-plyr-audio-control-background-hover);",
+			haystack: $css
+		);
 		$this->assertStringNotContainsString(needle: '#154273', haystack: $css, message: 'no value from the set reaches the output');
 	}
 
@@ -123,7 +129,11 @@ class InternalScopesServiceTest extends TestCase {
 
 		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
 		$this->assertStringContainsString(needle: ':where(body[data-theme-dark], body[data-themes*=dark]) :is(', haystack: $css);
-		$this->assertStringNotContainsString(needle: ':is(.vue-date-time-picker__wrapper[data-v-02e90461] .dp__theme_light)' . InternalScopesService::BUMP . ' {', haystack: $css, message: 'no unscoped rule');
+		$this->assertStringNotContainsString(
+			needle: ':is(.vue-date-time-picker__wrapper[data-v-02e90461] .dp__theme_light)' . InternalScopesService::BUMP . ' {',
+			haystack: $css,
+			message: 'no unscoped rule'
+		);
 		$this->assertStringNotContainsString(needle: ':root', haystack: $css);
 	}
 
@@ -152,7 +162,10 @@ class InternalScopesServiceTest extends TestCase {
 
 		$css = $this->service->build(lightNames: [], anyNames: [$body]);
 
-		$this->assertStringContainsString(needle: ':is(body):where(body[data-theme-dark], body[data-themes*=dark])' . InternalScopesService::BUMP, haystack: $css);
+		$this->assertStringContainsString(
+			needle: ':is(body):where(body[data-theme-dark], body[data-themes*=dark])' . InternalScopesService::BUMP,
+			haystack: $css
+		);
 	}
 
 	/**
@@ -168,11 +181,19 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertSame(expected: '--cn-kpi-accent', actual: $internal['--nldesign-cn-kpi-accent']['variable']);
 		$this->assertNotContains(needle: '--systemtag-color', haystack: array_column($internal, 'variable'));
 		$this->assertFalse(condition: TokenRegistry::isEditable('--nldesign-nc-systemtag-color'));
-		$this->assertArrayNotHasKey(key: '--nldesign-nc-dp-hover-color', array: TokenRegistry::getTokens(), message: 'kept out of the editor tabs until change 4');
+		$this->assertArrayNotHasKey(
+			key: '--nldesign-nc-dp-hover-color',
+			array: TokenRegistry::getTokens(),
+			message: 'kept out of the editor tabs until change 4'
+		);
 		// Under the Nextcloud name too: the settable theme loader read every
 		// settable status entry and listed all 453 as brand rows.
 		$this->assertArrayNotHasKey(key: '--dp-hover-color', array: TokenRegistry::getTokens());
-		$this->assertCount(expectedCount: 44, haystack: TokenRegistry::getSettableTokens(), message: 'only the 44 theme variables (--color-info-rgb is mapped)');
+		$this->assertCount(
+			expectedCount: 44,
+			haystack: TokenRegistry::getSettableTokens(),
+			message: 'only the 44 theme variables (--color-info-rgb is mapped)'
+		);
 		$this->assertNull(actual: TokenRegistry::settableToken('--dp-hover-color'));
 		$this->assertSame(expected: '--nldesign-nc-color-mark', actual: TokenRegistry::settableToken('--color-mark'));
 		$this->assertCount(expectedCount: 453, haystack: $internal);

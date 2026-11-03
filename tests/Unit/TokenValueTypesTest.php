@@ -86,7 +86,12 @@ class TokenValueTypesTest extends TestCase {
 		$this->appManager = $this->createMock(originalClassName: IAppManager::class);
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$this->darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $this->appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$this->darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $this->appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $this->appDir),
@@ -204,7 +209,10 @@ class TokenValueTypesTest extends TestCase {
 		[$status] = $this->post(params: ['overrides' => ['--nldesign-animation-easing' => 'cubic-bezier(0.2, 0, 0, 1)']]);
 
 		$this->assertSame(expected: 200, actual: $status);
-		$this->assertStringContainsString(needle: '--nldesign-animation-easing: cubic-bezier(0.2, 0, 0, 1) !important;', haystack: $this->overrides->getRawContent());
+		$this->assertStringContainsString(
+			needle: '--nldesign-animation-easing: cubic-bezier(0.2, 0, 0, 1) !important;',
+			haystack: $this->overrides->getRawContent()
+		);
 	}//end testCustomEasingIsSaved()
 
 	/**
@@ -230,10 +238,17 @@ class TokenValueTypesTest extends TestCase {
 		$theme = (string)file_get_contents($root . '/css/systems/nldesign/theme.css');
 		preg_match_all('/transition[a-z-]*\s*:([^;]*);/i', $theme, $declarations);
 		foreach ($declarations[1] as $value) {
-			$this->assertDoesNotMatchRegularExpression(pattern: '/\)\s+ease\b(?!-)/', string: $value, message: 'a transition still uses a bare ease: ' . trim($value));
+			$this->assertDoesNotMatchRegularExpression(
+				pattern: '/\)\s+ease\b(?!-)/',
+				string: $value,
+				message: 'a transition still uses a bare ease: ' . trim($value)
+			);
 		}
 
-		$this->assertMatchesRegularExpression(pattern: '/--nldesign-animation-easing:\s*ease;/', string: (string)file_get_contents($root . '/css/systems/nldesign/defaults.css'));
+		$this->assertMatchesRegularExpression(
+			pattern: '/--nldesign-animation-easing:\s*ease;/',
+			string: (string)file_get_contents($root . '/css/systems/nldesign/defaults.css')
+		);
 	}//end testThemeTransitionsReadTheEasingToken()
 
 	/**
@@ -262,7 +277,11 @@ class TokenValueTypesTest extends TestCase {
 		$derived = $this->darkPalette->deriveDarkValue(token: '--color-primary', lightValue: '#154273');
 		$this->assertStringContainsString(needle: '--color-primary: ' . $derived . ' !important;', haystack: $this->overrides->getRawContent());
 		$this->assertSame(expected: [], actual: $this->overrides->readDark());
-		$this->assertSame(expected: ['--color-primary' => $derived], actual: $this->overrides->derivedDark(), message: 'the editor shows it as the placeholder');
+		$this->assertSame(
+			expected: ['--color-primary' => $derived],
+			actual: $this->overrides->derivedDark(),
+			message: 'the editor shows it as the placeholder'
+		);
 	}//end testEmptyDarkValueIsDerived()
 
 	/**
@@ -296,9 +315,19 @@ class TokenValueTypesTest extends TestCase {
 				$stored[$key] = (string)$value;
 			}
 		);
-		$store = new CustomTokenSetService(store: new DirectoryRuntimeFileStore(root: $this->appDir), config: $config, validator: new CustomTokenSetValidator(), contrast: new ContrastService(), darkPalette: $this->darkPalette);
+		$store = new CustomTokenSetService(
+			store: new DirectoryRuntimeFileStore(root: $this->appDir),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: $this->darkPalette
+		);
 
-		$store->store(displayName: 'Doorschijnend', description: '', declarations: ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff']);
+		$store->store(
+			displayName: 'Doorschijnend',
+			description: '',
+			declarations: ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff']
+		);
 		$store->store(displayName: 'Dekkend', description: '', declarations: ['--nldesign-color-primary' => '#154273']);
 
 		$manifest = array_column($store->list(), null, 'id');

@@ -109,8 +109,16 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$xml = simplexml_load_string((string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/info.xml'));
 		$this->assertNotFalse(condition: $xml, message: 'appinfo/info.xml does not parse');
 		$steps = array_map('strval', (array)$xml->xpath('/info/repair-steps/post-migration/step'));
-		$this->assertContains(needle: RecordRestrictedSetsAwaitingConfirmation::class, haystack: $steps, message: 'the step is not registered for an upgrade');
-		$this->assertSame(expected: RecordRestrictedSetsAwaitingConfirmation::class, actual: end($steps), message: 'it runs after ApplyConfigSource, which may apply a set');
+		$this->assertContains(
+			needle: RecordRestrictedSetsAwaitingConfirmation::class,
+			haystack: $steps,
+			message: 'the step is not registered for an upgrade'
+		);
+		$this->assertSame(
+			expected: RecordRestrictedSetsAwaitingConfirmation::class,
+			actual: end($steps),
+			message: 'it runs after ApplyConfigSource, which may apply a set'
+		);
 
 		$class = RecordRestrictedSetsAwaitingConfirmation::class;
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
@@ -161,7 +169,10 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 
 		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame(expected: ['owned' => '2026-10-14T09:00:00+00:00'], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
+		$this->assertSame(
+			expected: ['owned' => '2026-10-14T09:00:00+00:00'],
+			actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true)
+		);
 		$this->assertSame(expected: [], actual: $this->warnings);
 	}//end testASecondUpgradeKeepsTheFirstDateAndWarnsNoMore()
 
@@ -207,8 +218,17 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 
-		(new RecordRestrictedSetsAwaitingConfirmation(licences: $licences, logger: $this->createMock(originalClassName: LoggerInterface::class)))->run($output);
+		(new RecordRestrictedSetsAwaitingConfirmation(
+			licences: $licences,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))->run($output);
 
-		$this->assertNotSame(expected: '', actual: (new RecordRestrictedSetsAwaitingConfirmation(licences: $licences, logger: $this->createMock(originalClassName: LoggerInterface::class)))->getName());
+		$this->assertNotSame(
+			expected: '',
+			actual: (new RecordRestrictedSetsAwaitingConfirmation(
+				licences: $licences,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			))->getName()
+		);
 	}//end testAFailureNeverFailsTheUpgrade()
 }//end class

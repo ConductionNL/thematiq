@@ -27,9 +27,9 @@ use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\FontService;
@@ -102,7 +102,6 @@ class ConfigBundleImportGoldenTest extends TestCase {
 		if (is_dir($this->appDir) === false) {
 			mkdir($this->appDir);
 		}
-
 
 		$actual = [];
 		for ($seed = 1; $seed <= 400; $seed++) {
@@ -625,7 +624,12 @@ class ConfigBundleImportGoldenTest extends TestCase {
 		$set = [];
 		$this->maybe(random: $random, bundle: $set, key: 'id', values: self::SET_IDS);
 		$this->maybe(random: $random, bundle: $set, key: 'name', values: ['Acme', '  ', ' Beta ', 'Gamma']);
-		$this->maybe(random: $random, bundle: $set, key: 'css', values: [':root{--x:1}', '', 5, 'body{color:red}', ':root{--refuse:1}', ':root{--y:2}']);
+		$this->maybe(
+			random: $random,
+			bundle: $set,
+			key: 'css',
+			values: [':root{--x:1}', '', 5, 'body{color:red}', ':root{--refuse:1}', ':root{--y:2}']
+		);
 		$this->maybe(random: $random, bundle: $set, key: 'description', values: ['Desc', 12]);
 		$this->maybe(random: $random, bundle: $set, key: 'theming', values: [['primary_color' => '#000'], 'x']);
 		$this->maybe(random: $random, bundle: $set, key: 'warnings', values: [['w1'], 'w']);

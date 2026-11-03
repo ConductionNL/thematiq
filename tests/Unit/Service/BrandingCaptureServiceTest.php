@@ -90,7 +90,11 @@ class BrandingCaptureServiceTest extends TestCase {
 
 		// The store keeps names exactly as the app-relative paths they replace,
 		// so the files this test inspects sit where they always did.
-		$this->service = new BrandingCaptureService(imageManager: $this->imageManager, config: $config, store: new DirectoryRuntimeFileStore(root: $this->appDir));
+		$this->service = new BrandingCaptureService(
+			imageManager: $this->imageManager,
+			config: $config,
+			store: new DirectoryRuntimeFileStore(root: $this->appDir)
+		);
 	}//end setUp()
 
 	/**

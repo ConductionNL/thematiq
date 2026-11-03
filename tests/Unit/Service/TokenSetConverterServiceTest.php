@@ -236,7 +236,11 @@ class TokenSetConverterServiceTest extends TestCase {
 
 		$this->assertSame(expected: '#154273', actual: $result['decl']['--nldesign-color-primary']);
 		foreach (array_keys($result['decl']) as $name) {
-			$this->assertStringNotContainsString(needle: 'color-action', haystack: $name, message: 'the Utrecht button colour is the primary, not an action colour');
+			$this->assertStringNotContainsString(
+				needle: 'color-action',
+				haystack: $name,
+				message: 'the Utrecht button colour is the primary, not an action colour'
+			);
 		}
 	}//end testAThemeWithoutAnActionColourGetsNone()
 
@@ -255,8 +259,16 @@ class TokenSetConverterServiceTest extends TestCase {
 
 		$this->assertSame(expected: '#1a67a3', actual: $bare['decl']['--nldesign-color-primary']);
 		$this->assertSame(expected: '#116329', actual: $bare['decl']['--nldesign-color-action']);
-		$this->assertSame(expected: '#ffffff', actual: $bare['decl']['--nldesign-color-action-text'], message: 'a dark green: the text is derived white, by the rule the primary text uses');
-		$this->assertArrayNotHasKey(key: '--nldesign-color-action-hover', array: $bare['decl'], message: 'the stylesheet darkens the action colour itself');
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $bare['decl']['--nldesign-color-action-text'],
+			message: 'a dark green: the text is derived white, by the rule the primary text uses'
+		);
+		$this->assertArrayNotHasKey(
+			key: '--nldesign-color-action-hover',
+			array: $bare['decl'],
+			message: 'the stylesheet darkens the action colour itself'
+		);
 
 		$full = $this->convert(content: $this->theme(tokens: [
 			'--demo-color-primary' => '#1a67a3',
@@ -270,7 +282,11 @@ class TokenSetConverterServiceTest extends TestCase {
 		$this->assertSame(expected: '#212529', actual: $full['decl']['--nldesign-color-action-text']);
 
 		$pale = $this->convert(content: $this->theme(tokens: ['--demo-color-primary' => '#1a67a3', '--demo-color-action' => '#ffd43b']));
-		$this->assertSame(expected: '#000000', actual: $pale['decl']['--nldesign-color-action-text'], message: 'white does not read on yellow, so the text is derived black');
+		$this->assertSame(
+			expected: '#000000',
+			actual: $pale['decl']['--nldesign-color-action-text'],
+			message: 'white does not read on yellow, so the text is derived black'
+		);
 	}//end testAThemesActionColourIsConverted()
 
 	/**
@@ -310,13 +326,25 @@ class TokenSetConverterServiceTest extends TestCase {
 			'--utrecht-accordion-button-background-color' => '#eeeeee',
 		]));
 
-		$this->assertSame(expected: 'layout-fixed-by-nextcloud', actual: $this->entry(result: $result, source: '--utrecht-page-max-inline-size')['reason']);
-		$this->assertSame(expected: 'typography-scale-locked', actual: $this->entry(result: $result, source: '--utrecht-document-font-size')['reason']);
-		$this->assertSame(expected: 'clickable-area-locked', actual: $this->entry(result: $result, source: '--utrecht-button-padding-block-start')['reason']);
+		$this->assertSame(
+			expected: 'layout-fixed-by-nextcloud',
+			actual: $this->entry(result: $result, source: '--utrecht-page-max-inline-size')['reason']
+		);
+		$this->assertSame(
+			expected: 'typography-scale-locked',
+			actual: $this->entry(result: $result, source: '--utrecht-document-font-size')['reason']
+		);
+		$this->assertSame(
+			expected: 'clickable-area-locked',
+			actual: $this->entry(result: $result, source: '--utrecht-button-padding-block-start')['reason']
+		);
 		$this->assertArrayNotHasKey(key: '--utrecht-page-max-inline-size', array: $result['decl']);
 		$this->assertSame(
 			expected: ['action' => 'kept', 'reason' => 'kept-for-nlds-components'],
-			actual: array_intersect_key($this->entry(result: $result, source: '--utrecht-accordion-button-background-color'), ['action' => 1, 'reason' => 1])
+			actual: array_intersect_key(
+				$this->entry(result: $result, source: '--utrecht-accordion-button-background-color'),
+				['action' => 1, 'reason' => 1]
+			)
 		);
 	}//end testTheNeverPolicySkipsLayoutAndKeepsComponents()
 
@@ -346,7 +374,10 @@ class TokenSetConverterServiceTest extends TestCase {
 			'--utrecht-page-header-background-image' => 'url("https://example.com/header.png")',
 		]));
 
-		$this->assertSame(expected: 'external-url-blocked', actual: $this->entry(result: $result, source: '--utrecht-page-header-background-image')['reason']);
+		$this->assertSame(
+			expected: 'external-url-blocked',
+			actual: $this->entry(result: $result, source: '--utrecht-page-header-background-image')['reason']
+		);
 		$this->assertStringNotContainsString(needle: 'example.com', haystack: $result['css']);
 	}//end testAnExternalUrlIsDroppedBeforeTheValidator()
 

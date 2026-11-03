@@ -454,7 +454,13 @@ class StockTokensServiceTest extends TestCase {
 		$this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: ['--color-primary' => '#00679e'])->getCss();
 		$this->buildCached(cache: $cache, version: '34.0.5', cachebuster: '7', stock: ['--color-primary' => '#00679e'])->getCss();
 		$this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '8', stock: ['--color-primary' => '#00679e'])->getCss();
-		$this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: ['--color-primary' => '#00679e'], appVersion: '1.2.11')->getCss();
+		$this->buildCached(
+			cache: $cache,
+			version: '34.0.4',
+			cachebuster: '7',
+			stock: ['--color-primary' => '#00679e'],
+			appVersion: '1.2.11'
+		)->getCss();
 
 		$this->assertSame(expected: ['34.0.4:7:1.2.10', '34.0.5:7:1.2.10', '34.0.4:8:1.2.10', '34.0.4:7:1.2.11'], actual: $keys);
 	}//end testTheKeyMovesWhenAnyInputMoves()

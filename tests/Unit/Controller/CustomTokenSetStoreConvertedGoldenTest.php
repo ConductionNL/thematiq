@@ -83,7 +83,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		}
 
 		for ($seed = 1; $seed <= 200; $seed++) {
-			$actual['persist:' . $seed] = $this->runCase(random: new Randomizer(new Mt19937($seed)), parsed: $this->parsed(random: new Randomizer(new Mt19937(($seed + 10000)))));
+			$actual['persist:' . $seed] = $this->runCase(
+				random: new Randomizer(new Mt19937($seed)),
+				parsed: $this->parsed(random: new Randomizer(new Mt19937(($seed + 10000))))
+			);
 		}
 
 		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
@@ -125,7 +128,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 			request: $request,
 			service: $this->service(random: $random),
 			validator: new CustomTokenSetValidator(),
-			cssParser: $this->recorder(class: CssParserService::class, methods: ['parseRootBlock' => self::DECLARATIONS[max(0, $random->getInt(-6, 3))]]),
+			cssParser: $this->recorder(
+				class: CssParserService::class,
+				methods: ['parseRootBlock' => self::DECLARATIONS[max(0, $random->getInt(-6, 3))]]
+			),
 			l: $this->l10n(),
 			auditService: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
 			config: $this->createMock(originalClassName: IConfig::class),
@@ -192,7 +198,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		$result = [
 			'imported' => [3, 12][$random->getInt(0, 1)],
 			'css' => [":root {\n\t--nldesign-color-primary: #154273;\n}\n", "body { color: red; }\n"][(int)($random->getInt(0, 7) === 0)],
-			'report' => [[], [['action' => 'skipped', 'source' => 'a.b', 'reason' => 'unmapped'], ['action' => 'mapped', 'source' => 'c']], [['action' => 'skipped']]][$random->getInt(0, 2)],
+			'report' => [[], [['action' => 'skipped', 'source' => 'a.b', 'reason' => 'unmapped'], ['action' => 'mapped', 'source' => 'c']], [['action' => 'skipped']]][$random->getInt(
+				0,
+				2
+			)],
 			'counts' => ['mapped' => 3],
 			'inputKind' => ['dtcg', 'css'][$random->getInt(0, 1)],
 			'errors' => [[], [['path' => 'x', 'message' => 'hard']]][$random->getInt(0, 1)],
@@ -217,13 +226,22 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		}
 
 		if ($random->getInt(0, 2) === 0) {
-			$result['darkDeclarations'] = [[], ['--nldesign-color-primary' => '#99ccff'], ['--nldesign-color-primary' => 'expression(1)']][$random->getInt(0, 2)];
+			$result['darkDeclarations'] = [[], ['--nldesign-color-primary' => '#99ccff'], ['--nldesign-color-primary' => 'expression(1)']][$random->getInt(
+				0,
+				2
+			)];
 		}
 
-		$converter = $this->recorder(class: TokenSetConverterService::class, methods: ['getReasons' => ['unmapped' => 'No Nextcloud token reads it.']]);
+		$converter = $this->recorder(
+			class: TokenSetConverterService::class,
+			methods: ['getReasons' => ['unmapped' => 'No Nextcloud token reads it.']]
+		);
 		$converter->method('convert')->willReturnCallback(
 			function (...$arguments) use ($mode, $result): array {
-				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(method: [TokenSetConverterService::class, 'convert'], arguments: $arguments);
+				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(
+					method: [TokenSetConverterService::class, 'convert'],
+					arguments: $arguments
+				);
 				if ($mode === 0) {
 					throw new RuntimeException('not a theme', 413);
 				}
@@ -252,7 +270,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		$service = $this->recorder(class: CustomTokenSetService::class, methods: ['getRawContent' => [":root {}\n", null][$random->getInt(0, 1)]]);
 		$service->method('store')->willReturnCallback(
 			function (...$arguments) use ($storeMode): array {
-				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(method: [CustomTokenSetService::class, 'store'], arguments: $arguments);
+				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(
+					method: [CustomTokenSetService::class, 'store'],
+					arguments: $arguments
+				);
 				if ($storeMode < 3) {
 					throw new RuntimeException('refused', [409, 500, 3][$storeMode]);
 				}
@@ -262,7 +283,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		);
 		$service->method('keepDarkValues')->willReturnCallback(
 			function (...$arguments) use ($pinThrows): void {
-				$this->calls[] = ['CustomTokenSetService::keepDarkValues'] + $this->named(method: [CustomTokenSetService::class, 'keepDarkValues'], arguments: $arguments);
+				$this->calls[] = ['CustomTokenSetService::keepDarkValues'] + $this->named(
+					method: [CustomTokenSetService::class, 'keepDarkValues'],
+					arguments: $arguments
+				);
 				if ($pinThrows === true) {
 					throw new RuntimeException('pin failed', 507);
 				}

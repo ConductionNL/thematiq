@@ -90,7 +90,14 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::appPath());
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService(appManager: $appManager, cssParser: $parser, contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		$skipped = [];
@@ -133,7 +140,13 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 
 		return (string)preg_replace_callback(
 			'/var\(\s*(--[A-Za-z0-9_-]+)\s*\)/',
-			fn (array $m): string => isset($set[$m[1]]) === true ? $this->resolved(value: $set[$m[1]], set: $set, depth: ($depth + 1)) : $m[0],
+			fn (array $m): string => match (isset($set[$m[1]]) === true) {
+				true => $this->resolved(
+					value: $set[$m[1]],
+					set: $set,
+					depth: ($depth + 1)
+				), default => $m[0]
+			},
 			$value
 		);
 	}//end resolved()
@@ -150,7 +163,10 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		if ($parsed !== null) {
 			$converter = new ColorSpaceConverter();
 
-			return $converter->toHex(rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']), alpha: $parsed['alpha']);
+			return $converter->toHex(
+				rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']),
+				alpha: $parsed['alpha']
+			);
 		}
 
 		return (string)preg_replace('/\s+/', ' ', trim($value));
@@ -173,7 +189,10 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$out = [];
 		foreach ($paths as $name => $path) {
 			foreach ($paths as $other => $otherPath) {
-				if ($name !== $other && ($path === $otherPath || str_starts_with($otherPath, $path . '.') === true || str_starts_with($path, $otherPath . '.') === true)) {
+				if ($name !== $other && ($path === $otherPath || str_starts_with(
+					$otherPath,
+					$path . '.'
+				) === true || str_starts_with($path, $otherPath . '.') === true)) {
 					$out[$name] = true;
 				}
 			}
@@ -287,7 +306,11 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 
 		$this->assertSame(expected: $dollar['declarations'], actual: $legacy['declarations']);
 		$this->assertSame(expected: '#0b5fff', actual: $dollar['declarations']['--nldesign-color-primary']);
-		$this->assertSame(expected: '#0b5fff', actual: $dollar['declarations']['--nldesign-color-link'], message: 'a colour reference is stored as the colour it points at');
+		$this->assertSame(
+			expected: '#0b5fff',
+			actual: $dollar['declarations']['--nldesign-color-link'],
+			message: 'a colour reference is stored as the colour it points at'
+		);
 		$this->assertSame(expected: '#1f883d', actual: $dollar['declarations']['--nldesign-color-action']);
 		$this->assertSame(expected: '6px', actual: $dollar['declarations']['--nldesign-border-radius']);
 		$this->assertSame(expected: 'var(--nldesign-border-radius)', actual: $dollar['declarations']['--nldesign-border-radius-large']);
@@ -365,7 +388,10 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 
 		$this->assertSame(expected: [], actual: $differences, message: $id . ' ' . $file);
 		$this->assertCount(expectedCount: 18, haystack: $expected, message: 'the plugin exported eighteen values for this design system');
-		$this->assertSame(expected: $this->normalise(value: (string)$expected['text']), actual: $this->normalise(value: $back['declarations']['--thematiq-shell-text']));
+		$this->assertSame(
+			expected: $this->normalise(value: (string)$expected['text']),
+			actual: $this->normalise(value: $back['declarations']['--thematiq-shell-text'])
+		);
 
 		// The dark colours are the set's dark values (dark-colours-from-a-file), in every format;
 		// a light and dark file is not taken for two brands, and the dark set is not laid over the light one.
@@ -381,7 +407,10 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$this->assertSame(expected: $expectedDark, actual: array_map('strtolower', $dark), message: $id . ' ' . $file . ' dark');
 		$this->assertSame(expected: [], actual: $back['skipped']);
 		if ($file !== 'w3c.tokens.json') {
-			$this->assertSame(expected: [], actual: (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file)));
+			$this->assertSame(
+				expected: [],
+				actual: (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file))
+			);
 		}
 	}//end testAPluginDownloadKeepsEveryRole()
 }//end class

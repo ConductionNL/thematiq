@@ -106,7 +106,11 @@ class SettingsControllerAuditTest extends TestCase {
 			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
 			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
 			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
-			activeTokenSet: new ActiveTokenSetService(config: $this->makeConfigMock(), tokenSets: $this->tokenSetService, auditService: $this->auditService)
+			activeTokenSet: new ActiveTokenSetService(
+				config: $this->makeConfigMock(),
+				tokenSets: $this->tokenSetService,
+				auditService: $this->auditService
+			)
 		);
 	}//end setUp()
 
@@ -184,7 +188,11 @@ class SettingsControllerAuditTest extends TestCase {
 			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
 			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
 			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
-			activeTokenSet: new ActiveTokenSetService(config: $this->makeConfigMock(), tokenSets: $this->tokenSetService, auditService: $realAuditService)
+			activeTokenSet: new ActiveTokenSetService(
+				config: $this->makeConfigMock(),
+				tokenSets: $this->tokenSetService,
+				auditService: $realAuditService
+			)
 		);
 
 		$response = $controller->setTokenSet(tokenSet: 'amsterdam');

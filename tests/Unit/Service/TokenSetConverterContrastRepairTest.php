@@ -116,7 +116,11 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnUploadKeepsItsColours(): void {
-		$result = $this->converter()->convert(content: ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n", slug: 'demo', displayName: 'Demo');
+		$result = $this->converter()->convert(
+			content: ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n",
+			slug: 'demo',
+			displayName: 'Demo'
+		);
 
 		$this->assertStringContainsString(needle: '--nldesign-color-primary: #f0b800;', haystack: (string)$result['css']);
 	}//end testAnUploadKeepsItsColours()

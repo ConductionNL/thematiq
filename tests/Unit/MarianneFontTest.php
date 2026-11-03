@@ -129,7 +129,10 @@ class MarianneFontTest extends TestCase {
 			);
 
 			$path = $this->repoRoot() . '/css/systems/lasuite/' . $ref;
-			$this->assertFileExists(filename: $path, message: "css/systems/lasuite/marianne.css references a missing font file: css/systems/lasuite/{$ref}");
+			$this->assertFileExists(
+				filename: $path,
+				message: "css/systems/lasuite/marianne.css references a missing font file: css/systems/lasuite/{$ref}"
+			);
 
 			$this->assertStringStartsWith(
 				prefix: 'fonts/marianne/',
@@ -174,11 +177,23 @@ class MarianneFontTest extends TestCase {
 		// Split into individual @font-face blocks and check each carries the
 		// right font-weight for the file it references.
 		preg_match_all('/@font-face\s*\{([^}]*)\}/s', $css, $blocks);
-		$this->assertCount(expectedCount: 8, haystack: $blocks[1], message: 'css/systems/lasuite/marianne.css must declare exactly 8 @font-face rules.');
+		$this->assertCount(
+			expectedCount: 8,
+			haystack: $blocks[1],
+			message: 'css/systems/lasuite/marianne.css must declare exactly 8 @font-face rules.'
+		);
 
 		foreach ($blocks[1] as $block) {
-			$this->assertMatchesRegularExpression(pattern: "/font-family:\\s*'Marianne'/", string: $block, message: 'Every rule must declare font-family: \'Marianne\'.');
-			$this->assertMatchesRegularExpression(pattern: '/font-display:\s*swap/', string: $block, message: 'Every rule must declare font-display: swap.');
+			$this->assertMatchesRegularExpression(
+				pattern: "/font-family:\\s*'Marianne'/",
+				string: $block,
+				message: 'Every rule must declare font-family: \'Marianne\'.'
+			);
+			$this->assertMatchesRegularExpression(
+				pattern: '/font-display:\s*swap/',
+				string: $block,
+				message: 'Every rule must declare font-display: swap.'
+			);
 
 			preg_match('/fonts\/marianne\/([^\')]+)/', $block, $fileMatch);
 			$this->assertNotEmpty(actual: $fileMatch, message: 'Could not find a referenced file in @font-face block.');

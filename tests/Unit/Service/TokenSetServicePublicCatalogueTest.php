@@ -169,7 +169,11 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 
 		// Capabilities computes + caches "rijkshuisstijl" first.
 		$capabilitiesLevel = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
-		$this->assertSame(expected: 1, actual: $rijkshuisstijlAuditCalls, message: 'Capabilities must have triggered exactly one audit for "rijkshuisstijl".');
+		$this->assertSame(
+			expected: 1,
+			actual: $rijkshuisstijlAuditCalls,
+			message: 'Capabilities must have triggered exactly one audit for "rijkshuisstijl".'
+		);
 
 		// The catalogue projection must read the SAME cached value for the
 		// same set id — the "rijkshuisstijl" audit counter must NOT

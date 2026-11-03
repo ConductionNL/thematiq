@@ -122,10 +122,29 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
 		$store = new DirectoryRuntimeFileStore(root: $this->appDir);
-		$dark = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $tempApp, logger: $this->createMock(originalClassName: LoggerInterface::class), store: $store);
-		$this->sets = new CustomTokenSetService(store: $store, config: $this->config, validator: new CustomTokenSetValidator(), contrast: new ContrastService(), darkPalette: $dark);
+		$dark = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $tempApp,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			store: $store
+		);
+		$this->sets = new CustomTokenSetService(
+			store: $store,
+			config: $this->config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: $dark
+		);
 		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
-		$converter = new TokenSetConverterService(appManager: $repoApp, cssParser: $parser, contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $repoApp,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->imports = new MultiBrandImportService(
 			conversion: new BrandConversion(
 				source: new MultiBrandSource(),
@@ -183,7 +202,14 @@ final class MultiBrandImportServiceTest extends TestCase {
 			l: $l,
 			auditService: $this->audit,
 			config: $this->config,
-			converter: new TokenSetConverterService(appManager: $repoApp, cssParser: new CssParserService(), contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class)),
+			converter: new TokenSetConverterService(
+				appManager: $repoApp,
+				cssParser: new CssParserService(),
+				contrast: new ContrastService(),
+				dtcgMapper: new DesignTokensMapper(),
+				fonts: $this->createMock(originalClassName: FontService::class),
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			),
 			themingService: $this->createMock(originalClassName: ThemingService::class),
 			designSystems: $this->createMock(originalClassName: DesignSystemService::class),
 			brandingCapture: null,
@@ -211,14 +237,27 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSourceRecordListsBrands(): void {
-		$this->audit->expects($this->exactly(count: 2))->method('log')->with('custom_set_uploaded', $this->callback(callback: static fn (array $c): bool => $c['sourceId'] === 'gemeente-voorbeeld' && in_array($c['brand'], ['noord', 'zuid'], true)));
+		$this->audit->expects($this->exactly(count: 2))->method('log')->with(
+			'custom_set_uploaded',
+			$this->callback(callback: static fn (array $c): bool => $c['sourceId'] === 'gemeente-voorbeeld' && in_array(
+				$c['brand'],
+				['noord', 'zuid'],
+				true
+			))
+		);
 		$response = $this->uploadController(params: ['name' => 'Gemeente Voorbeeld', 'content' => $this->fixture(name: 'three-themes.tokens.json'), 'brands' => ['noord', 'zuid']])->upload();
 
 		$this->assertSame(expected: 200, actual: $response->getStatus(), message: json_encode($response->getData()));
 		$record = $this->imports->records()['gemeente-voorbeeld'];
-		$this->assertSame(expected: ['noord' => 'custom-gemeente-voorbeeld-noord', 'zuid' => 'custom-gemeente-voorbeeld-zuid'], actual: $record['brands']);
+		$this->assertSame(
+			expected: ['noord' => 'custom-gemeente-voorbeeld-noord', 'zuid' => 'custom-gemeente-voorbeeld-zuid'],
+			actual: $record['brands']
+		);
 		$this->assertStringStartsWith(prefix: 'sha256:', string: $record['contentHash']);
-		$this->assertSame(expected: ['id' => 'gemeente-voorbeeld', 'brand' => 'noord'], actual: $this->sets->getManifest()['custom-gemeente-voorbeeld-noord']['source']);
+		$this->assertSame(
+			expected: ['id' => 'gemeente-voorbeeld', 'brand' => 'noord'],
+			actual: $this->sets->getManifest()['custom-gemeente-voorbeeld-noord']['source']
+		);
 		$this->assertSame(expected: 'Gemeente Voorbeeld: Zuid', actual: $this->sets->getManifest()['custom-gemeente-voorbeeld-zuid']['name']);
 	}//end testSourceRecordListsBrands()
 
@@ -268,7 +307,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 
 		$this->assertSame(expected: ['noord', 'zuid'], actual: $report['updated']);
 		$this->assertStringContainsString(needle: '#0b2a4a', haystack: (string)$this->sets->getRawContent(id: 'custom-voorbeeld-noord'));
-		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/custom-voorbeeld-noord.css', message: 'each brand gets a fresh dark variant');
+		$this->assertFileExists(
+			filename: $this->appDir . '/css/tokens/dark/custom-voorbeeld-noord.css',
+			message: 'each brand gets a fresh dark variant'
+		);
 	}//end testUpdateReplacesEveryBrand()
 
 	/**
@@ -297,7 +339,11 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
 		$before = $this->sets->getRawContent(id: 'custom-voorbeeld-noord');
 		$this->audit->expects($this->never())->method('log');
-		$bad = str_replace('--voorbeeld-color-primary: #c8102e;', '--voorbeeld-color-primary: expression(alert(1));', str_replace('#154273', '#0b2a4a', $this->fixture(name: 'two-brand-classes.css')));
+		$bad = str_replace(
+			'--voorbeeld-color-primary: #c8102e;',
+			'--voorbeeld-color-primary: expression(alert(1));',
+			str_replace('#154273', '#0b2a4a', $this->fixture(name: 'two-brand-classes.css'))
+		);
 
 		try {
 			$this->imports->update(sourceId: 'voorbeeld', content: $bad);

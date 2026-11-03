@@ -81,7 +81,12 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		);
 
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
@@ -119,9 +124,18 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 */
 	public function testFileForNamesAFileOfItsOwnOnlyForASetOnNoDesignSystem(): void {
 		$this->assertSame(expected: 'custom-overrides', actual: CustomOverridesService::fileFor(tokenSet: 'amsterdam', designSystemId: 'nldesign'));
-		$this->assertSame(expected: 'custom-overrides-nextcloud', actual: CustomOverridesService::fileFor(tokenSet: 'nextcloud', designSystemId: 'nldesign'));
-		$this->assertSame(expected: 'custom-overrides-custom-openwoo', actual: CustomOverridesService::fileFor(tokenSet: 'custom-openwoo', designSystemId: 'none'));
-		$this->assertSame(expected: 'custom-overrides-custom-openwoo', actual: CustomOverridesService::fileFor(tokenSet: 'Custom-Open/Woo', designSystemId: 'none'));
+		$this->assertSame(
+			expected: 'custom-overrides-nextcloud',
+			actual: CustomOverridesService::fileFor(tokenSet: 'nextcloud', designSystemId: 'nldesign')
+		);
+		$this->assertSame(
+			expected: 'custom-overrides-custom-openwoo',
+			actual: CustomOverridesService::fileFor(tokenSet: 'custom-openwoo', designSystemId: 'none')
+		);
+		$this->assertSame(
+			expected: 'custom-overrides-custom-openwoo',
+			actual: CustomOverridesService::fileFor(tokenSet: 'Custom-Open/Woo', designSystemId: 'none')
+		);
 	}//end testFileForNamesAFileOfItsOwnOnlyForASetOnNoDesignSystem()
 
 	/**
@@ -177,7 +191,9 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			})
 		);
 		$config->expects($this->never())->method('setAppValue');
 		$config->expects($this->never())->method('deleteAppValue');
@@ -186,7 +202,12 @@ class CustomOverridesServicePerSetTest extends TestCase {
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
-				darkPalette: new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class))
+				darkPalette: new DarkPaletteService(
+					contrast: new ContrastService(),
+					parser: $parser,
+					appManager: $appManager,
+					logger: $this->createMock(originalClassName: LoggerInterface::class)
+				)
 			),
 			setContext: new OverridesSetContext(
 				config: $config,
@@ -199,6 +220,9 @@ class CustomOverridesServicePerSetTest extends TestCase {
 
 		// The value comes back from the file alone.
 		$this->assertSame(expected: ['--color-primary' => '#445566'], actual: $service->read());
-		$this->assertStringContainsString(needle: '--color-primary: #445566', haystack: (string)file_get_contents($this->appDir . '/css/custom-overrides.css'));
+		$this->assertStringContainsString(
+			needle: '--color-primary: #445566',
+			haystack: (string)file_get_contents($this->appDir . '/css/custom-overrides.css')
+		);
 	}//end testOverridesLiveInTheFileAndNeverInAppConfig()
 }//end class

@@ -298,7 +298,12 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 		$this->assertSame(expected: [], actual: $this->service->list());
 
-		$entry = $this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-21T08:00:00Z', createdBy: 'admin');
+		$entry = $this->service->create(
+			tokenSet: 'koningsdag-oranje',
+			startAt: '2027-04-19T08:00:00Z',
+			endAt: '2027-04-21T08:00:00Z',
+			createdBy: 'admin'
+		);
 		$this->assertSame(expected: 'planned', actual: $entry['status']);
 	}//end testAWindowThatIsAlreadyOverIsRefused()
 
@@ -357,7 +362,12 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testBackToBackSwitchesPlannedOutOfOrderReturnToTheOriginalLook(): void {
-		$later = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-01T17:00:00Z', endAt: '2027-05-01T19:00:00Z', createdBy: 'admin');
+		$later = $this->service->create(
+			tokenSet: 'custom-campagne',
+			startAt: '2027-05-01T17:00:00Z',
+			endAt: '2027-05-01T19:00:00Z',
+			createdBy: 'admin'
+		);
 		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T15:00:00Z', endAt: '2027-05-01T17:00:00Z', createdBy: 'admin');
 
 		$this->at(iso: '2027-05-01T15:01:00Z');
@@ -612,7 +622,12 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testASwitchToADeletedSetFailsVisibly(): void {
-		$entry = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
+		$entry = $this->service->create(
+			tokenSet: 'custom-campagne',
+			startAt: '2027-04-21T00:00:00Z',
+			endAt: '2027-04-22T00:00:00Z',
+			createdBy: 'admin'
+		);
 		$this->sets = ['rijkshuisstijl', 'koningsdag-oranje', 'nextcloud'];
 
 		$this->at(iso: '2027-04-21T00:03:00Z');

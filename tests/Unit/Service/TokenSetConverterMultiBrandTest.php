@@ -61,7 +61,14 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 		$cut = (new MultiBrandSource())->cut(content: $content, key: $key);
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$result = (new TokenSetConverterService(appManager: $appManager, cssParser: new CssParserService(), contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class)))
+		$result = (new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))
 			->convert(content: $cut['content'], slug: 'voorbeeld-' . $key, displayName: 'Voorbeeld ' . $key, referenceOnlyPaths: $cut['referenceOnlyPaths']);
 		$result['declarations'] = (new CssParserService())->parseRootBlock(css: (string)$result['css']);
 
@@ -90,7 +97,10 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	public function testDetectsBrandClasses(): void {
 		$brands = (new MultiBrandSource())->detectBrands(content: $this->fixture(name: 'two-brand-classes.css'));
 
-		$this->assertSame(expected: [['key' => 'noord', 'name' => 'Noord', 'tokenCount' => 2], ['key' => 'zuid', 'name' => 'Zuid', 'tokenCount' => 2]], actual: $brands);
+		$this->assertSame(
+			expected: [['key' => 'noord', 'name' => 'Noord', 'tokenCount' => 2], ['key' => 'zuid', 'name' => 'Zuid', 'tokenCount' => 2]],
+			actual: $brands
+		);
 	}//end testDetectsBrandClasses()
 
 	/**
@@ -167,7 +177,11 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 
 		$this->assertSame(expected: 'C', actual: $result['inputKind']);
 		$this->assertStringContainsString(needle: '#c8102e', haystack: (string)$result['css']);
-		$this->assertStringNotContainsString(needle: '#2e7d32', haystack: (string)$result['css'], message: 'core is source-only: its green is not emitted');
+		$this->assertStringNotContainsString(
+			needle: '#2e7d32',
+			haystack: (string)$result['css'],
+			message: 'core is source-only: its green is not emitted'
+		);
 	}//end testLegacyFormatRoutesToInputC()
 
 	/**
@@ -187,7 +201,11 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 				$cuts[$brand['key']] = $source->cut(content: $content, key: $brand['key']);
 			}
 
-			$this->assertSame(expected: $answer, actual: json_decode((string)json_encode(['brands' => $brands, 'cuts' => $cuts]), true), message: $file);
+			$this->assertSame(
+				expected: $answer,
+				actual: json_decode((string)json_encode(['brands' => $brands, 'cuts' => $cuts]), true),
+				message: $file
+			);
 		}
 	}//end testParityFixtureMatchesPhp()
 }//end class

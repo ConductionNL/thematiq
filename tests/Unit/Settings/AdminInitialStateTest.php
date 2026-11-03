@@ -82,7 +82,9 @@ class AdminInitialStateTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+			static fn (string $key, string $default = '') => (match ($key === 'thematiq.environment') {
+				true => $environment, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use ($iconPackOverride) {
@@ -287,7 +289,12 @@ class AdminInitialStateTest extends TestCase {
 
 		// The instance-wide set is `lasuite` (the stub config); the preview is
 		// deliberately a different one, or this would pass either way.
-		$this->buildAdmin(activePreview: ['tokenSet' => 'nextcloud'], iconPackOverride: '', captured: $captured, playgroundSetAsked: $asked)->getForm();
+		$this->buildAdmin(
+			activePreview: ['tokenSet' => 'nextcloud'],
+			iconPackOverride: '',
+			captured: $captured,
+			playgroundSetAsked: $asked
+		)->getForm();
 		$this->assertSame(expected: 'nextcloud', actual: $asked);
 
 		$this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured, playgroundSetAsked: $asked)->getForm();
@@ -343,7 +350,13 @@ class AdminInitialStateTest extends TestCase {
 	 */
 	public function testTheFormCarriesTheDeclaredEnvironment(): void {
 		$captured = [];
-		$params = $this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured, playgroundSetAsked: $unused, environment: 'acceptance')->getForm()->getParams();
+		$params = $this->buildAdmin(
+			activePreview: null,
+			iconPackOverride: '',
+			captured: $captured,
+			playgroundSetAsked: $unused,
+			environment: 'acceptance'
+		)->getForm()->getParams();
 
 		$this->assertSame(expected: 'acceptance', actual: $params['environment']);
 		$this->assertSame(expected: 'occ config:system:set thematiq.environment --value=<environment>', actual: $params['environmentCommand']);

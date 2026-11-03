@@ -125,7 +125,9 @@ class ThemeGalleryServiceTest extends TestCase {
 				$response = $this->createMock(originalClassName: IResponse::class);
 				$response->method('getStatusCode')->willReturn($this->answer[0]);
 				$response->method('getBody')->willReturn($this->answer[1]);
-				$response->method('getHeader')->willReturnCallback(fn (string $key) => ($key === 'ETag' ? $this->answer[2] : ''));
+				$response->method('getHeader')->willReturnCallback(fn (string $key) => (match ($key === 'ETag') {
+					true => $this->answer[2], default => ''
+				}));
 				return $response;
 			}
 		);
@@ -331,7 +333,10 @@ class ThemeGalleryServiceTest extends TestCase {
 	 */
 	public function testAnInstalledSetWithANewChecksumOffersAnUpdate(): void {
 		$this->appConfig['gallery_enabled'] = 'yes';
-		$this->serve(entries: [self::entry(overrides: ['sha256' => str_repeat('b', 64)]), self::entry(overrides: ['id' => 'gemeente-epe', 'name' => 'Gemeente Epe'])]);
+		$this->serve(entries: [self::entry(overrides: ['sha256' => str_repeat(
+			'b',
+			64
+		)]), self::entry(overrides: ['id' => 'gemeente-epe', 'name' => 'Gemeente Epe'])]);
 		$this->installed = [
 			[
 				'id' => 'custom-provincie-utrecht',

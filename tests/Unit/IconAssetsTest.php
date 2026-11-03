@@ -266,7 +266,11 @@ class IconAssetsTest extends TestCase {
 			return $entry !== '.' && $entry !== '..' && is_dir($this->logosDir() . '/' . $entry);
 		});
 
-		$this->assertSame(expected: [], actual: array_values($subdirs), message: 'img/logos/ must contain no subdirectories (it is not build output).');
+		$this->assertSame(
+			expected: [],
+			actual: array_values($subdirs),
+			message: 'img/logos/ must contain no subdirectories (it is not build output).'
+		);
 	}
 
 	/**
@@ -284,7 +288,10 @@ class IconAssetsTest extends TestCase {
 			$replacementFile = $this->iconsDir() . '/' . $replacementPath . '.svg';
 
 			$this->assertFileExists(filename: $legacyFile, message: "Alias \"{$legacyName}\" has no legacy file img/icons/{$legacyName}.svg");
-			$this->assertFileExists(filename: $replacementFile, message: "Alias \"{$legacyName}\" maps to a nonexistent replacement img/icons/{$replacementPath}.svg");
+			$this->assertFileExists(
+				filename: $replacementFile,
+				message: "Alias \"{$legacyName}\" maps to a nonexistent replacement img/icons/{$replacementPath}.svg"
+			);
 
 			$this->assertSame(
 				expected: file_get_contents($replacementFile),
@@ -328,9 +335,21 @@ class IconAssetsTest extends TestCase {
 			$decoded['devDependencies'] ?? []
 		);
 
-		$this->assertArrayNotHasKey(key: '@amsterdam/design-system-assets', array: $allDeps, message: 'package.json must not depend on @amsterdam/design-system-assets.');
-		$this->assertArrayNotHasKey(key: '@amsterdam/design-system-react-icons', array: $allDeps, message: 'package.json must not depend on @amsterdam/design-system-react-icons.');
-		$this->assertArrayHasKey(key: '@conduction/nextcloud-vue', array: $decoded['devDependencies'] ?? [], message: '@conduction/nextcloud-vue must be a devDependency.');
+		$this->assertArrayNotHasKey(
+			key: '@amsterdam/design-system-assets',
+			array: $allDeps,
+			message: 'package.json must not depend on @amsterdam/design-system-assets.'
+		);
+		$this->assertArrayNotHasKey(
+			key: '@amsterdam/design-system-react-icons',
+			array: $allDeps,
+			message: 'package.json must not depend on @amsterdam/design-system-react-icons.'
+		);
+		$this->assertArrayHasKey(
+			key: '@conduction/nextcloud-vue',
+			array: $decoded['devDependencies'] ?? [],
+			message: '@conduction/nextcloud-vue must be a devDependency.'
+		);
 
 		// @gouvfr/dsfr is not a dependency at all (2 Oct 2026): its preinstall
 		// script refuses to run until the DSFR terms of use are accepted, so npm
@@ -508,9 +527,17 @@ class IconAssetsTest extends TestCase {
 		$docs = $this->readDoc(relativePath: 'docs/reference/icons.md');
 
 		$this->assertStringContainsString(needle: (string)$dsfrCount, haystack: $readme, message: 'README.md must state the actual dsfr icon count.');
-		$this->assertStringContainsString(needle: (string)$dsfrCount, haystack: $docs, message: 'docs/reference/icons.md must state the actual dsfr icon count.');
+		$this->assertStringContainsString(
+			needle: (string)$dsfrCount,
+			haystack: $docs,
+			message: 'docs/reference/icons.md must state the actual dsfr icon count.'
+		);
 		$this->assertStringContainsString(needle: 'Etalab-2.0', haystack: $readme, message: 'README.md must attribute the dsfr set as Etalab-2.0.');
-		$this->assertStringContainsString(needle: 'Etalab-2.0', haystack: $docs, message: 'docs/reference/icons.md must attribute the dsfr set as Etalab-2.0.');
+		$this->assertStringContainsString(
+			needle: 'Etalab-2.0',
+			haystack: $docs,
+			message: 'docs/reference/icons.md must attribute the dsfr set as Etalab-2.0.'
+		);
 	}
 
 	/**

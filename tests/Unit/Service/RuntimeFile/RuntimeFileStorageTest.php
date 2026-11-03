@@ -90,7 +90,12 @@ class RuntimeFileStorageTest extends TestCase {
 		$temp = $this->createMock(originalClassName: ITempManager::class);
 		$temp->method('getTemporaryFile')->willReturnCallback(fn (string $postfix): string => $this->storeDir . '/tmp' . bin2hex(random_bytes(3)) . $postfix);
 
-		return new RuntimeFileLocator(appManager: $appManager, store: new DirectoryRuntimeFileStore(root: $this->storeDir), urlGenerator: $urls, tempManager: $temp);
+		return new RuntimeFileLocator(
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $this->storeDir),
+			urlGenerator: $urls,
+			tempManager: $temp
+		);
 	}//end locator()
 
 	/**
@@ -188,8 +193,14 @@ class RuntimeFileStorageTest extends TestCase {
 
 		$this->assertFalse(condition: $locator->isProtected('css/tokens/gemeente-voorbeeld.css'));
 		$this->assertSame(expected: ':root {}', actual: $locator->read('css/tokens/gemeente-voorbeeld.css'));
-		$this->assertStringStartsWith(prefix: '/index.php/apps/thematiq/runtime/css/tokens/gemeente-voorbeeld.css?v=', string: (string)$locator->url('css/tokens/gemeente-voorbeeld.css'));
-		$this->assertSame(expected: ['css/tokens/gemeente-voorbeeld.css', 'css/tokens/utrecht.css'], actual: $locator->listDirectory('css/tokens', '.css'));
+		$this->assertStringStartsWith(
+			prefix: '/index.php/apps/thematiq/runtime/css/tokens/gemeente-voorbeeld.css?v=',
+			string: (string)$locator->url('css/tokens/gemeente-voorbeeld.css')
+		);
+		$this->assertSame(
+			expected: ['css/tokens/gemeente-voorbeeld.css', 'css/tokens/utrecht.css'],
+			actual: $locator->listDirectory('css/tokens', '.css')
+		);
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/gemeente-voorbeeld.css');
 	}//end testAnUploadedSetIsReadFromTheStoreAndServedByRoute()
 

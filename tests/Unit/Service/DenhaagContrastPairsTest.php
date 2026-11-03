@@ -155,10 +155,17 @@ class DenhaagContrastPairsTest extends TestCase {
 		$pairs = new DenhaagContrastPairs();
 
 		$this->assertNull(actual: $pairs->resolve(declarations: ['--a' => 'var(--b'], name: '--a'), message: 'An unclosed var() is malformed.');
-		$this->assertNull(actual: $pairs->resolve(declarations: ['--a' => 'var(--a)'], name: '--a'), message: 'A self-reference ends at the depth limit.');
+		$this->assertNull(
+			actual: $pairs->resolve(declarations: ['--a' => 'var(--a)'], name: '--a'),
+			message: 'A self-reference ends at the depth limit.'
+		);
 		$this->assertNull(actual: $pairs->resolve(declarations: [], name: '--a'), message: 'An undeclared property has no value.');
 		$this->assertSame(expected: '#927739', actual: $pairs->resolve(declarations: ['--a' => 'var(--gone, #927739)'], name: '--a'));
-		$this->assertSame(expected: '#917036', actual: $pairs->resolve(declarations: ['--a' => 'hsl(38deg 46% 39%)'], name: '--a'), message: 'An hsl() colour is measured, not left unevaluated.');
+		$this->assertSame(
+			expected: '#917036',
+			actual: $pairs->resolve(declarations: ['--a' => 'hsl(38deg 46% 39%)'], name: '--a'),
+			message: 'An hsl() colour is measured, not left unevaluated.'
+		);
 	}
 
 	/**

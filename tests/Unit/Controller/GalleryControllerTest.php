@@ -122,7 +122,10 @@ class GalleryControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testARefusedInstallAnswersWithTheReason(): void {
-		$this->installer->method('install')->willThrowException(new GalleryException(message: 'The downloaded file does not match the gallery index.', code: 422));
+		$this->installer->method('install')->willThrowException(new GalleryException(
+			message: 'The downloaded file does not match the gallery index.',
+			code: 422
+		));
 
 		$response = $this->controller->install(id: 'provincie-utrecht');
 

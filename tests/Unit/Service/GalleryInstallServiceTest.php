@@ -142,7 +142,12 @@ class GalleryInstallServiceTest extends TestCase {
 			config: $config,
 			validator: new CustomTokenSetValidator(),
 			contrast: new ContrastService(),
-			darkPalette: new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $tempApp, logger: $this->createMock(originalClassName: LoggerInterface::class))
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $tempApp,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			)
 		);
 	}//end setUp()
 
@@ -171,7 +176,9 @@ class GalleryInstallServiceTest extends TestCase {
 	private function service(): GalleryInstallService {
 		$gallery = $this->createMock(originalClassName: ThemeGalleryService::class);
 		$gallery->method('findEntry')->willReturnCallback(
-			fn (string $galleryId) => ($this->entry !== null && $this->entry['id'] === $galleryId ? $this->entry : null)
+			fn (string $galleryId) => (match ($this->entry !== null && $this->entry['id'] === $galleryId) {
+				true => $this->entry, default => null
+			})
 		);
 		$gallery->method('installedFor')->willReturnCallback(
 			function (string $galleryId): ?array {
@@ -349,6 +356,9 @@ class GalleryInstallServiceTest extends TestCase {
 		$sets = $this->customSets->list();
 		$this->assertCount(expectedCount: 1, haystack: $sets);
 		$this->assertSame(expected: hash('sha256', $this->body), actual: $sets[0]['provenance']['sha256']);
-		$this->assertStringContainsStringIgnoringCase(needle: '#1d4a7a', haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-provincie-utrecht.css'));
+		$this->assertStringContainsStringIgnoringCase(
+			needle: '#1d4a7a',
+			haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-provincie-utrecht.css')
+		);
 	}//end testAnUpdateReplacesTheSetAndKeepsItActive()
 }//end class

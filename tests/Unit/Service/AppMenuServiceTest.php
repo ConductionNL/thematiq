@@ -97,7 +97,9 @@ class AppMenuServiceTest extends TestCase {
 
 		$this->designSystemService->method('getTokenSetMeta')->willReturn($meta);
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, string $default) => ($key === AppMenuService::CONFIG_KEY ? $override : $default)
+			fn (string $app, string $key, string $default) => (match ($key === AppMenuService::CONFIG_KEY) {
+				true => $override, default => $default
+			})
 		);
 	}//end configure()
 
@@ -134,7 +136,9 @@ class AppMenuServiceTest extends TestCase {
 	 */
 	private function layout(bool $workplace): LayoutOptionsService {
 		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
-		$options->method('stylesheets')->willReturn($workplace === true ? ['workplace-layout', LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET] : ['workplace-layout']);
+		$options->method('stylesheets')->willReturn(match ($workplace === true) {
+			true => ['workplace-layout', LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET], default => ['workplace-layout']
+		});
 
 		return $options;
 	}//end layout()
@@ -264,18 +268,42 @@ class AppMenuServiceTest extends TestCase {
 	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
-		$this->assertSame(expected: 'https://op.example.org/sub', actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: ' https://op.example.org/sub// '));
+		$this->assertSame(
+			expected: 'https://op.example.org/sub',
+			actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: ' https://op.example.org/sub// ')
+		);
 		foreach (['', 'javascript:alert(1)', 'ftp://op.example.org', 'https://op.example.org/"><script>', '//op.example.org'] as $bad) {
-			$this->assertNull(actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: $bad), message: $bad);
+			$this->assertNull(
+				actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: $bad),
+				message: $bad
+			);
 		}
 
-		$this->assertSame(expected: OpenProjectModules::DEFAULT, actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: ''));
-		$this->assertSame(expected: OpenProjectModules::DEFAULT, actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'nope, also-nope'));
-		$this->assertSame(expected: ['news', 'projects'], actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'News|projects news'));
-		$this->assertCount(expectedCount: OpenProjectModules::MAX, haystack: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: implode(',', array_keys(OpenProjectModules::MODULES))));
+		$this->assertSame(
+			expected: OpenProjectModules::DEFAULT,
+			actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: '')
+		);
+		$this->assertSame(
+			expected: OpenProjectModules::DEFAULT,
+			actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'nope, also-nope')
+		);
+		$this->assertSame(
+			expected: ['news', 'projects'],
+			actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'News|projects news')
+		);
+		$this->assertCount(
+			expectedCount: OpenProjectModules::MAX,
+			haystack: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: implode(
+				',',
+				array_keys(OpenProjectModules::MODULES)
+			))
+		);
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('');
-		$this->assertNull(actual: (new OpenProjectModules(config: $config))->section(l: $this->createMock(originalClassName: IL10N::class)), message: 'no address, no section');
+		$this->assertNull(
+			actual: (new OpenProjectModules(config: $config))->section(l: $this->createMock(originalClassName: IL10N::class)),
+			message: 'no address, no section'
+		);
 	}//end testTheAddressAndTheModulesAreChecked()
 }//end class

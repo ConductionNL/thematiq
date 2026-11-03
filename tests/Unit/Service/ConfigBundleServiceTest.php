@@ -173,7 +173,12 @@ class ConfigBundleServiceTest extends TestCase {
 
 		$records = new DeprecationRecords(config: $config);
 		$this->ownTokens = new OwnTokenService(config: $config, values: new TokenValueValidator(), records: $records);
-		$this->deprecations = new TokenDeprecationService(records: $records, ownTokens: $this->ownTokens, appManager: $appManager, cssParser: $cssParser);
+		$this->deprecations = new TokenDeprecationService(
+			records: $records,
+			ownTokens: $this->ownTokens,
+			appManager: $appManager,
+			cssParser: $cssParser
+		);
 		$this->overridesService = new CustomOverridesService(
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
@@ -210,10 +215,20 @@ class ConfigBundleServiceTest extends TestCase {
 
 		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$previewService = new TokenSetPreviewService(appManager: $appManager);
-		$emailThemingService = new EmailThemingService(config: $config, tokenSetService: $this->tokenSetService, previewService: $previewService, urlGenerator: $urlGenerator);
+		$emailThemingService = new EmailThemingService(
+			config: $config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $previewService,
+			urlGenerator: $urlGenerator
+		);
 
 		$clientService = $this->createMock(originalClassName: IClientService::class);
-		$freshnessService = new UpstreamFreshnessService(config: $config, clientService: $clientService, tokenSetService: $this->tokenSetService, logger: $logger);
+		$freshnessService = new UpstreamFreshnessService(
+			config: $config,
+			clientService: $clientService,
+			tokenSetService: $this->tokenSetService,
+			logger: $logger
+		);
 
 		$this->fontService = $this->createMock(originalClassName: FontService::class);
 		$this->fontService->method('getManifest')->willReturn([]);
@@ -237,7 +252,11 @@ class ConfigBundleServiceTest extends TestCase {
 			scheduledSwitches: new ScheduledSwitchStore(config: $config),
 			logger: $logger,
 			extraSections: new BundleExtraSections(
-				assistantMark: new AssistantMarkService(config: $config, emailTheming: $emailThemingService, capabilities: $this->createMock(originalClassName: Capabilities::class)),
+				assistantMark: new AssistantMarkService(
+					config: $config,
+					emailTheming: $emailThemingService,
+					capabilities: $this->createMock(originalClassName: Capabilities::class)
+				),
 				documentAssets: new DocumentAssetService(appData: $this->createMock(originalClassName: IAppData::class), config: $config),
 				appBrands: new AppBrandService(
 					config: $config,
@@ -248,7 +267,11 @@ class ConfigBundleServiceTest extends TestCase {
 					urls: $this->createMock(originalClassName: IURLGenerator::class)
 				)
 			),
-			lifecycle: new TokenLifecycleBundleSection(ownTokens: $this->ownTokens, deprecations: $this->deprecations, overrides: $this->overridesService)
+			lifecycle: new TokenLifecycleBundleSection(
+				ownTokens: $this->ownTokens,
+				deprecations: $this->deprecations,
+				overrides: $this->overridesService
+			)
 		);
 	}//end setUp()
 
@@ -502,7 +525,10 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->appConfig['assistant_mark_logo'] = 'https://example.org/logo.svg';
 
 		$bundle = $this->service->export();
-		$this->assertSame(expected: ['enabled' => true, 'organisation' => 'Gemeente Voorbeeld', 'logo' => 'https://example.org/logo.svg'], actual: $bundle['assistantMark']);
+		$this->assertSame(
+			expected: ['enabled' => true, 'organisation' => 'Gemeente Voorbeeld', 'logo' => 'https://example.org/logo.svg'],
+			actual: $bundle['assistantMark']
+		);
 
 		$this->appConfig['assistant_mark_enabled'] = '0';
 		$this->appConfig['assistant_mark_organisation'] = '';
@@ -646,7 +672,11 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame(expected: 'soft', actual: $this->appConfig['navigation_active_style']);
 		$this->assertSame(expected: 'login', actual: $this->appConfig['brand_stripe_placement']);
 		$this->assertSame(expected: 'workplace', actual: $this->appConfig['header_style']);
-		$this->assertSame(expected: '', actual: $this->appConfig['login_watermark'], message: 'The empty choice travels too: the target follows its theme again.');
+		$this->assertSame(
+			expected: '',
+			actual: $this->appConfig['login_watermark'],
+			message: 'The empty choice travels too: the target follows its theme again.'
+		);
 	}//end testTheLayoutOptionsSurviveExportAndImport()
 
 	/**

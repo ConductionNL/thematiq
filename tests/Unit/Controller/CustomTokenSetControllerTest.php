@@ -215,7 +215,9 @@ class CustomTokenSetControllerTest extends TestCase {
 		file_put_contents($tmpFile, $content);
 
 		$this->request->method('getParam')->willReturnCallback(
-			fn (string $key, $default = null) => ($key === 'name' ? $name : $default)
+			fn (string $key, $default = null) => (match ($key === 'name') {
+				true => $name, default => $default
+			})
 		);
 		$this->request->method('getUploadedFile')->willReturn(
 			[

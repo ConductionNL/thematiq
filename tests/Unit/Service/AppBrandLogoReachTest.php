@@ -142,11 +142,19 @@ class AppBrandLogoReachTest extends TestCase {
 
 				foreach ($headerLogo as $selector) {
 					$checked++;
-					$this->assertGreaterThan(expected: $this->specificity(selector: $selector), actual: $brand['specificity'], message: $system . ': ' . $selector . ' outranks the brand logo');
+					$this->assertGreaterThan(
+						expected: $this->specificity(selector: $selector),
+						actual: $brand['specificity'],
+						message: $system . ': ' . $selector . ' outranks the brand logo'
+					);
 				}
 
 				foreach ($set as $property) {
-					$this->assertArrayHasKey(key: $property, array: $brand['declarations'], message: $system . ' sets ' . $property . ' on the header logo and the brand layer leaves it');
+					$this->assertArrayHasKey(
+						key: $property,
+						array: $brand['declarations'],
+						message: $system . ' sets ' . $property . ' on the header logo and the brand layer leaves it'
+					);
 				}
 			}
 		}
@@ -164,6 +172,9 @@ class AppBrandLogoReachTest extends TestCase {
 		$css = $this->layerCss();
 
 		$this->assertStringContainsString(needle: ':root{--nldesign-logo-url:url(/brand/collectives/large)', haystack: $css);
-		$this->assertStringContainsString(needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}', haystack: $css);
+		$this->assertStringContainsString(
+			needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}',
+			haystack: $css
+		);
 	}//end testTheSmallLogoStillSwapsThroughTheVariable()
 }//end class

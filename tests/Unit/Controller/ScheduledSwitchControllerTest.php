@@ -58,7 +58,12 @@ class ScheduledSwitchControllerTest extends TestCase {
 		$session = $this->createMock(originalClassName: IUserSession::class);
 		$session->method('getUser')->willReturn($user);
 
-		$this->controller = new ScheduledSwitchController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), service: $this->service, userSession: $session);
+		$this->controller = new ScheduledSwitchController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			service: $this->service,
+			userSession: $session
+		);
 	}//end setUp()
 
 	/**

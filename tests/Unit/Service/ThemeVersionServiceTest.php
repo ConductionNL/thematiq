@@ -164,7 +164,9 @@ class FakeVersionRoot implements IAppData {
 	}
 
 	public function getDirectoryListing(): array {
-		return $this->exists === true ? [$this->folder] : [];
+		return match ($this->exists === true) {
+			true => [$this->folder], default => []
+		};
 	}
 
 	public function newFolder(string $name): ISimpleFolder {

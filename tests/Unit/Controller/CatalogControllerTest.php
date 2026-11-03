@@ -92,7 +92,11 @@ class CatalogControllerTest extends TestCase {
 		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getPublicCatalogue')->willReturn($projection);
 
-		$controller = new CatalogController(appName: 'nldesign', request: $this->createMock(originalClassName: IRequest::class), tokenSetService: $tokenSetService);
+		$controller = new CatalogController(
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			tokenSetService: $tokenSetService
+		);
 		$response = $controller->tokenSets();
 
 		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
@@ -123,7 +127,11 @@ class CatalogControllerTest extends TestCase {
 		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getPublicCatalogue')->willReturn($projection);
 
-		$controller = new CatalogController(appName: 'nldesign', request: $this->createMock(originalClassName: IRequest::class), tokenSetService: $tokenSetService);
+		$controller = new CatalogController(
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			tokenSetService: $tokenSetService
+		);
 		$entry = $controller->tokenSets()->getData()['tokenSets'][0];
 
 		$this->assertSame(expected: ['id', 'name', 'design_system', 'theming', 'wcagLevel'], actual: array_keys($entry));

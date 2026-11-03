@@ -235,7 +235,9 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeReturnsManifestTheming(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'amsterdam' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			}
 		);
 		$this->tokenSetService->method('getAvailableTokenSets')->willReturn(
 			[
@@ -267,7 +269,9 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeFallsBackToResolvedColorsWithoutTheming(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'utrecht-custom' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'utrecht-custom', default => $default
+			}
 		);
 		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'utrecht-custom']]);
 		$this->previewService->method('getResolvedColors')->willReturn(
@@ -292,7 +296,9 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeReturnsNullForNextcloud(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'nextcloud' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'nextcloud', default => $default
+			}
 		);
 
 		$this->assertNull(actual: $this->service->getActiveEmailTheme());

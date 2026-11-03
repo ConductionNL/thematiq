@@ -116,7 +116,12 @@ class ThemingServiceTest extends TestCase {
 		$this->service = new ThemingService(
 			imageManager: $this->imageManager,
 			themingDefaults: $this->themingDefaults,
-			files: new RuntimeFileLocator(appManager: $appManager, store: new DirectoryRuntimeFileStore(root: $this->appDir . '/.store'), urlGenerator: $urls, tempManager: $this->createMock(originalClassName: ITempManager::class))
+			files: new RuntimeFileLocator(
+				appManager: $appManager,
+				store: new DirectoryRuntimeFileStore(root: $this->appDir . '/.store'),
+				urlGenerator: $urls,
+				tempManager: $this->createMock(originalClassName: ITempManager::class)
+			)
 		);
 	}//end setUp()
 

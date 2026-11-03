@@ -87,7 +87,10 @@ class ComplianceReportGoldenTest extends TestCase {
 		$actual = [];
 		for ($seed = 1; $seed <= 60; $seed++) {
 			$report = $this->report(random: new Randomizer(new Mt19937($seed)))->generate();
-			$actual['seed:' . $seed] = (string)json_encode(['pairs' => $report['pairs'], 'summary' => $report['summary']], (JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION));
+			$actual['seed:' . $seed] = (string)json_encode(
+				['pairs' => $report['pairs'], 'summary' => $report['summary']],
+				(JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION)
+			);
 		}
 
 		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
@@ -114,7 +117,10 @@ class ComplianceReportGoldenTest extends TestCase {
 		}
 
 		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
-			file_put_contents(self::MARKDOWN_FIXTURE, json_encode($actual, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . "\n");
+			file_put_contents(
+				self::MARKDOWN_FIXTURE,
+				json_encode($actual, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . "\n"
+			);
 		}
 
 		$expected = json_decode((string)file_get_contents(self::MARKDOWN_FIXTURE), true);
@@ -147,14 +153,20 @@ class ComplianceReportGoldenTest extends TestCase {
 			$meta['theming'] = ['background_color' => ['#fafafa', '', 'rgba(0, 0, 0, 0.1)'][$random->getInt(0, 2)]];
 		}
 
-		$tokens = array_map(static fn (array $pair): array => [$pair['fg'], $pair['bg']], (new ReflectionClassConstant(ComplianceReportService::class, 'PAIR_MATRIX'))->getValue());
+		$tokens = array_map(
+			static fn (array $pair): array => [$pair['fg'], $pair['bg']],
+			(new ReflectionClassConstant(ComplianceReportService::class, 'PAIR_MATRIX'))->getValue()
+		);
 		$tokens = array_values(array_unique(array_merge(...$tokens)));
 
 		$mapping = [];
 		$overrides = [];
 		foreach ($tokens as $token) {
 			if ($random->getInt(0, 5) > 0) {
-				$mapping[$token] = $this->pick(random: $random, values: ['var(' . $this->pick(random: $random, values: self::NLDESIGN) . ')', $this->pick(random: $random, values: self::COLOURS)]);
+				$mapping[$token] = $this->pick(
+					random: $random,
+					values: ['var(' . $this->pick(random: $random, values: self::NLDESIGN) . ')', $this->pick(random: $random, values: self::COLOURS)]
+				);
 			}
 
 			if ($random->getInt(0, 7) === 0) {

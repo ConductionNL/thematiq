@@ -86,7 +86,10 @@ class OverridesSaveGoldenTest extends TestCase {
 		}
 
 		if ($random->getInt(0, 9) !== 0) {
-			$params['overrides'] = [['--color-primary' => '#154273'], [], 'not an object', ['--color-primary' => '#154273', '--x' => 'url(evil)']][$random->getInt(0, 3)];
+			$params['overrides'] = [['--color-primary' => '#154273'], [], 'not an object', ['--color-primary' => '#154273', '--x' => 'url(evil)']][$random->getInt(
+				0,
+				3
+			)];
 		}
 
 		if ($random->getInt(0, 2) === 0) {
@@ -175,7 +178,16 @@ class OverridesSaveGoldenTest extends TestCase {
 			);
 		}
 
-		$controller = new OverridesController(appName: 'thematiq', request: $request, overridesService: $overrides, cssParser: $this->createMock(originalClassName: CssParserService::class), auditService: $audit, config: $config, themingService: $theming, brandingCapture: $capture);
+		$controller = new OverridesController(
+			appName: 'thematiq',
+			request: $request,
+			overridesService: $overrides,
+			cssParser: $this->createMock(originalClassName: CssParserService::class),
+			auditService: $audit,
+			config: $config,
+			themingService: $theming,
+			brandingCapture: $capture
+		);
 		$response = $controller->setOverrides();
 
 		return (string)json_encode(['status' => $response->getStatus(), 'data' => $response->getData(), 'calls' => $calls], JSON_UNESCAPED_SLASHES);

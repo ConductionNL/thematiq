@@ -55,7 +55,10 @@ class ConfigVersionCommandsTest extends TestCase {
 		$tester = $this->tester(command: new ConfigVersions(versions: $versions));
 
 		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute([]));
-		$this->assertStringContainsString(needle: '20260929164000-0001  2026-09-29T16:40:00Z  admin  token_set_changed', haystack: $tester->getDisplay());
+		$this->assertStringContainsString(
+			needle: '20260929164000-0001  2026-09-29T16:40:00Z  admin  token_set_changed',
+			haystack: $tester->getDisplay()
+		);
 	}//end testVersionsListsEachVersion()
 
 	/**

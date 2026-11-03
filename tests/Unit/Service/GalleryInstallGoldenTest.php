@@ -211,7 +211,9 @@ class GalleryInstallGoldenTest extends TestCase {
 				}
 
 				$response = $this->createMock(originalClassName: IResponse::class);
-				$response->method('getStatusCode')->willReturn(($mode === 1) ? 500 : 200);
+				$response->method('getStatusCode')->willReturn(match ($mode === 1) {
+					true => 500, default => 200
+				});
 				$response->method('getBody')->willReturn($body);
 				return $response;
 			}
@@ -258,7 +260,10 @@ class GalleryInstallGoldenTest extends TestCase {
 		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('convert')->willReturnCallback(
 			function (...$arguments) use ($mode, $result): array {
-				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(method: [TokenSetConverterService::class, 'convert'], arguments: $arguments);
+				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(
+					method: [TokenSetConverterService::class, 'convert'],
+					arguments: $arguments
+				);
 				if ($mode === 0) {
 					throw new RuntimeException('not a theme');
 				}
@@ -300,7 +305,10 @@ class GalleryInstallGoldenTest extends TestCase {
 		);
 		$sets->method('store')->willReturnCallback(
 			function (...$arguments) use ($refuses): array {
-				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(method: [CustomTokenSetService::class, 'store'], arguments: $arguments);
+				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(
+					method: [CustomTokenSetService::class, 'store'],
+					arguments: $arguments
+				);
 				if ($refuses === true) {
 					throw new RuntimeException('A custom token set named "x" already exists.', 409);
 				}

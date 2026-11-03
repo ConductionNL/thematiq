@@ -297,8 +297,14 @@ class ShellRoleMapperTest extends TestCase {
 	public function testTheMenuIsTheNavigationColumn(): void {
 		$this->assertSame(expected: '#ffffff', actual: $this->mapper()->map(tokens: [])['menu']);
 		$this->assertSame(expected: '#eeeeee', actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee'])['menu']);
-		$this->assertSame(expected: '#dddddd', actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--nldesign-component-navigation-background-color' => '#dddddd'])['menu']);
-		$this->assertSame(expected: '#123456', actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--thematiq-shell-menu' => '#123456'])['menu']);
+		$this->assertSame(
+			expected: '#dddddd',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--nldesign-component-navigation-background-color' => '#dddddd'])['menu']
+		);
+		$this->assertSame(
+			expected: '#123456',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--thematiq-shell-menu' => '#123456'])['menu']
+		);
 	}//end testTheMenuIsTheNavigationColumn()
 
 	/**
@@ -307,7 +313,10 @@ class ShellRoleMapperTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheAccentFallsBackToTheErrorColour(): void {
-		$this->assertSame(expected: '#f5b82e', actual: $this->mapper()->map(tokens: ['--nldesign-color-accent' => '#f5b82e', '--nldesign-color-error' => '#cc0000'])['accent']);
+		$this->assertSame(
+			expected: '#f5b82e',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-accent' => '#f5b82e', '--nldesign-color-error' => '#cc0000'])['accent']
+		);
 		$this->assertSame(expected: '#cc0000', actual: $this->mapper()->map(tokens: ['--nldesign-color-error' => '#cc0000'])['accent']);
 	}//end testTheAccentFallsBackToTheErrorColour()
 
@@ -343,7 +352,10 @@ class ShellRoleMapperTest extends TestCase {
 
 		// An administrator's value for Nextcloud's element variable moves checked
 		// boxes and switches, not the main button, so the action role ignores it.
-		$element = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']), overrides: ['--color-primary-element' => '#aa0000']);
+		$element = $this->mapper()->map(
+			tokens: ($set + ['--nldesign-color-action' => '#1f883d']),
+			overrides: ['--color-primary-element' => '#aa0000']
+		);
 		$this->assertSame(expected: '#1f883d', actual: $element['action']);
 
 		// An administrator's value for the main button's own token wins.
@@ -371,10 +383,18 @@ class ShellRoleMapperTest extends TestCase {
 			'--nldesign-color-background' => '#171a20',
 		];
 
-		$this->assertSame(expected: '#234a78', actual: $this->mapper()->map(tokens: $dark)['primary-deep'], message: 'the plain mapping keeps the darker step');
+		$this->assertSame(
+			expected: '#234a78',
+			actual: $this->mapper()->map(tokens: $dark)['primary-deep'],
+			message: 'the plain mapping keeps the darker step'
+		);
 
 		$roles = $this->mapper()->mapDark(tokens: $dark);
-		$this->assertSame(expected: '#84aad7', actual: $roles['primary-deep'], message: 'the dark mapping writes the primary on the tint, as Nextcloud does');
+		$this->assertSame(
+			expected: '#84aad7',
+			actual: $roles['primary-deep'],
+			message: 'the dark mapping writes the primary on the tint, as Nextcloud does'
+		);
 		$this->assertSame(expected: '#84aad7', actual: $roles['primary']);
 		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($roles));
 

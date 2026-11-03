@@ -149,7 +149,9 @@ class ConfigApplyTest extends TestCase {
 		$app = [];
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			fn (string $key, string $default = ''): string => $key === 'thematiq.config_source' ? $this->dir : $default
+			fn (string $key, string $default = ''): string => match ($key === 'thematiq.config_source') {
+				true => $this->dir, default => $default
+			}
 		);
 		$config->method('getAppValue')->willReturnCallback(fn (string $appId, string $key, $default = '') => ($app[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(

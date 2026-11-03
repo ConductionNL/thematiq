@@ -43,7 +43,12 @@ class OverridesCssBuilderReadableTextTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(sys_get_temp_dir());
 		$this->contrast = new ContrastService();
-		$darkPalette = new DarkPaletteService(contrast: $this->contrast, parser: new CssParserService(), appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(
+			contrast: $this->contrast,
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->builder = new OverridesCssBuilder(darkPalette: $darkPalette, values: new TokenValueValidator());
 	}//end setUp()
 

@@ -48,7 +48,13 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
-		$dark = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class), store: $this->store);
+		$dark = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			store: $this->store
+		);
 		$this->service = new CustomOverridesService(storage: new OverridesStorage(store: $this->store, cssParser: $parser, darkPalette: $dark));
 	}
 
@@ -82,7 +88,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a'], darkTokens: ['--color-mark' => '#5c4a00']);
 
 		$dark = $this->darkPart();
-		$this->assertSame(expected: 2, actual: substr_count($dark, '--nldesign-nc-color-mark: #5c4a00 !important;'), message: 'both dark scopes, as the token the theme scopes read');
+		$this->assertSame(
+			expected: 2,
+			actual: substr_count($dark, '--nldesign-nc-color-mark: #5c4a00 !important;'),
+			message: 'both dark scopes, as the token the theme scopes read'
+		);
 		$this->assertSame(expected: ['--color-mark' => '#5c4a00'], actual: $this->service->readDark());
 	}
 
@@ -94,7 +104,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 	public function testNoDarkValueMeansNoDarkLine(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a']);
 
-		$this->assertStringNotContainsString(needle: '--nldesign-nc-color-mark', haystack: $this->darkPart(), message: 'the reset leaves Nextcloud its own dark value');
+		$this->assertStringNotContainsString(
+			needle: '--nldesign-nc-color-mark',
+			haystack: $this->darkPart(),
+			message: 'the reset leaves Nextcloud its own dark value'
+		);
 	}
 
 	/**
@@ -115,7 +129,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$read = $this->service->read();
 		$this->assertSame(expected: '#e8eef5', actual: $read['--nldesign-nc-dp-hover-color']);
 		$this->assertSame(expected: '1rem', actual: $read['--nldesign-nc-dp-font-size']);
-		$this->assertSame(expected: ['--nldesign-nc-dp-hover-color' => '#333333'], actual: $this->service->readDark(), message: 'a brand colour keeps its derived value, which is not reported as own');
+		$this->assertSame(
+			expected: ['--nldesign-nc-dp-hover-color' => '#333333'],
+			actual: $this->service->readDark(),
+			message: 'a brand colour keeps its derived value, which is not reported as own'
+		);
 	}
 
 	/**
@@ -124,7 +142,10 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 	 * @return void
 	 */
 	public function testAFileFromBeforeThisChangeStillReads(): void {
-		$this->store->write('css/custom-overrides.css', ":root {\n  --color-primary: #24578f !important;\n  --color-main-text: #1a1a1a !important;\n}\n");
+		$this->store->write(
+			'css/custom-overrides.css',
+			":root {\n  --color-primary: #24578f !important;\n  --color-main-text: #1a1a1a !important;\n}\n"
+		);
 
 		$this->assertSame(expected: ['--color-primary' => '#24578f', '--color-main-text' => '#1a1a1a'], actual: $this->service->read());
 	}
@@ -137,8 +158,14 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 	public function testTheServerChecksAnInternalValueByItsType(): void {
 		$values = new TokenValueValidator();
 
-		$this->assertSame(expected: [], actual: $values->findRejected(['--nldesign-nc-dp-hover-color' => '#e8eef5'], ['--nldesign-nc-dp-hover-color' => '#333333']));
-		$this->assertArrayHasKey(key: '--nldesign-nc-dp-hover-color', array: $values->findRejected(['--nldesign-nc-dp-hover-color' => 'not-a-colour']));
+		$this->assertSame(
+			expected: [],
+			actual: $values->findRejected(['--nldesign-nc-dp-hover-color' => '#e8eef5'], ['--nldesign-nc-dp-hover-color' => '#333333'])
+		);
+		$this->assertArrayHasKey(
+			key: '--nldesign-nc-dp-hover-color',
+			array: $values->findRejected(['--nldesign-nc-dp-hover-color' => 'not-a-colour'])
+		);
 		$this->assertSame(
 			expected: ['--nldesign-nc-dp-font-size' => 'no dark value for this token'],
 			actual: $values->findRejected(['--nldesign-nc-dp-font-size' => '1rem'], ['--nldesign-nc-dp-font-size' => '2rem'])

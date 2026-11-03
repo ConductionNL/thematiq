@@ -69,7 +69,11 @@ class ColourFunctionEvaluatorTest extends TestCase {
 		$this->assertSame(expected: '#713800', actual: $this->evaluator->evaluate('color-mix(in srgb, #e17000 50%, #000)'));
 		$this->assertSame(expected: '#808080', actual: $this->evaluator->evaluate('color-mix(in srgb, #ffffff 50%, #000000)'));
 		$this->assertSame(expected: '#800000', actual: $this->evaluator->evaluate('color-mix(in srgb, hsl(0 100% 50%) 50%, #000)'));
-		$this->assertSame(expected: '#ffffff', actual: $this->evaluator->evaluate('color-mix(in srgb, #ffffff 150%, #000)'), message: 'A share above 100% is capped.');
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->evaluator->evaluate('color-mix(in srgb, #ffffff 150%, #000)'),
+			message: 'A share above 100% is capped.'
+		);
 	}
 
 	/**

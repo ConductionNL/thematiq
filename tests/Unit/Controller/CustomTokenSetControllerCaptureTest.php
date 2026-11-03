@@ -117,7 +117,12 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 			config: $config,
 			validator: new CustomTokenSetValidator(),
 			contrast: new ContrastService(),
-			darkPalette: new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class))
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			)
 		);
 
 		$l = $this->createMock(originalClassName: IL10N::class);

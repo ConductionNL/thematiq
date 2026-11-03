@@ -145,7 +145,11 @@ class ShellTokenControllerTest extends TestCase {
 	public function testTheRouteIsPublicAndRateLimited(): void {
 		$method = new ReflectionMethod(ShellTokenController::class, 'show');
 
-		$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(PublicPage::class), message: 'a reader without a session must not be refused');
+		$this->assertCount(
+			expectedCount: 1,
+			haystack: $method->getAttributes(PublicPage::class),
+			message: 'a reader without a session must not be refused'
+		);
 		$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(NoCSRFRequired::class), message: 'a server sends no CSRF token');
 		$this->assertCount(expectedCount: 0, haystack: $method->getAttributes(NoAdminRequired::class), message: 'one posture, not two');
 

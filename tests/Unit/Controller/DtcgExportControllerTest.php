@@ -75,12 +75,21 @@ final class DtcgExportControllerTest extends TestCase {
 		$cache = $this->createMock(originalClassName: ICacheFactory::class);
 		$cache->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$parser = new CssParserService();
-		$tokenSets = new TokenSetService(appManager: $appManager, config: $config, logger: $this->createMock(originalClassName: LoggerInterface::class), audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser), cacheFactory: $cache, vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser));
+		$tokenSets = new TokenSetService(
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser),
+			cacheFactory: $cache,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser)
+		);
 		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
 		$request = $this->createMock(originalClassName: IRequest::class);
-		$request->method('getParam')->willReturnCallback(static fn (string $key, $default = null) => $key === 'format' ? ($format ?? $default) : $default);
+		$request->method('getParam')->willReturnCallback(static fn (string $key, $default = null) => match ($key === 'format') {
+			true => $format ?? $default, default => $default
+		});
 
 		return new DtcgExportController(
 			appName: 'thematiq',
@@ -232,7 +241,10 @@ final class DtcgExportControllerTest extends TestCase {
 	public function testAdminOnly(): void {
 		$method = new ReflectionMethod(DtcgExportController::class, 'export');
 
-		$this->assertSame(expected: Admin::class, actual: ($method->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null));
+		$this->assertSame(
+			expected: Admin::class,
+			actual: ($method->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null)
+		);
 		$this->assertSame(expected: [], actual: $method->getAttributes(NoAdminRequired::class));
 	}//end testAdminOnly()
 

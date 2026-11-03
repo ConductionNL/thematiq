@@ -252,7 +252,9 @@ class TokenSetSelectionPolicyTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			static fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'utrecht' : $default)
+			static fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'utrecht', default => $default
+			})
 		);
 
 		// No token-sets.json at all.

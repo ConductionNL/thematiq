@@ -140,7 +140,9 @@ class LoginCopyServiceTest extends TestCase {
 
 		$this->designSystemService->method('getTokenSetMeta')->willReturn($meta);
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, string $default) => ($key === LoginCopyService::CONFIG_KEY ? $override : $default)
+			fn (string $app, string $key, string $default) => (match ($key === LoginCopyService::CONFIG_KEY) {
+				true => $override, default => $default
+			})
 		);
 	}//end configure()
 
@@ -168,7 +170,9 @@ class LoginCopyServiceTest extends TestCase {
 	private function language(string $language): void {
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn($language);
-		$l10n->method('t')->willReturnCallback(fn (string $text) => ($language === 'nl' && $text === 'or' ? 'of' : $text));
+		$l10n->method('t')->willReturnCallback(fn (string $text) => (match ($language === 'nl' && $text === 'or') {
+			true => 'of', default => $text
+		}));
 		$this->l10nFactory->method('get')->willReturn($l10n);
 	}//end language()
 
@@ -204,8 +208,14 @@ class LoginCopyServiceTest extends TestCase {
 	public function testALanguageMapPicksTheRequestsLanguage(): void {
 		$this->configure(login: ['title' => ['nl' => 'Inloggen', 'en' => 'Log in'], 'footer' => 'Overal'], override: '');
 
-		$this->assertSame(expected: ['title' => 'Inloggen', 'footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl_NL'));
-		$this->assertSame(expected: ['title' => 'Log in', 'footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'en'));
+		$this->assertSame(
+			expected: ['title' => 'Inloggen', 'footer' => 'Overal'],
+			actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl_NL')
+		);
+		$this->assertSame(
+			expected: ['title' => 'Log in', 'footer' => 'Overal'],
+			actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'en')
+		);
 		$this->assertSame(expected: ['footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'de'));
 	}//end testALanguageMapPicksTheRequestsLanguage()
 
@@ -338,7 +348,10 @@ class LoginCopyServiceTest extends TestCase {
 		$this->language(language: 'nl');
 		$groups = $this->createMock(originalClassName: GroupThemingService::class);
 		$groups->method('resolveTokenSetForRequest')->with(null)->willReturn('zuiddrecht');
-		$this->initialState->expects($this->once())->method('provideInitialState')->with(LoginCopyService::STATE_KEY, ['title' => 'Inloggen', 'divider' => 'of']);
+		$this->initialState->expects($this->once())->method('provideInitialState')->with(
+			LoginCopyService::STATE_KEY,
+			['title' => 'Inloggen', 'divider' => 'of']
+		);
 
 		$service = $this->getMockBuilder(className: LoginCopyService::class)
 			->setConstructorArgs([$this->sources(), $this->logger, $groups, $this->layout(layout: 'light')])
@@ -349,7 +362,12 @@ class LoginCopyServiceTest extends TestCase {
 		$broken = $this->createMock(originalClassName: GroupThemingService::class);
 		$broken->method('resolveTokenSetForRequest')->willThrowException(new RuntimeException('boom'));
 		$this->logger->expects($this->once())->method('warning');
-		$failing = new LoginCopyService(sources: $this->sources(), logger: $this->logger, groupTheming: $broken, layoutOptions: $this->layout(layout: 'light'));
+		$failing = new LoginCopyService(
+			sources: $this->sources(),
+			logger: $this->logger,
+			groupTheming: $broken,
+			layoutOptions: $this->layout(layout: 'light')
+		);
 		$failing->injectForLogin();
 	}//end testTheLoginEntryResolvesTheSetAndFailsOpen()
 }//end class

@@ -215,7 +215,14 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			}
 		);
 
-		return new DelegatedGroupThemingService(groupTheming: $this->groupTheming(), tokenSets: $this->tokenSets(), groupManager: $this->groupManager(), userManager: $userManager, subAdmin: $subAdmin, audit: $audit);
+		return new DelegatedGroupThemingService(
+			groupTheming: $this->groupTheming(),
+			tokenSets: $this->tokenSets(),
+			groupManager: $this->groupManager(),
+			userManager: $userManager,
+			subAdmin: $subAdmin,
+			audit: $audit
+		);
 	}//end service()
 
 	/**
@@ -313,7 +320,10 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->assertTrue(condition: $this->entry(group: 'gemeente-a')['delegated'], message: 'The subadmin cannot drop the delegation.');
 		$this->assertSame(expected: $generation + 1, actual: (int)$this->app['group_token_sets_generation']);
 		$this->assertSame(expected: 'token_set_changed', actual: $this->audited[0][0]);
-		$this->assertSame(expected: ['actor' => 'anna', 'old' => 'rijkshuisstijl', 'new' => 'gemeente-a-huisstijl', 'group' => 'gemeente-a', 'delegated' => true], actual: $this->audited[0][1]);
+		$this->assertSame(
+			expected: ['actor' => 'anna', 'old' => 'rijkshuisstijl', 'new' => 'gemeente-a-huisstijl', 'group' => 'gemeente-a', 'delegated' => true],
+			actual: $this->audited[0][1]
+		);
 	}//end testSubadminOfTheGroupChoosesAnAllowedSet()
 
 	/**
@@ -347,7 +357,13 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->app['group_token_sets'] = json_encode($mapping);
 		$before = $this->app['group_token_sets'];
 
-		$controller = new MyGroupsController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), delegation: $this->service(), userSession: $this->session(), l10n: $this->l10n());
+		$controller = new MyGroupsController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			delegation: $this->service(),
+			userSession: $this->session(),
+			l10n: $this->l10n()
+		);
 		$response = $controller->update(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
 
 		$this->assertSame(expected: 422, actual: $response->getStatus());
@@ -460,7 +476,13 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			$this->assertSame(expected: GroupHouseStyle::class, actual: $granted[0]->getArguments()['settings']);
 		}
 
-		$controller = new MyGroupsController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), delegation: $this->service(), userSession: $this->session(), l10n: $this->l10n());
+		$controller = new MyGroupsController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			delegation: $this->service(),
+			userSession: $this->session(),
+			l10n: $this->l10n()
+		);
 		$this->assertSame(expected: 'gemeente-a', actual: $controller->index()->getData()['groups'][0]['group']);
 		$this->assertSame(expected: 403, actual: $controller->update(group: 'gemeente-b', tokenSet: 'amsterdam')->getStatus());
 		$this->assertSame(expected: 403, actual: $controller->update(group: 'gemeente-a', tokenSet: 'amsterdam')->getStatus());
@@ -468,7 +490,13 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $this->entry(group: 'gemeente-a')['tokenSet']);
 
 		$this->sessionUid = 'bob';
-		$plain = new MyGroupsController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), delegation: $this->service(), userSession: $this->session(), l10n: $this->l10n());
+		$plain = new MyGroupsController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			delegation: $this->service(),
+			userSession: $this->session(),
+			l10n: $this->l10n()
+		);
 		$this->assertSame(expected: [], actual: $plain->index()->getData()['groups']);
 		$this->assertSame(expected: 403, actual: $plain->update(group: 'gemeente-a', tokenSet: 'rijkshuisstijl')->getStatus());
 	}//end testSubadminEndpoints()
@@ -487,9 +515,17 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$this->assertSame(expected: 'settings/group-house-style', actual: $block->getForm()->getTemplateName());
 
 		$this->sessionUid = 'bob';
-		$this->assertNull(actual: (new GroupHouseStyle(delegation: $this->service(), userSession: $this->session(), l10n: $this->l10n()))->getSection());
+		$this->assertNull(actual: (new GroupHouseStyle(
+			delegation: $this->service(),
+			userSession: $this->session(),
+			l10n: $this->l10n()
+		))->getSection());
 
 		$this->sessionUid = null;
-		$this->assertNull(actual: (new GroupHouseStyle(delegation: $this->service(), userSession: $this->session(), l10n: $this->l10n()))->getSection());
+		$this->assertNull(actual: (new GroupHouseStyle(
+			delegation: $this->service(),
+			userSession: $this->session(),
+			l10n: $this->l10n()
+		))->getSection());
 	}//end testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups()
 }//end class

@@ -74,7 +74,9 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 		$this->fonts = $this->createMock(originalClassName: FontService::class);
 
 		$this->versions->method('get')->willReturnCallback(
-			fn (string $id): ?array => $id === $this->version['id'] ? $this->version : null
+			fn (string $id): ?array => match ($id === $this->version['id']) {
+				true => $this->version, default => null
+			}
 		);
 		$this->versions->method('list')->willReturn([['id' => '20260929170000-0001'], ['id' => $this->version['id']]]);
 		$this->bundles->method('export')->willReturn(
@@ -102,7 +104,10 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testThePreviewListsTheChangesAndWritesNothing(): void {
-		$this->bundles->expects($this->once())->method('import')->with($this->version['bundle'], true)->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
+		$this->bundles->expects($this->once())->method('import')->with(
+			$this->version['bundle'],
+			true
+		)->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
 		$this->audit->expects($this->never())->method('log');
 
 		$preview = $this->service()->preview(id: $this->version['id']);

@@ -168,14 +168,23 @@ class DocumentStyleServiceTest extends TestCase {
 		$groupTheming = $this->createMock(originalClassName: GroupThemingService::class);
 		$groupTheming->method('getMapping')->willReturn([['group' => 'gemeente-utrecht', 'tokenSet' => 'utrecht']]);
 		$groupTheming->method('resolveTokenSetForRequest')->willReturnCallback(
-			fn (): string => ($this->groups[(string)$this->sessionUid] === ['gemeente-utrecht'] ? 'utrecht' : $this->app['token_set'])
+			fn (): string => (match ($this->groups[(string)$this->sessionUid] === ['gemeente-utrecht']) {
+				true => 'utrecht', default => $this->app['token_set']
+			})
 		);
 		$users = $this->createMock(originalClassName: IUserManager::class);
 		$users->method('get')->willReturnCallback(fn (string $uid): ?IUser => $this->user(uid: $uid));
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturnCallback(fn (IUser $user): array => ($this->groups[$user->getUID()] ?? []));
 
-		$resolver = new UserTokenSetResolver(groupTheming: $groupTheming, tokenSets: $tokenSets, groupManager: $groupManager, userManager: $users, userSession: $this->session(), config: $this->config());
+		$resolver = new UserTokenSetResolver(
+			groupTheming: $groupTheming,
+			tokenSets: $tokenSets,
+			groupManager: $groupManager,
+			userManager: $users,
+			userSession: $this->session(),
+			config: $this->config()
+		);
 
 		$fonts = $this->createMock(originalClassName: FontService::class);
 		$fonts->method('getManifest')->willReturnCallback(fn (): array => $this->fontManifest);
@@ -229,7 +238,9 @@ class DocumentStyleServiceTest extends TestCase {
 	 */
 	private function session(): IUserSession {
 		$session = $this->createMock(originalClassName: IUserSession::class);
-		$session->method('getUser')->willReturnCallback(fn (): ?IUser => ($this->sessionUid === null ? null : $this->user(uid: $this->sessionUid)));
+		$session->method('getUser')->willReturnCallback(fn (): ?IUser => (match ($this->sessionUid === null) {
+			true => null, default => $this->user(uid: $this->sessionUid)
+		}));
 
 		return $session;
 	}//end session()
@@ -264,8 +275,19 @@ class DocumentStyleServiceTest extends TestCase {
 		$this->assertSame(expected: '/apps/thematiq/img/logos/utrecht.svg', actual: $inProcess['logo']['url']);
 
 		$this->sessionUid = 'bea';
-		$controller = new DocumentStyleController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), style: $this->service(), assets: $this->assets(), userSession: $this->session(), l10n: $this->createMock(originalClassName: IL10N::class));
-		$this->assertSame(expected: $inProcess['colours'], actual: $controller->show()->getData()['colours'], message: 'HTTP and in-process return the same values.');
+		$controller = new DocumentStyleController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			style: $this->service(),
+			assets: $this->assets(),
+			userSession: $this->session(),
+			l10n: $this->createMock(originalClassName: IL10N::class)
+		);
+		$this->assertSame(
+			expected: $inProcess['colours'],
+			actual: $controller->show()->getData()['colours'],
+			message: 'HTTP and in-process return the same values.'
+		);
 		$this->assertNotSame(expected: $this->service()->forUser(uid: 'kees')['colours']['primary'], actual: $inProcess['colours']['primary']);
 	}//end testGroupMappedUserGetsTheGroupSet()
 
@@ -357,7 +379,10 @@ class DocumentStyleServiceTest extends TestCase {
 		}
 
 		$this->assertSame(expected: [], actual: $this->files);
-		$this->assets()->store(kind: 'cover', bytes: '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>');
+		$this->assets()->store(
+			kind: 'cover',
+			bytes: '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>'
+		);
 		$this->assertSame(expected: 'image/svg+xml', actual: $this->assets()->getAssets()['cover']['mime']);
 		$this->assertArrayHasKey(key: 'cover.svg', array: $this->files);
 	}//end testUploadChecks()
@@ -369,7 +394,14 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAssetEndpointServesTheImage(): void {
-		$controller = new DocumentStyleController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), style: $this->service(), assets: $this->assets(), userSession: $this->session(), l10n: $this->createMock(originalClassName: IL10N::class));
+		$controller = new DocumentStyleController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			style: $this->service(),
+			assets: $this->assets(),
+			userSession: $this->session(),
+			l10n: $this->createMock(originalClassName: IL10N::class)
+		);
 		$this->assertSame(expected: 404, actual: $controller->asset(kind: 'logo')->getStatus());
 		$this->assertSame(expected: 404, actual: $controller->asset(kind: 'nope')->getStatus());
 

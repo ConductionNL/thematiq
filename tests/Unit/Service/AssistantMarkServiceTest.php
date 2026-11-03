@@ -115,7 +115,10 @@ class AssistantMarkServiceTest extends TestCase {
 		$this->assertTrue(condition: $mark['enabled']);
 		$this->assertSame(expected: 'Goedgekeurd door Gemeente Voorbeeld', actual: $mark['label']);
 		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $mark['organisation']);
-		$this->assertSame(expected: ['url' => '/apps/thematiq/img/logos/voorbeeld.svg', 'alt' => 'Logo van Gemeente Voorbeeld'], actual: $mark['logo']);
+		$this->assertSame(
+			expected: ['url' => '/apps/thematiq/img/logos/voorbeeld.svg', 'alt' => 'Logo van Gemeente Voorbeeld'],
+			actual: $mark['logo']
+		);
 	}//end testOnWithDefaults()
 
 	/**
@@ -189,7 +192,12 @@ class AssistantMarkServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testControllerAnswers(): void {
-		$controller = new AssistantMarkController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), mark: $this->service(), l10n: $this->dutch());
+		$controller = new AssistantMarkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			mark: $this->service(),
+			l10n: $this->dutch()
+		);
 		$this->assertSame(expected: ['enabled' => false], actual: $controller->show()->getData());
 
 		$saved = $controller->save(enabled: true);
@@ -198,7 +206,12 @@ class AssistantMarkServiceTest extends TestCase {
 		$this->assertSame(expected: 'Goedgekeurd door Gemeente Voorbeeld', actual: $controller->show()->getData()['label']);
 
 		$this->footerName = '';
-		$refused = (new AssistantMarkController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), mark: $this->service(), l10n: $this->dutch()))
+		$refused = (new AssistantMarkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			mark: $this->service(),
+			l10n: $this->dutch()
+		))
 			->save(enabled: true, organisation: '');
 		$this->assertSame(expected: 422, actual: $refused->getStatus());
 		$this->assertStringContainsString(needle: 'organisation name', haystack: $refused->getData()['error']);

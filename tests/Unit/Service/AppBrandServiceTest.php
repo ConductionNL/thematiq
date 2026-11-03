@@ -137,7 +137,11 @@ class AppBrandServiceTest extends TestCase {
 	 */
 	private function brands(): AppBrandService {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
-		$appManager->method('isInstalled')->willReturnCallback(fn (string $id): bool => in_array($id, ['collectives', 'files', 'spreed', 'settings'], true));
+		$appManager->method('isInstalled')->willReturnCallback(fn (string $id): bool => in_array(
+			$id,
+			['collectives', 'files', 'spreed', 'settings'],
+			true
+		));
 		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturnCallback(fn (string $name): bool => isset($this->files[$name]));
 		$folder->method('newFile')->willReturnCallback(
@@ -187,7 +191,9 @@ class AppBrandServiceTest extends TestCase {
 		$session = $this->createMock(originalClassName: IUserSession::class);
 		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('piet');
-		$session->method('getUser')->willReturnCallback(fn (): ?IUser => ($this->signedIn === true ? $user : null));
+		$session->method('getUser')->willReturnCallback(fn (): ?IUser => (match ($this->signedIn === true) {
+			true => $user, default => null
+		}));
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a']);
 		$preview = $this->createMock(originalClassName: ThemePreviewService::class);
@@ -197,7 +203,14 @@ class AppBrandServiceTest extends TestCase {
 		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$this->app['group_token_sets'] = '[{"group":"gemeente-a","tokenSet":"gemeente-a-huisstijl"}]';
-		$groupTheming = new GroupThemingService(config: $this->config(), groupManager: $groupManager, userSession: $session, tokenSetService: $this->tokenSets(), previewService: $preview, cacheFactory: $cacheFactory);
+		$groupTheming = new GroupThemingService(
+			config: $this->config(),
+			groupManager: $groupManager,
+			userSession: $session,
+			tokenSetService: $this->tokenSets(),
+			previewService: $preview,
+			cacheFactory: $cacheFactory
+		);
 
 		$designSystem = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystem->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
@@ -307,7 +320,11 @@ class AppBrandServiceTest extends TestCase {
 
 		[$set, $inline] = $this->render(context: 'user', appId: 'collectives');
 		$this->assertSame(expected: 'amsterdam', actual: $set);
-		$this->assertStringNotContainsString(needle: '/brand/collectives', haystack: implode('', $inline), message: 'The brand logo goes with the brand set.');
+		$this->assertStringNotContainsString(
+			needle: '/brand/collectives',
+			haystack: implode('', $inline),
+			message: 'The brand logo goes with the brand set.'
+		);
 	}//end testPreviewStillWins()
 
 	/**
@@ -334,7 +351,10 @@ class AppBrandServiceTest extends TestCase {
 		$css = implode('', $this->render(context: 'user', appId: 'collectives')[1]);
 
 		$this->assertStringContainsString(needle: ':root{--nldesign-logo-url:url(/brand/collectives/large)', haystack: $css);
-		$this->assertStringContainsString(needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}', haystack: $css);
+		$this->assertStringContainsString(
+			needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}',
+			haystack: $css
+		);
 
 		$brands = json_decode($this->app['app_brands'], true);
 		$brands['collectives']['logoSmall'] = null;
@@ -414,7 +434,10 @@ class AppBrandServiceTest extends TestCase {
 			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 
-		$this->assertCount(expectedCount: 1, haystack: (new ReflectionMethod(AppBrandController::class, 'logo'))->getAttributes(NoAdminRequired::class));
+		$this->assertCount(
+			expectedCount: 1,
+			haystack: (new ReflectionMethod(AppBrandController::class, 'logo'))->getAttributes(NoAdminRequired::class)
+		);
 
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);

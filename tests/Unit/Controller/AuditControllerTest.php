@@ -214,7 +214,13 @@ class AuditControllerTest extends TestCase {
 	public function testTheVersionRoutesAreRegistered(): void {
 		$routes = (string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/routes.php');
 		$this->assertStringContainsString(needle: "['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET']", haystack: $routes);
-		$this->assertStringContainsString(needle: "['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST']", haystack: $routes);
-		$this->assertStringContainsString(needle: "['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST']", haystack: $routes);
+		$this->assertStringContainsString(
+			needle: "['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST']",
+			haystack: $routes
+		);
+		$this->assertStringContainsString(
+			needle: "['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST']",
+			haystack: $routes
+		);
 	}//end testTheVersionRoutesAreRegistered()
 }//end class

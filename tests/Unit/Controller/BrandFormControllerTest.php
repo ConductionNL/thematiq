@@ -115,7 +115,12 @@ class BrandFormControllerTest extends TestCase {
 			config: $config,
 			validator: new CustomTokenSetValidator(),
 			contrast: new ContrastService(),
-			darkPalette: new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class))
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			)
 		);
 		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
 	}//end setUp()
@@ -202,7 +207,10 @@ class BrandFormControllerTest extends TestCase {
 		$response = $this->controller()->create();
 
 		$this->assertSame(expected: 409, actual: $response->getStatus());
-		$this->assertStringContainsString(needle: '#c8102e', haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css'));
+		$this->assertStringContainsString(
+			needle: '#c8102e',
+			haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css')
+		);
 	}//end testTakenNameStoresNothing()
 
 	/**

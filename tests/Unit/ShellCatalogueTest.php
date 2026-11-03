@@ -103,9 +103,16 @@ class ShellCatalogueTest extends TestCase {
 		$first = $this->service()->render(catalogue: $this->catalogue());
 
 		$this->assertSame(expected: $first, actual: $this->service()->render(catalogue: $this->catalogue()));
-		$this->assertDoesNotMatchRegularExpression(pattern: '/20\d\d-\d\d-\d\dT/', string: $first, message: 'a timestamp would make every run differ');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/20\d\d-\d\d-\d\dT/',
+			string: $first,
+			message: 'a timestamp would make every run differ'
+		);
 		$this->assertMatchesRegularExpression(pattern: '/^sets:[0-9a-f]{16}$/', string: $this->catalogue()['generated_from']);
-		$this->assertSame(expected: 'thematiq 1.2.3', actual: $this->service()->build(appPath: $this->root(), generatedFrom: 'thematiq 1.2.3')['generated_from']);
+		$this->assertSame(
+			expected: 'thematiq 1.2.3',
+			actual: $this->service()->build(appPath: $this->root(), generatedFrom: 'thematiq 1.2.3')['generated_from']
+		);
 	}//end testTheCatalogueIsReproducible()
 
 	/**
@@ -130,14 +137,26 @@ class ShellCatalogueTest extends TestCase {
 
 		foreach ($catalogue['sets'] as $set) {
 			$this->assertSame(expected: ['id', 'name', 'tokens', 'logo'], actual: array_slice(array_keys($set), 0, 4), message: $set['id']);
-			$this->assertSame(expected: [], actual: array_diff(array_keys($set), ['id', 'name', 'tokens', 'logo', 'vocabulary', 'dark']), message: $set['id']);
+			$this->assertSame(
+				expected: [],
+				actual: array_diff(array_keys($set), ['id', 'name', 'tokens', 'logo', 'vocabulary', 'dark']),
+				message: $set['id']
+			);
 			$this->assertNotSame(expected: '', actual: $set['name'], message: $set['id']);
-			$this->assertSame(expected: ['file', 'inverse_file', 'licence', 'redistributable', 'basis'], actual: array_keys($set['logo']), message: $set['id']);
+			$this->assertSame(
+				expected: ['file', 'inverse_file', 'licence', 'redistributable', 'basis'],
+				actual: array_keys($set['logo']),
+				message: $set['id']
+			);
 		}
 
 		$sets = $this->setsById(catalogue: $catalogue);
 		$this->assertSame(expected: 'Gemeente Zuiddrecht', actual: $sets['zuiddrecht']['name']);
-		$this->assertSame(expected: 'Conduction', actual: $sets['conduction']['name'], message: 'a set without a manifest entry is named after its id');
+		$this->assertSame(
+			expected: 'Conduction',
+			actual: $sets['conduction']['name'],
+			message: 'a set without a manifest entry is named after its id'
+		);
 	}//end testEveryShippedSetIsInTheCatalogueOnce()
 
 	/**
@@ -158,7 +177,11 @@ class ShellCatalogueTest extends TestCase {
 		// The same call the shell tokens endpoint makes for a set without an administrator's values.
 		$resolver = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
 		$this->assertSame(
-			expected: (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $resolver->resolveDeclarations(appPath: $this->root(), id: 'zuiddrecht', theming: [])),
+			expected: (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $resolver->resolveDeclarations(
+				appPath: $this->root(),
+				id: 'zuiddrecht',
+				theming: []
+			)),
 			actual: $this->setsById(catalogue: $catalogue)['zuiddrecht']['tokens']
 		);
 	}//end testEverySetHasAllEighteenRoles()
@@ -201,7 +224,10 @@ class ShellCatalogueTest extends TestCase {
 		// The values are the committed dark file's own.
 		$dark = (string)file_get_contents($this->root() . '/css/tokens/dark/zuiddrecht.css');
 		$this->assertStringContainsString(needle: '--nldesign-color-text: ' . $sets['zuiddrecht']['dark']['tokens']['ink'] . ';', haystack: $dark);
-		$this->assertStringContainsString(needle: '--nldesign-color-primary: ' . $sets['zuiddrecht']['dark']['tokens']['primary'] . ';', haystack: $dark);
+		$this->assertStringContainsString(
+			needle: '--nldesign-color-primary: ' . $sets['zuiddrecht']['dark']['tokens']['primary'] . ';',
+			haystack: $dark
+		);
 		$this->assertNotSame(expected: $sets['zuiddrecht']['tokens']['ground'], actual: $sets['zuiddrecht']['dark']['tokens']['ground']);
 	}//end testASetWithADarkVariantHasDarkRoles()
 
@@ -233,7 +259,15 @@ class ShellCatalogueTest extends TestCase {
 				$checked++;
 				$ratio = $contrast->measure(foreground: $tokens[$foreground], background: $tokens[$background], page: $tokens['ground']);
 				if ($ratio === null || $ratio < 4.5) {
-					$failures[] = sprintf('%s: %s %s on %s %s is %s', $set['id'], $foreground, $tokens[$foreground], $background, $tokens[$background], var_export($ratio, true));
+					$failures[] = sprintf(
+						'%s: %s %s on %s %s is %s',
+						$set['id'],
+						$foreground,
+						$tokens[$foreground],
+						$background,
+						$tokens[$background],
+						var_export($ratio, true)
+					);
 				}
 			}
 		}
@@ -307,7 +341,10 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertTrue(condition: $sets['example-gemeente']['logo']['redistributable']);
 		$this->assertTrue(condition: $sets['dinkelland']['logo']['redistributable']);
 		$this->assertTrue(condition: $sets['frankendesk']['logo']['redistributable']);
-		$this->assertTrue(condition: $sets['opencatalogi']['logo']['redistributable'], message: 'OpenCatalogi is a Conduction product, and token-sets.json says so');
+		$this->assertTrue(
+			condition: $sets['opencatalogi']['logo']['redistributable'],
+			message: 'OpenCatalogi is a Conduction product, and token-sets.json says so'
+		);
 	}//end testALogoIsRedistributableOnlyOnEvidence()
 
 	/**
@@ -319,8 +356,15 @@ class ShellCatalogueTest extends TestCase {
 		$sets = $this->setsById(catalogue: $this->catalogue());
 
 		foreach (['amsterdam', 'denhaag', 'rotterdam', 'utrecht', 'vng', 'nijmegen', 'provincie-zuid-holland', 'xxllnc'] as $id) {
-			$this->assertNull(actual: $sets[$id]['logo']['redistributable'], message: $id . ': the repository does not say, so the catalogue does not either');
-			$this->assertStringContainsString(needle: 'holder of the artwork is not stated', haystack: (string)$sets[$id]['logo']['licence'], message: $id);
+			$this->assertNull(
+				actual: $sets[$id]['logo']['redistributable'],
+				message: $id . ': the repository does not say, so the catalogue does not either'
+			);
+			$this->assertStringContainsString(
+				needle: 'holder of the artwork is not stated',
+				haystack: (string)$sets[$id]['logo']['licence'],
+				message: $id
+			);
 		}
 
 		// The Rijksoverheid mark: the repository's own asset page quotes the prohibition.
@@ -355,7 +399,11 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertContains(needle: 'img/logos/zuiddrecht-dark.svg', haystack: $files);
 		$this->assertNotContains(needle: 'img/logos/rijkshuisstijl.svg', haystack: $files);
 		$this->assertNotContains(needle: 'img/logos/utrecht.svg', haystack: $files);
-		$this->assertSame(expected: count($files), actual: count(array_unique(array_map('basename', $files))), message: 'two logos would overwrite each other in one directory');
+		$this->assertSame(
+			expected: count($files),
+			actual: count(array_unique(array_map('basename', $files))),
+			message: 'two logos would overwrite each other in one directory'
+		);
 	}//end testTheCopyListHoldsOnlyRedistributableLogos()
 
 	/**
@@ -369,7 +417,11 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertContains(needle: 'zuiddrecht', haystack: $named);
 
 		foreach ($fonts as $family => $font) {
-			$this->assertSame(expected: ['family', 'sets', 'shipped', 'files', 'licence', 'licence_files', 'redistributable', 'basis'], actual: array_keys($font), message: $family);
+			$this->assertSame(
+				expected: ['family', 'sets', 'shipped', 'files', 'licence', 'licence_files', 'redistributable', 'basis'],
+				actual: array_keys($font),
+				message: $family
+			);
 			$this->assertNotSame(expected: [], actual: $font['sets'], message: $family);
 			$this->assertSame(expected: ($font['files'] !== []), actual: $font['shipped'], message: $family);
 			foreach (array_merge($font['files'], $font['licence_files']) as $file) {
@@ -379,7 +431,11 @@ class ShellCatalogueTest extends TestCase {
 			if ($font['redistributable'] === true) {
 				$this->assertContains(needle: $font['licence'], haystack: ['OFL-1.1', 'Apache-2.0'], message: $family);
 				$this->assertNotSame(expected: [], actual: $font['files'], message: $family);
-				$this->assertNotSame(expected: [], actual: $font['licence_files'], message: $family . ': the licence asks for its notice to travel with the files');
+				$this->assertNotSame(
+					expected: [],
+					actual: $font['licence_files'],
+					message: $family . ': the licence asks for its notice to travel with the files'
+				);
 				$this->assertFileExists(filename: $this->root() . '/LICENSES/' . $font['licence'] . '.txt', message: $family);
 			}
 		}
@@ -419,7 +475,11 @@ class ShellCatalogueTest extends TestCase {
 		$this->assertSame(expected: '5px', actual: $zuiddrecht['brand-stripe-height']);
 		$this->assertArrayNotHasKey(key: 'color-primary', array: $zuiddrecht, message: 'a role name stays in tokens');
 		$this->assertArrayNotHasKey(key: 'logo-url', array: $zuiddrecht, message: 'an address is a file in another product');
-		$this->assertArrayNotHasKey(key: 'component-heading-1-color', array: $zuiddrecht, message: 'a default the set does not declare is not its own');
+		$this->assertArrayNotHasKey(
+			key: 'component-heading-1-color',
+			array: $zuiddrecht,
+			message: 'a default the set does not declare is not its own'
+		);
 		$keys = array_keys($zuiddrecht);
 		$sorted = $keys;
 		sort($sorted, SORT_STRING);

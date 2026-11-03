@@ -109,7 +109,11 @@ class ContrastControllerTest extends TestCase {
 			'candidates' => [['name' => 'primary', 'value' => '#154273', 'role' => 'text']],
 		]);
 
-		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
+		$controller = new ContrastController(
+			appName: 'nldesign',
+			request: $request,
+			contrastService: $this->createMock(originalClassName: ContrastService::class)
+		);
 		$response = $controller->evaluate();
 
 		$this->assertSame(expected: 400, actual: $response->getStatus());
@@ -127,7 +131,11 @@ class ContrastControllerTest extends TestCase {
 			'background' => '#FFFFFF',
 		]);
 
-		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
+		$controller = new ContrastController(
+			appName: 'nldesign',
+			request: $request,
+			contrastService: $this->createMock(originalClassName: ContrastService::class)
+		);
 		$response = $controller->evaluate();
 
 		$this->assertSame(expected: 400, actual: $response->getStatus());
@@ -145,7 +153,11 @@ class ContrastControllerTest extends TestCase {
 			'background' => '#FFFFFF',
 		]);
 
-		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
+		$controller = new ContrastController(
+			appName: 'nldesign',
+			request: $request,
+			contrastService: $this->createMock(originalClassName: ContrastService::class)
+		);
 		$response = $controller->evaluate();
 
 		$this->assertSame(expected: 400, actual: $response->getStatus());

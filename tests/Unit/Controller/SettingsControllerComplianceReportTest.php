@@ -59,10 +59,14 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'utrecht' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'utrecht', default => $default
+			})
 		);
 		$config->method('getSystemValue')->willReturnCallback(
-			fn (string $key, $default = '') => ($key === 'instanceid' ? 'inst123' : $default)
+			fn (string $key, $default = '') => (match ($key === 'instanceid') {
+				true => 'inst123', default => $default
+			})
 		);
 
 		$this->complianceReportService = $this->createMock(originalClassName: ComplianceReportService::class);

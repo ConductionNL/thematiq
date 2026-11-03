@@ -135,7 +135,9 @@ class ShippedDarkContrastTest extends TestCase {
 	public static function highContrastSetProvider(): array {
 		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
 		$cases = [];
-		foreach ((is_array($manifest) === true ? $manifest : []) as $set) {
+		foreach ((match (is_array($manifest) === true) {
+			true => $manifest, default => []
+		}) as $set) {
 			if (self::isHighContrast(set: $set) === true) {
 				$cases[$set['id']] = [$set['id']];
 			}
@@ -212,7 +214,16 @@ class ShippedDarkContrastTest extends TestCase {
 
 			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
 			if ($ratio === null || $ratio < $threshold) {
-				$failures[] = sprintf('%s: %s on %s = %s, needs %.1f:1', $name, $foreground, $background, ($ratio === null ? 'unmeasurable' : sprintf('%.2f:1', $ratio)), $threshold);
+				$failures[] = sprintf(
+					'%s: %s on %s = %s, needs %.1f:1',
+					$name,
+					$foreground,
+					$background,
+					(match ($ratio === null) {
+						true => 'unmeasurable', default => sprintf('%.2f:1', $ratio)
+					}),
+					$threshold
+				);
 			}
 		}
 
@@ -239,7 +250,11 @@ class ShippedDarkContrastTest extends TestCase {
 		$media = [];
 		$this->assertSame(
 			expected: 1,
-			actual: preg_match('/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/', $css, $media),
+			actual: preg_match(
+				'/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/',
+				$css,
+				$media
+			),
 			message: $setId . ': no system-preference dark scope'
 		);
 		$explicit = [];
@@ -341,7 +356,13 @@ class ShippedDarkContrastTest extends TestCase {
 		$label = ($value('--nldesign-component-button-error-color') ?? '#ffffff');
 
 		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
-		$designSystem = (array_column((is_array($manifest) === true ? $manifest : []), 'design_system', 'id')[$setId] ?? 'nldesign');
+		$designSystem = (array_column(
+			(match (is_array($manifest) === true) {
+				true => $manifest, default => []
+			}),
+			'design_system',
+			'id'
+		)[$setId] ?? 'nldesign');
 		$fillToken = ([
 			'nldesign' => '--nldesign-color-error',
 			'high-contrast' => '--nldesign-color-error',
@@ -355,7 +376,11 @@ class ShippedDarkContrastTest extends TestCase {
 		$fill = $value($fillToken);
 		$this->assertNotNull(actual: $fill, message: $setId . ' dark declares no ' . $fillToken);
 		$ratio = $contrast->measure(foreground: $label, background: $fill);
-		$this->assertGreaterThanOrEqual(expected: 4.5, actual: (float)$ratio, message: sprintf('%s dark error label %s on %s', $setId, $label, $fill));
+		$this->assertGreaterThanOrEqual(
+			expected: 4.5,
+			actual: (float)$ratio,
+			message: sprintf('%s dark error label %s on %s', $setId, $label, $fill)
+		);
 	}//end testTheErrorLabelReadsOnTheErrorFill()
 
 	/**
@@ -386,7 +411,11 @@ class ShippedDarkContrastTest extends TestCase {
 		$this->assertNotNull(actual: $rgb, message: $setId . ': cannot parse ' . $page);
 		// Relative luminance from the ratio against black: (L + 0.05) / 0.05.
 		$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
-		$this->assertLessThanOrEqual(expected: 0.05, actual: $luminance, message: sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
+		$this->assertLessThanOrEqual(
+			expected: 0.05,
+			actual: $luminance,
+			message: sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance)
+		);
 	}//end testThePageBackgroundIsDark()
 
 	/**

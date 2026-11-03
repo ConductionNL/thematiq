@@ -106,7 +106,10 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$this->assertSame(expected: 'md-plain:custom-gemeente-x:/srv/apps/thematiq', actual: $response->render());
 		$this->assertStringStartsWith(prefix: 'text/markdown', string: $this->headers(response: $response)['Content-Type']);
-		$this->assertSame(expected: 'attachment; filename="custom-gemeente-x-tokens.md"', actual: $this->headers(response: $response)['Content-Disposition']);
+		$this->assertSame(
+			expected: 'attachment; filename="custom-gemeente-x-tokens.md"',
+			actual: $this->headers(response: $response)['Content-Disposition']
+		);
 	}//end testTheMarkdownDownload()
 
 	/**

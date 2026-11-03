@@ -70,7 +70,9 @@ class TokenSetServiceMergeTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'custom_token_sets' ? $this->customManifest : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'custom_token_sets') {
+				true => $this->customManifest, default => $default
+			})
 		);
 
 		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
@@ -221,7 +223,9 @@ class TokenSetServiceMergeTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'custom_token_sets' ? $this->customManifest : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'custom_token_sets') {
+				true => $this->customManifest, default => $default
+			})
 		);
 
 		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);

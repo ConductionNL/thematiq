@@ -266,9 +266,16 @@ class TokenSetVocabularyTest extends TestCase {
 				continue;
 			}
 
-			$this->assertFalse(condition: $result['auditable'], message: $result['id'] . ' must not be audited against a vocabulary its design system never reads.');
+			$this->assertFalse(
+				condition: $result['auditable'],
+				message: $result['id'] . ' must not be audited against a vocabulary its design system never reads.'
+			);
 			$this->assertTrue(condition: $result['complete'], message: $result['id'] . ' must not be reported as incomplete when it is not audited.');
-			$this->assertSame(expected: [], actual: $result['missingRequired'], message: $result['id'] . ' must report no missing tokens when it is not audited.');
+			$this->assertSame(
+				expected: [],
+				actual: $result['missingRequired'],
+				message: $result['id'] . ' must report no missing tokens when it is not audited.'
+			);
 		}
 	}//end testSetsOfNonConsumingDesignSystemsAreNotAudited()
 
@@ -293,8 +300,16 @@ class TokenSetVocabularyTest extends TestCase {
 		$result = $byId['summer-breeze'];
 
 		$this->assertTrue(condition: $result['auditable'], message: 'summer-breeze must be audited, not skipped.');
-		$this->assertSame(expected: [], actual: $result['missingRequired'], message: 'Names the summer-breeze stylesheets read that its token file does not declare.');
-		$this->assertSame(expected: [], actual: $result['foreignNldesignNames'], message: 'Names the summer-breeze token file declares that nothing reads.');
+		$this->assertSame(
+			expected: [],
+			actual: $result['missingRequired'],
+			message: 'Names the summer-breeze stylesheets read that its token file does not declare.'
+		);
+		$this->assertSame(
+			expected: [],
+			actual: $result['foreignNldesignNames'],
+			message: 'Names the summer-breeze token file declares that nothing reads.'
+		);
 		$this->assertFalse(
 			condition: $result['primaryMismatch'],
 			message: '--summer-color-primary ' . (string)$result['cssPrimary'] . ' disagrees with token-sets.json ' . (string)$result['declaredPrimary']
@@ -332,7 +347,11 @@ class TokenSetVocabularyTest extends TestCase {
 			$mirror[$match[1]] = ['prefix' => $match[2], 'primary' => $match[3]];
 		}
 
-		$this->assertSame(expected: TokenSetVocabularyAuditService::OWN_VOCABULARIES, actual: $mirror, message: 'OWN_VOCABULARIES has drifted between PHP and Node: update both.');
+		$this->assertSame(
+			expected: TokenSetVocabularyAuditService::OWN_VOCABULARIES,
+			actual: $mirror,
+			message: 'OWN_VOCABULARIES has drifted between PHP and Node: update both.'
+		);
 	}//end testNodeMirrorKnowsTheSameOwnVocabularies()
 
 	/**

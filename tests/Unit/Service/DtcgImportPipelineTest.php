@@ -51,7 +51,14 @@ final class DtcgImportPipelineTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		return (new TokenSetConverterService(appManager: $appManager, cssParser: new CssParserService(), contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class)))
+		return (new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))
 			->convert(content: (string)json_encode($document), slug: 'proef', displayName: 'Proef');
 	}//end convert()
 
@@ -86,7 +93,10 @@ final class DtcgImportPipelineTest extends TestCase {
 		);
 		$validator = new CustomTokenSetValidator();
 
-		$this->assertNull(actual: $validator->validateDeclarations(declarations: (new CssParserService())->parseRootBlock(css: (string)$result['css']), slug: 'proef'));
+		$this->assertNull(actual: $validator->validateDeclarations(
+			declarations: (new CssParserService())->parseRootBlock(css: (string)$result['css']),
+			slug: 'proef'
+		));
 		$this->assertSame(expected: 422, actual: $validator->getLastError()['status'] ?? null);
 	}//end testExtensionWithForbiddenValueIsRefused()
 
@@ -114,10 +124,21 @@ final class DtcgImportPipelineTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$mapped = (new DesignTokensMapper())->map(document: ['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]]]]);
-		$palette = new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$palette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 
-		$this->assertArrayHasKey(key: '--nldesign-color-primary', array: $palette->deriveDarkDeclarations(lightDeclarations: $mapped['declarations']));
+		$this->assertArrayHasKey(
+			key: '--nldesign-color-primary',
+			array: $palette->deriveDarkDeclarations(lightDeclarations: $mapped['declarations'])
+		);
 		// The control: stored as written, the palette could not read it and would skip it.
-		$this->assertArrayNotHasKey(key: '--nldesign-color-primary', array: $palette->deriveDarkDeclarations(lightDeclarations: ['--nldesign-color-primary' => 'oklch(0.5 0.1 250)']));
+		$this->assertArrayNotHasKey(
+			key: '--nldesign-color-primary',
+			array: $palette->deriveDarkDeclarations(lightDeclarations: ['--nldesign-color-primary' => 'oklch(0.5 0.1 250)'])
+		);
 	}//end testConvertedColourIsDerived()
 }//end class

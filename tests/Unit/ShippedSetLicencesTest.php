@@ -79,7 +79,10 @@ class ShippedSetLicencesTest extends TestCase {
 				continue;
 			}
 
-			$this->assertIsArray(actual: ($entry['licence'] ?? null), message: $entry['id'] . ' comes from a published theme and declares no licence');
+			$this->assertIsArray(
+				actual: ($entry['licence'] ?? null),
+				message: $entry['id'] . ' comes from a published theme and declares no licence'
+			);
 		}
 	}//end testEveryConvertedSetDeclaresALicence()
 
@@ -117,7 +120,11 @@ class ShippedSetLicencesTest extends TestCase {
 		$table = (string)file_get_contents($this->root() . '/docs/reference/token-set-licences.md');
 		foreach ($this->manifest() as $entry) {
 			if (isset($entry['licence']) === true) {
-				$this->assertStringContainsString(needle: '| `' . $entry['id'] . '` |', haystack: $table, message: $entry['id'] . ' is missing from the audit table');
+				$this->assertStringContainsString(
+					needle: '| `' . $entry['id'] . '` |',
+					haystack: $table,
+					message: $entry['id'] . ' is missing from the audit table'
+				);
 			}
 		}
 	}//end testTheAuditTableListsEveryDeclaredSet()

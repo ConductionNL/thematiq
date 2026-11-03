@@ -458,7 +458,10 @@ class CssInjectionServiceTest extends TestCase {
 		$fontLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('custom-openwoo');
 
-		$this->assertSame(expected: ['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'], actual: array_column($manifest['layers'], 'layer'));
+		$this->assertSame(
+			expected: ['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'],
+			actual: array_column($manifest['layers'], 'layer')
+		);
 		$last = end($manifest['layers']);
 		$this->assertSame(expected: 'inline', actual: $last['kind']);
 		$this->assertSame(expected: CssInjectionService::INTERNAL_SCOPES_STYLE_ID, actual: $last['id']);
@@ -491,7 +494,11 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains(needle: 'custom-overrides-nextcloud', haystack: $styleLog, message: 'overrides are not a static app stylesheet any more');
+		$this->assertNotContains(
+			needle: 'custom-overrides-nextcloud',
+			haystack: $styleLog,
+			message: 'overrides are not a static app stylesheet any more'
+		);
 		$this->assertStringStartsWith(prefix: 'runtime:css/custom-overrides-nextcloud.css?v=', string: (string)end($fontLog));
 	}//end testCustomOverridesAlwaysLoadedLast()
 
@@ -686,7 +693,11 @@ class CssInjectionServiceTest extends TestCase {
 		// Nextcloud prints every addStyle() stylesheet before every header,
 		// and the saved overrides are a header, so the lock must be one too.
 		$this->assertNotContains(needle: 'primary-lock', haystack: $styleLog);
-		$this->assertStringContainsString(needle: 'css/primary-lock.css', haystack: (string)end($fontLog), message: 'primary-lock is the last link emitted');
+		$this->assertStringContainsString(
+			needle: 'css/primary-lock.css',
+			haystack: (string)end($fontLog),
+			message: 'primary-lock is the last link emitted'
+		);
 		$this->assertGreaterThan(
 			expected: $this->indexStartingWith(log: $fontLog, prefix: 'runtime:css/custom-overrides-nextcloud.css'),
 			actual: $this->indexStartingWith(log: $fontLog, prefix: '/custom_apps/thematiq/css/primary-lock.css'),
@@ -1122,10 +1133,17 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertFalse(condition: $this->runtimeFiles->store()->exists('css/custom-overrides-nextcloud.css'), message: 'rendering created an overrides file');
+		$this->assertFalse(
+			condition: $this->runtimeFiles->store()->exists('css/custom-overrides-nextcloud.css'),
+			message: 'rendering created an overrides file'
+		);
 		$this->assertSame(expected: [], actual: $this->runtimeFiles->store()->listDirectory('css'), message: 'rendering stored a file');
 		$this->assertContains(needle: 'systems/nldesign/fonts', haystack: $styleLog);
-		$this->assertCount(expectedCount: 3, haystack: $fontLog, message: 'the fonts link and the two toggles: nothing was saved, so no overrides link');
+		$this->assertCount(
+			expectedCount: 3,
+			haystack: $fontLog,
+			message: 'the fonts link and the two toggles: nothing was saved, so no overrides link'
+		);
 		$this->assertStringContainsString(needle: '/index.php/apps/thematiq/fonts.css', haystack: $fontLog[0]);
 		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'), message: 'layer 5 was cancelled');
 		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'show-menu-labels'), message: 'layer 5 was cancelled');
@@ -1186,7 +1204,11 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertStringStartsWith(prefix: 'runtime:css/custom-overrides-nextcloud.css', string: (string)($fontLog[0] ?? ''), message: 'layer 4 was cancelled');
+		$this->assertStringStartsWith(
+			prefix: 'runtime:css/custom-overrides-nextcloud.css',
+			string: (string)($fontLog[0] ?? ''),
+			message: 'layer 4 was cancelled'
+		);
 		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'), message: 'layer 5 was cancelled');
 		$this->assertTrue(condition: $bannerInjected, message: 'layer 6 (preview banner) was cancelled');
 	}//end testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers()
@@ -1369,7 +1391,11 @@ class CssInjectionServiceTest extends TestCase {
 
 		$this->assertNotNull(actual: $darkFile, message: 'the dark variant is in the manifest');
 		$this->assertNotNull(actual: $darkLogo, message: 'the dark logo layer is in the manifest');
-		$this->assertGreaterThan(expected: $darkFile, actual: $darkLogo, message: 'the dark logo layer must come after the dark variant, or its relative url wins');
+		$this->assertGreaterThan(
+			expected: $darkFile,
+			actual: $darkLogo,
+			message: 'the dark logo layer must come after the dark variant, or its relative url wins'
+		);
 		$this->assertStringContainsString(needle: 'url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)', haystack: $layers[$darkLogo]['css']);
 	}//end testADarkLogoLayerFollowsTheDarkVariant()
 
@@ -1438,11 +1464,19 @@ class CssInjectionServiceTest extends TestCase {
 		$manifestFiles = [];
 		foreach ($manifest['layers'] as $layer) {
 			if ($layer['kind'] === 'file') {
-				$this->assertStringEndsWith(suffix: '?v=9.9.9', string: $layer['href'], message: 'a manifest href carries the installed version as cache-buster');
+				$this->assertStringEndsWith(
+					suffix: '?v=9.9.9',
+					string: $layer['href'],
+					message: 'a manifest href carries the installed version as cache-buster'
+				);
 				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
 			} else {
 				$this->assertSame(expected: 'inline', actual: $layer['kind']);
-				$this->assertSame(expected: CssInjectionService::LOGO_STYLE_ID, actual: $layer['id'], message: 'the inline logo layer carries the id the client replaces it by');
+				$this->assertSame(
+					expected: CssInjectionService::LOGO_STYLE_ID,
+					actual: $layer['id'],
+					message: 'the inline logo layer carries the id the client replaces it by'
+				);
 				$this->assertStringContainsString(needle: '--nldesign-logo-url', haystack: $layer['css']);
 			}
 		}
@@ -1546,7 +1580,11 @@ class CssInjectionServiceTest extends TestCase {
 		$this->assertSame(expected: CssInjectionService::STOCK_TOKENS_STYLE_ID, actual: $manifest['layers'][0]['id']);
 		$this->assertSame(expected: $block, actual: $manifest['layers'][0]['css']);
 		foreach ($manifest['layers'] as $layer) {
-			$this->assertStringNotContainsString(needle: 'tokens/nextcloud', haystack: ($layer['href'] ?? ''), message: 'the shipped snapshot is not loaded');
+			$this->assertStringNotContainsString(
+				needle: 'tokens/nextcloud',
+				haystack: ($layer['href'] ?? ''),
+				message: 'the shipped snapshot is not loaded'
+			);
 		}
 	}//end testStylesheetManifestCarriesTheInstanceResolvedStockTokens()
 
@@ -1809,7 +1847,10 @@ class CssInjectionServiceTest extends TestCase {
 			array_filter(
 				$log,
 				static fn (string $entry): bool => str_starts_with($entry, 'inline:thematiq-navigation-width')
-					|| preg_match('#/css/(workplace-layout|login-watermark-off|brand-stripe|brand-stripe-login-only|brand-stripe-header-only|navigation-width|navigation-active-soft)\.css#', $entry) === 1
+					|| preg_match(
+						'#/css/(workplace-layout|login-watermark-off|brand-stripe|brand-stripe-login-only|brand-stripe-header-only|navigation-width|navigation-active-soft)\.css#',
+						$entry
+					) === 1
 			)
 		);
 		$this->assertSame(

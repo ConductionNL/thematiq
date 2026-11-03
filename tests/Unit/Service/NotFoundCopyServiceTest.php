@@ -98,7 +98,9 @@ class NotFoundCopyServiceTest extends TestCase {
 
 		$this->designSystemService->method('getTokenSetMeta')->willReturn($meta);
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, string $default) => ($key === NotFoundCopyService::CONFIG_KEY ? $override : $default)
+			fn (string $app, string $key, string $default) => (match ($key === NotFoundCopyService::CONFIG_KEY) {
+				true => $override, default => $default
+			})
 		);
 	}//end configure()
 
@@ -216,7 +218,10 @@ class NotFoundCopyServiceTest extends TestCase {
 	 */
 	public function testTheLightWorkplaceLoadsTheScript(): void {
 		$this->configure(block: ['title' => ['nl' => 'Pagina niet gevonden', 'en' => 'Page not found']]);
-		$this->initialState->expects($this->once())->method('provideInitialState')->with(NotFoundCopyService::STATE_KEY, ['title' => 'Pagina niet gevonden']);
+		$this->initialState->expects($this->once())->method('provideInitialState')->with(
+			NotFoundCopyService::STATE_KEY,
+			['title' => 'Pagina niet gevonden']
+		);
 
 		$this->service()->inject();
 

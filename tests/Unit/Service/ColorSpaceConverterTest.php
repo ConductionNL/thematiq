@@ -73,7 +73,12 @@ final class ColorSpaceConverterTest extends TestCase {
 		$actual = $converter->toHex(rgb: (array)$converter->toSrgb(space: $space, components: $components));
 
 		foreach ([1, 3, 5] as $offset) {
-			$this->assertEqualsWithDelta(expected: hexdec(substr($expected, $offset, 2)), actual: hexdec(substr($actual, $offset, 2)), delta: 1, message: $space . ': ' . $actual . ' vs ' . $expected);
+			$this->assertEqualsWithDelta(
+				expected: hexdec(substr($expected, $offset, 2)),
+				actual: hexdec(substr($actual, $offset, 2)),
+				delta: 1,
+				message: $space . ': ' . $actual . ' vs ' . $expected
+			);
 		}
 	}//end testConvertsToTheReference()
 

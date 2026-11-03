@@ -58,11 +58,20 @@ final class FigmaTokenReaderTest extends TestCase {
 		$reader = new FigmaTokenReader();
 		$css = ":root {\n\t--nldesign-color-primary: #123456;\n}\n";
 		$dtcg = "{\n  \"color\": {\"primary\": {\"\$type\": \"color\", \"\$value\": \"#123456\"}}\n}";
-		$own = (string)json_encode((new DesignTokensWriter())->write(declarations: ['--nldesign-color-primary' => '#123456'], setId: 'x', setName: 'X', appVersion: '1'));
+		$own = (string)json_encode((new DesignTokensWriter())->write(
+			declarations: ['--nldesign-color-primary' => '#123456'],
+			setId: 'x',
+			setName: 'X',
+			appVersion: '1'
+		));
 
 		$this->assertSame(expected: $css, actual: $reader->normalise(content: $css, skipped: $skipped));
 		$this->assertSame(expected: $dtcg, actual: $reader->normalise(content: $dtcg, skipped: $skipped));
-		$this->assertSame(expected: $own, actual: $reader->normalise(content: $own, skipped: $skipped), message: 'a download with its extensions needs no rewrite');
+		$this->assertSame(
+			expected: $own,
+			actual: $reader->normalise(content: $own, skipped: $skipped),
+			message: 'a download with its extensions needs no rewrite'
+		);
 		$this->assertSame(expected: '{not json', actual: $reader->normalise(content: '{not json', skipped: $skipped));
 		$this->assertSame(expected: '', actual: $reader->normalise(content: '', skipped: $skipped));
 		$this->assertSame(expected: [], actual: $skipped);
@@ -90,9 +99,18 @@ final class FigmaTokenReaderTest extends TestCase {
 		);
 
 		$extension = $read['document']['$extensions']['nl.conduction.thematiq'];
-		$this->assertSame(expected: '--nldesign-color-primary', actual: $read['document']['nldesign']['color']['primary']['$extensions']['nl.conduction.thematiq']['cssVariable']);
-		$this->assertSame(expected: '--merk-color-blauw-500', actual: $read['document']['merk']['color']['blauw-500']['$extensions']['nl.conduction.thematiq']['cssVariable']);
-		$this->assertSame(expected: '--nldesign-border-width', actual: $read['document']['nldesign']['border']['width']['$extensions']['nl.conduction.thematiq']['cssVariable']);
+		$this->assertSame(
+			expected: '--nldesign-color-primary',
+			actual: $read['document']['nldesign']['color']['primary']['$extensions']['nl.conduction.thematiq']['cssVariable']
+		);
+		$this->assertSame(
+			expected: '--merk-color-blauw-500',
+			actual: $read['document']['merk']['color']['blauw-500']['$extensions']['nl.conduction.thematiq']['cssVariable']
+		);
+		$this->assertSame(
+			expected: '--nldesign-border-width',
+			actual: $read['document']['nldesign']['border']['width']['$extensions']['nl.conduction.thematiq']['cssVariable']
+		);
 		$this->assertSame(
 			expected: ['--nldesign-border-radius' => '6px', '--nldesign-border-radius-large' => 'var(--nldesign-border-radius)', '--nldesign-line-height' => '1.5'],
 			actual: $extension['cssOnly']
@@ -137,7 +155,11 @@ final class FigmaTokenReaderTest extends TestCase {
 			actual: $read['document']['$extensions']['nl.conduction.thematiq']['cssOnly']
 		);
 		$this->assertTrue(condition: (new CustomTokenSetValidator())->isForbiddenValue(value: '<script>'));
-		$this->assertArrayHasKey(key: 'Odd_Name', array: $read['document']['nldesign']['spacing'], message: 'a path that is not a CSS name of ours is left to the mapper');
+		$this->assertArrayHasKey(
+			key: 'Odd_Name',
+			array: $read['document']['nldesign']['spacing'],
+			message: 'a path that is not a CSS name of ours is left to the mapper'
+		);
 	}//end testAValueThatCouldLeaveItsDeclarationIsLeftOut()
 
 	/**
@@ -183,7 +205,10 @@ final class FigmaTokenReaderTest extends TestCase {
 			]
 		);
 
-		$this->assertSame(expected: ['$value' => '#222222', '$type' => 'color', '$description' => 'Merk'], actual: $read['document']['color']['primary']);
+		$this->assertSame(
+			expected: ['$value' => '#222222', '$type' => 'color', '$description' => 'Merk'],
+			actual: $read['document']['color']['primary']
+		);
 		$this->assertSame(expected: ['$value' => '#000000', '$type' => 'color'], actual: $read['document']['color']['text']);
 		$this->assertSame(expected: 'fontFamily', actual: $read['document']['font']['base']['$type']);
 		$this->assertArrayNotHasKey(key: '$metadata', array: $read['document']);
@@ -203,7 +228,11 @@ final class FigmaTokenReaderTest extends TestCase {
 		$withoutThemes = $this->read(document: ['basis' => $light, 'Dark' => $dark, '$metadata' => ['tokenSetOrder' => ['basis', 'Dark']]]);
 		$this->assertSame(expected: '#111111', actual: $withoutThemes['document']['color']['primary']['$value']);
 		$this->assertSame(expected: [], actual: $withoutThemes['skipped']);
-		$this->assertSame(expected: ['--color-primary' => '#eeeeee'], actual: $withoutThemes['document']['$extensions']['nl.conduction.thematiq']['dark'], message: 'the dark set is the dark values');
+		$this->assertSame(
+			expected: ['--color-primary' => '#eeeeee'],
+			actual: $withoutThemes['document']['$extensions']['nl.conduction.thematiq']['dark'],
+			message: 'the dark set is the dark values'
+		);
 
 		$pair = [
 			'licht' => $light,
@@ -243,10 +272,19 @@ final class FigmaTokenReaderTest extends TestCase {
 		$document = (new DesignTokensWriter())->write(declarations: $declarations, setId: 'x', setName: 'X', appVersion: '1');
 		$writer = new FigmaTokenWriter();
 
-		$figma = (array)json_decode((string)json_encode($writer->write(document: $document, declarations: $declarations, format: 'figma', setId: 'x', setName: 'X')), true);
-		$studio = (array)json_decode((string)json_encode($writer->write(document: $document, declarations: $declarations, format: 'tokens-studio', setId: 'x', setName: 'X')), true);
+		$figma = (array)json_decode(
+			(string)json_encode($writer->write(document: $document, declarations: $declarations, format: 'figma', setId: 'x', setName: 'X')),
+			true
+		);
+		$studio = (array)json_decode(
+			(string)json_encode($writer->write(document: $document, declarations: $declarations, format: 'tokens-studio', setId: 'x', setName: 'X')),
+			true
+		);
 
-		$this->assertSame(expected: $document, actual: $writer->write(document: $document, declarations: $declarations, format: 'dtcg', setId: 'x', setName: 'X'));
+		$this->assertSame(
+			expected: $document,
+			actual: $writer->write(document: $document, declarations: $declarations, format: 'dtcg', setId: 'x', setName: 'X')
+		);
 		$this->assertSame(expected: 'rgba(0, 0, 0, 0.5)', actual: $figma['nldesign']['color']['overlay']['$value']);
 		$this->assertSame(expected: '#123456', actual: $figma['nldesign']['color']['primary']['$value']);
 		$this->assertSame(expected: '{nldesign.color.primary}', actual: $figma['nldesign']['color']['primary-hover']['$value']);

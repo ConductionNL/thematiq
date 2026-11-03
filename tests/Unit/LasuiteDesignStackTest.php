@@ -364,7 +364,10 @@ class LasuiteDesignStackTest extends TestCase {
 		$this->assertSame(
 			expected: [],
 			actual: $missing,
-			message: 'Every audited --color-* variable must appear in bridge.css as a mapping or a reasoned comment. Missing: ' . implode(', ', $missing)
+			message: 'Every audited --color-* variable must appear in bridge.css as a mapping or a reasoned comment. Missing: ' . implode(
+				', ',
+				$missing
+			)
 		);
 	}//end testBridgeAccountsForEveryAuditedColorVariable()
 

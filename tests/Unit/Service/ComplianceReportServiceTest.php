@@ -246,10 +246,14 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? $this->activeTokenSetId : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => $this->activeTokenSetId, default => $default
+			})
 		);
 		$config->method('getSystemValue')->willReturnCallback(
-			fn (string $key, $default = '') => ($key === 'instanceid' ? 'test-instance-abc' : $default)
+			fn (string $key, $default = '') => (match ($key === 'instanceid') {
+				true => 'test-instance-abc', default => $default
+			})
 		);
 
 		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);

@@ -127,10 +127,18 @@ class ShippedDarkLogoTest extends TestCase {
 			$expected = "--nldesign-logo-url: url('../../../" . $path . "')";
 			$generated = $service->generateForSet(setId: $setId);
 			$this->assertNotNull(actual: $generated, message: "$setId: the set must be eligible for a dark variant.");
-			$this->assertStringContainsString(needle: $expected, haystack: $generated['css'], message: "$setId: the generator must emit the dark logo.");
+			$this->assertStringContainsString(
+				needle: $expected,
+				haystack: $generated['css'],
+				message: "$setId: the generator must emit the dark logo."
+			);
 
 			$committed = (string)file_get_contents($this->root() . '/css/tokens/dark/' . $setId . '.css');
-			$this->assertStringContainsString(needle: $expected, haystack: $committed, message: "$setId: regenerate css/tokens/dark/$setId.css with --force.");
+			$this->assertStringContainsString(
+				needle: $expected,
+				haystack: $committed,
+				message: "$setId: regenerate css/tokens/dark/$setId.css with --force."
+			);
 		}
 	}//end testEveryShippedDarkLogoReachesTheDarkStylesheet()
 
@@ -152,7 +160,11 @@ class ShippedDarkLogoTest extends TestCase {
 			foreach (array_unique($matches[1]) as $fill) {
 				$ratio = $contrast->measure(foreground: $fill, background: self::DARK_BACKGROUND);
 				$this->assertNotNull(actual: $ratio);
-				$this->assertGreaterThanOrEqual(expected: 3.0, actual: $ratio, message: "$setId: fill $fill is below 3:1 on " . self::DARK_BACKGROUND . '.');
+				$this->assertGreaterThanOrEqual(
+					expected: 3.0,
+					actual: $ratio,
+					message: "$setId: fill $fill is below 3:1 on " . self::DARK_BACKGROUND . '.'
+				);
 			}
 		}
 	}//end testEveryShippedDarkLogoIsReadableOnDark()

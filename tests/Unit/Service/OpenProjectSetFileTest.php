@@ -59,7 +59,10 @@ final class OpenProjectSetFileTest extends TestCase {
 	private function writer(): OpenProjectSetFileWriter {
 		$contrast = new ContrastService();
 
-		return new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(declarations: new ShippedTokenSetAuditService(contrast: $contrast, parser: new CssParserService()), mapper: new ShellRoleMapper(colours: $contrast)));
+		return new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
+			declarations: new ShippedTokenSetAuditService(contrast: $contrast, parser: new CssParserService()),
+			mapper: new ShellRoleMapper(colours: $contrast)
+		));
 	}//end writer()
 
 	/**
@@ -73,7 +76,14 @@ final class OpenProjectSetFileTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::appPath());
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService(appManager: $appManager, cssParser: $parser, contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		$skipped = [];
@@ -138,7 +148,11 @@ final class OpenProjectSetFileTest extends TestCase {
 		}
 
 		foreach (($file['vocabulary'] ?? []) as $key => $value) {
-			$this->assertSame(expected: trim((string)$value), actual: ($back['declarations']['--nldesign-' . $key] ?? null), message: $id . ' vocabulary ' . $key);
+			$this->assertSame(
+				expected: trim((string)$value),
+				actual: ($back['declarations']['--nldesign-' . $key] ?? null),
+				message: $id . ' vocabulary ' . $key
+			);
 		}
 	}//end testASetFileComesBackWithTheSameRoles()
 
@@ -240,7 +254,10 @@ final class OpenProjectSetFileTest extends TestCase {
 		$this->assertSame(expected: '#20242a', actual: $this->roles(declarations: $back['declarations'])['menu']);
 
 		$file['vocabulary'] = ['color-nav-background' => '#ffffff'];
-		$this->assertSame(expected: '#ffffff', actual: $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']
+		);
 	}//end testTheMenuColourBecomesTheNavigationColour()
 
 	/**

@@ -32,13 +32,21 @@ class AdminEnvironmentLineTest extends TestCase {
 
 		$start = strpos($template, 'id="nldesign-environment"');
 		$this->assertNotFalse(condition: $start, message: 'The admin template must ship the environment line.');
-		$this->assertGreaterThan(expected: strpos($template, '<h2>Thematiq</h2>'), actual: $start, message: 'The line sits under the theming heading.');
+		$this->assertGreaterThan(
+			expected: strpos($template, '<h2>Thematiq</h2>'),
+			actual: $start,
+			message: 'The line sits under the theming heading.'
+		);
 
 		$end = strpos($template, '</div>', $start);
 		$block = substr($template, $start, ($end - $start));
 		$this->assertStringContainsString(needle: "\$_['environment']", haystack: $block);
 		$this->assertStringContainsString(needle: "\$_['environmentCommand']", haystack: $block);
 		$this->assertStringContainsString(needle: "'Environment: {environment}'", haystack: $block);
-		$this->assertDoesNotMatchRegularExpression(pattern: '/<(input|select|textarea|button)\b/', string: $block, message: 'The page must not offer a control that writes the value.');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/<(input|select|textarea|button)\b/',
+			string: $block,
+			message: 'The page must not offer a control that writes the value.'
+		);
 	}//end testTheEnvironmentLineIsReadOnly()
 }//end class

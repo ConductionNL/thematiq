@@ -52,7 +52,12 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$this->darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$this->darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
 				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
@@ -118,7 +123,10 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 		$this->assertSame(expected: ['--color-primary' => $expected], actual: $systemDark);
 		$this->assertSame(expected: ['--color-primary' => $expected], actual: $chosenDark);
 		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
-		$this->assertMatchesRegularExpression(pattern: '/--color-primary: [^;]+ !important;/', string: substr($css, (int)strpos($css, 'body[data-theme-dark]')));
+		$this->assertMatchesRegularExpression(
+			pattern: '/--color-primary: [^;]+ !important;/',
+			string: substr($css, (int)strpos($css, 'body[data-theme-dark]'))
+		);
 	}//end testDarkScopesWritten()
 
 	/**
@@ -147,12 +155,19 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 			foreach ([['--color-primary-text', '--color-primary'], ['--color-primary-element-text', '--color-primary-element']] as [$fg, $bg]) {
 				$this->assertArrayHasKey(key: $fg, array: $dark);
 				$ratio = $contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
-				$this->assertGreaterThanOrEqual(expected: 4.5, actual: $ratio, message: sprintf('%s %s on %s in %s', $dark[$fg], $fg, $bg, $selector));
+				$this->assertGreaterThanOrEqual(
+					expected: 4.5,
+					actual: $ratio,
+					message: sprintf('%s %s on %s in %s', $dark[$fg], $fg, $bg, $selector)
+				);
 			}
 		}
 
 		// The editor shows the same dark value the file carries.
-		$this->assertSame(expected: $this->block(css: $css, selector: self::CHOSEN_DARK)['--color-primary-element-text'], actual: $this->service->derivedDark()['--color-primary-element-text']);
+		$this->assertSame(
+			expected: $this->block(css: $css, selector: self::CHOSEN_DARK)['--color-primary-element-text'],
+			actual: $this->service->derivedDark()['--color-primary-element-text']
+		);
 	}//end testAWhiteLabelOverrideStaysReadableInDark()
 
 	/**
@@ -166,7 +181,10 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 			darkTokens: ['--color-primary-element-text' => '#aaaaaa']
 		);
 
-		$this->assertSame(expected: '#aaaaaa', actual: $this->block(css: $this->service->getRawContent(), selector: self::CHOSEN_DARK)['--color-primary-element-text']);
+		$this->assertSame(
+			expected: '#aaaaaa',
+			actual: $this->block(css: $this->service->getRawContent(), selector: self::CHOSEN_DARK)['--color-primary-element-text']
+		);
 	}//end testAnOwnDarkLabelIsNotRepaired()
 
 	/**

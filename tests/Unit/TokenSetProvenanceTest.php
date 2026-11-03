@@ -133,7 +133,11 @@ class TokenSetProvenanceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame(expected: [], actual: $offenders, message: "Converted sets with an incomplete provenance block:\n  - " . implode("\n  - ", $offenders));
+		$this->assertSame(
+			expected: [],
+			actual: $offenders,
+			message: "Converted sets with an incomplete provenance block:\n  - " . implode("\n  - ", $offenders)
+		);
 	}//end testEveryConvertedSetCarriesACompleteProvenanceBlock()
 
 	/**
@@ -154,12 +158,24 @@ class TokenSetProvenanceTest extends TestCase {
 			}
 
 			$brandSets[] = $id;
-			$this->assertStringNotContainsString(needle: self::CONVERTER_MARKER, haystack: $css, message: $id . ' is a brand-file set and must not claim to be converter output.');
-			$this->assertDoesNotMatchRegularExpression(pattern: '/^\s*\*\s+mapping table:/m', string: $css, message: $id . ' must carry no converter provenance block.');
+			$this->assertStringNotContainsString(
+				needle: self::CONVERTER_MARKER,
+				haystack: $css,
+				message: $id . ' is a brand-file set and must not claim to be converter output.'
+			);
+			$this->assertDoesNotMatchRegularExpression(
+				pattern: '/^\s*\*\s+mapping table:/m',
+				string: $css,
+				message: $id . ' must carry no converter provenance block.'
+			);
 		}
 
 		foreach (['denhaag', 'example-gemeente'] as $known) {
-			$this->assertContains(needle: $known, haystack: $brandSets, message: $known . ' is built from a brand file and must name scripts/generate-brand-set.mjs.');
+			$this->assertContains(
+				needle: $known,
+				haystack: $brandSets,
+				message: $known . ' is built from a brand file and must name scripts/generate-brand-set.mjs.'
+			);
 		}
 	}//end testBrandFileSetsNameTheirGeneratorNotTheConverter()
 
@@ -176,8 +192,16 @@ class TokenSetProvenanceTest extends TestCase {
 		$this->assertNotNull(actual: $css, message: 'css/tokens/summer-breeze.css must be shipped.');
 
 		$code = (string)preg_replace('#/\*.*?\*/#s', '', $css);
-		$this->assertDoesNotMatchRegularExpression(pattern: '/--nldesign-[a-z0-9-]+\s*:/', string: $code, message: 'summer-breeze must declare no --nldesign-* property.');
-		$this->assertMatchesRegularExpression(pattern: '/--summer-color-primary\s*:/', string: $code, message: 'summer-breeze must declare its own primary.');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/--nldesign-[a-z0-9-]+\s*:/',
+			string: $code,
+			message: 'summer-breeze must declare no --nldesign-* property.'
+		);
+		$this->assertMatchesRegularExpression(
+			pattern: '/--summer-color-primary\s*:/',
+			string: $code,
+			message: 'summer-breeze must declare its own primary.'
+		);
 		$this->assertStringNotContainsString(needle: self::CONVERTER_MARKER, haystack: $css, message: 'summer-breeze is not converter output.');
 	}//end testSummerBreezeDeclaresNoNldesignLayer()
 }//end class

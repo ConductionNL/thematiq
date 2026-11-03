@@ -73,7 +73,14 @@ final class DesignTokensRoundTripTest extends TestCase {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService(appManager: $appManager, cssParser: $parser, contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'report' => $result['report']];
@@ -96,7 +103,13 @@ final class DesignTokensRoundTripTest extends TestCase {
 
 		return (string)preg_replace_callback(
 			'/var\(\s*(--[A-Za-z0-9_-]+)\s*\)/',
-			fn (array $m): string => isset($set[$m[1]]) === true ? $this->resolved(value: $set[$m[1]], set: $set, depth: ($depth + 1)) : $m[0],
+			fn (array $m): string => match (isset($set[$m[1]]) === true) {
+				true => $this->resolved(
+					value: $set[$m[1]],
+					set: $set,
+					depth: ($depth + 1)
+				), default => $m[0]
+			},
 			$value
 		);
 	}//end resolved()
@@ -113,7 +126,10 @@ final class DesignTokensRoundTripTest extends TestCase {
 		if ($parsed !== null) {
 			$converter = new ColorSpaceConverter();
 
-			return $converter->toHex(rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']), alpha: $parsed['alpha']);
+			return $converter->toHex(
+				rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']),
+				alpha: $parsed['alpha']
+			);
 		}
 
 		return (string)preg_replace('/\s+/', ' ', trim($value));
