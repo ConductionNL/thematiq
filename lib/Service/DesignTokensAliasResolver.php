@@ -78,30 +78,9 @@ class DesignTokensAliasResolver {
 			$targetPath = trim($matches[1]);
 
 			$hops++;
-			if ($hops > self::MAX_ALIAS_DEPTH) {
-				return [
-					'ok' => false,
-					'reason' => 'alias-depth-exceeded',
-					'detail' => implode(' -> ', $chain),
-				];
-			}
-
-			if (isset($visited[$targetPath]) === true) {
-				$chain[] = $targetPath;
-
-				return [
-					'ok' => false,
-					'reason' => 'alias-cycle',
-					'detail' => implode(' -> ', $chain),
-				];
-			}
-
-			if (isset($leaves[$targetPath]) === false) {
-				return [
-					'ok' => false,
-					'reason' => 'alias-target-missing',
-					'detail' => $targetPath,
-				];
+			$failure = $this->hopFailure(targetPath: $targetPath, walk: ['hops' => $hops, 'chain' => $chain, 'visited' => $visited, 'leaves' => $leaves]);
+			if ($failure !== null) {
+				return $failure;
 			}
 
 			$chain[] = $targetPath;
@@ -115,4 +94,29 @@ class DesignTokensAliasResolver {
 			'type' => $current['type'],
 		];
 	}//end resolve()
+
+	/**
+	 * Why the next hop of an alias chain fails: too deep, a cycle, or a missing target.
+	 *
+	 * @param string $targetPath The path the current alias points at.
+	 * @param array{hops: int, chain: array<int, string>, visited: array<string, bool>, leaves: array<string, array<string, mixed>>} $walk
+	 *        The hops so far, the chain walked, the paths visited and the leaf table.
+	 *
+	 * @return array{ok: bool, reason: string, detail: string}|null The failure, or null when the hop may be taken.
+	 */
+	private function hopFailure(string $targetPath, array $walk): ?array {
+		if ($walk['hops'] > self::MAX_ALIAS_DEPTH) {
+			return ['ok' => false, 'reason' => 'alias-depth-exceeded', 'detail' => implode(' -> ', $walk['chain'])];
+		}
+
+		if (isset($walk['visited'][$targetPath]) === true) {
+			return ['ok' => false, 'reason' => 'alias-cycle', 'detail' => implode(' -> ', array_merge($walk['chain'], [$targetPath]))];
+		}
+
+		if (isset($walk['leaves'][$targetPath]) === false) {
+			return ['ok' => false, 'reason' => 'alias-target-missing', 'detail' => $targetPath];
+		}
+
+		return null;
+	}//end hopFailure()
 }//end class

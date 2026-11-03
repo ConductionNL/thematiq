@@ -45,25 +45,7 @@ class GalleryEntryValidator {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-an-administrator-browses-the-gallery
 	 */
 	public function validate(mixed $raw): ?array {
-		if (is_array($raw) === false) {
-			return null;
-		}
-
-		$checks = [
-			'id' => '/^[a-z0-9]+(-[a-z0-9]+)*$/',
-			'licence' => '/^[A-Za-z0-9.+-]+( (AND|OR|WITH) [A-Za-z0-9.+-]+)*$/',
-			'sha256' => '/^[a-f0-9]{64}$/',
-			'sourceUrl' => '#^https://[^\s]+$#',
-			'fileUrl' => '#^https://[^\s]+$#',
-			'addedOn' => '/^\d{4}-\d{2}-\d{2}$/',
-		];
-		foreach ($checks as $field => $pattern) {
-			if (is_string($raw[$field] ?? null) === false || preg_match($pattern, $raw[$field]) !== 1) {
-				return null;
-			}
-		}
-
-		if ($this->validText(raw: $raw) === false || $this->validSwatches(swatches: ($raw['swatches'] ?? null)) === false) {
+		if (is_array($raw) === false || $this->isValid(raw: $raw) === false) {
 			return null;
 		}
 
@@ -82,6 +64,44 @@ class GalleryEntryValidator {
 			'addedOn' => $raw['addedOn'],
 		];
 	}//end validate()
+
+	/**
+	 * Whether an entry has every patterned field, its texts and three swatches.
+	 *
+	 * @param array<string, mixed> $raw The entry.
+	 *
+	 * @return bool True for a valid entry.
+	 */
+	private function isValid(array $raw): bool {
+		return $this->matchesPatterns(raw: $raw) === true
+			&& $this->validText(raw: $raw) === true
+			&& $this->validSwatches(swatches: ($raw['swatches'] ?? null)) === true;
+	}//end isValid()
+
+	/**
+	 * Whether the id, licence, digest, URLs and date are strings of their pattern.
+	 *
+	 * @param array<string, mixed> $raw The entry.
+	 *
+	 * @return bool True when every one matches.
+	 */
+	private function matchesPatterns(array $raw): bool {
+		$checks = [
+			'id' => '/^[a-z0-9]+(-[a-z0-9]+)*$/',
+			'licence' => '/^[A-Za-z0-9.+-]+( (AND|OR|WITH) [A-Za-z0-9.+-]+)*$/',
+			'sha256' => '/^[a-f0-9]{64}$/',
+			'sourceUrl' => '#^https://[^\s]+$#',
+			'fileUrl' => '#^https://[^\s]+$#',
+			'addedOn' => '/^\d{4}-\d{2}-\d{2}$/',
+		];
+		foreach ($checks as $field => $pattern) {
+			if (is_string($raw[$field] ?? null) === false || preg_match($pattern, $raw[$field]) !== 1) {
+				return false;
+			}
+		}
+
+		return true;
+	}//end matchesPatterns()
 
 	/**
 	 * Whether the swatches are three hex colours.
