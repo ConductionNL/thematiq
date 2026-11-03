@@ -109,7 +109,7 @@ class EmailThemingService {
 	 *
 	 * @var string
 	 */
-	private const INLINE_LOGO_PATH = '#^img/(?!.*\.\.)[A-Za-z0-9._/-]+\.(?:svg|png|jpe?g|gif|webp)$#';
+	private const INLINE_LOGO_PATH = '#^img/(?!.*\.\.)[A-Za-z0-9._/-]+\.(?:svg|png|jpe?g|gif|webp)$#D';
 
 	/**
 	 * The application configuration service.

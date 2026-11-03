@@ -18,11 +18,14 @@ use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCP\App\IAppManager;
 use OCP\HintException;
 use OCP\IConfig;
+use OCP\ITempManager;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -162,6 +165,77 @@ class EmailThemingServiceTest extends TestCase {
 			'no logo' => [null],
 		];
 	}//end refusedLogoPaths()
+
+	/**
+	 * On the real file locator a stored path cannot climb out of img/, though the file is there to read.
+	 *
+	 * @param string $logo The stored path.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider climbingLogoPaths
+	 */
+	public function testAStoredPathCannotClimbOutOfTheImages(string $logo): void {
+		$appPath = sys_get_temp_dir() . '/thematiq-mail-logo-' . bin2hex(random_bytes(4));
+		mkdir($appPath . '/img/logos', 0777, true);
+		mkdir($appPath . '/config');
+		file_put_contents($appPath . '/config/config.svg', 'secret');
+		file_put_contents($appPath . '/img/logos/own.svg', '<svg/>');
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($appPath);
+		$locator = new RuntimeFileLocator(
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $appPath . '/store'),
+			urlGenerator: $this->urlGenerator,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
+		);
+		$this->config->method('getAppValue')->willReturn('custom-a');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => $logo]]]);
+		$service = new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+
+		try {
+			$this->assertSame(expected: 'secret', actual: $locator->read(name: 'img/../config/config.svg'));
+			$image = $service->getActiveEmailLogoImage();
+			if ($logo === 'img/logos/own.svg') {
+				$this->assertSame(expected: '<svg/>', actual: $image['content']);
+				return;
+			}
+
+			$this->assertNull(actual: $image);
+		} finally {
+			unlink($appPath . '/config/config.svg');
+			unlink($appPath . '/img/logos/own.svg');
+			rmdir($appPath . '/config');
+			rmdir($appPath . '/img/logos');
+			rmdir($appPath . '/img');
+			@rmdir($appPath . '/store');
+			rmdir($appPath);
+		}
+	}//end testAStoredPathCannotClimbOutOfTheImages()
+
+	/**
+	 * Stored paths that climb, and one own logo as the control.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function climbingLogoPaths(): array {
+		return [
+			'own logo' => ['img/logos/own.svg'],
+			'up one' => ['img/../config/config.svg'],
+			'deeper first' => ['img/logos/../../config/config.svg'],
+			'dot segment in the name' => ['img/logos/..svg/../../../config/config.svg'],
+			'encoded' => ['img/%2e%2e/config/config.svg'],
+			'backslash' => ['img\\..\\config\\config.svg'],
+			'trailing newline' => ["img/logos/own.svg\n"],
+			'null byte' => ["img/logos/own.svg\0.png"],
+		];
+	}//end climbingLogoPaths()
 
 	/**
 	 * The stock theme embeds no set's logo, even when a set carries its id.
