@@ -29,6 +29,9 @@ use OCA\Thematiq\Service\BrandImportRecords;
 use OCA\Thematiq\Service\BrandSetStorage;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -175,19 +178,25 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		return new CustomTokenSetController(
-			'thematiq',
-			$request,
-			$this->sets,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->audit,
-			$this->config,
-			new TokenSetConverterService($repoApp, new CssParserService(), new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class)),
-			$this->createMock(ThemingService::class),
-			$this->createMock(DesignSystemService::class),
-			null,
-			$this->imports
+			appName: 'thematiq',
+			request: $request,
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->sets,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: new TokenSetConverterService($repoApp, new CssParserService(), new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class))
+			),
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->audit,
+				config: $this->config,
+				themingService: $this->createMock(ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(DesignSystemService::class),
+				brandingCapture: null,
+				multiBrand: $this->imports
+			)
 		);
 	}//end uploadController()
 

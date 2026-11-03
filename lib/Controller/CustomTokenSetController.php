@@ -25,22 +25,17 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\BrandingCaptureService;
-use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\DesignSystemService;
-use OCA\Thematiq\Service\MultiBrandImportService;
-use OCA\Thematiq\Service\ThemingAuditService;
-use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IRequest;
 use RuntimeException;
 
@@ -64,127 +59,22 @@ class CustomTokenSetController extends Controller {
 	use ErrorStatusTrait;
 
 	/**
-	 * The custom token set storage/lifecycle service.
-	 *
-	 * @var CustomTokenSetService
-	 */
-	private CustomTokenSetService $service;
-
-	/**
-	 * The CSS upload validator / re-serialiser.
-	 *
-	 * @var CustomTokenSetValidator
-	 */
-	private CustomTokenSetValidator $validator;
-
-	/**
-	 * The CSS parser service.
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
-	 * The localization service.
-	 *
-	 * @var IL10N
-	 */
-	private IL10N $l;
-
-	/**
-	 * The theming audit trail service.
-	 *
-	 * @var ThemingAuditService
-	 */
-	private ThemingAuditService $auditService;
-
-	/**
-	 * The application configuration service (active token set lookup, for
-	 * detecting whether a delete resets the active set).
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The theme converter — runs BEFORE the validator on every upload and
-	 * paste, so an admin can hand this app the artefact a design system
-	 * actually publishes instead of pre-baked `--nldesign-*` CSS.
-	 *
-	 * @var TokenSetConverterService
-	 */
-	private TokenSetConverterService $converter;
-
-	/**
-	 * Nextcloud core theming, so deleting the ACTIVE set can undo what that set
-	 * pushed into core (primary colour, background, logo).
-	 *
-	 * @var ThemingService
-	 */
-	private ThemingService $themingService;
-
-	/**
-	 * The shipped design-system manifest, used to allow-list a claimed id.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystems;
-
-	/**
-	 * Copies Nextcloud's own branding into a theme saved from the editor.
-	 * Optional so a caller that builds this controller by hand need not know
-	 * about it; the container always injects it.
-	 *
-	 * @var BrandingCaptureService|null
-	 */
-	private ?BrandingCaptureService $brandingCapture;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param CustomTokenSetService $service The storage/lifecycle service.
-	 * @param CustomTokenSetValidator $validator The CSS validator.
-	 * @param CssParserService $cssParser The CSS parser service.
-	 * @param IL10N $l The localization service.
-	 * @param ThemingAuditService $auditService The theming audit trail service.
-	 * @param IConfig $config The config service.
-	 * @param TokenSetConverterService $converter The theme converter, which runs before the validator.
-	 * @param ThemingService $themingService Core theming, for undoing a deleted set's sync.
-	 * @param DesignSystemService $designSystems The design-system manifest, for allow-listing a claimed id.
-	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into a theme saved from the editor.
-	 * @param MultiBrandImportService|null $multiBrand Lists and imports the brands of a multi-brand source.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else; the
-	 *   alternative is a service locator, which hides exactly these dependencies instead of removing any of them.
+	 * @param CustomSetUploadPipeline $pipeline The custom set service, the validator, the CSS parser and the converter.
+	 * @param CustomSetRecords $records The translator, the audit trail, the config and core theming.
+	 * @param CustomSetSources $sources The design systems, the branding capture and the multi-brand import.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		CustomTokenSetService $service,
-		CustomTokenSetValidator $validator,
-		CssParserService $cssParser,
-		IL10N $l,
-		ThemingAuditService $auditService,
-		IConfig $config,
-		TokenSetConverterService $converter,
-		ThemingService $themingService,
-		DesignSystemService $designSystems,
-		?BrandingCaptureService $brandingCapture = null,
-		private ?MultiBrandImportService $multiBrand = null,
+		private readonly CustomSetUploadPipeline $pipeline,
+		private readonly CustomSetRecords $records,
+		private readonly CustomSetSources $sources,
 	) {
 		parent::__construct(appName: $appName, request: $request);
-		$this->service = $service;
-		$this->validator = $validator;
-		$this->cssParser = $cssParser;
-		$this->l = $l;
-		$this->auditService = $auditService;
-		$this->config = $config;
-		$this->converter = $converter;
-		$this->themingService = $themingService;
-		$this->designSystems = $designSystems;
-		$this->brandingCapture = $brandingCapture;
 	}//end __construct()
 
 	/**
@@ -226,12 +116,12 @@ class CustomTokenSetController extends Controller {
 	public function upload(): JSONResponse {
 		$name = trim((string)($this->request->getParam('name', '')));
 		if ($name === '') {
-			return new JSONResponse(['error' => $this->l->t('A token set name is required.')], 400);
+			return new JSONResponse(['error' => $this->records->l->t('A token set name is required.')], 400);
 		}
 
-		$slug = $this->service->slugify(name: $name);
+		$slug = $this->pipeline->service->slugify(name: $name);
 		if ($slug === '') {
-			return new JSONResponse(['error' => $this->l->t('A token set name must contain at least one letter or digit.')], 422);
+			return new JSONResponse(['error' => $this->records->l->t('A token set name must contain at least one letter or digit.')], 422);
 		}
 
 		$read = $this->readInput();
@@ -240,7 +130,7 @@ class CustomTokenSetController extends Controller {
 		}
 
 		// One source, several brands: listed first, stored on the admin's choice.
-		$brands = ($this->multiBrand?->brands(content: $read['content']) ?? []);
+		$brands = ($this->sources->multiBrand?->brands(content: $read['content']) ?? []);
 		if ($brands !== []) {
 			return $this->uploadBrands(name: $name, read: $read, brands: $brands);
 		}
@@ -284,12 +174,12 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function uploadBrands(string $name, array $read, array $brands): JSONResponse {
 		$chosen = $this->request->getParam('brands', null);
-		if ($chosen === null || $this->multiBrand === null) {
+		if ($chosen === null || $this->sources->multiBrand === null) {
 			return new JSONResponse(['multiBrand' => true, 'stored' => false, 'brands' => $brands]);
 		}
 
 		try {
-			$result = $this->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
+			$result = $this->sources->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
 		} catch (RuntimeException $e) {
 			$code = match ($e->getCode()) {
 				404 => 404,
@@ -353,7 +243,7 @@ class CustomTokenSetController extends Controller {
 		// this. Allow-listed against the shipped manifest rather than taken
 		// on trust: it decides which stylesheet layers every page load emits.
 		$claimed = ($designSystem ?? trim((string)$this->request->getParam('designSystem', '')));
-		if ($claimed !== '' && isset($this->designSystems->getDesignSystems()[$claimed]) === true) {
+		if ($claimed !== '' && isset($this->sources->designSystems->getDesignSystems()[$claimed]) === true) {
 			$parsed['designSystem'] = $claimed;
 		}
 
@@ -364,14 +254,14 @@ class CustomTokenSetController extends Controller {
 		// so applying it later brings that back too. Only once the set is
 		// safely stored: a refused save must not leave copied images behind.
 		if ($this->request->getParam('captureTheming', false) === true
-			&& $this->brandingCapture !== null
+			&& $this->sources->brandingCapture !== null
 			&& $response->getStatus() === 200
 		) {
 			// The persist() response is always an array; getData() is typed
 			// array|object, so say which before indexing it.
 			$data = $response->getData();
 			if (is_array($data) === true) {
-				$data['theming'] = $this->brandingCapture->capture(setId: (string)$data['id']);
+				$data['theming'] = $this->sources->brandingCapture->capture(setId: (string)$data['id']);
 				$response->setData($data);
 			}
 		}
@@ -467,7 +357,7 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
 	 */
 	private function callConverter(array $upload): array {
-		return $this->converter->convert(
+		return $this->pipeline->converter->convert(
 			content: $upload['content'],
 			slug: $upload['slug'],
 			displayName: $upload['name'],
@@ -491,7 +381,7 @@ class CustomTokenSetController extends Controller {
 	private function nothingImported(array $converted): JSONResponse {
 		return new JSONResponse(
 			[
-				'error' => $this->l->t(
+				'error' => $this->records->l->t(
 					'Nothing in this document maps onto a Nextcloud token. The skipped list'
 					. ' shows what was found and why each token could not be used.'
 				),
@@ -525,7 +415,7 @@ class CustomTokenSetController extends Controller {
 		$parsed['report'] = $converted['report'];
 		$parsed['counts'] = $converted['counts'];
 		$parsed['inputKind'] = $converted['inputKind'];
-		$parsed['reasons'] = $this->converter->getReasons();
+		$parsed['reasons'] = $this->pipeline->converter->getReasons();
 
 		return $parsed;
 	}//end withConversion()
@@ -576,11 +466,12 @@ class CustomTokenSetController extends Controller {
 			return $parsed;
 		}
 
-		$split = $this->validator->validateDeclarations(declarations: $dark['declarations'], slug: $dark['slug']);
+		$split = $this->pipeline->validator->validateDeclarations(declarations: $dark['declarations'], slug: $dark['slug']);
 		if ($split === null) {
-			$error = $this->validator->getLastError();
+			$error = $this->pipeline->validator->getLastError();
 
-			return new JSONResponse(['error' => $this->l->t('A dark value in the file is not allowed: %s', [(string)($error['property'] ?? '')])], 422);
+			$message = $this->records->l->t('A dark value in the file is not allowed: %s', [(string)($error['property'] ?? '')]);
+			return new JSONResponse(['error' => $message], 422);
 		}
 
 		$parsed['darkPins'] = $split['accepted'];
@@ -618,11 +509,11 @@ class CustomTokenSetController extends Controller {
 	private function pastedInput(): array|JSONResponse {
 		$pasted = (string)($this->request->getParam('content', ''));
 		if (trim($pasted) === '') {
-			return new JSONResponse(['error' => $this->l->t('Choose a file or paste the contents of a theme file.')], 400);
+			return new JSONResponse(['error' => $this->records->l->t('Choose a file or paste the contents of a theme file.')], 400);
 		}
 
 		if (strlen($pasted) > CustomTokenSetValidator::MAX_SIZE) {
-			return new JSONResponse(['error' => $this->l->t('Pasted content exceeds the 512 KB size limit.')], 413);
+			return new JSONResponse(['error' => $this->records->l->t('Pasted content exceeds the 512 KB size limit.')], 413);
 		}
 
 		$sourceName = trim((string)($this->request->getParam('sourceName', '')));
@@ -647,16 +538,16 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function readUpload(?array $file) {
 		if (empty($file) === true || isset($file['tmp_name']) === false) {
-			return new JSONResponse(['error' => $this->l->t('No file uploaded.')], 400);
+			return new JSONResponse(['error' => $this->records->l->t('No file uploaded.')], 400);
 		}
 
 		if (($file['size'] ?? 0) > CustomTokenSetValidator::MAX_SIZE) {
-			return new JSONResponse(['error' => $this->l->t('File exceeds the 512 KB size limit.')], 413);
+			return new JSONResponse(['error' => $this->records->l->t('File exceeds the 512 KB size limit.')], 413);
 		}
 
 		$content = file_get_contents($file['tmp_name']);
 		if ($content === false) {
-			return new JSONResponse(['error' => $this->l->t('Could not read the uploaded file.')], 400);
+			return new JSONResponse(['error' => $this->records->l->t('Could not read the uploaded file.')], 400);
 		}
 
 		$fileName = trim((string)($file['name'] ?? ''));
@@ -711,20 +602,20 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
 	 */
 	private function mapFromCss(string $content, string $slug) {
-		if ($this->validator->hasDisallowedSelector(css: $content) === true) {
+		if ($this->pipeline->validator->hasDisallowedSelector(css: $content) === true) {
 			return new JSONResponse(
-				['error' => $this->l->t('The CSS contains a selector or at-rule other than :root, which is not allowed in a token set.')],
+				['error' => $this->records->l->t('The CSS contains a selector or at-rule other than :root, which is not allowed in a token set.')],
 				422
 			);
 		}
 
-		$declarations = $this->cssParser->parseRootBlock(css: $content);
-		$split = $this->validator->validateDeclarations(declarations: $declarations, slug: $slug);
+		$declarations = $this->pipeline->cssParser->parseRootBlock(css: $content);
+		$split = $this->pipeline->validator->validateDeclarations(declarations: $declarations, slug: $slug);
 		if ($split === null) {
-			$error = $this->validator->getLastError();
+			$error = $this->pipeline->validator->getLastError();
 
 			return new JSONResponse(
-				['error' => ($error['message'] ?? $this->l->t('The uploaded CSS could not be validated.'))],
+				['error' => ($error['message'] ?? $this->records->l->t('The uploaded CSS could not be validated.'))],
 				($error['status'] ?? 422)
 			);
 		}
@@ -755,15 +646,16 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
-			$result = $this->service->store(...$this->storeArguments(name: $name, parsed: $parsed));
+			$result = $this->pipeline->service->store(...$this->storeArguments(name: $name, parsed: $parsed));
 			if (empty($parsed['darkPins']) === false) {
-				$this->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
+				$this->pipeline->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
 			}
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
-		$this->auditService->log(action: 'custom_set_uploaded', context: $this->auditContext(parsed: $parsed, stored: $result + ['name' => $name]));
+		$context = $this->auditContext(parsed: $parsed, stored: $result + ['name' => $name]);
+		$this->records->auditService->log(action: 'custom_set_uploaded', context: $context);
 
 		return new JSONResponse($this->uploadResponse(parsed: $parsed, result: $result));
 	}//end persist()
@@ -823,7 +715,7 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function servedHash(string $id): ?string {
-		$servedCss = $this->service->getRawContent(id: $id);
+		$servedCss = $this->pipeline->service->getRawContent(id: $id);
 		if ($servedCss === null) {
 			return null;
 		}
@@ -886,7 +778,7 @@ class CustomTokenSetController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function list(): JSONResponse {
-		return new JSONResponse(['sets' => $this->service->list()]);
+		return new JSONResponse(['sets' => $this->pipeline->service->list()]);
 	}//end list()
 
 	/**
@@ -900,9 +792,9 @@ class CustomTokenSetController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function export(string $id) {
-		$content = $this->service->getRawContent(id: $id);
+		$content = $this->pipeline->service->getRawContent(id: $id);
 		if ($content === null) {
-			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
+			return new JSONResponse(['error' => $this->records->l->t('Token set not found.')], 404);
 		}
 
 		return new DataDownloadResponse(
@@ -924,28 +816,28 @@ class CustomTokenSetController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function delete(string $id): JSONResponse {
-		if ($this->service->isCustomId(id: $id) === false) {
-			return new JSONResponse(['error' => $this->l->t('Only custom token sets can be deleted.')], 400);
+		if ($this->pipeline->service->isCustomId(id: $id) === false) {
+			return new JSONResponse(['error' => $this->records->l->t('Only custom token sets can be deleted.')], 400);
 		}
 
-		$activeBefore = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$activeBefore = $this->records->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
 		$contentHash = $this->servedHash(id: $id);
 
-		if ($this->service->delete(id: $id) === false) {
-			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
+		if ($this->pipeline->service->delete(id: $id) === false) {
+			return new JSONResponse(['error' => $this->records->l->t('Token set not found.')], 404);
 		}
 
 		// The source record of a multi-brand import goes with its last brand, and
 		// the branding it captured, and the images copied for it, go with it.
-		$this->multiBrand?->forgetSet(id: $id);
-		$this->brandingCapture?->forget(setId: $id);
+		$this->sources->multiBrand?->forgetSet(id: $id);
+		$this->sources->brandingCapture?->forget(setId: $id);
 
 		$activeReset = ($activeBefore === $id);
 		if ($activeReset === true) {
 			$this->resetActiveTheming();
 		}
 
-		$this->auditService->log(
+		$this->records->auditService->log(
 			action: 'custom_set_deleted',
 			context: ['id' => $id, 'activeReset' => $activeReset, 'themingReset' => $activeReset, 'contentHash' => $contentHash]
 		);
@@ -968,9 +860,9 @@ class CustomTokenSetController extends Controller {
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function resetActiveTheming(): void {
-		$this->themingService->resetToDefaults();
+		$this->records->themingService->resetToDefaults();
 		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
-			$this->config->deleteAppValue(
+			$this->records->config->deleteAppValue(
 				Application::APP_ID,
 				SettingsController::SYNCED_IMAGE_PREFIX . $imageKey
 			);
