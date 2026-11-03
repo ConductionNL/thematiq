@@ -435,7 +435,7 @@ class TokenSetConverterService {
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
 	private function emittedLayers(array $declarations, ConversionRun $run): array {
-		$sections = $this->classify(declarations: $declarations, slug: $run->slug, report: $run->report);
+		$sections = $this->classify(declarations: $declarations, run: $run);
 
 		// The semantic layer, from the table. `existing` carries input D's
 		// hand-authored values, which win over anything the rules derive.
@@ -1407,172 +1407,200 @@ class TokenSetConverterService {
 	 * semantic sections, applying the table's `never` policy on the way.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string $slug The brand slug.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion; its report is appended to.
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
-	 *   specification of what goes where.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
-	 *   specification of what goes where.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - one branch per declaration shape the three emitted sections accept; the branches are
-	 *   the specification of what goes where.
 	 */
-	private function classify(array $declarations, string $slug, array &$report): array {
-		$palette = [];
-		$component = [];
-		$semantic = [];
-
-		$ruleTargets = $this->ruleTargets(slug: $slug);
+	private function classify(array $declarations, ConversionRun $run): array {
+		$run->sections = ['palette' => [], 'component' => [], 'semantic' => []];
+		$run->ruleTargets = $this->ruleTargets(slug: $run->slug);
 
 		foreach ($declarations as $name => $value) {
-			$policy = $this->policyFor(name: $name, slug: $slug);
+			$this->classifyOne(run: $run, declaration: [$name, $value]);
+		}
 
-			if ($policy !== null && ($policy['action'] ?? '') === 'skip') {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => (string)$policy['reason'],
-					'value' => $value,
-				];
-				continue;
-			}
-
-			// A real semantic token: input D's hand-authored value, which add-only
-			// re-conversion must not overwrite. Checked before the role, because an
-			// app name such as `--nldesign-animation-quick` or
-			// `--nldesign-header-border-bottom` has a component-shaped role too, and
-			// moving it under the brand prefix changed a value the set had chosen.
-			if (str_starts_with($name, '--nldesign-') === true
-				&& (isset($this->vocabulary()[$name]) === true || isset($ruleTargets['targets'][$name]) === true)
-			) {
-				$semantic[$name] = $value;
-				$report[] = [
-					'source' => $name,
-					'target' => $name,
-					'action' => 'kept',
-					'reason' => 'kept-existing-value',
-					'value' => $value,
-				];
-				continue;
-			}
-
-			// Component or palette is decided by the ROLE, not the prefix: a
-			// theme using an unknown namespace still names the job in the name,
-			// and everything that is not one of the value scales is a component
-			// token that has to survive verbatim.
-			$role = $this->roleOf(name: $name);
-			$isComponent = ($role !== '' && $this->isPaletteRole(role: $role) === false);
-
-			if ($isComponent === true) {
-				// The prefix decides only what it is CALLED. A recognised design
-				// system prefix is kept as-is, because `utrecht-bridge.css` and
-				// Conduction's apps read those exact names; an unfamiliar prefix
-				// is moved under the set's own, keeping the role intact, so the
-				// emitted file carries one namespace the validator accepts
-				// instead of a vendor name nothing in this app knows.
-				$emitted = $name;
-				$isKnownPrefix = false;
-				foreach (self::COMPONENT_PREFIXES as $prefix) {
-					if (str_starts_with($name, $prefix) === true) {
-						$isKnownPrefix = true;
-						break;
-					}
-				}
-
-				if ($isKnownPrefix === false) {
-					$emitted = '--' . $slug . '-' . $role;
-				}
-
-				$component[$emitted] = $value;
-
-				if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
-					$report[] = [
-						'source' => $name,
-						'target' => $emitted,
-						'action' => 'kept',
-						'reason' => (string)$policy['reason'],
-						'value' => $value,
-					];
-					continue;
-				}
-
-				// A component token a rule consumes is reported by runRules() as
-				// `applied`; one no rule names is still emitted for the NLDS
-				// components that read it, and named here so the mapping table
-				// can be extended. Checked by role as well as by name, because
-				// that is how runRules() resolves its sources.
-				if (isset($ruleTargets['sources'][$name]) === false
-					&& isset($ruleTargets['roles'][$role]) === false
-				) {
-					$report[] = [
-						'source' => $name,
-						'target' => $emitted,
-						'action' => 'kept',
-						'reason' => 'unmapped',
-						'value' => $value,
-					];
-				}
-
-				continue;
-			}//end if
-
-			if (str_starts_with($name, '--nldesign-') === true) {
-				// A raw upstream palette step dumped under the app's prefix,
-				// where it masquerades as app vocabulary while nothing can read
-				// it. Moved to the brand prefix, where the semantic layer can.
-				$renamed = '--' . $slug . '-' . substr($name, strlen('--nldesign-'));
-				$palette[$renamed] = $value;
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'adapted',
-					'reason' => 'palette-reprefixed',
-					'value' => $value,
-				];
-				continue;
-			}//end if
-
-			// Everything else is brand palette. Names already under the slug keep
-			// their name; a theme using its own prefix is re-namespaced so one
-			// set never carries two vocabularies.
-			$renamed = $name;
-			if (str_starts_with($name, '--' . $slug . '-') === false) {
-				$renamed = '--' . $slug . '-' . $role;
-			}
-
-			$palette[$renamed] = $value;
-
-			if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'kept',
-					'reason' => (string)$policy['reason'],
-					'value' => $value,
-				];
-				continue;
-			}
-
-			if (isset($ruleTargets['sources'][$name]) === false) {
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'kept',
-					'reason' => 'unmapped',
-					'value' => $value,
-				];
-			}
-		}//end foreach
-
-		return [
-			'palette' => $palette,
-			'component' => $component,
-			'semantic' => $semantic,
-		];
+		return $run->sections;
 	}//end classify()
+
+	/**
+	 * Put one declaration in its section and report what happened to it.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return void
+	 */
+	private function classifyOne(ConversionRun $run, array $declaration): void {
+		[$name, $value] = $declaration;
+		$policy = $this->policyFor(name: $name, slug: $run->slug);
+		if ($policy !== null && ($policy['action'] ?? '') === 'skip') {
+			$run->report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', (string)$policy['reason'], $value]);
+			return;
+		}
+
+		if ($this->keptSemantic(run: $run, declaration: $declaration) === true) {
+			return;
+		}
+
+		// Component or palette is decided by the ROLE, not the prefix: a
+		// theme using an unknown namespace still names the job in the name,
+		// and everything that is not one of the value scales is a component
+		// token that has to survive verbatim.
+		$role = $this->roleOf(name: $name);
+		if ($role !== '' && $this->isPaletteRole(role: $role) === false) {
+			$this->classifyComponent(run: $run, declaration: [$name, $value, $role, $policy]);
+			return;
+		}
+
+		$this->classifyPalette(run: $run, declaration: [$name, $value, $role, $policy]);
+	}//end classifyOne()
+
+	/**
+	 * Keep a real semantic token as it is, and say whether the declaration was one.
+	 *
+	 * Input D's hand-authored value, which add-only re-conversion must not overwrite. Checked
+	 * before the role, because an app name such as `--nldesign-animation-quick` or
+	 * `--nldesign-header-border-bottom` has a component-shaped role too, and moving it under
+	 * the brand prefix changed a value the set had chosen.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return bool True when the declaration went to the semantic section.
+	 */
+	private function keptSemantic(ConversionRun $run, array $declaration): bool {
+		[$name, $value] = $declaration;
+		if (str_starts_with($name, '--nldesign-') === false
+			|| (isset($this->vocabulary()[$name]) === false && isset($run->ruleTargets['targets'][$name]) === false)
+		) {
+			return false;
+		}
+
+		$run->sections['semantic'][$name] = $value;
+		$run->report[] = $this->reportEntry(route: [$name, $name], outcome: ['kept', 'kept-existing-value', $value]);
+		return true;
+	}//end keptSemantic()
+
+	/**
+	 * Put a component token in the component section, under its own name or the set's prefix.
+	 *
+	 * The prefix decides only what it is CALLED. A recognised design system prefix is kept
+	 * as-is, because `utrecht-bridge.css` and Conduction's apps read those exact names; an
+	 * unfamiliar prefix is moved under the set's own, keeping the role intact, so the emitted
+	 * file carries one namespace the validator accepts instead of a vendor name nothing in
+	 * this app knows.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string, 2: string, 3: array<string, mixed>|null} $declaration The name, value, role and policy.
+	 *
+	 * @return void
+	 */
+	private function classifyComponent(ConversionRun $run, array $declaration): void {
+		[$name, $value, $role, $policy] = $declaration;
+		$emitted = $name;
+		if ($this->hasComponentPrefix(name: $name) === false) {
+			$emitted = '--' . $run->slug . '-' . $role;
+		}
+
+		$run->sections['component'][$emitted] = $value;
+		if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
+			$run->report[] = $this->reportEntry(route: [$name, $emitted], outcome: ['kept', (string)$policy['reason'], $value]);
+			return;
+		}
+
+		// A component token a rule consumes is reported by runRules() as
+		// `applied`; one no rule names is still emitted for the NLDS
+		// components that read it, and named here so the mapping table
+		// can be extended. Checked by role as well as by name, because
+		// that is how runRules() resolves its sources.
+		if (isset($run->ruleTargets['sources'][$name]) === false && isset($run->ruleTargets['roles'][$role]) === false) {
+			$run->report[] = $this->reportEntry(route: [$name, $emitted], outcome: ['kept', 'unmapped', $value]);
+		}
+	}//end classifyComponent()
+
+	/**
+	 * Put a palette token in the brand palette, under the set's prefix.
+	 *
+	 * A raw upstream palette step dumped under the app's prefix masquerades as app vocabulary
+	 * while nothing can read it, so it moves to the brand prefix, where the semantic layer
+	 * can. Names already under the slug keep their name; a theme using its own prefix is
+	 * re-namespaced so one set never carries two vocabularies.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string, 2: string, 3: array<string, mixed>|null} $declaration The name, value, role and policy.
+	 *
+	 * @return void
+	 */
+	private function classifyPalette(ConversionRun $run, array $declaration): void {
+		[$name, $value, $role, $policy] = $declaration;
+		if ($this->reprefixedPalette(run: $run, declaration: [$name, $value]) === true) {
+			return;
+		}
+
+		$renamed = $name;
+		if (str_starts_with($name, '--' . $run->slug . '-') === false) {
+			$renamed = '--' . $run->slug . '-' . $role;
+		}
+
+		$run->sections['palette'][$renamed] = $value;
+		if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
+			$run->report[] = $this->reportEntry(route: [$name, $renamed], outcome: ['kept', (string)$policy['reason'], $value]);
+			return;
+		}
+
+		if (isset($run->ruleTargets['sources'][$name]) === false) {
+			$run->report[] = $this->reportEntry(route: [$name, $renamed], outcome: ['kept', 'unmapped', $value]);
+		}
+	}//end classifyPalette()
+
+	/**
+	 * Move a palette step dumped under the app's own prefix to the brand prefix, and say whether it was one.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return bool True when the declaration carried the app's prefix.
+	 */
+	private function reprefixedPalette(ConversionRun $run, array $declaration): bool {
+		[$name, $value] = $declaration;
+		if (str_starts_with($name, '--nldesign-') === false) {
+			return false;
+		}
+
+		$renamed = '--' . $run->slug . '-' . substr($name, strlen('--nldesign-'));
+		$run->sections['palette'][$renamed] = $value;
+		$run->report[] = $this->reportEntry(route: [$name, $renamed], outcome: ['adapted', 'palette-reprefixed', $value]);
+		return true;
+	}//end reprefixedPalette()
+
+	/**
+	 * Whether a component token carries one of the design system prefixes kept verbatim.
+	 *
+	 * @param string $name The token.
+	 *
+	 * @return bool
+	 */
+	private function hasComponentPrefix(string $name): bool {
+		foreach (self::COMPONENT_PREFIXES as $prefix) {
+			if (str_starts_with($name, $prefix) === true) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end hasComponentPrefix()
+
+	/**
+	 * One report entry.
+	 *
+	 * @param array{0: string, 1: string} $route The source token and the target it went to ('' when dropped).
+	 * @param array{0: string, 1: string, 2: string} $outcome The action, the reason code and the value.
+	 *
+	 * @return array{source: string, target: string, action: string, reason: string, value: string}
+	 */
+	private function reportEntry(array $route, array $outcome): array {
+		return ['source' => $route[0], 'target' => $route[1], 'action' => $outcome[0], 'reason' => $outcome[1], 'value' => $outcome[2]];
+	}//end reportEntry()
 
 	/**
 	 * Every rule target and every named source, for O(1) lookups.
