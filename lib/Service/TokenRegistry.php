@@ -338,7 +338,7 @@ class TokenRegistry implements TokenRegistryInterface {
 				'tab' => (string)($component['tab'] ?? 'content'),
 				'type' => (string)($meta['type'] ?? 'text'),
 				'label' => (string)($meta['label'] ?? $name),
-				'group' => (string)$componentId,
+				'group' => $componentId,
 				'primary' => (($meta['primary'] ?? false) === true),
 				// The Nextcloud variable this token replaces inside the
 				// component. A component token is deliberately undeclared

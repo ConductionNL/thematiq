@@ -35,6 +35,8 @@ use Random\Randomizer;
  * and compares each result with the recording. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\CssColorParser

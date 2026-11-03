@@ -99,8 +99,7 @@ class DesignTokensAliasResolver {
 	 * Why the next hop of an alias chain fails: too deep, a cycle, or a missing target.
 	 *
 	 * @param string $targetPath The path the current alias points at.
-	 * @param array{hops: int, chain: array<int, string>, visited: array<string, bool>, leaves: array<string, array<string, mixed>>} $walk
-	 *        The hops so far, the chain walked, the paths visited and the leaf table.
+	 * @param array<string, mixed> $walk The hops so far, the chain walked, the paths visited and the leaf table.
 	 *
 	 * @return array{ok: bool, reason: string, detail: string}|null The failure, or null when the hop may be taken.
 	 */

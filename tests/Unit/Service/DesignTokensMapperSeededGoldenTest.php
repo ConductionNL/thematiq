@@ -36,6 +36,8 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\CssColorParser
@@ -54,7 +56,9 @@ class DesignTokensMapperSeededGoldenTest extends TestCase {
 		'', '   ', 'not-a-colour', '#15427380', 'RGB(21, 66, 115)',
 	];
 
-	private const DEPRECATED = [null, false, true, 'Use the other one.', '  ', ['severity' => 'error', 'message' => 'Gone.'], ['severity' => 'warning'], ['message' => '']];
+	private const DEPRECATED = [
+		null, false, true, 'Use the other one.', '  ', ['severity' => 'error', 'message' => 'Gone.'], ['severity' => 'warning'], ['message' => ''],
+	];
 
 	private const FONTS = [['Fira Sans', 'Arial', 'sans-serif'], ['  ', 'Open Sans'], [], [3, 'serif'], 'Fira Sans, sans-serif', 12];
 

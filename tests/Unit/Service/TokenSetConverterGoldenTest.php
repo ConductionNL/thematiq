@@ -45,6 +45,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\ConversionRun
  * @uses   \OCA\Thematiq\Service\ConverterColourRepair
@@ -56,10 +57,13 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
  * @uses   \OCA\Thematiq\Service\FigmaTokenReader
+ * @uses   \OCA\Thematiq\Service\FigmaCssValue
  * @uses   \OCA\Thematiq\Service\FileDarkValues
  * @uses   \OCA\Thematiq\Service\OpenProjectSetFile
  * @uses   \OCA\Thematiq\Service\ThematiqExportLayers

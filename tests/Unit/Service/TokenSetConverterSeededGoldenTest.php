@@ -47,6 +47,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\ConversionRun
  * @uses   \OCA\Thematiq\Service\ConverterColourRepair
@@ -58,10 +59,13 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
  * @uses   \OCA\Thematiq\Service\FigmaTokenReader
+ * @uses   \OCA\Thematiq\Service\FigmaCssValue
  * @uses   \OCA\Thematiq\Service\FileDarkValues
  * @uses   \OCA\Thematiq\Service\OpenProjectSetFile
  * @uses   \OCA\Thematiq\Service\ThematiqExportLayers
@@ -122,8 +126,10 @@ class TokenSetConverterSeededGoldenTest extends TestCase {
 		$tree = $this->stylesheetTree();
 
 		$actual = [];
-		$actual['table-missing'] = $this->convertCase(appPath: $this->appDirectory(table: null, css: $tree), content: ".a {\n  --brand-color-primary: #154273;\n}\n", slug: 'brand');
-		$actual['table-malformed'] = $this->convertCase(appPath: $this->appDirectory(table: ['rules' => 'none'], css: $tree), content: ".a {\n  --brand-color-primary: #154273;\n}\n", slug: 'brand');
+		$plain = ".a {\n  --brand-color-primary: #154273;\n}\n";
+		$actual['table-missing'] = $this->convertCase(appPath: $this->appDirectory(table: null, css: $tree), content: $plain, slug: 'brand');
+		$malformed = $this->appDirectory(table: ['rules' => 'none'], css: $tree);
+		$actual['table-malformed'] = $this->convertCase(appPath: $malformed, content: $plain, slug: 'brand');
 
 		for ($seed = 1; $seed <= self::SEEDS; $seed++) {
 			$random = new Randomizer(engine: new Mt19937(seed: $seed));

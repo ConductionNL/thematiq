@@ -53,7 +53,13 @@ class ContrastServiceCheckGoldenTest extends TestCase {
 	 */
 	public function testChecksMatchTheGoldenRecording(): void {
 		$service = new ContrastService();
-		$tokens = ['--nldesign-color-primary', '--nldesign-color-primary-text', '--nldesign-color-action', '--nldesign-color-action-text', '--nldesign-color-background'];
+		$tokens = [
+			'--nldesign-color-primary',
+			'--nldesign-color-primary-text',
+			'--nldesign-color-action',
+			'--nldesign-color-action-text',
+			'--nldesign-color-background',
+		];
 		foreach ((new ReflectionClassConstant(ContrastService::class, 'PAIRS'))->getValue() as $pair) {
 			$tokens[] = $pair['fg'];
 			$tokens[] = $pair['bg'];

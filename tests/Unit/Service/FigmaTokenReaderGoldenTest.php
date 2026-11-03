@@ -35,6 +35,7 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\FigmaTokenReader
+ * @uses   \OCA\Thematiq\Service\FigmaCssValue
  * @uses   \OCA\Thematiq\Service\FileDarkValues
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
  */

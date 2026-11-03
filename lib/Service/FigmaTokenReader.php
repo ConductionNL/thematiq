@@ -131,7 +131,7 @@ class FigmaTokenReader {
 	 * @param array<string, mixed> $document The decoded document.
 	 * @param array<int, array{path: string, reason: string}> $skipped What was left out and why, appended to.
 	 *
-	 * @return array{document: array<string, mixed>, dark: array<string, string>, studio: bool} The document, the dark values, and whether it was a Tokens Studio file.
+	 * @return array<string, mixed> The document, the dark values, and whether it was a Tokens Studio file.
 	 */
 	private function studioRead(array $document, array &$skipped): array {
 		$sets = new TokensStudioSets();
@@ -236,7 +236,7 @@ class FigmaTokenReader {
 			}
 
 			$value = $leaf['token']['$value'];
-			if ($this->cycles(start: $dotted, leaves: $leaves) === true) {
+			if ((new FigmaCssValue())->cycles(start: $dotted, leaves: $leaves) === true) {
 				$skipped[] = ['path' => $dotted, 'reason' => 'alias-cycle'];
 				$this->set(tree: $document, path: $leaf['path'], token: null);
 				continue;
@@ -248,7 +248,7 @@ class FigmaTokenReader {
 				continue;
 			}
 
-			$css = $this->cssValue(value: $value, leaves: $leaves);
+			$css = (new FigmaCssValue())->cssValue(value: $value, leaves: $leaves);
 			$this->set(tree: $document, path: $leaf['path'], token: null);
 			if ($css === null) {
 				$skipped[] = ['path' => $dotted, 'reason' => 'value-not-a-css-value'];
@@ -263,87 +263,6 @@ class FigmaTokenReader {
 
 		return $document;
 	}//end named()
-
-	/**
-	 * A plain token value as CSS: itself, or `var()` for a reference to another token of the file.
-	 *
-	 * @param mixed $value The scalar value.
-	 * @param array<string, mixed> $leaves Every token of the file by dotted path.
-	 *
-	 * @return string|null The CSS value, or null for a boolean, an empty value, a sum over
-	 *                     references or a reference to a token the file does not hold.
-	 */
-	private function cssValue(mixed $value, array $leaves): ?string {
-		if (is_bool($value) === true || trim((string)$value) === '') {
-			return null;
-		}
-
-		$value = trim((string)$value);
-
-		return ($this->referenceVar(value: $value, leaves: $leaves) ?? $this->plainCss(value: $value));
-	}//end cssValue()
-
-	/**
-	 * A reference to another token of the file, as `var()`.
-	 *
-	 * @param string $value The trimmed value.
-	 * @param array<string, mixed> $leaves Every token of the file by dotted path.
-	 *
-	 * @return string|null The `var()`, or null when the value is no reference to a token the file holds.
-	 */
-	private function referenceVar(string $value, array $leaves): ?string {
-		if (preg_match('/^\{([a-z][a-z0-9]*(?:\.[a-z0-9-]+)+)\}$/', $value, $match) === 1 && isset($leaves[$match[1]]) === true) {
-			return 'var(--' . str_replace('.', '-', $match[1]) . ')';
-		}
-
-		return null;
-	}//end referenceVar()
-
-	/**
-	 * A value without references as CSS.
-	 *
-	 * A sum over references is not a CSS value. Everything else is judged by the token set
-	 * validator, which sees the file that would be stored: a data: image may hold markup.
-	 *
-	 * @param string $value The trimmed value.
-	 *
-	 * @return string|null The value, or null when it still holds a brace.
-	 */
-	private function plainCss(string $value): ?string {
-		if (str_contains($value, '{') === true || str_contains($value, '}') === true) {
-			return null;
-		}
-
-		return $value;
-	}//end plainCss()
-
-	/**
-	 * Whether following a token's references leads back to a token already passed.
-	 *
-	 * @param string $start The dotted path of the token.
-	 * @param array<string, array<string, mixed>> $leaves Every token by dotted path.
-	 *
-	 * @return bool True for a cycle.
-	 */
-	private function cycles(string $start, array $leaves): bool {
-		$seen = [];
-		$current = $start;
-		while (isset($leaves[$current]) === true) {
-			if (isset($seen[$current]) === true) {
-				return true;
-			}
-
-			$seen[$current] = true;
-			$value = $leaves[$current]['token']['$value'];
-			if (is_string($value) === false || preg_match('/^\{([^{}]+)\}$/', trim($value), $match) !== 1) {
-				return false;
-			}
-
-			$current = $match[1];
-		}
-
-		return false;
-	}//end cycles()
 
 	/**
 	 * Every token under a group, by dotted path.

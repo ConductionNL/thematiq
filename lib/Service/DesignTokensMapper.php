@@ -60,32 +60,6 @@ class DesignTokensMapper {
 	private const PLUGIN_EXTENSION = 'nl.conduction.openproject-thematiq';
 
 	/**
-	 * The v2025.10 `fontWeight` keyword => numeric CSS value table.
-	 *
-	 * @var array<string, int>
-	 */
-	private const FONT_WEIGHT_KEYWORDS = [
-		'thin' => 100,
-		'hairline' => 100,
-		'extra-light' => 200,
-		'ultra-light' => 200,
-		'light' => 300,
-		'normal' => 400,
-		'regular' => 400,
-		'book' => 400,
-		'medium' => 500,
-		'semi-bold' => 600,
-		'demi-bold' => 600,
-		'bold' => 700,
-		'extra-bold' => 800,
-		'ultra-bold' => 800,
-		'black' => 900,
-		'heavy' => 900,
-		'extra-black' => 950,
-		'ultra-black' => 950,
-	];
-
-	/**
 	 * Composite `typography` sub-property => `--nldesign-*` target.
 	 *
 	 * Only `fontFamily` has a generic (non component-scoped) `--nldesign-*`
@@ -134,11 +108,18 @@ class DesignTokensMapper {
 	private DesignTokensAliasResolver $aliasResolver;
 
 	/**
-	 * Converts every DTCG colour space to sRGB.
+	 * The colour value serializer.
 	 *
-	 * @var ColorSpaceConverter
+	 * @var DtcgColourSerializer
 	 */
-	private ColorSpaceConverter $colorSpaces;
+	private DtcgColourSerializer $colours;
+
+	/**
+	 * The serializer of every other single-target value.
+	 *
+	 * @var DtcgValueSerializer
+	 */
+	private DtcgValueSerializer $values;
 
 	/**
 	 * The colours of the current map() that were changed to fit sRGB.
@@ -164,7 +145,8 @@ class DesignTokensMapper {
 	 */
 	public function __construct(?DesignTokensAliasResolver $aliasResolver = null, ?ColorSpaceConverter $colorSpaces = null) {
 		$this->aliasResolver = ($aliasResolver ?? new DesignTokensAliasResolver());
-		$this->colorSpaces = ($colorSpaces ?? new ColorSpaceConverter());
+		$this->colours = new DtcgColourSerializer(colorSpaces: ($colorSpaces ?? new ColorSpaceConverter()));
+		$this->values = new DtcgValueSerializer(colours: $this->colours);
 	}//end __construct()
 
 	/**
@@ -425,7 +407,7 @@ class DesignTokensMapper {
 		$this->dispatchByType(
 			type: $type,
 			token: new DesignTokenRef(path: $path, deprecated: $deprecated),
-			value: $this->originalText(leaf: $leaf, value: $value, type: $type),
+			value: $this->colours->originalText(leaf: $leaf, value: $value, type: $type),
 			mapping: $mapping
 		);
 	}//end processLeaf()
@@ -451,61 +433,10 @@ class DesignTokensMapper {
 			return;
 		}
 
-		$result = match ($type) {
-			'color' => $this->serializeColor(value: $value),
-			'dimension', 'duration' => $this->serializeDimension(value: $value),
-			'cubicBezier' => $this->serializeCubicBezier(value: $value),
-			'fontFamily' => $this->serializeFontFamily(value: $value),
-			'fontWeight' => $this->serializeFontWeight(value: $value),
-			// Any other declared type (shadow, number, duration, …) is not
-			// yet a first-class serializer here — fall back to the original
-			// scalar-passthrough + suffix-mapping behaviour so every document
-			// the previous mapper handled correctly keeps working unchanged.
-			default => $this->serializeScalarPassthrough(value: $value),
-		};
+		$result = $this->values->serialize(type: $type, value: $value);
 
 		$this->assignSingleTarget(token: $token, result: $result, mapping: $mapping);
 	}//end dispatchByType()
-
-	/**
-	 * Serialize a `cubicBezier` value: the four-number array, or a legacy string.
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
-	 *
-	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
-	 */
-	private function serializeCubicBezier($value): array {
-		if (is_string($value) === true) {
-			return ['ok' => true, 'value' => trim($value)];
-		}
-
-		if (is_array($value) === false || count($value) !== 4 || count(array_filter($value, 'is_numeric')) !== 4) {
-			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-		}
-
-		return ['ok' => true, 'value' => 'cubic-bezier(' . implode(', ', array_map('strval', array_values($value))) . ')'];
-	}//end serializeCubicBezier()
-
-	/**
-	 * Legacy scalar-passthrough "serializer" for any declared type this
-	 * mapper does not yet have a first-class serializer for (shadow, number,
-	 * …) — preserves the original mapper's tolerant behaviour.
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string, adapted?: array<string, mixed>} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeScalarPassthrough($value): array {
-		if (is_scalar($value) === false) {
-			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-		}
-
-		return ['ok' => true, 'value' => (string)$value];
-	}//end serializeScalarPassthrough()
 
 	/**
 	 * Assign a serialized single-target result to its `--nldesign-*` target.
@@ -642,7 +573,7 @@ class DesignTokensMapper {
 	 */
 	private function typographyMemberResult(array $member): array {
 		if ($member['key'] === 'fontFamily') {
-			return $this->serializeFontFamily(value: $member['value']);
+			return $this->values->serializeFontFamily(value: $member['value']);
 		}
 
 		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
@@ -693,7 +624,11 @@ class DesignTokensMapper {
 	private function deprecationWarning(string $path, mixed $deprecated): array {
 		$warning = ['path' => $path, 'message' => null];
 		if (is_array($deprecated) === true) {
-			$warning['severity'] = ((($deprecated['severity'] ?? '') === 'error') ? 'critical' : 'warning');
+			$warning['severity'] = 'warning';
+			if (($deprecated['severity'] ?? '') === 'error') {
+				$warning['severity'] = 'critical';
+			}
+
 			$deprecated = ($deprecated['message'] ?? null);
 		}
 
@@ -703,354 +638,6 @@ class DesignTokensMapper {
 
 		return $warning;
 	}//end deprecationWarning()
-
-	/**
-	 * A colour's original text instead of its object, when the token carries one and it is the same colour.
-	 *
-	 * The download and the OpenProject plugin keep the text a colour was written in
-	 * (`rgb(…)`, `hsl(…)`, a name) beside the object. A tool that changed the colour left the text behind,
-	 * so the text counts only while it still names the colour the object holds.
-	 *
-	 * @param array<string, mixed> $leaf The leaf entry.
-	 * @param mixed $value The resolved value.
-	 * @param string $type The resolved type.
-	 *
-	 * @return mixed The text, or the value as it was.
-	 *
-	 * @spec openspec/specs/colour-notation-kept/spec.md#requirement-a-colour-keeps-the-text-it-was-written-in
-	 */
-	private function originalText(array $leaf, mixed $value, string $type): mixed {
-		if ($type !== 'color' || is_array($value) === false) {
-			return $value;
-		}
-
-		$text = $leaf['css'] ?? null;
-		if (is_string($text) === false || trim($text) === '') {
-			return $value;
-		}
-
-		return ($this->sameColourText(text: $text, value: $value) ?? $value);
-	}//end originalText()
-
-	/**
-	 * The CSS text of a colour object, when it is an sRGB notation of the same colour.
-	 *
-	 * Only the sRGB notations: a lab(), lch() or color() value keeps its conversion to sRGB, which
-	 * the upload reports and the contrast checks read.
-	 *
-	 * @param string $text The CSS text the exporter wrote alongside the object.
-	 * @param array<string, mixed> $value The colour object.
-	 *
-	 * @return string|null The trimmed text, or null when the object is to be kept.
-	 */
-	private function sameColourText(string $text, array $value): ?string {
-		$parsed = (new CssColorParser())->parse(value: $text);
-		$object = $this->serializeColorObject(value: $value);
-		if ($this->isSrgbNotation(parsed: $parsed) === false || ($object['ok'] ?? false) !== true) {
-			return null;
-		}
-
-		$rgb = (array)$this->colorSpaces->toSrgb(space: $parsed['space'], components: $parsed['components']);
-		if (strtolower($this->colorSpaces->toHex(rgb: $rgb, alpha: $parsed['alpha'])) !== strtolower((string)$object['value'])) {
-			return null;
-		}
-
-		return trim($text);
-	}//end sameColourText()
-
-	/**
-	 * Whether a parsed CSS colour is written in an sRGB notation (hex or rgb(), hsl(), hwb()).
-	 *
-	 * @param array<string, mixed>|null $parsed The parsed colour, or null when it did not parse.
-	 *
-	 * @return bool True for an sRGB notation.
-	 */
-	private function isSrgbNotation(?array $parsed): bool {
-		return $parsed !== null && in_array($parsed['space'], ['srgb', 'hsl', 'hwb'], true) === true;
-	}//end isSrgbNotation()
-
-	/**
-	 * Serialize a `color` value: legacy string literal passthrough, or the
-	 * v2025.10 object form (sRGB-family color spaces only).
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeColor($value): array {
-		if (is_string($value) === true) {
-			return ['ok' => true, 'value' => trim($value)];
-		}
-
-		if (is_array($value) === false) {
-			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-		}
-
-		return $this->serializeColorObject(value: $value);
-	}//end serializeColor()
-
-	/**
-	 * Serialize the v2025.10 object-form `color` value, in any colour space the DTCG colour
-	 * module lists, to sRGB hex: the `hex` member for an sRGB colour, else the converted
-	 * components; out of gamut, the document's `hex` or the clipped value, reported `adapted`.
-	 *
-	 * @param array<string, mixed> $value The object-form `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeColorObject(array $value): array {
-		$colorSpace = strtolower((string)($value['colorSpace'] ?? ''));
-		if ($this->colorSpaces->isKnownSpace(space: $colorSpace) === false) {
-			return ['ok' => false, 'reason' => 'unsupported-color-space', 'detail' => ($value['colorSpace'] ?? 'unknown')];
-		}
-
-		if ($this->usesHexMember(value: $value, colorSpace: $colorSpace) === true) {
-			return $this->hexMemberColour(value: $value);
-		}
-
-		return $this->componentsColour(value: $value, colorSpace: $colorSpace);
-	}//end serializeColorObject()
-
-	/**
-	 * Whether a colour object is serialized from its `hex` member: an sRGB object that has one,
-	 * or an object without three components.
-	 *
-	 * @param array<string, mixed> $value The colour object.
-	 * @param string $colorSpace The lower-cased colour space.
-	 *
-	 * @return bool True when the `hex` member decides the value.
-	 */
-	private function usesHexMember(array $value, string $colorSpace): bool {
-		$components = $value['components'] ?? null;
-		if ($colorSpace === 'srgb' && $this->hexMember(value: $value) !== null) {
-			return true;
-		}
-
-		return is_array($components) === false || count($components) < 3;
-	}//end usesHexMember()
-
-	/**
-	 * A colour object serialized from its `hex` member and alpha.
-	 *
-	 * @param array<string, mixed> $value The colour object.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialized value, or the reason it has none.
-	 */
-	private function hexMemberColour(array $value): array {
-		$hex = $this->hexMember(value: $value);
-		if ($hex === null) {
-			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-		}
-
-		return ['ok' => true, 'value' => $hex . $this->alphaToHex(alpha: $value['alpha'] ?? null)];
-	}//end hexMemberColour()
-
-	/**
-	 * A colour object serialized from its components, converted to sRGB; out of gamut, the
-	 * `hex` member or the clipped channels, reported as adapted.
-	 *
-	 * @param array<string, mixed> $value The colour object, with at least three components.
-	 * @param string $colorSpace The lower-cased colour space.
-	 *
-	 * @return array{ok: bool, value: string, adapted?: array<string, mixed>} The serialized value.
-	 */
-	private function componentsColour(array $value, string $colorSpace): array {
-		$alphaHex = $this->alphaToHex(alpha: $value['alpha'] ?? null);
-		$hex = $this->hexMember(value: $value);
-		$rgb = (array)$this->colorSpaces->toSrgb(space: $colorSpace, components: array_values($value['components']));
-		if ($this->colorSpaces->isInGamut(rgb: $rgb) === true) {
-			return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex];
-		}
-
-		// Out of the sRGB gamut every consumer reads: the document's own fallback when it
-		// has one, else each channel clipped. Either way the report says so.
-		$adapted = ['reason' => 'out-of-gamut-clipped', 'original' => $value];
-		if ($hex !== null) {
-			$adapted['reason'] = 'out-of-gamut-hex-fallback';
-
-			return ['ok' => true, 'value' => $hex . $alphaHex, 'adapted' => $adapted];
-		}
-
-		return ['ok' => true, 'value' => $this->colorSpaces->toHex(rgb: $rgb) . $alphaHex, 'adapted' => $adapted];
-	}//end componentsColour()
-
-	/**
-	 * A colour object's `hex` member as `#rrggbb`, or null when it has none.
-	 *
-	 * @param array<string, mixed> $value The colour object.
-	 *
-	 * @return string|null
-	 */
-	private function hexMember(array $value): ?string {
-		$hex = $value['hex'] ?? null;
-		if (is_string($hex) === false || preg_match('/^#?([0-9a-fA-F]{6})$/', trim($hex), $match) !== 1) {
-			return null;
-		}
-
-		return '#' . strtolower($match[1]);
-	}//end hexMember()
-
-	/**
-	 * Turn a colour object's `alpha` into the fourth hex pair, or '' when opaque.
-	 *
-	 * @param mixed $alpha The `alpha` member (0–1), absent for an opaque colour.
-	 *
-	 * @return string Two hex digits, or an empty string for an opaque or absent alpha.
-	 */
-	private function alphaToHex(mixed $alpha): string {
-		if (is_int($alpha) === false && is_float($alpha) === false) {
-			return '';
-		}
-
-		$alpha = max(0.0, min(1.0, (float)$alpha));
-		if ($alpha >= 1.0) {
-			return '';
-		}
-
-		return str_pad(dechex((int)round($alpha * 255)), 2, '0', STR_PAD_LEFT);
-	}//end alphaToHex()
-
-	/**
-	 * Serialize a `dimension` value: legacy string passthrough, or the
-	 * `{value, unit}` object form concatenated as `<value><unit>`.
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeDimension($value): array {
-		if (is_string($value) === true) {
-			return ['ok' => true, 'value' => trim($value)];
-		}
-
-		if ($this->isUnitObject(value: $value) === true) {
-			return ['ok' => true, 'value' => $value['value'] . $value['unit']];
-		}
-
-		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-	}//end serializeDimension()
-
-	/**
-	 * Whether a dimension value is the `{value, unit}` object form.
-	 *
-	 * @param mixed $value The raw `$value`.
-	 *
-	 * @return bool True for a scalar value with a string unit.
-	 */
-	private function isUnitObject(mixed $value): bool {
-		return is_array($value) === true
-			&& array_key_exists('value', $value) === true
-			&& array_key_exists('unit', $value) === true
-			&& is_scalar($value['value']) === true
-			&& is_string($value['unit']) === true;
-	}//end isUnitObject()
-
-	/**
-	 * Serialize a `fontFamily` value: a bare string, or an array serialized
-	 * as a quoted CSS font stack (names containing whitespace are quoted;
-	 * single-word names and generic keywords are left bare).
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeFontFamily($value): array {
-		if (is_string($value) === true) {
-			return ['ok' => true, 'value' => trim($value)];
-		}
-
-		if (is_array($value) === true) {
-			$parts = $this->fontFamilyParts(fonts: $value);
-			if (empty($parts) === true) {
-				return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-			}
-
-			return ['ok' => true, 'value' => implode(', ', $parts)];
-		}
-
-		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-	}//end serializeFontFamily()
-
-	/**
-	 * The non-empty string families of a font list, trimmed, a name with a space quoted.
-	 *
-	 * @param array<mixed> $fonts The font list.
-	 *
-	 * @return array<int, string> The families.
-	 */
-	private function fontFamilyParts(array $fonts): array {
-		$parts = [];
-		foreach ($fonts as $font) {
-			if (is_string($font) === false || trim($font) === '') {
-				continue;
-			}
-
-			$font = trim($font);
-			$quoted = $font;
-			if (str_contains($font, ' ') === true) {
-				$quoted = "'" . $font . "'";
-			}
-
-			$parts[] = $quoted;
-		}
-
-		return $parts;
-	}//end fontFamilyParts()
-
-	/**
-	 * Serialize a `fontWeight` value: a number, or a v2025.10 weight keyword
-	 * normalized to its numeric CSS value.
-	 *
-	 * @param mixed $value The resolved `$value`.
-	 *
-	 * @return array{ok: bool, value?: string, reason?: string} The serialization result.
-	 *
-	 * @spec openspec/specs/custom-token-sets/spec.md
-	 */
-	private function serializeFontWeight($value): array {
-		if (is_int($value) === true || is_float($value) === true) {
-			return ['ok' => true, 'value' => (string)((int)$value)];
-		}
-
-		$weight = null;
-		if (is_string($value) === true) {
-			$weight = $this->fontWeightOf(text: trim($value));
-		}
-
-		if ($weight === null) {
-			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
-		}
-
-		return ['ok' => true, 'value' => $weight];
-	}//end serializeFontWeight()
-
-	/**
-	 * A font weight written as text: a number, or one of the CSS keywords.
-	 *
-	 * @param string $text The trimmed value.
-	 *
-	 * @return string|null The numeric weight, or null when the text is neither.
-	 */
-	private function fontWeightOf(string $text): ?string {
-		if (is_numeric($text) === true) {
-			return (string)((int)$text);
-		}
-
-		$key = strtolower($text);
-		if (isset(self::FONT_WEIGHT_KEYWORDS[$key]) === false) {
-			return null;
-		}
-
-		return (string)self::FONT_WEIGHT_KEYWORDS[$key];
-	}//end fontWeightOf()
 
 	/**
 	 * Extract a declared package version from a DTCG document, checked in

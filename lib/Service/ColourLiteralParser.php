@@ -30,6 +30,16 @@ namespace OCA\Thematiq\Service;
 class ColourLiteralParser {
 
 	/**
+	 * A parser over the given argument reader.
+	 *
+	 * @param ColourArgument $arguments The argument reader.
+	 */
+	public function __construct(
+		private readonly ColourArgument $arguments = new ColourArgument(),
+	) {
+	}//end __construct()
+
+	/**
 	 * The CSS basic named colours a theme may write (buren: `white`); `transparent` is not one.
 	 */
 	private const NAMED_COLOURS = [
@@ -288,7 +298,7 @@ class ColourLiteralParser {
 	 * @return float|null The alpha, or null when malformed.
 	 */
 	private function parseAlpha(string $part): ?float {
-		$number = $this->number(part: $part);
+		$number = $this->arguments->number(part: $part);
 		if ($number === null) {
 			return null;
 		}
@@ -310,7 +320,7 @@ class ColourLiteralParser {
 	private function rgbChannels(array $parts): ?array {
 		$channels = [];
 		foreach (array_slice($parts, 0, 3) as $part) {
-			$channel = $this->number(part: $part);
+			$channel = $this->arguments->number(part: $part);
 			if ($channel === null) {
 				return null;
 			}
@@ -333,54 +343,15 @@ class ColourLiteralParser {
 	 * @return array{0: float, 1: float, 2: float}|null The channels, or null when malformed.
 	 */
 	private function hslChannels(array $parts): ?array {
-		$hue = $this->hueDegrees(part: $parts[0]);
-		$saturation = $this->percentage(part: $parts[1]);
-		$lightness = $this->percentage(part: $parts[2]);
+		$hue = $this->arguments->hueDegrees(part: $parts[0]);
+		$saturation = $this->arguments->percentage(part: $parts[1]);
+		$lightness = $this->arguments->percentage(part: $parts[2]);
 		if ($hue === null || $saturation === null || $lightness === null) {
 			return null;
 		}
 
 		return $this->hslToRgb(hue: $hue, saturation: ($saturation / 100), lightness: ($lightness / 100));
 	}//end hslChannels()
-
-	/**
-	 * The number of a percentage argument.
-	 *
-	 * @param string $part The argument.
-	 *
-	 * @return float|null The number before the `%`, or null when it is no percentage.
-	 */
-	private function percentage(string $part): ?float {
-		if (str_ends_with($part, '%') === false) {
-			return null;
-		}
-
-		return $this->number(part: $part);
-	}//end percentage()
-
-	/**
-	 * An hsl() hue in degrees, from degrees, turns or radians.
-	 *
-	 * @param string $part The hue as written.
-	 *
-	 * @return float|null Null when it is no number.
-	 */
-	private function hueDegrees(string $part): ?float {
-		$hue = $this->number(part: (string)preg_replace('/(deg|turn|rad)$/', '', $part));
-		if ($hue === null) {
-			return null;
-		}
-
-		if (str_ends_with($part, 'turn') === true) {
-			return ($hue * 360);
-		}
-
-		if (str_ends_with($part, 'rad') === true) {
-			return ($hue * 180 / M_PI);
-		}
-
-		return $hue;
-	}//end hueDegrees()
 
 	/**
 	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut per channel.
@@ -398,7 +369,7 @@ class ColourLiteralParser {
 	private function oklabChannels(string $space, array $parts): ?array {
 		$values = [];
 		foreach (array_slice($parts, 0, 3) as $index => $part) {
-			$number = $this->oklabComponent(part: $part, index: $index);
+			$number = $this->arguments->oklabComponent(part: $part, index: $index);
 			if ($number === null) {
 				return null;
 			}
@@ -416,60 +387,4 @@ class ColourLiteralParser {
 		return [$clip($srgb[0]), $clip($srgb[1]), $clip($srgb[2])];
 	}//end oklabChannels()
 
-	/**
-	 * One oklch() or oklab() argument as a number: `none` is 0, L's percentage is of 1, the
-	 * others' of 0.4.
-	 *
-	 * @param string $part The argument.
-	 * @param int $index Its position.
-	 *
-	 * @return float|null The number, or null when it is none.
-	 */
-	private function oklabComponent(string $part, int $index): ?float {
-		if ($part === 'none') {
-			return 0.0;
-		}
-
-		$number = $this->number(part: (string)preg_replace('/deg$/', '', $part));
-		if ($number === null) {
-			return null;
-		}
-
-		if (str_ends_with($part, '%') === false) {
-			return $number;
-		}
-
-		return ($number / 100 * $this->oklabPercentScale(index: $index));
-	}//end oklabComponent()
-
-	/**
-	 * What 100% is for an oklch() or oklab() argument: 1 for L, 0.4 for the others.
-	 *
-	 * @param int $index The argument's position.
-	 *
-	 * @return float The scale.
-	 */
-	private function oklabPercentScale(int $index): float {
-		if ($index > 0) {
-			return 0.4;
-		}
-
-		return 1.0;
-	}//end oklabPercentScale()
-
-	/**
-	 * A numeric argument, without a trailing `%`.
-	 *
-	 * @param string $part The argument.
-	 *
-	 * @return float|null The number, or null when it is not one.
-	 */
-	private function number(string $part): ?float {
-		$bare = rtrim($part, '%');
-		if (is_numeric($bare) === false) {
-			return null;
-		}
-
-		return (float)$bare;
-	}//end number()
 }//end class

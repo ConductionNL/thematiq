@@ -112,7 +112,7 @@ class ContrastService {
 	 * @param array{fg: string, bg: string, threshold: float} $pair The pair.
 	 * @param float|null $ratio The measured ratio, or null when it could not be measured.
 	 *
-	 * @return array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}|null The warning, or null when the pair passes.
+	 * @return array<string, mixed>|null The warning (pair, ratio, threshold, level, unevaluated), or null when the pair passes.
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
@@ -475,7 +475,7 @@ class ContrastService {
 	 *
 	 * @param string|null $page The page background.
 	 *
-	 * @return array<int, int|float> The page background's RGB.
+	 * @return array{0: int, 1: int, 2: int} The page background's RGB.
 	 */
 	private function pageBackground(?string $page): array {
 		$white = [255, 255, 255];

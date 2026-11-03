@@ -63,6 +63,10 @@ class DarkPaletteWriteGoldenTest extends TestCase {
 
 	private const MANIFESTS = ['entries', 'missing', 'malformed', 'scalar'];
 
+	private const SET_IDS = [
+		'amsterdam', 'shipped-hc', 'custom-a', 'custom-b', 'custom-none', 'custom-missing', 'custom-readonly', 'custom-t', 'custom-gone',
+	];
+
 	/**
 	 * The temporary files and directories made for this run, in creation order.
 	 *
@@ -114,7 +118,7 @@ class DarkPaletteWriteGoldenTest extends TestCase {
 				$writes = [];
 				$service = $this->service(appPath: $appPath, uploads: $uploads, writes: $writes);
 				$case = [];
-				foreach (['amsterdam', 'shipped-hc', 'custom-a', 'custom-b', 'custom-none', 'custom-missing', 'custom-readonly', 'custom-t', 'custom-gone'] as $id) {
+				foreach (self::SET_IDS as $id) {
 					$case[$id . ':first'] = $service->generateAndWrite(setId: $id);
 					$case[$id . ':again'] = $service->generateAndWrite(setId: $id);
 					$case[$id . ':forced'] = $service->generateAndWrite(setId: $id, force: true);

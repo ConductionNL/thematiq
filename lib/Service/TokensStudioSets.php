@@ -223,7 +223,7 @@ class TokensStudioSets {
 
 			$status = $this->setStatus(selected: $selected, name: $name);
 			if ($status !== 'enabled' && $status !== 'source') {
-				$skipped[] = ['path' => (string)$name, 'reason' => 'token-set-disabled'];
+				$skipped[] = ['path' => $name, 'reason' => 'token-set-disabled'];
 				continue;
 			}
 

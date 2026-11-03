@@ -964,8 +964,7 @@ class TokenSetConverterService {
 	 * @param string $slug The brand prefix for input C names.
 	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
-	 * @return array{declarations: array<string, string>, version: string|null} Declaration name => value, and the
-	 *                                                                           package version when the input declares one.
+	 * @return array{declarations: array<string, string>, version: string|null} The declarations, and the input's package version.
 	 */
 	private function declarationsFromJson(array $decoded, string $kind, string $slug, array &$report): array {
 		if ($kind === 'B') {
@@ -2826,7 +2825,7 @@ class TokenSetConverterService {
 
 		asort($distances);
 
-		return (string)array_key_first($distances);
+		return array_key_first($distances);
 	}//end nearestKey()
 
 	/**
@@ -3227,8 +3226,7 @@ class TokenSetConverterService {
 	 * the same reason. No at-rules and exactly one selector, which is what
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
-	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The
-	 *        brand palette, the component layer and the semantic layer.
+	 * @param array<string, array<string, string>> $layers The brand palette, the component layer and the semantic layer.
 	 * @param SetSource $source The brand slug, the source label and the source package version.
 	 * @param string $inputKind The detected input kind.
 	 * @param array<string, int> $counts The action tally.

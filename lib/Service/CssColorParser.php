@@ -237,7 +237,7 @@ class CssColorParser {
 	private function components(array $parts, array $read): ?array {
 		$components = [];
 		foreach ($parts as $index => $part) {
-			$number = $this->number(part: $part, at: ['space' => $read['space'], 'index' => $index, 'rgbFunction' => $read['rgbFunction']]);
+			$number = $this->number(part: $part, place: ['space' => $read['space'], 'index' => $index, 'rgbFunction' => $read['rgbFunction']]);
 			if ($number === null) {
 				return null;
 			}
@@ -323,12 +323,11 @@ class CssColorParser {
 	 * One component word to its DTCG number.
 	 *
 	 * @param string $part The word.
-	 * @param array{space: string, index: int, rgbFunction: bool} $at The colour space, its position, and whether
-	 *                                                                 it came from rgb() rather than color(srgb ...), which reads 0..255.
+	 * @param array{space: string, index: int, rgbFunction: bool} $place The colour space, its position, and whether rgb() wrote it (0..255).
 	 *
 	 * @return float|null Null for a word that is not a number.
 	 */
-	private function number(string $part, array $at): ?float {
+	private function number(string $part, array $place): ?float {
 		if ($part === 'none') {
 			return 0.0;
 		}
@@ -338,7 +337,7 @@ class CssColorParser {
 			return null;
 		}
 
-		return $this->scaled(part: $part, at: $at);
+		return $this->scaled(part: $part, place: $place);
 	}//end number()
 
 	/**
@@ -346,17 +345,17 @@ class CssColorParser {
 	 * an rgb() channel from 0..255.
 	 *
 	 * @param string $part The numeric word.
-	 * @param array{space: string, index: int, rgbFunction: bool} $at The colour space, its position, and whether rgb() wrote it.
+	 * @param array{space: string, index: int, rgbFunction: bool} $place The colour space, its position, and whether rgb() wrote it.
 	 *
 	 * @return float The number.
 	 */
-	private function scaled(string $part, array $at): float {
+	private function scaled(string $part, array $place): float {
 		$number = (float)$part;
 		if (str_ends_with($part, '%') === true) {
-			return ($number / 100 * (self::PERCENT_SCALE[$at['space']][$at['index']] ?? 1.0));
+			return ($number / 100 * (self::PERCENT_SCALE[$place['space']][$place['index']] ?? 1.0));
 		}
 
-		if ($at['space'] === 'srgb' && $at['rgbFunction'] === true) {
+		if ($place['space'] === 'srgb' && $place['rgbFunction'] === true) {
 			return ($number / 255);
 		}
 

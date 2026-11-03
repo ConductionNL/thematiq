@@ -35,6 +35,7 @@ use Random\Randomizer;
  * arguments. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ColourLiteralParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @covers \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  */
@@ -108,7 +109,12 @@ class ColourParsersGoldenTest extends TestCase {
 		}
 
 		$commas = ($random->getInt(0, 1) === 1);
-		$text = implode(($commas === true ? ', ' : ' '), $args);
+		$glue = ' ';
+		if ($commas === true) {
+			$glue = ', ';
+		}
+
+		$text = implode($glue, $args);
 		$alpha = $random->getInt(0, 3);
 		if ($alpha === 0) {
 			$text .= ' / ' . ['0.5', '50%', '1', '2', '-1', 'x'][$random->getInt(0, 5)];

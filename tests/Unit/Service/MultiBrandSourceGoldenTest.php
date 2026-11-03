@@ -36,6 +36,7 @@ use RuntimeException;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\MultiBrandSource
+ * @uses   \OCA\Thematiq\Service\BrandCssCut
  * @uses   \OCA\Thematiq\Service\CssBlockReader
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
  */
@@ -122,7 +123,10 @@ class MultiBrandSourceGoldenTest extends TestCase {
 		foreach (self::SETS as $index => $set) {
 			$document[$set] = [
 				'color' => [
-					'primary' => [['value' => '#' . str_repeat((string)$index, 6), 'type' => 'color'], ['$value' => '#' . str_repeat((string)$index, 6)]][($index % 2)],
+					'primary' => [
+						['value' => '#' . str_repeat((string)$index, 6), 'type' => 'color'],
+						['$value' => '#' . str_repeat((string)$index, 6)],
+					][($index % 2)],
 					's' . $index => ['$value' => $index . 'px'],
 				],
 				'only' . $index => ['value' => 'x'],

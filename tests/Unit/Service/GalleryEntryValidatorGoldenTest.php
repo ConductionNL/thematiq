@@ -63,7 +63,12 @@ class GalleryEntryValidatorGoldenTest extends TestCase {
 		'fileUrl' => ['ftp://x', 'https://x'],
 		'sha256' => ['AAAA', 'b'],
 		'format' => ['dtcg', 'design-tokens-css', 'json', 'CSS'],
-		'swatches' => [['primary' => '#154273', 'background' => '#fff'], ['primary' => 'red', 'background' => '#fff', 'text' => '#000'], 'none', ['primary' => '#1234', 'background' => '#fff', 'text' => '#000']],
+		'swatches' => [
+			['primary' => '#154273', 'background' => '#fff'],
+			['primary' => 'red', 'background' => '#fff', 'text' => '#000'],
+			'none',
+			['primary' => '#1234', 'background' => '#fff', 'text' => '#000'],
+		],
 		'contrast' => [null, 'AAA'],
 		'addedOn' => ['2026-1-3', '03-11-2026', '2026-11-03T00:00'],
 	];
@@ -75,7 +80,10 @@ class GalleryEntryValidatorGoldenTest extends TestCase {
 	 */
 	public function testValidationMatchesTheGoldenRecording(): void {
 		$validator = new GalleryEntryValidator();
-		$actual = ['scalar' => (string)json_encode($validator->validate(raw: 'entry')), 'valid' => (string)json_encode($validator->validate(raw: self::VALID))];
+		$actual = [
+			'scalar' => (string)json_encode($validator->validate(raw: 'entry')),
+			'valid' => (string)json_encode($validator->validate(raw: self::VALID)),
+		];
 		$fields = array_keys(self::BAD);
 		for ($seed = 1; $seed <= 400; $seed++) {
 			$random = new Randomizer(engine: new Mt19937(seed: $seed));

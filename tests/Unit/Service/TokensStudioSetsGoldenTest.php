@@ -133,7 +133,11 @@ class TokensStudioSetsGoldenTest extends TestCase {
 				continue;
 			}
 
-			$token = [['value' => '#' . $index . $index . $index, 'type' => 'color'], ['$value' => $index . 'px'], ['nested' => ['value' => 'x' . $index]]][$random->getInt(0, 2)];
+			$token = [
+				['value' => '#' . $index . $index . $index, 'type' => 'color'],
+				['$value' => $index . 'px'],
+				['nested' => ['value' => 'x' . $index]],
+			][$random->getInt(0, 2)];
 			$node = &$tree;
 			foreach (explode('.', $path) as $segment) {
 				if (isset($node[$segment]) === false || is_array($node[$segment]) === false) {
