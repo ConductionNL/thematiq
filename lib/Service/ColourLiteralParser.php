@@ -293,7 +293,7 @@ class ColourLiteralParser {
 	 * @return array{0: float, 1: float, 2: float}|null The channels, or null when malformed.
 	 */
 	private function hslChannels(array $parts): ?array {
-		$hue = $this->number(part: (string)preg_replace('/(deg|turn|rad)$/', '', $parts[0]));
+		$hue = $this->hueDegrees(part: $parts[0]);
 		$saturation = $this->number(part: $parts[1]);
 		$lightness = $this->number(part: $parts[2]);
 		if ($hue === null || $saturation === null || $lightness === null
@@ -302,16 +302,32 @@ class ColourLiteralParser {
 			return null;
 		}
 
-		if (str_ends_with($parts[0], 'turn') === true) {
-			$hue = ($hue * 360);
-		}
-
-		if (str_ends_with($parts[0], 'rad') === true) {
-			$hue = ($hue * 180 / M_PI);
-		}
-
 		return $this->hslToRgb(hue: $hue, saturation: ($saturation / 100), lightness: ($lightness / 100));
 	}//end hslChannels()
+
+	/**
+	 * An hsl() hue in degrees, from degrees, turns or radians.
+	 *
+	 * @param string $part The hue as written.
+	 *
+	 * @return float|null Null when it is no number.
+	 */
+	private function hueDegrees(string $part): ?float {
+		$hue = $this->number(part: (string)preg_replace('/(deg|turn|rad)$/', '', $part));
+		if ($hue === null) {
+			return null;
+		}
+
+		if (str_ends_with($part, 'turn') === true) {
+			return ($hue * 360);
+		}
+
+		if (str_ends_with($part, 'rad') === true) {
+			return ($hue * 180 / M_PI);
+		}
+
+		return $hue;
+	}//end hueDegrees()
 
 	/**
 	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut per channel.
