@@ -1068,7 +1068,7 @@ class TokenSetConverterService {
 		$resolved = [];
 
 		foreach ($declarations as $name => $value) {
-			$literal = $this->resolveValue(value: $value, declarations: $declarations, seen: [$name => true], depth: 0);
+			$literal = $this->resolveValue(value: $value, chain: ['declarations' => $declarations, 'seen' => [$name => true], 'depth' => 0]);
 
 			if ($literal === null) {
 				$report[] = [
@@ -1091,54 +1091,27 @@ class TokenSetConverterService {
 	 * Resolve one value's `var()` references to a literal.
 	 *
 	 * @param string $value The raw value.
-	 * @param array<string, string> $declarations The full declaration map.
-	 * @param array<string, bool> $seen Names already on this chain (cycle guard).
-	 * @param int $depth Current depth.
+	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The declarations,
+	 *        the names already on this chain (cycle guard) and the depth.
 	 *
 	 * @return string|null The literal value, or null when a reference cannot be resolved.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per value form the table accepts (literal, reference, alias, function).
 	 */
-	private function resolveValue(string $value, array $declarations, array $seen, int $depth): ?string {
+	private function resolveValue(string $value, array $chain): ?string {
 		if (str_contains($value, 'var(') === false) {
 			return trim($value);
 		}
 
-		if ($depth >= self::MAX_VAR_DEPTH) {
+		if ($chain['depth'] >= self::MAX_VAR_DEPTH) {
 			return null;
 		}
 
 		$failed = false;
 		$result = preg_replace_callback(
 			'/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\)[^()]*)*))?\)/',
-			function (array $match) use ($declarations, $seen, $depth, &$failed): string {
-				$reference = $match[1];
-				$fallback = ($match[2] ?? null);
-
-				if (isset($seen[$reference]) === false && array_key_exists($reference, $declarations) === true) {
-					$inner = $this->resolveValue(
-						value: $declarations[$reference],
-						declarations: $declarations,
-						seen: array_merge($seen, [$reference => true]),
-						depth: ($depth + 1)
-					);
-
-					if ($inner !== null) {
-						return $inner;
-					}
-				}
-
-				if ($fallback !== null && trim($fallback) !== '') {
-					$inner = $this->resolveValue(
-						value: trim($fallback),
-						declarations: $declarations,
-						seen: $seen,
-						depth: ($depth + 1)
-					);
-
-					if ($inner !== null) {
-						return $inner;
-					}
+			function (array $match) use ($chain, &$failed): string {
+				$inner = $this->resolveReference(match: $match, chain: $chain);
+				if ($inner !== null) {
+					return $inner;
 				}
 
 				$failed = true;
@@ -1154,6 +1127,34 @@ class TokenSetConverterService {
 
 		return trim($result);
 	}//end resolveValue()
+
+	/**
+	 * One `var()` reference resolved: the declared token when it resolves, else the fallback.
+	 *
+	 * @param array<int, string> $match The reference name and, when given, the fallback.
+	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The chain so far.
+	 *
+	 * @return string|null The literal, or null when neither resolves.
+	 */
+	private function resolveReference(array $match, array $chain): ?string {
+		$reference = $match[1];
+		if (isset($chain['seen'][$reference]) === false && array_key_exists($reference, $chain['declarations']) === true) {
+			$inner = $this->resolveValue(
+				value: $chain['declarations'][$reference],
+				chain: ['declarations' => $chain['declarations'], 'seen' => array_merge($chain['seen'], [$reference => true]), 'depth' => ($chain['depth'] + 1)]
+			);
+			if ($inner !== null) {
+				return $inner;
+			}
+		}
+
+		$fallback = ($match[2] ?? null);
+		if ($fallback === null || trim($fallback) === '') {
+			return null;
+		}
+
+		return $this->resolveValue(value: trim($fallback), chain: ['depth' => ($chain['depth'] + 1)] + $chain);
+	}//end resolveReference()
 
 	/**
 	 * Lift the theme's logo out of the declarations and into a writable asset.
