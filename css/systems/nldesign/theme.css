@@ -493,14 +493,20 @@ button:not(.action-button),
  * buttons). The font still reaches them, from the rule above. */
 :where(.button-vue:not(.action-button):not(.cn-look-board *)) {
 	--font-weight-element: var(--nldesign-component-button-font-weight);
-	--border-radius-element: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	--border-radius-element: var(
+		--nldesign-component-button-border-radius,
+		var(--nldesign-border-radius)
+	);
 	border-width: var(--nldesign-component-button-border-width);
 }
 
 button:not(.button-vue, [class^='vs__']):not(.action-button, .cn-look-board *),
 .button:not(.app-navigation-entry-button, .cn-look-board *) {
 	font-weight: var(--nldesign-component-button-font-weight);
-	border-radius: var(--nldesign-component-button-border-radius, var(--nldesign-border-radius));
+	border-radius: var(
+		--nldesign-component-button-border-radius,
+		var(--nldesign-border-radius)
+	);
 	border-width: var(--nldesign-component-button-border-width);
 }
 
@@ -519,7 +525,9 @@ button:not(.button-vue, [class^='vs__']):not(.action-button, .cn-look-board *),
  * (Settings › Theming renders each colour field as a primary NcButton whose
  * background IS the colour being chosen, with a legible text colour core
  * computes) are left out, so their label keeps core's colour. */
-:where(.button-vue--vue-primary, .button-vue--primary):not([data-admin-theming-setting-color-picker]):not(:where([class*='_colorPickerField__button'])) {
+:where(.button-vue--vue-primary, .button-vue--primary):not(
+		[data-admin-theming-setting-color-picker]
+	):not(:where([class*='_colorPickerField__button'])) {
 	--nldesign-color-on-surface: var(--color-primary-element-text);
 }
 
@@ -591,7 +599,9 @@ a {
 	transition: color var(--animation-quick) var(--nldesign-animation-easing, ease) !important;
 }
 
-a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
+		:where(.cn-banner-widget__action)
+	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 }
 
@@ -630,15 +640,27 @@ a.cn-week-strip__item:focus {
 /* A `.tile-widget` keeps its app's link colours (css-architecture spec, #939).
  * :where() keeps these rules at the specificity of a bare `a`, so every rule
  * that outranked them before still does. */
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(
+		:where(.button)
+	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
+		:where(.cn-link-button-widget__button)
+	):not(:where(.cn-week-strip__item)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):hover {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(
+		:where(.button)
+	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
+		:where(.cn-link-button-widget__button)
+	):not(:where(.cn-week-strip__item)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
-a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):visited {
+a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue)):not(
+		:where(.button)
+	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
+		:where(.cn-link-button-widget__button)
+	):not(:where(.cn-week-strip__item)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 

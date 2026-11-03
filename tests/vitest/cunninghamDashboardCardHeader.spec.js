@@ -10,13 +10,11 @@
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
+import { readCss } from './support/cssText.js'
 
 const ROOT = path.resolve(__dirname, '..', '..')
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8')
-const css = read('css/systems/lasuite/element-overrides.css').replace(
-	/\/\*[\s\S]*?\*\//g,
-	'',
-)
+const css = readCss(path.join(ROOT, 'css/systems/lasuite/element-overrides.css'))
 const systems = JSON.parse(read('design-systems.json'))
 
 describe('the Cunningham layer: dashboard card titles', () => {

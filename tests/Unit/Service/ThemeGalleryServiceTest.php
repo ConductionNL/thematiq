@@ -21,6 +21,8 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\GalleryEntryValidator;
+use OCA\Thematiq\Service\GalleryIndexCache;
+use OCA\Thematiq\Service\GalleryIndexFetch;
 use OCA\Thematiq\Service\ThemeGalleryService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
@@ -171,13 +173,17 @@ class ThemeGalleryServiceTest extends TestCase {
 		);
 
 		return new ThemeGalleryService(
-			$config,
-			$this->clientService,
-			$customSets,
-			new GalleryEntryValidator(),
-			$time,
-			$this->createMock(LoggerInterface::class),
-			$appConfig
+			config: $config,
+			fetching: new GalleryIndexFetch(
+				clientService: $this->clientService,
+				entries: new GalleryEntryValidator(),
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			customSets: $customSets,
+			cache: new GalleryIndexCache(
+				appConfig: $appConfig,
+				time: $time
+			)
 		);
 	}//end service()
 
