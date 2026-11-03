@@ -133,7 +133,10 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 		$response = $this->controller->exportOverrides();
 
-		$this->assertSame('text/css', $response->getHeaders()['Content-Type']);
-		$this->assertStringContainsString('custom-overrides.css', $response->getHeaders()['Content-Disposition']);
+		// The response's own headers: Response::getHeaders() merges in request headers through
+		// Server::get(), which needs a Nextcloud server.
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
+		$this->assertSame(expected: 'text/css', actual: $headers['Content-Type']);
+		$this->assertStringContainsString(needle: 'custom-overrides.css', haystack: $headers['Content-Disposition']);
 	}//end testExportsTheNamedSetsFile()
 }//end class
