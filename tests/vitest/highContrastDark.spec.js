@@ -18,6 +18,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import postcss from 'postcss'
+import { compact } from './support/cssText.js'
 import { describe, expect, it } from 'vitest'
 
 const ROOT = path.resolve(__dirname, '../..')
@@ -136,7 +137,7 @@ function cascade(env, matches) {
 				if (prior && prior.important && !d.important) {
 					return
 				}
-				won[d.prop] = { value: d.value.trim(), important: d.important }
+				won[d.prop] = { value: compact(d.value), important: d.important }
 			})
 		})
 	}
@@ -203,7 +204,8 @@ function ratio(a, b) {
 }
 
 /** The body link rule: every `a` except a link drawn as a button. */
-const BODY_LINK = "a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item))"
+const BODY_LINK =
+	"a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item))"
 
 /**
  * What a page looks like in an environment: the variables on body, and the
@@ -214,7 +216,7 @@ const BODY_LINK = "a:not(:where(.button-vue)):not(:where(.button)):not(:where([r
  */
 function page(env) {
 	const vars = cascade(env, (s) => reachesBody(s, env))
-	const element = (selector) => cascade(env, (s) => s.trim() === selector)
+	const element = (selector) => cascade(env, (s) => compact(s) === selector)
 	const focus = element('*:focus-visible')
 	const outline = resolve(focus.outline.replace(/!important/, ''), vars)
 	const [, width, colour] = outline.match(/^(\d+)px\s+solid\s+(\S+)$/) ?? []

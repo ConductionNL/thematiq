@@ -20,6 +20,9 @@ use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -123,17 +126,23 @@ class SettingsControllerEndpointsTest extends TestCase {
 		$this->controller = new SettingsController(
 			appName: 'thematiq',
 			request: $this->createMock(originalClassName: IRequest::class),
-			config: $config,
-			tokenSetService: $this->tokenSetService,
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			previewService: $this->previewService,
-			appThemingService: $this->appThemingService,
-			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
-			auditService: $auditService,
-			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
-			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
-			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
-			activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class)
+			settings: new SettingsConfigServices(
+				config: $config,
+				auditService: $auditService,
+				appThemingService: $this->appThemingService,
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSetService,
+				previewService: $this->previewService,
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end setUp()
 

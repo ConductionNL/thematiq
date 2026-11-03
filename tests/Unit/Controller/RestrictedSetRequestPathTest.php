@@ -73,6 +73,9 @@ use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ScheduledSwitchTargets;
 use OCA\Thematiq\Service\SettableContrastPairs;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\ThemeVersionService;
@@ -123,6 +126,9 @@ use ReflectionProperty;
  * 200, so a 403 read in the other tests is a status the chain let through.
  */
 #[CoversClass(SettingsController::class)]
+#[UsesClass(SettingsConfigServices::class)]
+#[UsesClass(SettingsReportServices::class)]
+#[UsesClass(SettingsTokenSetServices::class)]
 #[CoversClass(PreviewController::class)]
 #[CoversClass(ScheduledSwitchController::class)]
 #[CoversClass(AppBrandController::class)]
@@ -466,11 +472,7 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$controller = new AppBrandController(
 			appName: 'thematiq',
 			request: $this->request,
-			sources: new AppBrandSources(
-				brands: $brands,
-				appTheming: $appTheming,
-				tokenSets: $this->tokenSets
-			),
+			sources: new AppBrandSources(brands: $brands, appTheming: $appTheming, tokenSets: $this->tokenSets),
 			l10n: $this->createMock(originalClassName: IL10N::class)
 		);
 
@@ -541,24 +543,30 @@ class RestrictedSetRequestPathTest extends TestCase {
 		return new SettingsController(
 			appName: 'thematiq',
 			request: $this->request,
-			config: $this->config,
-			tokenSetService: $this->tokenSets,
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
-			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
-			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
-			auditService: $audit,
-			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
-			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
-			groupThemingService: new GroupThemingService(
+			settings: new SettingsConfigServices(
 				config: $this->config,
-				groupManager: $groupManager,
-				userSession: $this->createMock(originalClassName: IUserSession::class),
-				tokenSetService: $this->tokenSets,
-				previewService: $this->previewService(),
-				cacheFactory: $cacheFactory
+				auditService: $audit,
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: new GroupThemingService(
+					config: $this->config,
+					groupManager: $groupManager,
+					userSession: $this->createMock(originalClassName: IUserSession::class),
+					tokenSetService: $this->tokenSets,
+					previewService: $this->previewService(),
+					cacheFactory: $cacheFactory
+				)
 			),
-			activeTokenSet: new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $audit)
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSets,
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $audit),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end settingsController()
 }//end class

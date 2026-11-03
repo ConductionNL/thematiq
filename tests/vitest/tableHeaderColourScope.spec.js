@@ -14,7 +14,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const css = fs.readFileSync(path.join(ROOT, 'css/component-scopes.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const css = fs
+	.readFileSync(path.join(ROOT, 'css/component-scopes.css'), 'utf8')
+	.replace(/\/\*[\s\S]*?\*\//g, '')
 
 /**
  * The bodies of every rule whose selector list includes exactly this selector.
@@ -27,7 +29,12 @@ const bodiesOf = (selector) => {
 	const re = /([^{}]+)\{([^{}]*)\}/g
 	let m
 	while ((m = re.exec(css))) {
-		if (m[1].split(',').map((s) => s.trim()).includes(selector)) {
+		if (
+			m[1]
+				.split(',')
+				.map((s) => s.trim())
+				.includes(selector)
+		) {
 			out.push(m[2])
 		}
 	}
@@ -42,6 +49,8 @@ describe('the table header colour scope', () => {
 	})
 
 	it('paints the header cells from the token, inheriting without one', () => {
-		expect(bodiesOf('th').join('\n')).toMatch(/color:\s*var\(--nldesign-component-table-header-color,\s*inherit\)/)
+		expect(bodiesOf('th').join('\n')).toMatch(
+			/color:\s*var\(--nldesign-component-table-header-color,\s*inherit\)/,
+		)
 	})
 })

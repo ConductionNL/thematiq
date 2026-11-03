@@ -33,14 +33,16 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
  */
 function mainTextRules(file) {
 	const out = []
-	postcss.parse(fs.readFileSync(path.join(root, file), 'utf8')).walkDecls('--color-main-text', (decl) => {
-		if (decl.parent.type !== 'rule') {
-			return
-		}
-		for (const selector of decl.parent.selectors) {
-			out.push({ selector: selector.trim(), value: decl.value.trim() })
-		}
-	})
+	postcss
+		.parse(fs.readFileSync(path.join(root, file), 'utf8'))
+		.walkDecls('--color-main-text', (decl) => {
+			if (decl.parent.type !== 'rule') {
+				return
+			}
+			for (const selector of decl.parent.selectors) {
+				out.push({ selector: selector.trim(), value: decl.value.trim() })
+			}
+		})
 	return out
 }
 
@@ -77,20 +79,31 @@ beforeAll(() => {
 
 describe('a tertiary button in the app navigation', () => {
 	it('gets the tertiary button colour from the component scope (the cause)', () => {
-		const scoped = mainTextRules('css/component-scopes.css')
-			.filter((rule) => matches($('nav-settings'), rule.selector))
-		expect(scoped.some((rule) => rule.value.includes('--nldesign-component-button-color'))).toBe(true)
+		const scoped = mainTextRules('css/component-scopes.css').filter((rule) =>
+			matches($('nav-settings'), rule.selector),
+		)
+		expect(
+			scoped.some((rule) =>
+				rule.value.includes('--nldesign-component-button-color'),
+			),
+		).toBe(true)
 	})
 
 	it('inherits the navigation text colour instead', () => {
-		const handBack = mainTextRules('css/systems/nldesign/element-overrides.css')
-			.filter((rule) => matches($('nav-settings'), rule.selector) && rule.value === 'inherit')
+		const handBack = mainTextRules(
+			'css/systems/nldesign/element-overrides.css',
+		).filter(
+			(rule) =>
+				matches($('nav-settings'), rule.selector)
+				&& rule.value === 'inherit',
+		)
 		expect(handBack.length).toBeGreaterThan(0)
 	})
 
 	it('leaves a tertiary button outside the navigation alone', () => {
-		const handBack = mainTextRules('css/systems/nldesign/element-overrides.css')
-			.filter((rule) => matches($('content-tertiary'), rule.selector))
+		const handBack = mainTextRules(
+			'css/systems/nldesign/element-overrides.css',
+		).filter((rule) => matches($('content-tertiary'), rule.selector))
 		expect(handBack).toEqual([])
 	})
 })

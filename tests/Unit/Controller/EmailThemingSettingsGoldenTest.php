@@ -32,6 +32,9 @@ use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -51,6 +54,9 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\SettingsController
+ * @uses   \OCA\Thematiq\Service\SettingsConfigServices
+ * @uses   \OCA\Thematiq\Service\SettingsReportServices
+ * @uses   \OCA\Thematiq\Service\SettingsTokenSetServices
  * @covers \OCA\Thematiq\Service\EmailThemingSettings
  * @uses   \OCA\Thematiq\Service\Exception\ConfigReadOnlyException
  * @uses   \OCA\Thematiq\Service\Exception\FooterValidationException
@@ -164,17 +170,23 @@ class EmailThemingSettingsGoldenTest extends TestCase {
 		return new SettingsController(
 			appName: 'thematiq',
 			request: $this->createMock(originalClassName: IRequest::class),
-			config: $this->createMock(originalClassName: IConfig::class),
-			tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
-			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
-			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
-			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
-			emailTheming: new EmailThemingSettings(emailThemingService: $email),
-			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
-			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
-			activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class)
+			settings: new SettingsConfigServices(
+				config: $this->createMock(originalClassName: IConfig::class),
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+				emailTheming: new EmailThemingSettings(emailThemingService: $email),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end controller()
 }//end class
