@@ -23,9 +23,9 @@ use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -33,6 +33,8 @@ use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ImageSniffer;
+use OCA\Thematiq\Service\OverridesSetContext;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OwnTokenService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
@@ -171,13 +173,17 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
 		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $cssParser);
 		$this->overridesService = new CustomOverridesService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$cssParser,
-			new DarkPaletteService($contrast, $cssParser, $appManager, $logger),
-			$config,
-			new DesignSystemService($appManager, $config),
-			null,
-			$this->ownTokens
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				cssParser: $cssParser,
+				darkPalette: new DarkPaletteService($contrast, $cssParser, $appManager, $logger)
+			),
+			setContext: new OverridesSetContext(
+				config: $config,
+				designSystems: new DesignSystemService($appManager, $config),
+				values: null,
+				ownTokens: $this->ownTokens
+			)
 		);
 		$this->customTokenSetService = new CustomTokenSetService(
 			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
