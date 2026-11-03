@@ -21,11 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
-use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
-use OCP\App\IAppManager;
 use OCP\IL10N;
-use OCP\ServerVersion;
 use Throwable;
 
 /**
@@ -43,73 +39,17 @@ use Throwable;
 class PlaygroundStateService {
 
 	/**
-	 * Resolves the app directory, so the inventory is read from the installed
-	 * app rather than from a path guessed relative to this file.
-	 *
-	 * @var IAppManager
-	 */
-	private IAppManager $appManager;
-
-	/**
-	 * Resolves the token values and the variable-to-token map.
-	 *
-	 * @var TokenSetPreviewService
-	 */
-	private TokenSetPreviewService $previewValues;
-
-	/**
-	 * Owns the reason-code vocabulary the playground's token-less rows are
-	 * worded from.
-	 *
-	 * @var TokenSetConverterService
-	 */
-	private TokenSetConverterService $converter;
-
-	/**
-	 * The running instance's own stock theme, as tokens.
-	 *
-	 * Only consulted for the stock set, whose values live in the instance rather
-	 * than in a file — see {@see getExportTokens()}.
-	 *
-	 * @var StockTokensService
-	 */
-	private StockTokensService $stockTokens;
-
-	/**
-	 * Translates the inventory's own chrome: titles, subtitles, what each
-	 * token paints and why a look has no token. See {@see translateInventory()}.
-	 *
-	 * @var IL10N
-	 */
-	private IL10N $l10n;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager $appManager Resolves the app directory.
-	 * @param TokenSetPreviewService $previewValues Resolves token values and sources.
-	 * @param TokenSetConverterService $converter The conversion reason vocabulary.
-	 * @param StockTokensService $stockTokens The instance's own stock theme.
+	 * @param PlaygroundTokenSources $sources The app manager, the token preview, the converter and the stock tokens.
 	 * @param IL10N $l10n The app's translations.
-	 * @param RuntimeFileStore|null $store Where uploaded sets and their dark files live.
-	 * @param SetFileReader $files Reads a set file from the release or the store.
-	 * @param ServerVersion|null $serverVersion The running server's version.
+	 * @param PlaygroundSetFiles $setFiles The runtime file store, the set file reader and the server version.
 	 */
 	public function __construct(
-		IAppManager $appManager,
-		TokenSetPreviewService $previewValues,
-		TokenSetConverterService $converter,
-		StockTokensService $stockTokens,
-		IL10N $l10n,
-		private ?RuntimeFileStore $store = null,
-		private SetFileReader $files = new SetFileReader(),
-		private ?ServerVersion $serverVersion = null,
+		private readonly PlaygroundTokenSources $sources,
+		private readonly IL10N $l10n,
+		private readonly PlaygroundSetFiles $setFiles = new PlaygroundSetFiles(),
 	) {
-		$this->appManager = $appManager;
-		$this->previewValues = $previewValues;
-		$this->converter = $converter;
-		$this->stockTokens = $stockTokens;
-		$this->l10n = $l10n;
 	}//end __construct()
 
 	/**
@@ -138,15 +78,15 @@ class PlaygroundStateService {
 	 */
 	private function getExportTokens(string $tokenSetId): array {
 		if ($tokenSetId !== CssInjectionService::STOCK_TOKEN_SET) {
-			return $this->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
+			return $this->sources->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
 		}
 
-		$stock = $this->stockTokens->getTokens();
+		$stock = $this->sources->stockTokens->getTokens();
 		if ($stock !== []) {
 			return $stock;
 		}
 
-		return $this->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
+		return $this->sources->previewValues->getDeclaredTokens(tokenSetId: $tokenSetId);
 	}//end getExportTokens()
 
 	/**
@@ -162,9 +102,9 @@ class PlaygroundStateService {
 		return [
 			'playgroundInventory' => $this->getInventory(),
 			'playgroundReasons' => $this->getReasons(),
-			'playgroundTokens' => $this->previewValues->getResolvedTokens(tokenSetId: $tokenSetId),
+			'playgroundTokens' => $this->sources->previewValues->getResolvedTokens(tokenSetId: $tokenSetId),
 			'playgroundExportTokens' => $this->getExportTokens(tokenSetId: $tokenSetId),
-			'playgroundTokenSources' => $this->previewValues->getTokenSources(),
+			'playgroundTokenSources' => $this->sources->previewValues->getTokenSources(),
 			'playgroundVersion' => $this->getServerMajor(),
 			// The set these values came from, so an export is named after the
 			// set it actually contains. Published rather than re-derived in the
@@ -192,10 +132,10 @@ class PlaygroundStateService {
 		}
 
 		// An uploaded set's dark file lives in the runtime store, a shipped one in the release.
-		$css = (string)$this->files->read(
-			appPath: $this->appManager->getAppPath(Application::APP_ID),
+		$css = (string)$this->setFiles->files->read(
+			appPath: $this->sources->appManager->getAppPath(Application::APP_ID),
 			name: 'css/tokens/dark/' . $tokenSetId . '.css',
-			store: $this->store
+			store: $this->setFiles->store
 		);
 		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
 			return [];
@@ -230,7 +170,7 @@ class PlaygroundStateService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	protected function getServerMajor(): int {
-		if ($this->serverVersion === null) {
+		if ($this->setFiles->serverVersion === null) {
 			// Only without a full Nextcloud bootstrap, which in practice means
 			// an isolated unit test. Zero is not a version the switch offers,
 			// so the instrument falls back to the newest one it knows.
@@ -238,7 +178,7 @@ class PlaygroundStateService {
 		}
 
 		try {
-			return (int)($this->serverVersion->getVersion()[0] ?? 0);
+			return (int)($this->setFiles->serverVersion->getVersion()[0] ?? 0);
 		} catch (Throwable $e) {
 			return 0;
 		}
@@ -258,7 +198,7 @@ class PlaygroundStateService {
 	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
 	 */
 	public function getInventory(): array {
-		$path = $this->appManager->getAppPath(Application::APP_ID) . '/js/playground/components.json';
+		$path = $this->sources->appManager->getAppPath(Application::APP_ID) . '/js/playground/components.json';
 
 		$raw = false;
 		if (is_file($path) === true) {
@@ -373,7 +313,7 @@ class PlaygroundStateService {
 		try {
 			// Translated here, for the panel: the converter's own callers write
 			// the English sentence into import reports.
-			$reasons = $this->converter->getReasons();
+			$reasons = $this->sources->converter->getReasons();
 			foreach ($reasons as $code => $reason) {
 				if (is_string($reason) === true) {
 					$reasons[$code] = $this->translate(text: $reason);
