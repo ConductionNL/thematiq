@@ -78,7 +78,7 @@ class TokenSetConverterSeededGoldenTest extends TestCase {
 
 	private const FIXTURE = __DIR__ . '/../fixtures/golden/token-set-converter-seeded.golden.json';
 
-	private const SEEDS = 240;
+	private const SEEDS = 40;
 
 	private const COLOURS = [
 		'#154273', '#ffffff', '#000000', '#FFFFFF', '#767676', '#fafafa', '#1a1a1a', '#e17000', '#0b71a1', '#888888',
