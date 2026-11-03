@@ -28,6 +28,9 @@ use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignTokensWriter;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Settings\Admin;
@@ -73,7 +76,14 @@ final class DtcgExportControllerTest extends TestCase {
 		$cache = $this->createMock(ICacheFactory::class);
 		$cache->method('createDistributed')->willReturn($this->createMock(ICache::class));
 		$parser = new CssParserService();
-		$tokenSets = new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), new ShippedTokenSetAuditService(new ContrastService(), $parser), $cache, new TokenSetVocabularyAuditService($parser));
+		$tokenSets = new TokenSetService(
+			setFiles: new TokenSetFiles(appManager: $appManager),
+			runtime: new TokenSetRuntime(config: $config, cacheFactory: $cache, logger: $this->createMock(LoggerInterface::class)),
+			audits: new TokenSetAudits(
+				audit: new ShippedTokenSetAuditService(new ContrastService(), $parser),
+				vocabularyAudit: new TokenSetVocabularyAuditService($parser)
+			)
+		);
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 

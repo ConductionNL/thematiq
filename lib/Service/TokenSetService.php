@@ -21,13 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
-use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
-use OCP\App\IAppManager;
 use OCP\ICache;
-use OCP\ICacheFactory;
 use OCP\IConfig;
-use Psr\Log\LoggerInterface;
 
 /**
  * Service for filesystem-based token set discovery.
@@ -77,45 +72,6 @@ class TokenSetService {
 	private const WARNINGS_CACHE_TTL = 3600;
 
 	/**
-	 * The app manager for resolving paths.
-	 *
-	 * @var IAppManager
-	 */
-	private IAppManager $appManager;
-
-	/**
-	 * The config service for reading the custom-set appconfig manifest.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The logger for the defensive id-collision warning.
-	 *
-	 * @var LoggerInterface
-	 */
-	private LoggerInterface $logger;
-
-	/**
-	 * The shipped-set contrast audit service (runtime warning surface, and
-	 * the `wcagLevel` audit path the public catalogue projection reuses).
-	 *
-	 * @var ShippedTokenSetAuditService
-	 */
-	private ShippedTokenSetAuditService $audit;
-
-	/**
-	 * The vocabulary-completeness audit service — the second, independent
-	 * warning source: whether a shipped set defines the `--nldesign-*`
-	 * vocabulary the design system reads at all (as opposed to whether its
-	 * colours are legible, which is `$audit`'s job).
-	 *
-	 * @var TokenSetVocabularyAuditService
-	 */
-	private TokenSetVocabularyAuditService $vocabularyAudit;
-
-	/**
 	 * Distributed cache for the resolved WCAG level, keyed by set id.
 	 * Deliberately the same `ICache` prefix (`thematiq_wcag_level`)
 	 * `Capabilities` uses, so the public catalogue and the active-theme
@@ -138,34 +94,17 @@ class TokenSetService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IAppManager $appManager The app manager for resolving paths.
-	 * @param IConfig $config The config service.
-	 * @param LoggerInterface $logger The logger.
-	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
-	 * @param ICacheFactory $cacheFactory Creates the WCAG-level and warnings caches.
-	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
-	 * @param RuntimeFileStore|null $store Where uploaded sets are kept (app data).
-	 * @param SetFileReader $files Lists and checks a set's file in the release or the store.
-	 * @param TokenSetFontAuditService $fontAudit The typeface audit service.
+	 * @param TokenSetFiles $setFiles The app manager, the runtime file store and the set file reader.
+	 * @param TokenSetRuntime $runtime The config, the cache factory and the logger.
+	 * @param TokenSetAudits $audits The contrast, vocabulary and typeface audits.
 	 */
 	public function __construct(
-		IAppManager $appManager,
-		IConfig $config,
-		LoggerInterface $logger,
-		ShippedTokenSetAuditService $audit,
-		ICacheFactory $cacheFactory,
-		TokenSetVocabularyAuditService $vocabularyAudit,
-		private readonly ?RuntimeFileStore $store = null,
-		private readonly SetFileReader $files = new SetFileReader(),
-		private readonly TokenSetFontAuditService $fontAudit = new TokenSetFontAuditService(),
+		private readonly TokenSetFiles $setFiles,
+		private readonly TokenSetRuntime $runtime,
+		private readonly TokenSetAudits $audits,
 	) {
-		$this->appManager = $appManager;
-		$this->config = $config;
-		$this->logger = $logger;
-		$this->audit = $audit;
-		$this->wcagCache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
-		$this->warningsCache = $cacheFactory->createLocal(prefix: 'thematiq_set_warnings');
-		$this->vocabularyAudit = $vocabularyAudit;
+		$this->wcagCache = $runtime->cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');
+		$this->warningsCache = $runtime->cacheFactory->createLocal(prefix: 'thematiq_set_warnings');
 	}//end __construct()
 
 	/**
@@ -180,7 +119,7 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-filesystem-based-discovery
 	 */
 	public function getAppPath(): string {
-		return $this->appManager->getAppPath('thematiq');
+		return $this->setFiles->appManager->getAppPath('thematiq');
 	}//end getAppPath()
 
 	/**
@@ -191,7 +130,7 @@ class TokenSetService {
 	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	protected function licenceConfig(): IConfig {
-		return $this->config;
+		return $this->runtime->config;
 	}//end licenceConfig()
 
 	/**
@@ -222,7 +161,7 @@ class TokenSetService {
 
 		// Scan the release for shipped sets and the store for uploaded ones.
 		$tokenSets = [];
-		foreach ($this->files->fileNames(appPath: $appPath, directory: 'css/tokens', store: $this->store) as $file) {
+		foreach ($this->setFiles->files->fileNames(appPath: $appPath, directory: 'css/tokens', store: $this->setFiles->store) as $file) {
 			if (str_ends_with($file, '.css') === true) {
 				$tokenSets[] = $this->catalogueEntry(id: basename($file, '.css'), sources: $sources);
 			}
@@ -243,7 +182,7 @@ class TokenSetService {
 	 */
 	private function readCapturedTheming(): array {
 		$captured = json_decode(
-			(string)$this->config->getAppValue(Application::APP_ID, BrandingCaptureService::CAPTURED_KEY, '{}'),
+			(string)$this->runtime->config->getAppValue(Application::APP_ID, BrandingCaptureService::CAPTURED_KEY, '{}'),
 			true
 		);
 		if (is_array($captured) === false) {
@@ -291,7 +230,7 @@ class TokenSetService {
 				'name' => $entry['name'],
 				'design_system' => $entry['design_system'],
 				'theming' => $theming,
-				'wcagLevel' => $this->audit->computeCachedWcagLevel(
+				'wcagLevel' => $this->audits->audit->computeCachedWcagLevel(
 					cache: $this->wcagCache,
 					appPath: $appPath,
 					tokenSetId: $entry['id'],
@@ -420,7 +359,7 @@ class TokenSetService {
 	 */
 	private function resolveMeta(string $id, ?array $shippedMeta, ?array $customMeta): ?array {
 		if ($shippedMeta !== null && $customMeta !== null) {
-			$this->logger->warning(
+			$this->runtime->logger->warning(
 				'NL Design token set id "' . $id . '" exists in both the shipped and custom manifests; using the shipped metadata.'
 			);
 
@@ -489,11 +428,11 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
 	private function cachedShippedWarnings(array $tokenSet, array $meta, string $appPath, string $id): array {
-		$css = $this->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
+		$css = $this->setFiles->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->setFiles->store);
 		$key = $id . '-' . md5(
 			(string)json_encode(
 				[
-					$this->appManager->getAppVersion('thematiq'),
+					$this->setFiles->appManager->getAppVersion('thematiq'),
 					md5((string)$css),
 					$tokenSet['design_system'],
 					($tokenSet['theming'] ?? []),
@@ -530,7 +469,7 @@ class TokenSetService {
 		// Shipped set: surface the same non-blocking WCAG contrast warning
 		// the apply dialog raises for a custom upload, so a sub-AA or
 		// unevaluated shipped set is not silently applied.
-		$warnings = $this->audit->warningsFor(
+		$warnings = $this->audits->audit->warningsFor(
 			appPath: $appPath,
 			id: $id,
 			designSystem: $tokenSet['design_system'],
@@ -544,7 +483,7 @@ class TokenSetService {
 		// the existing ones keep their position in the list.
 		$warnings = array_merge(
 			$warnings,
-			$this->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+			$this->audits->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
 		);
 
 		// ...and the typeface verdict, on the same channel. A set that names a
@@ -556,7 +495,7 @@ class TokenSetService {
 		// than left to notice.
 		$warnings = array_merge(
 			$warnings,
-			$this->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+			$this->audits->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
 		);
 
 		return $warnings;
@@ -577,7 +516,7 @@ class TokenSetService {
 			return false;
 		}
 
-		return $this->files->exists(appPath: $this->getAppPath(), name: 'css/tokens/' . $tokenSetId . '.css', store: $this->store);
+		return $this->setFiles->files->exists(appPath: $this->getAppPath(), name: 'css/tokens/' . $tokenSetId . '.css', store: $this->setFiles->store);
 	}//end isValidTokenSet()
 
 	/**
@@ -626,7 +565,7 @@ class TokenSetService {
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function readCustomManifest(): array {
-		$raw = $this->config->getAppValue(Application::APP_ID, 'custom_token_sets', '{}');
+		$raw = $this->runtime->config->getAppValue(Application::APP_ID, 'custom_token_sets', '{}');
 		$decoded = json_decode($raw, true);
 
 		if (is_array($decoded) === false) {

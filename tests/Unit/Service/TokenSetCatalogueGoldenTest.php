@@ -23,7 +23,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -43,6 +46,9 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\TokenSetService
+ * @uses   \OCA\Thematiq\Service\TokenSetAudits
+ * @uses   \OCA\Thematiq\Service\TokenSetFiles
+ * @uses   \OCA\Thematiq\Service\TokenSetRuntime
  * @uses   \OCA\Thematiq\Service\RestrictedSetGate
  * @uses   \OCA\Thematiq\Service\RuntimeFile\SetFileReader
  */
@@ -313,13 +319,19 @@ class TokenSetCatalogueGoldenTest extends TestCase {
 		);
 
 		return new TokenSetService(
-			appManager: $appManager,
-			config: $config,
-			logger: $logger,
-			audit: $audit,
-			cacheFactory: $cacheFactory,
-			vocabularyAudit: $vocabulary,
-			fontAudit: $fonts
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $logger
+			),
+			audits: new TokenSetAudits(
+				audit: $audit,
+				vocabularyAudit: $vocabulary,
+				fontAudit: $fonts
+			)
 		);
 	}//end service()
 }//end class

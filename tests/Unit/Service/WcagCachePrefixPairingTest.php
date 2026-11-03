@@ -21,6 +21,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -87,12 +90,18 @@ class WcagCachePrefixPairingTest extends TestCase {
 		$audit = $this->createMock(ShippedTokenSetAuditService::class);
 
 		new TokenSetService(
-			$this->createMock(IAppManager::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(LoggerInterface::class),
-			$audit,
-			$this->recordingFactory(),
-			$this->createMock(TokenSetVocabularyAuditService::class)
+			setFiles: new TokenSetFiles(
+				appManager: $this->createMock(IAppManager::class)
+			),
+			runtime: new TokenSetRuntime(
+				config: $this->createMock(IConfig::class),
+				cacheFactory: $this->recordingFactory(),
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $audit,
+				vocabularyAudit: $this->createMock(TokenSetVocabularyAuditService::class)
+			)
 		);
 		$this->assertCount(1, $this->prefixes, 'TokenSetService must create exactly one distributed cache');
 		$tokenSetPrefix = $this->prefixes[0];
@@ -130,12 +139,18 @@ class WcagCachePrefixPairingTest extends TestCase {
 	 */
 	public function testTheSharedPrefixCarriesTheCurrentAppId(): void {
 		new TokenSetService(
-			$this->createMock(IAppManager::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(ShippedTokenSetAuditService::class),
-			$this->recordingFactory(),
-			$this->createMock(TokenSetVocabularyAuditService::class)
+			setFiles: new TokenSetFiles(
+				appManager: $this->createMock(IAppManager::class)
+			),
+			runtime: new TokenSetRuntime(
+				config: $this->createMock(IConfig::class),
+				cacheFactory: $this->recordingFactory(),
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $this->createMock(ShippedTokenSetAuditService::class),
+				vocabularyAudit: $this->createMock(TokenSetVocabularyAuditService::class)
+			)
 		);
 
 		$this->assertStringStartsWith(

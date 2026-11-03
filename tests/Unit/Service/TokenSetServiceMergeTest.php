@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -76,12 +79,18 @@ class TokenSetServiceMergeTest extends TestCase {
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
 		$this->service = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$audit,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $audit,
+				vocabularyAudit: new TokenSetVocabularyAuditService(new CssParserService())
+			)
 		);
 	}//end setUp()
 
@@ -214,12 +223,18 @@ class TokenSetServiceMergeTest extends TestCase {
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
 		return new TokenSetService(
-			$appManager,
-			$config,
-			$logger,
-			new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()),
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $logger
+			),
+			audits: new TokenSetAudits(
+				audit: new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()),
+				vocabularyAudit: new TokenSetVocabularyAuditService(new CssParserService())
+			)
 		);
 	}//end serviceWithLogger()
 
