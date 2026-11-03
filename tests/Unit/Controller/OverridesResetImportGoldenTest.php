@@ -25,6 +25,8 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCP\IConfig;
@@ -42,6 +44,8 @@ use RuntimeException;
  * order, case by case. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\OverridesController
+ * @uses   \OCA\Thematiq\Service\OverridesThemingSync
+ * @uses   \OCA\Thematiq\Service\OverridesWrites
  * @uses   \OCA\Thematiq\Service\TokenRegistry
  */
 class OverridesResetImportGoldenTest extends TestCase {
@@ -182,11 +186,15 @@ class OverridesResetImportGoldenTest extends TestCase {
 		$controller = new OverridesController(
 			appName: 'thematiq',
 			request: $request,
-			overridesService: $overrides,
-			cssParser: $parser,
-			auditService: $audit,
-			config: $config,
-			themingService: $theming
+			writes: new OverridesWrites(
+				overridesService: $overrides,
+				cssParser: $parser,
+				auditService: $audit
+			),
+			themingSync: new OverridesThemingSync(
+				config: $config,
+				themingService: $theming
+			)
 		);
 		if ($reset === true) {
 			$response = $controller->setOverrides();
