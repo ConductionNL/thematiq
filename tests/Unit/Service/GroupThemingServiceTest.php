@@ -163,6 +163,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * Absent config reads as an empty mapping (today's global-theming behavior).
+	 *
+	 * @return void
 	 */
 	public function testGetMappingDefaultsToEmpty(): void {
 		[$service] = $this->buildService(
@@ -177,6 +179,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * Malformed stored JSON reads as an empty mapping, never an error.
+	 *
+	 * @return void
 	 */
 	public function testGetMappingMalformedJsonIsEmpty(): void {
 		[$service] = $this->buildService(
@@ -192,6 +196,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * A valid mapping is saved verbatim, in order, and the generation counter
 	 * is incremented.
+	 *
+	 * @return void
 	 */
 	public function testSetMappingPersistsInOrderAndBumpsGeneration(): void {
 		$config = $this->fakeConfig();
@@ -226,6 +232,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * An entry naming a nonexistent group is rejected; nothing is persisted
 	 * and the generation counter is untouched.
+	 *
+	 * @return void
 	 */
 	public function testSetMappingRejectsUnknownGroupWithoutPartialWrite(): void {
 		$config = $this->fakeConfig(initial: ['group_token_sets' => '[]', 'group_token_sets_generation' => '3']);
@@ -253,6 +261,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * An entry naming an unavailable token set is rejected.
+	 *
+	 * @return void
 	 */
 	public function testSetMappingRejectsUnknownTokenSet(): void {
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
@@ -272,6 +282,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * Two entries for the same group are rejected — priority handles
 	 * multi-group users, not duplicate rows.
+	 *
+	 * @return void
 	 */
 	public function testSetMappingRejectsDuplicateGroupEntries(): void {
 		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
@@ -299,6 +311,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * A user in a single mapped group gets that group's token set.
+	 *
+	 * @return void
 	 */
 	public function testResolveReturnsMappedSetForSingleGroupMatch(): void {
 		$config = $this->fakeConfig(
@@ -322,6 +336,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * A user in multiple mapped groups gets the earliest (highest-priority)
 	 * matching entry.
+	 *
+	 * @return void
 	 */
 	public function testResolveReturnsEarliestEntryForMultiGroupUser(): void {
 		$config = $this->fakeConfig(
@@ -350,6 +366,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * An entry mapping to a deleted token set is skipped and resolution
 	 * continues to the next entry.
+	 *
+	 * @return void
 	 */
 	public function testResolveSkipsDeadSetEntryAndContinues(): void {
 		$config = $this->fakeConfig(
@@ -378,6 +396,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * A user matching ONLY a dead-set entry resolves to the instance default.
+	 *
+	 * @return void
 	 */
 	public function testResolveDeadSetOnlyMatchFallsBackToDefault(): void {
 		$config = $this->fakeConfig(
@@ -400,6 +420,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * A user in no mapped group gets the instance default.
+	 *
+	 * @return void
 	 */
 	public function testResolveReturnsDefaultForUnmappedUser(): void {
 		$config = $this->fakeConfig(
@@ -423,6 +445,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * No session (login/public/error pages) resolves to the instance
 	 * default WITHOUT any group-manager call.
+	 *
+	 * @return void
 	 */
 	public function testResolveReturnsDefaultForNoSessionWithoutGroupLookup(): void {
 		$config = $this->fakeConfig(
@@ -446,6 +470,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * An empty mapping short-circuits before any cache or group access —
 	 * preserves today's zero-lookup behavior exactly.
+	 *
+	 * @return void
 	 */
 	public function testResolveReturnsDefaultForEmptyMappingWithoutGroupOrCacheAccess(): void {
 		$config = $this->fakeConfig(initial: ['token_set' => 'nextcloud']);
@@ -477,6 +503,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * A group-backend exception fails open to the instance default; no
 	 * exception escapes.
+	 *
+	 * @return void
 	 */
 	public function testResolveFailsOpenOnGroupBackendException(): void {
 		$config = $this->fakeConfig(
@@ -504,6 +532,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * A second resolve under the same mapping generation hits the cache —
 	 * IGroupManager is queried exactly once across both calls.
+	 *
+	 * @return void
 	 */
 	public function testSecondResolveHitsCacheWithoutGroupLookup(): void {
 		$config = $this->fakeConfig(
@@ -528,6 +558,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * Saving a changed mapping bumps the generation, invalidating every
 	 * cached resolution: the very next resolve re-queries group membership.
+	 *
+	 * @return void
 	 */
 	public function testGenerationBumpInvalidatesCache(): void {
 		$config = $this->fakeConfig(initial: ['token_set' => 'nextcloud']);
@@ -553,6 +585,8 @@ class GroupThemingServiceTest extends TestCase {
 
 	/**
 	 * The cache write carries the documented TTL backstop (<= 1 hour).
+	 *
+	 * @return void
 	 */
 	public function testCacheWriteCarriesTtlBound(): void {
 		$config = $this->fakeConfig(
@@ -602,6 +636,8 @@ class GroupThemingServiceTest extends TestCase {
 	/**
 	 * getAvailableGroups() maps IGroup entries to {id, displayName}, sorted
 	 * by display name.
+	 *
+	 * @return void
 	 */
 	public function testGetAvailableGroupsListsAndSorts(): void {
 		$groupB = $this->createMock(originalClassName: \OCP\IGroup::class);

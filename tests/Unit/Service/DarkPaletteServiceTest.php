@@ -53,6 +53,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with a minimal defaults.css + tokens/ layout.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -72,6 +74,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -161,6 +165,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * Hue is preserved (within 2°) for a background-class token that is NOT
 	 * the brand-primary exception token.
+	 *
+	 * @return void
 	 */
 	public function testHuePreservedForBackgroundToken(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-header-background' => '#154273']);
@@ -177,6 +183,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * Thematiq#696: a translucent surface stays translucent in dark mode. The
 	 * dark channels come from the opaque colour, the light alpha is kept.
+	 *
+	 * @return void
 	 */
 	public function testTranslucentSurfaceKeepsAlpha(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-hero-cell-background' => 'rgba(255, 255, 255, 0.08)']);
@@ -191,6 +199,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Thematiq#696: an 8-digit hex token is darkened, not skipped, and keeps its alpha.
+	 *
+	 * @return void
 	 */
 	public function testEightDigitHexIsDarkenedAndKeepsAlpha(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-overlay' => '#00000080']);
@@ -203,6 +213,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * The brand-primary exception keeps `--nldesign-color-primary` at its
 	 * light value (hue delta 0) when the light primary/primary-text pair
 	 * already passes AA — the rijkshuisstijl blue stays recognisable.
+	 *
+	 * @return void
 	 */
 	public function testBrandPrimaryExceptionKeepsRecognisableBlue(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -218,6 +230,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * A failing brand primary (light pair below AA) is NOT exempted — it
 	 * gets the normal background-class dark transform instead of being kept as-is.
+	 *
+	 * @return void
 	 */
 	public function testFailingBrandPrimaryIsNotExempted(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -233,6 +247,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * A light background token (L≈0.96) derives to a dark lightness in [0.08, 0.16].
+	 *
+	 * @return void
 	 */
 	public function testLightBackgroundDerivesToDarkLightness(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#F5F6F7']);
@@ -244,6 +260,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * A dark-ish text token (L≈0.2) derives to a light lightness in [0.62, 0.92].
+	 *
+	 * @return void
 	 */
 	public function testDarkTextDerivesToLightLightness(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-text' => '#333333']);
@@ -268,6 +286,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Non-color tokens (size, font-family) never appear in the dark output.
+	 *
+	 * @return void
 	 */
 	public function testNonColorTokensPassThroughUntouched(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -287,6 +307,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * The alias here points at a token the set does not declare, so there is no
 	 * literal to derive from. An alias whose target IS declared is a different
 	 * case entirely — see {@see self::testAnAliasIsResolvedToTheLiteralItPointsAt()}.
+	 *
+	 * @return void
 	 */
 	public function testUnparseableValuesAreSkipped(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -312,6 +334,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * Measured on a live portal before this fix: dark mode repainted 51% of the
 	 * page while every text token stayed light-mode dark, leaving a heading at
 	 * contrast 1.06 against its own band.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasIsResolvedToTheLiteralItPointsAt(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -331,6 +355,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * An alias chain is followed to the end.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasChainIsFollowedToItsLiteral(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -350,6 +376,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * A token set is authored input; two tokens pointing at each other must
 	 * cost a bounded number of hops, not the process.
+	 *
+	 * @return void
 	 */
 	public function testACyclicAliasTerminates(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -365,6 +393,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * A `var()` FALLBACK is used only when the target is absent — which is what
 	 * the browser does with it.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasFallbackIsUsedOnlyWhenTheTargetIsAbsent(): void {
 		// The two sources are chosen so the OUTCOMES differ: #FFFFFF derives to
@@ -389,6 +419,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * Half-substituting a shorthand would corrupt it, and it is not a colour
 	 * this service can derive in the first place.
+	 *
+	 * @return void
 	 */
 	public function testACompoundValueContainingAVarIsNotResolved(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -409,6 +441,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * every `--utrecht-heading-N-color` in the background class, so the tokens
 	 * that paint body copy were darkened towards black exactly like the
 	 * surfaces they sit on.
+	 *
+	 * @return void
 	 */
 	public function testTheUtrechtColorConventionSplitsTextFromSurface(): void {
 		// A MID-TONE source, deliberately. The two classes use different
@@ -439,6 +473,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * "text" used to be matched as a substring, so a white
 	 * `--nldesign-component-textbox-background-color` took the text clamp and
 	 * shipped as mid-grey #9e9e9e under light #d5ddf0 input text (1.96:1).
+	 *
+	 * @return void
 	 */
 	public function testATextboxSurfaceIsNotTextClass(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -462,6 +498,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * These are the dark values development shipped for rijkshuisstijl: a
 	 * white label clamped to #9e9e9e on the derived light-blue primary fill.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesControlLabels(): void {
 		$result = $this->service->verifyAndRepair(
@@ -498,6 +536,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * over its dark navigation (#171717), 22% hovered, with the label in the
 	 * main text colour. These are conduction-new's dark values: #7499de read
 	 * 6.4:1 on the page but 4.37:1 on the wash, and 3.70:1 hovered.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash(): void {
 		$result = $this->service->verifyAndRepair(
@@ -520,6 +560,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * vng's theming background_color #0277BD stood in for the page background
 	 * and inverted to #42b1f3. The page keeps its hue but lands dark.
+	 *
+	 * @return void
 	 */
 	public function testAMidTonePageBackgroundDerivesDark(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#0277BD']);
@@ -533,6 +575,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * `-rgb` companion tokens are regenerated from their derived base token.
+	 *
+	 * @return void
 	 */
 	public function testRgbCompanionsMatchDerivedBase(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -549,6 +593,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * A pathological pair (bright yellow bg / white fg) is repaired by the
 	 * verification loop to a passing pair (snap fallback).
+	 *
+	 * @return void
 	 */
 	public function testPathologicalPairIsRepairedToPassing(): void {
 		$result = $this->service->verifyAndRepair(
@@ -565,6 +611,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * A hand-authored (protected) failing pair is emitted unchanged and
 	 * produces a warning — never rewritten by the loop.
+	 *
+	 * @return void
 	 */
 	public function testHandAuthoredFailurePreservedAndWarned(): void {
 		// Identical fg/bg -> ratio exactly 1:1, unambiguously below the 4.5:1
@@ -586,6 +634,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * A passing pair produces no warnings and is left untouched.
+	 *
+	 * @return void
 	 */
 	public function testPassingPairProducesNoWarnings(): void {
 		$result = $this->service->verifyAndRepair(
@@ -602,6 +652,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * `renderDarkCss()` emits the exact dual-scope selector shape from
 	 * design.md §2: the four `:not()` exclusions and the explicit
 	 * `body[data-theme-dark], body[data-themes*=dark]` block.
+	 *
+	 * @return void
 	 */
 	public function testRenderDarkCssSelectorShape(): void {
 		$css = $this->service->renderDarkCss(
@@ -636,6 +688,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * Asserted through the PUBLIC surface — the header text a real run writes
 	 * and a real freshness check reads — rather than by reflecting on the
 	 * private method, so it fails if either half drifts from the other.
+	 *
+	 * @return void
 	 */
 	public function testAnArtefactFromAnOlderGeneratorIsNotFresh(): void {
 		$tokenCss = ":root {\n\t--nldesign-color-primary: #154273;\n}\n";
@@ -669,6 +723,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `!important` is never used — body-level scope already out-specifies the
 	 * light `:root` layer without it.
+	 *
+	 * @return void
 	 */
 	public function testGeneratedCssNeverUsesImportant(): void {
 		$css = $this->service->renderDarkCss(setId: 'x', declarations: ['--nldesign-color-primary' => '#000000'], sourceHash: 'sha256:abc');
@@ -678,6 +734,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * Eligibility: `none` and `high-contrast` design systems are excluded;
 	 * everything else is eligible.
+	 *
+	 * @return void
 	 */
 	public function testEligibility(): void {
 		$this->assertFalse(condition: $this->service->isEligible(designSystemId: 'none'));
@@ -689,6 +747,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `generateForSet()` merges hand-authored dark-block overrides over the
 	 * derived declarations — the override wins.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetHandAuthoredOverrideWins(): void {
 		file_put_contents(
@@ -713,6 +773,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * chip and button label from `--nldesign-component-button-error-color`,
 	 * falling back to white; white on the lighter red a dark variant derives
 	 * from #d70d0d (#e72e2e) is 4.35:1, and so is near-black #111111.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetGivesTheErrorLabelAReadableColour(): void {
 		file_put_contents(
@@ -736,6 +798,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * A label the set chooses itself is kept when it reads, never replaced.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetKeepsAReadableHandAuthoredErrorLabel(): void {
 		file_put_contents(
@@ -757,6 +821,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `generateForSet()` returns null for an ineligible design system
 	 * (`none`) — no dark output is built at all.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetSkipsIneligibleDesignSystem(): void {
 		file_put_contents(
@@ -771,6 +837,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `generateAndWrite()` writes the file, and a second call without
 	 * `--force` is a no-op (fresh-file skip) — idempotence.
+	 *
+	 * @return void
 	 */
 	public function testGenerateAndWriteIsIdempotentWithoutForce(): void {
 		file_put_contents(
@@ -794,6 +862,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * `--force` rewrites despite a fresh hash.
+	 *
+	 * @return void
 	 */
 	public function testGenerateAndWriteForceRewrites(): void {
 		file_put_contents(
@@ -811,6 +881,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `discoverAllSetIds()` finds every `.css` file directly under
 	 * `css/tokens/` (not the `dark/` subdirectory itself).
+	 *
+	 * @return void
 	 */
 	public function testDiscoverAllSetIds(): void {
 		file_put_contents($this->appDir . '/css/tokens/one.css', ':root { --nldesign-color-primary: #000; }');
@@ -827,6 +899,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * Deleting a custom set's dark variant removes the file (best-effort, no
 	 * exception when it never existed).
+	 *
+	 * @return void
 	 */
 	public function testDeleteDarkVariant(): void {
 		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
@@ -874,6 +948,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * `logo_dark` theming metadata is emitted as a dark-scoped
 	 * `--nldesign-logo-url` override, relative to `css/tokens/dark/`.
+	 *
+	 * @return void
 	 */
 	public function testLogoDarkEmitsRelativeLogoUrlOverride(): void {
 		file_put_contents(
@@ -904,6 +980,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * variant, surface and text together, so the light values keep applying
 	 * (thematiq#1021). Inverted, La Frankendesk's #1b1b23 footer became
 	 * #cbcbd6 under a #9e9e9e label.
+	 *
+	 * @return void
 	 */
 	public function testAnAlreadyDarkFooterKeepsItsLightValues(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -925,6 +1003,8 @@ class DarkPaletteServiceTest extends TestCase {
 	/**
 	 * A light footer still derives dark, and an alias to a dark literal
 	 * counts as dark (conduction-new's `var(--c-cobalt-900)`).
+	 *
+	 * @return void
 	 */
 	public function testOnlyAnAlreadyDarkFooterIsLeftAlone(): void {
 		$light = $this->service->deriveDarkDeclarations(
@@ -951,6 +1031,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * The hero band's foregrounds are repaired against the primary fill they
 	 * sit on, a light footer's text against its derived surface, and the
 	 * semantic link colour and its hover against the page.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesTheHeroAndFooterForegrounds(): void {
 		$result = $this->service->verifyAndRepair(
@@ -987,6 +1069,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * declarations underneath for every token the variant leaves out.
 	 *
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 *
+	 * @return void
 	 */
 	public function testFrankendeskBandsReadInItsGeneratedDarkVariant(): void {
 		$realAppRoot = dirname(__DIR__, 3);
@@ -1028,6 +1112,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * @dataProvider shippedSetProvider
 	 *
 	 * @param string $setId The shipped token set id.
+	 *
+	 * @return void
 	 */
 	public function testRealShippedSetsPassContrastAfterGeneration(string $setId): void {
 		$realAppRoot = dirname(__DIR__, 3);

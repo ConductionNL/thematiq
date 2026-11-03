@@ -31,6 +31,8 @@ class AdminFontNoticeTest extends TestCase {
 	/**
 	 * The license notice must be present, translatable (ENGLISH key), and
 	 * positioned before the upload control markup.
+	 *
+	 * @return void
 	 */
 	public function testLicenseNoticePrecedesUploadControl(): void {
 		$path = __DIR__ . '/../../../templates/settings/admin.php';

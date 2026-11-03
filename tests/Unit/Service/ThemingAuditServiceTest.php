@@ -291,6 +291,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * A logged entry contains ts/actor/action/old/new/tokenSetVersion.
+	 *
+	 * @return void
 	 */
 	public function testEntryShape(): void {
 		$service = $this->makeService(time: 1700000000);
@@ -314,6 +316,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * Actor resolution: uid wins when a user is active.
+	 *
+	 * @return void
 	 */
 	public function testActorResolvesUidWhenUserPresent(): void {
 		$user = $this->createMock(originalClassName: IUser::class);
@@ -329,6 +333,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * Actor resolution: no user, running under CLI -> 'cli'.
+	 *
+	 * @return void
 	 */
 	public function testActorFallsBackToCli(): void {
 		$service = $this->makeService();
@@ -339,6 +345,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * Actor resolution: no user, not CLI -> 'system'.
+	 *
+	 * @return void
 	 */
 	public function testActorFallsBackToSystem(): void {
 		$config = $this->createMock(originalClassName: IConfig::class);
@@ -369,6 +377,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * An action outside the closed vocabulary is dropped with a warning.
+	 *
+	 * @return void
 	 */
 	public function testUnknownActionIsDroppedWithWarning(): void {
 		$this->logger->expects($this->once())->method('warning');
@@ -382,6 +392,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * The counter app value increments by exactly one per successful entry.
+	 *
+	 * @return void
 	 */
 	public function testCounterIncrementsPerEntry(): void {
 		$service = $this->makeService();
@@ -396,6 +408,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * A CSS payload is summarized as a sha256 hash + byte size, never
 	 * embedded verbatim.
+	 *
+	 * @return void
 	 */
 	public function testCssPayloadIsHashedNotEmbedded(): void {
 		$css = str_repeat('--nldesign-color-primary: #007bc7;', 200);
@@ -422,6 +436,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * Array old/new values are summarized as counts, with a 'changed' list
 	 * of the identities that differ.
+	 *
+	 * @return void
 	 */
 	public function testArrayValuesSummarizedWithChangedKeys(): void {
 		$service = $this->makeService();
@@ -447,6 +463,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * raised "Array to string conversion" and audited `"changed":["Array"]`.
 	 * The changed GROUPS are recorded: added, removed, re-pointed, delegated,
 	 * or moved in priority.
+	 *
+	 * @return void
 	 */
 	public function testGroupThemingMappingRecordsTheChangedGroups(): void {
 		$service = $this->makeService();
@@ -492,6 +510,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * Reordering the mapping changes which theme wins, so both moved groups are recorded;
 	 * an unchanged mapping records none.
+	 *
+	 * @return void
 	 */
 	public function testGroupThemingReorderAndNoChange(): void {
 		$service = $this->makeService();
@@ -510,6 +530,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * Rotation at the 1 MB size cap keeps exactly one generation, and the
 	 * overflowing entry lands in the rotated file.
+	 *
+	 * @return void
 	 */
 	public function testRotationAtSizeCapKeepsOneGeneration(): void {
 		$service = $this->makeService();
@@ -540,6 +562,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Counter
 	 * survives log rotation": MetricsController emits this app value, never a
 	 * line count of the file.
+	 *
+	 * @return void
 	 */
 	public function testCounterKeepsCountingAcrossRotation(): void {
 		$this->appConfig['audit_entries_total'] = '41';
@@ -557,6 +581,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * getRecent() returns newest-first and respects the limit.
+	 *
+	 * @return void
 	 */
 	public function testGetRecentOrderAndLimit(): void {
 		$service = $this->makeService();
@@ -574,6 +600,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * exportAll() returns the rotated generation before the current file,
 	 * oldest first overall.
+	 *
+	 * @return void
 	 */
 	public function testExportAllIncludesRotatedGenerationFirst(): void {
 		$service = $this->makeService();
@@ -599,6 +627,8 @@ class ThemingAuditServiceTest extends TestCase {
 	/**
 	 * A Throwable from the appdata layer is caught, logged, and swallowed —
 	 * log() never propagates it to the caller.
+	 *
+	 * @return void
 	 */
 	public function testAppdataFailureIsSwallowedAndWarned(): void {
 		$this->logger->expects($this->once())->method('warning');
@@ -637,6 +667,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * An entry for which a version was kept names it.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnEntryNamesTheVersionItProduced(): void {
 		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
@@ -652,6 +684,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * An entry for which no version was kept omits the field.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnEntryWithoutAVersionOmitsTheField(): void {
 		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
@@ -665,6 +699,8 @@ class ThemingAuditServiceTest extends TestCase {
 
 	/**
 	 * A capture that throws still writes the entry.
+	 *
+	 * @return void
 	 */
 	public function testAThrowingCaptureStillWritesTheEntry(): void {
 		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
@@ -682,6 +718,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * version_restored is part of the closed vocabulary.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md
+	 *
+	 * @return void
 	 */
 	public function testVersionRestoredIsAcceptedAction(): void {
 		$service = $this->makeService();
@@ -697,6 +735,8 @@ class ThemingAuditServiceTest extends TestCase {
 	 * background job's entry carries actor `system` although cron runs in CLI.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md
+	 *
+	 * @return void
 	 */
 	public function testScheduledSwitchAppliedIsAcceptedWithSystemActor(): void {
 		$service = $this->makeService();

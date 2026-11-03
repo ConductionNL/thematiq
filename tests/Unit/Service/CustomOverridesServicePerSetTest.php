@@ -104,6 +104,8 @@ class CustomOverridesServicePerSetTest extends TestCase {
 
 	/**
 	 * The file name each kind of set is given.
+	 *
+	 * @return void
 	 */
 	public function testFileForNamesAFileOfItsOwnOnlyForASetOnNoDesignSystem(): void {
 		$this->assertSame(expected: 'custom-overrides', actual: CustomOverridesService::fileFor(tokenSet: 'amsterdam', designSystemId: 'nldesign'));
@@ -114,6 +116,8 @@ class CustomOverridesServicePerSetTest extends TestCase {
 
 	/**
 	 * The stock set writes its own file, and the shared file is untouched.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetWritesItsOwnFile(): void {
 		$this->service->write(tokens: ['--color-primary' => '#112233'], tokenSet: 'nextcloud');
@@ -126,6 +130,8 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	/**
 	 * A set on a design system shares the one file, and the stock set does
 	 * not see what it pinned.
+	 *
+	 * @return void
 	 */
 	public function testASetOnADesignSystemSharesTheFileAndStockDoesNotSeeIt(): void {
 		$this->service->write(tokens: ['--color-primary' => '#445566'], tokenSet: 'amsterdam');
@@ -136,6 +142,8 @@ class CustomOverridesServicePerSetTest extends TestCase {
 
 	/**
 	 * Without a set named, the instance's active set is meant.
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedMeansTheActiveSet(): void {
 		$this->values['token_set'] = 'nextcloud';
@@ -151,6 +159,8 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 * disable/enable cycle is all a re-enabled app needs.
 	 *
 	 * @spec openspec/specs/custom-css-overrides/spec.md#token-overrides-survive-app-reinstall-if-css-directory-is-preserved
+	 *
+	 * @return void
 	 */
 	public function testOverridesLiveInTheFileAndNeverInAppConfig(): void {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);

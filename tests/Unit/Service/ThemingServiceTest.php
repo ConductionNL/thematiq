@@ -89,6 +89,8 @@ class ThemingServiceTest extends TestCase {
 
 	/**
 	 * Build the service against a temp app dir holding one real logo file.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -120,6 +122,8 @@ class ThemingServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (isset($this->appDir) === true && is_dir($this->appDir) === true) {
@@ -164,6 +168,8 @@ class ThemingServiceTest extends TestCase {
 	 * @dataProvider hexColorProvider
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testIsValidHexColor(string $color, bool $expected): void {
 		$this->assertSame(expected: $expected, actual: $this->service->isValidHexColor(color: $color));
@@ -193,6 +199,8 @@ class ThemingServiceTest extends TestCase {
 	 * sync sends only what the set actually declares.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testValidateColorsAcceptsAbsentAndEmptyValues(): void {
 		$this->assertNull(actual: $this->service->validateColors(params: []));
@@ -207,6 +215,8 @@ class ThemingServiceTest extends TestCase {
 	 * WHICH field it rejected rather than "invalid input".
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testValidateColorsNamesTheOffendingKey(): void {
 		$error = $this->service->validateColors(params: ['background_color' => 'not-a-colour']);
@@ -228,6 +238,8 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesTraversal(string $key, string $path): void {
 		$error = $this->service->validateImagePaths(params: [$key => $path]);
@@ -255,6 +267,8 @@ class ThemingServiceTest extends TestCase {
 	 * directories is refused on the prefix rule, before the existence check.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesDirectoriesOutsideTheAllowedTwo(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'css/tokens/utrecht.css']);
@@ -269,6 +283,8 @@ class ThemingServiceTest extends TestCase {
 	 * prefix rule says where a file may live, not that it does.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesAMissingFile(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'img/logos/absent.svg']);
@@ -282,6 +298,8 @@ class ThemingServiceTest extends TestCase {
 	 * that carries no image at all.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsAcceptsAnExistingFile(): void {
 		$this->assertNull(actual: $this->service->validateImagePaths(params: ['logo' => 'img/logos/present.svg']));
@@ -294,6 +312,8 @@ class ThemingServiceTest extends TestCase {
 	 * No background colour means no `backgroundMime` write.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsWritesOnlyWhatWasGiven(): void {
 		$written = [];
@@ -315,6 +335,8 @@ class ThemingServiceTest extends TestCase {
 	 * background colour with no accompanying image must also write that.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsRemovesTheDefaultBackgroundImage(): void {
 		$written = [];
@@ -337,6 +359,8 @@ class ThemingServiceTest extends TestCase {
 	 * or, on a failed image write, would leave the two disagreeing.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsLeavesTheMimeAloneWhenAnImageIsAlsoGiven(): void {
 		$written = [];
@@ -358,6 +382,8 @@ class ThemingServiceTest extends TestCase {
 	 * A theme that captured Nextcloud's default background image gets that
 	 * image back — the background is undone to core's own — instead of the
 	 * colour-only background a plain background colour would otherwise force.
+	 *
+	 * @return void
 	 */
 	public function testACapturedDefaultBackgroundIsRestoredNotRemoved(): void {
 		$written = [];
@@ -379,6 +405,8 @@ class ThemingServiceTest extends TestCase {
 	/**
 	 * A theme that captured "Remove background image" gets it back, whether
 	 * or not a background colour comes with it.
+	 *
+	 * @return void
 	 */
 	public function testACapturedRemovedBackgroundIsRemovedAgain(): void {
 		$written = [];
@@ -396,6 +424,8 @@ class ThemingServiceTest extends TestCase {
 
 	/**
 	 * An unknown background state is refused before anything is written.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownBackgroundModeIsRefused(): void {
 		$this->assertSame(
@@ -408,6 +438,8 @@ class ThemingServiceTest extends TestCase {
 	/**
 	 * The navigation-bar logo and the favicon are synced like the logo: the
 	 * stored file paired with its mime.
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesSyncsTheNavigationBarLogoAndFavicon(): void {
 		$this->imageManager->method('updateImage')->willReturn('image/svg+xml');
@@ -429,6 +461,8 @@ class ThemingServiceTest extends TestCase {
 	/**
 	 * A theme that captured an image of its own never has it removed by the
 	 * colour: the image is written by applyImages() right after.
+	 *
+	 * @return void
 	 */
 	public function testACapturedImageBackgroundIsNotRemovedByTheColour(): void {
 		$written = [];
@@ -453,6 +487,8 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesPairsTheStoredFileWithItsMime(): void {
 		$this->imageManager->expects($this->once())
@@ -479,6 +515,8 @@ class ThemingServiceTest extends TestCase {
 	 * dark stylesheet instead.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesIgnoresTheDarkLogo(): void {
 		$this->imageManager->expects($this->never())->method('updateImage');
@@ -494,6 +532,8 @@ class ThemingServiceTest extends TestCase {
 	 * in place after switching back to stock.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testResetToDefaultsUndoesEverySyncedSetting(): void {
 		$undone = [];
@@ -519,6 +559,8 @@ class ThemingServiceTest extends TestCase {
 	 * returns the admin-configured primary that a reset is removing.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGetDefaultColorsReadsCoreFallbacksNotTheConfiguredPrimary(): void {
 		$defaults = $this->service->getDefaultColors();
@@ -532,6 +574,8 @@ class ThemingServiceTest extends TestCase {
 	 * slot; it must be the same instance the service writes through.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 *
+	 * @return void
 	 */
 	public function testGetImageManagerReturnsTheInjectedInstance(): void {
 		$this->assertSame(expected: $this->imageManager, actual: $this->service->getImageManager());

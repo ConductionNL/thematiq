@@ -68,6 +68,8 @@ class SettingsControllerGroupThemingTest extends TestCase {
 	/**
 	 * getGroupTheming() returns the mapping alongside the group and
 	 * token-set option lists.
+	 *
+	 * @return void
 	 */
 	public function testGetGroupThemingReturnsMappingAndOptionLists(): void {
 		$groupThemingService = $this->createMock(originalClassName: GroupThemingService::class);
@@ -99,6 +101,8 @@ class SettingsControllerGroupThemingTest extends TestCase {
 
 	/**
 	 * setGroupTheming() persists the ordered mapping and returns it on success.
+	 *
+	 * @return void
 	 */
 	public function testSetGroupThemingReturnsPersistedMappingOnSuccess(): void {
 		$groupThemingService = $this->createMock(originalClassName: GroupThemingService::class);
@@ -120,6 +124,8 @@ class SettingsControllerGroupThemingTest extends TestCase {
 	/**
 	 * A validation failure surfaces as HTTP 422 naming the offending entry
 	 * and reason.
+	 *
+	 * @return void
 	 */
 	public function testSetGroupThemingReturns422OnValidationFailure(): void {
 		$badEntry = ['group' => 'nonexistent', 'tokenSet' => 'amsterdam'];

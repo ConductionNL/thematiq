@@ -78,6 +78,8 @@ class LoginCopyServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -174,6 +176,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * The shipped Zuiddrecht copy, in Dutch, as the NcLogin board writes it.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtShipsTheBoardsCopy(): void {
 		$manifest = json_decode((string)file_get_contents(__DIR__ . '/../../../token-sets.json'), true);
@@ -194,6 +198,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * a language it does not name gets nothing, so Nextcloud's words stay.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
 	 */
 	public function testALanguageMapPicksTheRequestsLanguage(): void {
 		$this->configure(login: ['title' => ['nl' => 'Inloggen', 'en' => 'Log in'], 'footer' => 'Overal'], override: '');
@@ -207,6 +213,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * The administrator's override wins key by key; the set's other keys stay.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
 	 */
 	public function testTheOverrideWinsKeyByKey(): void {
 		$this->configure(
@@ -231,6 +239,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * key, and a link that is not a web address or a path on this server.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
 	 */
 	public function testWhatMayNotBeShownIsDropped(): void {
 		$this->configure(
@@ -252,6 +262,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * A protocol-relative link points off this server without saying so; it is dropped.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
 	 */
 	public function testAProtocolRelativeLinkIsDropped(): void {
 		$this->configure(login: ['footer_link_url' => '//elders.example/'], override: '');
@@ -265,6 +277,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * request's language.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheLightWorkplaceLoadsTheScript(): void {
 		$this->configure(login: null);
@@ -280,6 +294,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * Every other layout keeps Nextcloud's login page: no state, no script.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheDefaultLayoutLoadsNothing(): void {
 		$this->configure(login: ['title' => 'Inloggen']);
@@ -295,6 +311,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * A failure is logged and leaves the page alone.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testAFailureIsLoggedAndLeavesThePage(): void {
 		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
@@ -312,6 +330,8 @@ class LoginCopyServiceTest extends TestCase {
 	 * injects for it; a resolver failure is logged and loads nothing.
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheLoginEntryResolvesTheSetAndFailsOpen(): void {
 		$this->configure(login: ['title' => 'Inloggen']);

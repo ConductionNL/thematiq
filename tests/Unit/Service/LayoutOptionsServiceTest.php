@@ -116,6 +116,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * Zuiddrecht carries both defaults, and wears them with nothing stored.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtWearsTheLightLayoutAndTheStripe(): void {
 		$this->assertSame(expected: '', actual: $this->service->workplaceLayoutSetting());
@@ -131,6 +133,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * leave it to the administrator.
 	 *
 	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
+	 *
+	 * @return void
 	 */
 	public function testTheSchoolSetsWearTheLightLayout(): void {
 		$expected = [
@@ -151,6 +155,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * block has to be named here on purpose.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testEveryOtherShippedSetKeepsTheDefaultLayout(): void {
 		$changed = [];
@@ -175,6 +181,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * the defaults rather than failing the page render.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownSetResolvesToTheDefaults(): void {
 		$this->assertSame(
@@ -197,6 +205,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * watermark to the built-in default.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtWearsTheNewerDefaults(): void {
 		$this->assertSame(
@@ -228,6 +238,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * Nextcloud's own top bar.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testEveryOtherShippedSetKeepsTheNewerDefaults(): void {
 		$changed = [];
@@ -266,6 +278,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * choice follows the set again.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAStoredNewerChoiceWinsOverTheSet(): void {
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'light'));
@@ -344,6 +358,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * option does not accept, both read as "follow": the page still renders.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableNewerValueFollowsTheBuiltInDefault(): void {
 		$this->stored['navigation_width'] = '12';
@@ -369,6 +385,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * the watermark is off and the stripe is on the login card only.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testASetMayDeclareEveryNewerDefault(): void {
 		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
@@ -409,6 +427,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * The administrator's choice always wins, in both directions.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAStoredChoiceWinsOverTheSet(): void {
 		$this->assertSame(expected: '', actual: $this->service->setWorkplaceLayout(layout: 'default'));
@@ -426,6 +446,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * Storing the empty value hands the option back to the set.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheEmptyChoiceFollowsTheSetAgain(): void {
 		$this->service->setWorkplaceLayout(layout: 'light');
@@ -441,6 +463,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * A value outside the three is refused and nothing is written.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownLayoutIsRefused(): void {
 		try {
@@ -459,6 +483,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * import) and is not one of the three is read as "follow the set".
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableStoredValueFollowsTheSet(): void {
 		$this->stored = ['workplace_layout' => 'wide', 'brand_stripe' => 'yes'];
@@ -475,6 +501,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * nothing, since the bar it places is the light one.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 *
+	 * @return void
 	 */
 	public function testTheWorkplaceHeaderNeedsTheLightLayout(): void {
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'workplace'));

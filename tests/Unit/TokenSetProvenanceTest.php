@@ -58,6 +58,8 @@ class TokenSetProvenanceTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -81,6 +83,8 @@ class TokenSetProvenanceTest extends TestCase {
 	 * The first fifteen lines of a file: where a generator names itself.
 	 *
 	 * @param string $css The file contents.
+	 *
+	 * @return string
 	 */
 	private function head(string $css): string {
 		return implode("\n", \array_slice(explode("\n", $css), 0, 15));
@@ -107,6 +111,8 @@ class TokenSetProvenanceTest extends TestCase {
 	 * version, mapping table hash and counts.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 *
+	 * @return void
 	 */
 	public function testEveryConvertedSetCarriesACompleteProvenanceBlock(): void {
 		$converted = $this->convertedSetIds();
@@ -135,6 +141,8 @@ class TokenSetProvenanceTest extends TestCase {
 	 * converter provenance, so the sync treats it as not its own.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 *
+	 * @return void
 	 */
 	public function testBrandFileSetsNameTheirGeneratorNotTheConverter(): void {
 		$this->assertFileExists(filename: $this->repoRoot() . '/scripts/generate-brand-set.mjs', message: 'The brand-file entry point must stay.');
@@ -160,6 +168,8 @@ class TokenSetProvenanceTest extends TestCase {
 	 * converter provenance.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
+	 *
+	 * @return void
 	 */
 	public function testSummerBreezeDeclaresNoNldesignLayer(): void {
 		$css = ($this->shippedSets()['summer-breeze'] ?? null);

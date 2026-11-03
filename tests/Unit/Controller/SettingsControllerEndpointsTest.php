@@ -93,6 +93,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 	/**
 	 * Wire the controller over mocked services and an in-memory appconfig.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -141,6 +143,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * empty map that reads like "this theme changes nothing".
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-preview
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownPreviewIs404AndResolvesNothing(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(false);
@@ -158,6 +162,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * to another set.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-preview
+	 *
+	 * @return void
 	 */
 	public function testAKnownPreviewEchoesTheIdWithTheResolvedMap(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(true);
@@ -183,6 +189,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * @dataProvider toggleProvider
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @return void
 	 */
 	public function testATogglePersistsEchoesAndAuditsThePreviousValue(
 		string $method,
@@ -215,6 +223,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * @dataProvider toggleProvider
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testATogglePersistsTheOnValue(string $method, string $key, string $property): void {
 		$response = $this->controller->{$method}(true);
@@ -250,6 +260,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * The themable-app list is handed through as the service built it.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheThemableAppListIsPassedThrough(): void {
 		$apps = [['id' => 'files', 'name' => 'Files', 'themed' => true]];
@@ -264,6 +276,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * back would show an exclusion that is not in force.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheExclusionListEchoesWhatWasStoredNotWhatWasSent(): void {
 		$stored = ['files'];
@@ -285,6 +299,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * request, and `old` says what it replaced.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @return void
 	 */
 	public function testTheExclusionChangeIsAuditedWithBothSides(): void {
 		$this->appThemingService->method('getDisabledApps')->willReturnOnConsecutiveCalls(['dashboard'], ['files']);
@@ -302,6 +318,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * argument means "no exclusions" rather than "leave it alone".
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testClearingTheExclusionListStoresAnEmptyList(): void {
 		$this->appThemingService->method('getDisabledApps')->willReturn([]);
@@ -319,6 +337,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * setting nobody touched would bury the one that changed.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @return void
 	 */
 	public function testASaveConfirmationStoresAndAuditsOnlyTheFlagThatChanged(): void {
 		$response = $this->controller->setSaveConfirmSettings(confirmSaveStock: false, confirmSaveTheme: true);
@@ -342,6 +362,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * its own audit entry.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 *
+	 * @return void
 	 */
 	public function testBothSaveConfirmationsCanBeTurnedBackOn(): void {
 		$this->appConfig['thematiq|confirm_save_stock'] = '0';

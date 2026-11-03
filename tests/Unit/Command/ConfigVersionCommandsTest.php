@@ -43,6 +43,8 @@ class ConfigVersionCommandsTest extends TestCase {
 
 	/**
 	 * The versions command prints id, time, actor and action per version.
+	 *
+	 * @return void
 	 */
 	public function testVersionsListsEachVersion(): void {
 		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
@@ -58,6 +60,8 @@ class ConfigVersionCommandsTest extends TestCase {
 
 	/**
 	 * --dry-run prints the changes and writes nothing; without it the restore applies and exits 0.
+	 *
+	 * @return void
 	 */
 	public function testRestoreDryRunThenApply(): void {
 		$restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);
@@ -83,6 +87,8 @@ class ConfigVersionCommandsTest extends TestCase {
 
 	/**
 	 * An unknown id and a refused version exit 1.
+	 *
+	 * @return void
 	 */
 	public function testRestoreFailsForUnknownAndRefused(): void {
 		$restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);

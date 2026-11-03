@@ -33,6 +33,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	/**
 	 * A compliant `text` candidate (white on the rijkshuisstijl primary blue,
 	 * well above 4.5:1) passes at the text threshold.
+	 *
+	 * @return void
 	 */
 	public function testCompliantTextCandidatePasses(): void {
 		$results = $this->service->evaluate(
@@ -54,6 +56,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	/**
 	 * A non-compliant `text` candidate (low-contrast grey on white) fails at
 	 * the text threshold — `pass` MUST be false, not omitted or true.
+	 *
+	 * @return void
 	 */
 	public function testNonCompliantTextCandidateFails(): void {
 		$results = $this->service->evaluate(
@@ -69,6 +73,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 
 	/**
 	 * A `ui` candidate is evaluated at the 3.0:1 threshold, not 4.5:1.
+	 *
+	 * @return void
 	 */
 	public function testUiCandidateUsesUiThreshold(): void {
 		$results = $this->service->evaluate(
@@ -85,6 +91,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	 * Multiple candidates against one shared background each get their own
 	 * result, matching design.md's worked example (primary/text vs
 	 * accent/ui).
+	 *
+	 * @return void
 	 */
 	public function testMultipleCandidatesAgainstOneBackground(): void {
 		$results = $this->service->evaluate(
@@ -106,6 +114,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	 * A non-literal candidate value (`var(--token)`) MUST be reported
 	 * `unevaluated: true`, `ratio: null`, and MUST NOT be reported as
 	 * passing.
+	 *
+	 * @return void
 	 */
 	public function testNonLiteralCandidateValueIsUnevaluatedNeverPassing(): void {
 		$results = $this->service->evaluate(
@@ -123,6 +133,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	/**
 	 * A non-literal background also produces `unevaluated` results for every
 	 * candidate — an unresolvable background is never silently ignored.
+	 *
+	 * @return void
 	 */
 	public function testNonLiteralBackgroundIsUnevaluated(): void {
 		$results = $this->service->evaluate(
@@ -139,6 +151,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	/**
 	 * The response shape never carries a `blocked`, `allowed`, or `verdict`
 	 * key — nldesign reports facts only (design.md decisions 2/4).
+	 *
+	 * @return void
 	 */
 	public function testResponseNeverCarriesABlockingVerdictKey(): void {
 		$results = $this->service->evaluate(
@@ -157,6 +171,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 	 * `check()` (the fixed-pair, upload-time method) is unaffected by the
 	 * new `evaluate()` generalisation — same PAIRS-driven behaviour as
 	 * before this change.
+	 *
+	 * @return void
 	 */
 	public function testCheckRemainsUnaffectedByEvaluate(): void {
 		$warnings = $this->service->check([

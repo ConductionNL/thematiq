@@ -120,6 +120,8 @@ class AppBrandLogoReachTest extends TestCase {
 
 	/**
 	 * The brand rule outranks each bundle's header-logo rule and undoes each property it sets.
+	 *
+	 * @return void
 	 */
 	public function testTheBrandLogoOutranksEveryBundleHeaderLogoRule(): void {
 		$brand = $this->brandRule();
@@ -155,6 +157,8 @@ class AppBrandLogoReachTest extends TestCase {
 	/**
 	 * The small logo still replaces the large one below the narrow-header breakpoint,
 	 * through the variable the brand rule reads.
+	 *
+	 * @return void
 	 */
 	public function testTheSmallLogoStillSwapsThroughTheVariable(): void {
 		$css = $this->layerCss();

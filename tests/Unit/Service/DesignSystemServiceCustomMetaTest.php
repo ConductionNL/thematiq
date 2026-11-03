@@ -64,6 +64,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 
 	/**
 	 * A set saved off stock Nextcloud keeps saying so.
+	 *
+	 * @return void
 	 */
 	public function testACustomSetCarriesTheDesignSystemItWasSavedFrom(): void {
 		$service = $this->build(manifest: '{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
@@ -78,6 +80,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	 * A set written before the field existed has no opinion, and must not
 	 * acquire one: CssInjectionService's own `?? 'nldesign'` keeps it exactly
 	 * what it has always been.
+	 *
+	 * @return void
 	 */
 	public function testASetWithoutTheFieldStaysUndecided(): void {
 		$service = $this->build(manifest: '{"custom-lansingerland":{"name":"lansingerland"}}');
@@ -91,6 +95,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	/**
 	 * A shipped set never consults the custom manifest, and an id that is in
 	 * neither answers with nothing rather than with someone else's entry.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownSetAnswersEmpty(): void {
 		$service = $this->build(manifest: '{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
@@ -101,6 +107,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 
 	/**
 	 * A manifest that is not JSON must not take the panel down with it.
+	 *
+	 * @return void
 	 */
 	public function testABrokenManifestDegradesToEmpty(): void {
 		$service = $this->build(manifest: 'not json at all');
@@ -111,6 +119,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	/**
 	 * An entry that is not an object is treated as no entry, not handed on
 	 * for a caller to index into.
+	 *
+	 * @return void
 	 */
 	public function testAMalformedEntryDegradesToEmpty(): void {
 		$service = $this->build(manifest: '{"custom-openwoo":"none"}');

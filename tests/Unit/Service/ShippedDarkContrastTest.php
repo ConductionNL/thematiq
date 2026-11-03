@@ -157,6 +157,8 @@ class ShippedDarkContrastTest extends TestCase {
 
 	/**
 	 * The provider finds the shipped high-contrast set, so the AAA cases cannot pass empty.
+	 *
+	 * @return void
 	 */
 	public function testThereIsAHighContrastSet(): void {
 		$this->assertArrayHasKey(key: 'hoog-contrast', array: self::highContrastSetProvider());
@@ -169,6 +171,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider highContrastSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testHighContrastSetShipsADarkVariant(string $setId): void {
 		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', message: $setId . ' has no dark variant');
@@ -181,6 +185,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider highContrastSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testHighContrastDarkVariantReachesAaa(string $setId): void {
 		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
@@ -223,6 +229,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider highContrastSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testHighContrastDarkVariantCoversBothScopesAlike(string $setId): void {
 		$css = (string)file_get_contents(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
@@ -265,6 +273,8 @@ class ShippedDarkContrastTest extends TestCase {
 
 	/**
 	 * The committed dark files exist at all, so the provider cannot pass empty.
+	 *
+	 * @return void
 	 */
 	public function testThereAreShippedDarkVariants(): void {
 		$this->assertGreaterThan(expected: 10, actual: count(self::darkSetProvider()));
@@ -276,6 +286,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider darkSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testInputsAndPrimaryButtonsReachAa(string $setId): void {
 		$contrast = new ContrastService();
@@ -320,6 +332,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider darkSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testTheErrorLabelReadsOnTheErrorFill(string $setId): void {
 		$contrast = new ContrastService();
@@ -356,6 +370,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider darkSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testThePageBackgroundIsDark(string $setId): void {
 		$contrast = new ContrastService();
@@ -384,6 +400,8 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @dataProvider darkSetProvider
 	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @return void
 	 */
 	public function testTextAndLinksReadOnTheDarkPage(string $setId): void {
 		$contrast = new ContrastService();

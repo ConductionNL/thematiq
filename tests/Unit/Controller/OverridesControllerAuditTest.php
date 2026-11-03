@@ -95,6 +95,8 @@ class OverridesControllerAuditTest extends TestCase {
 	/**
 	 * Overrides are written to the file of the set the request names, so
 	 * edits made on the stock set land in the stock set's own file.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesWritesTheRequestedSetsFile(): void {
 		$this->request->method('getParams')->willReturn(
@@ -115,6 +117,8 @@ class OverridesControllerAuditTest extends TestCase {
 	 * The reset empties the overrides of the set that was active AND of the
 	 * stock set, makes the stock set active, resets core theming, and records
 	 * each change in the audit vocabulary it already has.
+	 *
+	 * @return void
 	 */
 	public function testResetEmptiesBothFilesAndReturnsToStock(): void {
 		$this->request->method('getParams')->willReturn(['reset' => true]);
@@ -153,6 +157,8 @@ class OverridesControllerAuditTest extends TestCase {
 
 	/**
 	 * A reset whose file write fails changes nothing else and says so.
+	 *
+	 * @return void
 	 */
 	public function testResetWriteFailureLeavesTheSetAndThemingAlone(): void {
 		$this->request->method('getParams')->willReturn(['reset' => true]);
@@ -172,6 +178,8 @@ class OverridesControllerAuditTest extends TestCase {
 	/**
 	 * A successful setOverrides() logs exactly one overrides_written entry
 	 * with the pre-write and post-write token maps.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesLogsOneEntryWithOldAndNew(): void {
 		$this->overridesService->method('read')->willReturn(['--nldesign-color-primary' => '#000000']);
@@ -196,6 +204,8 @@ class OverridesControllerAuditTest extends TestCase {
 
 	/**
 	 * A validation failure (non-array overrides) logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesRejectsNonArrayWithoutLogging(): void {
 		$this->request->method('getParams')->willReturn(['overrides' => 'not-an-array']);
@@ -210,6 +220,8 @@ class OverridesControllerAuditTest extends TestCase {
 	/**
 	 * A write failure (RuntimeException) logs nothing — the audit trail
 	 * only records successful writes.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesWriteFailureLogsNothing(): void {
 		$this->overridesService->method('read')->willReturn([]);
@@ -226,6 +238,8 @@ class OverridesControllerAuditTest extends TestCase {
 	/**
 	 * A successful import logs one overrides_imported entry with the
 	 * imported/skipped counts and a hashed CSS payload — never the raw CSS.
+	 *
+	 * @return void
 	 */
 	public function testImportOverridesLogsHashedPayload(): void {
 		$css = ':root { --color-primary: #007bc7; }';

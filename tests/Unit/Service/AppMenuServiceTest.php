@@ -69,6 +69,8 @@ class AppMenuServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -141,6 +143,8 @@ class AppMenuServiceTest extends TestCase {
 	 * The shipped Zuiddrecht menu, in Dutch, as the AppMenu board draws it.
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtShipsTheBoardsSections(): void {
 		$manifest = json_decode((string)file_get_contents(__DIR__ . '/../../../token-sets.json'), true);
@@ -162,6 +166,8 @@ class AppMenuServiceTest extends TestCase {
 	 * dropped; the override's sections replace the set's.
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 *
+	 * @return void
 	 */
 	public function testWhatMayNotBeShownIsDropped(): void {
 		$this->configure(
@@ -193,6 +199,8 @@ class AppMenuServiceTest extends TestCase {
 	 * without it nothing; a failure is logged.
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheWorkplaceHeaderLoadsTheScriptAndNothingElseDoes(): void {
 		$this->configure(block: ['hint' => 'Hint']);

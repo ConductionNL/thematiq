@@ -51,6 +51,8 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 	 * Build a SettingsController wired to a real UpstreamFreshnessService
 	 * (backed by the in-memory config store) and stubbed sibling
 	 * dependencies not exercised by the upstream-freshness endpoints.
+	 *
+	 * @return SettingsController
 	 */
 	private function makeController(): SettingsController {
 		$config = $this->createMock(originalClassName: IConfig::class);
@@ -96,6 +98,8 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 	 * All three upstream-freshness routes carry the AuthorizedAdminSetting
 	 * attribute — non-admin requests are rejected by that posture before the
 	 * method body ever runs.
+	 *
+	 * @return void
 	 */
 	public function testAllThreeEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getUpstreamFreshness', 'setUpstreamFreshness', 'dismissUpstreamNotice'] as $method) {
@@ -107,6 +111,8 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 
 	/**
 	 * The toggle POST persists the enabled state, reflected by the GET.
+	 *
+	 * @return void
 	 */
 	public function testToggleEnabledPersists(): void {
 		$controller = $this->makeController();
@@ -124,6 +130,8 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 	/**
 	 * A dismiss POST round-trips into the filtered getStatus() output: the
 	 * dismissed notice disappears from the subsequent GET.
+	 *
+	 * @return void
 	 */
 	public function testDismissRoundTripsIntoFilteredStatus(): void {
 		$this->configStore['upstream_updates'] = json_encode(

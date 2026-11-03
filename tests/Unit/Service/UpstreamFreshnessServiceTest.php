@@ -41,6 +41,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 
 	/**
 	 * Reset the fake config store before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -49,6 +51,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 
 	/**
 	 * Build an IConfig mock backed by $this->configStore.
+	 *
+	 * @return IConfig
 	 */
 	private function makeConfig(): IConfig {
 		$config = $this->createMock(originalClassName: IConfig::class);
@@ -73,6 +77,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * @param array<int, array<string, mixed>> $tokenSets The installed token sets TokenSetService returns.
 	 * @param IClientService|null $clientService An optional pre-configured client service mock.
 	 * @param LoggerInterface|null $logger An optional pre-configured logger mock.
+	 *
+	 * @return UpstreamFreshnessService
 	 */
 	private function makeService(
 		array $tokenSets = [],
@@ -92,6 +98,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 
 	/**
 	 * (a) Disabled ⇒ runCheck() performs zero HTTP calls.
+	 *
+	 * @return void
 	 */
 	public function testDisabledPerformsZeroHttpCalls(): void {
 		$clientService = $this->createMock(originalClassName: IClientService::class);
@@ -107,6 +115,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 
 	/**
 	 * (b) 304 ⇒ only upstream_checked_at updated, no notices.
+	 *
+	 * @return void
 	 */
 	public function test304OnlyUpdatesCheckedAtAndProducesNoNotices(): void {
 		$response = $this->createMock(originalClassName: IResponse::class);
@@ -130,6 +140,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	/**
 	 * (c) 200 with SHA equal to all installed refs ⇒ no notices, and no
 	 * second (compare) request is made since nothing is stale.
+	 *
+	 * @return void
 	 */
 	public function test200WithUnchangedHeadShaProducesNoNotices(): void {
 		$sha = str_repeat('a', 40);
@@ -160,6 +172,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * (d) 200 with a new SHA + a successful compare listing
 	 * proprietary/utrecht-design-tokens/... ⇒ a notice for utrecht carrying
 	 * its recorded upstreamVersion, none for the untouched set.
+	 *
+	 * @return void
 	 */
 	public function test200WithNewShaAndSuccessfulCompareProducesPerSetNotice(): void {
 		$oldSha = str_repeat('a', 40);
@@ -200,6 +214,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 
 	/**
 	 * (e) The compare request fails ⇒ a single generic notice, no exception.
+	 *
+	 * @return void
 	 */
 	public function testCompareFailureProducesGenericNoticeWithoutException(): void {
 		$newSha = str_repeat('c', 40);
@@ -243,6 +259,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * (f) The freshness request itself throws (timeout/DNS) ⇒ no exception
 	 * escapes, prior notices are preserved untouched, and the failure is
 	 * logged.
+	 *
+	 * @return void
 	 */
 	public function testFreshnessRequestThrowLeavesPriorNoticesUntouched(): void {
 		$this->configStore['upstream_updates'] = json_encode(
@@ -281,6 +299,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	/**
 	 * A malformed 200 body (unparseable head SHA) is discarded without
 	 * creating a notice or updating the stored ETag.
+	 *
+	 * @return void
 	 */
 	public function testMalformedHeadShaBodyIsDiscarded(): void {
 		$response = $this->createMock(originalClassName: IResponse::class);
@@ -306,6 +326,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * (g) Sets without upstreamRef, and all custom-* sets, are excluded from
 	 * comparison entirely — no notices, and since nothing is stale the
 	 * compare request is never made (only the freshness GET runs).
+	 *
+	 * @return void
 	 */
 	public function testSetsWithoutUpstreamRefAndCustomSetsAreExcluded(): void {
 		$newSha = str_repeat('d', 40);
@@ -336,6 +358,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	/**
 	 * (h) Dismissing a notice at its current version hides it; a later
 	 * detection carrying a newer version for the same set re-surfaces it.
+	 *
+	 * @return void
 	 */
 	public function testDismissalHidesNoticeUntilNewerVersionDetected(): void {
 		$this->configStore['upstream_updates'] = json_encode(
@@ -377,6 +401,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	/**
 	 * (i) Never more than two HTTP requests per run, even with several
 	 * stale, attributable sets.
+	 *
+	 * @return void
 	 */
 	public function testNeverMoreThanTwoRequestsPerRun(): void {
 		$oldSha = str_repeat('e', 40);

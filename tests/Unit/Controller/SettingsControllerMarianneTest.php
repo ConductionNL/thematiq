@@ -86,6 +86,8 @@ class SettingsControllerMarianneTest extends TestCase {
 	/**
 	 * Both Marianne routes carry #[AuthorizedAdminSetting] — non-admin
 	 * requests are rejected by that posture before the method body runs.
+	 *
+	 * @return void
 	 */
 	public function testBothEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getMarianneEnabled', 'setMarianneEnabled'] as $method) {
@@ -98,6 +100,8 @@ class SettingsControllerMarianneTest extends TestCase {
 	/**
 	 * A fresh install (no `marianne_enabled` config value) defaults to
 	 * disabled — Marianne must be inert until an admin explicitly opts in.
+	 *
+	 * @return void
 	 */
 	public function testDefaultIsDisabled(): void {
 		$controller = $this->makeController();
@@ -110,6 +114,8 @@ class SettingsControllerMarianneTest extends TestCase {
 	/**
 	 * A POST persists the enabled state, reflected by the subsequent GET,
 	 * and stores the raw appconfig value as '1'.
+	 *
+	 * @return void
 	 */
 	public function testTogglePersists(): void {
 		$controller = $this->makeController();
@@ -125,6 +131,8 @@ class SettingsControllerMarianneTest extends TestCase {
 
 	/**
 	 * Disabling after an enable reverts to Inter — persisted as '0'.
+	 *
+	 * @return void
 	 */
 	public function testDisablingAfterEnablePersists(): void {
 		$controller = $this->makeController();

@@ -234,6 +234,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp appdata dir + mocked config/url-generator.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -263,6 +265,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp appdata dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->dataDir);
@@ -308,6 +312,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * Storing writes `custom-{slug}.woff2` and a manifest entry.
+	 *
+	 * @return void
 	 */
 	public function testStoreWritesFileAndManifest(): void {
 		$result = $this->service->store(
@@ -329,6 +335,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * A collision (same derived id twice) is rejected with 409 and the
 	 * existing file/manifest entry is left untouched.
+	 *
+	 * @return void
 	 */
 	public function testStoreCollisionRejectedWithoutTouchingExistingFile(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -348,6 +356,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * Deleting a font removes the file, the manifest entry, and bumps the
 	 * global revision.
+	 *
+	 * @return void
 	 */
 	public function testDeleteRemovesFileManifestAndBumpsRev(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -362,6 +372,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * Deleting an unknown (but well-formed) id returns false.
+	 *
+	 * @return void
 	 */
 	public function testDeleteUnknownIdReturnsFalse(): void {
 		$this->assertFalse(condition: $this->service->delete(id: 'custom-ghost'));
@@ -370,6 +382,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * getFont() returns null for an id absent from the manifest, even when
 	 * a stray file of that name exists on disk — the manifest is the gate.
+	 *
+	 * @return void
 	 */
 	public function testGetFontReturnsNullForUnknownIdEvenIfFileExists(): void {
 		mkdir($this->dataDir . '/fonts', 0777, true);
@@ -381,6 +395,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * getFont() returns the file for a font actually present in the
 	 * manifest.
+	 *
+	 * @return void
 	 */
 	public function testGetFontReturnsFileForKnownId(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -392,6 +408,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * readFontBytes() returns the raw bytes for a known font.
+	 *
+	 * @return void
 	 */
 	public function testReadFontBytesReturnsContentForKnownId(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -401,6 +419,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * readFontBytes() returns null for an unknown id (manifest is the gate).
+	 *
+	 * @return void
 	 */
 	public function testReadFontBytesReturnsNullForUnknownId(): void {
 		$this->assertNull(actual: $this->service->readFontBytes(id: 'custom-ghost'));
@@ -409,6 +429,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * Path-traversal-shaped ids never reach appdata lookups for delete() or
 	 * getFont() — they are rejected purely by id-shape validation.
+	 *
+	 * @return void
 	 */
 	public function testPathTraversalIdsNeverReachAppData(): void {
 		$traversalIds = ['../../config', 'custom-a/../b', "custom-a\0b", '../../../etc/passwd'];
@@ -421,6 +443,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * The 21st font is rejected with 409 (per-instance cap of 20).
+	 *
+	 * @return void
 	 */
 	public function test21stFontRejected(): void {
 		for ($i = 0; $i < 20; $i++) {
@@ -434,6 +458,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * hasFonts() reflects the manifest state.
+	 *
+	 * @return void
 	 */
 	public function testHasFontsFalseWhenEmpty(): void {
 		$this->assertFalse(condition: $this->service->hasFonts());
@@ -443,6 +469,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * buildCss() returns an empty string when no fonts are configured.
+	 *
+	 * @return void
 	 */
 	public function testBuildCssEmptyWhenNoFonts(): void {
 		$this->assertSame(expected: '', actual: $this->service->buildCss());
@@ -451,6 +479,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * buildCss() emits @font-face + the body font-family override with the
 	 * Fira Sans fallback chain preserved verbatim after the custom family.
+	 *
+	 * @return void
 	 */
 	public function testBuildCssBodyOverride(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -470,6 +500,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * buildCss() overrides the heading font token when a heading-role font
 	 * is stored, independently of the body override.
+	 *
+	 * @return void
 	 */
 	public function testBuildCssHeadingOverride(): void {
 		$this->service->store('Rijks Display', 'heading', $this->validWoff2(), strlen($this->validWoff2()));
@@ -486,6 +518,8 @@ class FontServiceTest extends TestCase {
 	/**
 	 * A display name with an embedded quote is CSS-escaped so the
 	 * stylesheet remains parseable with no injected rules.
+	 *
+	 * @return void
 	 */
 	public function testBuildCssEscapesDisplayName(): void {
 		$this->service->store('Test"Font', 'body', $this->validWoff2(), strlen($this->validWoff2()));
@@ -498,6 +532,8 @@ class FontServiceTest extends TestCase {
 
 	/**
 	 * isValidId() only accepts the prefixed slug charset.
+	 *
+	 * @return void
 	 */
 	public function testIsValidId(): void {
 		$this->assertTrue(condition: $this->service->isValidId(id: 'custom-rijks-sans'));

@@ -42,6 +42,8 @@ class ScheduledSwitchJobTest extends TestCase {
 
 	/**
 	 * Five minutes, time sensitive.
+	 *
+	 * @return void
 	 */
 	public function testRunsEveryFiveMinutesAndIsTimeSensitive(): void {
 		$job = new ScheduledSwitchJob(
@@ -58,6 +60,8 @@ class ScheduledSwitchJobTest extends TestCase {
 
 	/**
 	 * run() delegates to runDue().
+	 *
+	 * @return void
 	 */
 	public function testRunDelegatesToTheService(): void {
 		$service = $this->createMock(originalClassName: ScheduledSwitchService::class);
@@ -68,6 +72,8 @@ class ScheduledSwitchJobTest extends TestCase {
 
 	/**
 	 * A throw is logged, not rethrown.
+	 *
+	 * @return void
 	 */
 	public function testAThrowIsContained(): void {
 		$service = $this->createMock(originalClassName: ScheduledSwitchService::class);
@@ -80,6 +86,8 @@ class ScheduledSwitchJobTest extends TestCase {
 
 	/**
 	 * The job is registered next to the freshness job.
+	 *
+	 * @return void
 	 */
 	public function testTheJobIsRegisteredInInfoXml(): void {
 		$xml = (string)file_get_contents(__DIR__ . '/../../../appinfo/info.xml');

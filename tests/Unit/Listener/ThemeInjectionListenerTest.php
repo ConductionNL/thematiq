@@ -77,6 +77,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -111,6 +113,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 *
 	 * @param string $renderAs The response's renderAs value.
 	 * @param string $expectedContext The context `inject()` must receive.
+	 *
+	 * @return void
 	 */
 	public function testRenderAsMapsToMatchingContext(string $renderAs, string $expectedContext): void {
 		$response = new TemplateResponse('files', 'index', [], $renderAs);
@@ -137,6 +141,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	/**
 	 * An unknown renderAs (e.g. `blank`) still injects — fail-open,
 	 * forward-compatibility.
+	 *
+	 * @return void
 	 */
 	public function testUnknownRenderAsStillInjects(): void {
 		$response = new TemplateResponse('files', 'index', [], 'blank');
@@ -149,6 +155,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	/**
 	 * The login event injects with context `login` and never consults the
 	 * per-app guard.
+	 *
+	 * @return void
 	 */
 	public function testLoginEventInjectsWithLoginContextAndSkipsGuard(): void {
 		$response = new TemplateResponse('core', 'login', [], TemplateResponse::RENDER_AS_GUEST);
@@ -162,6 +170,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * An excluded app (identified via the response's own app id) skips injection.
+	 *
+	 * @return void
 	 */
 	public function testExcludedResponseAppSkipsInjection(): void {
 		$response = new TemplateResponse('calendar', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -175,6 +185,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * A non-excluded response app stays fully themed.
+	 *
+	 * @return void
 	 */
 	public function testNonExcludedResponseAppInjectsNormally(): void {
 		$response = new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -187,6 +199,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * An empty response app id falls back to the request path resolver.
+	 *
+	 * @return void
 	 */
 	public function testEmptyResponseAppFallsBackToPath(): void {
 		$response = new TemplateResponse('', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -201,6 +215,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * A `core`-attributed response app also falls back to the request path resolver.
+	 *
+	 * @return void
 	 */
 	public function testCoreResponseAppFallsBackToPath(): void {
 		$response = new TemplateResponse('core', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -216,6 +232,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * A throwing app-id resolver fails open to themed rather than propagating.
+	 *
+	 * @return void
 	 */
 	public function testResolverThrowingFailsOpenToThemed(): void {
 		$response = new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -229,6 +247,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	/**
 	 * An event that is neither of the two handled types is a no-op — no
 	 * exception escapes, and injection never runs.
+	 *
+	 * @return void
 	 */
 	public function testUnrelatedEventIsNoOp(): void {
 		$unrelated = $this->createMock(originalClassName: Event::class);
@@ -248,6 +268,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * cascade reached no log at any level and presented as "one theming
 	 * feature is broken". The `assertNotEmpty` below is the half that was
 	 * missing: without it this test passes over a swallow that tells nobody.
+	 *
+	 * @return void
 	 */
 	public function testInjectionServiceThrowingNeverEscapesButIsLogged(): void {
 		$response = new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -273,6 +295,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * Double dispatch of the same event yields exactly two `inject()` calls
 	 * with the same arguments each time (idempotency lives in
 	 * `\OCP\Util::addStyle()`, not the listener) — no duplicated/skewed state.
+	 *
+	 * @return void
 	 */
 	public function testDoubleDispatchYieldsNoDuplicatedSideEffectsBeyondInject(): void {
 		$response = new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -289,6 +313,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * excluded from theming still gets it.
 	 *
 	 * @spec openspec/specs/environment-marker/spec.md
+	 *
+	 * @return void
 	 */
 	public function testExcludedAppStillGetsTheEnvironmentMarker(): void {
 		$response = new TemplateResponse('calendar', 'index', [], TemplateResponse::RENDER_AS_USER);
@@ -304,6 +330,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * The login page gets the environment marker.
 	 *
 	 * @spec openspec/specs/environment-marker/spec.md
+	 *
+	 * @return void
 	 */
 	public function testLoginPageGetsTheEnvironmentMarker(): void {
 		$response = new TemplateResponse('core', 'login', [], TemplateResponse::RENDER_AS_GUEST);
@@ -315,6 +343,8 @@ class ThemeInjectionListenerTest extends TestCase {
 
 	/**
 	 * An unrelated event gets no marker.
+	 *
+	 * @return void
 	 */
 	public function testUnrelatedEventGetsNoEnvironmentMarker(): void {
 		$this->environmentMarker->expects($this->never())->method('inject');
@@ -333,6 +363,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * @dataProvider loginCopyProvider
 	 *
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheLoginCopyRunsOnAThemedLoginPageOnly(bool $themed, bool $login, int $expected): void {
 		$loginCopy = $this->createMock(originalClassName: LoginCopyService::class);
@@ -381,6 +413,8 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * @dataProvider notFoundProvider
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheNotFoundCopyRunsOnTheCore404Only(string $app, string $template, bool $themed, int $expected): void {
 		$notFound = $this->createMock(originalClassName: NotFoundCopyService::class);

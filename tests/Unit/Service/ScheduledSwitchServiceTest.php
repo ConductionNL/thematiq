@@ -215,6 +215,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * Scenario "An administrator plans a campaign look": the switch is
 	 * listed with UTC times and the active set does not change.
+	 *
+	 * @return void
 	 */
 	public function testPlanningStoresTheSwitchAndChangesNothingYet(): void {
 		$entry = $this->planKingsDay();
@@ -230,6 +232,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Scenario "Overlapping plans are refused".
+	 *
+	 * @return void
 	 */
 	public function testOverlappingPlanIsRefused(): void {
 		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-07T00:00:00Z', createdBy: 'admin');
@@ -246,6 +250,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A switch without an end overlaps every later window.
+	 *
+	 * @return void
 	 */
 	public function testOpenEndedSwitchOverlapsEveryLaterWindow(): void {
 		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: null, createdBy: 'admin');
@@ -256,6 +262,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * An unknown token set is refused.
+	 *
+	 * @return void
 	 */
 	public function testUnknownTokenSetIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
@@ -265,6 +273,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * An end that is not after the start is refused.
+	 *
+	 * @return void
 	 */
 	public function testEndBeforeStartIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
@@ -275,6 +285,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * A window that is already over is refused, so it is not applied and
 	 * reverted on the next run; one that is still running is accepted.
+	 *
+	 * @return void
 	 */
 	public function testAWindowThatIsAlreadyOverIsRefused(): void {
 		try {
@@ -292,6 +304,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A time that does not parse is refused.
+	 *
+	 * @return void
 	 */
 	public function testUnparsableTimeIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
@@ -301,6 +315,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * Scenario "The look starts and ends on time", plus theming-audit "A
 	 * start and an end leave two entries".
+	 *
+	 * @return void
 	 */
 	public function testTheLookStartsAndEndsOnTime(): void {
 		$entry = $this->planKingsDay();
@@ -337,6 +353,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * due in the same run, the end must go first, so the second campaign
 	 * snapshots and returns to the administrator's own look, not the first
 	 * campaign's.
+	 *
+	 * @return void
 	 */
 	public function testBackToBackSwitchesPlannedOutOfOrderReturnToTheOriginalLook(): void {
 		$later = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-01T17:00:00Z', endAt: '2027-05-01T19:00:00Z', createdBy: 'admin');
@@ -367,6 +385,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * Scenario "A set picked by hand during a running switch does not last":
 	 * the next run puts the switch's set back, and the end still returns to the
 	 * set the switch replaced.
+	 *
+	 * @return void
 	 */
 	public function testARunningSwitchKeepsItsSetActive(): void {
 		$entry = $this->planKingsDay();
@@ -396,6 +416,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Putting the set back brings its logo and colours back too.
+	 *
+	 * @return void
 	 */
 	public function testKeepingASwitchActiveSyncsCoreThemingAgain(): void {
 		$this->planKingsDay();
@@ -418,6 +440,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * A switch stored while the core sync was an option, with it switched off,
 	 * keeps the administrator's choice: the token set alone, at the start, on
 	 * every run and at the end.
+	 *
+	 * @return void
 	 */
 	public function testASwitchStoredWithoutCoreSyncLeavesCoreThemingAlone(): void {
 		$this->store['thematiq/scheduled_switches'] = json_encode(
@@ -457,6 +481,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * A running switch whose set was deleted mid-window cannot put it back:
 	 * the other set stays, the switch keeps running and says so in the log.
+	 *
+	 * @return void
 	 */
 	public function testARunningSwitchWhoseSetIsGoneLeavesTheActiveSetAlone(): void {
 		$this->planKingsDay();
@@ -475,6 +501,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * A switch whose previous set was deleted cannot go back to it at its end,
 	 * and shows as failed with the reason.
+	 *
+	 * @return void
 	 */
 	public function testAnEndWhosePreviousSetIsGoneFailsVisibly(): void {
 		$this->planKingsDay();
@@ -494,6 +522,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * Cancelling a running switch whose previous set was deleted says so, and
 	 * keeps the switch.
+	 *
+	 * @return void
 	 */
 	public function testCancellingWhenThePreviousSetIsGoneIsRefused(): void {
 		$entry = $this->planKingsDay();
@@ -514,6 +544,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * A set's theming block that does not validate is not written into core
 	 * theming; the token set still switches.
+	 *
+	 * @return void
 	 */
 	public function testAThemingBlockThatDoesNotValidateIsNotWritten(): void {
 		$this->planKingsDay();
@@ -529,6 +561,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A set without a theming block brings no logo or colours.
+	 *
+	 * @return void
 	 */
 	public function testASetWithoutThemingWritesNoCoreTheming(): void {
 		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
@@ -543,6 +577,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Before its start a planned switch is left alone.
+	 *
+	 * @return void
 	 */
 	public function testNothingHappensBeforeTheStart(): void {
 		$this->planKingsDay();
@@ -557,6 +593,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A switch without an end is done once applied and leaves the list.
+	 *
+	 * @return void
 	 */
 	public function testOpenEndedSwitchLeavesTheListOnceApplied(): void {
 		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
@@ -570,6 +608,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Scenario "A switch to a deleted set fails visibly".
+	 *
+	 * @return void
 	 */
 	public function testASwitchToADeletedSetFailsVisibly(): void {
 		$entry = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
@@ -601,6 +641,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * back what it replaced": the set's theming block is applied at the start,
 	 * and the end puts back the snapshot the start took (reset first, then the
 	 * administrator's own values), not the previous set's block.
+	 *
+	 * @return void
 	 */
 	public function testASwitchRestoresTheBrandingItReplaced(): void {
 		$entry = $this->planKingsDay();
@@ -635,6 +677,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A switch without an end never goes back, so it takes no snapshot.
+	 *
+	 * @return void
 	 */
 	public function testAnOpenEndedSwitchTakesNoSnapshot(): void {
 		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
@@ -648,6 +692,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * A switch that ticked the core sync before snapshots existed has none to
 	 * restore, and goes back the way it was planned: synced to the previous set.
+	 *
+	 * @return void
 	 */
 	public function testAnOlderSyncedSwitchSyncsThePreviousSetAtItsEnd(): void {
 		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
@@ -682,6 +728,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * A snapshot that is gone restores nothing rather than resetting core theming.
+	 *
+	 * @return void
 	 */
 	public function testAMissingSnapshotRestoresNothing(): void {
 		$this->store['thematiq/token_set'] = 'koningsdag-oranje';
@@ -712,6 +760,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Cancelling a planned switch removes it without touching the active set.
+	 *
+	 * @return void
 	 */
 	public function testCancellingAPlannedSwitchRemovesIt(): void {
 		$entry = $this->planKingsDay();
@@ -725,6 +775,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Scenario "Cancelling a running campaign".
+	 *
+	 * @return void
 	 */
 	public function testCancellingARunningCampaignSwitchesBackAtOnce(): void {
 		$entry = $this->planKingsDay();
@@ -744,6 +796,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 	/**
 	 * Cancelling an id that is not planned says so.
+	 *
+	 * @return void
 	 */
 	public function testCancellingAnUnknownSwitchIsNotFound(): void {
 		$this->expectException(exception: ScheduledSwitchNotFoundException::class);
@@ -753,6 +807,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	/**
 	 * Scenario "An administrator on AJAX cron is warned", and the status
 	 * names the last run and what is active until when.
+	 *
+	 * @return void
 	 */
 	public function testStatusNamesTheLastRunTheCronModeAndTheActiveWindow(): void {
 		$this->store['core/backgroundjobs_mode'] = 'ajax';

@@ -52,6 +52,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -84,6 +86,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * An active preview emits the banner assets and provides its initial state.
+	 *
+	 * @return void
 	 */
 	public function testActivePreviewEmitsAssetsAndState(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(
@@ -111,6 +115,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * Without an active preview nothing at all is emitted.
+	 *
+	 * @return void
 	 */
 	public function testInactivePreviewEmitsNothing(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(['previewActive' => false]);
@@ -125,6 +131,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * A throwing resolver fails open: no assets, no state, no exception.
+	 *
+	 * @return void
 	 */
 	public function testResolverFailureFailsOpen(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')
@@ -140,6 +148,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * The token set id is used as the display name when the metadata has none.
+	 *
+	 * @return void
 	 */
 	public function testMissingNameFallsBackToTokenSetId(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(['previewActive' => true]);

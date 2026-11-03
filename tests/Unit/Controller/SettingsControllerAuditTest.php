@@ -108,6 +108,8 @@ class SettingsControllerAuditTest extends TestCase {
 	/**
 	 * A successful token set change logs exactly one token_set_changed
 	 * entry with the correct old and new values.
+	 *
+	 * @return void
 	 */
 	public function testSuccessfulTokenSetChangeLogsOneEntry(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(true);
@@ -126,6 +128,8 @@ class SettingsControllerAuditTest extends TestCase {
 
 	/**
 	 * A rejected (invalid) token set never reaches the audit service.
+	 *
+	 * @return void
 	 */
 	public function testInvalidTokenSetLogsNothing(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(false);
@@ -144,6 +148,8 @@ class SettingsControllerAuditTest extends TestCase {
 	 * IAppDataFactory (rather than mocking the service itself) so this
 	 * exercises the actual failure-swallowing contract end-to-end from the
 	 * controller call site, not just log()'s own unit test.
+	 *
+	 * @return void
 	 */
 	public function testAuditServiceThrowingDoesNotChangeResponse(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(true);

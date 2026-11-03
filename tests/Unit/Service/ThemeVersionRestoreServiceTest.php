@@ -63,6 +63,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * Set up.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -96,6 +98,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * The preview is a dry-run import plus the changes it will make.
+	 *
+	 * @return void
 	 */
 	public function testThePreviewListsTheChangesAndWritesNothing(): void {
 		$this->bundles->expects($this->once())->method('import')->with($this->version['bundle'], true)->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
@@ -114,6 +118,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	 * count; a version 1 bundle without them names no change there.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThePreviewNamesAChangeInPlannedSwitches(): void {
 		$this->bundles->method('import')->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
@@ -128,6 +134,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	/**
 	 * A restore imports the bundle and records version_restored with the
 	 * version it replaced.
+	 *
+	 * @return void
 	 */
 	public function testARestoreImportsAndIsAudited(): void {
 		$this->bundles->expects($this->exactly(count: 2))->method('import')->willReturnCallback(
@@ -145,6 +153,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * A restore from occ records the actor it is given, as the other commands do.
+	 *
+	 * @return void
 	 */
 	public function testARestoreRecordsTheGivenActor(): void {
 		$this->bundles->method('import')->willReturnCallback(
@@ -160,6 +170,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * A version that no longer validates is refused whole: nothing applied, nothing audited.
+	 *
+	 * @return void
 	 */
 	public function testAnInvalidVersionWritesNothing(): void {
 		$this->bundles->expects($this->once())->method('import')->with($this->version['bundle'], true)->willReturn(
@@ -175,6 +187,8 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * An unknown id is null, for a 404.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownIdIsNull(): void {
 		$this->bundles->expects($this->never())->method('import');

@@ -38,6 +38,8 @@ class CatalogControllerTest extends TestCase {
 	/**
 	 * `tokenSets()` MUST carry `#[NoAdminRequired]` — any authenticated
 	 * (admin or non-admin) user may read the catalogue.
+	 *
+	 * @return void
 	 */
 	public function testTokenSetsHasNoAdminRequiredAttribute(): void {
 		$method = new ReflectionMethod(CatalogController::class, 'tokenSets');
@@ -53,6 +55,8 @@ class CatalogControllerTest extends TestCase {
 	 * `tokenSets()` MUST NOT carry `#[PublicPage]` — design.md decision 1
 	 * deliberately keeps the endpoint inside the instance's authenticated
 	 * user base, not open to anonymous internet traffic.
+	 *
+	 * @return void
 	 */
 	public function testTokenSetsHasNoPublicPageAttribute(): void {
 		$method = new ReflectionMethod(CatalogController::class, 'tokenSets');
@@ -67,6 +71,8 @@ class CatalogControllerTest extends TestCase {
 	/**
 	 * The response wraps `TokenSetService::getPublicCatalogue()` verbatim
 	 * under a `tokenSets` key — the controller adds no fields, drops none.
+	 *
+	 * @return void
 	 */
 	public function testTokenSetsReturnsServiceProjectionUnderTokenSetsKey(): void {
 		$projection = [
@@ -97,6 +103,8 @@ class CatalogControllerTest extends TestCase {
 	 * Every entry MUST contain exactly the 5 allowlisted keys — no
 	 * `description`, `custom`, `warnings`, `upstreamVersion`, or
 	 * `upstreamRef` leakage from the admin `TokenSetEntry` shape.
+	 *
+	 * @return void
 	 */
 	public function testEntryShapeIsExactlyTheFiveAllowlistedKeys(): void {
 		$projection = [

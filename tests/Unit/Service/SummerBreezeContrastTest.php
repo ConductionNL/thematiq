@@ -88,6 +88,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * @param string $mode The mode: light, media or explicit.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testEveryPaintedPairReachesAa(string $mode): void {
 		$contrast = new ContrastService();
@@ -119,6 +121,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * @param string $mode The mode: light, media or explicit.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testSurfacesFollowTheMode(string $mode): void {
 		$contrast = new ContrastService();
@@ -143,6 +147,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * on a dark page.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testBothDarkScopesRemapEveryColourToken(): void {
 		$contrast = new ContrastService();
@@ -173,6 +179,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * header names the light file's sha256.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testTheDarkFileWasGeneratedFromTheCurrentLightFile(): void {
 		$root = dirname(__DIR__, 3);
@@ -190,6 +198,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * it reported 10.20:1, which is #ffffff on the defaults' #154273).
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testTheShippedAuditMeasuresSummerBreezeOnItsOwnColours(): void {
 		$contrast = new ContrastService();

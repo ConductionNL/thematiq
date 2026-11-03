@@ -58,6 +58,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	/**
 	 * Build the converter against the repository root, which holds its
 	 * mapping table and the two vocabulary stylesheets.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -99,6 +101,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * vocabulary.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLeafPathBecomesASlugPrefixedTokenName(): void {
 		$result = $this->convert(
@@ -127,6 +131,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * @dataProvider componentPrefixProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAComponentVocabularyIsNotReprefixed(string $prefix): void {
 		$result = $this->convert(document: [$prefix => ['button' => ['border-radius' => ['value' => '4px']]]]);
@@ -156,6 +162,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * into them would emit declarations named after a schema URL.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMetadataKeysAreNotTokens(): void {
 		$result = $this->convert(
@@ -177,6 +185,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * string "Array".
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testANonScalarValueIsNotALeaf(): void {
 		$result = $this->convert(
@@ -198,6 +208,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * silently emit the wrong vocabulary.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADtcgDocumentNamedTokensJsonIsStillReadAsDtcg(): void {
 		$result = $this->convert(document: ['color' => ['primary' => ['$type' => 'color', '$value' => '#154273']]]);
@@ -211,6 +223,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * an empty token set.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADocumentWithNoLeavesIsRefused(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -226,6 +240,8 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * attributed to the wrong document.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDiagnosticsDescribeTheLastConversionOnly(): void {
 		$deprecated = $this->convert(

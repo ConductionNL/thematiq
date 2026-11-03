@@ -112,6 +112,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * is the filter, not discovery — and because a full catalogue build audits
 	 * every shipped set's CSS, which made this class alone take longer than
 	 * the rest of the suite put together.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -170,6 +172,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 
 	/**
 	 * Remove the synthetic app directory.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/tokens/*') as $file) {
@@ -290,6 +294,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * discovery finds it, and it has no name to show.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testStockInstanceOffersEveryNamedCompleteSet(): void {
 		$config = ['token_set' => 'nextcloud'];
@@ -318,6 +324,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * offered anyway.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testTheActiveSetIsAlwaysSelectable(): void {
 		foreach ([self::INCOMPLETE_SET, self::UNNAMED_SET] as $id) {
@@ -341,6 +349,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * theme that is still being applied.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testASetUsedByAGroupMappingIsSelectable(): void {
 		// The mapping points at the two sets the filter would otherwise drop,
@@ -372,6 +382,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @dataProvider unusableMappingProvider
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testAnUnusableGroupMappingIsIgnored(string $mapping): void {
 		$this->assertEqualsCanonicalizing(
@@ -402,6 +414,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * filter on an empty string would make every id with no name match.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testAnEmptyActiveSetAddsNothing(): void {
 		$this->assertEqualsCanonicalizing(
@@ -421,6 +435,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * off both.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testSelectableEntriesAreCatalogueEntriesInCatalogueOrder(): void {
 		$config = ['token_set' => 'nextcloud'];
@@ -459,6 +475,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * purpose: a synthetic one would pass while the shipped sets were hidden.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue(): void {
 		$config = ['token_set' => 'nextcloud'];

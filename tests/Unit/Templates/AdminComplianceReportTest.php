@@ -32,6 +32,8 @@ class AdminComplianceReportTest extends TestCase {
 
 	/**
 	 * The section ships both download links, marked for the browser to save.
+	 *
+	 * @return void
 	 */
 	public function testTheSectionShipsBothDownloadLinks(): void {
 		$template = (string)file_get_contents($this->root() . '/templates/settings/admin.php');
@@ -51,6 +53,8 @@ class AdminComplianceReportTest extends TestCase {
 
 	/**
 	 * The URL the admin script builds is a registered, admin-only route.
+	 *
+	 * @return void
 	 */
 	public function testTheLinksPointAtTheRegisteredExportRoute(): void {
 		$script = (string)file_get_contents($this->root() . '/js/admin.js');

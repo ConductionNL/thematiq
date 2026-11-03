@@ -60,6 +60,8 @@ class ActiveTokenSetServiceTest extends TestCase {
 	/**
 	 * A valid switch stores the set, returns the previous one and audits it
 	 * with the caller's action and context.
+	 *
+	 * @return void
 	 */
 	public function testSwitchStoresAuditsAndReturnsThePreviousSet(): void {
 		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
@@ -78,6 +80,8 @@ class ActiveTokenSetServiceTest extends TestCase {
 
 	/**
 	 * An invalid set throws and writes nothing.
+	 *
+	 * @return void
 	 */
 	public function testInvalidSetWritesNothing(): void {
 		$audit = $this->createMock(originalClassName: ThemingAuditService::class);

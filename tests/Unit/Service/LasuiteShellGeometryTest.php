@@ -128,6 +128,8 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * On Nextcloud 35 the lasuite set loads the shell layer directly after its
 	 * design-system stylesheets and before the token layer.
+	 *
+	 * @return void
 	 */
 	public function testLasuiteOnNextcloud35LoadsTheShellLayerAfterTheDesignSystem(): void {
 		$files = $this->files(tokenSet: 'lasuite', serverVersion: '35.0.1.0');
@@ -141,6 +143,8 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * A major the layer was not written against gets no shell layer at all:
 	 * the stock Nextcloud geometry stays, rather than half-fitting overrides.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownNextcloudMajorGetsNoShellLayer(): void {
 		foreach (['34.0.5.0', '36.0.0.0', ''] as $version) {
@@ -151,6 +155,8 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * The geometry belongs to the La Suite deployment, not to the unbranded
 	 * Cunningham sibling or any other design system.
+	 *
+	 * @return void
 	 */
 	public function testOnlyTheLasuiteSetLoadsTheShellLayer(): void {
 		foreach (['cunningham', 'rijkshuisstijl', 'nextcloud'] as $set) {
@@ -160,6 +166,8 @@ class LasuiteShellGeometryTest extends TestCase {
 
 	/**
 	 * Every version-scoped stylesheet the manifest declares exists on disk.
+	 *
+	 * @return void
 	 */
 	public function testEveryVersionScopedStylesheetExists(): void {
 		$systems = json_decode((string)file_get_contents($this->root() . '/design-systems.json'), true);
@@ -180,6 +188,8 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * The shell layer sets La Suite Docs' header row height through
 	 * Nextcloud's own variable, so every consumer of it follows.
+	 *
+	 * @return void
 	 */
 	public function testTheShellLayerSetsTheLaSuiteHeaderHeight(): void {
 		$css = (string)file_get_contents($this->root() . '/css/' . self::SHELL_NC35 . '.css');
@@ -190,6 +200,8 @@ class LasuiteShellGeometryTest extends TestCase {
 	 * The shared La Suite overrides follow the header height instead of
 	 * assuming Nextcloud 34's 50px, so a taller (or the NC 35 shorter) header
 	 * leaves no gap under it and keeps the search field centred.
+	 *
+	 * @return void
 	 */
 	public function testTheSharedOverridesFollowTheHeaderHeight(): void {
 		$css = (string)file_get_contents($this->root() . '/css/systems/lasuite/element-overrides.css');

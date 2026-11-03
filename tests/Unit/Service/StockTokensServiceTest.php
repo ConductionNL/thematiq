@@ -88,6 +88,8 @@ class StockTokensServiceTest extends TestCase {
 
 	/**
 	 * The instance's value reaches the token, under the token's name.
+	 *
+	 * @return void
 	 */
 	public function testEmitsTheInstanceValueUnderTheTokenName(): void {
 		$service = $this->build(
@@ -111,6 +113,8 @@ class StockTokensServiceTest extends TestCase {
 	 * Passing the reference through would reopen the cycle the service exists
 	 * to avoid — the token would point back at a variable `overrides.css` is
 	 * itself rewriting, and the browser would discard both.
+	 *
+	 * @return void
 	 */
 	public function testFollowsVarReferencesToALiteral(): void {
 		$service = $this->build(
@@ -133,6 +137,8 @@ class StockTokensServiceTest extends TestCase {
 	 * Gradients and `color-mix()` are resolved by the browser against whatever
 	 * the cascade holds at paint time. Freezing one into a token would freeze
 	 * the value it had in some other theme.
+	 *
+	 * @return void
 	 */
 	public function testDropsCompositesItCannotResolve(): void {
 		$service = $this->build(
@@ -165,6 +171,8 @@ class StockTokensServiceTest extends TestCase {
 	 * win handed the token the text colour, which paints the header in a shade
 	 * nothing asked for. Measured live on 34.0.4 before the fix: #00293f
 	 * instead of #00679e.
+	 *
+	 * @return void
 	 */
 	public function testTakesTheValueOfTheVariableSharingTheTokenName(): void {
 		$service = $this->build(
@@ -193,6 +201,8 @@ class StockTokensServiceTest extends TestCase {
 	 * Otherwise the emitted theme would depend on the order declarations
 	 * happen to appear in `overrides.css`, and reordering that file for
 	 * readability would silently change what the page looks like.
+	 *
+	 * @return void
 	 */
 	public function testPicksDeterministicallyWithoutANameMatch(): void {
 		$sources = [
@@ -213,6 +223,8 @@ class StockTokensServiceTest extends TestCase {
 	 *
 	 * The token set's vocabulary is `overrides.css`'s to define; this service
 	 * only fills it in.
+	 *
+	 * @return void
 	 */
 	public function testEmitsOnlyMappedVariables(): void {
 		$service = $this->build(
@@ -232,6 +244,8 @@ class StockTokensServiceTest extends TestCase {
 	 * Null is what makes the caller fall back to the shipped file. An empty
 	 * block would be accepted as a valid layer and would leave the page with no
 	 * token values at all, which is the one outcome worse than a stale theme.
+	 *
+	 * @return void
 	 */
 	public function testReturnsNullWhenTheInstanceCannotBeRead(): void {
 		$service = $this->build(stock: [], sources: ['--color-primary' => '--nldesign-color-primary']);
@@ -241,6 +255,8 @@ class StockTokensServiceTest extends TestCase {
 
 	/**
 	 * Nothing overlapping means nothing to emit, and that is also null.
+	 *
+	 * @return void
 	 */
 	public function testReturnsNullWhenNothingMaps(): void {
 		$service = $this->build(
@@ -257,6 +273,8 @@ class StockTokensServiceTest extends TestCase {
 	 * `inject()` and the stylesheet manifest both build the layer list, so an
 	 * unmemoised resolve would recompute the whole theme twice on a settings
 	 * page load.
+	 *
+	 * @return void
 	 */
 	public function testAsksTheInstanceOnlyOnce(): void {
 		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
@@ -284,6 +302,8 @@ class StockTokensServiceTest extends TestCase {
 
 	/**
 	 * A failed resolve is not retried either, for the same reason.
+	 *
+	 * @return void
 	 */
 	public function testDoesNotRetryAFailedResolve(): void {
 		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
@@ -371,6 +391,8 @@ class StockTokensServiceTest extends TestCase {
 	 * resolved on every page render, so an instance that never chose a token
 	 * set would otherwise recompute the theming app's entire variable map once
 	 * per request forever.
+	 *
+	 * @return void
 	 */
 	public function testAServedBlockComesFromTheCache(): void {
 		$cache = $this->createMock(originalClassName: ICache::class);
@@ -385,6 +407,8 @@ class StockTokensServiceTest extends TestCase {
 	/**
 	 * A resolved block is written back, under a key made of the three things
 	 * that can change the answer.
+	 *
+	 * @return void
 	 */
 	public function testAResolvedBlockIsCachedUnderVersionAndCachebuster(): void {
 		$written = [];
@@ -413,6 +437,8 @@ class StockTokensServiceTest extends TestCase {
 	 * The third input is thematiq#621. The block is built from this app's own
 	 * `overrides.css` mapping, so upgrading Thematiq changes the answer, and a
 	 * key without the app version served the old mapping for a day.
+	 *
+	 * @return void
 	 */
 	public function testTheKeyMovesWhenAnyInputMoves(): void {
 		$keys = [];
@@ -445,6 +471,8 @@ class StockTokensServiceTest extends TestCase {
 	 *
 	 * The stand-in mirrors the two fields core keeps: the admin's colour and
 	 * the one the current user resolves to.
+	 *
+	 * @return void
 	 */
 	public function testTheBlockIsTheInstanceColourNotTheUsers(): void {
 		$theme = new class {
@@ -498,6 +526,8 @@ class StockTokensServiceTest extends TestCase {
 	 * This is the safety half of the same fact: the check above is what keeps
 	 * one account's colour out of everyone else's page, so a theming app whose
 	 * shape no longer allows it must reach the shipped file.
+	 *
+	 * @return void
 	 */
 	public function testAThemeWithoutAnAdminColourFallsBack(): void {
 		$theme = new class {
@@ -544,6 +574,8 @@ class StockTokensServiceTest extends TestCase {
 	 * The theming app being absent or throwing does not move the cache key
 	 * when it is put back, so a cached failure would outlive its own cause and
 	 * hold the instance on the shipped snapshot indefinitely.
+	 *
+	 * @return void
 	 */
 	public function testAFailedResolveIsNotCached(): void {
 		$cache = $this->createMock(originalClassName: ICache::class);

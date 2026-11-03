@@ -13,6 +13,8 @@ use PHPUnit\Framework\TestCase;
 class TokenRegistryTest extends TestCase {
 	/**
 	 * Test that getTokens returns a non-empty array with correct structure.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensReturnsNonEmptyArray(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -23,6 +25,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that every token entry has the required keys: tab, type, label.
+	 *
+	 * @return void
 	 */
 	public function testEveryTokenHasRequiredKeys(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -44,6 +48,8 @@ class TokenRegistryTest extends TestCase {
 	 * to lock.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryTokenDeclaresItsLayer(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -63,6 +69,8 @@ class TokenRegistryTest extends TestCase {
 	 * very control the setting hands authority to.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheBrandLayerIsNeverLocked(): void {
 		$brand = TokenRegistry::getBrandTokens();
@@ -84,6 +92,8 @@ class TokenRegistryTest extends TestCase {
 	 * swatch. An entry without it renders an empty control.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheComponentLayerNamesTheGlobalItReplaces(): void {
 		$components = TokenRegistry::getComponentTokens();
@@ -102,6 +112,8 @@ class TokenRegistryTest extends TestCase {
 	 * getTokens() is both layers, and neither shadows the other.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGetTokensIsBothLayers(): void {
 		$brand = TokenRegistry::getBrandTokens();
@@ -114,6 +126,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that all token names start with '--'.
+	 *
+	 * @return void
 	 */
 	public function testTokenNamesStartWithDoubleDash(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -125,6 +139,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that all token types are either 'color' or 'text'.
+	 *
+	 * @return void
 	 */
 	public function testTokenTypesAreValid(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -143,6 +159,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that all token tabs are among the known set.
+	 *
+	 * @return void
 	 */
 	public function testTokenTabsAreValid(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -159,6 +177,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test getTabLabels returns labels for all known tabs.
+	 *
+	 * @return void
 	 */
 	public function testGetTabLabelsCoversAllTabs(): void {
 		$tabLabels = TokenRegistry::getTabLabels();
@@ -172,6 +192,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test getTokenNames returns the same keys as getTokens.
+	 *
+	 * @return void
 	 */
 	public function testGetTokenNamesMatchesGetTokensKeys(): void {
 		$names = TokenRegistry::getTokenNames();
@@ -182,6 +204,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test isEditable returns true for a known token.
+	 *
+	 * @return void
 	 */
 	public function testIsEditableReturnsTrueForKnownToken(): void {
 		$this->assertTrue(condition: TokenRegistry::isEditable('--color-primary'));
@@ -190,6 +214,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test isEditable returns false for an unknown token.
+	 *
+	 * @return void
 	 */
 	public function testIsEditableReturnsFalseForUnknownToken(): void {
 		$this->assertFalse(condition: TokenRegistry::isEditable('--nonexistent-token'));
@@ -199,6 +225,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test getTokensByTab groups tokens correctly.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensByTabGroupsCorrectly(): void {
 		$grouped = TokenRegistry::getTokensByTab();
@@ -224,6 +252,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that the total count of grouped tokens equals the total token count.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensByTabPreservesAllTokens(): void {
 		$grouped = TokenRegistry::getTokensByTab();
@@ -237,6 +267,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that --color-primary exists and belongs to the login tab.
+	 *
+	 * @return void
 	 */
 	public function testColorPrimaryIsInLoginTab(): void {
 		$tokens = TokenRegistry::getTokens();

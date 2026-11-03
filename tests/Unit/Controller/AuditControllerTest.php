@@ -71,6 +71,8 @@ class AuditControllerTest extends TestCase {
 
 	/**
 	 * The default limit (20) is passed straight through to getRecent().
+	 *
+	 * @return void
 	 */
 	public function testListUsesDefaultLimit(): void {
 		$this->auditService->expects($this->once())
@@ -85,6 +87,8 @@ class AuditControllerTest extends TestCase {
 
 	/**
 	 * A limit above 200 is capped at 200 before reaching the service.
+	 *
+	 * @return void
 	 */
 	public function testListCapsExcessiveLimit(): void {
 		$this->auditService->expects($this->once())
@@ -97,6 +101,8 @@ class AuditControllerTest extends TestCase {
 
 	/**
 	 * A negative limit is clamped to zero.
+	 *
+	 * @return void
 	 */
 	public function testListClampsNegativeLimitToZero(): void {
 		$this->auditService->expects($this->once())
@@ -114,6 +120,8 @@ class AuditControllerTest extends TestCase {
 	 * Response::getHeaders() — that method merges in request/session-derived
 	 * headers (Server::get(IRequest::class)/IUserSession) which need a full
 	 * Nextcloud server bootstrap unavailable in this standalone unit test.
+	 *
+	 * @return void
 	 */
 	public function testExportHeaders(): void {
 		$this->auditService->method('exportAll')->willReturn('{"a":1}' . "\n");
@@ -135,6 +143,8 @@ class AuditControllerTest extends TestCase {
 	/**
 	 * Both endpoints carry #[AuthorizedAdminSetting(Admin::class)] — the
 	 * route-auth/semantic-auth gates' expectation for this controller.
+	 *
+	 * @return void
 	 */
 	public function testBothMethodsAreAdminAnnotated(): void {
 		foreach (['list', 'export', 'versions', 'previewVersion', 'restoreVersion'] as $method) {
@@ -150,6 +160,8 @@ class AuditControllerTest extends TestCase {
 	 * The version list is the kept versions, newest first.
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
+	 *
+	 * @return void
 	 */
 	public function testVersionsListsTheKeptVersions(): void {
 		$this->versions->method('list')->willReturn([['id' => '20260929164000-0001']]);
@@ -161,6 +173,8 @@ class AuditControllerTest extends TestCase {
 	 * Preview and restore of an unknown id answer 404.
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownVersionIs404(): void {
 		$this->restorer->method('preview')->willReturn(null);
@@ -174,6 +188,8 @@ class AuditControllerTest extends TestCase {
 	 * A refused restore answers 422 with the errors; an applied one 200.
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
+	 *
+	 * @return void
 	 */
 	public function testRestoreAnswersByOutcome(): void {
 		$this->restorer->method('restore')->willReturnOnConsecutiveCalls(
@@ -187,6 +203,8 @@ class AuditControllerTest extends TestCase {
 
 	/**
 	 * The three version routes are registered and reach these methods.
+	 *
+	 * @return void
 	 */
 	public function testTheVersionRoutesAreRegistered(): void {
 		$routes = (string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/routes.php');

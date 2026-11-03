@@ -174,6 +174,8 @@ class TokenSetLicenceServiceTest extends TestCase {
 
 	/**
 	 * @param array{kind: string, id: string} $place
+	 *
+	 * @return void
 	 */
 	#[DataProvider('places')]
 	public function testAWithdrawalIsRefusedWhileTheSetIsApplied(string $key, string $value, array $place): void {

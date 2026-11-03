@@ -36,6 +36,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with fixture manifests and icon files.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -94,6 +96,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -104,6 +108,8 @@ class DesignSystemServiceTest extends TestCase {
 	 * Recursively remove a directory tree.
 	 *
 	 * @param string $dir The directory to remove.
+	 *
+	 * @return void
 	 */
 	private function rrmdir(string $dir): void {
 		if (is_dir($dir) === false) {
@@ -131,6 +137,8 @@ class DesignSystemServiceTest extends TestCase {
 	 * `icon_pack` override.
 	 *
 	 * @param string|null $override The appconfig `icon_pack` value (null = unset).
+	 *
+	 * @return DesignSystemService
 	 */
 	private function service(?string $override = null): DesignSystemService {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
@@ -152,6 +160,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * getIconPacks() normalizes a scalar `icon_pack` to a one-element list.
+	 *
+	 * @return void
 	 */
 	public function testGetIconPacksNormalizesScalarToList(): void {
 		$this->assertSame(expected: ['dsfr'], actual: $this->service()->getIconPacks('lasuite'));
@@ -159,6 +169,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * getIconPacks() preserves an already-ordered array `icon_pack`.
+	 *
+	 * @return void
 	 */
 	public function testGetIconPacksPreservesOrderedArray(): void {
 		$this->assertSame(expected: ['rvo', 'open-gemeenten', 'den-haag'], actual: $this->service()->getIconPacks('nldesign'));
@@ -166,6 +178,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * getIconPacks() returns [] for a design system with no `icon_pack` field.
+	 *
+	 * @return void
 	 */
 	public function testGetIconPacksAbsentFieldReturnsEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->service()->getIconPacks('none'));
@@ -173,6 +187,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * getIconPacks() returns [] (never throws) for an unknown design system id.
+	 *
+	 * @return void
 	 */
 	public function testGetIconPacksUnknownDesignSystemReturnsEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->service()->getIconPacks('does-not-exist'));
@@ -180,6 +196,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * An active French (`lasuite`) theme resolves the DSFR pack.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksLasuiteDefault(): void {
 		$this->assertSame(expected: ['dsfr'], actual: $this->service()->resolveActiveIconPacks('lasuite'));
@@ -187,6 +205,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * An active Dutch (`nldesign`) theme resolves the ordered Dutch packs.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksNldesignDefault(): void {
 		$this->assertSame(expected: ['rvo', 'open-gemeenten', 'den-haag'], actual: $this->service()->resolveActiveIconPacks('rijkshuisstijl'));
@@ -198,6 +218,8 @@ class DesignSystemServiceTest extends TestCase {
 	 * the Dutch icon packs, not an empty list. Regression: the resolver
 	 * previously returned [] for a missing field, silently stripping the
 	 * Dutch government's own icons.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksDefaultsMissingDesignSystemToNldesign(): void {
 		$this->assertSame(
@@ -208,6 +230,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * A `none` (stock) design system resolves to no pack.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksNoneDesignSystemReturnsEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->service()->resolveActiveIconPacks('nextcloud'));
@@ -215,6 +239,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * An unknown token set (absent from token-sets.json) degrades to [], never throws.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksUnknownTokenSetReturnsEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->service()->resolveActiveIconPacks('unknown-token-set-xyz'));
@@ -222,6 +248,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * A token set whose design_system is itself unknown degrades to [], never throws.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksUnknownDesignSystemOnTokenSetReturnsEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->service()->resolveActiveIconPacks('ghost-system'));
@@ -230,6 +258,8 @@ class DesignSystemServiceTest extends TestCase {
 	/**
 	 * A valid appconfig `icon_pack` override wins regardless of the active
 	 * token set's design system.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksAdminOverrideWins(): void {
 		$this->assertSame(expected: ['dsfr'], actual: $this->service(override: 'dsfr')->resolveActiveIconPacks('rijkshuisstijl'));
@@ -238,6 +268,8 @@ class DesignSystemServiceTest extends TestCase {
 	/**
 	 * An override naming a directory that does not exist under img/icons/ is
 	 * ignored — resolution falls through to the design-system default.
+	 *
+	 * @return void
 	 */
 	public function testResolveActiveIconPacksInvalidOverrideFallsThrough(): void {
 		$service = $this->service(override: 'does-not-exist-on-disk');
@@ -246,6 +278,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * resolveIconPath() finds a name within the active pack.
+	 *
+	 * @return void
 	 */
 	public function testResolveIconPathFindsFileInActivePack(): void {
 		$this->assertSame(expected: 'icons/dsfr/arrow-right-line.svg', actual: $this->service()->resolveIconPath('arrow-right-line', 'lasuite'));
@@ -254,6 +288,8 @@ class DesignSystemServiceTest extends TestCase {
 	/**
 	 * resolveIconPath() returns the FIRST pack (declared order) containing a
 	 * name present in more than one pack of the active ordered list.
+	 *
+	 * @return void
 	 */
 	public function testResolveIconPathFirstPackWinsAcrossOrderedList(): void {
 		$this->assertSame(expected: 'icons/rvo/shared-name.svg', actual: $this->service()->resolveIconPath('shared-name', 'rijkshuisstijl'));
@@ -261,6 +297,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * resolveIconPath() returns null for a name absent from every active pack.
+	 *
+	 * @return void
 	 */
 	public function testResolveIconPathMissingNameReturnsNull(): void {
 		$this->assertNull(actual: $this->service()->resolveIconPath('does-not-exist', 'lasuite'));
@@ -269,6 +307,8 @@ class DesignSystemServiceTest extends TestCase {
 	/**
 	 * resolveIconPath() rejects traversal / separator input without touching
 	 * the filesystem outside img/icons/.
+	 *
+	 * @return void
 	 */
 	public function testResolveIconPathRejectsTraversalAndSeparators(): void {
 		$service = $this->service();
@@ -280,6 +320,8 @@ class DesignSystemServiceTest extends TestCase {
 
 	/**
 	 * resolveIconPath() returns null when no pack is active for the token set.
+	 *
+	 * @return void
 	 */
 	public function testResolveIconPathNoActivePackReturnsNull(): void {
 		$this->assertNull(actual: $this->service()->resolveIconPath('rvo-home', 'nextcloud'));
@@ -290,6 +332,8 @@ class DesignSystemServiceTest extends TestCase {
 	 * so no design-system stylesheet is loaded and nothing throws.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md#unknown-design-system-falls-back-safely
+	 *
+	 * @return void
 	 */
 	public function testGetDesignSystemUnknownIdFallsBackToNoStylesheets(): void {
 		$system = $this->service()->getDesignSystem('does-not-exist');
@@ -303,6 +347,8 @@ class DesignSystemServiceTest extends TestCase {
 	 * a second call answers from the cache even after the file changed.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md#design-systems-are-cached-per-request
+	 *
+	 * @return void
 	 */
 	public function testGetDesignSystemsReadsTheManifestOncePerInstance(): void {
 		$service = $this->service();

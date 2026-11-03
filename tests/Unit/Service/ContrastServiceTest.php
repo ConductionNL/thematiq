@@ -33,6 +33,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Set up the service before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -41,6 +43,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Black on white is the maximum 21:1 ratio.
+	 *
+	 * @return void
 	 */
 	public function testBlackOnWhiteIsMaxRatio(): void {
 		$ratio = $this->contrast->ratio(first: [0, 0, 0], second: [255, 255, 255]);
@@ -49,6 +53,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Identical colours give a 1:1 ratio.
+	 *
+	 * @return void
 	 */
 	public function testIdenticalColoursAreOneToOne(): void {
 		$ratio = $this->contrast->ratio(first: [120, 120, 120], second: [120, 120, 120]);
@@ -57,6 +63,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * A compliant primary/primary-text pair produces no warnings.
+	 *
+	 * @return void
 	 */
 	public function testCompliantPairProducesNoWarning(): void {
 		// #154273 on #ffffff is well above 4.5:1.
@@ -72,6 +80,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * A low-contrast pair produces a warning carrying the ratio and threshold.
+	 *
+	 * @return void
 	 */
 	public function testLowContrastPairProducesWarning(): void {
 		// #cccccc text on #ffffff primary is ~1.6:1 — well below 4.5:1.
@@ -91,6 +101,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * A non-literal value (var()) is reported as unevaluated, never as passing.
+	 *
+	 * @return void
 	 */
 	public function testNonLiteralValueIsUnevaluated(): void {
 		$warnings = $this->contrast->check(
@@ -107,6 +119,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * parseColor handles #rgb, #rrggbb and rgb()/rgba() literals.
+	 *
+	 * @return void
 	 */
 	public function testParseColorSupportsCommonLiterals(): void {
 		$this->assertSame(expected: [0, 0, 0], actual: $this->contrast->parseColor(value: '#000'));
@@ -119,6 +133,8 @@ class ContrastServiceTest extends TestCase {
 	/**
 	 * Thematiq#696: faint text is measured as it renders. `rgba(0, 0, 0, 0.2)`
 	 * on white blends to #cccccc and must fail AA, although opaque black passes.
+	 *
+	 * @return void
 	 */
 	public function testFaintTextFailsAfterBlend(): void {
 		$warnings = $this->contrast->check(
@@ -138,6 +154,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Thematiq#696: an 8-digit hex gets a ratio and a verdict, not `unevaluated`.
+	 *
+	 * @return void
 	 */
 	public function testEightDigitHexIsEvaluated(): void {
 		$failing = $this->contrast->check(
@@ -162,6 +180,8 @@ class ContrastServiceTest extends TestCase {
 	/**
 	 * Thematiq#696: a translucent background is blended over the page
 	 * background first. A 10% blue behind white text is nearly white.
+	 *
+	 * @return void
 	 */
 	public function testTranslucentBackgroundIsBlendedOverThePage(): void {
 		$warnings = $this->contrast->check(
@@ -178,6 +198,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Thematiq#696: evaluate() blends a translucent candidate over the background too.
+	 *
+	 * @return void
 	 */
 	public function testEvaluateBlendsATranslucentCandidate(): void {
 		$results = $this->contrast->evaluate(
@@ -191,6 +213,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * Thematiq#696: parseColorWithAlpha reads the alpha of every hex and rgba() form.
+	 *
+	 * @return void
 	 */
 	public function testParseColorWithAlphaReadsEveryForm(): void {
 		$this->assertSame(expected: [0, 0, 0, 1.0], actual: $this->contrast->parseColorWithAlpha(value: '#000'));
@@ -205,6 +229,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * parseColor returns null for unparseable values.
+	 *
+	 * @return void
 	 */
 	public function testParseColorReturnsNullForUnparseable(): void {
 		$this->assertNull(actual: $this->contrast->parseColor(value: 'var(--x)'));
@@ -214,6 +240,8 @@ class ContrastServiceTest extends TestCase {
 
 	/**
 	 * A pair where only one token is present is silently skipped (not evaluable).
+	 *
+	 * @return void
 	 */
 	public function testPartialPairIsSkipped(): void {
 		$warnings = $this->contrast->check(

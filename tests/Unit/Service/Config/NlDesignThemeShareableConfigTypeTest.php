@@ -66,6 +66,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * The three wire-identity strings are exactly what peers match on.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testWireIdentityIsStable(): void {
 		$rec = $this->recordingContainer(bundle: null);
@@ -83,6 +85,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * of them.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheBundleServiceIsResolvedLazily(): void {
 		$rec = $this->recordingContainer(bundle: null);
@@ -105,6 +109,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * and ignores the selection.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testSerialiseWrapsTheConfigBundleAndIgnoresTheSelection(): void {
 		$exported = ['config' => ['tokenSet' => 'amsterdam'], 'bundleVersion' => 1];
@@ -138,6 +144,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * deserialise() applies the INNER bundle through the validated import path.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDeserialiseAppliesTheInnerBundleThroughImport(): void {
 		$inner = ['config' => ['tokenSet' => 'rijkshuisstijl']];
@@ -163,6 +171,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * A peer sending a bad payload must not be able to take this instance down.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAMalformedPayloadImportsAnEmptyArrayInsteadOfFataling(): void {
 		// `(array) 'x'` is `['x']`, not `[]` — a scalar bundle used to reach the
@@ -191,6 +201,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * The listener contributes the type on the matching event, and ignores anything else.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testListenerRegistersOnTheMatchingEventOnly(): void {
 		$rec = $this->recordingContainer(bundle: null);
@@ -219,6 +231,8 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * info.xml, or the app becomes uninstallable without it.
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOpenRegisterRemainsASoftDependency(): void {
 		$root = \dirname(__DIR__, 4);

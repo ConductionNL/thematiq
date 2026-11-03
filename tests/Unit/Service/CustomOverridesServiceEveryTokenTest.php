@@ -54,6 +54,8 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 
 	/**
 	 * The dark scopes of the file: everything after the light block.
+	 *
+	 * @return string
 	 */
 	private function darkPart(): string {
 		$css = (string)$this->store->read('css/custom-overrides.css');

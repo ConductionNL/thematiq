@@ -48,6 +48,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -79,6 +81,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/tokens/*') ?: [] as $f) {
@@ -106,6 +110,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	/**
 	 * A manifest entry with upstreamVersion/upstreamRef carries both fields
 	 * through discovery unmodified.
+	 *
+	 * @return void
 	 */
 	public function testProvenanceFieldsSurviveDiscovery(): void {
 		$this->writeTokenFile(id: 'utrecht');
@@ -135,6 +141,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	/**
 	 * A manifest entry without provenance fields behaves identically to one
 	 * with them, minus the two optional keys — absence never breaks discovery.
+	 *
+	 * @return void
 	 */
 	public function testAbsentProvenanceFieldsDoNotAppear(): void {
 		$this->writeTokenFile(id: 'nextcloud');
@@ -162,6 +170,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	/**
 	 * A manifest entry with only upstreamRef (no version resolvable upstream)
 	 * survives with just that one field.
+	 *
+	 * @return void
 	 */
 	public function testUpstreamRefWithoutVersionSurvivesAlone(): void {
 		$this->writeTokenFile(id: 'rotterdam');

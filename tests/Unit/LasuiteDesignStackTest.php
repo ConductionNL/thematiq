@@ -102,6 +102,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testLasuiteDesignSystemResolvesFiveStylesheetsInOrder(): void {
 		$system = $this->designSystemService()->getDesignSystem('lasuite');
@@ -128,6 +130,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCunninghamDesignSystemResolvesFourStylesheetsWithoutBrandOverride(): void {
 		$system = $this->designSystemService()->getDesignSystem('cunningham');
@@ -155,6 +159,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * under css/systems/lasuite/, and the font binaries directory exists.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDeclaredStylesheetsHaveBackingFiles(): void {
 		$system = $this->designSystemService()->getDesignSystem('lasuite');
@@ -180,6 +186,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCunninghamDeclaredStylesheetsHaveBackingFiles(): void {
 		$system = $this->designSystemService()->getDesignSystem('cunningham');
@@ -207,6 +215,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTokenSetMetaDeclaresCunninghamDesignSystem(): void {
 		$meta = $this->designSystemService()->getTokenSetMeta('cunningham');
@@ -229,6 +239,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * brand-override.css, never here.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGeneratedDefaultsDefineTheBlueBaseNotTheViolet(): void {
 		$defaults = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/defaults.css');
@@ -259,6 +271,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * source package, its version, the token count and the mapping rule.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGeneratedDefaultsCarryProvenanceHeader(): void {
 		$defaults = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/defaults.css');
@@ -279,6 +293,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * the vivid semantic palettes and the logo tokens to the deployed violet.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBrandOverrideIsGeneratedAndResolvesViolet(): void {
 		$override = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/brand-override.css');
@@ -322,6 +338,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * regression so the same invariant is enforced from both toolchains.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBridgeAccountsForEveryAuditedColorVariable(): void {
 		$overrides = (string)file_get_contents($this->repoRoot() . '/css/systems/nldesign/overrides.css');
@@ -360,6 +378,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * cunningham/lasuite swatches out of sync with what actually renders.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBridgeDerivesColorPrimaryFromBrand650(): void {
 		$bridge = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/bridge.css');
@@ -376,6 +396,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * and `DesignSystemService::getTokenSetMeta()` surfaces it unchanged.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTokenSetMetaDeclaresLasuiteDesignSystem(): void {
 		$meta = $this->designSystemService()->getTokenSetMeta('lasuite');
@@ -391,6 +413,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * intact — the entry only appears because css/tokens/lasuite.css exists).
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTokenSetServiceSurfacesLasuiteEntry(): void {
 		$sets = $this->tokenSetService()->getAvailableTokenSets();
@@ -412,6 +436,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * behaviour) — regression guard that adding `lasuite` did not disturb it.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testUnknownDesignSystemStillFallsBackSafely(): void {
 		$system = $this->designSystemService()->getDesignSystem('__does_not_exist__');
@@ -425,6 +451,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * "Brand palette matches Cunningham" scenario.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBrandPrimaryTextContrastMeetsAa(): void {
 		$contrast = new ContrastService();
@@ -456,6 +484,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testStatusFillsCarryWhiteTextAtAa(): void {
 		$contrast = new ContrastService();
@@ -499,6 +529,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * file and the expected Inter woff2 weights.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testFontsDirectoryCarriesOflLicenceAndExpectedWeights(): void {
 		$fontsDir = $this->repoRoot() . '/css/systems/lasuite/fonts';
@@ -532,6 +564,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * "Marianne" by name and are out of scope for this asset-delivery check.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMarianneAssetsAreScopedToTheGatedDirectoryAndStylesheet(): void {
 		$root = $this->repoRoot();
@@ -580,6 +614,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * un-gated `@font-face` cannot slip into any other stylesheet.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testNoUrlSourceForMarianneOutsideTheGatedStylesheet(): void {
 		$root = $this->repoRoot();
@@ -618,6 +654,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * `logo` key (no La Suite / French-state logos are bundled).
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTokenSetManifestEntryHasNoLogoKey(): void {
 		$json = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
@@ -637,6 +675,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * REQ-CSS-007 reserves for Nextcloud's own auto-derivation.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBridgeNeverSetsDarkModeCompatibilityVariables(): void {
 		$bridge = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/bridge.css');
@@ -671,6 +711,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * as commented, reasoned lines — not silently absent.
 	 *
 	 * @spec openspec/specs/lasuite-parity/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBridgeDocumentsDarkModeCompatVariablesWithAReason(): void {
 		$bridge = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/bridge.css');
@@ -696,6 +738,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * `local()` — so the browser can never fetch Marianne bytes from this app.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testFontsLayerNeverUrlSourcesMarianne(): void {
 		$fonts = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/fonts.css');
@@ -730,6 +774,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * La Suite (measured 0px) nor stock Nextcloud (measured 0px) has.
 	 *
 	 * @spec openspec/specs/lasuite-stack/spec.md
+	 *
+	 * @return void
 	 */
 	public function testElementOverridesNeverForcesHeaderPosition(): void {
 		$overrides = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/element-overrides.css');
@@ -756,6 +802,8 @@ class LasuiteDesignStackTest extends TestCase {
 	 * list needs a hairline to be legible at all.
 	 *
 	 * @spec openspec/specs/lasuite-stack/spec.md
+	 *
+	 * @return void
 	 */
 	public function testElementOverridesInvertsCanvasAndCard(): void {
 		$overrides = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/element-overrides.css');

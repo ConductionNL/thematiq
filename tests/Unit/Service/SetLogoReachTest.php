@@ -171,6 +171,8 @@ class SetLogoReachTest extends TestCase {
 
 	/**
 	 * A shipped set logo replaces the Nextcloud mark on the La Suite header.
+	 *
+	 * @return void
 	 */
 	public function testAShippedSetLogoReachesTheHeader(): void {
 		$vars = $this->rootVariables(css: $this->layerCss(shipped: true, uploaded: false));
@@ -184,6 +186,8 @@ class SetLogoReachTest extends TestCase {
 
 	/**
 	 * An admin-uploaded logo replaces it too, through the theming app's variables.
+	 *
+	 * @return void
 	 */
 	public function testAnUploadedLogoReachesTheHeader(): void {
 		$vars = $this->rootVariables(css: $this->layerCss(shipped: false, uploaded: true));
@@ -198,6 +202,8 @@ class SetLogoReachTest extends TestCase {
 
 	/**
 	 * Without any logo the header keeps the brand-coloured Nextcloud mark.
+	 *
+	 * @return void
 	 */
 	public function testWithoutALogoTheBrandColouredMarkStays(): void {
 		$vars = $this->rootVariables(css: $this->layerCss(shipped: false, uploaded: false));
@@ -238,6 +244,8 @@ class SetLogoReachTest extends TestCase {
 	 * fill is the one that renders. It filled with `--nldesign-color-header-text`,
 	 * near-black on La Suite. The custom properties the bundle rule declares on
 	 * the element itself are what the layer's var() resolves against.
+	 *
+	 * @return void
 	 */
 	public function testWithoutALogoTheLayerKeepsTheLaSuiteBrandFill(): void {
 		$layer = $this->layerLogoRule(css: $this->layerCss(shipped: false, uploaded: false));
@@ -250,6 +258,8 @@ class SetLogoReachTest extends TestCase {
 	/**
 	 * On the nldesign bundle, which declares no such property, the mark still
 	 * takes the set's header text colour.
+	 *
+	 * @return void
 	 */
 	public function testWithoutALogoNldesignKeepsTheHeaderTextFill(): void {
 		$layer = $this->layerLogoRule(css: $this->layerCss(shipped: false, uploaded: false));
@@ -308,6 +318,8 @@ class SetLogoReachTest extends TestCase {
 	 * absolute urls on body, in the OS-preference scope and the explicit one.
 	 *
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADarkSetLogoReachesTheHeaderInBothDarkScopes(): void {
 		$layer = $this->darkLayer(darkShipped: true);
@@ -328,6 +340,8 @@ class SetLogoReachTest extends TestCase {
 
 	/**
 	 * Without a dark file there is no dark layer, so the light logo stays.
+	 *
+	 * @return void
 	 */
 	public function testWithoutADarkFileThereIsNoDarkLayer(): void {
 		$this->assertNull(actual: $this->darkLayer(darkShipped: false));
@@ -363,6 +377,8 @@ class SetLogoReachTest extends TestCase {
 	 * at another depth than the token file that names it.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 *
+	 * @return void
 	 */
 	public function testAGreyEmblemBecomesTheLoginWatermark(): void {
 		$css = $this->layerWithEmblem(emblemShipped: true);
@@ -377,6 +393,8 @@ class SetLogoReachTest extends TestCase {
 	 * layer of every set that existed before is unchanged.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 *
+	 * @return void
 	 */
 	public function testWithoutAGreyEmblemThereIsNoWatermark(): void {
 		$this->assertStringNotContainsString(needle: 'watermark', haystack: $this->layerWithEmblem(emblemShipped: false));
@@ -386,6 +404,8 @@ class SetLogoReachTest extends TestCase {
 	 * A set that ships its coloured emblem names it as an absolute url in
 	 * --nldesign-emblem-url, because the rules that draw it live in the apps'
 	 * stylesheets; a set without one gets no declaration.
+	 *
+	 * @return void
 	 */
 	public function testAColouredEmblemBecomesTheEmblemUrl(): void {
 		$css = $this->layerWithEmblem(emblemShipped: true, colourEmblemShipped: true);
@@ -400,6 +420,8 @@ class SetLogoReachTest extends TestCase {
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
 	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-ships-its-logos-and-a-login-watermark
+	 *
+	 * @return void
 	 */
 	public function testOnlyTheDemoSetsShipAGreyEmblem(): void {
 		$emblems = array_map('basename', (array)glob(\dirname(__DIR__, 3) . '/img/logos/*-emblem-grey.*'));

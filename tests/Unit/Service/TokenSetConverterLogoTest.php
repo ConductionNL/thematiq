@@ -60,6 +60,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	/**
 	 * Build the converter against the repository root, which is where its
 	 * mapping table and the two vocabulary stylesheets live.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -124,6 +126,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * theme called "Amsterdam" cannot overwrite the shipped logo.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBase64SvgLogoIsDecodedAndNamedAfterTheSet(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
@@ -160,6 +164,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * bytes that are not the image.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testPercentEncodedLogoIsDecodedWithoutBase64(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg"/>';
@@ -182,6 +188,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * under the mime's own spelling — the file has to be servable by name.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testJpegLogoLandsUnderTheMappedExtension(): void {
 		$uri = 'data:image/jpeg;base64,' . base64_encode('not-really-a-jpeg-but-bytes');
@@ -203,6 +211,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * still a usable theme.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testUnsupportedImageTypeIsRefusedAndReported(): void {
 		$uri = 'data:image/tiff;base64,' . base64_encode('II*');
@@ -228,6 +238,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * the admin panel and written to the audit log.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOversizedLogoIsRefusedAndNotEchoedIntoTheReport(): void {
 		$oversized = str_repeat('A', (262144 + 16));
@@ -254,6 +266,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * as-is: the theme resolved it itself, so there are no bytes to write.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnExistingLocalLogoPathIsKeptWithoutWritingBytes(): void {
 		$result = $this->convert(
@@ -284,6 +298,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * @dataProvider rejectedLocalTargetProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testALocalTargetOutsideTheLogoDirectoryIsRefused(string $target): void {
 		$result = $this->convert(
@@ -325,6 +341,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * @dataProvider remoteTargetProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARemoteLogoIsBlockedBeforeTheLogoStep(string $target): void {
 		$result = $this->convert(
@@ -366,6 +384,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * it must not be reported as an unsupported format.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnExplicitlyDisabledLogoIsNotAFailure(): void {
 		$result = $this->convert(
@@ -386,6 +406,8 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * the payload.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testIdenticalArtworkInOtherSlotsIsRecordedAsAnAlias(): void {
 		$uri = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg"/>');

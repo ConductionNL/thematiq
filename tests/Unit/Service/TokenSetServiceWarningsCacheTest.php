@@ -54,6 +54,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with one shipped set, and an in-memory local cache.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -119,6 +121,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		@unlink($this->appDir . '/css/tokens/utrecht.css');
@@ -143,6 +147,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 	/**
 	 * A second catalogue read with unchanged inputs takes the warnings from the
 	 * cache and returns the same warnings.
+	 *
+	 * @return void
 	 */
 	public function testSecondReadReusesTheCachedWarnings(): void {
 		$first = array_column($this->service->getAvailableTokenSets(), null, 'id');
@@ -155,6 +161,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 
 	/**
 	 * A set whose CSS changed is audited again rather than served stale warnings.
+	 *
+	 * @return void
 	 */
 	public function testChangedSetCssIsAuditedAgain(): void {
 		$this->service->getAvailableTokenSets();

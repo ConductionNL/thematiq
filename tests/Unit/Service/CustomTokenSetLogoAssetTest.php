@@ -72,6 +72,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 
 	/**
 	 * Build the service over a temp app directory.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -108,6 +110,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 
 	/**
 	 * Remove the temp app directory.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -179,6 +183,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * actually on disk.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLogoIsWrittenUnderTheSetIdAndNamedInTheManifest(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg"/>';
@@ -198,6 +204,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * into a failure.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLogoDirectoryIsCreatedOnDemand(): void {
 		$this->assertDirectoryDoesNotExist(directory: $this->appDir . '/img/logos');
@@ -218,6 +226,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * @dataProvider acceptedExtensionProvider
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAcceptedExtensionsAreWrittenUnderTheirOwnName(string $path, string $extension): void {
 		$result = $this->store(logoAsset: ['path' => $path, 'contents' => 'bytes']);
@@ -256,6 +266,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * @dataProvider rejectedExtensionProvider
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARejectedExtensionLeavesNoLogoAtAll(string $path): void {
 		$result = $this->store(logoAsset: ['path' => $path, 'contents' => 'bytes']);
@@ -283,6 +295,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * step is skipped entirely rather than writing an empty file.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testASetWithoutALogoWritesNothingExtra(): void {
 		$result = $this->store(logoAsset: null);

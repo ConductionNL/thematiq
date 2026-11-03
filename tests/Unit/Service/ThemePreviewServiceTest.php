@@ -76,6 +76,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * Build an IConfig mock backed by $this->appStore / $this->userStore.
+	 *
+	 * @return IConfig
 	 */
 	private function makeConfig(): IConfig {
 		$config = $this->createMock(originalClassName: IConfig::class);
@@ -112,6 +114,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * Build the service under test with a given IConfig and an
 	 * always-valid-unless-told-otherwise TokenSetService stub.
+	 *
+	 * @return ThemePreviewService
 	 */
 	private function makeService(IConfig $config, bool $validTokenSet = true): ThemePreviewService {
 		$this->groupManager = $this->createMock(originalClassName: IGroupManager::class);
@@ -133,6 +137,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * Build a mocked IUserSession returning a user with the given uid, or no
 	 * user at all when $uid is null.
+	 *
+	 * @return IUserSession
 	 */
 	private function makeUserSession(?string $uid): IUserSession {
 		$userSession = $this->createMock(originalClassName: IUserSession::class);
@@ -152,6 +158,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * startPreview() writes both user values with a ~24h expiry.
+	 *
+	 * @return void
 	 */
 	public function testStartPreviewWritesBothUserValuesWithExpiry(): void {
 		$config = $this->makeConfig();
@@ -170,6 +178,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * An invalid token set id is rejected and no user values are written.
+	 *
+	 * @return void
 	 */
 	public function testStartPreviewRejectsInvalidId(): void {
 		$config = $this->makeConfig();
@@ -186,6 +196,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * getActivePreview() returns null when no preview value is set.
+	 *
+	 * @return void
 	 */
 	public function testGetActivePreviewReturnsNullWhenAbsent(): void {
 		$config = $this->makeConfig();
@@ -197,6 +209,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * An expired preview is treated as absent and the stale values are
 	 * opportunistically cleared.
+	 *
+	 * @return void
 	 */
 	public function testGetActivePreviewReturnsNullWhenExpiredAndClearsState(): void {
 		$config = $this->makeConfig();
@@ -213,6 +227,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * A no-longer-valid token set (e.g. a deleted custom set) is treated as
 	 * absent and the stale values are opportunistically cleared.
+	 *
+	 * @return void
 	 */
 	public function testGetActivePreviewReturnsNullWhenTokenSetNoLongerValid(): void {
 		$config = $this->makeConfig();
@@ -227,6 +243,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * A non-expired, still-valid preview is returned as-is.
+	 *
+	 * @return void
 	 */
 	public function testGetActivePreviewReturnsStateWhenActive(): void {
 		$config = $this->makeConfig();
@@ -244,6 +262,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * clearPreview() deletes both user values.
+	 *
+	 * @return void
 	 */
 	public function testClearPreviewDeletesBothValues(): void {
 		$config = $this->makeConfig();
@@ -260,6 +280,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * publishPreview() sets the app value and clears the user's preview.
+	 *
+	 * @return void
 	 */
 	public function testPublishPreviewSetsAppValueAndClearsUserValues(): void {
 		$config = $this->makeConfig();
@@ -279,6 +301,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * publishPreview() throws and changes nothing when there is no active preview.
+	 *
+	 * @return void
 	 */
 	public function testPublishPreviewThrowsWhenNoActivePreview(): void {
 		$config = $this->makeConfig();
@@ -298,6 +322,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * No user session (e.g. an anonymous/login-page request) falls back to
 	 * the active set.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenNoUser(): void {
 		$config = $this->makeConfig();
@@ -315,6 +341,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * No preview value set: falls back to the active set, and the (costlier)
 	 * admin check is never even called — the zero-cost path.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetSkipsAdminCheckWhenNoPreviewValue(): void {
 		$config = $this->makeConfig();
@@ -332,6 +360,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * Demotion defence: a non-admin user with a (manually planted) preview
 	 * value still gets the ACTIVE set, not the preview.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenUserIsNotAdmin(): void {
 		$config = $this->makeConfig();
@@ -350,6 +380,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * An expired preview is ignored — the active set renders.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenExpired(): void {
 		$config = $this->makeConfig();
@@ -367,6 +399,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * A no-longer-valid previewed token set falls back to the active set.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenTokenSetInvalid(): void {
 		$config = $this->makeConfig();
@@ -384,6 +418,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 	/**
 	 * All conditions hold: the previewed set substitutes the active one.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetReturnsPreviewedSetWhenAllValid(): void {
 		$config = $this->makeConfig();
@@ -405,6 +441,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * Any exception resolving the user session (CLI/occ/cron) falls back to
 	 * the active set and never propagates — boot must never crash.
+	 *
+	 * @return void
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenUserSessionThrows(): void {
 		$config = $this->makeConfig();

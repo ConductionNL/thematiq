@@ -51,6 +51,8 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * Set up the controller with mocked collaborators.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -110,6 +112,8 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * The default (json) format returns a JSON download with attachment disposition.
+	 *
+	 * @return void
 	 */
 	public function testDefaultFormatReturnsJsonDownload(): void {
 		$response = $this->controller->complianceReport();
@@ -127,6 +131,8 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * format=markdown returns a Markdown download with attachment disposition.
+	 *
+	 * @return void
 	 */
 	public function testMarkdownFormatReturnsMarkdownDownload(): void {
 		$response = $this->controller->complianceReport(format: 'markdown');
@@ -140,6 +146,8 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * An unknown format returns a 400 JSON error, not a report download.
+	 *
+	 * @return void
 	 */
 	public function testUnknownFormatReturns400(): void {
 		$response = $this->controller->complianceReport(format: 'yaml');

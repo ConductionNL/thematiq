@@ -116,6 +116,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	/**
 	 * The map runs Nextcloud variable => token, which is the direction the
 	 * cascade reads and the direction `overrides.css` declares.
+	 *
+	 * @return void
 	 */
 	public function testTokenSourcesRunFromVariableToToken(): void {
 		$this->writeCss(
@@ -143,6 +145,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * This is the case that makes the inverse many-to-one, which is the thing
 	 * `StockTokensService::canonical()` exists to decide. A map that silently
 	 * kept one of the four would hide the decision rather than settle it.
+	 *
+	 * @return void
 	 */
 	public function testEveryVariableReadingATokenIsReported(): void {
 		$this->writeCss(
@@ -169,6 +173,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * map, and a literal or a composite is a value rather than a connection.
 	 * Reporting either as a mapping would tell the stock resolver to write a
 	 * token the cascade never reads.
+	 *
+	 * @return void
 	 */
 	public function testOnlyPlainVarReferencesAreMappings(): void {
 		$this->writeCss(
@@ -188,6 +194,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 	/**
 	 * A missing `overrides.css` is an empty map, not a fatal.
+	 *
+	 * @return void
 	 */
 	public function testMissingOverridesGivesAnEmptyMap(): void {
 		$this->assertSame(expected: [], actual: $this->build()->getTokenSources());
@@ -203,6 +211,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 *
 	 * This is what makes the result a COMPLETE set, which is what an export
 	 * has to be.
+	 *
+	 * @return void
 	 */
 	public function testResolvedTokensMergeTheSetOverTheDefaults(): void {
 		$this->writeCss(
@@ -225,6 +235,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 	/**
 	 * A set with no file of its own resolves to the defaults alone.
+	 *
+	 * @return void
 	 */
 	public function testResolvedTokensFallBackToTheDefaultsAlone(): void {
 		$this->writeCss(
@@ -243,6 +255,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * The semantic layer is the token set's own vocabulary, and a set is
 	 * entitled to declare one token in terms of another. Resolving it here
 	 * would export a value the set never wrote.
+	 *
+	 * @return void
 	 */
 	public function testResolvedTokensCarryAVarReferenceThrough(): void {
 		$this->writeCss(
@@ -275,6 +289,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * The difference from the resolved map is the whole point: only this one
 	 * can answer "is this component touched by this set at all", because a
 	 * merged map answers yes for every token.
+	 *
+	 * @return void
 	 */
 	public function testDeclaredTokensAreTheSetsOwnFileOnly(): void {
 		$this->writeCss(
@@ -297,6 +313,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 	/**
 	 * A set that has no file declares nothing.
+	 *
+	 * @return void
 	 */
 	public function testDeclaredTokensOfAMissingSetAreEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->build()->getDeclaredTokens(tokenSetId: 'not-a-set'));
@@ -308,6 +326,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * A set file may declare its own `--{slug}-*` scale to build its tokens
 	 * out of. The design system does not read those, so an export that carried
 	 * them would hand another instance names nothing resolves.
+	 *
+	 * @return void
 	 */
 	public function testTheSemanticLayerDropsBrandPrefixedDeclarations(): void {
 		$this->writeCss(
@@ -332,6 +352,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * An export is a file an admin diffs against another export; ordering it
 	 * by whatever order the source file happened to use would make every diff
 	 * report changes nobody made.
+	 *
+	 * @return void
 	 */
 	public function testTheSemanticLayerIsSortedByName(): void {
 		$this->writeCss(
@@ -365,6 +387,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * The settings page asks for it several times while it builds one
 	 * response. A second read that saw a different file would give one
 	 * response two answers.
+	 *
+	 * @return void
 	 */
 	public function testTokenSourcesAreReadOnce(): void {
 		$this->writeCss(
@@ -389,6 +413,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 *
 	 * This is the shape the primary element variables have again now that
 	 * they read the primary: the preview shows the colour, not the reference.
+	 *
+	 * @return void
 	 */
 	public function testResolvedColoursFollowATokenThatNamesAnotherToken(): void {
 		$this->writeCss(
@@ -417,6 +443,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 *
 	 * An empty value would read as "no colour". The name tells the reader
 	 * which token is missing.
+	 *
+	 * @return void
 	 */
 	public function testAResolvedColourWithoutAValueKeepsItsTokenName(): void {
 		$this->writeCss(
@@ -431,6 +459,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 	/**
 	 * Without the bundle's stylesheets there is nothing to resolve.
+	 *
+	 * @return void
 	 */
 	public function testResolvedColoursAreEmptyWithoutTheStylesheets(): void {
 		$this->assertSame(expected: [], actual: $this->build()->getResolvedColors(tokenSetId: 'no-such-set'));

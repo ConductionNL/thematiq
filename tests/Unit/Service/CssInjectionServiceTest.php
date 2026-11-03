@@ -142,6 +142,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -315,6 +317,8 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * The standard nldesign order: design-system stylesheets (declared
 	 * order), token set, icon/error contrast, custom-overrides — layers 1-8.
+	 *
+	 * @return void
 	 */
 	public function testStandardNldesignOrder(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
@@ -377,6 +381,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * variables inside a component's subtree and every component token is
 	 * undeclared until somebody sets one, so an untouched stock instance still
 	 * renders byte-identically to stock.
+	 *
+	 * @return void
 	 */
 	public function testNoneDesignSystemLoadsOnlyTheComponentLayer(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'nextcloud']);
@@ -404,6 +410,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * stock set it HAS a file, and that file is where its values live. It is
 	 * loaded before the component layer that reads it, and the set gets an
 	 * overrides file of its own — neither the shared one nor the stock set's.
+	 *
+	 * @return void
 	 */
 	public function testACustomSetOnNoneLoadsItsOwnTokenFile(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'custom-openwoo']);
@@ -430,6 +438,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * inline and directly after the component scopes.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'custom-openwoo']);
@@ -455,6 +465,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * design-system and token layer.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCustomOverridesAlwaysLoadedLast(): void {
 		$this->configureAppValues();
@@ -488,6 +500,8 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md#conditional-css-loading
 	 * @spec openspec/specs/menu-labels/spec.md#css-loading-order-relative-to-other-conditionals
+	 *
+	 * @return void
 	 */
 	public function testConditionalStylesheetsLoadedWhenEnabled(): void {
 		$this->configureAppValues(overrides: ['hide_slogan' => '1', 'show_menu_labels' => '1']);
@@ -519,6 +533,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * The conditional stylesheets are absent when their flags are disabled.
+	 *
+	 * @return void
 	 */
 	public function testConditionalStylesheetsAbsentWhenDisabled(): void {
 		$this->configureAppValues();
@@ -550,6 +566,8 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @spec openspec/specs/hide-slogan/spec.md#default-value-when-not-configured
 	 * @spec openspec/specs/menu-labels/spec.md#default-value-when-not-configured
+	 *
+	 * @return void
 	 */
 	public function testTogglesAbsentFromConfigDefaultToOff(): void {
 		// Only the keys a fresh instance has; every other read gets the caller's default.
@@ -588,6 +606,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * @dataProvider looseTruthyProvider
 	 *
 	 * @spec openspec/specs/hide-slogan/spec.md#boot-phase-reads-and-compares-correctly
+	 *
+	 * @return void
 	 */
 	public function testConditionalStylesheetsIgnoreLooseTruthyValues(string $stored): void {
 		$this->configureAppValues(overrides: ['hide_slogan' => $stored, 'show_menu_labels' => $stored]);
@@ -637,6 +657,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * the overrides — hence the position is asserted, not just the presence.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testPrimaryLockEmittedLastWhenTheSettingIsOn(): void {
 		$this->configureAppValues(overrides: ['primary_drives_components' => '1']);
@@ -671,6 +693,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * Custom fonts inject a `<link>` header (not a static stylesheet) after
 	 * the token-set styles, only when at least one font is configured, and
 	 * never for the "none" design system.
+	 *
+	 * @return void
 	 */
 	public function testCustomFontsInjectedWhenConfigured(): void {
 		$this->configureAppValues();
@@ -698,6 +722,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * No font link is emitted for the "none" design system, even with fonts configured.
+	 *
+	 * @return void
 	 */
 	public function testCustomFontsNotInjectedForNoneDesignSystem(): void {
 		$this->configureAppValues();
@@ -727,6 +753,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * `systems/lasuite/fonts` layer).
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMarianneEmittedWhenLasuiteAndGateEnabled(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'lasuite', 'marianne_enabled' => '1']);
@@ -779,6 +807,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * default), even for the `lasuite` design system.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMarianneNotEmittedWhenGateDisabled(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'lasuite', 'marianne_enabled' => '0']);
@@ -806,6 +836,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * previous lasuite session must not leak into another design system).
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMarianneNotEmittedForNonLasuiteDesignSystem(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'marianne_enabled' => '1']);
@@ -829,6 +861,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * Absent `themed_contexts` themes every context (byte-identical default).
+	 *
+	 * @return void
 	 */
 	public function testAbsentThemedContextsThemesEveryContext(): void {
 		$this->configureAppValues(overrides: ['themed_contexts' => '[]']);
@@ -855,6 +889,8 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * `["user"]` excludes every other configured context — `login` injects
 	 * nothing, `user` remains fully themed.
+	 *
+	 * @return void
 	 */
 	public function testConfiguredListExcludesUnlistedContexts(): void {
 		$this->configureAppValues(overrides: ['themed_contexts' => '["user"]']);
@@ -883,6 +919,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * Unparseable JSON in `themed_contexts` fails open to themed, without raising.
+	 *
+	 * @return void
 	 */
 	public function testInvalidJsonThemedContextsFailsOpen(): void {
 		$this->configureAppValues(overrides: ['themed_contexts' => 'not-json{']);
@@ -906,6 +944,8 @@ class CssInjectionServiceTest extends TestCase {
 
 	/**
 	 * A non-array JSON value in `themed_contexts` also fails open to themed.
+	 *
+	 * @return void
 	 */
 	public function testNonArrayJsonThemedContextsFailsOpen(): void {
 		$this->configureAppValues(overrides: ['themed_contexts' => '"not-an-array"']);
@@ -930,6 +970,8 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * An unrecognized context value (a future/unmapped `renderAs`) is always
 	 * themed, even when a configured list would otherwise exclude "user".
+	 *
+	 * @return void
 	 */
 	public function testUnknownContextAlwaysThemed(): void {
 		$this->configureAppValues(overrides: ['themed_contexts' => '["login"]']);
@@ -956,6 +998,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * intent wins the cascade.
 	 *
 	 * @spec openspec/specs/custom-css-freeform/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCustomCssEmittedLastWhenEnabledAndPresent(): void {
 		$this->configureAppValues();
@@ -981,6 +1025,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * An instance that never opted in loads nothing, even if a file exists.
 	 *
 	 * @spec openspec/specs/custom-css-freeform/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCustomCssNotEmittedWhenDisabled(): void {
 		$this->configureAppValues();
@@ -1001,6 +1047,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * Enabled but empty must not emit a pointless <link>.
 	 *
 	 * @spec openspec/specs/custom-css-freeform/spec.md
+	 *
+	 * @return void
 	 */
 	public function testCustomCssNotEmittedWhenEmpty(): void {
 		$this->configureAppValues();
@@ -1051,6 +1099,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * instance and failed outright on a read-only app directory.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
+	 *
+	 * @return void
 	 */
 	public function testRenderingWritesNothingAndLaterLayersStillRun(): void {
 		$this->configureAllLaterLayers();
@@ -1082,6 +1132,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * failure: nothing is logged for it.
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
+	 *
+	 * @return void
 	 */
 	public function testNoSavedOverridesIsNotAWarning(): void {
 		$this->configureAllLaterLayers();
@@ -1106,6 +1158,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * a failure in an EARLY layer must not cancel the later ones either.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md#standard-css-load-order-for-nldesign-design-system
+	 *
+	 * @return void
 	 */
 	public function testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers(): void {
 		$this->configureAppValues(overrides: ['hide_slogan' => '1']);
@@ -1138,6 +1192,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * of failures invisible.
 	 *
 	 * @spec openspec/specs/theme-preview/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAFailingPreviewBannerIsContainedAndLogged(): void {
 		$this->configureAllLaterLayers();
@@ -1168,6 +1224,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * render is left unthemed — but it is logged, and it still does not throw.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md#standard-css-load-order-for-nldesign-design-system
+	 *
+	 * @return void
 	 */
 	public function testAnUnresolvableTokenSetLeavesThePageUnthemedAndLogged(): void {
 		$this->configureAppValues();
@@ -1572,6 +1630,8 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 *
+	 * @return void
 	 */
 	public function testLayoutStylesheetsAreAbsentByDefault(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
@@ -1590,6 +1650,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * has stored no choice, and both stylesheets come after the other toggles.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testASetsLayoutDefaultsEmitBothStylesheets(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht', 'show_menu_labels' => '1']);
@@ -1655,6 +1717,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * panel can add or drop the two stylesheets when it swaps sets in place.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testTheManifestCarriesTheResolvedLayout(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'nextcloud']);
@@ -1685,6 +1749,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * that carries none gets none of them (the control).
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 *
+	 * @return void
 	 */
 	public function testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
@@ -1760,6 +1826,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * stored choice loads none of the newer stylesheets and no inline width.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 *
+	 * @return void
 	 */
 	public function testTheNewerLayoutStylesheetsAreAbsentByDefault(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
@@ -1787,6 +1855,8 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson(array $layout, bool $expected): void {
 		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
@@ -1847,6 +1917,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * decides from the same stylesheets as the person's layer.
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheAppMenuLayerIsAskedWithThePagesSet(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);

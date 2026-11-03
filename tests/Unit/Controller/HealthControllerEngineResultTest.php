@@ -99,6 +99,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Critical
 	 * check failure yields 503 under adr006 policy".
+	 *
+	 * @return void
 	 */
 	public function testCriticalEngineFailureIsServedAs503(): void {
 		$response = $this->controllerWithEngineResult(
@@ -121,6 +123,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Degraded
 	 * filesystem check does not error the overall status".
+	 *
+	 * @return void
 	 */
 	public function testDegradedFilesystemIsServedAs200Degraded(): void {
 		$response = $this->controllerWithEngineResult(
@@ -142,6 +146,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Nextcloud
 	 * boots when OpenRegister is absent" (the response half).
+	 *
+	 * @return void
 	 */
 	public function testEngineAbsentDegradesTo200(): void {
 		$container = $this->createMock(originalClassName: ContainerInterface::class);
@@ -167,6 +173,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Nextcloud
 	 * boots when OpenRegister is absent" (the boot half).
+	 *
+	 * @return void
 	 */
 	public function testControllerNamesNoOpenRegisterClassInCode(): void {
 		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/HealthController.php');

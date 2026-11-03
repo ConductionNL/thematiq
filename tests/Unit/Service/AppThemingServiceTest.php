@@ -47,6 +47,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -64,6 +66,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Absent config returns an empty list (today's global theming).
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsDefaultsToEmpty(): void {
 		$this->config->method('getAppValue')->willReturn('[]');
@@ -72,6 +76,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Malformed JSON degrades to an empty list, never an error.
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsMalformedJsonIsEmpty(): void {
 		$this->config->method('getAppValue')->willReturn('not-json{');
@@ -80,6 +86,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * A stored list is read back, de-duplicated and string-filtered.
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsReadsStoredList(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar","files","calendar"]');
@@ -88,6 +96,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Unknown app ids are dropped on save (self-heal); known ids retained.
+	 *
+	 * @return void
 	 */
 	public function testSetDisabledAppsDropsUnknownIds(): void {
 		$this->appManager->method('isInstalled')->willReturnMap(
@@ -112,6 +122,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Protected ids can never enter the exclusion list.
+	 *
+	 * @return void
 	 */
 	public function testSetDisabledAppsDropsProtectedIds(): void {
 		$this->appManager->method('isInstalled')->willReturn(true);
@@ -129,6 +141,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Null/unresolved app id is always themed.
+	 *
+	 * @return void
 	 */
 	public function testIsThemingDisabledForNullIsFalse(): void {
 		$this->assertFalse(condition: $this->service->isThemingDisabledFor(null));
@@ -137,6 +151,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * An app in the exclusion list is reported as disabled.
+	 *
+	 * @return void
 	 */
 	public function testIsThemingDisabledForExcludedApp(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar"]');
@@ -151,6 +167,8 @@ class AppThemingServiceTest extends TestCase {
 	 *
 	 * @param string|null $pathInfo The request path info.
 	 * @param string|null $expected The expected resolved app id.
+	 *
+	 * @return void
 	 */
 	public function testResolveAppIdFromPath(?string $pathInfo, ?string $expected): void {
 		$this->assertSame(expected: $expected, actual: $this->service->resolveAppIdFromPath($pathInfo));
@@ -177,6 +195,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * getThemableApps omits protected ids, sorts by name, sets themed flag.
+	 *
+	 * @return void
 	 */
 	public function testGetThemableAppsListsEnabledAppsWithState(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar"]');

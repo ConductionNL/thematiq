@@ -47,6 +47,8 @@ class GenerateDarkVariantsTest extends TestCase {
 	 * Set up a temp app dir with a shipped-set-shaped fixture:
 	 * `amsterdam` (nldesign, eligible), `nextcloud` (none, skipped), and
 	 * `hoog-contrast` (high-contrast, skipped) — mirroring the real manifest.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -91,6 +93,8 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -127,6 +131,8 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * `--set=amsterdam` writes only that set's file.
+	 *
+	 * @return void
 	 */
 	public function testSetOptionWritesOnlyThatFile(): void {
 		$exitCode = $this->tester->execute(['--set' => 'amsterdam']);
@@ -138,6 +144,8 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * A full run skips `none`/`high-contrast` sets without failing the exit code.
+	 *
+	 * @return void
 	 */
 	public function testFullRunSkipsIneligibleSetsWithZeroExitCode(): void {
 		$exitCode = $this->tester->execute([]);
@@ -156,6 +164,8 @@ class GenerateDarkVariantsTest extends TestCase {
 	 * A forced full run, and a forced run of that set alone, leave a shipped
 	 * hand-written high-contrast dark variant byte for byte (thematiq#1023):
 	 * the generator only reaches AA, and that file is held to AAA by hand.
+	 *
+	 * @return void
 	 */
 	public function testForcedRunLeavesAHandWrittenHighContrastVariantAlone(): void {
 		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
@@ -171,6 +181,8 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * A second run without `--force` skips the now-fresh file.
+	 *
+	 * @return void
 	 */
 	public function testSecondRunWithoutForceSkipsFreshFile(): void {
 		$this->tester->execute(['--set' => 'amsterdam']);
@@ -187,6 +199,8 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * `--force` rewrites despite a fresh hash.
+	 *
+	 * @return void
 	 */
 	public function testForceRewritesFreshFile(): void {
 		$this->tester->execute(['--set' => 'amsterdam']);

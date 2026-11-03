@@ -111,6 +111,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * subtitle, paints note, token-less fact, reason and version note goes
 	 * through IL10N, and the data around them (ids, token names, codes) does
 	 * not.
+	 *
+	 * @return void
 	 */
 	public function testTheInventoryChromeIsTranslatedAndItsDataIsNot(): void {
 		$asked = [];
@@ -146,6 +148,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * js/, cannot see them. This is the guard that can: a new title, paints
 	 * note or reason without an l10n/en.json key and an l10n/nl.json value
 	 * fails here.
+	 *
+	 * @return void
 	 */
 	public function testEveryChromeStringIsInTheCatalogueWithADutchTranslation(): void {
 		$root = __DIR__ . '/../../..';
@@ -181,6 +185,8 @@ class PlaygroundStateServiceTest extends TestCase {
 
 	/**
 	 * Exactly the keys js/playground.js reads, and no others.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheKeysTheInstrumentReads(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
@@ -204,6 +210,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Task 3.3: the set's dark values are published from its generated dark stylesheet.
 	 *
 	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
+	 *
+	 * @return void
 	 */
 	public function testDarkTokensPublished(): void {
 		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];
@@ -222,6 +230,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Rijkshuisstijl values. Exporting from that map wrote all of them into a
 	 * theme whose author had changed one colour, which is the whole reason the
 	 * two keys are separate.
+	 *
+	 * @return void
 	 */
 	public function testTheExportBaseIsWhatTheSetDeclares(): void {
 		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
@@ -248,6 +258,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * `css/tokens/nextcloud.css` is a snapshot of one Nextcloud version, kept as
 	 * a fallback — saving "the Nextcloud theme plus my change" has to write what
 	 * this server is actually wearing.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetExportsWhatTheInstanceIsWearing(): void {
 		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
@@ -269,6 +281,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * When the instance cannot be read, the shipped snapshot answers rather than
 	 * nothing — an export with no tokens is worse than one slightly behind.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetFallsBackToTheShippedSnapshot(): void {
 		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
@@ -290,6 +304,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * The published set id is the one asked for, which is the set the page is
 	 * WEARING — a session preview changes it, and an export is named after it.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheSetItWasAskedFor(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'openwoo');
@@ -303,6 +319,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * The header specimen picks its markup by major version, so a string like
 	 * "34.0.4" or a full array would silently fail every comparison and leave
 	 * the switch opening on the wrong shape.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheServerMajorAsAnInteger(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
@@ -316,6 +334,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Zero is not a version the switch offers, so the instrument falls back to
 	 * the newest header it knows — which is the right answer for an admin who
 	 * is asking what an upgrade looks like anyway.
+	 *
+	 * @return void
 	 */
 	public function testItSurvivesHavingNoServerToAsk(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
@@ -326,6 +346,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * The inventory is the shipped file, decoded — the service adds nothing to
 	 * it and drops nothing from it.
+	 *
+	 * @return void
 	 */
 	public function testTheInventoryIsTheShippedFile(): void {
 		$shipped = json_decode(
@@ -340,6 +362,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * Every component names a tab the inventory itself declares. A chip under a
 	 * tab that does not exist is a chip no admin can ever reach.
+	 *
+	 * @return void
 	 */
 	public function testEveryComponentSitsUnderADeclaredTab(): void {
 		$inventory = $this->build()->getInventory();
@@ -358,6 +382,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * The tabs are the token editor's own four, in its own order: the instrument
 	 * MOVES that strip rather than drawing a second one, so a tab here that the
 	 * editor does not render is a chip row with nothing above it.
+	 *
+	 * @return void
 	 */
 	public function testTheTabsAreTheTokenEditorsOwn(): void {
 		$inventory = $this->build()->getInventory();
@@ -371,6 +397,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * The reason vocabulary is the converter's, so a row with no token and a
 	 * token an import had to skip are explained in the same words.
+	 *
+	 * @return void
 	 */
 	public function testTheReasonVocabularyIsTheConvertersOwn(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
@@ -381,6 +409,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * A missing mapping table costs the explanatory sentences and nothing else.
 	 * The instrument still builds, and every row still names its reason CODE.
+	 *
+	 * @return void
 	 */
 	public function testAMissingMappingTableCostsOnlyTheSentences(): void {
 		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
@@ -396,6 +426,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * An unreadable inventory yields an empty component list rather than an
 	 * exception: the instrument then does not build, and the token editor it
 	 * would have rebuilt keeps working.
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableInventoryYieldsAnEmptyOne(): void {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
@@ -415,6 +447,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	/**
 	 * The token values describe the set that was asked for, and the source map
 	 * comes from the stylesheet that actually makes the connection.
+	 *
+	 * @return void
 	 */
 	public function testItResolvesTheSetItWasAskedFor(): void {
 		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);

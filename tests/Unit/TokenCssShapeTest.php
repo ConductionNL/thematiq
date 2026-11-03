@@ -37,6 +37,8 @@ class TokenCssShapeTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -62,6 +64,8 @@ class TokenCssShapeTest extends TestCase {
 	 * exactly one `:root { }` block and no at-rule.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedTokenCssFileIsFlatRootOnly(): void {
 		foreach ($this->shippedTokenCssFiles() as $file) {
@@ -108,6 +112,8 @@ class TokenCssShapeTest extends TestCase {
 	 * expected to satisfy the flat `:root`-only shape.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDarkVariantsAreExcludedFromTheContract(): void {
 		$darkDir = $this->repoRoot() . '/css/tokens/dark';

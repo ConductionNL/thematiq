@@ -82,6 +82,8 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 	 * still missing, and its value is not read as the CSS primary.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testCommentedOutDeclarationsNeverCount(): void {
 		$declarations = '';
@@ -128,6 +130,8 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 	 * itself is not required, and the primary is compared on its own token.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testOwnVocabularySystemIsAuditedAgainstItsOwnNames(): void {
 		mkdir($this->appDir . '/css/systems/summer-breeze', 0777, true);

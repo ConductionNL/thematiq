@@ -63,6 +63,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * GET lists the switches with the status block.
+	 *
+	 * @return void
 	 */
 	public function testIndexListsSwitchesAndStatus(): void {
 		$this->service->method('list')->willReturn([['id' => 'a1', 'tokenSet' => 'koningsdag-oranje']]);
@@ -76,6 +78,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * POST plans a switch as the signed-in administrator.
+	 *
+	 * @return void
 	 */
 	public function testCreatePlansTheSwitchAsTheCurrentUser(): void {
 		$this->service->expects($this->once())->method('create')->with(
@@ -97,6 +101,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * An empty end means no end.
+	 *
+	 * @return void
 	 */
 	public function testAnEmptyEndMeansNoEnd(): void {
 		$this->service->expects($this->once())->method('create')->with(
@@ -111,6 +117,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * Scenario "Overlapping plans are refused": 400 with the reason.
+	 *
+	 * @return void
 	 */
 	public function testARefusedPlanAnswers400WithTheReason(): void {
 		$this->service->method('create')->willThrowException(new ScheduledSwitchException(message: 'The window overlaps a planned switch.'));
@@ -123,6 +131,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * DELETE cancels; an unknown id is 404.
+	 *
+	 * @return void
 	 */
 	public function testCancelAndUnknownCancel(): void {
 		$this->service->expects($this->exactly(count: 2))->method('cancel')->willReturnCallback(
@@ -140,6 +150,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 	/**
 	 * Scenario "A non-admin cannot plan a switch": every endpoint carries
 	 * the admin setting attribute.
+	 *
+	 * @return void
 	 */
 	public function testEveryEndpointIsAdminOnly(): void {
 		foreach (['index', 'create', 'cancel'] as $method) {
@@ -151,6 +163,8 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * The three routes exist.
+	 *
+	 * @return void
 	 */
 	public function testTheRoutesAreRegistered(): void {
 		$routes = require __DIR__ . '/../../../appinfo/routes.php';

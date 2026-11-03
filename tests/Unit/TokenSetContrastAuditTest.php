@@ -47,6 +47,8 @@ class TokenSetContrastAuditTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -54,6 +56,8 @@ class TokenSetContrastAuditTest extends TestCase {
 
 	/**
 	 * Build the audit service from the real (pure) collaborators.
+	 *
+	 * @return ShippedTokenSetAuditService
 	 */
 	private function service(): ShippedTokenSetAuditService {
 		return new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
@@ -79,6 +83,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.1
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.2
+	 *
+	 * @return void
 	 */
 	public function testEveryAuditedSetYieldsAVerdict(): void {
 		$service = $this->service();
@@ -117,6 +123,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * An unevaluated pair is never classified as passing.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.4
+	 *
+	 * @return void
 	 */
 	public function testUnevaluatedIsNeverPassing(): void {
 		$service = $this->service();
@@ -136,6 +144,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * Every set the documentation presents as WCAG-AA compliant actually meets AA.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.3
+	 *
+	 * @return void
 	 */
 	public function testDocumentedAaSetsMeetAa(): void {
 		$service = $this->service();
@@ -174,6 +184,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * would pass a shipped-set-only assertion too.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.3
+	 *
+	 * @return void
 	 */
 	public function testSubAaSetsAreSurfacedNotSilentlyPassed(): void {
 		$probe = $this->probeAppWithASubAaSet(
@@ -213,6 +225,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * pass, so the set could not be judged at all.
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 *
+	 * @return void
 	 */
 	public function testAVarChainPairIsMeasuredRatherThanUnevaluated(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
@@ -252,6 +266,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * had no second colour.
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 *
+	 * @return void
 	 */
 	public function testASetWithNoBackgroundIsMeasuredAgainstTheWhitePage(): void {
 		$this->assertNull(
@@ -274,6 +290,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * not depend on a fallback, and the login colour is unchanged.
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 *
+	 * @return void
 	 */
 	public function testVngIsMeasuredAgainstItsOwnPageNotTheLoginBackground(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
@@ -335,6 +353,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * A set tagged high-contrast must meet WCAG AAA (>= 7:1 text, >= 4.5:1 UI).
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-high-contrast-token-set/tasks.md#task-4.1
+	 *
+	 * @return void
 	 */
 	public function testHighContrastSetMeetsAaa(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
@@ -372,6 +392,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.1
 	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.2
+	 *
+	 * @return void
 	 */
 	public function testReportIsDeterministicAndComplete(): void {
 		$service = $this->service();
@@ -408,6 +430,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * question.
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
+	 *
+	 * @return void
 	 */
 	public function testTheVerdictJsonMatchesTheReportAndIsCommitted(): void {
 		$service = $this->service();

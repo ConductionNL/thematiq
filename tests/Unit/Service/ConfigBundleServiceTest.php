@@ -135,6 +135,8 @@ class ConfigBundleServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + real collaborators + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -252,6 +254,8 @@ class ConfigBundleServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -323,6 +327,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * export() carries all sections: config toggles/exclusions, overrides
 	 * CSS, and custom token sets (metadata + CSS).
+	 *
+	 * @return void
 	 */
 	public function testExportContainsAllSections(): void {
 		$this->seedConfig();
@@ -383,6 +389,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * A hard validation error in one custom token set writes NOTHING —
 	 * config, overrides file, and custom sets are all untouched.
+	 *
+	 * @return void
 	 */
 	public function testImportInvalidCustomSetWritesNothingAndListsError(): void {
 		$bundle = $this->baseBundle(
@@ -414,6 +422,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * Unknown override variables are skipped and counted, not fatal — the
 	 * import proceeds and writes only the recognised editable token.
+	 *
+	 * @return void
 	 */
 	public function testUnknownOverrideTokensSkippedNotFatal(): void {
 		$bundle = $this->baseBundle(
@@ -437,6 +447,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A token set referencing a custom set contained WITHIN the same bundle
 	 * resolves successfully, even though it has never existed on this
 	 * instance before, and becomes the active set after apply.
+	 *
+	 * @return void
 	 */
 	public function testTokenSetResolvableFromWithinBundle(): void {
 		$bundle = $this->baseBundle(
@@ -463,6 +475,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * A token set id that is neither shipped/installed nor present in the
 	 * bundle's own custom sets is a hard error naming the unresolvable id.
+	 *
+	 * @return void
 	 */
 	public function testNonexistentTokenSetIsHardError(): void {
 		$bundle = $this->baseBundle(overrides: ['config' => ['tokenSet' => 'atlantis']]);
@@ -478,6 +492,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * older bundle without the section leaves the mark alone.
 	 *
 	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAssistantMarkSurvivesExportAndImport(): void {
 		$this->seedConfig();
@@ -518,6 +534,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * signed off on.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testPrimaryDrivesComponentsSurvivesExportAndImport(): void {
 		$this->seedConfig();
@@ -541,6 +559,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * something an admin has to hand-edit before a promotion will run.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnAbsentPrimaryDrivesComponentsImportsAsOff(): void {
 		$this->appConfig['primary_drives_components'] = '1';
@@ -559,6 +579,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * environment.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testANonBooleanPrimaryDrivesComponentsIsRejected(): void {
 		$bundle = $this->baseBundle(overrides: ['config' => ['primaryDrivesComponents' => 'false']]);
@@ -583,6 +605,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * empty string ("follow the theme") included, and come back the same.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 *
+	 * @return void
 	 */
 	public function testTheLayoutOptionsSurviveExportAndImport(): void {
 		$this->seedConfig();
@@ -630,6 +654,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * imports as "follow the theme", which is what such an instance stored.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 *
+	 * @return void
 	 */
 	public function testAnAbsentLayoutOptionsSectionImportsAsFollowTheTheme(): void {
 		$this->appConfig['workplace_layout'] = 'light';
@@ -647,6 +673,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * nothing is written.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 *
+	 * @return void
 	 */
 	public function testALayoutValueTheOptionRefusesIsRejected(): void {
 		$this->appConfig['navigation_width'] = '264';
@@ -669,6 +697,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * A dry-run of a valid bundle reports the would-be sections and writes
 	 * nothing at all.
+	 *
+	 * @return void
 	 */
 	public function testDryRunWritesNothing(): void {
 		$this->seedConfig();
@@ -695,6 +725,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * Importing the same valid bundle twice yields byte-identical state —
 	 * app values, custom-overrides.css bytes, and custom-set files/manifest.
+	 *
+	 * @return void
 	 */
 	public function testImportIsIdempotent(): void {
 		$this->seedConfig();
@@ -720,6 +752,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * part, import the exported bundle, and assert the resulting state is
 	 * identical to the seeded state (app values, custom-overrides.css bytes,
 	 * custom-set file bytes + manifest).
+	 *
+	 * @return void
 	 */
 	public function testRoundTripExportWipeImportRestoresIdenticalState(): void {
 		$this->seedConfig();
@@ -754,6 +788,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * An envelope with the wrong `format` is a hard error before any other
 	 * section is even considered.
+	 *
+	 * @return void
 	 */
 	public function testWrongFormatIsHardError(): void {
 		$bundle = $this->baseBundle(overrides: ['format' => 'something-else']);
@@ -767,6 +803,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * An invalid emailFooter URL (non-http(s) scheme) is a hard error and
 	 * blocks the whole import — reusing EmailThemingService's own rule set.
+	 *
+	 * @return void
 	 */
 	public function testInvalidEmailFooterUrlIsHardError(): void {
 		$bundle = $this->baseBundle(
@@ -784,6 +822,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * The document footer line travels as a value, the document images as metadata only.
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDocumentStyleFooterLineSurvivesExportAndImport(): void {
 		$this->seedConfig();
@@ -811,6 +851,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * Brands per app travel as app => set, logos as metadata only; a version 2 bundle leaves them alone.
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAppBrandsSurviveExportAndImport(): void {
 		$this->seedConfig();
@@ -839,6 +881,8 @@ class ConfigBundleServiceTest extends TestCase {
 	/**
 	 * The customFonts section is exported/reported as metadata only and is
 	 * never applied — no custom_fonts app value is ever written by import().
+	 *
+	 * @return void
 	 */
 	public function testCustomFontsSectionIsNeverApplied(): void {
 		$bundle = $this->baseBundle(
@@ -857,6 +901,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * the one value that must differ between OTAP environments.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testExportNeverCarriesTheEnvironment(): void {
 		$this->seedConfig();
@@ -879,6 +925,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * The planned switches travel in the bundle without their runtime state.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testExportCarriesPlannedSwitchesWithoutRuntimeState(): void {
 		$this->seedConfig();
@@ -918,6 +966,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * planned switch names a custom set that only the bundle carries.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAPlannedSwitchToABundledCustomSetIsImported(): void {
 		$this->seedConfig();
@@ -956,6 +1006,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * restarting it would take the campaign look as the one to return to.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARunningSwitchKeepsItsStateThroughAnImport(): void {
 		$this->seedConfig();
@@ -987,6 +1039,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A stale bundle does not replay a switch whose window has already ended.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnEndedSwitchInABundleIsNotReplayed(): void {
 		$this->seedConfig();
@@ -1011,6 +1065,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * the app does not ship is dropped rather than trusted.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testACustomSetKeepsItsDesignSystemThroughARoundTrip(): void {
 		$this->seedConfig();
@@ -1034,6 +1090,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A design-systems manifest that is not a list of design systems allows none.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableDesignSystemManifestAllowsNone(): void {
 		$this->seedConfig();
@@ -1050,6 +1108,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * Scenario "An overlapping plan blocks the whole import".
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOverlappingPlannedSwitchesBlockTheWholeImport(): void {
 		$bundle = $this->baseBundle(overrides: ['bundleVersion' => 2]);
@@ -1071,6 +1131,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A planned switch to a set neither installed nor bundled is refused.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAPlannedSwitchToAnUnknownSetIsRefused(): void {
 		$bundle = $this->baseBundle(overrides: ['bundleVersion' => 2]);
@@ -1089,6 +1151,8 @@ class ConfigBundleServiceTest extends TestCase {
 	 * imports and leaves the planned switches alone.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAVersionOneBundleStillImportsAndKeepsPlannedSwitches(): void {
 		$this->appConfig['scheduled_switches'] = '[{"id":"keep"}]';

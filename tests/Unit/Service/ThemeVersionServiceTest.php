@@ -201,6 +201,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * Set up.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -237,6 +239,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * A capture stores the bundle and lists it with its metadata.
+	 *
+	 * @return void
 	 */
 	public function testCaptureStoresTheBundleAndListsIt(): void {
 		$service = $this->service();
@@ -254,6 +258,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * Versions list newest first, also within one second.
+	 *
+	 * @return void
 	 */
 	public function testListIsNewestFirst(): void {
 		$service = $this->service();
@@ -267,6 +273,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * At most 50 versions are kept, oldest removed first.
+	 *
+	 * @return void
 	 */
 	public function testTheCountCapRemovesTheOldest(): void {
 		$service = $this->service();
@@ -285,6 +293,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * At most 20 MB of versions are kept, oldest removed first.
+	 *
+	 * @return void
 	 */
 	public function testTheSizeCapRemovesTheOldest(): void {
 		$this->bundle['pad'] = str_repeat('x', (6 * 1024 * 1024));
@@ -301,6 +311,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * A failing app data folder is logged and never thrown.
+	 *
+	 * @return void
 	 */
 	public function testAFailingAppDataFolderReturnsNullAndWarns(): void {
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
@@ -313,6 +325,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * An unknown or malformed id reads as null, never as a path.
+	 *
+	 * @return void
 	 */
 	public function testUnknownAndMalformedIdsReadAsNull(): void {
 		$service = $this->service();

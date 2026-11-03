@@ -70,6 +70,8 @@ class NotFoundCopyServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -152,6 +154,8 @@ class NotFoundCopyServiceTest extends TestCase {
 	 * The shipped Zuiddrecht copy, in Dutch, as the NietGevonden board writes it.
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtShipsTheBoardsCopy(): void {
 		$manifest = json_decode((string)file_get_contents(__DIR__ . '/../../../token-sets.json'), true);
@@ -171,6 +175,8 @@ class NotFoundCopyServiceTest extends TestCase {
 	 * without a scheme are dropped; the override's list replaces the set's.
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 *
+	 * @return void
 	 */
 	public function testLinksTheOverrideMayNotShowAreDropped(): void {
 		$this->configure(
@@ -205,6 +211,8 @@ class NotFoundCopyServiceTest extends TestCase {
 	 * The light workplace provides the copy and loads the script.
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheLightWorkplaceLoadsTheScript(): void {
 		$this->configure(block: ['title' => ['nl' => 'Pagina niet gevonden', 'en' => 'Page not found']]);
@@ -219,6 +227,8 @@ class NotFoundCopyServiceTest extends TestCase {
 	 * Every other layout keeps Nextcloud's page; a failure is logged.
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 *
+	 * @return void
 	 */
 	public function testTheDefaultLayoutAndAFailureLoadNothing(): void {
 		$this->configure(block: ['title' => 'Niet gevonden']);

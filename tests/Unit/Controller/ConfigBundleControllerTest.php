@@ -69,6 +69,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * Set up the controller with mocked collaborators.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -87,6 +89,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * Remove any temp upload file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if ($this->uploadPath !== null && file_exists($this->uploadPath) === true) {
@@ -133,6 +137,8 @@ class ConfigBundleControllerTest extends TestCase {
 	/**
 	 * export() returns the exact service bundle as the download body, with
 	 * the attachment filename and JSON content type.
+	 *
+	 * @return void
 	 */
 	public function testExportReturnsAttachmentWithBundleBody(): void {
 		$this->service->method('export')->willReturn(['format' => 'nldesign-config-bundle', 'bundleVersion' => 1]);
@@ -150,6 +156,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * No uploaded file is a 400.
+	 *
+	 * @return void
 	 */
 	public function testImportWithNoFileReturns400(): void {
 		$this->request->method('getUploadedFile')->willReturn(null);
@@ -161,6 +169,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * A file exceeding the 256 KB cap is a 413, without ever reading its content.
+	 *
+	 * @return void
 	 */
 	public function testImportOversizeFileReturns413(): void {
 		$this->request->method('getUploadedFile')->willReturn(
@@ -180,6 +190,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * A non-.json file extension is a 415.
+	 *
+	 * @return void
 	 */
 	public function testImportWrongExtensionReturns415(): void {
 		$this->request->method('getUploadedFile')->willReturn(
@@ -197,6 +209,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * Invalid JSON content is a 400, never reaching the service.
+	 *
+	 * @return void
 	 */
 	public function testImportInvalidJsonReturns400(): void {
 		$this->request->method('getUploadedFile')->willReturn(
@@ -217,6 +231,8 @@ class ConfigBundleControllerTest extends TestCase {
 	/**
 	 * A hard validation failure from the service is a 400 with the full
 	 * per-section error listing, and logs NOTHING to the audit trail.
+	 *
+	 * @return void
 	 */
 	public function testImportValidationFailureReturns400WithErrorsAndLogsNothing(): void {
 		$this->request->method('getUploadedFile')->willReturn(
@@ -247,6 +263,8 @@ class ConfigBundleControllerTest extends TestCase {
 	/**
 	 * A successful import returns 200 with the per-section results and logs
 	 * exactly one audit entry carrying those sections.
+	 *
+	 * @return void
 	 */
 	public function testImportSuccessReturns200AndLogsOneAuditEntry(): void {
 		$this->request->method('getUploadedFile')->willReturn(
@@ -280,6 +298,8 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * An unexpected service exception is a 500, and logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testImportServiceExceptionReturns500(): void {
 		$this->request->method('getUploadedFile')->willReturn(

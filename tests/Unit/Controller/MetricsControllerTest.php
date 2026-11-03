@@ -65,6 +65,8 @@ class MetricsControllerTest extends TestCase {
 
 	/**
 	 * Set up the controller with mocked dependencies.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -123,6 +125,8 @@ class MetricsControllerTest extends TestCase {
 	 * `index()` MUST NOT carry `#[PublicPage]` — its presence would make the
 	 * endpoint reachable by any unauthenticated caller, defeating the
 	 * admin-auth requirement (ADR-006).
+	 *
+	 * @return void
 	 */
 	public function testIndexHasNoPublicPageAttribute(): void {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
@@ -138,6 +142,8 @@ class MetricsControllerTest extends TestCase {
 	 * `index()` MUST NOT carry `#[NoAdminRequired]` — its presence would
 	 * allow any authenticated (non-admin) user through, still short of the
 	 * admin-only requirement (ADR-006).
+	 *
+	 * @return void
 	 */
 	public function testIndexHasNoNoAdminRequiredAttribute(): void {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
@@ -153,6 +159,8 @@ class MetricsControllerTest extends TestCase {
 	 * The CSRF exemption is orthogonal to the admin-auth requirement and
 	 * MUST remain — a Prometheus scraper authenticates via HTTP Basic/an
 	 * app-password and cannot present a CSRF token.
+	 *
+	 * @return void
 	 */
 	public function testIndexDeclaresNoCsrfRequired(): void {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
@@ -168,6 +176,8 @@ class MetricsControllerTest extends TestCase {
 	 * Sanity/regression check: the auth posture is enforced by middleware,
 	 * never invoked when calling the method directly — the metrics body
 	 * itself must still be produced unchanged.
+	 *
+	 * @return void
 	 */
 	public function testIndexStillReturnsMetricsBody(): void {
 		$response = $this->controller->index();
@@ -179,6 +189,8 @@ class MetricsControllerTest extends TestCase {
 	/**
 	 * The audit counter defaults to zero when no entry has ever been
 	 * written (fresh install / unset app value).
+	 *
+	 * @return void
 	 */
 	public function testAuditCounterDefaultsToZero(): void {
 		$body = $this->controller->index()->render();
@@ -194,6 +206,8 @@ class MetricsControllerTest extends TestCase {
 	/**
 	 * The audit counter reflects the current `audit_entries_total` app
 	 * value (cast to int).
+	 *
+	 * @return void
 	 */
 	public function testAuditCounterReflectsAppValue(): void {
 		$this->appConfig['audit_entries_total'] = '12';
@@ -206,6 +220,8 @@ class MetricsControllerTest extends TestCase {
 	/**
 	 * The new counter is additive — pre-existing metric families still
 	 * appear in the same response.
+	 *
+	 * @return void
 	 */
 	public function testAuditCounterIsAdditiveToExistingFamilies(): void {
 		$body = $this->controller->index()->render();
@@ -223,6 +239,8 @@ class MetricsControllerTest extends TestCase {
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "Token set
 	 * count error handled gracefully" and "Token set metrics fail, other
 	 * metrics succeed".
+	 *
+	 * @return void
 	 */
 	public function testTokenSetFailureFallsBackToZeroAndLogs(): void {
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
@@ -249,6 +267,8 @@ class MetricsControllerTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Active token
 	 * set in error recovery".
+	 *
+	 * @return void
 	 */
 	public function testTokenSetFailureOmitsTheActiveTokenSetGauge(): void {
 		$body = $this->buildController(tokenSetError: new \RuntimeException('boom'))->index()->render();
@@ -264,6 +284,8 @@ class MetricsControllerTest extends TestCase {
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "Override
 	 * count error handled gracefully" and "Custom overrides fail, other
 	 * metrics succeed".
+	 *
+	 * @return void
 	 */
 	public function testOverrideFailureFallsBackToZeroAndLogs(): void {
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
@@ -291,6 +313,8 @@ class MetricsControllerTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Multiple
 	 * failures handled independently".
+	 *
+	 * @return void
 	 */
 	public function testBothFailuresAreHandledIndependently(): void {
 		$warnings = [];
@@ -325,6 +349,8 @@ class MetricsControllerTest extends TestCase {
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Default
 	 * token set reported when not configured". Note: the rest of the app
 	 * defaults `token_set` to `nextcloud`; the spec records that mismatch.
+	 *
+	 * @return void
 	 */
 	public function testActiveTokenSetDefaultWhenUnset(): void {
 		$body = $this->controller->index()->render();
@@ -338,6 +364,8 @@ class MetricsControllerTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenarios "No theming
 	 * syncs performed" and "Syncs counter is read from IConfig".
+	 *
+	 * @return void
 	 */
 	public function testThemingSyncsCounterDefaultsToZeroAndIsCastToInt(): void {
 		$unset = $this->controller->index()->render();
@@ -355,6 +383,8 @@ class MetricsControllerTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Dependencies
 	 * injected".
+	 *
+	 * @return void
 	 */
 	public function testDependenciesArePrivateReadonlyPromotedParameters(): void {
 		$expected = [
@@ -386,6 +416,8 @@ class MetricsControllerTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "No direct
 	 * service instantiation".
+	 *
+	 * @return void
 	 */
 	public function testSourceHasNoDirectServiceInstantiation(): void {
 		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/MetricsController.php');

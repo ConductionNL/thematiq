@@ -42,6 +42,8 @@ class TokenSetConverterRampContrastTest extends TestCase {
 
 	/**
 	 * Build the converter against the app's own mapping table.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -82,6 +84,8 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * take a value from the ramp. Each one takes its default from the rule instead.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAWhiteOnlyRampSuppliesNoRole(): void {
 		$report = $this->reportFor(css: ':root{--nldesign-color-primary:#8a2be2;--nldesign-color-primary-text:#ffffff}');
@@ -117,6 +121,8 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testAPrimaryOnlySetStillFallsBackToTheDefaults(): void {
 		$report = $this->reportFor(css: ':root{--nldesign-color-primary:#8a2be2}');
@@ -131,6 +137,8 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * refuses a pick that blends into the background, nothing else.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARampWithAReadableGreyStillSuppliesTheRoles(): void {
 		$report = $this->reportFor(

@@ -43,6 +43,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * app path so real `token-sets.json`/`css/tokens/` discovery runs
 	 * unmocked; only the audit VERDICT itself is stubbed (below) so the test
 	 * does not depend on hand-computed contrast ratios.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 3);
@@ -53,6 +55,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * is handed to both Capabilities and TokenSetService via their own
 	 * ICacheFactory mocks, so `get()`/`set()` calls made by one are visible
 	 * to the other, exactly as the real distributed cache would behave.
+	 *
+	 * @return ICache
 	 */
 	private function sharedCache(): ICache {
 		$store = [];
@@ -79,6 +83,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * MUST be invoked at most once across both callers — proving the two
 	 * consumers genuinely share one `ICache` entry rather than each
 	 * computing (and potentially disagreeing on) the audit independently.
+	 *
+	 * @return void
 	 */
 	public function testWcagLevelMatchesCapabilitiesAndAuditRunsOnce(): void {
 		$appPath = $this->repoRoot();
@@ -187,6 +193,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * `theming` further closed to `primary_color`/`background_color`/
 	 * `logo?` — no `description`, `custom`, `warnings`, `upstreamVersion`,
 	 * or `upstreamRef` leakage from the discovery entry.
+	 *
+	 * @return void
 	 */
 	public function testCatalogueEntryShapeIsClosed(): void {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
@@ -228,6 +236,8 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	/**
 	 * A set without a declared logo omits `theming.logo` entirely (never
 	 * `null`) — matching `TokenSetEntry`'s existing optionality.
+	 *
+	 * @return void
 	 */
 	public function testLogoIsOmittedNotNullWhenAbsent(): void {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);

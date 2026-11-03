@@ -72,6 +72,8 @@ class PreviewControllerTest extends TestCase {
 	/**
 	 * start() resolves the uid from IUserSession, never from the request,
 	 * and returns the started preview state.
+	 *
+	 * @return void
 	 */
 	public function testStartReturnsOkWithStateForValidId(): void {
 		$this->previewService->expects($this->once())
@@ -89,6 +91,8 @@ class PreviewControllerTest extends TestCase {
 
 	/**
 	 * start() returns 400 for an invalid token set id.
+	 *
+	 * @return void
 	 */
 	public function testStartReturns400ForInvalidId(): void {
 		$this->previewService->method('startPreview')
@@ -103,6 +107,8 @@ class PreviewControllerTest extends TestCase {
 	/**
 	 * discard() clears the caller's own preview (uid from the session) and
 	 * returns an ok envelope.
+	 *
+	 * @return void
 	 */
 	public function testDiscardClearsOwnPreviewAndReturnsOk(): void {
 		$this->previewService->expects($this->once())
@@ -116,6 +122,8 @@ class PreviewControllerTest extends TestCase {
 
 	/**
 	 * publish() promotes the caller's own preview and returns the published set.
+	 *
+	 * @return void
 	 */
 	public function testPublishReturnsOkWithPublishedTokenSet(): void {
 		$this->previewService->expects($this->once())
@@ -130,6 +138,8 @@ class PreviewControllerTest extends TestCase {
 
 	/**
 	 * publish() returns 400 and changes nothing when there is no active preview.
+	 *
+	 * @return void
 	 */
 	public function testPublishReturns400WhenNoActivePreview(): void {
 		$this->previewService->method('publishPreview')
@@ -143,6 +153,8 @@ class PreviewControllerTest extends TestCase {
 
 	/**
 	 * All three lifecycle endpoints carry #[AuthorizedAdminSetting(Admin::class)].
+	 *
+	 * @return void
 	 */
 	public function testAllMethodsAreAdminAnnotated(): void {
 		foreach (['start', 'discard', 'publish'] as $method) {
@@ -158,6 +170,8 @@ class PreviewControllerTest extends TestCase {
 	 * When no user is logged in (defensive path — the route itself is
 	 * already admin-only), every endpoint returns 400 rather than resolving
 	 * a null uid into the service.
+	 *
+	 * @return void
 	 */
 	public function testNoUserSessionReturns400OnEveryEndpoint(): void {
 		$anonymousSession = $this->createMock(originalClassName: IUserSession::class);

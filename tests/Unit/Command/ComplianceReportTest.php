@@ -47,6 +47,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * Set up the command with a mocked service.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -65,6 +67,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * Remove any temp output file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if ($this->outputPath !== null && file_exists($this->outputPath) === true) {
@@ -76,6 +80,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * Default format (json) prints the JSON report to stdout with exit code 0.
+	 *
+	 * @return void
 	 */
 	public function testDefaultFormatPrintsJsonAndExitsZero(): void {
 		$exitCode = $this->tester->execute([]);
@@ -86,6 +92,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * --format=markdown prints the Markdown report to stdout with exit code 0.
+	 *
+	 * @return void
 	 */
 	public function testMarkdownFormatPrintsMarkdownAndExitsZero(): void {
 		$exitCode = $this->tester->execute(['--format' => 'markdown']);
@@ -96,6 +104,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * An unknown format is a generation failure: non-zero exit, no report content.
+	 *
+	 * @return void
 	 */
 	public function testUnknownFormatFailsWithNonZeroExit(): void {
 		$exitCode = $this->tester->execute(['--format' => 'yaml']);
@@ -107,6 +117,8 @@ class ComplianceReportTest extends TestCase {
 	/**
 	 * --output=<path> writes the identical bytes to the file instead of stdout,
 	 * and still exits 0.
+	 *
+	 * @return void
 	 */
 	public function testOutputOptionWritesIdenticalBytesToFile(): void {
 		$this->outputPath = sys_get_temp_dir() . '/nldesign-compliance-cmd-test-' . uniqid() . '.md';
@@ -122,6 +134,8 @@ class ComplianceReportTest extends TestCase {
 	/**
 	 * The exit code is 0 even when the (mocked) report content represents a
 	 * failing verdict — the command only fails on generation errors.
+	 *
+	 * @return void
 	 */
 	public function testExitCodeIsZeroRegardlessOfVerdict(): void {
 		$this->service = $this->createMock(originalClassName: ComplianceReportService::class);
@@ -139,6 +153,8 @@ class ComplianceReportTest extends TestCase {
 
 	/**
 	 * A generation exception is reported and yields a non-zero exit code.
+	 *
+	 * @return void
 	 */
 	public function testGenerationFailureExitsNonZero(): void {
 		$failingService = $this->createMock(originalClassName: ComplianceReportService::class);

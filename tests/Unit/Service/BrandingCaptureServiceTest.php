@@ -63,6 +63,8 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * Build the service against a temp app dir and an in-memory app config.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -93,6 +95,8 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (isset($this->appDir) === true && is_dir($this->appDir) === true) {
@@ -153,6 +157,8 @@ class BrandingCaptureServiceTest extends TestCase {
 	/**
 	 * The colours and a removed background image are captured, and stored
 	 * under the set.
+	 *
+	 * @return void
 	 */
 	public function testCapturesTheColoursAndARemovedBackground(): void {
 		$this->values['theming/primary_color'] = '#23845c';
@@ -177,6 +183,8 @@ class BrandingCaptureServiceTest extends TestCase {
 	/**
 	 * With no image of its own and nothing removed, the background is
 	 * Nextcloud's default — which applying the theme must put back too.
+	 *
+	 * @return void
 	 */
 	public function testAnUntouchedBackgroundIsCapturedAsTheDefault(): void {
 		$this->uploads(images: []);
@@ -190,6 +198,8 @@ class BrandingCaptureServiceTest extends TestCase {
 	 * Every uploaded image is copied into the directory the sync accepts,
 	 * under a name that cannot overwrite a shipped logo, and the slot is
 	 * recorded as already holding it.
+	 *
+	 * @return void
 	 */
 	public function testCopiesEveryUploadedImage(): void {
 		$this->uploads(
@@ -217,6 +227,8 @@ class BrandingCaptureServiceTest extends TestCase {
 	/**
 	 * An image of a type core cannot take back, or one that cannot be read,
 	 * is left out rather than failing the save it rides on.
+	 *
+	 * @return void
 	 */
 	public function testAnImageThatCannotComeBackIsLeftOut(): void {
 		$this->values['theming/logoMime'] = 'image/tiff';
@@ -234,6 +246,8 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * An unreadable store reads as nothing captured.
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableStoreReadsAsEmpty(): void {
 		$this->values['thematiq/' . BrandingCaptureService::CAPTURED_KEY] = 'not json';
@@ -243,6 +257,8 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * Forgetting a set removes its captured branding and its copied images.
+	 *
+	 * @return void
 	 */
 	public function testForgetRemovesTheBrandingAndItsImages(): void {
 		$this->uploads(images: ['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
@@ -257,6 +273,8 @@ class BrandingCaptureServiceTest extends TestCase {
 	/**
 	 * An image directory that cannot be created leaves the image out rather
 	 * than failing the save: the colours are still captured.
+	 *
+	 * @return void
 	 */
 	public function testAnUncreatableImageDirectoryLeavesTheImageOut(): void {
 		// A file where img/ should be, so img/logos can never be made.
@@ -273,6 +291,8 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * An image that cannot be written is left out the same way.
+	 *
+	 * @return void
 	 */
 	public function testAnUnwritableImageIsLeftOut(): void {
 		// A directory where the copy should land, so writing it fails.

@@ -62,6 +62,8 @@ class ShippedDarkLogoTest extends TestCase {
 	/**
 	 * The Epe set draws its letters in near black on a transparent
 	 * background, so it must ship a dark logo.
+	 *
+	 * @return void
 	 */
 	public function testEpeShipsADarkLogo(): void {
 		$this->assertSame(expected: 'img/logos/epe-dark.svg', actual: ($this->shippedDarkLogos()['epe'] ?? null));
@@ -91,6 +93,8 @@ class ShippedDarkLogoTest extends TestCase {
 	 * @param string $setId The token set id.
 	 *
 	 * @dataProvider setsWithDarkInkLogos
+	 *
+	 * @return void
 	 */
 	public function testDarkInkLogoSetShipsADarkLogo(string $setId): void {
 		$this->assertSame(expected: "img/logos/{$setId}-dark.svg", actual: ($this->shippedDarkLogos()[$setId] ?? null));
@@ -99,6 +103,8 @@ class ShippedDarkLogoTest extends TestCase {
 	/**
 	 * Each declared dark logo exists under img/logos/ and reaches both the
 	 * generator output and the committed dark stylesheet.
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedDarkLogoReachesTheDarkStylesheet(): void {
 		$logos = $this->shippedDarkLogos();
@@ -131,6 +137,8 @@ class ShippedDarkLogoTest extends TestCase {
 	/**
 	 * Every fill in a shipped dark logo reaches 3:1 against the dark
 	 * background (WCAG 1.4.11 non-text contrast).
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedDarkLogoIsReadableOnDark(): void {
 		$contrast = new ContrastService();

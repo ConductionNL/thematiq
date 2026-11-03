@@ -234,6 +234,8 @@ class RuntimeFileWiringTest extends TestCase {
 
 	/**
 	 * @dataProvider refusedNames
+	 *
+	 * @return void
 	 */
 	public function testTheRouteRefusesEverythingElse(string $name): void {
 		$this->store->write('css/tokens/utrecht.css', ':root { --nldesign-color-primary: red; }');

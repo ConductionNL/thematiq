@@ -35,6 +35,8 @@ use PHPUnit\Framework\TestCase;
 class ClaimAccuracyTest extends TestCase {
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -42,6 +44,8 @@ class ClaimAccuracyTest extends TestCase {
 
 	/**
 	 * Read a file from the repository root.
+	 *
+	 * @return string
 	 */
 	private function readFile(string $relativePath): string {
 		$path = $this->repoRoot() . '/' . $relativePath;
@@ -53,6 +57,8 @@ class ClaimAccuracyTest extends TestCase {
 
 	/**
 	 * The number of token sets shipped, derived from token-sets.json.
+	 *
+	 * @return int
 	 */
 	private function tokenSetCount(): int {
 		$json = json_decode($this->readFile(relativePath: 'token-sets.json'), true);
@@ -64,6 +70,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * The manifest licence equals the bundled licence (EUPL-1.2), never AGPL.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.1
+	 *
+	 * @return void
 	 */
 	public function testManifestLicenceMatchesBundledLicence(): void {
 		$info = $this->readFile(relativePath: 'appinfo/info.xml');
@@ -107,6 +115,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * English and a Dutch pair, and the Dutch text is a translation, not a copy.
 	 *
 	 * @spec openspec/specs/beta-alignment/spec.md#requirement-infoxml-localisation
+	 *
+	 * @return void
 	 */
 	public function testManifestTextIsPairedInEnglishAndDutch(): void {
 		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
@@ -140,6 +150,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * Every PHP file under lib/ carries SPDX-License-Identifier: EUPL-1.2 and none declares AGPL.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.2
+	 *
+	 * @return void
 	 */
 	public function testSpdxHeadersAgreeWithManifest(): void {
 		$libDir = $this->repoRoot() . '/lib';
@@ -182,6 +194,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * The government checklist states the real licence (EUPL-1.2) and host (GitHub).
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-1.4
+	 *
+	 * @return void
 	 */
 	public function testGovernmentChecklistStatesRealLicenceAndHost(): void {
 		$doc = $this->readFile(relativePath: 'docs/GOVERNMENT-FEATURES.md');
@@ -223,6 +237,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * every referenced woff2/woff file exists on disk.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.3
+	 *
+	 * @return void
 	 */
 	public function testStylesheetUsesOnlyBundledFonts(): void {
 		$css = $this->readFile(relativePath: 'css/fonts.css');
@@ -262,6 +278,8 @@ class ClaimAccuracyTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-2.1
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-2.3
+	 *
+	 * @return void
 	 */
 	public function testFontDocumentationMatchesBundledDelivery(): void {
 		$readme = $this->readFile(relativePath: 'README.md');
@@ -295,6 +313,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * and project.md does not state a different total.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.4
+	 *
+	 * @return void
 	 */
 	public function testReadmeCountEqualsInventory(): void {
 		$count = $this->tokenSetCount();
@@ -337,6 +357,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * blanket production verdict over the unaudited community sets.
 	 *
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.5
+	 *
+	 * @return void
 	 */
 	public function testTokenAuditScopeStatedHonestly(): void {
 		$doc = $this->readFile(relativePath: 'docs/reference/token-audit.md');
@@ -382,6 +404,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * claim it is unconditionally free/open, nor that no Marianne file ships.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMarianneDocumentationDescribesTheGatedRestrictedSituationHonestly(): void {
 		$readme = $this->readFile(relativePath: 'README.md');
@@ -433,6 +457,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * scheme — the gated Marianne layer is self-hosted, app-relative only.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGatedMarianneStylesheetNeverUsesAnExternalScheme(): void {
 		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
@@ -504,6 +530,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * once — #241 then #242 — because nothing compared the two files.
 	 *
 	 * @spec openspec/specs/claim-accuracy/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDeclaredNextcloudRangeMatchesTheTestedMatrix(): void {
 		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
@@ -552,6 +580,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * instances whose PHP it cannot run on.
 	 *
 	 * @spec openspec/specs/claim-accuracy/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDeclaredPhpFloorIsSatisfiableOnTheDeclaredNextcloudFloor(): void {
 		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
@@ -588,6 +618,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * this to demand a named method everywhere would be a different decision.
 	 *
 	 * @spec openspec/specs/claim-accuracy/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryNamedE2eExclusionPointsAtATestThatExists(): void {
 		$root = $this->repoRoot();

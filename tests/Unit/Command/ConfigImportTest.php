@@ -51,6 +51,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * Set up the command with a mocked service.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -66,6 +68,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * Remove the temp bundle file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if ($this->bundlePath !== null && file_exists($this->bundlePath) === true) {
@@ -93,6 +97,8 @@ class ConfigImportTest extends TestCase {
 	 * `--dry-run` calls the service with dryRun=true and exits 0, printing
 	 * the would-be sections — the command itself never writes anything (all
 	 * writing happens, or doesn't, inside the mocked service call).
+	 *
+	 * @return void
 	 */
 	public function testDryRunCallsServiceWithDryRunTrueAndExitsZero(): void {
 		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
@@ -117,6 +123,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * A validation failure prints the full error listing and exits non-zero.
+	 *
+	 * @return void
 	 */
 	public function testValidationFailureExitsNonZeroWithErrorListing(): void {
 		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
@@ -141,6 +149,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * A missing file is exit 1 and never reaches the service.
+	 *
+	 * @return void
 	 */
 	public function testMissingFileExitsNonZeroWithoutCallingService(): void {
 		$this->service->expects($this->never())->method('import');
@@ -153,6 +163,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * A file that is not valid JSON is exit 1 and never reaches the service.
+	 *
+	 * @return void
 	 */
 	public function testUndecodableJsonExitsNonZeroWithoutCallingService(): void {
 		$path = $this->writeBundleFile(content: 'not json at all');
@@ -167,6 +179,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * A successful (non-dry-run) import exits 0 and prints the applied sections.
+	 *
+	 * @return void
 	 */
 	public function testSuccessfulImportExitsZeroAndPrintsSections(): void {
 		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
@@ -188,6 +202,8 @@ class ConfigImportTest extends TestCase {
 
 	/**
 	 * A service-level exception is exit 1.
+	 *
+	 * @return void
 	 */
 	public function testServiceExceptionExitsNonZero(): void {
 		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');

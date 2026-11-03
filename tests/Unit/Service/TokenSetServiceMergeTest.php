@@ -56,6 +56,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -87,6 +89,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/tokens/*') ?: [] as $f) {
@@ -113,6 +117,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * A custom file with a manifest entry carries its metadata and custom flag.
+	 *
+	 * @return void
 	 */
 	public function testCustomFileWithManifestCarriesMetadata(): void {
 		$this->writeTokenFile(id: 'custom-gemeente-voorbeeld');
@@ -139,6 +145,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * A custom file without a manifest entry falls back to an id-derived name.
+	 *
+	 * @return void
 	 */
 	public function testCustomFileWithoutManifestUsesIdFallback(): void {
 		$this->writeTokenFile(id: 'custom-orphan-set');
@@ -154,6 +162,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * A manifest entry without a backing file is dropped from discovery.
+	 *
+	 * @return void
 	 */
 	public function testManifestEntryWithoutFileIsDropped(): void {
 		// No file written for custom-stale.
@@ -166,6 +176,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * Malformed custom manifest JSON degrades to no custom sets, never an error.
+	 *
+	 * @return void
 	 */
 	public function testMalformedManifestDegradesGracefully(): void {
 		$this->writeTokenFile(id: 'custom-x');
@@ -181,6 +193,8 @@ class TokenSetServiceMergeTest extends TestCase {
 
 	/**
 	 * Sets are sorted alphabetically across shipped and custom groups.
+	 *
+	 * @return void
 	 */
 	public function testAlphabeticalSortSpansBothGroups(): void {
 		$this->writeTokenFile(id: 'nextcloud');
@@ -228,6 +242,8 @@ class TokenSetServiceMergeTest extends TestCase {
 	 * is logged at warning level.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-filesystem-based-discovery
+	 *
+	 * @return void
 	 */
 	public function testShippedManifestWinsACollisionAndLogsIt(): void {
 		$this->writeTokenFile(id: 'custom-dup');
@@ -251,6 +267,8 @@ class TokenSetServiceMergeTest extends TestCase {
 	 * file is still discovered, with an id-derived name and the nldesign default.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 *
+	 * @return void
 	 */
 	public function testMalformedShippedManifestStillDiscoversFiles(): void {
 		$this->writeTokenFile(id: 'gemeente-test');
@@ -267,6 +285,8 @@ class TokenSetServiceMergeTest extends TestCase {
 	 * A token-sets.json the process cannot read degrades the same way.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 *
+	 * @return void
 	 */
 	public function testUnreadableShippedManifestStillDiscoversFiles(): void {
 		$this->writeTokenFile(id: 'gemeente-test');
@@ -295,6 +315,8 @@ class TokenSetServiceMergeTest extends TestCase {
 	 * rather than attached to some other set.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-token-set-manifest-structure
+	 *
+	 * @return void
 	 */
 	public function testShippedManifestIsIndexedByIdAndSkipsEntriesWithoutOne(): void {
 		$this->writeTokenFile(id: 'alpha');

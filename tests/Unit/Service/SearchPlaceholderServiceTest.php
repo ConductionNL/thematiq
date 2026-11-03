@@ -113,6 +113,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -124,6 +126,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * An app's own text, translated through the app's catalogue (DqKop).
+	 *
+	 * @return void
 	 */
 	public function testTheAppsOwnTextThroughItsCatalogue(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
@@ -132,6 +136,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * The theme's entry for the app wins over the app's own text.
+	 *
+	 * @return void
 	 */
 	public function testTheThemesEntryWins(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
@@ -141,6 +147,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * The theme's `*` entry for an app that names none, through thematiq's catalogue.
+	 *
+	 * @return void
 	 */
 	public function testTheThemesDefault(): void {
 		$this->values['thematiq']['search_placeholders'] = json_encode(['*' => 'Search everything']);
@@ -150,6 +158,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * With no words anywhere, or a broken map, nothing is named.
+	 *
+	 * @return void
 	 */
 	public function testNothingNamed(): void {
 		$this->assertNull(actual: $this->service()->placeholderFor('dossiq'));
@@ -159,6 +169,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * Inject provides the words and loads the script; with none it does neither.
+	 *
+	 * @return void
 	 */
 	public function testInjectProvidesAndLoads(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
@@ -173,6 +185,8 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * A failure is logged and the page keeps Nextcloud's words.
+	 *
+	 * @return void
 	 */
 	public function testFailsOpen(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases';

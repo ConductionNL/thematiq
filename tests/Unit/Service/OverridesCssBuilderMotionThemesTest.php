@@ -94,6 +94,8 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 
 	/**
 	 * Motion overrides are declared on body for every chosen theme but reduced motion.
+	 *
+	 * @return void
 	 */
 	public function testMotionOverridesAreDeclaredOnBody(): void {
 		$this->service->write(tokens: ['--animation-quick' => '400ms', '--animation-slow' => '800ms', '--color-primary' => '#154273']);
@@ -109,6 +111,8 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 	/**
 	 * Only the motion tokens go on body: colours keep their own dark scopes,
 	 * and a file without motion overrides gets no body block.
+	 *
+	 * @return void
 	 */
 	public function testOnlyMotionGoesOnBody(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
@@ -118,6 +122,8 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 
 	/**
 	 * The body copy is not read back as a value or as a dark value.
+	 *
+	 * @return void
 	 */
 	public function testTheBodyCopyDoesNotChangeWhatIsReadBack(): void {
 		$tokens = ['--animation-quick' => '400ms', '--color-primary' => '#154273'];

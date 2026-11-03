@@ -44,6 +44,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * Set up the mapper before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -122,6 +124,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * DTCG color tokens map onto the --nldesign-* vocabulary (canonical scenario).
+	 *
+	 * @return void
 	 */
 	public function testColorTokensMapToNldesignVocabulary(): void {
 		$document = [
@@ -144,6 +148,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * The fixture corpus's regression document imports identically to the
 	 * pre-hardening mapper (imported: 2, skipped: 0, errors: 0).
+	 *
+	 * @return void
 	 */
 	public function testLegacyScalarRegressionFixtureIsUnchanged(): void {
 		$document = $this->loadFixture(name: '01-legacy-scalar-regression.tokens.json');
@@ -156,6 +162,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * Unmapped tokens degrade to a structured skipped entry, never an error.
+	 *
+	 * @return void
 	 */
 	public function testUnmappedTokensAreSkippedWithReason(): void {
 		$document = [
@@ -174,6 +182,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * The longest matching suffix wins (primary-text over primary).
+	 *
+	 * @return void
 	 */
 	public function testLongestSuffixWins(): void {
 		$document = [
@@ -193,6 +203,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * Nested groups and $-prefixed metadata keys are handled.
+	 *
+	 * @return void
 	 */
 	public function testNestedGroupsAndMetadataKeys(): void {
 		$document = [
@@ -214,6 +226,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * The published mapping table is exposed for transparency.
+	 *
+	 * @return void
 	 */
 	public function testMappingTableIsExposed(): void {
 		$table = $this->mapper->getMappingTable();
@@ -223,6 +237,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * The action colour has its own paths, and the longer path wins over `color.action`.
+	 *
+	 * @return void
 	 */
 	public function testTheActionColourMapsByPath(): void {
 		$result = $this->mapper->map(document: [
@@ -244,6 +260,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A later token colliding on an already-written target is skipped with
 	 * `duplicate-target`, never overwriting the first-seen declaration.
+	 *
+	 * @return void
 	 */
 	public function testDuplicateTargetCollisionIsSkipped(): void {
 		$document = [
@@ -269,6 +287,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * Group-level $type is inherited by descendant tokens.
+	 *
+	 * @return void
 	 */
 	public function testGroupTypeIsInheritedByDescendantTokens(): void {
 		$document = $this->loadFixture(name: '02-group-type-inheritance.tokens.json');
@@ -283,6 +303,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * A token whose resolved type is absent is skipped with `missing-type`,
 	 * never guessed from the value shape (a plausible hex string does NOT
 	 * become `color` just because it looks like one).
+	 *
+	 * @return void
 	 */
 	public function testMissingTypeIsNeverGuessedFromValueShape(): void {
 		$document = [
@@ -303,6 +325,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * v2025.10 object-form color and dimension values serialize to CSS; an
 	 * unsupported color space is skipped with an actionable reason.
+	 *
+	 * @return void
 	 */
 	public function testObjectFormColorAndDimensionSerializeToCss(): void {
 		$document = $this->loadFixture(name: '03-object-color-and-dimension.tokens.json');
@@ -322,6 +346,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * fontFamily string and array forms both serialize correctly; array
 	 * entries containing whitespace are quoted, bare keywords are not.
+	 *
+	 * @return void
 	 */
 	public function testFontFamilyArraySerializesToQuotedFontStack(): void {
 		$document = [
@@ -345,6 +371,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * is validated — there is no generic `--nldesign-*` fontWeight target
 	 * today, so a *valid* fontWeight is observed landing in `skipped` with
 	 * `unmapped-path` rather than `errors`).
+	 *
+	 * @return void
 	 */
 	public function testFontWeightNumberAndKeywordAreNormalized(): void {
 		$document = [
@@ -368,6 +396,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Composite typography token maps sub-values individually; sub-properties
 	 * without an --nldesign-* target are counted skipped with their sub-path.
+	 *
+	 * @return void
 	 */
 	public function testCompositeTypographyMapsSubValuesIndividually(): void {
 		$document = $this->loadFixture(name: '04-composite-typography.tokens.json');
@@ -389,6 +419,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * $extensions subtrees are never descended into (not an error, never
 	 * mapped) even when they contain a `$value`-shaped key; a sibling real
 	 * token still imports normally.
+	 *
+	 * @return void
 	 */
 	public function testExtensionsAreIgnoredWithoutError(): void {
 		$document = $this->loadFixture(name: '10-extensions-heavy.tokens.json');
@@ -405,6 +437,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A deprecated token still imports AND surfaces a warning naming the
 	 * token path and the deprecation message.
+	 *
+	 * @return void
 	 */
 	public function testDeprecatedTokenImportsWithWarning(): void {
 		$document = $this->loadFixture(name: '09-deprecated.tokens.json');
@@ -421,6 +455,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * deprecation; the Tokens Studio object form carries its message and severity.
 	 *
 	 * @spec openspec/specs/token-deprecations/spec.md#requirement-imported-deprecation-notices-can-be-recorded
+	 *
+	 * @return void
 	 */
 	public function testDeprecatedWarningNamesTheTargetAndReadsTokensStudio(): void {
 		$document = [
@@ -439,6 +475,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A boolean `$deprecated: true` still warns, with a null message.
+	 *
+	 * @return void
 	 */
 	public function testDeprecatedBooleanTrueWarnsWithNullMessage(): void {
 		$document = [
@@ -456,6 +494,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A deprecated token that never actually imports (e.g. unmapped) does not
 	 * surface a warning — deprecation warnings are only for imported tokens.
+	 *
+	 * @return void
 	 */
 	public function testDeprecatedButUnmappedTokenDoesNotWarn(): void {
 		$document = [
@@ -474,6 +514,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Transitive alias chain resolves to the concrete value (canonical
 	 * 2-hop scenario from the spec).
+	 *
+	 * @return void
 	 */
 	public function testTransitiveAliasChainResolvesToConcreteValue(): void {
 		$document = [
@@ -496,6 +538,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A longer (3-hop) alias chain from the fixture corpus also resolves.
+	 *
+	 * @return void
 	 */
 	public function testThreeHopAliasChainFixtureResolves(): void {
 		$document = $this->loadFixture(name: '05-alias-chain-3-hop.tokens.json');
@@ -508,6 +552,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * An alias cycle produces an actionable per-token error naming the full
 	 * cycle path, without aborting the import of an unrelated valid token.
+	 *
+	 * @return void
 	 */
 	public function testAliasCycleProducesActionableError(): void {
 		$document = $this->loadFixture(name: '06-alias-cycle.tokens.json');
@@ -530,6 +576,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A dangling alias is reported with its missing target path; no
 	 * declaration is emitted for it.
+	 *
+	 * @return void
 	 */
 	public function testDanglingAliasReportsMissingTarget(): void {
 		$document = $this->loadFixture(name: '07-alias-dangling.tokens.json');
@@ -544,6 +592,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * An alias chain longer than the 10-hop bound fails with
 	 * `alias-depth-exceeded` rather than resolving or hanging.
+	 *
+	 * @return void
 	 */
 	public function testAliasDepthExceededBeyondTenHops(): void {
 		$document = $this->loadFixture(name: '08-alias-depth-bomb.tokens.json');
@@ -564,6 +614,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A top-level $version member is extracted verbatim.
+	 *
+	 * @return void
 	 */
 	public function testPackageVersionExtractedFromTopLevelVersion(): void {
 		$document = $this->loadFixture(name: '11-version-carrying.tokens.json');
@@ -574,6 +626,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A recognized $extensions version convention is the second precedence tier.
+	 *
+	 * @return void
 	 */
 	public function testPackageVersionExtractedFromExtensionsConvention(): void {
 		$document = [
@@ -602,6 +656,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A plain top-level `version` string is the third precedence tier.
+	 *
+	 * @return void
 	 */
 	public function testPackageVersionExtractedFromPlainVersionField(): void {
 		$document = [
@@ -616,6 +672,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * $version takes precedence over both $extensions and plain `version`.
+	 *
+	 * @return void
 	 */
 	public function testTopLevelVersionTakesPrecedenceOverOtherConventions(): void {
 		$document = [
@@ -633,6 +691,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A document declaring no version anywhere reports a null packageVersion
 	 * — never fabricated.
+	 *
+	 * @return void
 	 */
 	public function testVersionLessDocumentReturnsNullPackageVersion(): void {
 		$document = $this->loadFixture(name: '01-legacy-scalar-regression.tokens.json');
@@ -646,6 +706,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * A syntactically valid, fully-typed document that maps nothing imports
 	 * zero declarations (the controller layer turns this into a 422).
+	 *
+	 * @return void
 	 */
 	public function testZeroYieldDocumentImportsNothing(): void {
 		$document = $this->loadFixture(name: '12-zero-yield.tokens.json');
@@ -662,6 +724,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * A trimmed real @utrecht/design-tokens excerpt: group-type inheritance,
 	 * a real semantic alias, and mostly-unmapped real paths all account for
 	 * every leaf with zero unexplained drops.
+	 *
+	 * @return void
 	 */
 	public function testRealUtrechtExcerptAccountsForEveryLeaf(): void {
 		$document = $this->loadFixture(name: '14-utrecht-real-excerpt.tokens.json');
@@ -677,6 +741,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * A trimmed real @amsterdam/design-system-tokens excerpt: a real
 	 * array-form fontFamily token imports, real $extensions-typed tokens
 	 * report missing-type, and every leaf is accounted for.
+	 *
+	 * @return void
 	 */
 	public function testRealAmsterdamExcerptAccountsForEveryLeaf(): void {
 		$document = $this->loadFixture(name: '15-amsterdam-real-excerpt.tokens.json');
@@ -707,6 +773,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * @dataProvider corpusFixtureProvider
 	 *
 	 * @param string $fixture The fixture filename.
+	 *
+	 * @return void
 	 */
 	public function testAccountingInvariantHoldsAcrossFullCorpus(string $fixture): void {
 		$document = $this->loadFixture(name: $fixture);
@@ -731,6 +799,8 @@ class DesignTokensMapperTest extends TestCase {
 	/**
 	 * Linear-light components go through the sRGB transfer function before
 	 * scaling: a linear 0.5 grey is about #bcbcbc, not #808080.
+	 *
+	 * @return void
 	 */
 	public function testSrgbLinearAppliesTransferFunction(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5]]);
@@ -741,6 +811,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * The transfer function's linear segment near black is honoured too.
+	 *
+	 * @return void
 	 */
 	public function testSrgbLinearNearBlackUsesTheLinearSegment(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.002, 0, 1]]);
@@ -751,6 +823,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A colour's alpha is kept as the fourth pair of an 8-digit hex.
+	 *
+	 * @return void
 	 */
 	public function testAlphaKeptAsEightDigitHex(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'alpha' => 0.5]);
@@ -760,6 +834,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * Alpha and srgb-linear together, the issue's own example.
+	 *
+	 * @return void
 	 */
 	public function testSrgbLinearWithAlpha(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5], 'alpha' => 0.5]);
@@ -769,6 +845,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * An alpha on the hex fallback is kept too, since the hex member carries no alpha.
+	 *
+	 * @return void
 	 */
 	public function testAlphaIsAddedToTheHexFallback(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'hex' => '#000000', 'alpha' => 0.25]);
@@ -778,6 +856,8 @@ class DesignTokensMapperTest extends TestCase {
 
 	/**
 	 * A fully opaque colour stays a 6-digit hex, so existing sets import unchanged.
+	 *
+	 * @return void
 	 */
 	public function testOpaqueColourStaysSixDigitHex(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0.0823, 0.2588, 0.451], 'alpha' => 1]);
@@ -814,6 +894,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * A reference-only leaf resolves an alias but is never emitted, nor reported as skipped.
 	 *
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
+	 *
+	 * @return void
 	 */
 	public function testReferenceOnlyLeafResolvesAliasButIsNotEmitted(): void {
 		$document = [
@@ -848,6 +930,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * Scenario: an oklch brand colour is converted to sRGB and imported.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testOklchConvertsToSrgb(): void {
 		$result = $this->mapColour(value: ['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]);
@@ -861,6 +945,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * Out of gamut with a hex: the hex, reported adapted.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testOutOfGamutUsesHexFallback(): void {
 		$result = $this->mapColour(value: ['colorSpace' => 'display-p3', 'components' => [1, 0, 0], 'hex' => '#fe0000']);
@@ -873,6 +959,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * Scenario: a display-p3 colour outside sRGB is clipped and reported with the original.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testOutOfGamutWithoutHexIsClipped(): void {
 		$result = $this->mapColour(value: ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]);
@@ -887,6 +975,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * Scenario: the thematiq extension names the target, where the suffix table has none.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testExtensionNamesTheTarget(): void {
 		$document = ['nldesign' => ['color' => ['error' => ['$type' => 'color', '$value' => '#d52b1e', '$extensions' => ['nl.conduction.thematiq' => ['cssVariable' => '--nldesign-color-error']]]]]];
@@ -901,6 +991,8 @@ class DesignTokensMapperTest extends TestCase {
 	 * The root cssOnly map is read as declarations; a token wins over it; a bad name is dropped.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testCssOnlyMapIsImported(): void {
 		$document = [

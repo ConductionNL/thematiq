@@ -80,6 +80,8 @@ class AdminDelegationTest extends TestCase {
 	 * the "grant this section to a group" flow offer it.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThePanelIsADelegatedSetting(): void {
 		$this->assertInstanceOf(expected: IDelegatedSettings::class, actual: $this->admin());
@@ -90,6 +92,8 @@ class AdminDelegationTest extends TestCase {
 	 * claiming one of its own, and sorts after core's entries.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThePanelSitsInTheThemingSection(): void {
 		$admin = $this->admin();
@@ -106,6 +110,8 @@ class AdminDelegationTest extends TestCase {
 	 * here would hand a delegated admin another app's configuration.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheAllowlistCoversThisAppOnly(): void {
 		$authorized = $this->admin()->getAuthorizedAppConfig();
@@ -124,6 +130,8 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider writableKeyProvider
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryKeyThePanelWritesIsAuthorized(string $key): void {
 		$this->assertContains(
@@ -166,6 +174,8 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider jobOwnedKeyProvider
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
+	 *
+	 * @return void
 	 */
 	public function testJobOwnedKeysAreNotDelegable(string $key): void {
 		$this->assertNotContains(

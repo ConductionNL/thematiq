@@ -28,6 +28,8 @@ class ContrastControllerTest extends TestCase {
 	/**
 	 * `evaluate()` MUST carry `#[NoAdminRequired]` — any authenticated user
 	 * may evaluate contrast, not just admins.
+	 *
+	 * @return void
 	 */
 	public function testEvaluateHasNoAdminRequiredAttribute(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
@@ -37,6 +39,8 @@ class ContrastControllerTest extends TestCase {
 
 	/**
 	 * `evaluate()` MUST NOT carry `#[PublicPage]` — authenticated only.
+	 *
+	 * @return void
 	 */
 	public function testEvaluateHasNoPublicPageAttribute(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
@@ -49,6 +53,8 @@ class ContrastControllerTest extends TestCase {
 	 * state-free POST from an authenticated, same-origin browser session
 	 * that carries the Nextcloud request token automatically, so the
 	 * framework's default CSRF requirement applies (design.md task 2.2).
+	 *
+	 * @return void
 	 */
 	public function testEvaluateHasNoCsrfExemption(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
@@ -60,6 +66,8 @@ class ContrastControllerTest extends TestCase {
 	/**
 	 * A well-formed request delegates to `ContrastService::evaluate()` and
 	 * returns its result under a `results` key.
+	 *
+	 * @return void
 	 */
 	public function testEvaluateDelegatesToContrastServiceAndReturnsResults(): void {
 		$expected = [
@@ -92,6 +100,8 @@ class ContrastControllerTest extends TestCase {
 
 	/**
 	 * A missing `background` returns 400, never a silent 200.
+	 *
+	 * @return void
 	 */
 	public function testMissingBackgroundReturns400(): void {
 		$request = $this->createMock(originalClassName: IRequest::class);
@@ -107,6 +117,8 @@ class ContrastControllerTest extends TestCase {
 
 	/**
 	 * A non-array `candidates` returns 400.
+	 *
+	 * @return void
 	 */
 	public function testNonArrayCandidatesReturns400(): void {
 		$request = $this->createMock(originalClassName: IRequest::class);
@@ -123,6 +135,8 @@ class ContrastControllerTest extends TestCase {
 
 	/**
 	 * A candidate with an invalid `role` (not `text`/`ui`) returns 400.
+	 *
+	 * @return void
 	 */
 	public function testCandidateWithInvalidRoleReturns400(): void {
 		$request = $this->createMock(originalClassName: IRequest::class);
@@ -141,6 +155,8 @@ class ContrastControllerTest extends TestCase {
 	 * The response never carries a `blocked`/`allowed`/`verdict` key at the
 	 * envelope level either — only whatever `ContrastService::evaluate()`
 	 * returns under `results`.
+	 *
+	 * @return void
 	 */
 	public function testResponseEnvelopeHasNoVerdictKeys(): void {
 		$request = $this->createMock(originalClassName: IRequest::class);

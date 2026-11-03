@@ -83,6 +83,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config/request before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -162,6 +164,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -225,6 +229,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * A well-formed DTCG upload returns the additive `errors`/`importWarnings`/
 	 * `version` fields alongside the pre-existing `imported`/`skipped`/`warnings`.
+	 *
+	 * @return void
 	 */
 	public function testUploadDtcgReturnsStructuredDiagnosticsAndVersion(): void {
 		$document = [
@@ -264,6 +270,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * A zero-yield DTCG document (well-formed, but nothing maps) is rejected
 	 * with HTTP 422 carrying the full structured diagnostics.
+	 *
+	 * @return void
 	 */
 	public function testUploadZeroYieldDtcgReturns422WithDiagnostics(): void {
 		$document = [
@@ -288,6 +296,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 	/**
 	 * A malformed JSON upload is rejected with HTTP 422 and no file is written.
+	 *
+	 * @return void
 	 */
 	public function testUploadMalformedJsonReturns422(): void {
 		$this->mockUpload(name: 'Broken', filename: 'broken.tokens.json', content: '{ "color": { "primary": {');
@@ -301,6 +311,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * An alias-cycle diagnostic surfaces in the response `errors` with the
 	 * full cycle path, while the valid sibling token still imports.
+	 *
+	 * @return void
 	 */
 	public function testUploadWithAliasCycleStillImportsValidTokenAndReportsError(): void {
 		$document = [
@@ -322,6 +334,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * A CSS upload's response is unaffected by the DTCG additive fields —
 	 * no `errors`/`importWarnings`/`version` keys are present.
+	 *
+	 * @return void
 	 */
 	public function testUploadCssResponseOmitsDtcgFields(): void {
 		$this->mockUpload(
@@ -343,6 +357,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	 * A semicolon-smuggled value mapped from a DTCG JSON token is rejected by
 	 * the same isForbiddenValue() gate the CSS path uses — the injection is
 	 * not limited to the CSS upload format.
+	 *
+	 * @return void
 	 */
 	public function testJsonUploadWithSemicolonSmugglingIsRejected(): void {
 		$document = [
@@ -365,6 +381,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * A comment-marker-smuggled value mapped from a DTCG JSON token is
 	 * rejected the same way.
+	 *
+	 * @return void
 	 */
 	public function testJsonUploadWithCommentMarkerSmugglingIsRejected(): void {
 		$document = [
@@ -387,6 +405,8 @@ class CustomTokenSetControllerTest extends TestCase {
 	/**
 	 * A legitimate mapped value (no injection characters) is accepted and
 	 * stored — no regression for benign W3C Design Tokens uploads.
+	 *
+	 * @return void
 	 */
 	public function testJsonUploadWithCleanValueIsAccepted(): void {
 		$document = [

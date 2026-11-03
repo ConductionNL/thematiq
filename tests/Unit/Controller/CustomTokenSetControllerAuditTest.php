@@ -130,6 +130,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	/**
 	 * A successful CSS upload logs one custom_set_uploaded entry with the
 	 * id, name, declaration count, and a hashed content identifier.
+	 *
+	 * @return void
 	 */
 	public function testUploadLogsOneEntry(): void {
 		$css = ':root { --nldesign-color-primary: #007bc7; }';
@@ -175,6 +177,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	/**
 	 * Deleting the currently active custom set logs custom_set_deleted with
 	 * activeReset === true.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetLogsActiveReset(): void {
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
@@ -206,6 +210,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	 * Resetting `token_set` alone left the deleted set's primary colour and
 	 * logo on the login page, in e-mails and in the mobile apps, with no set
 	 * left in the dropdown to explain where they came from.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetResetsCoreTheming(): void {
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
@@ -222,6 +228,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	/**
 	 * Deleting a set that is NOT active leaves core theming alone — it belongs
 	 * to whichever set is still applied.
+	 *
+	 * @return void
 	 */
 	public function testDeleteInactiveSetLeavesCoreThemingAlone(): void {
 		$this->appConfig['token_set'] = 'nextcloud';
@@ -237,6 +245,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 	/**
 	 * Deleting a non-active custom set logs activeReset === false.
+	 *
+	 * @return void
 	 */
 	public function testDeleteInactiveSetLogsNoActiveReset(): void {
 		$this->appConfig['token_set'] = 'nextcloud';
@@ -257,6 +267,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 	/**
 	 * A 404 (nothing to delete) logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testDeleteNotFoundLogsNothing(): void {
 		$this->service->method('isCustomId')->willReturn(true);

@@ -44,6 +44,8 @@ class TokenSetVocabularyTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -51,6 +53,8 @@ class TokenSetVocabularyTest extends TestCase {
 
 	/**
 	 * Build the audit service from its real (pure) collaborator.
+	 *
+	 * @return TokenSetVocabularyAuditService
 	 */
 	private function service(): TokenSetVocabularyAuditService {
 		return new TokenSetVocabularyAuditService(parser: new CssParserService());
@@ -78,6 +82,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * allow-listed as known-incomplete.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedSetIsCompleteOrAllowListed(): void {
 		$allowlist = $this->allowlist();
@@ -129,6 +135,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * new incomplete set to the list cannot silence the gate.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-the-known-incomplete-allow-list-is-empty
+	 *
+	 * @return void
 	 */
 	public function testAllowlistIsEmpty(): void {
 		$this->assertSame(
@@ -143,6 +151,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * deleted from it, so progress is recorded rather than hidden.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testAllowlistHasNoStaleEntries(): void {
 		$results = $this->service()->auditAll($this->repoRoot());
@@ -170,6 +180,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * passes) everything would otherwise look green forever.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testAuditDistinguishesCompleteFromIncompleteSets(): void {
 		$results = $this->service()->auditAll($this->repoRoot());
@@ -237,6 +249,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * failing: `none` (stock Nextcloud).
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testSetsOfNonConsumingDesignSystemsAreNotAudited(): void {
 		$service = $this->service();
@@ -265,6 +279,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * with `token-sets.json`.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testSummerBreezeIsCompleteForItsOwnVocabulary(): void {
 		$service = $this->service();
@@ -298,6 +314,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * prefix and primary token.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testNodeMirrorKnowsTheSameOwnVocabularies(): void {
 		$script = (string)file_get_contents($this->repoRoot() . '/scripts/audit-token-sets.mjs');
@@ -324,6 +342,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * than trusted.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testNodeMirrorRequiresTheSameTokens(): void {
 		$script = (string)file_get_contents($this->repoRoot() . '/scripts/audit-token-sets.mjs');
@@ -351,6 +371,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * the audit can never demand a token nothing reads.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testRequiredTokensAreThemselvesInTheVocabulary(): void {
 		$vocabulary = $this->service()->declaredVocabulary($this->repoRoot());

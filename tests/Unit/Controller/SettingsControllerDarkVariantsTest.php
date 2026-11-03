@@ -84,6 +84,8 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 	/**
 	 * Both dark-variants routes carry #[AuthorizedAdminSetting] — non-admin
 	 * requests are rejected by that posture before the method body runs.
+	 *
+	 * @return void
 	 */
 	public function testBothEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getDarkVariants', 'setDarkVariants'] as $method) {
@@ -95,6 +97,8 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 
 	/**
 	 * A fresh install (no `dark_variants` config value) defaults to enabled.
+	 *
+	 * @return void
 	 */
 	public function testDefaultIsEnabled(): void {
 		$controller = $this->makeController();
@@ -106,6 +110,8 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 
 	/**
 	 * A POST persists the disabled state, reflected by the subsequent GET.
+	 *
+	 * @return void
 	 */
 	public function testTogglePersists(): void {
 		$controller = $this->makeController();
@@ -121,6 +127,8 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 
 	/**
 	 * Re-enabling after a disable persists '1'.
+	 *
+	 * @return void
 	 */
 	public function testReEnablePersists(): void {
 		$controller = $this->makeController();

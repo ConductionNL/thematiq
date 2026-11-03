@@ -92,6 +92,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	/**
 	 * A colour override gets the same derived dark value in both dark scopes,
 	 * so both kinds of dark user see one colour.
+	 *
+	 * @return void
 	 */
 	public function testDarkScopesWritten(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
@@ -117,6 +119,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	 * #154273 turns light blue, and white text takes the text clamp to mid-grey
 	 * #9e9e9e, about 1.2:1 on it. The generated dark stylesheets repair such
 	 * pairs; the editor's dark scopes now run the same repair.
+	 *
+	 * @return void
 	 */
 	public function testAWhiteLabelOverrideStaysReadableInDark(): void {
 		$this->service->write(tokens: [
@@ -143,6 +147,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 
 	/**
 	 * An administrator's own dark label is never rewritten, even when it fails.
+	 *
+	 * @return void
 	 */
 	public function testAnOwnDarkLabelIsNotRepaired(): void {
 		$this->service->write(
@@ -157,6 +163,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	 * A component token gets no dark copy: the generated dark stylesheet already
 	 * gives both kinds of dark user the same body value, and a body-level copy
 	 * here would outrank the primary-lock layer.
+	 *
+	 * @return void
 	 */
 	public function testComponentTokensGetNoDarkCopy(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--nldesign-component-header-background-color' => '#112233']);
@@ -168,6 +176,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	/**
 	 * An exported file imports back to its light values, not the dark copies
 	 * that follow them in the file.
+	 *
+	 * @return void
 	 */
 	public function testAnExportedFileReadsBackItsLightValues(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273']);
@@ -181,6 +191,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 
 	/**
 	 * The light values still read back from the :root block alone.
+	 *
+	 * @return void
 	 */
 	public function testLightValuesReadBack(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
@@ -191,6 +203,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	/**
 	 * A colour the palette cannot parse keeps its light value in the dark
 	 * scopes, so the two kinds of dark user still agree.
+	 *
+	 * @return void
 	 */
 	public function testAnUnparseableColourKeepsItsValueInBothDarkScopes(): void {
 		$this->service->write(tokens: ['--color-primary' => 'var(--brand-blue)']);

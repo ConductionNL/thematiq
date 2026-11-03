@@ -57,6 +57,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -93,6 +95,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -129,6 +133,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Slug derivation lowercases, hyphenates and caps at 64 chars.
+	 *
+	 * @return void
 	 */
 	public function testSlugify(): void {
 		$this->assertSame(expected: 'gemeente-voorbeeld', actual: $this->service->slugify(name: 'Gemeente Voorbeeld'));
@@ -139,6 +145,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Storing writes the canonical CSS file and persists a manifest entry.
+	 *
+	 * @return void
 	 */
 	public function testStoreWritesFileAndManifest(): void {
 		$result = $this->service->store(
@@ -166,6 +174,8 @@ class CustomTokenSetServiceTest extends TestCase {
 	/**
 	 * A DTCG import's declared package version is persisted verbatim in the
 	 * manifest and returned by list().
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsDeclaredVersion(): void {
 		$this->service->store(
@@ -184,6 +194,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Absent a declared version, the manifest entry never fabricates one.
+	 *
+	 * @return void
 	 */
 	public function testStoreWithoutVersionOmitsVersionKey(): void {
 		$this->service->store(
@@ -199,6 +211,8 @@ class CustomTokenSetServiceTest extends TestCase {
 	/**
 	 * DTCG `$deprecated` import warnings are persisted apart from the
 	 * pre-existing WCAG contrast `warnings` key and exposed via list().
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsImportWarningsSeparatelyFromContrastWarnings(): void {
 		$result = $this->service->store(
@@ -227,6 +241,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Storing the same display name twice is a 409 collision.
+	 *
+	 * @return void
 	 */
 	public function testStoreCollisionThrows409(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
@@ -238,6 +254,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * An all-symbol name (empty slug) is a 422.
+	 *
+	 * @return void
 	 */
 	public function testStoreEmptySlugThrows422(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -247,6 +265,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * A low-contrast upload persists a contrast warning in the manifest.
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsContrastWarning(): void {
 		$result = $this->service->store(
@@ -265,6 +285,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Deleting a set removes the file and the manifest entry.
+	 *
+	 * @return void
 	 */
 	public function testDeleteRemovesFileAndManifest(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
@@ -278,6 +300,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Deleting the active set resets the active token_set to nextcloud.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetFallsBackToNextcloud(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
@@ -290,6 +314,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * A non-custom id is never deletable (path-traversal guard).
+	 *
+	 * @return void
 	 */
 	public function testDeleteRejectsNonCustomId(): void {
 		$this->assertFalse(condition: $this->service->delete(id: 'utrecht'));
@@ -298,6 +324,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * list() drops manifest entries whose CSS file no longer exists.
+	 *
+	 * @return void
 	 */
 	public function testListDropsManifestEntryWithoutFile(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
@@ -309,6 +337,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * isCustomId only accepts the prefixed slug charset.
+	 *
+	 * @return void
 	 */
 	public function testIsCustomId(): void {
 		$this->assertTrue(condition: $this->service->isCustomId(id: 'custom-gemeente-voorbeeld'));

@@ -40,6 +40,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -47,6 +49,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Absolute path to the icons directory.
+	 *
+	 * @return string
 	 */
 	private function iconsDir(): string {
 		return $this->repoRoot() . '/img/icons';
@@ -54,6 +58,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Absolute path to the logos directory.
+	 *
+	 * @return string
 	 */
 	private function logosDir(): string {
 		return $this->repoRoot() . '/img/logos';
@@ -61,6 +67,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Absolute path to the curated legacy-name alias map.
+	 *
+	 * @return string
 	 */
 	private function aliasesPath(): string {
 		return $this->repoRoot() . '/scripts/icon-aliases.json';
@@ -137,6 +145,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Read a documentation file from the repository root.
+	 *
+	 * @return string
 	 */
 	private function readDoc(string $relativePath): string {
 		$path = $this->repoRoot() . '/' . $relativePath;
@@ -149,6 +159,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Each icon-set directory holds the count documented in img/ICONS.md's
 	 * "### {set} (N icons)" heading, and that heading exists for every set.
+	 *
+	 * @return void
 	 */
 	public function testIconSetCountsMatchDocumentedTotals(): void {
 		$icons = $this->readDoc(relativePath: 'img/ICONS.md');
@@ -176,6 +188,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Every "- {set}/{key}" bullet enumerated in img/ICONS.md's Icons section
 	 * resolves to a real file on disk.
+	 *
+	 * @return void
 	 */
 	public function testDocumentedIconSampleResolvesOnDisk(): void {
 		$icons = $this->readDoc(relativePath: 'img/ICONS.md');
@@ -196,6 +210,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * The logo directory count matches the count stated in img/ICONS.md.
+	 *
+	 * @return void
 	 */
 	public function testLogoCountMatchesDocumentedTotal(): void {
 		$this->assertDirectoryExists(directory: $this->logosDir());
@@ -218,6 +234,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Every logo name enumerated in img/ICONS.md resolves to a real file on disk.
+	 *
+	 * @return void
 	 */
 	public function testDocumentedLogoSampleResolvesOnDisk(): void {
 		$icons = $this->readDoc(relativePath: 'img/ICONS.md');
@@ -239,6 +257,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * img/logos/ is untouched by the icon build: exactly the 23 checked-in files,
 	 * no set-prefixed subdirectories, no stray output.
+	 *
+	 * @return void
 	 */
 	public function testLogosDirectoryHasNoBuildArtifacts(): void {
 		$entries = scandir($this->logosDir()) ?: [];
@@ -252,6 +272,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Every entry in scripts/icon-aliases.json resolves to a top-level legacy file
 	 * that is byte-identical to its mapped {set}/{key} replacement.
+	 *
+	 * @return void
 	 */
 	public function testAllAliasesResolveAndAreByteIdenticalToReplacement(): void {
 		$aliases = $this->loadAliases();
@@ -275,6 +297,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Every top-level img/icons/*.svg file corresponds to an entry in
 	 * scripts/icon-aliases.json — no orphaned Amsterdam-era file survives.
+	 *
+	 * @return void
 	 */
 	public function testNoOrphanedTopLevelIconFiles(): void {
 		$aliases = $this->loadAliases();
@@ -291,6 +315,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * package.json must not declare the proprietary Amsterdam packages as dependencies.
+	 *
+	 * @return void
 	 */
 	public function testNoAmsterdamDependency(): void {
 		$packageJson = $this->readDoc(relativePath: 'package.json');
@@ -327,6 +353,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * A sample of assets are well-formed standalone SVG with no scriptable content.
+	 *
+	 * @return void
 	 */
 	public function testSampledAssetsAreSafeStandaloneSvg(): void {
 		$icons = [];
@@ -379,6 +407,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * The dsfr pack directory holds the count documented in img/ICONS.md's
 	 * "### dsfr (N icons)" heading, and the pack is non-empty.
+	 *
+	 * @return void
 	 */
 	public function testDsfrCountMatchesDocumentedTotal(): void {
 		$icons = $this->readDoc(relativePath: 'img/ICONS.md');
@@ -404,6 +434,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * A sample of dsfr assets are well-formed standalone SVG with no scriptable content.
+	 *
+	 * @return void
 	 */
 	public function testDsfrSampledAssetsAreSafeStandaloneSvg(): void {
 		$icons = glob($this->iconsDir() . '/dsfr/*.svg') ?: [];
@@ -450,6 +482,8 @@ class IconAssetsTest extends TestCase {
 	 * `img/icons/dsfr/{basename}.svg` layout the build script relies on is
 	 * only collision-free because DSFR names are unique across the whole
 	 * source set (guards the invariant documented in icon-packs/spec.md).
+	 *
+	 * @return void
 	 */
 	public function testDsfrBasenamesAreUnique(): void {
 		$names = $this->diskSetIconNames(set: 'dsfr');
@@ -464,6 +498,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * The dsfr icon and its Etalab-2.0 attribution are documented in
 	 * README.md and docs/reference/icons.md, not just img/ICONS.md.
+	 *
+	 * @return void
 	 */
 	public function testDsfrCountAndLicenceDocumentedInReadmeAndDocs(): void {
 		$dsfrCount = \count($this->diskSetIconNames(set: 'dsfr'));
@@ -480,6 +516,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * img/ICONS.md attributes each set with its correct upstream licence, references
 	 * nc-vue's ATTRIBUTION.md as the canonical record, and never claims MPL-2.0.
+	 *
+	 * @return void
 	 */
 	public function testLicenceAttributionPresentAndCorrect(): void {
 		$icons = $this->readDoc(relativePath: 'img/ICONS.md');
@@ -511,6 +549,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * The icon and logo counts agree across README.md, docs/reference/icons.md and img/ICONS.md.
+	 *
+	 * @return void
 	 */
 	public function testCountsAgreeAcrossDocuments(): void {
 		$iconCount = 0;
@@ -570,6 +610,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Every icon/logo filename used in a consumption example across the docs
 	 * resolves to a real asset on disk (nested "{set}/{key}" or legacy top-level alias).
+	 *
+	 * @return void
 	 */
 	public function testDocumentedConsumptionExamplesResolveOnDisk(): void {
 		$docs = [
@@ -612,6 +654,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * The README "View Icon Documentation" link resolves to an existing file.
+	 *
+	 * @return void
 	 */
 	public function testReadmeIconDocumentationLinkResolves(): void {
 		$readme = $this->readDoc(relativePath: 'README.md');
@@ -638,6 +682,8 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * Extract the section of a markdown document starting at a heading and ending
 	 * before the next occurrence of $stopMarker (or end of document if absent).
+	 *
+	 * @return string
 	 */
 	private function sectionBetween(string $doc, string $startHeading, string $stopMarker): string {
 		$start = strpos($doc, $startHeading);

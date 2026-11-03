@@ -42,6 +42,8 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with a `css/tokens/dark/` directory.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -60,6 +62,8 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -96,6 +100,8 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * True when the generated file exists.
+	 *
+	 * @return void
 	 */
 	public function testTrueWhenFileExists(): void {
 		file_put_contents($this->appDir . '/css/tokens/dark/amsterdam.css', '/* generated */');
@@ -105,6 +111,8 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * False when the file is absent — no error.
+	 *
+	 * @return void
 	 */
 	public function testFalseWhenFileAbsent(): void {
 		$this->assertFalse(condition: $this->service->hasGeneratedDarkVariant(tokenSetId: 'nonexistent'));

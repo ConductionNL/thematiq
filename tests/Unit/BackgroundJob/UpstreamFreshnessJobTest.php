@@ -49,6 +49,8 @@ class UpstreamFreshnessJobTest extends TestCase {
 	 * which collapses TIME_INSENSITIVE and TIME_INSENSITIVE_ONLY to the
 	 * same `false`), so the protected `timeSensitivity` property is read via
 	 * reflection to assert the exact declared level.
+	 *
+	 * @return void
 	 */
 	public function testDeclaresDailyIntervalAndTimeInsensitive(): void {
 		$time = $this->createMock(originalClassName: ITimeFactory::class);
@@ -67,6 +69,8 @@ class UpstreamFreshnessJobTest extends TestCase {
 
 	/**
 	 * run() delegates to UpstreamFreshnessService::runCheck().
+	 *
+	 * @return void
 	 */
 	public function testRunDelegatesToService(): void {
 		$time = $this->createMock(originalClassName: ITimeFactory::class);
@@ -83,6 +87,8 @@ class UpstreamFreshnessJobTest extends TestCase {
 	 * A service-level throw does not escape run() — belt and braces on top
 	 * of the service's own catch-all (defence in depth, never relied upon
 	 * alone: UpstreamFreshnessService::runCheck() already never throws).
+	 *
+	 * @return void
 	 */
 	public function testServiceThrowDoesNotEscapeRun(): void {
 		$time = $this->createMock(originalClassName: ITimeFactory::class);

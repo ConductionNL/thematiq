@@ -116,6 +116,8 @@ class LayoutControllerTest extends TestCase {
 	 * A choice is stored, audited, and answered with what the page resolves to.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAChoiceIsStoredAndAudited(): void {
 		$response = $this->controller->save(workplaceLayout: 'default', brandStripe: '0');
@@ -158,6 +160,8 @@ class LayoutControllerTest extends TestCase {
 	 * The empty choice follows the theme, and the answer says what that is.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testTheEmptyChoiceAnswersWithTheSetsDefaults(): void {
 		$response = $this->controller->save(workplaceLayout: '', brandStripe: '');
@@ -182,6 +186,8 @@ class LayoutControllerTest extends TestCase {
 	 * and the answer resolves them for the active set.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheNewerChoicesAreStoredAndAudited(): void {
 		$response = $this->controller->save(
@@ -266,6 +272,8 @@ class LayoutControllerTest extends TestCase {
 	 * The endpoint is delegated-admin only, like every other settings write.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheEndpointIsAdminOnly(): void {
 		$attributes = (new ReflectionMethod(LayoutController::class, 'save'))->getAttributes(AuthorizedAdminSetting::class);

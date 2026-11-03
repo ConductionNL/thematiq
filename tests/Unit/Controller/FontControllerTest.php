@@ -67,6 +67,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * Set up mocked collaborators before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -86,6 +88,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * Remove the temp upload file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (file_exists($this->tmpUploadPath) === true) {
@@ -137,6 +141,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * A successful upload returns the stored id.
+	 *
+	 * @return void
 	 */
 	public function testUploadSuccessReturnsId(): void {
 		$this->stubUpload(size: 20);
@@ -150,6 +156,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * Missing uploaded file returns 400.
+	 *
+	 * @return void
 	 */
 	public function testUploadNoFileReturns400(): void {
 		$this->request->method('getParam')->willReturnMap([
@@ -166,6 +174,8 @@ class FontControllerTest extends TestCase {
 	/**
 	 * A reported size over the 2 MB cap is rejected with 413 before the
 	 * service is even invoked.
+	 *
+	 * @return void
 	 */
 	public function testUploadOversizeReturns413(): void {
 		$this->stubUpload(size: ((2 * 1024 * 1024) + 1));
@@ -178,6 +188,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * A validator/service RuntimeException(422) surfaces as a 422 response.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceRejectsBadNameAs422(): void {
 		$this->stubUpload(size: 20);
@@ -192,6 +204,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * A collision (RuntimeException 409) surfaces as a 409 response.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceRejectsCollisionAs409(): void {
 		$this->stubUpload(size: 20);
@@ -206,6 +220,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * A non-HTTP exception code is clamped to 500.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceUnexpectedCodeClampsTo500(): void {
 		$this->stubUpload(size: 20);
@@ -218,6 +234,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * list() returns the service's font list.
+	 *
+	 * @return void
 	 */
 	public function testListReturnsFonts(): void {
 		$this->service->method('list')->willReturn([['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans']]);
@@ -229,6 +247,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * delete() returns ok on success.
+	 *
+	 * @return void
 	 */
 	public function testDeleteSuccess(): void {
 		$this->service->method('delete')->with('custom-rijks-sans')->willReturn(true);
@@ -240,6 +260,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * delete() returns 404 for an unknown id.
+	 *
+	 * @return void
 	 */
 	public function testDeleteNotFoundReturns404(): void {
 		$this->service->method('delete')->willReturn(false);
@@ -252,6 +274,8 @@ class FontControllerTest extends TestCase {
 	/**
 	 * serve() returns the font bytes with immutable cache headers and an
 	 * ETag derived from the manifest revision.
+	 *
+	 * @return void
 	 */
 	public function testServeReturnsImmutableCacheHeadersAndETag(): void {
 		$this->service->method('readFontBytes')->with('custom-rijks-sans')->willReturn('wOF2payload');
@@ -270,6 +294,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * serve() returns a bare 404 for an unknown id.
+	 *
+	 * @return void
 	 */
 	public function testServeReturns404ForUnknownId(): void {
 		$this->service->method('readFontBytes')->willReturn(null);
@@ -281,6 +307,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * css() returns text/css with an empty body when no fonts exist.
+	 *
+	 * @return void
 	 */
 	public function testCssEmptyStylesheetWhenNoFonts(): void {
 		$this->service->method('buildCss')->willReturn('');
@@ -295,6 +323,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * css() returns the generated stylesheet with the revision as ETag.
+	 *
+	 * @return void
 	 */
 	public function testCssReturnsGeneratedStylesheet(): void {
 		$this->service->method('buildCss')->willReturn('@font-face { font-family: "Rijks Sans"; }');
@@ -308,6 +338,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * upload/list/delete are admin-only (AuthorizedAdminSetting).
+	 *
+	 * @return void
 	 */
 	public function testUploadListDeleteCarryAuthorizedAdminSetting(): void {
 		foreach (['upload', 'list', 'delete'] as $method) {
@@ -321,6 +353,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * serve/css are deliberately public (PublicPage + NoCSRFRequired).
+	 *
+	 * @return void
 	 */
 	public function testServeAndCssCarryPublicPage(): void {
 		foreach (['serve', 'css'] as $method) {

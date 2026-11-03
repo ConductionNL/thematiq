@@ -51,6 +51,8 @@ class MotionTokensReachTransitionsTest extends TestCase {
 
 	/**
 	 * Every duration theme.css reads is one the token editor can set.
+	 *
+	 * @return void
 	 */
 	public function testEveryThemeTransitionReadsAnEditableMotionToken(): void {
 		$names = $this->motionVarsInTheme();
@@ -66,6 +68,8 @@ class MotionTokensReachTransitionsTest extends TestCase {
 
 	/**
 	 * The set's own speed still reaches the Nextcloud names the theme now reads.
+	 *
+	 * @return void
 	 */
 	public function testTheSetSpeedStillFeedsTheNextcloudNames(): void {
 		$overrides = (string)file_get_contents(\dirname(__DIR__, 2) . '/css/systems/nldesign/overrides.css');

@@ -178,6 +178,8 @@ class AdminInitialStateTest extends TestCase {
 	/**
 	 * Every key the panel's scripts read MUST be published, with the values they
 	 * expect. A missing key is not a crash — it is a silent fallback.
+	 *
+	 * @return void
 	 */
 	public function testEveryKeyTheScriptReadsIsProvided(): void {
 		$captured = [];
@@ -225,6 +227,8 @@ class AdminInitialStateTest extends TestCase {
 	 * the script gets every design system's link to follow the dropdown (#662).
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 *
+	 * @return void
 	 */
 	public function testTheDocumentationLinkFollowsTheDesignSystem(): void {
 		$captured = [];
@@ -251,6 +255,8 @@ class AdminInitialStateTest extends TestCase {
 	/**
 	 * An active preview is published with the token set's DISPLAY NAME
 	 * resolved from the inventory, which is what the banner renders.
+	 *
+	 * @return void
 	 */
 	public function testActivePreviewIsPublishedWithResolvedName(): void {
 		$captured = [];
@@ -272,6 +278,8 @@ class AdminInitialStateTest extends TestCase {
 	 * wins over the instance-wide set, exactly as the render does — otherwise
 	 * the instrument would name the tokens of a theme the admin is not looking
 	 * at, which is worse than naming none.
+	 *
+	 * @return void
 	 */
 	public function testThePlaygroundDescribesThePreviewedSet(): void {
 		$captured = [];
@@ -290,6 +298,8 @@ class AdminInitialStateTest extends TestCase {
 	 * When the appconfig override alone decides the icon pack, the published
 	 * source is `override` — the value js/admin.js uses to STOP re-deriving
 	 * the indicator from the dropdown.
+	 *
+	 * @return void
 	 */
 	public function testIconPackSourceReportsAnOverride(): void {
 		$captured = [];
@@ -305,6 +315,8 @@ class AdminInitialStateTest extends TestCase {
 	 * on the item rather than on the panel rendering is deliberate: the panel
 	 * renders correctly with BOTH mechanisms present, which is exactly the
 	 * state this change exists to leave behind.
+	 *
+	 * @return void
 	 */
 	public function testTemplateShipsNoServerDataAttributes(): void {
 		$path = __DIR__ . '/../../../templates/settings/admin.php';
@@ -326,6 +338,8 @@ class AdminInitialStateTest extends TestCase {
 	 * occ command that sets it.
 	 *
 	 * @spec openspec/specs/environment-marker/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheFormCarriesTheDeclaredEnvironment(): void {
 		$captured = [];

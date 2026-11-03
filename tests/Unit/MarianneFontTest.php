@@ -56,6 +56,8 @@ class MarianneFontTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -63,6 +65,8 @@ class MarianneFontTest extends TestCase {
 
 	/**
 	 * Read a file from the repository root, asserting it exists.
+	 *
+	 * @return string
 	 */
 	private function readFile(string $relativePath): string {
 		$path = $this->repoRoot() . '/' . $relativePath;
@@ -77,6 +81,8 @@ class MarianneFontTest extends TestCase {
 	 * directory.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAllEightMarianneWoff2FilesAreBundled(): void {
 		$dir = $this->repoRoot() . '/css/systems/lasuite/fonts/marianne';
@@ -103,6 +109,8 @@ class MarianneFontTest extends TestCase {
 	 * bundled file, no @font-face without a backing file).
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGatedStylesheetUsesOnlyAppRelativeUrlsToBundledFiles(): void {
 		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
@@ -146,6 +154,8 @@ class MarianneFontTest extends TestCase {
 	 * Medium 500, Bold 700).
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGatedStylesheetDeclaresCorrectFontWeights(): void {
 		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
@@ -199,6 +209,8 @@ class MarianneFontTest extends TestCase {
 	 * .dsfr-src/ scratch source and the Marianne files are bundled separately.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDsfrIsNotADependency(): void {
 		$packageJson = json_decode($this->readFile(relativePath: 'package.json'), true);
@@ -252,6 +264,8 @@ class MarianneFontTest extends TestCase {
 	 * condition, and the full Etalab-2.0 licence text.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testLegalArtifactsExistAndCiteTheSource(): void {
 		$licence = $this->readFile(relativePath: 'MARIANNE-LICENCE.md');
@@ -297,6 +311,8 @@ class MarianneFontTest extends TestCase {
 	 * accepts under `LICENSES/`.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testLicenseOverridesMapsMarianneFilesToEtalab(): void {
 		$overrides = json_decode($this->readFile(relativePath: '.license-overrides.json'), true);
@@ -319,6 +335,8 @@ class MarianneFontTest extends TestCase {
 	 * genuine (non-English) translations in l10n/nl.json and l10n/fr.json.
 	 *
 	 * @spec openspec/specs/marianne-font/spec.md
+	 *
+	 * @return void
 	 */
 	public function testRestrictionNoticeIsTranslatedInNlAndFr(): void {
 		$keys = [
@@ -354,6 +372,8 @@ class MarianneFontTest extends TestCase {
 	 * logo (lasuite-stack's own asset-license-compliance requirement).
 	 *
 	 * @spec openspec/specs/lasuite-stack/spec.md
+	 *
+	 * @return void
 	 */
 	public function testLasuiteTokenSetStillHasNoLogoKey(): void {
 		$json = json_decode($this->readFile(relativePath: 'token-sets.json'), true);

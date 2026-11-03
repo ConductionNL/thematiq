@@ -97,6 +97,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 	/**
 	 * Wire the controller over a temp app dir and a real converter.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -163,6 +165,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -261,6 +265,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider smuggledValueProvider
 	 *
 	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 *
+	 * @return void
 	 */
 	public function testAForbiddenValueUnderANameTheValidatorSkipsIsRefused(string $name, string $value): void {
 		$css = ":root {\n  --nldesign-color-primary: #154273;\n  " . $name . ': ' . $value . ";\n}\n";
@@ -299,6 +305,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * would claim the value gate catches something it never sees.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnImportInsideAValueIsDroppedBeforeItIsEverStored(): void {
 		$response = $this->upload(
@@ -318,6 +326,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * did not move from one set to the other, it widened to cover both.
 	 *
 	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 *
+	 * @return void
 	 */
 	public function testAForbiddenValueUnderAnAcceptedNameIsStillRefused(): void {
 		$response = $this->upload(css: ":root {\n  --nldesign-color-primary: expression(alert(1));\n}\n");
@@ -332,6 +342,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * component layer is the reason those prefixes are accepted at all.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAWellFormedComponentTokenStillStores(): void {
 		$response = $this->upload(
@@ -360,6 +372,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider provenancePayloadProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAFilenameCannotCloseTheProvenanceComment(string $payload): void {
 		$response = $this->upload(
@@ -388,6 +402,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider provenancePayloadProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADocumentVersionCannotCloseTheProvenanceComment(string $payload): void {
 		$document = json_encode(
@@ -480,6 +496,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * strips comment terminators, it does not blank the field.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnOrdinaryFilenameIsStillRecorded(): void {
 		$this->upload(
@@ -504,6 +522,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * overwrote a declared value would silently re-theme their brand.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAHandAuthoredUploadIsStoredBackfilledButNeverOverwritten(): void {
 		$response = $this->upload(

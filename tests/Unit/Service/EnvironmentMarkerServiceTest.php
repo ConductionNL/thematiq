@@ -59,6 +59,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -116,6 +118,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 	 * @param string $label The expected label.
 	 * @param string $short The expected title prefix.
 	 * @param string $style The expected style key.
+	 *
+	 * @return void
 	 */
 	public function testNonProductionValuesResolveToALabel(string $value, string $label, string $short, string $style): void {
 		$marker = $this->service(value: $value)->resolve();
@@ -128,6 +132,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * Production and an unset value render nothing.
+	 *
+	 * @return void
 	 */
 	public function testProductionAndUnsetResolveToNothing(): void {
 		$this->assertNull(actual: $this->service(value: 'production')->resolve());
@@ -137,6 +143,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * A typo is labelled unknown, styled as non-production, and logged.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownValueIsShownAndLogged(): void {
 		$this->logger->expects($this->once())
@@ -152,6 +160,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * A typo is logged once, not on every render, and a different typo is logged again.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownValueIsLoggedOnce(): void {
 		$this->logger->expects($this->once())->method('warning');
@@ -171,6 +181,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * inject() emits the assets and the initial state for a test server.
+	 *
+	 * @return void
 	 */
 	public function testInjectEmitsAssetsAndStateOffProduction(): void {
 		$service = $this->service(value: 'test');
@@ -184,6 +196,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * inject() does nothing on production.
+	 *
+	 * @return void
 	 */
 	public function testInjectDoesNothingOnProduction(): void {
 		$service = $this->service(value: 'production');
@@ -195,6 +209,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 
 	/**
 	 * A failure renders no marker, logs a warning and never escapes.
+	 *
+	 * @return void
 	 */
 	public function testInjectFailsOpen(): void {
 		$this->config->method('getSystemValueString')->willThrowException(new RuntimeException('boom'));
@@ -210,6 +226,8 @@ class EnvironmentMarkerServiceTest extends TestCase {
 	 * Each fixed stripe colour and its label reach 4.5:1, and the stylesheet
 	 * carries exactly the colours the service declares. The stripe does not
 	 * change with the colour scheme, so one pair covers light and dark mode.
+	 *
+	 * @return void
 	 */
 	public function testStripeColoursReachAaAndMatchTheStylesheet(): void {
 		$contrast = new ContrastService();

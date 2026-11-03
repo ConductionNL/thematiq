@@ -100,6 +100,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 	/**
 	 * Wire the controller over mocked services and an in-memory appconfig.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -188,6 +190,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * "this set has a logo".
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThemingValuesCarryCurrentDefaultAndSyncedState(): void {
 		$this->appConfig['theming|primary_color'] = '#154273';
@@ -209,6 +213,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * nothing is written — not the colours, not the images, not the counter.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnInvalidColourIsRefusedBeforeAnythingIsApplied(): void {
 		$this->withParams(params: ['primary_color' => 'not-a-colour']);
@@ -230,6 +236,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * half-applied theme would be easiest to ship by accident.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnInvalidImagePathIsRefusedBeforeAnythingIsApplied(): void {
 		$this->withParams(params: ['logo' => '../../etc/passwd']);
@@ -251,6 +259,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * replaced.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testASuccessfulApplyRecordsTheSyncedImageAndCountsIt(): void {
 		$this->withParams(params: ['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg']);
@@ -284,6 +294,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * carries before and after.
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
+	 *
+	 * @return void
 	 */
 	public function testTheSyncAuditEntryComparesTwoSnapshots(): void {
 		$this->withParams(params: ['primary_color' => '#154273']);
@@ -315,6 +327,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * value `MetricsController` exposes as `nldesign_theming_syncs_total`.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheSyncCounterAccumulates(): void {
 		$this->appConfig['thematiq|theming_syncs_total'] = '7';
@@ -335,6 +349,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * set of values to write.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testResetUndoesTheSyncAndForgetsTheSyncedImages(): void {
 		$this->appConfig['thematiq|synced_logo'] = 'img/logos/rijkshuisstijl.svg';
@@ -363,6 +379,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * into core, and a reset pushes none.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testResetDoesNotCountAsASync(): void {
 		$this->withParams(params: ['reset' => '1']);
@@ -383,6 +401,8 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @dataProvider notAResetProvider
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOnlyATruthyResetParameterResets(array $params): void {
 		$this->withParams(params: $params);

@@ -113,6 +113,8 @@ class CapabilitiesTest extends TestCase {
 
 	/**
 	 * Full payload shape + key allowlist for an active shipped set.
+	 *
+	 * @return void
 	 */
 	public function testFullPayloadShapeForShippedSet(): void {
 		$config = $this->configWith(
@@ -170,6 +172,8 @@ class CapabilitiesTest extends TestCase {
 	 * the default logo stays. The Zuiddrecht set in this repository is the fixture.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEmblemIsExposedWhenShipped(): void {
 		$config = $this->configWith(values: ['token_set' => 'zuiddrecht']);
@@ -206,6 +210,8 @@ class CapabilitiesTest extends TestCase {
 
 	/**
 	 * No `token_set` appconfig value → stock Nextcloud defaults, no audit call.
+	 *
+	 * @return void
 	 */
 	public function testDefaultConfigNoTokenSet(): void {
 		$config = $this->configWith(values: []);
@@ -245,6 +251,8 @@ class CapabilitiesTest extends TestCase {
 	/**
 	 * A `lasuite`-active instance advertises the resolved `["dsfr"]` pack on
 	 * the public capability (`openspec/specs/icon-packs/spec.md`).
+	 *
+	 * @return void
 	 */
 	public function testLasuiteActiveInstanceAdvertisesDsfrPack(): void {
 		$config = $this->configWith(values: ['token_set' => 'lasuite']);
@@ -273,6 +281,8 @@ class CapabilitiesTest extends TestCase {
 
 	/**
 	 * A custom/unknown token set id degrades name/version/wcagLevel, never lies.
+	 *
+	 * @return void
 	 */
 	public function testCustomOrUnknownTokenSetDegradesButNeverLies(): void {
 		$config = $this->configWith(values: ['token_set' => 'custom-onbekend']);
@@ -305,6 +315,8 @@ class CapabilitiesTest extends TestCase {
 	 * The name and the upstream version come from the active set's own
 	 * manifest entry, the one `getTokenSetMeta()` returns, so building the
 	 * capability never builds (and audits) the whole token-set catalogue.
+	 *
+	 * @return void
 	 */
 	public function testTokenSetNameAndVersionComeFromTheActiveSetsManifestEntry(): void {
 		$config = $this->configWith(values: ['token_set' => 'utrecht']);
@@ -339,6 +351,8 @@ class CapabilitiesTest extends TestCase {
 	/**
 	 * The WCAG level is cached — a second call within the TTL never re-invokes
 	 * the audit service, and both calls report the same level.
+	 *
+	 * @return void
 	 */
 	public function testWcagLevelIsCachedAcrossCalls(): void {
 		$config = $this->configWith(values: ['token_set' => 'rijkshuisstijl']);
@@ -370,6 +384,8 @@ class CapabilitiesTest extends TestCase {
 	/**
 	 * A high-contrast set declaring `contrast_level: AAA` and passing AAA
 	 * thresholds reports `AAA`.
+	 *
+	 * @return void
 	 */
 	public function testHighContrastSetReportsAaa(): void {
 		$config = $this->configWith(values: ['token_set' => 'hoog-contrast']);
@@ -397,6 +413,8 @@ class CapabilitiesTest extends TestCase {
 
 	/**
 	 * A shipped set failing its audit reports `fail`, never a fabricated pass.
+	 *
+	 * @return void
 	 */
 	public function testFailingShippedSetReportsFail(): void {
 		$config = $this->configWith(values: ['token_set' => 'noaberkracht']);
@@ -425,6 +443,8 @@ class CapabilitiesTest extends TestCase {
 	/**
 	 * A throwing injected dependency degrades to the minimal payload — no
 	 * exception escapes getCapabilities(), and no exception detail leaks.
+	 *
+	 * @return void
 	 */
 	public function testThrowingDependencyDegradesGracefully(): void {
 		$config = $this->configWith(values: ['token_set' => 'rijkshuisstijl']);

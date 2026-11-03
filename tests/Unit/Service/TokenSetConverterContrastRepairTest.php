@@ -66,6 +66,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 
 	/**
 	 * Build the converter against the app's own mapping table.
+	 *
+	 * @return TokenSetConverterService
 	 */
 	private function converter(): TokenSetConverterService {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
@@ -87,6 +89,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 * @dataProvider caseProvider
 	 *
 	 * @param string $name The case.
+	 *
+	 * @return void
 	 */
 	public function testMatchesTheJavaScriptConverter(string $name): void {
 		$case = self::fixture()[$name];
@@ -108,6 +112,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 
 	/**
 	 * An admin's upload keeps its own colours: the repair only runs when the caller asks.
+	 *
+	 * @return void
 	 */
 	public function testAnUploadKeepsItsColours(): void {
 		$result = $this->converter()->convert(content: ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n", slug: 'demo', displayName: 'Demo');
@@ -117,6 +123,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 
 	/**
 	 * A colour that already passes is never touched, and the report names what was repaired.
+	 *
+	 * @return void
 	 */
 	public function testRepairsOnlyWhatFails(): void {
 		$repair = new ConverterColourRepair(contrast: new ContrastService());
@@ -147,6 +155,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 * A primary that reaches 4.5:1 on the light primary and its hover writes no light-text step.
 	 *
 	 * @spec openspec/specs/primary-light-text-step/spec.md#requirement-text-on-the-light-primary-reaches-4-5-1
+	 *
+	 * @return void
 	 */
 	public function testAPassingPrimaryWritesNoLightTextStep(): void {
 		$repair = new ConverterColourRepair(contrast: new ContrastService());
@@ -172,6 +182,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 
 	/**
 	 * hsl(), hsla() and an 8-digit hex are written the way every reader takes them.
+	 *
+	 * @return void
 	 */
 	public function testNormalisesColourLiterals(): void {
 		$repair = new ColourLiteralParser();

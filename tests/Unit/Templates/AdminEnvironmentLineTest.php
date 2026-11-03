@@ -24,6 +24,8 @@ class AdminEnvironmentLineTest extends TestCase {
 
 	/**
 	 * The environment line ships, read-only, under the section heading.
+	 *
+	 * @return void
 	 */
 	public function testTheEnvironmentLineIsReadOnly(): void {
 		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');

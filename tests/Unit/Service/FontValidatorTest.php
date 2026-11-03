@@ -51,6 +51,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A valid woff2 magic-byte header is accepted (no exception).
+	 *
+	 * @return void
 	 */
 	public function testValidWoff2HeaderAccepted(): void {
 		$this->validator->validateMagicBytes(bytes: "wOF2\x00\x01\x02\x03rest-of-file-does-not-matter-here");
@@ -59,6 +61,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A TrueType font (bytes `\x00\x01\x00\x00`) is rejected as non-woff2.
+	 *
+	 * @return void
 	 */
 	public function testTtfRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -68,6 +72,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * An OpenType font (`OTTO`) is rejected as non-woff2.
+	 *
+	 * @return void
 	 */
 	public function testOtfRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -77,6 +83,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A WOFF (v1, `wOFF`) font is rejected as non-woff2.
+	 *
+	 * @return void
 	 */
 	public function testWoff1Rejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -86,6 +94,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A zip archive (`PK`) renamed to .woff2 is rejected as non-woff2.
+	 *
+	 * @return void
 	 */
 	public function testZipRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -95,6 +105,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A plain text file renamed to .woff2 is rejected as non-woff2.
+	 *
+	 * @return void
 	 */
 	public function testRenamedTextFileRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -104,6 +116,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * The magic-byte failure message names the check that failed.
+	 *
+	 * @return void
 	 */
 	public function testMagicByteErrorNamesTheCheck(): void {
 		try {
@@ -117,6 +131,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A size at exactly the 2 MB cap is accepted.
+	 *
+	 * @return void
 	 */
 	public function testSizeAtCapAccepted(): void {
 		$this->validator->validateSize(size: (2 * 1024 * 1024));
@@ -125,6 +141,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A size one byte over the 2 MB cap is rejected with 413.
+	 *
+	 * @return void
 	 */
 	public function testOversizeRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -134,6 +152,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * An empty display name is rejected with 422.
+	 *
+	 * @return void
 	 */
 	public function testEmptyDisplayNameRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -143,6 +163,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A display name containing a path-traversal sequence is rejected.
+	 *
+	 * @return void
 	 */
 	public function testDisplayNamePathTraversalRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -152,6 +174,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A display name containing a bare slash is rejected.
+	 *
+	 * @return void
 	 */
 	public function testDisplayNameSlashRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -161,6 +185,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A display name containing a NUL byte is rejected.
+	 *
+	 * @return void
 	 */
 	public function testDisplayNameNulByteRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -170,6 +196,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A well-formed display name passes.
+	 *
+	 * @return void
 	 */
 	public function testWellFormedDisplayNameAccepted(): void {
 		$this->validator->validateDisplayName(name: 'Rijks Sans');
@@ -178,6 +206,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * An empty slug (all-symbol display name) is rejected with 422.
+	 *
+	 * @return void
 	 */
 	public function testEmptySlugRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -187,6 +217,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A slug longer than 64 characters is rejected with 422.
+	 *
+	 * @return void
 	 */
 	public function testOverlongSlugRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -196,6 +228,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A slug outside the `[a-z0-9-]` charset is rejected with 422.
+	 *
+	 * @return void
 	 */
 	public function testBadCharsetSlugRejected(): void {
 		$this->expectException(exception: RuntimeException::class);
@@ -205,6 +239,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * A valid slug (64 chars exactly, safe charset) passes.
+	 *
+	 * @return void
 	 */
 	public function testValidSlugAccepted(): void {
 		$this->validator->validateSlug(slug: str_repeat('a', 64));
@@ -213,6 +249,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * Role validation accepts `body` and `heading` only.
+	 *
+	 * @return void
 	 */
 	public function testRoleValidation(): void {
 		$this->validator->validateRole(role: 'body');
@@ -226,6 +264,8 @@ class FontValidatorTest extends TestCase {
 
 	/**
 	 * The per-instance cap rejects the 21st font with 409.
+	 *
+	 * @return void
 	 */
 	public function testCapRejectsAt21st(): void {
 		$this->validator->validateCap(currentCount: 19);

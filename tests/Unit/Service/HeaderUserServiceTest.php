@@ -69,6 +69,8 @@ class HeaderUserServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -136,6 +138,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * The board's person: the name and the role, handed over once with the script.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testTheNameAndTheRoleAreHandedToTheScript(): void {
 		$this->signIn(name: 'Pieter Jansen', role: ' Woo-coördinator ');
@@ -152,6 +156,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * bar shows the name only.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testWithoutARoleTheNameStandsAlone(): void {
 		$this->signIn(name: 'admin', role: '');
@@ -164,6 +170,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * handed over and no script loads.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testNobodySignedInLoadsNothing(): void {
 		$this->userSession->method('getUser')->willReturn(null);
@@ -179,6 +187,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * layout) gets no state and no script, even with somebody signed in.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testWithoutTheWorkplaceBarNothingLoads(): void {
 		$this->signIn(name: 'Pieter Jansen', role: 'Woo-coördinator');
@@ -194,6 +204,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * no state, no script, no exception.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testAFailureIsLoggedAndLeavesTheAvatar(): void {
 		$user = $this->createMock(originalClassName: IUser::class);

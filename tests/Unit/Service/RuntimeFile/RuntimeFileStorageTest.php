@@ -108,6 +108,8 @@ class RuntimeFileStorageTest extends TestCase {
 
 	/**
 	 * @dataProvider names
+	 *
+	 * @return void
 	 */
 	public function testOnlyRuntimeNamesAreAllowed(string $name, bool $allowed): void {
 		$this->assertSame(expected: $allowed, actual: (new RuntimeFileNames())->isAllowed($name), message: $name);

@@ -90,6 +90,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with an "all pairs pass" fixture and mocked collaborators.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -116,6 +118,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		$this->rrmdir(dir: $this->appDir);
@@ -300,6 +304,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Known ratio: #000000 on #ffffff is exactly 21.00:1 and passes.
+	 *
+	 * @return void
 	 */
 	public function testKnownRatioBlackOnWhiteIs21AndPasses(): void {
 		$data = $this->service->generate();
@@ -313,6 +319,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Known ratio: #767676 on #ffffff is 4.54:1 — the AA boundary, and passes.
+	 *
+	 * @return void
 	 */
 	public function testKnownRatioBoundaryPasses(): void {
 		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#767676']));
@@ -326,6 +334,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Known ratio: #cccccc on #ffffff is ~1.61:1 and fails.
+	 *
+	 * @return void
 	 */
 	public function testKnownRatioLowContrastFails(): void {
 		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#cccccc']));
@@ -340,6 +350,8 @@ class ComplianceReportServiceTest extends TestCase {
 	/**
 	 * An unresolved var() chain is reported unevaluated, never passing, with
 	 * the unresolved token named in the note.
+	 *
+	 * @return void
 	 */
 	public function testUnresolvedVarIsUnevaluatedNeverPassing(): void {
 		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => 'var(--nldesign-does-not-exist)']));
@@ -354,6 +366,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * The report contains exactly 18 pairs, in matrix order.
+	 *
+	 * @return void
 	 */
 	public function testReportContainsEighteenPairsInMatrixOrder(): void {
 		$data = $this->service->generate();
@@ -378,6 +392,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * A custom override for --color-primary wins over the token set's value.
+	 *
+	 * @return void
 	 */
 	public function testCustomOverrideWinsOverTokenSetValue(): void {
 		$this->customOverrides = ['--color-primary' => '#767676'];
@@ -391,6 +407,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * Changing a custom override changes the overridesHash.
+	 *
+	 * @return void
 	 */
 	public function testOverridesHashChangesWithOverrides(): void {
 		$withoutOverrides = $this->service->generate();
@@ -406,6 +424,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * All 18 pairs passing yields an overall "pass" verdict with zero fail/unevaluated.
+	 *
+	 * @return void
 	 */
 	public function testAllPassingYieldsOverallPass(): void {
 		$data = $this->service->generate();
@@ -418,6 +438,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * One failing pair caps the overall verdict at "fail".
+	 *
+	 * @return void
 	 */
 	public function testOneFailingPairFailsOverallVerdict(): void {
 		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text-muted' => '#999999']));
@@ -433,6 +455,8 @@ class ComplianceReportServiceTest extends TestCase {
 	/**
 	 * Zero failing pairs but at least one unevaluated pair caps the verdict at
 	 * "incomplete", never a clean "pass".
+	 *
+	 * @return void
 	 */
 	public function testUnevaluatedPairsCapVerdictAtIncomplete(): void {
 		$this->writeDefaults(
@@ -456,6 +480,8 @@ class ComplianceReportServiceTest extends TestCase {
 	 * A stock-Nextcloud active set (design_system: none) still produces a
 	 * report, with every pair honestly unevaluated rather than scored against
 	 * values the runtime never actually loads.
+	 *
+	 * @return void
 	 */
 	public function testStockNextcloudConfigurationStillProducesReport(): void {
 		$this->activeTokenSetId = 'nextcloud';
@@ -479,6 +505,8 @@ class ComplianceReportServiceTest extends TestCase {
 	/**
 	 * Metadata carries every documented field, including the fallback
 	 * "unversioned" token-set version.
+	 *
+	 * @return void
 	 */
 	public function testMetadataIdentifiesTheAuditedConfiguration(): void {
 		$data = $this->service->generate();
@@ -498,6 +526,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * A custom-set manifest version, when present, wins over "unversioned".
+	 *
+	 * @return void
 	 */
 	public function testCustomSetManifestVersionIsUsedWhenPresent(): void {
 		$this->activeTokenSetId = 'custom-foo';
@@ -536,6 +566,8 @@ class ComplianceReportServiceTest extends TestCase {
 	/**
 	 * Regeneration with an unchanged configuration and a frozen clock is
 	 * byte-identical in both formats.
+	 *
+	 * @return void
 	 */
 	public function testDeterministicRegeneration(): void {
 		$this->assertSame(expected: $this->service->renderJson(), actual: $this->service->renderJson());
@@ -545,6 +577,8 @@ class ComplianceReportServiceTest extends TestCase {
 	/**
 	 * Both renderers always embed the scope statement and never the phrase
 	 * "WCAG compliant" or "voldoet aan WCAG" — even on a fully-passing report.
+	 *
+	 * @return void
 	 */
 	public function testScopeStatementAlwaysPresentNeverClaimsCompliance(): void {
 		$json = $this->service->renderJson();
@@ -564,6 +598,8 @@ class ComplianceReportServiceTest extends TestCase {
 
 	/**
 	 * The Markdown renderer embeds the JSON's pair count and metadata block.
+	 *
+	 * @return void
 	 */
 	public function testMarkdownContainsMetadataAndPairTable(): void {
 		$markdown = $this->service->renderMarkdown();
@@ -580,6 +616,8 @@ class ComplianceReportServiceTest extends TestCase {
 	 * primary/background pairs, computed through ShippedTokenSetAuditService
 	 * and ComplianceReportService, yield identical ratios (no overrides
 	 * configured), and both classify a non-literal value as unevaluated.
+	 *
+	 * @return void
 	 */
 	public function testSharedContractWithShippedTokenSetAuditService(): void {
 		$contrast = new ContrastService();

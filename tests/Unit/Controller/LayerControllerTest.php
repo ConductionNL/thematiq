@@ -64,6 +64,8 @@ class LayerControllerTest extends TestCase {
 
 	/**
 	 * Build the controller over two mocked services.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -83,6 +85,8 @@ class LayerControllerTest extends TestCase {
 	 * A known id is answered with the cascade owner's manifest, unchanged.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testKnownTokenSetReturnsTheManifestVerbatim(): void {
 		$manifest = [
@@ -114,6 +118,8 @@ class LayerControllerTest extends TestCase {
 	 * what the client would insert into the live page.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testUnknownTokenSetIs404AndBuildsNoManifest(): void {
 		$this->tokenSets->method('isValidTokenSet')->willReturn(false);
@@ -132,6 +138,8 @@ class LayerControllerTest extends TestCase {
 	 * the admin is previewing.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheRequestedIdIsTheOneValidated(): void {
 		$this->tokenSets->expects($this->once())

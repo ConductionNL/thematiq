@@ -80,6 +80,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	/**
 	 * The named set's overrides come back with the registry the editor
 	 * renders them against.
+	 *
+	 * @return void
 	 */
 	public function testReadsTheNamedSetsOverrides(): void {
 		$this->asking(tokenSet: 'custom-openwoo');
@@ -101,6 +103,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	 * @param mixed $tokenSet The parameter's value.
 	 *
 	 * @dataProvider noSetProvider
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedLeavesTheChoiceToTheService($tokenSet): void {
 		$this->asking(tokenSet: $tokenSet);
@@ -123,6 +127,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 	/**
 	 * The export is the named set's file, as a CSS download.
+	 *
+	 * @return void
 	 */
 	public function testExportsTheNamedSetsFile(): void {
 		$this->asking(tokenSet: 'custom-openwoo');

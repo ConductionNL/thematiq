@@ -122,6 +122,8 @@ class OverridesControllerValidationTest extends TestCase {
 
 	/**
 	 * An unknown token name is refused with 400 naming it, and nothing is written.
+	 *
+	 * @return void
 	 */
 	public function testUnknownTokenIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -139,6 +141,8 @@ class OverridesControllerValidationTest extends TestCase {
 	/**
 	 * A value the writer would drop (a CSS injection attempt) is refused with 400
 	 * naming the token, and nothing is written.
+	 *
+	 * @return void
 	 */
 	public function testWrongValueIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -155,6 +159,8 @@ class OverridesControllerValidationTest extends TestCase {
 
 	/**
 	 * A value that is not a string is refused with 400 instead of a type error.
+	 *
+	 * @return void
 	 */
 	public function testNonStringValueIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -170,6 +176,8 @@ class OverridesControllerValidationTest extends TestCase {
 	/**
 	 * A valid save reports the count that reached the file, and the audit entry
 	 * records exactly what was written.
+	 *
+	 * @return void
 	 */
 	public function testValidSaveReportsAndAuditsWhatWasWritten(): void {
 		$this->request->method('getParams')->willReturn(
@@ -198,6 +206,8 @@ class OverridesControllerValidationTest extends TestCase {
 	/**
 	 * A write failure answers 500 with a generic message, never the file path
 	 * the service puts in its exception text.
+	 *
+	 * @return void
 	 */
 	public function testWriteFailureHidesPath(): void {
 		$failing = $this->getMockBuilder(className: CustomOverridesService::class)

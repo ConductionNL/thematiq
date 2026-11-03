@@ -106,6 +106,8 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 
 	/**
 	 * A set's own theming is served while it captured nothing.
+	 *
+	 * @return void
 	 */
 	public function testAShippedSetKeepsItsOwnThemingUntilItCapturesAny(): void {
 		$this->assertSame(expected: ['primary_color' => '#ec0000'], actual: $this->themingOf(id: 'amsterdam'));
@@ -113,6 +115,8 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 
 	/**
 	 * Captured branding replaces the set's own theming.
+	 *
+	 * @return void
 	 */
 	public function testCapturedBrandingReplacesTheSetsOwn(): void {
 		$captured = ['captured' => true, 'primary_color' => '#23845c', 'background_mode' => 'color'];
@@ -123,6 +127,8 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 
 	/**
 	 * An unreadable captured store is ignored rather than breaking discovery.
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableStoreIsIgnored(): void {
 		$this->values['captured_theming'] = 'not json';

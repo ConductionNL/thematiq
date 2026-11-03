@@ -59,6 +59,8 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * Scenario: a display-p3 colour outside sRGB is clipped and the report says so, with the original.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
+	 *
+	 * @return void
 	 */
 	public function testAdaptedColourIsReported(): void {
 		$result = $this->convert(document: ['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);

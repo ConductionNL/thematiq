@@ -68,6 +68,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 
 	/**
 	 * Build the converter and open up `commentSafe()`.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -105,6 +107,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * the deletions rearrange it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testNoShortStringCanLeaveATerminatorBehind(): void {
 		$alphabet = ['*', '/', "\x00", 'a'];
@@ -151,6 +155,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * @dataProvider reconstructionProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheSpellingsThatDefeatedTheFirstGuard(string $payload): void {
 		$this->assertStringNotContainsString(needle: '*/', haystack: $this->guard(value: $payload));
@@ -177,6 +183,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * provenance line intact, which is the whole point of recording it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOrdinaryValuesSurviveUnchanged(): void {
 		$this->assertSame(expected: 'gemeente-voorbeeld-tokens.css', actual: $this->guard(value: 'gemeente-voorbeeld-tokens.css'));
@@ -190,6 +198,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * something, or the provenance line loses its shape.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAFullyStrippedValueFallsBackToAPlaceholder(): void {
 		$this->assertSame(expected: '(unnamed)', actual: $this->guard(value: '*/'));

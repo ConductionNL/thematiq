@@ -94,6 +94,8 @@ class OverridesControllerCaptureTest extends TestCase {
 
 	/**
 	 * The theme being saved gets the branding, and the editor gets it back.
+	 *
+	 * @return void
 	 */
 	public function testCapturesIntoTheSavedTheme(): void {
 		$this->saving(tokenSet: 'custom-openwoo');
@@ -110,6 +112,8 @@ class OverridesControllerCaptureTest extends TestCase {
 
 	/**
 	 * The stock set never captures: its branding is Nextcloud's own.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetIsNeverCaptured(): void {
 		$this->saving(tokenSet: 'nextcloud');
@@ -122,6 +126,8 @@ class OverridesControllerCaptureTest extends TestCase {
 
 	/**
 	 * Without a set named, the instance's active set is the one saved.
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedCapturesIntoTheActiveSet(): void {
 		$this->saving(tokenSet: '');

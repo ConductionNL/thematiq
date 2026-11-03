@@ -31,6 +31,8 @@ class CssParserServiceTest extends TestCase {
 
 	/**
 	 * Set up the parser.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -39,6 +41,8 @@ class CssParserServiceTest extends TestCase {
 
 	/**
 	 * A present dark block yields its declarations.
+	 *
+	 * @return void
 	 */
 	public function testDarkBlockPresent(): void {
 		$css = ":root {\n\t--nldesign-color-primary: #154273;\n}\n\n"
@@ -62,6 +66,8 @@ class CssParserServiceTest extends TestCase {
 
 	/**
 	 * A token set with no dark block returns an empty map — never throws.
+	 *
+	 * @return void
 	 */
 	public function testDarkBlockAbsent(): void {
 		$css = ":root {\n\t--nldesign-color-primary: #154273;\n}";
@@ -72,6 +78,8 @@ class CssParserServiceTest extends TestCase {
 	/**
 	 * Unrelated brace blocks elsewhere in the file (a light `:root {}` block,
 	 * another `@media` rule) do not confuse extraction of the dark block.
+	 *
+	 * @return void
 	 */
 	public function testDarkBlockWithNestedBracesElsewhereInFile(): void {
 		$css = ":root {\n\t--nldesign-color-primary: #154273;\n}\n\n"
@@ -89,6 +97,8 @@ class CssParserServiceTest extends TestCase {
 
 	/**
 	 * Malformed CSS (unclosed dark block) degrades to an empty map, never an exception.
+	 *
+	 * @return void
 	 */
 	public function testMalformedDarkBlockDegradesToEmpty(): void {
 		$css = "@media (prefers-color-scheme: dark) {\n\t:root {\n\t\t--nldesign-color-primary: #4844AD;";
@@ -98,6 +108,8 @@ class CssParserServiceTest extends TestCase {
 
 	/**
 	 * Empty input degrades to an empty map.
+	 *
+	 * @return void
 	 */
 	public function testEmptyInputDegradesToEmpty(): void {
 		$this->assertSame(expected: [], actual: $this->parser->parseDarkBlock(css: ''));
