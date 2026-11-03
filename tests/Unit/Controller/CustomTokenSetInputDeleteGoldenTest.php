@@ -25,6 +25,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -48,6 +51,9 @@ use RuntimeException;
  * collaborator call in order, case by case. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\CustomTokenSetController
+ * @uses   \OCA\Thematiq\Service\CustomSetRecords
+ * @uses   \OCA\Thematiq\Service\CustomSetSources
+ * @uses   \OCA\Thematiq\Service\CustomSetUploadPipeline
  */
 class CustomTokenSetInputDeleteGoldenTest extends TestCase {
 
@@ -136,17 +142,23 @@ class CustomTokenSetInputDeleteGoldenTest extends TestCase {
 		$controller = new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $request,
-			service: $this->service(random: $random, calls: $calls),
-			validator: $this->createMock(originalClassName: CustomTokenSetValidator::class),
-			cssParser: $this->createMock(originalClassName: CssParserService::class),
-			l: $this->l10n(),
-			auditService: $this->recorder(class: ThemingAuditService::class, method: 'log', calls: $calls),
-			config: $config,
-			converter: $this->converter(calls: $calls),
-			themingService: $this->recorder(class: ThemingService::class, method: 'resetToDefaults', calls: $calls),
-			designSystems: $this->createMock(originalClassName: DesignSystemService::class),
-			brandingCapture: [null, $this->recorder(class: BrandingCaptureService::class, method: 'forget', calls: $calls)][$random->getInt(0, 1)],
-			multiBrand: [null, $this->multiBrand(calls: $calls)][$random->getInt(0, 1)]
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service(random: $random, calls: $calls),
+				validator: $this->createMock(originalClassName: CustomTokenSetValidator::class),
+				cssParser: $this->createMock(originalClassName: CssParserService::class),
+				converter: $this->converter(calls: $calls)
+			),
+			records: new CustomSetRecords(
+				l: $this->l10n(),
+				auditService: $this->recorder(class: ThemingAuditService::class, method: 'log', calls: $calls),
+				config: $config,
+				themingService: $this->recorder(class: ThemingService::class, method: 'resetToDefaults', calls: $calls)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class),
+				brandingCapture: [null, $this->recorder(class: BrandingCaptureService::class, method: 'forget', calls: $calls)][$random->getInt(0, 1)],
+				multiBrand: [null, $this->multiBrand(calls: $calls)][$random->getInt(0, 1)]
+			)
 		);
 
 		if ($random->getInt(0, 1) === 0) {
