@@ -29,21 +29,38 @@
 	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function apply(text) {
-		document.querySelectorAll('.unified-search-input__label').forEach(function (label) {
-			if (label.textContent !== text) {
-				label.textContent = text
-			}
-		})
-		document.querySelectorAll('.unified-search-input input, .unified-search-modal input[data-cy-unified-search-input]').forEach(function (input) {
-			if (input.getAttribute('placeholder') !== null && input.getAttribute('placeholder') !== text) {
-				input.setAttribute('placeholder', text)
-			}
-		})
-		document.querySelectorAll('.unified-search-modal .input-field__label').forEach(function (label) {
-			if (label.closest('.input-field') && label.closest('.input-field').querySelector('input[data-cy-unified-search-input]') && label.textContent !== text) {
-				label.textContent = text
-			}
-		})
+		document
+			.querySelectorAll('.unified-search-input__label')
+			.forEach(function (label) {
+				if (label.textContent !== text) {
+					label.textContent = text
+				}
+			})
+		document
+			.querySelectorAll(
+				'.unified-search-input input, .unified-search-modal input[data-cy-unified-search-input]',
+			)
+			.forEach(function (input) {
+				if (
+					input.getAttribute('placeholder') !== null
+					&& input.getAttribute('placeholder') !== text
+				) {
+					input.setAttribute('placeholder', text)
+				}
+			})
+		document
+			.querySelectorAll('.unified-search-modal .input-field__label')
+			.forEach(function (label) {
+				if (
+					label.closest('.input-field')
+					&& label
+						.closest('.input-field')
+						.querySelector('input[data-cy-unified-search-input]')
+					&& label.textContent !== text
+				) {
+					label.textContent = text
+				}
+			})
 	}
 
 	/**
@@ -78,7 +95,11 @@
 		if (typeof MutationObserver === 'function') {
 			new MutationObserver(function () {
 				apply(text)
-			}).observe(document.body, { childList: true, subtree: true, characterData: true })
+			}).observe(document.body, {
+				childList: true,
+				subtree: true,
+				characterData: true,
+			})
 		}
 	}
 })()

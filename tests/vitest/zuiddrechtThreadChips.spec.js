@@ -17,7 +17,10 @@ import path from 'node:path'
 import postcss from 'postcss'
 import { beforeAll, describe, expect, it } from 'vitest'
 
-const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'), 'utf8')
+const css = fs.readFileSync(
+	path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'),
+	'utf8',
+)
 
 /**
  * The selectors of the set that size a quick-filter chip.
@@ -27,9 +30,17 @@ const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/z
 function sizingSelectors() {
 	const out = []
 	postcss.parse(css).walkRules((rule) => {
-		const sizes = rule.nodes.some((n) => n.type === 'decl' && /^(min-height|height|border-radius)$/.test(n.prop))
+		const sizes = rule.nodes.some(
+			(n) =>
+				n.type === 'decl'
+				&& /^(min-height|height|border-radius)$/.test(n.prop),
+		)
 		if (sizes) {
-			out.push(...rule.selectors.filter((s) => s.includes('.cn-quick-filter-bar__tab')))
+			out.push(
+				...rule.selectors.filter((s) =>
+					s.includes('.cn-quick-filter-bar__tab'),
+				),
+			)
 		}
 	})
 	return out
@@ -48,11 +59,13 @@ beforeAll(() => {
 })
 
 describe('zuiddrecht quick-filter chip size', () => {
-	it('sizes a list view\'s chip', () => {
-		expect(matches(document.getElementById('list-chip')).length).toBeGreaterThan(0)
+	it("sizes a list view's chip", () => {
+		expect(matches(document.getElementById('list-chip')).length).toBeGreaterThan(
+			0,
+		)
 	})
 
-	it('leaves a conversation thread\'s chip to the library', () => {
+	it("leaves a conversation thread's chip to the library", () => {
 		expect(matches(document.getElementById('thread-chip'))).toEqual([])
 	})
 })

@@ -361,8 +361,36 @@ class OverridesController extends Controller {
 		$stock = CssInjectionService::STOCK_TOKEN_SET;
 		$previous = $this->config->getAppValue(Application::APP_ID, 'token_set', $stock);
 
+		$emptied = $this->emptyOverrides(tokenSets: array_unique([$previous, $stock]));
+		if ($emptied instanceof JSONResponse) {
+			return $emptied;
+		}
+
+		$this->config->setAppValue(Application::APP_ID, 'token_set', $stock);
+		$this->themingService->resetToDefaults();
+		// Nothing is synced any more, so nothing is remembered as synced: the
+		// same keys SettingsController::resetThemingValues() clears.
+		foreach (['logo', 'background'] as $imageKey) {
+			$this->config->deleteAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey);
+		}
+
+		$this->logReset(emptied: $emptied, change: ['old' => $previous, 'new' => $stock]);
+
+		return new JSONResponse(['status' => 'ok', 'tokenSet' => $stock]);
+	}//end resetToStock()
+
+	/**
+	 * Empty the overrides of each set.
+	 *
+	 * @param array<int, string> $tokenSets The sets.
+	 *
+	 * @return array<int, array<string, mixed>>|JSONResponse The overrides each non-empty set had, or a 500 when a file cannot be written.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function emptyOverrides(array $tokenSets): array|JSONResponse {
 		$emptied = [];
-		foreach (array_unique([$previous, $stock]) as $tokenSet) {
+		foreach ($tokenSets as $tokenSet) {
 			$before = $this->overridesService->read(tokenSet: $tokenSet);
 
 			try {
@@ -376,25 +404,28 @@ class OverridesController extends Controller {
 			}
 		}
 
-		$this->config->setAppValue(Application::APP_ID, 'token_set', $stock);
-		$this->themingService->resetToDefaults();
-		// Nothing is synced any more, so nothing is remembered as synced — the
-		// same keys SettingsController::resetThemingValues() clears.
-		foreach (['logo', 'background'] as $imageKey) {
-			$this->config->deleteAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey);
-		}
+		return $emptied;
+	}//end emptyOverrides()
 
-		// Recorded as what it did, in the actions the audit trail already knows.
+	/**
+	 * Record a reset as what it did, in the actions the audit trail already knows.
+	 *
+	 * @param array<int, array<string, mixed>> $emptied The overrides each emptied set had.
+	 * @param array{old: string, new: string} $change The active set before and after.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function logReset(array $emptied, array $change): void {
 		foreach ($emptied as $before) {
 			$this->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => []]);
 		}
 
-		if ($previous !== $stock) {
-			$this->auditService->log(action: 'token_set_changed', context: ['old' => $previous, 'new' => $stock]);
+		if ($change['old'] !== $change['new']) {
+			$this->auditService->log(action: 'token_set_changed', context: $change);
 		}
-
-		return new JSONResponse(['status' => 'ok', 'tokenSet' => $stock]);
-	}//end resetToStock()
+	}//end logReset()
 
 	/**
 	 * Download custom-overrides.css as a file.
@@ -514,13 +545,37 @@ class OverridesController extends Controller {
 	 *
 	 * @return JSONResponse The import result response.
 	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
-	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function writeImportedTokens(array $parsed, string $rawContent): JSONResponse {
-		$toImport = [];
+		$import = $this->editableTokens(parsed: $parsed);
+
+		try {
+			$this->overridesService->write(tokens: $import['tokens'], tokenSet: $this->requestedTokenSet());
+		} catch (\RuntimeException) {
+			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
+		}
+
+		$counts = ['imported' => count($import['tokens']), 'skipped' => $import['skipped']];
+		$this->auditService->log(action: 'overrides_imported', context: $counts + ['new' => $rawContent, 'newIsCss' => true]);
+
+		return new JSONResponse(['status' => 'ok'] + $counts);
+	}//end writeImportedTokens()
+
+	/**
+	 * The parsed tokens the editor may set, and how many others were skipped.
+	 *
+	 * @param array<string, string> $parsed The parsed CSS tokens.
+	 *
+	 * @return array{tokens: array<string, string>, skipped: int} The editable tokens and the skipped count.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-13
+	 */
+	private function editableTokens(array $parsed): array {
+		$tokens = [];
 		$skipped = 0;
 		foreach ($parsed as $name => $value) {
 			if (TokenRegistry::isEditable(tokenName: $name) === false) {
@@ -528,31 +583,9 @@ class OverridesController extends Controller {
 				continue;
 			}
 
-			$toImport[$name] = $value;
+			$tokens[$name] = $value;
 		}
 
-		try {
-			$this->overridesService->write(tokens: $toImport, tokenSet: $this->requestedTokenSet());
-		} catch (\RuntimeException) {
-			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
-		}
-
-		$this->auditService->log(
-			action: 'overrides_imported',
-			context: [
-				'imported' => count($toImport),
-				'skipped' => $skipped,
-				'new' => $rawContent,
-				'newIsCss' => true,
-			]
-		);
-
-		return new JSONResponse(
-			[
-				'status' => 'ok',
-				'imported' => count($toImport),
-				'skipped' => $skipped,
-			]
-		);
-	}//end writeImportedTokens()
+		return ['tokens' => $tokens, 'skipped' => $skipped];
+	}//end editableTokens()
 }//end class

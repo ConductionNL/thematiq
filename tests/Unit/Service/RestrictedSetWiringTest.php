@@ -23,9 +23,9 @@ use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\CssDeclarationScanner;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -40,8 +40,10 @@ use OCA\Thematiq\Service\RestrictedSetsInBundle;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\ScheduledSwitchOrder;
+use OCA\Thematiq\Service\ScheduledSwitchRuntime;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
+use OCA\Thematiq\Service\ScheduledSwitchTargets;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
@@ -80,6 +82,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(DelegatedGroupThemingService::class)]
 #[CoversClass(ThemePreviewService::class)]
 #[CoversClass(ScheduledSwitchService::class)]
+#[UsesClass(ScheduledSwitchRuntime::class)]
+#[UsesClass(ScheduledSwitchTargets::class)]
 #[CoversClass(AppBrandService::class)]
 #[CoversClass(ConfigBundleService::class)]
 #[CoversClass(CustomTokenSetsBundleSection::class)]
@@ -399,15 +403,19 @@ class RestrictedSetWiringTest extends TestCase {
 		$l10n->method('t')->willReturnArgument(0);
 
 		return new ScheduledSwitchService(
-			new ScheduledSwitchStore($this->config),
-			new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
-			$this->tokenSets,
-			$this->createMock(ScheduledCoreThemingSync::class),
-			$audit,
-			$this->config,
-			$time,
-			$l10n,
-			$this->createMock(LoggerInterface::class)
+			store: new ScheduledSwitchStore($this->config),
+			targets: new ScheduledSwitchTargets(
+				activeTokenSet: new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
+				tokenSets: $this->tokenSets,
+				coreSync: $this->createMock(ScheduledCoreThemingSync::class)
+			),
+			runtime: new ScheduledSwitchRuntime(
+				auditService: $audit,
+				config: $this->config,
+				time: $time,
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			l10n: $l10n
 		);
 	}//end scheduledSwitches()
 

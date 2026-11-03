@@ -24,10 +24,13 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\ContrastTools;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\InstanceReportContext;
+use OCA\Thematiq\Service\ThemeSelectionSources;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -46,6 +49,9 @@ use ReflectionClassConstant;
  *
  * @covers \OCA\Thematiq\Service\ComplianceReportService
  * @uses   \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\ContrastTools
+ * @uses   \OCA\Thematiq\Service\InstanceReportContext
+ * @uses   \OCA\Thematiq\Service\ThemeSelectionSources
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\CssColorParser
@@ -176,15 +182,18 @@ class ComplianceReportGoldenTest extends TestCase {
 		$config->method('getSystemValue')->willReturn('');
 
 		return new ComplianceReportService(
-			new ContrastService(),
-			new CssParserService(),
-			$overridesService,
-			$designSystems,
-			$this->createMock(CustomTokenSetService::class),
-			$appManager,
-			$config,
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(ITimeFactory::class)
+			measuring: new ContrastTools(contrast: new ContrastService(), cssParser: new CssParserService()),
+			theme: new ThemeSelectionSources(
+				overrides: $overridesService,
+				designSystems: $designSystems,
+				customSets: $this->createMock(CustomTokenSetService::class)
+			),
+			instance: new InstanceReportContext(
+				appManager: $appManager,
+				config: $config,
+				urlGenerator: $this->createMock(IURLGenerator::class),
+				timeFactory: $this->createMock(ITimeFactory::class)
+			)
 		);
 	}//end service()
 

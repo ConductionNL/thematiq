@@ -13,11 +13,16 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const light = fs.readFileSync(path.join(ROOT, 'css/tokens/zuiddrecht.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
-const dark = fs.readFileSync(path.join(ROOT, 'css/tokens/dark/zuiddrecht.css'), 'utf8')
+const light = fs
+	.readFileSync(path.join(ROOT, 'css/tokens/zuiddrecht.css'), 'utf8')
+	.replace(/\/\*[\s\S]*?\*\//g, '')
+const dark = fs.readFileSync(
+	path.join(ROOT, 'css/tokens/dark/zuiddrecht.css'),
+	'utf8',
+)
 
 describe('the Zuiddrecht warning text', () => {
-	it('is the set\'s warning ink in the light scheme', () => {
+	it("is the set's warning ink in the light scheme", () => {
 		expect(light).toMatch(/--nldesign-nc-color-warning-text:\s*#7A4F00;/i)
 		expect(light).toMatch(/--nldesign-color-warning:\s*#7A4F00;/i)
 	})

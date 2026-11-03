@@ -40,10 +40,12 @@ class ConverterComponentRepair {
 	 *
 	 * @param ContrastService $contrast WCAG luminance and ratio.
 	 * @param ColourContrastAdjuster $adjuster Lightness repair and opaque compositing.
+	 * @param ConverterPairRepair $pairs Resolves a background's default chain.
 	 */
 	public function __construct(
 		private readonly ContrastService $contrast,
 		private readonly ColourContrastAdjuster $adjuster,
+		private readonly ConverterPairRepair $pairs,
 	) {
 	}//end __construct()
 
@@ -84,7 +86,7 @@ class ConverterComponentRepair {
 			}
 
 			$backgroundValue = ($component[$backgroundName] ?? $semantic[$backgroundName] ?? null);
-			$backgroundValue = ($backgroundValue ?? $this->fallback(name: $backgroundName, semantic: $semantic, defaults: $defaults));
+			$backgroundValue = ($backgroundValue ?? $this->pairs->fallbackValue(name: $backgroundName, semantic: $semantic, defaults: $defaults));
 			$repaired = $this->repairPair(pair: (array)$pair, value: $component[$name], backgroundValue: $backgroundValue, page: $page);
 			if ($repaired === null) {
 				continue;
@@ -133,28 +135,4 @@ class ConverterComponentRepair {
 
 		return sprintf('#%02x%02x%02x', $rgb[0], $rgb[1], $rgb[2]);
 	}//end repairPair()
-
-	/**
-	 * A background the set does not declare: the table default, a literal or a chain of tokens.
-	 *
-	 * @param string $name The token.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, mixed> $defaults The table's defaults.
-	 *
-	 * @return string|null The value.
-	 */
-	private function fallback(string $name, array $semantic, array $defaults): ?string {
-		foreach ((array)($defaults[$name] ?? []) as $step) {
-			$step = (string)$step;
-			if (str_starts_with($step, '--') === false) {
-				return $step;
-			}
-
-			if (isset($semantic[$step]) === true) {
-				return $semantic[$step];
-			}
-		}
-
-		return null;
-	}//end fallback()
 }//end class

@@ -41,7 +41,7 @@ class ConverterColourRepair {
 	/**
 	 * How many times the pair list is walked before giving up on a fixed point.
 	 */
-	private const MAX_PASSES = 4;
+	private const int MAX_PASSES = 4;
 
 	/**
 	 * The colour parser.
@@ -58,6 +58,13 @@ class ConverterColourRepair {
 	private readonly ColourContrastAdjuster $adjuster;
 
 	/**
+	 * Measures and repairs one pair.
+	 *
+	 * @var ConverterPairRepair
+	 */
+	private readonly ConverterPairRepair $pairs;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast WCAG luminance and ratio.
@@ -67,6 +74,7 @@ class ConverterColourRepair {
 	) {
 		$this->parser = new ColourLiteralParser();
 		$this->adjuster = new ColourContrastAdjuster(contrast: $this->contrast, parser: $this->parser);
+		$this->pairs = new ConverterPairRepair(contrast: $this->contrast, adjuster: $this->adjuster);
 	}//end __construct()
 
 	/**
@@ -168,7 +176,7 @@ class ConverterColourRepair {
 			return $component;
 		}
 
-		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster))->repair(
+		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster, pairs: $this->pairs))->repair(
 			component: $component,
 			semantic: $semantic,
 			spec: $spec,
@@ -189,7 +197,7 @@ class ConverterColourRepair {
 	private function repairPass(array &$semantic, array $pairs, array $context, array &$originals): bool {
 		$changed = false;
 		foreach ($pairs as $pair) {
-			$result = $this->repairPair(pair: (array)$pair, semantic: $semantic, context: $context);
+			$result = $this->pairs->repair(pair: (array)$pair, semantic: $semantic, context: $context);
 			if ($result === null) {
 				continue;
 			}
@@ -212,81 +220,6 @@ class ConverterColourRepair {
 	}//end repairPass()
 
 	/**
-	 * Repair one pair: the token it changes and that token's new colour, or null when it passes.
-	 *
-	 * @param array<string, mixed> $pair The pair spec.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array{page: array{0: int, 1: int, 2: int}, defaults: array<string, mixed>} $context Page colour and defaults.
-	 *
-	 * @return array{0: string, 1: array{0: int, 1: int, 2: int}}|null The token and its new colour.
-	 */
-	private function repairPair(array $pair, array $semantic, array $context): ?array {
-		$foregroundName = (string)($pair['foreground'] ?? '');
-		$backgroundName = (string)($pair['background'] ?? '');
-		$value = ($semantic[$foregroundName] ?? null);
-		// A step the set does not declare is measured as the token it falls
-		// back to (`from`), and written only when it needs a repair.
-		if ($value === null && isset($pair['from']) === true) {
-			$value = ($semantic[(string)$pair['from']] ?? null);
-		}
-
-		$backgroundValue = ($semantic[$backgroundName] ?? $this->fallbackValue(name: $backgroundName, semantic: $semantic, defaults: $context['defaults']));
-		if ($value === null || $backgroundValue === null) {
-			return null;
-		}
-
-		$foreground = $this->adjuster->opaque(value: $value, page: $context['page']);
-		$background = $this->adjuster->opaque(value: $backgroundValue, page: $context['page']);
-		$min = (float)($pair['min'] ?? 4.5);
-		if ($foreground === null || $background === null || $this->contrast->ratio(first: $foreground, second: $background) >= $min) {
-			return null;
-		}
-
-		// The fill gives way, not the text: only a background the set declares.
-		if (($pair['repair'] ?? '') === 'background') {
-			if (isset($semantic[$backgroundName]) === false) {
-				return null;
-			}
-
-			return [$backgroundName, $this->adjuster->repairLightness(foreground: $background, background: $foreground, min: $min)];
-		}
-
-		if (($pair['adjust'] ?? '') === 'flip') {
-			return [$foregroundName, $this->adjuster->blackOrWhite(background: $background, preferWhite: true)];
-		}
-
-		return [$foregroundName, $this->adjuster->repairLightness(foreground: $foreground, background: $background, min: $min)];
-	}//end repairPair()
-
-	/**
-	 * The value a token falls back to: a literal or a chain of tokens ending in a literal.
-	 *
-	 * @param string $name The token.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, mixed> $defaults The table's defaults.
-	 *
-	 * @return string|null The value, or null when there is none.
-	 */
-	private function fallbackValue(string $name, array $semantic, array $defaults): ?string {
-		if (isset($defaults[$name]) === false) {
-			return null;
-		}
-
-		foreach ((array)$defaults[$name] as $step) {
-			$step = (string)$step;
-			if (str_starts_with($step, '--') === false) {
-				return $step;
-			}
-
-			if (isset($semantic[$step]) === true) {
-				return $semantic[$step];
-			}
-		}
-
-		return null;
-	}//end fallbackValue()
-
-	/**
 	 * Give a listed colour token whose value is not a visible colour its default.
 	 *
 	 * @param array<string, string> $semantic The semantic layer.
@@ -303,7 +236,7 @@ class ConverterColourRepair {
 			if ($value !== null) {
 				$parsed = $this->parser->parse(value: $value);
 			}
-			$replacement = $this->fallbackValue(name: $name, semantic: [], defaults: (array)($spec['defaults'] ?? []));
+			$replacement = $this->pairs->fallbackValue(name: $name, semantic: [], defaults: (array)($spec['defaults'] ?? []));
 			if ($value === null || ($parsed !== null && $parsed[3] > 0) || $replacement === null) {
 				continue;
 			}

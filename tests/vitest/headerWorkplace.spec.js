@@ -37,7 +37,8 @@ function declsOf(selector, media = '') {
 			return
 		}
 		rule.walkDecls((d) => {
-			decls[d.prop] = d.value.replace(/\s+/g, ' ') + (d.important ? ' !important' : '')
+			decls[d.prop] =
+				d.value.replace(/\s+/g, ' ') + (d.important ? ' !important' : '')
 		})
 	})
 	return decls
@@ -47,7 +48,10 @@ const BAR = 'body:not(#body-login) #header'
 
 describe('the DqKop bar', () => {
 	it('pads the bar 14px at the start and 20px at the end, without gaps between its parts', () => {
-		expect(declsOf(BAR)).toMatchObject({ gap: '0', 'padding-inline': '14px 20px' })
+		expect(declsOf(BAR)).toMatchObject({
+			gap: '0',
+			'padding-inline': '14px 20px',
+		})
 	})
 
 	it('centres a 560px search field in the bar, and lets it follow the grid on a narrow screen', () => {
@@ -56,7 +60,9 @@ describe('the DqKop bar', () => {
 			'inset-inline-start': 'calc(50% - 283px)',
 			width: '560px',
 		})
-		expect(declsOf(`${BAR} .unified-search-menu`, '(max-width: 1240px)')).toMatchObject({
+		expect(
+			declsOf(`${BAR} .unified-search-menu`, '(max-width: 1240px)'),
+		).toMatchObject({
 			position: 'static',
 			'max-width': '560px',
 		})
@@ -65,12 +71,20 @@ describe('the DqKop bar', () => {
 	it('shows the contacts menu and draws the bell and the contacts as 44px round buttons', () => {
 		expect(declsOf(`${BAR} .header-end > #contactsmenu`).display).toBe('flex')
 		const button = declsOf(`${BAR} #contactsmenu .header-menu__trigger`)
-		expect(button).toMatchObject({ width: '44px !important', height: '44px !important', 'border-radius': '22px !important' })
-		expect(declsOf(`${BAR} #notifications .header-menu__trigger`)).toEqual(button)
+		expect(button).toMatchObject({
+			width: '44px !important',
+			height: '44px !important',
+			'border-radius': '22px !important',
+		})
+		expect(declsOf(`${BAR} #notifications .header-menu__trigger`)).toEqual(
+			button,
+		)
 	})
 
 	it('draws the divider before the person, after whichever control comes last', () => {
-		expect(declsOf(`${BAR} .header-end > :has(+ #user-menu)::after`)).toMatchObject({
+		expect(
+			declsOf(`${BAR} .header-end > :has(+ #user-menu)::after`),
+		).toMatchObject({
 			width: '1px',
 			height: '28px',
 			'margin-inline': '12px 6px',
@@ -78,8 +92,12 @@ describe('the DqKop bar', () => {
 		})
 	})
 
-	it('reads the brand block in the bar in the light bar\'s muted text and border colours', () => {
-		expect(declsOf(`${BAR} .cn-brand-bar__caption`).color).toBe('var(--color-text-maxcontrast)')
-		expect(declsOf(`${BAR} .cn-brand-bar__divider`).background).toBe('var(--color-border)')
+	it("reads the brand block in the bar in the light bar's muted text and border colours", () => {
+		expect(declsOf(`${BAR} .cn-brand-bar__caption`).color).toBe(
+			'var(--color-text-maxcontrast)',
+		)
+		expect(declsOf(`${BAR} .cn-brand-bar__divider`).background).toBe(
+			'var(--color-border)',
+		)
 	})
 })

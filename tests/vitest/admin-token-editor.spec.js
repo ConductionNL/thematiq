@@ -1650,7 +1650,15 @@ describe('admin.js theming sync rows', () => {
 
 describe('token editor — page text contrast', () => {
 	const MUTED = '--color-text-maxcontrast'
-	const withMuted = { ...REGISTRY, [MUTED]: { tab: 'content', type: 'color', label: 'Muted text', group: 'internal' } }
+	const withMuted = {
+		...REGISTRY,
+		[MUTED]: {
+			tab: 'content',
+			type: 'color',
+			label: 'Muted text',
+			group: 'internal',
+		},
+	}
 
 	beforeEach(() => {
 		requests = []
@@ -1683,6 +1691,8 @@ describe('token editor — page text contrast', () => {
 		const { el, text } = row(MUTED)
 		type(text, '#5e6168')
 		expect(el.querySelector('.nldesign-token-contrast-warning')).toBeNull()
-		expect(text.getAttribute('aria-describedby') || '').not.toContain('nldesign-contrast-')
+		expect(text.getAttribute('aria-describedby') || '').not.toContain(
+			'nldesign-contrast-',
+		)
 	})
 })

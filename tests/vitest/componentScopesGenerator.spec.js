@@ -226,7 +226,9 @@ describe('workplace component tokens: a surface token does not reach the cards',
 			}
 		})
 		const restoring = Object.values(MAPPING.components).filter((component) =>
-			Object.values(component.tokens).some((entry) => entry.selfOnly === true || entry.state !== undefined),
+			Object.values(component.tokens).some(
+				(entry) => entry.selfOnly === true || entry.state !== undefined,
+			),
 		)
 		expect(restores.length).toBe(restoring.length)
 		expect(restoring.length).toBe(2)
@@ -248,7 +250,8 @@ describe('workplace component tokens: the button focus ring colours the ring onl
 	it('redirects the main text colour, which the ring is drawn in, while the button has keyboard focus', () => {
 		for (const selector of focused) {
 			expect(ruleFor(selector), selector).toEqual({
-				'--color-main-text': 'var(' + token + ', var(--thematiq-global-color-main-text))',
+				'--color-main-text':
+					'var(' + token + ', var(--thematiq-global-color-main-text))',
 			})
 		}
 	})

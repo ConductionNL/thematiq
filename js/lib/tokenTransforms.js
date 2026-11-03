@@ -342,7 +342,11 @@
 	 * Page text among Nextcloud's own variables; the editor measures each
 	 * against the page background (OverridesCssBuilder::LIGHT_TEXT_PAIRS).
 	 */
-	var TEXT_CONTRAST_TOKENS = ['--color-main-text', '--color-text-maxcontrast', '--color-text-lighter']
+	var TEXT_CONTRAST_TOKENS = [
+		'--color-main-text',
+		'--color-text-maxcontrast',
+		'--color-text-lighter',
+	]
 
 	/**
 	 * Relative luminance of a #rrggbb colour (WCAG 2).
@@ -353,7 +357,9 @@
 	function luminance(hex) {
 		var channels = [1, 3, 5].map(function (start) {
 			var value = parseInt(hex.slice(start, start + 2), 16) / 255
-			return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4)
+			return value <= 0.03928
+				? value / 12.92
+				: Math.pow((value + 0.055) / 1.055, 2.4)
 		})
 		return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
 	}
@@ -376,7 +382,8 @@
 		if (foreground === null) {
 			return null
 		}
-		var page = (background ? normaliseColorForPicker(background) : null) || '#ffffff'
+		var page =
+			(background ? normaliseColorForPicker(background) : null) || '#ffffff'
 		var light = Math.max(luminance(foreground), luminance(page))
 		var dark = Math.min(luminance(foreground), luminance(page))
 		var ratio = (light + 0.05) / (dark + 0.05)

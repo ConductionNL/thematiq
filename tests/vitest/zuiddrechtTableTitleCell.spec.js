@@ -15,7 +15,10 @@ import path from 'node:path'
 import postcss from 'postcss'
 import { describe, expect, it } from 'vitest'
 
-const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'), 'utf8')
+const css = fs.readFileSync(
+	path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'),
+	'utf8',
+)
 
 describe('zuiddrecht table cells', () => {
 	it('sizes the cells at 14px but not the title cell', () => {
@@ -25,6 +28,8 @@ describe('zuiddrecht table cells', () => {
 				rule.walkDecls('font-size', () => selectors.push(rule.selector))
 			}
 		})
-		expect(selectors).toEqual(['#app-content-vue .cn-data-table tbody td:not(.cn-table-col--title)'])
+		expect(selectors).toEqual([
+			'#app-content-vue .cn-data-table tbody td:not(.cn-table-col--title)',
+		])
 	})
 })
