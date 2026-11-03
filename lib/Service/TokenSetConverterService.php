@@ -2323,84 +2323,110 @@ class TokenSetConverterService {
 	 *
 	 * @return string|null The picked colour, or null when no grey in the ramp qualifies.
 	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
 	 */
 	private function pickByCriterion(array $spec, array $ramp, array $semantic): ?string {
-		$criterion = (string)($spec['criterion'] ?? 'darkest');
-
 		// The page background the picked grey has to stand apart from. A ramp
 		// of one grey still has a "darkest" and a "nearest" member, and when
 		// that grey is the background itself every role came out white on
 		// white (#933). No readable candidate means no pick: the role then
 		// falls back to the defaults, like a set that declares no greys.
-		$background = $this->contrast->parseColor(
-			value: ($semantic[(string)($spec['background'] ?? '--nldesign-color-nav-background')] ?? '#ffffff')
-		);
-		if ($background === null) {
-			$background = [255, 255, 255];
-		}
+		$backgroundToken = (string)($spec['background'] ?? '--nldesign-color-nav-background');
+		$background = $this->rgbOrWhite(value: ($semantic[$backgroundToken] ?? '#ffffff'));
+		$min = (float)($spec['min'] ?? 4.5);
 
-		if ($criterion === 'darkest') {
-			uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
+		return match ((string)($spec['criterion'] ?? 'darkest')) {
+			'darkest' => $this->darkestReadable(ramp: $ramp, limits: ['against' => $background, 'min' => $min]),
+			'nearestLuminance' => $this->nearestLuminance(
+				ramp: $ramp,
+				limits: ['background' => $background, 'target' => (string)($spec['target'] ?? '#f2f2f2')]
+			),
+			'minContrast' => $this->lightestReadable(
+				ramp: $ramp,
+				limits: ['against' => $this->rgbOrWhite(value: ($semantic[(string)($spec['against'] ?? '')] ?? '#ffffff')), 'min' => $min]
+			),
+			default => null,
+		};
+	}//end pickByCriterion()
 
-			$darkest = array_key_first($ramp);
-			if ($this->contrast->ratio(first: $ramp[$darkest], second: $background) < (float)($spec['min'] ?? 4.5)) {
-				return null;
-			}
+	/**
+	 * A colour as RGB, or white when it cannot be read.
+	 *
+	 * @param string $value The colour.
+	 *
+	 * @return array{0: int, 1: int, 2: int}
+	 */
+	private function rgbOrWhite(string $value): array {
+		return ($this->contrast->parseColor(value: $value) ?? [255, 255, 255]);
+	}//end rgbOrWhite()
 
-			return $darkest;
-		}
+	/**
+	 * The darkest grey of a ramp, when it is readable against the background.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $limits The background and the ratio to clear.
+	 *
+	 * @return string|null
+	 */
+	private function darkestReadable(array $ramp, array $limits): ?string {
+		uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
 
-		if ($criterion === 'nearestLuminance') {
-			$targetRgb = $this->contrast->parseColor(value: (string)($spec['target'] ?? '#f2f2f2'));
-			if ($targetRgb === null) {
-				return null;
-			}
-
-			$best = null;
-			$bestDistance = null;
-			foreach ($ramp as $hex => $rgb) {
-				$distance = abs(array_sum($rgb) - array_sum($targetRgb));
-
-				// A grey nearer the background than the target reads as the
-				// background: a border or hover in that colour is invisible.
-				if ($distance >= abs(array_sum($rgb) - array_sum($background))) {
-					continue;
-				}
-
-				if ($bestDistance === null || $distance < $bestDistance) {
-					$bestDistance = $distance;
-					$best = $hex;
-				}
-			}
-
-			return $best;
-		}
-
-		if ($criterion === 'minContrast') {
-			$againstValue = ($semantic[(string)($spec['against'] ?? '')] ?? '#ffffff');
-			$againstRgb = $this->contrast->parseColor(value: $againstValue);
-			if ($againstRgb === null) {
-				$againstRgb = [255, 255, 255];
-			}
-
-			$min = (float)($spec['min'] ?? 4.5);
-
-			// The LIGHTEST grey that still clears the ratio: a muted role should
-			// be as quiet as it is allowed to be, not as dark as possible.
-			uasort($ramp, fn (array $a, array $b) => array_sum($b) <=> array_sum($a));
-			foreach ($ramp as $hex => $rgb) {
-				if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $min) {
-					return (string)$hex;
-				}
-			}
-
+		$darkest = array_key_first($ramp);
+		if ($this->contrast->ratio(first: $ramp[$darkest], second: $limits['against']) < $limits['min']) {
 			return null;
-		}//end if
+		}
+
+		return $darkest;
+	}//end darkestReadable()
+
+	/**
+	 * The grey of a ramp nearest the target luminance that is not nearer the background.
+	 *
+	 * A grey nearer the background than the target reads as the background: a border or hover
+	 * in that colour is invisible.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{background: array{0: int, 1: int, 2: int}, target: string} $limits The background and the target colour.
+	 *
+	 * @return string|null
+	 */
+	private function nearestLuminance(array $ramp, array $limits): ?string {
+		$targetRgb = $this->contrast->parseColor(value: $limits['target']);
+		if ($targetRgb === null) {
+			return null;
+		}
+
+		$best = null;
+		$bestDistance = null;
+		foreach ($ramp as $hex => $rgb) {
+			$distance = abs(array_sum($rgb) - array_sum($targetRgb));
+			if ($distance < abs(array_sum($rgb) - array_sum($limits['background'])) && ($bestDistance === null || $distance < $bestDistance)) {
+				$bestDistance = $distance;
+				$best = $hex;
+			}
+		}
+
+		return $best;
+	}//end nearestLuminance()
+
+	/**
+	 * The LIGHTEST grey that still clears the ratio: a muted role should be as quiet as it is
+	 * allowed to be, not as dark as possible.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $limits The colour to read against and the ratio to clear.
+	 *
+	 * @return string|null
+	 */
+	private function lightestReadable(array $ramp, array $limits): ?string {
+		uasort($ramp, fn (array $a, array $b) => array_sum($b) <=> array_sum($a));
+		foreach ($ramp as $hex => $rgb) {
+			if ($this->contrast->ratio(first: $rgb, second: $limits['against']) >= $limits['min']) {
+				return (string)$hex;
+			}
+		}
 
 		return null;
-	}//end pickByCriterion()
+	}//end lightestReadable()
 
 	/**
 	 * Apply one of the closed transform set.
