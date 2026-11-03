@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -178,11 +179,15 @@ class RuntimeFileWiringTest extends TestCase {
 			darkPalette: $dark
 		);
 		$stored = $sets->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#24578f'],
-			css: ':root { --nldesign-color-primary: #24578f; }',
-			logoAsset: ['path' => 'logo.png', 'contents' => 'PNGDATA'],
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#24578f'],
+					'css' => ':root { --nldesign-color-primary: #24578f; }',
+					'logoAsset' => ['path' => 'logo.png', 'contents' => 'PNGDATA'],
+				]
+			)
 		);
 		$dark->generateAndWrite(setId: (string)$stored['id'], force: true);
 		(new CustomOverridesService(

@@ -47,6 +47,7 @@ use RuntimeException;
  * @covers \OCA\Thematiq\Controller\BrandFormController
  * @uses   \OCA\Thematiq\Service\AuditAndTranslation
  * @uses   \OCA\Thematiq\Service\BrandFormSources
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class BrandFormCreateGoldenTest extends TestCase {
 
@@ -150,7 +151,7 @@ class BrandFormCreateGoldenTest extends TestCase {
 		$store = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$store->method('store')->willReturnCallback(
 			static function (...$arguments) use (&$calls, $storeMode): array {
-				$calls[] = ['store', $arguments];
+				$calls[] = ['store', array_values(get_object_vars($arguments[0]))];
 				if ($storeMode < 3) {
 					throw new RuntimeException('refused', [409, 500, 3][$storeMode]);
 				}

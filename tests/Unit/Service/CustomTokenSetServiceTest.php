@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -150,12 +151,16 @@ class CustomTokenSetServiceTest extends TestCase {
 	 */
 	public function testStoreWritesFileAndManifest(): void {
 		$result = $this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: [
-				'--nldesign-color-primary' => '#007bc7',
-				'--nldesign-color-primary-text' => '#ffffff',
-			]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => [
+						'--nldesign-color-primary' => '#007bc7',
+						'--nldesign-color-primary-text' => '#ffffff',
+					],
+				]
+			)
 		);
 
 		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $result['id']);
@@ -179,10 +184,14 @@ class CustomTokenSetServiceTest extends TestCase {
 	 */
 	public function testStorePersistsDeclaredVersion(): void {
 		$this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7'],
-			version: '2.3.1'
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+					'version' => '2.3.1',
+				]
+			)
 		);
 
 		$manifest = $this->service->getManifest();
@@ -199,9 +208,13 @@ class CustomTokenSetServiceTest extends TestCase {
 	 */
 	public function testStoreWithoutVersionOmitsVersionKey(): void {
 		$this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
 		);
 
 		$manifest = $this->service->getManifest();
@@ -216,10 +229,14 @@ class CustomTokenSetServiceTest extends TestCase {
 	 */
 	public function testStorePersistsImportWarningsSeparatelyFromContrastWarnings(): void {
 		$result = $this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7'],
-			importWarnings: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+					'importWarnings' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+				]
+			)
 		);
 
 		// The store() result's `warnings` key remains the contrast warnings.
@@ -245,11 +262,27 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testStoreCollisionThrows409(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 
 		$this->expectException(exception: RuntimeException::class);
 		$this->expectExceptionCode(code: 409);
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#000000']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#000000'],
+				]
+			)
+		);
 	}//end testStoreCollisionThrows409()
 
 	/**
@@ -260,7 +293,15 @@ class CustomTokenSetServiceTest extends TestCase {
 	public function testStoreEmptySlugThrows422(): void {
 		$this->expectException(exception: RuntimeException::class);
 		$this->expectExceptionCode(code: 422);
-		$this->service->store('!!!', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => '!!!',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 	}//end testStoreEmptySlugThrows422()
 
 	/**
@@ -270,12 +311,16 @@ class CustomTokenSetServiceTest extends TestCase {
 	 */
 	public function testStorePersistsContrastWarning(): void {
 		$result = $this->service->store(
-			displayName: 'Low Contrast',
-			description: '',
-			declarations: [
-				'--nldesign-color-primary' => '#ffffff',
-				'--nldesign-color-primary-text' => '#cccccc',
-			]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Low Contrast',
+					'description' => '',
+					'declarations' => [
+						'--nldesign-color-primary' => '#ffffff',
+						'--nldesign-color-primary-text' => '#cccccc',
+					],
+				]
+			)
 		);
 
 		$this->assertNotEmpty(actual: $result['warnings']);
@@ -289,7 +334,15 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteRemovesFileAndManifest(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		$path = $this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css';
 		$this->assertFileExists(filename: $path);
 
@@ -304,7 +357,15 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeleteActiveSetFallsBackToNextcloud(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
 
 		$this->service->delete(id: 'custom-gemeente-voorbeeld');
@@ -328,7 +389,15 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testListDropsManifestEntryWithoutFile(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		// Delete the file behind the service's back, leaving a stale manifest entry.
 		unlink($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css');
 

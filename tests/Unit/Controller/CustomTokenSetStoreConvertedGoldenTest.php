@@ -58,6 +58,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CustomSetSources
  * @uses   \OCA\Thematiq\Service\CustomSetUploadPipeline
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 
@@ -282,10 +283,7 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		$service = $this->recorder(class: CustomTokenSetService::class, methods: ['getRawContent' => [":root {}\n", null][$random->getInt(0, 1)]]);
 		$service->method('store')->willReturnCallback(
 			function (...$arguments) use ($storeMode): array {
-				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(
-					method: [CustomTokenSetService::class, 'store'],
-					arguments: $arguments
-				);
+				$this->calls[] = ['CustomTokenSetService::store'] + get_object_vars($arguments[0]);
 				if ($storeMode < 3) {
 					throw new RuntimeException('refused', [409, 500, 3][$storeMode]);
 				}

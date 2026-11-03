@@ -313,11 +313,15 @@ class MultiBrandImportService {
 	 */
 	private function storeBrand(string $sourceId, string $key, array $plan, ?string $fileName): array {
 		$result = $this->storage->customSets->store(
-			displayName: $plan['displayName'],
-			description: '',
-			declarations: $plan['accepted'],
-			css: $plan['css'],
-			theming: $plan['theming']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => $plan['displayName'],
+					'description' => '',
+					'declarations' => $plan['accepted'],
+					'css' => $plan['css'],
+					'theming' => $plan['theming'],
+				]
+			)
 		);
 
 		$entry = ($this->storage->customSets->getManifest()[$result['id']] ?? []);

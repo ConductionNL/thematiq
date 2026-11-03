@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -156,10 +157,14 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 */
 	private function store(?array $logoAsset, string $name = 'Gemeente Voorbeeld'): array {
 		return $this->service->store(
-			displayName: $name,
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#154273'],
-			logoAsset: $logoAsset
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => $name,
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#154273'],
+					'logoAsset' => $logoAsset,
+				]
+			)
 		);
 	}//end store()
 

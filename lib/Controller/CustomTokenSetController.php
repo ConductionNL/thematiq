@@ -30,6 +30,7 @@ use OCA\Thematiq\Service\CustomSetSources;
 use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -646,7 +647,7 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
-			$result = $this->pipeline->service->store(...$this->storeArguments(name: $name, parsed: $parsed));
+			$result = $this->pipeline->service->store(set: new NewCustomTokenSet(fields: $this->storeArguments(name: $name, parsed: $parsed)));
 			if (empty($parsed['darkPins']) === false) {
 				$this->pipeline->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
 			}

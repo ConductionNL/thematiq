@@ -27,6 +27,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -52,6 +53,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\DarkPaletteService
  * @uses   \OCA\Thematiq\Service\DarkPins
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class CustomTokenSetStoreGoldenTest extends TestCase {
 
@@ -159,7 +161,7 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 		);
 
 		try {
-			$outcome = ['result' => $service->store(...$arguments)];
+			$outcome = ['result' => $service->store(set: new NewCustomTokenSet(fields: $arguments))];
 		} catch (RuntimeException $e) {
 			$outcome = ['exception' => $e->getCode(), 'message' => $e->getMessage()];
 		}

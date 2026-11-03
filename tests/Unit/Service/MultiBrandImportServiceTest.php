@@ -40,6 +40,7 @@ use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Service\MultiBrandSource;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -288,7 +289,15 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCollisionRefusesWholeImport(): void {
-		$this->sets->store(displayName: 'Voorbeeld: Zuid', description: '', declarations: ['--nldesign-color-primary' => '#000000']);
+		$this->sets->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Voorbeeld: Zuid',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#000000'],
+				]
+			)
+		);
 
 		try {
 			$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);

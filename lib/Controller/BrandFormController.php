@@ -25,6 +25,7 @@ use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -180,11 +181,18 @@ class BrandFormController extends Controller {
 		$declarations = $input['derived']['declarations'];
 		try {
 			return $this->sources->store->store(
-				displayName: $name,
-				description: trim((string)$this->request->getParam('description', '')),
-				declarations: $declarations,
-				theming: ['primary_color' => $declarations['--nldesign-color-primary'], 'background_color' => $declarations['--nldesign-color-nav-background']],
-				logoAsset: $input['logo']
+				set: new NewCustomTokenSet(
+					fields: [
+						'displayName' => $name,
+						'description' => trim((string)$this->request->getParam('description', '')),
+						'declarations' => $declarations,
+						'theming' => [
+							'primary_color' => $declarations['--nldesign-color-primary'],
+							'background_color' => $declarations['--nldesign-color-nav-background'],
+						],
+						'logoAsset' => $input['logo'],
+					]
+				)
 			);
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));

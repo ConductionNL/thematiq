@@ -28,6 +28,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OverridesThemingSync;
 use OCA\Thematiq\Service\OverridesWrites;
@@ -330,11 +331,23 @@ class TokenValueTypesTest extends TestCase {
 		);
 
 		$store->store(
-			displayName: 'Doorschijnend',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Doorschijnend',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff'],
+				]
+			)
 		);
-		$store->store(displayName: 'Dekkend', description: '', declarations: ['--nldesign-color-primary' => '#154273']);
+		$store->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Dekkend',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#154273'],
+				]
+			)
+		);
 
 		$manifest = array_column($store->list(), null, 'id');
 		$this->assertSame(expected: '#8aa0b9', actual: $manifest['custom-doorschijnend']['theming']['primary_color'] ?? null);

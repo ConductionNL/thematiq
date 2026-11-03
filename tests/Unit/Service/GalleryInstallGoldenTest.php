@@ -61,6 +61,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\TokenSetUploadPipeline
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\Exception\GalleryException
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class GalleryInstallGoldenTest extends TestCase {
 
@@ -305,10 +306,7 @@ class GalleryInstallGoldenTest extends TestCase {
 		);
 		$sets->method('store')->willReturnCallback(
 			function (...$arguments) use ($refuses): array {
-				$this->calls[] = ['CustomTokenSetService::store'] + $this->named(
-					method: [CustomTokenSetService::class, 'store'],
-					arguments: $arguments
-				);
+				$this->calls[] = ['CustomTokenSetService::store'] + get_object_vars($arguments[0]);
 				if ($refuses === true) {
 					throw new RuntimeException('A custom token set named "x" already exists.', 409);
 				}

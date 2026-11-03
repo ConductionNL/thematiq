@@ -37,6 +37,7 @@ use OCA\Thematiq\Service\DocumentAssetService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ImageSniffer;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\OverridesSetContext;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OwnTokenService;
@@ -362,9 +363,13 @@ class ConfigBundleServiceTest extends TestCase {
 		);
 
 		$this->customTokenSetService->store(
-			displayName: 'Gemeente X',
-			description: 'A custom house style',
-			declarations: ['--nldesign-color-primary' => '#007bc7']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente X',
+					'description' => 'A custom house style',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
 		);
 	}//end seedConfig()
 

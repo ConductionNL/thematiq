@@ -203,7 +203,7 @@ class GalleryInstallService {
 	 */
 	private function storeInstall(array $install): array {
 		try {
-			return $this->records->customSets->store(...$this->storeArguments(install: $install));
+			return $this->records->customSets->store(set: new NewCustomTokenSet(fields: $this->storeArguments(install: $install)));
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $e->getMessage(), code: 422, previous: $e);
 		}
