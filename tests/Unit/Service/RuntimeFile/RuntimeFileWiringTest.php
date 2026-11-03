@@ -277,7 +277,9 @@ class RuntimeFileWiringTest extends TestCase {
 
 		$response = $controller->serve('img/logos/custom-gemeente-voorbeeld.svg');
 		$this->assertSame(expected: Http::STATUS_OK, actual: $response->getStatus());
-		$headers = $response->getHeaders();
+		// The response's own headers: Response::getHeaders() merges in request headers through
+		// Server::get(), which needs a Nextcloud server.
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
 		$this->assertSame(expected: 'image/svg+xml', actual: $headers['Content-Type']);
 		$this->assertSame(expected: 'nosniff', actual: $headers['X-Content-Type-Options']);
 		$this->assertStringContainsString(needle: 'immutable', haystack: $headers['Cache-Control']);
