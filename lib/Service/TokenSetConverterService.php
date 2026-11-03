@@ -2537,62 +2537,99 @@ class TokenSetConverterService {
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return array{value: string, reason: string|null} The (possibly corrected) value and the reason when it changed.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would
-	 *   be worse than a long switch.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would be
-	 *   worse than a long switch.
 	 */
 	private function applyGuard(array $guard, string $value, array $semantic): array {
 		$kind = (string)($guard['kind'] ?? '');
-
 		if ($kind === 'fontAvailable') {
-			if ($this->fontIsAvailable(stack: $value) === false) {
-				return ['value' => $value, 'reason' => (string)($guard['onFail'] ?? 'font-not-bundled')];
-			}
+			return $this->fontGuard(guard: $guard, value: $value);
+		}
 
+		$against = ($semantic[(string)($guard['against'] ?? '')] ?? null);
+		if ($kind !== 'contrast' || $against === null) {
 			return ['value' => $value, 'reason' => null];
 		}
 
-		if ($kind !== 'contrast') {
-			return ['value' => $value, 'reason' => null];
+		return $this->contrastGuard(guard: $guard, pair: ['value' => $value, 'against' => $against]);
+	}//end applyGuard()
+
+	/**
+	 * The `fontAvailable` guard: keep the value, and report when its first family is not available.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param string $value The font stack.
+	 *
+	 * @return array{value: string, reason: string|null}
+	 */
+	private function fontGuard(array $guard, string $value): array {
+		if ($this->fontIsAvailable(stack: $value) === false) {
+			return ['value' => $value, 'reason' => $this->guardReason(guard: $guard, fallback: 'font-not-bundled')];
 		}
 
-		$againstName = (string)($guard['against'] ?? '');
-		$againstValue = ($semantic[$againstName] ?? null);
-		if ($againstValue === null) {
-			return ['value' => $value, 'reason' => null];
-		}
+		return ['value' => $value, 'reason' => null];
+	}//end fontGuard()
 
-		$rgb = $this->contrast->parseColor(value: $value);
-		$againstRgb = $this->contrast->parseColor(value: $againstValue);
+	/**
+	 * The `contrast` guard: darken the value until it clears the minimum ratio against its pair.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param array{value: string, against: string} $pair The value and the colour it must contrast with.
+	 *
+	 * @return array{value: string, reason: string|null}
+	 */
+	private function contrastGuard(array $guard, array $pair): array {
+		$rgb = $this->contrast->parseColor(value: $pair['value']);
+		$againstRgb = $this->contrast->parseColor(value: $pair['against']);
 		if ($rgb === null || $againstRgb === null) {
-			return ['value' => $value, 'reason' => null];
+			return ['value' => $pair['value'], 'reason' => null];
 		}
 
-		$min = (float)($guard['min'] ?? 4.5);
-		if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $min) {
-			return ['value' => $value, 'reason' => null];
+		$target = ['against' => $againstRgb, 'min' => (float)($guard['min'] ?? 4.5)];
+		if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $target['min']) {
+			return ['value' => $pair['value'], 'reason' => null];
 		}
 
-		// Darken in fixed steps until the pair clears the ratio. Bounded at 10
-		// steps so a pathological pair cannot spin, and the ORIGINAL is kept in
-		// the report entry so the admin sees what the theme actually asked for.
+		return [
+			'value' => $this->darkenToClear(value: $pair['value'], target: $target),
+			'reason' => $this->guardReason(guard: $guard, fallback: 'contrast-adjusted'),
+		];
+	}//end contrastGuard()
+
+	/**
+	 * Darken a colour in fixed steps until it clears the target ratio.
+	 *
+	 * Bounded at MAX_CONTRAST_STEPS so a pathological pair cannot spin; the
+	 * caller keeps the ORIGINAL in the report entry, so the admin sees what the
+	 * theme actually asked for.
+	 *
+	 * @param string $value The colour to darken.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $target The colour it must contrast with, parsed, and the minimum ratio.
+	 *
+	 * @return string The first step that clears the ratio, or the last one tried.
+	 */
+	private function darkenToClear(string $value, array $target): string {
 		$candidate = $value;
 		for ($step = 0; $step < self::MAX_CONTRAST_STEPS; $step++) {
 			$candidate = $this->darken(value: $candidate, fraction: 0.1);
 			$candidateRgb = $this->contrast->parseColor(value: $candidate);
-			if ($candidateRgb === null) {
-				break;
-			}
-
-			if ($this->contrast->ratio(first: $candidateRgb, second: $againstRgb) >= $min) {
-				return ['value' => $candidate, 'reason' => (string)($guard['onFail'] ?? 'contrast-adjusted')];
+			if ($candidateRgb === null || $this->contrast->ratio(first: $candidateRgb, second: $target['against']) >= $target['min']) {
+				return $candidate;
 			}
 		}
 
-		return ['value' => $candidate, 'reason' => (string)($guard['onFail'] ?? 'contrast-adjusted')];
-	}//end applyGuard()
+		return $candidate;
+	}//end darkenToClear()
+
+	/**
+	 * The reason a guard reports when it changes or flags a value.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param string $fallback The reason when the spec names none.
+	 *
+	 * @return string
+	 */
+	private function guardReason(array $guard, string $fallback): string {
+		return (string)($guard['onFail'] ?? $fallback);
+	}//end guardReason()
 
 	/**
 	 * Whether the first family of a font stack is bundled or uploaded.
