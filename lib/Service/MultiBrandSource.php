@@ -105,31 +105,64 @@ class MultiBrandSource {
 			return $this->cutTheme(document: $decoded, key: $key);
 		}
 
-		$shared = [];
-		$own = null;
-		foreach ($this->reader->blocks(css: $content) as $block) {
-			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
-				if ($match[1] === $key) {
-					$own = $block;
-				}
-
-				continue;
-			}
-
-			// A modifier of another brand (`.zuid-theme--dark`) is that brand's, not shared.
-			if (preg_match('/^\.([a-z0-9-]+)-theme--/', $block['selector']) === 1) {
-				continue;
-			}
-
-			$shared[] = $block;
-		}
-
+		$blocks = $this->reader->blocks(css: $content);
+		$own = $this->brandBlock(blocks: $blocks, key: $key);
 		if ($own === null) {
 			throw new RuntimeException('unknown brand: ' . $key, 422);
 		}
 
+		return ['content' => $this->blocksCss(blocks: array_merge($this->sharedBlocks(blocks: $blocks), [$own])), 'referenceOnlyPaths' => []];
+	}//end cut()
+
+	/**
+	 * The last block whose selector is the brand's own class.
+	 *
+	 * @param array<int, array{selector: string, declarations: array<string, string>}> $blocks The blocks.
+	 * @param string $key The brand key.
+	 *
+	 * @return array{selector: string, declarations: array<string, string>}|null The block, or null when the source has none.
+	 */
+	private function brandBlock(array $blocks, string $key): ?array {
+		$own = null;
+		foreach ($blocks as $block) {
+			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1 && $match[1] === $key) {
+				$own = $block;
+			}
+		}
+
+		return $own;
+	}//end brandBlock()
+
+	/**
+	 * The blocks every brand shares: neither a brand's class nor a modifier of one.
+	 *
+	 * A modifier of another brand (`.zuid-theme--dark`) is that brand's, not shared.
+	 *
+	 * @param array<int, array{selector: string, declarations: array<string, string>}> $blocks The blocks.
+	 *
+	 * @return array<int, array{selector: string, declarations: array<string, string>}> The shared blocks.
+	 */
+	private function sharedBlocks(array $blocks): array {
+		$shared = [];
+		foreach ($blocks as $block) {
+			if (preg_match(self::BRAND_SELECTOR, $block['selector']) !== 1 && preg_match('/^\.([a-z0-9-]+)-theme--/', $block['selector']) !== 1) {
+				$shared[] = $block;
+			}
+		}
+
+		return $shared;
+	}//end sharedBlocks()
+
+	/**
+	 * Blocks written back as CSS.
+	 *
+	 * @param array<int, array{selector: string, declarations: array<string, string>}> $blocks The blocks.
+	 *
+	 * @return string The CSS.
+	 */
+	private function blocksCss(array $blocks): string {
 		$css = '';
-		foreach (array_merge($shared, [$own]) as $block) {
+		foreach ($blocks as $block) {
 			$lines = [];
 			foreach ($block['declarations'] as $name => $value) {
 				$lines[] = '  ' . $name . ': ' . $value . ';';
@@ -138,8 +171,8 @@ class MultiBrandSource {
 			$css .= $block['selector'] . " {\n" . implode("\n", $lines) . "\n}\n";
 		}
 
-		return ['content' => $css, 'referenceOnlyPaths' => []];
-	}//end cut()
+		return $css;
+	}//end blocksCss()
 
 	/**
 	 * The themes of a Tokens Studio document.
@@ -234,19 +267,7 @@ class MultiBrandSource {
 		$names = array_keys($selected);
 		usort(
 			$names,
-			static function (string $first, string $second) use ($order): int {
-				$firstAt = array_search($first, $order, true);
-				$secondAt = array_search($second, $order, true);
-				if ($firstAt === false && $secondAt === false) {
-					return strcmp($first, $second);
-				}
-
-				if ($firstAt === false || $secondAt === false) {
-					return (int)($firstAt === false) - (int)($secondAt === false);
-				}
-
-				return $firstAt <=> $secondAt;
-			}
+			static fn (string $first, string $second): int => self::compareInOrder(pair: [$first, $second], order: $order)
 		);
 
 		$merged = [];
@@ -260,6 +281,29 @@ class MultiBrandSource {
 	}//end mergeSets()
 
 	/**
+	 * Compare two set names by their place in the set order; names it does not list follow, by name.
+	 *
+	 * @param array{0: string, 1: string} $pair The two names.
+	 * @param array<int, string> $order The set order.
+	 *
+	 * @return int Below, at or above zero, as for usort().
+	 */
+	private static function compareInOrder(array $pair, array $order): int {
+		[$first, $second] = $pair;
+		$firstAt = array_search($first, $order, true);
+		$secondAt = array_search($second, $order, true);
+		if ($firstAt === false && $secondAt === false) {
+			return strcmp($first, $second);
+		}
+
+		if ($firstAt === false || $secondAt === false) {
+			return (int)($firstAt === false) - (int)($secondAt === false);
+		}
+
+		return $firstAt <=> $secondAt;
+	}//end compareInOrder()
+
+	/**
 	 * Recursive replace: a token (a node with `$value` or `value`) replaces whatever sits at its path.
 	 *
 	 * @param array<string, mixed> $base The tree so far.
@@ -269,9 +313,7 @@ class MultiBrandSource {
 	 */
 	private function replaceTree(array $base, array $over): array {
 		foreach ($over as $key => $node) {
-			$bothGroups = is_array($node) === true && $this->isToken(node: $node) === false
-				&& is_array($base[$key] ?? null) === true && $this->isToken(node: $base[$key]) === false;
-			if ($bothGroups === true) {
+			if ($this->isGroupNode(node: $node) === true && $this->isGroupNode(node: ($base[$key] ?? null)) === true) {
 				$base[$key] = $this->replaceTree(base: $base[$key], over: $node);
 				continue;
 			}
@@ -281,6 +323,17 @@ class MultiBrandSource {
 
 		return $base;
 	}//end replaceTree()
+
+	/**
+	 * Whether a node is a group: an array that is not a token.
+	 *
+	 * @param mixed $node The node.
+	 *
+	 * @return bool True for a group.
+	 */
+	private function isGroupNode(mixed $node): bool {
+		return is_array($node) === true && $this->isToken(node: $node) === false;
+	}//end isGroupNode()
 
 	/**
 	 * Whether a node is a token.
