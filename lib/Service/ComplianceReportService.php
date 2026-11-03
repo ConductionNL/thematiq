@@ -387,37 +387,10 @@ class ComplianceReportService {
 	 */
 	private function evaluatePair(array $pairDef, array $layers, array $tokenSetMeta): array {
 		$fgResolved = $this->resolveColorToken(token: $pairDef['fg'], layers: $layers);
-
-		$bgResolved = $this->resolveColorToken(token: $pairDef['bg'], layers: $layers);
-		if ($pairDef['bg'] === self::MAIN_BACKGROUND_TOKEN) {
-			$bgResolved = $this->resolveMainBackground(
-				customOverrides: $layers['customOverrides'],
-				declarations: $layers['declarations'],
-				tokenSetMeta: $tokenSetMeta
-			);
-		}
-
-		$fgColor = null;
-		if ($fgResolved['value'] !== null) {
-			$fgColor = $this->measuring->contrast->parseColor(value: $fgResolved['value']);
-		}
-
-		$bgColor = null;
-		if ($bgResolved['value'] !== null) {
-			$bgColor = $this->measuring->contrast->parseColor(value: $bgResolved['value']);
-		}
-
-		$entry = [
-			'foreground' => $pairDef['fg'],
-			'background' => $pairDef['bg'],
-			'foregroundValue' => $fgResolved['value'],
-			'backgroundValue' => $bgResolved['value'],
-			'ratio' => null,
-			'threshold' => $pairDef['threshold'],
-			'basis' => $pairDef['basis'],
-			'verdict' => 'unevaluated',
-			'note' => null,
-		];
+		$bgResolved = $this->resolveBackground(token: $pairDef['bg'], context: ['layers' => $layers, 'tokenSetMeta' => $tokenSetMeta]);
+		$fgColor = $this->parsedColor(resolved: $fgResolved);
+		$bgColor = $this->parsedColor(resolved: $bgResolved);
+		$entry = $this->pairEntry(pairDef: $pairDef, values: ['fg' => $fgResolved['value'], 'bg' => $bgResolved['value']]);
 
 		if ($fgColor === null || $bgColor === null) {
 			$entry['note'] = $this->describeUnresolvedPair(
@@ -428,18 +401,88 @@ class ComplianceReportService {
 			return $entry;
 		}
 
-		// Measured as it renders, so a translucent colour is blended first. Both
-		// values parsed above, so measure() cannot answer null here.
-		$ratio = round(($this->measuring->contrast->measure(foreground: (string)$fgResolved['value'], background: (string)$bgResolved['value']) ?? 0.0), 2);
+		return $this->withRatio(entry: $entry);
+	}//end evaluatePair()
 
+	/**
+	 * Resolve a pair's background token; the main background has a resolution of its own.
+	 *
+	 * @param string $token The background token.
+	 * @param array{layers: ColourLayers, tokenSetMeta: array<string, mixed>} $context The colour layers and the active token set's metadata.
+	 *
+	 * @return array<string, mixed> The resolution, as resolveColorToken() answers it.
+	 */
+	private function resolveBackground(string $token, array $context): array {
+		$resolved = $this->resolveColorToken(token: $token, layers: $context['layers']);
+		if ($token === self::MAIN_BACKGROUND_TOKEN) {
+			$resolved = $this->resolveMainBackground(
+				customOverrides: $context['layers']['customOverrides'],
+				declarations: $context['layers']['declarations'],
+				tokenSetMeta: $context['tokenSetMeta']
+			);
+		}
+
+		return $resolved;
+	}//end resolveBackground()
+
+	/**
+	 * The parsed colour of a resolved token, or null when it resolved to nothing or does not parse.
+	 *
+	 * @param array<string, mixed> $resolved The resolution.
+	 *
+	 * @return array{0: int, 1: int, 2: int}|null
+	 */
+	private function parsedColor(array $resolved): ?array {
+		if ($resolved['value'] === null) {
+			return null;
+		}
+
+		return $this->measuring->contrast->parseColor(value: $resolved['value']);
+	}//end parsedColor()
+
+	/**
+	 * A pair's report row before it is measured.
+	 *
+	 * @param array{fg: string, bg: string, threshold: float, basis: string} $pairDef The matrix entry.
+	 * @param array{fg: string|null, bg: string|null} $values The resolved foreground and background values.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function pairEntry(array $pairDef, array $values): array {
+		return [
+			'foreground' => $pairDef['fg'],
+			'background' => $pairDef['bg'],
+			'foregroundValue' => $values['fg'],
+			'backgroundValue' => $values['bg'],
+			'ratio' => null,
+			'threshold' => $pairDef['threshold'],
+			'basis' => $pairDef['basis'],
+			'verdict' => 'unevaluated',
+			'note' => null,
+		];
+	}//end pairEntry()
+
+	/**
+	 * Measure a row whose two colours both parse, and give it its verdict.
+	 *
+	 * Measured as it renders, so a translucent colour is blended first. Both
+	 * values parse, so measure() cannot answer null here.
+	 *
+	 * @param array<string, mixed> $entry The row from pairEntry().
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function withRatio(array $entry): array {
+		$measured = $this->measuring->contrast->measure(foreground: (string)$entry['foregroundValue'], background: (string)$entry['backgroundValue']);
+		$ratio = round(($measured ?? 0.0), 2);
 		$entry['ratio'] = $ratio;
 		$entry['verdict'] = 'fail';
-		if ($ratio >= $pairDef['threshold']) {
+		if ($ratio >= $entry['threshold']) {
 			$entry['verdict'] = 'pass';
 		}
 
 		return $entry;
-	}//end evaluatePair()
+	}//end withRatio()
 
 	/**
 	 * Resolve a --color-* pair token: custom override first, else the mapped
