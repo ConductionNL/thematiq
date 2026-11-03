@@ -58,6 +58,11 @@ class RuntimeFileWiringTest extends TestCase {
 	/** @var array<string, string> */
 	private array $appValues = [];
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->base = sys_get_temp_dir() . '/thematiq-wiring-' . bin2hex(random_bytes(4));
@@ -75,6 +80,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->remove(path: $this->base);
 		parent::tearDown();
@@ -136,6 +146,11 @@ class RuntimeFileWiringTest extends TestCase {
 		return new RuntimeFileLocator(appManager: $this->appManager, store: $this->store, urlGenerator: $urls, tempManager: $this->createMock(originalClassName: ITempManager::class));
 	}//end locator()
 
+	/**
+	 * A custom house style leaves the app directory unchanged.
+	 *
+	 * @return void
+	 */
 	public function testACustomHouseStyleLeavesTheAppDirectoryUnchanged(): void {
 		$before = $this->hashTree(root: $this->appDir);
 		$config = $this->config();
@@ -167,6 +182,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertTrue(condition: $this->store->exists(CustomCssService::FILE));
 	}//end testACustomHouseStyleLeavesTheAppDirectoryUnchanged()
 
+	/**
+	 * An uploaded set is listed and valid.
+	 *
+	 * @return void
+	 */
 	public function testAnUploadedSetIsListedAndValid(): void {
 		$this->store->write('css/tokens/custom-gemeente-voorbeeld.css', ':root {}');
 		$this->appValues['thematiq/custom_token_sets'] = json_encode(['custom-gemeente-voorbeeld' => ['name' => 'Gemeente Voorbeeld']]);
@@ -185,6 +205,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertContains(needle: 'utrecht', haystack: array_column($service->getAvailableTokenSets(), 'id'));
 	}//end testAnUploadedSetIsListedAndValid()
 
+	/**
+	 * A shipped dark variant is never rewritten at runtime.
+	 *
+	 * @return void
+	 */
 	public function testAShippedDarkVariantIsNeverRewrittenAtRuntime(): void {
 		$before = $this->hashTree(root: $this->appDir);
 		$result = $this->darkPalette()->generateAndWrite(setId: 'utrecht', force: true);
@@ -195,6 +220,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertFalse(condition: $this->store->exists('css/tokens/dark/utrecht.css'));
 	}//end testAShippedDarkVariantIsNeverRewrittenAtRuntime()
 
+	/**
+	 * An uploaded set gets its dark variant in the store.
+	 *
+	 * @return void
+	 */
 	public function testAnUploadedSetGetsItsDarkVariantInTheStore(): void {
 		$this->store->write('css/tokens/custom-gemeente-voorbeeld.css', ':root { --nldesign-color-primary: #24578f; }');
 		$result = $this->darkPalette()->generateAndWrite(setId: 'custom-gemeente-voorbeeld');
@@ -204,6 +234,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/custom-gemeente-voorbeeld.css');
 	}//end testAnUploadedSetGetsItsDarkVariantInTheStore()
 
+	/**
+	 * The route serves a runtime file with a policy that runs nothing.
+	 *
+	 * @return void
+	 */
 	public function testTheRouteServesARuntimeFileWithAPolicyThatRunsNothing(): void {
 		$this->store->write('img/logos/custom-gemeente-voorbeeld.svg', '<svg><script>alert(1)</script></svg>');
 		$controller = new RuntimeFileController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), files: $this->locator());
@@ -244,6 +279,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertSame(expected: Http::STATUS_NOT_FOUND, actual: $controller->serve($name)->getStatus());
 	}//end testTheRouteRefusesEverythingElse()
 
+	/**
+	 * The repair step moves an older installs files and keeps shipped ones.
+	 *
+	 * @return void
+	 */
 	public function testTheRepairStepMovesAnOlderInstallsFilesAndKeepsShippedOnes(): void {
 		file_put_contents($this->appDir . '/css/custom-overrides.css', ':root { --color-primary: #111111; }');
 		file_put_contents($this->appDir . '/css/tokens/custom-oud.css', ':root {}');
@@ -261,6 +301,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertFileExists(filename: $this->appDir . '/img/logos/utrecht.svg');
 	}//end testTheRepairStepMovesAnOlderInstallsFilesAndKeepsShippedOnes()
 
+	/**
+	 * The repair step keeps a newer stored copy.
+	 *
+	 * @return void
+	 */
 	public function testTheRepairStepKeepsANewerStoredCopy(): void {
 		$this->store->write('css/custom-overrides.css', ':root { --color-primary: #222222; }');
 		file_put_contents($this->appDir . '/css/custom-overrides.css', ':root { --color-primary: #111111; }');
@@ -271,6 +316,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/custom-overrides.css');
 	}//end testTheRepairStepKeepsANewerStoredCopy()
 
+	/**
+	 * Every shipped dark variant is fresh for its source.
+	 *
+	 * @return void
+	 */
 	public function testEveryShippedDarkVariantIsFreshForItsSource(): void {
 		// Shipped dark variants are build output now: the release may never
 		// rewrite them, so a generator change without regeneration has to fail here.
@@ -303,6 +353,11 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->assertSame(expected: [], actual: $stale, message: 'run php scripts/generate-dark-variants.php and commit the result');
 	}//end testEveryShippedDarkVariantIsFreshForItsSource()
 
+	/**
+	 * Nothing in lib writes files outside the known places.
+	 *
+	 * @return void
+	 */
 	public function testNothingInLibWritesFilesOutsideTheKnownPlaces(): void {
 		// Every place allowed to write a file, and why. A new write anywhere
 		// else is how runtime files used to end up in the signed app directory.

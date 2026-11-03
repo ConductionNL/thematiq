@@ -67,6 +67,11 @@ class OverridesControllerValidationTest extends TestCase {
 	 */
 	private IRequest $request;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -91,6 +96,11 @@ class OverridesControllerValidationTest extends TestCase {
 		$this->request = $this->createMock(originalClassName: IRequest::class);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
 			unlink($file);

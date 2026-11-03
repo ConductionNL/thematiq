@@ -69,6 +69,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 	 */
 	private TokenSetLicenceService $licences;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->makeAppDir();
@@ -85,6 +90,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->removeAppDir();
 		parent::tearDown();
@@ -113,6 +123,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		return new $class($this->licences, $logger);
 	}//end registeredStep()
 
+	/**
+	 * An applied restricted set stays and is recorded.
+	 *
+	 * @return void
+	 */
 	public function testAnAppliedRestrictedSetStaysAndIsRecorded(): void {
 		$this->appValues['token_set'] = 'owned';
 		$this->appValues['group_token_sets'] = '[{"group":"ruimte","tokenSet":"owned-two"}]';
@@ -133,6 +148,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$this->assertSame(expected: [$this->now, $this->now], actual: array_column($awaiting, 'since'), message: 'the admin notice gets the date');
 	}//end testAnAppliedRestrictedSetStaysAndIsRecorded()
 
+	/**
+	 * A second upgrade keeps the first date and warns no more.
+	 *
+	 * @return void
+	 */
 	public function testASecondUpgradeKeepsTheFirstDateAndWarnsNoMore(): void {
 		$this->appValues['token_set'] = 'owned';
 		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
@@ -145,6 +165,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$this->assertSame(expected: [], actual: $this->warnings);
 	}//end testASecondUpgradeKeepsTheFirstDateAndWarnsNoMore()
 
+	/**
+	 * A confirmation ends the record.
+	 *
+	 * @return void
+	 */
 	public function testAConfirmationEndsTheRecord(): void {
 		$this->appValues['token_set'] = 'owned';
 		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
@@ -155,6 +180,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$this->assertSame(expected: [], actual: $this->licences->awaitingConfirmation());
 	}//end testAConfirmationEndsTheRecord()
 
+	/**
+	 * Nothing applied nothing recorded.
+	 *
+	 * @return void
+	 */
 	public function testNothingAppliedNothingRecorded(): void {
 		$this->appValues['token_set'] = 'open';
 		$output = $this->createMock(originalClassName: IOutput::class);
@@ -166,6 +196,11 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		$this->assertSame(expected: [], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
 	}//end testNothingAppliedNothingRecorded()
 
+	/**
+	 * A failure never fails the upgrade.
+	 *
+	 * @return void
+	 */
 	public function testAFailureNeverFailsTheUpgrade(): void {
 		$licences = $this->createMock(originalClassName: TokenSetLicenceService::class);
 		$licences->method('recordAwaitingConfirmation')->willThrowException(new \RuntimeException('disk'));

@@ -61,6 +61,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		return new TokenSetLicenceController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), licences: $this->licences, userSession: $session);
 	}//end controller()
 
+	/**
+	 * Every endpoint is for administrators on a plain controller.
+	 *
+	 * @return void
+	 */
 	public function testEveryEndpointIsForAdministratorsOnAPlainController(): void {
 		$controller = $this->controller();
 		$this->assertInstanceOf(expected: Controller::class, actual: $controller);
@@ -73,6 +78,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		}
 	}//end testEveryEndpointIsForAdministratorsOnAPlainController()
 
+	/**
+	 * The routes exist.
+	 *
+	 * @return void
+	 */
 	public function testTheRoutesExist(): void {
 		$routes = (require __DIR__ . '/../../../appinfo/routes.php')['routes'];
 		$named = array_column($routes, null, 'name');
@@ -84,6 +94,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: $named['tokenSetLicence#confirm']['url'], actual: $named['tokenSetLicence#withdraw']['url']);
 	}//end testTheRoutesExist()
 
+	/**
+	 * The overview lists the sets and the ones awaiting confirmation.
+	 *
+	 * @return void
+	 */
 	public function testTheOverviewListsTheSetsAndTheOnesAwaitingConfirmation(): void {
 		$controller = $this->controller();
 		$this->licences->method('restrictedSets')->willReturn([['id' => 'owned']]);
@@ -95,6 +110,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		);
 	}//end testTheOverviewListsTheSetsAndTheOnesAwaitingConfirmation()
 
+	/**
+	 * A set without a licence answers 404.
+	 *
+	 * @return void
+	 */
 	public function testASetWithoutALicenceAnswers404(): void {
 		$controller = $this->controller();
 		$this->licences->method('describe')->willReturnCallback(fn (string $tokenSetId) => (['owned' => ['text' => 'x']][$tokenSetId] ?? null));
@@ -104,6 +124,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: ['text' => 'x'], actual: $controller->show('owned')->getData());
 	}//end testASetWithoutALicenceAnswers404()
 
+	/**
+	 * Without the statement nothing is confirmed.
+	 *
+	 * @return void
+	 */
 	public function testWithoutTheStatementNothingIsConfirmed(): void {
 		$controller = $this->controller();
 		$this->licences->expects($this->never())->method('confirm');
@@ -112,6 +137,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: 400, actual: $controller->confirm('owned', false)->getStatus());
 	}//end testWithoutTheStatementNothingIsConfirmed()
 
+	/**
+	 * Without a session nothing is confirmed.
+	 *
+	 * @return void
+	 */
 	public function testWithoutASessionNothingIsConfirmed(): void {
 		$controller = $this->controller(uid: null);
 		$this->licences->expects($this->never())->method('confirm');
@@ -119,6 +149,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: 400, actual: $controller->confirm('owned', true)->getStatus());
 	}//end testWithoutASessionNothingIsConfirmed()
 
+	/**
+	 * The acting administrator confirms.
+	 *
+	 * @return void
+	 */
 	public function testTheActingAdministratorConfirms(): void {
 		$controller = $this->controller(uid: 'noor');
 		$this->licences->expects($this->once())->method('confirm')->with('owned', 'noor')
@@ -130,6 +165,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: 'noor', actual: $response->getData()['confirmation']['uid']);
 	}//end testTheActingAdministratorConfirms()
 
+	/**
+	 * A set that is not restricted answers 404.
+	 *
+	 * @return void
+	 */
 	public function testASetThatIsNotRestrictedAnswers404(): void {
 		$controller = $this->controller();
 		$this->licences->method('confirm')->willThrowException(new InvalidArgumentException('no'));
@@ -137,6 +177,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: 404, actual: $controller->confirm('open', true)->getStatus());
 	}//end testASetThatIsNotRestrictedAnswers404()
 
+	/**
+	 * A withdrawal while applied answers 409 with the places.
+	 *
+	 * @return void
+	 */
 	public function testAWithdrawalWhileAppliedAnswers409WithThePlaces(): void {
 		$controller = $this->controller();
 		$this->licences->method('withdraw')->willThrowException(new RestrictedSetInUseException(tokenSetId: 'owned', appliedIn: [['kind' => 'instance', 'id' => '']]));
@@ -148,6 +193,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->assertSame(expected: [['kind' => 'instance', 'id' => '']], actual: $response->getData()['appliedIn']);
 	}//end testAWithdrawalWhileAppliedAnswers409WithThePlaces()
 
+	/**
+	 * A withdrawal answers 200.
+	 *
+	 * @return void
+	 */
 	public function testAWithdrawalAnswers200(): void {
 		$controller = $this->controller(uid: 'noor');
 		$this->licences->expects($this->once())->method('withdraw')->with('owned', 'noor');

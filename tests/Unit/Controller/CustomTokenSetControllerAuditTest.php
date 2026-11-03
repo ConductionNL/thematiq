@@ -81,6 +81,11 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	 */
 	private CustomTokenSetController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

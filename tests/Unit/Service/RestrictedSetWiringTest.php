@@ -127,6 +127,11 @@ class RestrictedSetWiringTest extends TestCase {
 	 */
 	private int $now;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->makeAppDir();
@@ -135,11 +140,21 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->now = strtotime('2026-10-12T12:00:00+00:00');
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->removeAppDir();
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * The instance wide switch refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testTheInstanceWideSwitchRefusesAndThenAccepts(): void {
 		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
 
@@ -157,6 +172,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testTheInstanceWideSwitchRefusesAndThenAccepts()
 
+	/**
+	 * The active set chosen again is not a new use.
+	 *
+	 * @return void
+	 */
 	public function testTheActiveSetChosenAgainIsNotANewUse(): void {
 		$this->appValues['token_set'] = 'owned';
 		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
@@ -164,6 +184,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $active->switchTo('owned'));
 	}//end testTheActiveSetChosenAgainIsNotANewUse()
 
+	/**
+	 * The command line switch refuses.
+	 *
+	 * @return void
+	 */
 	public function testTheCommandLineSwitchRefuses(): void {
 		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->createMock(originalClassName: ThemingAuditService::class));
 		$tester = new CommandTester(new ThemeSet(active: $active, tokenSets: $this->tokenSets, coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)));
@@ -177,6 +202,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testTheCommandLineSwitchRefuses()
 
+	/**
+	 * A group mapping refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testAGroupMappingRefusesAndThenAccepts(): void {
 		$groups = $this->groupTheming();
 
@@ -193,6 +223,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: [['group' => 'ruimte', 'tokenSet' => 'owned']], actual: $groups->getMapping());
 	}//end testAGroupMappingRefusesAndThenAccepts()
 
+	/**
+	 * A group that keeps its set is saved again but another group is not.
+	 *
+	 * @return void
+	 */
 	public function testAGroupThatKeepsItsSetIsSavedAgainButAnotherGroupIsNot(): void {
 		$this->appValues['group_token_sets'] = (string)json_encode([['group' => 'ruimte', 'tokenSet' => 'owned']]);
 		$groups = $this->groupTheming();
@@ -204,6 +239,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$groups->setMapping([['group' => 'ruimte', 'tokenSet' => 'owned'], ['group' => 'sociaal', 'tokenSet' => 'owned']]);
 	}//end testAGroupThatKeepsItsSetIsSavedAgainButAnotherGroupIsNot()
 
+	/**
+	 * A delegated choice refuses.
+	 *
+	 * @return void
+	 */
 	public function testADelegatedChoiceRefuses(): void {
 		$this->appValues['group_token_sets'] = (string)json_encode(
 			[['group' => 'ruimte', 'tokenSet' => 'open', 'delegated' => true, 'allowedTokenSets' => ['open', 'owned']]]
@@ -236,6 +276,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned')['tokenSet']);
 	}//end testADelegatedChoiceRefuses()
 
+	/**
+	 * A preview refuses to start and to publish.
+	 *
+	 * @return void
+	 */
 	public function testAPreviewRefusesToStartAndToPublish(): void {
 		$preview = $this->preview();
 
@@ -262,6 +307,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testAPreviewRefusesToStartAndToPublish()
 
+	/**
+	 * A preview of an unconfirmed set is not drawn.
+	 *
+	 * @return void
+	 */
 	public function testAPreviewOfAnUnconfirmedSetIsNotDrawn(): void {
 		$this->userValues['admin/preview_token_set'] = 'owned';
 		$this->userValues['admin/preview_expires_at'] = (string)(time() + 600);
@@ -278,6 +328,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $preview->resolveEffectiveTokenSet($session, 'nextcloud')['tokenSet']);
 	}//end testAPreviewOfAnUnconfirmedSetIsNotDrawn()
 
+	/**
+	 * A planned switch refuses when planned and when it starts.
+	 *
+	 * @return void
+	 */
 	public function testAPlannedSwitchRefusesWhenPlannedAndWhenItStarts(): void {
 		$switches = $this->scheduledSwitches();
 
@@ -302,6 +357,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 	}//end testAPlannedSwitchRefusesWhenPlannedAndWhenItStarts()
 
+	/**
+	 * An app brand refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testAnAppBrandRefusesAndThenAccepts(): void {
 		$brands = $this->appBrands();
 
@@ -318,6 +378,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertSame(expected: 'owned', actual: $brands->setBrand('collectives', 'owned')['tokenSet']);
 	}//end testAnAppBrandRefusesAndThenAccepts()
 
+	/**
+	 * A configuration bundle refuses every place it names the set.
+	 *
+	 * @return void
+	 */
 	public function testAConfigurationBundleRefusesEveryPlaceItNamesTheSet(): void {
 		$bundles = $this->bundles();
 		$places = [
@@ -338,6 +403,11 @@ class RestrictedSetWiringTest extends TestCase {
 		}
 	}//end testAConfigurationBundleRefusesEveryPlaceItNamesTheSet()
 
+	/**
+	 * A bundle may keep the set that is active here.
+	 *
+	 * @return void
+	 */
 	public function testABundleMayKeepTheSetThatIsActiveHere(): void {
 		$this->appValues['token_set'] = 'owned';
 
@@ -346,6 +416,11 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->assertStringNotContainsString(needle: 'restricted to its owner', haystack: (string)json_encode($result));
 	}//end testABundleMayKeepTheSetThatIsActiveHere()
 
+	/**
+	 * The set list carries the licence and the confirmation.
+	 *
+	 * @return void
+	 */
 	public function testTheSetListCarriesTheLicenceAndTheConfirmation(): void {
 		$this->confirmSet(tokenSetId: 'owned');
 		$byId = array_column($this->tokenSets->getAvailableTokenSets(), null, 'id');

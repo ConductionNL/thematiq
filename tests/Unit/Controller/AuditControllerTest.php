@@ -54,6 +54,11 @@ class AuditControllerTest extends TestCase {
 	 */
 	private $restorer;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

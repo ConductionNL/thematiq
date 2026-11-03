@@ -36,6 +36,11 @@ class RuntimeFileStorageTest extends TestCase {
 	private string $appDir;
 	private string $storeDir;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$base = sys_get_temp_dir() . '/thematiq-runtime-' . bin2hex(random_bytes(4));
@@ -49,6 +54,11 @@ class RuntimeFileStorageTest extends TestCase {
 		file_put_contents($this->appDir . '/img/logos/utrecht.svg', '<svg/>');
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->remove(path: dirname($this->appDir));
 		parent::tearDown();
@@ -115,11 +125,21 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertSame(expected: $allowed, actual: (new RuntimeFileNames())->isAllowed($name), message: $name);
 	}//end testOnlyRuntimeNamesAreAllowed()
 
+	/**
+	 * The store refuses a name outside the set.
+	 *
+	 * @return void
+	 */
 	public function testTheStoreRefusesANameOutsideTheSet(): void {
 		$this->expectException(exception: InvalidArgumentException::class);
 		(new DirectoryRuntimeFileStore(root: $this->storeDir))->write('css/tokens/../../config/config.php', 'x');
 	}//end testTheStoreRefusesANameOutsideTheSet()
 
+	/**
+	 * The directory store round trips and revises on change.
+	 *
+	 * @return void
+	 */
 	public function testTheDirectoryStoreRoundTripsAndRevisesOnChange(): void {
 		$store = new DirectoryRuntimeFileStore(root: $this->storeDir);
 		$this->assertNull(actual: $store->read('css/custom-css.css'));
@@ -140,6 +160,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertFalse(condition: $store->exists('css/custom-css.css'));
 	}//end testTheDirectoryStoreRoundTripsAndRevisesOnChange()
 
+	/**
+	 * A shipped set is read from the release even when the store holds the same name.
+	 *
+	 * @return void
+	 */
 	public function testAShippedSetIsReadFromTheReleaseEvenWhenTheStoreHoldsTheSameName(): void {
 		$locator = $this->locator();
 		$locator->store()->write('css/tokens/utrecht.css', ':root { --nldesign-color-primary: red; }');
@@ -152,6 +177,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertSame(expected: ['css/tokens/utrecht.css'], actual: $locator->listDirectory('css/tokens', '.css'));
 	}//end testAShippedSetIsReadFromTheReleaseEvenWhenTheStoreHoldsTheSameName()
 
+	/**
+	 * An uploaded set is read from the store and served by route.
+	 *
+	 * @return void
+	 */
 	public function testAnUploadedSetIsReadFromTheStoreAndServedByRoute(): void {
 		$locator = $this->locator();
 		$locator->store()->write('css/tokens/gemeente-voorbeeld.css', ':root {}');
@@ -163,6 +193,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/gemeente-voorbeeld.css');
 	}//end testAnUploadedSetIsReadFromTheStoreAndServedByRoute()
 
+	/**
+	 * The store wins over a stale app directory copy of a runtime file.
+	 *
+	 * @return void
+	 */
 	public function testTheStoreWinsOverAStaleAppDirectoryCopyOfARuntimeFile(): void {
 		// An older install whose copy could not be moved: saves go to the store,
 		// so reads must too, or every save would silently stop applying.
@@ -175,6 +210,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertStringStartsWith(prefix: '/index.php/apps/thematiq/runtime/', string: (string)$locator->url('css/custom-overrides.css'));
 	}//end testTheStoreWinsOverAStaleAppDirectoryCopyOfARuntimeFile()
 
+	/**
+	 * A local path of a runtime image is a temporary copy.
+	 *
+	 * @return void
+	 */
 	public function testALocalPathOfARuntimeImageIsATemporaryCopy(): void {
 		$locator = $this->locator();
 		$locator->store()->write('img/backgrounds/utrecht-captured-background.jpg', 'JPEGDATA');
@@ -186,6 +226,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertNull(actual: $locator->localPath('img/backgrounds/missing.jpg'));
 	}//end testALocalPathOfARuntimeImageIsATemporaryCopy()
 
+	/**
+	 * The app data store uses one flat folder per directory.
+	 *
+	 * @return void
+	 */
 	public function testTheAppDataStoreUsesOneFlatFolderPerDirectory(): void {
 		$file = $this->createMock(originalClassName: ISimpleFile::class);
 		$file->method('getContent')->willReturn('dark css');
@@ -200,6 +245,11 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertTrue(condition: $store->exists('css/tokens/dark/example.css'));
 	}//end testTheAppDataStoreUsesOneFlatFolderPerDirectory()
 
+	/**
+	 * The app data store creates its folder on first write.
+	 *
+	 * @return void
+	 */
 	public function testTheAppDataStoreCreatesItsFolderOnFirstWrite(): void {
 		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturn(false);
@@ -211,6 +261,11 @@ class RuntimeFileStorageTest extends TestCase {
 		(new AppDataRuntimeFileStore(appData: $appData))->write('css/custom-css.css', 'a {}');
 	}//end testTheAppDataStoreCreatesItsFolderOnFirstWrite()
 
+	/**
+	 * A missing app data file reads as absent.
+	 *
+	 * @return void
+	 */
 	public function testAMissingAppDataFileReadsAsAbsent(): void {
 		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willThrowException(new NotFoundException());

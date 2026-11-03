@@ -82,6 +82,11 @@ class SettingsControllerAuditTest extends TestCase {
 	 */
 	private SettingsController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

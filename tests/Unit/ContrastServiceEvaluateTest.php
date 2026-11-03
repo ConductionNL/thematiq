@@ -25,6 +25,11 @@ class ContrastServiceEvaluateTest extends TestCase {
 
 	private ContrastService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->service = new ContrastService();

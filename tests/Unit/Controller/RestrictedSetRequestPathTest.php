@@ -245,6 +245,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 	 */
 	private ?IUser $admin = null;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->makeAppDir();
@@ -269,6 +274,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->dispatcher = (new Application())->getContainer()->get(Dispatcher::class);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		(new ReflectionProperty($this->request, 'items'))->setValue($this->request, $this->originalItems);
 		$this->request->setUrlParameters([]);
@@ -295,6 +305,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		return ['status' => (int)$match[1], 'body' => (array)json_decode((string)$result[3], true)];
 	}//end send()
 
+	/**
+	 * Control the same chain turns an ocs 403 into 200.
+	 *
+	 * @return void
+	 */
 	public function testControlTheSameChainTurnsAnOcs403Into200(): void {
 		$ocs = new class('thematiq', $this->request) extends OCSController {
 
@@ -307,6 +322,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: 200, actual: $this->send(controller: $ocs, method: 'refuse', params: [])['status']);
 	}//end testControlTheSameChainTurnsAnOcs403Into200()
 
+	/**
+	 * Applying the set instance wide is delivered as 403 then as 200.
+	 *
+	 * @return void
+	 */
 	public function testApplyingTheSetInstanceWideIsDeliveredAs403ThenAs200(): void {
 		$sent = $this->send(controller: $this->settingsController(), method: 'setTokenSet', params: ['tokenSet' => 'owned']);
 		$this->assertSame(expected: 403, actual: $sent['status']);
@@ -326,6 +346,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: [['kind' => 'instance', 'id' => '']], actual: $withdrawn['body']['appliedIn']);
 	}//end testApplyingTheSetInstanceWideIsDeliveredAs403ThenAs200()
 
+	/**
+	 * A group mapping is delivered as 403.
+	 *
+	 * @return void
+	 */
 	public function testAGroupMappingIsDeliveredAs403(): void {
 		$mapping = ['mapping' => [['group' => 'ruimte', 'tokenSet' => 'owned']]];
 
@@ -339,6 +364,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: 200, actual: $this->send(controller: $this->settingsController(), method: 'setGroupTheming', params: $mapping)['status']);
 	}//end testAGroupMappingIsDeliveredAs403()
 
+	/**
+	 * A preview is delivered as 403.
+	 *
+	 * @return void
+	 */
 	public function testAPreviewIsDeliveredAs403(): void {
 		$controller = new PreviewController(appName: 'thematiq', request: $this->request, previewService: $this->previewService(), userSession: Server::get(IUserSession::class));
 
@@ -355,6 +385,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: 200, actual: $this->send(controller: $controller, method: 'publish', params: [])['status']);
 	}//end testAPreviewIsDeliveredAs403()
 
+	/**
+	 * A planned switch is delivered as 403.
+	 *
+	 * @return void
+	 */
 	public function testAPlannedSwitchIsDeliveredAs403(): void {
 		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$time = $this->createMock(originalClassName: ITimeFactory::class);
@@ -387,6 +422,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		$this->assertSame(expected: 201, actual: $this->send(controller: $controller, method: 'create', params: $plan)['status']);
 	}//end testAPlannedSwitchIsDeliveredAs403()
 
+	/**
+	 * An app brand is delivered as 403.
+	 *
+	 * @return void
+	 */
 	public function testAnAppBrandIsDeliveredAs403(): void {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isInstalled')->willReturn(true);

@@ -90,6 +90,11 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 		$this->fail(message: 'token-sets.json lists no rijkshuisstijl set');
 	}//end manifestEntry()
 
+	/**
+	 * The set carries the community token values.
+	 *
+	 * @return void
+	 */
 	public function testTheSetCarriesTheCommunityTokenValues(): void {
 		$declarations = $this->declarations();
 		foreach (self::UPSTREAM_VALUES as $name => $value) {
@@ -98,12 +103,22 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 		}
 	}//end testTheSetCarriesTheCommunityTokenValues()
 
+	/**
+	 * The font stack falls through to fira sans.
+	 *
+	 * @return void
+	 */
 	public function testTheFontStackFallsThroughToFiraSans(): void {
 		$family = $this->declarations()['--nldesign-font-family'] ?? '';
 		$this->assertStringStartsWith(prefix: "'Fira Sans'", string: $family);
 		$this->assertStringNotContainsStringIgnoringCase(needle: 'Rijksoverheid', haystack: $family, message: 'the government fonts are restricted');
 	}//end testTheFontStackFallsThroughToFiraSans()
 
+	/**
+	 * The manifest names the upstream release.
+	 *
+	 * @return void
+	 */
 	public function testTheManifestNamesTheUpstreamRelease(): void {
 		$licence = $this->manifestEntry()['licence'] ?? [];
 		$this->assertSame(expected: '@rijkshuisstijl-community/design-tokens', actual: ($licence['package'] ?? null));
@@ -111,6 +126,11 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 		$this->assertTrue(condition: ($licence['restricted'] ?? false), message: 'the house style stays behind the licence gate');
 	}//end testTheManifestNamesTheUpstreamRelease()
 
+	/**
+	 * The licence table records the same release.
+	 *
+	 * @return void
+	 */
 	public function testTheLicenceTableRecordsTheSameRelease(): void {
 		$table = (string)file_get_contents($this->root() . '/docs/reference/token-set-licences.md');
 		$this->assertStringContainsString(

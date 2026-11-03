@@ -72,6 +72,11 @@ class OverridesControllerAuditTest extends TestCase {
 	 */
 	private ThemingService $themingService;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

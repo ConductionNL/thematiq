@@ -51,6 +51,11 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 	 */
 	private TokenSetService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -83,6 +88,11 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		@unlink($this->appDir . '/css/tokens/amsterdam.css');
 		@unlink($this->appDir . '/token-sets.json');

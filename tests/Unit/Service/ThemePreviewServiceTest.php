@@ -67,6 +67,11 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	private TokenSetService $tokenSetService;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appStore = [];

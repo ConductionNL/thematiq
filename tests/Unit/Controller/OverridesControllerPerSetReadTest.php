@@ -49,6 +49,11 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	 */
 	private OverridesController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

@@ -35,6 +35,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 	private DirectoryRuntimeFileStore $store;
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->dir = sys_get_temp_dir() . '/thematiq-every-' . bin2hex(random_bytes(4));
@@ -47,6 +52,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$this->service = new CustomOverridesService(storage: new OverridesStorage(store: $this->store, cssParser: $parser, darkPalette: $dark));
 	}
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		exec('rm -rf ' . escapeshellarg($this->dir));
 		parent::tearDown();
@@ -63,6 +73,11 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		return substr($css, (int)strpos($css, '}'));
 	}
 
+	/**
+	 * A settable colour keeps the administrators dark value.
+	 *
+	 * @return void
+	 */
 	public function testASettableColourKeepsTheAdministratorsDarkValue(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a'], darkTokens: ['--color-mark' => '#5c4a00']);
 
@@ -71,12 +86,22 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$this->assertSame(expected: ['--color-mark' => '#5c4a00'], actual: $this->service->readDark());
 	}
 
+	/**
+	 * No dark value means no dark line.
+	 *
+	 * @return void
+	 */
 	public function testNoDarkValueMeansNoDarkLine(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a']);
 
 		$this->assertStringNotContainsString(needle: '--nldesign-nc-color-mark', haystack: $this->darkPart(), message: 'the reset leaves Nextcloud its own dark value');
 	}
 
+	/**
+	 * An internal token and its dark value survive the round trip.
+	 *
+	 * @return void
+	 */
 	public function testAnInternalTokenAndItsDarkValueSurviveTheRoundTrip(): void {
 		$this->service->write(
 			tokens: ['--nldesign-nc-dp-hover-color' => '#e8eef5', '--nldesign-nc-dp-font-size' => '1rem', '--color-primary' => '#24578f'],
@@ -93,12 +118,22 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$this->assertSame(expected: ['--nldesign-nc-dp-hover-color' => '#333333'], actual: $this->service->readDark(), message: 'a brand colour keeps its derived value, which is not reported as own');
 	}
 
+	/**
+	 * A file from before this change still reads.
+	 *
+	 * @return void
+	 */
 	public function testAFileFromBeforeThisChangeStillReads(): void {
 		$this->store->write('css/custom-overrides.css', ":root {\n  --color-primary: #24578f !important;\n  --color-main-text: #1a1a1a !important;\n}\n");
 
 		$this->assertSame(expected: ['--color-primary' => '#24578f', '--color-main-text' => '#1a1a1a'], actual: $this->service->read());
 	}
 
+	/**
+	 * The server checks an internal value by its type.
+	 *
+	 * @return void
+	 */
 	public function testTheServerChecksAnInternalValueByItsType(): void {
 		$values = new TokenValueValidator();
 

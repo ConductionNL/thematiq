@@ -33,6 +33,11 @@ class OverridesCssBuilderReadableTextTest extends TestCase {
 	private OverridesCssBuilder $builder;
 	private ContrastService $contrast;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
@@ -60,6 +65,11 @@ class OverridesCssBuilderReadableTextTest extends TestCase {
 		return trim($match[1]);
 	}//end rootValue()
 
+	/**
+	 * Muted text under threshold is stepped to four point five.
+	 *
+	 * @return void
+	 */
 	public function testMutedTextUnderThresholdIsSteppedToFourPointFive(): void {
 		$css = $this->builder->build(tokens: ['--color-text-maxcontrast' => '#75758a']);
 		$value = $this->rootValue(css: $css, token: '--color-text-maxcontrast');
@@ -69,12 +79,22 @@ class OverridesCssBuilderReadableTextTest extends TestCase {
 		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $value, background: '#ffffff'));
 	}//end testMutedTextUnderThresholdIsSteppedToFourPointFive()
 
+	/**
+	 * Readable muted text is left alone.
+	 *
+	 * @return void
+	 */
 	public function testReadableMutedTextIsLeftAlone(): void {
 		$css = $this->builder->build(tokens: ['--color-text-maxcontrast' => '#5E6168']);
 
 		$this->assertSame(expected: '#5E6168', actual: $this->rootValue(css: $css, token: '--color-text-maxcontrast'));
 	}//end testReadableMutedTextIsLeftAlone()
 
+	/**
+	 * Measures against the editors own background.
+	 *
+	 * @return void
+	 */
 	public function testMeasuresAgainstTheEditorsOwnBackground(): void {
 		$css = $this->builder->build(tokens: ['--color-main-background' => '#f0f0f3', '--color-text-lighter' => '#75758a']);
 		$value = $this->rootValue(css: $css, token: '--color-text-lighter');
@@ -84,6 +104,11 @@ class OverridesCssBuilderReadableTextTest extends TestCase {
 		$this->assertSame(expected: '#f0f0f3', actual: $this->rootValue(css: $css, token: '--nldesign-nc-color-main-background'));
 	}//end testMeasuresAgainstTheEditorsOwnBackground()
 
+	/**
+	 * Adds no background of its own.
+	 *
+	 * @return void
+	 */
 	public function testAddsNoBackgroundOfItsOwn(): void {
 		$css = $this->builder->build(tokens: ['--color-text-maxcontrast' => '#75758a']);
 

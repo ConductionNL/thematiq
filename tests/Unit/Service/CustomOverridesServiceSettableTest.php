@@ -34,6 +34,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 	private DirectoryRuntimeFileStore $store;
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->dir = sys_get_temp_dir() . '/thematiq-settable-' . bin2hex(random_bytes(4));
@@ -46,6 +51,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		$this->service = new CustomOverridesService(storage: new OverridesStorage(store: $this->store, cssParser: $parser, darkPalette: $dark));
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		foreach (glob($this->dir . '/css/*') ?: [] as $file) {
 			unlink($file);
@@ -60,6 +70,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		return (string)$this->store->read('css/custom-overrides.css');
 	}//end file()
 
+	/**
+	 * A settable value is stored as its token in the light scope only.
+	 *
+	 * @return void
+	 */
 	public function testASettableValueIsStoredAsItsTokenInTheLightScopeOnly(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a', '--color-primary' => '#24578f']);
 
@@ -72,12 +87,22 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '--nldesign-nc-color-mark', haystack: $dark, message: 'a settable value gets no derived dark value');
 	}//end testASettableValueIsStoredAsItsTokenInTheLightScopeOnly()
 
+	/**
+	 * The editor reads the nextcloud name.
+	 *
+	 * @return void
+	 */
 	public function testTheEditorReadsTheNextcloudName(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a', '--header-height' => '56px']);
 
 		$this->assertSame(expected: ['--color-mark' => '#ffe08a', '--header-height' => '56px'], actual: $this->service->read());
 	}//end testTheEditorReadsTheNextcloudName()
 
+	/**
+	 * An older plain declaration still reads and is saved as the token.
+	 *
+	 * @return void
+	 */
 	public function testAnOlderPlainDeclarationStillReadsAndIsSavedAsTheToken(): void {
 		$this->store->write('css/custom-overrides.css', ":root {\n  --color-scrollbar: #cccccc !important;\n}\n");
 
@@ -87,6 +112,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		$this->assertStringContainsString(needle: '--nldesign-nc-color-scrollbar: #cccccc !important;', haystack: $this->file());
 	}//end testAnOlderPlainDeclarationStillReadsAndIsSavedAsTheToken()
 
+	/**
+	 * An icon is still not editable.
+	 *
+	 * @return void
+	 */
 	public function testAnIconIsStillNotEditable(): void {
 		$this->assertSame(expected: ['--icon-download-dark' => 'not an editable token'], actual: $this->service->findRejected(['--icon-download-dark' => 'url(x.svg)']));
 	}//end testAnIconIsStillNotEditable()

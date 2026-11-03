@@ -39,6 +39,11 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	private DarkPaletteService $darkPalette;
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appDir = sys_get_temp_dir() . '/thematiq-698-' . bin2hex(random_bytes(4));
@@ -57,6 +62,11 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
 			unlink($file);

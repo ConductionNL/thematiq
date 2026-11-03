@@ -227,6 +227,11 @@ class CssInjectionServiceTest extends TestCase {
 		return false;
 	}//end linksStylesheet()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$remove = function (string $path) use (&$remove): void {
 			if (is_dir($path) === true) {

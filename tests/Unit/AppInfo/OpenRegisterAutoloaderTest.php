@@ -40,6 +40,11 @@ class OpenRegisterAutoloaderTest extends TestCase {
 	 */
 	private string $appPath;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appPath = sys_get_temp_dir() . '/thematiq-or-' . bin2hex(random_bytes(4));
@@ -50,6 +55,11 @@ class OpenRegisterAutoloaderTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		OpenRegisterAutoloader::unregister();
 		@unlink($this->appPath . '/lib/Fake/Probe.php');

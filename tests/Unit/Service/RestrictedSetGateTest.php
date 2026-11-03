@@ -36,16 +36,31 @@ class RestrictedSetGateTest extends TestCase {
 	 */
 	private RestrictedSetGate $gate;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->gate = new RestrictedSetGate(config: $this->memoryConfig(), appPath: $this->makeAppDir());
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->removeAppDir();
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * A set declares identifier package version holder and restriction.
+	 *
+	 * @return void
+	 */
 	public function testASetDeclaresIdentifierPackageVersionHolderAndRestriction(): void {
 		$this->assertSame(
 			expected: ['id' => 'LicenseRef-Voorbeeld', 'package' => '@example/voorbeeld-design-tokens', 'version' => '1.0.3', 'holder' => 'Gemeente Voorbeeld', 'restricted' => true],
@@ -56,12 +71,22 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertNull(actual: $this->gate->licenceOf('custom-anything'));
 	}//end testASetDeclaresIdentifierPackageVersionHolderAndRestriction()
 
+	/**
+	 * The licence text ships beside the set.
+	 *
+	 * @return void
+	 */
 	public function testTheLicenceTextShipsBesideTheSet(): void {
 		$this->assertSame(expected: "All rights reserved. Use is limited to Gemeente Voorbeeld.\n", actual: $this->gate->licenceText('owned'));
 		$this->assertNull(actual: $this->gate->licenceText('owned-two'));
 		$this->assertNull(actual: $this->gate->licenceText('../owned'));
 	}//end testTheLicenceTextShipsBesideTheSet()
 
+	/**
+	 * Only a declared open licence is unrestricted.
+	 *
+	 * @return void
+	 */
 	public function testOnlyADeclaredOpenLicenceIsUnrestricted(): void {
 		$this->assertTrue(condition: $this->gate->isRestricted('owned'));
 		$this->assertTrue(condition: $this->gate->isRestricted('sloppy'), message: 'a licence block without the flag counts as restricted');
@@ -70,6 +95,11 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertSame(expected: ['owned', 'owned-two', 'sloppy'], actual: $this->gate->restrictedIds());
 	}//end testOnlyADeclaredOpenLicenceIsUnrestricted()
 
+	/**
+	 * A restricted set is refused until it is confirmed.
+	 *
+	 * @return void
+	 */
 	public function testARestrictedSetIsRefusedUntilItIsConfirmed(): void {
 		$this->assertFalse(condition: $this->gate->mayApply('owned'));
 		$this->assertTrue(condition: $this->gate->mayApply('open'));
@@ -89,6 +119,11 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertSame(expected: ['uid' => 'ruben', 'at' => '2026-10-12T20:00:00+00:00'], actual: $this->gate->confirmation('owned'));
 	}//end testARestrictedSetIsRefusedUntilItIsConfirmed()
 
+	/**
+	 * A confirmation counts for its own set only.
+	 *
+	 * @return void
+	 */
 	public function testAConfirmationCountsForItsOwnSetOnly(): void {
 		$this->gate->storeConfirmation('owned', 'ruben', '2026-10-12T20:00:00+00:00');
 
@@ -96,12 +131,22 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertNull(actual: $this->gate->confirmation('owned-two'));
 	}//end testAConfirmationCountsForItsOwnSetOnly()
 
+	/**
+	 * A set that is already there stays.
+	 *
+	 * @return void
+	 */
 	public function testASetThatIsAlreadyThereStays(): void {
 		$this->gate->assertMayApply('owned', 'owned');
 		$this->expectException(exception: RestrictedSetNotConfirmedException::class);
 		$this->gate->assertMayApply('owned', 'open');
 	}//end testASetThatIsAlreadyThereStays()
 
+	/**
+	 * A dropped confirmation refuses again.
+	 *
+	 * @return void
+	 */
 	public function testADroppedConfirmationRefusesAgain(): void {
 		$this->gate->storeConfirmation('owned', 'ruben', '2026-10-12T20:00:00+00:00');
 		$this->gate->storeConfirmation('owned-two', 'ruben', '2026-10-12T20:01:00+00:00');
@@ -111,6 +156,11 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertTrue(condition: $this->gate->mayApply('owned-two'));
 	}//end testADroppedConfirmationRefusesAgain()
 
+	/**
+	 * An unreadable confirmation is no confirmation.
+	 *
+	 * @return void
+	 */
 	public function testAnUnreadableConfirmationIsNoConfirmation(): void {
 		$this->appValues[RestrictedSetGate::CONFIG_KEY] = '{"owned": {"uid": "", "at": "2026-10-12"}, "owned-two": true}';
 		$this->assertFalse(condition: $this->gate->mayApply('owned'));
@@ -120,6 +170,11 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertFalse(condition: $this->gate->mayApply('owned'));
 	}//end testAnUnreadableConfirmationIsNoConfirmation()
 
+	/**
+	 * A missing manifest restricts nothing.
+	 *
+	 * @return void
+	 */
 	public function testAMissingManifestRestrictsNothing(): void {
 		$gate = new RestrictedSetGate(config: $this->memoryConfig(), appPath: $this->appDir . '/nowhere');
 		$this->assertSame(expected: [], actual: $gate->restrictedIds());

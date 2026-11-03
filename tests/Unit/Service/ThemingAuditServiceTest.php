@@ -246,6 +246,11 @@ class ThemingAuditServiceTest extends TestCase {
 	 */
 	private LoggerInterface $logger;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 

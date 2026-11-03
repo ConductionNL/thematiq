@@ -18,6 +18,11 @@ use PHPUnit\Framework\TestCase;
 
 class SettableContrastPairsTest extends TestCase {
 
+	/**
+	 * A set that only moves the selected text is audited against the derived wash.
+	 *
+	 * @return void
+	 */
 	public function testASetThatOnlyMovesTheSelectedTextIsAuditedAgainstTheDerivedWash(): void {
 		$pairs = (new SettableContrastPairs())->pairs([
 			'--nldesign-color-primary' => '#154273',
@@ -31,6 +36,11 @@ class SettableContrastPairsTest extends TestCase {
 		$this->assertTrue(condition: $pairs[0]['passes']);
 	}
 
+	/**
+	 * A pale highlight under dark text fails and names both tokens.
+	 *
+	 * @return void
+	 */
 	public function testAPaleHighlightUnderDarkTextFailsAndNamesBothTokens(): void {
 		$pairs = (new SettableContrastPairs())->pairs([
 			'--nldesign-color-text' => '#1a1a1a',
@@ -44,6 +54,11 @@ class SettableContrastPairsTest extends TestCase {
 		$this->assertSame(expected: '--nldesign-nc-color-mark', actual: $pairs[0]['background']);
 	}
 
+	/**
+	 * A set that declares neither side is not reported.
+	 *
+	 * @return void
+	 */
 	public function testASetThatDeclaresNeitherSideIsNotReported(): void {
 		$this->assertSame(expected: [], actual: (new SettableContrastPairs())->pairs(['--nldesign-color-primary' => '#154273']));
 	}

@@ -31,6 +31,11 @@ class InternalScopesServiceTest extends TestCase {
 
 	private InternalScopesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->dir = sys_get_temp_dir() . '/thematiq-internal-' . bin2hex(random_bytes(4));
@@ -47,11 +52,21 @@ class InternalScopesServiceTest extends TestCase {
 		$this->service = new InternalScopesService(files: $locator);
 	}
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		exec('rm -rf ' . escapeshellarg($this->dir));
 		parent::tearDown();
 	}
 
+	/**
+	 * A set token and an override produce exactly two rules.
+	 *
+	 * @return void
+	 */
 	public function testASetTokenAndAnOverrideProduceExactlyTwoRules(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
 		$this->store->write('css/custom-overrides.css', ":root {\n\t--nldesign-nc-plyr-audio-control-background-hover: #f4f1ea !important;\n}\n");
@@ -65,6 +80,11 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '#154273', haystack: $css, message: 'no value from the set reaches the output');
 	}
 
+	/**
+	 * Nothing set means no rules.
+	 *
+	 * @return void
+	 */
 	public function testNothingSetMeansNoRules(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-nc-color-mark: #ffe08a;\n}\n");
 
@@ -72,6 +92,11 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'missing', designSystemId: 'nldesign', withDark: true));
 	}
 
+	/**
+	 * An override save is reflected on the next build.
+	 *
+	 * @return void
+	 */
 	public function testAnOverrideSaveIsReflectedOnTheNextBuild(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
 		$before = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
@@ -83,6 +108,11 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertStringContainsString(needle: '--cn-kpi-accent: var(--nldesign-cn-kpi-accent);', haystack: $after);
 	}
 
+	/**
+	 * A token declared only in dark applies only in the dark scopes.
+	 *
+	 * @return void
+	 */
 	public function testATokenDeclaredOnlyInDarkAppliesOnlyInTheDarkScopes(): void {
 		$this->store->write(
 			'css/tokens/dark/custom-test.css',
@@ -97,12 +127,22 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertStringNotContainsString(needle: ':root', haystack: $css);
 	}
 
+	/**
+	 * A dark variant that is not injected is not read.
+	 *
+	 * @return void
+	 */
 	public function testADarkVariantThatIsNotInjectedIsNotRead(): void {
 		$this->store->write('css/tokens/dark/custom-test.css', "body[data-theme-dark] {\n\t--nldesign-nc-dp-hover-color: #333333;\n}\n");
 
 		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: false));
 	}
 
+	/**
+	 * A body level selector is scoped on the same element.
+	 *
+	 * @return void
+	 */
 	public function testABodyLevelSelectorIsScopedOnTheSameElement(): void {
 		$body = array_key_first(array_filter(
 			TokenRegistry::getInternalTokens(),
@@ -115,6 +155,11 @@ class InternalScopesServiceTest extends TestCase {
 		$this->assertStringContainsString(needle: ':is(body):where(body[data-theme-dark], body[data-themes*=dark])' . InternalScopesService::BUMP, haystack: $css);
 	}
 
+	/**
+	 * The registry holds every internal token and no runtime one.
+	 *
+	 * @return void
+	 */
 	public function testTheRegistryHoldsEveryInternalTokenAndNoRuntimeOne(): void {
 		$internal = TokenRegistry::getInternalTokens();
 

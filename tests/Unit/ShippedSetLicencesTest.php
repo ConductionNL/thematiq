@@ -54,6 +54,11 @@ class ShippedSetLicencesTest extends TestCase {
 		return json_decode((string)file_get_contents($this->root() . '/token-sets.json'), true);
 	}//end manifest()
 
+	/**
+	 * The restricted sets are the audited ones.
+	 *
+	 * @return void
+	 */
 	public function testTheRestrictedSetsAreTheAuditedOnes(): void {
 		$gate = new RestrictedSetGate(config: $this->createMock(originalClassName: IConfig::class), appPath: $this->root());
 		$restricted = $gate->restrictedIds();
@@ -62,6 +67,11 @@ class ShippedSetLicencesTest extends TestCase {
 		$this->assertSame(expected: self::RESTRICTED, actual: $restricted);
 	}//end testTheRestrictedSetsAreTheAuditedOnes()
 
+	/**
+	 * Every converted set declares a licence.
+	 *
+	 * @return void
+	 */
 	public function testEveryConvertedSetDeclaresALicence(): void {
 		foreach ($this->manifest() as $entry) {
 			$converted = (isset($entry['upstreamRef']) === true || isset($entry['upstreamPackage']) === true);
@@ -73,6 +83,11 @@ class ShippedSetLicencesTest extends TestCase {
 		}
 	}//end testEveryConvertedSetDeclaresALicence()
 
+	/**
+	 * Every declaration is complete and every restricted set ships its text.
+	 *
+	 * @return void
+	 */
 	public function testEveryDeclarationIsCompleteAndEveryRestrictedSetShipsItsText(): void {
 		$gate = new RestrictedSetGate(config: $this->createMock(originalClassName: IConfig::class), appPath: $this->root());
 		foreach ($this->manifest() as $entry) {
@@ -93,6 +108,11 @@ class ShippedSetLicencesTest extends TestCase {
 		}
 	}//end testEveryDeclarationIsCompleteAndEveryRestrictedSetShipsItsText()
 
+	/**
+	 * The audit table lists every declared set.
+	 *
+	 * @return void
+	 */
 	public function testTheAuditTableListsEveryDeclaredSet(): void {
 		$table = (string)file_get_contents($this->root() . '/docs/reference/token-set-licences.md');
 		foreach ($this->manifest() as $entry) {
@@ -102,6 +122,11 @@ class ShippedSetLicencesTest extends TestCase {
 		}
 	}//end testTheAuditTableListsEveryDeclaredSet()
 
+	/**
+	 * No licence file without a set.
+	 *
+	 * @return void
+	 */
 	public function testNoLicenceFileWithoutASet(): void {
 		foreach ((array)glob($this->root() . '/css/tokens/*.LICENSE.md') as $file) {
 			$id = basename((string)$file, '.LICENSE.md');

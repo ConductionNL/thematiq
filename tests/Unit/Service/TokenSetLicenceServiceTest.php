@@ -72,6 +72,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 	 */
 	private TokenSetLicenceService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->makeAppDir();
@@ -102,11 +107,21 @@ class TokenSetLicenceServiceTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->removeAppDir();
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * A confirmation is stored with who and when and logged.
+	 *
+	 * @return void
+	 */
 	public function testAConfirmationIsStoredWithWhoAndWhenAndLogged(): void {
 		$confirmation = $this->service->confirm('owned', 'ruben');
 
@@ -125,6 +140,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertSame(expected: ['uid' => 'ruben', 'set' => 'owned', 'app' => 'thematiq'], actual: $this->logged[0][1]);
 	}//end testAConfirmationIsStoredWithWhoAndWhenAndLogged()
 
+	/**
+	 * A second confirmation keeps the first.
+	 *
+	 * @return void
+	 */
 	public function testASecondConfirmationKeepsTheFirst(): void {
 		$this->service->confirm('owned', 'ruben');
 
@@ -194,6 +214,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertCount(expectedCount: 1, haystack: $this->audit, message: 'only the confirmation is in the audit trail');
 	}//end testAWithdrawalIsRefusedWhileTheSetIsApplied()
 
+	/**
+	 * A finished switch does not hold the confirmation.
+	 *
+	 * @return void
+	 */
 	public function testAFinishedSwitchDoesNotHoldTheConfirmation(): void {
 		$this->service->confirm('owned', 'ruben');
 		$this->appValues['scheduled_switches'] = '[{"id":"s1","tokenSet":"owned","status":"done"},{"id":"s2","tokenSet":"owned","status":"failed"}]';
@@ -203,6 +228,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertSame(expected: '{}', actual: $this->appValues[RestrictedSetGate::CONFIG_KEY]);
 	}//end testAFinishedSwitchDoesNotHoldTheConfirmation()
 
+	/**
+	 * A withdrawal is logged with the confirmation it ends.
+	 *
+	 * @return void
+	 */
 	public function testAWithdrawalIsLoggedWithTheConfirmationItEnds(): void {
 		$this->service->confirm('owned', 'ruben');
 		$this->service->withdraw('owned', 'noor');
@@ -218,6 +248,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertCount(expectedCount: 2, haystack: $this->audit, message: 'withdrawing what is not confirmed writes nothing');
 	}//end testAWithdrawalIsLoggedWithTheConfirmationItEnds()
 
+	/**
+	 * A set applied without a confirmation awaits one.
+	 *
+	 * @return void
+	 */
 	public function testASetAppliedWithoutAConfirmationAwaitsOne(): void {
 		$this->assertSame(expected: [], actual: $this->service->awaitingConfirmation());
 
@@ -235,6 +270,11 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertSame(expected: ['owned-two'], actual: array_column($this->service->awaitingConfirmation(), 'tokenSet'));
 	}//end testASetAppliedWithoutAConfirmationAwaitsOne()
 
+	/**
+	 * The settings page gets every restricted set and its licence.
+	 *
+	 * @return void
+	 */
 	public function testTheSettingsPageGetsEveryRestrictedSetAndItsLicence(): void {
 		$this->service->confirm('owned', 'ruben');
 
