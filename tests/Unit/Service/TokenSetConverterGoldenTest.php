@@ -196,6 +196,10 @@ class TokenSetConverterGoldenTest extends TestCase {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
 		$inputs['root-set-with-logo'] = ":root {\n  --nldesign-color-primary: #154273;\n  --conduction-logo-header-background-image: url(\"data:image/svg+xml;base64,"
 			. base64_encode($svg) . "\");\n  --nldesign-color-page-background: #fafafa;\n  --utrecht-button-primary-action-background-color: var(--nldesign-color-primary);\n}\n";
+		$inputs['root-set-logo-after-none'] = ":root {\n  --nldesign-logo-url: url(none);\n  --conduction-logo-header-background-image: url(\" data:image/svg+xml;base64,"
+			. base64_encode($svg) . " \");\n  --nldesign-color-primary: #154273;\n}\n";
+		$inputs['root-set-logo-after-empty-url'] = ":root {\n  --nldesign-logo-url: url('');\n  --conduction-logo-navbar-background-image: url('data:image/svg+xml;base64,"
+			. base64_encode($svg) . "');\n  --nldesign-color-primary: #154273;\n}\n";
 		$inputs['root-set-logo-on-disk'] = ":root {\n  --nldesign-color-primary: #0b71a1;\n  --nldesign-logo-url: url('../../img/logos/rijkshuisstijl.svg');\n}\n";
 		$inputs['theme-block'] = ".demo-theme {\n  --demo-color-primary: hsl(210, 70%, 30%);\n  --demo-color-text: #ffffffcc;\n"
 			. "  --utrecht-button-primary-action-background-color: var(--demo-color-primary);\n  --utrecht-document-font-family: 'Fira Sans', sans-serif;\n}\n";
