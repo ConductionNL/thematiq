@@ -763,7 +763,8 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
-		$this->auditService->log(action: 'custom_set_uploaded', context: $this->auditContext(parsed: $parsed, stored: $result + ['name' => $name]));
+		$context = $this->auditContext(parsed: $parsed, stored: ['id' => $result['id'], 'name' => $name]);
+		$this->auditService->log(action: 'custom_set_uploaded', context: $context);
 
 		return new JSONResponse($this->uploadResponse(parsed: $parsed, result: $result));
 	}//end persist()

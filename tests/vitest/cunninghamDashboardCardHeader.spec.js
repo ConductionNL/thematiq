@@ -13,12 +13,16 @@ import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8')
-const css = read('css/systems/lasuite/element-overrides.css').replace(/\/\*[\s\S]*?\*\//g, '')
+const css = read('css/systems/lasuite/element-overrides.css').replace(
+	/\/\*[\s\S]*?\*\//g,
+	'',
+)
 const systems = JSON.parse(read('design-systems.json'))
 
 describe('the Cunningham layer: dashboard card titles', () => {
 	it('drops the rule under a dashboard card title, leaving the Nextcloud chrome and chromeless cards alone', () => {
-		const selector = '.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header'
+		const selector =
+			'.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header'
 		const at = css.indexOf(selector + ' {')
 		expect(at).toBeGreaterThan(-1)
 		expect(css.slice(at, css.indexOf('}', at))).toContain('border-bottom: none;')
@@ -26,7 +30,9 @@ describe('the Cunningham layer: dashboard card titles', () => {
 
 	it('reaches both design systems built on Cunningham', () => {
 		for (const id of ['lasuite', 'cunningham']) {
-			expect(systems.find((s) => s.id === id).stylesheets).toContain('systems/lasuite/element-overrides')
+			expect(systems.find((s) => s.id === id).stylesheets).toContain(
+				'systems/lasuite/element-overrides',
+			)
 		}
 	})
 })

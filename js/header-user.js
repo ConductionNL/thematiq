@@ -86,7 +86,10 @@
 		chevron.setAttribute('fill', 'currentColor')
 		var path = document.createElementNS(SVG_NS, 'path')
 		// Material Design Icons chevron-down, as the board draws it.
-		path.setAttribute('d', 'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z')
+		path.setAttribute(
+			'd',
+			'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z',
+		)
 		chevron.appendChild(path)
 		chip.appendChild(chevron)
 

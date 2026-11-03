@@ -603,7 +603,9 @@ describe('workplace layout: the top bar', () => {
 		const [search] = withSelector(rules, '.unified-search__button')
 		expect(search.decls.height).toBe('44px !important')
 		expect(search.decls['border-radius']).toBe('22px !important')
-		expect(search.decls.border).toBe('1px solid var(--color-border-maxcontrast) !important')
+		expect(search.decls.border).toBe(
+			'1px solid var(--color-border-maxcontrast) !important',
+		)
 		expect(search.decls['font-weight']).toBe('400 !important')
 		expect(search.decls.color).toBe('var(--color-text-maxcontrast) !important')
 	})

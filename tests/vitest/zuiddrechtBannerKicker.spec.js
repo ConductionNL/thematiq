@@ -14,7 +14,10 @@ import path from 'node:path'
 import postcss from 'postcss'
 import { describe, expect, it } from 'vitest'
 
-const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'), 'utf8')
+const css = fs.readFileSync(
+	path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'),
+	'utf8',
+)
 
 describe('zuiddrecht banner kicker', () => {
 	it('sets no letter spacing on the kicker', () => {
