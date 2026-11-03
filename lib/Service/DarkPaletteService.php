@@ -1426,29 +1426,8 @@ class DarkPaletteService {
 			page: ($declarations['--nldesign-color-background'] ?? null)
 		);
 
-		return $this->ratioWarning(pair: $pair, ratio: $ratio);
+		return $this->contrast->ratioWarning(pair: $pair, ratio: $ratio);
 	}//end pairWarning()
-
-	/**
-	 * The warning for a measured pair: unevaluated when there is no ratio, failing below the threshold.
-	 *
-	 * @param array{fg: string, bg: string, threshold: float} $pair The pair.
-	 * @param float|null $ratio The measured ratio, or null when it could not be measured.
-	 *
-	 * @return array<string, mixed>|null The warning, or null when the pair passes.
-	 */
-	private function ratioWarning(array $pair, ?float $ratio): ?array {
-		$label = $pair['fg'] . ' vs ' . $pair['bg'];
-		if ($ratio === null) {
-			return ['pair' => $label, 'ratio' => null, 'threshold' => $pair['threshold'], 'level' => 'AA', 'unevaluated' => true];
-		}
-
-		if ($ratio < $pair['threshold']) {
-			return ['pair' => $label, 'ratio' => round($ratio, 2), 'threshold' => $pair['threshold'], 'level' => 'AA'];
-		}
-
-		return null;
-	}//end ratioWarning()
 
 	/**
 	 * The CONTROL_PAIRS fills that are transparent in light and absent from
