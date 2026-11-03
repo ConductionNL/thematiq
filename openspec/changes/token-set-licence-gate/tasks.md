@@ -18,7 +18,7 @@
 - [x] 2.7 Controllers answer 403 with `restricted_set_not_confirmed`.
 - [x] 2.8 `tests/Unit/Service/RestrictedSetWiringTest.php`: each caller refuses and then accepts.
       Removing the gate call from any one caller turns it red (checked per caller).
-- [x] 2.9 `tests/Unit/Controller/RestrictedSetRequestPathTest.php`: the delivered status through
+- [x] 2.9 `tests/Server/Controller/RestrictedSetRequestPathTest.php`: the delivered status through
       Nextcloud's Dispatcher, with the OCS 403-to-200 control.
 
 ## 3. Confirm and withdraw

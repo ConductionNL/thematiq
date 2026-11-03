@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\Thematiq\Tests\Unit\Controller;
+namespace OCA\Thematiq\Tests\Server\Controller;
 
 use OC\AppFramework\Http\Dispatcher;
 use OCA\Thematiq\AppInfo\Application;
