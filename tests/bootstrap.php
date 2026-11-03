@@ -167,7 +167,7 @@ function thematiq_nc_root_is_installed(string $ncRoot): bool {
 // Only an INSTALLED root is booted; a bare source tree runs in pure-unit mode
 // with the composer autoload and the stubs above. NC's tests/autoload.php
 // requires lib/base.php itself, so it sits behind the same guard.
-if (!defined('OC_CONSOLE')) {
+if (defined('OC_CONSOLE') === false) {
 	$thematiqNcRoot = realpath(__DIR__ . '/../../..');
 	if ($thematiqNcRoot !== false && file_exists($thematiqNcRoot . '/lib/base.php') === true) {
 		if (thematiq_nc_root_is_installed($thematiqNcRoot) === true) {
@@ -216,7 +216,7 @@ if (!defined('OC_CONSOLE')) {
 
 	unset($thematiqNcRoot);
 
-	if (class_exists('\OC_App')) {
+	if (class_exists('\OC_App') === true) {
 		\OC_App::loadApps();
 		// The APP ID, which is `thematiq` since 2026-08-22. Loading `nldesign`
 		// asked the server for an app that no longer exists — a second silent

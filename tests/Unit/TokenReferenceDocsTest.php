@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenReferenceService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -58,7 +59,7 @@ class TokenReferenceDocsTest extends TestCase {
 			);
 		}
 
-		$committed = array_map('basename', glob($root . '/docs/reference/token-sets/*.md') ?: []);
+		$committed = array_map('basename', FileList::glob(pattern: $root . '/docs/reference/token-sets/*.md'));
 		sort($committed);
 		$expected = array_keys($pages);
 		sort($expected);

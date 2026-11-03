@@ -482,8 +482,18 @@ class StockTokensServiceTest extends TestCase {
 	 */
 	public function testTheBlockIsTheInstanceColourNotTheUsers(): void {
 		$theme = new class {
+			/**
+			 * The default primary color.
+			 *
+			 * @var string
+			 */
 			public string $defaultPrimaryColor = '#00679e';
 
+			/**
+			 * The primary color.
+			 *
+			 * @var string
+			 */
 			public string $primaryColor = '#ff00ff';
 
 			/**
@@ -501,6 +511,15 @@ class StockTokensServiceTest extends TestCase {
 		);
 
 		$service = new class($preview, $this->createMock(originalClassName: LoggerInterface::class), $this->cacheFactory(), $this->createMock(originalClassName: IConfig::class), $theme) extends StockTokensService {
+			/**
+			 * Constructor.
+			 *
+			 * @param TokenSetPreviewService $sources The sources.
+			 * @param LoggerInterface $logger The logger.
+			 * @param ICacheFactory $cacheFactory The cache factory.
+			 * @param IConfig $config The config.
+			 * @param object $theme The theme.
+			 */
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,
@@ -537,6 +556,11 @@ class StockTokensServiceTest extends TestCase {
 	 */
 	public function testAThemeWithoutAnAdminColourFallsBack(): void {
 		$theme = new class {
+			/**
+			 * The primary color.
+			 *
+			 * @var string
+			 */
 			public string $primaryColor = '#ff00ff';
 
 			/**
@@ -553,6 +577,15 @@ class StockTokensServiceTest extends TestCase {
 		);
 
 		$service = new class($preview, $this->createMock(originalClassName: LoggerInterface::class), $this->cacheFactory(), $this->createMock(originalClassName: IConfig::class), $theme) extends StockTokensService {
+			/**
+			 * Constructor.
+			 *
+			 * @param TokenSetPreviewService $sources The sources.
+			 * @param LoggerInterface $logger The logger.
+			 * @param ICacheFactory $cacheFactory The cache factory.
+			 * @param IConfig $config The config.
+			 * @param object $theme The theme.
+			 */
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,

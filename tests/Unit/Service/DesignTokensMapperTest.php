@@ -770,9 +770,9 @@ class DesignTokensMapperTest extends TestCase {
 	 * processed) holds for every fixture in the corpus (excluding the
 	 * malformed-JSON fixture, which never reaches the mapper).
 	 *
-	 * @dataProvider corpusFixtureProvider
-	 *
 	 * @param string $fixture The fixture filename.
+	 *
+	 * @dataProvider corpusFixtureProvider
 	 *
 	 * @return void
 	 */

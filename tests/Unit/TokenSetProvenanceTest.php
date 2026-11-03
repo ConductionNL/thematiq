@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit;
 
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -72,7 +73,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 */
 	private function shippedSets(): array {
 		$sets = [];
-		foreach (glob($this->repoRoot() . '/css/tokens/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/tokens/*.css') as $file) {
 			$sets[basename($file, '.css')] = (string)file_get_contents($file);
 		}
 

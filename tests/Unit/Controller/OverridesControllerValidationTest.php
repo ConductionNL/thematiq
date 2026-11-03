@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -109,7 +110,7 @@ class OverridesControllerValidationTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 

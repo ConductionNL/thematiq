@@ -30,7 +30,17 @@ use Psr\Log\LoggerInterface;
  */
 class OverridesCssBuilderReadableTextTest extends TestCase {
 
+	/**
+	 * The builder.
+	 *
+	 * @var OverridesCssBuilder
+	 */
 	private OverridesCssBuilder $builder;
+	/**
+	 * The contrast.
+	 *
+	 * @var ContrastService
+	 */
 	private ContrastService $contrast;
 
 	/**

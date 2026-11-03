@@ -43,45 +43,101 @@ class FakeAuditFile implements ISimpleFile {
 	) {
 	}
 
+	/**
+	 * ISimpleFile::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return $this->name;
 	}
 
+	/**
+	 * ISimpleFile::getSize(), as this test double answers it.
+	 *
+	 * @return int|float
+	 */
 	public function getSize(): int|float {
 		return strlen($this->content);
 	}
 
+	/**
+	 * ISimpleFile::getETag(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getETag(): string {
 		return 'fake-etag';
 	}
 
+	/**
+	 * ISimpleFile::getMTime(), as this test double answers it.
+	 *
+	 * @return int
+	 */
 	public function getMTime(): int {
 		return 0;
 	}
 
+	/**
+	 * ISimpleFile::getContent(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getContent(): string {
 		return $this->content;
 	}
 
+	/**
+	 * ISimpleFile::putContent(), as this test double answers it.
+	 *
+	 * @param mixed $data The data.
+	 * @return void
+	 */
 	public function putContent($data): void {
 		$this->content = (string)$data;
 	}
 
+	/**
+	 * ISimpleFile::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 	}
 
+	/**
+	 * ISimpleFile::getMimeType(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getMimeType(): string {
 		return 'application/x-ndjson';
 	}
 
+	/**
+	 * ISimpleFile::getExtension(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getExtension(): string {
 		return 'jsonl';
 	}
 
+	/**
+	 * ISimpleFile::read(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function read() {
 		return false;
 	}
 
+	/**
+	 * ISimpleFile::write(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function write() {
 		return false;
 	}
@@ -99,14 +155,31 @@ class FakeAuditFolder implements ISimpleFolder {
 	 */
 	public array $files = [];
 
+	/**
+	 * ISimpleFolder::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		return array_values($this->files);
 	}
 
+	/**
+	 * ISimpleFolder::fileExists(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return bool
+	 */
 	public function fileExists(string $name): bool {
 		return isset($this->files[$name]);
 	}
 
+	/**
+	 * ISimpleFolder::getFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFile
+	 */
 	public function getFile(string $name): ISimpleFile {
 		if (isset($this->files[$name]) === false) {
 			throw new NotFoundException();
@@ -115,6 +188,13 @@ class FakeAuditFolder implements ISimpleFolder {
 		return $this->files[$name];
 	}
 
+	/**
+	 * ISimpleFolder::newFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @param mixed $content The content.
+	 * @return ISimpleFile
+	 */
 	public function newFile(string $name, $content = null): ISimpleFile {
 		$file = new FakeAuditFile($name, (string)$content);
 		$this->files[$name] = $file;
@@ -122,17 +202,39 @@ class FakeAuditFolder implements ISimpleFolder {
 		return $file;
 	}
 
+	/**
+	 * ISimpleFolder::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 	}
 
+	/**
+	 * ISimpleFolder::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return 'audit';
 	}
 
+	/**
+	 * ISimpleFolder::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		throw new NotFoundException();
 	}
 
+	/**
+	 * ISimpleFolder::newFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $path): ISimpleFolder {
 		throw new \RuntimeException('not supported by fake');
 	}
@@ -140,6 +242,13 @@ class FakeAuditFolder implements ISimpleFolder {
 	// ISimpleFolder::getOrCreateFolder() is @since 35.0.0. This fake is flat —
 	// the audit log lives in one folder — so it refuses the way newFolder()
 	// does, rather than pretending to nest.
+	/**
+	 * ISimpleFolder::getOrCreateFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @param int $maxRetries The max retries.
+	 * @return ISimpleFolder
+	 */
 	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
 		throw new \RuntimeException('not supported by fake');
 	}
@@ -151,14 +260,33 @@ class FakeAuditFolder implements ISimpleFolder {
  */
 class FakeAuditRoot implements IAppData {
 
+	/**
+	 * The audit folder.
+	 *
+	 * @var FakeAuditFolder
+	 */
 	public FakeAuditFolder $auditFolder;
 
+	/**
+	 * The folder exists.
+	 *
+	 * @var bool
+	 */
 	public bool $folderExists = false;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->auditFolder = new FakeAuditFolder();
 	}
 
+	/**
+	 * IAppData::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		if ($this->folderExists === false) {
 			throw new NotFoundException();
@@ -167,6 +295,11 @@ class FakeAuditRoot implements IAppData {
 		return $this->auditFolder;
 	}
 
+	/**
+	 * IAppData::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		if ($this->folderExists === false) {
 			return [];
@@ -175,6 +308,12 @@ class FakeAuditRoot implements IAppData {
 		return [$this->auditFolder];
 	}
 
+	/**
+	 * IAppData::newFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $name): ISimpleFolder {
 		$this->folderExists = true;
 
@@ -187,11 +326,22 @@ class FakeAuditRoot implements IAppData {
  */
 class FakeAuditAppDataFactory implements IAppDataFactory {
 
+	/**
+	 * Constructor.
+	 *
+	 * @param IAppData $appData The app data.
+	 */
 	public function __construct(
 		private IAppData $appData,
 	) {
 	}
 
+	/**
+	 * IAppDataFactory::get(), as this test double answers it.
+	 *
+	 * @param string $appId The app id.
+	 * @return IAppData
+	 */
 	public function get(string $appId): IAppData {
 		return $this->appData;
 	}
@@ -203,6 +353,12 @@ class FakeAuditAppDataFactory implements IAppDataFactory {
  */
 class ThrowingAuditAppDataFactory implements IAppDataFactory {
 
+	/**
+	 * IAppDataFactory::get(), as this test double answers it.
+	 *
+	 * @param string $appId The app id.
+	 * @return IAppData
+	 */
 	public function get(string $appId): IAppData {
 		throw new \RuntimeException('appdata unavailable');
 	}
@@ -265,6 +421,7 @@ class ThemingAuditServiceTest extends TestCase {
 	 * resolves to 'cli', since PHPUnit itself runs under PHP_SAPI==='cli').
 	 *
 	 * @param int $time The fixed clock value.
+	 * @param ?ThemeVersionService $versions The versions.
 	 *
 	 * @return ThemingAuditService The service under test.
 	 */
@@ -370,6 +527,11 @@ class ThemingAuditServiceTest extends TestCase {
 		$this->userSession->method('getUser')->willReturn(null);
 
 		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger, $this->createMock(originalClassName: ThemeVersionService::class)) extends ThemingAuditService {
+			/**
+			 * ThemingAuditService::isRunningInCli(), as this test double answers it.
+			 *
+			 * @return bool
+			 */
 			protected function isRunningInCli(): bool {
 				return false;
 			}

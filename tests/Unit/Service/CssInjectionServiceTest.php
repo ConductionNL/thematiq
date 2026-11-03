@@ -32,6 +32,7 @@ use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\ThemePreviewBannerService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\ITempManager;
@@ -240,7 +241,7 @@ class CssInjectionServiceTest extends TestCase {
 	protected function tearDown(): void {
 		$remove = function (string $path) use (&$remove): void {
 			if (is_dir($path) === true) {
-				foreach (scandir($path) ?: [] as $entry) {
+				foreach (FileList::entries(directory: $path) as $entry) {
 					if ($entry !== '.' && $entry !== '..') {
 						$remove($path . '/' . $entry);
 					}

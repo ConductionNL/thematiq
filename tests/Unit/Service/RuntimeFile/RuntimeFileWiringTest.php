@@ -33,6 +33,7 @@ use OCA\Thematiq\Service\TokenSetAudits;
 use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\IAppConfig;
@@ -53,10 +54,35 @@ use Psr\Log\LoggerInterface;
  */
 class RuntimeFileWiringTest extends TestCase {
 
+	/**
+	 * The base.
+	 *
+	 * @var string
+	 */
 	private string $base;
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The store dir.
+	 *
+	 * @var string
+	 */
 	private string $storeDir;
+	/**
+	 * The store.
+	 *
+	 * @var DirectoryRuntimeFileStore
+	 */
 	private DirectoryRuntimeFileStore $store;
+	/**
+	 * The app manager.
+	 *
+	 * @var IAppManager
+	 */
 	private IAppManager $appManager;
 
 	/** @var array<string, string> */
@@ -94,9 +120,15 @@ class RuntimeFileWiringTest extends TestCase {
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * TestCase::remove(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return void
+	 */
 	private function remove(string $path): void {
 		if (is_dir($path) === true) {
-			foreach (scandir($path) ?: [] as $entry) {
+			foreach (FileList::entries(directory: $path) as $entry) {
 				if ($entry !== '.' && $entry !== '..') {
 					$this->remove(path: $path . '/' . $entry);
 				}
@@ -110,6 +142,8 @@ class RuntimeFileWiringTest extends TestCase {
 
 	/**
 	 * Every file under a directory, relative path => sha256.
+	 *
+	 * @param string $root The root.
 	 *
 	 * @return array<string, string>
 	 */
@@ -125,6 +159,11 @@ class RuntimeFileWiringTest extends TestCase {
 		return $hashes;
 	}//end hashTree()
 
+	/**
+	 * TestCase::config(), as this test double answers it.
+	 *
+	 * @return IConfig
+	 */
 	private function config(): IConfig {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
@@ -139,6 +178,11 @@ class RuntimeFileWiringTest extends TestCase {
 		return $config;
 	}//end config()
 
+	/**
+	 * TestCase::darkPalette(), as this test double answers it.
+	 *
+	 * @return DarkPaletteService
+	 */
 	private function darkPalette(): DarkPaletteService {
 		return new DarkPaletteService(
 			contrast: new ContrastService(),
@@ -149,6 +193,11 @@ class RuntimeFileWiringTest extends TestCase {
 		);
 	}//end darkPalette()
 
+	/**
+	 * TestCase::locator(), as this test double answers it.
+	 *
+	 * @return RuntimeFileLocator
+	 */
 	private function locator(): RuntimeFileLocator {
 		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => '/runtime/' . $args['name']);
@@ -318,6 +367,8 @@ class RuntimeFileWiringTest extends TestCase {
 	/**
 	 * @dataProvider refusedNames
 	 *
+	 * @param string $name The name.
+	 *
 	 * @return void
 	 */
 	public function testTheRouteRefusesEverythingElse(string $name): void {
@@ -394,9 +445,9 @@ class RuntimeFileWiringTest extends TestCase {
 		// (hoog-contrast, thematiq#1023): the generator never touches it, so
 		// it cannot go stale. Only an ineligible set may carry one.
 		$skipped = (new \ReflectionClassConstant(DarkPaletteService::class, 'SKIPPED_DESIGN_SYSTEMS'))->getValue();
-		$designSystems = array_column((json_decode((string)file_get_contents($repo . '/token-sets.json'), true) ?: []), 'design_system', 'id');
+		$designSystems = array_column((array)json_decode((string)file_get_contents($repo . '/token-sets.json'), true), 'design_system', 'id');
 		$stale = [];
-		foreach (glob($repo . '/css/tokens/dark/*.css') ?: [] as $dark) {
+		foreach (FileList::glob(pattern: $repo . '/css/tokens/dark/*.css') as $dark) {
 			$id = basename($dark, '.css');
 			$source = $reader->read($repo, 'css/tokens/' . $id . '.css', null);
 			$header = substr((string)file_get_contents($dark), 0, 512);

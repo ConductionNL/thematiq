@@ -86,9 +86,9 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	/**
 	 * Every token the JavaScript converter emits for the case, PHP emits identically.
 	 *
-	 * @dataProvider caseProvider
-	 *
 	 * @param string $name The case.
+	 *
+	 * @dataProvider caseProvider
 	 *
 	 * @return void
 	 */

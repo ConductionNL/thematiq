@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -30,8 +31,23 @@ use Psr\Log\LoggerInterface;
  */
 class CustomOverridesServiceSettableTest extends TestCase {
 
+	/**
+	 * The dir.
+	 *
+	 * @var string
+	 */
 	private string $dir;
+	/**
+	 * The store.
+	 *
+	 * @var DirectoryRuntimeFileStore
+	 */
 	private DirectoryRuntimeFileStore $store;
+	/**
+	 * The service.
+	 *
+	 * @var CustomOverridesService
+	 */
 	private CustomOverridesService $service;
 
 	/**
@@ -63,7 +79,7 @@ class CustomOverridesServiceSettableTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->dir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->dir . '/css/*') as $file) {
 			unlink($file);
 		}
 
@@ -72,6 +88,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * TestCase::file(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	private function file(): string {
 		return (string)$this->store->read('css/custom-overrides.css');
 	}//end file()

@@ -83,9 +83,9 @@ class SummerBreezeContrastTest extends TestCase {
 	/**
 	 * Every pair reaches its threshold in the given mode.
 	 *
-	 * @dataProvider modeProvider
-	 *
 	 * @param string $mode The mode: light, media or explicit.
+	 *
+	 * @dataProvider modeProvider
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
 	 *
@@ -120,9 +120,9 @@ class SummerBreezeContrastTest extends TestCase {
 	 * The page and the panels are dark in both dark scopes and light in light
 	 * mode (relative luminance at most 0.05, at least 0.8).
 	 *
-	 * @dataProvider modeProvider
-	 *
 	 * @param string $mode The mode: light, media or explicit.
+	 *
+	 * @dataProvider modeProvider
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
 	 *

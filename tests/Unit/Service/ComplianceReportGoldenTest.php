@@ -66,6 +66,11 @@ class ComplianceReportGoldenTest extends TestCase {
 
 	private const NLDESIGN = ['--nldesign-color-primary', '--nldesign-color-primary-text', '--nldesign-color-background', '--nldesign-color-text', '--nldesign-color-a', '--nldesign-color-b', '--nldesign-color-c'];
 
+	/**
+	 * The directory.
+	 *
+	 * @var string
+	 */
 	private string $directory = '';
 
 	/**

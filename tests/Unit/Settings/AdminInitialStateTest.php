@@ -68,6 +68,7 @@ class AdminInitialStateTest extends TestCase {
 	 * @param string $iconPackOverride The appconfig `icon_pack` value.
 	 * @param array<string, mixed> $captured Filled with key => value as provided.
 	 * @param string|null $playgroundSetAsked Filled with the set the playground state was assembled for.
+	 * @param string $environment The environment.
 	 *
 	 * @return Admin The system under test.
 	 */

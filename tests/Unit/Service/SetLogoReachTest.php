@@ -381,6 +381,7 @@ class SetLogoReachTest extends TestCase {
 	 * The logo layer of a set, with or without a grey emblem beside its logo.
 	 *
 	 * @param bool $emblemShipped Whether `img/logos/zuiddrecht-emblem-grey.svg` exists.
+	 * @param bool $colourEmblemShipped Whether the colour emblem file exists too.
 	 *
 	 * @return string The layer CSS.
 	 */

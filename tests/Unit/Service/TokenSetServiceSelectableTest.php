@@ -23,6 +23,7 @@ use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -147,7 +148,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		// this state the filter could stop filtering and every assertion below
 		// would still pass.
 		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
-		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $layer) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/systems/nldesign/*.css') as $layer) {
 			copy($layer, $this->appDir . '/css/systems/nldesign/' . basename($layer));
 		}
 		copy($this->repoRoot() . '/design-systems.json', $this->appDir . '/design-systems.json');
@@ -289,6 +290,12 @@ class TokenSetServiceSelectableTest extends TestCase {
 		return $config;
 	}//end configFor()
 
+	/**
+	 * TestCase::ids(), as this test double answers it.
+	 *
+	 * @param array $sets The sets.
+	 * @return array
+	 */
 	private function ids(array $sets): array {
 		return array_map(static fn (array $set): string => (string)$set['id'], $sets);
 	}//end ids()

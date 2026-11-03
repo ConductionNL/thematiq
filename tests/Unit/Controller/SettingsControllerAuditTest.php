@@ -42,6 +42,12 @@ use Psr\Log\LoggerInterface;
  * controller call site, rather than mocking the service itself.
  */
 class SettingsControllerAuditThrowingAppDataFactory implements IAppDataFactory {
+	/**
+	 * IAppDataFactory::get(), as this test double answers it.
+	 *
+	 * @param string $appId The app id.
+	 * @return IAppData
+	 */
 	public function get(string $appId): IAppData {
 		throw new \RuntimeException('appdata unavailable');
 	}

@@ -163,10 +163,10 @@ class AppThemingServiceTest extends TestCase {
 	/**
 	 * The resolver extracts the app id from app-page paths and only those.
 	 *
-	 * @dataProvider pathProvider
-	 *
 	 * @param string|null $pathInfo The request path info.
 	 * @param string|null $expected The expected resolved app id.
+	 *
+	 * @dataProvider pathProvider
 	 *
 	 * @return void
 	 */

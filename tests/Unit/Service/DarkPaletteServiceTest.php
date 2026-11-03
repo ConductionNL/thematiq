@@ -1151,9 +1151,9 @@ class DarkPaletteServiceTest extends TestCase {
 	 * at its AA threshold — the verification-loop contract, exercised
 	 * against the actual worktree files (not synthetic fixtures).
 	 *
-	 * @dataProvider shippedSetProvider
-	 *
 	 * @param string $setId The shipped token set id.
+	 *
+	 * @dataProvider shippedSetProvider
 	 *
 	 * @return void
 	 */

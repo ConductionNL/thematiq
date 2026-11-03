@@ -21,6 +21,7 @@ use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -104,7 +105,7 @@ class TokenSetServiceMergeTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/tokens/*') ?: [] as $f) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/tokens/*') as $f) {
 			unlink($f);
 		}
 

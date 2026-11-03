@@ -29,6 +29,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit;
 
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -66,6 +67,8 @@ class MarianneFontTest extends TestCase {
 	/**
 	 * Read a file from the repository root, asserting it exists.
 	 *
+	 * @param string $relativePath The relative path.
+	 *
 	 * @return string
 	 */
 	private function readFile(string $relativePath): string {
@@ -93,7 +96,7 @@ class MarianneFontTest extends TestCase {
 		}
 
 		// No .woff fallback — woff2-only per tasks.md #1.3 (CSP-clean self-hosting).
-		$woffFallbacks = glob($dir . '/*.woff') ?: [];
+		$woffFallbacks = FileList::glob(pattern: $dir . '/*.woff');
 		$this->assertSame(
 			expected: [],
 			actual: $woffFallbacks,
@@ -205,7 +208,9 @@ class MarianneFontTest extends TestCase {
 			$this->assertNotEmpty(actual: $weightMatch, message: "No font-weight declared for {$file}.");
 			$this->assertSame(expected: $expectedWeights[$file], actual: $weightMatch[1], message: "Wrong font-weight for {$file}.");
 
-			$expectedStyle = str_contains($file, '_Italic') ? 'italic' : 'normal';
+			$expectedStyle = match (str_contains($file, '_Italic')) {
+				true => 'italic', default => 'normal'
+			};
 			$this->assertMatchesRegularExpression(
 				pattern: '/font-style:\s*' . $expectedStyle . '/',
 				string: $block,

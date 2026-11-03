@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -136,7 +137,9 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		);
 
 		$l = $this->createMock(originalClassName: IL10N::class);
-		$l->method('t')->willReturnCallback(fn (string $text, $p = []) => (empty($p) ? $text : vsprintf($text, $p)));
+		$l->method('t')->willReturnCallback(fn (string $text, $p = []) => match (empty($p)) {
+			true => $text, default => vsprintf($text, $p)
+		});
 
 		// The converter reads its mapping table and vocabulary stylesheets from
 		// the REPO; everything it writes still goes through the service above.
@@ -215,6 +218,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @param string $css The uploaded document.
 	 * @param string $name The token set display name.
+	 * @param string $fileName The file name.
 	 *
 	 * @return \OCP\AppFramework\Http\JSONResponse The upload response.
 	 */
@@ -261,7 +265,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @return array<int, string> The file names.
 	 */
 	private function writtenFiles(): array {
-		return array_map('basename', (glob($this->appDir . '/css/tokens/*.css') ?: []));
+		return array_map('basename', (FileList::glob(pattern: $this->appDir . '/css/tokens/*.css')));
 	}//end writtenFiles()
 
 	/**

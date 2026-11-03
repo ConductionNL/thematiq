@@ -110,9 +110,9 @@ class TokenSetConverterParityTest extends TestCase {
 	/**
 	 * The emitted CSS is byte-equal, provenance block and mapping table hash included.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */
@@ -127,9 +127,9 @@ class TokenSetConverterParityTest extends TestCase {
 	/**
 	 * The report holds the same entries in the same order, and the counts agree.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */
@@ -154,9 +154,9 @@ class TokenSetConverterParityTest extends TestCase {
 	/**
 	 * The manifest entry and the extracted logo agree.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */

@@ -337,6 +337,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 	public function testControlTheSameChainTurnsAnOcs403Into200(): void {
 		$ocs = new class('thematiq', $this->request) extends OCSController {
 
+			/**
+			 * OCSController::refuse(), as this test double answers it.
+			 *
+			 * @return DataResponse
+			 */
 			#[NoAdminRequired]
 			public function refuse(): DataResponse {
 				return new DataResponse(['error' => 'refused'], 403);

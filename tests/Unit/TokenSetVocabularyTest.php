@@ -35,6 +35,7 @@ namespace OCA\Thematiq\Tests\Unit;
 
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -233,7 +234,7 @@ class TokenSetVocabularyTest extends TestCase {
 		@mkdir($probe . '/css/tokens', 0777, true);
 		@mkdir($probe . '/css/systems/nldesign', 0777, true);
 		copy($this->repoRoot() . '/design-systems.json', $probe . '/design-systems.json');
-		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/systems/nldesign/*.css') as $file) {
 			copy($file, $probe . '/css/systems/nldesign/' . basename($file));
 		}
 

@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -36,7 +37,17 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 
 	private const MOTION_SCOPE = 'body:not([data-theme-reduced-motion])';
 
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The service.
+	 *
+	 * @var CustomOverridesService
+	 */
 	private CustomOverridesService $service;
 
 	/**
@@ -73,7 +84,7 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 

@@ -64,7 +64,9 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	protected function tearDown(): void {
 		$files = glob($this->appPath . '/css/{systems/nldesign,tokens}/*.css', GLOB_BRACE);
-		foreach (($files ?: []) as $file) {
+		foreach (match ($files) {
+			false => [], default => $files
+		} as $file) {
 			unlink($file);
 		}
 

@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -170,9 +171,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * A high-contrast set ships a dark variant (thematiq#1023): without one its
 	 * surfaces stay white in Nextcloud's dark and dark-highcontrast themes.
 	 *
-	 * @dataProvider highContrastSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider highContrastSetProvider
 	 *
 	 * @return void
 	 */
@@ -184,9 +185,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * A high-contrast set's dark variant reaches AAA: 7:1 for text, 4.5:1 for
 	 * borders, fills and the focus ring.
 	 *
-	 * @dataProvider highContrastSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider highContrastSetProvider
 	 *
 	 * @return void
 	 */
@@ -237,9 +238,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * dark-highcontrast theme). A token in one scope only would leave that
 	 * path half light.
 	 *
-	 * @dataProvider highContrastSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider highContrastSetProvider
 	 *
 	 * @return void
 	 */
@@ -278,7 +279,7 @@ class ShippedDarkContrastTest extends TestCase {
 	 */
 	public static function darkSetProvider(): array {
 		$cases = [];
-		foreach (glob(dirname(__DIR__, 3) . '/css/tokens/dark/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: dirname(__DIR__, 3) . '/css/tokens/dark/*.css') as $file) {
 			$id = basename($file, '.css');
 			$cases[$id] = [$id];
 		}
@@ -298,9 +299,9 @@ class ShippedDarkContrastTest extends TestCase {
 	/**
 	 * Inputs and primary buttons reach 4.5:1 in the shipped dark variant.
 	 *
-	 * @dataProvider darkSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider darkSetProvider
 	 *
 	 * @return void
 	 */
@@ -344,9 +345,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * tests/vitest/errorLabelContrast.spec.js resolves every system's real
 	 * cascade, lasuite included.
 	 *
-	 * @dataProvider darkSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider darkSetProvider
 	 *
 	 * @return void
 	 */
@@ -392,9 +393,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * own dark page is #171717 (relative luminance 0.009); 0.05 leaves room
 	 * for a tinted dark surface and refuses anything that reads as light.
 	 *
-	 * @dataProvider darkSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider darkSetProvider
 	 *
 	 * @return void
 	 */
@@ -426,9 +427,9 @@ class ShippedDarkContrastTest extends TestCase {
 	 * be measured against, so its page pairs were skipped: nora's dark link
 	 * shipped at 3.57:1.
 	 *
-	 * @dataProvider darkSetProvider
-	 *
 	 * @param string $setId The token set id.
+	 *
+	 * @dataProvider darkSetProvider
 	 *
 	 * @return void
 	 */

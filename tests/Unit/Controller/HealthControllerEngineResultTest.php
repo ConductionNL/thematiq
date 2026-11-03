@@ -42,25 +42,54 @@ class HealthControllerEngineResultTest extends TestCase {
 	 */
 	private function controllerWithEngineResult(string $status, array $checks, int $httpCode): HealthController {
 		$manifest = new class {
+			/**
+			 * The cors.
+			 *
+			 * @var bool
+			 */
 			public bool $cors = false;
 		};
 
 		$loader = new class($manifest) {
+			/**
+			 * Constructor.
+			 *
+			 * @param object $manifest The manifest.
+			 */
 			public function __construct(
 				private object $manifest,
 			) {
 			}
 
+			/**
+			 * Load.
+			 *
+			 * @param string $appId The app id.
+			 * @return object
+			 */
 			public function load(string $appId): object {
 				return $this->manifest;
 			}
 
+			/**
+			 * App version.
+			 *
+			 * @param string $appId The app id.
+			 * @return string
+			 */
 			public function appVersion(string $appId): string {
 				return '9.9.9';
 			}
 		};
 
 		$result = new class($status, $checks, $httpCode) {
+			/**
+			 * Constructor.
+			 *
+			 * @param string $status The status.
+			 * @param array $checks The checks.
+			 * @param int $httpStatusCode The http status code.
+			 */
 			public function __construct(
 				public string $status,
 				public array $checks,
@@ -70,11 +99,22 @@ class HealthControllerEngineResultTest extends TestCase {
 		};
 
 		$executor = new class($result) {
+			/**
+			 * Constructor.
+			 *
+			 * @param object $result The result.
+			 */
 			public function __construct(
 				private object $result,
 			) {
 			}
 
+			/**
+			 * Execute.
+			 *
+			 * @param object $manifest The manifest.
+			 * @return object
+			 */
 			public function execute(object $manifest): object {
 				return $this->result;
 			}

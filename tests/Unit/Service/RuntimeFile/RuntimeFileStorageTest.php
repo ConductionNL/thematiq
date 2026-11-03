@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -33,7 +34,17 @@ use PHPUnit\Framework\TestCase;
  */
 class RuntimeFileStorageTest extends TestCase {
 
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The store dir.
+	 *
+	 * @var string
+	 */
 	private string $storeDir;
 
 	/**
@@ -64,9 +75,15 @@ class RuntimeFileStorageTest extends TestCase {
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * TestCase::remove(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return void
+	 */
 	private function remove(string $path): void {
 		if (is_dir($path) === true) {
-			foreach (scandir($path) ?: [] as $entry) {
+			foreach (FileList::entries(directory: $path) as $entry) {
 				if ($entry !== '.' && $entry !== '..') {
 					$this->remove(path: $path . '/' . $entry);
 				}
@@ -81,6 +98,11 @@ class RuntimeFileStorageTest extends TestCase {
 		}
 	}//end remove()
 
+	/**
+	 * TestCase::locator(), as this test double answers it.
+	 *
+	 * @return RuntimeFileLocator
+	 */
 	private function locator(): RuntimeFileLocator {
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
@@ -123,6 +145,9 @@ class RuntimeFileStorageTest extends TestCase {
 
 	/**
 	 * @dataProvider names
+	 *
+	 * @param string $name The name.
+	 * @param bool $allowed Whether the name is an allowed runtime file name.
 	 *
 	 * @return void
 	 */

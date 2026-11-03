@@ -112,12 +112,12 @@ class EnvironmentMarkerServiceTest extends TestCase {
 	/**
 	 * A declared non-production environment resolves to a label.
 	 *
-	 * @dataProvider environmentProvider
-	 *
 	 * @param string $value The declared value.
 	 * @param string $label The expected label.
 	 * @param string $short The expected title prefix.
 	 * @param string $style The expected style key.
+	 *
+	 * @dataProvider environmentProvider
 	 *
 	 * @return void
 	 */

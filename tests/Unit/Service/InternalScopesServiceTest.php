@@ -25,10 +25,25 @@ use PHPUnit\Framework\TestCase;
  */
 class InternalScopesServiceTest extends TestCase {
 
+	/**
+	 * The dir.
+	 *
+	 * @var string
+	 */
 	private string $dir;
 
+	/**
+	 * The store.
+	 *
+	 * @var DirectoryRuntimeFileStore
+	 */
 	private DirectoryRuntimeFileStore $store;
 
+	/**
+	 * The service.
+	 *
+	 * @var InternalScopesService
+	 */
 	private InternalScopesService $service;
 
 	/**

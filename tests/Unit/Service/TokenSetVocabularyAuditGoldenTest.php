@@ -45,6 +45,11 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 
 	private const SYSTEMS = ['nldesign', 'none', 'summer-breeze', 'lasuite', 'high-contrast', 'unknown-system', 7, null];
 
+	/**
+	 * The directory.
+	 *
+	 * @var string
+	 */
 	private string $directory = '';
 
 	private const PRIMARIES = ['#154273', '#FFF', '#fff', ' #ffffff ', '#12345', 'red', 7, null, '#000'];

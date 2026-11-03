@@ -31,8 +31,23 @@ use Psr\Log\LoggerInterface;
  */
 class CustomOverridesServiceEveryTokenTest extends TestCase {
 
+	/**
+	 * The dir.
+	 *
+	 * @var string
+	 */
 	private string $dir;
+	/**
+	 * The store.
+	 *
+	 * @var DirectoryRuntimeFileStore
+	 */
 	private DirectoryRuntimeFileStore $store;
+	/**
+	 * The service.
+	 *
+	 * @var CustomOverridesService
+	 */
 	private CustomOverridesService $service;
 
 	/**

@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\OverridesSetContext;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -107,7 +108,7 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 

@@ -113,10 +113,10 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * renderAs `user`/`guest`/`public`/`error` each reach `inject()` with the
 	 * matching context.
 	 *
-	 * @dataProvider renderAsProvider
-	 *
 	 * @param string $renderAs The response's renderAs value.
 	 * @param string $expectedContext The context `inject()` must receive.
+	 *
+	 * @dataProvider renderAsProvider
 	 *
 	 * @return void
 	 */

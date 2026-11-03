@@ -41,6 +41,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 *
 	 * @param TokenSetPreviewService|null $previewValues A stub, when the test needs its own.
 	 * @param TokenSetConverterService|null $converter A stub, when the test needs its own.
+	 * @param ?StockTokensService $stockTokens The stock tokens.
+	 * @param ?IL10N $l10n The l10n.
 	 *
 	 * @return PlaygroundStateService The service under test.
 	 */

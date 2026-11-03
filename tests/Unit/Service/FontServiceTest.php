@@ -31,52 +31,118 @@ use RuntimeException;
  * exercised against real reads/writes, not a fully mocked object graph.
  */
 class FontServiceFakeSimpleFile implements ISimpleFile {
+	/**
+	 * The path.
+	 *
+	 * @var string
+	 */
 	private string $path;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $path The path.
+	 */
 	public function __construct(string $path) {
 		$this->path = $path;
 	}
 
+	/**
+	 * ISimpleFile::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return basename($this->path);
 	}
 
+	/**
+	 * ISimpleFile::getSize(), as this test double answers it.
+	 *
+	 * @return int|float
+	 */
 	public function getSize(): int|float {
 		return (int)filesize($this->path);
 	}
 
+	/**
+	 * ISimpleFile::getETag(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getETag(): string {
 		return (string)md5_file($this->path);
 	}
 
+	/**
+	 * ISimpleFile::getMTime(), as this test double answers it.
+	 *
+	 * @return int
+	 */
 	public function getMTime(): int {
 		return (int)filemtime($this->path);
 	}
 
+	/**
+	 * ISimpleFile::getContent(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getContent(): string {
 		return (string)file_get_contents($this->path);
 	}
 
+	/**
+	 * ISimpleFile::putContent(), as this test double answers it.
+	 *
+	 * @param mixed $data The data.
+	 * @return void
+	 */
 	public function putContent($data): void {
 		file_put_contents($this->path, $data);
 	}
 
+	/**
+	 * ISimpleFile::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 		unlink($this->path);
 	}
 
+	/**
+	 * ISimpleFile::getMimeType(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getMimeType(): string {
 		return 'font/woff2';
 	}
 
+	/**
+	 * ISimpleFile::getExtension(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getExtension(): string {
 		return (string)pathinfo($this->path, PATHINFO_EXTENSION);
 	}
 
+	/**
+	 * ISimpleFile::read(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function read() {
 		return fopen($this->path, 'rb');
 	}
 
+	/**
+	 * ISimpleFile::write(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function write() {
 		return fopen($this->path, 'wb');
 	}
@@ -88,8 +154,18 @@ class FontServiceFakeSimpleFile implements ISimpleFile {
  * implemented; the rest satisfy the interface.
  */
 class FontServiceFakeSimpleFolder implements ISimpleFolder {
+	/**
+	 * The dir.
+	 *
+	 * @var string
+	 */
 	private string $dir;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $dir The directory this fake folder keeps its files in.
+	 */
 	public function __construct(string $dir) {
 		$this->dir = $dir;
 		if (is_dir($dir) === false) {
@@ -97,6 +173,11 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 		}
 	}
 
+	/**
+	 * ISimpleFolder::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		$result = [];
 		foreach (scandir($this->dir) as $entry) {
@@ -108,10 +189,22 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 		return $result;
 	}
 
+	/**
+	 * ISimpleFolder::fileExists(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return bool
+	 */
 	public function fileExists(string $name): bool {
 		return file_exists($this->dir . '/' . $name);
 	}
 
+	/**
+	 * ISimpleFolder::getFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFile
+	 */
 	public function getFile(string $name): ISimpleFile {
 		$path = $this->dir . '/' . $name;
 		if (file_exists($path) === false) {
@@ -120,12 +213,24 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 		return new FontServiceFakeSimpleFile($path);
 	}
 
+	/**
+	 * ISimpleFolder::newFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @param mixed $content The content.
+	 * @return ISimpleFile
+	 */
 	public function newFile(string $name, $content = null): ISimpleFile {
 		$path = $this->dir . '/' . $name;
 		file_put_contents($path, $content ?? '');
 		return new FontServiceFakeSimpleFile($path);
 	}
 
+	/**
+	 * ISimpleFolder::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 		foreach (scandir($this->dir) as $entry) {
 			if ($entry === '.' || $entry === '..') {
@@ -136,10 +241,21 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 		rmdir($this->dir);
 	}
 
+	/**
+	 * ISimpleFolder::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return basename($this->dir);
 	}
 
+	/**
+	 * ISimpleFolder::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		$path = $this->dir . '/' . $name;
 		if (is_dir($path) === false) {
@@ -148,6 +264,12 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 		return new FontServiceFakeSimpleFolder($path);
 	}
 
+	/**
+	 * ISimpleFolder::newFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $path): ISimpleFolder {
 		return new FontServiceFakeSimpleFolder($this->dir . '/' . $path);
 	}
@@ -155,6 +277,13 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
 	// ISimpleFolder::getOrCreateFolder() is @since 35.0.0. The fake implements
 	// it so the suite loads on a stable35 leg; on the older legs it is simply
 	// a method nothing calls.
+	/**
+	 * ISimpleFolder::getOrCreateFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @param int $maxRetries The max retries.
+	 * @return ISimpleFolder
+	 */
 	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
 		$full = $this->dir . '/' . $path;
 		if (is_dir($full) === false) {
@@ -169,12 +298,28 @@ class FontServiceFakeSimpleFolder implements ISimpleFolder {
  * A real-filesystem-backed fake IAppData root, scoped to a temp directory.
  */
 class FontServiceFakeAppData implements IAppData {
+	/**
+	 * The root.
+	 *
+	 * @var string
+	 */
 	private string $root;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $root The root.
+	 */
 	public function __construct(string $root) {
 		$this->root = $root;
 	}
 
+	/**
+	 * IAppData::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		$path = $this->root . '/' . $name;
 		if (is_dir($path) === false) {
@@ -183,6 +328,11 @@ class FontServiceFakeAppData implements IAppData {
 		return new FontServiceFakeSimpleFolder($path);
 	}
 
+	/**
+	 * IAppData::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		$result = [];
 		foreach (scandir($this->root) as $entry) {
@@ -194,6 +344,12 @@ class FontServiceFakeAppData implements IAppData {
 		return $result;
 	}
 
+	/**
+	 * IAppData::newFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $name): ISimpleFolder {
 		return new FontServiceFakeSimpleFolder($this->root . '/' . $name);
 	}

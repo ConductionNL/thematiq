@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit;
 
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -77,10 +78,12 @@ class IconAssetsTest extends TestCase {
 	/**
 	 * List of pack entry keys (without the .svg suffix) found on disk for one set.
 	 *
+	 * @param string $set The set.
+	 *
 	 * @return array<string>
 	 */
 	private function diskSetIconNames(string $set): array {
-		$files = glob($this->iconsDir() . '/' . $set . '/*.svg') ?: [];
+		$files = FileList::glob(pattern: $this->iconsDir() . '/' . $set . '/*.svg');
 		return array_map(
 			static fn (string $p): string => basename($p, '.svg'),
 			$files
@@ -93,7 +96,7 @@ class IconAssetsTest extends TestCase {
 	 * @return array<string>
 	 */
 	private function diskTopLevelIconNames(): array {
-		$files = glob($this->iconsDir() . '/*.svg') ?: [];
+		$files = FileList::glob(pattern: $this->iconsDir() . '/*.svg');
 		return array_map(
 			static fn (string $p): string => basename($p, '.svg'),
 			$files
@@ -121,7 +124,7 @@ class IconAssetsTest extends TestCase {
 	 * @return array<string>
 	 */
 	private function shippedLogoFiles(): array {
-		$files = glob($this->logosDir() . '/*.svg') ?: [];
+		$files = FileList::glob(pattern: $this->logosDir() . '/*.svg');
 		return array_values(array_filter(
 			$files,
 			static fn (string $p): bool => str_contains(basename($p), '-captured-') === false
@@ -145,6 +148,8 @@ class IconAssetsTest extends TestCase {
 
 	/**
 	 * Read a documentation file from the repository root.
+	 *
+	 * @param string $relativePath The relative path.
 	 *
 	 * @return string
 	 */
@@ -261,7 +266,7 @@ class IconAssetsTest extends TestCase {
 	 * @return void
 	 */
 	public function testLogosDirectoryHasNoBuildArtifacts(): void {
-		$entries = scandir($this->logosDir()) ?: [];
+		$entries = FileList::entries(directory: $this->logosDir());
 		$subdirs = array_filter($entries, function (string $entry): bool {
 			return $entry !== '.' && $entry !== '..' && is_dir($this->logosDir() . '/' . $entry);
 		});
@@ -378,9 +383,9 @@ class IconAssetsTest extends TestCase {
 	public function testSampledAssetsAreSafeStandaloneSvg(): void {
 		$icons = [];
 		foreach (self::ICON_SETS as $set) {
-			$icons = array_merge($icons, glob($this->iconsDir() . '/' . $set . '/*.svg') ?: []);
+			$icons = array_merge($icons, FileList::glob(pattern: $this->iconsDir() . '/' . $set . '/*.svg'));
 		}
-		$topLevelAliases = glob($this->iconsDir() . '/*.svg') ?: [];
+		$topLevelAliases = FileList::glob(pattern: $this->iconsDir() . '/*.svg');
 		$logos = $this->shippedLogoFiles();
 		$this->assertNotEmpty(actual: $icons, message: 'No icon SVG files found to sample.');
 
@@ -457,7 +462,7 @@ class IconAssetsTest extends TestCase {
 	 * @return void
 	 */
 	public function testDsfrSampledAssetsAreSafeStandaloneSvg(): void {
-		$icons = glob($this->iconsDir() . '/dsfr/*.svg') ?: [];
+		$icons = FileList::glob(pattern: $this->iconsDir() . '/dsfr/*.svg');
 		$this->assertNotEmpty(actual: $icons, message: 'No dsfr icon SVG files found to sample.');
 
 		sort($icons);
@@ -710,6 +715,10 @@ class IconAssetsTest extends TestCase {
 	 * Extract the section of a markdown document starting at a heading and ending
 	 * before the next occurrence of $stopMarker (or end of document if absent).
 	 *
+	 * @param string $doc The markdown document.
+	 * @param string $startHeading The start heading.
+	 * @param string $stopMarker The stop marker.
+	 *
 	 * @return string
 	 */
 	private function sectionBetween(string $doc, string $startHeading, string $stopMarker): string {
@@ -729,11 +738,16 @@ class IconAssetsTest extends TestCase {
 	 * Extract bullet-list item names ("- Name") from a markdown section,
 	 * skipping the "... and N more" continuation line.
 	 *
+	 * @param string $section The section.
+	 *
 	 * @return array<string>
 	 */
 	private function bulletNames(string $section): array {
 		$names = [];
-		foreach (preg_split('/\r?\n/', $section) ?: [] as $line) {
+		$lines = preg_split('/\r?\n/', $section);
+		foreach (match ($lines) {
+			false => [], default => $lines
+		} as $line) {
 			if (preg_match('/^-\s+(.+?)\s*$/', $line, $m) === 1) {
 				$name = $m[1];
 				if (stripos($name, 'and ') === 0 || stripos($name, '...') === 0) {

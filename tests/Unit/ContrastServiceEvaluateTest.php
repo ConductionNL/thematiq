@@ -23,6 +23,11 @@ use PHPUnit\Framework\TestCase;
  */
 class ContrastServiceEvaluateTest extends TestCase {
 
+	/**
+	 * The service.
+	 *
+	 * @var ContrastService
+	 */
 	private ContrastService $service;
 
 	/**

@@ -44,46 +44,102 @@ class FakeVersionFile implements ISimpleFile {
 	) {
 	}
 
+	/**
+	 * ISimpleFile::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return $this->name;
 	}
 
+	/**
+	 * ISimpleFile::getSize(), as this test double answers it.
+	 *
+	 * @return int|float
+	 */
 	public function getSize(): int|float {
 		return strlen($this->content);
 	}
 
+	/**
+	 * ISimpleFile::getETag(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getETag(): string {
 		return 'etag';
 	}
 
+	/**
+	 * ISimpleFile::getMTime(), as this test double answers it.
+	 *
+	 * @return int
+	 */
 	public function getMTime(): int {
 		return 0;
 	}
 
+	/**
+	 * ISimpleFile::getContent(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getContent(): string {
 		return $this->content;
 	}
 
+	/**
+	 * ISimpleFile::putContent(), as this test double answers it.
+	 *
+	 * @param mixed $data The data.
+	 * @return void
+	 */
 	public function putContent($data): void {
 		$this->content = (string)$data;
 	}
 
+	/**
+	 * ISimpleFile::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 		unset($this->folder->files[$this->name]);
 	}
 
+	/**
+	 * ISimpleFile::getMimeType(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getMimeType(): string {
 		return 'application/json';
 	}
 
+	/**
+	 * ISimpleFile::getExtension(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getExtension(): string {
 		return 'json';
 	}
 
+	/**
+	 * ISimpleFile::read(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function read() {
 		return false;
 	}
 
+	/**
+	 * ISimpleFile::write(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function write() {
 		return false;
 	}
@@ -101,14 +157,31 @@ class FakeVersionFolder implements ISimpleFolder {
 	 */
 	public array $files = [];
 
+	/**
+	 * ISimpleFolder::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		return array_values($this->files);
 	}
 
+	/**
+	 * ISimpleFolder::fileExists(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return bool
+	 */
 	public function fileExists(string $name): bool {
 		return isset($this->files[$name]);
 	}
 
+	/**
+	 * ISimpleFolder::getFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFile
+	 */
 	public function getFile(string $name): ISimpleFile {
 		if (isset($this->files[$name]) === false) {
 			throw new NotFoundException();
@@ -117,26 +190,62 @@ class FakeVersionFolder implements ISimpleFolder {
 		return $this->files[$name];
 	}
 
+	/**
+	 * ISimpleFolder::newFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @param mixed $content The content.
+	 * @return ISimpleFile
+	 */
 	public function newFile(string $name, $content = null): ISimpleFile {
 		$this->files[$name] = new FakeVersionFile(folder: $this, name: $name, content: (string)$content);
 		return $this->files[$name];
 	}
 
+	/**
+	 * ISimpleFolder::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 	}
 
+	/**
+	 * ISimpleFolder::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return 'versions';
 	}
 
+	/**
+	 * ISimpleFolder::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		throw new NotFoundException();
 	}
 
+	/**
+	 * ISimpleFolder::newFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $path): ISimpleFolder {
 		throw new RuntimeException('flat fake');
 	}
 
+	/**
+	 * ISimpleFolder::getOrCreateFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @param int $maxRetries The max retries.
+	 * @return ISimpleFolder
+	 */
 	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
 		throw new RuntimeException('flat fake');
 	}
@@ -147,14 +256,33 @@ class FakeVersionFolder implements ISimpleFolder {
  */
 class FakeVersionRoot implements IAppData {
 
+	/**
+	 * The folder.
+	 *
+	 * @var FakeVersionFolder
+	 */
 	public FakeVersionFolder $folder;
 
+	/**
+	 * The exists.
+	 *
+	 * @var bool
+	 */
 	public bool $exists = false;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->folder = new FakeVersionFolder();
 	}
 
+	/**
+	 * IAppData::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		if ($this->exists === false || $name !== 'versions') {
 			throw new NotFoundException();
@@ -163,12 +291,23 @@ class FakeVersionRoot implements IAppData {
 		return $this->folder;
 	}
 
+	/**
+	 * IAppData::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		return match ($this->exists === true) {
 			true => [$this->folder], default => []
 		};
 	}
 
+	/**
+	 * IAppData::newFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $name): ISimpleFolder {
 		$this->exists = true;
 		return $this->folder;

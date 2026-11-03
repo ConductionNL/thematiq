@@ -250,10 +250,23 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 			) {
 			}
 
+			/**
+			 * RuntimeFileStore::read(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return ?string
+			 */
 			public function read(string $name): ?string {
 				return ($this->files[$name] ?? null);
 			}
 
+			/**
+			 * RuntimeFileStore::write(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @param string $content The content.
+			 * @return void
+			 */
 			public function write(string $name, string $content): void {
 				foreach ($this->refused as $prefix) {
 					if (str_starts_with($name, $prefix) === true) {
@@ -276,14 +289,32 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 				$this->files[$name] = $content;
 			}
 
+			/**
+			 * RuntimeFileStore::exists(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return bool
+			 */
 			public function exists(string $name): bool {
 				return isset($this->files[$name]);
 			}
 
+			/**
+			 * RuntimeFileStore::delete(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return void
+			 */
 			public function delete(string $name): void {
 				unset($this->files[$name]);
 			}
 
+			/**
+			 * RuntimeFileStore::listDirectory(), as this test double answers it.
+			 *
+			 * @param string $directory The directory.
+			 * @return array
+			 */
 			public function listDirectory(string $directory): array {
 				$names = [];
 				foreach (array_keys($this->files) as $name) {
@@ -296,6 +327,12 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 				return $names;
 			}
 
+			/**
+			 * RuntimeFileStore::revision(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return string
+			 */
 			public function revision(string $name): string {
 				return hash('sha256', ($this->files[$name] ?? ''));
 			}

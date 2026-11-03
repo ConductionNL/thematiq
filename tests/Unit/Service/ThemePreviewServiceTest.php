@@ -120,6 +120,9 @@ class ThemePreviewServiceTest extends TestCase {
 	 * Build the service under test with a given IConfig and an
 	 * always-valid-unless-told-otherwise TokenSetService stub.
 	 *
+	 * @param IConfig $config The config.
+	 * @param bool $validTokenSet Whether the stub treats every token set as valid.
+	 *
 	 * @return ThemePreviewService
 	 */
 	private function makeService(IConfig $config, bool $validTokenSet = true): ThemePreviewService {
@@ -142,6 +145,8 @@ class ThemePreviewServiceTest extends TestCase {
 	/**
 	 * Build a mocked IUserSession returning a user with the given uid, or no
 	 * user at all when $uid is null.
+	 *
+	 * @param ?string $uid The uid.
 	 *
 	 * @return IUserSession
 	 */

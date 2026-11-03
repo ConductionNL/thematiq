@@ -69,13 +69,29 @@ final class OwnComponentServiceTest extends TestCase {
 		$this->folder = new FakeVersionFolder();
 		$folder = $this->folder;
 		$root = new class($folder) implements IAppData {
+			/**
+			 * The exists.
+			 *
+			 * @var bool
+			 */
 			public bool $exists = false;
 
+			/**
+			 * Constructor.
+			 *
+			 * @param FakeVersionFolder $folder The folder.
+			 */
 			public function __construct(
 				private FakeVersionFolder $folder,
 			) {
 			}
 
+			/**
+			 * IAppData::getFolder(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return ISimpleFolder
+			 */
 			public function getFolder(string $name): ISimpleFolder {
 				if ($this->exists === false || $name !== OwnComponentService::FOLDER) {
 					throw new NotFoundException();
@@ -84,10 +100,21 @@ final class OwnComponentServiceTest extends TestCase {
 				return $this->folder;
 			}
 
+			/**
+			 * IAppData::getDirectoryListing(), as this test double answers it.
+			 *
+			 * @return array
+			 */
 			public function getDirectoryListing(): array {
 				return [];
 			}
 
+			/**
+			 * IAppData::newFolder(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return ISimpleFolder
+			 */
 			public function newFolder(string $name): ISimpleFolder {
 				$this->exists = true;
 				return $this->folder;

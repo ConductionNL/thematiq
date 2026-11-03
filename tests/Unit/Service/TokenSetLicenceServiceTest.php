@@ -170,6 +170,13 @@ class TokenSetLicenceServiceTest extends TestCase {
 		];
 	}//end notConfirmable()
 
+	/**
+	 * Only a restricted set is confirmed and only by name.
+	 *
+	 * @param string $set The set.
+	 * @param string $uid The uid.
+	 * @return void
+	 */
 	#[DataProvider('notConfirmable')]
 	public function testOnlyARestrictedSetIsConfirmedAndOnlyByName(string $set, string $uid): void {
 		try {
@@ -200,6 +207,8 @@ class TokenSetLicenceServiceTest extends TestCase {
 
 	/**
 	 * @param array{kind: string, id: string} $place
+	 * @param string $key The key.
+	 * @param string $value The value.
 	 *
 	 * @return void
 	 */

@@ -45,6 +45,8 @@ class ClaimAccuracyTest extends TestCase {
 	/**
 	 * Read a file from the repository root.
 	 *
+	 * @param string $relativePath The relative path.
+	 *
 	 * @return string
 	 */
 	private function readFile(string $relativePath): string {

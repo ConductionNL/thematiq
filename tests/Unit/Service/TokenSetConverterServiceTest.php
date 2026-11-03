@@ -41,6 +41,11 @@ use RuntimeException;
  */
 class TokenSetConverterServiceTest extends TestCase {
 
+	/**
+	 * The converter.
+	 *
+	 * @var TokenSetConverterService
+	 */
 	private TokenSetConverterService $converter;
 
 	/**

@@ -236,6 +236,7 @@ class LayoutControllerTest extends TestCase {
 	 *
 	 * @param string $layout The workplace layout sent.
 	 * @param string $stripe The brand stripe sent.
+	 * @param array $newer The newer choices sent alongside, from the provider.
 	 *
 	 * @return void
 	 *
