@@ -134,7 +134,7 @@ class ConverterColourRepair {
 		];
 		$originals = [];
 		$oldPrimary = ($semantic['--nldesign-color-primary'] ?? null);
-		$semantic = $this->replaceInvalid(input: ['semantic' => $semantic, 'spec' => $spec], report: $report);
+		$semantic = $this->replaceInvalid(semantic: $semantic, spec: $spec, report: $report);
 
 		for ($pass = 0; $pass < self::MAX_PASSES; $pass++) {
 			if ($this->repairPass(semantic: $semantic, pairs: $spec['pairs'], context: $context, originals: $originals) === false) {
@@ -222,13 +222,13 @@ class ConverterColourRepair {
 	/**
 	 * Give a listed colour token whose value is not a visible colour its default.
 	 *
-	 * @param array<string, mixed> $input The semantic layer and the contrast repair section.
+	 * @param array<string, string> $semantic The semantic layer.
+	 * @param array<string, mixed> $spec The table's contrastRepair section.
 	 * @param array<int, ReportEntry> $report The conversion report (appended to).
 	 *
 	 * @return array<string, string> The semantic layer.
 	 */
-	private function replaceInvalid(array $input, array &$report): array {
-		['semantic' => $semantic, 'spec' => $spec] = $input;
+	private function replaceInvalid(array $semantic, array $spec, array &$report): array {
 		foreach ((array)($spec['replaceInvalid'] ?? []) as $name) {
 			$name = (string)$name;
 			$value = ($semantic[$name] ?? null);

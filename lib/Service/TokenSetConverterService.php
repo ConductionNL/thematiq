@@ -342,10 +342,7 @@ class TokenSetConverterService {
 	 * @return array<string, string>
 	 */
 	private function jsonDeclarations(string $content, ConversionRun $run): array {
-		$parsed = $this->declarationsFromJson(
-			input: ['decoded' => json_decode($content, true), 'kind' => $run->inputKind, 'slug' => $run->slug],
-			report: $run->report
-		);
+		$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $run->inputKind, slug: $run->slug, report: $run->report);
 		$run->sourceVersion = $parsed['version'];
 
 		// Thematiq's own export comes back as it went out, without the conversion rules.
@@ -372,7 +369,8 @@ class TokenSetConverterService {
 		if ($run->exportDark !== null) {
 			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(
 				declarations: $declarations,
-				outcome: ['source' => $run->source(), 'report' => $run->report]
+				source: $run->source(),
+				report: $run->report
 			);
 		}
 
@@ -500,12 +498,9 @@ class TokenSetConverterService {
 		$source = $run->source();
 
 		return [
-			'css' => $this->buildCss(layers: $layers, provenance: ['source' => $source, 'inputKind' => $run->inputKind, 'counts' => $counts]),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: $run->inputKind, counts: $counts),
 			'imported' => $run->imported,
-			'manifestEntry' => $this->buildManifestEntry(
-				source: $source,
-				layers: ['semantic' => $layers['semantic'], 'manifest' => $run->manifest, 'logo' => $run->logo]
-			),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $layers['semantic'], manifest: $run->manifest, logo: $run->logo),
 			'report' => $run->report,
 			'inputKind' => $run->inputKind,
 			'counts' => $counts,
@@ -579,14 +574,14 @@ class TokenSetConverterService {
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
 	 * @param array<string, string> $declarations The mapped declarations.
-	 * @param array<string, mixed> $outcome The set's source and the report so far.
+	 * @param SetSource $source The new set's slug and name, the file name and the document's package version.
+	 * @param array<int, array<string, mixed>> $report The report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(array $declarations, array $outcome): array {
-		['source' => $source, 'report' => $report] = $outcome;
+	private function thematiqExportResult(array $declarations, array $source, array $report): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
 
 		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
@@ -605,9 +600,9 @@ class TokenSetConverterService {
 		}
 
 		return [
-			'css' => $this->buildCss(layers: $layers, provenance: ['source' => $source, 'inputKind' => 'B', 'counts' => $counts]),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: 'B', counts: $counts),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(source: $source, layers: ['semantic' => [], 'manifest' => $manifest, 'logo' => null]),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: [], manifest: $manifest),
 			'report' => $report,
 			'inputKind' => 'B',
 			'counts' => $counts,
@@ -964,13 +959,14 @@ class TokenSetConverterService {
 	 * plain Style Dictionary tree, whose leaves are `value` (not `$value`) and
 	 * whose dotted path becomes the token name.
 	 *
-	 * @param array<string, mixed> $input The decoded document, its detected kind and the brand prefix.
+	 * @param array<mixed> $decoded The decoded JSON.
+	 * @param string $kind `B` or `C`.
+	 * @param string $slug The brand prefix for input C names.
 	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
 	 * @return array{declarations: array<string, string>, version: string|null} The declarations, and the input's package version.
 	 */
-	private function declarationsFromJson(array $input, array &$report): array {
-		['decoded' => $decoded, 'kind' => $kind, 'slug' => $slug] = $input;
+	private function declarationsFromJson(array $decoded, string $kind, string $slug, array &$report): array {
 		if ($kind === 'B') {
 			$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
 			$this->importWarnings = $mapped['warnings'];
@@ -1001,7 +997,7 @@ class TokenSetConverterService {
 			return ['declarations' => $mapped['declarations'], 'version' => $mapped['packageVersion']];
 		}
 
-		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, walk: ['path' => [], 'slug' => $slug, 'depth' => 0]);
+		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug);
 
 		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug), 'version' => null];
 	}//end declarationsFromJson()
@@ -1092,12 +1088,13 @@ class TokenSetConverterService {
 	 * step must never end up under the app's own `--nldesign-` vocabulary.
 	 *
 	 * @param mixed $node The current node.
-	 * @param array<string, mixed> $walk The path walked so far, the brand prefix and the recursion depth.
+	 * @param array<int, string> $path The path walked so far.
+	 * @param string $slug The brand prefix.
+	 * @param int $depth Current recursion depth.
 	 *
 	 * @return array<string, string> The declarations under this node, in document order.
 	 */
-	private function collectStyleDictionaryLeaves(mixed $node, array $walk): array {
-		['path' => $path, 'slug' => $slug, 'depth' => $depth] = $walk;
+	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, int $depth = 0): array {
 		if ($this->isWalkable(node: $node, depth: $depth) === false) {
 			return [];
 		}
@@ -1117,7 +1114,7 @@ class TokenSetConverterService {
 		foreach ($this->styleDictionaryChildren(node: $node) as [$key, $child]) {
 			$declarations = array_replace(
 				$declarations,
-				$this->collectStyleDictionaryLeaves(node: $child, walk: ['path' => array_merge($path, [$key]), 'slug' => $slug, 'depth' => ($depth + 1)])
+				$this->collectStyleDictionaryLeaves(node: $child, path: array_merge($path, [$key]), slug: $slug, depth: ($depth + 1))
 			);
 		}
 
@@ -1390,7 +1387,7 @@ class TokenSetConverterService {
 			return null;
 		}
 
-		foreach ($this->logoCandidates(declarations: $declarations, naming: ['slug' => $run->slug, 'spec' => $spec]) as $name) {
+		foreach ($this->logoCandidates(declarations: $declarations, slug: $run->slug, spec: $spec) as $name) {
 			$logo = $this->logoFrom(step: ['name' => $name, 'declarations' => $declarations, 'spec' => $spec], run: $run);
 			if ($logo !== null) {
 				return $logo;
@@ -1481,7 +1478,7 @@ class TokenSetConverterService {
 
 		return [
 			'source' => $step['name'],
-			'aliases' => $this->logoAliases(declarations: $step['declarations'], chosen: ['source' => $step['name'], 'value' => $value]),
+			'aliases' => $this->logoAliases(declarations: $step['declarations'], source: $step['name'], value: $value),
 			'path' => $file['path'],
 			'css' => "url('../../" . $file['path'] . "')",
 			'contents' => $file['contents'],
@@ -1496,12 +1493,12 @@ class TokenSetConverterService {
 	 * prefix this app has never seen is still recognised.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param array<string, mixed> $naming The brand slug, substituted for `{p}`, and the table's `logo` block.
+	 * @param string $slug The brand slug, substituted for `{p}`.
+	 * @param array<string, mixed> $spec The table's `logo` block.
 	 *
 	 * @return array<int, string> The candidate declaration names, in order.
 	 */
-	private function logoCandidates(array $declarations, array $naming): array {
-		['slug' => $slug, 'spec' => $spec] = $naming;
+	private function logoCandidates(array $declarations, string $slug, array $spec): array {
 		$declared = [];
 
 		foreach (($spec['sources'] ?? []) as $source) {
@@ -1542,12 +1539,12 @@ class TokenSetConverterService {
 	 * pointed at `--nldesign-logo-url` rather than repeating the payload.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param array<string, mixed> $chosen The chosen source declaration and its value.
+	 * @param string $source The chosen source declaration.
+	 * @param string $value The chosen source's value.
 	 *
 	 * @return array<int, string> The alias declaration names.
 	 */
-	private function logoAliases(array $declarations, array $chosen): array {
-		['source' => $source, 'value' => $value] = $chosen;
+	private function logoAliases(array $declarations, string $source, string $value): array {
 		$aliases = [];
 
 		foreach ($declarations as $name => $candidate) {
@@ -2320,8 +2317,10 @@ class TokenSetConverterService {
 
 		if (isset($rule['transform']) === true && $entry['source'] !== '') {
 			$entry['value'] = $this->transform(
-				step: ['kind' => (string)$rule['transform'], 'args' => ($rule['args'] ?? []), 'semantic' => $run->semantic],
-				value: $entry['value']
+				kind: (string)$rule['transform'],
+				value: $entry['value'],
+				args: ($rule['args'] ?? []),
+				semantic: $run->semantic
 			);
 		}
 
@@ -2368,7 +2367,7 @@ class TokenSetConverterService {
 	 */
 	private function fallbackEntry(array $step, ConversionRun $run): ?array {
 		$fallback = ($step['rule']['fallback'] ?? []);
-		$derived = $this->applyFallback(fallback: $fallback, layers: ['semantic' => $run->semantic, 'declarations' => $run->ruleInput['declarations']]);
+		$derived = $this->applyFallback(fallback: $fallback, semantic: $run->semantic, declarations: $run->ruleInput['declarations']);
 		if ($derived === null) {
 			return null;
 		}
@@ -2392,8 +2391,8 @@ class TokenSetConverterService {
 	 */
 	private function guardedEntry(array $step, ConversionRun $run): array {
 		[$rule, $entry] = [$step['rule'], $step['entry']];
-		$against = $this->guardSemantic(guard: $rule['guard'], state: ['semantic' => $run->semantic, 'input' => $run->ruleInput]);
-		$guarded = $this->applyGuard(guard: $rule['guard'], subject: ['value' => $entry['value'], 'semantic' => $against]);
+		$against = $this->guardSemantic(guard: $rule['guard'], semantic: $run->semantic, input: $run->ruleInput);
+		$guarded = $this->applyGuard(guard: $rule['guard'], value: $entry['value'], semantic: $against);
 		if ($guarded['value'] !== $entry['value']) {
 			$entry['original'] = $entry['value'];
 			$entry['action'] = 'adapted';
@@ -2487,14 +2486,14 @@ class TokenSetConverterService {
 	 * Mirrors `guardSemantic()` in js/lib/tokenConverter.js.
 	 *
 	 * @param array<string, mixed> $guard The rule's guard.
-	 * @param array<string, mixed> $state The semantic layer so far and the resolved input.
+	 * @param array<string, string> $semantic The semantic layer so far.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 *
 	 * @return array<string, string> The semantic layer, with the partner filled in when the theme declares it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
-	private function guardSemantic(array $guard, array $state): array {
-		['semantic' => $semantic, 'input' => $input] = $state;
+	private function guardSemantic(array $guard, array $semantic, array $input): array {
 		$against = (string)($guard['against'] ?? '');
 		if (($guard['kind'] ?? '') !== 'contrast' || $against === '' || array_key_exists($against, $semantic) === true) {
 			return $semantic;
@@ -2593,12 +2592,12 @@ class TokenSetConverterService {
 	 * Run a rule's fallback.
 	 *
 	 * @param array<string, mixed> $fallback The fallback spec, empty when the rule has none.
-	 * @param array<string, mixed> $layers The semantic layer so far and the resolved input.
+	 * @param array<string, string> $semantic The semantic layer so far.
+	 * @param array<string, string> $declarations The resolved input.
 	 *
 	 * @return array{value: string, source: string, reason: string}|null The derived value, or null when it cannot be derived.
 	 */
-	private function applyFallback(array $fallback, array $layers): ?array {
-		['semantic' => $semantic, 'declarations' => $declarations] = $layers;
+	private function applyFallback(array $fallback, array $semantic, array $declarations): ?array {
 		// No fallback, a `manifest` fallback and an unknown kind all give no value.
 		$kind = (string)($fallback['kind'] ?? '');
 
@@ -2615,7 +2614,7 @@ class TokenSetConverterService {
 		}
 
 		if ($kind === 'ramp') {
-			return $this->pickFromRamp(spec: $fallback, layers: ['declarations' => $declarations, 'semantic' => $semantic]);
+			return $this->pickFromRamp(spec: $fallback, declarations: $declarations, semantic: $semantic);
 		}
 
 		return null;
@@ -2638,8 +2637,10 @@ class TokenSetConverterService {
 
 		return [
 			'value' => $this->transform(
-				step: ['kind' => (string)($spec['transform'] ?? 'copy'), 'args' => ($spec['args'] ?? []), 'semantic' => $semantic],
-				value: $base
+				kind: (string)($spec['transform'] ?? 'copy'),
+				value: $base,
+				args: ($spec['args'] ?? []),
+				semantic: $semantic
 			),
 			'source' => $from,
 			'reason' => 'derived-from-brand',
@@ -2655,7 +2656,8 @@ class TokenSetConverterService {
 	 * Rijkshuisstijl, which is the whole defect this converter exists to fix.
 	 *
 	 * @param array<string, mixed> $spec The ramp spec.
-	 * @param array<string, mixed> $layers The resolved input and the semantic layer so far.
+	 * @param array<string, string> $declarations The resolved input.
+	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * A theme that declares greys but none that stands apart from the page
 	 * background (its only grey is white, #933) gets the role's default from
@@ -2664,8 +2666,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array{value: string, source: string, reason: string}|null The derived value, or null when the theme has no ramp.
 	 */
-	private function pickFromRamp(array $spec, array $layers): ?array {
-		['declarations' => $declarations, 'semantic' => $semantic] = $layers;
+	private function pickFromRamp(array $spec, array $declarations, array $semantic): ?array {
 		$ramp = $this->neutralRamp(declarations: $declarations);
 		$default = ($spec['default'] ?? null);
 		if ($ramp === []) {
@@ -2674,7 +2675,7 @@ class TokenSetConverterService {
 			return $this->rampDefault(default: $default);
 		}
 
-		$picked = $this->pickByCriterion(spec: $spec, palette: ['ramp' => $ramp, 'semantic' => $semantic]);
+		$picked = $this->pickByCriterion(spec: $spec, ramp: $ramp, semantic: $semantic);
 		if ($picked !== null) {
 			return ['value' => $picked, 'source' => '(brand ramp)', 'reason' => 'derived-from-brand'];
 		}
@@ -2726,13 +2727,13 @@ class TokenSetConverterService {
 	 * Pick a grey out of a non-empty ramp by the rule's criterion.
 	 *
 	 * @param array<string, mixed> $spec The ramp spec.
-	 * @param array<string, mixed> $palette The ramp and the semantic layer so far.
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => channels.
+	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return string|null The picked colour, or null when no grey in the ramp qualifies.
 	 *
 	 */
-	private function pickByCriterion(array $spec, array $palette): ?string {
-		['ramp' => $ramp, 'semantic' => $semantic] = $palette;
+	private function pickByCriterion(array $spec, array $ramp, array $semantic): ?string {
 		// The page background the picked grey has to stand apart from. A ramp
 		// of one grey still has a "darkest" and a "nearest" member, and when
 		// that grey is the background itself every role came out white on
@@ -2850,28 +2851,32 @@ class TokenSetConverterService {
 	/**
 	 * Apply one of the closed transform set.
 	 *
-	 * @param array<string, mixed> $step The transform name, its arguments and the semantic layer so far.
+	 * @param string $kind The transform name.
 	 * @param string $value The input value.
+	 * @param array<string, mixed> $args Transform arguments.
+	 * @param array<string, string> $semantic The semantic layer so far (for `mix` against another token).
 	 *
 	 * @return string The transformed value.
 	 */
-	private function transform(array $step, string $value): string {
-		['kind' => $kind, 'args' => $args, 'semantic' => $semantic] = $step;
+	private function transform(string $kind, string $value, array $args, array $semantic): string {
 		$transforms = [
 			'darken' => fn (): string => $this->darken(value: $value, fraction: (float)($args['fraction'] ?? 0.1)),
 			'mix' => fn (): string => $this->mix(
-				colours: ['value' => $value, 'with' => $this->mixPartner(args: $args, semantic: $semantic)],
+				value: $value,
+				with: $this->mixPartner(args: $args, semantic: $semantic),
 				weight: (float)($args['weight'] ?? 0.5)
 			),
 			'rgbTriplet' => fn (): string => $this->rgbTriplet(value: $value),
 			'alpha' => fn (): string => $this->alpha(value: $value, fraction: (float)($args['fraction'] ?? 0.5)),
 			'radiusScale' => fn (): string => $this->radiusScale(
 				value: $value,
-				scale: ['factor' => (float)($args['factor'] ?? 2), 'clampPx' => (float)($args['clampPx'] ?? 16)]
+				factor: (float)($args['factor'] ?? 2),
+				clampPx: (float)($args['clampPx'] ?? 16)
 			),
 			'onColor' => fn (): string => $this->onColor(
 				background: $value,
-				choices: ['light' => (string)($args['light'] ?? '#ffffff'), 'dark' => (string)($args['dark'] ?? '#000000')]
+				light: (string)($args['light'] ?? '#ffffff'),
+				dark: (string)($args['dark'] ?? '#000000')
 			),
 			'literal' => fn (): string => str_replace('{value}', $value, (string)($args['template'] ?? '{value}')),
 		];
@@ -2905,12 +2910,12 @@ class TokenSetConverterService {
 	 * Apply a rule's guard.
 	 *
 	 * @param array<string, mixed> $guard The guard spec.
-	 * @param array<string, mixed> $subject The guarded value and the semantic layer so far.
+	 * @param string $value The value to guard.
+	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return array{value: string, reason: string|null} The (possibly corrected) value and the reason when it changed.
 	 */
-	private function applyGuard(array $guard, array $subject): array {
-		['value' => $value, 'semantic' => $semantic] = $subject;
+	private function applyGuard(array $guard, string $value, array $semantic): array {
 		$kind = (string)($guard['kind'] ?? '');
 		if ($kind === 'fontAvailable') {
 			return $this->fontGuard(guard: $guard, value: $value);
@@ -3076,13 +3081,13 @@ class TokenSetConverterService {
 	 * `CommonThemeTrait` mixes an element colour with the main background, so a
 	 * derived tint matches what Nextcloud would have computed itself.
 	 *
-	 * @param array<string, mixed> $colours The colour and the colour to mix it with.
+	 * @param string $value The base colour.
+	 * @param string $with The colour to mix in.
 	 * @param float $weight The share of the base retained (0-1).
 	 *
 	 * @return string The mixed colour, or the input when either side is not a colour.
 	 */
-	private function mix(array $colours, float $weight): string {
-		['value' => $value, 'with' => $with] = $colours;
+	private function mix(string $value, string $with, float $weight): string {
 		$base = $this->contrast->parseColor(value: $value);
 		$other = $this->contrast->parseColor(value: $with);
 		if ($base === null || $other === null) {
@@ -3139,12 +3144,12 @@ class TokenSetConverterService {
 	 * Scale a px radius by a factor and clamp it.
 	 *
 	 * @param string $value The radius (e.g. `4px`).
-	 * @param array<string, mixed> $scale The factor and the upper clamp in px.
+	 * @param float $factor The multiplier.
+	 * @param float $clampPx The maximum in px.
 	 *
 	 * @return string The scaled radius, or the input when it is not a px length.
 	 */
-	private function radiusScale(string $value, array $scale): string {
-		['factor' => $factor, 'clampPx' => $clampPx] = $scale;
+	private function radiusScale(string $value, float $factor, float $clampPx): string {
 		if (preg_match('/^\s*([\d.]+)px\s*$/', $value, $match) !== 1) {
 			return $value;
 		}
@@ -3158,12 +3163,12 @@ class TokenSetConverterService {
 	 * Pick the legible foreground for a background colour.
 	 *
 	 * @param string $background The background colour.
-	 * @param array<string, mixed> $choices The light and the dark candidate.
+	 * @param string $light The light foreground candidate.
+	 * @param string $dark The dark foreground candidate.
 	 *
 	 * @return string Whichever candidate contrasts better.
 	 */
-	private function onColor(string $background, array $choices): string {
-		['light' => $light, 'dark' => $dark] = $choices;
+	private function onColor(string $background, string $light, string $dark): string {
 		$rgb = $this->contrast->parseColor(value: $background);
 		if ($rgb === null) {
 			return $dark;
@@ -3222,12 +3227,13 @@ class TokenSetConverterService {
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
 	 * @param array<string, array<string, string>> $layers The brand palette, the component layer and the semantic layer.
-	 * @param array<string, mixed> $provenance The set's source, the detected input kind and the action tally.
+	 * @param SetSource $source The brand slug, the source label and the source package version.
+	 * @param string $inputKind The detected input kind.
+	 * @param array<string, int> $counts The action tally.
 	 *
 	 * @return string The complete CSS file.
 	 */
-	private function buildCss(array $layers, array $provenance): string {
-		['source' => $source, 'inputKind' => $inputKind, 'counts' => $counts] = $provenance;
+	private function buildCss(array $layers, array $source, string $inputKind, array $counts): string {
 		$palette = $layers['palette'];
 		$component = $layers['component'];
 		$semantic = $layers['semantic'];
@@ -3381,12 +3387,13 @@ class TokenSetConverterService {
 	 * working.
 	 *
 	 * @param SetSource $source The set slug and display name, the source label and the source version.
-	 * @param array<string, mixed> $layers The semantic layer, the manifest values and the extracted logo.
+	 * @param array<string, string> $semantic The semantic layer.
+	 * @param array<string, string> $manifest Manifest values produced by the rules.
+	 * @param array<string, mixed>|null $logo The extracted logo, from {@see self::extractLogo()}.
 	 *
 	 * @return array<string, mixed> The manifest entry.
 	 */
-	private function buildManifestEntry(array $source, array $layers): array {
-		['semantic' => $semantic, 'manifest' => $manifest, 'logo' => $logo] = $layers;
+	private function buildManifestEntry(array $source, array $semantic, array $manifest, ?array $logo = null): array {
 		$theming = $this->colourTheming(semantic: $semantic, manifest: $manifest);
 
 		// The path the theming-sync dialog offers to Nextcloud's own logo slot.

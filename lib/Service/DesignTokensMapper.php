@@ -171,7 +171,7 @@ class DesignTokensMapper {
 	public function map(array $document, array $referenceOnlyPaths = []): array {
 		$this->adapted = [];
 		$leaves = [];
-		$this->collectLeaves(place: ['node' => $document, 'prefix' => '', 'inheritedType' => null], leaves: $leaves);
+		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
 		$referenceOnly = array_flip($referenceOnlyPaths);
 
 		$mapping = new DesignTokensMapping();
@@ -183,7 +183,7 @@ class DesignTokensMapper {
 				continue;
 			}
 
-			$this->processLeaf(entry: ['path' => $path, 'leaf' => $leaf, 'leaves' => $leaves], mapping: $mapping);
+			$this->processLeaf(path: $path, leaf: $leaf, leaves: $leaves, mapping: $mapping);
 		}
 
 		// The root cssOnly map: values DTCG has no type for, written by thematiq's own export.
@@ -217,15 +217,16 @@ class DesignTokensMapper {
 	 * the nearest ancestor declaring `$type` wins, per the v2025.10 group
 	 * inheritance rule.
 	 *
-	 * @param array{node: mixed, prefix: string, inheritedType: string|null} $place The current node, its dotted path and the nearest ancestor's `$type`.
+	 * @param mixed $node The current node (array or scalar).
+	 * @param string $prefix The accumulated dotted path.
+	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 * @param array<string, array<string, mixed>> $leaves Collected path => {value, type, deprecated} (by reference).
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function collectLeaves(array $place, array &$leaves): void {
-		['node' => $node, 'prefix' => $prefix, 'inheritedType' => $inheritedType] = $place;
+	private function collectLeaves($node, string $prefix, ?string $inheritedType, array &$leaves): void {
 		if (is_array($node) === false) {
 			return;
 		}
@@ -233,7 +234,7 @@ class DesignTokensMapper {
 		$ownType = $this->stringMember(map: $node, key: '$type');
 
 		if (array_key_exists('$value', $node) === true) {
-			$leaves[$prefix] = $this->buildLeafEntry(node: $node, types: ['ownType' => $ownType, 'inheritedType' => $inheritedType]);
+			$leaves[$prefix] = $this->buildLeafEntry(node: $node, ownType: $ownType, inheritedType: $inheritedType);
 
 			return;
 		}
@@ -241,10 +242,7 @@ class DesignTokensMapper {
 		$effectiveInherited = ($ownType ?? $inheritedType);
 
 		foreach ($this->groupChildren(node: $node) as $key => $child) {
-			$this->collectLeaves(
-				place: ['node' => $child, 'prefix' => $this->childPath(prefix: $prefix, key: $key), 'inheritedType' => $effectiveInherited],
-				leaves: $leaves
-			);
+			$this->collectLeaves(node: $child, prefix: $this->childPath(prefix: $prefix, key: $key), inheritedType: $effectiveInherited, leaves: $leaves);
 		}
 	}//end collectLeaves()
 
@@ -299,14 +297,14 @@ class DesignTokensMapper {
 	 * Build a single leaf-table entry from a `$value`-bearing DTCG node.
 	 *
 	 * @param array<string, mixed> $node The `$value`-bearing node.
-	 * @param array<string, mixed> $types The node's own `$type` and the nearest ancestor's.
+	 * @param string|null $ownType The node's own declared `$type`, if any.
+	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
 	 *
 	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null, css: mixed} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function buildLeafEntry(array $node, array $types): array {
-		['ownType' => $ownType, 'inheritedType' => $inheritedType] = $types;
+	private function buildLeafEntry(array $node, ?string $ownType, ?string $inheritedType): array {
 		$deprecated = null;
 		if (array_key_exists('$deprecated', $node) === true) {
 			$deprecated = $node['$deprecated'];
@@ -363,15 +361,16 @@ class DesignTokensMapper {
 	 * or warning). A single leaf's failure only ever produces a diagnostic
 	 * entry for that leaf — it never aborts the loop.
 	 *
-	 * @param array<string, mixed> $entry The leaf's path, the leaf and the leaf table.
+	 * @param string $path The leaf's dotted path.
+	 * @param array<string, mixed> $leaf The leaf data ({value, type, deprecated}).
+	 * @param array<string, array<string, mixed>> $leaves The full leaf table (for alias resolution).
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processLeaf(array $entry, DesignTokensMapping $mapping): void {
-		['path' => $path, 'leaf' => $leaf, 'leaves' => $leaves] = $entry;
+	private function processLeaf(string $path, array $leaf, array $leaves, DesignTokensMapping $mapping): void {
 		$rawValue = $leaf['value'];
 		$ownType = $leaf['type'];
 		$deprecated = $leaf['deprecated'];
@@ -406,52 +405,51 @@ class DesignTokensMapper {
 		}
 
 		$this->dispatchByType(
-			typed: [
-				'type' => $type,
-				'token' => new DesignTokenRef(path: $path, deprecated: $deprecated),
-				'value' => $this->colours->originalText(leaf: $leaf, value: $value, type: $type),
-			],
+			type: $type,
+			token: new DesignTokenRef(path: $path, deprecated: $deprecated),
+			value: $this->colours->originalText(leaf: $leaf, value: $value, type: $type),
 			mapping: $mapping
 		);
 	}//end processLeaf()
 
 	/**
 	 * Dispatch a leaf's resolved type to its serializer and record the
-	 * outcome. Extracted from {@see self::processLeaf(entry: ['path' => None, 'leaf' => None, 'leaves' => None])} to keep each
+	 * outcome. Extracted from {@see self::processLeaf()} to keep each
 	 * method's own cyclomatic complexity and length in check.
 	 *
-	 * @param array<string, mixed> $typed The resolved type, the token's path and `$deprecated`, and the resolved value.
+	 * @param string $type The resolved `$type`.
+	 * @param DesignTokenRef $token The leaf's path and `$deprecated` value.
+	 * @param mixed $value The resolved `$value`.
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function dispatchByType(array $typed, DesignTokensMapping $mapping): void {
-		['type' => $type, 'token' => $token, 'value' => $value] = $typed;
+	private function dispatchByType(string $type, DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
 		if ($type === 'typography') {
-			$this->processTypographyComposite(composite: ['token' => $token, 'value' => $value], mapping: $mapping);
+			$this->processTypographyComposite(token: $token, value: $value, mapping: $mapping);
 
 			return;
 		}
 
 		$result = $this->values->serialize(type: $type, value: $value);
 
-		$this->assignSingleTarget(outcome: ['token' => $token, 'result' => $result], mapping: $mapping);
+		$this->assignSingleTarget(token: $token, result: $result, mapping: $mapping);
 	}//end dispatchByType()
 
 	/**
 	 * Assign a serialized single-target result to its `--nldesign-*` target.
 	 *
-	 * @param array<string, mixed> $outcome The token's path and `$deprecated`, and the serializer result.
+	 * @param DesignTokenRef $token The token's path and `$deprecated` value.
+	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function assignSingleTarget(array $outcome, DesignTokensMapping $mapping): void {
-		['token' => $token, 'result' => $result] = $outcome;
+	private function assignSingleTarget(DesignTokenRef $token, array $result, DesignTokensMapping $mapping): void {
 		$path = $token->path;
 		if ($result['ok'] !== true) {
 			$mapping->errors[] = $this->errorEntry(path: $path, result: $result);
@@ -480,7 +478,7 @@ class DesignTokensMapper {
 			$this->adapted[] = ['path' => $path, 'target' => $target, 'value' => $result['value']] + $result['adapted'];
 		}
 
-		$this->maybeWarnDeprecated(notice: ['path' => $path, 'deprecated' => $token->deprecated, 'token' => $target], warnings: $mapping->warnings);
+		$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings, token: $target);
 	}//end assignSingleTarget()
 
 	/**
@@ -508,15 +506,15 @@ class DesignTokensMapper {
 	 * exists; sub-properties without a target are counted as skipped with
 	 * their sub-path (`<path>.<subKey>`), never guessed or dropped silently.
 	 *
-	 * @param array<string, mixed> $composite The composite token's path and `$deprecated`, and its value.
+	 * @param DesignTokenRef $token The composite token's path and `$deprecated` value.
+	 * @param mixed $value The resolved `$value` (expected object/array).
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processTypographyComposite(array $composite, DesignTokensMapping $mapping): void {
-		['token' => $token, 'value' => $value] = $composite;
+	private function processTypographyComposite(DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
 		$path = $token->path;
 		if (is_array($value) === false) {
 			$mapping->errors[] = ['path' => $path, 'reason' => 'unsupported-value-shape'];
@@ -532,7 +530,7 @@ class DesignTokensMapper {
 		}
 
 		if ($mapped > 0) {
-			$this->maybeWarnDeprecated(notice: ['path' => $path, 'deprecated' => $token->deprecated, 'token' => null], warnings: $mapping->warnings);
+			$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings);
 		}
 	}//end processTypographyComposite()
 
@@ -591,15 +589,16 @@ class DesignTokensMapper {
 	 * A single-target token also names the CSS variable it became, so the
 	 * notice can be recorded as a deprecation of that name.
 	 *
-	 * @param array<string, mixed> $notice The token's dotted path, the raw `$deprecated` value and the CSS variable it became, if any.
+	 * @param string $path The token's dotted path.
+	 * @param mixed $deprecated The raw `$deprecated` value.
 	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param string|null $token The CSS variable the token became, when it became one.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function maybeWarnDeprecated(array $notice, array &$warnings): void {
-		['path' => $path, 'deprecated' => $deprecated, 'token' => $token] = $notice;
+	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings, ?string $token = null): void {
 		if ($deprecated === null || $deprecated === false) {
 			return;
 		}
