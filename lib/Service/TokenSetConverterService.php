@@ -441,9 +441,7 @@ class TokenSetConverterService {
 		// hand-authored values, which win over anything the rules derive.
 		$semantic = $this->runRules(
 			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $run->slug],
-			existing: $sections['semantic'],
-			manifest: $run->manifest,
-			report: $run->report
+			run: $run
 		);
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
@@ -1867,122 +1865,188 @@ class TokenSetConverterService {
 	 * to be able to tell the theme's own value from one this app invented.
 	 *
 	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
-	 * @param array<string, string> $existing Values the input already declared (input D wins).
-	 * @param array<string, string> $manifest Manifest targets, written by reference.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion: its semantic section is the start (input D wins), and it gets
+	 *                           the manifest targets and the report entries.
 	 *
 	 * @return array<string, string> The semantic layer.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
-	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest target and
-	 *   report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
-	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
 	 */
-	private function runRules(array $input, array $existing, array &$manifest, array &$report): array {
-		$semantic = $existing;
-		$manifest = [];
+	private function runRules(array $input, ConversionRun $run): array {
+		$run->ruleInput = $input;
+		$run->semantic = $run->sections['semantic'];
+		$run->manifest = [];
 
 		foreach ($this->table()['rules'] as $rule) {
-			$target = (string)($rule['target'] ?? '');
-			if ($target === '') {
-				continue;
+			$entry = $this->ruleEntry(rule: $rule, run: $run);
+			if ($entry !== null) {
+				$this->recordRule(entry: $entry, run: $run);
 			}
+		}
 
-			$isManifest = str_starts_with($target, 'manifest:');
-
-			// Add-only: a value the set already carries is never recomputed.
-			if ($isManifest === false && array_key_exists($target, $semantic) === true) {
-				continue;
-			}
-
-			if (isset($rule['when']) === true && $this->whenSatisfied(when: $rule['when'], semantic: $semantic) === false) {
-				continue;
-			}
-
-			$value = null;
-			$action = 'applied';
-			$reason = null;
-			if (isset($rule['reason']) === true) {
-				$reason = (string)$rule['reason'];
-			}
-
-			$sourceName = '';
-
-			$declared = $this->firstDeclaredSource(rule: $rule, input: $input);
-			if ($declared !== null) {
-				$value = $declared['value'];
-				$sourceName = $declared['source'];
-			}
-
-			if ($value === null) {
-				$derived = $this->applyFallback(
-					fallback: ($rule['fallback'] ?? null),
-					semantic: $semantic,
-					declarations: $input['declarations']
-				);
-
-				if ($derived === null) {
-					continue;
-				}
-
-				$value = $derived['value'];
-				$action = 'adapted';
-				$sourceName = $derived['source'];
-				if ($reason === null) {
-					$reason = $derived['reason'];
-				}
-			}
-
-			if (isset($rule['transform']) === true && $sourceName !== '' && $action === 'applied') {
-				$value = $this->transform(
-					kind: (string)$rule['transform'],
-					value: $value,
-					args: ($rule['args'] ?? []),
-					semantic: $semantic
-				);
-			}
-
-			$entry = [
-				'source' => $sourceName,
-				'target' => $target,
-				'action' => $action,
-				'reason' => $reason,
-				'value' => $value,
-			];
-
-			if (isset($rule['guard']) === true) {
-				$guarded = $this->applyGuard(
-					guard: $rule['guard'],
-					value: $value,
-					semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $semantic, input: $input)
-				);
-				if ($guarded['value'] !== $value) {
-					$entry['original'] = $value;
-					$entry['action'] = 'adapted';
-					$value = $guarded['value'];
-					$entry['value'] = $value;
-				}
-
-				if ($guarded['reason'] !== null) {
-					$entry['reason'] = $guarded['reason'];
-				}
-			}
-
-			if ($isManifest === true) {
-				$manifest[substr($target, strlen('manifest:'))] = $value;
-			}
-
-			if ($isManifest === false) {
-				$semantic[$target] = $value;
-			}
-
-			$report[] = $entry;
-		}//end foreach
-
-		return $semantic;
+		return $run->semantic;
 	}//end runRules()
+
+	/**
+	 * The report entry one rule produces, or null when the rule does not apply or finds no value.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function ruleEntry(array $rule, ConversionRun $run): ?array {
+		if ($this->ruleApplies(rule: $rule, run: $run) === false) {
+			return null;
+		}
+
+		$entry = $this->ruleValue(rule: $rule, run: $run);
+		if ($entry === null || isset($rule['guard']) === false) {
+			return $entry;
+		}
+
+		return $this->guardedEntry(step: ['rule' => $rule, 'entry' => $entry], run: $run);
+	}//end ruleEntry()
+
+	/**
+	 * Whether a rule has a target this run may still fill, and its condition holds.
+	 *
+	 * Add-only: a value the set already carries is never recomputed.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return bool
+	 */
+	private function ruleApplies(array $rule, ConversionRun $run): bool {
+		$target = (string)($rule['target'] ?? '');
+		if ($target === '') {
+			return false;
+		}
+
+		if (str_starts_with($target, 'manifest:') === false && array_key_exists($target, $run->semantic) === true) {
+			return false;
+		}
+
+		return (isset($rule['when']) === false || $this->whenSatisfied(when: $rule['when'], semantic: $run->semantic) === true);
+	}//end ruleApplies()
+
+	/**
+	 * A rule's value: the first source the input declares, else the fallback, then its transform.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null The report entry, or null when neither a source nor the fallback gives a value.
+	 */
+	private function ruleValue(array $rule, ConversionRun $run): ?array {
+		$entry = [
+			'source' => '',
+			'target' => (string)$rule['target'],
+			'action' => 'applied',
+			'reason' => null,
+			'value' => null,
+		];
+
+		if (isset($rule['reason']) === true) {
+			$entry['reason'] = (string)$rule['reason'];
+		}
+
+		$declared = $this->firstDeclaredSource(rule: $rule, input: $run->ruleInput);
+		if ($declared !== null) {
+			$entry['value'] = $declared['value'];
+			$entry['source'] = $declared['source'];
+		}
+
+		if ($entry['value'] === null) {
+			return $this->fallbackEntry(step: ['rule' => $rule, 'entry' => $entry], run: $run);
+		}
+
+		if (isset($rule['transform']) === true && $entry['source'] !== '') {
+			$entry['value'] = $this->transform(
+				kind: (string)$rule['transform'],
+				value: $entry['value'],
+				args: ($rule['args'] ?? []),
+				semantic: $run->semantic
+			);
+		}
+
+		return $entry;
+	}//end ruleValue()
+
+	/**
+	 * A rule's entry from its fallback, `adapted`, or null when the fallback gives nothing.
+	 *
+	 * @param array{rule: array<string, mixed>, entry: array<string, mixed>} $step The rule and its entry so far.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function fallbackEntry(array $step, ConversionRun $run): ?array {
+		$derived = $this->applyFallback(
+			fallback: ($step['rule']['fallback'] ?? null),
+			semantic: $run->semantic,
+			declarations: $run->ruleInput['declarations']
+		);
+		if ($derived === null) {
+			return null;
+		}
+
+		$entry = $step['entry'];
+		$entry['value'] = $derived['value'];
+		$entry['action'] = 'adapted';
+		$entry['source'] = $derived['source'];
+		$entry['reason'] = ($entry['reason'] ?? $derived['reason']);
+
+		return $entry;
+	}//end fallbackEntry()
+
+	/**
+	 * A rule's entry after its guard: the guarded value, `adapted` when the guard changed it.
+	 *
+	 * @param array{rule: array<string, mixed>, entry: array<string, mixed>} $step The rule and its entry so far.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function guardedEntry(array $step, ConversionRun $run): array {
+		[$rule, $entry] = [$step['rule'], $step['entry']];
+		$guarded = $this->applyGuard(
+			guard: $rule['guard'],
+			value: $entry['value'],
+			semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $run->semantic, input: $run->ruleInput)
+		);
+		if ($guarded['value'] !== $entry['value']) {
+			$entry['original'] = $entry['value'];
+			$entry['action'] = 'adapted';
+			$entry['value'] = $guarded['value'];
+		}
+
+		if ($guarded['reason'] !== null) {
+			$entry['reason'] = $guarded['reason'];
+		}
+
+		return $entry;
+	}//end guardedEntry()
+
+	/**
+	 * Write a rule's value to the manifest or the semantic layer, and report it.
+	 *
+	 * @param array<string, mixed> $entry The rule's report entry.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return void
+	 */
+	private function recordRule(array $entry, ConversionRun $run): void {
+		$target = (string)$entry['target'];
+		if (str_starts_with($target, 'manifest:') === true) {
+			$run->manifest[substr($target, strlen('manifest:'))] = $entry['value'];
+		}
+
+		if (str_starts_with($target, 'manifest:') === false) {
+			$run->semantic[$target] = $entry['value'];
+		}
+
+		$run->report[] = $entry;
+	}//end recordRule()
 
 	/**
 	 * The first of a rule's sources the input declares, by name or by role.

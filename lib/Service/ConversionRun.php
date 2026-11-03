@@ -112,6 +112,20 @@ final class ConversionRun {
 	public array $sections = ['palette' => [], 'component' => [], 'semantic' => []];
 
 	/**
+	 * What the rules read: the declarations, the same indexed by role, and the slug.
+	 *
+	 * @var array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
+	 */
+	public array $ruleInput = ['declarations' => [], 'byRole' => [], 'slug' => ''];
+
+	/**
+	 * The semantic layer while the rules build it.
+	 *
+	 * @var array<string, string>
+	 */
+	public array $semantic = [];
+
+	/**
 	 * How many declarations the document yielded before the rules ran.
 	 *
 	 * @var int
