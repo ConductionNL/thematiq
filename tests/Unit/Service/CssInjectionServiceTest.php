@@ -15,7 +15,12 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppMenuService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionChrome;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
@@ -264,18 +269,18 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
-					$this->appBrands,
+					new CssInjectionContext(config: $this->config, designSystemService: $this->designSystemService, urlGenerator: $this->urlGenerator, logger: $this->logger),
+					new CssInjectionLayers(
+						customCssService: $this->customCssService,
+						fontService: $this->fontService,
+						previewBannerService: $this->previewBannerService,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupThemingService, appBrands: $this->appBrands)
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $this->stockTokens,
+						runtimeFiles: $this->runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles)
+					),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
@@ -1607,18 +1612,18 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
-					$this->appBrands,
+					new CssInjectionContext(config: $this->config, designSystemService: $this->designSystemService, urlGenerator: $this->urlGenerator, logger: $this->logger),
+					new CssInjectionLayers(
+						customCssService: $this->customCssService,
+						fontService: $this->fontService,
+						previewBannerService: $this->previewBannerService,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupThemingService, appBrands: $this->appBrands)
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $this->stockTokens,
+						runtimeFiles: $this->runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles)
+					),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
@@ -1814,18 +1819,18 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
-					$this->appBrands,
+					new CssInjectionContext(config: $this->config, designSystemService: $this->designSystemService, urlGenerator: $this->urlGenerator, logger: $this->logger),
+					new CssInjectionLayers(
+						customCssService: $this->customCssService,
+						fontService: $this->fontService,
+						previewBannerService: $this->previewBannerService,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupThemingService, appBrands: $this->appBrands)
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $this->stockTokens,
+						runtimeFiles: $this->runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles)
+					),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
@@ -1915,21 +1920,19 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
-					$this->appBrands,
-					null,
-					null,
-					$headerUser,
+					new CssInjectionContext(config: $this->config, designSystemService: $this->designSystemService, urlGenerator: $this->urlGenerator, logger: $this->logger),
+					new CssInjectionLayers(
+						customCssService: $this->customCssService,
+						fontService: $this->fontService,
+						previewBannerService: $this->previewBannerService,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupThemingService, appBrands: $this->appBrands)
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $this->stockTokens,
+						runtimeFiles: $this->runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles)
+					),
+					new CssInjectionChrome(headerUser: $headerUser),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
@@ -1976,22 +1979,19 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config,
-					$this->designSystemService,
-					$this->customCssService,
-					$this->fontService,
-					$this->urlGenerator,
-					$this->groupThemingService,
-					$this->previewBannerService,
-					$this->logger,
-					$this->stockTokens,
-					$this->runtimeFiles,
-					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
-					$this->appBrands,
-					null,
-					null,
-					null,
-					$appMenu,
+					new CssInjectionContext(config: $this->config, designSystemService: $this->designSystemService, urlGenerator: $this->urlGenerator, logger: $this->logger),
+					new CssInjectionLayers(
+						customCssService: $this->customCssService,
+						fontService: $this->fontService,
+						previewBannerService: $this->previewBannerService,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupThemingService, appBrands: $this->appBrands)
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $this->stockTokens,
+						runtimeFiles: $this->runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles)
+					),
+					new CssInjectionChrome(appMenu: $appMenu),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

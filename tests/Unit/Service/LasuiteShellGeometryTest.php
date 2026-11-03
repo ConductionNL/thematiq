@@ -15,7 +15,11 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
@@ -92,18 +96,26 @@ class LasuiteShellGeometryTest extends TestCase {
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 
 		return new CssInjectionService(
-			config: $config,
-			designSystemService: new DesignSystemService(appManager: $appManager, config: $config),
-			customCssService: $this->createMock(originalClassName: CustomCssService::class),
-			fontService: $this->createMock(originalClassName: FontService::class),
-			urlGenerator: $urlGenerator,
-			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
-			previewBannerService: $this->createMock(originalClassName: ThemePreviewBannerService::class),
-			logger: $logger,
-			stockTokens: $stockTokens,
-			runtimeFiles: $runtimeFiles,
-			logoLayer: new LogoLayerService(config: $config, urlGenerator: $urlGenerator, logger: $logger, files: $runtimeFiles),
-			appBrands: $this->createMock(originalClassName: AppBrandService::class)
+			context: new CssInjectionContext(
+				config: $config,
+				designSystemService: new DesignSystemService(appManager: $appManager, config: $config),
+				urlGenerator: $urlGenerator,
+				logger: $logger
+			),
+			layers: new CssInjectionLayers(
+				customCssService: $this->createMock(originalClassName: CustomCssService::class),
+				fontService: $this->createMock(originalClassName: FontService::class),
+				previewBannerService: $this->createMock(originalClassName: ThemePreviewBannerService::class),
+				brands: new CssInjectionBrands(
+					groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+					appBrands: $this->createMock(originalClassName: AppBrandService::class)
+				)
+			),
+			files: new CssInjectionTokenFiles(
+				stockTokens: $stockTokens,
+				runtimeFiles: $runtimeFiles,
+				logoLayer: new LogoLayerService(config: $config, urlGenerator: $urlGenerator, logger: $logger, files: $runtimeFiles)
+			)
 		);
 	}//end service()
 

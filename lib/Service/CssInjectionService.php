@@ -22,10 +22,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
-use OCP\IConfig;
-use OCP\IURLGenerator;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -83,51 +79,47 @@ class CssInjectionService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config The config service.
-	 * @param DesignSystemService $designSystemService The design system resolver.
-	 * @param CustomCssService $customCssService The freeform custom CSS service.
-	 * @param FontService $fontService The custom font resolver.
-	 * @param IURLGenerator $urlGenerator The URL generator.
-	 * @param GroupThemingService $groupThemingService The per-group token-set resolver.
-	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
-	 * @param LoggerInterface $logger The logger for skipped layers.
-	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
-	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
-	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
-	 * @param AppBrandService $appBrands The brand per app.
-	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
-	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
-	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
-	 * @param AppMenuService|null $appMenu The sections of the apps menu in the workplace top bar; null keeps one grid.
-	 * @param SearchPlaceholderService|null $searchPlaceholder The words in the top bar's search field per app; null keeps Nextcloud's.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
-	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
+	 * @param CssInjectionContext $context The app config, the design systems, the URL generator and the log.
+	 * @param CssInjectionLayers $layers The custom CSS, the fonts, the preview banner, and the set and brand per request.
+	 * @param CssInjectionTokenFiles $files The stock tokens, the runtime files, the logo layer and the internal scopes.
+	 * @param CssInjectionChrome $chrome The workplace layout and the top bar parts.
 	 */
 	public function __construct(
-		private readonly IConfig $config,
-		private readonly DesignSystemService $designSystemService,
-		private readonly CustomCssService $customCssService,
-		private readonly FontService $fontService,
-		private readonly IURLGenerator $urlGenerator,
-		private readonly GroupThemingService $groupThemingService,
-		private readonly ThemePreviewBannerService $previewBannerService,
-		private readonly LoggerInterface $logger,
-		StockTokensService $stockTokens,
-		private readonly RuntimeFileLocator $runtimeFiles,
-		LogoLayerService $logoLayer,
-		private readonly AppBrandService $appBrands,
-		?InternalScopesService $internalScopes = null,
-		?LayoutOptionsService $layoutOptions = null,
-		private readonly ?HeaderUserService $headerUser = null,
-		private readonly ?AppMenuService $appMenu = null,
-		private readonly ?SearchPlaceholderService $searchPlaceholder = null,
+		private readonly CssInjectionContext $context,
+		private readonly CssInjectionLayers $layers,
+		private readonly CssInjectionTokenFiles $files,
+		private readonly CssInjectionChrome $chrome = new CssInjectionChrome(),
 	) {
-		$this->layoutOptions = ($layoutOptions ?? new LayoutOptionsService(config: $config, designSystemService: $designSystemService));
-		$scopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
-		$entries = new TokenSetLayerEntries(runtimeFiles: $runtimeFiles, stockTokens: $stockTokens, internalScopes: $scopes, logger: $logger);
-		$this->setLayers = new TokenSetLayers(designSystemService: $designSystemService, config: $config, logoLayer: $logoLayer, entries: $entries);
+		$this->layoutOptions = ($chrome->layoutOptions ?? new LayoutOptionsService(
+			config: $context->config,
+			designSystemService: $context->designSystemService
+		));
+		$this->setLayers = self::setLayersFrom(context: $context, files: $files);
 	}//end __construct()
+
+	/**
+	 * The set-dependent layers, read through the token files.
+	 *
+	 * @param CssInjectionContext $context The app config, the design systems and the log.
+	 * @param CssInjectionTokenFiles $files The stock tokens, the runtime files, the logo layer and the internal scopes.
+	 *
+	 * @return TokenSetLayers
+	 */
+	private static function setLayersFrom(CssInjectionContext $context, CssInjectionTokenFiles $files): TokenSetLayers {
+		$entries = new TokenSetLayerEntries(
+			runtimeFiles: $files->runtimeFiles,
+			stockTokens: $files->stockTokens,
+			internalScopes: ($files->internalScopes ?? new InternalScopesService(files: $files->runtimeFiles)),
+			logger: $context->logger
+		);
+
+		return new TokenSetLayers(
+			designSystemService: $context->designSystemService,
+			config: $context->config,
+			logoLayer: $files->logoLayer,
+			entries: $entries
+		);
+	}//end setLayersFrom()
 
 	/**
 	 * Run one cascade layer, isolated from every other layer.
@@ -157,7 +149,7 @@ class CssInjectionService {
 		try {
 			$work();
 		} catch (Throwable $e) {
-			$this->logger->warning(
+			$this->context->logger->warning(
 				'nldesign: stylesheet layer "' . $layer . '" was skipped; the rest of the cascade still ran.',
 				[
 					'app' => Application::APP_ID,
@@ -224,12 +216,12 @@ class CssInjectionService {
 	 */
 	private function resolvePage(?string $appId): ?array {
 		try {
-			$brand = $this->appBrands->brandFor(appId: $appId);
-			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
-			$this->setLayers->useBrandLogo(brandLogo: $this->appBrands->logoLayer(brand: $brand, tokenSet: $tokenSet, styleId: self::LOGO_STYLE_ID));
-			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+			$resolved = $this->layers->brands->forApp(appId: $appId, styleId: self::LOGO_STYLE_ID);
+			$tokenSet = $resolved['tokenSet'];
+			$this->setLayers->useBrandLogo(brandLogo: $resolved['logo']);
+			$tokenSetMeta = $this->context->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		} catch (Throwable $e) {
-			$this->logger->warning(
+			$this->context->logger->warning(
 				'nldesign: could not resolve the active token set; no stylesheet layer was injected.',
 				['app' => Application::APP_ID, 'exception' => $e]
 			);
@@ -276,12 +268,12 @@ class CssInjectionService {
 	 */
 	private function injectPageLayers(array $page, ?string $appId): void {
 		$tokenSet = $page['tokenSet'];
-		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		$this->runLayer(layer: 'app-menu', work: fn () => $this->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		$this->runLayer(layer: 'search-placeholder', work: fn () => $this->searchPlaceholder?->inject(appId: $appId));
+		$this->runLayer(layer: 'header-user', work: fn () => $this->chrome->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'app-menu', work: fn () => $this->chrome->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'search-placeholder', work: fn () => $this->chrome->searchPlaceholder?->inject(appId: $appId));
 		$this->runLayer(
 			layer: 'preview-banner',
-			work: fn () => $this->previewBannerService->inject(tokenSet: $tokenSet, tokenSetMeta: $page['tokenSetMeta'])
+			work: fn () => $this->layers->previewBannerService->inject(tokenSet: $tokenSet, tokenSetMeta: $page['tokenSetMeta'])
 		);
 	}//end injectPageLayers()
 
@@ -321,9 +313,9 @@ class CssInjectionService {
 	 * @return string The URL.
 	 */
 	private function staticLayerUrl(string $file): string {
-		$version = $this->config->getAppValue(Application::APP_ID, 'installed_version', '0');
+		$version = $this->context->config->getAppValue(Application::APP_ID, 'installed_version', '0');
 
-		return $this->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
+		return $this->context->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
 	}//end staticLayerUrl()
 
 	/**
@@ -340,7 +332,7 @@ class CssInjectionService {
 		}
 
 		if ($entry['kind'] === 'runtime') {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: (string)$entry['name']));
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: (string)$entry['name']));
 			return;
 		}
 
@@ -378,7 +370,7 @@ class CssInjectionService {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function getStylesheetManifest(string $tokenSet): array {
-		$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+		$tokenSetMeta = $this->context->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$designSystemId = (string)($tokenSetMeta['design_system'] ?? 'nldesign');
 		$layers = array_map(
 			fn (array $entry): array => $this->manifestLayer(entry: $entry),
@@ -410,7 +402,7 @@ class CssInjectionService {
 		}
 
 		if ($entry['kind'] === 'runtime') {
-			return ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->runtimeFiles->routeUrl(name: (string)$entry['name'])];
+			return ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->files->runtimeFiles->routeUrl(name: (string)$entry['name'])];
 		}
 
 		return ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->staticLayerUrl(file: (string)$entry['file'])];
@@ -428,11 +420,11 @@ class CssInjectionService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
 	private function customFontLayers(string $designSystemId): array {
-		if ($designSystemId === 'none' || $this->fontService->hasFonts() === false) {
+		if ($designSystemId === 'none' || $this->layers->fontService->hasFonts() === false) {
 			return [];
 		}
 
-		$href = $this->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->fontService->getRevision();
+		$href = $this->context->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->layers->fontService->getRevision();
 
 		return [['layer' => 'custom-font', 'kind' => 'file', 'href' => $href]];
 	}//end customFontLayers()
@@ -462,18 +454,18 @@ class CssInjectionService {
 		// Kept in app data and linked only once saved: writing it on render
 		// is what gave every instance a code integrity warning.
 		$overridesName = 'css/' . $overridesFile . '.css';
-		if ($this->runtimeFiles->store()->exists(name: $overridesName) === true) {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: $overridesName));
+		if ($this->files->runtimeFiles->store()->exists(name: $overridesName) === true) {
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: $overridesName));
 		}
 
 		// 4.1 Freeform custom CSS — admin-authored arbitrary rules. Emitted
 		// AFTER custom-overrides so administrator intent wins the cascade, and
 		// only when the feature is switched on AND something is actually
 		// stored, so an instance that never opts in loads nothing at all.
-		if ($this->customCssService->isEnabled() === true
-			&& $this->customCssService->hasContent() === true
+		if ($this->layers->customCssService->isEnabled() === true
+			&& $this->layers->customCssService->hasContent() === true
 		) {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: CustomCssService::FILE));
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: CustomCssService::FILE));
 		}
 	}//end injectOverrideStyles()
 
@@ -527,11 +519,11 @@ class CssInjectionService {
 		// addStyle() entries the toggles landed before custom-overrides. The
 		// spec puts them after it (css-architecture, hide-slogan, menu-labels),
 		// which is also where the admin page appends them on a toggle.
-		if ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'hide-slogan'));
 		}
 
-		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
@@ -543,7 +535,7 @@ class CssInjectionService {
 
 		// A header, so it follows the overrides and custom CSS links: it must
 		// come last, or a stored value would beat the lock.
-		if ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'primary-lock'));
 		}
 	}//end injectConditionalStyles()
@@ -638,7 +630,7 @@ class CssInjectionService {
 			return true;
 		}
 
-		$raw = $this->config->getAppValue(Application::APP_ID, self::THEMED_CONTEXTS_KEY, '[]');
+		$raw = $this->context->config->getAppValue(Application::APP_ID, self::THEMED_CONTEXTS_KEY, '[]');
 		$decoded = json_decode($raw, true);
 		if (is_array($decoded) === false || empty($decoded) === true) {
 			return true;

@@ -30,7 +30,11 @@ use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppBrandSources;
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -234,18 +238,18 @@ class AppBrandServiceTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config(),
-					$designSystem,
-					$this->createMock(originalClassName: CustomCssService::class),
-					$this->createMock(originalClassName: FontService::class),
-					$urls,
-					$groupTheming,
-					$this->createMock(originalClassName: ThemePreviewBannerService::class),
-					$logger,
-					$stock,
-					$runtimeFiles,
-					new LogoLayerService(config: $this->config(), urlGenerator: $urls, logger: $logger, files: $runtimeFiles),
-					$this->brands(),
+					new CssInjectionContext(config: $this->config(), designSystemService: $designSystem, urlGenerator: $urls, logger: $logger),
+					new CssInjectionLayers(
+						customCssService: $this->createMock(originalClassName: CustomCssService::class),
+						fontService: $this->createMock(originalClassName: FontService::class),
+						previewBannerService: $this->createMock(originalClassName: ThemePreviewBannerService::class),
+						brands: new CssInjectionBrands(groupThemingService: $groupTheming, appBrands: $this->brands())
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $stock,
+						runtimeFiles: $runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config(), urlGenerator: $urls, logger: $logger, files: $runtimeFiles)
+					),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
