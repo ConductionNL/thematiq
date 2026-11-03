@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -77,7 +78,13 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$parser = new CssParserService();
 		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->overridesService = new CustomOverridesService(new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')), $parser, $darkPalette);
+		$this->overridesService = new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				cssParser: $parser,
+				darkPalette: $darkPalette
+			)
+		);
 		$this->overridesService->write(tokens: ['--color-primary' => '#000000']);
 
 		$this->auditService = $this->createMock(ThemingAuditService::class);

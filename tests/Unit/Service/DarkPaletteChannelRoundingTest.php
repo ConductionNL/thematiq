@@ -37,6 +37,7 @@ use ReflectionMethod;
  * @covers \OCA\Thematiq\Service\DarkPaletteService
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\CssParserService
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore
  */
 class DarkPaletteChannelRoundingTest extends TestCase {
 

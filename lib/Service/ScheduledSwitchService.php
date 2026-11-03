@@ -392,7 +392,13 @@ class ScheduledSwitchService {
 			);
 			$this->runtime->auditService->log(
 				action: self::AUDIT_ACTION,
-				context: ['old' => $this->targets->activeTokenSet->getActive(), 'new' => null, 'actor' => 'system', 'switchId' => $entry['id'], 'reason' => $reason]
+				context: [
+					'old' => $this->targets->activeTokenSet->getActive(),
+					'new' => null,
+					'actor' => 'system',
+					'switchId' => $entry['id'],
+					'reason' => $reason,
+				]
 			);
 			$entry['status'] = 'failed';
 			$entry['failureReason'] = $reason;
