@@ -14,7 +14,10 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\PlaygroundSetFiles;
 use OCA\Thematiq\Service\PlaygroundStateService;
+use OCA\Thematiq\Service\PlaygroundTokenSources;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\StockTokensService;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -62,11 +65,13 @@ class PlaygroundStateServiceTest extends TestCase {
 		}
 
 		return new PlaygroundStateService(
-			$appManager,
-			$previewValues,
-			$converter,
-			($stockTokens ?? $this->createMock(StockTokensService::class)),
-			($l10n ?? $this->identityL10n())
+			sources: new PlaygroundTokenSources(
+				appManager: $appManager,
+				previewValues: $previewValues,
+				converter: $converter,
+				stockTokens: ($stockTokens ?? $this->createMock(StockTokensService::class))
+			),
+			l10n: ($l10n ?? $this->identityL10n())
 		);
 	}//end build()
 
@@ -393,6 +398,44 @@ class PlaygroundStateServiceTest extends TestCase {
 	}//end testAMissingMappingTableCostsOnlyTheSentences()
 
 	/**
+	 * An uploaded set's dark values are read from the runtime store.
+	 *
+	 * @return void
+	 */
+	public function testAnUploadedSetsDarkValuesComeFromTheStore(): void {
+		$store = $this->createMock(originalClassName: RuntimeFileStore::class);
+		$dark = "body[data-theme-dark] {\n  --nldesign-color-primary: #0b2a4a !important;\n}\n";
+		$store->method('read')->willReturnMap(valueMap: [['css/tokens/dark/custom-proef.css', $dark]]);
+
+		$state = $this->service(setFiles: new PlaygroundSetFiles(store: $store))->getInitialState(tokenSetId: 'custom-proef');
+
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#0b2a4a'], actual: $state['playgroundDarkTokens']);
+	}//end testAnUploadedSetsDarkValuesComeFromTheStore()
+
+	/**
+	 * The service with the given set files and stubbed token sources.
+	 *
+	 * @param PlaygroundSetFiles $setFiles The store, the reader and the server version.
+	 *
+	 * @return PlaygroundStateService
+	 */
+	private function service(PlaygroundSetFiles $setFiles): PlaygroundStateService {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
+
+		return new PlaygroundStateService(
+			sources: new PlaygroundTokenSources(
+				appManager: $appManager,
+				previewValues: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				converter: $this->createMock(originalClassName: TokenSetConverterService::class),
+				stockTokens: $this->createMock(originalClassName: StockTokensService::class)
+			),
+			l10n: $this->identityL10n(),
+			setFiles: $setFiles
+		);
+	}//end service()
+
+	/**
 	 * An unreadable inventory yields an empty component list rather than an
 	 * exception: the instrument then does not build, and the token editor it
 	 * would have rebuilt keeps working.
@@ -402,11 +445,13 @@ class PlaygroundStateServiceTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn(sys_get_temp_dir() . '/thematiq-does-not-exist');
 
 		$service = new PlaygroundStateService(
-			$appManager,
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(TokenSetConverterService::class),
-			$this->createMock(StockTokensService::class),
-			$this->identityL10n()
+			sources: new PlaygroundTokenSources(
+				appManager: $appManager,
+				previewValues: $this->createMock(TokenSetPreviewService::class),
+				converter: $this->createMock(TokenSetConverterService::class),
+				stockTokens: $this->createMock(StockTokensService::class)
+			),
+			l10n: $this->identityL10n()
 		);
 
 		$this->assertSame(['version' => 0, 'tabs' => [], 'components' => []], $service->getInventory());

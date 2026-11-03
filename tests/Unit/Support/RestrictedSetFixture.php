@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Support;
 
 use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -167,12 +170,18 @@ trait RestrictedSetFixture {
 		$cacheFactory->method('createLocal')->willReturn($this->createMock(ICache::class));
 
 		return new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(ShippedTokenSetAuditService::class),
-			$cacheFactory,
-			$this->createMock(TokenSetVocabularyAuditService::class)
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $this->createMock(ShippedTokenSetAuditService::class),
+				vocabularyAudit: $this->createMock(TokenSetVocabularyAuditService::class)
+			)
 		);
 	}//end fixtureTokenSets()
 

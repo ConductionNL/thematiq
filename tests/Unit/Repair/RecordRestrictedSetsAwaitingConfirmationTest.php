@@ -21,8 +21,11 @@ use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
 use OCA\Thematiq\Service\TokenSetLicenceService;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Tests\Unit\Support\RestrictedSetFixture;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -40,6 +43,9 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(TokenSetLicenceService::class)]
 #[UsesClass(RestrictedSetGate::class)]
 #[UsesClass(TokenSetService::class)]
+#[UsesClass(TokenSetAudits::class)]
+#[UsesClass(TokenSetFiles::class)]
+#[UsesClass(TokenSetRuntime::class)]
 #[UsesClass(ActiveTokenSetService::class)]
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(SetFileReader::class)]

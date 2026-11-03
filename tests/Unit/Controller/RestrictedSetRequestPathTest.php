@@ -31,7 +31,11 @@ use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\BundleExtraSections;
 use OCA\Thematiq\Service\ColourFunctionEvaluator;
 use OCA\Thematiq\Service\ComplianceReportService;
+use OCA\Thematiq\Service\ConfigBundleAppSettings;
+use OCA\Thematiq\Service\ConfigBundleBranding;
+use OCA\Thematiq\Service\ConfigBundleSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigBundleTokenSources;
 use OCA\Thematiq\Service\ConfigSourceClock;
 use OCA\Thematiq\Service\ConfigSourceLock;
 use OCA\Thematiq\Service\ConfigSourceService;
@@ -82,10 +86,13 @@ use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenDeprecationService;
 use OCA\Thematiq\Service\TokenLifecycleBundleSection;
+use OCA\Thematiq\Service\TokenSetAudits;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
 use OCA\Thematiq\Service\TokenSetLicenceService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
@@ -143,6 +150,9 @@ use ReflectionProperty;
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(TokenSetLicenceService::class)]
 #[UsesClass(TokenSetService::class)]
+#[UsesClass(TokenSetAudits::class)]
+#[UsesClass(TokenSetFiles::class)]
+#[UsesClass(TokenSetRuntime::class)]
 #[UsesClass(RestrictedSetGate::class)]
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
@@ -160,6 +170,10 @@ use ReflectionProperty;
 #[UsesClass(BundleExtraSections::class)]
 #[UsesClass(ColourFunctionEvaluator::class)]
 #[UsesClass(ConfigBundleService::class)]
+#[UsesClass(ConfigBundleAppSettings::class)]
+#[UsesClass(ConfigBundleBranding::class)]
+#[UsesClass(ConfigBundleSections::class)]
+#[UsesClass(ConfigBundleTokenSources::class)]
 #[UsesClass(ConfigSourceService::class)]
 #[UsesClass(ConfigSourceClock::class)]
 #[UsesClass(ConfigSourceLock::class)]

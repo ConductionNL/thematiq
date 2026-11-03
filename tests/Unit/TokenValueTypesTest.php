@@ -29,6 +29,8 @@ use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -118,13 +120,17 @@ class TokenValueTypesTest extends TestCase {
 		$request->method('getParams')->willReturn($params);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ($params[$key] ?? $default));
 		$response = (new OverridesController(
-			'thematiq',
-			$request,
-			$this->overrides,
-			new CssParserService(),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(ThemingService::class)
+			appName: 'thematiq',
+			request: $request,
+			writes: new OverridesWrites(
+				overridesService: $this->overrides,
+				cssParser: new CssParserService(),
+				auditService: $this->createMock(ThemingAuditService::class)
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->createMock(IConfig::class),
+				themingService: $this->createMock(ThemingService::class)
+			)
 		))->setOverrides();
 
 		return [$response->getStatus(), (array)$response->getData()];

@@ -15,6 +15,8 @@ use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCP\IConfig;
@@ -64,14 +66,18 @@ class OverridesControllerCaptureTest extends TestCase {
 		$this->capture = $this->createMock(BrandingCaptureService::class);
 
 		$this->controller = new OverridesController(
-			'thematiq',
-			$this->request,
-			$this->createMock(CustomOverridesService::class),
-			new CssParserService(),
-			$this->createMock(ThemingAuditService::class),
-			$this->config,
-			$this->createMock(ThemingService::class),
-			$this->capture
+			appName: 'thematiq',
+			request: $this->request,
+			writes: new OverridesWrites(
+				overridesService: $this->createMock(CustomOverridesService::class),
+				cssParser: new CssParserService(),
+				auditService: $this->createMock(ThemingAuditService::class)
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->config,
+				themingService: $this->createMock(ThemingService::class),
+				brandingCapture: $this->capture
+			)
 		);
 	}//end setUp()
 

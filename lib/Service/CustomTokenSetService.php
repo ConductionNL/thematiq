@@ -54,7 +54,7 @@ class CustomTokenSetService {
 	 *
 	 * @var string
 	 */
-	public const ID_PREFIX = 'custom-';
+	public const ID_PREFIX = CustomTokenSetId::PREFIX;
 
 	/**
 	 * Where an uploaded set's stylesheet and logo are stored: app data, never the app directory.

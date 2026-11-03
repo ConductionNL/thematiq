@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -140,24 +143,30 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 		$this->request = $this->createMock(IRequest::class);
 		$this->controller = new CustomTokenSetController(
-			'thematiq',
-			$this->request,
-			$this->service,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->createMock(ThemingAuditService::class),
-			$config,
-			new TokenSetConverterService(
-				$repoAppManager,
-				new CssParserService(),
-				new ContrastService(),
-				new DesignTokensMapper(),
-				$this->createMock(FontService::class),
-				$this->createMock(LoggerInterface::class)
+			appName: 'thematiq',
+			request: $this->request,
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: new TokenSetConverterService(
+					$repoAppManager,
+					new CssParserService(),
+					new ContrastService(),
+					new DesignTokensMapper(),
+					$this->createMock(FontService::class),
+					$this->createMock(LoggerInterface::class)
+				)
 			),
-			$this->createMock(ThemingService::class),
-			$this->createMock(DesignSystemService::class)
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->createMock(ThemingAuditService::class),
+				config: $config,
+				themingService: $this->createMock(ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(DesignSystemService::class)
+			)
 		);
 	}//end setUp()
 
