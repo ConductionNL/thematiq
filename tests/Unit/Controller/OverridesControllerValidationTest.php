@@ -19,6 +19,8 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -127,11 +129,15 @@ class OverridesControllerValidationTest extends TestCase {
 		return new OverridesController(
 			appName: 'thematiq',
 			request: $this->request,
-			overridesService: $service,
-			cssParser: new CssParserService(),
-			auditService: $this->auditService,
-			config: $this->createMock(originalClassName: IConfig::class),
-			themingService: $this->createMock(originalClassName: ThemingService::class)
+			writes: new OverridesWrites(
+				overridesService: $service,
+				cssParser: new CssParserService(),
+				auditService: $this->auditService
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			)
 		);
 	}//end controller()
 

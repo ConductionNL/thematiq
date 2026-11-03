@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -144,22 +147,28 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$this->controller = new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $this->request,
-			service: $this->service,
-			validator: new CustomTokenSetValidator(),
-			cssParser: new CssParserService(),
-			l: $l,
-			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
-			config: $config,
-			converter: new TokenSetConverterService(
-				appManager: $repoAppManager,
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service,
+				validator: new CustomTokenSetValidator(),
 				cssParser: new CssParserService(),
-				contrast: new ContrastService(),
-				dtcgMapper: new DesignTokensMapper(),
-				fonts: $this->createMock(originalClassName: FontService::class),
-				logger: $this->createMock(originalClassName: LoggerInterface::class)
+				converter: new TokenSetConverterService(
+					appManager: $repoAppManager,
+					cssParser: new CssParserService(),
+					contrast: new ContrastService(),
+					dtcgMapper: new DesignTokensMapper(),
+					fonts: $this->createMock(originalClassName: FontService::class),
+					logger: $this->createMock(originalClassName: LoggerInterface::class)
+				)
 			),
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				config: $config,
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			)
 		);
 	}//end setUp()
 

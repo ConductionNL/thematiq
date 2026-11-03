@@ -15,6 +15,9 @@ use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -142,16 +145,22 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->controller = new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $this->request,
-			service: $service,
-			validator: new CustomTokenSetValidator(),
-			cssParser: new CssParserService(),
-			l: $l,
-			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
-			config: $config,
-			converter: $this->converter,
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			designSystems: $this->designSystems,
-			brandingCapture: $this->capture
+			pipeline: new CustomSetUploadPipeline(
+				service: $service,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: $this->converter
+			),
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				config: $config,
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->designSystems,
+				brandingCapture: $this->capture
+			)
 		);
 	}//end setUp()
 

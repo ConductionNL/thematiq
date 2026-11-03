@@ -29,6 +29,9 @@ use OCA\Thematiq\Service\BrandImportRecords;
 use OCA\Thematiq\Service\BrandSetStorage;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -196,24 +199,30 @@ final class MultiBrandImportServiceTest extends TestCase {
 		return new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $request,
-			service: $this->sets,
-			validator: new CustomTokenSetValidator(),
-			cssParser: new CssParserService(),
-			l: $l,
-			auditService: $this->audit,
-			config: $this->config,
-			converter: new TokenSetConverterService(
-				appManager: $repoApp,
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->sets,
+				validator: new CustomTokenSetValidator(),
 				cssParser: new CssParserService(),
-				contrast: new ContrastService(),
-				dtcgMapper: new DesignTokensMapper(),
-				fonts: $this->createMock(originalClassName: FontService::class),
-				logger: $this->createMock(originalClassName: LoggerInterface::class)
+				converter: new TokenSetConverterService(
+					appManager: $repoApp,
+					cssParser: new CssParserService(),
+					contrast: new ContrastService(),
+					dtcgMapper: new DesignTokensMapper(),
+					fonts: $this->createMock(originalClassName: FontService::class),
+					logger: $this->createMock(originalClassName: LoggerInterface::class)
+				)
 			),
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			designSystems: $this->createMock(originalClassName: DesignSystemService::class),
-			brandingCapture: null,
-			multiBrand: $this->imports
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->audit,
+				config: $this->config,
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class),
+				brandingCapture: null,
+				multiBrand: $this->imports
+			)
 		);
 	}//end uploadController()
 

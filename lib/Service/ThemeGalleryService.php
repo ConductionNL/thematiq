@@ -21,11 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Http\Client\IClientService;
-use OCP\IAppConfig;
 use OCP\IConfig;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -95,21 +91,15 @@ class ThemeGalleryService {
 	 * Constructor.
 	 *
 	 * @param IConfig $config App config.
-	 * @param IClientService $clientService The HTTP client service.
+	 * @param GalleryIndexFetch $fetching The HTTP client service, the entry validator and the logger.
 	 * @param CustomTokenSetService $customSets The installed custom sets, for provenance.
-	 * @param GalleryEntryValidator $entries Decides which index entries may be listed.
-	 * @param ITimeFactory $time The clock.
-	 * @param LoggerInterface $logger The logger.
-	 * @param IAppConfig $appConfig Holds the cached index as a lazy value.
+	 * @param GalleryIndexCache $cache The app config and the clock.
 	 */
 	public function __construct(
 		private IConfig $config,
-		private IClientService $clientService,
+		private readonly GalleryIndexFetch $fetching,
 		private CustomTokenSetService $customSets,
-		private GalleryEntryValidator $entries,
-		private ITimeFactory $time,
-		private LoggerInterface $logger,
-		private IAppConfig $appConfig,
+		private readonly GalleryIndexCache $cache,
 	) {
 	}//end __construct()
 
@@ -262,7 +252,7 @@ class ThemeGalleryService {
 	private function validEntries(array $raw): array {
 		$entries = [];
 		foreach ($raw as $item) {
-			$entry = $this->entries->validate(raw: $item);
+			$entry = $this->fetching->entries->validate(raw: $item);
 			if ($entry !== null) {
 				$entries[] = $entry;
 			}
@@ -280,7 +270,7 @@ class ThemeGalleryService {
 	 * @return array<int, mixed>|null The entries, or null when the index cannot be read.
 	 */
 	private function readIndex(): ?array {
-		$now = $this->time->getTime();
+		$now = $this->cache->time->getTime();
 		$cache = $this->readCache();
 		if ($cache !== null && ($now - (int)($cache['fetchedAt'] ?? 0)) < self::CACHE_SECONDS) {
 			return $cache['entries'];
@@ -299,7 +289,7 @@ class ThemeGalleryService {
 
 		$decoded = json_decode($response['body'], true);
 		if ($response['status'] !== 200 || is_array($decoded) === false || is_array($decoded['entries'] ?? null) === false) {
-			$this->logger->info('thematiq gallery: the index answered {status} without an entries list', ['status' => $response['status']]);
+			$this->fetching->logger->info('thematiq gallery: the index answered {status} without an entries list', ['status' => $response['status']]);
 			return null;
 		}
 
@@ -320,7 +310,7 @@ class ThemeGalleryService {
 	 * @return array{url: string, fetchedAt: int, etag: string, entries: array<int, mixed>}|null The cache.
 	 */
 	private function readCache(): ?array {
-		$cache = json_decode($this->appConfig->getValueString(Application::APP_ID, self::CONFIG_CACHE, '', lazy: true), true);
+		$cache = json_decode($this->cache->appConfig->getValueString(Application::APP_ID, self::CONFIG_CACHE, '', lazy: true), true);
 		if (is_array($cache) === false || ($cache['url'] ?? null) !== $this->getIndexUrl() || is_array($cache['entries'] ?? null) === false) {
 			return null;
 		}
@@ -336,7 +326,7 @@ class ThemeGalleryService {
 	 * @return void
 	 */
 	private function writeCache(array $cache): void {
-		$this->appConfig->setValueString(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES), lazy: true);
+		$this->cache->appConfig->setValueString(Application::APP_ID, self::CONFIG_CACHE, (string)json_encode($cache, JSON_UNESCAPED_SLASHES), lazy: true);
 	}//end writeCache()
 
 	/**
@@ -354,18 +344,18 @@ class ThemeGalleryService {
 		}
 
 		try {
-			$response = $this->clientService->newClient()->get(
+			$response = $this->fetching->clientService->newClient()->get(
 				$this->getIndexUrl(),
 				['timeout' => self::TIMEOUT_SECONDS, 'headers' => $headers]
 			);
 		} catch (Throwable $e) {
-			$this->logger->info('thematiq gallery: the index could not be read: {message}', ['message' => $e->getMessage()]);
+			$this->fetching->logger->info('thematiq gallery: the index could not be read: {message}', ['message' => $e->getMessage()]);
 			return null;
 		}
 
 		$body = (string)$response->getBody();
 		if (strlen($body) > self::MAX_INDEX_BYTES) {
-			$this->logger->info('thematiq gallery: the index is larger than {max} bytes and was not read', ['max' => self::MAX_INDEX_BYTES]);
+			$this->fetching->logger->info('thematiq gallery: the index is larger than {max} bytes and was not read', ['max' => self::MAX_INDEX_BYTES]);
 			return null;
 		}
 

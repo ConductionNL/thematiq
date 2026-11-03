@@ -28,7 +28,10 @@ use OCA\Thematiq\Service\OpenProjectSetFileWriter;
 use OCA\Thematiq\Service\ShellCatalogueService;
 use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
 use OCA\Thematiq\Service\TokenSetFileLocation;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Settings\Admin;
@@ -65,12 +68,9 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 		$parser = new CssParserService();
 		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser);
 		$tokenSets = new TokenSetService(
-			appManager: $appManager,
-			config: $config,
-			logger: $this->createMock(originalClassName: LoggerInterface::class),
-			audit: $audit,
-			cacheFactory: $cache,
-			vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser)
+			setFiles: new TokenSetFiles(appManager: $appManager),
+			runtime: new TokenSetRuntime(config: $config, cacheFactory: $cache, logger: $this->createMock(originalClassName: LoggerInterface::class)),
+			audits: new TokenSetAudits(audit: $audit, vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser))
 		);
 		$writer = new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
 			declarations: $audit,

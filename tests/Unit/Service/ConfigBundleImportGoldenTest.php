@@ -24,7 +24,11 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\BundleExtraSections;
+use OCA\Thematiq\Service\ConfigBundleAppSettings;
+use OCA\Thematiq\Service\ConfigBundleBranding;
+use OCA\Thematiq\Service\ConfigBundleSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigBundleTokenSources;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
@@ -57,6 +61,10 @@ use Random\Randomizer;
  *
  * @covers \OCA\Thematiq\Service\ConfigBundleService
  * @covers \OCA\Thematiq\Service\CustomTokenSetsBundleSection
+ * @uses   \OCA\Thematiq\Service\ConfigBundleAppSettings
+ * @uses   \OCA\Thematiq\Service\ConfigBundleBranding
+ * @uses   \OCA\Thematiq\Service\ConfigBundleSections
+ * @uses   \OCA\Thematiq\Service\ConfigBundleTokenSources
  * @uses   \OCA\Thematiq\Service\Exception\FooterValidationException
  * @uses   \OCA\Thematiq\Service\LayoutOptionValues
  * @uses   \OCA\Thematiq\Service\LayoutOptionsService
@@ -387,25 +395,33 @@ class ConfigBundleImportGoldenTest extends TestCase {
 		$c = $collaborators;
 
 		return new ConfigBundleService(
-			config: $c['config'],
-			appManager: $c['appManager'],
-			tokenSetService: $c['tokenSets'],
-			overridesService: $c['overrides'],
-			customTokenSets: new CustomTokenSetsBundleSection(
-				customSets: $c['customSets'],
-				validator: $c['validator'],
-				cssParser: $c['cssParser'],
-				appManager: $c['appManager']
+			appSettings: new ConfigBundleAppSettings(
+				config: $c['config'],
+				appManager: $c['appManager'],
+				appThemingService: $c['appTheming'],
+				freshnessService: $c['freshness']
 			),
-			appThemingService: $c['appTheming'],
-			cssParser: $c['cssParser'],
-			emailThemingService: $c['email'],
-			fontService: $c['fonts'],
-			freshnessService: $c['freshness'],
-			scheduledSwitches: $c['switches'],
-			logger: $c['logger'],
-			extraSections: $c['extra'],
-			lifecycle: $c['lifecycle']
+			tokenSources: new ConfigBundleTokenSources(
+				tokenSetService: $c['tokenSets'],
+				overridesService: $c['overrides'],
+				scheduledSwitches: $c['switches'],
+				cssParser: $c['cssParser']
+			),
+			sections: new ConfigBundleSections(
+				customTokenSets: new CustomTokenSetsBundleSection(
+					customSets: $c['customSets'],
+					validator: $c['validator'],
+					cssParser: $c['cssParser'],
+					appManager: $c['appManager']
+				),
+				extraSections: $c['extra'],
+				lifecycle: $c['lifecycle']
+			),
+			branding: new ConfigBundleBranding(
+				emailThemingService: $c['email'],
+				fontService: $c['fonts'],
+				logger: $c['logger']
+			)
 		);
 	}//end construct()
 

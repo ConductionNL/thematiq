@@ -24,6 +24,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -51,6 +54,9 @@ use RuntimeException;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\CustomTokenSetController
+ * @uses   \OCA\Thematiq\Service\CustomSetRecords
+ * @uses   \OCA\Thematiq\Service\CustomSetSources
+ * @uses   \OCA\Thematiq\Service\CustomSetUploadPipeline
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  */
 class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
@@ -126,18 +132,24 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		$controller = new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $request,
-			service: $this->service(random: $random),
-			validator: new CustomTokenSetValidator(),
-			cssParser: $this->recorder(
-				class: CssParserService::class,
-				methods: ['parseRootBlock' => self::DECLARATIONS[max(0, $random->getInt(-6, 3))]]
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service(random: $random),
+				validator: new CustomTokenSetValidator(),
+				cssParser: $this->recorder(
+					class: CssParserService::class,
+					methods: ['parseRootBlock' => self::DECLARATIONS[max(0, $random->getInt(-6, 3))]]
+				),
+				converter: $this->converter(random: $random)
 			),
-			l: $this->l10n(),
-			auditService: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
-			config: $this->createMock(originalClassName: IConfig::class),
-			converter: $this->converter(random: $random),
-			themingService: $this->createMock(originalClassName: ThemingService::class),
-			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			records: new CustomSetRecords(
+				l: $this->l10n(),
+				auditService: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			)
 		);
 
 		$read = ['content' => '{"color":{}}', 'sourceName' => ['theme.json', null][$random->getInt(0, 1)]];

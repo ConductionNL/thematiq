@@ -17,6 +17,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
@@ -228,12 +231,18 @@ class TokenSetServiceSelectableTest extends TestCase {
 		$cacheFactory->method('createDistributed')->willReturn($cache);
 
 		return new TokenSetService(
-			appManager: $appManager,
-			config: $config,
-			logger: $this->createMock(originalClassName: LoggerInterface::class),
-			audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
-			cacheFactory: $cacheFactory,
-			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
+				vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
+			)
 		);
 	}//end service()
 

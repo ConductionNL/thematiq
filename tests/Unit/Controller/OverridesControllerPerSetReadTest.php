@@ -14,6 +14,8 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCP\IConfig;
@@ -63,11 +65,15 @@ class OverridesControllerPerSetReadTest extends TestCase {
 		$this->controller = new OverridesController(
 			appName: 'thematiq',
 			request: $this->request,
-			overridesService: $this->overrides,
-			cssParser: new CssParserService(),
-			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
-			config: $this->createMock(originalClassName: IConfig::class),
-			themingService: $this->createMock(originalClassName: ThemingService::class)
+			writes: new OverridesWrites(
+				overridesService: $this->overrides,
+				cssParser: new CssParserService(),
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			)
 		);
 	}//end setUp()
 

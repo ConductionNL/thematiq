@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -120,15 +123,21 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 		$this->controller = new CustomTokenSetController(
 			appName: 'nldesign',
 			request: $this->request,
-			service: $this->service,
-			validator: new CustomTokenSetValidator(),
-			cssParser: new CssParserService(),
-			l: $l,
-			auditService: $this->auditService,
-			config: $config,
-			converter: $converter,
-			themingService: $this->themingService,
-			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: $converter
+			),
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->auditService,
+				config: $config,
+				themingService: $this->themingService
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			)
 		);
 	}//end setUp()
 

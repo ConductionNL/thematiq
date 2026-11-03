@@ -19,6 +19,8 @@ use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\EnvironmentMarkerService;
 use OCA\Thematiq\Service\LoginCopyService;
 use OCA\Thematiq\Service\NotFoundCopyService;
+use OCA\Thematiq\Service\PageCopyServices;
+use OCA\Thematiq\Service\ThemeInjectionStyles;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -88,11 +90,13 @@ class ThemeInjectionListenerTest extends TestCase {
 		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->environmentMarker = $this->createMock(originalClassName: EnvironmentMarkerService::class);
 		$this->listener = new ThemeInjectionListener(
-			cssInjectionService: $this->cssInjectionService,
-			appThemingService: $this->appThemingService,
+			styles: new ThemeInjectionStyles(
+				cssInjectionService: $this->cssInjectionService,
+				appThemingService: $this->appThemingService,
+				environmentMarker: $this->environmentMarker
+			),
 			request: $this->request,
-			logger: $this->logger,
-			environmentMarker: $this->environmentMarker
+			logger: $this->logger
 		);
 
 		// No blanket `isThemingDisabledFor()` default here: PHPUnit's
@@ -371,12 +375,16 @@ class ThemeInjectionListenerTest extends TestCase {
 		$loginCopy->expects($this->exactly(count: $expected))->method('injectForLogin');
 		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
 		$listener = new ThemeInjectionListener(
-			cssInjectionService: $this->cssInjectionService,
-			appThemingService: $this->appThemingService,
+			styles: new ThemeInjectionStyles(
+				cssInjectionService: $this->cssInjectionService,
+				appThemingService: $this->appThemingService,
+				environmentMarker: $this->environmentMarker
+			),
 			request: $this->request,
 			logger: $this->logger,
-			environmentMarker: $this->environmentMarker,
-			loginCopy: $loginCopy
+			pageCopy: new PageCopyServices(
+				loginCopy: $loginCopy
+			)
 		);
 
 		$response = new TemplateResponse(
@@ -428,13 +436,17 @@ class ThemeInjectionListenerTest extends TestCase {
 		$notFound->expects($this->exactly(count: $expected))->method('inject');
 		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
 		$listener = new ThemeInjectionListener(
-			cssInjectionService: $this->cssInjectionService,
-			appThemingService: $this->appThemingService,
+			styles: new ThemeInjectionStyles(
+				cssInjectionService: $this->cssInjectionService,
+				appThemingService: $this->appThemingService,
+				environmentMarker: $this->environmentMarker
+			),
 			request: $this->request,
 			logger: $this->logger,
-			environmentMarker: $this->environmentMarker,
-			loginCopy: null,
-			notFoundCopy: $notFound
+			pageCopy: new PageCopyServices(
+				loginCopy: null,
+				notFoundCopy: $notFound
+			)
 		);
 
 		$listener->handle(new BeforeTemplateRenderedEvent(false, new TemplateResponse($app, $template, [], TemplateResponse::RENDER_AS_GUEST)));
