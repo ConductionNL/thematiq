@@ -1094,13 +1094,7 @@ class TokenSetConverterService {
 			$literal = $this->resolveValue(value: $value, chain: ['declarations' => $declarations, 'seen' => [$name => true], 'depth' => 0]);
 
 			if ($literal === null) {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => 'unresolved-var',
-					'value' => $value,
-				];
+				$report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', 'unresolved-var', $value]);
 				continue;
 			}
 
@@ -2321,11 +2315,7 @@ class TokenSetConverterService {
 		if ($ramp === []) {
 			// A theme with no neutral greys still needs a body text and a border
 			// colour: the table's default, not a missing token (thematiq#1006).
-			if (is_string($default) === false || $default === '') {
-				return null;
-			}
-
-			return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
+			return $this->rampDefault(default: $default);
 		}
 
 		$picked = $this->pickByCriterion(spec: $spec, ramp: $ramp, semantic: $semantic);
@@ -2333,12 +2323,23 @@ class TokenSetConverterService {
 			return ['value' => $picked, 'source' => '(brand ramp)', 'reason' => 'derived-from-brand'];
 		}
 
+		return $this->rampDefault(default: $default);
+	}//end pickFromRamp()
+
+	/**
+	 * The table's default for a ramp role, or null when it names none.
+	 *
+	 * @param mixed $default The rule's `default`.
+	 *
+	 * @return array{value: string, source: string, reason: string}|null
+	 */
+	private function rampDefault(mixed $default): ?array {
 		if (is_string($default) === false || $default === '') {
 			return null;
 		}
 
 		return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
-	}//end pickFromRamp()
+	}//end rampDefault()
 
 	/**
 	 * Every near-grey colour the theme declares (channels within 12 of each other).
@@ -2609,16 +2610,27 @@ class TokenSetConverterService {
 			return true;
 		}
 
-		$slug = $this->fonts->slugify(name: $first);
+		// The two families this app bundles itself.
+		return ($this->isUploadedFont(family: $first) === true || in_array(strtolower($first), ['marianne', 'inter'], true) === true);
+	}//end fontIsAvailable()
+
+	/**
+	 * Whether an administrator uploaded a font of this family, by id or by name.
+	 *
+	 * @param string $family The family name.
+	 *
+	 * @return bool
+	 */
+	private function isUploadedFont(string $family): bool {
+		$slug = $this->fonts->slugify(name: $family);
 		foreach ($this->fonts->list() as $font) {
-			if (($font['id'] ?? '') === $slug || strcasecmp((string)($font['name'] ?? ''), $first) === 0) {
+			if (($font['id'] ?? '') === $slug || strcasecmp((string)($font['name'] ?? ''), $family) === 0) {
 				return true;
 			}
 		}
 
-		// The two families this app bundles itself.
-		return in_array(strtolower($first), ['marianne', 'inter'], true);
-	}//end fontIsAvailable()
+		return false;
+	}//end isUploadedFont()
 
 	/**
 	 * Darken a hex colour by a fraction. Mirrors `darkenHex()` in
