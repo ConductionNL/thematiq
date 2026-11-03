@@ -69,7 +69,7 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 			fonts: $this->createMock(originalClassName: FontService::class),
 			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		))
-			->convert(content: $cut['content'], slug: 'voorbeeld-' . $key, displayName: 'Voorbeeld ' . $key, referenceOnlyPaths: $cut['referenceOnlyPaths']);
+			->convert(content: $cut['content'], slug: 'voorbeeld-' . $key, displayName: 'Voorbeeld ' . $key, options: ['referenceOnlyPaths' => $cut['referenceOnlyPaths']]);
 		$result['declarations'] = (new CssParserService())->parseRootBlock(css: (string)$result['css']);
 
 		return $result;

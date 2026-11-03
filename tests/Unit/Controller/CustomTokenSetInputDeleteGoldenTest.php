@@ -54,6 +54,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CustomSetRecords
  * @uses   \OCA\Thematiq\Service\CustomSetSources
  * @uses   \OCA\Thematiq\Service\CustomSetUploadPipeline
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class CustomTokenSetInputDeleteGoldenTest extends TestCase {
 
@@ -244,7 +245,8 @@ class CustomTokenSetInputDeleteGoldenTest extends TestCase {
 		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('convert')->willReturnCallback(
 			static function (...$arguments) use (&$calls): array {
-				$calls[] = ['convert', $arguments];
+				$options = array_values(array_replace(TokenSetConverterService::CONVERT_OPTIONS, $arguments[3]));
+				$calls[] = ['convert', array_merge(array_slice($arguments, 0, 3), $options)];
 				throw new RuntimeException('stopped after reading the input');
 			}
 		);

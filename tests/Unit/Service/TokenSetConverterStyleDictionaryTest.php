@@ -89,8 +89,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 			content: json_encode($document),
 			slug: 'voorbeeld',
 			displayName: 'Voorbeeld',
-			sourceName: 'tokens.json',
-			assetName: 'custom-voorbeeld'
+			options: ['sourceName' => 'tokens.json', 'assetName' => 'custom-voorbeeld']
 		);
 	}//end convert()
 

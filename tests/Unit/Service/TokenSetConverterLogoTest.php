@@ -98,8 +98,7 @@ class TokenSetConverterLogoTest extends TestCase {
 			content: $css,
 			slug: 'voorbeeld',
 			displayName: 'Voorbeeld',
-			sourceName: 'theme.css',
-			assetName: 'custom-voorbeeld'
+			options: ['sourceName' => 'theme.css', 'assetName' => 'custom-voorbeeld']
 		);
 	}//end convert()
 

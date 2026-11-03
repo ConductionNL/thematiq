@@ -362,11 +362,13 @@ class CustomTokenSetController extends Controller {
 			content: $upload['content'],
 			slug: $upload['slug'],
 			displayName: $upload['name'],
-			sourceName: $upload['sourceName'],
-			// An extracted logo lands under the SET's id, not the bare
-			// slug, so an uploaded theme named "Amsterdam" can never
-			// overwrite the shipped img/logos/amsterdam.svg.
-			assetName: CustomTokenSetService::ID_PREFIX . $upload['slug']
+			options: [
+				'sourceName' => $upload['sourceName'],
+				// An extracted logo lands under the SET's id, not the bare
+				// slug, so an uploaded theme named "Amsterdam" can never
+				// overwrite the shipped img/logos/amsterdam.svg.
+				'assetName' => CustomTokenSetService::ID_PREFIX . $upload['slug'],
+			]
 		);
 	}//end callConverter()
 

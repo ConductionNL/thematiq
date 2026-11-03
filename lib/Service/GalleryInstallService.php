@@ -354,8 +354,10 @@ class GalleryInstallService {
 				content: $content,
 				slug: $slug,
 				displayName: $name,
-				sourceName: basename((string)parse_url($fileUrl, PHP_URL_PATH)),
-				assetName: CustomTokenSetId::PREFIX . $slug
+				options: [
+					'sourceName' => basename((string)parse_url($fileUrl, PHP_URL_PATH)),
+					'assetName' => CustomTokenSetId::PREFIX . $slug,
+				]
 			);
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $this->refused(reason: $e->getMessage()), code: 422, previous: $e);

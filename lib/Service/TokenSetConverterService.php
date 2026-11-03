@@ -107,6 +107,11 @@ class TokenSetConverterService {
 	public const COMPONENT_PREFIXES = ['--utrecht-', '--ams-', '--denhaag-', '--conduction-'];
 
 	/**
+	 * The options convert() takes, at their defaults, in the order callers have always given them.
+	 */
+	public const CONVERT_OPTIONS = ['sourceName' => null, 'assetName' => null, 'referenceOnlyPaths' => [], 'repairContrast' => false];
+
+	/**
 	 * Role heads that mean "a raw design-token VALUE", not a component part.
 	 *
 	 * Everything else is a component token. Deliberately a short list of value
@@ -229,14 +234,18 @@ class TokenSetConverterService {
 	 * @param string $content The raw pasted or uploaded content.
 	 * @param string $slug The token set slug, which is also the brand prefix (`--{slug}-*`).
 	 * @param string $displayName The human-readable set name for the manifest entry.
-	 * @param string|null $sourceName Optional source label (file name or package) for the provenance block.
-	 * @param string|null $assetName Base name for an extracted logo, WITHOUT extension. Defaults to
-	 *                               the slug; the admin upload path passes `custom-{slug}` so an
-	 *                               uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
-	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
-	 *                                               emitted (a Tokens Studio `source` set of one brand).
-	 * @param bool $repairContrast Bring the converted pairs to WCAG AA (the nightly sync); off for an admin's upload,
-	 *                             which keeps its own colours and reports contrast warnings instead (thematiq#993).
+	 * @param array<string, mixed> $options Optional inputs, each at its CONVERT_OPTIONS default when left out:
+	 *                                      `sourceName`, a source label (file name or package) for the provenance block;
+	 *                                      `assetName`, the base name for an extracted logo, WITHOUT extension, by default
+	 *                                      the slug (the admin upload passes `custom-{slug}`, so an uploaded theme can
+	 *                                      never overwrite a shipped `img/logos/{slug}.svg`); `referenceOnlyPaths`, dotted
+	 *                                      token paths that resolve aliases but are not emitted (a Tokens Studio `source`
+	 *                                      set of one brand); `repairContrast`, bring the converted pairs to WCAG AA (the
+	 *                                      nightly sync), off for an admin's upload, which keeps its own colours and
+	 *                                      reports contrast warnings instead (thematiq#993).
+	 *
+	 * @phpstan-param array{sourceName?: string|null, assetName?: string|null, referenceOnlyPaths?: array<int, string>, repairContrast?: bool} $options
+	 * @psalm-param   array{sourceName?: string|null, assetName?: string|null, referenceOnlyPaths?: array<int, string>, repairContrast?: bool} $options
 	 *
 	 * @return array{
 	 *     css: string,
@@ -255,26 +264,21 @@ class TokenSetConverterService {
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$repairContrast` switches one optional stage of the pipeline on for the
-	 *   nightly sync; the upload path is the same pipeline without it, not a second responsibility.
 	 */
 	public function convert(
 		string $content,
 		string $slug,
 		string $displayName,
-		?string $sourceName = null,
-		?string $assetName = null,
-		array $referenceOnlyPaths = [],
-		bool $repairContrast = false,
+		array $options = [],
 	): array {
-		$this->referenceOnlyPaths = $referenceOnlyPaths;
+		$options = array_replace(self::CONVERT_OPTIONS, $options);
+		$this->referenceOnlyPaths = $options['referenceOnlyPaths'];
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
 		$run = new ConversionRun(slug: $slug, displayName: $displayName);
-		$run->sourceName = $sourceName;
-		$run->assetName = ($assetName ?? $slug);
-		$run->repairContrast = $repairContrast;
+		$run->sourceName = $options['sourceName'];
+		$run->assetName = ($options['assetName'] ?? $slug);
+		$run->repairContrast = $options['repairContrast'];
 
 		// Detect, parse, then the two outcomes that end early; after that the app's own layers are built.
 		$declarations = $this->readDeclarations(content: $content, run: $run);

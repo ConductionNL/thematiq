@@ -162,7 +162,17 @@ class TokenSetConverterGoldenTest extends TestCase {
 		);
 
 		try {
-			$result = $converter->convert(...$arguments);
+			$result = $converter->convert(
+				content: $arguments['content'],
+				slug: $arguments['slug'],
+				displayName: $arguments['displayName'],
+				options: [
+					'sourceName' => $arguments['sourceName'],
+					'assetName' => $arguments['assetName'],
+					'referenceOnlyPaths' => $arguments['referenceOnlyPaths'],
+					'repairContrast' => $arguments['repairContrast'],
+				]
+			);
 		} catch (RuntimeException $exception) {
 			$result = ['refused' => $exception->getMessage(), 'code' => $exception->getCode()];
 		}

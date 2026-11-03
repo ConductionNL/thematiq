@@ -92,7 +92,7 @@ class TokenSetConverterParityTest extends TestCase {
 			content: $content,
 			slug: $fixture['slug'],
 			displayName: $fixture['displayName'],
-			sourceName: $fixture['sourceName']
+			options: ['sourceName' => $fixture['sourceName']]
 		);
 	}//end convert()
 

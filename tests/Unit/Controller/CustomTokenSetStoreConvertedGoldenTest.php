@@ -253,8 +253,8 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 			function (...$arguments) use ($mode, $result): array {
 				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(
 					method: [TokenSetConverterService::class, 'convert'],
-					arguments: $arguments
-				);
+					arguments: array_slice($arguments, 0, 3)
+				) + array_replace(TokenSetConverterService::CONVERT_OPTIONS, $arguments[3]);
 				if ($mode === 0) {
 					throw new RuntimeException('not a theme', 413);
 				}

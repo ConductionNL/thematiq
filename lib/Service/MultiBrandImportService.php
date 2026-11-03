@@ -277,9 +277,7 @@ class MultiBrandImportService {
 				content: $cut['content'],
 				slug: $slug,
 				displayName: $displayName,
-				sourceName: $fileName,
-				assetName: CustomTokenSetId::PREFIX . $slug,
-				referenceOnlyPaths: $cut['referenceOnlyPaths']
+				options: ['sourceName' => $fileName, 'assetName' => CustomTokenSetId::PREFIX . $slug, 'referenceOnlyPaths' => $cut['referenceOnlyPaths']]
 			);
 		} catch (RuntimeException $e) {
 			throw new RuntimeException('Brand "' . $key . '": ' . $e->getMessage(), 422);

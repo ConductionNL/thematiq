@@ -148,8 +148,7 @@ class PackageTokenSourceConverter {
 				content: $source['content'],
 				slug: $this->slug(id: $source['id']),
 				displayName: $source['name'],
-				sourceName: $source['id'] . '.json',
-				assetName: $source['id']
+				options: ['sourceName' => $source['id'] . '.json', 'assetName' => $source['id']]
 			);
 		} catch (Throwable $e) {
 			return $e->getMessage();

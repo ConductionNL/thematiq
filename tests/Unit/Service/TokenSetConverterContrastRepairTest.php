@@ -94,7 +94,7 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 */
 	public function testMatchesTheJavaScriptConverter(string $name): void {
 		$case = self::fixture()[$name];
-		$result = $this->converter()->convert(content: $case['input'], slug: 'demo', displayName: 'Demo', repairContrast: true);
+		$result = $this->converter()->convert(content: $case['input'], slug: 'demo', displayName: 'Demo', options: ['repairContrast' => true]);
 
 		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)$result['css']);
 		preg_match_all('/(--[\w-]+)\s*:\s*([^;]+);/', $css, $matches, PREG_SET_ORDER);
