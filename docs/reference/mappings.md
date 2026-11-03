@@ -225,7 +225,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-main-text` | mapped | `--nldesign-color-text` | `#222222` | `#EBEBEB` | Main body text color |
-| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text |
+| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text; a set's --nldesign-color-error-text ink when it has one |
 | `--color-text-maxcontrast` | mapped | `--nldesign-color-text-muted` | `#6b6b6b` | `#999999` | Muted/secondary text |
 | `--color-text-maxcontrast-background-blur` | mapped |  | `#595959` | `#a8a8a8` | Blur-adjusted maxcontrast; Nextcloud calculates per background |
 | `--color-text-maxcontrast-default` | settable | `--nldesign-nc-color-text-maxcontrast-default` | `#6b6b6b` | `#999999` | Default maxcontrast; auto-calculated by Nextcloud per theme |
