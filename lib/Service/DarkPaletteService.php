@@ -64,7 +64,7 @@ class DarkPaletteService {
 	 * comment so a future algorithm change can force regeneration.
 	 *
 	 * Version 2 resolves `var()` aliases before deriving (see
-	 * {@see self::resolveAlias()}) and classifies text-class tokens by the
+	 * {@see self::resolveAlias(scope: ['declarations' => None, 'depth' => 0])}) and classifies text-class tokens by the
 	 * `-color` / `-background-color` convention the utrecht and municipal
 	 * families use, not only by the word "text".
 	 *
@@ -88,7 +88,7 @@ class DarkPaletteService {
 	 * against the page (thematiq#1021).
 	 *
 	 * Version 8 gives the error chip and button label a colour that reads on
-	 * the derived error fill (see {@see self::withErrorLabel()}, thematiq#1027).
+	 * the derived error fill (see {@see self::withErrorLabel(options: ['designSystemId' => None, 'protectedTokens' => None])}, thematiq#1027).
 	 *
 	 * Version 9 repairs the body text against the selected navigation entry's
 	 * wash, at rest and hovered (see {@see self::WASH_PATTERN}, thematiq#1051).
@@ -145,7 +145,7 @@ class DarkPaletteService {
 	 * Inverting a light value's lightness only lands dark when the light value
 	 * was light. A set without its own `--nldesign-color-background` takes the
 	 * manifest's theming `background_color` instead (see
-	 * {@see self::resolveLightDeclarations()}), which is Nextcloud's header and
+	 * {@see self::resolveLightDeclarations(set: ['appPath' => None, 'setId' => None])}), which is Nextcloud's header and
 	 * login colour and often a mid-tone: vng's #0277BD inverted to #42b1f3, a
 	 * bright page in dark mode (thematiq#952). Nextcloud's own dark page has
 	 * luminance 0.009; 0.05 leaves every tinted dark page a set already ships
@@ -767,15 +767,15 @@ class DarkPaletteService {
 	 * resolution {@see ShippedTokenSetAuditService::resolveDeclarations()}
 	 * (and the preview service) already use.
 	 *
-	 * @param string $appPath The app root path.
-	 * @param string $setId The token set id.
+	 * @param array<string, mixed> $set The app's install path and the token set id.
 	 * @param array<string, mixed> $theming The set's theming metadata (for the background fallback).
 	 *
 	 * @return array<string, string> The merged declarations.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function resolveLightDeclarations(string $appPath, string $setId, array $theming = []): array {
+	private function resolveLightDeclarations(array $set, array $theming = []): array {
+		['appPath' => $appPath, 'setId' => $setId] = $set;
 		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
 		$tokenCss = $this->readTokenCss(setId: $setId);
@@ -836,7 +836,7 @@ class DarkPaletteService {
 			// is that a runtime override of the TARGET token no longer
 			// propagates through this alias in dark mode; the alternative is a
 			// dark mode that only ever half-applies.
-			$literal = $this->resolveAlias(value: $value, declarations: $lightDeclarations);
+			$literal = $this->resolveAlias(value: $value, scope: ['declarations' => $lightDeclarations, 'depth' => 0]);
 			$darkValue = $this->deriveDarkValue(token: $token, lightValue: $literal, context: $lightDeclarations);
 			if ($darkValue === null) {
 				// Unparseable (gradient, keyword, size, font stack, url(), an
@@ -867,7 +867,7 @@ class DarkPaletteService {
 				continue;
 			}
 
-			$literal = $this->resolveAlias(value: $lightDeclarations[$surface], declarations: $lightDeclarations);
+			$literal = $this->resolveAlias(value: $lightDeclarations[$surface], scope: ['declarations' => $lightDeclarations, 'depth' => 0]);
 			$rgb = $this->contrast->parseColor(value: $literal);
 			if ($rgb !== null && $this->luminanceOf(rgb: $rgb) <= self::PAGE_BACKGROUND_MAX_LUMINANCE) {
 				$bands[] = $band;
@@ -920,7 +920,7 @@ class DarkPaletteService {
 			return null;
 		}
 
-		return $this->deriveColorToken(token: $token, rgb: [$rgba[0], $rgba[1], $rgba[2]], lightDeclarations: $context)
+		return $this->deriveColorToken(token: $token, light: ['rgb' => [$rgba[0], $rgba[1], $rgba[2]], 'lightDeclarations' => $context])
 			. $this->alphaSuffix(alpha: $rgba[3]);
 	}//end deriveDarkValue()
 
@@ -937,14 +937,14 @@ class DarkPaletteService {
 	 * set, which mirrors what the browser does with it.
 	 *
 	 * @param string $value The declaration's raw value.
-	 * @param array<string, string> $declarations The full light declaration map.
-	 * @param int $depth The current hop count (internal).
+	 * @param array<string, mixed> $scope The declarations to look in and the recursion depth.
 	 *
 	 * @return string The resolved literal, or the input when it does not resolve.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function resolveAlias(string $value, array $declarations, int $depth = 0): string {
+	private function resolveAlias(string $value, array $scope): string {
+		['declarations' => $declarations, 'depth' => $depth] = $scope;
 		if ($depth >= self::MAX_ALIAS_DEPTH) {
 			return $value;
 		}
@@ -956,7 +956,7 @@ class DarkPaletteService {
 
 		$target = $matches[1];
 		if (isset($declarations[$target]) === true) {
-			return $this->resolveAlias(value: $declarations[$target], declarations: $declarations, depth: ($depth + 1));
+			return $this->resolveAlias(value: $declarations[$target], scope: ['declarations' => $declarations, 'depth' => ($depth + 1)]);
 		}
 
 		$fallback = ($matches[2] ?? '');
@@ -964,21 +964,21 @@ class DarkPaletteService {
 			return $value;
 		}
 
-		return $this->resolveAlias(value: $fallback, declarations: $declarations, depth: ($depth + 1));
+		return $this->resolveAlias(value: $fallback, scope: ['declarations' => $declarations, 'depth' => ($depth + 1)]);
 	}//end resolveAlias()
 
 	/**
 	 * Derive one color token's dark value.
 	 *
 	 * @param string $token The token name.
-	 * @param array{0:int,1:int,2:int} $rgb The token's light RGB value.
-	 * @param array<string, string> $lightDeclarations The full light declaration map (for the brand-primary exception).
+	 * @param array<string, mixed> $light The light colour and the light declarations.
 	 *
 	 * @return string The derived dark hex value.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function deriveColorToken(string $token, array $rgb, array $lightDeclarations): string {
+	private function deriveColorToken(string $token, array $light): string {
+		['rgb' => $rgb, 'lightDeclarations' => $lightDeclarations] = $light;
 		if ($this->keepsLightValue(token: $token, lightDeclarations: $lightDeclarations) === true) {
 			return $this->rgbToHex(rgb: $rgb);
 		}
@@ -1074,7 +1074,7 @@ class DarkPaletteService {
 
 		$lightDeclarations['--nldesign-color-action-text'] = $this->resolveAlias(
 			value: $lightDeclarations['--nldesign-color-primary-text'],
-			declarations: $lightDeclarations
+			scope: ['declarations' => $lightDeclarations, 'depth' => 0]
 		);
 
 		return $lightDeclarations;
@@ -1100,8 +1100,8 @@ class DarkPaletteService {
 		}
 
 		$ratio = $this->contrast->measure(
-			foreground: $this->resolveAlias(value: $foreground, declarations: $lightDeclarations),
-			background: $this->resolveAlias(value: $background, declarations: $lightDeclarations)
+			foreground: $this->resolveAlias(value: $foreground, scope: ['declarations' => $lightDeclarations, 'depth' => 0]),
+			background: $this->resolveAlias(value: $background, scope: ['declarations' => $lightDeclarations, 'depth' => 0])
 		);
 
 		return ($ratio !== null && $ratio >= 4.5);
@@ -1367,8 +1367,7 @@ class DarkPaletteService {
 		}
 
 		$declarations[$fgName] = $this->repairForeground(
-			fgValue: $declarations[$fgName],
-			bgValue: $bgValue,
+			pair: ['fgValue' => $declarations[$fgName], 'bgValue' => $bgValue],
 			threshold: $warning['threshold']
 		);
 
@@ -1447,7 +1446,7 @@ class DarkPaletteService {
 				continue;
 			}
 
-			if ($this->isTransparent(value: $this->resolveAlias(value: $light[$fill], declarations: $light)) === true) {
+			if ($this->isTransparent(value: $this->resolveAlias(value: $light[$fill], scope: ['declarations' => $light, 'depth' => 0])) === true) {
 				$fills[] = $fill;
 			}
 		}
@@ -1469,7 +1468,7 @@ class DarkPaletteService {
 	private function pairBackground(array $declarations, string $token): ?string {
 		$wash = [];
 		if (preg_match(self::WASH_PATTERN, $token, $wash) === 1) {
-			return $this->washOver(declarations: $declarations, token: $wash[1], percent: (int)$wash[2]);
+			return $this->washOver(declarations: $declarations, wash: ['token' => $wash[1], 'percent' => (int)$wash[2]]);
 		}
 
 		return $this->declaredBackground(declarations: $declarations, token: $token);
@@ -1514,14 +1513,14 @@ class DarkPaletteService {
 	 * The colour a share of a token paints over Nextcloud's dark navigation.
 	 *
 	 * @param array<string, string> $declarations The dark declarations.
-	 * @param string $token The washed token.
-	 * @param int $percent Its share, 0 to 100.
+	 * @param array<string, mixed> $wash The washed token and its share in percent.
 	 *
 	 * @return string|null The composited hex, or null when the token is absent or not a colour.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function washOver(array $declarations, string $token, int $percent): ?string {
+	private function washOver(array $declarations, array $wash): ?string {
+		['token' => $token, 'percent' => $percent] = $wash;
 		$value = ($declarations[$token] ?? null);
 		if ($value === null) {
 			return null;
@@ -1577,15 +1576,15 @@ class DarkPaletteService {
 	 * search passes, snap to whichever of near-white/near-black yields the
 	 * higher ratio and log a warning naming the pair and the snap.
 	 *
-	 * @param string $fgValue The current foreground value.
-	 * @param string $bgValue The background value (never modified here).
+	 * @param array<string, mixed> $pair The foreground and background value.
 	 * @param float $threshold The AA threshold this pair must reach.
 	 *
 	 * @return string The repaired (or snapped) foreground hex value.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function repairForeground(string $fgValue, string $bgValue, float $threshold): string {
+	private function repairForeground(array $pair, float $threshold): string {
+		['fgValue' => $fgValue, 'bgValue' => $bgValue] = $pair;
 		$fgRgb = $this->contrast->parseColor(value: $fgValue);
 		$bgRgb = $this->contrast->parseColor(value: $bgValue);
 		if ($fgRgb === null || $bgRgb === null) {
@@ -1609,7 +1608,7 @@ class DarkPaletteService {
 			return $this->rgbToHex(rgb: $this->hslToRgb(hue: $hue, saturation: $saturation, lightness: $candidateL));
 		}
 
-		return $this->snapForeground(bgRgb: $bgRgb, threshold: $threshold, originalFg: $fgValue);
+		return $this->snapForeground(bgRgb: $bgRgb, target: ['threshold' => $threshold, 'originalFg' => $fgValue]);
 	}//end repairForeground()
 
 	/**
@@ -1644,14 +1643,14 @@ class DarkPaletteService {
 	 * comes closest to passing) against the background, logging a warning.
 	 *
 	 * @param array{0:int,1:int,2:int} $bgRgb The background RGB.
-	 * @param float $threshold The AA threshold.
-	 * @param string $originalFg The original (failing) foreground value, for the log message.
+	 * @param array<string, mixed> $target The ratio to clear and the original foreground.
 	 *
 	 * @return string The snapped hex value.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function snapForeground(array $bgRgb, float $threshold, string $originalFg): string {
+	private function snapForeground(array $bgRgb, array $target): string {
+		['threshold' => $threshold, 'originalFg' => $originalFg] = $target;
 		$whiteRgb = ($this->contrast->parseColor(value: self::NEAR_WHITE) ?? [235, 235, 235]);
 		$blackRgb = ($this->contrast->parseColor(value: self::NEAR_BLACK) ?? [17, 17, 17]);
 
@@ -1765,7 +1764,7 @@ class DarkPaletteService {
 			return null;
 		}
 
-		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
+		$light = $this->resolveLightDeclarations(set: ['appPath' => $appPath, 'setId' => $setId], theming: $meta['theming']);
 		$run = ['meta' => $meta, 'light' => $light, 'derived' => $this->deriveDarkDeclarations(lightDeclarations: $light)];
 		// The dark values an uploaded file brought (dark-colours-from-a-file) win over the derived
 		// ones and are protected from repair, like a hand-authored dark block; the block wins over them.
@@ -1793,8 +1792,7 @@ class DarkPaletteService {
 	private function mergedDarkPalette(array $run): array {
 		$merged = $this->withErrorLabel(
 			declarations: array_merge($run['derived'], $run['overrides']),
-			designSystemId: $run['meta']['design_system'],
-			protectedTokens: array_keys($run['overrides'])
+			options: ['designSystemId' => $run['meta']['design_system'], 'protectedTokens' => array_keys($run['overrides'])]
 		);
 
 		$logoDark = ($run['meta']['theming']['logo_dark'] ?? null);
@@ -1831,8 +1829,7 @@ class DarkPaletteService {
 		// checked again against the fill that ships.
 		$repaired['declarations'] = $this->withErrorLabel(
 			declarations: $repaired['declarations'],
-			designSystemId: $run['meta']['design_system'],
-			protectedTokens: array_keys($run['overrides'])
+			options: ['designSystemId' => $run['meta']['design_system'], 'protectedTokens' => array_keys($run['overrides'])]
 		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
@@ -1857,14 +1854,14 @@ class DarkPaletteService {
 	 * authors in its own dark block is never rewritten.
 	 *
 	 * @param array<string, string> $declarations The dark declarations so far.
-	 * @param string $designSystemId The design system the set wears (decides the fill token).
-	 * @param array<int, string> $protectedTokens Tokens the set authored in its dark block.
+	 * @param array<string, mixed> $options The design system and the tokens that stay as they are.
 	 *
 	 * @return array<string, string> The declarations, with a readable error label where one was owed.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function withErrorLabel(array $declarations, string $designSystemId, array $protectedTokens): array {
+	private function withErrorLabel(array $declarations, array $options): array {
+		['designSystemId' => $designSystemId, 'protectedTokens' => $protectedTokens] = $options;
 		$fill = ($declarations[(self::ERROR_FILL_TOKENS[$designSystemId] ?? '')] ?? null);
 		if ($fill === null || in_array(self::ERROR_LABEL, $protectedTokens, true) === true) {
 			return $declarations;

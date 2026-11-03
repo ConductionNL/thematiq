@@ -109,13 +109,13 @@ class MultiBrandImportService {
 				throw new RuntimeException('The brand "' . $detected[$key]['name'] . '" would replace the existing set ' . $id . '.', 409);
 			}
 
-			$converted = $this->convertBrand(content: $content, key: $key, displayName: $displayName, fileName: $fileName);
+			$converted = $this->convertBrand(content: $content, brand: ['key' => $key, 'displayName' => $displayName, 'fileName' => $fileName]);
 			$plans[$key] = ['displayName' => $displayName, 'id' => $id] + $converted;
 		}
 
 		$sets = [];
 		foreach ($plans as $key => $plan) {
-			$sets[] = $this->storeBrand(sourceId: $sourceId, key: $key, plan: $plan, fileName: $fileName);
+			$sets[] = $this->storeBrand(origin: ['sourceId' => $sourceId, 'key' => $key, 'fileName' => $fileName], plan: $plan);
 		}
 
 		$records = $this->records();
@@ -181,7 +181,10 @@ class MultiBrandImportService {
 		$plans = [];
 		foreach ($present as $key => $id) {
 			$manifest = ($this->storage->customSets->getManifest()[$id] ?? ['name' => $id]);
-			$converted = $this->convertBrand(content: $content, key: (string)$key, displayName: (string)$manifest['name'], fileName: $fileName);
+			$converted = $this->convertBrand(
+				content: $content,
+				brand: ['key' => (string)$key, 'displayName' => (string)$manifest['name'], 'fileName' => $fileName]
+			);
 			$plans[$key] = ['id' => $id, 'entry' => $manifest] + $converted;
 		}
 
@@ -261,15 +264,14 @@ class MultiBrandImportService {
 	 * Convert and validate one brand, writing nothing.
 	 *
 	 * @param string $content The source.
-	 * @param string $key The brand.
-	 * @param string $displayName The set name the brand gets.
-	 * @param string|null $fileName The uploaded file's name.
+	 * @param array<string, mixed> $brand The brand key, the set's display name and the uploaded file's name.
 	 *
 	 * @return array{css: string, accepted: array<string, string>, theming: array<string, mixed>, inputKind: string, imported: int}
 	 *
 	 * @throws RuntimeException 422 naming the brand.
 	 */
-	private function convertBrand(string $content, string $key, string $displayName, ?string $fileName): array {
+	private function convertBrand(string $content, array $brand): array {
+		['key' => $key, 'displayName' => $displayName, 'fileName' => $fileName] = $brand;
 		$slug = $this->storage->customSets->slugify(name: $displayName);
 		$cut = $this->conversion->source->cut(content: $content, key: $key);
 		try {
@@ -302,14 +304,13 @@ class MultiBrandImportService {
 	/**
 	 * Store one converted brand, link it to its source, and audit it.
 	 *
-	 * @param string $sourceId The source id.
-	 * @param string $key The brand key.
+	 * @param array<string, mixed> $origin The source id, the brand key and the uploaded file's name.
 	 * @param array<string, mixed> $plan The converted brand.
-	 * @param string|null $fileName The uploaded file's name.
 	 *
 	 * @return array<string, mixed> The brand key, the set id and the warnings.
 	 */
-	private function storeBrand(string $sourceId, string $key, array $plan, ?string $fileName): array {
+	private function storeBrand(array $origin, array $plan): array {
+		['sourceId' => $sourceId, 'key' => $key, 'fileName' => $fileName] = $origin;
 		$result = $this->storage->customSets->store(
 			set: new NewCustomTokenSet(
 				fields: [

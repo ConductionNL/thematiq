@@ -181,15 +181,13 @@ class ComplianceReportService {
 		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
 		foreach (self::PAIR_MATRIX as $pairDef) {
-			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $tokenSetMeta);
+			$pairs[] = $this->evaluatePair(pairDef: $pairDef, scope: ['layers' => $layers, 'tokenSetMeta' => $tokenSetMeta]);
 		}
 
 		return [
 			'scope' => self::SCOPE_STATEMENT,
 			'metadata' => $this->buildMetadata(
-				tokenSetId: $activeTokenSetId,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId,
+				set: ['tokenSetId' => $activeTokenSetId, 'tokenSetMeta' => $tokenSetMeta, 'designSystemId' => $designSystemId],
 				customOverrides: $customOverrides
 			),
 			'pairs' => $pairs,
@@ -377,15 +375,14 @@ class ComplianceReportService {
 	 * Evaluate a single pair-matrix entry into its full report row.
 	 *
 	 * @param array{fg: string, bg: string, threshold: float, basis: string} $pairDef The matrix entry.
-	 * @param ColourLayers $layers The custom-overrides layer, the --color-* => --nldesign-* mapping, the layered
-	 *                             --nldesign-* declarations and the active design system id.
-	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
+	 * @param array<string, mixed> $scope The declaration layers and the token set's metadata.
 	 *
 	 * @return array<string, mixed> The evaluated pair row.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function evaluatePair(array $pairDef, array $layers, array $tokenSetMeta): array {
+	private function evaluatePair(array $pairDef, array $scope): array {
+		['layers' => $layers, 'tokenSetMeta' => $tokenSetMeta] = $scope;
 		$fgResolved = $this->resolveColorToken(token: $pairDef['fg'], layers: $layers);
 		$bgResolved = $this->resolveBackground(token: $pairDef['bg'], context: ['layers' => $layers, 'tokenSetMeta' => $tokenSetMeta]);
 		$fgColor = $this->parsedColor(resolved: $fgResolved);
@@ -416,8 +413,7 @@ class ComplianceReportService {
 		$resolved = $this->resolveColorToken(token: $token, layers: $context['layers']);
 		if ($token === self::MAIN_BACKGROUND_TOKEN) {
 			$resolved = $this->resolveMainBackground(
-				customOverrides: $context['layers']['customOverrides'],
-				declarations: $context['layers']['declarations'],
+				layers: ['customOverrides' => $context['layers']['customOverrides'], 'declarations' => $context['layers']['declarations']],
 				tokenSetMeta: $context['tokenSetMeta']
 			);
 		}
@@ -509,7 +505,7 @@ class ComplianceReportService {
 			];
 		}
 
-		return $this->resolveVarChain(value: $layers['mapping'][$token], declarations: $layers['declarations']);
+		return $this->resolveVarChain(value: $layers['mapping'][$token], scope: ['declarations' => $layers['declarations'], 'depth' => 0]);
 	}//end resolveColorToken()
 
 	/**
@@ -518,21 +514,24 @@ class ComplianceReportService {
 	 * --nldesign-color-background, else the set's theming.background_color,
 	 * else #ffffff (last resort — this path never leaves the pair unevaluated).
 	 *
-	 * @param array<string, string> $customOverrides The custom-overrides layer.
-	 * @param array<string, string> $declarations The layered --nldesign-* declarations.
+	 * @param array<string, mixed> $layers The custom overrides and the declarations.
 	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
 	 *
 	 * @return array{value: string|null, unresolved: string|null} The resolution result.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function resolveMainBackground(array $customOverrides, array $declarations, array $tokenSetMeta): array {
+	private function resolveMainBackground(array $layers, array $tokenSetMeta): array {
+		['customOverrides' => $customOverrides, 'declarations' => $declarations] = $layers;
 		if (array_key_exists(self::MAIN_BACKGROUND_TOKEN, $customOverrides) === true) {
 			return ['value' => $customOverrides[self::MAIN_BACKGROUND_TOKEN], 'unresolved' => null];
 		}
 
 		if (array_key_exists('--nldesign-color-background', $declarations) === true) {
-			return $this->resolveVarChain(value: $declarations['--nldesign-color-background'], declarations: $declarations);
+			return $this->resolveVarChain(
+				value: $declarations['--nldesign-color-background'],
+				scope: ['declarations' => $declarations, 'depth' => 0]
+			);
 		}
 
 		$theming = ($tokenSetMeta['theming'] ?? []);
@@ -548,14 +547,14 @@ class ComplianceReportService {
 	 * Resolve a value transitively through var(--token) indirections.
 	 *
 	 * @param string $value The raw value (may be a var() reference).
-	 * @param array<string, string> $declarations The declaration map to resolve against.
-	 * @param int $depth The current recursion depth (internal).
+	 * @param array<string, mixed> $scope The declarations to look in and the recursion depth.
 	 *
 	 * @return array{value: string|null, unresolved: string|null} The resolved literal, or the unresolved token name.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function resolveVarChain(string $value, array $declarations, int $depth = 0): array {
+	private function resolveVarChain(string $value, array $scope): array {
+		['declarations' => $declarations, 'depth' => $depth] = $scope;
 		$trimmed = trim($value);
 
 		if (preg_match('/^var\(\s*(--[\w-]+)\s*\)$/', $trimmed, $matches) !== 1) {
@@ -570,7 +569,7 @@ class ComplianceReportService {
 			return ['value' => null, 'unresolved' => $reference];
 		}
 
-		return $this->resolveVarChain(value: $declarations[$reference], declarations: $declarations, depth: ($depth + 1));
+		return $this->resolveVarChain(value: $declarations[$reference], scope: ['declarations' => $declarations, 'depth' => ($depth + 1)]);
 	}//end resolveVarChain()
 
 	/**
@@ -667,16 +666,15 @@ class ComplianceReportService {
 	/**
 	 * Assemble the report metadata block (identical shape for both formats).
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
+	 * @param array<string, mixed> $set The token set id, its metadata and its design system.
 	 * @param array<string, string> $customOverrides The custom-overrides layer.
 	 *
 	 * @return array<string, mixed> The metadata block.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function buildMetadata(string $tokenSetId, array $tokenSetMeta, string $designSystemId, array $customOverrides): array {
+	private function buildMetadata(array $set, array $customOverrides): array {
+		['tokenSetId' => $tokenSetId, 'tokenSetMeta' => $tokenSetMeta, 'designSystemId' => $designSystemId] = $set;
 		return [
 			'instanceId' => $this->instance->config->getSystemValue('instanceid', ''),
 			'instanceUrl' => $this->instance->urlGenerator->getBaseUrl(),
