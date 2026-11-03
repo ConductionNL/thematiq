@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\HintException;
@@ -84,6 +85,116 @@ class EmailThemingServiceTest extends TestCase {
 			urlGenerator: $this->urlGenerator
 		);
 	}//end setUp()
+
+	/**
+	 * The service with the given stored logo path on the active set, over a file locator that has the given files.
+	 *
+	 * @param mixed $logo The stored `theming.logo`.
+	 * @param array<string, string> $files File name => bytes.
+	 *
+	 * @return EmailThemingService
+	 */
+	private function serviceWithLogo(mixed $logo, array $files): EmailThemingService {
+		$this->config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, string $default = ''): string => (['token_set' => 'custom-a'][$key] ?? $default)
+		);
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => $logo]]]);
+		$locator = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$locator->method('read')->willReturnCallback(static fn (string $name): ?string => ($files[$name] ?? null));
+		$locator->method('contentType')->willReturn('image/svg+xml');
+
+		return new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+	}//end serviceWithLogo()
+
+	/**
+	 * The active set's logo is read as bytes and a type.
+	 *
+	 * @return void
+	 */
+	public function testActiveLogoIsReadForEmbedding(): void {
+		$service = $this->serviceWithLogo(logo: 'img/logos/custom-a.svg', files: ['img/logos/custom-a.svg' => '<svg/>']);
+
+		$this->assertSame(expected: ['content' => '<svg/>', 'mimeType' => 'image/svg+xml'], actual: $service->getActiveEmailLogoImage());
+	}//end testActiveLogoIsReadForEmbedding()
+
+	/**
+	 * Only an image under img/ is read, whatever the stored path says.
+	 *
+	 * @param mixed $logo The stored path.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider refusedLogoPaths
+	 */
+	public function testAStoredPathOutsideTheImagesIsNotRead(mixed $logo): void {
+		$files = [
+			'config/img/a.svg' => 'secret',
+			'config/config.php' => 'secret',
+			'img/../config/config.svg' => 'secret',
+			'img/a.php' => 'x',
+			'/etc/passwd.svg' => 'secret',
+		];
+		$service = $this->serviceWithLogo(logo: $logo, files: $files);
+
+		$this->assertNull(actual: $service->getActiveEmailLogoImage());
+	}//end testAStoredPathOutsideTheImagesIsNotRead()
+
+	/**
+	 * Stored paths that must not be read.
+	 *
+	 * @return array<string, array{0: mixed}>
+	 */
+	public static function refusedLogoPaths(): array {
+		return [
+			'outside img' => ['config/config.php'],
+			'img further down' => ['config/img/a.svg'],
+			'traversal' => ['img/../config/config.svg'],
+			'not an image' => ['img/a.php'],
+			'absolute' => ['/etc/passwd.svg'],
+			'not a string' => [['img/a.svg']],
+			'missing file' => ['img/logos/none.svg'],
+			'no logo' => [null],
+		];
+	}//end refusedLogoPaths()
+
+	/**
+	 * The stock theme embeds no set's logo, even when a set carries its id.
+	 *
+	 * @return void
+	 */
+	public function testTheStockThemeHasNoEmbeddedLogo(): void {
+		$locator = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$locator->expects($this->never())->method('read');
+		$this->config->method('getAppValue')->willReturn('nextcloud');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'nextcloud', 'theming' => ['logo' => 'img/a.svg']]]);
+		$service = new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+
+		$this->assertNull(actual: $service->getActiveEmailLogoImage());
+	}//end testTheStockThemeHasNoEmbeddedLogo()
+
+	/**
+	 * Without a file locator nothing is read.
+	 *
+	 * @return void
+	 */
+	public function testNoLocatorMeansNoEmbeddedLogo(): void {
+		$this->config->method('getAppValue')->willReturn('custom-a');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => 'img/logos/custom-a.svg']]]);
+
+		$this->assertNull(actual: $this->service->getActiveEmailLogoImage());
+	}//end testNoLocatorMeansNoEmbeddedLogo()
 
 	/**
 	 * Enabling with a writable config.php and nothing configured writes the

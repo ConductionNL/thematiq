@@ -105,6 +105,13 @@ class EmailThemingService {
 	private const MAX_FOOTER_VALUE_LENGTH = 2048;
 
 	/**
+	 * A logo path a mail may embed: an image file under `img/`, with no `..` segment.
+	 *
+	 * @var string
+	 */
+	private const INLINE_LOGO_PATH = '#^img/(?!.*\.\.)[A-Za-z0-9._/-]+\.(?:svg|png|jpe?g|gif|webp)$#';
+
+	/**
 	 * The application configuration service.
 	 *
 	 * @var IConfig
@@ -267,18 +274,9 @@ class EmailThemingService {
 	 */
 	public function getActiveEmailTheme(): ?array {
 		$tokenSetId = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		if ($tokenSetId === '' || $tokenSetId === 'nextcloud') {
+		$theming = $this->activeTheming(tokenSetId: $tokenSetId);
+		if ($theming === null) {
 			return null;
-		}
-
-		$entry = $this->findTokenSetEntry(tokenSetId: $tokenSetId);
-		if ($entry === null) {
-			return null;
-		}
-
-		$theming = [];
-		if (is_array($entry['theming'] ?? null) === true) {
-			$theming = $entry['theming'];
 		}
 
 		$colors = $this->resolveThemeColors(theming: $theming, tokenSetId: $tokenSetId);
@@ -292,6 +290,51 @@ class EmailThemingService {
 			'logoUrl' => $this->resolveLogoUrl(logoPath: ($theming['logo'] ?? null)),
 		];
 	}//end getActiveEmailTheme()
+
+	/**
+	 * The theming block of a token set.
+	 *
+	 * @param string $tokenSetId The active token set id.
+	 *
+	 * @return array<string, mixed>|null The block, or null for the stock theme or an unknown set.
+	 */
+	private function activeTheming(string $tokenSetId): ?array {
+		if ($tokenSetId === '' || $tokenSetId === 'nextcloud') {
+			return null;
+		}
+
+		$entry = $this->findTokenSetEntry(tokenSetId: $tokenSetId);
+		if ($entry === null) {
+			return null;
+		}
+
+		return (array)($entry['theming'] ?? []);
+	}//end activeTheming()
+
+	/**
+	 * The bytes of the active token set's logo, to embed in a mail.
+	 *
+	 * Only an image under `img/` is read: the path comes from a stored manifest and what is
+	 * read here leaves the server in a mail.
+	 *
+	 * @return array{content: string, mimeType: string}|null The image, or null when it stays linked.
+	 *
+	 * @spec openspec/specs/email-theming/spec.md
+	 */
+	public function getActiveEmailLogoImage(): ?array {
+		$theming = $this->activeTheming(tokenSetId: $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'));
+		$logo = ($theming['logo'] ?? null);
+		if ($this->files === null || is_string($logo) === false || preg_match(self::INLINE_LOGO_PATH, $logo) !== 1) {
+			return null;
+		}
+
+		$content = $this->files->read(name: $logo);
+		if ($content === null) {
+			return null;
+		}
+
+		return ['content' => $content, 'mimeType' => $this->files->contentType(name: $logo)];
+	}//end getActiveEmailLogoImage()
 
 	/**
 	 * Resolve the primary color / primary text color for a token set,

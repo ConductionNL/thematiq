@@ -47,6 +47,20 @@ use OCA\Thematiq\Service\EmailThemingService;
  */
 class NLDesignEMailTemplate extends EMailTemplate {
 	/**
+	 * The logo URL a branded header used; empty when the header is the parent's.
+	 *
+	 * @var string
+	 */
+	private string $headerLogoUrl = '';
+
+	/**
+	 * Whether that logo is the token set's own rather than the instance's.
+	 *
+	 * @var bool
+	 */
+	private bool $headerLogoIsOwn = false;
+
+	/**
 	 * Lazily resolve the email theming service.
 	 *
 	 * Returns null on ANY failure so callers fall back to stock rendering.
@@ -163,28 +177,82 @@ class NLDesignEMailTemplate extends EMailTemplate {
 
 		$this->headerAdded = true;
 
-		$logoSizeDimensions = '';
-		if ($this->logoWidth !== null && $this->logoHeight !== null) {
-			// Provide a logo size when we have the dimensions so it displays
-			// nicely in Outlook — mirrors the parent's behaviour exactly.
-			$logoSizeDimensions = ' width="' . $this->logoWidth . '" height="' . $this->logoHeight . '"';
-		}
-
-		$logoUrl = $theme['logoUrl'] ?? null;
-		if ($logoUrl === null || $logoUrl === '') {
+		$logoUrl = (string)($theme['logoUrl'] ?? '');
+		$this->headerLogoIsOwn = ($logoUrl !== '');
+		if ($logoUrl === '') {
 			$logoUrl = $this->urlGenerator->getAbsoluteURL($this->themingDefaults->getLogo(false));
 		}
 
+		$this->headerLogoUrl = $logoUrl;
 		$this->htmlBody .= vsprintf(
 			$this->header,
 			[
 				$theme['primaryColor'],
 				$logoUrl,
 				$this->themingDefaults->getName(),
-				$logoSizeDimensions,
+				$this->logoSizeAttributes(),
 			]
 		);
 	}//end addHeader()
+
+	/**
+	 * The logo's size attributes, so it displays nicely in Outlook; mirrors the parent's behaviour.
+	 *
+	 * @return string The attributes, or empty when the dimensions are unknown.
+	 */
+	private function logoSizeAttributes(): string {
+		if ($this->logoWidth === null || $this->logoHeight === null) {
+			return '';
+		}
+
+		return ' width="' . $this->logoWidth . '" height="' . $this->logoHeight . '"';
+	}//end logoSizeAttributes()
+
+	/**
+	 * The HTML part with a branded header's logo embedded instead of linked.
+	 *
+	 * The parent replaces only the logo URL it wrote itself, kept in a private member, so a
+	 * branded header has to do this itself. Nextcloud before 34 has no inline logos and never calls this.
+	 *
+	 * @return string The HTML; the caller attaches getInlineImages() afterwards.
+	 *
+	 * @spec openspec/specs/email-theming/spec.md
+	 */
+	public function renderHtmlWithInlineImages(): string {
+		if ($this->headerLogoUrl === '') {
+			return parent::renderHtmlWithInlineImages();
+		}
+
+		$html = $this->renderHtml();
+		$this->inlineImages = [];
+		$logoSrc = 'src="' . $this->headerLogoUrl . '"';
+		$position = strpos($html, $logoSrc);
+		$image = $this->headerLogoImage();
+		if ($position === false || $image === null) {
+			return $html;
+		}
+
+		$this->inlineImages[] = ['name' => 'logo'] + $image;
+
+		return substr_replace($html, 'src="cid:logo"', $position, strlen($logoSrc));
+	}//end renderHtmlWithInlineImages()
+
+	/**
+	 * The bytes of the logo a branded header shows.
+	 *
+	 * @return array{content: string, mimeType: string}|null The image, or null when it stays linked.
+	 */
+	private function headerLogoImage(): ?array {
+		if ($this->headerLogoIsOwn === false) {
+			return $this->themingDefaults->getLogoImage();
+		}
+
+		try {
+			return $this->getEmailThemingService()?->getActiveEmailLogoImage();
+		} catch (\Throwable $e) {
+			return null;
+		}
+	}//end headerLogoImage()
 
 	/**
 	 * Adds a button to the body of the email.
@@ -330,7 +398,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			return;
 		}
 
-		$complianceHtml = $this->renderComplianceFooterHtml(footerConfig: $footerConfig, lang: $lang);
+		$complianceHtml = (new ComplianceMailFooter())->html(footerConfig: $footerConfig, l10n: $this->l10nFactory->get('thematiq', $lang));
 		$tailFound = str_ends_with($this->htmlBody, $this->tail);
 		if ($tailFound === true) {
 			$this->htmlBody = substr($this->htmlBody, 0, -strlen($this->tail)) . $complianceHtml . $this->tail;
@@ -343,84 +411,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			$this->htmlBody .= $complianceHtml;
 		}
 
-		$this->plainBody .= $this->renderComplianceFooterPlain(footerConfig: $footerConfig, lang: $lang);
+		$this->plainBody .= (new ComplianceMailFooter())->plain(footerConfig: $footerConfig, l10n: $this->l10nFactory->get('thematiq', $lang));
 	}//end addFooter()
 
-	/**
-	 * Render the compliance footer block as HTML, output-encoded.
-	 *
-	 * @param array{orgName: string, accessibilityUrl: string, privacyUrl: string} $footerConfig The footer config.
-	 * @param string|null $lang The language override.
-	 *
-	 * @return string The HTML block (a standalone table, valid inside `<body>`).
-	 *
-	 * @spec openspec/specs/email-theming/spec.md
-	 */
-	private function renderComplianceFooterHtml(array $footerConfig, ?string $lang): string {
-		$l10n = $this->l10nFactory->get('thematiq', $lang);
-
-		$lines = [];
-		if ($footerConfig['orgName'] !== '') {
-			$lines[] = htmlspecialchars($footerConfig['orgName']);
-		}
-
-		if ($footerConfig['accessibilityUrl'] !== '') {
-			$lines[] = '<a href="' . htmlspecialchars($footerConfig['accessibilityUrl']) . '" style="color:#C8C8C8;text-decoration:underline">'
-				. htmlspecialchars($l10n->t('Accessibility statement')) . '</a>';
-		}
-
-		if ($footerConfig['privacyUrl'] !== '') {
-			$lines[] = '<a href="' . htmlspecialchars($footerConfig['privacyUrl']) . '" style="color:#C8C8C8;text-decoration:underline">'
-				. htmlspecialchars($l10n->t('Privacy statement')) . '</a>';
-		}
-
-		if (empty($lines) === true) {
-			return '';
-		}
-
-		$paragraphs = '';
-		foreach ($lines as $line) {
-			$paragraphs .= '<p class="text-center float-center" align="center" style="Margin:0;Margin-bottom:4px;'
-				. 'color:#C8C8C8;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Oxygen-Sans,Ubuntu,'
-				. 'Cantarell,\'Helvetica Neue\',Arial,sans-serif;font-size:12px;font-weight:400;line-height:16px;'
-				. 'margin:0;margin-bottom:4px;padding:0;text-align:center">' . $line . '</p>';
-		}
-
-		return '<table align="center" class="wrapper footer float-center nldesign-compliance-footer" '
-			. 'style="Margin:0 auto;border-collapse:collapse;border-spacing:0;float:none;margin:0 auto;padding:0;'
-			. 'text-align:center;vertical-align:top;width:100%">'
-			. '<tr style="padding:0;text-align:left;vertical-align:top">'
-			. '<td class="wrapper-inner" style="Margin:0;padding:0;text-align:left;vertical-align:top">'
-			. '<center data-parsed="" style="min-width:580px;width:100%">' . $paragraphs . '</center>'
-			. '</td></tr></table>';
-	}//end renderComplianceFooterHtml()
-
-	/**
-	 * Render the compliance footer block as plain text lines.
-	 *
-	 * @param array{orgName: string, accessibilityUrl: string, privacyUrl: string} $footerConfig The footer config.
-	 * @param string|null $lang The language override.
-	 *
-	 * @return string The plain-text lines, each terminated with PHP_EOL.
-	 *
-	 * @spec openspec/specs/email-theming/spec.md
-	 */
-	private function renderComplianceFooterPlain(array $footerConfig, ?string $lang): string {
-		$l10n = $this->l10nFactory->get('thematiq', $lang);
-
-		$plain = '';
-		if ($footerConfig['orgName'] !== '') {
-			$plain .= $footerConfig['orgName'] . PHP_EOL;
-		}
-
-		if ($footerConfig['accessibilityUrl'] !== '') {
-			$plain .= $l10n->t('Accessibility statement') . ': ' . $footerConfig['accessibilityUrl'] . PHP_EOL;
-		}
-
-		if ($footerConfig['privacyUrl'] !== '') {
-			$plain .= $l10n->t('Privacy statement') . ': ' . $footerConfig['privacyUrl'] . PHP_EOL;
-		}
-
-		return $plain;
-	}//end renderComplianceFooterPlain()
 }//end class
