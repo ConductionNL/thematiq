@@ -69,21 +69,25 @@ class ColourLiteralParser {
 			return $this->parseHex(digits: $hex[1]);
 		}
 
-		if (preg_match('/^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/', $trimmed, $function) !== 1) {
+		return $this->functionColour(trimmed: $trimmed);
+	}//end parse()
+
+	/**
+	 * A colour function literal: rgb(), hsl(), oklch() or oklab(), with or without alpha.
+	 *
+	 * @param string $trimmed The lower-cased, trimmed value.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: float}|null The channels and alpha, or null when it is not one.
+	 */
+	private function functionColour(string $trimmed): ?array {
+		$function = $this->functionParts(trimmed: $trimmed);
+		if ($function === null) {
 			return null;
 		}
 
-		$parts = $this->splitArguments(arguments: $function[2]);
-		if ($parts === null) {
-			return null;
-		}
-
+		[$name, $parts] = $function;
 		$alpha = $this->parseAlpha(part: ($parts[3] ?? '1'));
-		$channels = match (true) {
-			str_starts_with($function[1], 'ok') => $this->oklabChannels(space: $function[1], parts: $parts),
-			str_starts_with($function[1], 'rgb') => $this->rgbChannels(parts: $parts),
-			default => $this->hslChannels(parts: $parts),
-		};
+		$channels = $this->channels(name: $name, parts: $parts);
 
 		if ($channels === null || $alpha === null) {
 			return null;
@@ -95,7 +99,43 @@ class ColourLiteralParser {
 			(int)max(0, min(255, round($channels[2]))),
 			max(0.0, min(1.0, $alpha)),
 		];
-	}//end parse()
+	}//end functionColour()
+
+	/**
+	 * The sRGB channels of a colour function's arguments.
+	 *
+	 * @param string $name The function name.
+	 * @param array<int, string> $parts The arguments.
+	 *
+	 * @return array{0: float, 1: float, 2: float}|null The channels, or null when malformed.
+	 */
+	private function channels(string $name, array $parts): ?array {
+		return match (true) {
+			str_starts_with($name, 'ok') => $this->oklabChannels(space: $name, parts: $parts),
+			str_starts_with($name, 'rgb') => $this->rgbChannels(parts: $parts),
+			default => $this->hslChannels(parts: $parts),
+		};
+	}//end channels()
+
+	/**
+	 * The name and the arguments of a colour function literal.
+	 *
+	 * @param string $trimmed The lower-cased, trimmed value.
+	 *
+	 * @return array{0: string, 1: array<int, string>}|null The function name and its arguments, or null when malformed.
+	 */
+	private function functionParts(string $trimmed): ?array {
+		if (preg_match('/^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/', $trimmed, $function) !== 1) {
+			return null;
+		}
+
+		$parts = $this->splitArguments(arguments: $function[2]);
+		if ($parts === null) {
+			return null;
+		}
+
+		return [$function[1], $parts];
+	}//end functionParts()
 
 	/**
 	 * Write a colour literal as `#rrggbb`, or `rgba(r, g, b, a)` when it is translucent.
@@ -294,16 +334,29 @@ class ColourLiteralParser {
 	 */
 	private function hslChannels(array $parts): ?array {
 		$hue = $this->hueDegrees(part: $parts[0]);
-		$saturation = $this->number(part: $parts[1]);
-		$lightness = $this->number(part: $parts[2]);
-		if ($hue === null || $saturation === null || $lightness === null
-			|| str_ends_with($parts[1], '%') === false || str_ends_with($parts[2], '%') === false
-		) {
+		$saturation = $this->percentage(part: $parts[1]);
+		$lightness = $this->percentage(part: $parts[2]);
+		if ($hue === null || $saturation === null || $lightness === null) {
 			return null;
 		}
 
 		return $this->hslToRgb(hue: $hue, saturation: ($saturation / 100), lightness: ($lightness / 100));
 	}//end hslChannels()
+
+	/**
+	 * The number of a percentage argument.
+	 *
+	 * @param string $part The argument.
+	 *
+	 * @return float|null The number before the `%`, or null when it is no percentage.
+	 */
+	private function percentage(string $part): ?float {
+		if (str_ends_with($part, '%') === false) {
+			return null;
+		}
+
+		return $this->number(part: $part);
+	}//end percentage()
 
 	/**
 	 * An hsl() hue in degrees, from degrees, turns or radians.
@@ -345,21 +398,9 @@ class ColourLiteralParser {
 	private function oklabChannels(string $space, array $parts): ?array {
 		$values = [];
 		foreach (array_slice($parts, 0, 3) as $index => $part) {
-			if ($part === 'none') {
-				$values[] = 0.0;
-				continue;
-			}
-
-			$number = $this->number(part: (string)preg_replace('/deg$/', '', $part));
+			$number = $this->oklabComponent(part: $part, index: $index);
 			if ($number === null) {
 				return null;
-			}
-
-			if (str_ends_with($part, '%') === true) {
-				$number = ($number / 100);
-				if ($index > 0) {
-					$number = ($number * 0.4);
-				}
 			}
 
 			$values[] = $number;
@@ -374,6 +415,47 @@ class ColourLiteralParser {
 
 		return [$clip($srgb[0]), $clip($srgb[1]), $clip($srgb[2])];
 	}//end oklabChannels()
+
+	/**
+	 * One oklch() or oklab() argument as a number: `none` is 0, L's percentage is of 1, the
+	 * others' of 0.4.
+	 *
+	 * @param string $part The argument.
+	 * @param int $index Its position.
+	 *
+	 * @return float|null The number, or null when it is none.
+	 */
+	private function oklabComponent(string $part, int $index): ?float {
+		if ($part === 'none') {
+			return 0.0;
+		}
+
+		$number = $this->number(part: (string)preg_replace('/deg$/', '', $part));
+		if ($number === null) {
+			return null;
+		}
+
+		if (str_ends_with($part, '%') === false) {
+			return $number;
+		}
+
+		return ($number / 100 * $this->oklabPercentScale(index: $index));
+	}//end oklabComponent()
+
+	/**
+	 * What 100% is for an oklch() or oklab() argument: 1 for L, 0.4 for the others.
+	 *
+	 * @param int $index The argument's position.
+	 *
+	 * @return float The scale.
+	 */
+	private function oklabPercentScale(int $index): float {
+		if ($index > 0) {
+			return 0.4;
+		}
+
+		return 1.0;
+	}//end oklabPercentScale()
 
 	/**
 	 * A numeric argument, without a trailing `%`.
