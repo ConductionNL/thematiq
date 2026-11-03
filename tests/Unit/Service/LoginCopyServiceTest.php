@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LoginCopyService;
+use OCA\Thematiq\Service\PageCopySources;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -95,7 +96,7 @@ class LoginCopyServiceTest extends TestCase {
 	 */
 	private function service(): LoginCopyService {
 		$service = $this->getMockBuilder(LoginCopyService::class)
-			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $this->l10nFactory, $this->logger])
+			->setConstructorArgs([$this->sources(), $this->logger])
 			->onlyMethods(['emitScript'])
 			->getMock();
 		$service->method('emitScript')->willReturnCallback(
@@ -106,6 +107,20 @@ class LoginCopyServiceTest extends TestCase {
 
 		return $service;
 	}//end service()
+
+	/**
+	 * The config, design systems, initial state and language factory of this test.
+	 *
+	 * @return PageCopySources
+	 */
+	private function sources(): PageCopySources {
+		return new PageCopySources(
+			config: $this->config,
+			designSystemService: $this->designSystemService,
+			initialState: $this->initialState,
+			l10nFactory: $this->l10nFactory
+		);
+	}//end sources()
 
 	/**
 	 * Give the set a `login` block and the administrator an override.
@@ -306,7 +321,7 @@ class LoginCopyServiceTest extends TestCase {
 		$this->initialState->expects($this->once())->method('provideInitialState')->with(LoginCopyService::STATE_KEY, ['title' => 'Inloggen', 'divider' => 'of']);
 
 		$service = $this->getMockBuilder(LoginCopyService::class)
-			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $this->l10nFactory, $this->logger, $groups, $this->layout('light')])
+			->setConstructorArgs([$this->sources(), $this->logger, $groups, $this->layout('light')])
 			->onlyMethods(['emitScript'])
 			->getMock();
 		$service->injectForLogin();
@@ -314,7 +329,7 @@ class LoginCopyServiceTest extends TestCase {
 		$broken = $this->createMock(GroupThemingService::class);
 		$broken->method('resolveTokenSetForRequest')->willThrowException(new RuntimeException('boom'));
 		$this->logger->expects($this->once())->method('warning');
-		$failing = new LoginCopyService($this->config, $this->designSystemService, $this->initialState, $this->l10nFactory, $this->logger, $broken, $this->layout('light'));
+		$failing = new LoginCopyService(sources: $this->sources(), logger: $this->logger, groupTheming: $broken, layoutOptions: $this->layout('light'));
 		$failing->injectForLogin();
 	}//end testTheLoginEntryResolvesTheSetAndFailsOpen()
 }//end class

@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\NotFoundCopyService;
+use OCA\Thematiq\Service\PageCopySources;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -123,7 +124,19 @@ class NotFoundCopyServiceTest extends TestCase {
 		$factory->method('get')->willReturn($l10n);
 
 		$service = $this->getMockBuilder(NotFoundCopyService::class)
-			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $groups, $options])
+			->setConstructorArgs(
+				[
+					new PageCopySources(
+						config: $this->config,
+						designSystemService: $this->designSystemService,
+						initialState: $this->initialState,
+						l10nFactory: $factory
+					),
+					$this->logger,
+					$groups,
+					$options,
+				]
+			)
 			->onlyMethods(['emitScript'])
 			->getMock();
 		$service->method('emitScript')->willReturnCallback(
