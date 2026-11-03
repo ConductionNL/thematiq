@@ -28,6 +28,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Controller\AppBrandController;
 use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\AppBrandSources;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CustomCssService;
@@ -418,11 +419,46 @@ class AppBrandServiceTest extends TestCase {
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
 		$appTheming = $this->createMock(AppThemingService::class);
-		$controller = new AppBrandController('thematiq', $this->createMock(IRequest::class), $this->brands(), $appTheming, $this->tokenSets(), $l10n);
+		$controller = new AppBrandController(
+			appName: 'thematiq',
+			request: $this->createMock(IRequest::class),
+			sources: new AppBrandSources(
+				brands: $this->brands(),
+				appTheming: $appTheming,
+				tokenSets: $this->tokenSets()
+			),
+			l10n: $l10n
+		);
 		$refused = $controller->save(appId: 'settings', tokenSet: 'kennisbank');
 		$this->assertSame(422, $refused->getStatus());
 		$this->assertStringContainsString('settings pages always follow the house style', $refused->getData()['error']);
 		$this->assertSame(200, $controller->save(appId: 'collectives', tokenSet: 'kennisbank')->getStatus());
 		$this->assertSame(404, $controller->logo(appId: 'collectives', size: 'large')->getStatus());
 	}//end testEndpoints()
+
+	/**
+	 * The index answers the stored brands, the themed apps and the public catalogue.
+	 *
+	 * @return void
+	 */
+	public function testIndexAnswersBrandsAppsAndSets(): void {
+		$appTheming = $this->createMock(originalClassName: AppThemingService::class);
+		$appTheming->method('getThemableApps')->willReturn([['id' => 'files', 'themed' => true], ['id' => 'spreed', 'themed' => false]]);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
+		$tokenSets->method('getPublicCatalogue')->willReturn([['id' => 'kennisbank']]);
+		$brands = $this->brands();
+		$brands->setBrand(appId: 'collectives', tokenSet: 'kennisbank');
+
+		$controller = new AppBrandController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			sources: new AppBrandSources(brands: $brands, appTheming: $appTheming, tokenSets: $tokenSets),
+			l10n: $this->createMock(originalClassName: IL10N::class)
+		);
+		$data = $controller->index()->getData();
+
+		$this->assertSame(expected: ['collectives'], actual: array_keys((array)$data['brands']));
+		$this->assertSame(expected: [['id' => 'files', 'themed' => true]], actual: $data['apps']);
+		$this->assertSame(expected: [['id' => 'kennisbank']], actual: $data['tokenSets']);
+	}//end testIndexAnswersBrandsAppsAndSets()
 }//end class

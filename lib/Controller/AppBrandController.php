@@ -20,10 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use OCA\Thematiq\Service\AppBrandService;
-use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Service\AppBrandSources;
 use OCA\Thematiq\Service\Exception\AppBrandException;
-use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -50,17 +48,13 @@ class AppBrandController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param AppBrandService $brands The brands.
-	 * @param AppThemingService $appTheming The apps that can be themed.
-	 * @param TokenSetService $tokenSets The selectable sets.
+	 * @param AppBrandSources $sources The brand per app, the per-app theming and the token sets.
 	 * @param IL10N $l10n Translations.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly AppBrandService $brands,
-		private readonly AppThemingService $appTheming,
-		private readonly TokenSetService $tokenSets,
+		private readonly AppBrandSources $sources,
 		private readonly IL10N $l10n,
 	) {
 		parent::__construct(appName: $appName, request: $request);
@@ -75,13 +69,13 @@ class AppBrandController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function index(): JSONResponse {
-		$apps = array_values(array_filter($this->appTheming->getThemableApps(), static fn (array $app): bool => $app['themed'] === true));
+		$apps = array_values(array_filter($this->sources->appTheming->getThemableApps(), static fn (array $app): bool => $app['themed'] === true));
 
 		return new JSONResponse(
 			[
-				'brands' => (object)$this->brands->getBrands(),
+				'brands' => (object)$this->sources->brands->getBrands(),
 				'apps' => $apps,
-				'tokenSets' => $this->tokenSets->getPublicCatalogue(),
+				'tokenSets' => $this->sources->tokenSets->getPublicCatalogue(),
 			]
 		);
 	}//end index()
@@ -99,7 +93,7 @@ class AppBrandController extends Controller {
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function save(string $appId, string $tokenSet = ''): JSONResponse {
 		try {
-			return new JSONResponse($this->brands->setBrand(appId: $appId, tokenSet: $tokenSet));
+			return new JSONResponse($this->sources->brands->setBrand(appId: $appId, tokenSet: $tokenSet));
 		} catch (AppBrandException $e) {
 			return $this->refused(exception: $e);
 		}
@@ -116,7 +110,7 @@ class AppBrandController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function remove(string $appId): JSONResponse {
-		$this->brands->removeBrand(appId: $appId);
+		$this->sources->brands->removeBrand(appId: $appId);
 
 		return new JSONResponse(['removed' => true]);
 	}//end remove()
@@ -140,7 +134,7 @@ class AppBrandController extends Controller {
 
 		try {
 			return new JSONResponse(
-				$this->brands->storeLogo(appId: $appId, size: $size, bytes: (string)file_get_contents($file['tmp_name']))
+				$this->sources->brands->storeLogo(appId: $appId, size: $size, bytes: (string)file_get_contents($file['tmp_name']))
 			);
 		} catch (AppBrandException $e) {
 			return $this->refused(exception: $e);
@@ -162,7 +156,7 @@ class AppBrandController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function logo(string $appId, string $size): Response {
-		$logo = $this->brands->readLogo(appId: $appId, size: $size);
+		$logo = $this->sources->brands->readLogo(appId: $appId, size: $size);
 		if ($logo === null) {
 			return new Response(Http::STATUS_NOT_FOUND);
 		}

@@ -25,6 +25,7 @@ use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\AppBrandSources;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\AssistantMarkService;
 use OCA\Thematiq\Service\BrandingPackageService;
@@ -137,6 +138,7 @@ use ReflectionProperty;
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(TokenSetLicenceService::class)]
 #[UsesClass(TokenSetService::class)]
+#[UsesClass(AppBrandSources::class)]
 #[UsesClass(RestrictedSetGate::class)]
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
@@ -397,7 +399,16 @@ class RestrictedSetRequestPathTest extends TestCase {
 			$this->createMock(AppBrandLogoStore::class),
 			$this->createMock(IURLGenerator::class)
 		);
-		$controller = new AppBrandController('thematiq', $this->request, $brands, $appTheming, $this->tokenSets, $this->createMock(IL10N::class));
+		$controller = new AppBrandController(
+			appName: 'thematiq',
+			request: $this->request,
+			sources: new AppBrandSources(
+				brands: $brands,
+				appTheming: $appTheming,
+				tokenSets: $this->tokenSets
+			),
+			l10n: $this->createMock(IL10N::class)
+		);
 
 		$sent = $this->send($controller, 'save', ['appId' => 'collectives', 'tokenSet' => 'owned']);
 		$this->assertSame(403, $sent['status']);

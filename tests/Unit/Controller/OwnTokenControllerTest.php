@@ -31,6 +31,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
+use OCA\Thematiq\Service\DeprecationSources;
 use OCA\Thematiq\Service\OverridesSetContext;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OwnTokenService;
@@ -199,7 +200,18 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return TokenDeprecationController
 	 */
 	private function deprecationController(array $params = []): TokenDeprecationController {
-		return new TokenDeprecationController('thematiq', $this->request($params), $this->deprecations, $this->overrides, $this->audit, $this->l10n());
+		return new TokenDeprecationController(
+			appName: 'thematiq',
+			request: $this->request($params),
+			sources: new DeprecationSources(
+				deprecations: $this->deprecations,
+				overrides: $this->overrides
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $this->l10n()
+			)
+		);
 	}//end deprecationController()
 
 	/**
@@ -321,4 +333,24 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->assertCount(1, $method->getAttributes(NoAdminRequired::class));
 		$this->assertSame([], $method->getAttributes(PublicPage::class));
 	}//end testDeprecationsShape()
+	/**
+	 * Withdrawing a deprecation records the withdrawn record as the old value.
+	 *
+	 * @return void
+	 */
+	public function testWithdrawAuditsTheWithdrawnRecord(): void {
+		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
+		$this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning'])->save();
+		$logged = [];
+		$this->audit->method('log')->willReturnCallback(
+			static function (string $action, array $context) use (&$logged): void {
+				$logged[] = $context;
+			}
+		);
+
+		$this->deprecationController()->delete(token: '--nldesign-org-old-accent');
+
+		$this->assertSame(expected: 'warning', actual: ($logged[0]['old']['severity'] ?? null));
+		$this->assertNull(actual: $logged[0]['new']);
+	}//end testWithdrawAuditsTheWithdrawnRecord()
 }//end class
