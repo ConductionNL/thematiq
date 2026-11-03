@@ -14,11 +14,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const read = (file) => fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const read = (file) =>
+	fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
 
 describe('the error text ink', () => {
 	it('is what --color-text-error reads, the error colour without one', () => {
-		expect(read('css/systems/nldesign/overrides.css')).toMatch(/--color-text-error:\s*var\(--nldesign-color-error-text,\s*var\(--nldesign-color-error\)\)\s*!important;/)
+		expect(read('css/systems/nldesign/overrides.css')).toMatch(
+			/--color-text-error:\s*var\(--nldesign-color-error-text,\s*var\(--nldesign-color-error\)\)\s*!important;/,
+		)
 	})
 
 	it('is #A30000 in the Zuiddrecht set, beside its #CC0000 fill', () => {

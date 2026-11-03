@@ -25,11 +25,24 @@ describe('primary buttons are not forced', () => {
 		theme.walkRules((rule) => {
 			// The login page is core's own page, styled by core's login sheet; its
 			// primary button stays the set's, forced there on purpose.
-			if (!/primary/.test(rule.selector) || /disabled/.test(rule.selector) || /#body-login|\.login-form/.test(rule.selector)) {
+			if (
+				!/primary/.test(rule.selector)
+				|| /disabled/.test(rule.selector)
+				|| /#body-login|\.login-form/.test(rule.selector)
+			) {
 				return
 			}
 			rule.walkDecls((decl) => {
-				if (decl.important && ['background-color', 'color', 'border-color', 'font-weight', 'border-radius'].includes(decl.prop)) {
+				if (
+					decl.important
+					&& [
+						'background-color',
+						'color',
+						'border-color',
+						'font-weight',
+						'border-radius',
+					].includes(decl.prop)
+				) {
 					forced.push(rule.selector.replace(/\s+/g, ' ') + ' ' + decl.prop)
 				}
 			})
@@ -48,11 +61,15 @@ describe('primary buttons are not forced', () => {
 	})
 
 	it('hands the primary label colour to the spans through the on-surface colour', () => {
-		expect(read('css/systems/nldesign/theme.css')).toMatch(/:where\(\.button-vue--vue-primary, \.button-vue--primary\)[^{]*\{\s*--nldesign-color-on-surface: var\(--color-primary-element-text\);/)
+		expect(read('css/systems/nldesign/theme.css')).toMatch(
+			/:where\(\.button-vue--vue-primary, \.button-vue--primary\)[^{]*\{\s*--nldesign-color-on-surface: var\(--color-primary-element-text\);/,
+		)
 	})
 
-	it('scopes core\'s input.primary and a.primary with the primary button', () => {
+	it("scopes core's input.primary and a.primary with the primary button", () => {
 		const scopes = read('css/component-scopes.css')
-		expect(scopes).toMatch(/\/\* primary-button \*\/[\s\S]*?input\.primary,\s*a\.primary,/)
+		expect(scopes).toMatch(
+			/\/\* primary-button \*\/[\s\S]*?input\.primary,\s*a\.primary,/,
+		)
 	})
 })

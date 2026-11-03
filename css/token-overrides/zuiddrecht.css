@@ -182,7 +182,9 @@ div.guest-box.login-box::after {
 /* The label at 400, except on the tile with its icon in a circle at the end,
  * which the boards set at 600 (DqDashboard, DqMijnTeam): the library sets that
  * weight on that tile, and this id rule would beat it. */
-#app-content-vue .cn-kpi-card:not(:has(.cn-kpi-card__title--badge-end)) .cn-kpi-card__title {
+#app-content-vue
+	.cn-kpi-card:not(:has(.cn-kpi-card__title--badge-end))
+	.cn-kpi-card__title {
 	font-weight: 400;
 }
 
