@@ -200,6 +200,10 @@ class TokenSetConverterGoldenTest extends TestCase {
 			. base64_encode($svg) . " \");\n  --nldesign-color-primary: #154273;\n}\n";
 		$inputs['root-set-logo-after-empty-url'] = ":root {\n  --nldesign-logo-url: url('');\n  --conduction-logo-navbar-background-image: url('data:image/svg+xml;base64,"
 			. base64_encode($svg) . "');\n  --nldesign-color-primary: #154273;\n}\n";
+		$inputs['var-chains'] = ":root {\n  --nldesign-color-primary: var(--golden-a, #154273);\n  --golden-a: var(--golden-b);\n  --golden-b: var(--golden-a);\n"
+			. "  --nldesign-color-text: var(--golden-missing, var(--golden-also-missing, #222222));\n  --nldesign-color-error: var(--golden-missing, );\n"
+			. "  --nldesign-color-success: var(--golden-ok);\n  --golden-ok: #00aa00;\n  --nldesign-color-warning: var(--golden-step-0);\n"
+			. "  --golden-step-0: var(--golden-step-1);\n  --golden-step-1: var(--golden-step-2);\n  --golden-step-2: var(--golden-step-3);\n  --golden-step-3: var(--golden-step-4);\n  --golden-step-4: var(--golden-step-5);\n  --golden-step-5: var(--golden-step-6);\n  --golden-step-6: var(--golden-step-7);\n  --golden-step-7: var(--golden-step-8);\n  --golden-step-8: var(--golden-step-9);\n  --golden-step-9: var(--golden-step-10);\n  --golden-step-10: var(--golden-step-11);\n  --golden-step-11: var(--golden-step-12);\n  --golden-step-12: #cc8800;\n  --nldesign-color-info: var(--golden-step-6);\n}\n";
 		$inputs['root-set-logo-on-disk'] = ":root {\n  --nldesign-color-primary: #0b71a1;\n  --nldesign-logo-url: url('../../img/logos/rijkshuisstijl.svg');\n}\n";
 		$inputs['theme-block'] = ".demo-theme {\n  --demo-color-primary: hsl(210, 70%, 30%);\n  --demo-color-text: #ffffffcc;\n"
 			. "  --utrecht-button-primary-action-background-color: var(--demo-color-primary);\n  --utrecht-document-font-family: 'Fira Sans', sans-serif;\n}\n";
