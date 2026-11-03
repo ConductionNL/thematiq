@@ -33,6 +33,9 @@ use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
@@ -421,19 +424,25 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	 */
 	public function testAdminEndpointsCarryTheDelegationFields(): void {
 		$controller = new SettingsController(
-			'thematiq',
-			$this->createMock(IRequest::class),
-			$this->config(),
-			$this->tokenSets(),
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->groupTheming(),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'thematiq',
+			request: $this->createMock(IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $this->config(),
+				auditService: $this->createMock(ThemingAuditService::class),
+				appThemingService: $this->createMock(AppThemingService::class),
+				groupThemingService: $this->groupTheming()
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSets(),
+				previewService: $this->createMock(TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(ActiveTokenSetService::class),
+				themingService: $this->createMock(ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+			)
 		);
 
 		$response = $controller->setGroupTheming(

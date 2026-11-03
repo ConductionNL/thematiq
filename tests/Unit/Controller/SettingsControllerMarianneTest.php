@@ -20,6 +20,9 @@ use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -67,19 +70,25 @@ class SettingsControllerMarianneTest extends TestCase {
 		);
 
 		return new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$config,
-			$this->createMock(TokenSetService::class),
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'nldesign',
+			request: $this->createMock(IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $config,
+				auditService: $this->createMock(ThemingAuditService::class),
+				appThemingService: $this->createMock(AppThemingService::class),
+				groupThemingService: $this->createMock(GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->createMock(TokenSetService::class),
+				previewService: $this->createMock(TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(ActiveTokenSetService::class),
+				themingService: $this->createMock(ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+			)
 		);
 	}//end makeController()
 

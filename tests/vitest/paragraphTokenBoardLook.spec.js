@@ -15,7 +15,9 @@ import path from 'node:path'
 import postcss from 'postcss'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const theme = postcss.parse(fs.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8'))
+const theme = postcss.parse(
+	fs.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8'),
+)
 const PROPS = ['font-size', 'line-height', 'color', 'font-family', 'font-weight']
 
 /**
@@ -39,13 +41,23 @@ describe('the paragraph token and the board look', () => {
 		expect(decls('p')).toEqual([])
 		const outside = decls('p:not(.cn-look-board *)')
 		expect(outside.map((d) => d.prop)).toEqual(PROPS)
-		expect(outside.every((d) => d.important && d.value.startsWith('var(--nldesign-component-paragraph-'))).toBe(true)
+		expect(
+			outside.every(
+				(d) =>
+					d.important
+					&& d.value.startsWith('var(--nldesign-component-paragraph-'),
+			),
+		).toBe(true)
 	})
 
 	it('gives a board-look paragraph the token at no weight and without !important', () => {
 		const inside = decls(':where(.cn-look-board) :where(p)')
 		expect(inside.map((d) => d.prop)).toEqual(PROPS)
 		expect(inside.some((d) => d.important)).toBe(false)
-		expect(inside.every((d) => d.value.startsWith('var(--nldesign-component-paragraph-'))).toBe(true)
+		expect(
+			inside.every((d) =>
+				d.value.startsWith('var(--nldesign-component-paragraph-'),
+			),
+		).toBe(true)
 	})
 })

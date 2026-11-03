@@ -66,7 +66,7 @@ class ColourContrastAdjuster {
 				}
 
 				$channels = $this->parser->hslToRgb(hue: $hsl[0], saturation: $hsl[1], lightness: $lightness);
-				$rgb = [(int)round($channels[0]), (int)round($channels[1]), (int)round($channels[2])];
+				$rgb = [$this->channel(value: $channels[0]), $this->channel(value: $channels[1]), $this->channel(value: $channels[2])];
 				if ($this->contrast->ratio(first: $rgb, second: $background) >= $min) {
 					return $rgb;
 				}
@@ -115,9 +115,29 @@ class ColourContrastAdjuster {
 		$alpha = $parsed[3];
 
 		return [
-			(int)round($parsed[0] * $alpha + $page[0] * (1 - $alpha)),
-			(int)round($parsed[1] * $alpha + $page[1] * (1 - $alpha)),
-			(int)round($parsed[2] * $alpha + $page[2] * (1 - $alpha)),
+			$this->channel(value: $parsed[0] * $alpha + $page[0] * (1 - $alpha)),
+			$this->channel(value: $parsed[1] * $alpha + $page[1] * (1 - $alpha)),
+			$this->channel(value: $parsed[2] * $alpha + $page[2] * (1 - $alpha)),
 		];
 	}//end opaque()
+
+	/**
+	 * Round a 0-255 channel value, halves up, the same on every PHP version.
+	 *
+	 * The value is first rounded to 15 significant digits, so float noise such as
+	 * 102.49999999999997 gives the same channel on PHP 8.3 and 8.4: PHP 8.3's round()
+	 * did this pre-rounding itself, PHP 8.4's round() does not.
+	 *
+	 * @param float $value The channel value.
+	 *
+	 * @return int The channel.
+	 */
+	private function channel(float $value): int {
+		if (abs($value) < 1.0E-9) {
+			return 0;
+		}
+
+		$scale = (10 ** (14 - (int)floor(log10(abs($value)))));
+		return (int)round(round($value * $scale) / $scale);
+	}//end channel()
 }//end class
