@@ -44,40 +44,36 @@ class BrandedLogoInlineTest extends TestCase {
 		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
 		$service->method('getActiveEmailTheme')->willReturn($theme);
 		$service->method('getActiveEmailLogoImage')->willReturn(['content' => '<svg id="own"/>', 'mimeType' => 'image/svg+xml']);
-		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
+		$footer = ['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => ''];
+		$service->method('getFooterConfig')->willReturn($footer);
 
 		$container = \OC::$server;
-		$template = new class($container->get(Defaults::class), $container->get(IURLGenerator::class), $container->get(IFactory::class), 32, 32, 'test', [], $service) extends NLDesignEMailTemplate {
+		$defaults = $container->get(Defaults::class);
+		$urls = $container->get(IURLGenerator::class);
+		$l10n = $container->get(IFactory::class);
+		$template = new class($defaults, $urls, $l10n, $service) extends NLDesignEMailTemplate {
 			/**
 			 * The template over a stubbed service.
 			 *
 			 * @param Defaults $defaults The theming defaults.
 			 * @param IURLGenerator $urlGenerator The URL generator.
 			 * @param IFactory $l10nFactory The l10n factory.
-			 * @param int|null $logoWidth The logo width.
-			 * @param int|null $logoHeight The logo height.
-			 * @param string $emailId The mail id.
-			 * @param array<string, mixed> $data The mail data.
 			 * @param EmailThemingService $service The service.
 			 */
 			public function __construct(
 				Defaults $defaults,
 				IURLGenerator $urlGenerator,
 				IFactory $l10nFactory,
-				?int $logoWidth,
-				?int $logoHeight,
-				string $emailId,
-				array $data,
 				private EmailThemingService $service,
 			) {
 				parent::__construct(
 					themingDefaults: $defaults,
 					urlGenerator: $urlGenerator,
 					l10nFactory: $l10nFactory,
-					logoWidth: $logoWidth,
-					logoHeight: $logoHeight,
-					emailId: $emailId,
-					data: $data
+					logoWidth: 32,
+					logoHeight: 32,
+					emailId: 'test',
+					data: []
 				);
 			}//end __construct()
 
