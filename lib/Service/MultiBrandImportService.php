@@ -104,7 +104,7 @@ class MultiBrandImportService {
 		$plans = [];
 		foreach ($keys as $key) {
 			$displayName = $sourceName . ': ' . (string)$detected[$key]['name'];
-			$id = CustomTokenSetService::ID_PREFIX . $this->storage->customSets->slugify(name: $displayName);
+			$id = CustomTokenSetId::PREFIX . $this->storage->customSets->slugify(name: $displayName);
 			if (isset($this->storage->customSets->getManifest()[$id]) === true || $this->storage->customSets->getRawContent(id: $id) !== null) {
 				throw new RuntimeException('The brand "' . $detected[$key]['name'] . '" would replace the existing set ' . $id . '.', 409);
 			}
@@ -278,7 +278,7 @@ class MultiBrandImportService {
 				slug: $slug,
 				displayName: $displayName,
 				sourceName: $fileName,
-				assetName: CustomTokenSetService::ID_PREFIX . $slug,
+				assetName: CustomTokenSetId::PREFIX . $slug,
 				referenceOnlyPaths: $cut['referenceOnlyPaths']
 			);
 		} catch (RuntimeException $e) {
