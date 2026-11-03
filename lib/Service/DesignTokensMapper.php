@@ -525,7 +525,7 @@ class DesignTokensMapper {
 		$mapped = 0;
 		$members = array_filter($value, static fn ($key): bool => is_string($key), ARRAY_FILTER_USE_KEY);
 		foreach ($members as $subKey => $subValue) {
-			$member = ['path' => $path . '.' . $subKey, 'key' => $subKey, 'value' => $subValue];
+			$member = new TypographyMember(path: $path . '.' . $subKey, key: $subKey, value: $subValue);
 			$mapped += (int)$this->mapTypographyMember(mapping: $mapping, member: $member);
 		}
 
@@ -538,25 +538,25 @@ class DesignTokensMapper {
 	 * Map one typography sub-property to its fixed target, or record why it was not.
 	 *
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
-	 * @param array{path: string, key: string, value: mixed} $member The sub-property's path, key and value.
+	 * @param TypographyMember $member The sub-property.
 	 *
 	 * @return bool True when the sub-property was mapped.
 	 */
-	private function mapTypographyMember(DesignTokensMapping $mapping, array $member): bool {
-		$target = (self::TYPOGRAPHY_SUBPROPERTY_TARGETS[$member['key']] ?? null);
+	private function mapTypographyMember(DesignTokensMapping $mapping, TypographyMember $member): bool {
+		$target = (self::TYPOGRAPHY_SUBPROPERTY_TARGETS[$member->key] ?? null);
 		if ($target === null) {
-			$mapping->skipped[] = ['path' => $member['path'], 'reason' => 'unmapped-path'];
+			$mapping->skipped[] = ['path' => $member->path, 'reason' => 'unmapped-path'];
 			return false;
 		}
 
 		$result = $this->typographyMemberResult(member: $member);
 		if ($result['ok'] !== true) {
-			$mapping->errors[] = ['path' => $member['path'], 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
+			$mapping->errors[] = ['path' => $member->path, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
 			return false;
 		}
 
 		if (isset($mapping->declarations[$target]) === true) {
-			$mapping->skipped[] = ['path' => $member['path'], 'reason' => 'duplicate-target', 'detail' => $target];
+			$mapping->skipped[] = ['path' => $member->path, 'reason' => 'duplicate-target', 'detail' => $target];
 			return false;
 		}
 
@@ -567,13 +567,13 @@ class DesignTokensMapper {
 	/**
 	 * A typography sub-property serialized: only `fontFamily` has a serializer.
 	 *
-	 * @param array{path: string, key: string, value: mixed} $member The sub-property's path, key and value.
+	 * @param TypographyMember $member The sub-property.
 	 *
 	 * @return array{ok: bool, value?: string, reason?: string} The serializer result.
 	 */
-	private function typographyMemberResult(array $member): array {
-		if ($member['key'] === 'fontFamily') {
-			return $this->values->serializeFontFamily(value: $member['value']);
+	private function typographyMemberResult(TypographyMember $member): array {
+		if ($member->key === 'fontFamily') {
+			return $this->values->serializeFontFamily(value: $member->value);
 		}
 
 		return ['ok' => false, 'reason' => 'unsupported-value-shape'];

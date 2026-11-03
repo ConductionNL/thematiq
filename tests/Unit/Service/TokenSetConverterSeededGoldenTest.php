@@ -58,7 +58,9 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\AliasWalk
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\TypographyMember
  * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
  * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping

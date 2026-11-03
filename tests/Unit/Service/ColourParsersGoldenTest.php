@@ -35,8 +35,8 @@ use Random\Randomizer;
  * arguments. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ColourLiteralParser
- * @uses   \OCA\Thematiq\Service\ColourArgument
  * @covers \OCA\Thematiq\Service\CssColorParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  */
 class ColourParsersGoldenTest extends TestCase {

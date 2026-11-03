@@ -33,6 +33,7 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\AliasWalk
  */
 class DesignTokensAliasResolverGoldenTest extends TestCase {
 

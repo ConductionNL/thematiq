@@ -233,7 +233,8 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testFirstUploadListsAndStoresNothing(): void {
-		$data = $this->uploadController(params: ['name' => 'Gemeente Voorbeeld', 'content' => $this->fixture(name: 'three-themes.tokens.json')])->upload()->getData();
+		$params = ['name' => 'Gemeente Voorbeeld', 'content' => $this->fixture(name: 'three-themes.tokens.json')];
+		$data = $this->uploadController(params: $params)->upload()->getData();
 
 		$this->assertTrue(condition: $data['multiBrand']);
 		$this->assertFalse(condition: $data['stored']);
@@ -255,7 +256,8 @@ final class MultiBrandImportServiceTest extends TestCase {
 				true
 			))
 		);
-		$response = $this->uploadController(params: ['name' => 'Gemeente Voorbeeld', 'content' => $this->fixture(name: 'three-themes.tokens.json'), 'brands' => ['noord', 'zuid']])->upload();
+		$params = ['name' => 'Gemeente Voorbeeld', 'content' => $this->fixture(name: 'three-themes.tokens.json'), 'brands' => ['noord', 'zuid']];
+		$response = $this->uploadController(params: $params)->upload();
 
 		$this->assertSame(expected: 200, actual: $response->getStatus(), message: json_encode($response->getData()));
 		$record = $this->imports->records()['gemeente-voorbeeld'];
@@ -342,7 +344,8 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testUnknownBrandIs422(): void {
-		$response = $this->uploadController(params: ['name' => 'Voorbeeld', 'content' => $this->fixture(name: 'two-brand-classes.css'), 'brands' => ['west']])->upload();
+		$params = ['name' => 'Voorbeeld', 'content' => $this->fixture(name: 'two-brand-classes.css'), 'brands' => ['west']];
+		$response = $this->uploadController(params: $params)->upload();
 
 		$this->assertSame(expected: 422, actual: $response->getStatus());
 		$this->assertStringContainsString(needle: 'west', haystack: $response->getData()['error']);
@@ -403,7 +406,8 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 */
 	public function testMissingBrandIsKept(): void {
 		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
-		$next = ":root { --voorbeeld-radius: 4px; }\n.noord-theme { --voorbeeld-color-primary: #154273; }\n.west-theme { --voorbeeld-color-primary: #2e7d32; }\n";
+		$next = ":root { --voorbeeld-radius: 4px; }\n.noord-theme { --voorbeeld-color-primary: #154273; }\n"
+			. ".west-theme { --voorbeeld-color-primary: #2e7d32; }\n";
 
 		$report = $this->imports->update(sourceId: 'voorbeeld', content: $next);
 
@@ -460,7 +464,8 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testEachBrandCarriesItsOwnContrastWarnings(): void {
-		$css = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #ffff00; --nldesign-color-primary-text: #ffffff; }\n.donker-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n";
+		$css = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #ffff00; --nldesign-color-primary-text: #ffffff; }\n"
+			. ".donker-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n";
 		$result = $this->imports->import(sourceName: 'Proef', content: $css, keys: ['licht', 'donker']);
 		$warnings = array_column($result['sets'], 'warnings', 'brand');
 

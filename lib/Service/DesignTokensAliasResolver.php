@@ -68,23 +68,20 @@ class DesignTokensAliasResolver {
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	public function resolve(string $startPath, array $leaves): array {
-		$chain = [$startPath];
-		$visited = [$startPath => true];
+		$walk = new AliasWalk(chain: [$startPath]);
 		$current = $leaves[$startPath];
-		$hops = 0;
 
 		while (is_string($current['value']) === true && $this->isAlias(value: $current['value']) === true) {
 			preg_match('/^\{(.+)\}$/', trim($current['value']), $matches);
 			$targetPath = trim($matches[1]);
 
-			$hops++;
-			$failure = $this->hopFailure(targetPath: $targetPath, walk: ['hops' => $hops, 'chain' => $chain, 'visited' => $visited, 'leaves' => $leaves]);
+			$walk = new AliasWalk(chain: $walk->chain, hops: ($walk->hops + 1));
+			$failure = $this->hopFailure(targetPath: $targetPath, walk: $walk, leaves: $leaves);
 			if ($failure !== null) {
 				return $failure;
 			}
 
-			$chain[] = $targetPath;
-			$visited[$targetPath] = true;
+			$walk = new AliasWalk(chain: [...$walk->chain, $targetPath], hops: $walk->hops);
 			$current = $leaves[$targetPath];
 		}//end while
 
@@ -99,20 +96,21 @@ class DesignTokensAliasResolver {
 	 * Why the next hop of an alias chain fails: too deep, a cycle, or a missing target.
 	 *
 	 * @param string $targetPath The path the current alias points at.
-	 * @param array<string, mixed> $walk The hops so far, the chain walked, the paths visited and the leaf table.
+	 * @param AliasWalk $walk The chain so far, this hop counted.
+	 * @param array<string, array<string, mixed>> $leaves The full leaf table.
 	 *
 	 * @return array{ok: bool, reason: string, detail: string}|null The failure, or null when the hop may be taken.
 	 */
-	private function hopFailure(string $targetPath, array $walk): ?array {
-		if ($walk['hops'] > self::MAX_ALIAS_DEPTH) {
-			return ['ok' => false, 'reason' => 'alias-depth-exceeded', 'detail' => implode(' -> ', $walk['chain'])];
+	private function hopFailure(string $targetPath, AliasWalk $walk, array $leaves): ?array {
+		if ($walk->hops > self::MAX_ALIAS_DEPTH) {
+			return ['ok' => false, 'reason' => 'alias-depth-exceeded', 'detail' => $walk->describe()];
 		}
 
-		if (isset($walk['visited'][$targetPath]) === true) {
-			return ['ok' => false, 'reason' => 'alias-cycle', 'detail' => implode(' -> ', array_merge($walk['chain'], [$targetPath]))];
+		if ($walk->passed(path: $targetPath) === true) {
+			return ['ok' => false, 'reason' => 'alias-cycle', 'detail' => $walk->describe(next: $targetPath)];
 		}
 
-		if (isset($walk['leaves'][$targetPath]) === false) {
+		if (isset($leaves[$targetPath]) === false) {
 			return ['ok' => false, 'reason' => 'alias-target-missing', 'detail' => $targetPath];
 		}
 

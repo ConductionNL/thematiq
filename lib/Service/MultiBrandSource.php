@@ -206,7 +206,7 @@ class MultiBrandSource {
 		$names = array_keys($selected);
 		usort(
 			$names,
-			static fn (string $first, string $second): int => self::compareInOrder(pair: [$first, $second], order: $order)
+			static fn (string $first, string $second): int => self::compareInOrder(first: $first, second: $second, order: $order)
 		);
 
 		$merged = [];
@@ -222,13 +222,13 @@ class MultiBrandSource {
 	/**
 	 * Compare two set names by their place in the set order; names it does not list follow, by name.
 	 *
-	 * @param array{0: string, 1: string} $pair The two names.
+	 * @param string $first The first name.
+	 * @param string $second The second name.
 	 * @param array<int, string> $order The set order.
 	 *
 	 * @return int Below, at or above zero, as for usort().
 	 */
-	private static function compareInOrder(array $pair, array $order): int {
-		[$first, $second] = $pair;
+	private static function compareInOrder(string $first, string $second, array $order): int {
 		$firstAt = array_search($first, $order, true);
 		$secondAt = array_search($second, $order, true);
 		if ($firstAt === false && $secondAt === false) {

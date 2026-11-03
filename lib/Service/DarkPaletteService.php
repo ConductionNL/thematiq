@@ -1533,19 +1533,19 @@ class DarkPaletteService {
 			return null;
 		}
 
-		return $this->blend(colours: [$top, $under], share: ($percent / 100));
+		return $this->blend(top: $top, under: $under, share: ($percent / 100));
 	}//end washOver()
 
 	/**
 	 * One colour laid over another at a share, as hex.
 	 *
-	 * @param array{0: array<int, int|float>, 1: array<int, int|float>} $colours The top colour and the one under it.
+	 * @param array<int, int|float> $top The top colour.
+	 * @param array<int, int|float> $under The colour under it.
 	 * @param float|int $share The top colour's share, 0 to 1.
 	 *
 	 * @return string The blend.
 	 */
-	private function blend(array $colours, float|int $share): string {
-		[$top, $under] = $colours;
+	private function blend(array $top, array $under, float|int $share): string {
 		$channels = [];
 		foreach ([0, 1, 2] as $i) {
 			$channels[] = (int)round(($top[$i] * $share) + ($under[$i] * (1 - $share)));
@@ -1603,7 +1603,9 @@ class DarkPaletteService {
 
 		$candidateL = $this->passingLightness(
 			hsl: [$hue, $saturation, $lightness],
-			target: ['background' => $bgRgb, 'threshold' => $threshold, 'direction' => $direction]
+			background: $bgRgb,
+			threshold: $threshold,
+			direction: $direction
 		);
 		if ($candidateL !== null) {
 			return $this->rgbToHex(rgb: $this->hslToRgb(hue: $hue, saturation: $saturation, lightness: $candidateL));
@@ -1617,19 +1619,21 @@ class DarkPaletteService {
 	 * until the ratio clears the threshold.
 	 *
 	 * @param array{0: float, 1: float, 2: float} $hsl The foreground's hue, saturation and lightness.
-	 * @param array{background: array<int, int>, threshold: float, direction: float} $target The background, the threshold and the direction to step in.
+	 * @param array<int, int> $background The background colour.
+	 * @param float $threshold The ratio to clear.
+	 * @param float $direction The direction to step in.
 	 *
 	 * @return float|null The first passing lightness, or null when none of the steps passes.
 	 */
-	private function passingLightness(array $hsl, array $target): ?float {
+	private function passingLightness(array $hsl, array $background, float $threshold, float $direction): ?float {
 		[$hue, $saturation, $candidateL] = $hsl;
 		$step = self::INITIAL_STEP;
 
 		for ($i = 0; $i < self::MAX_BINARY_STEPS; $i++) {
-			$candidateL = $this->clamp(value: ($candidateL + ($target['direction'] * $step)), min: 0.0, max: 1.0);
+			$candidateL = $this->clamp(value: ($candidateL + ($direction * $step)), min: 0.0, max: 1.0);
 			$candidateRgb = $this->hslToRgb(hue: $hue, saturation: $saturation, lightness: $candidateL);
 
-			if ($this->contrast->ratio(first: $candidateRgb, second: $target['background']) >= $target['threshold']) {
+			if ($this->contrast->ratio(first: $candidateRgb, second: $background) >= $threshold) {
 				return $candidateL;
 			}
 

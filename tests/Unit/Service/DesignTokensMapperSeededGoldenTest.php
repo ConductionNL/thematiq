@@ -36,9 +36,11 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\TypographyMember
  * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
  * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\AliasWalk
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\DesignTokenRef

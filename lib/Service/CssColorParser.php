@@ -184,7 +184,7 @@ class CssColorParser {
 			return null;
 		}
 
-		$components = $this->components(parts: $parts, read: ['space' => $space, 'rgbFunction' => ($name !== 'color')]);
+		$components = $this->components(parts: $parts, space: $space, rgbFunction: ($name !== 'color'));
 		if ($components === null) {
 			return null;
 		}
@@ -230,14 +230,15 @@ class CssColorParser {
 	 * The component words as DTCG numbers.
 	 *
 	 * @param list<string> $parts The component words.
-	 * @param array{space: string, rgbFunction: bool} $read The colour space, and whether rgb() wrote them (0..255).
+	 * @param string $space The colour space.
+	 * @param bool $rgbFunction Whether rgb() wrote them (0..255).
 	 *
 	 * @return array<int, float>|null The numbers, or null when a word is not one.
 	 */
-	private function components(array $parts, array $read): ?array {
+	private function components(array $parts, string $space, bool $rgbFunction): ?array {
 		$components = [];
 		foreach ($parts as $index => $part) {
-			$number = $this->number(part: $part, place: ['space' => $read['space'], 'index' => $index, 'rgbFunction' => $read['rgbFunction']]);
+			$number = $this->number(part: $part, space: $space, index: $index, rgbFunction: $rgbFunction);
 			if ($number === null) {
 				return null;
 			}
@@ -323,11 +324,13 @@ class CssColorParser {
 	 * One component word to its DTCG number.
 	 *
 	 * @param string $part The word.
-	 * @param array{space: string, index: int, rgbFunction: bool} $place The colour space, its position, and whether rgb() wrote it (0..255).
+	 * @param string $space The colour space.
+	 * @param int $index Its position.
+	 * @param bool $rgbFunction Whether it came from rgb() rather than color(srgb ...), which reads 0..255.
 	 *
 	 * @return float|null Null for a word that is not a number.
 	 */
-	private function number(string $part, array $place): ?float {
+	private function number(string $part, string $space, int $index, bool $rgbFunction): ?float {
 		if ($part === 'none') {
 			return 0.0;
 		}
@@ -337,7 +340,7 @@ class CssColorParser {
 			return null;
 		}
 
-		return $this->scaled(part: $part, place: $place);
+		return $this->scaled(part: $part, space: $space, index: $index, rgbFunction: $rgbFunction);
 	}//end number()
 
 	/**
@@ -345,17 +348,19 @@ class CssColorParser {
 	 * an rgb() channel from 0..255.
 	 *
 	 * @param string $part The numeric word.
-	 * @param array{space: string, index: int, rgbFunction: bool} $place The colour space, its position, and whether rgb() wrote it.
+	 * @param string $space The colour space.
+	 * @param int $index Its position.
+	 * @param bool $rgbFunction Whether rgb() wrote it.
 	 *
 	 * @return float The number.
 	 */
-	private function scaled(string $part, array $place): float {
+	private function scaled(string $part, string $space, int $index, bool $rgbFunction): float {
 		$number = (float)$part;
 		if (str_ends_with($part, '%') === true) {
-			return ($number / 100 * (self::PERCENT_SCALE[$place['space']][$place['index']] ?? 1.0));
+			return ($number / 100 * (self::PERCENT_SCALE[$space][$index] ?? 1.0));
 		}
 
-		if ($place['space'] === 'srgb' && $place['rgbFunction'] === true) {
+		if ($space === 'srgb' && $rgbFunction === true) {
 			return ($number / 255);
 		}
 

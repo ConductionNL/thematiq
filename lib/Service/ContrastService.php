@@ -150,7 +150,9 @@ class ContrastService {
 		$action = ($declarations['--nldesign-color-action'] ?? ($declarations['--nldesign-color-primary'] ?? null));
 		$actionText = ($declarations['--nldesign-color-action-text'] ?? ($declarations['--nldesign-color-primary-text'] ?? null));
 
-		if ($action === null || $actionText === null || $this->isPrimaryPair(declarations: $declarations, action: [$action, $actionText]) === true) {
+		if ($action === null || $actionText === null
+			|| $this->isPrimaryPair(declarations: $declarations, action: $action, actionText: $actionText) === true
+		) {
 			return [];
 		}
 
@@ -175,13 +177,14 @@ class ContrastService {
 	 * Whether the action pair is the primary pair itself, so {@see self::PAIRS} already measured it.
 	 *
 	 * @param array<string, string> $declarations Map of token name => value.
-	 * @param array{0: string, 1: string} $action The action colour and the text on it.
+	 * @param string $action The action colour.
+	 * @param string $actionText The text on it.
 	 *
 	 * @return bool True when both sides equal their primary counterparts.
 	 */
-	private function isPrimaryPair(array $declarations, array $action): bool {
-		return $action[0] === ($declarations['--nldesign-color-primary'] ?? null)
-			&& $action[1] === ($declarations['--nldesign-color-primary-text'] ?? null);
+	private function isPrimaryPair(array $declarations, string $action, string $actionText): bool {
+		return $action === ($declarations['--nldesign-color-primary'] ?? null)
+			&& $actionText === ($declarations['--nldesign-color-primary-text'] ?? null);
 	}//end isPrimaryPair()
 
 	/**
