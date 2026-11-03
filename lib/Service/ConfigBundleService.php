@@ -22,9 +22,6 @@ namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
-use OCP\App\IAppManager;
-use OCP\IConfig;
-use Psr\Log\LoggerInterface;
 
 /**
  * Exports/imports the COMPLETE nldesign configuration as a single JSON
@@ -120,148 +117,19 @@ class ConfigBundleService {
 	];
 
 	/**
-	 * The application configuration service.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The app manager, for the informational app version and the app path.
-	 *
-	 * @var IAppManager
-	 */
-	private IAppManager $appManager;
-
-	/**
-	 * The token set discovery/validation service.
-	 *
-	 * @var TokenSetService
-	 */
-	private TokenSetService $tokenSetService;
-
-	/**
-	 * The custom overrides (custom-overrides.css) read/write service.
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
-
-	/**
-	 * The custom token sets section.
-	 *
-	 * @var CustomTokenSetsBundleSection
-	 */
-	private CustomTokenSetsBundleSection $customTokenSets;
-
-	/**
-	 * The per-app theming exclusion list service.
-	 *
-	 * @var AppThemingService
-	 */
-	private AppThemingService $appThemingService;
-
-	/**
-	 * The CSS parser service.
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
-	 * The email theming footer service.
-	 *
-	 * @var EmailThemingService
-	 */
-	private EmailThemingService $emailThemingService;
-
-	/**
-	 * The custom font metadata service (manifest export only, see class docblock).
-	 *
-	 * @var FontService
-	 */
-	private FontService $fontService;
-
-	/**
-	 * The upstream token freshness opt-in toggle service.
-	 *
-	 * @var UpstreamFreshnessService
-	 */
-	private UpstreamFreshnessService $freshnessService;
-
-	/**
-	 * The planned token set switches.
-	 *
-	 * @var ScheduledSwitchStore
-	 */
-	private ScheduledSwitchStore $scheduledSwitches;
-
-	/**
-	 * The approved mark, document style and brand per app sections.
-	 *
-	 * @var BundleExtraSections
-	 */
-	private BundleExtraSections $extraSections;
-
-	/**
-	 * The logger.
-	 *
-	 * @var LoggerInterface
-	 */
-	private LoggerInterface $logger;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config The config service.
-	 * @param IAppManager $appManager The app manager.
-	 * @param TokenSetService $tokenSetService The token set service.
-	 * @param CustomOverridesService $overridesService The custom overrides service.
-	 * @param CustomTokenSetsBundleSection $customTokenSets The custom token sets section.
-	 * @param AppThemingService $appThemingService The per-app theming service.
-	 * @param CssParserService $cssParser The CSS parser service.
-	 * @param EmailThemingService $emailThemingService The email theming footer service.
-	 * @param FontService $fontService The custom font metadata service.
-	 * @param UpstreamFreshnessService $freshnessService The upstream freshness toggle service.
-	 * @param ScheduledSwitchStore $scheduledSwitches The planned token set switches.
-	 * @param LoggerInterface $logger The logger.
-	 * @param BundleExtraSections $extraSections The approved mark, document style and brand per app sections.
-	 * @param TokenLifecycleBundleSection|null $lifecycle The own tokens and deprecations section.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Each dependency backs exactly one bundle
-	 * section's EXISTING validator/service (config-portability's core reuse requirement); NC's DI
-	 * container supplies them, and a synthetic parameter-object split would not reduce the real
-	 * one-collaborator-per-section coupling.
+	 * @param ConfigBundleAppSettings $appSettings The config, the app manager, the per-app theming and the freshness toggle.
+	 * @param ConfigBundleTokenSources $tokenSources The token sets, the custom overrides, the planned switches and the CSS parser.
+	 * @param ConfigBundleSections $sections The custom token sets, the extra sections and the lifecycle section.
+	 * @param ConfigBundleBranding $branding The e-mail theming, the fonts and the logger.
 	 */
 	public function __construct(
-		IConfig $config,
-		IAppManager $appManager,
-		TokenSetService $tokenSetService,
-		CustomOverridesService $overridesService,
-		CustomTokenSetsBundleSection $customTokenSets,
-		AppThemingService $appThemingService,
-		CssParserService $cssParser,
-		EmailThemingService $emailThemingService,
-		FontService $fontService,
-		UpstreamFreshnessService $freshnessService,
-		ScheduledSwitchStore $scheduledSwitches,
-		LoggerInterface $logger,
-		BundleExtraSections $extraSections,
-		private ?TokenLifecycleBundleSection $lifecycle = null,
+		private readonly ConfigBundleAppSettings $appSettings,
+		private readonly ConfigBundleTokenSources $tokenSources,
+		private readonly ConfigBundleSections $sections,
+		private readonly ConfigBundleBranding $branding,
 	) {
-		$this->config = $config;
-		$this->appManager = $appManager;
-		$this->tokenSetService = $tokenSetService;
-		$this->overridesService = $overridesService;
-		$this->customTokenSets = $customTokenSets;
-		$this->appThemingService = $appThemingService;
-		$this->cssParser = $cssParser;
-		$this->emailThemingService = $emailThemingService;
-		$this->fontService = $fontService;
-		$this->freshnessService = $freshnessService;
-		$this->scheduledSwitches = $scheduledSwitches;
-		$this->logger = $logger;
-		$this->extraSections = $extraSections;
 	}//end __construct()
 
 	/**
@@ -278,28 +146,28 @@ class ConfigBundleService {
 			'exportedAt' => gmdate('c'),
 			'app' => [
 				'id' => Application::APP_ID,
-				'version' => $this->appManager->getAppVersion(Application::APP_ID),
+				'version' => $this->appSettings->appManager->getAppVersion(Application::APP_ID),
 			],
 			'config' => [
-				'tokenSet' => $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
-				'hideSlogan' => ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
-				'showMenuLabels' => ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
-				'primaryDrivesComponents' => ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
+				'tokenSet' => $this->appSettings->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
+				'hideSlogan' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
+				'showMenuLabels' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
+				'primaryDrivesComponents' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
 				'layoutOptions' => $this->exportLayoutOptions(),
-				'disabledApps' => $this->appThemingService->getDisabledApps(),
-				'upstreamFreshnessEnabled' => $this->freshnessService->isEnabled(),
-				'scheduledSwitches' => $this->scheduledSwitches->exportable(),
+				'disabledApps' => $this->appSettings->appThemingService->getDisabledApps(),
+				'upstreamFreshnessEnabled' => $this->appSettings->freshnessService->isEnabled(),
+				'scheduledSwitches' => $this->tokenSources->scheduledSwitches->exportable(),
 			],
-			'emailFooter' => $this->emailThemingService->getFooterConfig(),
-			'customOverridesCss' => $this->overridesService->getRawContent(),
-			'customTokenSets' => $this->customTokenSets->export(),
+			'emailFooter' => $this->branding->emailThemingService->getFooterConfig(),
+			'customOverridesCss' => $this->tokenSources->overridesService->getRawContent(),
+			'customTokenSets' => $this->sections->customTokenSets->export(),
 			'customFonts' => [
 				'binariesIncluded' => false,
 				'note' => 'Font binaries are not embedded in the bundle (see config-portability spec). '
 					. 'Metadata only — re-upload font files by hand on the target environment.',
-				'manifest' => $this->fontService->getManifest(),
+				'manifest' => $this->branding->fontService->getManifest(),
 			],
-		] + $this->extraSections->export() + ($this->lifecycle?->export() ?? []);
+		] + $this->sections->extraSections->export() + ($this->sections->lifecycle?->export() ?? []);
 	}//end export()
 
 	/**
@@ -314,7 +182,7 @@ class ConfigBundleService {
 	private function exportLayoutOptions(): array {
 		$export = [];
 		foreach (LayoutOptionValues::BUNDLE_KEYS as $name => $key) {
-			$export[$name] = $this->config->getAppValue(Application::APP_ID, $key, '');
+			$export[$name] = $this->appSettings->config->getAppValue(Application::APP_ID, $key, '');
 		}
 
 		return $export;
@@ -339,7 +207,7 @@ class ConfigBundleService {
 		$validation = $this->validate(bundle: $bundle);
 
 		if ($validation['valid'] === false) {
-			$this->logger->warning(
+			$this->branding->logger->warning(
 				'NL Design configuration bundle import rejected: ' . count($validation['errors']) . ' section error(s).'
 			);
 
@@ -364,7 +232,7 @@ class ConfigBundleService {
 
 		$this->apply(resolved: $validation['resolved']);
 
-		$this->logger->info('NL Design configuration bundle imported successfully.');
+		$this->branding->logger->info('NL Design configuration bundle imported successfully.');
 
 		return [
 			'valid' => true,
@@ -395,23 +263,26 @@ class ConfigBundleService {
 		$resolved['config'] = $this->validateConfigSection(bundle: $bundle, errors: $errors);
 		$resolved['emailFooter'] = $this->validateEmailFooterSection(bundle: $bundle, errors: $errors);
 		$resolved['customOverrides'] = $this->validateOverridesSection(bundle: $bundle, errors: $errors);
-		$resolved['customTokenSets'] = $this->customTokenSets->validate(bundle: $bundle, errors: $errors);
+		$resolved['customTokenSets'] = $this->sections->customTokenSets->validate(bundle: $bundle, errors: $errors);
 		$resolved['customFonts'] = $this->validateFontsSection(bundle: $bundle, errors: $errors);
 
 		// The active token set must resolve against either the filesystem
 		// (shipped or already-installed custom) OR one of THIS bundle's own
 		// custom sets — only meaningful once customTokenSets parsed cleanly.
 		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
-		$errors = array_merge($errors, (new RestrictedSetsInBundle())->errors(bundle: $bundle, tokenSets: $this->tokenSetService, config: $this->config));
+		$errors = array_merge(
+			$errors,
+			(new RestrictedSetsInBundle())->errors(bundle: $bundle, tokenSets: $this->tokenSources->tokenSetService, config: $this->appSettings->config)
+		);
 
 		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
-		$resolved['lifecycle'] = $this->lifecycle?->validate(bundle: $bundle, errors: $errors);
+		$resolved['lifecycle'] = $this->sections->lifecycle?->validate(bundle: $bundle, errors: $errors);
 
 		$bundledIds = array_column($resolved['customTokenSets'], 'id');
-		$resolved['extra'] = $this->extraSections->validate(
+		$resolved['extra'] = $this->sections->extraSections->validate(
 			bundle: $bundle,
 			setExists: fn (string $id): bool => (
-				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+				in_array($id, $bundledIds, true) === true || $this->tokenSources->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
 			),
 			errors: $errors
 		);
@@ -597,7 +468,7 @@ class ConfigBundleService {
 		$privacyUrl = (string)($footer['privacyUrl'] ?? '');
 
 		try {
-			$this->emailThemingService->validateFooterConfig(
+			$this->branding->emailThemingService->validateFooterConfig(
 				orgName: $orgName,
 				accessibilityUrl: $accessibilityUrl,
 				privacyUrl: $privacyUrl
@@ -635,7 +506,7 @@ class ConfigBundleService {
 			return ['tokens' => [], 'skipped' => []];
 		}
 
-		$parsed = $this->cssParser->parseOverridesFile(css: $css);
+		$parsed = $this->tokenSources->cssParser->parseOverridesFile(css: $css);
 		if ($parsed === null) {
 			$parsed = [];
 		}
@@ -702,7 +573,7 @@ class ConfigBundleService {
 			return;
 		}
 
-		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSet) === true) {
+		if ($this->tokenSources->tokenSetService->isValidTokenSet(tokenSetId: $tokenSet) === true) {
 			return;
 		}
 
@@ -738,10 +609,10 @@ class ConfigBundleService {
 		}
 
 		$bundledIds = array_column(($resolved['customTokenSets'] ?? []), 'id');
-		$result = $this->scheduledSwitches->validateImport(
+		$result = $this->tokenSources->scheduledSwitches->validateImport(
 			raw: $config['scheduledSwitches'],
 			setExists: fn (string $id): bool => (
-				in_array($id, $bundledIds, true) === true || $this->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
+				in_array($id, $bundledIds, true) === true || $this->tokenSources->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
 			)
 		);
 
@@ -792,8 +663,8 @@ class ConfigBundleService {
 				'note' => 'Font metadata recorded for information only — binaries are not part of the '
 					. 'bundle and must be re-uploaded by hand on the target environment.',
 			],
-		] + $this->extraSections->summary(resolved: $resolved['extra'])
-			+ ($this->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
+		] + $this->sections->extraSections->summary(resolved: $resolved['extra'])
+			+ ($this->sections->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
 	}//end buildSectionSummary()
 
 	/**
@@ -807,17 +678,17 @@ class ConfigBundleService {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function applyConfig(array $config): void {
-		$this->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']);
+		$this->appSettings->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']);
 		foreach (self::CONFIG_FLAG_KEYS as $flag => $key) {
-			$this->config->setAppValue(Application::APP_ID, $key, (string)(int)$config[$flag]);
+			$this->appSettings->config->setAppValue(Application::APP_ID, $key, (string)(int)$config[$flag]);
 		}
 
 		foreach ($config['layoutOptions'] as $key => $value) {
-			$this->config->setAppValue(Application::APP_ID, $key, $value);
+			$this->appSettings->config->setAppValue(Application::APP_ID, $key, $value);
 		}
 
-		$this->appThemingService->setDisabledApps(appIds: $config['disabledApps']);
-		$this->freshnessService->setEnabled(enabled: $config['upstreamFreshnessEnabled']);
+		$this->appSettings->appThemingService->setDisabledApps(appIds: $config['disabledApps']);
+		$this->appSettings->freshnessService->setEnabled(enabled: $config['upstreamFreshnessEnabled']);
 	}//end applyConfig()
 
 	/**
@@ -833,24 +704,24 @@ class ConfigBundleService {
 		$this->applyConfig(config: $resolved['config']);
 
 		$footer = $resolved['emailFooter'];
-		$this->emailThemingService->setFooterConfig(
+		$this->branding->emailThemingService->setFooterConfig(
 			orgName: $footer['orgName'],
 			accessibilityUrl: $footer['accessibilityUrl'],
 			privacyUrl: $footer['privacyUrl']
 		);
 
 		// Own tokens first: the overrides file written next renders them.
-		$this->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
-		$this->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
-		$this->customTokenSets->apply(resolved: $resolved['customTokenSets']);
+		$this->sections->lifecycle?->apply(resolved: ($resolved['lifecycle'] ?? null));
+		$this->tokenSources->overridesService->write(tokens: $resolved['customOverrides']['tokens']);
+		$this->sections->customTokenSets->apply(resolved: $resolved['customTokenSets']);
 
 		if ($resolved['scheduledSwitches'] !== null) {
-			$this->scheduledSwitches->save(
-				entries: $this->scheduledSwitches->mergeImported(imported: $resolved['scheduledSwitches'], now: time())
+			$this->tokenSources->scheduledSwitches->save(
+				entries: $this->tokenSources->scheduledSwitches->mergeImported(imported: $resolved['scheduledSwitches'], now: time())
 			);
 		}
 
-		$this->extraSections->apply(resolved: $resolved['extra']);
+		$this->sections->extraSections->apply(resolved: $resolved['extra']);
 
 		// CustomFonts is deliberately never applied — see class docblock.
 	}//end apply()

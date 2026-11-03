@@ -19,7 +19,11 @@ use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\AssistantMarkService;
 use OCA\Thematiq\Service\BundleExtraSections;
+use OCA\Thematiq\Service\ConfigBundleAppSettings;
+use OCA\Thematiq\Service\ConfigBundleBranding;
+use OCA\Thematiq\Service\ConfigBundleSections;
 use OCA\Thematiq\Service\ConfigBundleService;
+use OCA\Thematiq\Service\ConfigBundleTokenSources;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
@@ -217,36 +221,44 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->fontService->method('getManifest')->willReturn([]);
 
 		$this->service = new ConfigBundleService(
-			$config,
-			$appManager,
-			$this->tokenSetService,
-			$this->overridesService,
-			new CustomTokenSetsBundleSection(
-				customSets: $this->customTokenSetService,
-				validator: $customTokenSetValidator,
-				cssParser: $cssParser,
-				appManager: $appManager
+			appSettings: new ConfigBundleAppSettings(
+				config: $config,
+				appManager: $appManager,
+				appThemingService: $appThemingService,
+				freshnessService: $freshnessService
 			),
-			$appThemingService,
-			$cssParser,
-			$emailThemingService,
-			$this->fontService,
-			$freshnessService,
-			new ScheduledSwitchStore($config),
-			$logger,
-			new BundleExtraSections(
-				new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
-				new DocumentAssetService($this->createMock(IAppData::class), $config),
-				new AppBrandService(
-					$config,
-					$appManager,
-					$appThemingService,
-					$this->tokenSetService,
-					new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
-					$this->createMock(IURLGenerator::class)
-				)
+			tokenSources: new ConfigBundleTokenSources(
+				tokenSetService: $this->tokenSetService,
+				overridesService: $this->overridesService,
+				scheduledSwitches: new ScheduledSwitchStore($config),
+				cssParser: $cssParser
 			),
-			new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations, $this->overridesService)
+			sections: new ConfigBundleSections(
+				customTokenSets: new CustomTokenSetsBundleSection(
+					customSets: $this->customTokenSetService,
+					validator: $customTokenSetValidator,
+					cssParser: $cssParser,
+					appManager: $appManager
+				),
+				extraSections: new BundleExtraSections(
+					new AssistantMarkService($config, $emailThemingService, $this->createMock(Capabilities::class)),
+					new DocumentAssetService($this->createMock(IAppData::class), $config),
+					new AppBrandService(
+						$config,
+						$appManager,
+						$appThemingService,
+						$this->tokenSetService,
+						new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer()),
+						$this->createMock(IURLGenerator::class)
+					)
+				),
+				lifecycle: new TokenLifecycleBundleSection($this->ownTokens, $this->deprecations, $this->overridesService)
+			),
+			branding: new ConfigBundleBranding(
+				emailThemingService: $emailThemingService,
+				fontService: $this->fontService,
+				logger: $logger
+			)
 		);
 	}//end setUp()
 
