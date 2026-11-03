@@ -18,6 +18,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import postcss from 'postcss'
+import { compact } from './support/cssText.js'
 import { describe, expect, it } from 'vitest'
 
 const ROOT = path.resolve(__dirname, '../..')
@@ -136,7 +137,7 @@ function cascade(env, matches) {
 				if (prior && prior.important && !d.important) {
 					return
 				}
-				won[d.prop] = { value: d.value.trim(), important: d.important }
+				won[d.prop] = { value: compact(d.value), important: d.important }
 			})
 		})
 	}
@@ -215,7 +216,7 @@ const BODY_LINK =
  */
 function page(env) {
 	const vars = cascade(env, (s) => reachesBody(s, env))
-	const element = (selector) => cascade(env, (s) => s.trim() === selector)
+	const element = (selector) => cascade(env, (s) => compact(s) === selector)
 	const focus = element('*:focus-visible')
 	const outline = resolve(focus.outline.replace(/!important/, ''), vars)
 	const [, width, colour] = outline.match(/^(\d+)px\s+solid\s+(\S+)$/) ?? []

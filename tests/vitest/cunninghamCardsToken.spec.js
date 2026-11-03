@@ -10,12 +10,11 @@
  * @spec openspec/specs/cunningham-cards-token/spec.md
  */
 import { describe, expect, it } from 'vitest'
-import fs from 'node:fs'
 import path from 'node:path'
+import { readCss } from './support/cssText.js'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const read = (rel) =>
-	fs.readFileSync(path.join(ROOT, rel), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const read = (rel) => readCss(path.join(ROOT, rel))
 const TOKEN = '--nldesign-component-dashboard-card-header-border-style'
 
 describe('the Cunningham card marker', () => {
