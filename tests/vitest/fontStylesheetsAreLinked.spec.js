@@ -21,7 +21,7 @@ const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '')
 
 /** The layer portaliq links for a public site; build-fonts.js emits it. */
 const PUBLIC_SITE_LAYER = 'css/fonts.css'
-/** Linked by CssInjectionService only when the admin turns Marianne on. */
+/** Linked by the set layers (TokenSetLayers) only when the admin turns Marianne on. */
 const OPT_IN_LAYER = 'css/systems/lasuite/marianne.css'
 
 /**
@@ -76,8 +76,8 @@ describe('a stylesheet that declares a typeface is linked', () => {
 		expect(orphans).toEqual([])
 	})
 
-	it('links the opt-in Marianne layer from the injection service (the control)', () => {
-		expect(read('lib/Service/CssInjectionService.php')).toContain(
+	it('links the opt-in Marianne layer from the set layers (the control)', () => {
+		expect(read('lib/Service/TokenSetLayers.php')).toContain(
 			"'file' => 'systems/lasuite/marianne'",
 		)
 	})
