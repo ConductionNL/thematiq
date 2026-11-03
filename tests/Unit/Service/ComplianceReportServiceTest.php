@@ -98,7 +98,7 @@ class ComplianceReportServiceTest extends TestCase {
 		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$this->writeDefaults($this->allPassDefaults());
+		$this->writeDefaults(tokens: $this->allPassDefaults());
 		$this->writeOverridesMapping();
 
 		$this->activeTokenSetId = 'nldesign-fixture';
@@ -118,7 +118,7 @@ class ComplianceReportServiceTest extends TestCase {
 	 * Remove the temp app dir after each test.
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -141,7 +141,7 @@ class ComplianceReportServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -236,11 +236,11 @@ class ComplianceReportServiceTest extends TestCase {
 	 * @return ComplianceReportService The service under test.
 	 */
 	private function buildService(): ComplianceReportService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$appManager->method('getAppVersion')->willReturn('0.1.3');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? $this->activeTokenSetId : $default)
 		);
@@ -248,19 +248,19 @@ class ComplianceReportServiceTest extends TestCase {
 			fn (string $key, $default = '') => ($key === 'instanceid' ? 'test-instance-abc' : $default)
 		);
 
-		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$urlGenerator->method('getBaseUrl')->willReturn('https://cloud.example.test');
 
-		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory = $this->createMock(originalClassName: ITimeFactory::class);
 		$timeFactory->method('getTime')->willReturnCallback(fn () => $this->frozenTime);
 
-		$overridesService = $this->createMock(CustomOverridesService::class);
+		$overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
 		$overridesService->method('read')->willReturnCallback(fn () => $this->customOverrides);
 
-		$designSystemService = $this->createMock(DesignSystemService::class);
+		$designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystemService->method('getTokenSetMeta')->willReturnCallback(fn () => $this->tokenSetMeta);
 
-		$customTokenSetService = $this->createMock(CustomTokenSetService::class);
+		$customTokenSetService = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$customTokenSetService->method('getManifest')->willReturnCallback(fn () => $this->customManifest);
 		$customTokenSetService->method('getRawContent')->willReturnMap(valueMap: [['custom-foo', ":root {\n  --nldesign-color-text: #222222;\n}\n"]]);
 
@@ -295,7 +295,7 @@ class ComplianceReportServiceTest extends TestCase {
 			}
 		}
 
-		$this->fail('No pair found for foreground ' . $foreground);
+		$this->fail(message: 'No pair found for foreground ' . $foreground);
 	}//end findPair()
 
 	/**
@@ -305,36 +305,36 @@ class ComplianceReportServiceTest extends TestCase {
 		$data = $this->service->generate();
 		$pair = $this->findPair(pairs: $data['pairs'], foreground: '--color-main-text');
 
-		$this->assertSame('#000000', $pair['foregroundValue']);
-		$this->assertSame('#ffffff', $pair['backgroundValue']);
-		$this->assertEqualsWithDelta(21.0, $pair['ratio'], 0.01);
-		$this->assertSame('pass', $pair['verdict']);
+		$this->assertSame(expected: '#000000', actual: $pair['foregroundValue']);
+		$this->assertSame(expected: '#ffffff', actual: $pair['backgroundValue']);
+		$this->assertEqualsWithDelta(expected: 21.0, actual: $pair['ratio'], delta: 0.01);
+		$this->assertSame(expected: 'pass', actual: $pair['verdict']);
 	}//end testKnownRatioBlackOnWhiteIs21AndPasses()
 
 	/**
 	 * Known ratio: #767676 on #ffffff is 4.54:1 — the AA boundary, and passes.
 	 */
 	public function testKnownRatioBoundaryPasses(): void {
-		$this->writeDefaults(array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#767676']));
+		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#767676']));
 
 		$data = $this->service->generate();
 		$pair = $this->findPair(pairs: $data['pairs'], foreground: '--color-main-text');
 
-		$this->assertEqualsWithDelta(4.54, $pair['ratio'], 0.01);
-		$this->assertSame('pass', $pair['verdict']);
+		$this->assertEqualsWithDelta(expected: 4.54, actual: $pair['ratio'], delta: 0.01);
+		$this->assertSame(expected: 'pass', actual: $pair['verdict']);
 	}//end testKnownRatioBoundaryPasses()
 
 	/**
 	 * Known ratio: #cccccc on #ffffff is ~1.61:1 and fails.
 	 */
 	public function testKnownRatioLowContrastFails(): void {
-		$this->writeDefaults(array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#cccccc']));
+		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => '#cccccc']));
 
 		$data = $this->service->generate();
 		$pair = $this->findPair(pairs: $data['pairs'], foreground: '--color-main-text');
 
-		$this->assertEqualsWithDelta(1.61, $pair['ratio'], 0.01);
-		$this->assertSame('fail', $pair['verdict']);
+		$this->assertEqualsWithDelta(expected: 1.61, actual: $pair['ratio'], delta: 0.01);
+		$this->assertSame(expected: 'fail', actual: $pair['verdict']);
 	}//end testKnownRatioLowContrastFails()
 
 	/**
@@ -342,14 +342,14 @@ class ComplianceReportServiceTest extends TestCase {
 	 * the unresolved token named in the note.
 	 */
 	public function testUnresolvedVarIsUnevaluatedNeverPassing(): void {
-		$this->writeDefaults(array_merge($this->allPassDefaults(), ['--nldesign-color-text' => 'var(--nldesign-does-not-exist)']));
+		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text' => 'var(--nldesign-does-not-exist)']));
 
 		$data = $this->service->generate();
 		$pair = $this->findPair(pairs: $data['pairs'], foreground: '--color-main-text');
 
-		$this->assertSame('unevaluated', $pair['verdict']);
-		$this->assertNull($pair['ratio']);
-		$this->assertStringContainsString('--nldesign-does-not-exist', (string)$pair['note']);
+		$this->assertSame(expected: 'unevaluated', actual: $pair['verdict']);
+		$this->assertNull(actual: $pair['ratio']);
+		$this->assertStringContainsString(needle: '--nldesign-does-not-exist', haystack: (string)$pair['note']);
 	}//end testUnresolvedVarIsUnevaluatedNeverPassing()
 
 	/**
@@ -358,21 +358,21 @@ class ComplianceReportServiceTest extends TestCase {
 	public function testReportContainsEighteenPairsInMatrixOrder(): void {
 		$data = $this->service->generate();
 
-		$this->assertCount(18, $data['pairs']);
-		$this->assertSame('--color-primary-text', $data['pairs'][0]['foreground']);
-		$this->assertSame('--color-primary', $data['pairs'][0]['background']);
-		$this->assertSame('--color-border-success', $data['pairs'][17]['foreground']);
+		$this->assertCount(expectedCount: 18, haystack: $data['pairs']);
+		$this->assertSame(expected: '--color-primary-text', actual: $data['pairs'][0]['foreground']);
+		$this->assertSame(expected: '--color-primary', actual: $data['pairs'][0]['background']);
+		$this->assertSame(expected: '--color-border-success', actual: $data['pairs'][17]['foreground']);
 
 		foreach ($data['pairs'] as $pair) {
-			$this->assertArrayHasKey('foreground', $pair);
-			$this->assertArrayHasKey('background', $pair);
-			$this->assertArrayHasKey('foregroundValue', $pair);
-			$this->assertArrayHasKey('backgroundValue', $pair);
-			$this->assertArrayHasKey('ratio', $pair);
-			$this->assertArrayHasKey('threshold', $pair);
-			$this->assertArrayHasKey('basis', $pair);
-			$this->assertArrayHasKey('verdict', $pair);
-			$this->assertContains($pair['verdict'], ['pass', 'fail', 'unevaluated']);
+			$this->assertArrayHasKey(key: 'foreground', array: $pair);
+			$this->assertArrayHasKey(key: 'background', array: $pair);
+			$this->assertArrayHasKey(key: 'foregroundValue', array: $pair);
+			$this->assertArrayHasKey(key: 'backgroundValue', array: $pair);
+			$this->assertArrayHasKey(key: 'ratio', array: $pair);
+			$this->assertArrayHasKey(key: 'threshold', array: $pair);
+			$this->assertArrayHasKey(key: 'basis', array: $pair);
+			$this->assertArrayHasKey(key: 'verdict', array: $pair);
+			$this->assertContains(needle: $pair['verdict'], haystack: ['pass', 'fail', 'unevaluated']);
 		}
 	}//end testReportContainsEighteenPairsInMatrixOrder()
 
@@ -385,8 +385,8 @@ class ComplianceReportServiceTest extends TestCase {
 		$data = $this->service->generate();
 		$pair = $this->findPair(pairs: $data['pairs'], foreground: '--color-primary');
 
-		$this->assertSame('#767676', $pair['foregroundValue']);
-		$this->assertNotSame('#000000', $pair['foregroundValue']);
+		$this->assertSame(expected: '#767676', actual: $pair['foregroundValue']);
+		$this->assertNotSame(expected: '#000000', actual: $pair['foregroundValue']);
 	}//end testCustomOverrideWinsOverTokenSetValue()
 
 	/**
@@ -399,8 +399,8 @@ class ComplianceReportServiceTest extends TestCase {
 		$withOverrides = $this->service->generate();
 
 		$this->assertNotSame(
-			$withoutOverrides['metadata']['overridesHash'],
-			$withOverrides['metadata']['overridesHash']
+			expected: $withoutOverrides['metadata']['overridesHash'],
+			actual: $withOverrides['metadata']['overridesHash']
 		);
 	}//end testOverridesHashChangesWithOverrides()
 
@@ -410,24 +410,24 @@ class ComplianceReportServiceTest extends TestCase {
 	public function testAllPassingYieldsOverallPass(): void {
 		$data = $this->service->generate();
 
-		$this->assertSame(18, $data['summary']['passed']);
-		$this->assertSame(0, $data['summary']['failed']);
-		$this->assertSame(0, $data['summary']['unevaluated']);
-		$this->assertSame('pass', $data['summary']['verdict']);
+		$this->assertSame(expected: 18, actual: $data['summary']['passed']);
+		$this->assertSame(expected: 0, actual: $data['summary']['failed']);
+		$this->assertSame(expected: 0, actual: $data['summary']['unevaluated']);
+		$this->assertSame(expected: 'pass', actual: $data['summary']['verdict']);
 	}//end testAllPassingYieldsOverallPass()
 
 	/**
 	 * One failing pair caps the overall verdict at "fail".
 	 */
 	public function testOneFailingPairFailsOverallVerdict(): void {
-		$this->writeDefaults(array_merge($this->allPassDefaults(), ['--nldesign-color-text-muted' => '#999999']));
+		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-text-muted' => '#999999']));
 
 		$data = $this->service->generate();
 
-		$this->assertSame(17, $data['summary']['passed']);
-		$this->assertSame(1, $data['summary']['failed']);
-		$this->assertSame(0, $data['summary']['unevaluated']);
-		$this->assertSame('fail', $data['summary']['verdict']);
+		$this->assertSame(expected: 17, actual: $data['summary']['passed']);
+		$this->assertSame(expected: 1, actual: $data['summary']['failed']);
+		$this->assertSame(expected: 0, actual: $data['summary']['unevaluated']);
+		$this->assertSame(expected: 'fail', actual: $data['summary']['verdict']);
 	}//end testOneFailingPairFailsOverallVerdict()
 
 	/**
@@ -436,7 +436,7 @@ class ComplianceReportServiceTest extends TestCase {
 	 */
 	public function testUnevaluatedPairsCapVerdictAtIncomplete(): void {
 		$this->writeDefaults(
-			array_merge(
+			tokens: array_merge(
 				$this->allPassDefaults(),
 				[
 					'--nldesign-color-text-muted' => 'var(--nldesign-undefined-a)',
@@ -447,9 +447,9 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$data = $this->service->generate();
 
-		$this->assertSame(0, $data['summary']['failed']);
-		$this->assertSame(2, $data['summary']['unevaluated']);
-		$this->assertSame('incomplete', $data['summary']['verdict']);
+		$this->assertSame(expected: 0, actual: $data['summary']['failed']);
+		$this->assertSame(expected: 2, actual: $data['summary']['unevaluated']);
+		$this->assertSame(expected: 'incomplete', actual: $data['summary']['verdict']);
 	}//end testUnevaluatedPairsCapVerdictAtIncomplete()
 
 	/**
@@ -468,12 +468,12 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$data = $this->service->generate();
 
-		$this->assertCount(18, $data['pairs']);
+		$this->assertCount(expectedCount: 18, haystack: $data['pairs']);
 		foreach ($data['pairs'] as $pair) {
-			$this->assertSame('unevaluated', $pair['verdict']);
+			$this->assertSame(expected: 'unevaluated', actual: $pair['verdict']);
 		}
 
-		$this->assertSame('incomplete', $data['summary']['verdict']);
+		$this->assertSame(expected: 'incomplete', actual: $data['summary']['verdict']);
 	}//end testStockNextcloudConfigurationStillProducesReport()
 
 	/**
@@ -484,16 +484,16 @@ class ComplianceReportServiceTest extends TestCase {
 		$data = $this->service->generate();
 		$meta = $data['metadata'];
 
-		$this->assertSame('test-instance-abc', $meta['instanceId']);
-		$this->assertSame('https://cloud.example.test', $meta['instanceUrl']);
-		$this->assertSame('0.1.3', $meta['appVersion']);
-		$this->assertNotEmpty($meta['nextcloudVersion']);
-		$this->assertSame('nldesign-fixture', $meta['tokenSet']['id']);
-		$this->assertSame('NL Design Fixture', $meta['tokenSet']['name']);
-		$this->assertSame('unversioned', $meta['tokenSet']['version']);
-		$this->assertSame('nldesign', $meta['designSystem']);
-		$this->assertSame('2026-01-01T00:00:00Z', $meta['generatedAt']);
-		$this->assertSame(64, strlen((string)$meta['overridesHash']));
+		$this->assertSame(expected: 'test-instance-abc', actual: $meta['instanceId']);
+		$this->assertSame(expected: 'https://cloud.example.test', actual: $meta['instanceUrl']);
+		$this->assertSame(expected: '0.1.3', actual: $meta['appVersion']);
+		$this->assertNotEmpty(actual: $meta['nextcloudVersion']);
+		$this->assertSame(expected: 'nldesign-fixture', actual: $meta['tokenSet']['id']);
+		$this->assertSame(expected: 'NL Design Fixture', actual: $meta['tokenSet']['name']);
+		$this->assertSame(expected: 'unversioned', actual: $meta['tokenSet']['version']);
+		$this->assertSame(expected: 'nldesign', actual: $meta['designSystem']);
+		$this->assertSame(expected: '2026-01-01T00:00:00Z', actual: $meta['generatedAt']);
+		$this->assertSame(expected: 64, actual: strlen((string)$meta['overridesHash']));
 	}//end testMetadataIdentifiesTheAuditedConfiguration()
 
 	/**
@@ -512,10 +512,10 @@ class ComplianceReportServiceTest extends TestCase {
 
 		$data = $this->service->generate();
 
-		$this->assertSame('3', $data['metadata']['tokenSet']['version']);
+		$this->assertSame(expected: '3', actual: $data['metadata']['tokenSet']['version']);
 		// No design_system key in the custom manifest entry — falls back to
 		// "nldesign", matching Application::injectThemeCSS()'s own default.
-		$this->assertSame('nldesign', $data['metadata']['designSystem']);
+		$this->assertSame(expected: 'nldesign', actual: $data['metadata']['designSystem']);
 	}//end testCustomSetManifestVersionIsUsedWhenPresent()
 
 	/**
@@ -538,8 +538,8 @@ class ComplianceReportServiceTest extends TestCase {
 	 * byte-identical in both formats.
 	 */
 	public function testDeterministicRegeneration(): void {
-		$this->assertSame($this->service->renderJson(), $this->service->renderJson());
-		$this->assertSame($this->service->renderMarkdown(), $this->service->renderMarkdown());
+		$this->assertSame(expected: $this->service->renderJson(), actual: $this->service->renderJson());
+		$this->assertSame(expected: $this->service->renderMarkdown(), actual: $this->service->renderMarkdown());
 	}//end testDeterministicRegeneration()
 
 	/**
@@ -551,15 +551,15 @@ class ComplianceReportServiceTest extends TestCase {
 		$markdown = $this->service->renderMarkdown();
 
 		foreach ([$json, $markdown] as $rendered) {
-			$this->assertStringContainsString('NOT a WCAG-EM audit', $rendered);
-			$this->assertStringContainsString('NOT a full WCAG', $rendered);
-			$this->assertStringNotContainsStringIgnoringCase('WCAG compliant', $rendered);
-			$this->assertStringNotContainsStringIgnoringCase('voldoet aan WCAG', $rendered);
+			$this->assertStringContainsString(needle: 'NOT a WCAG-EM audit', haystack: $rendered);
+			$this->assertStringContainsString(needle: 'NOT a full WCAG', haystack: $rendered);
+			$this->assertStringNotContainsStringIgnoringCase(needle: 'WCAG compliant', haystack: $rendered);
+			$this->assertStringNotContainsStringIgnoringCase(needle: 'voldoet aan WCAG', haystack: $rendered);
 		}
 
 		$decoded = json_decode($json, true);
-		$this->assertArrayHasKey('scope', $decoded);
-		$this->assertNotEmpty($decoded['scope']);
+		$this->assertArrayHasKey(key: 'scope', array: $decoded);
+		$this->assertNotEmpty(actual: $decoded['scope']);
 	}//end testScopeStatementAlwaysPresentNeverClaimsCompliance()
 
 	/**
@@ -568,11 +568,11 @@ class ComplianceReportServiceTest extends TestCase {
 	public function testMarkdownContainsMetadataAndPairTable(): void {
 		$markdown = $this->service->renderMarkdown();
 
-		$this->assertStringContainsString('## Metadata', $markdown);
-		$this->assertStringContainsString('Instance id: test-instance-abc', $markdown);
-		$this->assertStringContainsString('## Pair matrix (18 pairs)', $markdown);
-		$this->assertStringContainsString('## Summary', $markdown);
-		$this->assertStringContainsString('--color-primary-text', $markdown);
+		$this->assertStringContainsString(needle: '## Metadata', haystack: $markdown);
+		$this->assertStringContainsString(needle: 'Instance id: test-instance-abc', haystack: $markdown);
+		$this->assertStringContainsString(needle: '## Pair matrix (18 pairs)', haystack: $markdown);
+		$this->assertStringContainsString(needle: '## Summary', haystack: $markdown);
+		$this->assertStringContainsString(needle: '--color-primary-text', haystack: $markdown);
 	}//end testMarkdownContainsMetadataAndPairTable()
 
 	/**
@@ -584,7 +584,7 @@ class ComplianceReportServiceTest extends TestCase {
 	public function testSharedContractWithShippedTokenSetAuditService(): void {
 		$contrast = new ContrastService();
 		$cssParser = new CssParserService();
-		$audit = new ShippedTokenSetAuditService($contrast, $cssParser);
+		$audit = new ShippedTokenSetAuditService(contrast: $contrast, parser: $cssParser);
 
 		$shippedResult = $audit->auditSet(
 			appPath: $this->appDir,
@@ -596,12 +596,12 @@ class ComplianceReportServiceTest extends TestCase {
 		$textPair = $this->findPair(pairs: $data['pairs'], foreground: '--color-primary-text');
 		$uiPair = $this->findPair(pairs: $data['pairs'], foreground: '--color-primary');
 
-		$this->assertSame($shippedResult['textRatio'], $textPair['ratio']);
-		$this->assertSame($shippedResult['uiRatio'], $uiPair['ratio']);
-		$this->assertSame('pass', $shippedResult['verdict']);
+		$this->assertSame(expected: $shippedResult['textRatio'], actual: $textPair['ratio']);
+		$this->assertSame(expected: $shippedResult['uiRatio'], actual: $uiPair['ratio']);
+		$this->assertSame(expected: 'pass', actual: $shippedResult['verdict']);
 
 		// Both classify a non-literal value as unevaluated.
-		$this->writeDefaults(array_merge($this->allPassDefaults(), ['--nldesign-color-primary-text' => 'var(--undefined)']));
+		$this->writeDefaults(tokens: array_merge($this->allPassDefaults(), ['--nldesign-color-primary-text' => 'var(--undefined)']));
 		$shippedUnevaluated = $audit->auditSet(
 			appPath: $this->appDir,
 			id: 'irrelevant-no-tokens-file',
@@ -612,7 +612,7 @@ class ComplianceReportServiceTest extends TestCase {
 			foreground: '--color-primary-text'
 		);
 
-		$this->assertSame('unevaluated', $shippedUnevaluated['verdict']);
-		$this->assertSame('unevaluated', $complianceUnevaluated['verdict']);
+		$this->assertSame(expected: 'unevaluated', actual: $shippedUnevaluated['verdict']);
+		$this->assertSame(expected: 'unevaluated', actual: $complianceUnevaluated['verdict']);
 	}//end testSharedContractWithShippedTokenSetAuditService()
 }//end class

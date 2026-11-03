@@ -72,10 +72,10 @@ class AppMenuServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->designSystemService = $this->createMock(DesignSystemService::class);
-		$this->initialState = $this->createMock(IInitialState::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->scripts = 0;
 	}//end setUp()
 
@@ -105,12 +105,12 @@ class AppMenuServiceTest extends TestCase {
 	 * @return AppMenuService
 	 */
 	private function service(): AppMenuService {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('nl');
-		$factory = $this->createMock(IFactory::class);
+		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturn($l10n);
 
-		$service = $this->getMockBuilder(AppMenuService::class)
+		$service = $this->getMockBuilder(className: AppMenuService::class)
 			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger])
 			->onlyMethods(['emitScript'])
 			->getMock();
@@ -131,7 +131,7 @@ class AppMenuServiceTest extends TestCase {
 	 * @return LayoutOptionsService&MockObject
 	 */
 	private function layout(bool $workplace): LayoutOptionsService {
-		$options = $this->createMock(LayoutOptionsService::class);
+		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$options->method('stylesheets')->willReturn($workplace === true ? ['workplace-layout', LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET] : ['workplace-layout']);
 
 		return $options;
@@ -149,12 +149,12 @@ class AppMenuServiceTest extends TestCase {
 
 		$menu = $this->service()->resolveMenu(tokenSet: 'zuiddrecht', language: 'nl');
 
-		$this->assertSame('Werk', $menu['groups'][0]['title']);
-		$this->assertSame(['label' => 'Mijn werkdag in launchpad', 'url' => '/apps/launchpad/'], $menu['groups'][0]['link']);
-		$this->assertSame(['id' => 'dossiq', 'description' => 'Zaken en Woo'], $menu['groups'][0]['apps'][1]);
-		$this->assertCount(8, $menu['groups'][0]['apps']);
-		$this->assertSame('Nextcloud', $menu['othersTitle']);
-		$this->assertSame('Apps beheren', $menu['manageLabel']);
+		$this->assertSame(expected: 'Werk', actual: $menu['groups'][0]['title']);
+		$this->assertSame(expected: ['label' => 'Mijn werkdag in launchpad', 'url' => '/apps/launchpad/'], actual: $menu['groups'][0]['link']);
+		$this->assertSame(expected: ['id' => 'dossiq', 'description' => 'Zaken en Woo'], actual: $menu['groups'][0]['apps'][1]);
+		$this->assertCount(expectedCount: 8, haystack: $menu['groups'][0]['apps']);
+		$this->assertSame(expected: 'Nextcloud', actual: $menu['othersTitle']);
+		$this->assertSame(expected: 'Apps beheren', actual: $menu['manageLabel']);
 	}//end testZuiddrechtShipsTheBoardsSections()
 
 	/**
@@ -178,13 +178,13 @@ class AppMenuServiceTest extends TestCase {
 		);
 
 		$this->assertSame(
-			[
+			expected: [
 				'hint' => 'Hint',
 				'groups' => [
 					['title' => 'Werk', 'apps' => [['id' => 'dossiq'], ['id' => 'pipelinq', 'description' => 'Klantcontact']]],
 				],
 			],
-			$this->service()->resolveMenu(tokenSet: 'x', language: 'nl')
+			actual: $this->service()->resolveMenu(tokenSet: 'x', language: 'nl')
 		);
 	}//end testWhatMayNotBeShownIsDropped()
 
@@ -202,11 +202,11 @@ class AppMenuServiceTest extends TestCase {
 		$service = $this->service();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: false));
-		$broken = $this->createMock(LayoutOptionsService::class);
+		$broken = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$broken->method('stylesheets')->willThrowException(new RuntimeException('boom'));
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $broken);
 
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 	}//end testTheWorkplaceHeaderLoadsTheScriptAndNothingElseDoes()
 
 	/**
@@ -218,12 +218,12 @@ class AppMenuServiceTest extends TestCase {
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, $default = '') => ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings'][$key] ?? $default);
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('nl');
 		$l10n->method('t')->willReturnArgument(0);
-		$factory = $this->createMock(IFactory::class);
+		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturn($l10n);
 
 		$this->initialState->expects($this->once())->method('provideInitialState')->with(
@@ -241,8 +241,8 @@ class AppMenuServiceTest extends TestCase {
 			]
 		);
 
-		$service = $this->getMockBuilder(AppMenuService::class)
-			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, new OpenProjectModules($config)])
+		$service = $this->getMockBuilder(className: AppMenuService::class)
+			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, new OpenProjectModules(config: $config)])
 			->onlyMethods(['emitScript'])
 			->getMock();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
@@ -256,18 +256,18 @@ class AppMenuServiceTest extends TestCase {
 	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
-		$this->assertSame('https://op.example.org/sub', (new OpenProjectModules($this->createMock(IConfig::class)))->normalize(value: ' https://op.example.org/sub// '));
+		$this->assertSame(expected: 'https://op.example.org/sub', actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: ' https://op.example.org/sub// '));
 		foreach (['', 'javascript:alert(1)', 'ftp://op.example.org', 'https://op.example.org/"><script>', '//op.example.org'] as $bad) {
-			$this->assertNull((new OpenProjectModules($this->createMock(IConfig::class)))->normalize(value: $bad), $bad);
+			$this->assertNull(actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->normalize(value: $bad), message: $bad);
 		}
 
-		$this->assertSame(OpenProjectModules::DEFAULT, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: ''));
-		$this->assertSame(OpenProjectModules::DEFAULT, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: 'nope, also-nope'));
-		$this->assertSame(['news', 'projects'], (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: 'News|projects news'));
-		$this->assertCount(OpenProjectModules::MAX, (new OpenProjectModules($this->createMock(IConfig::class)))->wanted(value: implode(',', array_keys(OpenProjectModules::MODULES))));
+		$this->assertSame(expected: OpenProjectModules::DEFAULT, actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: ''));
+		$this->assertSame(expected: OpenProjectModules::DEFAULT, actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'nope, also-nope'));
+		$this->assertSame(expected: ['news', 'projects'], actual: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: 'News|projects news'));
+		$this->assertCount(expectedCount: OpenProjectModules::MAX, haystack: (new OpenProjectModules(config: $this->createMock(originalClassName: IConfig::class)))->wanted(value: implode(',', array_keys(OpenProjectModules::MODULES))));
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('');
-		$this->assertNull((new OpenProjectModules($config))->section(l: $this->createMock(IL10N::class)), 'no address, no section');
+		$this->assertNull(actual: (new OpenProjectModules(config: $config))->section(l: $this->createMock(originalClassName: IL10N::class)), message: 'no address, no section');
 	}//end testTheAddressAndTheModulesAreChecked()
 }//end class

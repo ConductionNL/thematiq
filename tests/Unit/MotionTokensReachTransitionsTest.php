@@ -35,7 +35,7 @@ class MotionTokensReachTransitionsTest extends TestCase {
 	 */
 	private function motionVarsInTheme(): array {
 		$css = (string)file_get_contents(\dirname(__DIR__, 2) . '/css/systems/nldesign/theme.css');
-		$this->assertNotSame('', $css, 'theme.css must be readable.');
+		$this->assertNotSame(expected: '', actual: $css, message: 'theme.css must be readable.');
 
 		preg_match_all('/(?:transition|animation)[a-z-]*\s*:([^;]*);/i', $css, $declarations);
 		$names = [];
@@ -54,12 +54,12 @@ class MotionTokensReachTransitionsTest extends TestCase {
 	 */
 	public function testEveryThemeTransitionReadsAnEditableMotionToken(): void {
 		$names = $this->motionVarsInTheme();
-		$this->assertNotEmpty($names, 'theme.css is expected to time its transitions with a token.');
+		$this->assertNotEmpty(actual: $names, message: 'theme.css is expected to time its transitions with a token.');
 
 		foreach ($names as $name) {
 			$this->assertTrue(
-				TokenRegistry::isEditable(tokenName: $name),
-				$name . ' times a transition in theme.css, but the token editor cannot set it.'
+				condition: TokenRegistry::isEditable(tokenName: $name),
+				message: $name . ' times a transition in theme.css, but the token editor cannot set it.'
 			);
 		}
 	}//end testEveryThemeTransitionReadsAnEditableMotionToken()
@@ -70,7 +70,7 @@ class MotionTokensReachTransitionsTest extends TestCase {
 	public function testTheSetSpeedStillFeedsTheNextcloudNames(): void {
 		$overrides = (string)file_get_contents(\dirname(__DIR__, 2) . '/css/systems/nldesign/overrides.css');
 
-		$this->assertMatchesRegularExpression('/--animation-quick:\s*var\(--nldesign-animation-quick\)/', $overrides);
-		$this->assertMatchesRegularExpression('/--animation-slow:\s*var\(--nldesign-animation-slow\)/', $overrides);
+		$this->assertMatchesRegularExpression(pattern: '/--animation-quick:\s*var\(--nldesign-animation-quick\)/', string: $overrides);
+		$this->assertMatchesRegularExpression(pattern: '/--animation-slow:\s*var\(--nldesign-animation-slow\)/', string: $overrides);
 	}//end testTheSetSpeedStillFeedsTheNextcloudNames()
 }//end class

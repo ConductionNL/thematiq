@@ -56,7 +56,7 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 */
 	private function sharedCache(): ICache {
 		$store = [];
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturnCallback(
 			static function (string $key) use (&$store) {
 				return ($store[$key] ?? null);
@@ -83,11 +83,11 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	public function testWcagLevelMatchesCapabilitiesAndAuditRunsOnce(): void {
 		$appPath = $this->repoRoot();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appPath);
 		$appManager->method('getAppVersion')->willReturn('3.4.0');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $appName, string $key, $default = '') => match ($key) {
 				'token_set' => 'rijkshuisstijl',
@@ -96,7 +96,7 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 		);
 
 		$cache = $this->sharedCache();
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturnCallback(static fn (string $prefix): ICache => $cache);
 
 		// Partial mock: only `auditSet()` is stubbed (a fixed, cheap
@@ -110,7 +110,7 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 		// id across the whole catalogue sweep — this test tracks the call
 		// count for "rijkshuisstijl" specifically, not the global total.
 		$rijkshuisstijlAuditCalls = 0;
-		$auditService = $this->getMockBuilder(ShippedTokenSetAuditService::class)
+		$auditService = $this->getMockBuilder(className: ShippedTokenSetAuditService::class)
 			->setConstructorArgs([new ContrastService(), new CssParserService()])
 			->onlyMethods(['auditSet'])
 			->getMock();
@@ -132,15 +132,15 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 		);
 
 		$tokenSetService = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$auditService,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $auditService,
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 
-		$designSystemService = $this->createMock(DesignSystemService::class);
+		$designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')->willReturn(
 			[
 				'id' => 'rijkshuisstijl',
@@ -149,21 +149,21 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 			]
 		);
 
-		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$urlGenerator->method('imagePath')->willReturn('https://cloud.example/apps/thematiq/img/logos/rijkshuisstijl.svg');
 
 		$capabilities = new Capabilities(
-			$config,
-			$appManager,
-			$urlGenerator,
-			$designSystemService,
-			$auditService,
-			$cacheFactory
+			config: $config,
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $auditService,
+			cacheFactory: $cacheFactory
 		);
 
 		// Capabilities computes + caches "rijkshuisstijl" first.
 		$capabilitiesLevel = $capabilities->getCapabilities()['nldesign']['wcagLevel'];
-		$this->assertSame(1, $rijkshuisstijlAuditCalls, 'Capabilities must have triggered exactly one audit for "rijkshuisstijl".');
+		$this->assertSame(expected: 1, actual: $rijkshuisstijlAuditCalls, message: 'Capabilities must have triggered exactly one audit for "rijkshuisstijl".');
 
 		// The catalogue projection must read the SAME cached value for the
 		// same set id — the "rijkshuisstijl" audit counter must NOT
@@ -172,13 +172,13 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 		$catalogue = $tokenSetService->getPublicCatalogue();
 		$byId = array_column($catalogue, null, 'id');
 
-		$this->assertArrayHasKey('rijkshuisstijl', $byId);
-		$this->assertSame('AA', $capabilitiesLevel);
-		$this->assertSame($capabilitiesLevel, $byId['rijkshuisstijl']['wcagLevel']);
+		$this->assertArrayHasKey(key: 'rijkshuisstijl', array: $byId);
+		$this->assertSame(expected: 'AA', actual: $capabilitiesLevel);
+		$this->assertSame(expected: $capabilitiesLevel, actual: $byId['rijkshuisstijl']['wcagLevel']);
 		$this->assertSame(
-			1,
-			$rijkshuisstijlAuditCalls,
-			'auditSet() must still have been called exactly once for "rijkshuisstijl" after the catalogue read — proving cache-sharing, not a second independent computation.'
+			expected: 1,
+			actual: $rijkshuisstijlAuditCalls,
+			message: 'auditSet() must still have been called exactly once for "rijkshuisstijl" after the catalogue read — proving cache-sharing, not a second independent computation.'
 		);
 	}//end testWcagLevelMatchesCapabilitiesAndAuditRunsOnce()
 
@@ -189,38 +189,38 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * or `upstreamRef` leakage from the discovery entry.
 	 */
 	public function testCatalogueEntryShapeIsClosed(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->repoRoot());
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('{}');
 
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->sharedCache());
 
-		$auditService = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
+		$auditService = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
 
 		$tokenSetService = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$auditService,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $auditService,
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 
 		$catalogue = $tokenSetService->getPublicCatalogue();
-		$this->assertNotEmpty($catalogue);
+		$this->assertNotEmpty(actual: $catalogue);
 
 		foreach ($catalogue as $entry) {
-			$this->assertSame(['id', 'name', 'design_system', 'theming', 'wcagLevel'], array_keys($entry));
+			$this->assertSame(expected: ['id', 'name', 'design_system', 'theming', 'wcagLevel'], actual: array_keys($entry));
 			$this->assertContains(
-				array_keys($entry['theming']),
-				[
+				needle: array_keys($entry['theming']),
+				haystack: [
 					['primary_color', 'background_color'],
 					['primary_color', 'background_color', 'logo'],
 				],
-				'theming for "' . $entry['id'] . '" must be exactly primary_color/background_color(/logo).'
+				message: 'theming for "' . $entry['id'] . '" must be exactly primary_color/background_color(/logo).'
 			);
 		}
 	}//end testCatalogueEntryShapeIsClosed()
@@ -230,30 +230,30 @@ class TokenSetServicePublicCatalogueTest extends TestCase {
 	 * `null`) — matching `TokenSetEntry`'s existing optionality.
 	 */
 	public function testLogoIsOmittedNotNullWhenAbsent(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->repoRoot());
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('{}');
 
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($this->sharedCache());
 
-		$auditService = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
+		$auditService = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
 
 		$tokenSetService = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$auditService,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $auditService,
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 
 		$byId = array_column($tokenSetService->getPublicCatalogue(), null, 'id');
 
 		// "nextcloud" ships with no theming.logo in token-sets.json.
-		$this->assertArrayHasKey('nextcloud', $byId);
-		$this->assertArrayNotHasKey('logo', $byId['nextcloud']['theming']);
+		$this->assertArrayHasKey(key: 'nextcloud', array: $byId);
+		$this->assertArrayNotHasKey(key: 'logo', array: $byId['nextcloud']['theming']);
 	}//end testLogoIsOmittedNotNullWhenAbsent()
 }//end class

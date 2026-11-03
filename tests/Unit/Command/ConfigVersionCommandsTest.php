@@ -45,22 +45,22 @@ class ConfigVersionCommandsTest extends TestCase {
 	 * The versions command prints id, time, actor and action per version.
 	 */
 	public function testVersionsListsEachVersion(): void {
-		$versions = $this->createMock(ThemeVersionService::class);
+		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
 		$versions->method('list')->willReturn(
 			[['id' => '20260929164000-0001', 'ts' => '2026-09-29T16:40:00Z', 'actor' => 'admin', 'action' => 'token_set_changed']]
 		);
 
-		$tester = $this->tester(new ConfigVersions($versions));
+		$tester = $this->tester(command: new ConfigVersions(versions: $versions));
 
-		$this->assertSame(Command::SUCCESS, $tester->execute([]));
-		$this->assertStringContainsString('20260929164000-0001  2026-09-29T16:40:00Z  admin  token_set_changed', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute([]));
+		$this->assertStringContainsString(needle: '20260929164000-0001  2026-09-29T16:40:00Z  admin  token_set_changed', haystack: $tester->getDisplay());
 	}//end testVersionsListsEachVersion()
 
 	/**
 	 * --dry-run prints the changes and writes nothing; without it the restore applies and exits 0.
 	 */
 	public function testRestoreDryRunThenApply(): void {
-		$restorer = $this->createMock(ThemeVersionRestoreService::class);
+		$restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);
 		$preview = [
 			'valid' => true,
 			'errors' => [],
@@ -71,30 +71,30 @@ class ConfigVersionCommandsTest extends TestCase {
 		$restorer->expects($this->once())->method('preview')->with('20260929164000-0001')->willReturn($preview);
 		$restorer->expects($this->once())->method('restore')->with('20260929164000-0001', 'cli')->willReturn($preview + ['applied' => true]);
 
-		$tester = $this->tester(new ConfigRestore($restorer));
+		$tester = $this->tester(command: new ConfigRestore(restorer: $restorer));
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['id' => '20260929164000-0001', '--dry-run' => true]));
-		$this->assertStringContainsString('tokenSet: "custom-bad" -> "rijkshuisstijl"', $tester->getDisplay());
-		$this->assertStringContainsString('Dry run', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['id' => '20260929164000-0001', '--dry-run' => true]));
+		$this->assertStringContainsString(needle: 'tokenSet: "custom-bad" -> "rijkshuisstijl"', haystack: $tester->getDisplay());
+		$this->assertStringContainsString(needle: 'Dry run', haystack: $tester->getDisplay());
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['id' => '20260929164000-0001']));
-		$this->assertStringContainsString('restored', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['id' => '20260929164000-0001']));
+		$this->assertStringContainsString(needle: 'restored', haystack: $tester->getDisplay());
 	}//end testRestoreDryRunThenApply()
 
 	/**
 	 * An unknown id and a refused version exit 1.
 	 */
 	public function testRestoreFailsForUnknownAndRefused(): void {
-		$restorer = $this->createMock(ThemeVersionRestoreService::class);
+		$restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);
 		$restorer->method('restore')->willReturnOnConsecutiveCalls(
 			null,
 			['valid' => false, 'applied' => false, 'errors' => [['section' => 'customTokenSets', 'message' => 'custom-x fails the whitelist']], 'changes' => [], 'customTokenSets' => ['add' => [], 'remove' => []], 'missingFonts' => []]
 		);
 
-		$tester = $this->tester(new ConfigRestore($restorer));
+		$tester = $this->tester(command: new ConfigRestore(restorer: $restorer));
 
-		$this->assertSame(Command::FAILURE, $tester->execute(['id' => 'nope']));
-		$this->assertSame(Command::FAILURE, $tester->execute(['id' => '20260929164000-0001']));
-		$this->assertStringContainsString('custom-x fails the whitelist', $tester->getDisplay());
+		$this->assertSame(expected: Command::FAILURE, actual: $tester->execute(['id' => 'nope']));
+		$this->assertSame(expected: Command::FAILURE, actual: $tester->execute(['id' => '20260929164000-0001']));
+		$this->assertStringContainsString(needle: 'custom-x fails the whitelist', haystack: $tester->getDisplay());
 	}//end testRestoreFailsForUnknownAndRefused()
 }//end class

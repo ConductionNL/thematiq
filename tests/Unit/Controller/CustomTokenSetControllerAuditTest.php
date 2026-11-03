@@ -84,15 +84,15 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(CustomTokenSetService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->themingService = $this->createMock(ThemingService::class);
-		$this->request = $this->createMock(IRequest::class);
+		$this->service = $this->createMock(originalClassName: CustomTokenSetService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->themingService = $this->createMock(originalClassName: ThemingService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, array $params = []) => $text);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -101,29 +101,29 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 		// validator, so a bare mock returns null and the controller has no CSS
 		// to validate. Its app path is the repo root, which is where the
 		// mapping table it reads lives.
-		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager = $this->createMock(originalClassName: IAppManager::class);
 		$repoAppManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$repoAppManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $repoAppManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		$this->controller = new CustomTokenSetController(
-			'nldesign',
-			$this->request,
-			$this->service,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->auditService,
-			$config,
-			$converter,
-			$this->themingService,
-			$this->createMock(DesignSystemService::class)
+			appName: 'nldesign',
+			request: $this->request,
+			service: $this->service,
+			validator: new CustomTokenSetValidator(),
+			cssParser: new CssParserService(),
+			l: $l,
+			auditService: $this->auditService,
+			config: $config,
+			converter: $converter,
+			themingService: $this->themingService,
+			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
 		);
 	}//end setUp()
 
@@ -159,7 +159,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_uploaded',
-				$this->callback(function (array $context): bool {
+				$this->callback(callback: function (array $context): bool {
 					return ($context['id'] === 'custom-gemeente-voorbeeld')
 						&& ($context['name'] === 'Gemeente Voorbeeld')
 						&& ($context['declarationCount'] === 1)
@@ -169,7 +169,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testUploadLogsOneEntry()
 
 	/**
@@ -187,7 +187,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_deleted',
-				$this->callback(function (array $context): bool {
+				$this->callback(callback: function (array $context): bool {
 					return ($context['id'] === 'custom-gemeente-voorbeeld')
 						&& ($context['activeReset'] === true)
 						&& str_starts_with($context['contentHash'], 'sha256:');
@@ -196,7 +196,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->delete(id: 'custom-gemeente-voorbeeld');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testDeleteActiveSetLogsActiveReset()
 
 	/**
@@ -249,7 +249,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_deleted',
-				$this->callback(fn (array $context): bool => ($context['activeReset'] === false))
+				$this->callback(callback: fn (array $context): bool => ($context['activeReset'] === false))
 			);
 
 		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
@@ -267,7 +267,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->delete(id: 'custom-does-not-exist');
 
-		$this->assertSame(404, $response->getStatus());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
 	}//end testDeleteNotFoundLogsNothing()
 
 	/**

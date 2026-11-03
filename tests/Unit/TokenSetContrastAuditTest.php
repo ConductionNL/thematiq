@@ -56,7 +56,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * Build the audit service from the real (pure) collaborators.
 	 */
 	private function service(): ShippedTokenSetAuditService {
-		return new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
+		return new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
 	}
 
 	/**
@@ -66,7 +66,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	 */
 	private function auditableManifest(): array {
 		$json = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
-		$this->assertIsArray($json, 'token-sets.json must decode to an array.');
+		$this->assertIsArray(actual: $json, message: 'token-sets.json must decode to an array.');
 
 		return array_values(array_filter(
 			$json,
@@ -83,7 +83,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	public function testEveryAuditedSetYieldsAVerdict(): void {
 		$service = $this->service();
 		$manifest = $this->auditableManifest();
-		$this->assertNotEmpty($manifest, 'There must be at least one auditable token set.');
+		$this->assertNotEmpty(actual: $manifest, message: 'There must be at least one auditable token set.');
 
 		foreach ($manifest as $set) {
 			$result = $service->auditSet(
@@ -93,21 +93,21 @@ class TokenSetContrastAuditTest extends TestCase {
 			);
 
 			$this->assertContains(
-				$result['verdict'],
-				['pass', 'fail', 'unevaluated'],
-				"Set {$set['id']} must classify to pass/fail/unevaluated."
+				needle: $result['verdict'],
+				haystack: ['pass', 'fail', 'unevaluated'],
+				message: "Set {$set['id']} must classify to pass/fail/unevaluated."
 			);
 
 			// A resolved literal pair yields a numeric ratio; a non-literal pair is
 			// reported unevaluated (null) — never silently omitted.
 			if ($result['verdict'] !== 'unevaluated') {
 				$this->assertIsFloat(
-					$result['textRatio'],
-					"Set {$set['id']} primary/text pair must yield a computed ratio."
+					actual: $result['textRatio'],
+					message: "Set {$set['id']} primary/text pair must yield a computed ratio."
 				);
 				$this->assertIsFloat(
-					$result['uiRatio'],
-					"Set {$set['id']} primary/background pair must yield a computed ratio."
+					actual: $result['uiRatio'],
+					message: "Set {$set['id']} primary/background pair must yield a computed ratio."
 				);
 			}
 		}
@@ -129,7 +129,7 @@ class TokenSetContrastAuditTest extends TestCase {
 			['background_color' => 'var(--whatever)']
 		);
 
-		$this->assertNotSame('pass', $result['verdict'], 'A non-literal pair must never be classified as passing.');
+		$this->assertNotSame(expected: 'pass', actual: $result['verdict'], message: 'A non-literal pair must never be classified as passing.');
 	}
 
 	/**
@@ -142,14 +142,14 @@ class TokenSetContrastAuditTest extends TestCase {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
 
 		foreach (self::DOCUMENTED_AA_SETS as $id) {
-			$this->assertArrayHasKey($id, $manifest, "Documented AA set '{$id}' must exist in token-sets.json.");
+			$this->assertArrayHasKey(key: $id, array: $manifest, message: "Documented AA set '{$id}' must exist in token-sets.json.");
 
 			$result = $service->auditSet($this->repoRoot(), $id, ($manifest[$id]['theming'] ?? []));
 
 			$this->assertSame(
-				'pass',
-				$result['verdict'],
-				sprintf(
+				expected: 'pass',
+				actual: $result['verdict'],
+				message: sprintf(
 					"Documented AA set '%s' must meet WCAG AA: primary/text %s (need >= %s), primary/bg %s (need >= %s).",
 					$id,
 					(string)($result['textRatio'] ?? 'unevaluated'),
@@ -184,21 +184,21 @@ class TokenSetContrastAuditTest extends TestCase {
 
 		$result = $this->service()->auditSet($probe, 'probe', []);
 
-		$this->assertSame('fail', $result['verdict'], 'A probe set below both thresholds must be surfaced as fail.');
-		$this->assertNotNull($result['uiRatio'], 'A literal pair must be measured, not reported unevaluated.');
+		$this->assertSame(expected: 'fail', actual: $result['verdict'], message: 'A probe set below both thresholds must be surfaced as fail.');
+		$this->assertNotNull(actual: $result['uiRatio'], message: 'A literal pair must be measured, not reported unevaluated.');
 		$this->assertLessThan(
-			ShippedTokenSetAuditService::AA_UI,
-			$result['uiRatio'],
-			'The probe primary/background pair must be below the AA UI threshold.'
+			expected: ShippedTokenSetAuditService::AA_UI,
+			actual: $result['uiRatio'],
+			message: 'The probe primary/background pair must be below the AA UI threshold.'
 		);
 
 		// ...and no shipped set is laundered into a pass: the audit must still
 		// classify each one, and the report must carry that verdict.
 		foreach ($this->service()->auditAll($this->repoRoot()) as $row) {
 			$this->assertContains(
-				$row['verdict'],
-				['pass', 'fail', 'unevaluated'],
-				$row['id'] . ' must carry a computed verdict.'
+				needle: $row['verdict'],
+				haystack: ['pass', 'fail', 'unevaluated'],
+				message: $row['id'] . ' must carry a computed verdict.'
 			);
 		}
 	}
@@ -216,7 +216,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	 */
 	public function testAVarChainPairIsMeasuredRatherThanUnevaluated(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
-		$this->assertArrayHasKey('conduction-new', $manifest, 'conduction-new must be a shipped set.');
+		$this->assertArrayHasKey(key: 'conduction-new', array: $manifest, message: 'conduction-new must be a shipped set.');
 
 		$declarations = $this->service()->resolveDeclarations(
 			$this->repoRoot(),
@@ -226,20 +226,20 @@ class TokenSetContrastAuditTest extends TestCase {
 
 		// The raw file value is an indirection; what the audit measures is not.
 		$this->assertStringContainsString(
-			'var(',
-			(string)$this->rawDeclaration('conduction-new', '--nldesign-color-primary'),
-			'This control only means anything while conduction-new writes its primary as a var().'
+			needle: 'var(',
+			haystack: (string)$this->rawDeclaration(id: 'conduction-new', token: '--nldesign-color-primary'),
+			message: 'This control only means anything while conduction-new writes its primary as a var().'
 		);
-		$this->assertSame('#21468B', $declarations['--nldesign-color-primary']);
+		$this->assertSame(expected: '#21468B', actual: $declarations['--nldesign-color-primary']);
 
 		$result = $this->service()->auditSet(
 			$this->repoRoot(),
 			'conduction-new',
 			($manifest['conduction-new']['theming'] ?? [])
 		);
-		$this->assertNotNull($result['textRatio']);
-		$this->assertNotNull($result['uiRatio']);
-		$this->assertSame('pass', $result['verdict']);
+		$this->assertNotNull(actual: $result['textRatio']);
+		$this->assertNotNull(actual: $result['uiRatio']);
+		$this->assertSame(expected: 'pass', actual: $result['verdict']);
 	}
 
 	/**
@@ -255,17 +255,17 @@ class TokenSetContrastAuditTest extends TestCase {
 	 */
 	public function testASetWithNoBackgroundIsMeasuredAgainstTheWhitePage(): void {
 		$this->assertNull(
-			$this->rawDeclaration('purmerend', '--nldesign-color-background'),
-			'This control only means anything while purmerend declares no background.'
+			actual: $this->rawDeclaration(id: 'purmerend', token: '--nldesign-color-background'),
+			message: 'This control only means anything while purmerend declares no background.'
 		);
 
 		$declarations = $this->service()->resolveDeclarations($this->repoRoot(), 'purmerend', []);
 
 		$this->assertSame(
-			ShippedTokenSetAuditService::PAGE_BACKGROUND,
-			$declarations['--nldesign-color-background']
+			expected: ShippedTokenSetAuditService::PAGE_BACKGROUND,
+			actual: $declarations['--nldesign-color-background']
 		);
-		$this->assertSame('pass', $this->service()->auditSet($this->repoRoot(), 'purmerend', [])['verdict']);
+		$this->assertSame(expected: 'pass', actual: $this->service()->auditSet($this->repoRoot(), 'purmerend', [])['verdict']);
 	}
 
 	/**
@@ -279,13 +279,13 @@ class TokenSetContrastAuditTest extends TestCase {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
 		$theming = ($manifest['vng']['theming'] ?? []);
 
-		$this->assertSame('#0277BD', ($theming['background_color'] ?? null), 'vng keeps its login background.');
-		$this->assertSame('#ffffff', $this->rawDeclaration('vng', '--nldesign-color-background'));
+		$this->assertSame(expected: '#0277BD', actual: ($theming['background_color'] ?? null), message: 'vng keeps its login background.');
+		$this->assertSame(expected: '#ffffff', actual: $this->rawDeclaration(id: 'vng', token: '--nldesign-color-background'));
 
 		$result = $this->service()->auditSet($this->repoRoot(), 'vng', $theming);
 
-		$this->assertSame('pass', $result['verdict']);
-		$this->assertGreaterThanOrEqual(ShippedTokenSetAuditService::AA_UI, $result['uiRatio']);
+		$this->assertSame(expected: 'pass', actual: $result['verdict']);
+		$this->assertGreaterThanOrEqual(expected: ShippedTokenSetAuditService::AA_UI, actual: $result['uiRatio']);
 	}
 
 	/**
@@ -339,32 +339,32 @@ class TokenSetContrastAuditTest extends TestCase {
 	public function testHighContrastSetMeetsAaa(): void {
 		$manifest = array_column($this->auditableManifest(), null, 'id');
 		if (isset($manifest['hoog-contrast']) === false) {
-			$this->markTestSkipped('hoog-contrast set not present.');
+			$this->markTestSkipped(message: 'hoog-contrast set not present.');
 		}
 
 		$this->assertSame(
-			'high-contrast',
-			$manifest['hoog-contrast']['design_system'] ?? null,
-			'hoog-contrast must be bound to the high-contrast design system.'
+			expected: 'high-contrast',
+			actual: $manifest['hoog-contrast']['design_system'] ?? null,
+			message: 'hoog-contrast must be bound to the high-contrast design system.'
 		);
 
 		// auditAll applies the AAA thresholds automatically for high-contrast sets.
 		$rows = array_column($this->service()->auditAll($this->repoRoot()), null, 'id');
 		$row = $rows['hoog-contrast'];
 
-		$this->assertSame(7.0, $row['textThreshold'], 'hoog-contrast must be audited at the AAA text threshold.');
-		$this->assertSame(4.5, $row['uiThreshold'], 'hoog-contrast must be audited at the AAA UI threshold.');
+		$this->assertSame(expected: 7.0, actual: $row['textThreshold'], message: 'hoog-contrast must be audited at the AAA text threshold.');
+		$this->assertSame(expected: 4.5, actual: $row['uiThreshold'], message: 'hoog-contrast must be audited at the AAA UI threshold.');
 		$this->assertSame(
-			'pass',
-			$row['verdict'],
-			sprintf(
+			expected: 'pass',
+			actual: $row['verdict'],
+			message: sprintf(
 				'hoog-contrast must meet AAA: primary/text %s (>= 7), primary/bg %s (>= 4.5).',
 				(string)($row['textRatio'] ?? 'unevaluated'),
 				(string)($row['uiRatio'] ?? 'unevaluated')
 			)
 		);
-		$this->assertGreaterThanOrEqual(7.0, $row['textRatio'], 'hoog-contrast primary/text must be >= 7:1.');
-		$this->assertGreaterThanOrEqual(4.5, $row['uiRatio'], 'hoog-contrast primary/background must be >= 4.5:1.');
+		$this->assertGreaterThanOrEqual(expected: 7.0, actual: $row['textRatio'], message: 'hoog-contrast primary/text must be >= 7:1.');
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $row['uiRatio'], message: 'hoog-contrast primary/background must be >= 4.5:1.');
 	}
 
 	/**
@@ -378,23 +378,23 @@ class TokenSetContrastAuditTest extends TestCase {
 
 		$first = $service->renderReport($this->repoRoot());
 		$second = $service->renderReport($this->repoRoot());
-		$this->assertSame($first, $second, 'The contrast report must be deterministic (byte-identical regeneration).');
+		$this->assertSame(expected: $first, actual: $second, message: 'The contrast report must be deterministic (byte-identical regeneration).');
 
 		// Every audited set must appear as a row.
 		foreach ($this->auditableManifest() as $set) {
 			$this->assertMatchesRegularExpression(
-				'/^\| ' . preg_quote((string)$set['id'], '/') . ' \|/m',
-				$first,
-				"Report must contain a row for set '{$set['id']}'."
+				pattern: '/^\| ' . preg_quote((string)$set['id'], '/') . ' \|/m',
+				string: $first,
+				message: "Report must contain a row for set '{$set['id']}'."
 			);
 		}
 
 		// The committed report must be up to date with the current token files.
 		$committed = file_get_contents($this->repoRoot() . '/docs/reference/contrast-report.md');
 		$this->assertSame(
-			$first,
-			$committed,
-			'docs/reference/contrast-report.md is stale. Run: composer docs:contrast-report'
+			expected: $first,
+			actual: $committed,
+			message: 'docs/reference/contrast-report.md is stale. Run: composer docs:contrast-report'
 		);
 	}
 
@@ -415,26 +415,26 @@ class TokenSetContrastAuditTest extends TestCase {
 		$rendered = $document->render($service->auditAll($this->repoRoot()));
 
 		$this->assertSame(
-			$rendered,
-			$document->render($service->auditAll($this->repoRoot())),
-			'The verdict document must be deterministic.'
+			expected: $rendered,
+			actual: $document->render($service->auditAll($this->repoRoot())),
+			message: 'The verdict document must be deterministic.'
 		);
 
 		$this->assertSame(
-			$rendered,
-			file_get_contents($this->repoRoot() . '/docs/reference/contrast-report.json'),
-			'docs/reference/contrast-report.json is stale. Run: composer docs:contrast-report'
+			expected: $rendered,
+			actual: file_get_contents($this->repoRoot() . '/docs/reference/contrast-report.json'),
+			message: 'docs/reference/contrast-report.json is stale. Run: composer docs:contrast-report'
 		);
 
 		$decoded = json_decode($rendered, true);
-		$this->assertIsArray($decoded);
-		$this->assertIsArray(($decoded['sets'] ?? null));
+		$this->assertIsArray(actual: $decoded);
+		$this->assertIsArray(actual: ($decoded['sets'] ?? null));
 
 		foreach ($service->auditAll($this->repoRoot()) as $row) {
 			$this->assertSame(
-				$row['verdict'],
-				($decoded['sets'][$row['id']]['verdict'] ?? null),
-				$row['id'] . ': the JSON verdict must be the audit verdict.'
+				expected: $row['verdict'],
+				actual: ($decoded['sets'][$row['id']]['verdict'] ?? null),
+				message: $row['id'] . ': the JSON verdict must be the audit verdict.'
 			);
 		}
 	}

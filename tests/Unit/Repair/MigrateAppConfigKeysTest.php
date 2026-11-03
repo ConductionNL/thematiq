@@ -90,7 +90,7 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	 * @return IAppConfig
 	 */
 	private function appConfig(): IAppConfig {
-		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig = $this->createMock(originalClassName: IAppConfig::class);
 
 		$appConfig->method('getKeys')
 			->willReturnCallback(
@@ -130,8 +130,8 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	 */
 	private function step(?LoggerInterface $logger = null): MigrateAppConfigKeys {
 		return new MigrateAppConfigKeys(
-			$this->appConfig(),
-			($logger ?? $this->createMock(LoggerInterface::class))
+			appConfig: $this->appConfig(),
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 
 	}//end step()
@@ -154,13 +154,13 @@ final class MigrateAppConfigKeysTest extends TestCase {
 			],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('rijkshuisstijl', $this->store[self::NEW]['token_set']);
-		$this->assertSame('1', $this->store[self::NEW]['hide_slogan']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store[self::NEW]['token_set']);
+		$this->assertSame(expected: '1', actual: $this->store[self::NEW]['hide_slogan']);
 		$this->assertSame(
-			'https://gemeente.nl/toegankelijkheid',
-			$this->store[self::NEW]['email_footer_accessibility_url']
+			expected: 'https://gemeente.nl/toegankelijkheid',
+			actual: $this->store[self::NEW]['email_footer_accessibility_url']
 		);
 
 	}//end testCopiesStoredValuesToTheNewNamespace()
@@ -185,14 +185,14 @@ final class MigrateAppConfigKeysTest extends TestCase {
 			],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
 		$this->assertSame(
-			'[{"id":"gemeente-x","label":"Gemeente X"}]',
-			$this->store[self::NEW]['custom_token_sets']
+			expected: '[{"id":"gemeente-x","label":"Gemeente X"}]',
+			actual: $this->store[self::NEW]['custom_token_sets']
 		);
-		$this->assertSame('["mail","calendar"]', $this->store[self::NEW]['disabled_apps']);
-		$this->assertSame('{"bestuur":"rijkshuisstijl"}', $this->store[self::NEW]['group_token_sets']);
+		$this->assertSame(expected: '["mail","calendar"]', actual: $this->store[self::NEW]['disabled_apps']);
+		$this->assertSame(expected: '{"bestuur":"rijkshuisstijl"}', actual: $this->store[self::NEW]['group_token_sets']);
 
 	}//end testCopiesAdminAuthoredDataThatHasNoDefault()
 
@@ -204,9 +204,9 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	public function testLeavesTheOldNamespaceIntact(): void {
 		$this->store = [self::OLD => ['token_set' => 'rijkshuisstijl']];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('rijkshuisstijl', $this->store[self::OLD]['token_set']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store[self::OLD]['token_set']);
 
 	}//end testLeavesTheOldNamespaceIntact()
 
@@ -234,12 +234,12 @@ final class MigrateAppConfigKeysTest extends TestCase {
 			],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertArrayNotHasKey('enabled', ($this->store[self::NEW] ?? []));
-		$this->assertArrayNotHasKey('installed_version', ($this->store[self::NEW] ?? []));
-		$this->assertArrayNotHasKey('types', ($this->store[self::NEW] ?? []));
-		$this->assertSame('rijkshuisstijl', $this->store[self::NEW]['token_set']);
+		$this->assertArrayNotHasKey(key: 'enabled', array: ($this->store[self::NEW] ?? []));
+		$this->assertArrayNotHasKey(key: 'installed_version', array: ($this->store[self::NEW] ?? []));
+		$this->assertArrayNotHasKey(key: 'types', array: ($this->store[self::NEW] ?? []));
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store[self::NEW]['token_set']);
 
 	}//end testSkipsNextcloudReservedKeys()
 
@@ -254,9 +254,9 @@ final class MigrateAppConfigKeysTest extends TestCase {
 			self::NEW => ['token_set' => 'nieuw'],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('nieuw', $this->store[self::NEW]['token_set']);
+		$this->assertSame(expected: 'nieuw', actual: $this->store[self::NEW]['token_set']);
 
 	}//end testDoesNotOverwriteAValueAlreadySetUnderTheNewAppId()
 
@@ -269,10 +269,10 @@ final class MigrateAppConfigKeysTest extends TestCase {
 		$this->store = [self::OLD => ['token_set' => 'rijkshuisstijl']];
 
 		$step = $this->step();
-		$step->run($this->createMock(IOutput::class));
-		$step->run($this->createMock(IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('rijkshuisstijl', $this->store[self::NEW]['token_set']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store[self::NEW]['token_set']);
 
 	}//end testIsIdempotent()
 
@@ -284,9 +284,9 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	public function testSkipsKeysWithNoStoredValue(): void {
 		$this->store = [self::OLD => ['primary_color' => '']];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertArrayNotHasKey('primary_color', ($this->store[self::NEW] ?? []));
+		$this->assertArrayNotHasKey(key: 'primary_color', array: ($this->store[self::NEW] ?? []));
 
 	}//end testSkipsKeysWithNoStoredValue()
 
@@ -296,14 +296,14 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	 * @return void
 	 */
 	public function testReportsNothingToDoOnAFreshInstall(): void {
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())
 			->method('info')
-			->with($this->stringContains('nothing to do'));
+			->with($this->stringContains(string: 'nothing to do'));
 
 		$this->step()->run($output);
 
-		$this->assertSame([], $this->store);
+		$this->assertSame(expected: [], actual: $this->store);
 
 	}//end testReportsNothingToDoOnAFreshInstall()
 
@@ -329,11 +329,11 @@ final class MigrateAppConfigKeysTest extends TestCase {
 
 		$this->throwOn = ['custom_fonts'];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('rijkshuisstijl', $this->store[self::NEW]['token_set']);
-		$this->assertSame('1', $this->store[self::NEW]['hide_slogan']);
-		$this->assertArrayNotHasKey('custom_fonts', $this->store[self::NEW]);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store[self::NEW]['token_set']);
+		$this->assertSame(expected: '1', actual: $this->store[self::NEW]['hide_slogan']);
+		$this->assertArrayNotHasKey(key: 'custom_fonts', array: $this->store[self::NEW]);
 
 	}//end testOneUnreadableKeyDoesNotStopTheOthers()
 
@@ -349,15 +349,15 @@ final class MigrateAppConfigKeysTest extends TestCase {
 		$this->store = [self::OLD => ['custom_fonts' => 'boom']];
 		$this->throwOn = ['custom_fonts'];
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
 			->with(
-				$this->stringContains('could not migrate one app config key'),
-				$this->arrayHasKey('key')
+				$this->stringContains(string: 'could not migrate one app config key'),
+				$this->arrayHasKey(key: 'key')
 			);
 
-		$this->step($logger)->run($this->createMock(IOutput::class));
+		$this->step(logger: $logger)->run($this->createMock(originalClassName: IOutput::class));
 
 	}//end testLogsAKeyItCouldNotMigrate()
 
@@ -367,18 +367,18 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	 * @return void
 	 */
 	public function testUnreadableOldNamespaceIsLoggedAndSkipped(): void {
-		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig = $this->createMock(originalClassName: IAppConfig::class);
 		$appConfig->method('getKeys')
 			->willThrowException(new RuntimeException('no database'));
 		$appConfig->expects($this->never())->method('setValueString');
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
-			->with($this->stringContains('could not enumerate nldesign app config keys'));
+			->with($this->stringContains(string: 'could not enumerate nldesign app config keys'));
 
-		$step = new MigrateAppConfigKeys($appConfig, $logger);
-		$step->run($this->createMock(IOutput::class));
+		$step = new MigrateAppConfigKeys(appConfig: $appConfig, logger: $logger);
+		$step->run($this->createMock(originalClassName: IOutput::class));
 
 	}//end testUnreadableOldNamespaceIsLoggedAndSkipped()
 
@@ -390,8 +390,8 @@ final class MigrateAppConfigKeysTest extends TestCase {
 	public function testGetNameNamesBothAppIds(): void {
 		$name = $this->step()->getName();
 
-		$this->assertStringContainsString(self::OLD, $name);
-		$this->assertStringContainsString('thematiq', $name);
+		$this->assertStringContainsString(needle: self::OLD, haystack: $name);
+		$this->assertStringContainsString(needle: 'thematiq', haystack: $name);
 
 	}//end testGetNameNamesBothAppIds()
 

@@ -73,10 +73,10 @@ class NotFoundCopyServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->designSystemService = $this->createMock(DesignSystemService::class);
-		$this->initialState = $this->createMock(IInitialState::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->scripts = 0;
 	}//end setUp()
 
@@ -109,21 +109,21 @@ class NotFoundCopyServiceTest extends TestCase {
 	 * @return NotFoundCopyService
 	 */
 	private function service(string $layout = 'light', bool $failing = false): NotFoundCopyService {
-		$groups = $this->createMock(GroupThemingService::class);
+		$groups = $this->createMock(originalClassName: GroupThemingService::class);
 		if ($failing === true) {
 			$groups->method('resolveTokenSetForRequest')->willThrowException(new RuntimeException('boom'));
 		} else {
 			$groups->method('resolveTokenSetForRequest')->with(null)->willReturn('zuiddrecht');
 		}
 
-		$options = $this->createMock(LayoutOptionsService::class);
+		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$options->method('workplaceLayout')->willReturn($layout);
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('nl');
-		$factory = $this->createMock(IFactory::class);
+		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturn($l10n);
 
-		$service = $this->getMockBuilder(NotFoundCopyService::class)
+		$service = $this->getMockBuilder(className: NotFoundCopyService::class)
 			->setConstructorArgs(
 				[
 					new PageCopySources(
@@ -160,10 +160,10 @@ class NotFoundCopyServiceTest extends TestCase {
 
 		$copy = $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'nl');
 
-		$this->assertSame('Foutcode 404', $copy['eyebrow']);
-		$this->assertSame('Pagina niet gevonden', $copy['title']);
-		$this->assertSame('Of ga verder naar', $copy['linksHeading']);
-		$this->assertSame([['label' => 'De homepage', 'url' => '/']], $copy['links']);
+		$this->assertSame(expected: 'Foutcode 404', actual: $copy['eyebrow']);
+		$this->assertSame(expected: 'Pagina niet gevonden', actual: $copy['title']);
+		$this->assertSame(expected: 'Of ga verder naar', actual: $copy['linksHeading']);
+		$this->assertSame(expected: [['label' => 'De homepage', 'url' => '/']], actual: $copy['links']);
 	}//end testZuiddrechtShipsTheBoardsCopy()
 
 	/**
@@ -190,14 +190,14 @@ class NotFoundCopyServiceTest extends TestCase {
 		);
 
 		$this->assertSame(
-			[
+			expected: [
 				'title' => 'Niet gevonden',
 				'links' => [
 					['label' => 'Mijn Zuiddrecht', 'url' => '/apps/portaliq/'],
 					['label' => 'Contact', 'url' => 'https://zuiddrecht.example/contact'],
 				],
 			],
-			$this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'nl')
+			actual: $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'nl')
 		);
 	}//end testLinksTheOverrideMayNotShowAreDropped()
 
@@ -212,7 +212,7 @@ class NotFoundCopyServiceTest extends TestCase {
 
 		$this->service()->inject();
 
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 	}//end testTheLightWorkplaceLoadsTheScript()
 
 	/**
@@ -228,6 +228,6 @@ class NotFoundCopyServiceTest extends TestCase {
 		$this->service(layout: 'default')->inject();
 		$this->service(failing: true)->inject();
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testTheDefaultLayoutAndAFailureLoadNothing()
 }//end class

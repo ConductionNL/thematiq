@@ -59,9 +59,9 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 */
 	private function convertBrand(string $content, string $key): array {
 		$cut = (new MultiBrandSource())->cut(content: $content, key: $key);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$result = (new TokenSetConverterService($appManager, new CssParserService(), new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class)))
+		$result = (new TokenSetConverterService(appManager: $appManager, cssParser: new CssParserService(), contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class)))
 			->convert(content: $cut['content'], slug: 'voorbeeld-' . $key, displayName: 'Voorbeeld ' . $key, referenceOnlyPaths: $cut['referenceOnlyPaths']);
 		$result['declarations'] = (new CssParserService())->parseRootBlock(css: (string)$result['css']);
 
@@ -74,12 +74,12 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testDetectsTokensStudioThemes(): void {
-		$brands = (new MultiBrandSource())->detectBrands(content: $this->fixture('three-themes.tokens.json'));
+		$brands = (new MultiBrandSource())->detectBrands(content: $this->fixture(name: 'three-themes.tokens.json'));
 
-		$this->assertSame(['noord', 'zuid', 'oost'], array_column($brands, 'key'));
-		$this->assertSame(['Noord', 'Zuid', 'Oost'], array_column($brands, 'name'));
-		$this->assertSame('brand', $brands[0]['group']);
-		$this->assertSame(3, $brands[0]['tokenCount'], 'common holds two, the brand set one');
+		$this->assertSame(expected: ['noord', 'zuid', 'oost'], actual: array_column($brands, 'key'));
+		$this->assertSame(expected: ['Noord', 'Zuid', 'Oost'], actual: array_column($brands, 'name'));
+		$this->assertSame(expected: 'brand', actual: $brands[0]['group']);
+		$this->assertSame(expected: 3, actual: $brands[0]['tokenCount'], message: 'common holds two, the brand set one');
 	}//end testDetectsTokensStudioThemes()
 
 	/**
@@ -88,9 +88,9 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testDetectsBrandClasses(): void {
-		$brands = (new MultiBrandSource())->detectBrands(content: $this->fixture('two-brand-classes.css'));
+		$brands = (new MultiBrandSource())->detectBrands(content: $this->fixture(name: 'two-brand-classes.css'));
 
-		$this->assertSame([['key' => 'noord', 'name' => 'Noord', 'tokenCount' => 2], ['key' => 'zuid', 'name' => 'Zuid', 'tokenCount' => 2]], $brands);
+		$this->assertSame(expected: [['key' => 'noord', 'name' => 'Noord', 'tokenCount' => 2], ['key' => 'zuid', 'name' => 'Zuid', 'tokenCount' => 2]], actual: $brands);
 	}//end testDetectsBrandClasses()
 
 	/**
@@ -101,7 +101,7 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	public function testRootAndModifierBlocksAreNotBrands(): void {
 		$css = ":root { --a-b: 1px; }\n.noord-theme { --a-c: red; }\n.zuid-theme--dark { --a-c: blue; }\n.zuid-theme .x { --a-c: green; }\n";
 
-		$this->assertSame([], (new MultiBrandSource())->detectBrands(content: $css));
+		$this->assertSame(expected: [], actual: (new MultiBrandSource())->detectBrands(content: $css));
 	}//end testRootAndModifierBlocksAreNotBrands()
 
 	/**
@@ -112,9 +112,9 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	public function testSingleBrandReturnsOne(): void {
 		$source = new MultiBrandSource();
 
-		$this->assertSame([], $source->detectBrands(content: '{"color":{"primary":{"$type":"color","$value":"#154273"}}}'));
-		$this->assertSame([], $source->detectBrands(content: '{"$themes":[{"id":"a","name":"A","selectedTokenSets":{}}]}'));
-		$this->assertSame([], $source->detectBrands(content: ':root { --nldesign-color-primary: #154273; }'));
+		$this->assertSame(expected: [], actual: $source->detectBrands(content: '{"color":{"primary":{"$type":"color","$value":"#154273"}}}'));
+		$this->assertSame(expected: [], actual: $source->detectBrands(content: '{"$themes":[{"id":"a","name":"A","selectedTokenSets":{}}]}'));
+		$this->assertSame(expected: [], actual: $source->detectBrands(content: ':root { --nldesign-color-primary: #154273; }'));
 	}//end testSingleBrandReturnsOne()
 
 	/**
@@ -123,16 +123,16 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testBrandInheritsSharedBlocks(): void {
-		$cut = (new MultiBrandSource())->cut(content: $this->fixture('two-brand-classes.css'), key: 'zuid');
+		$cut = (new MultiBrandSource())->cut(content: $this->fixture(name: 'two-brand-classes.css'), key: 'zuid');
 
-		$this->assertStringContainsString('--voorbeeld-radius: 4px', $cut['content']);
-		$this->assertStringContainsString('--voorbeeld-color-primary: #c8102e', $cut['content']);
-		$this->assertStringNotContainsString('#154273', $cut['content']);
-		$this->assertStringNotContainsString('#5b9bd5', $cut['content'], 'the other brand\'s dark modifier stays out');
-		$this->assertLessThan(strpos($cut['content'], '.zuid-theme'), strpos($cut['content'], ':root'));
+		$this->assertStringContainsString(needle: '--voorbeeld-radius: 4px', haystack: $cut['content']);
+		$this->assertStringContainsString(needle: '--voorbeeld-color-primary: #c8102e', haystack: $cut['content']);
+		$this->assertStringNotContainsString(needle: '#154273', haystack: $cut['content']);
+		$this->assertStringNotContainsString(needle: '#5b9bd5', haystack: $cut['content'], message: 'the other brand\'s dark modifier stays out');
+		$this->assertLessThan(expected: strpos($cut['content'], '.zuid-theme'), actual: strpos($cut['content'], ':root'));
 
-		$values = $this->convertBrand($this->fixture('two-brand-classes.css'), 'zuid')['css'];
-		$this->assertStringContainsString('#c8102e', (string)$values);
+		$values = $this->convertBrand(content: $this->fixture(name: 'two-brand-classes.css'), key: 'zuid')['css'];
+		$this->assertStringContainsString(needle: '#c8102e', haystack: (string)$values);
 	}//end testBrandInheritsSharedBlocks()
 
 	/**
@@ -142,19 +142,19 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testLaterTokenSetWins(): void {
-		$source = $this->fixture('three-themes.tokens.json');
-		$noord = $this->convertBrand($source, 'noord');
-		$zuid = $this->convertBrand($source, 'zuid');
+		$source = $this->fixture(name: 'three-themes.tokens.json');
+		$noord = $this->convertBrand(content: $source, key: 'noord');
+		$zuid = $this->convertBrand(content: $source, key: 'zuid');
 
-		$this->assertSame('#154273', strtolower($noord['declarations']['--nldesign-color-primary']));
-		$this->assertSame('#c8102e', strtolower($zuid['declarations']['--nldesign-color-primary']));
-		$this->assertSame('#ffffff', strtolower((string)($noord['declarations']['--nldesign-color-primary-text'] ?? '')));
+		$this->assertSame(expected: '#154273', actual: strtolower($noord['declarations']['--nldesign-color-primary']));
+		$this->assertSame(expected: '#c8102e', actual: strtolower($zuid['declarations']['--nldesign-color-primary']));
+		$this->assertSame(expected: '#ffffff', actual: strtolower((string)($noord['declarations']['--nldesign-color-primary-text'] ?? '')));
 
 		$cut = (new MultiBrandSource())->cut(content: $source, key: 'noord');
-		$this->assertContains('color.blue', $cut['referenceOnlyPaths']);
-		$this->assertNotContains('color.primary', $cut['referenceOnlyPaths']);
+		$this->assertContains(needle: 'color.blue', haystack: $cut['referenceOnlyPaths']);
+		$this->assertNotContains(needle: 'color.primary', haystack: $cut['referenceOnlyPaths']);
 		$skipped = array_column(array_filter($noord['report'], static fn (array $e): bool => $e['action'] === 'skipped'), 'source');
-		$this->assertNotContains('color.blue', $skipped, 'a source-only token is not reported as skipped');
+		$this->assertNotContains(needle: 'color.blue', haystack: $skipped, message: 'a source-only token is not reported as skipped');
 	}//end testLaterTokenSetWins()
 
 	/**
@@ -163,11 +163,11 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testLegacyFormatRoutesToInputC(): void {
-		$result = $this->convertBrand($this->fixture('three-themes-legacy.tokens.json'), 'zuid');
+		$result = $this->convertBrand(content: $this->fixture(name: 'three-themes-legacy.tokens.json'), key: 'zuid');
 
-		$this->assertSame('C', $result['inputKind']);
-		$this->assertStringContainsString('#c8102e', (string)$result['css']);
-		$this->assertStringNotContainsString('#2e7d32', (string)$result['css'], 'core is source-only: its green is not emitted');
+		$this->assertSame(expected: 'C', actual: $result['inputKind']);
+		$this->assertStringContainsString(needle: '#c8102e', haystack: (string)$result['css']);
+		$this->assertStringNotContainsString(needle: '#2e7d32', haystack: (string)$result['css'], message: 'core is source-only: its green is not emitted');
 	}//end testLegacyFormatRoutesToInputC()
 
 	/**
@@ -177,17 +177,17 @@ final class TokenSetConverterMultiBrandTest extends TestCase {
 	 * @return void
 	 */
 	public function testParityFixtureMatchesPhp(): void {
-		$expected = json_decode($this->fixture('expected.json'), true);
+		$expected = json_decode($this->fixture(name: 'expected.json'), true);
 		$source = new MultiBrandSource();
 		foreach ($expected as $file => $answer) {
-			$content = $this->fixture($file);
+			$content = $this->fixture(name: $file);
 			$brands = $source->detectBrands(content: $content);
 			$cuts = [];
 			foreach ($brands as $brand) {
 				$cuts[$brand['key']] = $source->cut(content: $content, key: $brand['key']);
 			}
 
-			$this->assertSame($answer, json_decode((string)json_encode(['brands' => $brands, 'cuts' => $cuts]), true), $file);
+			$this->assertSame(expected: $answer, actual: json_decode((string)json_encode(['brands' => $brands, 'cuts' => $cuts]), true), message: $file);
 		}
 	}//end testParityFixtureMatchesPhp()
 }//end class

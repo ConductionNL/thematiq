@@ -91,10 +91,10 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 * @return TokenSetPreviewService The system under test.
 	 */
 	private function build(): TokenSetPreviewService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appPath);
 
-		return new TokenSetPreviewService($appManager);
+		return new TokenSetPreviewService(appManager: $appManager);
 	}//end build()
 
 	/**
@@ -119,8 +119,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testTokenSourcesRunFromVariableToToken(): void {
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n"
 			. "\t--color-primary: var(--nldesign-color-primary) !important;\n"
 			. "\t--border-radius-element: var(--nldesign-border-radius-element);\n"
 			. "}\n"
@@ -129,11 +129,11 @@ class TokenSetPreviewServiceTest extends TestCase {
 		$sources = $this->build()->getTokenSources();
 
 		$this->assertSame(
-			[
+			expected: [
 				'--color-primary' => '--nldesign-color-primary',
 				'--border-radius-element' => '--nldesign-border-radius-element',
 			],
-			$sources
+			actual: $sources
 		);
 	}//end testTokenSourcesRunFromVariableToToken()
 
@@ -146,8 +146,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testEveryVariableReadingATokenIsReported(): void {
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n"
 			. "\t--color-primary: var(--nldesign-color-primary) !important;\n"
 			. "\t--color-primary-element: var(--nldesign-color-primary) !important;\n"
 			. "\t--color-primary-light-text: var(--nldesign-color-primary);\n"
@@ -156,10 +156,10 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 		$sources = $this->build()->getTokenSources();
 
-		$this->assertCount(3, $sources);
-		$this->assertSame('--nldesign-color-primary', $sources['--color-primary']);
-		$this->assertSame('--nldesign-color-primary', $sources['--color-primary-element']);
-		$this->assertSame('--nldesign-color-primary', $sources['--color-primary-light-text']);
+		$this->assertCount(expectedCount: 3, haystack: $sources);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $sources['--color-primary']);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $sources['--color-primary-element']);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $sources['--color-primary-light-text']);
 	}//end testEveryVariableReadingATokenIsReported()
 
 	/**
@@ -172,8 +172,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testOnlyPlainVarReferencesAreMappings(): void {
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n"
 			. "\t--color-primary: var(--nldesign-color-primary) !important;\n"
 			. "\t/* --color-loading-light: var(--nldesign-color-loading-light); */\n"
 			. "\t--color-box-shadow: rgba(0, 0, 0, 0.1);\n"
@@ -183,14 +183,14 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 		$sources = $this->build()->getTokenSources();
 
-		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $sources);
+		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $sources);
 	}//end testOnlyPlainVarReferencesAreMappings()
 
 	/**
 	 * A missing `overrides.css` is an empty map, not a fatal.
 	 */
 	public function testMissingOverridesGivesAnEmptyMap(): void {
-		$this->assertSame([], $this->build()->getTokenSources());
+		$this->assertSame(expected: [], actual: $this->build()->getTokenSources());
 	}//end testMissingOverridesGivesAnEmptyMap()
 
 	/* ---------------------------------------------------------------- */
@@ -206,21 +206,21 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testResolvedTokensMergeTheSetOverTheDefaults(): void {
 		$this->writeCss(
-			'css/systems/nldesign/defaults.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/defaults.css',
+			css: ":root {\n"
 			. "\t--nldesign-color-primary: #0082c9;\n"
 			. "\t--nldesign-color-error: #e9322d;\n"
 			. "}\n"
 		);
 		$this->writeCss(
-			'css/tokens/utrecht.css',
-			":root {\n\t--nldesign-color-primary: #cc0000;\n}\n"
+			relativePath: 'css/tokens/utrecht.css',
+			css: ":root {\n\t--nldesign-color-primary: #cc0000;\n}\n"
 		);
 
 		$tokens = $this->build()->getResolvedTokens(tokenSetId: 'utrecht');
 
-		$this->assertSame('#cc0000', $tokens['--nldesign-color-primary']);
-		$this->assertSame('#e9322d', $tokens['--nldesign-color-error']);
+		$this->assertSame(expected: '#cc0000', actual: $tokens['--nldesign-color-primary']);
+		$this->assertSame(expected: '#e9322d', actual: $tokens['--nldesign-color-error']);
 	}//end testResolvedTokensMergeTheSetOverTheDefaults()
 
 	/**
@@ -228,13 +228,13 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testResolvedTokensFallBackToTheDefaultsAlone(): void {
 		$this->writeCss(
-			'css/systems/nldesign/defaults.css',
-			":root {\n\t--nldesign-color-primary: #0082c9;\n}\n"
+			relativePath: 'css/systems/nldesign/defaults.css',
+			css: ":root {\n\t--nldesign-color-primary: #0082c9;\n}\n"
 		);
 
 		$tokens = $this->build()->getResolvedTokens(tokenSetId: 'not-a-set');
 
-		$this->assertSame(['--nldesign-color-primary' => '#0082c9'], $tokens);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#0082c9'], actual: $tokens);
 	}//end testResolvedTokensFallBackToTheDefaultsAlone()
 
 	/**
@@ -246,12 +246,12 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testResolvedTokensCarryAVarReferenceThrough(): void {
 		$this->writeCss(
-			'css/systems/nldesign/defaults.css',
-			":root {\n\t--nldesign-color-primary: #0082c9;\n}\n"
+			relativePath: 'css/systems/nldesign/defaults.css',
+			css: ":root {\n\t--nldesign-color-primary: #0082c9;\n}\n"
 		);
 		$this->writeCss(
-			'css/tokens/utrecht.css',
-			":root {\n"
+			relativePath: 'css/tokens/utrecht.css',
+			css: ":root {\n"
 			. "\t--nldesign-color-primary: #cc0000;\n"
 			. "\t--nldesign-color-primary-hover: var(--nldesign-color-primary);\n"
 			. "}\n"
@@ -260,8 +260,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 		$tokens = $this->build()->getResolvedTokens(tokenSetId: 'utrecht');
 
 		$this->assertSame(
-			'var(--nldesign-color-primary)',
-			$tokens['--nldesign-color-primary-hover']
+			expected: 'var(--nldesign-color-primary)',
+			actual: $tokens['--nldesign-color-primary-hover']
 		);
 	}//end testResolvedTokensCarryAVarReferenceThrough()
 
@@ -278,28 +278,28 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testDeclaredTokensAreTheSetsOwnFileOnly(): void {
 		$this->writeCss(
-			'css/systems/nldesign/defaults.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/defaults.css',
+			css: ":root {\n"
 			. "\t--nldesign-color-primary: #0082c9;\n"
 			. "\t--nldesign-color-error: #e9322d;\n"
 			. "}\n"
 		);
 		$this->writeCss(
-			'css/tokens/utrecht.css',
-			":root {\n\t--nldesign-color-primary: #cc0000;\n}\n"
+			relativePath: 'css/tokens/utrecht.css',
+			css: ":root {\n\t--nldesign-color-primary: #cc0000;\n}\n"
 		);
 
 		$declared = $this->build()->getDeclaredTokens(tokenSetId: 'utrecht');
 
-		$this->assertSame(['--nldesign-color-primary' => '#cc0000'], $declared);
-		$this->assertArrayNotHasKey('--nldesign-color-error', $declared);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#cc0000'], actual: $declared);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-error', array: $declared);
 	}//end testDeclaredTokensAreTheSetsOwnFileOnly()
 
 	/**
 	 * A set that has no file declares nothing.
 	 */
 	public function testDeclaredTokensOfAMissingSetAreEmpty(): void {
-		$this->assertSame([], $this->build()->getDeclaredTokens(tokenSetId: 'not-a-set'));
+		$this->assertSame(expected: [], actual: $this->build()->getDeclaredTokens(tokenSetId: 'not-a-set'));
 	}//end testDeclaredTokensOfAMissingSetAreEmpty()
 
 	/**
@@ -311,8 +311,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testTheSemanticLayerDropsBrandPrefixedDeclarations(): void {
 		$this->writeCss(
-			'css/tokens/utrecht.css',
-			":root {\n"
+			relativePath: 'css/tokens/utrecht.css',
+			css: ":root {\n"
 			. "\t--utrecht-red-500: #cc0000;\n"
 			. "\t--nldesign-color-primary: var(--utrecht-red-500);\n"
 			. "}\n"
@@ -321,8 +321,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 		$declared = $this->build()->getDeclaredTokens(tokenSetId: 'utrecht');
 
 		$this->assertSame(
-			['--nldesign-color-primary' => 'var(--utrecht-red-500)'],
-			$declared
+			expected: ['--nldesign-color-primary' => 'var(--utrecht-red-500)'],
+			actual: $declared
 		);
 	}//end testTheSemanticLayerDropsBrandPrefixedDeclarations()
 
@@ -335,8 +335,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testTheSemanticLayerIsSortedByName(): void {
 		$this->writeCss(
-			'css/tokens/utrecht.css',
-			":root {\n"
+			relativePath: 'css/tokens/utrecht.css',
+			css: ":root {\n"
 			. "\t--nldesign-color-primary: #cc0000;\n"
 			. "\t--nldesign-color-error: #e9322d;\n"
 			. "\t--nldesign-border-radius-element: 4px;\n"
@@ -346,12 +346,12 @@ class TokenSetPreviewServiceTest extends TestCase {
 		$declared = $this->build()->getDeclaredTokens(tokenSetId: 'utrecht');
 
 		$this->assertSame(
-			[
+			expected: [
 				'--nldesign-border-radius-element',
 				'--nldesign-color-error',
 				'--nldesign-color-primary',
 			],
-			array_keys($declared)
+			actual: array_keys($declared)
 		);
 	}//end testTheSemanticLayerIsSortedByName()
 
@@ -368,20 +368,20 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testTokenSourcesAreReadOnce(): void {
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
 		);
 
 		$service = $this->build();
 		$first = $service->getTokenSources();
 
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n\t--color-primary: var(--nldesign-color-action) !important;\n}\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n\t--color-primary: var(--nldesign-color-action) !important;\n}\n"
 		);
 
-		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $first);
-		$this->assertSame($first, $service->getTokenSources());
+		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $first);
+		$this->assertSame(expected: $first, actual: $service->getTokenSources());
 	}//end testTokenSourcesAreReadOnce()
 
 	/**
@@ -392,15 +392,15 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testResolvedColoursFollowATokenThatNamesAnotherToken(): void {
 		$this->writeCss(
-			'css/systems/nldesign/defaults.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/defaults.css',
+			css: ":root {\n"
 			. "\t--nldesign-color-primary: #0b5fff;\n"
 			. "\t--nldesign-color-primary-element: var(--nldesign-color-primary);\n"
 			. "}\n"
 		);
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n"
 			. "\t--color-primary: var(--nldesign-color-primary) !important;\n"
 			. "\t--color-primary-element: var(--nldesign-color-primary-element) !important;\n"
 			. "}\n"
@@ -408,8 +408,8 @@ class TokenSetPreviewServiceTest extends TestCase {
 
 		$colours = $this->build()->getResolvedColors(tokenSetId: 'no-such-set');
 
-		$this->assertSame('#0b5fff', $colours['--color-primary']);
-		$this->assertSame('#0b5fff', $colours['--color-primary-element']);
+		$this->assertSame(expected: '#0b5fff', actual: $colours['--color-primary']);
+		$this->assertSame(expected: '#0b5fff', actual: $colours['--color-primary-element']);
 	}//end testResolvedColoursFollowATokenThatNamesAnotherToken()
 
 	/**
@@ -420,19 +420,19 @@ class TokenSetPreviewServiceTest extends TestCase {
 	 */
 	public function testAResolvedColourWithoutAValueKeepsItsTokenName(): void {
 		$this->writeCss(
-			'css/systems/nldesign/overrides.css',
-			":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
+			relativePath: 'css/systems/nldesign/overrides.css',
+			css: ":root {\n\t--color-primary: var(--nldesign-color-primary) !important;\n}\n"
 		);
 
 		$colours = $this->build()->getResolvedColors(tokenSetId: 'no-such-set');
 
-		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $colours);
+		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $colours);
 	}//end testAResolvedColourWithoutAValueKeepsItsTokenName()
 
 	/**
 	 * Without the bundle's stylesheets there is nothing to resolve.
 	 */
 	public function testResolvedColoursAreEmptyWithoutTheStylesheets(): void {
-		$this->assertSame([], $this->build()->getResolvedColors(tokenSetId: 'no-such-set'));
+		$this->assertSame(expected: [], actual: $this->build()->getResolvedColors(tokenSetId: 'no-such-set'));
 	}//end testResolvedColoursAreEmptyWithoutTheStylesheets()
 }//end class

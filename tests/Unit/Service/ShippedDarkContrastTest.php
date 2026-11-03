@@ -159,7 +159,7 @@ class ShippedDarkContrastTest extends TestCase {
 	 * The provider finds the shipped high-contrast set, so the AAA cases cannot pass empty.
 	 */
 	public function testThereIsAHighContrastSet(): void {
-		$this->assertArrayHasKey('hoog-contrast', self::highContrastSetProvider());
+		$this->assertArrayHasKey(key: 'hoog-contrast', array: self::highContrastSetProvider());
 	}//end testThereIsAHighContrastSet()
 
 	/**
@@ -171,7 +171,7 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @param string $setId The token set id.
 	 */
 	public function testHighContrastSetShipsADarkVariant(string $setId): void {
-		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', $setId . ' has no dark variant');
+		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', message: $setId . ' has no dark variant');
 	}//end testHighContrastSetShipsADarkVariant()
 
 	/**
@@ -183,12 +183,12 @@ class ShippedDarkContrastTest extends TestCase {
 	 * @param string $setId The token set id.
 	 */
 	public function testHighContrastDarkVariantReachesAaa(string $setId): void {
-		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
+		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
 
 		$contrast = new ContrastService();
 		$value = $this->darkValues(setId: $setId);
 		$page = $value('--nldesign-color-background');
-		$this->assertNotNull($page, $setId . ' dark declares no page background');
+		$this->assertNotNull(actual: $page, message: $setId . ' dark declares no page background');
 
 		$failures = [];
 		foreach (self::AAA_PAIRS as $name => [$fgToken, $bgToken, $kind]) {
@@ -210,7 +210,7 @@ class ShippedDarkContrastTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testHighContrastDarkVariantReachesAaa()
 
 	/**
@@ -230,22 +230,22 @@ class ShippedDarkContrastTest extends TestCase {
 
 		$media = [];
 		$this->assertSame(
-			1,
-			preg_match('/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/', $css, $media),
-			$setId . ': no system-preference dark scope'
+			expected: 1,
+			actual: preg_match('/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/', $css, $media),
+			message: $setId . ': no system-preference dark scope'
 		);
 		$explicit = [];
 		$this->assertSame(
-			1,
-			preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\] \{([^}]*)\}/', $css, $explicit),
-			$setId . ': no explicit dark scope'
+			expected: 1,
+			actual: preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\] \{([^}]*)\}/', $css, $explicit),
+			message: $setId . ': no explicit dark scope'
 		);
 
 		$parser = new CssParserService();
 		$fromMedia = ($parser->parseDeclarations(':root {' . $media[1] . '}') ?? []);
 		$fromExplicit = ($parser->parseDeclarations(':root {' . $explicit[1] . '}') ?? []);
-		$this->assertNotSame([], $fromMedia);
-		$this->assertSame($fromMedia, $fromExplicit, $setId . ': the two dark scopes differ');
+		$this->assertNotSame(expected: [], actual: $fromMedia);
+		$this->assertSame(expected: $fromMedia, actual: $fromExplicit, message: $setId . ': the two dark scopes differ');
 	}//end testHighContrastDarkVariantCoversBothScopesAlike()
 
 	/**
@@ -267,7 +267,7 @@ class ShippedDarkContrastTest extends TestCase {
 	 * The committed dark files exist at all, so the provider cannot pass empty.
 	 */
 	public function testThereAreShippedDarkVariants(): void {
-		$this->assertGreaterThan(10, count(self::darkSetProvider()));
+		$this->assertGreaterThan(expected: 10, actual: count(self::darkSetProvider()));
 	}//end testThereAreShippedDarkVariants()
 
 	/**
@@ -298,13 +298,13 @@ class ShippedDarkContrastTest extends TestCase {
 			}
 
 			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
-			$this->assertNotNull($ratio, $setId . ' ' . $name . ': cannot measure ' . $foreground . ' on ' . $background);
+			$this->assertNotNull(actual: $ratio, message: $setId . ' ' . $name . ': cannot measure ' . $foreground . ' on ' . $background);
 			if ($ratio < $threshold) {
 				$failures[] = sprintf('%s: %s on %s = %.2f:1', $name, $foreground, $background, $ratio);
 			}
 		}
 
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testInputsAndPrimaryButtonsReachAa()
 
 	/**
@@ -334,14 +334,14 @@ class ShippedDarkContrastTest extends TestCase {
 			'summer-breeze' => '--summer-color-error',
 		][$designSystem] ?? null);
 		if ($fillToken === null) {
-			$this->addToAssertionCount(1);
+			$this->addToAssertionCount(count: 1);
 			return;
 		}
 
 		$fill = $value($fillToken);
-		$this->assertNotNull($fill, $setId . ' dark declares no ' . $fillToken);
+		$this->assertNotNull(actual: $fill, message: $setId . ' dark declares no ' . $fillToken);
 		$ratio = $contrast->measure(foreground: $label, background: $fill);
-		$this->assertGreaterThanOrEqual(4.5, (float)$ratio, sprintf('%s dark error label %s on %s', $setId, $label, $fill));
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: (float)$ratio, message: sprintf('%s dark error label %s on %s', $setId, $label, $fill));
 	}//end testTheErrorLabelReadsOnTheErrorFill()
 
 	/**
@@ -362,15 +362,15 @@ class ShippedDarkContrastTest extends TestCase {
 		$page = $this->darkValues(setId: $setId)('--nldesign-color-background');
 		if ($page === null) {
 			// The set leaves the page background to Nextcloud's own dark theme.
-			$this->addToAssertionCount(1);
+			$this->addToAssertionCount(count: 1);
 			return;
 		}
 
 		$rgb = $contrast->parseColor(value: $page);
-		$this->assertNotNull($rgb, $setId . ': cannot parse ' . $page);
+		$this->assertNotNull(actual: $rgb, message: $setId . ': cannot parse ' . $page);
 		// Relative luminance from the ratio against black: (L + 0.05) / 0.05.
 		$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
-		$this->assertLessThanOrEqual(0.05, $luminance, sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
+		$this->assertLessThanOrEqual(expected: 0.05, actual: $luminance, message: sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
 	}//end testThePageBackgroundIsDark()
 
 	/**
@@ -403,8 +403,8 @@ class ShippedDarkContrastTest extends TestCase {
 			}
 		}
 
-		$this->assertNotNull($value('--nldesign-color-text'), $setId . ' has no main text colour to measure');
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertNotNull(actual: $value('--nldesign-color-text'), message: $setId . ' has no main text colour to measure');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testTextAndLinksReadOnTheDarkPage()
 
 	/**

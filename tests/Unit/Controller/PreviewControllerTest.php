@@ -54,18 +54,18 @@ class PreviewControllerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->previewService = $this->createMock(ThemePreviewService::class);
-		$this->userSession = $this->createMock(IUserSession::class);
+		$this->previewService = $this->createMock(originalClassName: ThemePreviewService::class);
+		$this->userSession = $this->createMock(originalClassName: IUserSession::class);
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('admin');
 		$this->userSession->method('getUser')->willReturn($user);
 
 		$this->controller = new PreviewController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->previewService,
-			$this->userSession
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			previewService: $this->previewService,
+			userSession: $this->userSession
 		);
 	}//end setUp()
 
@@ -82,8 +82,8 @@ class PreviewControllerTest extends TestCase {
 		$response = $this->controller->start(tokenSet: 'amsterdam');
 
 		$this->assertSame(
-			['status' => 'ok', 'tokenSet' => 'amsterdam', 'expiresAt' => 1234],
-			$response->getData()
+			expected: ['status' => 'ok', 'tokenSet' => 'amsterdam', 'expiresAt' => 1234],
+			actual: $response->getData()
 		);
 	}//end testStartReturnsOkWithStateForValidId()
 
@@ -96,8 +96,8 @@ class PreviewControllerTest extends TestCase {
 
 		$response = $this->controller->start(tokenSet: 'does-not-exist');
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('Invalid token set', $response->getData()['error']);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'Invalid token set', actual: $response->getData()['error']);
 	}//end testStartReturns400ForInvalidId()
 
 	/**
@@ -111,7 +111,7 @@ class PreviewControllerTest extends TestCase {
 
 		$response = $this->controller->discard();
 
-		$this->assertSame(['status' => 'ok'], $response->getData());
+		$this->assertSame(expected: ['status' => 'ok'], actual: $response->getData());
 	}//end testDiscardClearsOwnPreviewAndReturnsOk()
 
 	/**
@@ -125,7 +125,7 @@ class PreviewControllerTest extends TestCase {
 
 		$response = $this->controller->publish();
 
-		$this->assertSame(['status' => 'ok', 'tokenSet' => 'amsterdam'], $response->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'tokenSet' => 'amsterdam'], actual: $response->getData());
 	}//end testPublishReturnsOkWithPublishedTokenSet()
 
 	/**
@@ -137,8 +137,8 @@ class PreviewControllerTest extends TestCase {
 
 		$response = $this->controller->publish();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('No active preview to publish', $response->getData()['error']);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'No active preview to publish', actual: $response->getData()['error']);
 	}//end testPublishReturns400WhenNoActivePreview()
 
 	/**
@@ -149,8 +149,8 @@ class PreviewControllerTest extends TestCase {
 			$reflection = new \ReflectionMethod(PreviewController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
 
-			$this->assertNotEmpty($attributes, "PreviewController::{$method}() must carry #[AuthorizedAdminSetting]");
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
+			$this->assertNotEmpty(actual: $attributes, message: "PreviewController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
 		}
 	}//end testAllMethodsAreAdminAnnotated()
 
@@ -160,22 +160,22 @@ class PreviewControllerTest extends TestCase {
 	 * a null uid into the service.
 	 */
 	public function testNoUserSessionReturns400OnEveryEndpoint(): void {
-		$anonymousSession = $this->createMock(IUserSession::class);
+		$anonymousSession = $this->createMock(originalClassName: IUserSession::class);
 		$anonymousSession->method('getUser')->willReturn(null);
 
 		$controller = new PreviewController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->previewService,
-			$anonymousSession
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			previewService: $this->previewService,
+			userSession: $anonymousSession
 		);
 
 		$this->previewService->expects($this->never())->method('startPreview');
 		$this->previewService->expects($this->never())->method('clearPreview');
 		$this->previewService->expects($this->never())->method('publishPreview');
 
-		$this->assertSame(400, $controller->start(tokenSet: 'amsterdam')->getStatus());
-		$this->assertSame(400, $controller->discard()->getStatus());
-		$this->assertSame(400, $controller->publish()->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->start(tokenSet: 'amsterdam')->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->discard()->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->publish()->getStatus());
 	}//end testNoUserSessionReturns400OnEveryEndpoint()
 }//end class

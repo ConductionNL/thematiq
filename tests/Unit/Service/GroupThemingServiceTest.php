@@ -52,7 +52,7 @@ class GroupThemingServiceTest extends TestCase {
 	): array {
 		$store = [];
 
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturnCallback(
 			static function (string $key) use (&$store) {
 				return ($store[$key] ?? null);
@@ -65,16 +65,16 @@ class GroupThemingServiceTest extends TestCase {
 			}
 		);
 
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($cache);
 
 		$service = new GroupThemingService(
-			$config,
-			$groupManager,
-			$userSession,
-			$tokenSetService,
-			$this->inactivePreviewService(),
-			$cacheFactory
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $tokenSetService,
+			previewService: $this->inactivePreviewService(),
+			cacheFactory: $cacheFactory
 		);
 
 		return [$service, $cache];
@@ -91,7 +91,7 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	private function fakeConfig(array $initial = []): IConfig {
 		$store = $initial;
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use (&$store) {
 				return ($store[$key] ?? $default);
@@ -114,7 +114,7 @@ class GroupThemingServiceTest extends TestCase {
 	 * @return IUser The user double.
 	 */
 	private function fakeUser(string $uid): IUser {
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn($uid);
 
 		return $user;
@@ -128,7 +128,7 @@ class GroupThemingServiceTest extends TestCase {
 	 * @return ThemePreviewService The stub.
 	 */
 	private function inactivePreviewService(): ThemePreviewService {
-		$preview = $this->createMock(ThemePreviewService::class);
+		$preview = $this->createMock(originalClassName: ThemePreviewService::class);
 		$preview->method('resolveEffectiveTokenSet')->willReturnCallback(
 			static fn (IUserSession $session, string $activeTokenSet): array => [
 				'tokenSet' => $activeTokenSet,
@@ -149,7 +149,7 @@ class GroupThemingServiceTest extends TestCase {
 	 * @return TokenSetService The stub.
 	 */
 	private function fakeTokenSetService(array $available): TokenSetService {
-		$service = $this->createMock(TokenSetService::class);
+		$service = $this->createMock(originalClassName: TokenSetService::class);
 		$service->method('isValidTokenSet')->willReturnCallback(
 			static fn (string $tokenSetId) => in_array($tokenSetId, $available, true)
 		);
@@ -166,13 +166,13 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testGetMappingDefaultsToEmpty(): void {
 		[$service] = $this->buildService(
-			$this->fakeConfig(),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService([])
+			config: $this->fakeConfig(),
+			groupManager: $this->createMock(originalClassName: IGroupManager::class),
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: [])
 		);
 
-		$this->assertSame([], $service->getMapping());
+		$this->assertSame(expected: [], actual: $service->getMapping());
 	}//end testGetMappingDefaultsToEmpty()
 
 	/**
@@ -180,13 +180,13 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testGetMappingMalformedJsonIsEmpty(): void {
 		[$service] = $this->buildService(
-			$this->fakeConfig(['group_token_sets' => 'not-json{']),
-			$this->createMock(IGroupManager::class),
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService([])
+			config: $this->fakeConfig(initial: ['group_token_sets' => 'not-json{']),
+			groupManager: $this->createMock(originalClassName: IGroupManager::class),
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: [])
 		);
 
-		$this->assertSame([], $service->getMapping());
+		$this->assertSame(expected: [], actual: $service->getMapping());
 	}//end testGetMappingMalformedJsonIsEmpty()
 
 	/**
@@ -195,14 +195,14 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testSetMappingPersistsInOrderAndBumpsGeneration(): void {
 		$config = $this->fakeConfig();
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
 
 		[$service] = $this->buildService(
-			$config,
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService(['amsterdam', 'utrecht'])
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam', 'utrecht'])
 		);
 
 		$result = $service->setMapping(
@@ -213,14 +213,14 @@ class GroupThemingServiceTest extends TestCase {
 		);
 
 		$this->assertSame(
-			[
+			expected: [
 				['group' => 'gemeente-a', 'tokenSet' => 'amsterdam'],
 				['group' => 'gemeente-b', 'tokenSet' => 'utrecht'],
 			],
-			$result
+			actual: $result
 		);
-		$this->assertSame($result, $service->getMapping());
-		$this->assertSame(1, (int)$config->getAppValue('nldesign', 'group_token_sets_generation', '0'));
+		$this->assertSame(expected: $result, actual: $service->getMapping());
+		$this->assertSame(expected: 1, actual: (int)$config->getAppValue('nldesign', 'group_token_sets_generation', '0'));
 	}//end testSetMappingPersistsInOrderAndBumpsGeneration()
 
 	/**
@@ -228,44 +228,44 @@ class GroupThemingServiceTest extends TestCase {
 	 * and the generation counter is untouched.
 	 */
 	public function testSetMappingRejectsUnknownGroupWithoutPartialWrite(): void {
-		$config = $this->fakeConfig(['group_token_sets' => '[]', 'group_token_sets_generation' => '3']);
-		$groupManager = $this->createMock(IGroupManager::class);
+		$config = $this->fakeConfig(initial: ['group_token_sets' => '[]', 'group_token_sets_generation' => '3']);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(false);
 
 		[$service] = $this->buildService(
-			$config,
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService(['amsterdam'])
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
 		);
 
 		try {
 			$service->setMapping([['group' => 'nonexistent', 'tokenSet' => 'amsterdam']]);
-			$this->fail('Expected GroupThemingValidationException.');
+			$this->fail(message: 'Expected GroupThemingValidationException.');
 		} catch (GroupThemingValidationException $e) {
-			$this->assertSame(['group' => 'nonexistent', 'tokenSet' => 'amsterdam'], $e->getEntry());
-			$this->assertStringContainsString('nonexistent', $e->getReason());
+			$this->assertSame(expected: ['group' => 'nonexistent', 'tokenSet' => 'amsterdam'], actual: $e->getEntry());
+			$this->assertStringContainsString(needle: 'nonexistent', haystack: $e->getReason());
 		}
 
-		$this->assertSame([], $service->getMapping());
-		$this->assertSame(3, (int)$config->getAppValue('nldesign', 'group_token_sets_generation', '0'));
+		$this->assertSame(expected: [], actual: $service->getMapping());
+		$this->assertSame(expected: 3, actual: (int)$config->getAppValue('nldesign', 'group_token_sets_generation', '0'));
 	}//end testSetMappingRejectsUnknownGroupWithoutPartialWrite()
 
 	/**
 	 * An entry naming an unavailable token set is rejected.
 	 */
 	public function testSetMappingRejectsUnknownTokenSet(): void {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
 
 		[$service] = $this->buildService(
-			$this->fakeConfig(),
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService(['amsterdam'])
+			config: $this->fakeConfig(),
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
 		);
 
-		$this->expectException(GroupThemingValidationException::class);
+		$this->expectException(exception: GroupThemingValidationException::class);
 		$service->setMapping([['group' => 'gemeente-a', 'tokenSet' => 'does-not-exist']]);
 	}//end testSetMappingRejectsUnknownTokenSet()
 
@@ -274,17 +274,17 @@ class GroupThemingServiceTest extends TestCase {
 	 * multi-group users, not duplicate rows.
 	 */
 	public function testSetMappingRejectsDuplicateGroupEntries(): void {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
 
 		[$service] = $this->buildService(
-			$this->fakeConfig(),
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService(['amsterdam', 'utrecht'])
+			config: $this->fakeConfig(),
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam', 'utrecht'])
 		);
 
-		$this->expectException(GroupThemingValidationException::class);
+		$this->expectException(exception: GroupThemingValidationException::class);
 		$service->setMapping(
 			[
 				['group' => 'gemeente-a', 'tokenSet' => 'amsterdam'],
@@ -302,21 +302,21 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveReturnsMappedSetForSingleGroupMatch(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('anna'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
 
-		$this->assertSame('amsterdam', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsMappedSetForSingleGroupMatch()
 
 	/**
@@ -325,7 +325,7 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveReturnsEarliestEntryForMultiGroupUser(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode(
 					[
 						['group' => 'gemeente-a', 'tokenSet' => 'amsterdam'],
@@ -336,15 +336,15 @@ class GroupThemingServiceTest extends TestCase {
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a', 'gemeente-b']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('bob'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'bob'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam', 'utrecht']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam', 'utrecht']));
 
-		$this->assertSame('amsterdam', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsEarliestEntryForMultiGroupUser()
 
 	/**
@@ -353,7 +353,7 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveSkipsDeadSetEntryAndContinues(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode(
 					[
 						['group' => 'gemeente-a', 'tokenSet' => 'custom-gone'],
@@ -364,16 +364,16 @@ class GroupThemingServiceTest extends TestCase {
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a', 'gemeente-a-fallbackgroup']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('dana'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'dana'));
 
 		// "custom-gone" is not in the available set — dead entry.
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['utrecht']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['utrecht']));
 
-		$this->assertSame('utrecht', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'utrecht', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveSkipsDeadSetEntryAndContinues()
 
 	/**
@@ -381,21 +381,21 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveDeadSetOnlyMatchFallsBackToDefault(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'custom-gone']]),
 				'token_set' => 'rijkshuisstijl',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('erik'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'erik'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService([]));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: []));
 
-		$this->assertSame('rijkshuisstijl', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveDeadSetOnlyMatchFallsBackToDefault()
 
 	/**
@@ -403,21 +403,21 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveReturnsDefaultForUnmappedUser(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['some-other-group']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('carol'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'carol'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
 
-		$this->assertSame('nextcloud', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsDefaultForUnmappedUser()
 
 	/**
@@ -426,21 +426,21 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveReturnsDefaultForNoSessionWithoutGroupLookup(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->expects($this->never())->method('getUserGroupIds');
 
-		$userSession = $this->createMock(IUserSession::class);
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn(null);
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
 
-		$this->assertSame('nextcloud', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsDefaultForNoSessionWithoutGroupLookup()
 
 	/**
@@ -448,30 +448,30 @@ class GroupThemingServiceTest extends TestCase {
 	 * preserves today's zero-lookup behavior exactly.
 	 */
 	public function testResolveReturnsDefaultForEmptyMappingWithoutGroupOrCacheAccess(): void {
-		$config = $this->fakeConfig(['token_set' => 'nextcloud']);
+		$config = $this->fakeConfig(initial: ['token_set' => 'nextcloud']);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->expects($this->never())->method('getUserGroupIds');
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('frank'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'frank'));
 
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->expects($this->never())->method('get');
 		$cache->expects($this->never())->method('set');
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($cache);
 
 		$service = new GroupThemingService(
-			$config,
-			$groupManager,
-			$userSession,
-			$this->fakeTokenSetService([]),
-			$this->inactivePreviewService(),
-			$cacheFactory
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: []),
+			previewService: $this->inactivePreviewService(),
+			cacheFactory: $cacheFactory
 		);
 
-		$this->assertSame('nextcloud', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveReturnsDefaultForEmptyMappingWithoutGroupOrCacheAccess()
 
 	/**
@@ -480,21 +480,21 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testResolveFailsOpenOnGroupBackendException(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willThrowException(new \RuntimeException('backend down'));
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('greta'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'greta'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
 
-		$this->assertSame('nextcloud', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
 	}//end testResolveFailsOpenOnGroupBackendException()
 
 	// -------------------------------------------------------------------
@@ -507,22 +507,22 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testSecondResolveHitsCacheWithoutGroupLookup(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->expects($this->once())->method('getUserGroupIds')->willReturn(['gemeente-a']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('anna'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $this->fakeTokenSetService(['amsterdam']));
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']));
 
-		$this->assertSame('amsterdam', $service->resolveTokenSetForRequest());
-		$this->assertSame('amsterdam', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 	}//end testSecondResolveHitsCacheWithoutGroupLookup()
 
 	/**
@@ -530,25 +530,25 @@ class GroupThemingServiceTest extends TestCase {
 	 * cached resolution: the very next resolve re-queries group membership.
 	 */
 	public function testGenerationBumpInvalidatesCache(): void {
-		$config = $this->fakeConfig(['token_set' => 'nextcloud']);
+		$config = $this->fakeConfig(initial: ['token_set' => 'nextcloud']);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
-		$groupManager->expects($this->exactly(2))->method('getUserGroupIds')->willReturn(['gemeente-a']);
+		$groupManager->expects($this->exactly(count: 2))->method('getUserGroupIds')->willReturn(['gemeente-a']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('anna'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		$tokenSetService = $this->fakeTokenSetService(['amsterdam', 'utrecht']);
+		$tokenSetService = $this->fakeTokenSetService(available: ['amsterdam', 'utrecht']);
 
-		[$service] = $this->buildService($config, $groupManager, $userSession, $tokenSetService);
+		[$service] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $userSession, tokenSetService: $tokenSetService);
 
 		$service->setMapping([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]);
-		$this->assertSame('amsterdam', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'amsterdam', actual: $service->resolveTokenSetForRequest());
 		// Cached — a same-generation resolve would not re-query, but we
 		// change the mapping (bumping the generation) before resolving again.
 		$service->setMapping([['group' => 'gemeente-a', 'tokenSet' => 'utrecht']]);
-		$this->assertSame('utrecht', $service->resolveTokenSetForRequest());
+		$this->assertSame(expected: 'utrecht', actual: $service->resolveTokenSetForRequest());
 	}//end testGenerationBumpInvalidatesCache()
 
 	/**
@@ -556,19 +556,19 @@ class GroupThemingServiceTest extends TestCase {
 	 */
 	public function testCacheWriteCarriesTtlBound(): void {
 		$config = $this->fakeConfig(
-			[
+			initial: [
 				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
 				'token_set' => 'nextcloud',
 			]
 		);
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a']);
 
-		$userSession = $this->createMock(IUserSession::class);
-		$userSession->method('getUser')->willReturn($this->fakeUser('anna'));
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'anna'));
 
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturn(null);
 		$capturedTtl = null;
 		$cache->expects($this->once())->method('set')->willReturnCallback(
@@ -577,22 +577,22 @@ class GroupThemingServiceTest extends TestCase {
 				return true;
 			}
 		);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($cache);
 
 		$service = new GroupThemingService(
-			$config,
-			$groupManager,
-			$userSession,
-			$this->fakeTokenSetService(['amsterdam']),
-			$this->inactivePreviewService(),
-			$cacheFactory
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam']),
+			previewService: $this->inactivePreviewService(),
+			cacheFactory: $cacheFactory
 		);
 
 		$service->resolveTokenSetForRequest();
 
-		$this->assertSame(3600, $capturedTtl);
-		$this->assertLessThanOrEqual(3600, $capturedTtl);
+		$this->assertSame(expected: 3600, actual: $capturedTtl);
+		$this->assertLessThanOrEqual(expected: 3600, actual: $capturedTtl);
 	}//end testCacheWriteCarriesTtlBound()
 
 	// -------------------------------------------------------------------
@@ -604,30 +604,30 @@ class GroupThemingServiceTest extends TestCase {
 	 * by display name.
 	 */
 	public function testGetAvailableGroupsListsAndSorts(): void {
-		$groupB = $this->createMock(\OCP\IGroup::class);
+		$groupB = $this->createMock(originalClassName: \OCP\IGroup::class);
 		$groupB->method('getGID')->willReturn('gemeente-b');
 		$groupB->method('getDisplayName')->willReturn('Zeeburgstad');
 
-		$groupA = $this->createMock(\OCP\IGroup::class);
+		$groupA = $this->createMock(originalClassName: \OCP\IGroup::class);
 		$groupA->method('getGID')->willReturn('gemeente-a');
 		$groupA->method('getDisplayName')->willReturn('Amsteldam');
 
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('search')->willReturn([$groupB, $groupA]);
 
 		[$service] = $this->buildService(
-			$this->fakeConfig(),
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->fakeTokenSetService([])
+			config: $this->fakeConfig(),
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: [])
 		);
 
 		$this->assertSame(
-			[
+			expected: [
 				['id' => 'gemeente-a', 'displayName' => 'Amsteldam'],
 				['id' => 'gemeente-b', 'displayName' => 'Zeeburgstad'],
 			],
-			$service->getAvailableGroups()
+			actual: $service->getAvailableGroups()
 		);
 	}//end testGetAvailableGroupsListsAndSorts()
 }//end class

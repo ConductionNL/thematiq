@@ -68,14 +68,14 @@ class LayerControllerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->injection = $this->createMock(CssInjectionService::class);
-		$this->tokenSets = $this->createMock(TokenSetService::class);
+		$this->injection = $this->createMock(originalClassName: CssInjectionService::class);
+		$this->tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 
 		$this->controller = new LayerController(
-			'thematiq',
-			$this->createMock(IRequest::class),
-			$this->injection,
-			$this->tokenSets
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			injection: $this->injection,
+			tokenSets: $this->tokenSets
 		);
 	}//end setUp()
 
@@ -103,9 +103,9 @@ class LayerControllerTest extends TestCase {
 
 		$response = $this->controller->getStylesheets(tokenSetId: 'rijkshuisstijl');
 
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame($manifest, $response->getData());
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: $manifest, actual: $response->getData());
 	}//end testKnownTokenSetReturnsTheManifestVerbatim()
 
 	/**
@@ -121,8 +121,8 @@ class LayerControllerTest extends TestCase {
 
 		$response = $this->controller->getStylesheets(tokenSetId: 'no-such-set');
 
-		$this->assertSame(404, $response->getStatus());
-		$this->assertSame(['error' => 'Token set not found'], $response->getData());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
+		$this->assertSame(expected: ['error' => 'Token set not found'], actual: $response->getData());
 	}//end testUnknownTokenSetIs404AndBuildsNoManifest()
 
 	/**

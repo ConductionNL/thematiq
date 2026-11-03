@@ -48,10 +48,10 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @return array<string, mixed> The converter result.
 	 */
 	private function convert(array $document): array {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		return (new TokenSetConverterService($appManager, new CssParserService(), new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class)))
+		return (new TokenSetConverterService(appManager: $appManager, cssParser: new CssParserService(), contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class)))
 			->convert(content: (string)json_encode($document), slug: 'proef', displayName: 'Proef');
 	}//end convert()
 
@@ -61,13 +61,13 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testAdaptedColourIsReported(): void {
-		$result = $this->convert(['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);
+		$result = $this->convert(document: ['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]]]]);
 		$adapted = array_values(array_filter($result['report'], static fn (array $e): bool => $e['reason'] === 'out-of-gamut-clipped'));
 
-		$this->assertCount(1, $adapted);
-		$this->assertSame('adapted', $adapted[0]['action']);
-		$this->assertSame('#ff0000', $adapted[0]['value']);
-		$this->assertStringContainsString('display-p3', $adapted[0]['original']);
+		$this->assertCount(expectedCount: 1, haystack: $adapted);
+		$this->assertSame(expected: 'adapted', actual: $adapted[0]['action']);
+		$this->assertSame(expected: '#ff0000', actual: $adapted[0]['value']);
+		$this->assertStringContainsString(needle: 'display-p3', haystack: $adapted[0]['original']);
 	}//end testAdaptedColourIsReported()
 
 	/**
@@ -77,15 +77,15 @@ final class DtcgImportPipelineTest extends TestCase {
 	 */
 	public function testExtensionWithForbiddenValueIsRefused(): void {
 		$result = $this->convert(
-			[
+			document: [
 				'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
 				'$extensions' => ['nl.conduction.thematiq' => ['setId' => 'x', 'cssOnly' => ['--nldesign-header-background' => 'expression(alert(1))']]],
 			]
 		);
 		$validator = new CustomTokenSetValidator();
 
-		$this->assertNull($validator->validateDeclarations(declarations: (new CssParserService())->parseRootBlock(css: (string)$result['css']), slug: 'proef'));
-		$this->assertSame(422, $validator->getLastError()['status'] ?? null);
+		$this->assertNull(actual: $validator->validateDeclarations(declarations: (new CssParserService())->parseRootBlock(css: (string)$result['css']), slug: 'proef'));
+		$this->assertSame(expected: 422, actual: $validator->getLastError()['status'] ?? null);
 	}//end testExtensionWithForbiddenValueIsRefused()
 
 	/**
@@ -99,8 +99,8 @@ final class DtcgImportPipelineTest extends TestCase {
 		);
 		$warnings = (new ContrastService())->check(declarations: $mapped['declarations']);
 
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', $mapped['declarations']['--nldesign-color-primary']);
-		$this->assertNotSame([], $warnings, 'a light converted primary under white text must warn');
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6}$/', string: $mapped['declarations']['--nldesign-color-primary']);
+		$this->assertNotSame(expected: [], actual: $warnings, message: 'a light converted primary under white text must warn');
 	}//end testConvertedColourIsContrastChecked()
 
 	/**
@@ -109,13 +109,13 @@ final class DtcgImportPipelineTest extends TestCase {
 	 * @return void
 	 */
 	public function testConvertedColourIsDerived(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$mapped = (new DesignTokensMapper())->map(document: ['color' => ['primary' => ['$type' => 'color', '$value' => ['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]]]]);
-		$palette = new DarkPaletteService(new ContrastService(), new CssParserService(), $appManager, $this->createMock(LoggerInterface::class));
+		$palette = new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
 
-		$this->assertArrayHasKey('--nldesign-color-primary', $palette->deriveDarkDeclarations(lightDeclarations: $mapped['declarations']));
+		$this->assertArrayHasKey(key: '--nldesign-color-primary', array: $palette->deriveDarkDeclarations(lightDeclarations: $mapped['declarations']));
 		// The control: stored as written, the palette could not read it and would skip it.
-		$this->assertArrayNotHasKey('--nldesign-color-primary', $palette->deriveDarkDeclarations(lightDeclarations: ['--nldesign-color-primary' => 'oklch(0.5 0.1 250)']));
+		$this->assertArrayNotHasKey(key: '--nldesign-color-primary', array: $palette->deriveDarkDeclarations(lightDeclarations: ['--nldesign-color-primary' => 'oklch(0.5 0.1 250)']));
 	}//end testConvertedColourIsDerived()
 }//end class

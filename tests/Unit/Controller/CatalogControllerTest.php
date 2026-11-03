@@ -43,9 +43,9 @@ class CatalogControllerTest extends TestCase {
 		$method = new ReflectionMethod(CatalogController::class, 'tokenSets');
 
 		$this->assertCount(
-			1,
-			$method->getAttributes(NoAdminRequired::class),
-			'#[NoAdminRequired] must be present so any authenticated user (not just admins) can read the catalogue.'
+			expectedCount: 1,
+			haystack: $method->getAttributes(NoAdminRequired::class),
+			message: '#[NoAdminRequired] must be present so any authenticated user (not just admins) can read the catalogue.'
 		);
 	}//end testTokenSetsHasNoAdminRequiredAttribute()
 
@@ -58,9 +58,9 @@ class CatalogControllerTest extends TestCase {
 		$method = new ReflectionMethod(CatalogController::class, 'tokenSets');
 
 		$this->assertCount(
-			0,
-			$method->getAttributes(PublicPage::class),
-			'#[PublicPage] must be absent — the catalogue may expose admin-uploaded custom sets and must stay behind authentication.'
+			expectedCount: 0,
+			haystack: $method->getAttributes(PublicPage::class),
+			message: '#[PublicPage] must be absent — the catalogue may expose admin-uploaded custom sets and must stay behind authentication.'
 		);
 	}//end testTokenSetsHasNoPublicPageAttribute()
 
@@ -83,14 +83,14 @@ class CatalogControllerTest extends TestCase {
 			],
 		];
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getPublicCatalogue')->willReturn($projection);
 
-		$controller = new CatalogController('nldesign', $this->createMock(IRequest::class), $tokenSetService);
+		$controller = new CatalogController(appName: 'nldesign', request: $this->createMock(originalClassName: IRequest::class), tokenSetService: $tokenSetService);
 		$response = $controller->tokenSets();
 
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame(['tokenSets' => $projection], $response->getData());
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: ['tokenSets' => $projection], actual: $response->getData());
 	}//end testTokenSetsReturnsServiceProjectionUnderTokenSetsKey()
 
 	/**
@@ -112,15 +112,15 @@ class CatalogControllerTest extends TestCase {
 			],
 		];
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getPublicCatalogue')->willReturn($projection);
 
-		$controller = new CatalogController('nldesign', $this->createMock(IRequest::class), $tokenSetService);
+		$controller = new CatalogController(appName: 'nldesign', request: $this->createMock(originalClassName: IRequest::class), tokenSetService: $tokenSetService);
 		$entry = $controller->tokenSets()->getData()['tokenSets'][0];
 
-		$this->assertSame(['id', 'name', 'design_system', 'theming', 'wcagLevel'], array_keys($entry));
+		$this->assertSame(expected: ['id', 'name', 'design_system', 'theming', 'wcagLevel'], actual: array_keys($entry));
 		foreach (['description', 'custom', 'warnings', 'upstreamVersion', 'upstreamRef'] as $forbidden) {
-			$this->assertArrayNotHasKey($forbidden, $entry, $forbidden . ' must never leak into the non-admin catalogue entry.');
+			$this->assertArrayNotHasKey(key: $forbidden, array: $entry, message: $forbidden . ' must never leak into the non-admin catalogue entry.');
 		}
 	}//end testEntryShapeIsExactlyTheFiveAllowlistedKeys()
 }//end class

@@ -65,9 +65,9 @@ class OverridesSaveGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testSetOverridesMatchesTheGoldenRecording()
 
@@ -97,7 +97,7 @@ class OverridesSaveGoldenTest extends TestCase {
 			'tokenSet' => ['', 'rijkshuisstijl', 'nextcloud', 7][$random->getInt(0, 3)],
 			'captureTheming' => [true, false, 'true'][$random->getInt(0, 2)],
 		];
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn($params);
 		$request->method('getParam')->willReturnCallback(
 			static function (string $key, $default = null) use (&$calls, $single) {
@@ -108,7 +108,7 @@ class OverridesSaveGoldenTest extends TestCase {
 
 		$writeFails = ($random->getInt(0, 7) === 0);
 		$earlier = [[], ['--color-primary' => '#000000']][$random->getInt(0, 1)];
-		$overrides = $this->createMock(CustomOverridesService::class);
+		$overrides = $this->createMock(originalClassName: CustomOverridesService::class);
 		$overrides->method('findRejected')->willReturnCallback(
 			static function (...$arguments) use (&$calls): array {
 				$calls[] = ['findRejected', $arguments];
@@ -135,7 +135,7 @@ class OverridesSaveGoldenTest extends TestCase {
 		);
 
 		$active = ['nextcloud', 'rijkshuisstijl'][$random->getInt(0, 1)];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (...$arguments) use (&$calls, $active): string {
 				$calls[] = ['getAppValue', $arguments];
@@ -150,13 +150,13 @@ class OverridesSaveGoldenTest extends TestCase {
 			);
 		}
 
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->method('log')->willReturnCallback(
 			static function (...$arguments) use (&$calls): void {
 				$calls[] = ['log', $arguments];
 			}
 		);
-		$theming = $this->createMock(ThemingService::class);
+		$theming = $this->createMock(originalClassName: ThemingService::class);
 		$theming->method('resetToDefaults')->willReturnCallback(
 			static function () use (&$calls): array {
 				$calls[] = ['resetToDefaults'];
@@ -166,7 +166,7 @@ class OverridesSaveGoldenTest extends TestCase {
 
 		$capture = null;
 		if ($random->getInt(0, 3) !== 0) {
-			$capture = $this->createMock(BrandingCaptureService::class);
+			$capture = $this->createMock(originalClassName: BrandingCaptureService::class);
 			$capture->method('capture')->willReturnCallback(
 				static function (...$arguments) use (&$calls): array {
 					$calls[] = ['capture', $arguments];
@@ -175,7 +175,7 @@ class OverridesSaveGoldenTest extends TestCase {
 			);
 		}
 
-		$controller = new OverridesController('thematiq', $request, $overrides, $this->createMock(CssParserService::class), $audit, $config, $theming, $capture);
+		$controller = new OverridesController(appName: 'thematiq', request: $request, overridesService: $overrides, cssParser: $this->createMock(originalClassName: CssParserService::class), auditService: $audit, config: $config, themingService: $theming, brandingCapture: $capture);
 		$response = $controller->setOverrides();
 
 		return (string)json_encode(['status' => $response->getStatus(), 'data' => $response->getData(), 'calls' => $calls], JSON_UNESCAPED_SLASHES);

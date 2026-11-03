@@ -48,18 +48,18 @@ class SetLogoReachTest extends TestCase {
 	 * @return string The layer CSS.
 	 */
 	private function layerCss(bool $shipped, bool $uploaded): string {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, string $default = ''): string => ($uploaded === true && $key === 'logoMime') ? 'image/png' : $default
 		);
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('imagePath')->willReturn('/core/img/logo/logo.svg');
-		$files = $this->createMock(RuntimeFileLocator::class);
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
 		$files->method('exists')->willReturnCallback(static fn (string $name): bool => $shipped === true && $name === 'img/logos/cunningham.svg');
 		$files->method('url')->willReturn('/apps/thematiq/img/logos/cunningham.svg');
 
-		$layer = (new LogoLayerService($config, $urls, $this->createMock(LoggerInterface::class), $files))->layer(tokenSet: 'cunningham');
-		$this->assertNotNull($layer);
+		$layer = (new LogoLayerService(config: $config, urlGenerator: $urls, logger: $this->createMock(originalClassName: LoggerInterface::class), files: $files))->layer(tokenSet: 'cunningham');
+		$this->assertNotNull(actual: $layer);
 
 		return $layer['css'];
 	}//end layerCss()
@@ -111,7 +111,7 @@ class SetLogoReachTest extends TestCase {
 			return $declarations;
 		}
 
-		$this->fail($file . ' has no #header .logo rule');
+		$this->fail(message: $file . ' has no #header .logo rule');
 	}//end headerLogoRule()
 
 	/**
@@ -176,10 +176,10 @@ class SetLogoReachTest extends TestCase {
 		$vars = $this->rootVariables(css: $this->layerCss(shipped: true, uploaded: false));
 		$rule = $this->headerLogoRule();
 
-		$this->assertSame('url(/apps/thematiq/img/logos/cunningham.svg)', $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars));
-		$this->assertSame('none', $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
-		$this->assertSame('none', $this->resolve(value: ($rule['-webkit-mask'] ?? ''), vars: $vars));
-		$this->assertSame('transparent', $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
+		$this->assertSame(expected: 'url(/apps/thematiq/img/logos/cunningham.svg)', actual: $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars));
+		$this->assertSame(expected: 'none', actual: $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
+		$this->assertSame(expected: 'none', actual: $this->resolve(value: ($rule['-webkit-mask'] ?? ''), vars: $vars));
+		$this->assertSame(expected: 'transparent', actual: $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
 	}//end testAShippedSetLogoReachesTheHeader()
 
 	/**
@@ -191,9 +191,9 @@ class SetLogoReachTest extends TestCase {
 
 		// Nextcloud's own --image-logoheader / --image-logo, which this test
 		// does not declare: what matters is that the image is the theming one.
-		$this->assertStringStartsWith('<--image-logo', $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars));
-		$this->assertSame('none', $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
-		$this->assertSame('transparent', $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
+		$this->assertStringStartsWith(prefix: '<--image-logo', string: $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars));
+		$this->assertSame(expected: 'none', actual: $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
+		$this->assertSame(expected: 'transparent', actual: $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
 	}//end testAnUploadedLogoReachesTheHeader()
 
 	/**
@@ -203,10 +203,10 @@ class SetLogoReachTest extends TestCase {
 		$vars = $this->rootVariables(css: $this->layerCss(shipped: false, uploaded: false));
 		$rule = $this->headerLogoRule();
 
-		$this->assertSame([], $vars, 'the no-logo layer declares no logo variables');
-		$this->assertSame('none', $this->resolve(value: ($rule['background-image'] ?? ''), vars: $vars));
-		$this->assertStringContainsString('core/img/logo/logo.svg', $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
-		$this->assertStringContainsString('brand-550', $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
+		$this->assertSame(expected: [], actual: $vars, message: 'the no-logo layer declares no logo variables');
+		$this->assertSame(expected: 'none', actual: $this->resolve(value: ($rule['background-image'] ?? ''), vars: $vars));
+		$this->assertStringContainsString(needle: 'core/img/logo/logo.svg', haystack: $this->resolve(value: ($rule['mask'] ?? ''), vars: $vars));
+		$this->assertStringContainsString(needle: 'brand-550', haystack: $this->resolve(value: ($rule['background-color'] ?? ''), vars: $vars));
 	}//end testWithoutALogoTheBrandColouredMarkStays()
 
 	/**
@@ -217,7 +217,7 @@ class SetLogoReachTest extends TestCase {
 	 * @return array<string, string> Property => value, `!important` dropped.
 	 */
 	private function layerLogoRule(string $css): array {
-		$this->assertSame(1, preg_match('/#nextcloud \.logo\{([^}]*)\}/', $css, $match), 'the no-logo layer paints #nextcloud .logo');
+		$this->assertSame(expected: 1, actual: preg_match('/#nextcloud \.logo\{([^}]*)\}/', $css, $match), message: 'the no-logo layer paints #nextcloud .logo');
 		$declarations = [];
 		foreach (explode(';', $match[1]) as $declaration) {
 			$parts = explode(':', $declaration, 2);
@@ -244,7 +244,7 @@ class SetLogoReachTest extends TestCase {
 		$element = array_filter($this->headerLogoRule(), static fn (string $name): bool => str_starts_with($name, '--'), ARRAY_FILTER_USE_KEY);
 
 		$fill = $this->resolve(value: ($layer['background-color'] ?? ''), vars: $element);
-		$this->assertStringContainsString('brand-550', $fill, 'the no-logo mark on La Suite fills with ' . $fill);
+		$this->assertStringContainsString(needle: 'brand-550', haystack: $fill, message: 'the no-logo mark on La Suite fills with ' . $fill);
 	}//end testWithoutALogoTheLayerKeepsTheLaSuiteBrandFill()
 
 	/**
@@ -254,7 +254,7 @@ class SetLogoReachTest extends TestCase {
 	public function testWithoutALogoNldesignKeepsTheHeaderTextFill(): void {
 		$layer = $this->layerLogoRule(css: $this->layerCss(shipped: false, uploaded: false));
 
-		$this->assertSame('#123456', $this->resolve(value: ($layer['background-color'] ?? ''), vars: ['--nldesign-color-header-text' => '#123456']));
+		$this->assertSame(expected: '#123456', actual: $this->resolve(value: ($layer['background-color'] ?? ''), vars: ['--nldesign-color-header-text' => '#123456']));
 	}//end testWithoutALogoNldesignKeepsTheHeaderTextFill()
 
 	/**
@@ -265,15 +265,15 @@ class SetLogoReachTest extends TestCase {
 	 * @return array{layer: string, kind: string, css: string, id: string}|null The layer.
 	 */
 	private function darkLayer(bool $darkShipped): ?array {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
-		$files = $this->createMock(RuntimeFileLocator::class);
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
 		$files->method('exists')->willReturnCallback(
 			static fn (string $name): bool => $name === 'img/logos/frankendesk.svg' || ($darkShipped === true && $name === 'img/logos/frankendesk-dark.svg')
 		);
 		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
 
-		return (new LogoLayerService($config, $this->createMock(IURLGenerator::class), $this->createMock(LoggerInterface::class), $files))->darkLayer(tokenSet: 'frankendesk');
+		return (new LogoLayerService(config: $config, urlGenerator: $this->createMock(originalClassName: IURLGenerator::class), logger: $this->createMock(originalClassName: LoggerInterface::class), files: $files))->darkLayer(tokenSet: 'frankendesk');
 	}//end darkLayer()
 
 	/**
@@ -285,7 +285,7 @@ class SetLogoReachTest extends TestCase {
 	 * @return array<string, string> Name => value.
 	 */
 	private function scopeVariables(string $css, string $scope): array {
-		$this->assertSame(1, preg_match('/' . $scope . '\{([^{}]*)\}/', $css, $match), 'the dark logo layer has a ' . $scope . ' scope');
+		$this->assertSame(expected: 1, actual: preg_match('/' . $scope . '\{([^{}]*)\}/', $css, $match), message: 'the dark logo layer has a ' . $scope . ' scope');
 		$vars = [];
 		foreach (explode(';', $match[1]) as $declaration) {
 			$parts = explode(':', $declaration, 2);
@@ -311,17 +311,17 @@ class SetLogoReachTest extends TestCase {
 	 */
 	public function testADarkSetLogoReachesTheHeaderInBothDarkScopes(): void {
 		$layer = $this->darkLayer(darkShipped: true);
-		$this->assertNotNull($layer);
-		$this->assertSame('inline', $layer['kind']);
-		$this->assertNotSame(CssInjectionService::LOGO_STYLE_ID, $layer['id'], 'its own id, so the client can swap it');
+		$this->assertNotNull(actual: $layer);
+		$this->assertSame(expected: 'inline', actual: $layer['kind']);
+		$this->assertNotSame(expected: CssInjectionService::LOGO_STYLE_ID, actual: $layer['id'], message: 'its own id, so the client can swap it');
 
 		$url = 'url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)';
-		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $layer['css']);
+		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $layer['css']);
 		foreach (['body:not\(\[data-theme-light\]\)[^{]*', 'body\[data-theme-dark\],body\[data-themes\*=dark\]'] as $scope) {
 			$vars = $this->scopeVariables(css: $layer['css'], scope: $scope);
 			foreach ([self::BUNDLE, 'css/token-overrides/frankendesk.css'] as $file) {
 				$rule = $this->headerLogoRule(file: $file);
-				$this->assertSame($url, $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars), $file . ' in ' . $scope);
+				$this->assertSame(expected: $url, actual: $this->resolve(value: ($rule['background-image'] ?? 'none'), vars: $vars), message: $file . ' in ' . $scope);
 			}
 		}
 	}//end testADarkSetLogoReachesTheHeaderInBothDarkScopes()
@@ -330,7 +330,7 @@ class SetLogoReachTest extends TestCase {
 	 * Without a dark file there is no dark layer, so the light logo stays.
 	 */
 	public function testWithoutADarkFileThereIsNoDarkLayer(): void {
-		$this->assertNull($this->darkLayer(darkShipped: false));
+		$this->assertNull(actual: $this->darkLayer(darkShipped: false));
 	}//end testWithoutADarkFileThereIsNoDarkLayer()
 
 	/**
@@ -341,9 +341,9 @@ class SetLogoReachTest extends TestCase {
 	 * @return string The layer CSS.
 	 */
 	private function layerWithEmblem(bool $emblemShipped, bool $colourEmblemShipped = false): string {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, string $default = ''): string => $default);
-		$files = $this->createMock(RuntimeFileLocator::class);
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
 		$files->method('exists')->willReturnCallback(
 			static fn (string $name): bool => $name === 'img/logos/zuiddrecht.svg'
 				|| ($emblemShipped === true && $name === 'img/logos/zuiddrecht-emblem-grey.svg')
@@ -351,8 +351,8 @@ class SetLogoReachTest extends TestCase {
 		);
 		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
 
-		$layer = (new LogoLayerService($config, $this->createMock(IURLGenerator::class), $this->createMock(LoggerInterface::class), $files))->layer(tokenSet: 'zuiddrecht');
-		$this->assertNotNull($layer);
+		$layer = (new LogoLayerService(config: $config, urlGenerator: $this->createMock(originalClassName: IURLGenerator::class), logger: $this->createMock(originalClassName: LoggerInterface::class), files: $files))->layer(tokenSet: 'zuiddrecht');
+		$this->assertNotNull(actual: $layer);
 
 		return $layer['css'];
 	}//end layerWithEmblem()
@@ -367,9 +367,9 @@ class SetLogoReachTest extends TestCase {
 	public function testAGreyEmblemBecomesTheLoginWatermark(): void {
 		$css = $this->layerWithEmblem(emblemShipped: true);
 
-		$this->assertStringContainsString('--nldesign-logo-url:url(/custom_apps/thematiq/img/logos/zuiddrecht.svg)', $css);
-		$this->assertStringContainsString(';--nldesign-login-watermark-image:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem-grey.svg)}', $css);
-		$this->assertStringStartsWith(':root{', $css);
+		$this->assertStringContainsString(needle: '--nldesign-logo-url:url(/custom_apps/thematiq/img/logos/zuiddrecht.svg)', haystack: $css);
+		$this->assertStringContainsString(needle: ';--nldesign-login-watermark-image:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem-grey.svg)}', haystack: $css);
+		$this->assertStringStartsWith(prefix: ':root{', string: $css);
 	}//end testAGreyEmblemBecomesTheLoginWatermark()
 
 	/**
@@ -379,7 +379,7 @@ class SetLogoReachTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
 	 */
 	public function testWithoutAGreyEmblemThereIsNoWatermark(): void {
-		$this->assertStringNotContainsString('watermark', $this->layerWithEmblem(emblemShipped: false));
+		$this->assertStringNotContainsString(needle: 'watermark', haystack: $this->layerWithEmblem(emblemShipped: false));
 	}//end testWithoutAGreyEmblemThereIsNoWatermark()
 
 	/**
@@ -389,9 +389,9 @@ class SetLogoReachTest extends TestCase {
 	 */
 	public function testAColouredEmblemBecomesTheEmblemUrl(): void {
 		$css = $this->layerWithEmblem(emblemShipped: true, colourEmblemShipped: true);
-		$this->assertStringContainsString(';--nldesign-emblem-url:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem.svg)}', $css);
+		$this->assertStringContainsString(needle: ';--nldesign-emblem-url:url(/custom_apps/thematiq/img/logos/zuiddrecht-emblem.svg)}', haystack: $css);
 
-		$this->assertStringNotContainsString('--nldesign-emblem-url', $this->layerWithEmblem(emblemShipped: true));
+		$this->assertStringNotContainsString(needle: '--nldesign-emblem-url', haystack: $this->layerWithEmblem(emblemShipped: true));
 	}//end testAColouredEmblemBecomesTheEmblemUrl()
 
 	/**
@@ -405,14 +405,14 @@ class SetLogoReachTest extends TestCase {
 		$emblems = array_map('basename', (array)glob(\dirname(__DIR__, 3) . '/img/logos/*-emblem-grey.*'));
 
 		$this->assertSame(
-			[
+			expected: [
 				'esdoornveen-emblem-grey.svg',
 				'vaartveld-emblem-grey.svg',
 				'warmtepompacademie-emblem-grey.svg',
 				'wilgenboom-emblem-grey.svg',
 				'zuiddrecht-emblem-grey.svg',
 			],
-			$emblems
+			actual: $emblems
 		);
 	}//end testOnlyTheDemoSetsShipAGreyEmblem()
 }//end class

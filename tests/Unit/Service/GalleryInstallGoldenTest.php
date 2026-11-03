@@ -97,9 +97,9 @@ class GalleryInstallGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testInstallMatchesTheGoldenRecording()
 
@@ -202,7 +202,7 @@ class GalleryInstallGoldenTest extends TestCase {
 	 */
 	private function clientService(Randomizer $random, string $body): IClientService {
 		$mode = $random->getInt(0, 14);
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->method('get')->willReturnCallback(
 			function (string $url, array $options) use ($mode, $body): IResponse {
 				$this->calls[] = ['IClient::get', $url, $options];
@@ -210,14 +210,14 @@ class GalleryInstallGoldenTest extends TestCase {
 					throw new RuntimeException('network down');
 				}
 
-				$response = $this->createMock(IResponse::class);
+				$response = $this->createMock(originalClassName: IResponse::class);
 				$response->method('getStatusCode')->willReturn(($mode === 1) ? 500 : 200);
 				$response->method('getBody')->willReturn($body);
 				return $response;
 			}
 		);
 
-		$service = $this->createMock(IClientService::class);
+		$service = $this->createMock(originalClassName: IClientService::class);
 		$service->method('newClient')->willReturn($client);
 		return $service;
 	}//end clientService()
@@ -255,7 +255,7 @@ class GalleryInstallGoldenTest extends TestCase {
 			$result['logoAsset'] = ['path' => 'logo.svg', 'contents' => '<svg/>'];
 		}
 
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('convert')->willReturnCallback(
 			function (...$arguments) use ($mode, $result): array {
 				$this->calls[] = ['TokenSetConverterService::convert'] + $this->named(method: [TokenSetConverterService::class, 'convert'], arguments: $arguments);
@@ -318,7 +318,7 @@ class GalleryInstallGoldenTest extends TestCase {
 	 * @return IL10N
 	 */
 	private function l10n(): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			static fn (string $text, $parameters = []): string => strtr($text, ['{reason}' => (string)(((array)$parameters)['reason'] ?? '')])
 		);
@@ -335,7 +335,7 @@ class GalleryInstallGoldenTest extends TestCase {
 	 * @return MockObject
 	 */
 	private function recorder(string $class, array $methods): MockObject {
-		$double = $this->createMock($class);
+		$double = $this->createMock(originalClassName: $class);
 		foreach ($methods as $method => $value) {
 			$double->method($method)->willReturnCallback(
 				function (...$arguments) use ($class, $method, $value) {

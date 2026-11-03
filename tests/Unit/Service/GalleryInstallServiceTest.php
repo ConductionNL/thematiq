@@ -121,12 +121,12 @@ class GalleryInstallServiceTest extends TestCase {
 		$this->body = (string)file_get_contents(\dirname(__DIR__, 3) . '/css/tokens/utrecht.css');
 		$this->entry = ThemeGalleryServiceTest::entry(['sha256' => hash('sha256', $this->body)]);
 
-		$tempApp = $this->createMock(IAppManager::class);
+		$tempApp = $this->createMock(originalClassName: IAppManager::class);
 		$tempApp->method('getAppPath')->willReturn($this->appDir);
-		$repoApp = $this->createMock(IAppManager::class);
+		$repoApp = $this->createMock(originalClassName: IAppManager::class);
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -138,11 +138,11 @@ class GalleryInstallServiceTest extends TestCase {
 		$this->config = $config;
 
 		$this->customSets = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($this->appDir),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(new ContrastService(), new CssParserService(), $tempApp, $this->createMock(LoggerInterface::class))
+			store: new DirectoryRuntimeFileStore(root: $this->appDir),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(contrast: new ContrastService(), parser: new CssParserService(), appManager: $tempApp, logger: $this->createMock(originalClassName: LoggerInterface::class))
 		);
 	}//end setUp()
 
@@ -169,7 +169,7 @@ class GalleryInstallServiceTest extends TestCase {
 	 * @return GalleryInstallService The service.
 	 */
 	private function service(): GalleryInstallService {
-		$gallery = $this->createMock(ThemeGalleryService::class);
+		$gallery = $this->createMock(originalClassName: ThemeGalleryService::class);
 		$gallery->method('findEntry')->willReturnCallback(
 			fn (string $galleryId) => ($this->entry !== null && $this->entry['id'] === $galleryId ? $this->entry : null)
 		);
@@ -185,44 +185,44 @@ class GalleryInstallServiceTest extends TestCase {
 			}
 		);
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->method('get')->willReturnCallback(
 			function (string $url, array $options) {
 				$this->downloads[] = $url;
-				$this->assertSame(10, $options['timeout']);
-				$response = $this->createMock(IResponse::class);
+				$this->assertSame(expected: 10, actual: $options['timeout']);
+				$response = $this->createMock(originalClassName: IResponse::class);
 				$response->method('getStatusCode')->willReturn(200);
 				$response->method('getBody')->willReturn($this->body);
 				return $response;
 			}
 		);
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
-		$repoApp = $this->createMock(IAppManager::class);
+		$repoApp = $this->createMock(originalClassName: IAppManager::class);
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$repoApp,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $repoApp,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audited[] = [$action, $context];
 			}
 		);
 
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			fn (string $text, $params = []) => vsprintf(str_replace(['{set}', '{reason}'], '%s', $text), (array)$params)
 		);
 
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturn(1_800_000_000);
 
 		return new GalleryInstallService(
@@ -253,25 +253,25 @@ class GalleryInstallServiceTest extends TestCase {
 	public function testAMatchingFileIsInstalledWithProvenance(): void {
 		$result = $this->service()->install(galleryId: 'provincie-utrecht');
 
-		$this->assertSame('custom-provincie-utrecht', $result['id']);
-		$this->assertFalse($result['updated']);
-		$this->assertSame(['https://gallery.example.nl/sets/provincie-utrecht.css'], $this->downloads);
-		$this->assertFileExists($this->appDir . '/css/tokens/custom-provincie-utrecht.css');
+		$this->assertSame(expected: 'custom-provincie-utrecht', actual: $result['id']);
+		$this->assertFalse(condition: $result['updated']);
+		$this->assertSame(expected: ['https://gallery.example.nl/sets/provincie-utrecht.css'], actual: $this->downloads);
+		$this->assertFileExists(filename: $this->appDir . '/css/tokens/custom-provincie-utrecht.css');
 
 		$sets = $this->customSets->list();
-		$this->assertCount(1, $sets);
+		$this->assertCount(expectedCount: 1, haystack: $sets);
 		$this->assertSame(
-			[
+			expected: [
 				'galleryId' => 'provincie-utrecht',
 				'sourceUrl' => 'https://github.com/example/utrecht-tokens',
 				'licence' => 'EUPL-1.2',
 				'sha256' => hash('sha256', $this->body),
 				'installedOn' => '2027-01-15T08:00:00Z',
 			],
-			$sets[0]['provenance']
+			actual: $sets[0]['provenance']
 		);
-		$this->assertSame('custom_set_uploaded', $this->audited[0][0]);
-		$this->assertSame('provincie-utrecht', $this->audited[0][1]['galleryId']);
+		$this->assertSame(expected: 'custom_set_uploaded', actual: $this->audited[0][0]);
+		$this->assertSame(expected: 'provincie-utrecht', actual: $this->audited[0][1]['galleryId']);
 	}//end testAMatchingFileIsInstalledWithProvenance()
 
 	/**
@@ -284,14 +284,14 @@ class GalleryInstallServiceTest extends TestCase {
 
 		try {
 			$this->service()->install(galleryId: 'provincie-utrecht');
-			$this->fail('A tampered file was installed.');
+			$this->fail(message: 'A tampered file was installed.');
 		} catch (GalleryException $e) {
-			$this->assertSame(422, $e->getCode());
-			$this->assertStringContainsString('does not match the gallery index', $e->getMessage());
+			$this->assertSame(expected: 422, actual: $e->getCode());
+			$this->assertStringContainsString(needle: 'does not match the gallery index', haystack: $e->getMessage());
 		}
 
-		$this->assertSame([], $this->customSets->list());
-		$this->assertSame([], $this->audited);
+		$this->assertSame(expected: [], actual: $this->customSets->list());
+		$this->assertSame(expected: [], actual: $this->audited);
 	}//end testATamperedFileIsRefused()
 
 	/**
@@ -305,13 +305,13 @@ class GalleryInstallServiceTest extends TestCase {
 
 		try {
 			$this->service()->install(galleryId: 'provincie-utrecht');
-			$this->fail('A file the upload path refuses was installed.');
+			$this->fail(message: 'A file the upload path refuses was installed.');
 		} catch (GalleryException $e) {
-			$this->assertSame(422, $e->getCode());
-			$this->assertStringContainsString('The file was refused, so nothing was installed', $e->getMessage());
+			$this->assertSame(expected: 422, actual: $e->getCode());
+			$this->assertStringContainsString(needle: 'The file was refused, so nothing was installed', haystack: $e->getMessage());
 		}
 
-		$this->assertSame([], $this->customSets->list());
+		$this->assertSame(expected: [], actual: $this->customSets->list());
 	}//end testAFileTheUploadPathRefusesStoresNothing()
 
 	/**
@@ -322,12 +322,12 @@ class GalleryInstallServiceTest extends TestCase {
 	public function testAnUnknownEntryIsNotFound(): void {
 		try {
 			$this->service()->install(galleryId: 'nope');
-			$this->fail('An unknown entry was installed.');
+			$this->fail(message: 'An unknown entry was installed.');
 		} catch (GalleryException $e) {
-			$this->assertSame(404, $e->getCode());
+			$this->assertSame(expected: 404, actual: $e->getCode());
 		}
 
-		$this->assertSame([], $this->downloads);
+		$this->assertSame(expected: [], actual: $this->downloads);
 	}//end testAnUnknownEntryIsNotFound()
 
 	/**
@@ -343,12 +343,12 @@ class GalleryInstallServiceTest extends TestCase {
 		$this->entry = ThemeGalleryServiceTest::entry(['name' => 'Utrecht renamed', 'sha256' => hash('sha256', $this->body)]);
 		$result = $this->service()->install(galleryId: 'provincie-utrecht');
 
-		$this->assertSame('custom-provincie-utrecht', $result['id']);
-		$this->assertTrue($result['updated']);
-		$this->assertSame('custom-provincie-utrecht', $this->appConfig['token_set']);
+		$this->assertSame(expected: 'custom-provincie-utrecht', actual: $result['id']);
+		$this->assertTrue(condition: $result['updated']);
+		$this->assertSame(expected: 'custom-provincie-utrecht', actual: $this->appConfig['token_set']);
 		$sets = $this->customSets->list();
-		$this->assertCount(1, $sets);
-		$this->assertSame(hash('sha256', $this->body), $sets[0]['provenance']['sha256']);
-		$this->assertStringContainsStringIgnoringCase('#1d4a7a', (string)file_get_contents($this->appDir . '/css/tokens/custom-provincie-utrecht.css'));
+		$this->assertCount(expectedCount: 1, haystack: $sets);
+		$this->assertSame(expected: hash('sha256', $this->body), actual: $sets[0]['provenance']['sha256']);
+		$this->assertStringContainsStringIgnoringCase(needle: '#1d4a7a', haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-provincie-utrecht.css'));
 	}//end testAnUpdateReplacesTheSetAndKeepsItActive()
 }//end class

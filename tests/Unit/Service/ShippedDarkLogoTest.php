@@ -64,7 +64,7 @@ class ShippedDarkLogoTest extends TestCase {
 	 * background, so it must ship a dark logo.
 	 */
 	public function testEpeShipsADarkLogo(): void {
-		$this->assertSame('img/logos/epe-dark.svg', ($this->shippedDarkLogos()['epe'] ?? null));
+		$this->assertSame(expected: 'img/logos/epe-dark.svg', actual: ($this->shippedDarkLogos()['epe'] ?? null));
 	}//end testEpeShipsADarkLogo()
 
 	/**
@@ -93,7 +93,7 @@ class ShippedDarkLogoTest extends TestCase {
 	 * @dataProvider setsWithDarkInkLogos
 	 */
 	public function testDarkInkLogoSetShipsADarkLogo(string $setId): void {
-		$this->assertSame("img/logos/{$setId}-dark.svg", ($this->shippedDarkLogos()[$setId] ?? null));
+		$this->assertSame(expected: "img/logos/{$setId}-dark.svg", actual: ($this->shippedDarkLogos()[$setId] ?? null));
 	}//end testDarkInkLogoSetShipsADarkLogo()
 
 	/**
@@ -102,29 +102,29 @@ class ShippedDarkLogoTest extends TestCase {
 	 */
 	public function testEveryShippedDarkLogoReachesTheDarkStylesheet(): void {
 		$logos = $this->shippedDarkLogos();
-		$this->assertNotEmpty($logos, 'At least one shipped token set must declare theming.logo_dark.');
+		$this->assertNotEmpty(actual: $logos, message: 'At least one shipped token set must declare theming.logo_dark.');
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->root());
 		$service = new DarkPaletteService(
-			new ContrastService(),
-			new CssParserService(),
-			$appManager,
-			$this->createMock(LoggerInterface::class)
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		foreach ($logos as $setId => $path) {
-			$this->assertStringStartsWith('img/logos/', $path, "$setId: logo_dark must live under img/logos/.");
-			$this->assertStringNotContainsString('..', $path, "$setId: logo_dark must not traverse.");
-			$this->assertFileExists($this->root() . '/' . $path, "$setId: logo_dark file is missing.");
+			$this->assertStringStartsWith(prefix: 'img/logos/', string: $path, message: "$setId: logo_dark must live under img/logos/.");
+			$this->assertStringNotContainsString(needle: '..', haystack: $path, message: "$setId: logo_dark must not traverse.");
+			$this->assertFileExists(filename: $this->root() . '/' . $path, message: "$setId: logo_dark file is missing.");
 
 			$expected = "--nldesign-logo-url: url('../../../" . $path . "')";
 			$generated = $service->generateForSet(setId: $setId);
-			$this->assertNotNull($generated, "$setId: the set must be eligible for a dark variant.");
-			$this->assertStringContainsString($expected, $generated['css'], "$setId: the generator must emit the dark logo.");
+			$this->assertNotNull(actual: $generated, message: "$setId: the set must be eligible for a dark variant.");
+			$this->assertStringContainsString(needle: $expected, haystack: $generated['css'], message: "$setId: the generator must emit the dark logo.");
 
 			$committed = (string)file_get_contents($this->root() . '/css/tokens/dark/' . $setId . '.css');
-			$this->assertStringContainsString($expected, $committed, "$setId: regenerate css/tokens/dark/$setId.css with --force.");
+			$this->assertStringContainsString(needle: $expected, haystack: $committed, message: "$setId: regenerate css/tokens/dark/$setId.css with --force.");
 		}
 	}//end testEveryShippedDarkLogoReachesTheDarkStylesheet()
 
@@ -135,16 +135,16 @@ class ShippedDarkLogoTest extends TestCase {
 	public function testEveryShippedDarkLogoIsReadableOnDark(): void {
 		$contrast = new ContrastService();
 		$logos = $this->shippedDarkLogos();
-		$this->assertNotEmpty($logos, 'At least one shipped token set must declare theming.logo_dark.');
+		$this->assertNotEmpty(actual: $logos, message: 'At least one shipped token set must declare theming.logo_dark.');
 
 		foreach ($logos as $setId => $path) {
 			$svg = (string)file_get_contents($this->root() . '/' . $path);
 			preg_match_all('/fill\s*[=:]\s*"?\s*(#[0-9a-fA-F]{3,8})/', $svg, $matches);
-			$this->assertNotEmpty($matches[1], "$setId: the dark logo must declare its fill colours.");
+			$this->assertNotEmpty(actual: $matches[1], message: "$setId: the dark logo must declare its fill colours.");
 			foreach (array_unique($matches[1]) as $fill) {
 				$ratio = $contrast->measure(foreground: $fill, background: self::DARK_BACKGROUND);
-				$this->assertNotNull($ratio);
-				$this->assertGreaterThanOrEqual(3.0, $ratio, "$setId: fill $fill is below 3:1 on " . self::DARK_BACKGROUND . '.');
+				$this->assertNotNull(actual: $ratio);
+				$this->assertGreaterThanOrEqual(expected: 3.0, actual: $ratio, message: "$setId: fill $fill is below 3:1 on " . self::DARK_BACKGROUND . '.');
 			}
 		}
 	}//end testEveryShippedDarkLogoIsReadableOnDark()

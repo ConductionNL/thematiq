@@ -145,33 +145,33 @@ class CssInjectionServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->designSystemService = $this->createMock(DesignSystemService::class);
-		$this->customCssService = $this->createMock(CustomCssService::class);
-		$this->fontService = $this->createMock(FontService::class);
-		$this->urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->groupThemingService = $this->createMock(GroupThemingService::class);
-		$this->previewBannerService = $this->createMock(ThemePreviewBannerService::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
-		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+		$this->customCssService = $this->createMock(originalClassName: CustomCssService::class);
+		$this->fontService = $this->createMock(originalClassName: FontService::class);
+		$this->urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
+		$this->groupThemingService = $this->createMock(originalClassName: GroupThemingService::class);
+		$this->previewBannerService = $this->createMock(originalClassName: ThemePreviewBannerService::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$this->stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$this->stockTokens->method('getCss')->willReturn(null);
-		$this->appBrands = $this->createMock(AppBrandService::class);
+		$this->appBrands = $this->createMock(originalClassName: AppBrandService::class);
 
 		$this->runtimeDir = sys_get_temp_dir() . '/thematiq-injection-' . bin2hex(random_bytes(4));
 		// The repository is the app directory, read-only, so shipped files
 		// such as img/logos/rijkshuisstijl.svg resolve as they do in a release.
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$this->urlGenerator->method('linkTo')->willReturnCallback(
 			fn (string $appName, string $file) => '/custom_apps/' . $appName . '/' . $file
 		);
-		$routes = $this->createMock(IURLGenerator::class);
+		$routes = $this->createMock(originalClassName: IURLGenerator::class);
 		$routes->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => 'runtime:' . $args['name']);
 		$this->runtimeFiles = new RuntimeFileLocator(
-			$appManager,
-			new DirectoryRuntimeFileStore($this->runtimeDir . '/store'),
-			$routes,
-			$this->createMock(ITempManager::class)
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $this->runtimeDir . '/store'),
+			urlGenerator: $routes,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
 		);
 
 		// Default: no group mapping configured, so the resolver returns the
@@ -204,7 +204,7 @@ class CssInjectionServiceTest extends TestCase {
 			}
 		}
 
-		$this->fail('no entry starts with ' . $prefix . ' in ' . json_encode($log));
+		$this->fail(message: 'no entry starts with ' . $prefix . ' in ' . json_encode($log));
 	}//end indexStartingWith()
 
 	/**
@@ -254,7 +254,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @return CssInjectionService&MockObject The service under test.
 	 */
 	private function buildService(array &$styleLog, array &$fontLog): CssInjectionService {
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config,
@@ -267,7 +267,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->logger,
 					$this->stockTokens,
 					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
 					$this->appBrands,
 				]
 			)
@@ -317,7 +317,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * order), token set, icon/error contrast, custom-overrides — layers 1-8.
 	 */
 	public function testStandardNldesignOrder(): void {
-		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
 		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
 			->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
@@ -346,7 +346,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			[
+			expected: [
 				'systems/nldesign/fonts',
 				'systems/nldesign/defaults',
 				'systems/nldesign/utrecht-bridge',
@@ -359,10 +359,10 @@ class CssInjectionServiceTest extends TestCase {
 				'theme-scopes',
 				'component-scopes',
 			],
-			$styleLog
+			actual: $styleLog
 		);
-		$this->assertCount(1, $fontLog);
-		$this->assertStringStartsWith('runtime:css/custom-overrides.css?v=', $fontLog[0]);
+		$this->assertCount(expectedCount: 1, haystack: $fontLog);
+		$this->assertStringStartsWith(prefix: 'runtime:css/custom-overrides.css?v=', string: $fontLog[0]);
 	}//end testStandardNldesignOrder()
 
 	/**
@@ -379,7 +379,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * renders byte-identically to stock.
 	 */
 	public function testNoneDesignSystemLoadsOnlyTheComponentLayer(): void {
-		$this->configureAppValues(['token_set' => 'nextcloud']);
+		$this->configureAppValues(overrides: ['token_set' => 'nextcloud']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
 			[
@@ -395,8 +395,8 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['theme-scopes', 'component-scopes'], $styleLog);
-		$this->assertSame([], $fontLog);
+		$this->assertSame(expected: ['theme-scopes', 'component-scopes'], actual: $styleLog);
+		$this->assertSame(expected: [], actual: $fontLog);
 	}//end testNoneDesignSystemLoadsOnlyTheComponentLayer()
 
 	/**
@@ -406,7 +406,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * overrides file of its own — neither the shared one nor the stock set's.
 	 */
 	public function testACustomSetOnNoneLoadsItsOwnTokenFile(): void {
-		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->configureAppValues(overrides: ['token_set' => 'custom-openwoo']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
 			[
@@ -422,7 +422,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['tokens/custom-openwoo', 'theme-scopes', 'component-scopes'], $styleLog);
+		$this->assertSame(expected: ['tokens/custom-openwoo', 'theme-scopes', 'component-scopes'], actual: $styleLog);
 	}//end testACustomSetOnNoneLoadsItsOwnTokenFile()
 
 	/**
@@ -432,7 +432,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes(): void {
-		$this->configureAppValues(['token_set' => 'custom-openwoo']);
+		$this->configureAppValues(overrides: ['token_set' => 'custom-openwoo']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
 			['id' => 'none', 'name' => 'No design system', 'description' => '', 'stylesheets' => []]
@@ -443,11 +443,11 @@ class CssInjectionServiceTest extends TestCase {
 		$fontLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('custom-openwoo');
 
-		$this->assertSame(['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'], array_column($manifest['layers'], 'layer'));
+		$this->assertSame(expected: ['tokens', 'theme-scopes', 'component-scopes', 'internal-scopes'], actual: array_column($manifest['layers'], 'layer'));
 		$last = end($manifest['layers']);
-		$this->assertSame('inline', $last['kind']);
-		$this->assertSame(CssInjectionService::INTERNAL_SCOPES_STYLE_ID, $last['id']);
-		$this->assertStringContainsString('--dp-hover-color: var(--nldesign-nc-dp-hover-color);', (string)$last['css']);
+		$this->assertSame(expected: 'inline', actual: $last['kind']);
+		$this->assertSame(expected: CssInjectionService::INTERNAL_SCOPES_STYLE_ID, actual: $last['id']);
+		$this->assertStringContainsString(needle: '--dp-hover-color: var(--nldesign-nc-dp-hover-color);', haystack: (string)$last['css']);
 	}//end testASetWithAnInternalTokenCarriesTheInternalScopesAfterTheComponentScopes()
 
 	/**
@@ -474,8 +474,8 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('custom-overrides-nextcloud', $styleLog, 'overrides are not a static app stylesheet any more');
-		$this->assertStringStartsWith('runtime:css/custom-overrides-nextcloud.css?v=', (string)end($fontLog));
+		$this->assertNotContains(needle: 'custom-overrides-nextcloud', haystack: $styleLog, message: 'overrides are not a static app stylesheet any more');
+		$this->assertStringStartsWith(prefix: 'runtime:css/custom-overrides-nextcloud.css?v=', string: (string)end($fontLog));
 	}//end testCustomOverridesAlwaysLoadedLast()
 
 	/**
@@ -490,7 +490,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/menu-labels/spec.md#css-loading-order-relative-to-other-conditionals
 	 */
 	public function testConditionalStylesheetsLoadedWhenEnabled(): void {
-		$this->configureAppValues(['hide_slogan' => '1', 'show_menu_labels' => '1']);
+		$this->configureAppValues(overrides: ['hide_slogan' => '1', 'show_menu_labels' => '1']);
 		$this->runtimeFiles->store()->write('css/custom-overrides-nextcloud.css', ':root {}');
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
@@ -507,14 +507,14 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('hide-slogan', $styleLog, 'an addStyle() entry is printed before every header');
-		$this->assertNotContains('show-menu-labels', $styleLog, 'an addStyle() entry is printed before every header');
-		$overrides = $this->indexStartingWith($fontLog, 'runtime:css/custom-overrides-nextcloud.css');
-		$slogan = $this->indexStartingWith($fontLog, '/custom_apps/thematiq/css/hide-slogan.css?v=');
-		$labels = $this->indexStartingWith($fontLog, '/custom_apps/thematiq/css/show-menu-labels.css?v=');
-		$this->assertGreaterThanOrEqual(0, $overrides, 'the saved overrides are linked');
-		$this->assertGreaterThan($overrides, $slogan, 'hide-slogan loads after custom-overrides');
-		$this->assertGreaterThan($slogan, $labels, 'show-menu-labels loads after hide-slogan');
+		$this->assertNotContains(needle: 'hide-slogan', haystack: $styleLog, message: 'an addStyle() entry is printed before every header');
+		$this->assertNotContains(needle: 'show-menu-labels', haystack: $styleLog, message: 'an addStyle() entry is printed before every header');
+		$overrides = $this->indexStartingWith(log: $fontLog, prefix: 'runtime:css/custom-overrides-nextcloud.css');
+		$slogan = $this->indexStartingWith(log: $fontLog, prefix: '/custom_apps/thematiq/css/hide-slogan.css?v=');
+		$labels = $this->indexStartingWith(log: $fontLog, prefix: '/custom_apps/thematiq/css/show-menu-labels.css?v=');
+		$this->assertGreaterThanOrEqual(expected: 0, actual: $overrides, message: 'the saved overrides are linked');
+		$this->assertGreaterThan(expected: $overrides, actual: $slogan, message: 'hide-slogan loads after custom-overrides');
+		$this->assertGreaterThan(expected: $slogan, actual: $labels, message: 'show-menu-labels loads after hide-slogan');
 	}//end testConditionalStylesheetsLoadedWhenEnabled()
 
 	/**
@@ -537,11 +537,11 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('hide-slogan', $styleLog);
-		$this->assertNotContains('show-menu-labels', $styleLog);
-		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
-		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
-		$this->assertNotContains('primary-lock', $styleLog);
+		$this->assertNotContains(needle: 'hide-slogan', haystack: $styleLog);
+		$this->assertNotContains(needle: 'show-menu-labels', haystack: $styleLog);
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'));
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'show-menu-labels'));
+		$this->assertNotContains(needle: 'primary-lock', haystack: $styleLog);
 	}//end testConditionalStylesheetsAbsentWhenDisabled()
 
 	/**
@@ -573,10 +573,10 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('hide-slogan', $styleLog);
-		$this->assertNotContains('show-menu-labels', $styleLog);
-		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
-		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
+		$this->assertNotContains(needle: 'hide-slogan', haystack: $styleLog);
+		$this->assertNotContains(needle: 'show-menu-labels', haystack: $styleLog);
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'));
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'show-menu-labels'));
 	}//end testTogglesAbsentFromConfigDefaultToOff()
 
 	/**
@@ -590,7 +590,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/hide-slogan/spec.md#boot-phase-reads-and-compares-correctly
 	 */
 	public function testConditionalStylesheetsIgnoreLooseTruthyValues(string $stored): void {
-		$this->configureAppValues(['hide_slogan' => $stored, 'show_menu_labels' => $stored]);
+		$this->configureAppValues(overrides: ['hide_slogan' => $stored, 'show_menu_labels' => $stored]);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -606,10 +606,10 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('hide-slogan', $styleLog);
-		$this->assertNotContains('show-menu-labels', $styleLog);
-		$this->assertFalse($this->linksStylesheet($fontLog, 'hide-slogan'));
-		$this->assertFalse($this->linksStylesheet($fontLog, 'show-menu-labels'));
+		$this->assertNotContains(needle: 'hide-slogan', haystack: $styleLog);
+		$this->assertNotContains(needle: 'show-menu-labels', haystack: $styleLog);
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'));
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'show-menu-labels'));
 	}//end testConditionalStylesheetsIgnoreLooseTruthyValues()
 
 	/**
@@ -639,7 +639,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public function testPrimaryLockEmittedLastWhenTheSettingIsOn(): void {
-		$this->configureAppValues(['primary_drives_components' => '1']);
+		$this->configureAppValues(overrides: ['primary_drives_components' => '1']);
 		$this->runtimeFiles->store()->write('css/custom-overrides-nextcloud.css', ':root {}');
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
@@ -658,12 +658,12 @@ class CssInjectionServiceTest extends TestCase {
 
 		// Nextcloud prints every addStyle() stylesheet before every header,
 		// and the saved overrides are a header, so the lock must be one too.
-		$this->assertNotContains('primary-lock', $styleLog);
-		$this->assertStringContainsString('css/primary-lock.css', (string)end($fontLog), 'primary-lock is the last link emitted');
+		$this->assertNotContains(needle: 'primary-lock', haystack: $styleLog);
+		$this->assertStringContainsString(needle: 'css/primary-lock.css', haystack: (string)end($fontLog), message: 'primary-lock is the last link emitted');
 		$this->assertGreaterThan(
-			$this->indexStartingWith($fontLog, 'runtime:css/custom-overrides-nextcloud.css'),
-			$this->indexStartingWith($fontLog, '/custom_apps/thematiq/css/primary-lock.css'),
-			'primary-lock must come after custom-overrides, or the stored value would win'
+			expected: $this->indexStartingWith(log: $fontLog, prefix: 'runtime:css/custom-overrides-nextcloud.css'),
+			actual: $this->indexStartingWith(log: $fontLog, prefix: '/custom_apps/thematiq/css/primary-lock.css'),
+			message: 'primary-lock must come after custom-overrides, or the stored value would win'
 		);
 	}//end testPrimaryLockEmittedLastWhenTheSettingIsOn()
 
@@ -693,7 +693,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame(['https://example.test/apps/thematiq/fonts/css?v=3'], $fontLog);
+		$this->assertSame(expected: ['https://example.test/apps/thematiq/fonts/css?v=3'], actual: $fontLog);
 	}//end testCustomFontsInjectedWhenConfigured()
 
 	/**
@@ -717,7 +717,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame([], $fontLog);
+		$this->assertSame(expected: [], actual: $fontLog);
 	}//end testCustomFontsNotInjectedForNoneDesignSystem()
 
 	/**
@@ -729,7 +729,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testMarianneEmittedWhenLasuiteAndGateEnabled(): void {
-		$this->configureAppValues(['token_set' => 'lasuite', 'marianne_enabled' => '1']);
+		$this->configureAppValues(overrides: ['token_set' => 'lasuite', 'marianne_enabled' => '1']);
 		$this->designSystemService->method('getTokenSetMeta')->with('lasuite')
 			->willReturn(['design_system' => 'lasuite']);
 		$this->designSystemService->method('getDesignSystem')->with('lasuite')->willReturn(
@@ -753,7 +753,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			[
+			expected: [
 				'systems/lasuite/fonts',
 				'systems/lasuite/defaults',
 				'systems/lasuite/brand-override',
@@ -766,12 +766,12 @@ class CssInjectionServiceTest extends TestCase {
 				'theme-scopes',
 				'component-scopes',
 			],
-			$styleLog
+			actual: $styleLog
 		);
 
 		$fontsIndex = array_search('systems/lasuite/fonts', $styleLog, true);
 		$marianneIndex = array_search('systems/lasuite/marianne', $styleLog, true);
-		$this->assertGreaterThan($fontsIndex, $marianneIndex, 'marianne.css must load after the base fonts layer.');
+		$this->assertGreaterThan(expected: $fontsIndex, actual: $marianneIndex, message: 'marianne.css must load after the base fonts layer.');
 	}//end testMarianneEmittedWhenLasuiteAndGateEnabled()
 
 	/**
@@ -781,7 +781,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testMarianneNotEmittedWhenGateDisabled(): void {
-		$this->configureAppValues(['token_set' => 'lasuite', 'marianne_enabled' => '0']);
+		$this->configureAppValues(overrides: ['token_set' => 'lasuite', 'marianne_enabled' => '0']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'lasuite']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -797,7 +797,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('systems/lasuite/marianne', $styleLog);
+		$this->assertNotContains(needle: 'systems/lasuite/marianne', haystack: $styleLog);
 	}//end testMarianneNotEmittedWhenGateDisabled()
 
 	/**
@@ -808,7 +808,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testMarianneNotEmittedForNonLasuiteDesignSystem(): void {
-		$this->configureAppValues(['token_set' => 'rijkshuisstijl', 'marianne_enabled' => '1']);
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'marianne_enabled' => '1']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -824,14 +824,14 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('systems/lasuite/marianne', $styleLog);
+		$this->assertNotContains(needle: 'systems/lasuite/marianne', haystack: $styleLog);
 	}//end testMarianneNotEmittedForNonLasuiteDesignSystem()
 
 	/**
 	 * Absent `themed_contexts` themes every context (byte-identical default).
 	 */
 	public function testAbsentThemedContextsThemesEveryContext(): void {
-		$this->configureAppValues(['themed_contexts' => '[]']);
+		$this->configureAppValues(overrides: ['themed_contexts' => '[]']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -848,7 +848,7 @@ class CssInjectionServiceTest extends TestCase {
 			$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 			$service->inject($context);
 
-			$this->assertContains('component-scopes', $styleLog, 'context ' . $context . ' must be themed');
+			$this->assertContains(needle: 'component-scopes', haystack: $styleLog, message: 'context ' . $context . ' must be themed');
 		}
 	}//end testAbsentThemedContextsThemesEveryContext()
 
@@ -857,7 +857,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * nothing, `user` remains fully themed.
 	 */
 	public function testConfiguredListExcludesUnlistedContexts(): void {
-		$this->configureAppValues(['themed_contexts' => '["user"]']);
+		$this->configureAppValues(overrides: ['themed_contexts' => '["user"]']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -872,20 +872,20 @@ class CssInjectionServiceTest extends TestCase {
 		$loginFontLog = [];
 		$loginService = $this->buildService(styleLog: $loginStyleLog, fontLog: $loginFontLog);
 		$loginService->inject('login');
-		$this->assertSame([], $loginStyleLog);
+		$this->assertSame(expected: [], actual: $loginStyleLog);
 
 		$userStyleLog = [];
 		$userFontLog = [];
 		$userService = $this->buildService(styleLog: $userStyleLog, fontLog: $userFontLog);
 		$userService->inject('user');
-		$this->assertContains('component-scopes', $userStyleLog);
+		$this->assertContains(needle: 'component-scopes', haystack: $userStyleLog);
 	}//end testConfiguredListExcludesUnlistedContexts()
 
 	/**
 	 * Unparseable JSON in `themed_contexts` fails open to themed, without raising.
 	 */
 	public function testInvalidJsonThemedContextsFailsOpen(): void {
-		$this->configureAppValues(['themed_contexts' => 'not-json{']);
+		$this->configureAppValues(overrides: ['themed_contexts' => 'not-json{']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -901,14 +901,14 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('public');
 
-		$this->assertContains('component-scopes', $styleLog);
+		$this->assertContains(needle: 'component-scopes', haystack: $styleLog);
 	}//end testInvalidJsonThemedContextsFailsOpen()
 
 	/**
 	 * A non-array JSON value in `themed_contexts` also fails open to themed.
 	 */
 	public function testNonArrayJsonThemedContextsFailsOpen(): void {
-		$this->configureAppValues(['themed_contexts' => '"not-an-array"']);
+		$this->configureAppValues(overrides: ['themed_contexts' => '"not-an-array"']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -924,7 +924,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('guest');
 
-		$this->assertContains('component-scopes', $styleLog);
+		$this->assertContains(needle: 'component-scopes', haystack: $styleLog);
 	}//end testNonArrayJsonThemedContextsFailsOpen()
 
 	/**
@@ -932,7 +932,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * themed, even when a configured list would otherwise exclude "user".
 	 */
 	public function testUnknownContextAlwaysThemed(): void {
-		$this->configureAppValues(['themed_contexts' => '["login"]']);
+		$this->configureAppValues(overrides: ['themed_contexts' => '["login"]']);
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willReturn(
 			[
@@ -948,7 +948,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('blank');
 
-		$this->assertContains('component-scopes', $styleLog);
+		$this->assertContains(needle: 'component-scopes', haystack: $styleLog);
 	}//end testUnknownContextAlwaysThemed()
 
 	/**
@@ -971,9 +971,9 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertGreaterThan(
-			$this->indexStartingWith($fontLog, 'runtime:css/custom-overrides-nextcloud.css'),
-			$this->indexStartingWith($fontLog, 'runtime:css/custom-css.css'),
-			'custom-css must be emitted AFTER custom-overrides so it wins the cascade.'
+			expected: $this->indexStartingWith(log: $fontLog, prefix: 'runtime:css/custom-overrides-nextcloud.css'),
+			actual: $this->indexStartingWith(log: $fontLog, prefix: 'runtime:css/custom-css.css'),
+			message: 'custom-css must be emitted AFTER custom-overrides so it wins the cascade.'
 		);
 	}//end testCustomCssEmittedLastWhenEnabledAndPresent()
 
@@ -994,7 +994,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('custom-css', $styleLog);
+		$this->assertNotContains(needle: 'custom-css', haystack: $styleLog);
 	}//end testCustomCssNotEmittedWhenDisabled()
 
 	/**
@@ -1014,7 +1014,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertNotContains('custom-css', $styleLog);
+		$this->assertNotContains(needle: 'custom-css', haystack: $styleLog);
 	}//end testCustomCssNotEmittedWhenEmpty()
 
 	/**
@@ -1029,7 +1029,7 @@ class CssInjectionServiceTest extends TestCase {
 	 */
 	private function configureAllLaterLayers(): void {
 		$this->configureAppValues(
-			[
+			overrides: [
 				'hide_slogan' => '1',
 				'show_menu_labels' => '1',
 			]
@@ -1067,14 +1067,14 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertFalse($this->runtimeFiles->store()->exists('css/custom-overrides-nextcloud.css'), 'rendering created an overrides file');
-		$this->assertSame([], $this->runtimeFiles->store()->listDirectory('css'), 'rendering stored a file');
-		$this->assertContains('systems/nldesign/fonts', $styleLog);
-		$this->assertCount(3, $fontLog, 'the fonts link and the two toggles: nothing was saved, so no overrides link');
-		$this->assertStringContainsString('/index.php/apps/thematiq/fonts.css', $fontLog[0]);
-		$this->assertTrue($this->linksStylesheet($fontLog, 'hide-slogan'), 'layer 5 was cancelled');
-		$this->assertTrue($this->linksStylesheet($fontLog, 'show-menu-labels'), 'layer 5 was cancelled');
-		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
+		$this->assertFalse(condition: $this->runtimeFiles->store()->exists('css/custom-overrides-nextcloud.css'), message: 'rendering created an overrides file');
+		$this->assertSame(expected: [], actual: $this->runtimeFiles->store()->listDirectory('css'), message: 'rendering stored a file');
+		$this->assertContains(needle: 'systems/nldesign/fonts', haystack: $styleLog);
+		$this->assertCount(expectedCount: 3, haystack: $fontLog, message: 'the fonts link and the two toggles: nothing was saved, so no overrides link');
+		$this->assertStringContainsString(needle: '/index.php/apps/thematiq/fonts.css', haystack: $fontLog[0]);
+		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'), message: 'layer 5 was cancelled');
+		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'show-menu-labels'), message: 'layer 5 was cancelled');
+		$this->assertTrue(condition: $bannerInjected, message: 'layer 6 (preview banner) was cancelled');
 	}//end testRenderingWritesNothingAndLaterLayersStillRun()
 
 	/**
@@ -1098,7 +1098,7 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame([], $warnings);
+		$this->assertSame(expected: [], actual: $warnings);
 	}//end testNoSavedOverridesIsNotAWarning()
 
 	/**
@@ -1108,7 +1108,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/css-architecture/spec.md#standard-css-load-order-for-nldesign-design-system
 	 */
 	public function testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers(): void {
-		$this->configureAppValues(['hide_slogan' => '1']);
+		$this->configureAppValues(overrides: ['hide_slogan' => '1']);
 		$this->runtimeFiles->store()->write('css/custom-overrides-nextcloud.css', ':root {}');
 		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->willThrowException(
@@ -1127,9 +1127,9 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertStringStartsWith('runtime:css/custom-overrides-nextcloud.css', (string)($fontLog[0] ?? ''), 'layer 4 was cancelled');
-		$this->assertTrue($this->linksStylesheet($fontLog, 'hide-slogan'), 'layer 5 was cancelled');
-		$this->assertTrue($bannerInjected, 'layer 6 (preview banner) was cancelled');
+		$this->assertStringStartsWith(prefix: 'runtime:css/custom-overrides-nextcloud.css', string: (string)($fontLog[0] ?? ''), message: 'layer 4 was cancelled');
+		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $fontLog, file: 'hide-slogan'), message: 'layer 5 was cancelled');
+		$this->assertTrue(condition: $bannerInjected, message: 'layer 6 (preview banner) was cancelled');
 	}//end testAFailingDesignSystemLayerDoesNotCancelTheLaterLayers()
 
 	/**
@@ -1157,9 +1157,9 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertContains('component-scopes', $styleLog);
-		$this->assertCount(1, $warnings);
-		$this->assertStringContainsString('preview-banner', $warnings[0]);
+		$this->assertContains(needle: 'component-scopes', haystack: $styleLog);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertStringContainsString(needle: 'preview-banner', haystack: $warnings[0]);
 	}//end testAFailingPreviewBannerIsContainedAndLogged()
 
 	/**
@@ -1187,9 +1187,9 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$service->inject('user');
 
-		$this->assertSame([], $styleLog);
-		$this->assertCount(1, $warnings);
-		$this->assertStringContainsString('could not resolve the active token set', $warnings[0]);
+		$this->assertSame(expected: [], actual: $styleLog);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertStringContainsString(needle: 'could not resolve the active token set', haystack: $warnings[0]);
 	}//end testAnUnresolvableTokenSetLeavesThePageUnthemedAndLogged()
 
 	/**
@@ -1200,7 +1200,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @return array<int, string> The emitted stylesheets, in order.
 	 */
 	private function emitFor(string $tokenSet): array {
-		$this->configureAppValues(['token_set' => $tokenSet]);
+		$this->configureAppValues(overrides: ['token_set' => $tokenSet]);
 		$this->designSystemService->method('getTokenSetMeta')->with($tokenSet)
 			->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
@@ -1233,18 +1233,18 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	public function testASetWithElementOverridesGetsThemAfterItsTokens(): void {
-		$emitted = $this->emitFor('frankendesk');
+		$emitted = $this->emitFor(tokenSet: 'frankendesk');
 
-		$this->assertContains('token-overrides/frankendesk', $emitted);
+		$this->assertContains(needle: 'token-overrides/frankendesk', haystack: $emitted);
 		$this->assertGreaterThan(
-			array_search('systems/nldesign/element-overrides', $emitted, true),
-			array_search('token-overrides/frankendesk', $emitted, true),
-			'the set override must come AFTER the shared element overrides, or it cannot win'
+			expected: array_search('systems/nldesign/element-overrides', $emitted, true),
+			actual: array_search('token-overrides/frankendesk', $emitted, true),
+			message: 'the set override must come AFTER the shared element overrides, or it cannot win'
 		);
 		$this->assertGreaterThan(
-			array_search('tokens/frankendesk', $emitted, true),
-			array_search('token-overrides/frankendesk', $emitted, true),
-			'and after its own tokens, whose values it reads'
+			expected: array_search('tokens/frankendesk', $emitted, true),
+			actual: array_search('token-overrides/frankendesk', $emitted, true),
+			message: 'and after its own tokens, whose values it reads'
 		);
 	}//end testASetWithElementOverridesGetsThemAfterItsTokens()
 
@@ -1263,7 +1263,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
 	 */
 	public function testADarkLogoLayerFollowsTheDarkVariant(): void {
-		$this->configureAppValues(['token_set' => 'frankendesk']);
+		$this->configureAppValues(overrides: ['token_set' => 'frankendesk']);
 		$this->designSystemService->method('getTokenSetMeta')->with('frankendesk')
 			->willReturn(['design_system' => 'lasuite']);
 		$this->designSystemService->method('getDesignSystem')->with('lasuite')->willReturn(
@@ -1277,15 +1277,15 @@ class CssInjectionServiceTest extends TestCase {
 		$this->designSystemService->method('hasGeneratedDarkVariant')->willReturn(true);
 		// The shared locator's url generator answers routes only; this one also
 		// links shipped files, so the layer has a url to declare.
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$links = $this->createMock(IURLGenerator::class);
+		$links = $this->createMock(originalClassName: IURLGenerator::class);
 		$links->method('linkTo')->willReturnCallback(static fn (string $appName, string $file): string => '/custom_apps/' . $appName . '/' . $file);
 		$this->runtimeFiles = new RuntimeFileLocator(
-			$appManager,
-			new DirectoryRuntimeFileStore($this->runtimeDir . '/store'),
-			$links,
-			$this->createMock(ITempManager::class)
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $this->runtimeDir . '/store'),
+			urlGenerator: $links,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
 		);
 
 		$styleLog = [];
@@ -1304,10 +1304,10 @@ class CssInjectionServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertNotNull($darkFile, 'the dark variant is in the manifest');
-		$this->assertNotNull($darkLogo, 'the dark logo layer is in the manifest');
-		$this->assertGreaterThan($darkFile, $darkLogo, 'the dark logo layer must come after the dark variant, or its relative url wins');
-		$this->assertStringContainsString('url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)', $layers[$darkLogo]['css']);
+		$this->assertNotNull(actual: $darkFile, message: 'the dark variant is in the manifest');
+		$this->assertNotNull(actual: $darkLogo, message: 'the dark logo layer is in the manifest');
+		$this->assertGreaterThan(expected: $darkFile, actual: $darkLogo, message: 'the dark logo layer must come after the dark variant, or its relative url wins');
+		$this->assertStringContainsString(needle: 'url(/custom_apps/thematiq/img/logos/frankendesk-dark.svg)', haystack: $layers[$darkLogo]['css']);
 	}//end testADarkLogoLayerFollowsTheDarkVariant()
 
 	/**
@@ -1322,10 +1322,10 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	public function testASetWithoutElementOverridesLoadsNothingExtra(): void {
-		$emitted = $this->emitFor('rijkshuisstijl');
+		$emitted = $this->emitFor(tokenSet: 'rijkshuisstijl');
 
-		$this->assertContains('tokens/rijkshuisstijl', $emitted);
-		$this->assertNotContains('token-overrides/rijkshuisstijl', $emitted);
+		$this->assertContains(needle: 'tokens/rijkshuisstijl', haystack: $emitted);
+		$this->assertNotContains(needle: 'token-overrides/rijkshuisstijl', haystack: $emitted);
 	}//end testASetWithoutElementOverridesLoadsNothingExtra()
 	/**
 	 * The stylesheet manifest is the SAME list `inject()` emits for the
@@ -1339,7 +1339,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
 	 */
 	public function testStylesheetManifestMatchesInjectedSetLayers(): void {
-		$this->configureAppValues(['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
 		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
 			->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
@@ -1375,19 +1375,19 @@ class CssInjectionServiceTest extends TestCase {
 		$manifestFiles = [];
 		foreach ($manifest['layers'] as $layer) {
 			if ($layer['kind'] === 'file') {
-				$this->assertStringEndsWith('?v=9.9.9', $layer['href'], 'a manifest href carries the installed version as cache-buster');
+				$this->assertStringEndsWith(suffix: '?v=9.9.9', string: $layer['href'], message: 'a manifest href carries the installed version as cache-buster');
 				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
 			} else {
-				$this->assertSame('inline', $layer['kind']);
-				$this->assertSame(CssInjectionService::LOGO_STYLE_ID, $layer['id'], 'the inline logo layer carries the id the client replaces it by');
-				$this->assertStringContainsString('--nldesign-logo-url', $layer['css']);
+				$this->assertSame(expected: 'inline', actual: $layer['kind']);
+				$this->assertSame(expected: CssInjectionService::LOGO_STYLE_ID, actual: $layer['id'], message: 'the inline logo layer carries the id the client replaces it by');
+				$this->assertStringContainsString(needle: '--nldesign-logo-url', haystack: $layer['css']);
 			}
 		}
 
-		$this->assertSame($injectedSetFiles, $manifestFiles, 'manifest files equal the injected set layers, in order');
-		$this->assertSame('rijkshuisstijl', $manifest['tokenSet']);
-		$this->assertSame('nldesign', $manifest['designSystem']);
-		$this->assertNotContains('custom-overrides', $manifestFiles);
+		$this->assertSame(expected: $injectedSetFiles, actual: $manifestFiles, message: 'manifest files equal the injected set layers, in order');
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $manifest['tokenSet']);
+		$this->assertSame(expected: 'nldesign', actual: $manifest['designSystem']);
+		$this->assertNotContains(needle: 'custom-overrides', haystack: $manifestFiles);
 	}//end testStylesheetManifestMatchesInjectedSetLayers()
 
 	/**
@@ -1423,10 +1423,10 @@ class CssInjectionServiceTest extends TestCase {
 		$service = $this->buildService(styleLog: $styleLog, fontLog: $fontLog);
 		$manifest = $service->getStylesheetManifest('nextcloud');
 
-		$this->assertSame('none', $manifest['designSystem']);
+		$this->assertSame(expected: 'none', actual: $manifest['designSystem']);
 		$this->assertSame(
-			['theme-scopes', 'component-scopes'],
-			array_column($manifest['layers'], 'layer')
+			expected: ['theme-scopes', 'component-scopes'],
+			actual: array_column($manifest['layers'], 'layer')
 		);
 	}//end testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud()
 
@@ -1442,7 +1442,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @return void
 	 */
 	private function configureResolvedStockSet(string $css): void {
-		$this->configureAppValues(['token_set' => 'nextcloud']);
+		$this->configureAppValues(overrides: ['token_set' => 'nextcloud']);
 		$this->designSystemService->method('getTokenSetMeta')->with('nextcloud')
 			->willReturn(['design_system' => 'none']);
 		$this->designSystemService->method('getDesignSystem')->with('none')->willReturn(
@@ -1454,7 +1454,7 @@ class CssInjectionServiceTest extends TestCase {
 			]
 		);
 
-		$this->stockTokens = $this->createMock(StockTokensService::class);
+		$this->stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$this->stockTokens->expects($this->atLeastOnce())->method('getCss')->willReturn($css);
 	}//end configureResolvedStockSet()
 
@@ -1478,12 +1478,12 @@ class CssInjectionServiceTest extends TestCase {
 		$fontLog = [];
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $fontLog)->getStylesheetManifest('nextcloud');
 
-		$this->assertSame(['tokens', 'theme-scopes', 'component-scopes'], array_column($manifest['layers'], 'layer'));
-		$this->assertSame('inline', $manifest['layers'][0]['kind']);
-		$this->assertSame(CssInjectionService::STOCK_TOKENS_STYLE_ID, $manifest['layers'][0]['id']);
-		$this->assertSame($block, $manifest['layers'][0]['css']);
+		$this->assertSame(expected: ['tokens', 'theme-scopes', 'component-scopes'], actual: array_column($manifest['layers'], 'layer'));
+		$this->assertSame(expected: 'inline', actual: $manifest['layers'][0]['kind']);
+		$this->assertSame(expected: CssInjectionService::STOCK_TOKENS_STYLE_ID, actual: $manifest['layers'][0]['id']);
+		$this->assertSame(expected: $block, actual: $manifest['layers'][0]['css']);
 		foreach ($manifest['layers'] as $layer) {
-			$this->assertStringNotContainsString('tokens/nextcloud', ($layer['href'] ?? ''), 'the shipped snapshot is not loaded');
+			$this->assertStringNotContainsString(needle: 'tokens/nextcloud', haystack: ($layer['href'] ?? ''), message: 'the shipped snapshot is not loaded');
 		}
 	}//end testStylesheetManifestCarriesTheInstanceResolvedStockTokens()
 
@@ -1503,7 +1503,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->configureResolvedStockSet(css: $block);
 
 		$log = [];
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config,
@@ -1516,7 +1516,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->logger,
 					$this->stockTokens,
 					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
 					$this->appBrands,
 				]
 			)
@@ -1536,12 +1536,12 @@ class CssInjectionServiceTest extends TestCase {
 		$service->inject('user');
 
 		$this->assertSame(
-			[
+			expected: [
 				'inline:' . CssInjectionService::STOCK_TOKENS_STYLE_ID . ':' . $block,
 				'file:theme-scopes',
 				'file:component-scopes',
 			],
-			$log
+			actual: $log
 		);
 	}//end testInjectEmitsTheInstanceResolvedStockTokensOnAStockPage()
 
@@ -1574,15 +1574,15 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 */
 	public function testLayoutStylesheetsAreAbsentByDefault(): void {
-		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
 		$this->configureLayoutSet(meta: []);
 
 		$styleLog = [];
 		$linkLog = [];
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
 
-		$this->assertFalse($this->linksStylesheet($linkLog, 'workplace-layout'));
-		$this->assertFalse($this->linksStylesheet($linkLog, 'brand-stripe'));
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $linkLog, file: 'workplace-layout'));
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $linkLog, file: 'brand-stripe'));
 	}//end testLayoutStylesheetsAreAbsentByDefault()
 
 	/**
@@ -1592,18 +1592,18 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testASetsLayoutDefaultsEmitBothStylesheets(): void {
-		$this->configureAppValues(['token_set' => 'zuiddrecht', 'show_menu_labels' => '1']);
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht', 'show_menu_labels' => '1']);
 		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'brand_stripe' => true]]);
 
 		$styleLog = [];
 		$linkLog = [];
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
 
-		$labels = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/show-menu-labels.css');
-		$layout = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/workplace-layout.css');
-		$stripe = $this->indexStartingWith($linkLog, '/custom_apps/thematiq/css/brand-stripe.css');
-		$this->assertGreaterThan($labels, $layout);
-		$this->assertGreaterThan($layout, $stripe);
+		$labels = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/show-menu-labels.css');
+		$layout = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-layout.css');
+		$stripe = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/brand-stripe.css');
+		$this->assertGreaterThan(expected: $labels, actual: $layout);
+		$this->assertGreaterThan(expected: $layout, actual: $stripe);
 	}//end testASetsLayoutDefaultsEmitBothStylesheets()
 
 	/**
@@ -1623,15 +1623,15 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testAStoredLayoutChoiceWinsOverTheSet(array $stored, array $meta, bool $expectLayout, bool $expectStripe): void {
-		$this->configureAppValues(array_merge(['token_set' => 'rijkshuisstijl'], $stored));
+		$this->configureAppValues(overrides: array_merge(['token_set' => 'rijkshuisstijl'], $stored));
 		$this->configureLayoutSet(meta: $meta);
 
 		$styleLog = [];
 		$linkLog = [];
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
 
-		$this->assertSame($expectLayout, $this->linksStylesheet($linkLog, 'workplace-layout'));
-		$this->assertSame($expectStripe, $this->linksStylesheet($linkLog, 'brand-stripe'));
+		$this->assertSame(expected: $expectLayout, actual: $this->linksStylesheet(linkLog: $linkLog, file: 'workplace-layout'));
+		$this->assertSame(expected: $expectStripe, actual: $this->linksStylesheet(linkLog: $linkLog, file: 'brand-stripe'));
 	}//end testAStoredLayoutChoiceWinsOverTheSet()
 
 	/**
@@ -1657,7 +1657,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testTheManifestCarriesTheResolvedLayout(): void {
-		$this->configureAppValues(['token_set' => 'nextcloud']);
+		$this->configureAppValues(overrides: ['token_set' => 'nextcloud']);
 		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'brand_stripe' => true]]);
 
 		$styleLog = [];
@@ -1665,7 +1665,7 @@ class CssInjectionServiceTest extends TestCase {
 		$manifest = $this->buildService(styleLog: $styleLog, fontLog: $linkLog)->getStylesheetManifest('zuiddrecht');
 
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'light',
 				'brandStripe' => true,
 				'navigationWidth' => null,
@@ -1674,7 +1674,7 @@ class CssInjectionServiceTest extends TestCase {
 				'loginWatermark' => true,
 				'headerStyle' => 'default',
 			],
-			$manifest['layout']
+			actual: $manifest['layout']
 		);
 	}//end testTheManifestCarriesTheResolvedLayout()
 
@@ -1687,7 +1687,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	public function testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth(): void {
-		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
 		$this->configureLayoutSet(
 			meta: [
 				'layout' => [
@@ -1702,7 +1702,7 @@ class CssInjectionServiceTest extends TestCase {
 		);
 
 		$log = [];
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config,
@@ -1715,7 +1715,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->logger,
 					$this->stockTokens,
 					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
 					$this->appBrands,
 				]
 			)
@@ -1742,7 +1742,7 @@ class CssInjectionServiceTest extends TestCase {
 			)
 		);
 		$this->assertSame(
-			[
+			expected: [
 				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0',
 				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0',
 				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0',
@@ -1751,7 +1751,7 @@ class CssInjectionServiceTest extends TestCase {
 				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0',
 				'inline:thematiq-navigation-width::root { --thematiq-navigation-width: 264px; }',
 			],
-			$conditional
+			actual: $conditional
 		);
 	}//end testTheNewerLayoutDefaultsEmitTheirStylesheetsAndTheInlineWidth()
 
@@ -1762,7 +1762,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	public function testTheNewerLayoutStylesheetsAreAbsentByDefault(): void {
-		$this->configureAppValues(['token_set' => 'rijkshuisstijl']);
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
 		$this->configureLayoutSet(meta: []);
 
 		$styleLog = [];
@@ -1770,7 +1770,7 @@ class CssInjectionServiceTest extends TestCase {
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject('user');
 
 		foreach (['login-watermark-off', 'brand-stripe-login-only', 'brand-stripe-header-only', 'navigation-width', 'navigation-active-soft'] as $file) {
-			$this->assertFalse($this->linksStylesheet($linkLog, $file), $file);
+			$this->assertFalse(condition: $this->linksStylesheet(linkLog: $linkLog, file: $file), message: $file);
 		}
 	}//end testTheNewerLayoutStylesheetsAreAbsentByDefault()
 
@@ -1789,14 +1789,14 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	public function testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson(array $layout, bool $expected): void {
-		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
 		$this->configureLayoutSet(meta: ['layout' => $layout]);
 
-		$headerUser = $this->createMock(HeaderUserService::class);
-		$headerUser->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
+		$headerUser = $this->createMock(originalClassName: HeaderUserService::class);
+		$headerUser->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(className: LayoutOptionsService::class));
 
 		$links = [];
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config,
@@ -1809,7 +1809,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->logger,
 					$this->stockTokens,
 					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
 					$this->appBrands,
 					null,
 					null,
@@ -1826,7 +1826,7 @@ class CssInjectionServiceTest extends TestCase {
 
 		$service->inject('user');
 
-		$this->assertSame($expected, $this->linksStylesheet($links, 'header-workplace'));
+		$this->assertSame(expected: $expected, actual: $this->linksStylesheet(linkLog: $links, file: 'header-workplace'));
 	}//end testTheWorkplaceHeaderStyleLoadsItsSheetAndItsPerson()
 
 	/**
@@ -1849,13 +1849,13 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	public function testTheAppMenuLayerIsAskedWithThePagesSet(): void {
-		$this->configureAppValues(['token_set' => 'zuiddrecht']);
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
 		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'header_style' => 'workplace']]);
 
-		$appMenu = $this->createMock(AppMenuService::class);
-		$appMenu->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(LayoutOptionsService::class));
+		$appMenu = $this->createMock(originalClassName: AppMenuService::class);
+		$appMenu->expects($this->once())->method('inject')->with('zuiddrecht', $this->isInstanceOf(className: LayoutOptionsService::class));
 
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
 					$this->config,
@@ -1868,7 +1868,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->logger,
 					$this->stockTokens,
 					$this->runtimeFiles,
-					new LogoLayerService($this->config, $this->urlGenerator, $this->logger, $this->runtimeFiles),
+					new LogoLayerService(config: $this->config, urlGenerator: $this->urlGenerator, logger: $this->logger, files: $this->runtimeFiles),
 					$this->appBrands,
 					null,
 					null,

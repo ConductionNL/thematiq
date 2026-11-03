@@ -78,7 +78,7 @@ class ThemePreviewServiceTest extends TestCase {
 	 * Build an IConfig mock backed by $this->appStore / $this->userStore.
 	 */
 	private function makeConfig(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
@@ -114,19 +114,19 @@ class ThemePreviewServiceTest extends TestCase {
 	 * always-valid-unless-told-otherwise TokenSetService stub.
 	 */
 	private function makeService(IConfig $config, bool $validTokenSet = true): ThemePreviewService {
-		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$this->groupManager->method('isAdmin')->willReturnCallback(
 			fn (string $uid): bool => ($this->adminByUid[$uid] ?? true)
 		);
 
-		$this->tokenSetService = $this->createMock(TokenSetService::class);
+		$this->tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$this->tokenSetService->method('isValidTokenSet')->willReturn($validTokenSet);
 
 		return new ThemePreviewService(
-			$config,
-			$this->groupManager,
-			$this->tokenSetService,
-			$this->createMock(LoggerInterface::class)
+			config: $config,
+			groupManager: $this->groupManager,
+			tokenSetService: $this->tokenSetService,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end makeService()
 
@@ -135,7 +135,7 @@ class ThemePreviewServiceTest extends TestCase {
 	 * user at all when $uid is null.
 	 */
 	private function makeUserSession(?string $uid): IUserSession {
-		$userSession = $this->createMock(IUserSession::class);
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
 
 		if ($uid === null) {
 			$userSession->method('getUser')->willReturn(null);
@@ -143,7 +143,7 @@ class ThemePreviewServiceTest extends TestCase {
 			return $userSession;
 		}
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn($uid);
 		$userSession->method('getUser')->willReturn($user);
 
@@ -155,17 +155,17 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testStartPreviewWritesBothUserValuesWithExpiry(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$before = time();
 		$state = $service->startPreview('admin', 'amsterdam');
 		$after = time();
 
-		$this->assertSame('amsterdam', $state['tokenSet']);
-		$this->assertSame('amsterdam', $this->userStore['admin']['preview_token_set']);
-		$this->assertSame((string)$state['expiresAt'], $this->userStore['admin']['preview_expires_at']);
-		$this->assertGreaterThanOrEqual($before + 86400, $state['expiresAt']);
-		$this->assertLessThanOrEqual($after + 86400, $state['expiresAt']);
+		$this->assertSame(expected: 'amsterdam', actual: $state['tokenSet']);
+		$this->assertSame(expected: 'amsterdam', actual: $this->userStore['admin']['preview_token_set']);
+		$this->assertSame(expected: (string)$state['expiresAt'], actual: $this->userStore['admin']['preview_expires_at']);
+		$this->assertGreaterThanOrEqual(expected: $before + 86400, actual: $state['expiresAt']);
+		$this->assertLessThanOrEqual(expected: $after + 86400, actual: $state['expiresAt']);
 	}//end testStartPreviewWritesBothUserValuesWithExpiry()
 
 	/**
@@ -173,14 +173,14 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testStartPreviewRejectsInvalidId(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config, validTokenSet: false);
+		$service = $this->makeService(config: $config, validTokenSet: false);
 
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(exception: \InvalidArgumentException::class);
 
 		try {
 			$service->startPreview('admin', 'does-not-exist');
 		} finally {
-			$this->assertArrayNotHasKey('admin', $this->userStore);
+			$this->assertArrayNotHasKey(key: 'admin', array: $this->userStore);
 		}
 	}//end testStartPreviewRejectsInvalidId()
 
@@ -189,9 +189,9 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testGetActivePreviewReturnsNullWhenAbsent(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
-		$this->assertNull($service->getActivePreview('admin'));
+		$this->assertNull(actual: $service->getActivePreview('admin'));
 	}//end testGetActivePreviewReturnsNullWhenAbsent()
 
 	/**
@@ -200,14 +200,14 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testGetActivePreviewReturnsNullWhenExpiredAndClearsState(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
 		$this->userStore['admin']['preview_expires_at'] = (string)(time() - 10);
 
-		$this->assertNull($service->getActivePreview('admin'));
-		$this->assertArrayNotHasKey('preview_token_set', $this->userStore['admin']);
-		$this->assertArrayNotHasKey('preview_expires_at', $this->userStore['admin']);
+		$this->assertNull(actual: $service->getActivePreview('admin'));
+		$this->assertArrayNotHasKey(key: 'preview_token_set', array: $this->userStore['admin']);
+		$this->assertArrayNotHasKey(key: 'preview_expires_at', array: $this->userStore['admin']);
 	}//end testGetActivePreviewReturnsNullWhenExpiredAndClearsState()
 
 	/**
@@ -216,13 +216,13 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testGetActivePreviewReturnsNullWhenTokenSetNoLongerValid(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config, validTokenSet: false);
+		$service = $this->makeService(config: $config, validTokenSet: false);
 
 		$this->userStore['admin']['preview_token_set'] = 'deleted-custom-set';
 		$this->userStore['admin']['preview_expires_at'] = (string)(time() + 3600);
 
-		$this->assertNull($service->getActivePreview('admin'));
-		$this->assertArrayNotHasKey('preview_token_set', $this->userStore['admin']);
+		$this->assertNull(actual: $service->getActivePreview('admin'));
+		$this->assertArrayNotHasKey(key: 'preview_token_set', array: $this->userStore['admin']);
 	}//end testGetActivePreviewReturnsNullWhenTokenSetNoLongerValid()
 
 	/**
@@ -230,15 +230,15 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testGetActivePreviewReturnsStateWhenActive(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$expiresAt = (time() + 3600);
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
 		$this->userStore['admin']['preview_expires_at'] = (string)$expiresAt;
 
 		$this->assertSame(
-			['tokenSet' => 'amsterdam', 'expiresAt' => $expiresAt],
-			$service->getActivePreview('admin')
+			expected: ['tokenSet' => 'amsterdam', 'expiresAt' => $expiresAt],
+			actual: $service->getActivePreview('admin')
 		);
 	}//end testGetActivePreviewReturnsStateWhenActive()
 
@@ -247,15 +247,15 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testClearPreviewDeletesBothValues(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
 		$this->userStore['admin']['preview_expires_at'] = (string)(time() + 3600);
 
 		$service->clearPreview('admin');
 
-		$this->assertArrayNotHasKey('preview_token_set', $this->userStore['admin']);
-		$this->assertArrayNotHasKey('preview_expires_at', $this->userStore['admin']);
+		$this->assertArrayNotHasKey(key: 'preview_token_set', array: $this->userStore['admin']);
+		$this->assertArrayNotHasKey(key: 'preview_expires_at', array: $this->userStore['admin']);
 	}//end testClearPreviewDeletesBothValues()
 
 	/**
@@ -263,7 +263,7 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testPublishPreviewSetsAppValueAndClearsUserValues(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$this->appStore['token_set'] = 'rijkshuisstijl';
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
@@ -271,10 +271,10 @@ class ThemePreviewServiceTest extends TestCase {
 
 		$published = $service->publishPreview('admin');
 
-		$this->assertSame('amsterdam', $published);
-		$this->assertSame('amsterdam', $this->appStore['token_set']);
-		$this->assertArrayNotHasKey('preview_token_set', $this->userStore['admin']);
-		$this->assertArrayNotHasKey('preview_expires_at', $this->userStore['admin']);
+		$this->assertSame(expected: 'amsterdam', actual: $published);
+		$this->assertSame(expected: 'amsterdam', actual: $this->appStore['token_set']);
+		$this->assertArrayNotHasKey(key: 'preview_token_set', array: $this->userStore['admin']);
+		$this->assertArrayNotHasKey(key: 'preview_expires_at', array: $this->userStore['admin']);
 	}//end testPublishPreviewSetsAppValueAndClearsUserValues()
 
 	/**
@@ -282,16 +282,16 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testPublishPreviewThrowsWhenNoActivePreview(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
+		$service = $this->makeService(config: $config);
 
 		$this->appStore['token_set'] = 'rijkshuisstijl';
 
-		$this->expectException(\RuntimeException::class);
+		$this->expectException(exception: \RuntimeException::class);
 
 		try {
 			$service->publishPreview('admin');
 		} finally {
-			$this->assertSame('rijkshuisstijl', $this->appStore['token_set']);
+			$this->assertSame(expected: 'rijkshuisstijl', actual: $this->appStore['token_set']);
 		}
 	}//end testPublishPreviewThrowsWhenNoActivePreview()
 
@@ -301,14 +301,14 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenNoUser(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->makeUserSession(null);
+		$service = $this->makeService(config: $config);
+		$userSession = $this->makeUserSession(uid: null);
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
 		$this->assertSame(
-			['tokenSet' => 'rijkshuisstijl', 'previewActive' => false, 'expiresAt' => null],
-			$result
+			expected: ['tokenSet' => 'rijkshuisstijl', 'previewActive' => false, 'expiresAt' => null],
+			actual: $result
 		);
 	}//end testResolveEffectiveTokenSetFallsBackWhenNoUser()
 
@@ -318,15 +318,15 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetSkipsAdminCheckWhenNoPreviewValue(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->makeUserSession('regularuser');
+		$service = $this->makeService(config: $config);
+		$userSession = $this->makeUserSession(uid: 'regularuser');
 
 		$this->groupManager->expects($this->never())->method('isAdmin');
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
-		$this->assertFalse($result['previewActive']);
-		$this->assertSame('rijkshuisstijl', $result['tokenSet']);
+		$this->assertFalse(condition: $result['previewActive']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $result['tokenSet']);
 	}//end testResolveEffectiveTokenSetSkipsAdminCheckWhenNoPreviewValue()
 
 	/**
@@ -335,8 +335,8 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenUserIsNotAdmin(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->makeUserSession('demoted');
+		$service = $this->makeService(config: $config);
+		$userSession = $this->makeUserSession(uid: 'demoted');
 
 		$this->userStore['demoted']['preview_token_set'] = 'amsterdam';
 		$this->userStore['demoted']['preview_expires_at'] = (string)(time() + 3600);
@@ -344,8 +344,8 @@ class ThemePreviewServiceTest extends TestCase {
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
-		$this->assertFalse($result['previewActive']);
-		$this->assertSame('rijkshuisstijl', $result['tokenSet']);
+		$this->assertFalse(condition: $result['previewActive']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $result['tokenSet']);
 	}//end testResolveEffectiveTokenSetFallsBackWhenUserIsNotAdmin()
 
 	/**
@@ -353,16 +353,16 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenExpired(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->makeUserSession('admin');
+		$service = $this->makeService(config: $config);
+		$userSession = $this->makeUserSession(uid: 'admin');
 
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
 		$this->userStore['admin']['preview_expires_at'] = (string)(time() - 10);
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
-		$this->assertFalse($result['previewActive']);
-		$this->assertSame('rijkshuisstijl', $result['tokenSet']);
+		$this->assertFalse(condition: $result['previewActive']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $result['tokenSet']);
 	}//end testResolveEffectiveTokenSetFallsBackWhenExpired()
 
 	/**
@@ -370,16 +370,16 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenTokenSetInvalid(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config, validTokenSet: false);
-		$userSession = $this->makeUserSession('admin');
+		$service = $this->makeService(config: $config, validTokenSet: false);
+		$userSession = $this->makeUserSession(uid: 'admin');
 
 		$this->userStore['admin']['preview_token_set'] = 'deleted-custom-set';
 		$this->userStore['admin']['preview_expires_at'] = (string)(time() + 3600);
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
-		$this->assertFalse($result['previewActive']);
-		$this->assertSame('rijkshuisstijl', $result['tokenSet']);
+		$this->assertFalse(condition: $result['previewActive']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $result['tokenSet']);
 	}//end testResolveEffectiveTokenSetFallsBackWhenTokenSetInvalid()
 
 	/**
@@ -387,8 +387,8 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetReturnsPreviewedSetWhenAllValid(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->makeUserSession('admin');
+		$service = $this->makeService(config: $config);
+		$userSession = $this->makeUserSession(uid: 'admin');
 
 		$expiresAt = (time() + 3600);
 		$this->userStore['admin']['preview_token_set'] = 'amsterdam';
@@ -397,8 +397,8 @@ class ThemePreviewServiceTest extends TestCase {
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
 		$this->assertSame(
-			['tokenSet' => 'amsterdam', 'previewActive' => true, 'expiresAt' => $expiresAt],
-			$result
+			expected: ['tokenSet' => 'amsterdam', 'previewActive' => true, 'expiresAt' => $expiresAt],
+			actual: $result
 		);
 	}//end testResolveEffectiveTokenSetReturnsPreviewedSetWhenAllValid()
 
@@ -408,15 +408,15 @@ class ThemePreviewServiceTest extends TestCase {
 	 */
 	public function testResolveEffectiveTokenSetFallsBackWhenUserSessionThrows(): void {
 		$config = $this->makeConfig();
-		$service = $this->makeService($config);
-		$userSession = $this->createMock(IUserSession::class);
+		$service = $this->makeService(config: $config);
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willThrowException(new \RuntimeException('no session'));
 
 		$result = $service->resolveEffectiveTokenSet($userSession, 'rijkshuisstijl');
 
 		$this->assertSame(
-			['tokenSet' => 'rijkshuisstijl', 'previewActive' => false, 'expiresAt' => null],
-			$result
+			expected: ['tokenSet' => 'rijkshuisstijl', 'previewActive' => false, 'expiresAt' => null],
+			actual: $result
 		);
 	}//end testResolveEffectiveTokenSetFallsBackWhenUserSessionThrows()
 }//end class

@@ -44,7 +44,7 @@ class ContrastServiceTest extends TestCase {
 	 */
 	public function testBlackOnWhiteIsMaxRatio(): void {
 		$ratio = $this->contrast->ratio(first: [0, 0, 0], second: [255, 255, 255]);
-		$this->assertEqualsWithDelta(21.0, $ratio, 0.01);
+		$this->assertEqualsWithDelta(expected: 21.0, actual: $ratio, delta: 0.01);
 	}//end testBlackOnWhiteIsMaxRatio()
 
 	/**
@@ -52,7 +52,7 @@ class ContrastServiceTest extends TestCase {
 	 */
 	public function testIdenticalColoursAreOneToOne(): void {
 		$ratio = $this->contrast->ratio(first: [120, 120, 120], second: [120, 120, 120]);
-		$this->assertEqualsWithDelta(1.0, $ratio, 0.001);
+		$this->assertEqualsWithDelta(expected: 1.0, actual: $ratio, delta: 0.001);
 	}//end testIdenticalColoursAreOneToOne()
 
 	/**
@@ -67,7 +67,7 @@ class ContrastServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $warnings);
+		$this->assertSame(expected: [], actual: $warnings);
 	}//end testCompliantPairProducesNoWarning()
 
 	/**
@@ -82,11 +82,11 @@ class ContrastServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertCount(1, $warnings);
-		$this->assertSame(4.5, $warnings[0]['threshold']);
-		$this->assertSame('AA', $warnings[0]['level']);
-		$this->assertLessThan(4.5, $warnings[0]['ratio']);
-		$this->assertArrayNotHasKey('unevaluated', $warnings[0]);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertSame(expected: 4.5, actual: $warnings[0]['threshold']);
+		$this->assertSame(expected: 'AA', actual: $warnings[0]['level']);
+		$this->assertLessThan(expected: 4.5, actual: $warnings[0]['ratio']);
+		$this->assertArrayNotHasKey(key: 'unevaluated', array: $warnings[0]);
 	}//end testLowContrastPairProducesWarning()
 
 	/**
@@ -100,20 +100,20 @@ class ContrastServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertCount(1, $warnings);
-		$this->assertTrue($warnings[0]['unevaluated']);
-		$this->assertNull($warnings[0]['ratio']);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertTrue(condition: $warnings[0]['unevaluated']);
+		$this->assertNull(actual: $warnings[0]['ratio']);
 	}//end testNonLiteralValueIsUnevaluated()
 
 	/**
 	 * parseColor handles #rgb, #rrggbb and rgb()/rgba() literals.
 	 */
 	public function testParseColorSupportsCommonLiterals(): void {
-		$this->assertSame([0, 0, 0], $this->contrast->parseColor(value: '#000'));
-		$this->assertSame([255, 255, 255], $this->contrast->parseColor(value: '#ffffff'));
-		$this->assertSame([21, 66, 115], $this->contrast->parseColor(value: '#154273'));
-		$this->assertSame([0, 123, 199], $this->contrast->parseColor(value: 'rgb(0, 123, 199)'));
-		$this->assertSame([0, 123, 199], $this->contrast->parseColor(value: 'rgba(0, 123, 199, 0.5)'));
+		$this->assertSame(expected: [0, 0, 0], actual: $this->contrast->parseColor(value: '#000'));
+		$this->assertSame(expected: [255, 255, 255], actual: $this->contrast->parseColor(value: '#ffffff'));
+		$this->assertSame(expected: [21, 66, 115], actual: $this->contrast->parseColor(value: '#154273'));
+		$this->assertSame(expected: [0, 123, 199], actual: $this->contrast->parseColor(value: 'rgb(0, 123, 199)'));
+		$this->assertSame(expected: [0, 123, 199], actual: $this->contrast->parseColor(value: 'rgba(0, 123, 199, 0.5)'));
 	}//end testParseColorSupportsCommonLiterals()
 
 	/**
@@ -128,11 +128,11 @@ class ContrastServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertCount(1, $warnings);
-		$this->assertArrayNotHasKey('unevaluated', $warnings[0]);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertArrayNotHasKey(key: 'unevaluated', array: $warnings[0]);
 		$this->assertSame(
-			round($this->contrast->ratio(first: [204, 204, 204], second: [255, 255, 255]), 2),
-			$warnings[0]['ratio']
+			expected: round($this->contrast->ratio(first: [204, 204, 204], second: [255, 255, 255]), 2),
+			actual: $warnings[0]['ratio']
 		);
 	}//end testFaintTextFailsAfterBlend()
 
@@ -146,9 +146,9 @@ class ContrastServiceTest extends TestCase {
 				'--nldesign-color-primary' => '#ffffff',
 			]
 		);
-		$this->assertCount(1, $failing);
-		$this->assertArrayNotHasKey('unevaluated', $failing[0]);
-		$this->assertNotNull($failing[0]['ratio']);
+		$this->assertCount(expectedCount: 1, haystack: $failing);
+		$this->assertArrayNotHasKey(key: 'unevaluated', array: $failing[0]);
+		$this->assertNotNull(actual: $failing[0]['ratio']);
 
 		$passing = $this->contrast->check(
 			declarations: [
@@ -156,7 +156,7 @@ class ContrastServiceTest extends TestCase {
 				'--nldesign-color-primary' => '#ffffff',
 			]
 		);
-		$this->assertSame([], $passing);
+		$this->assertSame(expected: [], actual: $passing);
 	}//end testEightDigitHexIsEvaluated()
 
 	/**
@@ -173,7 +173,7 @@ class ContrastServiceTest extends TestCase {
 		);
 
 		$pairs = array_column($warnings, 'pair');
-		$this->assertContains('--nldesign-color-primary-text vs --nldesign-color-primary', $pairs);
+		$this->assertContains(needle: '--nldesign-color-primary-text vs --nldesign-color-primary', haystack: $pairs);
 	}//end testTranslucentBackgroundIsBlendedOverThePage()
 
 	/**
@@ -185,31 +185,31 @@ class ContrastServiceTest extends TestCase {
 			background: '#ffffff'
 		);
 
-		$this->assertFalse($results[0]['pass']);
-		$this->assertLessThan(2.0, $results[0]['ratio']);
+		$this->assertFalse(condition: $results[0]['pass']);
+		$this->assertLessThan(expected: 2.0, actual: $results[0]['ratio']);
 	}//end testEvaluateBlendsATranslucentCandidate()
 
 	/**
 	 * Thematiq#696: parseColorWithAlpha reads the alpha of every hex and rgba() form.
 	 */
 	public function testParseColorWithAlphaReadsEveryForm(): void {
-		$this->assertSame([0, 0, 0, 1.0], $this->contrast->parseColorWithAlpha(value: '#000'));
-		$this->assertSame([255, 255, 255, 1.0], $this->contrast->parseColorWithAlpha(value: '#ffffff'));
-		$this->assertSame([0, 0, 0, 0.8], $this->contrast->parseColorWithAlpha(value: '#000000cc'));
-		$this->assertSame([255, 0, 0, 0.6], $this->contrast->parseColorWithAlpha(value: '#f009'));
-		$this->assertSame([1, 2, 3, 0.5], $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 0.5)'));
-		$this->assertSame([1, 2, 3, 0.25], $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 25%)'));
-		$this->assertSame([0, 0, 0], $this->contrast->parseColor(value: '#00000080'));
-		$this->assertNull($this->contrast->parseColorWithAlpha(value: 'var(--x)'));
+		$this->assertSame(expected: [0, 0, 0, 1.0], actual: $this->contrast->parseColorWithAlpha(value: '#000'));
+		$this->assertSame(expected: [255, 255, 255, 1.0], actual: $this->contrast->parseColorWithAlpha(value: '#ffffff'));
+		$this->assertSame(expected: [0, 0, 0, 0.8], actual: $this->contrast->parseColorWithAlpha(value: '#000000cc'));
+		$this->assertSame(expected: [255, 0, 0, 0.6], actual: $this->contrast->parseColorWithAlpha(value: '#f009'));
+		$this->assertSame(expected: [1, 2, 3, 0.5], actual: $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 0.5)'));
+		$this->assertSame(expected: [1, 2, 3, 0.25], actual: $this->contrast->parseColorWithAlpha(value: 'rgba(1, 2, 3, 25%)'));
+		$this->assertSame(expected: [0, 0, 0], actual: $this->contrast->parseColor(value: '#00000080'));
+		$this->assertNull(actual: $this->contrast->parseColorWithAlpha(value: 'var(--x)'));
 	}//end testParseColorWithAlphaReadsEveryForm()
 
 	/**
 	 * parseColor returns null for unparseable values.
 	 */
 	public function testParseColorReturnsNullForUnparseable(): void {
-		$this->assertNull($this->contrast->parseColor(value: 'var(--x)'));
-		$this->assertNull($this->contrast->parseColor(value: 'rebeccapurple'));
-		$this->assertNull($this->contrast->parseColor(value: 'hsl(200, 50%, 50%)'));
+		$this->assertNull(actual: $this->contrast->parseColor(value: 'var(--x)'));
+		$this->assertNull(actual: $this->contrast->parseColor(value: 'rebeccapurple'));
+		$this->assertNull(actual: $this->contrast->parseColor(value: 'hsl(200, 50%, 50%)'));
 	}//end testParseColorReturnsNullForUnparseable()
 
 	/**
@@ -220,6 +220,6 @@ class ContrastServiceTest extends TestCase {
 			declarations: ['--nldesign-color-primary' => '#154273']
 		);
 
-		$this->assertSame([], $warnings);
+		$this->assertSame(expected: [], actual: $warnings);
 	}//end testPartialPairIsSkipped()
 }//end class

@@ -90,10 +90,10 @@ class CustomTokenSetControllerTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-controller-test-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -104,19 +104,19 @@ class CustomTokenSetControllerTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(
-				new ContrastService(),
-				new CssParserService(),
-				$appManager,
-				$this->createMock(LoggerInterface::class)
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnCallback(
 			function (string $text, $parameters = []) {
 				if (empty($parameters) === true) {
@@ -132,31 +132,31 @@ class CustomTokenSetControllerTest extends TestCase {
 		// not the temp dir the service writes into — hence a second app-manager
 		// mock. Everything the converter writes still goes through $this->service
 		// and lands in the temp dir.
-		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager = $this->createMock(originalClassName: IAppManager::class);
 		$repoAppManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$converter = new TokenSetConverterService(
-			$repoAppManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $repoAppManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
-		$this->request = $this->createMock(IRequest::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 		$this->controller = new CustomTokenSetController(
-			'nldesign',
-			$this->request,
-			$this->service,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->createMock(ThemingAuditService::class),
-			$config,
-			$converter,
-			$this->createMock(ThemingService::class),
-			$this->createMock(DesignSystemService::class)
+			appName: 'nldesign',
+			request: $this->request,
+			service: $this->service,
+			validator: new CustomTokenSetValidator(),
+			cssParser: new CssParserService(),
+			l: $l,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+			config: $config,
+			converter: $converter,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
 		);
 	}//end setUp()
 
@@ -164,7 +164,7 @@ class CustomTokenSetControllerTest extends TestCase {
 	 * Remove the temp app dir after each test.
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -187,7 +187,7 @@ class CustomTokenSetControllerTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -242,23 +242,23 @@ class CustomTokenSetControllerTest extends TestCase {
 		$this->mockUpload(name: 'Gemeente Voorbeeld', filename: 'theme.tokens.json', content: json_encode($document));
 
 		$response = $this->controller->upload();
-		$this->assertInstanceOf(JSONResponse::class, $response);
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
 
 		$data = $response->getData();
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('custom-gemeente-voorbeeld', $data['id']);
-		$this->assertSame(1, $data['imported']);
-		$this->assertSame('2.3.1', $data['version']);
-		$this->assertCount(1, $data['importWarnings']);
-		$this->assertSame('color.primary', $data['importWarnings'][0]['path']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $data['id']);
+		$this->assertSame(expected: 1, actual: $data['imported']);
+		$this->assertSame(expected: '2.3.1', actual: $data['version']);
+		$this->assertCount(expectedCount: 1, haystack: $data['importWarnings']);
+		$this->assertSame(expected: 'color.primary', actual: $data['importWarnings'][0]['path']);
 
 		$skippedPaths = array_column($data['skipped'], 'path');
-		$this->assertContains('shadow.elevation-1', $skippedPaths);
+		$this->assertContains(needle: 'shadow.elevation-1', haystack: $skippedPaths);
 
 		// Version + import warnings round-trip through the manifest/list.
 		$listed = $this->service->list();
-		$this->assertSame('2.3.1', $listed[0]['version']);
-		$this->assertNotEmpty($listed[0]['importWarnings']);
+		$this->assertSame(expected: '2.3.1', actual: $listed[0]['version']);
+		$this->assertNotEmpty(actual: $listed[0]['importWarnings']);
 	}//end testUploadDtcgReturnsStructuredDiagnosticsAndVersion()
 
 	/**
@@ -274,16 +274,16 @@ class CustomTokenSetControllerTest extends TestCase {
 		$this->mockUpload(name: 'Empty Set', filename: 'empty.tokens.json', content: json_encode($document));
 
 		$response = $this->controller->upload();
-		$this->assertSame(422, $response->getStatus());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
 
 		$data = $response->getData();
-		$this->assertArrayHasKey('error', $data);
-		$this->assertSame(0, $data['imported']);
-		$this->assertCount(2, $data['skipped']);
-		$this->assertSame([], $data['errors']);
+		$this->assertArrayHasKey(key: 'error', array: $data);
+		$this->assertSame(expected: 0, actual: $data['imported']);
+		$this->assertCount(expectedCount: 2, haystack: $data['skipped']);
+		$this->assertSame(expected: [], actual: $data['errors']);
 
 		// Nothing was persisted.
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 	}//end testUploadZeroYieldDtcgReturns422WithDiagnostics()
 
 	/**
@@ -293,9 +293,9 @@ class CustomTokenSetControllerTest extends TestCase {
 		$this->mockUpload(name: 'Broken', filename: 'broken.tokens.json', content: '{ "color": { "primary": {');
 
 		$response = $this->controller->upload();
-		$this->assertSame(422, $response->getStatus());
-		$this->assertArrayHasKey('error', $response->getData());
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'error', array: $response->getData());
+		$this->assertSame(expected: [], actual: $this->service->list());
 	}//end testUploadMalformedJsonReturns422()
 
 	/**
@@ -312,11 +312,11 @@ class CustomTokenSetControllerTest extends TestCase {
 		$this->mockUpload(name: 'Cycle Set', filename: 'cycle.tokens.json', content: json_encode($document));
 
 		$response = $this->controller->upload();
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
 		$data = $response->getData();
 		$errorPaths = array_column($data['errors'], 'reason', 'path');
-		$this->assertSame('alias-cycle', ($errorPaths['a.x'] ?? null));
+		$this->assertSame(expected: 'alias-cycle', actual: ($errorPaths['a.x'] ?? null));
 	}//end testUploadWithAliasCycleStillImportsValidTokenAndReportsError()
 
 	/**
@@ -331,12 +331,12 @@ class CustomTokenSetControllerTest extends TestCase {
 		);
 
 		$response = $this->controller->upload();
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
 		$data = $response->getData();
-		$this->assertArrayNotHasKey('errors', $data);
-		$this->assertArrayNotHasKey('importWarnings', $data);
-		$this->assertArrayNotHasKey('version', $data);
+		$this->assertArrayNotHasKey(key: 'errors', array: $data);
+		$this->assertArrayNotHasKey(key: 'importWarnings', array: $data);
+		$this->assertArrayNotHasKey(key: 'version', array: $data);
 	}//end testUploadCssResponseOmitsDtcgFields()
 
 	/**
@@ -358,8 +358,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertArrayHasKey('error', $response->getData());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'error', array: $response->getData());
 	}//end testJsonUploadWithSemicolonSmugglingIsRejected()
 
 	/**
@@ -380,8 +380,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertArrayHasKey('error', $response->getData());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'error', array: $response->getData());
 	}//end testJsonUploadWithCommentMarkerSmugglingIsRejected()
 
 	/**
@@ -402,8 +402,8 @@ class CustomTokenSetControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('custom-gemeente-voorbeeld', $response->getData()['id']);
-		$this->assertSame(1, $response->getData()['imported']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $response->getData()['id']);
+		$this->assertSame(expected: 1, actual: $response->getData()['imported']);
 	}//end testJsonUploadWithCleanValueIsAccepted()
 }//end class

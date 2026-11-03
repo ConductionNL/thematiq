@@ -59,19 +59,19 @@ class OverridesControllerCaptureTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->request = $this->createMock(IRequest::class);
-		$this->config = $this->createMock(IConfig::class);
-		$this->capture = $this->createMock(BrandingCaptureService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->capture = $this->createMock(originalClassName: BrandingCaptureService::class);
 
 		$this->controller = new OverridesController(
-			'thematiq',
-			$this->request,
-			$this->createMock(CustomOverridesService::class),
-			new CssParserService(),
-			$this->createMock(ThemingAuditService::class),
-			$this->config,
-			$this->createMock(ThemingService::class),
-			$this->capture
+			appName: 'thematiq',
+			request: $this->request,
+			overridesService: $this->createMock(originalClassName: CustomOverridesService::class),
+			cssParser: new CssParserService(),
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+			config: $this->config,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			brandingCapture: $this->capture
 		);
 	}//end setUp()
 
@@ -104,8 +104,8 @@ class OverridesControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['captured' => true, 'primary_color' => '#23845c'], $response->getData()['theming']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['captured' => true, 'primary_color' => '#23845c'], actual: $response->getData()['theming']);
 	}//end testCapturesIntoTheSavedTheme()
 
 	/**
@@ -117,7 +117,7 @@ class OverridesControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertArrayNotHasKey('theming', $response->getData());
+		$this->assertArrayNotHasKey(key: 'theming', array: $response->getData());
 	}//end testTheStockSetIsNeverCaptured()
 
 	/**

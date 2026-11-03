@@ -55,11 +55,11 @@ class ShippedSetLicencesTest extends TestCase {
 	}//end manifest()
 
 	public function testTheRestrictedSetsAreTheAuditedOnes(): void {
-		$gate = new RestrictedSetGate($this->createMock(IConfig::class), $this->root());
+		$gate = new RestrictedSetGate(config: $this->createMock(originalClassName: IConfig::class), appPath: $this->root());
 		$restricted = $gate->restrictedIds();
 		sort($restricted);
 
-		$this->assertSame(self::RESTRICTED, $restricted);
+		$this->assertSame(expected: self::RESTRICTED, actual: $restricted);
 	}//end testTheRestrictedSetsAreTheAuditedOnes()
 
 	public function testEveryConvertedSetDeclaresALicence(): void {
@@ -69,12 +69,12 @@ class ShippedSetLicencesTest extends TestCase {
 				continue;
 			}
 
-			$this->assertIsArray(($entry['licence'] ?? null), $entry['id'] . ' comes from a published theme and declares no licence');
+			$this->assertIsArray(actual: ($entry['licence'] ?? null), message: $entry['id'] . ' comes from a published theme and declares no licence');
 		}
 	}//end testEveryConvertedSetDeclaresALicence()
 
 	public function testEveryDeclarationIsCompleteAndEveryRestrictedSetShipsItsText(): void {
-		$gate = new RestrictedSetGate($this->createMock(IConfig::class), $this->root());
+		$gate = new RestrictedSetGate(config: $this->createMock(originalClassName: IConfig::class), appPath: $this->root());
 		foreach ($this->manifest() as $entry) {
 			if (isset($entry['licence']) === false) {
 				continue;
@@ -82,13 +82,13 @@ class ShippedSetLicencesTest extends TestCase {
 
 			$id = $entry['id'];
 			foreach (['id', 'package', 'version', 'holder', 'restricted'] as $field) {
-				$this->assertArrayHasKey($field, $entry['licence'], $id . ' licence lacks ' . $field);
+				$this->assertArrayHasKey(key: $field, array: $entry['licence'], message: $id . ' licence lacks ' . $field);
 			}
 
-			$this->assertIsBool($entry['licence']['restricted'], $id);
-			$this->assertNotSame('', $entry['licence']['holder'], $id);
+			$this->assertIsBool(actual: $entry['licence']['restricted'], message: $id);
+			$this->assertNotSame(expected: '', actual: $entry['licence']['holder'], message: $id);
 			if ($entry['licence']['restricted'] === true) {
-				$this->assertNotEmpty($gate->licenceText($id), $id . ' ships no css/tokens/' . $id . '.LICENSE.md');
+				$this->assertNotEmpty(actual: $gate->licenceText($id), message: $id . ' ships no css/tokens/' . $id . '.LICENSE.md');
 			}
 		}
 	}//end testEveryDeclarationIsCompleteAndEveryRestrictedSetShipsItsText()
@@ -97,7 +97,7 @@ class ShippedSetLicencesTest extends TestCase {
 		$table = (string)file_get_contents($this->root() . '/docs/reference/token-set-licences.md');
 		foreach ($this->manifest() as $entry) {
 			if (isset($entry['licence']) === true) {
-				$this->assertStringContainsString('| `' . $entry['id'] . '` |', $table, $entry['id'] . ' is missing from the audit table');
+				$this->assertStringContainsString(needle: '| `' . $entry['id'] . '` |', haystack: $table, message: $entry['id'] . ' is missing from the audit table');
 			}
 		}
 	}//end testTheAuditTableListsEveryDeclaredSet()
@@ -105,7 +105,7 @@ class ShippedSetLicencesTest extends TestCase {
 	public function testNoLicenceFileWithoutASet(): void {
 		foreach ((array)glob($this->root() . '/css/tokens/*.LICENSE.md') as $file) {
 			$id = basename((string)$file, '.LICENSE.md');
-			$this->assertFileExists($this->root() . '/css/tokens/' . $id . '.css', $id);
+			$this->assertFileExists(filename: $this->root() . '/css/tokens/' . $id . '.css', message: $id);
 		}
 	}//end testNoLicenceFileWithoutASet()
 }//end class

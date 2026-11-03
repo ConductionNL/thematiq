@@ -93,9 +93,9 @@ final class OwnComponentServiceTest extends TestCase {
 				return $this->folder;
 			}
 		};
-		$factory = $this->createMock(IAppDataFactory::class);
+		$factory = $this->createMock(originalClassName: IAppDataFactory::class);
 		$factory->method('get')->willReturn($root);
-		$this->service = new OwnComponentService($factory);
+		$this->service = new OwnComponentService(appDataFactory: $factory);
 	}//end setUp()
 
 	/**
@@ -109,18 +109,18 @@ final class OwnComponentServiceTest extends TestCase {
 		}
 
 		$this->service->save(name: 'Kaart 1', html: '<p>y</p>', css: '');
-		$this->assertCount(20, $this->service->list());
+		$this->assertCount(expectedCount: 20, haystack: $this->service->list());
 
 		foreach ([['Kaart 21', 'x', 'count'], ['Kaart 1', str_repeat('a', 65537), 'size']] as [$name, $html, $field]) {
 			try {
 				$this->service->save(name: $name, html: $html, css: '');
-				$this->fail('expected a refusal: ' . $field);
+				$this->fail(message: 'expected a refusal: ' . $field);
 			} catch (InvalidArgumentException $e) {
-				$this->assertSame([$field, 400], [$e->getMessage(), $e->getCode()]);
+				$this->assertSame(expected: [$field, 400], actual: [$e->getMessage(), $e->getCode()]);
 			}
 		}
 
-		$this->assertSame('<p>y</p>', $this->service->list()[0]['html']);
+		$this->assertSame(expected: '<p>y</p>', actual: $this->service->list()[0]['html']);
 	}//end testLimits()
 
 	/**
@@ -129,11 +129,11 @@ final class OwnComponentServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testSlugRule(): void {
-		$this->assertSame('afvalkaart', $this->service->save(name: 'Afvalkaart', html: '', css: '')['slug']);
-		$this->assertSame('kaart-voor-ophaaldagen', OwnComponentService::slugFor(name: 'Kaart voor ophaaldagen!'));
-		$this->assertFalse(OwnComponentService::isSlug(slug: '../x'));
+		$this->assertSame(expected: 'afvalkaart', actual: $this->service->save(name: 'Afvalkaart', html: '', css: '')['slug']);
+		$this->assertSame(expected: 'kaart-voor-ophaaldagen', actual: OwnComponentService::slugFor(name: 'Kaart voor ophaaldagen!'));
+		$this->assertFalse(condition: OwnComponentService::isSlug(slug: '../x'));
 
-		$this->expectExceptionMessage('name');
+		$this->expectExceptionMessage(message: 'name');
 		$this->service->save(name: '!!!', html: '', css: '');
 	}//end testSlugRule()
 
@@ -146,11 +146,11 @@ final class OwnComponentServiceTest extends TestCase {
 		$html = '<button onclick="alert(1)">Test</button><script>alert(2)</script>';
 		$this->service->save(name: 'Proef', html: $html, css: '.x{background:url(https://example.org/a.png)}');
 
-		$this->assertSame($html, $this->service->list()[0]['html']);
+		$this->assertSame(expected: $html, actual: $this->service->list()[0]['html']);
 		$this->service->delete(slug: 'proef');
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 
-		$this->expectExceptionCode(404);
+		$this->expectExceptionCode(code: 404);
 		$this->service->delete(slug: 'proef');
 	}//end testStoredRawAndCleanedOnRender()
 
@@ -162,20 +162,20 @@ final class OwnComponentServiceTest extends TestCase {
 	public function testControllerPosture(): void {
 		foreach (['list', 'save', 'delete'] as $method) {
 			$reflection = new ReflectionMethod(OwnComponentController::class, $method);
-			$this->assertSame(Admin::class, ($reflection->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null), $method);
-			$this->assertSame([], $reflection->getAttributes(NoAdminRequired::class));
+			$this->assertSame(expected: Admin::class, actual: ($reflection->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null), message: $method);
+			$this->assertSame(expected: [], actual: $reflection->getAttributes(NoAdminRequired::class));
 		}
 
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ['name' => 'Groot', 'html' => str_repeat('a', 70000), 'css' => ''][$key] ?? $default);
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
-		$controller = new OwnComponentController('thematiq', $request, $this->service, $l);
+		$controller = new OwnComponentController(appName: 'thematiq', request: $request, components: $this->service, l: $l);
 
 		$response = $controller->save();
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('64 KB', $response->getData()['error']);
-		$this->assertSame([], $this->service->list());
-		$this->assertSame(404, $controller->delete(slug: 'nope')->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '64 KB', haystack: $response->getData()['error']);
+		$this->assertSame(expected: [], actual: $this->service->list());
+		$this->assertSame(expected: 404, actual: $controller->delete(slug: 'nope')->getStatus());
 	}//end testControllerPosture()
 }//end class

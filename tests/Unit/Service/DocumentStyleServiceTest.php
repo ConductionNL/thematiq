@@ -102,7 +102,7 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return IConfig The config.
 	 */
 	private function config(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(
 			function (string $app, string $key, $value): void {
@@ -119,18 +119,18 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return DocumentAssetService The service.
 	 */
 	private function assets(): DocumentAssetService {
-		$folder = $this->createMock(ISimpleFolder::class);
+		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturnCallback(fn (string $name): bool => isset($this->files[$name]));
 		$folder->method('newFile')->willReturnCallback(
 			function (string $name, $content = null): ISimpleFile {
 				$this->files[$name] = (string)$content;
 
-				return $this->createMock(ISimpleFile::class);
+				return $this->createMock(originalClassName: ISimpleFile::class);
 			}
 		);
 		$folder->method('getFile')->willReturnCallback(
 			function (string $name): ISimpleFile {
-				$file = $this->createMock(ISimpleFile::class);
+				$file = $this->createMock(originalClassName: ISimpleFile::class);
 				$file->method('getContent')->willReturnCallback(fn (): string => $this->files[$name]);
 				$file->method('delete')->willReturnCallback(
 					function () use ($name): void {
@@ -141,10 +141,10 @@ class DocumentStyleServiceTest extends TestCase {
 				return $file;
 			}
 		);
-		$appData = $this->createMock(IAppData::class);
+		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willReturn($folder);
 
-		return new DocumentAssetService($appData, $this->config());
+		return new DocumentAssetService(appData: $appData, config: $this->config());
 	}//end assets()
 
 	/**
@@ -155,35 +155,35 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return DocumentStyleService The service.
 	 */
 	private function service(?string $tokenDir = null): DocumentStyleService {
-		$repo = $this->createMock(IAppManager::class);
+		$repo = $this->createMock(originalClassName: IAppManager::class);
 		$repo->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$tokenApp = $this->createMock(IAppManager::class);
+		$tokenApp = $this->createMock(originalClassName: IAppManager::class);
 		$tokenApp->method('getAppPath')->willReturn(($tokenDir ?? \dirname(__DIR__, 3)));
 
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturn(true);
 		$tokenSets->method('getAvailableTokenSets')->willReturn(
 			[['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl'], ['id' => 'utrecht', 'name' => 'Gemeente Utrecht']]
 		);
-		$groupTheming = $this->createMock(GroupThemingService::class);
+		$groupTheming = $this->createMock(originalClassName: GroupThemingService::class);
 		$groupTheming->method('getMapping')->willReturn([['group' => 'gemeente-utrecht', 'tokenSet' => 'utrecht']]);
 		$groupTheming->method('resolveTokenSetForRequest')->willReturnCallback(
 			fn (): string => ($this->groups[(string)$this->sessionUid] === ['gemeente-utrecht'] ? 'utrecht' : $this->app['token_set'])
 		);
-		$users = $this->createMock(IUserManager::class);
+		$users = $this->createMock(originalClassName: IUserManager::class);
 		$users->method('get')->willReturnCallback(fn (string $uid): ?IUser => $this->user(uid: $uid));
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturnCallback(fn (IUser $user): array => ($this->groups[$user->getUID()] ?? []));
 
-		$resolver = new UserTokenSetResolver($groupTheming, $tokenSets, $groupManager, $users, $this->session(), $this->config());
+		$resolver = new UserTokenSetResolver(groupTheming: $groupTheming, tokenSets: $tokenSets, groupManager: $groupManager, userManager: $users, userSession: $this->session(), config: $this->config());
 
-		$fonts = $this->createMock(FontService::class);
+		$fonts = $this->createMock(originalClassName: FontService::class);
 		$fonts->method('getManifest')->willReturnCallback(fn (): array => $this->fontManifest);
-		$email = $this->createMock(EmailThemingService::class);
+		$email = $this->createMock(originalClassName: EmailThemingService::class);
 		$email->method('getFooterConfig')->willReturn(
 			['orgName' => 'Gemeente Voorbeeld', 'accessibilityUrl' => 'https://voorbeeld.nl/toegankelijkheid', 'privacyUrl' => 'https://voorbeeld.nl/privacy']
 		);
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(fn (string $route, array $params = []): string => '/' . $route . '?' . http_build_query($params));
 		$urls->method('imagePath')->willReturnCallback(fn (string $app, string $file): string => '/apps/' . $app . '/img/' . $file);
 
@@ -191,8 +191,8 @@ class DocumentStyleServiceTest extends TestCase {
 			setSources: new DocumentSetSources(
 				resolver: $resolver,
 				tokenSets: $tokenSets,
-				preview: new TokenSetPreviewService($tokenApp),
-				designSystem: new DesignSystemService($repo, $this->config())
+				preview: new TokenSetPreviewService(appManager: $tokenApp),
+				designSystem: new DesignSystemService(appManager: $repo, config: $this->config())
 			),
 			brandAssets: new DocumentBrandAssets(
 				fonts: $fonts,
@@ -216,7 +216,7 @@ class DocumentStyleServiceTest extends TestCase {
 			return null;
 		}
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn($uid);
 
 		return $user;
@@ -228,7 +228,7 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return IUserSession The session.
 	 */
 	private function session(): IUserSession {
-		$session = $this->createMock(IUserSession::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
 		$session->method('getUser')->willReturnCallback(fn (): ?IUser => ($this->sessionUid === null ? null : $this->user(uid: $this->sessionUid)));
 
 		return $session;
@@ -242,15 +242,15 @@ class DocumentStyleServiceTest extends TestCase {
 	public function testInstanceDefaultProfile(): void {
 		$profile = $this->service()->forUser(uid: null);
 
-		$this->assertSame(['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl'], $profile['tokenSet']);
-		$this->assertSame('Gemeente Voorbeeld', $profile['organisation']);
-		$this->assertSame('#154273', strtolower((string)$profile['colours']['primary']));
-		$this->assertSame('#ffffff', $profile['colours']['background']);
-		$this->assertSame(['url' => '/apps/thematiq/img/logos/rijkshuisstijl.svg', 'mime' => 'image/svg+xml'], $profile['logo']);
-		$this->assertNull($profile['cover']);
-		$this->assertSame(['Gemeente Voorbeeld'], $profile['footer']['lines']);
-		$this->assertSame('https://voorbeeld.nl/privacy', $profile['footer']['privacyUrl']);
-		$this->assertSame([], $profile['warnings'], 'Rijkshuisstijl text meets 4.5:1 on white.');
+		$this->assertSame(expected: ['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl'], actual: $profile['tokenSet']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $profile['organisation']);
+		$this->assertSame(expected: '#154273', actual: strtolower((string)$profile['colours']['primary']));
+		$this->assertSame(expected: '#ffffff', actual: $profile['colours']['background']);
+		$this->assertSame(expected: ['url' => '/apps/thematiq/img/logos/rijkshuisstijl.svg', 'mime' => 'image/svg+xml'], actual: $profile['logo']);
+		$this->assertNull(actual: $profile['cover']);
+		$this->assertSame(expected: ['Gemeente Voorbeeld'], actual: $profile['footer']['lines']);
+		$this->assertSame(expected: 'https://voorbeeld.nl/privacy', actual: $profile['footer']['privacyUrl']);
+		$this->assertSame(expected: [], actual: $profile['warnings'], message: 'Rijkshuisstijl text meets 4.5:1 on white.');
 	}//end testInstanceDefaultProfile()
 
 	/**
@@ -260,13 +260,13 @@ class DocumentStyleServiceTest extends TestCase {
 	 */
 	public function testGroupMappedUserGetsTheGroupSet(): void {
 		$inProcess = $this->service()->forUser(uid: 'bea');
-		$this->assertSame('utrecht', $inProcess['tokenSet']['id']);
-		$this->assertSame('/apps/thematiq/img/logos/utrecht.svg', $inProcess['logo']['url']);
+		$this->assertSame(expected: 'utrecht', actual: $inProcess['tokenSet']['id']);
+		$this->assertSame(expected: '/apps/thematiq/img/logos/utrecht.svg', actual: $inProcess['logo']['url']);
 
 		$this->sessionUid = 'bea';
-		$controller = new DocumentStyleController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->assets(), $this->session(), $this->createMock(IL10N::class));
-		$this->assertSame($inProcess['colours'], $controller->show()->getData()['colours'], 'HTTP and in-process return the same values.');
-		$this->assertNotSame($this->service()->forUser(uid: 'kees')['colours']['primary'], $inProcess['colours']['primary']);
+		$controller = new DocumentStyleController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), style: $this->service(), assets: $this->assets(), userSession: $this->session(), l10n: $this->createMock(originalClassName: IL10N::class));
+		$this->assertSame(expected: $inProcess['colours'], actual: $controller->show()->getData()['colours'], message: 'HTTP and in-process return the same values.');
+		$this->assertNotSame(expected: $this->service()->forUser(uid: 'kees')['colours']['primary'], actual: $inProcess['colours']['primary']);
 	}//end testGroupMappedUserGetsTheGroupSet()
 
 	/**
@@ -279,11 +279,11 @@ class DocumentStyleServiceTest extends TestCase {
 
 		$profile = $this->service()->forUser(uid: null);
 
-		$this->assertNull($profile['logo']);
-		$this->assertNull($profile['fonts']['heading']['url']);
-		$this->assertNull($profile['fonts']['body']['url']);
-		$this->assertNotSame('', (string)$profile['fonts']['body']['family']);
-		$this->assertStringNotContainsString('var(', (string)$profile['fonts']['heading']['family']);
+		$this->assertNull(actual: $profile['logo']);
+		$this->assertNull(actual: $profile['fonts']['heading']['url']);
+		$this->assertNull(actual: $profile['fonts']['body']['url']);
+		$this->assertNotSame(expected: '', actual: (string)$profile['fonts']['body']['family']);
+		$this->assertStringNotContainsString(needle: 'var(', haystack: (string)$profile['fonts']['heading']['family']);
 	}//end testSetWithoutLogoAndSystemFonts()
 
 	/**
@@ -296,8 +296,8 @@ class DocumentStyleServiceTest extends TestCase {
 
 		$heading = $this->service()->forUser(uid: null)['fonts']['heading'];
 
-		$this->assertSame('Corporate', $heading['family']);
-		$this->assertSame('/thematiq.font.serve?id=custom-corporate', $heading['url']);
+		$this->assertSame(expected: 'Corporate', actual: $heading['family']);
+		$this->assertSame(expected: '/thematiq.font.serve?id=custom-corporate', actual: $heading['url']);
 	}//end testUploadedFontsCarryTheirUrl()
 
 	/**
@@ -311,10 +311,10 @@ class DocumentStyleServiceTest extends TestCase {
 
 		$profile = $this->service()->forUser(uid: null);
 
-		$this->assertSame('image/png', $profile['logo']['mime']);
-		$this->assertStringStartsWith('/thematiq.documentStyle.asset?kind=logo', $profile['logo']['url']);
-		$this->assertSame(['Gemeente Voorbeeld', 'Postbus 1, 1234 AB Voorbeeld'], $profile['footer']['lines']);
-		$this->assertSame('rijkshuisstijl', $this->app['token_set'], 'The web header logo is untouched.');
+		$this->assertSame(expected: 'image/png', actual: $profile['logo']['mime']);
+		$this->assertStringStartsWith(prefix: '/thematiq.documentStyle.asset?kind=logo', string: $profile['logo']['url']);
+		$this->assertSame(expected: ['Gemeente Voorbeeld', 'Postbus 1, 1234 AB Voorbeeld'], actual: $profile['footer']['lines']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->app['token_set'], message: 'The web header logo is untouched.');
 	}//end testDocumentLogoAndFooterLine()
 
 	/**
@@ -331,7 +331,7 @@ class DocumentStyleServiceTest extends TestCase {
 		file_put_contents($dir . '/token-sets.json', '[]');
 		$this->app['token_set'] = 'grey';
 
-		$this->assertSame('text-contrast', $this->service(tokenDir: $dir)->forUser(uid: null)['warnings'][0]['code']);
+		$this->assertSame(expected: 'text-contrast', actual: $this->service(tokenDir: $dir)->forUser(uid: null)['warnings'][0]['code']);
 		exec('rm -rf ' . escapeshellarg($dir));
 	}//end testPoorContrastCarriesAWarning()
 
@@ -350,16 +350,16 @@ class DocumentStyleServiceTest extends TestCase {
 		foreach ($cases as [$bytes, $code]) {
 			try {
 				$this->assets()->store(kind: 'cover', bytes: $bytes);
-				$this->fail('Refused with ' . $code);
+				$this->fail(message: 'Refused with ' . $code);
 			} catch (RuntimeException $e) {
-				$this->assertSame($code, $e->getCode());
+				$this->assertSame(expected: $code, actual: $e->getCode());
 			}
 		}
 
-		$this->assertSame([], $this->files);
+		$this->assertSame(expected: [], actual: $this->files);
 		$this->assets()->store(kind: 'cover', bytes: '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>');
-		$this->assertSame('image/svg+xml', $this->assets()->getAssets()['cover']['mime']);
-		$this->assertArrayHasKey('cover.svg', $this->files);
+		$this->assertSame(expected: 'image/svg+xml', actual: $this->assets()->getAssets()['cover']['mime']);
+		$this->assertArrayHasKey(key: 'cover.svg', array: $this->files);
 	}//end testUploadChecks()
 
 	/**
@@ -369,16 +369,16 @@ class DocumentStyleServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAssetEndpointServesTheImage(): void {
-		$controller = new DocumentStyleController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->assets(), $this->session(), $this->createMock(IL10N::class));
-		$this->assertSame(404, $controller->asset(kind: 'logo')->getStatus());
-		$this->assertSame(404, $controller->asset(kind: 'nope')->getStatus());
+		$controller = new DocumentStyleController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), style: $this->service(), assets: $this->assets(), userSession: $this->session(), l10n: $this->createMock(originalClassName: IL10N::class));
+		$this->assertSame(expected: 404, actual: $controller->asset(kind: 'logo')->getStatus());
+		$this->assertSame(expected: 404, actual: $controller->asset(kind: 'nope')->getStatus());
 
 		$png = "\x89PNG\r\n\x1a\n" . str_repeat('0', 16);
 		$this->assets()->store(kind: 'logo', bytes: $png);
 		$response = $controller->asset(kind: 'logo');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame($png, $response->render());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: $png, actual: $response->render());
 	}//end testAssetEndpointServesTheImage()
 
 	/**
@@ -389,14 +389,14 @@ class DocumentStyleServiceTest extends TestCase {
 	public function testEndpointAttributes(): void {
 		foreach (['show', 'asset'] as $method) {
 			$reflection = new ReflectionMethod(DocumentStyleController::class, $method);
-			$this->assertCount(1, $reflection->getAttributes(NoAdminRequired::class));
-			$this->assertCount(0, $reflection->getAttributes(PublicPage::class), 'No session, no profile.');
+			$this->assertCount(expectedCount: 1, haystack: $reflection->getAttributes(NoAdminRequired::class));
+			$this->assertCount(expectedCount: 0, haystack: $reflection->getAttributes(PublicPage::class), message: 'No session, no profile.');
 		}
 
 		foreach (['settings', 'saveFooter', 'upload', 'remove'] as $method) {
 			$attributes = (new ReflectionMethod(DocumentStyleController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes);
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertCount(expectedCount: 1, haystack: $attributes);
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 	}//end testEndpointAttributes()
 }//end class

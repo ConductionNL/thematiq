@@ -250,8 +250,8 @@ class ThemingAuditServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->root = new FakeAuditRoot();
-		$this->userSession = $this->createMock(IUserSession::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->userSession = $this->createMock(originalClassName: IUserSession::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 	}//end setUp()
 
 	/**
@@ -264,7 +264,7 @@ class ThemingAuditServiceTest extends TestCase {
 	 * @return ThemingAuditService The service under test.
 	 */
 	private function makeService(int $time = 1700000000, ?ThemeVersionService $versions = null): ThemingAuditService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -274,7 +274,7 @@ class ThemingAuditServiceTest extends TestCase {
 			}
 		);
 
-		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory = $this->createMock(originalClassName: ITimeFactory::class);
 		$timeFactory->method('getTime')->willReturn($time);
 
 		$this->userSession->method('getUser')->willReturn(null);
@@ -285,7 +285,7 @@ class ThemingAuditServiceTest extends TestCase {
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
 			logger: $this->logger,
-			versionService: ($versions ?? $this->createMock(ThemeVersionService::class))
+			versionService: ($versions ?? $this->createMock(originalClassName: ThemeVersionService::class))
 		);
 	}//end makeService()
 
@@ -301,30 +301,30 @@ class ThemingAuditServiceTest extends TestCase {
 		);
 
 		$entries = $service->getRecent(limit: 10);
-		$this->assertCount(1, $entries);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
 
 		$entry = $entries[0];
-		$this->assertSame('2023-11-14T22:13:20Z', $entry['ts']);
-		$this->assertSame('cli', $entry['actor']);
-		$this->assertSame('token_set_changed', $entry['action']);
-		$this->assertSame('rijkshuisstijl', $entry['old']);
-		$this->assertSame('amsterdam', $entry['new']);
-		$this->assertArrayHasKey('tokenSetVersion', $entry);
+		$this->assertSame(expected: '2023-11-14T22:13:20Z', actual: $entry['ts']);
+		$this->assertSame(expected: 'cli', actual: $entry['actor']);
+		$this->assertSame(expected: 'token_set_changed', actual: $entry['action']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $entry['old']);
+		$this->assertSame(expected: 'amsterdam', actual: $entry['new']);
+		$this->assertArrayHasKey(key: 'tokenSetVersion', array: $entry);
 	}//end testEntryShape()
 
 	/**
 	 * Actor resolution: uid wins when a user is active.
 	 */
 	public function testActorResolvesUidWhenUserPresent(): void {
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('ruben');
-		$this->userSession = $this->createMock(IUserSession::class);
+		$this->userSession = $this->createMock(originalClassName: IUserSession::class);
 		$this->userSession->method('getUser')->willReturn($user);
 
 		$service = $this->makeService();
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertSame('ruben', $service->getRecent(limit: 1)[0]['actor']);
+		$this->assertSame(expected: 'ruben', actual: $service->getRecent(limit: 1)[0]['actor']);
 	}//end testActorResolvesUidWhenUserPresent()
 
 	/**
@@ -334,14 +334,14 @@ class ThemingAuditServiceTest extends TestCase {
 		$service = $this->makeService();
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertSame('cli', $service->getRecent(limit: 1)[0]['actor']);
+		$this->assertSame(expected: 'cli', actual: $service->getRecent(limit: 1)[0]['actor']);
 	}//end testActorFallsBackToCli()
 
 	/**
 	 * Actor resolution: no user, not CLI -> 'system'.
 	 */
 	public function testActorFallsBackToSystem(): void {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -351,12 +351,12 @@ class ThemingAuditServiceTest extends TestCase {
 			}
 		);
 
-		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory = $this->createMock(originalClassName: ITimeFactory::class);
 		$timeFactory->method('getTime')->willReturn(1700000000);
 
 		$this->userSession->method('getUser')->willReturn(null);
 
-		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger, $this->createMock(ThemeVersionService::class)) extends ThemingAuditService {
+		$service = new class(new FakeAuditAppDataFactory(appData: $this->root), $config, $this->userSession, $timeFactory, $this->logger, $this->createMock(originalClassName: ThemeVersionService::class)) extends ThemingAuditService {
 			protected function isRunningInCli(): bool {
 				return false;
 			}
@@ -364,7 +364,7 @@ class ThemingAuditServiceTest extends TestCase {
 
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertSame('system', $service->getRecent(limit: 1)[0]['actor']);
+		$this->assertSame(expected: 'system', actual: $service->getRecent(limit: 1)[0]['actor']);
 	}//end testActorFallsBackToSystem()
 
 	/**
@@ -376,8 +376,8 @@ class ThemingAuditServiceTest extends TestCase {
 		$service = $this->makeService();
 		$service->log(action: 'not_a_real_action', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertSame([], $service->getRecent(limit: 10));
-		$this->assertSame('0', ($this->appConfig['audit_entries_total'] ?? '0'));
+		$this->assertSame(expected: [], actual: $service->getRecent(limit: 10));
+		$this->assertSame(expected: '0', actual: ($this->appConfig['audit_entries_total'] ?? '0'));
 	}//end testUnknownActionIsDroppedWithWarning()
 
 	/**
@@ -387,10 +387,10 @@ class ThemingAuditServiceTest extends TestCase {
 		$service = $this->makeService();
 
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
-		$this->assertSame('1', $this->appConfig['audit_entries_total']);
+		$this->assertSame(expected: '1', actual: $this->appConfig['audit_entries_total']);
 
 		$service->log(action: 'toggle_changed', context: ['key' => 'hide_slogan', 'old' => false, 'new' => true]);
-		$this->assertSame('2', $this->appConfig['audit_entries_total']);
+		$this->assertSame(expected: '2', actual: $this->appConfig['audit_entries_total']);
 	}//end testCounterIncrementsPerEntry()
 
 	/**
@@ -412,11 +412,11 @@ class ThemingAuditServiceTest extends TestCase {
 		);
 
 		$entry = $service->getRecent(limit: 1)[0];
-		$this->assertIsArray($entry['new']);
-		$this->assertStringStartsWith('sha256:', $entry['new']['hash']);
-		$this->assertSame(12, strlen(substr($entry['new']['hash'], 7)));
-		$this->assertSame(strlen($css), $entry['new']['bytes']);
-		$this->assertStringNotContainsString('--nldesign-color-primary', json_encode($entry));
+		$this->assertIsArray(actual: $entry['new']);
+		$this->assertStringStartsWith(prefix: 'sha256:', string: $entry['new']['hash']);
+		$this->assertSame(expected: 12, actual: strlen(substr($entry['new']['hash'], 7)));
+		$this->assertSame(expected: strlen($css), actual: $entry['new']['bytes']);
+		$this->assertStringNotContainsString(needle: '--nldesign-color-primary', haystack: json_encode($entry));
 	}//end testCssPayloadIsHashedNotEmbedded()
 
 	/**
@@ -435,10 +435,10 @@ class ThemingAuditServiceTest extends TestCase {
 		);
 
 		$entry = $service->getRecent(limit: 1)[0];
-		$this->assertSame(['count' => 2], $entry['old']);
-		$this->assertSame(['count' => 2], $entry['new']);
+		$this->assertSame(expected: ['count' => 2], actual: $entry['old']);
+		$this->assertSame(expected: ['count' => 2], actual: $entry['new']);
 		sort($entry['changed']);
-		$this->assertSame(['contacts', 'mail'], $entry['changed']);
+		$this->assertSame(expected: ['contacts', 'mail'], actual: $entry['changed']);
 	}//end testArrayValuesSummarizedWithChangedKeys()
 
 	/**
@@ -481,12 +481,12 @@ class ThemingAuditServiceTest extends TestCase {
 			restore_error_handler();
 		}
 
-		$this->assertSame([], $warnings);
+		$this->assertSame(expected: [], actual: $warnings);
 		$entry = $service->getRecent(limit: 1)[0];
-		$this->assertSame(['count' => 3], $entry['old']);
-		$this->assertSame(['count' => 3], $entry['new']);
+		$this->assertSame(expected: ['count' => 3], actual: $entry['old']);
+		$this->assertSame(expected: ['count' => 3], actual: $entry['new']);
 		sort($entry['changed']);
-		$this->assertSame(['guests', 'staff', 'students'], $entry['changed']);
+		$this->assertSame(expected: ['guests', 'staff', 'students'], actual: $entry['changed']);
 	}//end testGroupThemingMappingRecordsTheChangedGroups()
 
 	/**
@@ -501,10 +501,10 @@ class ThemingAuditServiceTest extends TestCase {
 		$service->log(action: 'group_theming_changed', context: ['old' => [$admin, $staff], 'new' => [$staff, $admin]]);
 		$moved = $service->getRecent(limit: 1)[0]['changed'];
 		sort($moved);
-		$this->assertSame(['admin', 'staff'], $moved);
+		$this->assertSame(expected: ['admin', 'staff'], actual: $moved);
 
 		$service->log(action: 'group_theming_changed', context: ['old' => [$admin, $staff], 'new' => [$admin, $staff]]);
-		$this->assertSame([], $service->getRecent(limit: 1)[0]['changed']);
+		$this->assertSame(expected: [], actual: $service->getRecent(limit: 1)[0]['changed']);
 	}//end testGroupThemingReorderAndNoChange()
 
 	/**
@@ -522,15 +522,15 @@ class ThemingAuditServiceTest extends TestCase {
 
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertTrue($this->root->auditFolder->fileExists('audit.jsonl.1'));
-		$this->assertStringContainsString('token_set_changed', $this->root->auditFolder->getFile('audit.jsonl.1')->getContent());
-		$this->assertSame('', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
+		$this->assertTrue(condition: $this->root->auditFolder->fileExists('audit.jsonl.1'));
+		$this->assertStringContainsString(needle: 'token_set_changed', haystack: $this->root->auditFolder->getFile('audit.jsonl.1')->getContent());
+		$this->assertSame(expected: '', actual: $this->root->auditFolder->getFile('audit.jsonl')->getContent());
 
 		// A second small entry must land in the FRESH current file, not the
 		// rotated generation, and rotation must not create a second
 		// generation file.
 		$service->log(action: 'token_set_changed', context: ['old' => 'b', 'new' => 'c']);
-		$this->assertStringContainsString('"old":"b"', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
+		$this->assertStringContainsString(needle: '"old":"b"', haystack: $this->root->auditFolder->getFile('audit.jsonl')->getContent());
 	}//end testRotationAtSizeCapKeepsOneGeneration()
 
 	/**
@@ -550,9 +550,9 @@ class ThemingAuditServiceTest extends TestCase {
 
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertTrue($this->root->auditFolder->fileExists('audit.jsonl.1'));
-		$this->assertSame('', $this->root->auditFolder->getFile('audit.jsonl')->getContent());
-		$this->assertSame('42', $this->appConfig['audit_entries_total']);
+		$this->assertTrue(condition: $this->root->auditFolder->fileExists('audit.jsonl.1'));
+		$this->assertSame(expected: '', actual: $this->root->auditFolder->getFile('audit.jsonl')->getContent());
+		$this->assertSame(expected: '42', actual: $this->appConfig['audit_entries_total']);
 	}//end testCounterKeepsCountingAcrossRotation()
 
 	/**
@@ -566,9 +566,9 @@ class ThemingAuditServiceTest extends TestCase {
 		$service->log(action: 'token_set_changed', context: ['old' => '3', 'new' => '4']);
 
 		$recent = $service->getRecent(limit: 2);
-		$this->assertCount(2, $recent);
-		$this->assertSame('4', $recent[0]['new']);
-		$this->assertSame('3', $recent[1]['new']);
+		$this->assertCount(expectedCount: 2, haystack: $recent);
+		$this->assertSame(expected: '4', actual: $recent[0]['new']);
+		$this->assertSame(expected: '3', actual: $recent[1]['new']);
 	}//end testGetRecentOrderAndLimit()
 
 	/**
@@ -591,9 +591,9 @@ class ThemingAuditServiceTest extends TestCase {
 		$rotatedPos = strpos($exported, 'rotated-gen');
 		$currentPos = strpos($exported, 'current-gen');
 
-		$this->assertIsInt($rotatedPos);
-		$this->assertIsInt($currentPos);
-		$this->assertLessThan($currentPos, $rotatedPos);
+		$this->assertIsInt(actual: $rotatedPos);
+		$this->assertIsInt(actual: $currentPos);
+		$this->assertLessThan(expected: $currentPos, actual: $rotatedPos);
 	}//end testExportAllIncludesRotatedGenerationFirst()
 
 	/**
@@ -603,7 +603,7 @@ class ThemingAuditServiceTest extends TestCase {
 	public function testAppdataFailureIsSwallowedAndWarned(): void {
 		$this->logger->expects($this->once())->method('warning');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -613,7 +613,7 @@ class ThemingAuditServiceTest extends TestCase {
 			}
 		);
 
-		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory = $this->createMock(originalClassName: ITimeFactory::class);
 		$timeFactory->method('getTime')->willReturn(1700000000);
 		$this->userSession->method('getUser')->willReturn(null);
 
@@ -623,14 +623,14 @@ class ThemingAuditServiceTest extends TestCase {
 			userSession: $this->userSession,
 			timeFactory: $timeFactory,
 			logger: $this->logger,
-			versionService: $this->createMock(ThemeVersionService::class)
+			versionService: $this->createMock(originalClassName: ThemeVersionService::class)
 		);
 
 		// Must not throw.
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
 		// The counter must NOT have been incremented — the append failed.
-		$this->assertSame('0', ($this->appConfig['audit_entries_total'] ?? '0'));
+		$this->assertSame(expected: '0', actual: ($this->appConfig['audit_entries_total'] ?? '0'));
 	}//end testAppdataFailureIsSwallowedAndWarned()
 
 	/**
@@ -639,13 +639,13 @@ class ThemingAuditServiceTest extends TestCase {
 	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testAnEntryNamesTheVersionItProduced(): void {
-		$versions = $this->createMock(ThemeVersionService::class);
+		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
 		$versions->expects($this->once())->method('capture')->with('token_set_changed', 'cli')->willReturn('20260929164000-0001');
 
 		$service = $this->makeService(versions: $versions);
 		$service->log(action: 'token_set_changed', context: ['old' => 'a', 'new' => 'b']);
 
-		$this->assertSame('20260929164000-0001', $service->getRecent(limit: 1)[0]['versionId']);
+		$this->assertSame(expected: '20260929164000-0001', actual: $service->getRecent(limit: 1)[0]['versionId']);
 	}//end testAnEntryNamesTheVersionItProduced()
 
 	/**
@@ -654,28 +654,28 @@ class ThemingAuditServiceTest extends TestCase {
 	 * @spec openspec/specs/theming-audit/spec.md
 	 */
 	public function testAnEntryWithoutAVersionOmitsTheField(): void {
-		$versions = $this->createMock(ThemeVersionService::class);
+		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
 		$versions->method('capture')->willReturn(null);
 
 		$service = $this->makeService(versions: $versions);
 		$service->log(action: 'toggle_changed', context: ['key' => 'hide_slogan', 'old' => '0', 'new' => '1']);
 
-		$this->assertArrayNotHasKey('versionId', $service->getRecent(limit: 1)[0]);
+		$this->assertArrayNotHasKey(key: 'versionId', array: $service->getRecent(limit: 1)[0]);
 	}//end testAnEntryWithoutAVersionOmitsTheField()
 
 	/**
 	 * A capture that throws still writes the entry.
 	 */
 	public function testAThrowingCaptureStillWritesTheEntry(): void {
-		$versions = $this->createMock(ThemeVersionService::class);
+		$versions = $this->createMock(originalClassName: ThemeVersionService::class);
 		$versions->method('capture')->willThrowException(new \RuntimeException('boom'));
 
 		$service = $this->makeService(versions: $versions);
 		$service->log(action: 'overrides_written', context: []);
 
 		$entries = $service->getRecent(limit: 1);
-		$this->assertSame('overrides_written', $entries[0]['action']);
-		$this->assertArrayNotHasKey('versionId', $entries[0]);
+		$this->assertSame(expected: 'overrides_written', actual: $entries[0]['action']);
+		$this->assertArrayNotHasKey(key: 'versionId', array: $entries[0]);
 	}//end testAThrowingCaptureStillWritesTheEntry()
 
 	/**
@@ -688,8 +688,8 @@ class ThemingAuditServiceTest extends TestCase {
 		$service->log(action: 'version_restored', context: ['old' => '20260929164000-0002', 'new' => '20260929164000-0001']);
 
 		$entry = $service->getRecent(limit: 1)[0];
-		$this->assertSame('version_restored', $entry['action']);
-		$this->assertSame('20260929164000-0001', $entry['new']);
+		$this->assertSame(expected: 'version_restored', actual: $entry['action']);
+		$this->assertSame(expected: '20260929164000-0001', actual: $entry['new']);
 	}//end testVersionRestoredIsAcceptedAction()
 
 	/**
@@ -706,10 +706,10 @@ class ThemingAuditServiceTest extends TestCase {
 		);
 
 		$entry = $service->getRecent(limit: 1)[0];
-		$this->assertSame('scheduled_switch_applied', $entry['action']);
-		$this->assertSame('system', $entry['actor']);
-		$this->assertSame('rijkshuisstijl', $entry['old']);
-		$this->assertSame('koningsdag-oranje', $entry['new']);
-		$this->assertSame('abc123', $entry['switchId']);
+		$this->assertSame(expected: 'scheduled_switch_applied', actual: $entry['action']);
+		$this->assertSame(expected: 'system', actual: $entry['actor']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $entry['old']);
+		$this->assertSame(expected: 'koningsdag-oranje', actual: $entry['new']);
+		$this->assertSame(expected: 'abc123', actual: $entry['switchId']);
 	}//end testScheduledSwitchAppliedIsAcceptedWithSystemActor()
 }//end class

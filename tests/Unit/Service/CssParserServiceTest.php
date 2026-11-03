@@ -52,11 +52,11 @@ class CssParserServiceTest extends TestCase {
 		$result = $this->parser->parseDarkBlock(css: $css);
 
 		$this->assertSame(
-			[
+			expected: [
 				'--nldesign-color-primary' => '#4844AD',
 				'--nldesign-color-background' => '#171717',
 			],
-			$result
+			actual: $result
 		);
 	}//end testDarkBlockPresent()
 
@@ -66,7 +66,7 @@ class CssParserServiceTest extends TestCase {
 	public function testDarkBlockAbsent(): void {
 		$css = ":root {\n\t--nldesign-color-primary: #154273;\n}";
 
-		$this->assertSame([], $this->parser->parseDarkBlock(css: $css));
+		$this->assertSame(expected: [], actual: $this->parser->parseDarkBlock(css: $css));
 	}//end testDarkBlockAbsent()
 
 	/**
@@ -84,7 +84,7 @@ class CssParserServiceTest extends TestCase {
 
 		$result = $this->parser->parseDarkBlock(css: $css);
 
-		$this->assertSame(['--nldesign-color-primary' => '#4844AD'], $result);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#4844AD'], actual: $result);
 	}//end testDarkBlockWithNestedBracesElsewhereInFile()
 
 	/**
@@ -93,14 +93,14 @@ class CssParserServiceTest extends TestCase {
 	public function testMalformedDarkBlockDegradesToEmpty(): void {
 		$css = "@media (prefers-color-scheme: dark) {\n\t:root {\n\t\t--nldesign-color-primary: #4844AD;";
 
-		$this->assertSame([], $this->parser->parseDarkBlock(css: $css));
+		$this->assertSame(expected: [], actual: $this->parser->parseDarkBlock(css: $css));
 	}//end testMalformedDarkBlockDegradesToEmpty()
 
 	/**
 	 * Empty input degrades to an empty map.
 	 */
 	public function testEmptyInputDegradesToEmpty(): void {
-		$this->assertSame([], $this->parser->parseDarkBlock(css: ''));
+		$this->assertSame(expected: [], actual: $this->parser->parseDarkBlock(css: ''));
 	}//end testEmptyInputDegradesToEmpty()
 
 	/**
@@ -112,7 +112,7 @@ class CssParserServiceTest extends TestCase {
 	public function testBracesInACommentDoNotEndTheRootBlock(): void {
 		$css = ":root {\n\t--a: 1;\n\t/* the {normal,bold} weights */\n\t--b: 2;\n}\n";
 
-		$this->assertSame(['--a' => '1', '--b' => '2'], $this->parser->parseRootBlock(css: $css));
+		$this->assertSame(expected: ['--a' => '1', '--b' => '2'], actual: $this->parser->parseRootBlock(css: $css));
 	}//end testBracesInACommentDoNotEndTheRootBlock()
 
 	/**
@@ -123,8 +123,8 @@ class CssParserServiceTest extends TestCase {
 	public function testDefaultsLayerIsReadWhole(): void {
 		$root = $this->parser->parseRootBlock(css: (string)file_get_contents(\dirname(__DIR__, 3) . '/css/systems/nldesign/defaults.css'));
 
-		$this->assertSame('0', ($root['--nldesign-border-radius'] ?? null));
-		$this->assertSame('4px', ($root['--nldesign-border-radius-large'] ?? null));
+		$this->assertSame(expected: '0', actual: ($root['--nldesign-border-radius'] ?? null));
+		$this->assertSame(expected: '4px', actual: ($root['--nldesign-border-radius-large'] ?? null));
 	}//end testDefaultsLayerIsReadWhole()
 
 	/**
@@ -134,12 +134,12 @@ class CssParserServiceTest extends TestCase {
 	 */
 	public function testALiteralResolvesToItself(): void {
 		$this->assertSame(
-			['value' => '#21468B', 'unresolved' => null],
-			$this->parser->resolveVarChain(value: ' #21468B ', declarations: [])
+			expected: ['value' => '#21468B', 'unresolved' => null],
+			actual: $this->parser->resolveVarChain(value: ' #21468B ', declarations: [])
 		);
 		$this->assertSame(
-			['value' => 'rgba(0, 0, 0, .5)', 'unresolved' => null],
-			$this->parser->resolveVarChain(value: 'rgba(0, 0, 0, .5)', declarations: [])
+			expected: ['value' => 'rgba(0, 0, 0, .5)', 'unresolved' => null],
+			actual: $this->parser->resolveVarChain(value: 'rgba(0, 0, 0, .5)', declarations: [])
 		);
 	}//end testALiteralResolvesToItself()
 
@@ -159,8 +159,8 @@ class CssParserServiceTest extends TestCase {
 		];
 
 		$this->assertSame(
-			['value' => '#21468B', 'unresolved' => null],
-			$this->parser->resolveVarChain(
+			expected: ['value' => '#21468B', 'unresolved' => null],
+			actual: $this->parser->resolveVarChain(
 				value: $declarations['--nldesign-color-primary'],
 				declarations: $declarations
 			)
@@ -175,12 +175,12 @@ class CssParserServiceTest extends TestCase {
 	 */
 	public function testAFallbackIsTakenOnlyWhenTheTokenIsAbsent(): void {
 		$this->assertSame(
-			['value' => '#fff', 'unresolved' => null],
-			$this->parser->resolveVarChain(value: 'var(--missing, #fff)', declarations: [])
+			expected: ['value' => '#fff', 'unresolved' => null],
+			actual: $this->parser->resolveVarChain(value: 'var(--missing, #fff)', declarations: [])
 		);
 		$this->assertSame(
-			['value' => '#000000', 'unresolved' => null],
-			$this->parser->resolveVarChain(
+			expected: ['value' => '#000000', 'unresolved' => null],
+			actual: $this->parser->resolveVarChain(
 				value: 'var(--present, #fff)',
 				declarations: ['--present' => '#000000']
 			)
@@ -196,14 +196,14 @@ class CssParserServiceTest extends TestCase {
 	 */
 	public function testAnUnresolvableChainIsReportedNotGuessed(): void {
 		$this->assertSame(
-			['value' => null, 'unresolved' => '--nowhere'],
-			$this->parser->resolveVarChain(value: 'var(--nowhere)', declarations: [])
+			expected: ['value' => null, 'unresolved' => '--nowhere'],
+			actual: $this->parser->resolveVarChain(value: 'var(--nowhere)', declarations: [])
 		);
 
 		$cycle = ['--a' => 'var(--b)', '--b' => 'var(--a)'];
 		$result = $this->parser->resolveVarChain(value: $cycle['--a'], declarations: $cycle);
 
-		$this->assertNull($result['value'], 'A cycle must not resolve to a value.');
-		$this->assertNotNull($result['unresolved'], 'A cycle must name the token it stopped on.');
+		$this->assertNull(actual: $result['value'], message: 'A cycle must not resolve to a value.');
+		$this->assertNotNull(actual: $result['unresolved'], message: 'A cycle must name the token it stopped on.');
 	}//end testAnUnresolvableChainIsReportedNotGuessed()
 }//end class

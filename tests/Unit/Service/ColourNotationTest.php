@@ -62,9 +62,9 @@ final class ColourNotationTest extends TestCase {
 	public function testEveryNotationComesBack(): void {
 		$document = $this->download();
 
-		$this->assertSame('rgb(54, 105, 165)', $document['nldesign']['color']['a']['$extensions']['nl.conduction.thematiq']['css']);
-		$this->assertArrayNotHasKey('css', $document['nldesign']['color']['e']['$extensions']['nl.conduction.thematiq'], 'a hex needs no copy');
-		$this->assertSame(self::DECLARATIONS, (new DesignTokensMapper())->map(document: $document)['declarations']);
+		$this->assertSame(expected: 'rgb(54, 105, 165)', actual: $document['nldesign']['color']['a']['$extensions']['nl.conduction.thematiq']['css']);
+		$this->assertArrayNotHasKey(key: 'css', array: $document['nldesign']['color']['e']['$extensions']['nl.conduction.thematiq'], message: 'a hex needs no copy');
+		$this->assertSame(expected: self::DECLARATIONS, actual: (new DesignTokensMapper())->map(document: $document)['declarations']);
 	}//end testEveryNotationComesBack()
 
 	/**
@@ -80,9 +80,9 @@ final class ColourNotationTest extends TestCase {
 
 		$declarations = (new DesignTokensMapper())->map(document: $document)['declarations'];
 
-		$this->assertSame('#000000', $declarations['--nldesign-color-a']);
-		$this->assertSame('#336699', $declarations['--nldesign-color-b']);
-		$this->assertSame('#00000080', $declarations['--nldesign-color-c']);
+		$this->assertSame(expected: '#000000', actual: $declarations['--nldesign-color-a']);
+		$this->assertSame(expected: '#336699', actual: $declarations['--nldesign-color-b']);
+		$this->assertSame(expected: '#00000080', actual: $declarations['--nldesign-color-c']);
 	}//end testAChangedColourIsNotOverwrittenByItsOldText()
 
 	/**
@@ -103,6 +103,6 @@ final class ColourNotationTest extends TestCase {
 			],
 		];
 
-		$this->assertSame(['--nldesign-color-primary' => 'rgb(54 105 165)'], (new DesignTokensMapper())->map(document: $document)['declarations']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => 'rgb(54 105 165)'], actual: (new DesignTokensMapper())->map(document: $document)['declarations']);
 	}//end testThePluginsTextIsReadToo()
 }//end class

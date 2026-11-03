@@ -77,28 +77,28 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->makeAppDir();
 		$config = $this->memoryConfig();
 
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audit[] = [$action, $context];
 			}
 		);
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->method('warning')->willReturnCallback(
 			function (string $message, array $context = []): void {
 				$this->logged[] = [$message, $context];
 			}
 		);
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getDateTime')->willReturn(new DateTime('2026-10-12T20:15:00+00:00'));
 
 		$this->service = new TokenSetLicenceService(
-			$this->fixtureTokenSets($config),
-			$config,
-			new ScheduledSwitchStore($config),
-			$audit,
-			$time,
-			$logger
+			tokenSets: $this->fixtureTokenSets(config: $config),
+			config: $config,
+			switches: new ScheduledSwitchStore(config: $config),
+			audit: $audit,
+			time: $time,
+			logger: $logger
 		);
 	}//end setUp()
 
@@ -110,26 +110,26 @@ class TokenSetLicenceServiceTest extends TestCase {
 	public function testAConfirmationIsStoredWithWhoAndWhenAndLogged(): void {
 		$confirmation = $this->service->confirm('owned', 'ruben');
 
-		$this->assertSame(['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00'], $confirmation);
+		$this->assertSame(expected: ['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00'], actual: $confirmation);
 		$stored = json_decode($this->appValues[RestrictedSetGate::CONFIG_KEY], true);
-		$this->assertSame(['owned' => ['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00']], $stored);
+		$this->assertSame(expected: ['owned' => ['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00']], actual: $stored);
 
-		$this->assertCount(1, $this->audit);
-		$this->assertSame('restricted_set_confirmed', $this->audit[0][0]);
-		$this->assertSame('owned', $this->audit[0][1]['new']);
-		$this->assertSame('ruben', $this->audit[0][1]['actor']);
-		$this->assertSame('LicenseRef-Voorbeeld', $this->audit[0][1]['licence']);
-		$this->assertSame('Gemeente Voorbeeld', $this->audit[0][1]['holder']);
+		$this->assertCount(expectedCount: 1, haystack: $this->audit);
+		$this->assertSame(expected: 'restricted_set_confirmed', actual: $this->audit[0][0]);
+		$this->assertSame(expected: 'owned', actual: $this->audit[0][1]['new']);
+		$this->assertSame(expected: 'ruben', actual: $this->audit[0][1]['actor']);
+		$this->assertSame(expected: 'LicenseRef-Voorbeeld', actual: $this->audit[0][1]['licence']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $this->audit[0][1]['holder']);
 
-		$this->assertCount(1, $this->logged);
-		$this->assertSame(['uid' => 'ruben', 'set' => 'owned', 'app' => 'thematiq'], $this->logged[0][1]);
+		$this->assertCount(expectedCount: 1, haystack: $this->logged);
+		$this->assertSame(expected: ['uid' => 'ruben', 'set' => 'owned', 'app' => 'thematiq'], actual: $this->logged[0][1]);
 	}//end testAConfirmationIsStoredWithWhoAndWhenAndLogged()
 
 	public function testASecondConfirmationKeepsTheFirst(): void {
 		$this->service->confirm('owned', 'ruben');
 
-		$this->assertSame('ruben', $this->service->confirm('owned', 'someone-else')['uid']);
-		$this->assertCount(1, $this->audit);
+		$this->assertSame(expected: 'ruben', actual: $this->service->confirm('owned', 'someone-else')['uid']);
+		$this->assertCount(expectedCount: 1, haystack: $this->audit);
 	}//end testASecondConfirmationKeepsTheFirst()
 
 	/**
@@ -148,10 +148,10 @@ class TokenSetLicenceServiceTest extends TestCase {
 	public function testOnlyARestrictedSetIsConfirmedAndOnlyByName(string $set, string $uid): void {
 		try {
 			$this->service->confirm($set, $uid);
-			$this->fail('a confirmation was stored');
+			$this->fail(message: 'a confirmation was stored');
 		} catch (InvalidArgumentException $e) {
-			$this->assertArrayNotHasKey(RestrictedSetGate::CONFIG_KEY, $this->appValues);
-			$this->assertSame([], $this->audit);
+			$this->assertArrayNotHasKey(key: RestrictedSetGate::CONFIG_KEY, array: $this->appValues);
+			$this->assertSame(expected: [], actual: $this->audit);
 		}
 	}//end testOnlyARestrictedSetIsConfirmedAndOnlyByName()
 
@@ -182,14 +182,14 @@ class TokenSetLicenceServiceTest extends TestCase {
 
 		try {
 			$this->service->withdraw('owned', 'ruben');
-			$this->fail('the confirmation was withdrawn while the set is applied');
+			$this->fail(message: 'the confirmation was withdrawn while the set is applied');
 		} catch (RestrictedSetInUseException $e) {
-			$this->assertSame(409, $e->getCode());
-			$this->assertSame([$place], $e->getAppliedIn());
+			$this->assertSame(expected: 409, actual: $e->getCode());
+			$this->assertSame(expected: [$place], actual: $e->getAppliedIn());
 		}
 
-		$this->assertArrayHasKey('owned', json_decode($this->appValues[RestrictedSetGate::CONFIG_KEY], true));
-		$this->assertCount(1, $this->audit, 'only the confirmation is in the audit trail');
+		$this->assertArrayHasKey(key: 'owned', array: json_decode($this->appValues[RestrictedSetGate::CONFIG_KEY], true));
+		$this->assertCount(expectedCount: 1, haystack: $this->audit, message: 'only the confirmation is in the audit trail');
 	}//end testAWithdrawalIsRefusedWhileTheSetIsApplied()
 
 	public function testAFinishedSwitchDoesNotHoldTheConfirmation(): void {
@@ -198,56 +198,56 @@ class TokenSetLicenceServiceTest extends TestCase {
 
 		$this->service->withdraw('owned', 'ruben');
 
-		$this->assertSame('{}', $this->appValues[RestrictedSetGate::CONFIG_KEY]);
+		$this->assertSame(expected: '{}', actual: $this->appValues[RestrictedSetGate::CONFIG_KEY]);
 	}//end testAFinishedSwitchDoesNotHoldTheConfirmation()
 
 	public function testAWithdrawalIsLoggedWithTheConfirmationItEnds(): void {
 		$this->service->confirm('owned', 'ruben');
 		$this->service->withdraw('owned', 'noor');
 
-		$this->assertSame('restricted_set_confirmation_withdrawn', $this->audit[1][0]);
-		$this->assertSame('owned', $this->audit[1][1]['old']);
-		$this->assertSame('noor', $this->audit[1][1]['actor']);
-		$this->assertSame('ruben', $this->audit[1][1]['confirmedBy']);
-		$this->assertSame('2026-10-12T20:15:00+00:00', $this->audit[1][1]['confirmedAt']);
-		$this->assertCount(2, $this->logged);
+		$this->assertSame(expected: 'restricted_set_confirmation_withdrawn', actual: $this->audit[1][0]);
+		$this->assertSame(expected: 'owned', actual: $this->audit[1][1]['old']);
+		$this->assertSame(expected: 'noor', actual: $this->audit[1][1]['actor']);
+		$this->assertSame(expected: 'ruben', actual: $this->audit[1][1]['confirmedBy']);
+		$this->assertSame(expected: '2026-10-12T20:15:00+00:00', actual: $this->audit[1][1]['confirmedAt']);
+		$this->assertCount(expectedCount: 2, haystack: $this->logged);
 
 		$this->service->withdraw('owned', 'noor');
-		$this->assertCount(2, $this->audit, 'withdrawing what is not confirmed writes nothing');
+		$this->assertCount(expectedCount: 2, haystack: $this->audit, message: 'withdrawing what is not confirmed writes nothing');
 	}//end testAWithdrawalIsLoggedWithTheConfirmationItEnds()
 
 	public function testASetAppliedWithoutAConfirmationAwaitsOne(): void {
-		$this->assertSame([], $this->service->awaitingConfirmation());
+		$this->assertSame(expected: [], actual: $this->service->awaitingConfirmation());
 
 		$this->appValues['token_set'] = 'owned';
 		$this->appValues['group_token_sets'] = '[{"group":"ruimte","tokenSet":"owned-two"}]';
 		$this->assertSame(
-			[
+			expected: [
 				['tokenSet' => 'owned', 'appliedIn' => [['kind' => 'instance', 'id' => '']], 'since' => ''],
 				['tokenSet' => 'owned-two', 'appliedIn' => [['kind' => 'group', 'id' => 'ruimte']], 'since' => ''],
 			],
-			$this->service->awaitingConfirmation()
+			actual: $this->service->awaitingConfirmation()
 		);
 
 		$this->service->confirm('owned', 'ruben');
-		$this->assertSame(['owned-two'], array_column($this->service->awaitingConfirmation(), 'tokenSet'));
+		$this->assertSame(expected: ['owned-two'], actual: array_column($this->service->awaitingConfirmation(), 'tokenSet'));
 	}//end testASetAppliedWithoutAConfirmationAwaitsOne()
 
 	public function testTheSettingsPageGetsEveryRestrictedSetAndItsLicence(): void {
 		$this->service->confirm('owned', 'ruben');
 
 		$sets = array_column($this->service->restrictedSets(), null, 'id');
-		$this->assertSame(['owned-two', 'owned', 'sloppy'], array_keys($sets), 'sorted by name');
-		$this->assertSame('Gemeente Voorbeeld', $sets['owned']['name']);
-		$this->assertSame('@example/voorbeeld-design-tokens', $sets['owned']['licence']['package']);
-		$this->assertSame('ruben', $sets['owned']['confirmation']['uid']);
-		$this->assertNull($sets['owned-two']['confirmation']);
+		$this->assertSame(expected: ['owned-two', 'owned', 'sloppy'], actual: array_keys($sets), message: 'sorted by name');
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $sets['owned']['name']);
+		$this->assertSame(expected: '@example/voorbeeld-design-tokens', actual: $sets['owned']['licence']['package']);
+		$this->assertSame(expected: 'ruben', actual: $sets['owned']['confirmation']['uid']);
+		$this->assertNull(actual: $sets['owned-two']['confirmation']);
 
 		$described = $this->service->describe('owned');
-		$this->assertSame("All rights reserved. Use is limited to Gemeente Voorbeeld.\n", $described['text']);
-		$this->assertSame('1.0.3', $described['licence']['version']);
-		$this->assertSame([], $described['appliedIn']);
-		$this->assertNull($this->service->describe('nextcloud'));
-		$this->assertFalse($this->service->describe('open')['licence']['restricted']);
+		$this->assertSame(expected: "All rights reserved. Use is limited to Gemeente Voorbeeld.\n", actual: $described['text']);
+		$this->assertSame(expected: '1.0.3', actual: $described['licence']['version']);
+		$this->assertSame(expected: [], actual: $described['appliedIn']);
+		$this->assertNull(actual: $this->service->describe('nextcloud'));
+		$this->assertFalse(condition: $this->service->describe('open')['licence']['restricted']);
 	}//end testTheSettingsPageGetsEveryRestrictedSetAndItsLicence()
 }//end class

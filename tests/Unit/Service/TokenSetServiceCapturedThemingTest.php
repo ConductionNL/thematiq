@@ -62,24 +62,24 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 			json_encode([['id' => 'amsterdam', 'name' => 'Amsterdam', 'theming' => ['primary_color' => '#ec0000']]])
 		);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->values[$key] ?? $default)
 		);
 
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		$this->service = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()),
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 	}//end setUp()
 
@@ -108,7 +108,7 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 	 * A set's own theming is served while it captured nothing.
 	 */
 	public function testAShippedSetKeepsItsOwnThemingUntilItCapturesAny(): void {
-		$this->assertSame(['primary_color' => '#ec0000'], $this->themingOf('amsterdam'));
+		$this->assertSame(expected: ['primary_color' => '#ec0000'], actual: $this->themingOf(id: 'amsterdam'));
 	}//end testAShippedSetKeepsItsOwnThemingUntilItCapturesAny()
 
 	/**
@@ -118,7 +118,7 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 		$captured = ['captured' => true, 'primary_color' => '#23845c', 'background_mode' => 'color'];
 		$this->values['captured_theming'] = json_encode(['amsterdam' => $captured]);
 
-		$this->assertSame($captured, $this->themingOf('amsterdam'));
+		$this->assertSame(expected: $captured, actual: $this->themingOf(id: 'amsterdam'));
 	}//end testCapturedBrandingReplacesTheSetsOwn()
 
 	/**
@@ -127,6 +127,6 @@ class TokenSetServiceCapturedThemingTest extends TestCase {
 	public function testAnUnreadableStoreIsIgnored(): void {
 		$this->values['captured_theming'] = 'not json';
 
-		$this->assertSame(['primary_color' => '#ec0000'], $this->themingOf('amsterdam'));
+		$this->assertSame(expected: ['primary_color' => '#ec0000'], actual: $this->themingOf(id: 'amsterdam'));
 	}//end testAnUnreadableStoreIsIgnored()
 }//end class

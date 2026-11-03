@@ -32,7 +32,7 @@ class ContrastControllerTest extends TestCase {
 	public function testEvaluateHasNoAdminRequiredAttribute(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
 
-		$this->assertCount(1, $method->getAttributes(NoAdminRequired::class));
+		$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(NoAdminRequired::class));
 	}//end testEvaluateHasNoAdminRequiredAttribute()
 
 	/**
@@ -41,7 +41,7 @@ class ContrastControllerTest extends TestCase {
 	public function testEvaluateHasNoPublicPageAttribute(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
 
-		$this->assertCount(0, $method->getAttributes(PublicPage::class));
+		$this->assertCount(expectedCount: 0, haystack: $method->getAttributes(PublicPage::class));
 	}//end testEvaluateHasNoPublicPageAttribute()
 
 	/**
@@ -53,8 +53,8 @@ class ContrastControllerTest extends TestCase {
 	public function testEvaluateHasNoCsrfExemption(): void {
 		$method = new ReflectionMethod(ContrastController::class, 'evaluate');
 
-		$this->assertCount(0, $method->getAttributes(NoCSRFRequired::class));
-		$this->assertStringNotContainsString('@NoCSRFRequired', (string)$method->getDocComment());
+		$this->assertCount(expectedCount: 0, haystack: $method->getAttributes(NoCSRFRequired::class));
+		$this->assertStringNotContainsString(needle: '@NoCSRFRequired', haystack: (string)$method->getDocComment());
 	}//end testEvaluateHasNoCsrfExemption()
 
 	/**
@@ -66,7 +66,7 @@ class ContrastControllerTest extends TestCase {
 			['name' => 'primary', 'ratio' => 8.99, 'threshold' => 4.5, 'level' => 'AA', 'pass' => true],
 		];
 
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn([
 			'candidates' => [
 				['name' => 'primary', 'value' => '#154273', 'role' => 'text'],
@@ -74,7 +74,7 @@ class ContrastControllerTest extends TestCase {
 			'background' => '#F5F6F7',
 		]);
 
-		$contrastService = $this->createMock(ContrastService::class);
+		$contrastService = $this->createMock(originalClassName: ContrastService::class);
 		$contrastService->expects($this->once())
 			->method('evaluate')
 			->with(
@@ -83,58 +83,58 @@ class ContrastControllerTest extends TestCase {
 			)
 			->willReturn($expected);
 
-		$controller = new ContrastController('nldesign', $request, $contrastService);
+		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $contrastService);
 		$response = $controller->evaluate();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['results' => $expected], $response->getData());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['results' => $expected], actual: $response->getData());
 	}//end testEvaluateDelegatesToContrastServiceAndReturnsResults()
 
 	/**
 	 * A missing `background` returns 400, never a silent 200.
 	 */
 	public function testMissingBackgroundReturns400(): void {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn([
 			'candidates' => [['name' => 'primary', 'value' => '#154273', 'role' => 'text']],
 		]);
 
-		$controller = new ContrastController('nldesign', $request, $this->createMock(ContrastService::class));
+		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
 		$response = $controller->evaluate();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testMissingBackgroundReturns400()
 
 	/**
 	 * A non-array `candidates` returns 400.
 	 */
 	public function testNonArrayCandidatesReturns400(): void {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn([
 			'candidates' => 'not-an-array',
 			'background' => '#FFFFFF',
 		]);
 
-		$controller = new ContrastController('nldesign', $request, $this->createMock(ContrastService::class));
+		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
 		$response = $controller->evaluate();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testNonArrayCandidatesReturns400()
 
 	/**
 	 * A candidate with an invalid `role` (not `text`/`ui`) returns 400.
 	 */
 	public function testCandidateWithInvalidRoleReturns400(): void {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn([
 			'candidates' => [['name' => 'primary', 'value' => '#154273', 'role' => 'bogus']],
 			'background' => '#FFFFFF',
 		]);
 
-		$controller = new ContrastController('nldesign', $request, $this->createMock(ContrastService::class));
+		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class));
 		$response = $controller->evaluate();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testCandidateWithInvalidRoleReturns400()
 
 	/**
@@ -143,20 +143,20 @@ class ContrastControllerTest extends TestCase {
 	 * returns under `results`.
 	 */
 	public function testResponseEnvelopeHasNoVerdictKeys(): void {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn([
 			'candidates' => [['name' => 'primary', 'value' => '#154273', 'role' => 'text']],
 			'background' => '#FFFFFF',
 		]);
 
-		$contrastService = $this->createMock(ContrastService::class);
+		$contrastService = $this->createMock(originalClassName: ContrastService::class);
 		$contrastService->method('evaluate')->willReturn([]);
 
-		$controller = new ContrastController('nldesign', $request, $contrastService);
+		$controller = new ContrastController(appName: 'nldesign', request: $request, contrastService: $contrastService);
 		$data = $controller->evaluate()->getData();
 
-		$this->assertArrayNotHasKey('blocked', $data);
-		$this->assertArrayNotHasKey('allowed', $data);
-		$this->assertArrayNotHasKey('verdict', $data);
+		$this->assertArrayNotHasKey(key: 'blocked', array: $data);
+		$this->assertArrayNotHasKey(key: 'allowed', array: $data);
+		$this->assertArrayNotHasKey(key: 'verdict', array: $data);
 	}//end testResponseEnvelopeHasNoVerdictKeys()
 }//end class

@@ -57,15 +57,15 @@ class AuditControllerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->versions = $this->createMock(ThemeVersionService::class);
-		$this->restorer = $this->createMock(ThemeVersionRestoreService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->versions = $this->createMock(originalClassName: ThemeVersionService::class);
+		$this->restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);
 		$this->controller = new AuditController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->auditService,
-			$this->versions,
-			$this->restorer
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			auditService: $this->auditService,
+			versionService: $this->versions,
+			restoreService: $this->restorer
 		);
 	}//end setUp()
 
@@ -80,7 +80,7 @@ class AuditControllerTest extends TestCase {
 
 		$response = $this->controller->list();
 
-		$this->assertSame(['entries' => []], $response->getData());
+		$this->assertSame(expected: ['entries' => []], actual: $response->getData());
 	}//end testListUsesDefaultLimit()
 
 	/**
@@ -124,12 +124,12 @@ class AuditControllerTest extends TestCase {
 		$property->setAccessible(true);
 		$headers = $property->getValue($response);
 
-		$this->assertSame('application/x-ndjson', $headers['Content-Type']);
+		$this->assertSame(expected: 'application/x-ndjson', actual: $headers['Content-Type']);
 		// The real OCP DataDownloadResponse does not quote the filename; the
 		// standalone stub does. Assert the parts, not the quoting flavour.
-		$this->assertStringContainsString('attachment;', $headers['Content-Disposition']);
-		$this->assertStringContainsString('nldesign-audit.jsonl', $headers['Content-Disposition']);
-		$this->assertSame('{"a":1}' . "\n", $response->render());
+		$this->assertStringContainsString(needle: 'attachment;', haystack: $headers['Content-Disposition']);
+		$this->assertStringContainsString(needle: 'nldesign-audit.jsonl', haystack: $headers['Content-Disposition']);
+		$this->assertSame(expected: '{"a":1}' . "\n", actual: $response->render());
 	}//end testExportHeaders()
 
 	/**
@@ -141,8 +141,8 @@ class AuditControllerTest extends TestCase {
 			$reflection = new \ReflectionMethod(AuditController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
 
-			$this->assertNotEmpty($attributes, "AuditController::{$method}() must carry #[AuthorizedAdminSetting]");
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
+			$this->assertNotEmpty(actual: $attributes, message: "AuditController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
 		}
 	}//end testBothMethodsAreAdminAnnotated()
 
@@ -154,7 +154,7 @@ class AuditControllerTest extends TestCase {
 	public function testVersionsListsTheKeptVersions(): void {
 		$this->versions->method('list')->willReturn([['id' => '20260929164000-0001']]);
 
-		$this->assertSame(['versions' => [['id' => '20260929164000-0001']]], $this->controller->versions()->getData());
+		$this->assertSame(expected: ['versions' => [['id' => '20260929164000-0001']]], actual: $this->controller->versions()->getData());
 	}//end testVersionsListsTheKeptVersions()
 
 	/**
@@ -166,8 +166,8 @@ class AuditControllerTest extends TestCase {
 		$this->restorer->method('preview')->willReturn(null);
 		$this->restorer->method('restore')->willReturn(null);
 
-		$this->assertSame(404, $this->controller->previewVersion(id: 'nope')->getStatus());
-		$this->assertSame(404, $this->controller->restoreVersion(id: 'nope')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller->previewVersion(id: 'nope')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller->restoreVersion(id: 'nope')->getStatus());
 	}//end testAnUnknownVersionIs404()
 
 	/**
@@ -181,8 +181,8 @@ class AuditControllerTest extends TestCase {
 			['applied' => true, 'valid' => true]
 		);
 
-		$this->assertSame(422, $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
-		$this->assertSame(200, $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
+		$this->assertSame(expected: 422, actual: $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
+		$this->assertSame(expected: 200, actual: $this->controller->restoreVersion(id: '20260929164000-0001')->getStatus());
 	}//end testRestoreAnswersByOutcome()
 
 	/**
@@ -190,8 +190,8 @@ class AuditControllerTest extends TestCase {
 	 */
 	public function testTheVersionRoutesAreRegistered(): void {
 		$routes = (string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/routes.php');
-		$this->assertStringContainsString("['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET']", $routes);
-		$this->assertStringContainsString("['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST']", $routes);
-		$this->assertStringContainsString("['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST']", $routes);
+		$this->assertStringContainsString(needle: "['name' => 'audit#versions', 'url' => '/settings/versions', 'verb' => 'GET']", haystack: $routes);
+		$this->assertStringContainsString(needle: "['name' => 'audit#previewVersion', 'url' => '/settings/versions/{id}/preview', 'verb' => 'POST']", haystack: $routes);
+		$this->assertStringContainsString(needle: "['name' => 'audit#restoreVersion', 'url' => '/settings/versions/{id}/restore', 'verb' => 'POST']", haystack: $routes);
 	}//end testTheVersionRoutesAreRegistered()
 }//end class

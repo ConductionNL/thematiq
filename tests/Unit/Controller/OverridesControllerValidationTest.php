@@ -73,22 +73,22 @@ class OverridesControllerValidationTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-694-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
 		$this->overridesService = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
 				cssParser: $parser,
 				darkPalette: $darkPalette
 			)
 		);
 		$this->overridesService->write(tokens: ['--color-primary' => '#000000']);
 
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->request = $this->createMock(IRequest::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 	}//end setUp()
 
 	protected function tearDown(): void {
@@ -110,13 +110,13 @@ class OverridesControllerValidationTest extends TestCase {
 	 */
 	private function controller(CustomOverridesService $service): OverridesController {
 		return new OverridesController(
-			'thematiq',
-			$this->request,
-			$service,
-			new CssParserService(),
-			$this->auditService,
-			$this->createMock(IConfig::class),
-			$this->createMock(ThemingService::class)
+			appName: 'thematiq',
+			request: $this->request,
+			overridesService: $service,
+			cssParser: new CssParserService(),
+			auditService: $this->auditService,
+			config: $this->createMock(originalClassName: IConfig::class),
+			themingService: $this->createMock(originalClassName: ThemingService::class)
 		);
 	}//end controller()
 
@@ -131,9 +131,9 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('--not-a-registry-token', json_encode($response->getData()));
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--not-a-registry-token', haystack: json_encode($response->getData()));
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testUnknownTokenIs400()
 
 	/**
@@ -148,9 +148,9 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('--color-primary', json_encode($response->getData()));
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--color-primary', haystack: json_encode($response->getData()));
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testWrongValueIs400()
 
 	/**
@@ -163,8 +163,8 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testNonStringValueIs400()
 
 	/**
@@ -187,11 +187,11 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(2, $response->getData()['written']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 2, actual: $response->getData()['written']);
 		$this->assertSame(
-			['--color-primary' => '#112233', '--color-primary-element' => '#445566'],
-			$this->overridesService->read()
+			expected: ['--color-primary' => '#112233', '--color-primary-element' => '#445566'],
+			actual: $this->overridesService->read()
 		);
 	}//end testValidSaveReportsAndAuditsWhatWasWritten()
 
@@ -200,7 +200,7 @@ class OverridesControllerValidationTest extends TestCase {
 	 * the service puts in its exception text.
 	 */
 	public function testWriteFailureHidesPath(): void {
-		$failing = $this->getMockBuilder(CustomOverridesService::class)
+		$failing = $this->getMockBuilder(className: CustomOverridesService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['read', 'write', 'findRejected'])
 			->getMock();
@@ -213,8 +213,8 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $failing)->setOverrides();
 
-		$this->assertSame(500, $response->getStatus());
-		$this->assertStringNotContainsString('/var/www', json_encode($response->getData()));
-		$this->assertStringNotContainsString('custom-overrides.css', json_encode($response->getData()));
+		$this->assertSame(expected: 500, actual: $response->getStatus());
+		$this->assertStringNotContainsString(needle: '/var/www', haystack: json_encode($response->getData()));
+		$this->assertStringNotContainsString(needle: 'custom-overrides.css', haystack: json_encode($response->getData()));
 	}//end testWriteFailureHidesPath()
 }//end class

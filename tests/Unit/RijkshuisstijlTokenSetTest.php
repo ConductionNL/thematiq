@@ -87,35 +87,35 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 			}
 		}
 
-		$this->fail('token-sets.json lists no rijkshuisstijl set');
+		$this->fail(message: 'token-sets.json lists no rijkshuisstijl set');
 	}//end manifestEntry()
 
 	public function testTheSetCarriesTheCommunityTokenValues(): void {
 		$declarations = $this->declarations();
 		foreach (self::UPSTREAM_VALUES as $name => $value) {
-			$this->assertArrayHasKey($name, $declarations, $name . ' is not declared');
-			$this->assertSame($value, strtolower($declarations[$name]), $name);
+			$this->assertArrayHasKey(key: $name, array: $declarations, message: $name . ' is not declared');
+			$this->assertSame(expected: $value, actual: strtolower($declarations[$name]), message: $name);
 		}
 	}//end testTheSetCarriesTheCommunityTokenValues()
 
 	public function testTheFontStackFallsThroughToFiraSans(): void {
 		$family = $this->declarations()['--nldesign-font-family'] ?? '';
-		$this->assertStringStartsWith("'Fira Sans'", $family);
-		$this->assertStringNotContainsStringIgnoringCase('Rijksoverheid', $family, 'the government fonts are restricted');
+		$this->assertStringStartsWith(prefix: "'Fira Sans'", string: $family);
+		$this->assertStringNotContainsStringIgnoringCase(needle: 'Rijksoverheid', haystack: $family, message: 'the government fonts are restricted');
 	}//end testTheFontStackFallsThroughToFiraSans()
 
 	public function testTheManifestNamesTheUpstreamRelease(): void {
 		$licence = $this->manifestEntry()['licence'] ?? [];
-		$this->assertSame('@rijkshuisstijl-community/design-tokens', ($licence['package'] ?? null));
-		$this->assertSame(self::UPSTREAM_VERSION, ($licence['version'] ?? null));
-		$this->assertTrue(($licence['restricted'] ?? false), 'the house style stays behind the licence gate');
+		$this->assertSame(expected: '@rijkshuisstijl-community/design-tokens', actual: ($licence['package'] ?? null));
+		$this->assertSame(expected: self::UPSTREAM_VERSION, actual: ($licence['version'] ?? null));
+		$this->assertTrue(condition: ($licence['restricted'] ?? false), message: 'the house style stays behind the licence gate');
 	}//end testTheManifestNamesTheUpstreamRelease()
 
 	public function testTheLicenceTableRecordsTheSameRelease(): void {
 		$table = (string)file_get_contents($this->root() . '/docs/reference/token-set-licences.md');
 		$this->assertStringContainsString(
-			'| `rijkshuisstijl` | `@rijkshuisstijl-community/design-tokens` | ' . self::UPSTREAM_VERSION . ' |',
-			$table,
+			needle: '| `rijkshuisstijl` | `@rijkshuisstijl-community/design-tokens` | ' . self::UPSTREAM_VERSION . ' |',
+			haystack: $table,
 		);
 	}//end testTheLicenceTableRecordsTheSameRelease()
 }//end class

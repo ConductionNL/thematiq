@@ -45,9 +45,9 @@ class ClaimAccuracyTest extends TestCase {
 	 */
 	private function readFile(string $relativePath): string {
 		$path = $this->repoRoot() . '/' . $relativePath;
-		$this->assertFileExists($path, "Expected file to exist: {$relativePath}");
+		$this->assertFileExists(filename: $path, message: "Expected file to exist: {$relativePath}");
 		$contents = file_get_contents($path);
-		$this->assertIsString($contents, "Could not read {$relativePath}");
+		$this->assertIsString(actual: $contents, message: "Could not read {$relativePath}");
 		return $contents;
 	}
 
@@ -55,8 +55,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * The number of token sets shipped, derived from token-sets.json.
 	 */
 	private function tokenSetCount(): int {
-		$json = json_decode($this->readFile('token-sets.json'), true);
-		$this->assertIsArray($json, 'token-sets.json must decode to an array.');
+		$json = json_decode($this->readFile(relativePath: 'token-sets.json'), true);
+		$this->assertIsArray(actual: $json, message: 'token-sets.json must decode to an array.');
 		return \count($json);
 	}
 
@@ -66,7 +66,7 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.1
 	 */
 	public function testManifestLicenceMatchesBundledLicence(): void {
-		$info = $this->readFile('appinfo/info.xml');
+		$info = $this->readFile(relativePath: 'appinfo/info.xml');
 
 		// The fleet declares the version explicitly ("EUPL-1.2"), which the
 		// original bare-"eupl" pattern rejected — so this test failed against a
@@ -74,31 +74,31 @@ class ClaimAccuracyTest extends TestCase {
 		// Conduction app. Accept the version suffix; the point of the assertion
 		// is EUPL rather than AGPL, which the check below still enforces.
 		$this->assertMatchesRegularExpression(
-			'#<licence>\s*eupl(-1\.2)?\s*</licence>#i',
-			$info,
-			'appinfo/info.xml <licence> must declare EUPL ("eupl" or "EUPL-1.2").'
+			pattern: '#<licence>\s*eupl(-1\.2)?\s*</licence>#i',
+			string: $info,
+			message: 'appinfo/info.xml <licence> must declare EUPL ("eupl" or "EUPL-1.2").'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'#<licence>\s*agpl\s*</licence>#i',
-			$info,
-			'appinfo/info.xml must not declare AGPL.'
+			pattern: '#<licence>\s*agpl\s*</licence>#i',
+			string: $info,
+			message: 'appinfo/info.xml must not declare AGPL.'
 		);
 
 		// The manifest description must state the EUPL licence in prose.
 		$this->assertMatchesRegularExpression(
-			'/EUPL[\s-]?1\.2/i',
-			$info,
-			'appinfo/info.xml <description> must mention the EUPL-1.2 licence.'
+			pattern: '/EUPL[\s-]?1\.2/i',
+			string: $info,
+			message: 'appinfo/info.xml <description> must mention the EUPL-1.2 licence.'
 		);
 
 		// The bundled LICENSE file must be the European Union Public Licence.
-		$license = $this->readFile('LICENSE');
+		$license = $this->readFile(relativePath: 'LICENSE');
 		$firstLine = strtok($license, "\n");
-		$this->assertIsString($firstLine, 'LICENSE must have a first line.');
+		$this->assertIsString(actual: $firstLine, message: 'LICENSE must have a first line.');
 		$this->assertStringContainsStringIgnoringCase(
-			'EUROPEAN UNION PUBLIC LICENCE',
-			$firstLine,
-			'The first line of LICENSE must name the European Union Public Licence.'
+			needle: 'EUROPEAN UNION PUBLIC LICENCE',
+			haystack: $firstLine,
+			message: 'The first line of LICENSE must name the European Union Public Licence.'
 		);
 	}
 
@@ -109,8 +109,8 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/specs/beta-alignment/spec.md#requirement-infoxml-localisation
 	 */
 	public function testManifestTextIsPairedInEnglishAndDutch(): void {
-		$info = simplexml_load_string($this->readFile('appinfo/info.xml'));
-		$this->assertNotFalse($info, 'appinfo/info.xml must parse.');
+		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
+		$this->assertNotFalse(condition: $info, message: 'appinfo/info.xml must parse.');
 
 		foreach (['summary', 'description'] as $tag) {
 			$byLang = [];
@@ -118,9 +118,9 @@ class ClaimAccuracyTest extends TestCase {
 				$byLang[(string)$node['lang']] = trim((string)$node);
 			}
 
-			$this->assertNotEmpty($byLang['en'] ?? '', "<{$tag} lang=\"en\"> must be present.");
-			$this->assertNotEmpty($byLang['nl'] ?? '', "<{$tag} lang=\"nl\"> must be present.");
-			$this->assertNotSame($byLang['en'], $byLang['nl'], "<{$tag} lang=\"nl\"> must be translated, not copied.");
+			$this->assertNotEmpty(actual: $byLang['en'] ?? '', message: "<{$tag} lang=\"en\"> must be present.");
+			$this->assertNotEmpty(actual: $byLang['nl'] ?? '', message: "<{$tag} lang=\"nl\"> must be present.");
+			$this->assertNotSame(expected: $byLang['en'], actual: $byLang['nl'], message: "<{$tag} lang=\"nl\"> must be translated, not copied.");
 		}
 
 		$names = [];
@@ -128,7 +128,7 @@ class ClaimAccuracyTest extends TestCase {
 			$names[] = (string)$node['lang'];
 		}
 
-		$this->assertEqualsCanonicalizing(['en', 'nl'], $names, '<name> must come as an en and an nl pair.');
+		$this->assertEqualsCanonicalizing(expected: ['en', 'nl'], actual: $names, message: '<name> must come as an en and an nl pair.');
 	}
 
 	// REUSE-IgnoreStart -- from here to the end of testSpdxHeadersAgreeWithManifest()
@@ -143,7 +143,7 @@ class ClaimAccuracyTest extends TestCase {
 	 */
 	public function testSpdxHeadersAgreeWithManifest(): void {
 		$libDir = $this->repoRoot() . '/lib';
-		$this->assertDirectoryExists($libDir);
+		$this->assertDirectoryExists(directory: $libDir);
 
 		$iterator = new \RecursiveIteratorIterator(
 			new \RecursiveDirectoryIterator($libDir, \FilesystemIterator::SKIP_DOTS)
@@ -158,22 +158,22 @@ class ClaimAccuracyTest extends TestCase {
 
 			$rel = str_replace($this->repoRoot() . '/', '', $file->getPathname());
 			$contents = file_get_contents($file->getPathname());
-			$this->assertIsString($contents, "Could not read {$rel}");
+			$this->assertIsString(actual: $contents, message: "Could not read {$rel}");
 
 			$this->assertMatchesRegularExpression(
-				'/SPDX-License-Identifier:\s*EUPL-1\.2/',
-				$contents,
-				"{$rel} must carry SPDX-License-Identifier: EUPL-1.2"
+				pattern: '/SPDX-License-Identifier:\s*EUPL-1\.2/',
+				string: $contents,
+				message: "{$rel} must carry SPDX-License-Identifier: EUPL-1.2"
 			);
 			$this->assertDoesNotMatchRegularExpression(
-				'/SPDX-License-Identifier:\s*AGPL/i',
-				$contents,
-				"{$rel} must not declare an AGPL SPDX identifier."
+				pattern: '/SPDX-License-Identifier:\s*AGPL/i',
+				string: $contents,
+				message: "{$rel} must not declare an AGPL SPDX identifier."
 			);
 			$checked++;
 		}
 
-		$this->assertGreaterThan(0, $checked, 'No PHP files were scanned under lib/.');
+		$this->assertGreaterThan(expected: 0, actual: $checked, message: 'No PHP files were scanned under lib/.');
 	}
 
 	// REUSE-IgnoreEnd
@@ -184,17 +184,17 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-1.4
 	 */
 	public function testGovernmentChecklistStatesRealLicenceAndHost(): void {
-		$doc = $this->readFile('docs/GOVERNMENT-FEATURES.md');
+		$doc = $this->readFile(relativePath: 'docs/GOVERNMENT-FEATURES.md');
 
 		$this->assertMatchesRegularExpression(
-			'/EUPL[\s-]?1\.2/i',
-			$doc,
-			'GOVERNMENT-FEATURES.md must state the EUPL-1.2 licence.'
+			pattern: '/EUPL[\s-]?1\.2/i',
+			string: $doc,
+			message: 'GOVERNMENT-FEATURES.md must state the EUPL-1.2 licence.'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'/\bAGPL\b/i',
-			$doc,
-			'GOVERNMENT-FEATURES.md must not state AGPL.'
+			pattern: '/\bAGPL\b/i',
+			string: $doc,
+			message: 'GOVERNMENT-FEATURES.md must not state AGPL.'
 		);
 
 		// The open-source technical row must reference GitHub, never Codeberg.
@@ -207,14 +207,14 @@ class ClaimAccuracyTest extends TestCase {
 		// organisations, so naming the wrong host is a false claim to a
 		// customer, which is exactly what this test class exists to prevent.
 		$this->assertStringContainsString(
-			'GitHub',
-			$doc,
-			'GOVERNMENT-FEATURES.md must reference the GitHub source host.'
+			needle: 'GitHub',
+			haystack: $doc,
+			message: 'GOVERNMENT-FEATURES.md must reference the GitHub source host.'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'/\bCodeberg\b/i',
-			$doc,
-			'GOVERNMENT-FEATURES.md must not reference Codeberg as the canonical source host.'
+			pattern: '/\bCodeberg\b/i',
+			string: $doc,
+			message: 'GOVERNMENT-FEATURES.md must not reference Codeberg as the canonical source host.'
 		);
 	}
 
@@ -225,34 +225,34 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.3
 	 */
 	public function testStylesheetUsesOnlyBundledFonts(): void {
-		$css = $this->readFile('css/fonts.css');
+		$css = $this->readFile(relativePath: 'css/fonts.css');
 
 		// No url() reference may use an http(s):// scheme.
 		preg_match_all('/url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/i', $css, $matches);
-		$this->assertNotEmpty($matches[1], 'css/fonts.css must contain at least one url() reference.');
+		$this->assertNotEmpty(actual: $matches[1], message: 'css/fonts.css must contain at least one url() reference.');
 
 		foreach ($matches[1] as $ref) {
 			$ref = trim($ref);
 			$this->assertDoesNotMatchRegularExpression(
-				'#^https?://#i',
-				$ref,
-				"css/fonts.css must not load fonts from an external URL: {$ref}"
+				pattern: '#^https?://#i',
+				string: $ref,
+				message: "css/fonts.css must not load fonts from an external URL: {$ref}"
 			);
 
 			// Every font-file reference must resolve on disk (relative to css/).
 			if (preg_match('/\.(woff2?|ttf|otf)$/i', $ref) === 1) {
 				$path = $this->repoRoot() . '/css/' . $ref;
 				$this->assertFileExists(
-					$path,
-					"css/fonts.css references a missing font file: css/{$ref}"
+					filename: $path,
+					message: "css/fonts.css references a missing font file: css/{$ref}"
 				);
 			}
 		}
 
 		$this->assertStringNotContainsStringIgnoringCase(
-			'jsdelivr',
-			$css,
-			'css/fonts.css must not reference the jsdelivr CDN.'
+			needle: 'jsdelivr',
+			haystack: $css,
+			message: 'css/fonts.css must not reference the jsdelivr CDN.'
 		);
 	}
 
@@ -264,29 +264,29 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-2.3
 	 */
 	public function testFontDocumentationMatchesBundledDelivery(): void {
-		$readme = $this->readFile('README.md');
+		$readme = $this->readFile(relativePath: 'README.md');
 
 		$this->assertStringNotContainsStringIgnoringCase(
-			'jsdelivr',
-			$readme,
-			'README.md must not claim fonts load from the jsdelivr CDN.'
+			needle: 'jsdelivr',
+			haystack: $readme,
+			message: 'README.md must not claim fonts load from the jsdelivr CDN.'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'/Loaded via CDN|CDN-based font/i',
-			$readme,
-			'README.md must not describe CDN-based font delivery.'
+			pattern: '/Loaded via CDN|CDN-based font/i',
+			string: $readme,
+			message: 'README.md must not describe CDN-based font delivery.'
 		);
 		$this->assertMatchesRegularExpression(
-			'/self-hosted|bundled/i',
-			$readme,
-			'README.md must describe the self-hosted, bundled font delivery.'
+			pattern: '/self-hosted|bundled/i',
+			string: $readme,
+			message: 'README.md must describe the self-hosted, bundled font delivery.'
 		);
 
-		$compliance = $this->readFile('docs/reference/compliance.md');
+		$compliance = $this->readFile(relativePath: 'docs/reference/compliance.md');
 		$this->assertDoesNotMatchRegularExpression(
-			'/Font declared but not loaded|files not loaded/i',
-			$compliance,
-			'compliance.md must not claim the bundled font is "not loaded".'
+			pattern: '/Font declared but not loaded|files not loaded/i',
+			string: $compliance,
+			message: 'compliance.md must not claim the bundled font is "not loaded".'
 		);
 	}
 
@@ -298,37 +298,37 @@ class ClaimAccuracyTest extends TestCase {
 	 */
 	public function testReadmeCountEqualsInventory(): void {
 		$count = $this->tokenSetCount();
-		$readme = $this->readFile('README.md');
+		$readme = $this->readFile(relativePath: 'README.md');
 
 		// Canonical bold count in the Features section: "**41 token sets**".
 		$this->assertMatchesRegularExpression(
-			'/\*\*(\d+) token sets\*\*/',
-			$readme,
-			'README.md must state a bold canonical token-set count (e.g. "**41 token sets**").'
+			pattern: '/\*\*(\d+) token sets\*\*/',
+			string: $readme,
+			message: 'README.md must state a bold canonical token-set count (e.g. "**41 token sets**").'
 		);
 		preg_match('/\*\*(\d+) token sets\*\*/', $readme, $m);
 		$this->assertSame(
-			$count,
-			(int)$m[1],
-			'The token-set count stated in README.md must equal the token-sets.json inventory.'
+			expected: $count,
+			actual: (int)$m[1],
+			message: 'The token-set count stated in README.md must equal the token-sets.json inventory.'
 		);
 
 		// project.md must state the same total, both in prose and in the section heading.
-		$project = $this->readFile('project.md');
+		$project = $this->readFile(relativePath: 'project.md');
 		$this->assertMatchesRegularExpression(
-			'/provides ' . $count . ' token sets/',
-			$project,
-			'project.md must state the real token-set total in its overview.'
+			pattern: '/provides ' . $count . ' token sets/',
+			string: $project,
+			message: 'project.md must state the real token-set total in its overview.'
 		);
 		$this->assertMatchesRegularExpression(
-			'/## Token Sets \(' . $count . '\)/',
-			$project,
-			'project.md "Token Sets" heading must state the real total.'
+			pattern: '/## Token Sets \(' . $count . '\)/',
+			string: $project,
+			message: 'project.md "Token Sets" heading must state the real total.'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'/provides 39 token sets|## Token Sets \(39\)/',
-			$project,
-			'project.md must not retain the stale "39 token sets" total.'
+			pattern: '/provides 39 token sets|## Token Sets \(39\)/',
+			string: $project,
+			message: 'project.md must not retain the stale "39 token sets" total.'
 		);
 	}
 
@@ -339,37 +339,37 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/changes/archive/2026-07-07-fix-readiness-claims/tasks.md#task-5.5
 	 */
 	public function testTokenAuditScopeStatedHonestly(): void {
-		$doc = $this->readFile('docs/reference/token-audit.md');
+		$doc = $this->readFile(relativePath: 'docs/reference/token-audit.md');
 
 		// Must name the five manually-reviewed sets.
 		foreach (['Rijkshuisstijl', 'Utrecht', 'Amsterdam', 'Den Haag', 'Rotterdam'] as $name) {
 			$this->assertStringContainsString(
-				$name,
-				$doc,
-				"token-audit.md must name the reviewed set: {$name}"
+				needle: $name,
+				haystack: $doc,
+				message: "token-audit.md must name the reviewed set: {$name}"
 			);
 		}
 
 		// Must mark the remaining sets as not individually audited.
 		$this->assertMatchesRegularExpression(
-			'/not (been )?individually audited|not individually reviewed/i',
-			$doc,
-			'token-audit.md must mark the remaining sets as not individually audited.'
+			pattern: '/not (been )?individually audited|not individually reviewed/i',
+			string: $doc,
+			message: 'token-audit.md must mark the remaining sets as not individually audited.'
 		);
 
 		// Must not carry a blanket "APPROVED FOR PRODUCTION" verdict covering all sets.
 		$this->assertDoesNotMatchRegularExpression(
-			'/^\**Status\**:.*APPROVED FOR PRODUCTION\s*$/im',
-			$doc,
-			'token-audit.md must not carry a blanket APPROVED FOR PRODUCTION verdict.'
+			pattern: '/^\**Status\**:.*APPROVED FOR PRODUCTION\s*$/im',
+			string: $doc,
+			message: 'token-audit.md must not carry a blanket APPROVED FOR PRODUCTION verdict.'
 		);
 
 		// Any surviving "APPROVED FOR PRODUCTION" mention must sit in a five-sets-scoped line.
 		if (preg_match('/APPROVED FOR PRODUCTION/i', $doc) === 1) {
 			$this->assertMatchesRegularExpression(
-				'/(five|5) .{0,80}APPROVED FOR PRODUCTION|APPROVED FOR PRODUCTION.{0,120}(five|5)/is',
-				$doc,
-				'Any remaining APPROVED FOR PRODUCTION mention must be scoped to the five reviewed sets.'
+				pattern: '/(five|5) .{0,80}APPROVED FOR PRODUCTION|APPROVED FOR PRODUCTION.{0,120}(five|5)/is',
+				string: $doc,
+				message: 'Any remaining APPROVED FOR PRODUCTION mention must be scoped to the five reviewed sets.'
 			);
 		}
 	}
@@ -384,46 +384,46 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testMarianneDocumentationDescribesTheGatedRestrictedSituationHonestly(): void {
-		$readme = $this->readFile('README.md');
-		$compliance = $this->readFile('docs/reference/compliance.md');
+		$readme = $this->readFile(relativePath: 'README.md');
+		$compliance = $this->readFile(relativePath: 'docs/reference/compliance.md');
 
 		foreach (['README.md' => $readme, 'docs/reference/compliance.md' => $compliance] as $label => $doc) {
 			$this->assertMatchesRegularExpression(
-				'/Etalab.{0,10}2\.0/i',
-				$doc,
-				"{$label} must state Marianne is bundled under the Etalab Open Licence 2.0."
+				pattern: '/Etalab.{0,10}2\.0/i',
+				string: $doc,
+				message: "{$label} must state Marianne is bundled under the Etalab Open Licence 2.0."
 			);
 			$this->assertMatchesRegularExpression(
-				"/French State agenc(y|ies)|administration de l'[ÉE]tat/i",
-				$doc,
-				"{$label} must state Marianne is restricted to French State agencies."
+				pattern: "/French State agenc(y|ies)|administration de l'[ÉE]tat/i",
+				string: $doc,
+				message: "{$label} must state Marianne is restricted to French State agencies."
 			);
 			$this->assertMatchesRegularExpression(
-				'/off by default|default[- ]off|inert by default/i',
-				$doc,
-				"{$label} must state Marianne is off by default."
+				pattern: '/off by default|default[- ]off|inert by default/i',
+				string: $doc,
+				message: "{$label} must state Marianne is off by default."
 			);
 
 			// Must not claim Marianne is unconditionally free/open.
 			$this->assertDoesNotMatchRegularExpression(
-				'/Marianne is (a |an )?(unconditionally )?(free|open)[- ]?(source|font)?\b(?!.{0,20}(French State|reserved|restricted))/i',
-				$doc,
-				"{$label} must not describe Marianne as an unconditionally free/open font."
+				pattern: '/Marianne is (a |an )?(unconditionally )?(free|open)[- ]?(source|font)?\b(?!.{0,20}(French State|reserved|restricted))/i',
+				string: $doc,
+				message: "{$label} must not describe Marianne as an unconditionally free/open font."
 			);
 
 			// Must not claim (pre-change wording) that no Marianne file exists.
 			$this->assertDoesNotMatchRegularExpression(
-				'/no (such )?Marianne file exists|no Marianne file (anywhere )?ships/i',
-				$doc,
-				"{$label} must not claim that no Marianne file ships in the app."
+				pattern: '/no (such )?Marianne file exists|no Marianne file (anywhere )?ships/i',
+				string: $doc,
+				message: "{$label} must not claim that no Marianne file ships in the app."
 			);
 
 			// Must not claim CDN / external-host delivery for Marianne (mirrors
 			// testFontDocumentationMatchesBundledDelivery's Fira Sans guard).
 			$this->assertDoesNotMatchRegularExpression(
-				'/Marianne is (loaded|served|fetched) (via|from) (a )?(CDN|external)/i',
-				$doc,
-				"{$label} must not claim Marianne loads from a CDN or external host."
+				pattern: '/Marianne is (loaded|served|fetched) (via|from) (a )?(CDN|external)/i',
+				string: $doc,
+				message: "{$label} must not claim Marianne loads from a CDN or external host."
 			);
 		}
 	}
@@ -435,12 +435,12 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testGatedMarianneStylesheetNeverUsesAnExternalScheme(): void {
-		$css = $this->readFile('css/systems/lasuite/marianne.css');
+		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
 
 		$this->assertDoesNotMatchRegularExpression(
-			'#url\(\s*[\'"]?https?://#i',
-			$css,
-			'css/systems/lasuite/marianne.css must not load Marianne from an external http(s):// URL.'
+			pattern: '#url\(\s*[\'"]?https?://#i',
+			string: $css,
+			message: 'css/systems/lasuite/marianne.css must not load Marianne from an external http(s):// URL.'
 		);
 	}
 
@@ -456,7 +456,7 @@ class ClaimAccuracyTest extends TestCase {
 	 * @return int[] the major versions provisioned by CI, ascending
 	 */
 	private function testedNextcloudMajors(): array {
-		$workflow = $this->readFile('.github/workflows/code-quality.yml');
+		$workflow = $this->readFile(relativePath: '.github/workflows/code-quality.yml');
 
 		// Anchored to the start of a (possibly indented) line so the many
 		// COMMENTS in this file that quote the key — including one quoting the
@@ -468,24 +468,24 @@ class ClaimAccuracyTest extends TestCase {
 			$m
 		);
 		$this->assertSame(
-			1,
-			$matched,
-			'.github/workflows/code-quality.yml must pin `nextcloud-test-refs` explicitly. '
+			expected: 1,
+			actual: $matched,
+			message: '.github/workflows/code-quality.yml must pin `nextcloud-test-refs` explicitly. '
 			. 'Inheriting the shared default silently widens the tested matrix, which is how '
 			. 'the floor and the matrix drifted apart in #241/#242.'
 		);
 
 		$refs = json_decode($m['json'], true);
-		$this->assertIsArray($refs, 'nextcloud-test-refs must be a JSON array.');
-		$this->assertNotEmpty($refs, 'nextcloud-test-refs must not be empty.');
+		$this->assertIsArray(actual: $refs, message: 'nextcloud-test-refs must be a JSON array.');
+		$this->assertNotEmpty(actual: $refs, message: 'nextcloud-test-refs must not be empty.');
 
 		$majors = [];
 		foreach ($refs as $ref) {
-			$this->assertIsString($ref, 'Every nextcloud-test-refs entry must be a string.');
+			$this->assertIsString(actual: $ref, message: 'Every nextcloud-test-refs entry must be a string.');
 			$this->assertSame(
-				1,
-				preg_match('/^stable(?P<major>\d+)$/', $ref, $r),
-				"nextcloud-test-refs entry '{$ref}' must be of the form stableNN."
+				expected: 1,
+				actual: preg_match('/^stable(?P<major>\d+)$/', $ref, $r),
+				message: "nextcloud-test-refs entry '{$ref}' must be of the form stableNN."
 			);
 			$majors[] = (int)$r['major'];
 		}
@@ -506,13 +506,13 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/specs/claim-accuracy/spec.md
 	 */
 	public function testDeclaredNextcloudRangeMatchesTheTestedMatrix(): void {
-		$info = simplexml_load_string($this->readFile('appinfo/info.xml'));
-		$this->assertNotFalse($info, 'appinfo/info.xml must be well-formed XML.');
+		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
+		$this->assertNotFalse(condition: $info, message: 'appinfo/info.xml must be well-formed XML.');
 
 		$min = (int)$info->dependencies->nextcloud['min-version'];
 		$max = (int)$info->dependencies->nextcloud['max-version'];
-		$this->assertGreaterThan(0, $min, 'appinfo/info.xml must declare <nextcloud min-version>.');
-		$this->assertGreaterThan(0, $max, 'appinfo/info.xml must declare <nextcloud max-version>.');
+		$this->assertGreaterThan(expected: 0, actual: $min, message: 'appinfo/info.xml must declare <nextcloud min-version>.');
+		$this->assertGreaterThan(expected: 0, actual: $max, message: 'appinfo/info.xml must declare <nextcloud max-version>.');
 
 		$tested = $this->testedNextcloudMajors();
 		$lowest = $tested[0];
@@ -520,25 +520,25 @@ class ClaimAccuracyTest extends TestCase {
 		$list = implode(', ', $tested);
 
 		$this->assertGreaterThanOrEqual(
-			$min,
-			$lowest,
-			"appinfo/info.xml declares min-version={$min}, but CI provisions stable{$lowest}. "
+			expected: $min,
+			actual: $lowest,
+			message: "appinfo/info.xml declares min-version={$min}, but CI provisions stable{$lowest}. "
 			. 'min-version is enforced at install time, so `occ app:enable` will REFUSE on that '
 			. 'leg and the run fails later with an unrelated "app is not installed or enabled".'
 		);
 
 		$this->assertSame(
-			$min,
-			$lowest,
-			"appinfo/info.xml declares min-version={$min}, but the lowest ref CI tests is "
+			expected: $min,
+			actual: $lowest,
+			message: "appinfo/info.xml declares min-version={$min}, but the lowest ref CI tests is "
 			. "stable{$lowest} (matrix: {$list}). Every version between {$min} and {$lowest} is "
 			. 'advertised to the app store and exercised by nothing.'
 		);
 
 		$this->assertGreaterThanOrEqual(
-			$highest,
-			$max,
-			"appinfo/info.xml declares max-version={$max}, but CI tests stable{$highest}."
+			expected: $highest,
+			actual: $max,
+			message: "appinfo/info.xml declares max-version={$max}, but CI tests stable{$highest}."
 		);
 	}
 
@@ -554,20 +554,20 @@ class ClaimAccuracyTest extends TestCase {
 	 * @spec openspec/specs/claim-accuracy/spec.md
 	 */
 	public function testDeclaredPhpFloorIsSatisfiableOnTheDeclaredNextcloudFloor(): void {
-		$info = simplexml_load_string($this->readFile('appinfo/info.xml'));
-		$this->assertNotFalse($info, 'appinfo/info.xml must be well-formed XML.');
+		$info = simplexml_load_string($this->readFile(relativePath: 'appinfo/info.xml'));
+		$this->assertNotFalse(condition: $info, message: 'appinfo/info.xml must be well-formed XML.');
 
 		$php = (string)$info->dependencies->php['min-version'];
 		$nc = (int)$info->dependencies->nextcloud['min-version'];
 
 		if (version_compare($php, '8.3', '>=') === false) {
-			$this->markTestSkipped('PHP floor is below 8.3 — this invariant does not apply.');
+			$this->markTestSkipped(message: 'PHP floor is below 8.3 — this invariant does not apply.');
 		}
 
 		$this->assertGreaterThanOrEqual(
-			32,
-			$nc,
-			"appinfo/info.xml declares php min-version={$php} with nextcloud min-version={$nc}. "
+			expected: 32,
+			actual: $nc,
+			message: "appinfo/info.xml declares php min-version={$php} with nextcloud min-version={$nc}. "
 			. 'Nextcloud 32 is the first release whose own PHP floor is 8.3; below it the two '
 			. 'declarations contradict each other.'
 		);
@@ -592,12 +592,12 @@ class ClaimAccuracyTest extends TestCase {
 	public function testEveryNamedE2eExclusionPointsAtATestThatExists(): void {
 		$root = $this->repoRoot();
 		$specs = glob($root . '/openspec/specs/*/spec.md');
-		$this->assertNotEmpty($specs, 'openspec/specs/ must contain specs to scan.');
+		$this->assertNotEmpty(actual: $specs, message: 'openspec/specs/ must contain specs to scan.');
 
 		$claims = [];
 		foreach ($specs as $spec) {
 			$text = file_get_contents($spec);
-			$this->assertIsString($text);
+			$this->assertIsString(actual: $text);
 			preg_match_all(
 				'/covered by\s+(?P<class>[A-Za-z_][A-Za-z0-9_]*)::(?P<method>[A-Za-z_][A-Za-z0-9_]*)/',
 				$text,
@@ -617,8 +617,8 @@ class ClaimAccuracyTest extends TestCase {
 		// output. This repo HAS such claims, so an empty result means the regex
 		// stopped working, not that the claims became true.
 		$this->assertNotEmpty(
-			$claims,
-			'No "covered by Class::method" claims found in openspec/specs/. Either every one was '
+			actual: $claims,
+			message: 'No "covered by Class::method" claims found in openspec/specs/. Either every one was '
 			. 'removed, or this scanner no longer matches the format it is supposed to check.'
 		);
 
@@ -639,15 +639,15 @@ class ClaimAccuracyTest extends TestCase {
 
 		foreach ($claims as $claim) {
 			$this->assertArrayHasKey(
-				$claim['class'],
-				$index,
-				"{$claim['spec']} claims coverage by {$claim['class']}::{$claim['method']}, "
+				key: $claim['class'],
+				array: $index,
+				message: "{$claim['spec']} claims coverage by {$claim['class']}::{$claim['method']}, "
 				. "but no tests/**/{$claim['class']}.php exists."
 			);
 			$this->assertStringContainsString(
-				"function {$claim['method']}(",
-				$index[$claim['class']],
-				"{$claim['spec']} claims coverage by {$claim['class']}::{$claim['method']}, "
+				needle: "function {$claim['method']}(",
+				haystack: $index[$claim['class']],
+				message: "{$claim['spec']} claims coverage by {$claim['class']}::{$claim['method']}, "
 				. 'but that class has no such method — the exclusion is prose standing in for a test.'
 			);
 		}

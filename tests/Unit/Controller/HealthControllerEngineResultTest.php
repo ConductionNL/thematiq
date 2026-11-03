@@ -80,16 +80,16 @@ class HealthControllerEngineResultTest extends TestCase {
 			}
 		};
 
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willReturnMap([
 			['OCA\\OpenRegister\\AppHost\\Observability\\ManifestLoader', $loader],
 			['OCA\\OpenRegister\\AppHost\\Observability\\HealthCheckExecutor', $executor],
 		]);
 
 		return new HealthController(
-			$this->createMock(IRequest::class),
-			$this->createMock(IConfig::class),
-			$container
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $this->createMock(originalClassName: IConfig::class),
+			container: $container
 		);
 	}//end controllerWithEngineResult()
 
@@ -107,12 +107,12 @@ class HealthControllerEngineResultTest extends TestCase {
 			httpCode: 503
 		)->index();
 
-		$this->assertSame(503, $response->getStatus());
+		$this->assertSame(expected: 503, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('error', $data['status']);
-		$this->assertSame('thematiq', $data['app']);
-		$this->assertSame('9.9.9', $data['version']);
-		$this->assertStringStartsWith('failed', $data['checks']['database']);
+		$this->assertSame(expected: 'error', actual: $data['status']);
+		$this->assertSame(expected: 'thematiq', actual: $data['app']);
+		$this->assertSame(expected: '9.9.9', actual: $data['version']);
+		$this->assertStringStartsWith(prefix: 'failed', string: $data['checks']['database']);
 	}//end testCriticalEngineFailureIsServedAs503()
 
 	/**
@@ -129,11 +129,11 @@ class HealthControllerEngineResultTest extends TestCase {
 			httpCode: 200
 		)->index();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('degraded', $data['status']);
-		$this->assertStringStartsWith('failed', $data['checks']['filesystem']);
-		$this->assertSame('ok', $data['checks']['database']);
+		$this->assertSame(expected: 'degraded', actual: $data['status']);
+		$this->assertStringStartsWith(prefix: 'failed', string: $data['checks']['filesystem']);
+		$this->assertSame(expected: 'ok', actual: $data['checks']['database']);
 	}//end testDegradedFilesystemIsServedAs200Degraded()
 
 	/**
@@ -144,18 +144,18 @@ class HealthControllerEngineResultTest extends TestCase {
 	 * boots when OpenRegister is absent" (the response half).
 	 */
 	public function testEngineAbsentDegradesTo200(): void {
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willThrowException(new \RuntimeException('class not found'));
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('1.0.0');
 
-		$response = (new HealthController($this->createMock(IRequest::class), $config, $container))->index();
+		$response = (new HealthController(request: $this->createMock(originalClassName: IRequest::class), config: $config, container: $container))->index();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(
-			['status' => 'degraded', 'app' => 'thematiq', 'version' => '1.0.0', 'checks' => ['openregister' => 'unavailable']],
-			$response->getData()
+			expected: ['status' => 'degraded', 'app' => 'thematiq', 'version' => '1.0.0', 'checks' => ['openregister' => 'unavailable']],
+			actual: $response->getData()
 		);
 	}//end testEngineAbsentDegradesTo200()
 
@@ -171,8 +171,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	public function testControllerNamesNoOpenRegisterClassInCode(): void {
 		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/HealthController.php');
 
-		$this->assertDoesNotMatchRegularExpression('/^use\s+OCA\\\\OpenRegister\\\\/m', $source);
-		$this->assertMatchesRegularExpression('/^class HealthController extends Controller \{$/m', $source);
-		$this->assertSame('OCP\AppFramework\Controller', get_parent_class(HealthController::class));
+		$this->assertDoesNotMatchRegularExpression(pattern: '/^use\s+OCA\\\\OpenRegister\\\\/m', string: $source);
+		$this->assertMatchesRegularExpression(pattern: '/^class HealthController extends Controller \{$/m', string: $source);
+		$this->assertSame(expected: 'OCP\AppFramework\Controller', actual: get_parent_class(HealthController::class));
 	}//end testControllerNamesNoOpenRegisterClassInCode()
 }//end class

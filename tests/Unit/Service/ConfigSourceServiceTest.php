@@ -139,7 +139,7 @@ class ConfigSourceServiceTest extends TestCase {
 	 * @return ConfigSourceService The service.
 	 */
 	private function service(): ConfigSourceService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(fn (string $key, string $default = '') => (string)($this->system[$key] ?? $default));
 		$config->method('getSystemValueBool')->willReturnCallback(fn (string $key, bool $default = false) => (bool)($this->system[$key] ?? $default));
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
@@ -154,7 +154,7 @@ class ConfigSourceServiceTest extends TestCase {
 			}
 		);
 
-		$packages = $this->createMock(BrandingPackageService::class);
+		$packages = $this->createMock(originalClassName: BrandingPackageService::class);
 		$packages->method('import')->willReturnCallback(
 			function (): array {
 				$this->imports++;
@@ -163,17 +163,17 @@ class ConfigSourceServiceTest extends TestCase {
 			}
 		);
 
-		$bundles = $this->createMock(ConfigBundleService::class);
+		$bundles = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundles->method('export')->willReturnCallback(fn (): array => $this->running + ['exportedAt' => uniqid()]);
 
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audited[] = [$action, $context];
 			}
 		);
 
-		$locking = $this->createMock(ILockingProvider::class);
+		$locking = $this->createMock(originalClassName: ILockingProvider::class);
 		$locking->method('acquireLock')->willReturnCallback(
 			function (): void {
 				if ($this->lockBusy === true) {
@@ -186,10 +186,10 @@ class ConfigSourceServiceTest extends TestCase {
 			}
 		);
 
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturn(1790000000);
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->method('error')->willReturnCallback(
 			function (string $message): void {
 				$this->errors[] = $message;
@@ -206,7 +206,7 @@ class ConfigSourceServiceTest extends TestCase {
 			),
 			lock: new ConfigSourceLock(
 				locking: $locking,
-				appConfig: $this->createMock(IAppConfig::class)
+				appConfig: $this->createMock(originalClassName: IAppConfig::class)
 			),
 			clock: new ConfigSourceClock(
 				time: $time,
@@ -223,9 +223,9 @@ class ConfigSourceServiceTest extends TestCase {
 	public function testUnconfiguredDoesNothing(): void {
 		unset($this->system['thematiq.config_source']);
 
-		$this->assertSame('unconfigured', $this->service()->applyIfChanged()['status']);
-		$this->assertSame(0, $this->imports);
-		$this->assertSame(['managed' => false], $this->service()->getStatus());
+		$this->assertSame(expected: 'unconfigured', actual: $this->service()->applyIfChanged()['status']);
+		$this->assertSame(expected: 0, actual: $this->imports);
+		$this->assertSame(expected: ['managed' => false], actual: $this->service()->getStatus());
 	}//end testUnconfiguredDoesNothing()
 
 	/**
@@ -236,15 +236,15 @@ class ConfigSourceServiceTest extends TestCase {
 	public function testChangedValidPackageIsAppliedAndAudited(): void {
 		$result = $this->service()->applyIfChanged();
 
-		$this->assertSame('applied', $result['status']);
-		$this->assertSame(1, $this->imports);
-		$this->assertSame('3f2a9c1', $this->app['config_source_applied_revision']);
+		$this->assertSame(expected: 'applied', actual: $result['status']);
+		$this->assertSame(expected: 1, actual: $this->imports);
+		$this->assertSame(expected: '3f2a9c1', actual: $this->app['config_source_applied_revision']);
 		$this->assertSame(expected: '1790000000', actual: $this->app['config_source_applied_at']);
-		$this->assertCount(1, $this->audited);
-		$this->assertSame('config_imported', $this->audited[0][0]);
-		$this->assertSame('system', $this->audited[0][1]['actor']);
-		$this->assertSame('deployment', $this->audited[0][1]['source']);
-		$this->assertSame('3f2a9c1', $this->audited[0][1]['revision']);
+		$this->assertCount(expectedCount: 1, haystack: $this->audited);
+		$this->assertSame(expected: 'config_imported', actual: $this->audited[0][0]);
+		$this->assertSame(expected: 'system', actual: $this->audited[0][1]['actor']);
+		$this->assertSame(expected: 'deployment', actual: $this->audited[0][1]['source']);
+		$this->assertSame(expected: '3f2a9c1', actual: $this->audited[0][1]['revision']);
 	}//end testChangedValidPackageIsAppliedAndAudited()
 
 	/**
@@ -259,10 +259,10 @@ class ConfigSourceServiceTest extends TestCase {
 
 		$result = $this->service()->applyIfChanged();
 
-		$this->assertSame('unchanged', $result['status']);
-		$this->assertSame(1, $this->imports);
-		$this->assertSame($before, $this->app);
-		$this->assertSame([], $this->audited);
+		$this->assertSame(expected: 'unchanged', actual: $result['status']);
+		$this->assertSame(expected: 1, actual: $this->imports);
+		$this->assertSame(expected: $before, actual: $this->app);
+		$this->assertSame(expected: [], actual: $this->audited);
 	}//end testUnchangedPackageIsNotAppliedAgain()
 
 	/**
@@ -276,17 +276,17 @@ class ConfigSourceServiceTest extends TestCase {
 		$first = $this->service()->applyIfChanged();
 		$this->service()->applyIfChanged();
 
-		$this->assertSame('failed', $first['status']);
-		$this->assertArrayNotHasKey('config_source_applied_hash', $this->app);
-		$this->assertSame([], $this->audited);
-		$this->assertCount(1, $this->errors, 'One log line per distinct package hash.');
+		$this->assertSame(expected: 'failed', actual: $first['status']);
+		$this->assertArrayNotHasKey(key: 'config_source_applied_hash', array: $this->app);
+		$this->assertSame(expected: [], actual: $this->audited);
+		$this->assertCount(expectedCount: 1, haystack: $this->errors, message: 'One log line per distinct package hash.');
 		$status = $this->service()->getStatus();
-		$this->assertSame('custom-gemeente', $status['lastError']['errors'][0]['id']);
+		$this->assertSame(expected: 'custom-gemeente', actual: $status['lastError']['errors'][0]['id']);
 		$this->assertSame(expected: gmdate(format: 'c', timestamp: 1790000000), actual: $status['lastError']['at']);
 
 		file_put_contents($this->dir . '/REVISION', 'next');
 		$this->service()->applyIfChanged();
-		$this->assertCount(2, $this->errors, 'A new package hash logs again.');
+		$this->assertCount(expectedCount: 2, haystack: $this->errors, message: 'A new package hash logs again.');
 	}//end testChangedInvalidPackageChangesNothingAndLogsOnce()
 
 	/**
@@ -300,13 +300,13 @@ class ConfigSourceServiceTest extends TestCase {
 		file_put_contents($this->dir . '/REVISION', 'broken');
 		$this->importResult = ['valid' => false, 'errors' => [['section' => 'package', 'message' => 'Broken.']]];
 		$this->service()->applyIfChanged();
-		$this->assertNotNull($this->service()->getStatus()['lastError']);
+		$this->assertNotNull(actual: $this->service()->getStatus()['lastError']);
 
 		unlink($this->dir . '/REVISION');
 		$result = $this->service()->applyIfChanged();
 
-		$this->assertSame('unchanged', $result['status']);
-		$this->assertNull($this->service()->getStatus()['lastError']);
+		$this->assertSame(expected: 'unchanged', actual: $result['status']);
+		$this->assertNull(actual: $this->service()->getStatus()['lastError']);
 	}//end testRevertingToTheAppliedPackageClearsTheError()
 
 	/**
@@ -323,9 +323,9 @@ class ConfigSourceServiceTest extends TestCase {
 
 		$result = $this->service()->applyIfChanged();
 
-		$this->assertSame('unchanged', $result['status']);
-		$this->assertSame(0, $this->imports);
-		$this->assertSame([], $this->audited);
+		$this->assertSame(expected: 'unchanged', actual: $result['status']);
+		$this->assertSame(expected: 0, actual: $this->imports);
+		$this->assertSame(expected: [], actual: $this->audited);
 	}//end testAPackageAppliedWhileWaitingForTheLockIsNotAppliedAgain()
 
 	/**
@@ -338,9 +338,9 @@ class ConfigSourceServiceTest extends TestCase {
 
 		$result = $this->service()->applyIfChanged();
 
-		$this->assertSame('failed', $result['status']);
-		$this->assertSame('package', $result['errors'][0]['section']);
-		$this->assertSame(0, $this->imports);
+		$this->assertSame(expected: 'failed', actual: $result['status']);
+		$this->assertSame(expected: 'package', actual: $result['errors'][0]['section']);
+		$this->assertSame(expected: 0, actual: $this->imports);
 	}//end testMissingPathFails()
 
 	/**
@@ -351,8 +351,8 @@ class ConfigSourceServiceTest extends TestCase {
 	public function testBusyLockSkips(): void {
 		$this->lockBusy = true;
 
-		$this->assertSame('busy', $this->service()->applyIfChanged()['status']);
-		$this->assertSame(0, $this->imports);
+		$this->assertSame(expected: 'busy', actual: $this->service()->applyIfChanged()['status']);
+		$this->assertSame(expected: 0, actual: $this->imports);
 	}//end testBusyLockSkips()
 
 	/**
@@ -365,14 +365,14 @@ class ConfigSourceServiceTest extends TestCase {
 		$this->service()->applyIfChanged();
 
 		$status = $this->service()->getStatus();
-		$this->assertTrue($status['managed']);
-		$this->assertSame($this->dir, $status['path']);
-		$this->assertSame('3f2a9c1', $status['revision']);
-		$this->assertTrue($status['locked']);
-		$this->assertFalse($status['drift']);
+		$this->assertTrue(condition: $status['managed']);
+		$this->assertSame(expected: $this->dir, actual: $status['path']);
+		$this->assertSame(expected: '3f2a9c1', actual: $status['revision']);
+		$this->assertTrue(condition: $status['locked']);
+		$this->assertFalse(condition: $status['drift']);
 
 		$this->running['config']['tokenSet'] = 'amsterdam';
-		$this->assertTrue($this->service()->getStatus()['drift']);
+		$this->assertTrue(condition: $this->service()->getStatus()['drift']);
 	}//end testStatusShowsRevisionAndDrift()
 
 	/**
@@ -382,9 +382,9 @@ class ConfigSourceServiceTest extends TestCase {
 	 */
 	public function testLockNeedsASource(): void {
 		$this->system['thematiq.config_source_lock'] = true;
-		$this->assertTrue($this->service()->isLocked());
+		$this->assertTrue(condition: $this->service()->isLocked());
 
 		unset($this->system['thematiq.config_source']);
-		$this->assertFalse($this->service()->isLocked());
+		$this->assertFalse(condition: $this->service()->isLocked());
 	}//end testLockNeedsASource()
 }//end class

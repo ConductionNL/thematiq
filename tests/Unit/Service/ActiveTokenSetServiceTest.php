@@ -41,7 +41,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 * @return ActiveTokenSetService
 	 */
 	private function make(bool $valid, ThemingAuditService $audit): ActiveTokenSetService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->store[$key] ?? $default)
 		);
@@ -51,10 +51,10 @@ class ActiveTokenSetServiceTest extends TestCase {
 			}
 		);
 
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturn($valid);
 
-		return new ActiveTokenSetService($config, $tokenSets, $audit);
+		return new ActiveTokenSetService(config: $config, tokenSets: $tokenSets, auditService: $audit);
 	}//end make()
 
 	/**
@@ -62,7 +62,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 * with the caller's action and context.
 	 */
 	public function testSwitchStoresAuditsAndReturnsThePreviousSet(): void {
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->expects($this->once())->method('log')->with(
 			'scheduled_switch_applied',
 			['old' => 'rijkshuisstijl', 'new' => 'amsterdam', 'actor' => 'system']
@@ -71,25 +71,25 @@ class ActiveTokenSetServiceTest extends TestCase {
 		$service = $this->make(valid: true, audit: $audit);
 		$previous = $service->switchTo(tokenSet: 'amsterdam', auditAction: 'scheduled_switch_applied', auditContext: ['actor' => 'system']);
 
-		$this->assertSame('rijkshuisstijl', $previous);
-		$this->assertSame('amsterdam', $this->store['token_set']);
-		$this->assertSame('amsterdam', $service->getActive());
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $previous);
+		$this->assertSame(expected: 'amsterdam', actual: $this->store['token_set']);
+		$this->assertSame(expected: 'amsterdam', actual: $service->getActive());
 	}//end testSwitchStoresAuditsAndReturnsThePreviousSet()
 
 	/**
 	 * An invalid set throws and writes nothing.
 	 */
 	public function testInvalidSetWritesNothing(): void {
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->expects($this->never())->method('log');
 
 		$service = $this->make(valid: false, audit: $audit);
 
 		try {
 			$service->switchTo(tokenSet: 'bestaat-niet');
-			$this->fail('An invalid set was accepted.');
+			$this->fail(message: 'An invalid set was accepted.');
 		} catch (\InvalidArgumentException $e) {
-			$this->assertSame('rijkshuisstijl', $this->store['token_set']);
+			$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store['token_set']);
 		}
 	}//end testInvalidSetWritesNothing()
 }//end class

@@ -80,17 +80,17 @@ class ThemeInjectionListenerTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->cssInjectionService = $this->createMock(CssInjectionService::class);
-		$this->appThemingService = $this->createMock(AppThemingService::class);
-		$this->request = $this->createMock(IRequest::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
-		$this->environmentMarker = $this->createMock(EnvironmentMarkerService::class);
+		$this->cssInjectionService = $this->createMock(originalClassName: CssInjectionService::class);
+		$this->appThemingService = $this->createMock(originalClassName: AppThemingService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$this->environmentMarker = $this->createMock(originalClassName: EnvironmentMarkerService::class);
 		$this->listener = new ThemeInjectionListener(
-			$this->cssInjectionService,
-			$this->appThemingService,
-			$this->request,
-			$this->logger,
-			$this->environmentMarker
+			cssInjectionService: $this->cssInjectionService,
+			appThemingService: $this->appThemingService,
+			request: $this->request,
+			logger: $this->logger,
+			environmentMarker: $this->environmentMarker
 		);
 
 		// No blanket `isThemingDisabledFor()` default here: PHPUnit's
@@ -231,12 +231,12 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * exception escapes, and injection never runs.
 	 */
 	public function testUnrelatedEventIsNoOp(): void {
-		$unrelated = $this->createMock(Event::class);
+		$unrelated = $this->createMock(originalClassName: Event::class);
 
 		$this->cssInjectionService->expects($this->never())->method('inject');
 
 		$this->listener->handle($unrelated);
-		$this->addToAssertionCount(1);
+		$this->addToAssertionCount(count: 1);
 	}//end testUnrelatedEventIsNoOp()
 
 	/**
@@ -265,8 +265,8 @@ class ThemeInjectionListenerTest extends TestCase {
 		// let it escape, PHPUnit would report the RuntimeException here.
 		$this->listener->handle(new BeforeTemplateRenderedEvent(true, $response));
 
-		$this->assertCount(1, $warnings);
-		$this->assertStringContainsString('served unthemed', $warnings[0]);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertStringContainsString(needle: 'served unthemed', haystack: $warnings[0]);
 	}//end testInjectionServiceThrowingNeverEscapesButIsLogged()
 
 	/**
@@ -277,7 +277,7 @@ class ThemeInjectionListenerTest extends TestCase {
 	public function testDoubleDispatchYieldsNoDuplicatedSideEffectsBeyondInject(): void {
 		$response = new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_USER);
 
-		$this->cssInjectionService->expects($this->exactly(2))->method('inject')->with('user');
+		$this->cssInjectionService->expects($this->exactly(count: 2))->method('inject')->with('user');
 
 		$event = new BeforeTemplateRenderedEvent(true, $response);
 		$this->listener->handle($event);
@@ -335,16 +335,16 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 */
 	public function testTheLoginCopyRunsOnAThemedLoginPageOnly(bool $themed, bool $login, int $expected): void {
-		$loginCopy = $this->createMock(LoginCopyService::class);
-		$loginCopy->expects($this->exactly($expected))->method('injectForLogin');
+		$loginCopy = $this->createMock(originalClassName: LoginCopyService::class);
+		$loginCopy->expects($this->exactly(count: $expected))->method('injectForLogin');
 		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
 		$listener = new ThemeInjectionListener(
-			$this->cssInjectionService,
-			$this->appThemingService,
-			$this->request,
-			$this->logger,
-			$this->environmentMarker,
-			$loginCopy
+			cssInjectionService: $this->cssInjectionService,
+			appThemingService: $this->appThemingService,
+			request: $this->request,
+			logger: $this->logger,
+			environmentMarker: $this->environmentMarker,
+			loginCopy: $loginCopy
 		);
 
 		$response = new TemplateResponse('core', 'login', [], $login === true ? TemplateResponse::RENDER_AS_GUEST : TemplateResponse::RENDER_AS_USER);
@@ -383,17 +383,17 @@ class ThemeInjectionListenerTest extends TestCase {
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
 	 */
 	public function testTheNotFoundCopyRunsOnTheCore404Only(string $app, string $template, bool $themed, int $expected): void {
-		$notFound = $this->createMock(NotFoundCopyService::class);
-		$notFound->expects($this->exactly($expected))->method('inject');
+		$notFound = $this->createMock(originalClassName: NotFoundCopyService::class);
+		$notFound->expects($this->exactly(count: $expected))->method('inject');
 		$this->cssInjectionService->method('isContextThemed')->willReturn($themed);
 		$listener = new ThemeInjectionListener(
-			$this->cssInjectionService,
-			$this->appThemingService,
-			$this->request,
-			$this->logger,
-			$this->environmentMarker,
-			null,
-			$notFound
+			cssInjectionService: $this->cssInjectionService,
+			appThemingService: $this->appThemingService,
+			request: $this->request,
+			logger: $this->logger,
+			environmentMarker: $this->environmentMarker,
+			loginCopy: null,
+			notFoundCopy: $notFound
 		);
 
 		$listener->handle(new BeforeTemplateRenderedEvent(false, new TemplateResponse($app, $template, [], TemplateResponse::RENDER_AS_GUEST)));

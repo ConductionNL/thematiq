@@ -42,13 +42,13 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#154273'
 		);
 
-		$this->assertCount(1, $results);
-		$this->assertSame('primary-text', $results[0]['name']);
-		$this->assertSame(4.5, $results[0]['threshold']);
-		$this->assertSame('AA', $results[0]['level']);
-		$this->assertTrue($results[0]['pass']);
-		$this->assertArrayNotHasKey('unevaluated', $results[0]);
-		$this->assertGreaterThanOrEqual(4.5, $results[0]['ratio']);
+		$this->assertCount(expectedCount: 1, haystack: $results);
+		$this->assertSame(expected: 'primary-text', actual: $results[0]['name']);
+		$this->assertSame(expected: 4.5, actual: $results[0]['threshold']);
+		$this->assertSame(expected: 'AA', actual: $results[0]['level']);
+		$this->assertTrue(condition: $results[0]['pass']);
+		$this->assertArrayNotHasKey(key: 'unevaluated', array: $results[0]);
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $results[0]['ratio']);
 	}//end testCompliantTextCandidatePasses()
 
 	/**
@@ -63,8 +63,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#ffffff'
 		);
 
-		$this->assertFalse($results[0]['pass']);
-		$this->assertLessThan(4.5, $results[0]['ratio']);
+		$this->assertFalse(condition: $results[0]['pass']);
+		$this->assertLessThan(expected: 4.5, actual: $results[0]['ratio']);
 	}//end testNonCompliantTextCandidateFails()
 
 	/**
@@ -78,7 +78,7 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#f5f6f7'
 		);
 
-		$this->assertSame(3.0, $results[0]['threshold']);
+		$this->assertSame(expected: 3.0, actual: $results[0]['threshold']);
 	}//end testUiCandidateUsesUiThreshold()
 
 	/**
@@ -95,11 +95,11 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#F5F6F7'
 		);
 
-		$this->assertCount(2, $results);
-		$this->assertSame('primary', $results[0]['name']);
-		$this->assertSame(4.5, $results[0]['threshold']);
-		$this->assertSame('accent', $results[1]['name']);
-		$this->assertSame(3.0, $results[1]['threshold']);
+		$this->assertCount(expectedCount: 2, haystack: $results);
+		$this->assertSame(expected: 'primary', actual: $results[0]['name']);
+		$this->assertSame(expected: 4.5, actual: $results[0]['threshold']);
+		$this->assertSame(expected: 'accent', actual: $results[1]['name']);
+		$this->assertSame(expected: 3.0, actual: $results[1]['threshold']);
 	}//end testMultipleCandidatesAgainstOneBackground()
 
 	/**
@@ -115,9 +115,9 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#ffffff'
 		);
 
-		$this->assertTrue($results[0]['unevaluated']);
-		$this->assertNull($results[0]['ratio']);
-		$this->assertFalse($results[0]['pass']);
+		$this->assertTrue(condition: $results[0]['unevaluated']);
+		$this->assertNull(actual: $results[0]['ratio']);
+		$this->assertFalse(condition: $results[0]['pass']);
 	}//end testNonLiteralCandidateValueIsUnevaluatedNeverPassing()
 
 	/**
@@ -132,8 +132,8 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: 'var(--nldesign-color-background)'
 		);
 
-		$this->assertTrue($results[0]['unevaluated']);
-		$this->assertNull($results[0]['ratio']);
+		$this->assertTrue(condition: $results[0]['unevaluated']);
+		$this->assertNull(actual: $results[0]['ratio']);
 	}//end testNonLiteralBackgroundIsUnevaluated()
 
 	/**
@@ -148,9 +148,9 @@ class ContrastServiceEvaluateTest extends TestCase {
 			background: '#ffffff'
 		);
 
-		$this->assertArrayNotHasKey('blocked', $results[0]);
-		$this->assertArrayNotHasKey('allowed', $results[0]);
-		$this->assertArrayNotHasKey('verdict', $results[0]);
+		$this->assertArrayNotHasKey(key: 'blocked', array: $results[0]);
+		$this->assertArrayNotHasKey(key: 'allowed', array: $results[0]);
+		$this->assertArrayNotHasKey(key: 'verdict', array: $results[0]);
 	}//end testResponseNeverCarriesABlockingVerdictKey()
 
 	/**
@@ -165,6 +165,6 @@ class ContrastServiceEvaluateTest extends TestCase {
 			'--nldesign-color-background' => '#ffffff',
 		]);
 
-		$this->assertIsArray($warnings);
+		$this->assertIsArray(actual: $warnings);
 	}//end testCheckRemainsUnaffectedByEvaluate()
 }//end class

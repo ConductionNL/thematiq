@@ -47,26 +47,26 @@ class PlaygroundStateServiceTest extends TestCase {
 		?StockTokensService $stockTokens = null,
 		?IL10N $l10n = null,
 	): PlaygroundStateService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
 
 		if ($previewValues === null) {
-			$previewValues = $this->createMock(TokenSetPreviewService::class);
+			$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 			$previewValues->method('getResolvedTokens')->willReturn(['--nldesign-color-primary' => '#154273']);
 			$previewValues->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 		}
 
 		if ($converter === null) {
-			$converter = $this->createMock(TokenSetConverterService::class);
+			$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 			$converter->method('getReasons')->willReturn(['derived-by-nextcloud' => 'Calculated by Nextcloud.']);
 		}
 
 		return new PlaygroundStateService(
-			$appManager,
-			$previewValues,
-			$converter,
-			($stockTokens ?? $this->createMock(StockTokensService::class)),
-			($l10n ?? $this->identityL10n())
+			appManager: $appManager,
+			previewValues: $previewValues,
+			converter: $converter,
+			stockTokens: ($stockTokens ?? $this->createMock(originalClassName: StockTokensService::class)),
+			l10n: ($l10n ?? $this->identityL10n())
 		);
 	}//end build()
 
@@ -80,7 +80,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * @return IL10N The stub.
 	 */
 	private function identityL10n(): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn (string $text): string => vsprintf($text, []));
 
 		return $l10n;
@@ -94,7 +94,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * @return IL10N The stub.
 	 */
 	private function markingL10n(array &$asked): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			function (string $text) use (&$asked): string {
 				$asked[] = $text;
@@ -114,28 +114,28 @@ class PlaygroundStateServiceTest extends TestCase {
 	 */
 	public function testTheInventoryChromeIsTranslatedAndItsDataIsNot(): void {
 		$asked = [];
-		$state = $this->build(l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$state = $this->build(l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud');
 		$inventory = $state['playgroundInventory'];
 
 		foreach ($inventory['components'] as $component) {
-			$this->assertStringStartsWith('NL:', $component['title']);
-			$this->assertStringStartsWith('NL:', $component['subtitle']);
-			$this->assertStringStartsNotWith('NL:', $component['id']);
+			$this->assertStringStartsWith(prefix: 'NL:', string: $component['title']);
+			$this->assertStringStartsWith(prefix: 'NL:', string: $component['subtitle']);
+			$this->assertStringStartsNotWith(prefix: 'NL:', string: $component['id']);
 			foreach ($component['tokens'] ?? [] as $token) {
-				$this->assertStringStartsWith('NL:', $token['paints'], $component['id']);
-				$this->assertStringStartsWith('--', $token['name']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $token['paints'], message: $component['id']);
+				$this->assertStringStartsWith(prefix: '--', string: $token['name']);
 			}
 			foreach ($component['fixed'] ?? [] as $fixed) {
-				$this->assertStringStartsWith('NL:', $fixed['what']);
-				$this->assertStringStartsWith('NL:', $fixed['why']);
-				$this->assertStringStartsNotWith('NL:', $fixed['code']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $fixed['what']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $fixed['why']);
+				$this->assertStringStartsNotWith(prefix: 'NL:', string: $fixed['code']);
 			}
 			foreach ($component['versionNotes'] ?? [] as $note) {
-				$this->assertStringStartsWith('NL:', $note['text']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $note['text']);
 			}
 		}
 
-		$this->assertSame(['derived-by-nextcloud' => 'NL:Calculated by Nextcloud.'], $state['playgroundReasons']);
+		$this->assertSame(expected: ['derived-by-nextcloud' => 'NL:Calculated by Nextcloud.'], actual: $state['playgroundReasons']);
 	}//end testTheInventoryChromeIsTranslatedAndItsDataIsNot()
 
 	/**
@@ -150,17 +150,17 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testEveryChromeStringIsInTheCatalogueWithADutchTranslation(): void {
 		$root = __DIR__ . '/../../..';
 		$mapping = json_decode((string)file_get_contents($root . '/scripts/mapping/nlds-to-nextcloud.json'), true);
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('getReasons')->willReturn($mapping['reasons']);
 
 		$asked = [];
-		$this->build(converter: $converter, l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$this->build(converter: $converter, l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud');
 		$asked = array_values(array_unique($asked));
 
 		$english = json_decode((string)file_get_contents($root . '/l10n/en.json'), true)['translations'];
 		$dutch = json_decode((string)file_get_contents($root . '/l10n/nl.json'), true)['translations'];
 
-		$this->assertGreaterThan(200, count($asked));
+		$this->assertGreaterThan(expected: 200, actual: count($asked));
 		$missing = [];
 		foreach ($asked as $text) {
 			if (isset($english[$text]) === false || is_string($dutch[$text] ?? null) === false || trim($dutch[$text]) === '') {
@@ -176,7 +176,7 @@ class PlaygroundStateServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $missing, 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.');
+		$this->assertSame(expected: [], actual: $missing, message: 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.');
 	}//end testEveryChromeStringIsInTheCatalogueWithADutchTranslation()
 
 	/**
@@ -186,7 +186,7 @@ class PlaygroundStateServiceTest extends TestCase {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
 		$this->assertSame(
-			[
+			expected: [
 				'playgroundInventory',
 				'playgroundReasons',
 				'playgroundTokens',
@@ -196,7 +196,7 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundSet',
 				'playgroundDarkTokens',
 			],
-			array_keys($state)
+			actual: array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
 
@@ -208,9 +208,9 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testDarkTokensPublished(): void {
 		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];
 
-		$this->assertNotSame([], $dark);
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6,8}$/i', (string)($dark['--nldesign-color-primary'] ?? ''));
-		$this->assertSame([], $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
+		$this->assertNotSame(expected: [], actual: $dark);
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6,8}$/i', string: (string)($dark['--nldesign-color-primary'] ?? ''));
+		$this->assertSame(expected: [], actual: $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
 	}//end testDarkTokensPublished()
 
 	/**
@@ -224,7 +224,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * two keys are separate.
 	 */
 	public function testTheExportBaseIsWhatTheSetDeclares(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn(
 			[
 				'--nldesign-color-primary' => '#154273',
@@ -236,10 +236,10 @@ class PlaygroundStateServiceTest extends TestCase {
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$state = $this->build($previewValues)->getInitialState(tokenSetId: 'rijkshuisstijl');
+		$state = $this->build(previewValues: $previewValues)->getInitialState(tokenSetId: 'rijkshuisstijl');
 
-		$this->assertSame(['--nldesign-color-primary' => '#154273'], $state['playgroundExportTokens']);
-		$this->assertArrayHasKey('--nldesign-component-button-disabled-color', $state['playgroundTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#154273'], actual: $state['playgroundExportTokens']);
+		$this->assertArrayHasKey(key: '--nldesign-component-button-disabled-color', array: $state['playgroundTokens']);
 	}//end testTheExportBaseIsWhatTheSetDeclares()
 
 	/**
@@ -250,20 +250,20 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * this server is actually wearing.
 	 */
 	public function testTheStockSetExportsWhatTheInstanceIsWearing(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn([]);
 		$previewValues->method('getDeclaredTokens')->willReturn(
 			['--nldesign-color-primary' => '#stale-snapshot']
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getTokens')->willReturn(['--nldesign-color-primary' => '#00679e']);
 
-		$state = $this->build($previewValues, null, $stockTokens)
+		$state = $this->build(previewValues: $previewValues, converter: null, stockTokens: $stockTokens)
 			->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['--nldesign-color-primary' => '#00679e'], $state['playgroundExportTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#00679e'], actual: $state['playgroundExportTokens']);
 	}//end testTheStockSetExportsWhatTheInstanceIsWearing()
 
 	/**
@@ -271,20 +271,20 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * nothing — an export with no tokens is worse than one slightly behind.
 	 */
 	public function testTheStockSetFallsBackToTheShippedSnapshot(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn([]);
 		$previewValues->method('getDeclaredTokens')->willReturn(
 			['--nldesign-color-primary' => '#0082c9']
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getTokens')->willReturn([]);
 
-		$state = $this->build($previewValues, null, $stockTokens)
+		$state = $this->build(previewValues: $previewValues, converter: null, stockTokens: $stockTokens)
 			->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['--nldesign-color-primary' => '#0082c9'], $state['playgroundExportTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#0082c9'], actual: $state['playgroundExportTokens']);
 	}//end testTheStockSetFallsBackToTheShippedSnapshot()
 
 	/**
@@ -294,7 +294,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testItPublishesTheSetItWasAskedFor(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'openwoo');
 
-		$this->assertSame('openwoo', $state['playgroundSet']);
+		$this->assertSame(expected: 'openwoo', actual: $state['playgroundSet']);
 	}//end testItPublishesTheSetItWasAskedFor()
 
 	/**
@@ -307,7 +307,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testItPublishesTheServerMajorAsAnInteger(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertIsInt($state['playgroundVersion']);
+		$this->assertIsInt(actual: $state['playgroundVersion']);
 	}//end testItPublishesTheServerMajorAsAnInteger()
 
 	/**
@@ -320,7 +320,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testItSurvivesHavingNoServerToAsk(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertGreaterThanOrEqual(0, $state['playgroundVersion']);
+		$this->assertGreaterThanOrEqual(expected: 0, actual: $state['playgroundVersion']);
 	}//end testItSurvivesHavingNoServerToAsk()
 
 	/**
@@ -333,8 +333,8 @@ class PlaygroundStateServiceTest extends TestCase {
 			true
 		);
 
-		$this->assertSame($shipped, $this->build()->getInventory());
-		$this->assertNotEmpty($shipped['components']);
+		$this->assertSame(expected: $shipped, actual: $this->build()->getInventory());
+		$this->assertNotEmpty(actual: $shipped['components']);
 	}//end testTheInventoryIsTheShippedFile()
 
 	/**
@@ -347,9 +347,9 @@ class PlaygroundStateServiceTest extends TestCase {
 
 		foreach ($inventory['components'] as $component) {
 			$this->assertContains(
-				$component['tab'],
-				$tabs,
-				$component['id'] . ' names a tab the inventory does not declare.'
+				needle: $component['tab'],
+				haystack: $tabs,
+				message: $component['id'] . ' names a tab the inventory does not declare.'
 			);
 		}
 	}//end testEveryComponentSitsUnderADeclaredTab()
@@ -363,8 +363,8 @@ class PlaygroundStateServiceTest extends TestCase {
 		$inventory = $this->build()->getInventory();
 
 		$this->assertSame(
-			['login', 'content', 'status', 'typography'],
-			array_column($inventory['tabs'], 'id')
+			expected: ['login', 'content', 'status', 'typography'],
+			actual: array_column($inventory['tabs'], 'id')
 		);
 	}//end testTheTabsAreTheTokenEditorsOwn()
 
@@ -375,7 +375,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	public function testTheReasonVocabularyIsTheConvertersOwn(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['derived-by-nextcloud' => 'Calculated by Nextcloud.'], $state['playgroundReasons']);
+		$this->assertSame(expected: ['derived-by-nextcloud' => 'Calculated by Nextcloud.'], actual: $state['playgroundReasons']);
 	}//end testTheReasonVocabularyIsTheConvertersOwn()
 
 	/**
@@ -383,13 +383,13 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * The instrument still builds, and every row still names its reason CODE.
 	 */
 	public function testAMissingMappingTableCostsOnlyTheSentences(): void {
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('getReasons')->willThrowException(new RuntimeException('missing'));
 
 		$state = $this->build(converter: $converter)->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame([], $state['playgroundReasons']);
-		$this->assertNotEmpty($state['playgroundInventory']['components']);
+		$this->assertSame(expected: [], actual: $state['playgroundReasons']);
+		$this->assertNotEmpty(actual: $state['playgroundInventory']['components']);
 	}//end testAMissingMappingTableCostsOnlyTheSentences()
 
 	/**
@@ -398,18 +398,18 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * would have rebuilt keeps working.
 	 */
 	public function testAnUnreadableInventoryYieldsAnEmptyOne(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(sys_get_temp_dir() . '/thematiq-does-not-exist');
 
 		$service = new PlaygroundStateService(
-			$appManager,
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(TokenSetConverterService::class),
-			$this->createMock(StockTokensService::class),
-			$this->identityL10n()
+			appManager: $appManager,
+			previewValues: $this->createMock(originalClassName: TokenSetPreviewService::class),
+			converter: $this->createMock(originalClassName: TokenSetConverterService::class),
+			stockTokens: $this->createMock(originalClassName: StockTokensService::class),
+			l10n: $this->identityL10n()
 		);
 
-		$this->assertSame(['version' => 0, 'tabs' => [], 'components' => []], $service->getInventory());
+		$this->assertSame(expected: ['version' => 0, 'tabs' => [], 'components' => []], actual: $service->getInventory());
 	}//end testAnUnreadableInventoryYieldsAnEmptyOne()
 
 	/**
@@ -417,7 +417,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * comes from the stylesheet that actually makes the connection.
 	 */
 	public function testItResolvesTheSetItWasAskedFor(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->expects($this->once())
 			->method('getResolvedTokens')
 			->with('custom-openwoo')
@@ -426,7 +426,7 @@ class PlaygroundStateServiceTest extends TestCase {
 
 		$state = $this->build(previewValues: $previewValues)->getInitialState(tokenSetId: 'custom-openwoo');
 
-		$this->assertSame(['--nldesign-color-primary' => '#a90061'], $state['playgroundTokens']);
-		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $state['playgroundTokenSources']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#a90061'], actual: $state['playgroundTokens']);
+		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $state['playgroundTokenSources']);
 	}//end testItResolvesTheSetItWasAskedFor()
 }//end class

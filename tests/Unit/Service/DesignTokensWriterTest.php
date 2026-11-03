@@ -52,14 +52,14 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testPathExtensionAndRoot(): void {
-		$doc = $this->write(['--nldesign-color-primary-hover' => '#0f3059', '--utrecht-button-background-color' => '#154273']);
+		$doc = $this->write(declarations: ['--nldesign-color-primary-hover' => '#0f3059', '--utrecht-button-background-color' => '#154273']);
 		$token = $doc['nldesign']['color']['primary-hover'];
 
-		$this->assertSame('--nldesign-color-primary-hover', $token['$extensions']['nl.conduction.thematiq']['cssVariable']);
-		$this->assertArrayHasKey('background-color', $doc['utrecht']['button']);
-		$this->assertSame('Gemeente Voorbeeld', $doc['$description']);
-		$this->assertSame('voorbeeld', $doc['$extensions']['nl.conduction.thematiq']['setId']);
-		$this->assertSame('1.2.3', $doc['$extensions']['nl.conduction.thematiq']['appVersion']);
+		$this->assertSame(expected: '--nldesign-color-primary-hover', actual: $token['$extensions']['nl.conduction.thematiq']['cssVariable']);
+		$this->assertArrayHasKey(key: 'background-color', array: $doc['utrecht']['button']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $doc['$description']);
+		$this->assertSame(expected: 'voorbeeld', actual: $doc['$extensions']['nl.conduction.thematiq']['setId']);
+		$this->assertSame(expected: '1.2.3', actual: $doc['$extensions']['nl.conduction.thematiq']['appVersion']);
 	}//end testPathExtensionAndRoot()
 
 	/**
@@ -69,7 +69,7 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testTypingTable(): void {
 		$doc = $this->write(
-			[
+			declarations: [
 				'--nldesign-animation-quick' => '100ms',
 				'--nldesign-animation-easing' => 'cubic-bezier(0.2, 0, 0, 1)',
 				'--nldesign-border-radius' => '8px',
@@ -81,14 +81,14 @@ final class DesignTokensWriterTest extends TestCase {
 			]
 		);
 
-		$this->assertSame(['$type' => 'duration', '$value' => ['value' => 100, 'unit' => 'ms']], array_diff_key($doc['nldesign']['animation']['quick'], ['$extensions' => 1]));
-		$this->assertSame(['$type' => 'cubicBezier', '$value' => [0.2, 0, 0, 1]], array_diff_key($doc['nldesign']['animation']['easing'], ['$extensions' => 1]));
-		$this->assertSame(['value' => 8, 'unit' => 'px'], $doc['nldesign']['border']['radius']['$value']);
-		$this->assertSame('dimension', $doc['nldesign']['spacing']['base']['$type']);
-		$this->assertSame(['fontFamily', ['Fira Sans', 'sans-serif']], [$doc['nldesign']['font']['family']['$type'], $doc['nldesign']['font']['family']['$value']]);
-		$this->assertSame(['fontWeight', 700], [$doc['nldesign']['font']['weight-bold']['$type'], $doc['nldesign']['font']['weight-bold']['$value']]);
-		$this->assertSame(['number', 1.5], [$doc['nldesign']['line']['height']['$type'], $doc['nldesign']['line']['height']['$value']]);
-		$this->assertSame('color', $doc['nldesign']['color']['primary']['$type']);
+		$this->assertSame(expected: ['$type' => 'duration', '$value' => ['value' => 100, 'unit' => 'ms']], actual: array_diff_key($doc['nldesign']['animation']['quick'], ['$extensions' => 1]));
+		$this->assertSame(expected: ['$type' => 'cubicBezier', '$value' => [0.2, 0, 0, 1]], actual: array_diff_key($doc['nldesign']['animation']['easing'], ['$extensions' => 1]));
+		$this->assertSame(expected: ['value' => 8, 'unit' => 'px'], actual: $doc['nldesign']['border']['radius']['$value']);
+		$this->assertSame(expected: 'dimension', actual: $doc['nldesign']['spacing']['base']['$type']);
+		$this->assertSame(expected: ['fontFamily', ['Fira Sans', 'sans-serif']], actual: [$doc['nldesign']['font']['family']['$type'], $doc['nldesign']['font']['family']['$value']]);
+		$this->assertSame(expected: ['fontWeight', 700], actual: [$doc['nldesign']['font']['weight-bold']['$type'], $doc['nldesign']['font']['weight-bold']['$value']]);
+		$this->assertSame(expected: ['number', 1.5], actual: [$doc['nldesign']['line']['height']['$type'], $doc['nldesign']['line']['height']['$value']]);
+		$this->assertSame(expected: 'color', actual: $doc['nldesign']['color']['primary']['$type']);
 	}//end testTypingTable()
 
 	/**
@@ -97,10 +97,10 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testAliasStaysAnAlias(): void {
-		$doc = $this->write(['--nldesign-color-link' => 'var(--nldesign-color-primary)', '--nldesign-color-primary' => '#154273']);
+		$doc = $this->write(declarations: ['--nldesign-color-link' => 'var(--nldesign-color-primary)', '--nldesign-color-primary' => '#154273']);
 
-		$this->assertSame('{nldesign.color.primary}', $doc['nldesign']['color']['link']['$value']);
-		$this->assertSame('color', $doc['nldesign']['color']['link']['$type']);
+		$this->assertSame(expected: '{nldesign.color.primary}', actual: $doc['nldesign']['color']['link']['$value']);
+		$this->assertSame(expected: 'color', actual: $doc['nldesign']['color']['link']['$type']);
 	}//end testAliasStaysAnAlias()
 
 	/**
@@ -110,14 +110,14 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testUntypedValuesGoToCssOnly(): void {
 		$gradient = 'linear-gradient(90deg, #154273, #01689b)';
-		$doc = $this->write(['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem', '--nldesign-animation-bounce' => 'cubic-bezier(1.5, 0, 0, 1)']);
+		$doc = $this->write(declarations: ['--nldesign-header-background' => $gradient, '--nldesign-color-text' => 'var(--color-main-text)', '--nldesign-gap' => '1.0rem', '--nldesign-animation-bounce' => 'cubic-bezier(1.5, 0, 0, 1)']);
 		$cssOnly = $doc['$extensions']['nl.conduction.thematiq']['cssOnly'];
 
-		$this->assertSame($gradient, $cssOnly['--nldesign-header-background']);
-		$this->assertSame('var(--color-main-text)', $cssOnly['--nldesign-color-text']);
-		$this->assertSame('1.0rem', $cssOnly['--nldesign-gap'], 'written as 1rem it would not come back the same');
-		$this->assertSame('cubic-bezier(1.5, 0, 0, 1)', $cssOnly['--nldesign-animation-bounce'], 'DTCG allows x only in 0..1');
-		$this->assertArrayNotHasKey('header', $doc['nldesign'] ?? []);
+		$this->assertSame(expected: $gradient, actual: $cssOnly['--nldesign-header-background']);
+		$this->assertSame(expected: 'var(--color-main-text)', actual: $cssOnly['--nldesign-color-text']);
+		$this->assertSame(expected: '1.0rem', actual: $cssOnly['--nldesign-gap'], message: 'written as 1rem it would not come back the same');
+		$this->assertSame(expected: 'cubic-bezier(1.5, 0, 0, 1)', actual: $cssOnly['--nldesign-animation-bounce'], message: 'DTCG allows x only in 0..1');
+		$this->assertArrayNotHasKey(key: 'header', array: $doc['nldesign'] ?? []);
 	}//end testUntypedValuesGoToCssOnly()
 
 	/**
@@ -126,9 +126,9 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testHexBecomesAnSrgbObject(): void {
-		$doc = $this->write(['--nldesign-color-primary' => '#154273']);
+		$doc = $this->write(declarations: ['--nldesign-color-primary' => '#154273']);
 
-		$this->assertSame(['colorSpace' => 'srgb', 'components' => [0.0824, 0.2588, 0.451], 'hex' => '#154273'], $doc['nldesign']['color']['primary']['$value']);
+		$this->assertSame(expected: ['colorSpace' => 'srgb', 'components' => [0.0824, 0.2588, 0.451], 'hex' => '#154273'], actual: $doc['nldesign']['color']['primary']['$value']);
 	}//end testHexBecomesAnSrgbObject()
 
 	/**
@@ -137,9 +137,9 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testOklchKeepsItsSpace(): void {
-		$value = $this->write(['--nldesign-color-primary' => 'oklch(0.5 0.1 250)'])['nldesign']['color']['primary']['$value'];
+		$value = $this->write(declarations: ['--nldesign-color-primary' => 'oklch(0.5 0.1 250)'])['nldesign']['color']['primary']['$value'];
 
-		$this->assertSame(['oklch', [0.5, 0.1, 250], '#32669a'], [$value['colorSpace'], $value['components'], $value['hex']]);
+		$this->assertSame(expected: ['oklch', [0.5, 0.1, 250], '#32669a'], actual: [$value['colorSpace'], $value['components'], $value['hex']]);
 	}//end testOklchKeepsItsSpace()
 
 	/**
@@ -148,10 +148,10 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testAlphaIsCarried(): void {
-		$value = $this->write(['--nldesign-color-primary-light' => '#15427380'])['nldesign']['color']['primary-light']['$value'];
+		$value = $this->write(declarations: ['--nldesign-color-primary-light' => '#15427380'])['nldesign']['color']['primary-light']['$value'];
 
-		$this->assertSame(0.502, $value['alpha']);
-		$this->assertSame('#154273', $value['hex']);
+		$this->assertSame(expected: 0.502, actual: $value['alpha']);
+		$this->assertSame(expected: '#154273', actual: $value['hex']);
 	}//end testAlphaIsCarried()
 
 	/**
@@ -161,11 +161,11 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testEveryColourObjectImports(): void {
 		$colours = ['--nldesign-a-b' => 'navy', '--nldesign-a-c' => 'rgb(21 66 115 / 50%)', '--nldesign-a-d' => 'hsl(210, 50%, 40%)', '--nldesign-a-e' => 'lab(50 20 -30)', '--nldesign-a-f' => 'color(display-p3 0.5 0.3 0.7)', '--nldesign-a-g' => 'hwb(210 20% 30%)'];
-		$result = (new DesignTokensMapper())->map(document: $this->write($colours));
+		$result = (new DesignTokensMapper())->map(document: $this->write(declarations: $colours));
 
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 		// The sRGB notations come back as they were written (colour-notation-kept); lab() and display-p3 as sRGB hex.
-		$this->assertSame(['--nldesign-a-b' => 'navy', '--nldesign-a-c' => 'rgb(21 66 115 / 50%)', '--nldesign-a-d' => 'hsl(210, 50%, 40%)', '--nldesign-a-e' => '#856caa', '--nldesign-a-f' => '#8849b8', '--nldesign-a-g' => 'hwb(210 20% 30%)'], $result['declarations']);
+		$this->assertSame(expected: ['--nldesign-a-b' => 'navy', '--nldesign-a-c' => 'rgb(21 66 115 / 50%)', '--nldesign-a-d' => 'hsl(210, 50%, 40%)', '--nldesign-a-e' => '#856caa', '--nldesign-a-f' => '#8849b8', '--nldesign-a-g' => 'hwb(210 20% 30%)'], actual: $result['declarations']);
 	}//end testEveryColourObjectImports()
 
 	/**
@@ -174,10 +174,10 @@ final class DesignTokensWriterTest extends TestCase {
 	 * @return void
 	 */
 	public function testGroupAndTokenClashGoesToCssOnly(): void {
-		$doc = $this->write(['--nldesign-color' => '#000000', '--nldesign-color-primary' => '#154273']);
+		$doc = $this->write(declarations: ['--nldesign-color' => '#000000', '--nldesign-color-primary' => '#154273']);
 
-		$this->assertSame('#000000', $doc['$extensions']['nl.conduction.thematiq']['cssOnly']['--nldesign-color']);
-		$this->assertSame('#154273', $doc['nldesign']['color']['primary']['$value']['hex']);
+		$this->assertSame(expected: '#000000', actual: $doc['$extensions']['nl.conduction.thematiq']['cssOnly']['--nldesign-color']);
+		$this->assertSame(expected: '#154273', actual: $doc['nldesign']['color']['primary']['$value']['hex']);
 	}//end testGroupAndTokenClashGoesToCssOnly()
 
 	/**
@@ -187,16 +187,16 @@ final class DesignTokensWriterTest extends TestCase {
 	 */
 	public function testDeprecatedTokenCarriesNotice(): void {
 		$doc = $this->write(
-			['--nldesign-color-primary-light' => '#e6ecf3', '--nldesign-color-primary' => '#154273'],
-			[
+			declarations: ['--nldesign-color-primary-light' => '#e6ecf3', '--nldesign-color-primary' => '#154273'],
+			deprecations: [
 				'--nldesign-color-primary-light' => ['severity' => 'critical', 'replacement' => '--nldesign-color-primary', 'removalDate' => '2027-03-01', 'state' => 'active'],
 				'--nldesign-color-primary' => ['severity' => 'info', 'state' => 'removed'],
 			]
 		);
 		$token = $doc['nldesign']['color']['primary-light'];
 
-		$this->assertSame('Use --nldesign-color-primary instead; removal 2027-03-01', $token['$deprecated']);
-		$this->assertSame(['severity' => 'critical', 'replacement' => '--nldesign-color-primary', 'removalDate' => '2027-03-01'], $token['$extensions']['nl.conduction.thematiq']['deprecation']);
-		$this->assertArrayNotHasKey('$deprecated', $doc['nldesign']['color']['primary'], 'a removed record is history, not a notice');
+		$this->assertSame(expected: 'Use --nldesign-color-primary instead; removal 2027-03-01', actual: $token['$deprecated']);
+		$this->assertSame(expected: ['severity' => 'critical', 'replacement' => '--nldesign-color-primary', 'removalDate' => '2027-03-01'], actual: $token['$extensions']['nl.conduction.thematiq']['deprecation']);
+		$this->assertArrayNotHasKey(key: '$deprecated', array: $doc['nldesign']['color']['primary'], message: 'a removed record is history, not a notice');
 	}//end testDeprecatedTokenCarriesNotice()
 }//end class

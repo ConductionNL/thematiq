@@ -89,21 +89,21 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
 		copy(\dirname(__DIR__, 3) . '/css/systems/nldesign/defaults.css', $this->appDir . '/css/systems/nldesign/defaults.css');
 		$this->stored = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(function (string $app, string $key, $value): void {
 			$this->stored[$key] = (string)$value;
 		});
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$records = new DeprecationRecords($config);
-		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
-		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $parser);
-		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$records = new DeprecationRecords(config: $config);
+		$this->ownTokens = new OwnTokenService(config: $config, values: new TokenValueValidator(), records: $records);
+		$this->deprecations = new TokenDeprecationService(records: $records, ownTokens: $this->ownTokens, appManager: $appManager, cssParser: $parser);
+		$dark = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($this->appDir),
+				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
 				darkPalette: $dark
 			),
@@ -131,8 +131,8 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		$css = $this->overrides->getRawContent();
 
 		$root = substr($css, 0, (int)strpos($css, '}'));
-		$this->assertMatchesRegularExpression('/--color-primary: #154273 !important;\s+--nldesign-org-brand-accent: #e17000;/', $root);
-		$this->assertSame(['--color-primary' => '#154273'], $this->overrides->read(), 'own tokens are not editor overrides');
+		$this->assertMatchesRegularExpression(pattern: '/--color-primary: #154273 !important;\s+--nldesign-org-brand-accent: #e17000;/', string: $root);
+		$this->assertSame(expected: ['--color-primary' => '#154273'], actual: $this->overrides->read(), message: 'own tokens are not editor overrides');
 	}//end testOwnTokensRenderedAfterOverrides()
 
 	/**
@@ -145,10 +145,10 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		$this->overrides->write(tokens: []);
 		$css = $this->overrides->getRawContent();
 
-		$this->assertStringContainsString('--nldesign-org-brand-accent: #e17000;', $css);
-		$this->assertSame(2, substr_count($css, '--nldesign-org-brand-accent: #ff9a3c;'));
-		$this->assertStringContainsString('body[data-theme-dark]', $css);
-		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $css);
+		$this->assertStringContainsString(needle: '--nldesign-org-brand-accent: #e17000;', haystack: $css);
+		$this->assertSame(expected: 2, actual: substr_count($css, '--nldesign-org-brand-accent: #ff9a3c;'));
+		$this->assertStringContainsString(needle: 'body[data-theme-dark]', haystack: $css);
+		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
 	}//end testOwnTokenDarkValue()
 
 	/**
@@ -160,7 +160,7 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000']);
 		$this->overrides->write(tokens: []);
 
-		$this->assertSame(1, substr_count($this->overrides->getRawContent(), '--nldesign-org-brand-accent'));
+		$this->assertSame(expected: 1, actual: substr_count($this->overrides->getRawContent(), '--nldesign-org-brand-accent'));
 	}//end testColourWithoutDarkValueStaysLight()
 
 	/**
@@ -175,8 +175,8 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		$this->overrides->write(tokens: []);
 
 		$this->assertStringContainsString(
-			"  /* deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01 */\n  --nldesign-org-old-accent: #aa0000;",
-			$this->overrides->getRawContent()
+			needle: "  /* deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01 */\n  --nldesign-org-old-accent: #aa0000;",
+			haystack: $this->overrides->getRawContent()
 		);
 	}//end testDeprecationCommentWritten()
 
@@ -193,8 +193,8 @@ final class CustomOverridesServiceOwnTokensTest extends TestCase {
 		$changed = $this->overrides->rewriteAll();
 		sort($changed);
 
-		$this->assertSame(['custom-overrides-nextcloud.css', 'custom-overrides.css'], $changed);
-		$this->assertStringContainsString('--nldesign-org-gap: 8px;', (string)file_get_contents($this->appDir . '/css/custom-overrides-nextcloud.css'));
-		$this->assertSame([], $this->overrides->rewriteAll(), 'a second run changes nothing');
+		$this->assertSame(expected: ['custom-overrides-nextcloud.css', 'custom-overrides.css'], actual: $changed);
+		$this->assertStringContainsString(needle: '--nldesign-org-gap: 8px;', haystack: (string)file_get_contents($this->appDir . '/css/custom-overrides-nextcloud.css'));
+		$this->assertSame(expected: [], actual: $this->overrides->rewriteAll(), message: 'a second run changes nothing');
 	}//end testEveryFileGetsOwnTokens()
 }//end class

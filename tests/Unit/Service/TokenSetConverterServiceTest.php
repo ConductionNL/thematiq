@@ -51,16 +51,16 @@ class TokenSetConverterServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$this->converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -125,13 +125,13 @@ class TokenSetConverterServiceTest extends TestCase {
 	 */
 	public function testBuiltThemeCssIsInputAWithItsChainResolved(): void {
 		$result = $this->convert(
-			'.openwoo-theme { --utrecht-button-primary-action-background-color: var(--openwoo-color-primary); --openwoo-color-primary: #23845c; }',
-			'openwoo'
+			content: '.openwoo-theme { --utrecht-button-primary-action-background-color: var(--openwoo-color-primary); --openwoo-color-primary: #23845c; }',
+			slug: 'openwoo'
 		);
 
-		$this->assertSame('A', $result['inputKind']);
-		$this->assertSame('#23845c', $result['decl']['--nldesign-color-primary']);
-		$this->assertStringNotContainsString('var(--openwoo-color-primary)', $result['css']);
+		$this->assertSame(expected: 'A', actual: $result['inputKind']);
+		$this->assertSame(expected: '#23845c', actual: $result['decl']['--nldesign-color-primary']);
+		$this->assertStringNotContainsString(needle: 'var(--openwoo-color-primary)', haystack: $result['css']);
 	}//end testBuiltThemeCssIsInputAWithItsChainResolved()
 
 	/**
@@ -140,10 +140,10 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testADtcgDocumentIsInputB(): void {
-		$result = $this->convert('{"color": {"primary": {"$value": "#154273", "$type": "color"}}}');
+		$result = $this->convert(content: '{"color": {"primary": {"$value": "#154273", "$type": "color"}}}');
 
-		$this->assertSame('B', $result['inputKind']);
-		$this->assertSame('#154273', $result['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: 'B', actual: $result['inputKind']);
+		$this->assertSame(expected: '#154273', actual: $result['decl']['--nldesign-color-primary']);
 	}//end testADtcgDocumentIsInputB()
 
 	/**
@@ -152,15 +152,15 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAStyleDictionaryTreeIsInputCWithItsAliasResolved(): void {
-		$result = $this->convert((string)json_encode([
+		$result = $this->convert(content: (string)json_encode([
 			'brand' => ['red' => ['500' => ['value' => '#c8102e']]],
 			'utrecht' => ['button' => ['primary-action' => ['background-color' => ['value' => '{brand.red.500}']]]],
 		]));
 
-		$this->assertSame('C', $result['inputKind']);
-		$this->assertSame('#c8102e', $result['decl']['--nldesign-color-primary']);
-		$this->assertSame('#c8102e', $result['decl']['--demo-brand-red-500']);
-		$this->assertStringNotContainsString('{brand', $result['css']);
+		$this->assertSame(expected: 'C', actual: $result['inputKind']);
+		$this->assertSame(expected: '#c8102e', actual: $result['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#c8102e', actual: $result['decl']['--demo-brand-red-500']);
+		$this->assertStringNotContainsString(needle: '{brand', haystack: $result['css']);
 	}//end testAStyleDictionaryTreeIsInputCWithItsAliasResolved()
 
 	/**
@@ -169,12 +169,12 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnExistingSetIsInputDAndKeepsItsValues(): void {
-		$result = $this->convert(':root { --nldesign-color-primary: #1b3d6b; --nldesign-animation-quick: 100ms; }');
+		$result = $this->convert(content: ':root { --nldesign-color-primary: #1b3d6b; --nldesign-animation-quick: 100ms; }');
 
-		$this->assertSame('D', $result['inputKind']);
-		$this->assertSame('#1b3d6b', $result['decl']['--nldesign-color-primary']);
-		$this->assertSame('100ms', $result['decl']['--nldesign-animation-quick']);
-		$this->assertSame('kept-existing-value', $this->entry($result, '--nldesign-animation-quick')['reason']);
+		$this->assertSame(expected: 'D', actual: $result['inputKind']);
+		$this->assertSame(expected: '#1b3d6b', actual: $result['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: '100ms', actual: $result['decl']['--nldesign-animation-quick']);
+		$this->assertSame(expected: 'kept-existing-value', actual: $this->entry(result: $result, source: '--nldesign-animation-quick')['reason']);
 	}//end testAnExistingSetIsInputDAndKeepsItsValues()
 
 	/**
@@ -185,9 +185,9 @@ class TokenSetConverterServiceTest extends TestCase {
 	public function testUnrecognisedContentIsRefused(): void {
 		try {
 			$this->converter->convert(content: 'this is not a theme at all', slug: 'demo', displayName: 'Demo');
-			$this->fail('Unrecognised content was converted.');
+			$this->fail(message: 'Unrecognised content was converted.');
 		} catch (RuntimeException $exception) {
-			$this->assertSame(422, $exception->getCode());
+			$this->assertSame(expected: 422, actual: $exception->getCode());
 		}
 	}//end testUnrecognisedContentIsRefused()
 
@@ -197,7 +197,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheContrastGuardDarkensAFailingPrimary(): void {
-		$result = $this->convert($this->theme([
+		$result = $this->convert(content: $this->theme(tokens: [
 			'--utrecht-button-primary-action-background-color' => '#7fb3e0',
 			'--utrecht-button-primary-action-color' => '#ffffff',
 		]));
@@ -208,7 +208,7 @@ class TokenSetConverterServiceTest extends TestCase {
 			second: $contrast->parseColor(value: $result['decl']['--nldesign-color-primary-text'])
 		);
 
-		$this->assertGreaterThanOrEqual(4.5, $ratio);
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $ratio);
 		$primary = null;
 		foreach ($result['report'] as $item) {
 			if ($item['target'] === '--nldesign-color-primary') {
@@ -216,8 +216,8 @@ class TokenSetConverterServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame('contrast-adjusted', $primary['reason']);
-		$this->assertSame('#7fb3e0', $primary['original']);
+		$this->assertSame(expected: 'contrast-adjusted', actual: $primary['reason']);
+		$this->assertSame(expected: '#7fb3e0', actual: $primary['original']);
 	}//end testTheContrastGuardDarkensAFailingPrimary()
 
 	/**
@@ -228,15 +228,15 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testAThemeWithoutAnActionColourGetsNone(): void {
-		$result = $this->convert($this->theme([
+		$result = $this->convert(content: $this->theme(tokens: [
 			'--utrecht-button-primary-action-background-color' => '#154273',
 			'--utrecht-button-primary-action-color' => '#ffffff',
 			'--utrecht-button-primary-action-hover-background-color' => '#0f2f52',
 		]));
 
-		$this->assertSame('#154273', $result['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#154273', actual: $result['decl']['--nldesign-color-primary']);
 		foreach (array_keys($result['decl']) as $name) {
-			$this->assertStringNotContainsString('color-action', $name, 'the Utrecht button colour is the primary, not an action colour');
+			$this->assertStringNotContainsString(needle: 'color-action', haystack: $name, message: 'the Utrecht button colour is the primary, not an action colour');
 		}
 	}//end testAThemeWithoutAnActionColourGetsNone()
 
@@ -248,29 +248,29 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testAThemesActionColourIsConverted(): void {
-		$bare = $this->convert($this->theme([
+		$bare = $this->convert(content: $this->theme(tokens: [
 			'--demo-color-primary' => '#1a67a3',
 			'--demo-color-action' => '#116329',
 		]));
 
-		$this->assertSame('#1a67a3', $bare['decl']['--nldesign-color-primary']);
-		$this->assertSame('#116329', $bare['decl']['--nldesign-color-action']);
-		$this->assertSame('#ffffff', $bare['decl']['--nldesign-color-action-text'], 'a dark green: the text is derived white, by the rule the primary text uses');
-		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $bare['decl'], 'the stylesheet darkens the action colour itself');
+		$this->assertSame(expected: '#1a67a3', actual: $bare['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#116329', actual: $bare['decl']['--nldesign-color-action']);
+		$this->assertSame(expected: '#ffffff', actual: $bare['decl']['--nldesign-color-action-text'], message: 'a dark green: the text is derived white, by the rule the primary text uses');
+		$this->assertArrayNotHasKey(key: '--nldesign-color-action-hover', array: $bare['decl'], message: 'the stylesheet darkens the action colour itself');
 
-		$full = $this->convert($this->theme([
+		$full = $this->convert(content: $this->theme(tokens: [
 			'--demo-color-primary' => '#1a67a3',
 			'--demo-color-action' => '#ffd43b',
 			'--demo-color-action-hover' => '#fcc419',
 			'--demo-color-action-text' => '#212529',
 		]));
 
-		$this->assertSame('#ffd43b', $full['decl']['--nldesign-color-action']);
-		$this->assertSame('#fcc419', $full['decl']['--nldesign-color-action-hover']);
-		$this->assertSame('#212529', $full['decl']['--nldesign-color-action-text']);
+		$this->assertSame(expected: '#ffd43b', actual: $full['decl']['--nldesign-color-action']);
+		$this->assertSame(expected: '#fcc419', actual: $full['decl']['--nldesign-color-action-hover']);
+		$this->assertSame(expected: '#212529', actual: $full['decl']['--nldesign-color-action-text']);
 
-		$pale = $this->convert($this->theme(['--demo-color-primary' => '#1a67a3', '--demo-color-action' => '#ffd43b']));
-		$this->assertSame('#000000', $pale['decl']['--nldesign-color-action-text'], 'white does not read on yellow, so the text is derived black');
+		$pale = $this->convert(content: $this->theme(tokens: ['--demo-color-primary' => '#1a67a3', '--demo-color-action' => '#ffd43b']));
+		$this->assertSame(expected: '#000000', actual: $pale['decl']['--nldesign-color-action-text'], message: 'white does not read on yellow, so the text is derived black');
 	}//end testAThemesActionColourIsConverted()
 
 	/**
@@ -281,7 +281,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @spec openspec/specs/action-colour/spec.md#requirement-an-imported-theme-may-bring-an-action-colour
 	 */
 	public function testADtcgDocumentBringsItsActionColour(): void {
-		$result = $this->convert((string)json_encode([
+		$result = $this->convert(content: (string)json_encode([
 			'color' => [
 				'primary' => ['$value' => '#1a67a3', '$type' => 'color'],
 				'action' => ['$value' => '#1f883d', '$type' => 'color'],
@@ -290,10 +290,10 @@ class TokenSetConverterServiceTest extends TestCase {
 			],
 		]));
 
-		$this->assertSame('#1a67a3', $result['decl']['--nldesign-color-primary']);
-		$this->assertSame('#1f883d', $result['decl']['--nldesign-color-action']);
-		$this->assertSame('#197032', $result['decl']['--nldesign-color-action-hover']);
-		$this->assertSame('#ffffff', $result['decl']['--nldesign-color-action-text']);
+		$this->assertSame(expected: '#1a67a3', actual: $result['decl']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#1f883d', actual: $result['decl']['--nldesign-color-action']);
+		$this->assertSame(expected: '#197032', actual: $result['decl']['--nldesign-color-action-hover']);
+		$this->assertSame(expected: '#ffffff', actual: $result['decl']['--nldesign-color-action-text']);
 	}//end testADtcgDocumentBringsItsActionColour()
 
 	/**
@@ -302,7 +302,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheNeverPolicySkipsLayoutAndKeepsComponents(): void {
-		$result = $this->convert($this->theme([
+		$result = $this->convert(content: $this->theme(tokens: [
 			'--utrecht-button-primary-action-background-color' => '#154273',
 			'--utrecht-page-max-inline-size' => '1200px',
 			'--utrecht-document-font-size' => '18px',
@@ -310,13 +310,13 @@ class TokenSetConverterServiceTest extends TestCase {
 			'--utrecht-accordion-button-background-color' => '#eeeeee',
 		]));
 
-		$this->assertSame('layout-fixed-by-nextcloud', $this->entry($result, '--utrecht-page-max-inline-size')['reason']);
-		$this->assertSame('typography-scale-locked', $this->entry($result, '--utrecht-document-font-size')['reason']);
-		$this->assertSame('clickable-area-locked', $this->entry($result, '--utrecht-button-padding-block-start')['reason']);
-		$this->assertArrayNotHasKey('--utrecht-page-max-inline-size', $result['decl']);
+		$this->assertSame(expected: 'layout-fixed-by-nextcloud', actual: $this->entry(result: $result, source: '--utrecht-page-max-inline-size')['reason']);
+		$this->assertSame(expected: 'typography-scale-locked', actual: $this->entry(result: $result, source: '--utrecht-document-font-size')['reason']);
+		$this->assertSame(expected: 'clickable-area-locked', actual: $this->entry(result: $result, source: '--utrecht-button-padding-block-start')['reason']);
+		$this->assertArrayNotHasKey(key: '--utrecht-page-max-inline-size', array: $result['decl']);
 		$this->assertSame(
-			['action' => 'kept', 'reason' => 'kept-for-nlds-components'],
-			array_intersect_key($this->entry($result, '--utrecht-accordion-button-background-color'), ['action' => 1, 'reason' => 1])
+			expected: ['action' => 'kept', 'reason' => 'kept-for-nlds-components'],
+			actual: array_intersect_key($this->entry(result: $result, source: '--utrecht-accordion-button-background-color'), ['action' => 1, 'reason' => 1])
 		);
 	}//end testTheNeverPolicySkipsLayoutAndKeepsComponents()
 
@@ -326,13 +326,13 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnUnresolvedVarIsReportedAndNotEmitted(): void {
-		$result = $this->convert($this->theme([
+		$result = $this->convert(content: $this->theme(tokens: [
 			'--utrecht-button-primary-action-background-color' => '#154273',
 			'--utrecht-link-color' => 'var(--some-foreign-token)',
 		]));
 
-		$this->assertSame('unresolved-var', $this->entry($result, '--utrecht-link-color')['reason']);
-		$this->assertStringNotContainsString('--some-foreign-token', $result['css']);
+		$this->assertSame(expected: 'unresolved-var', actual: $this->entry(result: $result, source: '--utrecht-link-color')['reason']);
+		$this->assertStringNotContainsString(needle: '--some-foreign-token', haystack: $result['css']);
 	}//end testAnUnresolvedVarIsReportedAndNotEmitted()
 
 	/**
@@ -341,13 +341,13 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnExternalUrlIsDroppedBeforeTheValidator(): void {
-		$result = $this->convert($this->theme([
+		$result = $this->convert(content: $this->theme(tokens: [
 			'--utrecht-button-primary-action-background-color' => '#154273',
 			'--utrecht-page-header-background-image' => 'url("https://example.com/header.png")',
 		]));
 
-		$this->assertSame('external-url-blocked', $this->entry($result, '--utrecht-page-header-background-image')['reason']);
-		$this->assertStringNotContainsString('example.com', $result['css']);
+		$this->assertSame(expected: 'external-url-blocked', actual: $this->entry(result: $result, source: '--utrecht-page-header-background-image')['reason']);
+		$this->assertStringNotContainsString(needle: 'example.com', haystack: $result['css']);
 	}//end testAnExternalUrlIsDroppedBeforeTheValidator()
 
 	/**
@@ -356,7 +356,7 @@ class TokenSetConverterServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testEveryReasonHasCopyInTheTable(): void {
-		$result = $this->convert((string)file_get_contents(\dirname(__DIR__) . '/fixtures/converter/theme-css.input.css'), 'parity');
+		$result = $this->convert(content: (string)file_get_contents(\dirname(__DIR__) . '/fixtures/converter/theme-css.input.css'), slug: 'parity');
 		$reasons = $this->converter->getReasons();
 
 		foreach ($result['report'] as $item) {
@@ -364,7 +364,7 @@ class TokenSetConverterServiceTest extends TestCase {
 				continue;
 			}
 
-			$this->assertArrayHasKey((string)$item['reason'], $reasons, (string)$item['source']);
+			$this->assertArrayHasKey(key: (string)$item['reason'], array: $reasons, message: (string)$item['source']);
 		}
 	}//end testEveryReasonHasCopyInTheTable()
 }//end class

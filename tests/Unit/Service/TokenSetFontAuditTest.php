@@ -68,9 +68,9 @@ class TokenSetFontAuditTest extends TestCase {
 		}
 
 		$this->assertSame(
-			[],
-			$offenders,
-			"These shipped sets would render a substitute typeface in silence.\n"
+			expected: [],
+			actual: $offenders,
+			message: "These shipped sets would render a substitute typeface in silence.\n"
 			. "Self-host the family (scripts/build-fonts.js FAMILIES) when its licence allows it,\n"
 			. "or add a `font` block with licence, licenceHolder, action and note to its\n"
 			. "token-sets.json entry so the admin UI asks for an upload:\n  - "
@@ -91,17 +91,17 @@ class TokenSetFontAuditTest extends TestCase {
 		$service = $this->service();
 
 		$served = $service->auditSet($this->repoRoot(), 'example-gemeente', ['design_system' => 'nldesign']);
-		$this->assertSame('Source Sans 3', $served['family']);
-		$this->assertSame('self-hosted', $served['kind']);
-		$this->assertTrue($served['selfHosted']);
+		$this->assertSame(expected: 'Source Sans 3', actual: $served['family']);
+		$this->assertSame(expected: 'self-hosted', actual: $served['kind']);
+		$this->assertTrue(condition: $served['selfHosted']);
 
 		// The same set file, judged against a design system that links no
 		// stylesheet at all, must come back unserved — so the verdict is a
 		// function of what is linked, not of the set's name.
 		$unserved = $service->auditSet($this->repoRoot(), 'example-gemeente', ['design_system' => 'none']);
-		$this->assertSame('undeclared', $unserved['kind']);
-		$this->assertFalse($unserved['selfHosted']);
-		$this->assertFalse($unserved['ok']);
+		$this->assertSame(expected: 'undeclared', actual: $unserved['kind']);
+		$this->assertFalse(condition: $unserved['selfHosted']);
+		$this->assertFalse(condition: $unserved['ok']);
 	}//end testTheAuditDistinguishesAServedFamilyFromAnUnservedOne()
 
 	/**
@@ -125,9 +125,9 @@ class TokenSetFontAuditTest extends TestCase {
 			['design_system' => 'nldesign']
 		);
 
-		$this->assertStringContainsString('var(', (string)$result['stack'], 'The set must still write its family as a var().');
-		$this->assertSame('Figtree', $result['family']);
-		$this->assertSame('self-hosted', $result['kind']);
+		$this->assertStringContainsString(needle: 'var(', haystack: (string)$result['stack'], message: 'The set must still write its family as a var().');
+		$this->assertSame(expected: 'Figtree', actual: $result['family']);
+		$this->assertSame(expected: 'self-hosted', actual: $result['kind']);
 	}//end testAFamilyBehindAVarChainIsResolved()
 
 	/**
@@ -145,17 +145,17 @@ class TokenSetFontAuditTest extends TestCase {
 			$meta = ($manifest[$id] ?? []);
 			$block = ($meta['font'] ?? null);
 
-			$this->assertIsArray($block, $id . ' must declare a font block.');
-			$this->assertSame($family, ($block['family'] ?? null), $id . ' must declare the family it names.');
-			$this->assertFalse(($block['selfHosted'] ?? null), $id . ' must not claim the family is self-hosted.');
-			$this->assertNotSame('', trim((string)($block['note'] ?? '')), $id . ' must record why.');
+			$this->assertIsArray(actual: $block, message: $id . ' must declare a font block.');
+			$this->assertSame(expected: $family, actual: ($block['family'] ?? null), message: $id . ' must declare the family it names.');
+			$this->assertFalse(condition: ($block['selfHosted'] ?? null), message: $id . ' must not claim the family is self-hosted.');
+			$this->assertNotSame(expected: '', actual: trim((string)($block['note'] ?? '')), message: $id . ' must record why.');
 
 			$warnings = $this->service()->warningsFor($this->repoRoot(), $id, $meta);
-			$this->assertCount(1, $warnings, $id . ' must raise exactly one typeface warning.');
-			$this->assertSame('font', $warnings[0]['kind']);
-			$this->assertSame($family, $warnings[0]['family']);
-			$this->assertContains($warnings[0]['licence'], ['proprietary', 'restricted']);
-			$this->assertContains($warnings[0]['action'], ['upload', 'acknowledge']);
+			$this->assertCount(expectedCount: 1, haystack: $warnings, message: $id . ' must raise exactly one typeface warning.');
+			$this->assertSame(expected: 'font', actual: $warnings[0]['kind']);
+			$this->assertSame(expected: $family, actual: $warnings[0]['family']);
+			$this->assertContains(needle: $warnings[0]['licence'], haystack: ['proprietary', 'restricted']);
+			$this->assertContains(needle: $warnings[0]['action'], haystack: ['upload', 'acknowledge']);
 		}
 	}//end testAnUndistributableFamilyCarriesItsLicencePositionAndAction()
 
@@ -187,7 +187,7 @@ class TokenSetFontAuditTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $drift, "A font block has drifted from the set it describes:\n  - " . implode("\n  - ", $drift));
+		$this->assertSame(expected: [], actual: $drift, message: "A font block has drifted from the set it describes:\n  - " . implode("\n  - ", $drift));
 	}//end testADeclaredFontBlockMatchesTheSetsOwnCss()
 
 	/**
@@ -201,9 +201,9 @@ class TokenSetFontAuditTest extends TestCase {
 	public function testASystemFamilyIsNotReportedAsMissing(): void {
 		$result = $this->service()->auditSet($this->repoRoot(), 'tilburg', $this->manifest()['tilburg'] ?? []);
 
-		$this->assertSame('Arial', $result['family']);
-		$this->assertSame('system', $result['kind']);
-		$this->assertSame([], $this->service()->warningsFor($this->repoRoot(), 'tilburg', $this->manifest()['tilburg'] ?? []));
+		$this->assertSame(expected: 'Arial', actual: $result['family']);
+		$this->assertSame(expected: 'system', actual: $result['kind']);
+		$this->assertSame(expected: [], actual: $this->service()->warningsFor($this->repoRoot(), 'tilburg', $this->manifest()['tilburg'] ?? []));
 	}//end testASystemFamilyIsNotReportedAsMissing()
 
 	/**
@@ -220,21 +220,21 @@ class TokenSetFontAuditTest extends TestCase {
 		@mkdir($probe . '/css/tokens', 0777, true);
 
 		// No design-systems.json at all.
-		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+		$this->assertSame(expected: [], actual: $this->service()->selfHostedFamilies($probe, 'nldesign'));
 
 		// Present but not a JSON list.
 		file_put_contents($probe . '/design-systems.json', '{"id":"nldesign"}');
-		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+		$this->assertSame(expected: [], actual: $this->service()->selfHostedFamilies($probe, 'nldesign'));
 
 		// Present and a list, but naming a stylesheet that is not on disk.
 		file_put_contents(
 			$probe . '/design-systems.json',
 			json_encode([['id' => 'nldesign', 'stylesheets' => ['systems/nowhere/fonts']]])
 		);
-		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'nldesign'));
+		$this->assertSame(expected: [], actual: $this->service()->selfHostedFamilies($probe, 'nldesign'));
 
 		// A design system nothing declares.
-		$this->assertSame([], $this->service()->selfHostedFamilies($this->repoRoot(), 'no-such-system'));
+		$this->assertSame(expected: [], actual: $this->service()->selfHostedFamilies($this->repoRoot(), 'no-such-system'));
 	}//end testAnUnusableDesignSystemManifestSelfHostsNothing()
 
 	/**
@@ -249,11 +249,11 @@ class TokenSetFontAuditTest extends TestCase {
 	public function testASetWithNoFileNamesNoFamily(): void {
 		$result = $this->service()->auditSet($this->repoRoot(), 'no-such-set', []);
 
-		$this->assertNull($result['family']);
-		$this->assertNull($result['stack']);
-		$this->assertSame('system', $result['kind']);
-		$this->assertTrue($result['ok']);
-		$this->assertSame([], $this->service()->warningsFor($this->repoRoot(), 'no-such-set', []));
+		$this->assertNull(actual: $result['family']);
+		$this->assertNull(actual: $result['stack']);
+		$this->assertSame(expected: 'system', actual: $result['kind']);
+		$this->assertTrue(condition: $result['ok']);
+		$this->assertSame(expected: [], actual: $this->service()->warningsFor($this->repoRoot(), 'no-such-set', []));
 	}//end testASetWithNoFileNamesNoFamily()
 
 	/**
@@ -269,20 +269,20 @@ class TokenSetFontAuditTest extends TestCase {
 		@mkdir($probe, 0777, true);
 
 		// No css/tokens/ directory and no manifest.
-		$this->assertSame([], $this->service()->auditAll($probe));
+		$this->assertSame(expected: [], actual: $this->service()->auditAll($probe));
 
 		// A manifest that is not a list, and still no token files.
 		file_put_contents($probe . '/token-sets.json', '"not a list"');
-		$this->assertSame([], $this->service()->auditAll($probe));
+		$this->assertSame(expected: [], actual: $this->service()->auditAll($probe));
 
 		// One token file, and a manifest entry with no usable id.
 		@mkdir($probe . '/css/tokens', 0777, true);
 		file_put_contents($probe . '/css/tokens/probe.css', ":root {\n\t--nldesign-font-family: Arial;\n}\n");
 		file_put_contents($probe . '/token-sets.json', json_encode([['name' => 'no id'], 'not an entry']));
 		$results = $this->service()->auditAll($probe);
-		$this->assertCount(1, $results);
-		$this->assertSame('probe', $results[0]['id']);
-		$this->assertSame('Arial', $results[0]['family']);
+		$this->assertCount(expectedCount: 1, haystack: $results);
+		$this->assertSame(expected: 'probe', actual: $results[0]['id']);
+		$this->assertSame(expected: 'Arial', actual: $results[0]['family']);
 	}//end testAnUnusableCatalogueAuditsNothing()
 
 	/**
@@ -312,9 +312,9 @@ class TokenSetFontAuditTest extends TestCase {
 			] as $label => $meta
 		) {
 			$result = $this->service()->auditSet($probe, 'probe', $meta);
-			$this->assertSame('undeclared', $result['kind'], $label);
-			$this->assertFalse($result['ok'], $label);
-			$this->assertCount(1, $this->service()->warningsFor($probe, 'probe', $meta), $label);
+			$this->assertSame(expected: 'undeclared', actual: $result['kind'], message: $label);
+			$this->assertFalse(condition: $result['ok'], message: $label);
+			$this->assertCount(expectedCount: 1, haystack: $this->service()->warningsFor($probe, 'probe', $meta), message: $label);
 		}
 
 		// ...and the complete block is accepted, so the assertion above is not
@@ -328,7 +328,7 @@ class TokenSetFontAuditTest extends TestCase {
 				'note' => 'Not redistributable; an administrator uploads it.',
 			],
 		];
-		$this->assertSame('declared', $this->service()->auditSet($probe, 'probe', $complete)['kind']);
+		$this->assertSame(expected: 'declared', actual: $this->service()->auditSet($probe, 'probe', $complete)['kind']);
 	}//end testAnIncompleteFontBlockDeclaresNothing()
 
 	/**
@@ -352,15 +352,15 @@ class TokenSetFontAuditTest extends TestCase {
 			json_encode([['id' => 'probe', 'stylesheets' => ['systems/probe/fonts']]])
 		);
 
-		$this->assertSame([], $this->service()->selfHostedFamilies($probe, 'probe'));
+		$this->assertSame(expected: [], actual: $this->service()->selfHostedFamilies($probe, 'probe'));
 
 		file_put_contents($probe . '/css/tokens/ghost.css', ":root {\n\t--nldesign-font-family: 'Ghost';\n}\n");
-		$this->assertSame('undeclared', $this->service()->auditSet($probe, 'ghost', ['design_system' => 'probe'])['kind']);
+		$this->assertSame(expected: 'undeclared', actual: $this->service()->auditSet($probe, 'ghost', ['design_system' => 'probe'])['kind']);
 
 		file_put_contents($probe . '/css/tokens/empty.css', ":root {\n\t--nldesign-font-family: ;\n}\n");
 		$empty = $this->service()->auditSet($probe, 'empty', ['design_system' => 'probe']);
-		$this->assertNull($empty['family']);
-		$this->assertSame('system', $empty['kind']);
+		$this->assertNull(actual: $empty['family']);
+		$this->assertSame(expected: 'system', actual: $empty['kind']);
 	}//end testACommentedFaceIsNotServedAndAnEmptyStackNamesNothing()
 
 	/**
@@ -370,7 +370,7 @@ class TokenSetFontAuditTest extends TestCase {
 	 */
 	private function manifest(): array {
 		$decoded = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
-		$this->assertIsArray($decoded, 'token-sets.json must be a JSON array.');
+		$this->assertIsArray(actual: $decoded, message: 'token-sets.json must be a JSON array.');
 
 		$byId = [];
 		foreach ($decoded as $entry) {

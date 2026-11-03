@@ -55,9 +55,9 @@ class ConfigImportTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(ConfigBundleService::class);
+		$this->service = $this->createMock(originalClassName: ConfigBundleService::class);
 
-		$command = new ConfigImport($this->service, $this->createMock(BrandingPackageService::class));
+		$command = new ConfigImport(service: $this->service, packages: $this->createMock(originalClassName: BrandingPackageService::class));
 		$application = new Application();
 		$application->add($command);
 
@@ -95,7 +95,7 @@ class ConfigImportTest extends TestCase {
 	 * writing happens, or doesn't, inside the mocked service call).
 	 */
 	public function testDryRunCallsServiceWithDryRunTrueAndExitsZero(): void {
-		$path = $this->writeBundleFile('{"format":"nldesign-config-bundle","bundleVersion":1}');
+		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
 
 		$this->service->expects($this->once())
 			->method('import')
@@ -111,15 +111,15 @@ class ConfigImportTest extends TestCase {
 
 		$exitCode = $this->tester->execute(['file' => $path, '--dry-run' => true]);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertStringContainsString('Dry run', $this->tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'Dry run', haystack: $this->tester->getDisplay());
 	}//end testDryRunCallsServiceWithDryRunTrueAndExitsZero()
 
 	/**
 	 * A validation failure prints the full error listing and exits non-zero.
 	 */
 	public function testValidationFailureExitsNonZeroWithErrorListing(): void {
-		$path = $this->writeBundleFile('{"format":"nldesign-config-bundle","bundleVersion":1}');
+		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
 
 		$this->service->method('import')->willReturn(
 			[
@@ -133,10 +133,10 @@ class ConfigImportTest extends TestCase {
 
 		$exitCode = $this->tester->execute(['file' => $path]);
 
-		$this->assertNotSame(0, $exitCode);
+		$this->assertNotSame(expected: 0, actual: $exitCode);
 		$display = $this->tester->getDisplay();
-		$this->assertStringContainsString('Forbidden value in custom-x.', $display);
-		$this->assertStringContainsString('Unresolvable token set "atlantis".', $display);
+		$this->assertStringContainsString(needle: 'Forbidden value in custom-x.', haystack: $display);
+		$this->assertStringContainsString(needle: 'Unresolvable token set "atlantis".', haystack: $display);
 	}//end testValidationFailureExitsNonZeroWithErrorListing()
 
 	/**
@@ -147,29 +147,29 @@ class ConfigImportTest extends TestCase {
 
 		$exitCode = $this->tester->execute(['file' => '/nonexistent/path/bundle.json']);
 
-		$this->assertNotSame(0, $exitCode);
-		$this->assertStringContainsString('Cannot read bundle file', $this->tester->getDisplay());
+		$this->assertNotSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'Cannot read bundle file', haystack: $this->tester->getDisplay());
 	}//end testMissingFileExitsNonZeroWithoutCallingService()
 
 	/**
 	 * A file that is not valid JSON is exit 1 and never reaches the service.
 	 */
 	public function testUndecodableJsonExitsNonZeroWithoutCallingService(): void {
-		$path = $this->writeBundleFile('not json at all');
+		$path = $this->writeBundleFile(content: 'not json at all');
 
 		$this->service->expects($this->never())->method('import');
 
 		$exitCode = $this->tester->execute(['file' => $path]);
 
-		$this->assertNotSame(0, $exitCode);
-		$this->assertStringContainsString('does not contain valid JSON', $this->tester->getDisplay());
+		$this->assertNotSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'does not contain valid JSON', haystack: $this->tester->getDisplay());
 	}//end testUndecodableJsonExitsNonZeroWithoutCallingService()
 
 	/**
 	 * A successful (non-dry-run) import exits 0 and prints the applied sections.
 	 */
 	public function testSuccessfulImportExitsZeroAndPrintsSections(): void {
-		$path = $this->writeBundleFile('{"format":"nldesign-config-bundle","bundleVersion":1}');
+		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
 
 		$this->service->method('import')->willReturn(
 			[
@@ -182,21 +182,21 @@ class ConfigImportTest extends TestCase {
 
 		$exitCode = $this->tester->execute(['file' => $path]);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertStringContainsString('applied', $this->tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'applied', haystack: $this->tester->getDisplay());
 	}//end testSuccessfulImportExitsZeroAndPrintsSections()
 
 	/**
 	 * A service-level exception is exit 1.
 	 */
 	public function testServiceExceptionExitsNonZero(): void {
-		$path = $this->writeBundleFile('{"format":"nldesign-config-bundle","bundleVersion":1}');
+		$path = $this->writeBundleFile(content: '{"format":"nldesign-config-bundle","bundleVersion":1}');
 
 		$this->service->method('import')->willThrowException(new RuntimeException('boom'));
 
 		$exitCode = $this->tester->execute(['file' => $path]);
 
-		$this->assertNotSame(0, $exitCode);
-		$this->assertStringContainsString('boom', $this->tester->getDisplay());
+		$this->assertNotSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'boom', haystack: $this->tester->getDisplay());
 	}//end testServiceExceptionExitsNonZero()
 }//end class

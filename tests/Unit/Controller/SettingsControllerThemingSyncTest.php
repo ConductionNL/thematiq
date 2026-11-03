@@ -105,10 +105,10 @@ class SettingsControllerThemingSyncTest extends TestCase {
 		parent::setUp();
 
 		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped('OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
+			$this->markTestSkipped(message: 'OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
 		}
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$app . '|' . $key] ?? $default)
 		);
@@ -123,41 +123,41 @@ class SettingsControllerThemingSyncTest extends TestCase {
 			}
 		);
 
-		$imageManager = $this->createMock(ImageManager::class);
+		$imageManager = $this->createMock(originalClassName: ImageManager::class);
 		$imageManager->method('getImageUrl')->willReturnCallback(
 			static fn (string $key): string => '/index.php/apps/theming/image/' . $key
 		);
 		$imageManager->method('hasImage')->willReturn(false);
 
-		$this->themingService = $this->createMock(ThemingService::class);
+		$this->themingService = $this->createMock(originalClassName: ThemingService::class);
 		$this->themingService->method('getImageManager')->willReturn($imageManager);
 		$this->themingService->method('getDefaultColors')->willReturn(
 			['primary_color' => '#0082c9', 'background_color' => '#ffffff']
 		);
 
-		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
 		$this->auditService->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audited[] = [$action, $context];
 			}
 		);
 
-		$this->request = $this->createMock(IRequest::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 
 		$this->controller = new SettingsController(
-			'thematiq',
-			$this->request,
-			$config,
-			$this->createMock(TokenSetService::class),
-			$this->themingService,
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->auditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'thematiq',
+			request: $this->request,
+			config: $config,
+			tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+			themingService: $this->themingService,
+			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+			auditService: $this->auditService,
+			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
+			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+			activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class)
 		);
 	}//end setUp()
 
@@ -195,13 +195,13 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$data = $this->controller->getThemingValues()->getData();
 
-		$this->assertSame('#154273', $data['primary_color']);
-		$this->assertSame('#0082c9', $data['default_primary_color']);
-		$this->assertSame('#ffffff', $data['default_background_color']);
-		$this->assertSame('img/logos/rijkshuisstijl.svg', $data['synced_logo']);
-		$this->assertSame('', $data['synced_background']);
-		$this->assertFalse($data['has_custom_logo']);
-		$this->assertStringContainsString('logo', $data['logo_url']);
+		$this->assertSame(expected: '#154273', actual: $data['primary_color']);
+		$this->assertSame(expected: '#0082c9', actual: $data['default_primary_color']);
+		$this->assertSame(expected: '#ffffff', actual: $data['default_background_color']);
+		$this->assertSame(expected: 'img/logos/rijkshuisstijl.svg', actual: $data['synced_logo']);
+		$this->assertSame(expected: '', actual: $data['synced_background']);
+		$this->assertFalse(condition: $data['has_custom_logo']);
+		$this->assertStringContainsString(needle: 'logo', haystack: $data['logo_url']);
 	}//end testThemingValuesCarryCurrentDefaultAndSyncedState()
 
 	/**
@@ -211,17 +211,17 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function testAnInvalidColourIsRefusedBeforeAnythingIsApplied(): void {
-		$this->withParams(['primary_color' => 'not-a-colour']);
+		$this->withParams(params: ['primary_color' => 'not-a-colour']);
 		$this->themingService->method('validateColors')->willReturn('Invalid hex color for primary_color: not-a-colour');
 		$this->themingService->expects($this->never())->method('applyColors');
 		$this->themingService->expects($this->never())->method('applyImages');
 
 		$response = $this->controller->updateThemingValues();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('Invalid hex color for primary_color: not-a-colour', $response->getData()['error']);
-		$this->assertArrayNotHasKey('thematiq|theming_syncs_total', $this->appConfig);
-		$this->assertSame([], $this->auditedActions());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'Invalid hex color for primary_color: not-a-colour', actual: $response->getData()['error']);
+		$this->assertArrayNotHasKey(key: 'thematiq|theming_syncs_total', array: $this->appConfig);
+		$this->assertSame(expected: [], actual: $this->auditedActions());
 	}//end testAnInvalidColourIsRefusedBeforeAnythingIsApplied()
 
 	/**
@@ -232,7 +232,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function testAnInvalidImagePathIsRefusedBeforeAnythingIsApplied(): void {
-		$this->withParams(['logo' => '../../etc/passwd']);
+		$this->withParams(params: ['logo' => '../../etc/passwd']);
 		$this->themingService->method('validateColors')->willReturn(null);
 		$this->themingService->method('validateImagePaths')->willReturn('Invalid image path for logo: path traversal not allowed');
 		$this->themingService->expects($this->never())->method('applyColors');
@@ -240,9 +240,9 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$response = $this->controller->updateThemingValues();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('path traversal', $response->getData()['error']);
-		$this->assertSame([], $this->auditedActions());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: 'path traversal', haystack: $response->getData()['error']);
+		$this->assertSame(expected: [], actual: $this->auditedActions());
 	}//end testAnInvalidImagePathIsRefusedBeforeAnythingIsApplied()
 
 	/**
@@ -253,7 +253,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function testASuccessfulApplyRecordsTheSyncedImageAndCountsIt(): void {
-		$this->withParams(['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg']);
+		$this->withParams(params: ['primary_color' => '#154273', 'logo' => 'img/logos/rijkshuisstijl.svg']);
 		$this->themingService->method('validateColors')->willReturn(null);
 		$this->themingService->method('validateImagePaths')->willReturn(null);
 		$this->themingService->method('applyColors')->willReturn(['primary_color']);
@@ -261,14 +261,14 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$response = $this->controller->updateThemingValues();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('ok', $response->getData()['status']);
-		$this->assertSame(['primary_color', 'logo'], $response->getData()['updated']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'ok', actual: $response->getData()['status']);
+		$this->assertSame(expected: ['primary_color', 'logo'], actual: $response->getData()['updated']);
 
-		$this->assertSame('img/logos/rijkshuisstijl.svg', $this->appConfig['thematiq|synced_logo']);
-		$this->assertSame('1', $this->appConfig['thematiq|theming_syncs_total']);
-		$this->assertSame(['theming_sync_applied'], $this->auditedActions());
-		$this->assertArrayHasKey('old', $this->audited[0][1]);
+		$this->assertSame(expected: 'img/logos/rijkshuisstijl.svg', actual: $this->appConfig['thematiq|synced_logo']);
+		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|theming_syncs_total']);
+		$this->assertSame(expected: ['theming_sync_applied'], actual: $this->auditedActions());
+		$this->assertArrayHasKey(key: 'old', array: $this->audited[0][1]);
 	}//end testASuccessfulApplyRecordsTheSyncedImageAndCountsIt()
 
 	/**
@@ -286,7 +286,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
 	 */
 	public function testTheSyncAuditEntryComparesTwoSnapshots(): void {
-		$this->withParams(['primary_color' => '#154273']);
+		$this->withParams(params: ['primary_color' => '#154273']);
 		$this->themingService->method('validateColors')->willReturn(null);
 		$this->themingService->method('validateImagePaths')->willReturn(null);
 		$this->themingService->method('applyColors')->willReturn(['primary_color']);
@@ -296,17 +296,17 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$context = $this->audited[0][1];
 
-		$this->assertArrayHasKey('old', $context);
-		$this->assertArrayHasKey('new', $context);
+		$this->assertArrayHasKey(key: 'old', array: $context);
+		$this->assertArrayHasKey(key: 'new', array: $context);
 
 		// Both sides carry the snapshot's own keys, and neither is a list.
-		$this->assertArrayHasKey('primary_color', $context['old']);
-		$this->assertArrayHasKey('primary_color', $context['new']);
-		$this->assertSame(array_keys($context['old']), array_keys($context['new']));
+		$this->assertArrayHasKey(key: 'primary_color', array: $context['old']);
+		$this->assertArrayHasKey(key: 'primary_color', array: $context['new']);
+		$this->assertSame(expected: array_keys($context['old']), actual: array_keys($context['new']));
 		$this->assertNotSame(
-			array_keys($context['new']),
-			range(0, (count($context['new']) - 1)),
-			'`new` must be a snapshot, not a list of written field names.'
+			expected: array_keys($context['new']),
+			actual: range(0, (count($context['new']) - 1)),
+			message: '`new` must be a snapshot, not a list of written field names.'
 		);
 	}//end testTheSyncAuditEntryComparesTwoSnapshots()
 
@@ -318,7 +318,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 */
 	public function testTheSyncCounterAccumulates(): void {
 		$this->appConfig['thematiq|theming_syncs_total'] = '7';
-		$this->withParams(['primary_color' => '#154273']);
+		$this->withParams(params: ['primary_color' => '#154273']);
 		$this->themingService->method('validateColors')->willReturn(null);
 		$this->themingService->method('validateImagePaths')->willReturn(null);
 		$this->themingService->method('applyColors')->willReturn(['primary_color']);
@@ -326,7 +326,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$this->controller->updateThemingValues();
 
-		$this->assertSame('8', $this->appConfig['thematiq|theming_syncs_total']);
+		$this->assertSame(expected: '8', actual: $this->appConfig['thematiq|theming_syncs_total']);
 	}//end testTheSyncCounterAccumulates()
 
 	/**
@@ -340,7 +340,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 		$this->appConfig['thematiq|synced_logo'] = 'img/logos/rijkshuisstijl.svg';
 		$this->appConfig['thematiq|synced_background'] = 'img/backgrounds/rijk.jpg';
 
-		$this->withParams(['reset' => '1']);
+		$this->withParams(params: ['reset' => '1']);
 		$this->themingService->expects($this->once())
 			->method('resetToDefaults')
 			->willReturn(ThemingService::RESETTABLE);
@@ -349,13 +349,13 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$response = $this->controller->updateThemingValues();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('ok', $response->getData()['status']);
-		$this->assertSame(ThemingService::RESETTABLE, $response->getData()['reset']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'ok', actual: $response->getData()['status']);
+		$this->assertSame(expected: ThemingService::RESETTABLE, actual: $response->getData()['reset']);
 
-		$this->assertArrayNotHasKey('thematiq|synced_logo', $this->appConfig);
-		$this->assertArrayNotHasKey('thematiq|synced_background', $this->appConfig);
-		$this->assertSame(['theming_sync_reset'], $this->auditedActions());
+		$this->assertArrayNotHasKey(key: 'thematiq|synced_logo', array: $this->appConfig);
+		$this->assertArrayNotHasKey(key: 'thematiq|synced_background', array: $this->appConfig);
+		$this->assertSame(expected: ['theming_sync_reset'], actual: $this->auditedActions());
 	}//end testResetUndoesTheSyncAndForgetsTheSyncedImages()
 
 	/**
@@ -365,12 +365,12 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
 	 */
 	public function testResetDoesNotCountAsASync(): void {
-		$this->withParams(['reset' => '1']);
+		$this->withParams(params: ['reset' => '1']);
 		$this->themingService->method('resetToDefaults')->willReturn(ThemingService::RESETTABLE);
 
 		$this->controller->updateThemingValues();
 
-		$this->assertArrayNotHasKey('thematiq|theming_syncs_total', $this->appConfig);
+		$this->assertArrayNotHasKey(key: 'thematiq|theming_syncs_total', array: $this->appConfig);
 	}//end testResetDoesNotCountAsASync()
 
 	/**
@@ -385,7 +385,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
 	 */
 	public function testOnlyATruthyResetParameterResets(array $params): void {
-		$this->withParams($params);
+		$this->withParams(params: $params);
 		$this->themingService->method('validateColors')->willReturn(null);
 		$this->themingService->method('validateImagePaths')->willReturn(null);
 		$this->themingService->method('applyColors')->willReturn(['primary_color']);
@@ -394,10 +394,10 @@ class SettingsControllerThemingSyncTest extends TestCase {
 
 		$response = $this->controller->updateThemingValues();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertArrayHasKey('updated', $response->getData());
-		$this->assertArrayNotHasKey('reset', $response->getData());
-		$this->assertSame(['theming_sync_applied'], $this->auditedActions());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'updated', array: $response->getData());
+		$this->assertArrayNotHasKey(key: 'reset', array: $response->getData());
+		$this->assertSame(expected: ['theming_sync_applied'], actual: $this->auditedActions());
 	}//end testOnlyATruthyResetParameterResets()
 
 	/**

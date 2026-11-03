@@ -64,10 +64,10 @@ class CustomTokenSetServiceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-test-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -78,15 +78,15 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(
-				new ContrastService(),
-				new CssParserService(),
-				$appManager,
-				$this->createMock(LoggerInterface::class)
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 	}//end setUp()
@@ -95,7 +95,7 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * Remove the temp app dir after each test.
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -118,7 +118,7 @@ class CustomTokenSetServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -131,10 +131,10 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * Slug derivation lowercases, hyphenates and caps at 64 chars.
 	 */
 	public function testSlugify(): void {
-		$this->assertSame('gemeente-voorbeeld', $this->service->slugify(name: 'Gemeente Voorbeeld'));
-		$this->assertSame('gemeente-amsterdam', $this->service->slugify(name: '  Gemeente   Amsterdam!!  '));
-		$this->assertSame('', $this->service->slugify(name: '!!!'));
-		$this->assertLessThanOrEqual(64, strlen($this->service->slugify(name: str_repeat('a', 200))));
+		$this->assertSame(expected: 'gemeente-voorbeeld', actual: $this->service->slugify(name: 'Gemeente Voorbeeld'));
+		$this->assertSame(expected: 'gemeente-amsterdam', actual: $this->service->slugify(name: '  Gemeente   Amsterdam!!  '));
+		$this->assertSame(expected: '', actual: $this->service->slugify(name: '!!!'));
+		$this->assertLessThanOrEqual(expected: 64, actual: strlen($this->service->slugify(name: str_repeat('a', 200))));
 	}//end testSlugify()
 
 	/**
@@ -150,17 +150,17 @@ class CustomTokenSetServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('custom-gemeente-voorbeeld', $result['id']);
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $result['id']);
 
 		$path = $this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css';
-		$this->assertFileExists($path);
-		$this->assertStringContainsString('--nldesign-color-primary: #007bc7;', file_get_contents($path));
+		$this->assertFileExists(filename: $path);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #007bc7;', haystack: file_get_contents($path));
 
 		$manifest = $this->service->getManifest();
-		$this->assertArrayHasKey('custom-gemeente-voorbeeld', $manifest);
-		$this->assertSame('Gemeente Voorbeeld', $manifest['custom-gemeente-voorbeeld']['name']);
+		$this->assertArrayHasKey(key: 'custom-gemeente-voorbeeld', array: $manifest);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $manifest['custom-gemeente-voorbeeld']['name']);
 		// Derived theming.
-		$this->assertSame('#007bc7', $manifest['custom-gemeente-voorbeeld']['theming']['primary_color']);
+		$this->assertSame(expected: '#007bc7', actual: $manifest['custom-gemeente-voorbeeld']['theming']['primary_color']);
 	}//end testStoreWritesFileAndManifest()
 
 	/**
@@ -176,10 +176,10 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		$manifest = $this->service->getManifest();
-		$this->assertSame('2.3.1', $manifest['custom-gemeente-voorbeeld']['version']);
+		$this->assertSame(expected: '2.3.1', actual: $manifest['custom-gemeente-voorbeeld']['version']);
 
 		$listed = $this->service->list();
-		$this->assertSame('2.3.1', $listed[0]['version']);
+		$this->assertSame(expected: '2.3.1', actual: $listed[0]['version']);
 	}//end testStorePersistsDeclaredVersion()
 
 	/**
@@ -193,7 +193,7 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		$manifest = $this->service->getManifest();
-		$this->assertArrayNotHasKey('version', $manifest['custom-gemeente-voorbeeld']);
+		$this->assertArrayNotHasKey(key: 'version', array: $manifest['custom-gemeente-voorbeeld']);
 	}//end testStoreWithoutVersionOmitsVersionKey()
 
 	/**
@@ -209,19 +209,19 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		// The store() result's `warnings` key remains the contrast warnings.
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 
 		$manifest = $this->service->getManifest();
 		$this->assertSame(
-			[['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
-			$manifest['custom-gemeente-voorbeeld']['importWarnings']
+			expected: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+			actual: $manifest['custom-gemeente-voorbeeld']['importWarnings']
 		);
-		$this->assertSame([], $manifest['custom-gemeente-voorbeeld']['warnings']);
+		$this->assertSame(expected: [], actual: $manifest['custom-gemeente-voorbeeld']['warnings']);
 
 		$listed = $this->service->list();
 		$this->assertSame(
-			[['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
-			$listed[0]['importWarnings']
+			expected: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+			actual: $listed[0]['importWarnings']
 		);
 	}//end testStorePersistsImportWarningsSeparatelyFromContrastWarnings()
 
@@ -231,8 +231,8 @@ class CustomTokenSetServiceTest extends TestCase {
 	public function testStoreCollisionThrows409(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
 
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(409);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 409);
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#000000']);
 	}//end testStoreCollisionThrows409()
 
@@ -240,8 +240,8 @@ class CustomTokenSetServiceTest extends TestCase {
 	 * An all-symbol name (empty slug) is a 422.
 	 */
 	public function testStoreEmptySlugThrows422(): void {
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(422);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 422);
 		$this->service->store('!!!', '', ['--nldesign-color-primary' => '#007bc7']);
 	}//end testStoreEmptySlugThrows422()
 
@@ -258,9 +258,9 @@ class CustomTokenSetServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertNotEmpty($result['warnings']);
+		$this->assertNotEmpty(actual: $result['warnings']);
 		$manifest = $this->service->getManifest();
-		$this->assertNotEmpty($manifest['custom-low-contrast']['warnings']);
+		$this->assertNotEmpty(actual: $manifest['custom-low-contrast']['warnings']);
 	}//end testStorePersistsContrastWarning()
 
 	/**
@@ -269,11 +269,11 @@ class CustomTokenSetServiceTest extends TestCase {
 	public function testDeleteRemovesFileAndManifest(): void {
 		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
 		$path = $this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css';
-		$this->assertFileExists($path);
+		$this->assertFileExists(filename: $path);
 
-		$this->assertTrue($this->service->delete(id: 'custom-gemeente-voorbeeld'));
-		$this->assertFileDoesNotExist($path);
-		$this->assertArrayNotHasKey('custom-gemeente-voorbeeld', $this->service->getManifest());
+		$this->assertTrue(condition: $this->service->delete(id: 'custom-gemeente-voorbeeld'));
+		$this->assertFileDoesNotExist(filename: $path);
+		$this->assertArrayNotHasKey(key: 'custom-gemeente-voorbeeld', array: $this->service->getManifest());
 	}//end testDeleteRemovesFileAndManifest()
 
 	/**
@@ -285,15 +285,15 @@ class CustomTokenSetServiceTest extends TestCase {
 
 		$this->service->delete(id: 'custom-gemeente-voorbeeld');
 
-		$this->assertSame('nextcloud', $this->appConfig['token_set']);
+		$this->assertSame(expected: 'nextcloud', actual: $this->appConfig['token_set']);
 	}//end testDeleteActiveSetFallsBackToNextcloud()
 
 	/**
 	 * A non-custom id is never deletable (path-traversal guard).
 	 */
 	public function testDeleteRejectsNonCustomId(): void {
-		$this->assertFalse($this->service->delete(id: 'utrecht'));
-		$this->assertFalse($this->service->delete(id: '../../../etc/passwd'));
+		$this->assertFalse(condition: $this->service->delete(id: 'utrecht'));
+		$this->assertFalse(condition: $this->service->delete(id: '../../../etc/passwd'));
 	}//end testDeleteRejectsNonCustomId()
 
 	/**
@@ -304,16 +304,16 @@ class CustomTokenSetServiceTest extends TestCase {
 		// Delete the file behind the service's back, leaving a stale manifest entry.
 		unlink($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css');
 
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 	}//end testListDropsManifestEntryWithoutFile()
 
 	/**
 	 * isCustomId only accepts the prefixed slug charset.
 	 */
 	public function testIsCustomId(): void {
-		$this->assertTrue($this->service->isCustomId(id: 'custom-gemeente-voorbeeld'));
-		$this->assertFalse($this->service->isCustomId(id: 'utrecht'));
-		$this->assertFalse($this->service->isCustomId(id: 'custom-../x'));
-		$this->assertFalse($this->service->isCustomId(id: 'custom-UPPER'));
+		$this->assertTrue(condition: $this->service->isCustomId(id: 'custom-gemeente-voorbeeld'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'utrecht'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'custom-../x'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'custom-UPPER'));
 	}//end testIsCustomId()
 }//end class

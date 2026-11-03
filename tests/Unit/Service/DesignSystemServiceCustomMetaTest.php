@@ -45,10 +45,10 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	 * @return DesignSystemService The service under test.
 	 */
 	private function build(string $manifest): DesignSystemService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(sys_get_temp_dir() . '/thematiq-no-manifest');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use ($manifest): string {
 				if ($key === CustomTokenSetService::MANIFEST_KEY) {
@@ -59,18 +59,18 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 			}
 		);
 
-		return new DesignSystemService($appManager, $config);
+		return new DesignSystemService(appManager: $appManager, config: $config);
 	}//end build()
 
 	/**
 	 * A set saved off stock Nextcloud keeps saying so.
 	 */
 	public function testACustomSetCarriesTheDesignSystemItWasSavedFrom(): void {
-		$service = $this->build('{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
+		$service = $this->build(manifest: '{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
 
 		$this->assertSame(
-			'none',
-			$service->getTokenSetMeta(tokenSetId: 'custom-openwoo')['design_system'] ?? null
+			expected: 'none',
+			actual: $service->getTokenSetMeta(tokenSetId: 'custom-openwoo')['design_system'] ?? null
 		);
 	}//end testACustomSetCarriesTheDesignSystemItWasSavedFrom()
 
@@ -80,12 +80,12 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	 * what it has always been.
 	 */
 	public function testASetWithoutTheFieldStaysUndecided(): void {
-		$service = $this->build('{"custom-lansingerland":{"name":"lansingerland"}}');
+		$service = $this->build(manifest: '{"custom-lansingerland":{"name":"lansingerland"}}');
 
 		$meta = $service->getTokenSetMeta(tokenSetId: 'custom-lansingerland');
 
-		$this->assertArrayNotHasKey('design_system', $meta);
-		$this->assertSame('lansingerland', $meta['name']);
+		$this->assertArrayNotHasKey(key: 'design_system', array: $meta);
+		$this->assertSame(expected: 'lansingerland', actual: $meta['name']);
 	}//end testASetWithoutTheFieldStaysUndecided()
 
 	/**
@@ -93,19 +93,19 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	 * neither answers with nothing rather than with someone else's entry.
 	 */
 	public function testAnUnknownSetAnswersEmpty(): void {
-		$service = $this->build('{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
+		$service = $this->build(manifest: '{"custom-openwoo":{"name":"OpenWoo","design_system":"none"}}');
 
-		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'custom-missing'));
-		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'rijkshuisstijl'));
+		$this->assertSame(expected: [], actual: $service->getTokenSetMeta(tokenSetId: 'custom-missing'));
+		$this->assertSame(expected: [], actual: $service->getTokenSetMeta(tokenSetId: 'rijkshuisstijl'));
 	}//end testAnUnknownSetAnswersEmpty()
 
 	/**
 	 * A manifest that is not JSON must not take the panel down with it.
 	 */
 	public function testABrokenManifestDegradesToEmpty(): void {
-		$service = $this->build('not json at all');
+		$service = $this->build(manifest: 'not json at all');
 
-		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
+		$this->assertSame(expected: [], actual: $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
 	}//end testABrokenManifestDegradesToEmpty()
 
 	/**
@@ -113,8 +113,8 @@ class DesignSystemServiceCustomMetaTest extends TestCase {
 	 * for a caller to index into.
 	 */
 	public function testAMalformedEntryDegradesToEmpty(): void {
-		$service = $this->build('{"custom-openwoo":"none"}');
+		$service = $this->build(manifest: '{"custom-openwoo":"none"}');
 
-		$this->assertSame([], $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
+		$this->assertSame(expected: [], actual: $service->getTokenSetMeta(tokenSetId: 'custom-openwoo'));
 	}//end testAMalformedEntryDegradesToEmpty()
 }//end class

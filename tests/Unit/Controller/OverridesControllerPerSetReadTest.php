@@ -52,17 +52,17 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->request = $this->createMock(IRequest::class);
-		$this->overrides = $this->createMock(CustomOverridesService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->overrides = $this->createMock(originalClassName: CustomOverridesService::class);
 
 		$this->controller = new OverridesController(
-			'thematiq',
-			$this->request,
-			$this->overrides,
-			new CssParserService(),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(ThemingService::class)
+			appName: 'thematiq',
+			request: $this->request,
+			overridesService: $this->overrides,
+			cssParser: new CssParserService(),
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+			config: $this->createMock(originalClassName: IConfig::class),
+			themingService: $this->createMock(originalClassName: ThemingService::class)
 		);
 	}//end setUp()
 
@@ -90,9 +90,9 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 		$data = $this->controller->getOverrides()->getData();
 
-		$this->assertSame(['--color-primary' => '#112233'], $data['overrides']);
-		$this->assertNotEmpty($data['registry']);
-		$this->assertNotEmpty($data['tabs']);
+		$this->assertSame(expected: ['--color-primary' => '#112233'], actual: $data['overrides']);
+		$this->assertNotEmpty(actual: $data['registry']);
+		$this->assertNotEmpty(actual: $data['tabs']);
 	}//end testReadsTheNamedSetsOverrides()
 
 	/**

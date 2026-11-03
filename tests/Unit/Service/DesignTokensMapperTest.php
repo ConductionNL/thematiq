@@ -60,7 +60,7 @@ class DesignTokensMapperTest extends TestCase {
 	private function loadFixture(string $name): array {
 		$path = (__DIR__ . '/../fixtures/dtcg/' . $name);
 		$decoded = json_decode((string)file_get_contents($path), true);
-		$this->assertIsArray($decoded, 'Fixture ' . $name . ' must decode to an array.');
+		$this->assertIsArray(actual: $decoded, message: 'Fixture ' . $name . ' must decode to an array.');
 
 		return $decoded;
 	}//end loadFixture()
@@ -115,7 +115,7 @@ class DesignTokensMapperTest extends TestCase {
 		$expected = $this->countProcessingUnits(node: $document);
 		$actual = ($result['imported'] + count($result['skipped']) + count($result['errors']));
 
-		$this->assertSame($expected, $actual, $message);
+		$this->assertSame(expected: $expected, actual: $actual, message: $message);
 	}//end assertAccountingInvariant()
 
 	// -- Regression: pre-hardening behaviour is preserved -------------------
@@ -133,11 +133,11 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('#ffffff', $result['declarations']['--nldesign-color-primary-text']);
-		$this->assertSame(2, $result['imported']);
-		$this->assertSame([], $result['skipped']);
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#ffffff', actual: $result['declarations']['--nldesign-color-primary-text']);
+		$this->assertSame(expected: 2, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['skipped']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'canonical scenario');
 	}//end testColorTokensMapToNldesignVocabulary()
 
@@ -149,9 +149,9 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '01-legacy-scalar-regression.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(2, $result['imported']);
-		$this->assertSame([], $result['skipped']);
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: 2, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['skipped']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 	}//end testLegacyScalarRegressionFixtureIsUnchanged()
 
 	/**
@@ -165,10 +165,10 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(1, $result['imported']);
-		$this->assertCount(1, $result['skipped']);
-		$this->assertSame('shadow.elevation-1', $result['skipped'][0]['path']);
-		$this->assertSame('unmapped-path', $result['skipped'][0]['reason']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
+		$this->assertCount(expectedCount: 1, haystack: $result['skipped']);
+		$this->assertSame(expected: 'shadow.elevation-1', actual: $result['skipped'][0]['path']);
+		$this->assertSame(expected: 'unmapped-path', actual: $result['skipped'][0]['reason']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'unmapped tokens degrade to skipped');
 	}//end testUnmappedTokensAreSkippedWithReason()
 
@@ -187,8 +187,8 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#111111', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('#eeeeee', $result['declarations']['--nldesign-color-primary-text']);
+		$this->assertSame(expected: '#111111', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#eeeeee', actual: $result['declarations']['--nldesign-color-primary-text']);
 	}//end testLongestSuffixWins()
 
 	/**
@@ -208,8 +208,8 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#007bc7', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('Inter, sans-serif', $result['declarations']['--nldesign-font-family']);
+		$this->assertSame(expected: '#007bc7', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: 'Inter, sans-serif', actual: $result['declarations']['--nldesign-font-family']);
 	}//end testNestedGroupsAndMetadataKeys()
 
 	/**
@@ -217,8 +217,8 @@ class DesignTokensMapperTest extends TestCase {
 	 */
 	public function testMappingTableIsExposed(): void {
 		$table = $this->mapper->getMappingTable();
-		$this->assertArrayHasKey('color.primary', $table);
-		$this->assertSame('--nldesign-color-primary', $table['color.primary']);
+		$this->assertArrayHasKey(key: 'color.primary', array: $table);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $table['color.primary']);
 	}//end testMappingTableIsExposed()
 
 	/**
@@ -234,11 +234,11 @@ class DesignTokensMapperTest extends TestCase {
 			],
 		]);
 
-		$this->assertSame('#1a67a3', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('#1f883d', $result['declarations']['--nldesign-color-action']);
-		$this->assertSame('#197032', $result['declarations']['--nldesign-color-action-hover']);
-		$this->assertSame('#ffffff', $result['declarations']['--nldesign-color-action-text']);
-		$this->assertSame('--nldesign-color-action-text', $this->mapper->getMappingTable()['color.on-action']);
+		$this->assertSame(expected: '#1a67a3', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#1f883d', actual: $result['declarations']['--nldesign-color-action']);
+		$this->assertSame(expected: '#197032', actual: $result['declarations']['--nldesign-color-action-hover']);
+		$this->assertSame(expected: '#ffffff', actual: $result['declarations']['--nldesign-color-action-text']);
+		$this->assertSame(expected: '--nldesign-color-action-text', actual: $this->mapper->getMappingTable()['color.on-action']);
 	}//end testTheActionColourMapsByPath()
 
 	/**
@@ -259,10 +259,10 @@ class DesignTokensMapperTest extends TestCase {
 		$result = $this->mapper->map(document: $document);
 
 		// color.primary and brand.primary both target --nldesign-color-primary.
-		$this->assertSame('#111111', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#111111', actual: $result['declarations']['--nldesign-color-primary']);
 		$duplicate = array_values(array_filter($result['skipped'], fn ($s) => $s['reason'] === 'duplicate-target'));
-		$this->assertCount(1, $duplicate);
-		$this->assertSame('brand.primary', $duplicate[0]['path']);
+		$this->assertCount(expectedCount: 1, haystack: $duplicate);
+		$this->assertSame(expected: 'brand.primary', actual: $duplicate[0]['path']);
 	}//end testDuplicateTargetCollisionIsSkipped()
 
 	// -- $type resolution with group inheritance -----------------------------
@@ -274,8 +274,8 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '02-group-type-inheritance.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame(1, $result['imported']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'group type inheritance');
 	}//end testGroupTypeIsInheritedByDescendantTokens()
 
@@ -291,11 +291,11 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(0, $result['imported']);
-		$this->assertSame([], $result['declarations']);
-		$this->assertCount(1, $result['errors']);
-		$this->assertSame('missing-type', $result['errors'][0]['reason']);
-		$this->assertSame('color.primary', $result['errors'][0]['path']);
+		$this->assertSame(expected: 0, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['declarations']);
+		$this->assertCount(expectedCount: 1, haystack: $result['errors']);
+		$this->assertSame(expected: 'missing-type', actual: $result['errors'][0]['reason']);
+		$this->assertSame(expected: 'color.primary', actual: $result['errors'][0]['path']);
 	}//end testMissingTypeIsNeverGuessedFromValueShape()
 
 	// -- Typed object $value handling -----------------------------------------
@@ -308,13 +308,13 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '03-object-color-and-dimension.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('8px', $result['declarations']['--nldesign-border-radius']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '8px', actual: $result['declarations']['--nldesign-border-radius']);
 
-		$this->assertCount(1, $result['errors']);
-		$this->assertSame('color.accent', $result['errors'][0]['path']);
-		$this->assertSame('unsupported-color-space', $result['errors'][0]['reason']);
-		$this->assertSame('cmyk', $result['errors'][0]['detail']);
+		$this->assertCount(expectedCount: 1, haystack: $result['errors']);
+		$this->assertSame(expected: 'color.accent', actual: $result['errors'][0]['path']);
+		$this->assertSame(expected: 'unsupported-color-space', actual: $result['errors'][0]['reason']);
+		$this->assertSame(expected: 'cmyk', actual: $result['errors'][0]['detail']);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'object color/dimension');
 	}//end testObjectFormColorAndDimensionSerializeToCss()
@@ -335,7 +335,7 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame("'Fira Sans', sans-serif", $result['declarations']['--nldesign-font-family']);
+		$this->assertSame(expected: "'Fira Sans', sans-serif", actual: $result['declarations']['--nldesign-font-family']);
 	}//end testFontFamilyArraySerializesToQuotedFontStack()
 
 	/**
@@ -358,11 +358,11 @@ class DesignTokensMapperTest extends TestCase {
 		$result = $this->mapper->map(document: $document);
 
 		$skippedPaths = array_column($result['skipped'], 'reason', 'path');
-		$this->assertSame('unmapped-path', ($skippedPaths['weight.numeric'] ?? null));
-		$this->assertSame('unmapped-path', ($skippedPaths['weight.keyword'] ?? null));
+		$this->assertSame(expected: 'unmapped-path', actual: ($skippedPaths['weight.numeric'] ?? null));
+		$this->assertSame(expected: 'unmapped-path', actual: ($skippedPaths['weight.keyword'] ?? null));
 
 		$errorPaths = array_column($result['errors'], 'reason', 'path');
-		$this->assertSame('unsupported-value-shape', ($errorPaths['weight.invalid'] ?? null));
+		$this->assertSame(expected: 'unsupported-value-shape', actual: ($errorPaths['weight.invalid'] ?? null));
 	}//end testFontWeightNumberAndKeywordAreNormalized()
 
 	/**
@@ -373,12 +373,12 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '04-composite-typography.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame("'Fira Sans', sans-serif", $result['declarations']['--nldesign-font-family']);
+		$this->assertSame(expected: "'Fira Sans', sans-serif", actual: $result['declarations']['--nldesign-font-family']);
 
 		$skippedPaths = array_column($result['skipped'], 'path');
-		$this->assertContains('typography.heading.fontSize', $skippedPaths);
-		$this->assertContains('typography.heading.fontWeight', $skippedPaths);
-		$this->assertContains('typography.heading.lineHeight', $skippedPaths);
+		$this->assertContains(needle: 'typography.heading.fontSize', haystack: $skippedPaths);
+		$this->assertContains(needle: 'typography.heading.fontWeight', haystack: $skippedPaths);
+		$this->assertContains(needle: 'typography.heading.lineHeight', haystack: $skippedPaths);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'composite typography fan-out');
 	}//end testCompositeTypographyMapsSubValuesIndividually()
@@ -394,9 +394,9 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '10-extensions-heavy.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(1, $result['imported']);
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'extensions passthrough-ignore');
 	}//end testExtensionsAreIgnoredWithoutError()
 
@@ -410,10 +410,10 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '09-deprecated.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertCount(1, $result['warnings']);
-		$this->assertSame('color.primary', $result['warnings'][0]['path']);
-		$this->assertSame('Use color.brand.primary instead', $result['warnings'][0]['message']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertCount(expectedCount: 1, haystack: $result['warnings']);
+		$this->assertSame(expected: 'color.primary', actual: $result['warnings'][0]['path']);
+		$this->assertSame(expected: 'Use color.brand.primary instead', actual: $result['warnings'][0]['message']);
 	}//end testDeprecatedTokenImportsWithWarning()
 
 	/**
@@ -432,9 +432,9 @@ class DesignTokensMapperTest extends TestCase {
 
 		$warnings = array_column($this->mapper->map(document: $document)['warnings'], null, 'path');
 
-		$this->assertSame('--nldesign-color-primary', $warnings['color.primary']['token']);
-		$this->assertSame('Gone in 2027', $warnings['color.background']['message']);
-		$this->assertSame('critical', $warnings['color.background']['severity']);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $warnings['color.primary']['token']);
+		$this->assertSame(expected: 'Gone in 2027', actual: $warnings['color.background']['message']);
+		$this->assertSame(expected: 'critical', actual: $warnings['color.background']['severity']);
 	}//end testDeprecatedWarningNamesTheTargetAndReadsTokensStudio()
 
 	/**
@@ -449,8 +449,8 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertCount(1, $result['warnings']);
-		$this->assertNull($result['warnings'][0]['message']);
+		$this->assertCount(expectedCount: 1, haystack: $result['warnings']);
+		$this->assertNull(actual: $result['warnings'][0]['message']);
 	}//end testDeprecatedBooleanTrueWarnsWithNullMessage()
 
 	/**
@@ -466,7 +466,7 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 	}//end testDeprecatedButUnmappedTokenDoesNotWarn()
 
 	// -- Alias resolution ------------------------------------------------------
@@ -490,8 +490,8 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertGreaterThanOrEqual(1, $result['imported']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertGreaterThanOrEqual(expected: 1, actual: $result['imported']);
 	}//end testTransitiveAliasChainResolvesToConcreteValue()
 
 	/**
@@ -501,7 +501,7 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '05-alias-chain-3-hop.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: '3-hop alias chain');
 	}//end testThreeHopAliasChainFixtureResolves()
 
@@ -513,16 +513,16 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '06-alias-cycle.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
 
 		$errorsByPath = [];
 		foreach ($result['errors'] as $error) {
 			$errorsByPath[$error['path']] = $error;
 		}
 
-		$this->assertSame('alias-cycle', $errorsByPath['a.x']['reason']);
-		$this->assertSame('a.x -> b.y -> a.x', $errorsByPath['a.x']['detail']);
-		$this->assertSame('alias-cycle', $errorsByPath['b.y']['reason']);
+		$this->assertSame(expected: 'alias-cycle', actual: $errorsByPath['a.x']['reason']);
+		$this->assertSame(expected: 'a.x -> b.y -> a.x', actual: $errorsByPath['a.x']['detail']);
+		$this->assertSame(expected: 'alias-cycle', actual: $errorsByPath['b.y']['reason']);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'alias cycle');
 	}//end testAliasCycleProducesActionableError()
@@ -535,10 +535,10 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '07-alias-dangling.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame([], $result['declarations']);
-		$this->assertCount(1, $result['errors']);
-		$this->assertSame('alias-target-missing', $result['errors'][0]['reason']);
-		$this->assertSame('does.not.exist', $result['errors'][0]['detail']);
+		$this->assertSame(expected: [], actual: $result['declarations']);
+		$this->assertCount(expectedCount: 1, haystack: $result['errors']);
+		$this->assertSame(expected: 'alias-target-missing', actual: $result['errors'][0]['reason']);
+		$this->assertSame(expected: 'does.not.exist', actual: $result['errors'][0]['detail']);
 	}//end testDanglingAliasReportsMissingTarget()
 
 	/**
@@ -554,8 +554,8 @@ class DesignTokensMapperTest extends TestCase {
 			$errorsByPath[$error['path']] = $error;
 		}
 
-		$this->assertArrayHasKey('color.primary', $errorsByPath);
-		$this->assertSame('alias-depth-exceeded', $errorsByPath['color.primary']['reason']);
+		$this->assertArrayHasKey(key: 'color.primary', array: $errorsByPath);
+		$this->assertSame(expected: 'alias-depth-exceeded', actual: $errorsByPath['color.primary']['reason']);
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'alias depth bomb');
 	}//end testAliasDepthExceededBeyondTenHops()
@@ -569,7 +569,7 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '11-version-carrying.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('2.3.1', $result['packageVersion']);
+		$this->assertSame(expected: '2.3.1', actual: $result['packageVersion']);
 	}//end testPackageVersionExtractedFromTopLevelVersion()
 
 	/**
@@ -583,7 +583,7 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('1.9.0', $result['packageVersion']);
+		$this->assertSame(expected: '1.9.0', actual: $result['packageVersion']);
 	}//end testPackageVersionExtractedFromExtensionsConvention()
 
 	/**
@@ -611,7 +611,7 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('0.4.2', $result['packageVersion']);
+		$this->assertSame(expected: '0.4.2', actual: $result['packageVersion']);
 	}//end testPackageVersionExtractedFromPlainVersionField()
 
 	/**
@@ -627,7 +627,7 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('3.0.0', $result['packageVersion']);
+		$this->assertSame(expected: '3.0.0', actual: $result['packageVersion']);
 	}//end testTopLevelVersionTakesPrecedenceOverOtherConventions()
 
 	/**
@@ -638,7 +638,7 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '01-legacy-scalar-regression.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertNull($result['packageVersion']);
+		$this->assertNull(actual: $result['packageVersion']);
 	}//end testVersionLessDocumentReturnsNullPackageVersion()
 
 	// -- Zero-yield --------------------------------------------------------------
@@ -651,8 +651,8 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '12-zero-yield.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(0, $result['imported']);
-		$this->assertSame([], $result['declarations']);
+		$this->assertSame(expected: 0, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['declarations']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'zero-yield document');
 	}//end testZeroYieldDocumentImportsNothing()
 
@@ -667,9 +667,9 @@ class DesignTokensMapperTest extends TestCase {
 		$document = $this->loadFixture(name: '14-utrecht-real-excerpt.tokens.json');
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('hsl(211 60% 35%)', $result['declarations']['--nldesign-color-primary']);
-		$this->assertGreaterThanOrEqual(1, $result['imported']);
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: 'hsl(211 60% 35%)', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertGreaterThanOrEqual(expected: 1, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'real utrecht excerpt');
 	}//end testRealUtrechtExcerptAccountsForEveryLeaf()
 
@@ -683,15 +683,15 @@ class DesignTokensMapperTest extends TestCase {
 		$result = $this->mapper->map(document: $document);
 
 		$this->assertSame(
-			"'Amsterdam Sans', Arial, sans-serif",
-			$result['declarations']['--nldesign-font-family']
+			expected: "'Amsterdam Sans', Arial, sans-serif",
+			actual: $result['declarations']['--nldesign-font-family']
 		);
 
 		$errorPaths = array_column($result['errors'], 'path');
-		$this->assertContains('ams.typography.hyphenate-limit-chars', $errorPaths);
-		$this->assertContains('ams.typography.italic.font-style', $errorPaths);
+		$this->assertContains(needle: 'ams.typography.hyphenate-limit-chars', haystack: $errorPaths);
+		$this->assertContains(needle: 'ams.typography.italic.font-style', haystack: $errorPaths);
 		foreach ($result['errors'] as $error) {
-			$this->assertSame('missing-type', $error['reason']);
+			$this->assertSame(expected: 'missing-type', actual: $error['reason']);
 		}
 
 		$this->assertAccountingInvariant(document: $document, result: $result, message: 'real amsterdam excerpt');
@@ -735,8 +735,8 @@ class DesignTokensMapperTest extends TestCase {
 	public function testSrgbLinearAppliesTransferFunction(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5]]);
 
-		$this->assertSame('#bcbcbc', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame([], $result['errors']);
+		$this->assertSame(expected: '#bcbcbc', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: [], actual: $result['errors']);
 	}//end testSrgbLinearAppliesTransferFunction()
 
 	/**
@@ -746,7 +746,7 @@ class DesignTokensMapperTest extends TestCase {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.002, 0, 1]]);
 
 		// 0.002 * 12.92 = 0.02584 -> 7 -> 07.
-		$this->assertSame('#0700ff', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#0700ff', actual: $result['declarations']['--nldesign-color-primary']);
 	}//end testSrgbLinearNearBlackUsesTheLinearSegment()
 
 	/**
@@ -755,7 +755,7 @@ class DesignTokensMapperTest extends TestCase {
 	public function testAlphaKeptAsEightDigitHex(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'alpha' => 0.5]);
 
-		$this->assertSame('#00000080', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#00000080', actual: $result['declarations']['--nldesign-color-primary']);
 	}//end testAlphaKeptAsEightDigitHex()
 
 	/**
@@ -764,7 +764,7 @@ class DesignTokensMapperTest extends TestCase {
 	public function testSrgbLinearWithAlpha(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb-linear', 'components' => [0.5, 0.5, 0.5], 'alpha' => 0.5]);
 
-		$this->assertSame('#bcbcbc80', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#bcbcbc80', actual: $result['declarations']['--nldesign-color-primary']);
 	}//end testSrgbLinearWithAlpha()
 
 	/**
@@ -773,7 +773,7 @@ class DesignTokensMapperTest extends TestCase {
 	public function testAlphaIsAddedToTheHexFallback(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0, 0, 0], 'hex' => '#000000', 'alpha' => 0.25]);
 
-		$this->assertSame('#00000040', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#00000040', actual: $result['declarations']['--nldesign-color-primary']);
 	}//end testAlphaIsAddedToTheHexFallback()
 
 	/**
@@ -782,7 +782,7 @@ class DesignTokensMapperTest extends TestCase {
 	public function testOpaqueColourStaysSixDigitHex(): void {
 		$result = $this->mapPrimaryColour(value: ['colorSpace' => 'srgb', 'components' => [0.0823, 0.2588, 0.451], 'alpha' => 1]);
 
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
 	}//end testOpaqueColourStaysSixDigitHex()
 
 	/**
@@ -826,8 +826,8 @@ class DesignTokensMapperTest extends TestCase {
 
 		$result = $this->mapper->map(document: $document, referenceOnlyPaths: ['color.brand-blue', 'brand.primary']);
 
-		$this->assertSame(['--nldesign-color-primary' => '#154273'], $result['declarations']);
-		$this->assertSame([], $result['skipped']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#154273'], actual: $result['declarations']);
+		$this->assertSame(expected: [], actual: $result['skipped']);
 	}//end testReferenceOnlyLeafResolvesAliasButIsNotEmitted()
 
 	// -- authoring-dtcg-export: colour spaces and the thematiq extension ---------
@@ -850,11 +850,11 @@ class DesignTokensMapperTest extends TestCase {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOklchConvertsToSrgb(): void {
-		$result = $this->mapColour(['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]);
+		$result = $this->mapColour(value: ['colorSpace' => 'oklch', 'components' => [0.5, 0.1, 250]]);
 
-		$this->assertSame('#32669a', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame(1, $result['imported']);
-		$this->assertSame([], $result['adapted']);
+		$this->assertSame(expected: '#32669a', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
+		$this->assertSame(expected: [], actual: $result['adapted']);
 	}//end testOklchConvertsToSrgb()
 
 	/**
@@ -863,10 +863,10 @@ class DesignTokensMapperTest extends TestCase {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOutOfGamutUsesHexFallback(): void {
-		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0], 'hex' => '#fe0000']);
+		$result = $this->mapColour(value: ['colorSpace' => 'display-p3', 'components' => [1, 0, 0], 'hex' => '#fe0000']);
 
-		$this->assertSame('#fe0000', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('out-of-gamut-hex-fallback', $result['adapted'][0]['reason']);
+		$this->assertSame(expected: '#fe0000', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: 'out-of-gamut-hex-fallback', actual: $result['adapted'][0]['reason']);
 	}//end testOutOfGamutUsesHexFallback()
 
 	/**
@@ -875,12 +875,12 @@ class DesignTokensMapperTest extends TestCase {
 	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-w3c-design-tokens-json-import
 	 */
 	public function testOutOfGamutWithoutHexIsClipped(): void {
-		$result = $this->mapColour(['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]);
+		$result = $this->mapColour(value: ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]]);
 
-		$this->assertSame('#ff0000', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('out-of-gamut-clipped', $result['adapted'][0]['reason']);
-		$this->assertSame(['colorSpace' => 'display-p3', 'components' => [1, 0, 0]], $result['adapted'][0]['original']);
-		$this->assertSame('color.primary', $result['adapted'][0]['path']);
+		$this->assertSame(expected: '#ff0000', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: 'out-of-gamut-clipped', actual: $result['adapted'][0]['reason']);
+		$this->assertSame(expected: ['colorSpace' => 'display-p3', 'components' => [1, 0, 0]], actual: $result['adapted'][0]['original']);
+		$this->assertSame(expected: 'color.primary', actual: $result['adapted'][0]['path']);
 	}//end testOutOfGamutWithoutHexIsClipped()
 
 	/**
@@ -892,9 +892,9 @@ class DesignTokensMapperTest extends TestCase {
 		$document = ['nldesign' => ['color' => ['error' => ['$type' => 'color', '$value' => '#d52b1e', '$extensions' => ['nl.conduction.thematiq' => ['cssVariable' => '--nldesign-color-error']]]]]];
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame(['--nldesign-color-error' => '#d52b1e'], $result['declarations']);
-		$this->assertSame([], $result['skipped']);
-		$this->assertFalse($result['thematiqExport'], 'only a root setId marks a thematiq export');
+		$this->assertSame(expected: ['--nldesign-color-error' => '#d52b1e'], actual: $result['declarations']);
+		$this->assertSame(expected: [], actual: $result['skipped']);
+		$this->assertFalse(condition: $result['thematiqExport'], message: 'only a root setId marks a thematiq export');
 	}//end testExtensionNamesTheTarget()
 
 	/**
@@ -909,9 +909,9 @@ class DesignTokensMapperTest extends TestCase {
 		];
 		$result = $this->mapper->map(document: $document);
 
-		$this->assertSame('linear-gradient(90deg, #154273, #01689b)', $result['declarations']['--nldesign-header-background']);
-		$this->assertSame('#154273', $result['declarations']['--nldesign-color-primary']);
-		$this->assertCount(2, $result['declarations']);
-		$this->assertTrue($result['thematiqExport']);
+		$this->assertSame(expected: 'linear-gradient(90deg, #154273, #01689b)', actual: $result['declarations']['--nldesign-header-background']);
+		$this->assertSame(expected: '#154273', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertCount(expectedCount: 2, haystack: $result['declarations']);
+		$this->assertTrue(condition: $result['thematiqExport']);
 	}//end testCssOnlyMapIsImported()
 }//end class

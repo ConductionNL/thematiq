@@ -67,19 +67,19 @@ final class DtcgExportControllerTest extends TestCase {
 	 * @return DtcgExportController
 	 */
 	private function controller(?string $format = null): DtcgExportController {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$appManager->method('getAppVersion')->willReturn('9.9.9');
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
-		$cache = $this->createMock(ICacheFactory::class);
-		$cache->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cache = $this->createMock(originalClassName: ICacheFactory::class);
+		$cache->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$parser = new CssParserService();
-		$tokenSets = new TokenSetService($appManager, $config, $this->createMock(LoggerInterface::class), new ShippedTokenSetAuditService(new ContrastService(), $parser), $cache, new TokenSetVocabularyAuditService($parser));
-		$l = $this->createMock(IL10N::class);
+		$tokenSets = new TokenSetService(appManager: $appManager, config: $config, logger: $this->createMock(originalClassName: LoggerInterface::class), audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser), cacheFactory: $cache, vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser));
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(static fn (string $key, $default = null) => $key === 'format' ? ($format ?? $default) : $default);
 
 		return new DtcgExportController(
@@ -92,7 +92,7 @@ final class DtcgExportControllerTest extends TestCase {
 			tools: new DtcgExportTools(
 				cssParser: $parser,
 				writer: new DesignTokensWriter(),
-				deprecations: new DeprecationRecords($config),
+				deprecations: new DeprecationRecords(config: $config),
 				l: $l
 			)
 		);
@@ -107,15 +107,15 @@ final class DtcgExportControllerTest extends TestCase {
 		$response = $this->controller()->export(id: 'amsterdam');
 		$document = json_decode((string)json_encode($response->getData()), true);
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		// Read the headers as set: getHeaders() asks the server container, absent in a bare checkout.
 		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
-		$this->assertSame('attachment; filename="amsterdam.tokens.json"', $headers['Content-Disposition']);
-		$this->assertStringContainsString('application/json', $headers['Content-Type']);
-		$this->assertSame('amsterdam', $document['$extensions']['nl.conduction.thematiq']['setId']);
-		$this->assertSame('9.9.9', $document['$extensions']['nl.conduction.thematiq']['appVersion']);
-		$this->assertArrayHasKey('$type', $document['nldesign']['color']['primary']);
-		$this->assertArrayHasKey('$value', $document['nldesign']['color']['primary']);
+		$this->assertSame(expected: 'attachment; filename="amsterdam.tokens.json"', actual: $headers['Content-Disposition']);
+		$this->assertStringContainsString(needle: 'application/json', haystack: $headers['Content-Type']);
+		$this->assertSame(expected: 'amsterdam', actual: $document['$extensions']['nl.conduction.thematiq']['setId']);
+		$this->assertSame(expected: '9.9.9', actual: $document['$extensions']['nl.conduction.thematiq']['appVersion']);
+		$this->assertArrayHasKey(key: '$type', array: $document['nldesign']['color']['primary']);
+		$this->assertArrayHasKey(key: '$value', array: $document['nldesign']['color']['primary']);
 	}//end testExportDtcgShippedSet()
 
 	/**
@@ -139,7 +139,7 @@ final class DtcgExportControllerTest extends TestCase {
 		$expected = array_keys($own);
 		sort($expected);
 
-		$this->assertSame($expected, $names);
+		$this->assertSame(expected: $expected, actual: $names);
 	}//end testOnlyTheSetsOwnDeclarations()
 
 	/**
@@ -153,11 +153,11 @@ final class DtcgExportControllerTest extends TestCase {
 		$response = $this->controller(format: 'figma')->export(id: 'amsterdam');
 		$document = json_decode((string)json_encode($response->getData()), true);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('color', $document['nldesign']['color']['primary']['$type']);
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}$/', $document['nldesign']['color']['primary']['$value']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'color', actual: $document['nldesign']['color']['primary']['$type']);
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6}$/', string: $document['nldesign']['color']['primary']['$value']);
 		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
-		$this->assertSame('attachment; filename="amsterdam.tokens.json"', $headers['Content-Disposition']);
+		$this->assertSame(expected: 'attachment; filename="amsterdam.tokens.json"', actual: $headers['Content-Disposition']);
 	}//end testTheFigmaFormatWritesColoursAsText()
 
 	/**
@@ -172,19 +172,19 @@ final class DtcgExportControllerTest extends TestCase {
 		$legacyResponse = $this->controller(format: 'tokens-studio-legacy')->export(id: 'amsterdam');
 		$legacy = json_decode((string)json_encode($legacyResponse->getData()), true);
 
-		$this->assertSame(['tokenSetOrder' => ['amsterdam']], $dollar['$metadata']);
-		$this->assertSame('amsterdam', $dollar['$themes'][0]['id']);
-		$this->assertSame(['amsterdam' => 'enabled'], $dollar['$themes'][0]['selectedTokenSets']);
-		$this->assertSame('color', $dollar['amsterdam']['nldesign']['color']['primary']['$type']);
-		$this->assertIsString($dollar['amsterdam']['nldesign']['color']['primary']['$value']);
+		$this->assertSame(expected: ['tokenSetOrder' => ['amsterdam']], actual: $dollar['$metadata']);
+		$this->assertSame(expected: 'amsterdam', actual: $dollar['$themes'][0]['id']);
+		$this->assertSame(expected: ['amsterdam' => 'enabled'], actual: $dollar['$themes'][0]['selectedTokenSets']);
+		$this->assertSame(expected: 'color', actual: $dollar['amsterdam']['nldesign']['color']['primary']['$type']);
+		$this->assertIsString(actual: $dollar['amsterdam']['nldesign']['color']['primary']['$value']);
 		$this->assertSame(
-			$dollar['amsterdam']['nldesign']['color']['primary']['$value'],
-			$legacy['amsterdam']['nldesign']['color']['primary']['value']
+			expected: $dollar['amsterdam']['nldesign']['color']['primary']['$value'],
+			actual: $legacy['amsterdam']['nldesign']['color']['primary']['value']
 		);
-		$this->assertSame('color', $legacy['amsterdam']['nldesign']['color']['primary']['type']);
-		$this->assertArrayNotHasKey('$value', $legacy['amsterdam']['nldesign']['color']['primary']);
+		$this->assertSame(expected: 'color', actual: $legacy['amsterdam']['nldesign']['color']['primary']['type']);
+		$this->assertArrayNotHasKey(key: '$value', array: $legacy['amsterdam']['nldesign']['color']['primary']);
 		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($legacyResponse);
-		$this->assertSame('attachment; filename="amsterdam.tokens-studio.json"', $headers['Content-Disposition']);
+		$this->assertSame(expected: 'attachment; filename="amsterdam.tokens-studio.json"', actual: $headers['Content-Disposition']);
 	}//end testTheTokensStudioFormatsWrapTheSet()
 
 	/**
@@ -197,8 +197,8 @@ final class DtcgExportControllerTest extends TestCase {
 	public function testAnUnknownFormatIsRefused(): void {
 		$response = $this->controller(format: 'sketch')->export(id: 'amsterdam');
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame(['error' => 'Unknown file format.'], $response->getData());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: ['error' => 'Unknown file format.'], actual: $response->getData());
 	}//end testAnUnknownFormatIsRefused()
 
 	/**
@@ -209,8 +209,8 @@ final class DtcgExportControllerTest extends TestCase {
 	public function testExportDtcgUnknownIs404(): void {
 		$response = $this->controller()->export(id: 'does-not-exist');
 
-		$this->assertSame(404, $response->getStatus());
-		$this->assertSame(['error' => 'Token set not found.'], $response->getData());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
+		$this->assertSame(expected: ['error' => 'Token set not found.'], actual: $response->getData());
 	}//end testExportDtcgUnknownIs404()
 
 	/**
@@ -220,7 +220,7 @@ final class DtcgExportControllerTest extends TestCase {
 	 */
 	public function testExportDtcgRejectsTraversalId(): void {
 		foreach (['../appinfo/info', '..', 'amsterdam/../../appinfo/info', 'Amsterdam'] as $id) {
-			$this->assertSame(404, $this->controller()->export(id: $id)->getStatus(), $id);
+			$this->assertSame(expected: 404, actual: $this->controller()->export(id: $id)->getStatus(), message: $id);
 		}
 	}//end testExportDtcgRejectsTraversalId()
 
@@ -232,8 +232,8 @@ final class DtcgExportControllerTest extends TestCase {
 	public function testAdminOnly(): void {
 		$method = new ReflectionMethod(DtcgExportController::class, 'export');
 
-		$this->assertSame(Admin::class, ($method->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null));
-		$this->assertSame([], $method->getAttributes(NoAdminRequired::class));
+		$this->assertSame(expected: Admin::class, actual: ($method->getAttributes(AuthorizedAdminSetting::class)[0]->getArguments()['settings'] ?? null));
+		$this->assertSame(expected: [], actual: $method->getAttributes(NoAdminRequired::class));
 	}//end testAdminOnly()
 
 	/**
@@ -245,7 +245,7 @@ final class DtcgExportControllerTest extends TestCase {
 		$this->stored[DeprecationRecords::CONFIG_KEY] = (string)json_encode(['--nldesign-color-primary' => ['severity' => 'warning', 'message' => 'Moving to the new palette', 'state' => 'active']]);
 		$document = json_decode((string)json_encode($this->controller()->export(id: 'amsterdam')->getData()), true);
 
-		$this->assertSame('Moving to the new palette', $document['nldesign']['color']['primary']['$deprecated']);
+		$this->assertSame(expected: 'Moving to the new palette', actual: $document['nldesign']['color']['primary']['$deprecated']);
 	}//end testDeprecationReachesTheDownload()
 
 	/**
@@ -257,28 +257,28 @@ final class DtcgExportControllerTest extends TestCase {
 		$dir = sys_get_temp_dir() . '/thematiq-dtcg-store-' . bin2hex(random_bytes(4));
 		mkdir($dir . '/css/tokens', 0777, true);
 		file_put_contents($dir . '/css/tokens/custom-gemeente-voorbeeld.css', ":root {\n  --nldesign-color-primary: #c8102e;\n}\n");
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturn(true);
 		$tokenSets->method('getAvailableTokenSets')->willReturn([['id' => 'custom-gemeente-voorbeeld', 'name' => 'Gemeente Voorbeeld']]);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$appManager->method('getAppVersion')->willReturn('9.9.9');
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnArgument(2);
 		$controller = new DtcgExportController(
 			appName: 'thematiq',
-			request: $this->createMock(IRequest::class),
+			request: $this->createMock(originalClassName: IRequest::class),
 			location: new TokenSetFileLocation(
 				tokenSets: $tokenSets,
 				appManager: $appManager,
-				store: new DirectoryRuntimeFileStore($dir)
+				store: new DirectoryRuntimeFileStore(root: $dir)
 			),
 			tools: new DtcgExportTools(
 				cssParser: new CssParserService(),
 				writer: new DesignTokensWriter(),
-				deprecations: new DeprecationRecords($config),
+				deprecations: new DeprecationRecords(config: $config),
 				l: $l
 			)
 		);
@@ -286,7 +286,7 @@ final class DtcgExportControllerTest extends TestCase {
 		$document = json_decode((string)json_encode($controller->export(id: 'custom-gemeente-voorbeeld')->getData()), true);
 		exec('rm -rf ' . escapeshellarg($dir));
 
-		$this->assertSame('#c8102e', $document['nldesign']['color']['primary']['$value']['hex']);
-		$this->assertSame('Gemeente Voorbeeld', $document['$description']);
+		$this->assertSame(expected: '#c8102e', actual: $document['nldesign']['color']['primary']['$value']['hex']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $document['$description']);
 	}//end testExportsACustomSetFromTheStore()
 }//end class

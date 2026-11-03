@@ -79,7 +79,7 @@ class TokenReferenceServiceTest extends TestCase {
 	 */
 	private function service(): TokenReferenceService {
 		$parser = new CssParserService();
-		return new TokenReferenceService(new ShippedTokenSetAuditService(new ContrastService(), $parser), $parser);
+		return new TokenReferenceService(audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser), parser: $parser);
 	}//end service()
 
 	/**
@@ -99,11 +99,11 @@ class TokenReferenceServiceTest extends TestCase {
 	public function testMarkdownMarksDeclaredAndDefaultTokensAndWhatTheyPaint(): void {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md');
 
-		$this->assertStringContainsString('# Gemeente Voorbeeld', $md);
-		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary` \| .*`#24578F` \| .*`#8fb4e0` \| this set \| Primary element color \|$/m', $md);
-		$this->assertMatchesRegularExpression('/^\| `--nldesign-color-primary-text` \| .*`#ffffff` \| \| defaults \| /m', $md);
-		$this->assertMatchesRegularExpression('/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| Font family \|$/m', $md);
-		$this->assertStringContainsString('2 declared by this set, 3 from the defaults layer', $md);
+		$this->assertStringContainsString(needle: '# Gemeente Voorbeeld', haystack: $md);
+		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-color-primary` \| .*`#24578F` \| .*`#8fb4e0` \| this set \| Primary element color \|$/m', string: $md);
+		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-color-primary-text` \| .*`#ffffff` \| \| defaults \| /m', string: $md);
+		$this->assertMatchesRegularExpression(pattern: '/^\| `--nldesign-font-family` \| `sans-serif` \| \| defaults \| Font family \|$/m', string: $md);
+		$this->assertStringContainsString(needle: '2 declared by this set, 3 from the defaults layer', haystack: $md);
 	}//end testMarkdownMarksDeclaredAndDefaultTokensAndWhatTheyPaint()
 
 	/**
@@ -114,7 +114,7 @@ class TokenReferenceServiceTest extends TestCase {
 	public function testAColourRowHasASwatchAndTheValueAsText(): void {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md');
 
-		$this->assertMatchesRegularExpression('/!\[\]\(data:image\/svg\+xml,[^)]*%2324578F[^)]*\) `#24578F`/', $md);
+		$this->assertMatchesRegularExpression(pattern: '/!\[\]\(data:image\/svg\+xml,[^)]*%2324578F[^)]*\) `#24578F`/', string: $md);
 	}//end testAColourRowHasASwatchAndTheValueAsText()
 
 	/**
@@ -125,8 +125,8 @@ class TokenReferenceServiceTest extends TestCase {
 	public function testWithoutSwatchesAColourRowIsTheValueAsText(): void {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md-plain');
 
-		$this->assertStringContainsString('| `#24578F` |', $md);
-		$this->assertStringNotContainsString('data:image', $md);
+		$this->assertStringContainsString(needle: '| `#24578F` |', haystack: $md);
+		$this->assertStringNotContainsString(needle: 'data:image', haystack: $md);
 	}//end testWithoutSwatchesAColourRowIsTheValueAsText()
 
 	/**
@@ -138,8 +138,8 @@ class TokenReferenceServiceTest extends TestCase {
 		$md = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'md');
 
 		$apart = substr($md, (int)strpos($md, '## Tokens nothing reads'));
-		$this->assertStringContainsString('`--voorbeeld-unused-token`', $apart);
-		$this->assertStringNotContainsString('`--voorbeeld-unused-token`', substr($md, 0, (int)strpos($md, '## Tokens nothing reads')));
+		$this->assertStringContainsString(needle: '`--voorbeeld-unused-token`', haystack: $apart);
+		$this->assertStringNotContainsString(needle: '`--voorbeeld-unused-token`', haystack: substr($md, 0, (int)strpos($md, '## Tokens nothing reads')));
 	}//end testTokensNothingReadsAreListedApart()
 
 	/**
@@ -150,12 +150,12 @@ class TokenReferenceServiceTest extends TestCase {
 	public function testHtmlIsAnAccessiblePage(): void {
 		$html = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'html');
 
-		$this->assertStringStartsWith('<!DOCTYPE html>', $html);
-		$this->assertStringContainsString('<html lang="en">', $html);
-		$this->assertStringContainsString('<title>Gemeente Voorbeeld token reference</title>', $html);
-		$this->assertStringContainsString('<th scope="col">Token</th>', $html);
-		$this->assertMatchesRegularExpression('/<span class="swatch" aria-hidden="true" style="background:#24578F"><\/span> <code>#24578F<\/code>/', $html);
-		$this->assertStringContainsString('<details>', $html);
+		$this->assertStringStartsWith(prefix: '<!DOCTYPE html>', string: $html);
+		$this->assertStringContainsString(needle: '<html lang="en">', haystack: $html);
+		$this->assertStringContainsString(needle: '<title>Gemeente Voorbeeld token reference</title>', haystack: $html);
+		$this->assertStringContainsString(needle: '<th scope="col">Token</th>', haystack: $html);
+		$this->assertMatchesRegularExpression(pattern: '/<span class="swatch" aria-hidden="true" style="background:#24578F"><\/span> <code>#24578F<\/code>/', string: $html);
+		$this->assertStringContainsString(needle: '<details>', haystack: $html);
 	}//end testHtmlIsAnAccessiblePage()
 
 	/**
@@ -168,7 +168,7 @@ class TokenReferenceServiceTest extends TestCase {
 
 		$html = $this->service()->render(appPath: $this->appDir, set: $this->set(), format: 'html');
 
-		$this->assertStringNotContainsString('<script>', $html);
+		$this->assertStringNotContainsString(needle: '<script>', haystack: $html);
 	}//end testHtmlEscapesValues()
 
 	/**
@@ -180,8 +180,8 @@ class TokenReferenceServiceTest extends TestCase {
 		$service = $this->service();
 
 		$this->assertSame(
-			$service->render(appPath: $this->appDir, set: $this->set(), format: 'md'),
-			$service->render(appPath: $this->appDir, set: $this->set(), format: 'md')
+			expected: $service->render(appPath: $this->appDir, set: $this->set(), format: 'md'),
+			actual: $service->render(appPath: $this->appDir, set: $this->set(), format: 'md')
 		);
 	}//end testRenderingIsDeterministic()
 }//end class

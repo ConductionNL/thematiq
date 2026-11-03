@@ -56,7 +56,7 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 	 */
 	public function testAuditMatchesTheGoldenRecording(): void {
 		$appPath = dirname(__DIR__, 3);
-		$service = new TokenSetVocabularyAuditService(new CssParserService());
+		$service = new TokenSetVocabularyAuditService(parser: new CssParserService());
 		$manifest = json_decode((string)file_get_contents($appPath . '/token-sets.json'), true);
 		$entries = [];
 		foreach ($manifest as $entry) {
@@ -132,9 +132,9 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testAuditMatchesTheGoldenRecording()
 

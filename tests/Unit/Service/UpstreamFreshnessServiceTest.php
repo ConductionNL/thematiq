@@ -51,7 +51,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * Build an IConfig mock backed by $this->configStore.
 	 */
 	private function makeConfig(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
 				return ($this->configStore[$key] ?? $default);
@@ -79,14 +79,14 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		?IClientService $clientService = null,
 		?LoggerInterface $logger = null,
 	): UpstreamFreshnessService {
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getAvailableTokenSets')->willReturn($tokenSets);
 
 		return new UpstreamFreshnessService(
-			$this->makeConfig(),
-			($clientService ?? $this->createMock(IClientService::class)),
-			$tokenSetService,
-			($logger ?? $this->createMock(LoggerInterface::class))
+			config: $this->makeConfig(),
+			clientService: ($clientService ?? $this->createMock(originalClassName: IClientService::class)),
+			tokenSetService: $tokenSetService,
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 	}//end makeService()
 
@@ -94,28 +94,28 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * (a) Disabled ⇒ runCheck() performs zero HTTP calls.
 	 */
 	public function testDisabledPerformsZeroHttpCalls(): void {
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->expects($this->never())->method('newClient');
 
 		$service = $this->makeService(tokenSets: [], clientService: $clientService);
 
-		$this->assertFalse($service->isEnabled());
+		$this->assertFalse(condition: $service->isEnabled());
 		$service->runCheck();
 
-		$this->assertNull($service->getStatus()['lastChecked']);
+		$this->assertNull(actual: $service->getStatus()['lastChecked']);
 	}//end testDisabledPerformsZeroHttpCalls()
 
 	/**
 	 * (b) 304 ⇒ only upstream_checked_at updated, no notices.
 	 */
 	public function test304OnlyUpdatesCheckedAtAndProducesNoNotices(): void {
-		$response = $this->createMock(IResponse::class);
+		$response = $this->createMock(originalClassName: IResponse::class);
 		$response->method('getStatusCode')->willReturn(304);
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->expects($this->once())->method('get')->willReturn($response);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$service = $this->makeService(tokenSets: [], clientService: $clientService);
@@ -123,8 +123,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->runCheck();
 
 		$status = $service->getStatus();
-		$this->assertNotNull($status['lastChecked']);
-		$this->assertSame([], $status['notices']);
+		$this->assertNotNull(actual: $status['lastChecked']);
+		$this->assertSame(expected: [], actual: $status['notices']);
 	}//end test304OnlyUpdatesCheckedAtAndProducesNoNotices()
 
 	/**
@@ -134,15 +134,15 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	public function test200WithUnchangedHeadShaProducesNoNotices(): void {
 		$sha = str_repeat('a', 40);
 
-		$response = $this->createMock(IResponse::class);
+		$response = $this->createMock(originalClassName: IResponse::class);
 		$response->method('getStatusCode')->willReturn(200);
 		$response->method('getBody')->willReturn($sha);
 		$response->method('getHeader')->willReturn('"etag-1"');
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->expects($this->once())->method('get')->willReturn($response);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$tokenSets = [
@@ -153,7 +153,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->setEnabled(enabled: true);
 		$service->runCheck();
 
-		$this->assertSame([], $service->getStatus()['notices']);
+		$this->assertSame(expected: [], actual: $service->getStatus()['notices']);
 	}//end test200WithUnchangedHeadShaProducesNoNotices()
 
 	/**
@@ -165,7 +165,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$oldSha = str_repeat('a', 40);
 		$newSha = str_repeat('b', 40);
 
-		$freshResponse = $this->createMock(IResponse::class);
+		$freshResponse = $this->createMock(originalClassName: IResponse::class);
 		$freshResponse->method('getStatusCode')->willReturn(200);
 		$freshResponse->method('getBody')->willReturn($newSha);
 		$freshResponse->method('getHeader')->willReturn('"etag-2"');
@@ -173,14 +173,14 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$compareBody = json_encode(
 			['files' => [['filename' => 'proprietary/utrecht-design-tokens/src/brand/utrecht/color.tokens.json']]]
 		);
-		$compareResponse = $this->createMock(IResponse::class);
+		$compareResponse = $this->createMock(originalClassName: IResponse::class);
 		$compareResponse->method('getStatusCode')->willReturn(200);
 		$compareResponse->method('getBody')->willReturn($compareBody);
 
-		$client = $this->createMock(IClient::class);
-		$client->expects($this->exactly(2))->method('get')->willReturnOnConsecutiveCalls($freshResponse, $compareResponse);
+		$client = $this->createMock(originalClassName: IClient::class);
+		$client->expects($this->exactly(count: 2))->method('get')->willReturnOnConsecutiveCalls($freshResponse, $compareResponse);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$tokenSets = [
@@ -193,9 +193,9 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->runCheck();
 
 		$notices = $service->getStatus()['notices'];
-		$this->assertCount(1, $notices);
-		$this->assertSame('utrecht', $notices[0]['setId']);
-		$this->assertSame('1.2.0', $notices[0]['upstreamVersion']);
+		$this->assertCount(expectedCount: 1, haystack: $notices);
+		$this->assertSame(expected: 'utrecht', actual: $notices[0]['setId']);
+		$this->assertSame(expected: '1.2.0', actual: $notices[0]['upstreamVersion']);
 	}//end test200WithNewShaAndSuccessfulCompareProducesPerSetNotice()
 
 	/**
@@ -204,13 +204,13 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	public function testCompareFailureProducesGenericNoticeWithoutException(): void {
 		$newSha = str_repeat('c', 40);
 
-		$freshResponse = $this->createMock(IResponse::class);
+		$freshResponse = $this->createMock(originalClassName: IResponse::class);
 		$freshResponse->method('getStatusCode')->willReturn(200);
 		$freshResponse->method('getBody')->willReturn($newSha);
 		$freshResponse->method('getHeader')->willReturn('"etag-3"');
 
-		$client = $this->createMock(IClient::class);
-		$client->expects($this->exactly(2))->method('get')->willReturnCallback(
+		$client = $this->createMock(originalClassName: IClient::class);
+		$client->expects($this->exactly(count: 2))->method('get')->willReturnCallback(
 			function () use ($freshResponse) {
 				static $call = 0;
 				$call++;
@@ -222,7 +222,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 			}
 		);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$tokenSets = [
@@ -234,9 +234,9 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->runCheck();
 
 		$notices = $service->getStatus()['notices'];
-		$this->assertCount(1, $notices);
-		$this->assertSame('__generic__', $notices[0]['setId']);
-		$this->assertSame($newSha, $notices[0]['headSha']);
+		$this->assertCount(expectedCount: 1, haystack: $notices);
+		$this->assertSame(expected: '__generic__', actual: $notices[0]['setId']);
+		$this->assertSame(expected: $newSha, actual: $notices[0]['headSha']);
 	}//end testCompareFailureProducesGenericNoticeWithoutException()
 
 	/**
@@ -257,13 +257,13 @@ class UpstreamFreshnessServiceTest extends TestCase {
 			]
 		);
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->method('get')->willThrowException(new \RuntimeException('DNS failure'));
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->atLeastOnce())->method('info');
 
 		$service = $this->makeService(tokenSets: [], clientService: $clientService, logger: $logger);
@@ -273,9 +273,9 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->runCheck();
 
 		$notices = $service->getStatus()['notices'];
-		$this->assertCount(1, $notices);
-		$this->assertSame('utrecht', $notices[0]['setId']);
-		$this->assertSame('1.0.0', $notices[0]['upstreamVersion']);
+		$this->assertCount(expectedCount: 1, haystack: $notices);
+		$this->assertSame(expected: 'utrecht', actual: $notices[0]['setId']);
+		$this->assertSame(expected: '1.0.0', actual: $notices[0]['upstreamVersion']);
 	}//end testFreshnessRequestThrowLeavesPriorNoticesUntouched()
 
 	/**
@@ -283,23 +283,23 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	 * creating a notice or updating the stored ETag.
 	 */
 	public function testMalformedHeadShaBodyIsDiscarded(): void {
-		$response = $this->createMock(IResponse::class);
+		$response = $this->createMock(originalClassName: IResponse::class);
 		$response->method('getStatusCode')->willReturn(200);
 		$response->method('getBody')->willReturn('<html>not a sha</html>');
 		$response->method('getHeader')->willReturn('"should-not-be-stored"');
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->expects($this->once())->method('get')->willReturn($response);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$service = $this->makeService(tokenSets: [], clientService: $clientService);
 		$service->setEnabled(enabled: true);
 		$service->runCheck();
 
-		$this->assertSame([], $service->getStatus()['notices']);
-		$this->assertSame('', ($this->configStore['upstream_etag'] ?? ''));
+		$this->assertSame(expected: [], actual: $service->getStatus()['notices']);
+		$this->assertSame(expected: '', actual: ($this->configStore['upstream_etag'] ?? ''));
 	}//end testMalformedHeadShaBodyIsDiscarded()
 
 	/**
@@ -310,15 +310,15 @@ class UpstreamFreshnessServiceTest extends TestCase {
 	public function testSetsWithoutUpstreamRefAndCustomSetsAreExcluded(): void {
 		$newSha = str_repeat('d', 40);
 
-		$response = $this->createMock(IResponse::class);
+		$response = $this->createMock(originalClassName: IResponse::class);
 		$response->method('getStatusCode')->willReturn(200);
 		$response->method('getBody')->willReturn($newSha);
 		$response->method('getHeader')->willReturn('"etag-4"');
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->expects($this->once())->method('get')->willReturn($response);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$tokenSets = [
@@ -330,7 +330,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->setEnabled(enabled: true);
 		$service->runCheck();
 
-		$this->assertSame([], $service->getStatus()['notices']);
+		$this->assertSame(expected: [], actual: $service->getStatus()['notices']);
 	}//end testSetsWithoutUpstreamRefAndCustomSetsAreExcluded()
 
 	/**
@@ -353,7 +353,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service = $this->makeService(tokenSets: []);
 		$service->dismiss(setId: 'utrecht', versionOrSha: '1.0.0');
 
-		$this->assertSame([], $service->getStatus()['notices']);
+		$this->assertSame(expected: [], actual: $service->getStatus()['notices']);
 
 		// A newer detection (different version) re-surfaces regardless of
 		// the prior dismissal.
@@ -370,8 +370,8 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		);
 
 		$notices = $service->getStatus()['notices'];
-		$this->assertCount(1, $notices);
-		$this->assertSame('1.1.0', $notices[0]['upstreamVersion']);
+		$this->assertCount(expectedCount: 1, haystack: $notices);
+		$this->assertSame(expected: '1.1.0', actual: $notices[0]['upstreamVersion']);
 	}//end testDismissalHidesNoticeUntilNewerVersionDetected()
 
 	/**
@@ -382,7 +382,7 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$oldSha = str_repeat('e', 40);
 		$newSha = str_repeat('f', 40);
 
-		$freshResponse = $this->createMock(IResponse::class);
+		$freshResponse = $this->createMock(originalClassName: IResponse::class);
 		$freshResponse->method('getStatusCode')->willReturn(200);
 		$freshResponse->method('getBody')->willReturn($newSha);
 		$freshResponse->method('getHeader')->willReturn('"etag-5"');
@@ -396,14 +396,14 @@ class UpstreamFreshnessServiceTest extends TestCase {
 				],
 			]
 		);
-		$compareResponse = $this->createMock(IResponse::class);
+		$compareResponse = $this->createMock(originalClassName: IResponse::class);
 		$compareResponse->method('getStatusCode')->willReturn(200);
 		$compareResponse->method('getBody')->willReturn($compareBody);
 
-		$client = $this->createMock(IClient::class);
-		$client->expects($this->atMost(2))->method('get')->willReturnOnConsecutiveCalls($freshResponse, $compareResponse);
+		$client = $this->createMock(originalClassName: IClient::class);
+		$client->expects($this->atMost(allowedInvocations: 2))->method('get')->willReturnOnConsecutiveCalls($freshResponse, $compareResponse);
 
-		$clientService = $this->createMock(IClientService::class);
+		$clientService = $this->createMock(originalClassName: IClientService::class);
 		$clientService->method('newClient')->willReturn($client);
 
 		$tokenSets = [
@@ -418,6 +418,6 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$service->runCheck();
 
 		$notices = $service->getStatus()['notices'];
-		$this->assertCount(3, $notices);
+		$this->assertCount(expectedCount: 3, haystack: $notices);
 	}//end testNeverMoreThanTwoRequestsPerRun()
 }//end class

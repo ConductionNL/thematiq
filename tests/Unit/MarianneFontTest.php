@@ -66,9 +66,9 @@ class MarianneFontTest extends TestCase {
 	 */
 	private function readFile(string $relativePath): string {
 		$path = $this->repoRoot() . '/' . $relativePath;
-		$this->assertFileExists($path, "Expected file to exist: {$relativePath}");
+		$this->assertFileExists(filename: $path, message: "Expected file to exist: {$relativePath}");
 		$contents = file_get_contents($path);
-		$this->assertIsString($contents, "Could not read {$relativePath}");
+		$this->assertIsString(actual: $contents, message: "Could not read {$relativePath}");
 		return $contents;
 	}//end readFile()
 
@@ -80,18 +80,18 @@ class MarianneFontTest extends TestCase {
 	 */
 	public function testAllEightMarianneWoff2FilesAreBundled(): void {
 		$dir = $this->repoRoot() . '/css/systems/lasuite/fonts/marianne';
-		$this->assertDirectoryExists($dir, 'css/systems/lasuite/fonts/marianne/ must exist.');
+		$this->assertDirectoryExists(directory: $dir, message: 'css/systems/lasuite/fonts/marianne/ must exist.');
 
 		foreach (self::MARIANNE_WOFF2_FILES as $file) {
-			$this->assertFileExists($dir . '/' . $file, "Expected bundled Marianne file missing: {$file}");
+			$this->assertFileExists(filename: $dir . '/' . $file, message: "Expected bundled Marianne file missing: {$file}");
 		}
 
 		// No .woff fallback — woff2-only per tasks.md #1.3 (CSP-clean self-hosting).
 		$woffFallbacks = glob($dir . '/*.woff') ?: [];
 		$this->assertSame(
-			[],
-			$woffFallbacks,
-			'css/systems/lasuite/fonts/marianne/ must not carry .woff fallback files, only .woff2: ' . implode(', ', $woffFallbacks)
+			expected: [],
+			actual: $woffFallbacks,
+			message: 'css/systems/lasuite/fonts/marianne/ must not carry .woff fallback files, only .woff2: ' . implode(', ', $woffFallbacks)
 		);
 	}//end testAllEightMarianneWoff2FilesAreBundled()
 
@@ -105,28 +105,28 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testGatedStylesheetUsesOnlyAppRelativeUrlsToBundledFiles(): void {
-		$css = $this->readFile('css/systems/lasuite/marianne.css');
+		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
 
 		preg_match_all('/url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/i', $css, $matches);
-		$this->assertNotEmpty($matches[1], 'css/systems/lasuite/marianne.css must contain at least one url() reference.');
+		$this->assertNotEmpty(actual: $matches[1], message: 'css/systems/lasuite/marianne.css must contain at least one url() reference.');
 
 		$referenced = [];
 		foreach ($matches[1] as $ref) {
 			$ref = trim($ref);
 
 			$this->assertDoesNotMatchRegularExpression(
-				'#^https?://#i',
-				$ref,
-				"css/systems/lasuite/marianne.css must not use an http(s):// url(): {$ref}"
+				pattern: '#^https?://#i',
+				string: $ref,
+				message: "css/systems/lasuite/marianne.css must not use an http(s):// url(): {$ref}"
 			);
 
 			$path = $this->repoRoot() . '/css/systems/lasuite/' . $ref;
-			$this->assertFileExists($path, "css/systems/lasuite/marianne.css references a missing font file: css/systems/lasuite/{$ref}");
+			$this->assertFileExists(filename: $path, message: "css/systems/lasuite/marianne.css references a missing font file: css/systems/lasuite/{$ref}");
 
 			$this->assertStringStartsWith(
-				'fonts/marianne/',
-				$ref,
-				"css/systems/lasuite/marianne.css must only reference files under fonts/marianne/: {$ref}"
+				prefix: 'fonts/marianne/',
+				string: $ref,
+				message: "css/systems/lasuite/marianne.css must only reference files under fonts/marianne/: {$ref}"
 			);
 
 			$referenced[] = basename($ref);
@@ -137,7 +137,7 @@ class MarianneFontTest extends TestCase {
 		sort($referenced);
 		$expected = self::MARIANNE_WOFF2_FILES;
 		sort($expected);
-		$this->assertSame($expected, array_values(array_unique($referenced)));
+		$this->assertSame(expected: $expected, actual: array_values(array_unique($referenced)));
 	}//end testGatedStylesheetUsesOnlyAppRelativeUrlsToBundledFiles()
 
 	/**
@@ -148,7 +148,7 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testGatedStylesheetDeclaresCorrectFontWeights(): void {
-		$css = $this->readFile('css/systems/lasuite/marianne.css');
+		$css = $this->readFile(relativePath: 'css/systems/lasuite/marianne.css');
 
 		$expectedWeights = [
 			'Marianne-Light.woff2' => '300',
@@ -164,27 +164,27 @@ class MarianneFontTest extends TestCase {
 		// Split into individual @font-face blocks and check each carries the
 		// right font-weight for the file it references.
 		preg_match_all('/@font-face\s*\{([^}]*)\}/s', $css, $blocks);
-		$this->assertCount(8, $blocks[1], 'css/systems/lasuite/marianne.css must declare exactly 8 @font-face rules.');
+		$this->assertCount(expectedCount: 8, haystack: $blocks[1], message: 'css/systems/lasuite/marianne.css must declare exactly 8 @font-face rules.');
 
 		foreach ($blocks[1] as $block) {
-			$this->assertMatchesRegularExpression("/font-family:\\s*'Marianne'/", $block, 'Every rule must declare font-family: \'Marianne\'.');
-			$this->assertMatchesRegularExpression('/font-display:\s*swap/', $block, 'Every rule must declare font-display: swap.');
+			$this->assertMatchesRegularExpression(pattern: "/font-family:\\s*'Marianne'/", string: $block, message: 'Every rule must declare font-family: \'Marianne\'.');
+			$this->assertMatchesRegularExpression(pattern: '/font-display:\s*swap/', string: $block, message: 'Every rule must declare font-display: swap.');
 
 			preg_match('/fonts\/marianne\/([^\')]+)/', $block, $fileMatch);
-			$this->assertNotEmpty($fileMatch, 'Could not find a referenced file in @font-face block.');
+			$this->assertNotEmpty(actual: $fileMatch, message: 'Could not find a referenced file in @font-face block.');
 			$file = $fileMatch[1];
 
-			$this->assertArrayHasKey($file, $expectedWeights, "Unexpected file referenced: {$file}");
+			$this->assertArrayHasKey(key: $file, array: $expectedWeights, message: "Unexpected file referenced: {$file}");
 
 			preg_match('/font-weight:\s*(\d+)/', $block, $weightMatch);
-			$this->assertNotEmpty($weightMatch, "No font-weight declared for {$file}.");
-			$this->assertSame($expectedWeights[$file], $weightMatch[1], "Wrong font-weight for {$file}.");
+			$this->assertNotEmpty(actual: $weightMatch, message: "No font-weight declared for {$file}.");
+			$this->assertSame(expected: $expectedWeights[$file], actual: $weightMatch[1], message: "Wrong font-weight for {$file}.");
 
 			$expectedStyle = str_contains($file, '_Italic') ? 'italic' : 'normal';
 			$this->assertMatchesRegularExpression(
-				'/font-style:\s*' . $expectedStyle . '/',
-				$block,
-				"Wrong font-style for {$file} (expected {$expectedStyle})."
+				pattern: '/font-style:\s*' . $expectedStyle . '/',
+				string: $block,
+				message: "Wrong font-style for {$file} (expected {$expectedStyle})."
 			);
 		}
 	}//end testGatedStylesheetDeclaresCorrectFontWeights()
@@ -201,17 +201,17 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testDsfrIsNotADependency(): void {
-		$packageJson = json_decode($this->readFile('package.json'), true);
-		$this->assertIsArray($packageJson, 'package.json must decode to an array.');
+		$packageJson = json_decode($this->readFile(relativePath: 'package.json'), true);
+		$this->assertIsArray(actual: $packageJson, message: 'package.json must decode to an array.');
 
 		// Dropped on 2 Oct 2026: its preinstall script refuses to run without the
 		// DSFR terms of use, so npm never installed it. The Marianne files are
 		// bundled separately, gated (marianne-font-restricted).
 		foreach (['dependencies', 'devDependencies', 'optionalDependencies'] as $section) {
 			$this->assertArrayNotHasKey(
-				'@gouvfr/dsfr',
-				$packageJson[$section] ?? [],
-				'@gouvfr/dsfr must not be declared in package.json ' . $section . '.'
+				key: '@gouvfr/dsfr',
+				array: $packageJson[$section] ?? [],
+				message: '@gouvfr/dsfr must not be declared in package.json ' . $section . '.'
 			);
 		}
 
@@ -234,16 +234,16 @@ class MarianneFontTest extends TestCase {
 
 				$contents = (string)file_get_contents($file->getPathname());
 				$this->assertStringNotContainsString(
-					'@gouvfr/dsfr',
-					$contents,
-					str_replace($this->repoRoot() . '/', '', $file->getPathname()) . ' must not import/require @gouvfr/dsfr at runtime.'
+					needle: '@gouvfr/dsfr',
+					haystack: $contents,
+					message: str_replace($this->repoRoot() . '/', '', $file->getPathname()) . ' must not import/require @gouvfr/dsfr at runtime.'
 				);
 			}
 		}
 
 		// The build script itself is the one sanctioned build-time consumer.
-		$buildScript = $this->readFile('scripts/build-fonts-marianne.js');
-		$this->assertStringContainsString('@gouvfr/dsfr', $buildScript);
+		$buildScript = $this->readFile(relativePath: 'scripts/build-fonts-marianne.js');
+		$this->assertStringContainsString(needle: '@gouvfr/dsfr', haystack: $buildScript);
 	}//end testDsfrIsNotADependency()
 
 	/**
@@ -254,34 +254,34 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testLegalArtifactsExistAndCiteTheSource(): void {
-		$licence = $this->readFile('MARIANNE-LICENCE.md');
+		$licence = $this->readFile(relativePath: 'MARIANNE-LICENCE.md');
 		$this->assertMatchesRegularExpression(
-			"/r[ée]serv[ée]e?\\s+aux\\s+administrations\\s+de\\s+l'[ÉE]tat/iu",
-			$licence,
-			'MARIANNE-LICENCE.md must reproduce the Marianne restriction wording verbatim.'
+			pattern: "/r[ée]serv[ée]e?\\s+aux\\s+administrations\\s+de\\s+l'[ÉE]tat/iu",
+			string: $licence,
+			message: 'MARIANNE-LICENCE.md must reproduce the Marianne restriction wording verbatim.'
 		);
-		$this->assertStringContainsString('Etalab-2.0', $licence);
+		$this->assertStringContainsString(needle: 'Etalab-2.0', haystack: $licence);
 		$this->assertMatchesRegularExpression(
-			'#https?://(www\.)?(systeme-de-design\.gouv\.fr|etalab\.gouv\.fr|npmjs\.com/package/@gouvfr/dsfr)#i',
-			$licence,
-			'MARIANNE-LICENCE.md must cite a source URL for the DSFR package or official design system site.'
-		);
-
-		$agreement = $this->readFile('AGREEMENT-MARIANNE.md');
-		$this->assertMatchesRegularExpression(
-			'/French State agency/i',
-			$agreement,
-			'AGREEMENT-MARIANNE.md must state the French-State-agency eligibility condition.'
+			pattern: '#https?://(www\.)?(systeme-de-design\.gouv\.fr|etalab\.gouv\.fr|npmjs\.com/package/@gouvfr/dsfr)#i',
+			string: $licence,
+			message: 'MARIANNE-LICENCE.md must cite a source URL for the DSFR package or official design system site.'
 		);
 
-		$etalabText = $this->readFile('LICENSES/etalab-2.0.txt');
+		$agreement = $this->readFile(relativePath: 'AGREEMENT-MARIANNE.md');
+		$this->assertMatchesRegularExpression(
+			pattern: '/French State agency/i',
+			string: $agreement,
+			message: 'AGREEMENT-MARIANNE.md must state the French-State-agency eligibility condition.'
+		);
+
+		$etalabText = $this->readFile(relativePath: 'LICENSES/etalab-2.0.txt');
 		// REUSE-IgnoreStart -- asserted string, not this file's own licence tag.
-		$this->assertStringContainsString('SPDX-License-Identifier: etalab-2.0', $etalabText);
+		$this->assertStringContainsString(needle: 'SPDX-License-Identifier: etalab-2.0', haystack: $etalabText);
 		// REUSE-IgnoreEnd
 		$this->assertMatchesRegularExpression(
-			'/LICENCE OUVERTE 2\.0/i',
-			$etalabText,
-			'LICENSES/etalab-2.0.txt must carry the Etalab Open Licence 2.0 text.'
+			pattern: '/LICENCE OUVERTE 2\.0/i',
+			string: $etalabText,
+			message: 'LICENSES/etalab-2.0.txt must carry the Etalab Open Licence 2.0 text.'
 		);
 	}//end testLegalArtifactsExistAndCiteTheSource()
 
@@ -299,18 +299,18 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function testLicenseOverridesMapsMarianneFilesToEtalab(): void {
-		$overrides = json_decode($this->readFile('.license-overrides.json'), true);
-		$this->assertIsArray($overrides, '.license-overrides.json must decode to an array.');
+		$overrides = json_decode($this->readFile(relativePath: '.license-overrides.json'), true);
+		$this->assertIsArray(actual: $overrides, message: '.license-overrides.json must decode to an array.');
 
 		foreach (self::MARIANNE_WOFF2_FILES as $file) {
 			$key = 'css/systems/lasuite/fonts/marianne/' . $file;
-			$this->assertArrayHasKey($key, $overrides, ".license-overrides.json must map {$key}.");
-			$this->assertSame('Etalab-2.0', $overrides[$key], "{$key} must map to Etalab-2.0.");
+			$this->assertArrayHasKey(key: $key, array: $overrides, message: ".license-overrides.json must map {$key}.");
+			$this->assertSame(expected: 'Etalab-2.0', actual: $overrides[$key], message: "{$key} must map to Etalab-2.0.");
 		}
 
 		$this->assertFileExists(
-			$this->repoRoot() . '/LICENSES/etalab-2.0.txt',
-			'LICENSES/etalab-2.0.txt must exist so the Etalab-2.0 identifier resolves to licence text.'
+			filename: $this->repoRoot() . '/LICENSES/etalab-2.0.txt',
+			message: 'LICENSES/etalab-2.0.txt must exist so the Etalab-2.0 identifier resolves to licence text.'
 		);
 	}//end testLicenseOverridesMapsMarianneFilesToEtalab()
 
@@ -326,24 +326,24 @@ class MarianneFontTest extends TestCase {
 			'Marianne is the official typeface of the French State and is reserved for French State administrations. Enable it only if your organisation is a French State agency. Otherwise Inter is used.',
 		];
 
-		$en = json_decode($this->readFile('l10n/en.json'), true);
-		$nl = json_decode($this->readFile('l10n/nl.json'), true);
-		$fr = json_decode($this->readFile('l10n/fr.json'), true);
+		$en = json_decode($this->readFile(relativePath: 'l10n/en.json'), true);
+		$nl = json_decode($this->readFile(relativePath: 'l10n/nl.json'), true);
+		$fr = json_decode($this->readFile(relativePath: 'l10n/fr.json'), true);
 
 		foreach ($keys as $key) {
-			$this->assertArrayHasKey($key, $en['translations'] ?? [], "l10n/en.json must contain the key: {$key}");
-			$this->assertArrayHasKey($key, $nl['translations'] ?? [], "l10n/nl.json must contain the key: {$key}");
-			$this->assertArrayHasKey($key, $fr['translations'] ?? [], "l10n/fr.json must contain the key: {$key}");
+			$this->assertArrayHasKey(key: $key, array: $en['translations'] ?? [], message: "l10n/en.json must contain the key: {$key}");
+			$this->assertArrayHasKey(key: $key, array: $nl['translations'] ?? [], message: "l10n/nl.json must contain the key: {$key}");
+			$this->assertArrayHasKey(key: $key, array: $fr['translations'] ?? [], message: "l10n/fr.json must contain the key: {$key}");
 
 			$this->assertNotSame(
-				$key,
-				$nl['translations'][$key],
-				"l10n/nl.json value for '{$key}' must be a genuine Dutch translation, not the untranslated English source."
+				expected: $key,
+				actual: $nl['translations'][$key],
+				message: "l10n/nl.json value for '{$key}' must be a genuine Dutch translation, not the untranslated English source."
 			);
 			$this->assertNotSame(
-				$key,
-				$fr['translations'][$key],
-				"l10n/fr.json value for '{$key}' must be a genuine French translation, not the untranslated English source."
+				expected: $key,
+				actual: $fr['translations'][$key],
+				message: "l10n/fr.json value for '{$key}' must be a genuine French translation, not the untranslated English source."
 			);
 		}
 	}//end testRestrictionNoticeIsTranslatedInNlAndFr()
@@ -356,15 +356,15 @@ class MarianneFontTest extends TestCase {
 	 * @spec openspec/specs/lasuite-stack/spec.md
 	 */
 	public function testLasuiteTokenSetStillHasNoLogoKey(): void {
-		$json = json_decode($this->readFile('token-sets.json'), true);
-		$this->assertIsArray($json, 'token-sets.json must decode to an array.');
+		$json = json_decode($this->readFile(relativePath: 'token-sets.json'), true);
+		$this->assertIsArray(actual: $json, message: 'token-sets.json must decode to an array.');
 
 		$byId = array_column($json, null, 'id');
-		$this->assertArrayHasKey('lasuite', $byId, 'token-sets.json must contain a lasuite entry.');
+		$this->assertArrayHasKey(key: 'lasuite', array: $byId, message: 'token-sets.json must contain a lasuite entry.');
 		$this->assertArrayNotHasKey(
-			'logo',
-			$byId['lasuite']['theming'] ?? [],
-			'The lasuite theming block must not declare a logo key.'
+			key: 'logo',
+			array: $byId['lasuite']['theming'] ?? [],
+			message: 'The lasuite theming block must not declare a logo key.'
 		);
 	}//end testLasuiteTokenSetStillHasNoLogoKey()
 }//end class

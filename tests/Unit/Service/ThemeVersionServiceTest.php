@@ -118,7 +118,7 @@ class FakeVersionFolder implements ISimpleFolder {
 	}
 
 	public function newFile(string $name, $content = null): ISimpleFile {
-		$this->files[$name] = new FakeVersionFile($this, $name, (string)$content);
+		$this->files[$name] = new FakeVersionFile(folder: $this, name: $name, content: (string)$content);
 		return $this->files[$name];
 	}
 
@@ -216,22 +216,22 @@ class ThemeVersionServiceTest extends TestCase {
 	 * @return ThemeVersionService The service under test.
 	 */
 	private function service(?LoggerInterface $logger = null, ?IAppDataFactory $appFactory = null): ThemeVersionService {
-		$bundleService = $this->createMock(ConfigBundleService::class);
+		$bundleService = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundleService->method('export')->willReturnCallback(fn (): array => $this->bundle);
 
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn (): int => $this->time);
 
 		if ($appFactory === null) {
-			$appFactory = $this->createMock(IAppDataFactory::class);
+			$appFactory = $this->createMock(originalClassName: IAppDataFactory::class);
 			$appFactory->method('get')->willReturn($this->root);
 		}
 
 		return new ThemeVersionService(
-			$appFactory,
-			$bundleService,
-			$time,
-			($logger ?? $this->createMock(LoggerInterface::class))
+			appDataFactory: $appFactory,
+			bundleService: $bundleService,
+			timeFactory: $time,
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 	}//end service()
 
@@ -243,12 +243,12 @@ class ThemeVersionServiceTest extends TestCase {
 
 		$id = $service->capture(auditAction: 'token_set_changed', actor: 'admin');
 
-		$this->assertNotNull($id);
-		$this->assertMatchesRegularExpression('/^\d{14}-\d{4}$/', $id);
-		$this->assertSame('amsterdam', $service->get(id: $id)['bundle']['config']['tokenSet']);
+		$this->assertNotNull(actual: $id);
+		$this->assertMatchesRegularExpression(pattern: '/^\d{14}-\d{4}$/', string: $id);
+		$this->assertSame(expected: 'amsterdam', actual: $service->get(id: $id)['bundle']['config']['tokenSet']);
 		$this->assertSame(
-			[['id' => $id, 'ts' => '2026-09-29T16:40:00Z', 'actor' => 'admin', 'action' => 'token_set_changed']],
-			$service->list()
+			expected: [['id' => $id, 'ts' => '2026-09-29T16:40:00Z', 'actor' => 'admin', 'action' => 'token_set_changed']],
+			actual: $service->list()
 		);
 	}//end testCaptureStoresTheBundleAndListsIt()
 
@@ -262,7 +262,7 @@ class ThemeVersionServiceTest extends TestCase {
 		$this->time += 60;
 		$third = $service->capture(auditAction: 'config_imported', actor: 'cli');
 
-		$this->assertSame([$third, $second, $first], array_column($service->list(), 'id'));
+		$this->assertSame(expected: [$third, $second, $first], actual: array_column($service->list(), 'id'));
 	}//end testListIsNewestFirst()
 
 	/**
@@ -277,10 +277,10 @@ class ThemeVersionServiceTest extends TestCase {
 		}
 
 		$kept = array_column($service->list(), 'id');
-		$this->assertCount(50, $kept);
-		$this->assertNotContains($ids[0], $kept);
-		$this->assertNotContains($ids[1], $kept);
-		$this->assertContains($ids[51], $kept);
+		$this->assertCount(expectedCount: 50, haystack: $kept);
+		$this->assertNotContains(needle: $ids[0], haystack: $kept);
+		$this->assertNotContains(needle: $ids[1], haystack: $kept);
+		$this->assertContains(needle: $ids[51], haystack: $kept);
 	}//end testTheCountCapRemovesTheOldest()
 
 	/**
@@ -296,19 +296,19 @@ class ThemeVersionServiceTest extends TestCase {
 		}
 
 		$kept = array_column($service->list(), 'id');
-		$this->assertSame([$ids[3], $ids[2], $ids[1]], $kept);
+		$this->assertSame(expected: [$ids[3], $ids[2], $ids[1]], actual: $kept);
 	}//end testTheSizeCapRemovesTheOldest()
 
 	/**
 	 * A failing app data folder is logged and never thrown.
 	 */
 	public function testAFailingAppDataFolderReturnsNullAndWarns(): void {
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects($this->once())->method('warning')->with($this->stringContains('no version was kept'));
-		$factory = $this->createMock(IAppDataFactory::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with($this->stringContains(string: 'no version was kept'));
+		$factory = $this->createMock(originalClassName: IAppDataFactory::class);
 		$factory->method('get')->willThrowException(new RuntimeException('read-only'));
 
-		$this->assertNull($this->service(logger: $logger, appFactory: $factory)->capture(auditAction: 'toggle_changed', actor: 'admin'));
+		$this->assertNull(actual: $this->service(logger: $logger, appFactory: $factory)->capture(auditAction: 'toggle_changed', actor: 'admin'));
 	}//end testAFailingAppDataFolderReturnsNullAndWarns()
 
 	/**
@@ -318,7 +318,7 @@ class ThemeVersionServiceTest extends TestCase {
 		$service = $this->service();
 		$service->capture(auditAction: 'toggle_changed', actor: 'admin');
 
-		$this->assertNull($service->get(id: '20260101000000-0001'));
-		$this->assertNull($service->get(id: '../audit/audit.jsonl'));
+		$this->assertNull(actual: $service->get(id: '20260101000000-0001'));
+		$this->assertNull(actual: $service->get(id: '../audit/audit.jsonl'));
 	}//end testUnknownAndMalformedIdsReadAsNull()
 }//end class

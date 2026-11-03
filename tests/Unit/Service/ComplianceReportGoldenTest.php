@@ -95,9 +95,9 @@ class ComplianceReportGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], 'case ' . $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: 'case ' . $name);
 		}
 	}//end testPairsMatchTheGoldenRecording()
 
@@ -118,9 +118,9 @@ class ComplianceReportGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::MARKDOWN_FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $markdown) {
-			self::assertSame($markdown, $actual[$name], 'case ' . $name);
+			self::assertSame(expected: $markdown, actual: $actual[$name], message: 'case ' . $name);
 		}
 	}//end testMarkdownMatchesTheGoldenRecording()
 
@@ -195,14 +195,14 @@ class ComplianceReportGoldenTest extends TestCase {
 	 * @return ComplianceReportService
 	 */
 	private function service(array $meta, array $overrides): ComplianceReportService {
-		$overridesService = $this->createMock(CustomOverridesService::class);
+		$overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
 		$overridesService->method('read')->willReturn($overrides);
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn($meta);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->directory);
 		$appManager->method('getAppVersion')->willReturn('0.0.0');
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('golden');
 		$config->method('getSystemValue')->willReturn('');
 
@@ -211,13 +211,13 @@ class ComplianceReportGoldenTest extends TestCase {
 			theme: new ThemeSelectionSources(
 				overrides: $overridesService,
 				designSystems: $designSystems,
-				customSets: $this->createMock(CustomTokenSetService::class)
+				customSets: $this->createMock(originalClassName: CustomTokenSetService::class)
 			),
 			instance: new InstanceReportContext(
 				appManager: $appManager,
 				config: $config,
-				urlGenerator: $this->createMock(IURLGenerator::class),
-				timeFactory: $this->createMock(ITimeFactory::class)
+				urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+				timeFactory: $this->createMock(originalClassName: ITimeFactory::class)
 			)
 		);
 	}//end service()

@@ -249,11 +249,11 @@ class RestrictedSetRequestPathTest extends TestCase {
 		parent::setUp();
 		$this->makeAppDir();
 		$this->config = $this->memoryConfig();
-		$this->tokenSets = $this->fixtureTokenSets($this->config);
+		$this->tokenSets = $this->fixtureTokenSets(config: $this->config);
 
 		$users = Server::get(IUserManager::class);
 		$this->admin = ($users->get(self::ADMIN_UID) ?? $users->createUser(self::ADMIN_UID, bin2hex(random_bytes(16))));
-		$this->assertInstanceOf(IUser::class, $this->admin, 'the test administrator could not be created');
+		$this->assertInstanceOf(expected: IUser::class, actual: $this->admin, message: 'the test administrator could not be created');
 		Server::get(IGroupManager::class)->get('admin')?->addUser($this->admin);
 		Server::get(IUserSession::class)->setUser($this->admin);
 
@@ -290,7 +290,7 @@ class RestrictedSetRequestPathTest extends TestCase {
 	private function send(Controller $controller, string $method, array $params): array {
 		$this->request->setUrlParameters($params);
 		$result = $this->dispatcher->dispatch($controller, $method);
-		$this->assertSame(1, preg_match('/^HTTP\/1\.\d (\d{3})/', (string)$result[0], $match), 'no status line: ' . (string)$result[0]);
+		$this->assertSame(expected: 1, actual: preg_match('/^HTTP\/1\.\d (\d{3})/', (string)$result[0], $match), message: 'no status line: ' . (string)$result[0]);
 
 		return ['status' => (int)$match[1], 'body' => (array)json_decode((string)$result[3], true)];
 	}//end send()
@@ -304,100 +304,100 @@ class RestrictedSetRequestPathTest extends TestCase {
 			}//end refuse()
 		};
 
-		$this->assertSame(200, $this->send($ocs, 'refuse', [])['status']);
+		$this->assertSame(expected: 200, actual: $this->send(controller: $ocs, method: 'refuse', params: [])['status']);
 	}//end testControlTheSameChainTurnsAnOcs403Into200()
 
 	public function testApplyingTheSetInstanceWideIsDeliveredAs403ThenAs200(): void {
-		$sent = $this->send($this->settingsController(), 'setTokenSet', ['tokenSet' => 'owned']);
-		$this->assertSame(403, $sent['status']);
-		$this->assertSame(['error' => 'restricted_set_not_confirmed', 'tokenSet' => 'owned'], $sent['body']);
-		$this->assertArrayNotHasKey('token_set', $this->appValues);
+		$sent = $this->send(controller: $this->settingsController(), method: 'setTokenSet', params: ['tokenSet' => 'owned']);
+		$this->assertSame(expected: 403, actual: $sent['status']);
+		$this->assertSame(expected: ['error' => 'restricted_set_not_confirmed', 'tokenSet' => 'owned'], actual: $sent['body']);
+		$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 
-		$this->assertSame(400, $this->send($this->licenceController(), 'confirm', ['id' => 'owned'])['status'], 'no statement, no confirmation');
-		$confirmed = $this->send($this->licenceController(), 'confirm', ['id' => 'owned', 'confirmed' => true]);
-		$this->assertSame(200, $confirmed['status']);
-		$this->assertSame(self::ADMIN_UID, $confirmed['body']['confirmation']['uid']);
+		$this->assertSame(expected: 400, actual: $this->send(controller: $this->licenceController(), method: 'confirm', params: ['id' => 'owned'])['status'], message: 'no statement, no confirmation');
+		$confirmed = $this->send(controller: $this->licenceController(), method: 'confirm', params: ['id' => 'owned', 'confirmed' => true]);
+		$this->assertSame(expected: 200, actual: $confirmed['status']);
+		$this->assertSame(expected: self::ADMIN_UID, actual: $confirmed['body']['confirmation']['uid']);
 
-		$this->assertSame(200, $this->send($this->settingsController(), 'setTokenSet', ['tokenSet' => 'owned'])['status']);
-		$this->assertSame('owned', $this->appValues['token_set']);
+		$this->assertSame(expected: 200, actual: $this->send(controller: $this->settingsController(), method: 'setTokenSet', params: ['tokenSet' => 'owned'])['status']);
+		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 
-		$withdrawn = $this->send($this->licenceController(), 'withdraw', ['id' => 'owned']);
-		$this->assertSame(409, $withdrawn['status']);
-		$this->assertSame([['kind' => 'instance', 'id' => '']], $withdrawn['body']['appliedIn']);
+		$withdrawn = $this->send(controller: $this->licenceController(), method: 'withdraw', params: ['id' => 'owned']);
+		$this->assertSame(expected: 409, actual: $withdrawn['status']);
+		$this->assertSame(expected: [['kind' => 'instance', 'id' => '']], actual: $withdrawn['body']['appliedIn']);
 	}//end testApplyingTheSetInstanceWideIsDeliveredAs403ThenAs200()
 
 	public function testAGroupMappingIsDeliveredAs403(): void {
 		$mapping = ['mapping' => [['group' => 'ruimte', 'tokenSet' => 'owned']]];
 
-		$sent = $this->send($this->settingsController(), 'setGroupTheming', $mapping);
-		$this->assertSame(403, $sent['status']);
-		$this->assertSame('restricted_set_not_confirmed', $sent['body']['error']);
-		$this->assertSame('owned', $sent['body']['tokenSet']);
-		$this->assertArrayNotHasKey('group_token_sets', $this->appValues);
+		$sent = $this->send(controller: $this->settingsController(), method: 'setGroupTheming', params: $mapping);
+		$this->assertSame(expected: 403, actual: $sent['status']);
+		$this->assertSame(expected: 'restricted_set_not_confirmed', actual: $sent['body']['error']);
+		$this->assertSame(expected: 'owned', actual: $sent['body']['tokenSet']);
+		$this->assertArrayNotHasKey(key: 'group_token_sets', array: $this->appValues);
 
-		$this->confirmSet('owned');
-		$this->assertSame(200, $this->send($this->settingsController(), 'setGroupTheming', $mapping)['status']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 200, actual: $this->send(controller: $this->settingsController(), method: 'setGroupTheming', params: $mapping)['status']);
 	}//end testAGroupMappingIsDeliveredAs403()
 
 	public function testAPreviewIsDeliveredAs403(): void {
-		$controller = new PreviewController('thematiq', $this->request, $this->previewService(), Server::get(IUserSession::class));
+		$controller = new PreviewController(appName: 'thematiq', request: $this->request, previewService: $this->previewService(), userSession: Server::get(IUserSession::class));
 
-		$sent = $this->send($controller, 'start', ['tokenSet' => 'owned']);
-		$this->assertSame(403, $sent['status']);
-		$this->assertSame('restricted_set_not_confirmed', $sent['body']['error']);
+		$sent = $this->send(controller: $controller, method: 'start', params: ['tokenSet' => 'owned']);
+		$this->assertSame(expected: 403, actual: $sent['status']);
+		$this->assertSame(expected: 'restricted_set_not_confirmed', actual: $sent['body']['error']);
 
 		$this->userValues[self::ADMIN_UID . '/preview_token_set'] = 'owned';
 		$this->userValues[self::ADMIN_UID . '/preview_expires_at'] = (string)(time() + 600);
-		$this->assertSame(403, $this->send($controller, 'publish', [])['status']);
+		$this->assertSame(expected: 403, actual: $this->send(controller: $controller, method: 'publish', params: [])['status']);
 
-		$this->confirmSet('owned');
-		$this->assertSame(200, $this->send($controller, 'start', ['tokenSet' => 'owned'])['status']);
-		$this->assertSame(200, $this->send($controller, 'publish', [])['status']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 200, actual: $this->send(controller: $controller, method: 'start', params: ['tokenSet' => 'owned'])['status']);
+		$this->assertSame(expected: 200, actual: $this->send(controller: $controller, method: 'publish', params: [])['status']);
 	}//end testAPreviewIsDeliveredAs403()
 
 	public function testAPlannedSwitchIsDeliveredAs403(): void {
-		$audit = $this->createMock(ThemingAuditService::class);
-		$time = $this->createMock(ITimeFactory::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturn(strtotime('2026-10-12T12:00:00+00:00'));
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
 		$service = new ScheduledSwitchService(
-			store: new ScheduledSwitchStore($this->config),
+			store: new ScheduledSwitchStore(config: $this->config),
 			targets: new ScheduledSwitchTargets(
-				activeTokenSet: new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
+				activeTokenSet: new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $audit),
 				tokenSets: $this->tokenSets,
-				coreSync: $this->createMock(ScheduledCoreThemingSync::class)
+				coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)
 			),
 			runtime: new ScheduledSwitchRuntime(
 				auditService: $audit,
 				config: $this->config,
 				time: $time,
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			l10n: $l10n
 		);
-		$controller = new ScheduledSwitchController('thematiq', $this->request, $service, Server::get(IUserSession::class));
+		$controller = new ScheduledSwitchController(appName: 'thematiq', request: $this->request, service: $service, userSession: Server::get(IUserSession::class));
 		$plan = ['tokenSet' => 'owned', 'startAt' => '2026-10-13T09:00:00+00:00'];
 
-		$sent = $this->send($controller, 'create', $plan);
-		$this->assertSame(403, $sent['status']);
-		$this->assertSame('restricted_set_not_confirmed', $sent['body']['error']);
+		$sent = $this->send(controller: $controller, method: 'create', params: $plan);
+		$this->assertSame(expected: 403, actual: $sent['status']);
+		$this->assertSame(expected: 'restricted_set_not_confirmed', actual: $sent['body']['error']);
 
-		$this->confirmSet('owned');
-		$this->assertSame(201, $this->send($controller, 'create', $plan)['status']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 201, actual: $this->send(controller: $controller, method: 'create', params: $plan)['status']);
 	}//end testAPlannedSwitchIsDeliveredAs403()
 
 	public function testAnAppBrandIsDeliveredAs403(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isInstalled')->willReturn(true);
-		$appTheming = $this->createMock(AppThemingService::class);
+		$appTheming = $this->createMock(originalClassName: AppThemingService::class);
 		$brands = new AppBrandService(
-			$this->config,
-			$appManager,
-			$appTheming,
-			$this->tokenSets,
-			$this->createMock(AppBrandLogoStore::class),
-			$this->createMock(IURLGenerator::class)
+			config: $this->config,
+			appManager: $appManager,
+			appTheming: $appTheming,
+			tokenSets: $this->tokenSets,
+			logos: $this->createMock(originalClassName: AppBrandLogoStore::class),
+			urls: $this->createMock(originalClassName: IURLGenerator::class)
 		);
 		$controller = new AppBrandController(
 			appName: 'thematiq',
@@ -407,15 +407,15 @@ class RestrictedSetRequestPathTest extends TestCase {
 				appTheming: $appTheming,
 				tokenSets: $this->tokenSets
 			),
-			l10n: $this->createMock(IL10N::class)
+			l10n: $this->createMock(originalClassName: IL10N::class)
 		);
 
-		$sent = $this->send($controller, 'save', ['appId' => 'collectives', 'tokenSet' => 'owned']);
-		$this->assertSame(403, $sent['status']);
-		$this->assertSame('restricted_set_not_confirmed', $sent['body']['reason']);
+		$sent = $this->send(controller: $controller, method: 'save', params: ['appId' => 'collectives', 'tokenSet' => 'owned']);
+		$this->assertSame(expected: 403, actual: $sent['status']);
+		$this->assertSame(expected: 'restricted_set_not_confirmed', actual: $sent['body']['reason']);
 
-		$this->confirmSet('owned');
-		$this->assertSame(200, $this->send($controller, 'save', ['appId' => 'collectives', 'tokenSet' => 'owned'])['status']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 200, actual: $this->send(controller: $controller, method: 'save', params: ['appId' => 'collectives', 'tokenSet' => 'owned'])['status']);
 	}//end testAnAppBrandIsDeliveredAs403()
 
 	/**
@@ -424,10 +424,10 @@ class RestrictedSetRequestPathTest extends TestCase {
 	 * @return ThemePreviewService The service.
 	 */
 	private function previewService(): ThemePreviewService {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('isAdmin')->willReturn(true);
 
-		return new ThemePreviewService($this->config, $groupManager, $this->tokenSets, $this->createMock(LoggerInterface::class));
+		return new ThemePreviewService(config: $this->config, groupManager: $groupManager, tokenSetService: $this->tokenSets, logger: $this->createMock(originalClassName: LoggerInterface::class));
 	}//end previewService()
 
 	/**
@@ -436,21 +436,21 @@ class RestrictedSetRequestPathTest extends TestCase {
 	 * @return TokenSetLicenceController The controller.
 	 */
 	private function licenceController(): TokenSetLicenceController {
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getDateTime')->willReturn(new \DateTime('2026-10-12T20:15:00+00:00'));
 
 		return new TokenSetLicenceController(
-			'thematiq',
-			$this->request,
-			new TokenSetLicenceService(
-				$this->tokenSets,
-				$this->config,
-				new ScheduledSwitchStore($this->config),
-				$this->createMock(ThemingAuditService::class),
-				$time,
-				$this->createMock(LoggerInterface::class)
+			appName: 'thematiq',
+			request: $this->request,
+			licences: new TokenSetLicenceService(
+				tokenSets: $this->tokenSets,
+				config: $this->config,
+				switches: new ScheduledSwitchStore(config: $this->config),
+				audit: $this->createMock(originalClassName: ThemingAuditService::class),
+				time: $time,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
-			Server::get(IUserSession::class)
+			userSession: Server::get(IUserSession::class)
 		);
 	}//end licenceController()
 
@@ -460,33 +460,33 @@ class RestrictedSetRequestPathTest extends TestCase {
 	 * @return SettingsController The controller.
 	 */
 	private function settingsController(): SettingsController {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
-		$audit = $this->createMock(ThemingAuditService::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 
 		return new SettingsController(
-			'thematiq',
-			$this->request,
-			$this->config,
-			$this->tokenSets,
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$audit,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			new GroupThemingService(
-				$this->config,
-				$groupManager,
-				$this->createMock(IUserSession::class),
-				$this->tokenSets,
-				$this->previewService(),
-				$cacheFactory
+			appName: 'thematiq',
+			request: $this->request,
+			config: $this->config,
+			tokenSetService: $this->tokenSets,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+			auditService: $audit,
+			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
+			groupThemingService: new GroupThemingService(
+				config: $this->config,
+				groupManager: $groupManager,
+				userSession: $this->createMock(originalClassName: IUserSession::class),
+				tokenSetService: $this->tokenSets,
+				previewService: $this->previewService(),
+				cacheFactory: $cacheFactory
 			),
-			new ActiveTokenSetService($this->config, $this->tokenSets, $audit)
+			activeTokenSet: new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $audit)
 		);
 	}//end settingsController()
 }//end class

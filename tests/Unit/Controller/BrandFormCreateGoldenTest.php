@@ -91,9 +91,9 @@ class BrandFormCreateGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testCreateMatchesTheGoldenRecording()
 
@@ -117,7 +117,7 @@ class BrandFormCreateGoldenTest extends TestCase {
 		}
 
 		$file = $this->uploadedFile(random: $random);
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(
 			static function (string $key, $default = null) use (&$calls, $params) {
 				$calls[] = ['getParam', $key, $default];
@@ -127,7 +127,7 @@ class BrandFormCreateGoldenTest extends TestCase {
 		$request->method('getUploadedFile')->willReturn($file);
 
 		$throws = ($params['primary'] === 'red');
-		$brandForm = $this->createMock(BrandFormService::class);
+		$brandForm = $this->createMock(originalClassName: BrandFormService::class);
 		$brandForm->method('derive')->willReturnCallback(
 			static function (...$arguments) use (&$calls, $throws): array {
 				$calls[] = ['derive', $arguments];
@@ -147,7 +147,7 @@ class BrandFormCreateGoldenTest extends TestCase {
 		);
 
 		$storeMode = $random->getInt(0, 7);
-		$store = $this->createMock(CustomTokenSetService::class);
+		$store = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$store->method('store')->willReturnCallback(
 			static function (...$arguments) use (&$calls, $storeMode): array {
 				$calls[] = ['store', $arguments];
@@ -159,15 +159,15 @@ class BrandFormCreateGoldenTest extends TestCase {
 			}
 		);
 
-		$apps = $this->createMock(IAppManager::class);
+		$apps = $this->createMock(originalClassName: IAppManager::class);
 		$apps->method('getAppPath')->willReturn('/srv/thematiq');
-		$audit = $this->createMock(ThemingAuditService::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
 		$audit->method('log')->willReturnCallback(
 			static function (...$arguments) use (&$calls): void {
 				$calls[] = ['log', $arguments];
 			}
 		);
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(static fn (string $text): string => $text);
 
 		$controller = new BrandFormController(

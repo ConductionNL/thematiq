@@ -46,16 +46,16 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$this->converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -84,7 +84,7 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
 	public function testAWhiteOnlyRampSuppliesNoRole(): void {
-		$report = $this->reportFor(':root{--nldesign-color-primary:#8a2be2;--nldesign-color-primary-text:#ffffff}');
+		$report = $this->reportFor(css: ':root{--nldesign-color-primary:#8a2be2;--nldesign-color-primary-text:#ffffff}');
 
 		$roles = [
 			'--nldesign-color-text',
@@ -97,15 +97,15 @@ class TokenSetConverterRampContrastTest extends TestCase {
 		];
 		foreach ($roles as $role) {
 			$entry = ($report[$role] ?? []);
-			$this->assertNotSame('(brand ramp)', $entry['source'] ?? null, $role . ' was taken from a ramp of white only');
-			$this->assertNotSame('#ffffff', strtolower((string)($entry['value'] ?? '')), $role . ' became white on white');
+			$this->assertNotSame(expected: '(brand ramp)', actual: $entry['source'] ?? null, message: $role . ' was taken from a ramp of white only');
+			$this->assertNotSame(expected: '#ffffff', actual: strtolower((string)($entry['value'] ?? '')), message: $role . ' became white on white');
 		}
 
 		// The set still carries the full semantic layer (multi-brand task 5.5):
 		// the roles take their defaults instead of the white.
-		$this->assertSame('(Nextcloud default)', $report['--nldesign-color-text']['source'] ?? null);
-		$this->assertSame('#333333', $report['--nldesign-color-text']['value'] ?? null);
-		$this->assertSame('#b4b4b4', $report['--nldesign-color-border']['value'] ?? null);
+		$this->assertSame(expected: '(Nextcloud default)', actual: $report['--nldesign-color-text']['source'] ?? null);
+		$this->assertSame(expected: '#333333', actual: $report['--nldesign-color-text']['value'] ?? null);
+		$this->assertSame(expected: '#b4b4b4', actual: $report['--nldesign-color-border']['value'] ?? null);
 	}//end testAWhiteOnlyRampSuppliesNoRole()
 
 	/**
@@ -119,11 +119,11 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
 	public function testAPrimaryOnlySetStillFallsBackToTheDefaults(): void {
-		$report = $this->reportFor(':root{--nldesign-color-primary:#8a2be2}');
+		$report = $this->reportFor(css: ':root{--nldesign-color-primary:#8a2be2}');
 
-		$this->assertSame('(Nextcloud default)', $report['--nldesign-color-text']['source'] ?? null);
-		$this->assertSame('#333333', $report['--nldesign-color-text']['value'] ?? null);
-		$this->assertSame('#b4b4b4', $report['--nldesign-color-border']['value'] ?? null);
+		$this->assertSame(expected: '(Nextcloud default)', actual: $report['--nldesign-color-text']['source'] ?? null);
+		$this->assertSame(expected: '#333333', actual: $report['--nldesign-color-text']['value'] ?? null);
+		$this->assertSame(expected: '#b4b4b4', actual: $report['--nldesign-color-border']['value'] ?? null);
 	}//end testAPrimaryOnlySetStillFallsBackToTheDefaults()
 
 	/**
@@ -134,13 +134,13 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 */
 	public function testARampWithAReadableGreyStillSuppliesTheRoles(): void {
 		$report = $this->reportFor(
-			':root{--nldesign-color-primary:#8a2be2;--nldesign-color-primary-text:#ffffff;'
+			css: ':root{--nldesign-color-primary:#8a2be2;--nldesign-color-primary-text:#ffffff;'
 			. '--brand-grey-20:#333333;--brand-grey-80:#cccccc;--brand-grey-95:#f2f2f2}'
 		);
 
-		$this->assertSame('(brand ramp)', $report['--nldesign-color-text']['source'] ?? null);
-		$this->assertSame('#333333', strtolower((string)($report['--nldesign-color-text']['value'] ?? '')));
-		$this->assertSame('#cccccc', strtolower((string)($report['--nldesign-color-border']['value'] ?? '')));
-		$this->assertSame('#f2f2f2', strtolower((string)($report['--nldesign-color-background-hover']['value'] ?? '')));
+		$this->assertSame(expected: '(brand ramp)', actual: $report['--nldesign-color-text']['source'] ?? null);
+		$this->assertSame(expected: '#333333', actual: strtolower((string)($report['--nldesign-color-text']['value'] ?? '')));
+		$this->assertSame(expected: '#cccccc', actual: strtolower((string)($report['--nldesign-color-border']['value'] ?? '')));
+		$this->assertSame(expected: '#f2f2f2', actual: strtolower((string)($report['--nldesign-color-background-hover']['value'] ?? '')));
 	}//end testARampWithAReadableGreyStillSuppliesTheRoles()
 }//end class

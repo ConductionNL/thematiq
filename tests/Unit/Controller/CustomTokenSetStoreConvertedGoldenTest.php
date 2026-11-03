@@ -91,9 +91,9 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testStoreConvertedMatchesTheGoldenRecording()
 
@@ -108,7 +108,7 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 	private function runCase(Randomizer $random, ?array $parsed = null): string {
 		$this->calls = [];
 		$description = ['  Beschrijving ', '', null][$random->getInt(0, 2)];
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(
 			function (string $key, $default = null) use ($description) {
 				$this->calls[] = ['IRequest::getParam', $key, $default];
@@ -128,10 +128,10 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 			cssParser: $this->recorder(class: CssParserService::class, methods: ['parseRootBlock' => self::DECLARATIONS[max(0, $random->getInt(-6, 3))]]),
 			l: $this->l10n(),
 			auditService: $this->recorder(class: ThemingAuditService::class, methods: ['log' => null]),
-			config: $this->createMock(IConfig::class),
+			config: $this->createMock(originalClassName: IConfig::class),
 			converter: $this->converter(random: $random),
-			themingService: $this->createMock(ThemingService::class),
-			designSystems: $this->createMock(DesignSystemService::class)
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			designSystems: $this->createMock(originalClassName: DesignSystemService::class)
 		);
 
 		$read = ['content' => '{"color":{}}', 'sourceName' => ['theme.json', null][$random->getInt(0, 1)]];
@@ -142,7 +142,7 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 		} else {
 			$response = (new ReflectionMethod(CustomTokenSetController::class, 'storeConverted'))->invoke($controller, $name, $slug, $read);
 		}
-		self::assertInstanceOf(JSONResponse::class, $response);
+		self::assertInstanceOf(expected: JSONResponse::class, actual: $response);
 
 		return (string)json_encode(
 			['status' => $response->getStatus(), 'data' => $response->getData(), 'calls' => $this->calls],
@@ -278,7 +278,7 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 	 * @return IL10N
 	 */
 	private function l10n(): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			static fn (string $text, $parameters = []): string => vsprintf($text, (array)$parameters)
 		);
@@ -295,7 +295,7 @@ class CustomTokenSetStoreConvertedGoldenTest extends TestCase {
 	 * @return MockObject
 	 */
 	private function recorder(string $class, array $methods): MockObject {
-		$double = $this->createMock($class);
+		$double = $this->createMock(originalClassName: $class);
 		foreach ($methods as $method => $value) {
 			$double->method($method)->willReturnCallback(
 				function (...$arguments) use ($class, $method, $value) {

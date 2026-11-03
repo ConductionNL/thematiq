@@ -51,32 +51,32 @@ class UpstreamFreshnessJobTest extends TestCase {
 	 * reflection to assert the exact declared level.
 	 */
 	public function testDeclaresDailyIntervalAndTimeInsensitive(): void {
-		$time = $this->createMock(ITimeFactory::class);
-		$service = $this->createMock(UpstreamFreshnessService::class);
-		$logger = $this->createMock(LoggerInterface::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
+		$service = $this->createMock(originalClassName: UpstreamFreshnessService::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 
-		$job = new UpstreamFreshnessJob($time, $service, $logger);
+		$job = new UpstreamFreshnessJob(time: $time, service: $service, logger: $logger);
 
-		$this->assertSame(24 * 60 * 60, $job->getInterval());
-		$this->assertFalse($job->isTimeSensitive());
+		$this->assertSame(expected: 24 * 60 * 60, actual: $job->getInterval());
+		$this->assertFalse(condition: $job->isTimeSensitive());
 
 		$property = new \ReflectionProperty(TimedJob::class, 'timeSensitivity');
 		$property->setAccessible(true);
-		$this->assertSame(TimedJob::TIME_INSENSITIVE, $property->getValue($job));
+		$this->assertSame(expected: TimedJob::TIME_INSENSITIVE, actual: $property->getValue($job));
 	}//end testDeclaresDailyIntervalAndTimeInsensitive()
 
 	/**
 	 * run() delegates to UpstreamFreshnessService::runCheck().
 	 */
 	public function testRunDelegatesToService(): void {
-		$time = $this->createMock(ITimeFactory::class);
-		$service = $this->createMock(UpstreamFreshnessService::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
+		$service = $this->createMock(originalClassName: UpstreamFreshnessService::class);
 		$service->expects($this->once())->method('runCheck');
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 
-		$job = new UpstreamFreshnessJob($time, $service, $logger);
+		$job = new UpstreamFreshnessJob(time: $time, service: $service, logger: $logger);
 
-		$this->invokeRun($job);
+		$this->invokeRun(job: $job);
 	}//end testRunDelegatesToService()
 
 	/**
@@ -85,16 +85,16 @@ class UpstreamFreshnessJobTest extends TestCase {
 	 * alone: UpstreamFreshnessService::runCheck() already never throws).
 	 */
 	public function testServiceThrowDoesNotEscapeRun(): void {
-		$time = $this->createMock(ITimeFactory::class);
-		$service = $this->createMock(UpstreamFreshnessService::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
+		$service = $this->createMock(originalClassName: UpstreamFreshnessService::class);
 		$service->method('runCheck')->willThrowException(new \RuntimeException('unexpected'));
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->atLeastOnce())->method('info');
 
-		$job = new UpstreamFreshnessJob($time, $service, $logger);
+		$job = new UpstreamFreshnessJob(time: $time, service: $service, logger: $logger);
 
 		// Must not throw.
-		$this->invokeRun($job);
-		$this->addToAssertionCount(1);
+		$this->invokeRun(job: $job);
+		$this->addToAssertionCount(count: 1);
 	}//end testServiceThrowDoesNotEscapeRun()
 }//end class

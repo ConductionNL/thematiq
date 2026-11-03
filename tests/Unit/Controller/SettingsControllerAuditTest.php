@@ -85,23 +85,23 @@ class SettingsControllerAuditTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->tokenSetService = $this->createMock(TokenSetService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
 
 		$this->controller = new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->makeConfigMock(),
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->auditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $this->auditService)
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $this->makeConfigMock(),
+			tokenSetService: $this->tokenSetService,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+			auditService: $this->auditService,
+			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
+			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+			activeTokenSet: new ActiveTokenSetService(config: $this->makeConfigMock(), tokenSets: $this->tokenSetService, auditService: $this->auditService)
 		);
 	}//end setUp()
 
@@ -121,7 +121,7 @@ class SettingsControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setTokenSet(tokenSet: 'amsterdam');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testSuccessfulTokenSetChangeLogsOneEntry()
 
 	/**
@@ -134,8 +134,8 @@ class SettingsControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setTokenSet(tokenSet: 'not-a-real-set');
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('rijkshuisstijl', $this->appConfig['token_set']);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->appConfig['token_set']);
 	}//end testInvalidTokenSetLogsNothing()
 
 	/**
@@ -148,39 +148,39 @@ class SettingsControllerAuditTest extends TestCase {
 	public function testAuditServiceThrowingDoesNotChangeResponse(): void {
 		$this->tokenSetService->method('isValidTokenSet')->willReturn(true);
 
-		$auditConfig = $this->createMock(IConfig::class);
+		$auditConfig = $this->createMock(originalClassName: IConfig::class);
 		$auditConfig->method('getAppValue')->willReturn('0');
 
 		$realAuditService = new ThemingAuditService(
 			appDataFactory: new SettingsControllerAuditThrowingAppDataFactory(),
 			config: $auditConfig,
-			userSession: $this->createMock(IUserSession::class),
-			timeFactory: $this->createMock(ITimeFactory::class),
-			logger: $this->createMock(LoggerInterface::class),
-			versionService: $this->createMock(\OCA\Thematiq\Service\ThemeVersionService::class)
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			timeFactory: $this->createMock(originalClassName: ITimeFactory::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			versionService: $this->createMock(originalClassName: \OCA\Thematiq\Service\ThemeVersionService::class)
 		);
 
 		$controller = new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->makeConfigMock(),
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$realAuditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			new ActiveTokenSetService($this->makeConfigMock(), $this->tokenSetService, $realAuditService)
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $this->makeConfigMock(),
+			tokenSetService: $this->tokenSetService,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+			appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+			auditService: $realAuditService,
+			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
+			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+			activeTokenSet: new ActiveTokenSetService(config: $this->makeConfigMock(), tokenSets: $this->tokenSetService, auditService: $realAuditService)
 		);
 
 		$response = $controller->setTokenSet(tokenSet: 'amsterdam');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('amsterdam', $response->getData()['tokenSet']);
-		$this->assertSame('amsterdam', $this->appConfig['token_set']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'amsterdam', actual: $response->getData()['tokenSet']);
+		$this->assertSame(expected: 'amsterdam', actual: $this->appConfig['token_set']);
 	}//end testAuditServiceThrowingDoesNotChangeResponse()
 
 	/**
@@ -189,7 +189,7 @@ class SettingsControllerAuditTest extends TestCase {
 	 * @return IConfig&\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private function makeConfigMock(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);

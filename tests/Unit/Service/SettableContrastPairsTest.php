@@ -25,10 +25,10 @@ class SettableContrastPairsTest extends TestCase {
 			'--nldesign-nc-color-text-selection' => '#1a1a1a',
 		]);
 
-		$this->assertCount(1, $pairs);
-		$this->assertSame('selection', $pairs[0]['pair']);
-		$this->assertGreaterThan(4.5, (float)$pairs[0]['ratio'], 'dark text on a 20% navy wash passes');
-		$this->assertTrue($pairs[0]['passes']);
+		$this->assertCount(expectedCount: 1, haystack: $pairs);
+		$this->assertSame(expected: 'selection', actual: $pairs[0]['pair']);
+		$this->assertGreaterThan(expected: 4.5, actual: (float)$pairs[0]['ratio'], message: 'dark text on a 20% navy wash passes');
+		$this->assertTrue(condition: $pairs[0]['passes']);
 	}
 
 	public function testAPaleHighlightUnderDarkTextFailsAndNamesBothTokens(): void {
@@ -37,14 +37,14 @@ class SettableContrastPairsTest extends TestCase {
 			'--nldesign-nc-color-mark' => '#222222',
 		]);
 
-		$this->assertCount(1, $pairs);
-		$this->assertLessThan(4.5, (float)$pairs[0]['ratio']);
-		$this->assertFalse($pairs[0]['passes']);
-		$this->assertSame('--nldesign-color-text', $pairs[0]['foreground']);
-		$this->assertSame('--nldesign-nc-color-mark', $pairs[0]['background']);
+		$this->assertCount(expectedCount: 1, haystack: $pairs);
+		$this->assertLessThan(expected: 4.5, actual: (float)$pairs[0]['ratio']);
+		$this->assertFalse(condition: $pairs[0]['passes']);
+		$this->assertSame(expected: '--nldesign-color-text', actual: $pairs[0]['foreground']);
+		$this->assertSame(expected: '--nldesign-nc-color-mark', actual: $pairs[0]['background']);
 	}
 
 	public function testASetThatDeclaresNeitherSideIsNotReported(): void {
-		$this->assertSame([], (new SettableContrastPairs())->pairs(['--nldesign-color-primary' => '#154273']));
+		$this->assertSame(expected: [], actual: (new SettableContrastPairs())->pairs(['--nldesign-color-primary' => '#154273']));
 	}
 }

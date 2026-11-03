@@ -243,7 +243,7 @@ class FontServiceTest extends TestCase {
 
 		$appData = new FontServiceFakeAppData($this->dataDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -253,19 +253,19 @@ class FontServiceTest extends TestCase {
 			}
 		);
 
-		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$urlGenerator->method('linkToRoute')->willReturnCallback(
 			fn (string $route, array $args = []) => '/apps/thematiq/fonts/' . ($args['id'] ?? '') . '.woff2'
 		);
 
-		$this->service = new FontService($appData, $config, $urlGenerator, new FontValidator());
+		$this->service = new FontService(appData: $appData, config: $config, urlGenerator: $urlGenerator, validator: new FontValidator());
 	}//end setUp()
 
 	/**
 	 * Remove the temp appdata dir after each test.
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->dataDir);
+		$this->rrmdir(dir: $this->dataDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -288,7 +288,7 @@ class FontServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -317,13 +317,13 @@ class FontServiceTest extends TestCase {
 			reportedSize: strlen($this->validWoff2())
 		);
 
-		$this->assertSame('custom-rijks-sans', $result['id']);
-		$this->assertFileExists($this->dataDir . '/fonts/custom-rijks-sans.woff2');
+		$this->assertSame(expected: 'custom-rijks-sans', actual: $result['id']);
+		$this->assertFileExists(filename: $this->dataDir . '/fonts/custom-rijks-sans.woff2');
 
 		$manifest = $this->service->getManifest();
-		$this->assertArrayHasKey('custom-rijks-sans', $manifest);
-		$this->assertSame('Rijks Sans', $manifest['custom-rijks-sans']['name']);
-		$this->assertSame('body', $manifest['custom-rijks-sans']['role']);
+		$this->assertArrayHasKey(key: 'custom-rijks-sans', array: $manifest);
+		$this->assertSame(expected: 'Rijks Sans', actual: $manifest['custom-rijks-sans']['name']);
+		$this->assertSame(expected: 'body', actual: $manifest['custom-rijks-sans']['role']);
 	}//end testStoreWritesFileAndManifest()
 
 	/**
@@ -336,13 +336,13 @@ class FontServiceTest extends TestCase {
 
 		try {
 			$this->service->store('Rijks Sans', 'heading', 'wOF2different-payload', 20);
-			$this->fail('Expected a RuntimeException (409).');
+			$this->fail(message: 'Expected a RuntimeException (409).');
 		} catch (RuntimeException $e) {
-			$this->assertSame(409, $e->getCode());
+			$this->assertSame(expected: 409, actual: $e->getCode());
 		}
 
-		$this->assertSame($originalContent, file_get_contents($this->dataDir . '/fonts/custom-rijks-sans.woff2'));
-		$this->assertSame('body', $this->service->getManifest()['custom-rijks-sans']['role']);
+		$this->assertSame(expected: $originalContent, actual: file_get_contents($this->dataDir . '/fonts/custom-rijks-sans.woff2'));
+		$this->assertSame(expected: 'body', actual: $this->service->getManifest()['custom-rijks-sans']['role']);
 	}//end testStoreCollisionRejectedWithoutTouchingExistingFile()
 
 	/**
@@ -353,18 +353,18 @@ class FontServiceTest extends TestCase {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
 		$revBefore = $this->service->getRevision();
 
-		$this->assertTrue($this->service->delete(id: 'custom-rijks-sans'));
+		$this->assertTrue(condition: $this->service->delete(id: 'custom-rijks-sans'));
 
-		$this->assertFileDoesNotExist($this->dataDir . '/fonts/custom-rijks-sans.woff2');
-		$this->assertArrayNotHasKey('custom-rijks-sans', $this->service->getManifest());
-		$this->assertGreaterThan($revBefore, $this->service->getRevision());
+		$this->assertFileDoesNotExist(filename: $this->dataDir . '/fonts/custom-rijks-sans.woff2');
+		$this->assertArrayNotHasKey(key: 'custom-rijks-sans', array: $this->service->getManifest());
+		$this->assertGreaterThan(expected: $revBefore, actual: $this->service->getRevision());
 	}//end testDeleteRemovesFileManifestAndBumpsRev()
 
 	/**
 	 * Deleting an unknown (but well-formed) id returns false.
 	 */
 	public function testDeleteUnknownIdReturnsFalse(): void {
-		$this->assertFalse($this->service->delete(id: 'custom-ghost'));
+		$this->assertFalse(condition: $this->service->delete(id: 'custom-ghost'));
 	}//end testDeleteUnknownIdReturnsFalse()
 
 	/**
@@ -375,7 +375,7 @@ class FontServiceTest extends TestCase {
 		mkdir($this->dataDir . '/fonts', 0777, true);
 		file_put_contents($this->dataDir . '/fonts/custom-ghost.woff2', $this->validWoff2());
 
-		$this->assertNull($this->service->getFont(id: 'custom-ghost'));
+		$this->assertNull(actual: $this->service->getFont(id: 'custom-ghost'));
 	}//end testGetFontReturnsNullForUnknownIdEvenIfFileExists()
 
 	/**
@@ -386,8 +386,8 @@ class FontServiceTest extends TestCase {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
 
 		$file = $this->service->getFont(id: 'custom-rijks-sans');
-		$this->assertNotNull($file);
-		$this->assertSame($this->validWoff2(), $file->getContent());
+		$this->assertNotNull(actual: $file);
+		$this->assertSame(expected: $this->validWoff2(), actual: $file->getContent());
 	}//end testGetFontReturnsFileForKnownId()
 
 	/**
@@ -396,14 +396,14 @@ class FontServiceTest extends TestCase {
 	public function testReadFontBytesReturnsContentForKnownId(): void {
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
 
-		$this->assertSame($this->validWoff2(), $this->service->readFontBytes(id: 'custom-rijks-sans'));
+		$this->assertSame(expected: $this->validWoff2(), actual: $this->service->readFontBytes(id: 'custom-rijks-sans'));
 	}//end testReadFontBytesReturnsContentForKnownId()
 
 	/**
 	 * readFontBytes() returns null for an unknown id (manifest is the gate).
 	 */
 	public function testReadFontBytesReturnsNullForUnknownId(): void {
-		$this->assertNull($this->service->readFontBytes(id: 'custom-ghost'));
+		$this->assertNull(actual: $this->service->readFontBytes(id: 'custom-ghost'));
 	}//end testReadFontBytesReturnsNullForUnknownId()
 
 	/**
@@ -414,8 +414,8 @@ class FontServiceTest extends TestCase {
 		$traversalIds = ['../../config', 'custom-a/../b', "custom-a\0b", '../../../etc/passwd'];
 
 		foreach ($traversalIds as $id) {
-			$this->assertFalse($this->service->delete(id: $id), 'delete() must reject: ' . $id);
-			$this->assertNull($this->service->getFont(id: $id), 'getFont() must reject: ' . $id);
+			$this->assertFalse(condition: $this->service->delete(id: $id), message: 'delete() must reject: ' . $id);
+			$this->assertNull(actual: $this->service->getFont(id: $id), message: 'getFont() must reject: ' . $id);
 		}
 	}//end testPathTraversalIdsNeverReachAppData()
 
@@ -427,8 +427,8 @@ class FontServiceTest extends TestCase {
 			$this->service->store('Font ' . $i, 'body', $this->validWoff2(), strlen($this->validWoff2()));
 		}
 
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(409);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 409);
 		$this->service->store('One Too Many', 'body', $this->validWoff2(), strlen($this->validWoff2()));
 	}//end test21stFontRejected()
 
@@ -436,16 +436,16 @@ class FontServiceTest extends TestCase {
 	 * hasFonts() reflects the manifest state.
 	 */
 	public function testHasFontsFalseWhenEmpty(): void {
-		$this->assertFalse($this->service->hasFonts());
+		$this->assertFalse(condition: $this->service->hasFonts());
 		$this->service->store('Rijks Sans', 'body', $this->validWoff2(), strlen($this->validWoff2()));
-		$this->assertTrue($this->service->hasFonts());
+		$this->assertTrue(condition: $this->service->hasFonts());
 	}//end testHasFontsFalseWhenEmpty()
 
 	/**
 	 * buildCss() returns an empty string when no fonts are configured.
 	 */
 	public function testBuildCssEmptyWhenNoFonts(): void {
-		$this->assertSame('', $this->service->buildCss());
+		$this->assertSame(expected: '', actual: $this->service->buildCss());
 	}//end testBuildCssEmptyWhenNoFonts()
 
 	/**
@@ -457,14 +457,14 @@ class FontServiceTest extends TestCase {
 
 		$css = $this->service->buildCss();
 
-		$this->assertStringContainsString('@font-face', $css);
-		$this->assertStringContainsString("format('woff2')", $css);
-		$this->assertStringContainsString('font-display: swap', $css);
+		$this->assertStringContainsString(needle: '@font-face', haystack: $css);
+		$this->assertStringContainsString(needle: "format('woff2')", haystack: $css);
+		$this->assertStringContainsString(needle: 'font-display: swap', haystack: $css);
 		$this->assertStringContainsString(
-			'--nldesign-font-family: "Rijks Sans", ' . FontService::DEFAULT_FONT_FAMILY . ';',
-			$css
+			needle: '--nldesign-font-family: "Rijks Sans", ' . FontService::DEFAULT_FONT_FAMILY . ';',
+			haystack: $css
 		);
-		$this->assertStringContainsString("'Fira Sans'", $css);
+		$this->assertStringContainsString(needle: "'Fira Sans'", haystack: $css);
 	}//end testBuildCssBodyOverride()
 
 	/**
@@ -477,10 +477,10 @@ class FontServiceTest extends TestCase {
 		$css = $this->service->buildCss();
 
 		$this->assertStringContainsString(
-			'--nldesign-typography-heading-font-family: "Rijks Display", ' . FontService::DEFAULT_FONT_FAMILY . ';',
-			$css
+			needle: '--nldesign-typography-heading-font-family: "Rijks Display", ' . FontService::DEFAULT_FONT_FAMILY . ';',
+			haystack: $css
 		);
-		$this->assertStringNotContainsString('--nldesign-font-family: "Rijks Display"', $css);
+		$this->assertStringNotContainsString(needle: '--nldesign-font-family: "Rijks Display"', haystack: $css);
 	}//end testBuildCssHeadingOverride()
 
 	/**
@@ -492,17 +492,17 @@ class FontServiceTest extends TestCase {
 
 		$css = $this->service->buildCss();
 
-		$this->assertStringContainsString('Test\\"Font', $css);
-		$this->assertStringNotContainsString('Test"Font"', $css);
+		$this->assertStringContainsString(needle: 'Test\\"Font', haystack: $css);
+		$this->assertStringNotContainsString(needle: 'Test"Font"', haystack: $css);
 	}//end testBuildCssEscapesDisplayName()
 
 	/**
 	 * isValidId() only accepts the prefixed slug charset.
 	 */
 	public function testIsValidId(): void {
-		$this->assertTrue($this->service->isValidId(id: 'custom-rijks-sans'));
-		$this->assertFalse($this->service->isValidId(id: 'rijks-sans'));
-		$this->assertFalse($this->service->isValidId(id: 'custom-../x'));
-		$this->assertFalse($this->service->isValidId(id: 'custom-UPPER'));
+		$this->assertTrue(condition: $this->service->isValidId(id: 'custom-rijks-sans'));
+		$this->assertFalse(condition: $this->service->isValidId(id: 'rijks-sans'));
+		$this->assertFalse(condition: $this->service->isValidId(id: 'custom-../x'));
+		$this->assertFalse(condition: $this->service->isValidId(id: 'custom-UPPER'));
 	}//end testIsValidId()
 }//end class

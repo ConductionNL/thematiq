@@ -73,15 +73,15 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 		parent::setUp();
 		$this->makeAppDir();
 		$config = $this->memoryConfig();
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getDateTime')->willReturnCallback(fn () => new DateTime($this->now));
 		$this->licences = new TokenSetLicenceService(
-			$this->fixtureTokenSets($config),
-			$config,
-			new ScheduledSwitchStore($config),
-			$this->createMock(ThemingAuditService::class),
-			$time,
-			$this->createMock(LoggerInterface::class)
+			tokenSets: $this->fixtureTokenSets(config: $config),
+			config: $config,
+			switches: new ScheduledSwitchStore(config: $config),
+			audit: $this->createMock(originalClassName: ThemingAuditService::class),
+			time: $time,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -97,13 +97,13 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 	 */
 	private function registeredStep(): IRepairStep {
 		$xml = simplexml_load_string((string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/info.xml'));
-		$this->assertNotFalse($xml, 'appinfo/info.xml does not parse');
+		$this->assertNotFalse(condition: $xml, message: 'appinfo/info.xml does not parse');
 		$steps = array_map('strval', (array)$xml->xpath('/info/repair-steps/post-migration/step'));
-		$this->assertContains(RecordRestrictedSetsAwaitingConfirmation::class, $steps, 'the step is not registered for an upgrade');
-		$this->assertSame(RecordRestrictedSetsAwaitingConfirmation::class, end($steps), 'it runs after ApplyConfigSource, which may apply a set');
+		$this->assertContains(needle: RecordRestrictedSetsAwaitingConfirmation::class, haystack: $steps, message: 'the step is not registered for an upgrade');
+		$this->assertSame(expected: RecordRestrictedSetsAwaitingConfirmation::class, actual: end($steps), message: 'it runs after ApplyConfigSource, which may apply a set');
 
 		$class = RecordRestrictedSetsAwaitingConfirmation::class;
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->method('warning')->willReturnCallback(
 			function (string $message, array $context = []): void {
 				$this->warnings[] = [$message, $context];
@@ -116,64 +116,64 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 	public function testAnAppliedRestrictedSetStaysAndIsRecorded(): void {
 		$this->appValues['token_set'] = 'owned';
 		$this->appValues['group_token_sets'] = '[{"group":"ruimte","tokenSet":"owned-two"}]';
-		$output = $this->createMock(IOutput::class);
-		$output->expects($this->once())->method('warning')->with($this->stringContains('owned, owned-two'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects($this->once())->method('warning')->with($this->stringContains(string: 'owned, owned-two'));
 
 		$this->registeredStep()->run($output);
 
-		$this->assertSame('owned', $this->appValues['token_set'], 'the instance keeps its theme');
-		$this->assertSame('[{"group":"ruimte","tokenSet":"owned-two"}]', $this->appValues['group_token_sets']);
+		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set'], message: 'the instance keeps its theme');
+		$this->assertSame(expected: '[{"group":"ruimte","tokenSet":"owned-two"}]', actual: $this->appValues['group_token_sets']);
 		$this->assertSame(
-			['owned' => $this->now, 'owned-two' => $this->now],
-			json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true)
+			expected: ['owned' => $this->now, 'owned-two' => $this->now],
+			actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true)
 		);
-		$this->assertSame(['owned', 'owned-two'], array_map(fn ($w) => $w[1]['set'], $this->warnings));
+		$this->assertSame(expected: ['owned', 'owned-two'], actual: array_map(fn ($w) => $w[1]['set'], $this->warnings));
 
 		$awaiting = $this->licences->awaitingConfirmation();
-		$this->assertSame([$this->now, $this->now], array_column($awaiting, 'since'), 'the admin notice gets the date');
+		$this->assertSame(expected: [$this->now, $this->now], actual: array_column($awaiting, 'since'), message: 'the admin notice gets the date');
 	}//end testAnAppliedRestrictedSetStaysAndIsRecorded()
 
 	public function testASecondUpgradeKeepsTheFirstDateAndWarnsNoMore(): void {
 		$this->appValues['token_set'] = 'owned';
-		$this->registeredStep()->run($this->createMock(IOutput::class));
+		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
 		$this->now = '2026-11-01T09:00:00+00:00';
 		$this->warnings = [];
 
-		$this->registeredStep()->run($this->createMock(IOutput::class));
+		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame(['owned' => '2026-10-14T09:00:00+00:00'], json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
-		$this->assertSame([], $this->warnings);
+		$this->assertSame(expected: ['owned' => '2026-10-14T09:00:00+00:00'], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
+		$this->assertSame(expected: [], actual: $this->warnings);
 	}//end testASecondUpgradeKeepsTheFirstDateAndWarnsNoMore()
 
 	public function testAConfirmationEndsTheRecord(): void {
 		$this->appValues['token_set'] = 'owned';
-		$this->registeredStep()->run($this->createMock(IOutput::class));
+		$this->registeredStep()->run($this->createMock(originalClassName: IOutput::class));
 
 		$this->licences->confirm('owned', 'ruben');
 
-		$this->assertSame([], json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
-		$this->assertSame([], $this->licences->awaitingConfirmation());
+		$this->assertSame(expected: [], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
+		$this->assertSame(expected: [], actual: $this->licences->awaitingConfirmation());
 	}//end testAConfirmationEndsTheRecord()
 
 	public function testNothingAppliedNothingRecorded(): void {
 		$this->appValues['token_set'] = 'open';
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->never())->method('warning');
 		$output->expects($this->once())->method('info');
 
 		$this->registeredStep()->run($output);
 
-		$this->assertSame([], json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
+		$this->assertSame(expected: [], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
 	}//end testNothingAppliedNothingRecorded()
 
 	public function testAFailureNeverFailsTheUpgrade(): void {
-		$licences = $this->createMock(TokenSetLicenceService::class);
+		$licences = $this->createMock(originalClassName: TokenSetLicenceService::class);
 		$licences->method('recordAwaitingConfirmation')->willThrowException(new \RuntimeException('disk'));
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 
-		(new RecordRestrictedSetsAwaitingConfirmation($licences, $this->createMock(LoggerInterface::class)))->run($output);
+		(new RecordRestrictedSetsAwaitingConfirmation(licences: $licences, logger: $this->createMock(originalClassName: LoggerInterface::class)))->run($output);
 
-		$this->assertNotSame('', (new RecordRestrictedSetsAwaitingConfirmation($licences, $this->createMock(LoggerInterface::class)))->getName());
+		$this->assertNotSame(expected: '', actual: (new RecordRestrictedSetsAwaitingConfirmation(licences: $licences, logger: $this->createMock(originalClassName: LoggerInterface::class)))->getName());
 	}//end testAFailureNeverFailsTheUpgrade()
 }//end class

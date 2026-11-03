@@ -50,26 +50,26 @@ class TokenSetLicenceControllerTest extends TestCase {
 	 * @return TokenSetLicenceController The controller.
 	 */
 	private function controller(?string $uid = 'ruben'): TokenSetLicenceController {
-		$this->licences = $this->createMock(TokenSetLicenceService::class);
-		$session = $this->createMock(IUserSession::class);
+		$this->licences = $this->createMock(originalClassName: TokenSetLicenceService::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
 		if ($uid !== null) {
-			$user = $this->createMock(IUser::class);
+			$user = $this->createMock(originalClassName: IUser::class);
 			$user->method('getUID')->willReturn($uid);
 			$session->method('getUser')->willReturn($user);
 		}
 
-		return new TokenSetLicenceController('thematiq', $this->createMock(IRequest::class), $this->licences, $session);
+		return new TokenSetLicenceController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), licences: $this->licences, userSession: $session);
 	}//end controller()
 
 	public function testEveryEndpointIsForAdministratorsOnAPlainController(): void {
 		$controller = $this->controller();
-		$this->assertInstanceOf(Controller::class, $controller);
-		$this->assertNotInstanceOf(OCSController::class, $controller, 'an OCS controller would deliver a 403 as 200');
+		$this->assertInstanceOf(expected: Controller::class, actual: $controller);
+		$this->assertNotInstanceOf(expected: OCSController::class, actual: $controller, message: 'an OCS controller would deliver a 403 as 200');
 
 		foreach (['index', 'show', 'confirm', 'withdraw'] as $method) {
 			$attributes = (new ReflectionMethod(TokenSetLicenceController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes, $method);
-			$this->assertSame([Admin::class], array_values($attributes[0]->getArguments()), $method);
+			$this->assertCount(expectedCount: 1, haystack: $attributes, message: $method);
+			$this->assertSame(expected: [Admin::class], actual: array_values($attributes[0]->getArguments()), message: $method);
 		}
 	}//end testEveryEndpointIsForAdministratorsOnAPlainController()
 
@@ -77,11 +77,11 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$routes = (require __DIR__ . '/../../../appinfo/routes.php')['routes'];
 		$named = array_column($routes, null, 'name');
 
-		$this->assertSame(['GET', '/settings/tokensets/licences'], [$named['tokenSetLicence#index']['verb'], $named['tokenSetLicence#index']['url']]);
-		$this->assertSame(['GET', '/settings/tokensets/{id}/licence'], [$named['tokenSetLicence#show']['verb'], $named['tokenSetLicence#show']['url']]);
-		$this->assertSame('POST', $named['tokenSetLicence#confirm']['verb']);
-		$this->assertSame('DELETE', $named['tokenSetLicence#withdraw']['verb']);
-		$this->assertSame($named['tokenSetLicence#confirm']['url'], $named['tokenSetLicence#withdraw']['url']);
+		$this->assertSame(expected: ['GET', '/settings/tokensets/licences'], actual: [$named['tokenSetLicence#index']['verb'], $named['tokenSetLicence#index']['url']]);
+		$this->assertSame(expected: ['GET', '/settings/tokensets/{id}/licence'], actual: [$named['tokenSetLicence#show']['verb'], $named['tokenSetLicence#show']['url']]);
+		$this->assertSame(expected: 'POST', actual: $named['tokenSetLicence#confirm']['verb']);
+		$this->assertSame(expected: 'DELETE', actual: $named['tokenSetLicence#withdraw']['verb']);
+		$this->assertSame(expected: $named['tokenSetLicence#confirm']['url'], actual: $named['tokenSetLicence#withdraw']['url']);
 	}//end testTheRoutesExist()
 
 	public function testTheOverviewListsTheSetsAndTheOnesAwaitingConfirmation(): void {
@@ -90,8 +90,8 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$this->licences->method('awaitingConfirmation')->willReturn([['tokenSet' => 'owned', 'appliedIn' => []]]);
 
 		$this->assertSame(
-			['sets' => [['id' => 'owned']], 'awaiting' => [['tokenSet' => 'owned', 'appliedIn' => []]]],
-			$controller->index()->getData()
+			expected: ['sets' => [['id' => 'owned']], 'awaiting' => [['tokenSet' => 'owned', 'appliedIn' => []]]],
+			actual: $controller->index()->getData()
 		);
 	}//end testTheOverviewListsTheSetsAndTheOnesAwaitingConfirmation()
 
@@ -99,59 +99,59 @@ class TokenSetLicenceControllerTest extends TestCase {
 		$controller = $this->controller();
 		$this->licences->method('describe')->willReturnCallback(fn (string $tokenSetId) => (['owned' => ['text' => 'x']][$tokenSetId] ?? null));
 
-		$this->assertSame(404, $controller->show('nextcloud')->getStatus());
-		$this->assertSame(200, $controller->show('owned')->getStatus());
-		$this->assertSame(['text' => 'x'], $controller->show('owned')->getData());
+		$this->assertSame(expected: 404, actual: $controller->show('nextcloud')->getStatus());
+		$this->assertSame(expected: 200, actual: $controller->show('owned')->getStatus());
+		$this->assertSame(expected: ['text' => 'x'], actual: $controller->show('owned')->getData());
 	}//end testASetWithoutALicenceAnswers404()
 
 	public function testWithoutTheStatementNothingIsConfirmed(): void {
 		$controller = $this->controller();
 		$this->licences->expects($this->never())->method('confirm');
 
-		$this->assertSame(400, $controller->confirm('owned')->getStatus());
-		$this->assertSame(400, $controller->confirm('owned', false)->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->confirm('owned')->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->confirm('owned', false)->getStatus());
 	}//end testWithoutTheStatementNothingIsConfirmed()
 
 	public function testWithoutASessionNothingIsConfirmed(): void {
-		$controller = $this->controller(null);
+		$controller = $this->controller(uid: null);
 		$this->licences->expects($this->never())->method('confirm');
 
-		$this->assertSame(400, $controller->confirm('owned', true)->getStatus());
+		$this->assertSame(expected: 400, actual: $controller->confirm('owned', true)->getStatus());
 	}//end testWithoutASessionNothingIsConfirmed()
 
 	public function testTheActingAdministratorConfirms(): void {
-		$controller = $this->controller('noor');
+		$controller = $this->controller(uid: 'noor');
 		$this->licences->expects($this->once())->method('confirm')->with('owned', 'noor')
 			->willReturn(['uid' => 'noor', 'at' => '2026-10-12T20:15:00+00:00']);
 
 		$response = $controller->confirm('owned', true);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('noor', $response->getData()['confirmation']['uid']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'noor', actual: $response->getData()['confirmation']['uid']);
 	}//end testTheActingAdministratorConfirms()
 
 	public function testASetThatIsNotRestrictedAnswers404(): void {
 		$controller = $this->controller();
 		$this->licences->method('confirm')->willThrowException(new InvalidArgumentException('no'));
 
-		$this->assertSame(404, $controller->confirm('open', true)->getStatus());
+		$this->assertSame(expected: 404, actual: $controller->confirm('open', true)->getStatus());
 	}//end testASetThatIsNotRestrictedAnswers404()
 
 	public function testAWithdrawalWhileAppliedAnswers409WithThePlaces(): void {
 		$controller = $this->controller();
-		$this->licences->method('withdraw')->willThrowException(new RestrictedSetInUseException('owned', [['kind' => 'instance', 'id' => '']]));
+		$this->licences->method('withdraw')->willThrowException(new RestrictedSetInUseException(tokenSetId: 'owned', appliedIn: [['kind' => 'instance', 'id' => '']]));
 
 		$response = $controller->withdraw('owned');
 
-		$this->assertSame(409, $response->getStatus());
-		$this->assertSame('restricted_set_in_use', $response->getData()['error']);
-		$this->assertSame([['kind' => 'instance', 'id' => '']], $response->getData()['appliedIn']);
+		$this->assertSame(expected: 409, actual: $response->getStatus());
+		$this->assertSame(expected: 'restricted_set_in_use', actual: $response->getData()['error']);
+		$this->assertSame(expected: [['kind' => 'instance', 'id' => '']], actual: $response->getData()['appliedIn']);
 	}//end testAWithdrawalWhileAppliedAnswers409WithThePlaces()
 
 	public function testAWithdrawalAnswers200(): void {
-		$controller = $this->controller('noor');
+		$controller = $this->controller(uid: 'noor');
 		$this->licences->expects($this->once())->method('withdraw')->with('owned', 'noor');
 
-		$this->assertSame(200, $controller->withdraw('owned')->getStatus());
+		$this->assertSame(expected: 200, actual: $controller->withdraw('owned')->getStatus());
 	}//end testAWithdrawalAnswers200()
 }//end class

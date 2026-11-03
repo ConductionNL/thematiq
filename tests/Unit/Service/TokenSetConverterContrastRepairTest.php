@@ -68,16 +68,16 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 * Build the converter against the app's own mapping table.
 	 */
 	private function converter(): TokenSetConverterService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		return new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end converter()
 
@@ -100,10 +100,10 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 		}
 
 		foreach ($case['expected'] as $token => $value) {
-			$this->assertSame($value, ($declared[$token] ?? null), $name . ' ' . $token);
+			$this->assertSame(expected: $value, actual: ($declared[$token] ?? null), message: $name . ' ' . $token);
 		}
 
-		$this->assertSame($case['primary_color'], $result['manifestEntry']['theming']['primary_color'] ?? null);
+		$this->assertSame(expected: $case['primary_color'], actual: $result['manifestEntry']['theming']['primary_color'] ?? null);
 	}//end testMatchesTheJavaScriptConverter()
 
 	/**
@@ -112,7 +112,7 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	public function testAnUploadKeepsItsColours(): void {
 		$result = $this->converter()->convert(content: ".demo-theme {\n\t--utrecht-button-primary-action-background-color: #f0b800;\n}\n", slug: 'demo', displayName: 'Demo');
 
-		$this->assertStringContainsString('--nldesign-color-primary: #f0b800;', (string)$result['css']);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #f0b800;', haystack: (string)$result['css']);
 	}//end testAnUploadKeepsItsColours()
 
 	/**
@@ -131,15 +131,15 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 			report: $report
 		);
 
-		$this->assertSame('#333333', $semantic['--nldesign-color-text']);
-		$this->assertNotSame('#f0b800', $semantic['--nldesign-color-primary']);
-		$this->assertSame($semantic['--nldesign-color-primary'], $manifest['theming.primary_color']);
+		$this->assertSame(expected: '#333333', actual: $semantic['--nldesign-color-text']);
+		$this->assertNotSame(expected: '#f0b800', actual: $semantic['--nldesign-color-primary']);
+		$this->assertSame(expected: $semantic['--nldesign-color-primary'], actual: $manifest['theming.primary_color']);
 		// The repaired primary passes on the page but not on the light primary band,
 		// so the light-text step is written as a deeper shade of it.
-		$this->assertSame(['--nldesign-color-primary', '--nldesign-color-primary-light-text'], array_column($report, 'target'));
+		$this->assertSame(expected: ['--nldesign-color-primary', '--nldesign-color-primary-light-text'], actual: array_column($report, 'target'));
 		$this->assertGreaterThanOrEqual(
-			4.5,
-			(new ContrastService())->measure(foreground: $semantic['--nldesign-color-primary-light-text'], background: '#e8f0f8')
+			expected: 4.5,
+			actual: (new ContrastService())->measure(foreground: $semantic['--nldesign-color-primary-light-text'], background: '#e8f0f8')
 		);
 	}//end testRepairsOnlyWhatFails()
 
@@ -166,8 +166,8 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 			report: $report
 		);
 
-		$this->assertArrayNotHasKey('--nldesign-color-primary-light-text', $semantic);
-		$this->assertSame([], $report);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-primary-light-text', array: $semantic);
+		$this->assertSame(expected: [], actual: $report);
 	}//end testAPassingPrimaryWritesNoLightTextStep()
 
 	/**
@@ -175,12 +175,12 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	 */
 	public function testNormalisesColourLiterals(): void {
 		$repair = new ColourLiteralParser();
-		$this->assertSame('#002e52', $repair->normalise(value: 'hsl(206 100% 16%)'));
-		$this->assertSame('#1d1d1b', $repair->normalise(value: 'hsl(60, 4%, 11%)'));
-		$this->assertSame('rgba(0, 0, 0, 0.5)', $repair->normalise(value: 'hsla(0deg 0% 0% / 50%)'));
-		$this->assertSame('rgba(1, 44, 157, 0.6)', $repair->normalise(value: '#012c9d99'));
-		$this->assertNull($repair->normalise(value: 'inset 0 -4px hsl(0 0% 0%)'));
-		$this->assertSame('#ffffff', $repair->normalise(value: 'white'));
-		$this->assertNull($repair->normalise(value: 'transparent'));
+		$this->assertSame(expected: '#002e52', actual: $repair->normalise(value: 'hsl(206 100% 16%)'));
+		$this->assertSame(expected: '#1d1d1b', actual: $repair->normalise(value: 'hsl(60, 4%, 11%)'));
+		$this->assertSame(expected: 'rgba(0, 0, 0, 0.5)', actual: $repair->normalise(value: 'hsla(0deg 0% 0% / 50%)'));
+		$this->assertSame(expected: 'rgba(1, 44, 157, 0.6)', actual: $repair->normalise(value: '#012c9d99'));
+		$this->assertNull(actual: $repair->normalise(value: 'inset 0 -4px hsl(0 0% 0%)'));
+		$this->assertSame(expected: '#ffffff', actual: $repair->normalise(value: 'white'));
+		$this->assertNull(actual: $repair->normalise(value: 'transparent'));
 	}//end testNormalisesColourLiterals()
 }//end class

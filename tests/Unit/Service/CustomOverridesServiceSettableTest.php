@@ -38,11 +38,11 @@ class CustomOverridesServiceSettableTest extends TestCase {
 		parent::setUp();
 		$this->dir = sys_get_temp_dir() . '/thematiq-settable-' . bin2hex(random_bytes(4));
 		mkdir($this->dir, 0777, true);
-		$this->store = new DirectoryRuntimeFileStore($this->dir);
-		$appManager = $this->createMock(IAppManager::class);
+		$this->store = new DirectoryRuntimeFileStore(root: $this->dir);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
-		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class), $this->store);
+		$dark = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class), store: $this->store);
 		$this->service = new CustomOverridesService(storage: new OverridesStorage(store: $this->store, cssParser: $parser, darkPalette: $dark));
 	}//end setUp()
 
@@ -65,29 +65,29 @@ class CustomOverridesServiceSettableTest extends TestCase {
 
 		$css = $this->file();
 		$root = substr($css, 0, (int)strpos($css, '}'));
-		$this->assertStringContainsString('--nldesign-nc-color-mark: #ffe08a !important;', $root);
-		$this->assertStringNotContainsString('  --color-mark:', $css, 'the plain variable would lose to the theme scopes');
+		$this->assertStringContainsString(needle: '--nldesign-nc-color-mark: #ffe08a !important;', haystack: $root);
+		$this->assertStringNotContainsString(needle: '  --color-mark:', haystack: $css, message: 'the plain variable would lose to the theme scopes');
 		$dark = substr($css, (int)strpos($css, '}'));
-		$this->assertStringContainsString('--color-primary:', $dark, 'a brand colour still gets its derived dark value');
-		$this->assertStringNotContainsString('--nldesign-nc-color-mark', $dark, 'a settable value gets no derived dark value');
+		$this->assertStringContainsString(needle: '--color-primary:', haystack: $dark, message: 'a brand colour still gets its derived dark value');
+		$this->assertStringNotContainsString(needle: '--nldesign-nc-color-mark', haystack: $dark, message: 'a settable value gets no derived dark value');
 	}//end testASettableValueIsStoredAsItsTokenInTheLightScopeOnly()
 
 	public function testTheEditorReadsTheNextcloudName(): void {
 		$this->service->write(tokens: ['--color-mark' => '#ffe08a', '--header-height' => '56px']);
 
-		$this->assertSame(['--color-mark' => '#ffe08a', '--header-height' => '56px'], $this->service->read());
+		$this->assertSame(expected: ['--color-mark' => '#ffe08a', '--header-height' => '56px'], actual: $this->service->read());
 	}//end testTheEditorReadsTheNextcloudName()
 
 	public function testAnOlderPlainDeclarationStillReadsAndIsSavedAsTheToken(): void {
 		$this->store->write('css/custom-overrides.css', ":root {\n  --color-scrollbar: #cccccc !important;\n}\n");
 
-		$this->assertSame(['--color-scrollbar' => '#cccccc'], $this->service->read());
+		$this->assertSame(expected: ['--color-scrollbar' => '#cccccc'], actual: $this->service->read());
 
 		$this->service->write(tokens: $this->service->read());
-		$this->assertStringContainsString('--nldesign-nc-color-scrollbar: #cccccc !important;', $this->file());
+		$this->assertStringContainsString(needle: '--nldesign-nc-color-scrollbar: #cccccc !important;', haystack: $this->file());
 	}//end testAnOlderPlainDeclarationStillReadsAndIsSavedAsTheToken()
 
 	public function testAnIconIsStillNotEditable(): void {
-		$this->assertSame(['--icon-download-dark' => 'not an editable token'], $this->service->findRejected(['--icon-download-dark' => 'url(x.svg)']));
+		$this->assertSame(expected: ['--icon-download-dark' => 'not an editable token'], actual: $this->service->findRejected(['--icon-download-dark' => 'url(x.svg)']));
 	}//end testAnIconIsStillNotEditable()
 }//end class

@@ -86,7 +86,7 @@ class MetricsControllerTest extends TestCase {
 		?\Exception $overridesError = null,
 		?LoggerInterface $logger = null,
 	): MetricsController {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
 				$this->defaults[$key] = $default;
@@ -95,14 +95,14 @@ class MetricsControllerTest extends TestCase {
 		);
 		$config->method('getSystemValueString')->willReturn('34.0.0');
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		if ($tokenSetError !== null) {
 			$tokenSetService->method('getAvailableTokenSets')->willThrowException($tokenSetError);
 		} else {
 			$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
 		}
 
-		$overridesService = $this->createMock(CustomOverridesService::class);
+		$overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
 		if ($overridesError !== null) {
 			$overridesService->method('read')->willThrowException($overridesError);
 		} else {
@@ -110,12 +110,12 @@ class MetricsControllerTest extends TestCase {
 		}
 
 		return new MetricsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$config,
-			$tokenSetService,
-			$overridesService,
-			($logger ?? $this->createMock(LoggerInterface::class))
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $config,
+			tokenSetService: $tokenSetService,
+			overridesSvc: $overridesService,
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 	}//end buildController()
 
@@ -128,9 +128,9 @@ class MetricsControllerTest extends TestCase {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
 
 		$this->assertCount(
-			0,
-			$method->getAttributes(PublicPage::class),
-			'#[PublicPage] must be absent so the SecurityMiddleware admin-only default applies.'
+			expectedCount: 0,
+			haystack: $method->getAttributes(PublicPage::class),
+			message: '#[PublicPage] must be absent so the SecurityMiddleware admin-only default applies.'
 		);
 	}//end testIndexHasNoPublicPageAttribute()
 
@@ -143,9 +143,9 @@ class MetricsControllerTest extends TestCase {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
 
 		$this->assertCount(
-			0,
-			$method->getAttributes(NoAdminRequired::class),
-			'#[NoAdminRequired] must be absent so the SecurityMiddleware admin-only default applies.'
+			expectedCount: 0,
+			haystack: $method->getAttributes(NoAdminRequired::class),
+			message: '#[NoAdminRequired] must be absent so the SecurityMiddleware admin-only default applies.'
 		);
 	}//end testIndexHasNoNoAdminRequiredAttribute()
 
@@ -158,9 +158,9 @@ class MetricsControllerTest extends TestCase {
 		$method = new ReflectionMethod(MetricsController::class, 'index');
 
 		$this->assertStringContainsString(
-			'@NoCSRFRequired',
-			(string)$method->getDocComment(),
-			'index() must remain CSRF-exempt even though it now requires an admin session.'
+			needle: '@NoCSRFRequired',
+			haystack: (string)$method->getDocComment(),
+			message: 'index() must remain CSRF-exempt even though it now requires an admin session.'
 		);
 	}//end testIndexDeclaresNoCsrfRequired()
 
@@ -172,8 +172,8 @@ class MetricsControllerTest extends TestCase {
 	public function testIndexStillReturnsMetricsBody(): void {
 		$response = $this->controller->index();
 
-		$this->assertInstanceOf(TextPlainResponse::class, $response);
-		$this->assertStringContainsString('nldesign_up 1', $response->render());
+		$this->assertInstanceOf(expected: TextPlainResponse::class, actual: $response);
+		$this->assertStringContainsString(needle: 'nldesign_up 1', haystack: $response->render());
 	}//end testIndexStillReturnsMetricsBody()
 
 	/**
@@ -184,11 +184,11 @@ class MetricsControllerTest extends TestCase {
 		$body = $this->controller->index()->render();
 
 		$this->assertStringContainsString(
-			'# HELP nldesign_audit_entries_total Total theming audit entries written',
-			$body
+			needle: '# HELP nldesign_audit_entries_total Total theming audit entries written',
+			haystack: $body
 		);
-		$this->assertStringContainsString('# TYPE nldesign_audit_entries_total counter', $body);
-		$this->assertStringContainsString('nldesign_audit_entries_total 0', $body);
+		$this->assertStringContainsString(needle: '# TYPE nldesign_audit_entries_total counter', haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_audit_entries_total 0', haystack: $body);
 	}//end testAuditCounterDefaultsToZero()
 
 	/**
@@ -200,7 +200,7 @@ class MetricsControllerTest extends TestCase {
 
 		$body = $this->controller->index()->render();
 
-		$this->assertStringContainsString('nldesign_audit_entries_total 12', $body);
+		$this->assertStringContainsString(needle: 'nldesign_audit_entries_total 12', haystack: $body);
 	}//end testAuditCounterReflectsAppValue()
 
 	/**
@@ -210,9 +210,9 @@ class MetricsControllerTest extends TestCase {
 	public function testAuditCounterIsAdditiveToExistingFamilies(): void {
 		$body = $this->controller->index()->render();
 
-		$this->assertStringContainsString('nldesign_info{', $body);
-		$this->assertStringContainsString('nldesign_up 1', $body);
-		$this->assertStringContainsString('# TYPE nldesign_theming_syncs_total counter', $body);
+		$this->assertStringContainsString(needle: 'nldesign_info{', haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_up 1', haystack: $body);
+		$this->assertStringContainsString(needle: '# TYPE nldesign_theming_syncs_total counter', haystack: $body);
 	}//end testAuditCounterIsAdditiveToExistingFamilies()
 
 	/**
@@ -225,7 +225,7 @@ class MetricsControllerTest extends TestCase {
 	 * metrics succeed".
 	 */
 	public function testTokenSetFailureFallsBackToZeroAndLogs(): void {
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('warning')->with(
 			'Could not collect token set metrics',
 			['exception' => 'token dir unreadable']
@@ -236,11 +236,11 @@ class MetricsControllerTest extends TestCase {
 			logger: $logger
 		)->index()->render();
 
-		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
-		$this->assertStringContainsString('nldesign_info{', $body);
-		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
-		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
-		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+		$this->assertStringContainsString(needle: "\nnldesign_token_sets_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_info{', haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_up 1\n", haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_custom_overrides_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_theming_syncs_total 0\n", haystack: $body);
 	}//end testTokenSetFailureFallsBackToZeroAndLogs()
 
 	/**
@@ -253,8 +253,8 @@ class MetricsControllerTest extends TestCase {
 	public function testTokenSetFailureOmitsTheActiveTokenSetGauge(): void {
 		$body = $this->buildController(tokenSetError: new \RuntimeException('boom'))->index()->render();
 
-		$this->assertStringNotContainsString('nldesign_active_token_set', $body);
-		$this->assertSame(1, substr_count($body, 'nldesign_token_sets_total 0'));
+		$this->assertStringNotContainsString(needle: 'nldesign_active_token_set', haystack: $body);
+		$this->assertSame(expected: 1, actual: substr_count($body, 'nldesign_token_sets_total 0'));
 	}//end testTokenSetFailureOmitsTheActiveTokenSetGauge()
 
 	/**
@@ -266,7 +266,7 @@ class MetricsControllerTest extends TestCase {
 	 * metrics succeed".
 	 */
 	public function testOverrideFailureFallsBackToZeroAndLogs(): void {
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('warning')->with(
 			'Could not collect override metrics',
 			['exception' => 'overrides unreadable']
@@ -277,12 +277,12 @@ class MetricsControllerTest extends TestCase {
 			logger: $logger
 		)->index()->render();
 
-		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
-		$this->assertStringContainsString('nldesign_info{', $body);
-		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
-		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
-		$this->assertStringContainsString('nldesign_active_token_set{name="rijkshuisstijl"} 1', $body);
-		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+		$this->assertStringContainsString(needle: "\nnldesign_custom_overrides_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_info{', haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_up 1\n", haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_token_sets_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_active_token_set{name="rijkshuisstijl"} 1', haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_theming_syncs_total 0\n", haystack: $body);
 	}//end testOverrideFailureFallsBackToZeroAndLogs()
 
 	/**
@@ -294,8 +294,8 @@ class MetricsControllerTest extends TestCase {
 	 */
 	public function testBothFailuresAreHandledIndependently(): void {
 		$warnings = [];
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects($this->exactly(2))->method('warning')->willReturnCallback(
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects($this->exactly(count: 2))->method('warning')->willReturnCallback(
 			function (string $message) use (&$warnings): void {
 				$warnings[] = $message;
 			}
@@ -308,14 +308,14 @@ class MetricsControllerTest extends TestCase {
 		)->index()->render();
 
 		$this->assertSame(
-			['Could not collect token set metrics', 'Could not collect override metrics'],
-			$warnings
+			expected: ['Could not collect token set metrics', 'Could not collect override metrics'],
+			actual: $warnings
 		);
-		$this->assertStringContainsString("\nnldesign_token_sets_total 0\n", $body);
-		$this->assertStringContainsString("\nnldesign_custom_overrides_total 0\n", $body);
-		$this->assertStringContainsString('nldesign_info{', $body);
-		$this->assertStringContainsString("\nnldesign_up 1\n", $body);
-		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $body);
+		$this->assertStringContainsString(needle: "\nnldesign_token_sets_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_custom_overrides_total 0\n", haystack: $body);
+		$this->assertStringContainsString(needle: 'nldesign_info{', haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_up 1\n", haystack: $body);
+		$this->assertStringContainsString(needle: "\nnldesign_theming_syncs_total 0\n", haystack: $body);
 	}//end testBothFailuresAreHandledIndependently()
 
 	/**
@@ -329,8 +329,8 @@ class MetricsControllerTest extends TestCase {
 	public function testActiveTokenSetDefaultWhenUnset(): void {
 		$body = $this->controller->index()->render();
 
-		$this->assertSame('rijkshuisstijl', $this->defaults['token_set']);
-		$this->assertStringContainsString('nldesign_active_token_set{name="rijkshuisstijl"} 1', $body);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->defaults['token_set']);
+		$this->assertStringContainsString(needle: 'nldesign_active_token_set{name="rijkshuisstijl"} 1', haystack: $body);
 	}//end testActiveTokenSetDefaultWhenUnset()
 
 	/**
@@ -341,12 +341,12 @@ class MetricsControllerTest extends TestCase {
 	 */
 	public function testThemingSyncsCounterDefaultsToZeroAndIsCastToInt(): void {
 		$unset = $this->controller->index()->render();
-		$this->assertSame('0', $this->defaults['theming_syncs_total']);
-		$this->assertStringContainsString("\nnldesign_theming_syncs_total 0\n", $unset);
+		$this->assertSame(expected: '0', actual: $this->defaults['theming_syncs_total']);
+		$this->assertStringContainsString(needle: "\nnldesign_theming_syncs_total 0\n", haystack: $unset);
 
 		$this->appConfig['theming_syncs_total'] = '3';
 		$set = $this->controller->index()->render();
-		$this->assertStringContainsString("\nnldesign_theming_syncs_total 3\n", $set);
+		$this->assertStringContainsString(needle: "\nnldesign_theming_syncs_total 3\n", haystack: $set);
 	}//end testThemingSyncsCounterDefaultsToZeroAndIsCastToInt()
 
 	/**
@@ -371,13 +371,13 @@ class MetricsControllerTest extends TestCase {
 		}
 
 		foreach ($expected as $name => $type) {
-			$this->assertArrayHasKey($name, $params, "constructor parameter \${$name}");
-			$this->assertTrue($params[$name]->isPromoted(), "\${$name} must be promoted");
-			$this->assertSame($type, (string)$params[$name]->getType());
+			$this->assertArrayHasKey(key: $name, array: $params, message: "constructor parameter \${$name}");
+			$this->assertTrue(condition: $params[$name]->isPromoted(), message: "\${$name} must be promoted");
+			$this->assertSame(expected: $type, actual: (string)$params[$name]->getType());
 
 			$property = new \ReflectionProperty(MetricsController::class, $name);
-			$this->assertTrue($property->isPrivate(), "\${$name} must be private");
-			$this->assertTrue($property->isReadOnly(), "\${$name} must be readonly");
+			$this->assertTrue(condition: $property->isPrivate(), message: "\${$name} must be private");
+			$this->assertTrue(condition: $property->isReadOnly(), message: "\${$name} must be readonly");
 		}
 	}//end testDependenciesArePrivateReadonlyPromotedParameters()
 
@@ -390,8 +390,8 @@ class MetricsControllerTest extends TestCase {
 	public function testSourceHasNoDirectServiceInstantiation(): void {
 		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/MetricsController.php');
 
-		$this->assertDoesNotMatchRegularExpression('/\bnew\s+\\\\?[\w\\\\]*Service\b/', $source);
-		$this->assertStringNotContainsString('\\OC::$server', $source);
-		$this->assertStringNotContainsString('Server::get(', $source);
+		$this->assertDoesNotMatchRegularExpression(pattern: '/\bnew\s+\\\\?[\w\\\\]*Service\b/', string: $source);
+		$this->assertStringNotContainsString(needle: '\\OC::$server', haystack: $source);
+		$this->assertStringNotContainsString(needle: 'Server::get(', haystack: $source);
 	}//end testSourceHasNoDirectServiceInstantiation()
 }//end class

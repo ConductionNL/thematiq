@@ -51,7 +51,7 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 */
 	private function recordingContainer(?ConfigBundleService $bundle): object {
 		$calls = new \ArrayObject();
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willReturnCallback(
 			function (string $id) use ($calls, $bundle) {
 				$calls[] = $id;
@@ -68,12 +68,12 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * @spec openspec/specs/federated-config-sharing/spec.md
 	 */
 	public function testWireIdentityIsStable(): void {
-		$rec = $this->recordingContainer(null);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: null);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
-		$this->assertSame('nldesign.theme', $type->getId());
-		$this->assertSame('NL Design theme', $type->getDisplayName());
-		$this->assertSame('nldesign-theme', $type->getTopic());
+		$this->assertSame(expected: 'nldesign.theme', actual: $type->getId());
+		$this->assertSame(expected: 'NL Design theme', actual: $type->getDisplayName());
+		$this->assertSame(expected: 'nldesign-theme', actual: $type->getTopic());
 	}
 
 	/**
@@ -85,17 +85,17 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * @spec openspec/specs/federated-config-sharing/spec.md
 	 */
 	public function testTheBundleServiceIsResolvedLazily(): void {
-		$rec = $this->recordingContainer(null);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: null);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
 		$type->getId();
 		$type->getDisplayName();
 		$type->getTopic();
 
 		$this->assertCount(
-			0,
-			$rec->calls,
-			'Constructing the type and reading its identity must not resolve anything '
+			expectedCount: 0,
+			haystack: $rec->calls,
+			message: 'Constructing the type and reading its identity must not resolve anything '
 			. 'from the container; it resolved: ' . implode(', ', (array)$rec->calls)
 		);
 	}
@@ -109,28 +109,28 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	public function testSerialiseWrapsTheConfigBundleAndIgnoresTheSelection(): void {
 		$exported = ['config' => ['tokenSet' => 'amsterdam'], 'bundleVersion' => 1];
 
-		$bundle = $this->createMock(ConfigBundleService::class);
-		$bundle->expects($this->exactly(2))->method('export')->willReturn($exported);
+		$bundle = $this->createMock(originalClassName: ConfigBundleService::class);
+		$bundle->expects($this->exactly(count: 2))->method('export')->willReturn($exported);
 
-		$rec = $this->recordingContainer($bundle);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: $bundle);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
 		$empty = $type->serialise([]);
 		$selected = $type->serialise(['something', 'else']);
 
 		$this->assertSame(
-			['type' => 'nldesign.theme', 'version' => '1.0', 'bundle' => $exported],
-			$empty
+			expected: ['type' => 'nldesign.theme', 'version' => '1.0', 'bundle' => $exported],
+			actual: $empty
 		);
 		$this->assertSame(
-			$empty,
-			$selected,
-			'A theme has no selection — $selection must make no difference to the output.'
+			expected: $empty,
+			actual: $selected,
+			message: 'A theme has no selection — $selection must make no difference to the output.'
 		);
 		$this->assertSame(
-			[ConfigBundleService::class, ConfigBundleService::class],
-			(array)$rec->calls,
-			'serialise() must resolve ConfigBundleService from the container, once per call.'
+			expected: [ConfigBundleService::class, ConfigBundleService::class],
+			actual: (array)$rec->calls,
+			message: 'serialise() must resolve ConfigBundleService from the container, once per call.'
 		);
 	}
 
@@ -143,18 +143,18 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 		$inner = ['config' => ['tokenSet' => 'rijkshuisstijl']];
 		$result = ['applied' => 4];
 
-		$bundle = $this->createMock(ConfigBundleService::class);
+		$bundle = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundle->expects($this->once())
 			->method('import')
 			->with($inner, false)
 			->willReturn($result);
 
-		$rec = $this->recordingContainer($bundle);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: $bundle);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
 		$this->assertSame(
-			['installed' => ['nldesign-theme'], 'import' => $result],
-			$type->deserialise(['type' => 'nldesign.theme', 'bundle' => $inner])
+			expected: ['installed' => ['nldesign-theme'], 'import' => $result],
+			actual: $type->deserialise(['type' => 'nldesign.theme', 'bundle' => $inner])
 		);
 	}
 
@@ -169,20 +169,20 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 		// importer as a one-element list. `->with([], false)` is what catches it:
 		// this test failed on the pre-fix code with
 		// "Parameter 0 ... does not match expected value / + 0 => 'not-an-array'".
-		$bundle = $this->createMock(ConfigBundleService::class);
-		$bundle->expects($this->exactly(4))
+		$bundle = $this->createMock(originalClassName: ConfigBundleService::class);
+		$bundle->expects($this->exactly(count: 4))
 			->method('import')
 			->with([], false)
 			->willReturn([]);
 
-		$rec = $this->recordingContainer($bundle);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: $bundle);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
 		foreach ([[], ['bundle' => null], ['bundle' => 'not-an-array'], ['bundle' => 42]] as $payload) {
 			$this->assertSame(
-				['installed' => ['nldesign-theme'], 'import' => []],
-				$type->deserialise($payload),
-				'A malformed payload must import an empty array, not fatal and not smuggle a scalar.'
+				expected: ['installed' => ['nldesign-theme'], 'import' => []],
+				actual: $type->deserialise($payload),
+				message: 'A malformed payload must import an empty array, not fatal and not smuggle a scalar.'
 			);
 		}
 	}
@@ -193,19 +193,19 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 	 * @spec openspec/specs/federated-config-sharing/spec.md
 	 */
 	public function testListenerRegistersOnTheMatchingEventOnly(): void {
-		$rec = $this->recordingContainer(null);
-		$type = new NlDesignThemeShareableConfigType($rec->container);
+		$rec = $this->recordingContainer(bundle: null);
+		$type = new NlDesignThemeShareableConfigType(container: $rec->container);
 
-		$listener = new ShareableConfigTypeListener($type);
+		$listener = new ShareableConfigTypeListener(theme: $type);
 
-		$event = $this->createMock(\OCA\OpenRegister\Service\Config\RegisterShareableConfigTypesEvent::class);
+		$event = $this->createMock(originalClassName: \OCA\OpenRegister\Service\Config\RegisterShareableConfigTypesEvent::class);
 		$event->expects($this->once())->method('registerType')->with($type);
 		$listener->handle($event);
 
 		// Any other event must be ignored — no exception, no registration.
 		$listener->handle(new class extends Event {
 		});
-		$this->addToAssertionCount(1);
+		$this->addToAssertionCount(count: 1);
 	}
 
 	/**
@@ -224,21 +224,21 @@ class NlDesignThemeShareableConfigTypeTest extends TestCase {
 		$root = \dirname(__DIR__, 4);
 
 		$application = file_get_contents($root . '/lib/AppInfo/Application.php');
-		$this->assertIsString($application);
+		$this->assertIsString(actual: $application);
 
 		$this->assertMatchesRegularExpression(
-			'/class_exists\(\s*\\\\?OCA\\\\OpenRegister\\\\Service\\\\Config\\\\RegisterShareableConfigTypesEvent::class\s*\)/',
-			$application,
-			'The shareable-config listener registration must stay behind a class_exists() guard '
+			pattern: '/class_exists\(\s*\\\\?OCA\\\\OpenRegister\\\\Service\\\\Config\\\\RegisterShareableConfigTypesEvent::class\s*\)/',
+			string: $application,
+			message: 'The shareable-config listener registration must stay behind a class_exists() guard '
 			. 'on the OpenRegister event class, or an instance without OpenRegister cannot boot.'
 		);
 
 		$info = file_get_contents($root . '/appinfo/info.xml');
-		$this->assertIsString($info);
+		$this->assertIsString(actual: $info);
 		$this->assertDoesNotMatchRegularExpression(
-			'#<app>\s*openregister\s*</app>#i',
-			$info,
-			'openregister must NOT be declared as a hard <app> dependency — it is optional, '
+			pattern: '#<app>\s*openregister\s*</app>#i',
+			string: $info,
+			message: 'openregister must NOT be declared as a hard <app> dependency — it is optional, '
 			. 'and declaring it would also force this app min-version up to openregister\'s floor.'
 		);
 	}

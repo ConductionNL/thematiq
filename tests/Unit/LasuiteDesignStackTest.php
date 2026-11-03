@@ -59,13 +59,13 @@ class LasuiteDesignStackTest extends TestCase {
 	 * @return DesignSystemService
 	 */
 	private function designSystemService(): DesignSystemService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->repoRoot());
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('');
 
-		return new DesignSystemService($appManager, $config);
+		return new DesignSystemService(appManager: $appManager, config: $config);
 	}//end designSystemService()
 
 	/**
@@ -75,23 +75,23 @@ class LasuiteDesignStackTest extends TestCase {
 	 * @return TokenSetService
 	 */
 	private function tokenSetService(): TokenSetService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->repoRoot());
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('{}');
 
-		$audit = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		return new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$audit,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $audit,
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 	}//end tokenSetService()
 
@@ -106,17 +106,17 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testLasuiteDesignSystemResolvesFiveStylesheetsInOrder(): void {
 		$system = $this->designSystemService()->getDesignSystem('lasuite');
 
-		$this->assertSame('lasuite', $system['id']);
+		$this->assertSame(expected: 'lasuite', actual: $system['id']);
 		$this->assertSame(
-			[
+			expected: [
 				'systems/lasuite/fonts',
 				'systems/lasuite/defaults',
 				'systems/lasuite/brand-override',
 				'systems/lasuite/bridge',
 				'systems/lasuite/element-overrides',
 			],
-			$system['stylesheets'],
-			'The lasuite bundle must declare exactly these five stylesheets, in this order.'
+			actual: $system['stylesheets'],
+			message: 'The lasuite bundle must declare exactly these five stylesheets, in this order.'
 		);
 	}//end testLasuiteDesignSystemResolvesFiveStylesheetsInOrder()
 
@@ -132,21 +132,21 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testCunninghamDesignSystemResolvesFourStylesheetsWithoutBrandOverride(): void {
 		$system = $this->designSystemService()->getDesignSystem('cunningham');
 
-		$this->assertSame('cunningham', $system['id']);
+		$this->assertSame(expected: 'cunningham', actual: $system['id']);
 		$this->assertSame(
-			[
+			expected: [
 				'systems/lasuite/fonts',
 				'systems/lasuite/defaults',
 				'systems/lasuite/bridge',
 				'systems/lasuite/element-overrides',
 			],
-			$system['stylesheets'],
-			'The cunningham bundle must reuse the shared lasuite files, minus brand-override.'
+			actual: $system['stylesheets'],
+			message: 'The cunningham bundle must reuse the shared lasuite files, minus brand-override.'
 		);
 		$this->assertNotContains(
-			'systems/lasuite/brand-override',
-			$system['stylesheets'],
-			'The cunningham bundle must never load the violet brand-override layer.'
+			needle: 'systems/lasuite/brand-override',
+			haystack: $system['stylesheets'],
+			message: 'The cunningham bundle must never load the violet brand-override layer.'
 		);
 	}//end testCunninghamDesignSystemResolvesFourStylesheetsWithoutBrandOverride()
 
@@ -161,16 +161,16 @@ class LasuiteDesignStackTest extends TestCase {
 
 		foreach ($system['stylesheets'] as $stylesheet) {
 			$path = $this->repoRoot() . '/css/' . $stylesheet . '.css';
-			$this->assertFileExists($path, "Declared stylesheet '{$stylesheet}' has no backing CSS file.");
+			$this->assertFileExists(filename: $path, message: "Declared stylesheet '{$stylesheet}' has no backing CSS file.");
 		}
 
 		$this->assertDirectoryExists(
-			$this->repoRoot() . '/css/systems/lasuite/fonts',
-			'The lasuite font binaries directory must exist.'
+			directory: $this->repoRoot() . '/css/systems/lasuite/fonts',
+			message: 'The lasuite font binaries directory must exist.'
 		);
 		$this->assertFileExists(
-			$this->repoRoot() . '/css/tokens/lasuite.css',
-			'The lasuite Layer-3 token file must exist.'
+			filename: $this->repoRoot() . '/css/tokens/lasuite.css',
+			message: 'The lasuite Layer-3 token file must exist.'
 		);
 	}//end testDeclaredStylesheetsHaveBackingFiles()
 
@@ -186,12 +186,12 @@ class LasuiteDesignStackTest extends TestCase {
 
 		foreach ($system['stylesheets'] as $stylesheet) {
 			$path = $this->repoRoot() . '/css/' . $stylesheet . '.css';
-			$this->assertFileExists($path, "Declared stylesheet '{$stylesheet}' has no backing CSS file.");
+			$this->assertFileExists(filename: $path, message: "Declared stylesheet '{$stylesheet}' has no backing CSS file.");
 		}
 
 		$this->assertFileExists(
-			$this->repoRoot() . '/css/tokens/cunningham.css',
-			'The cunningham Layer-3 token file must exist.'
+			filename: $this->repoRoot() . '/css/tokens/cunningham.css',
+			message: 'The cunningham Layer-3 token file must exist.'
 		);
 	}//end testCunninghamDeclaredStylesheetsHaveBackingFiles()
 
@@ -211,15 +211,15 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testTokenSetMetaDeclaresCunninghamDesignSystem(): void {
 		$meta = $this->designSystemService()->getTokenSetMeta('cunningham');
 
-		$this->assertSame('cunningham', $meta['design_system'] ?? null);
-		$this->assertSame('#1A509F', $meta['theming']['primary_color'] ?? null);
+		$this->assertSame(expected: 'cunningham', actual: $meta['design_system'] ?? null);
+		$this->assertSame(expected: '#1A509F', actual: $meta['theming']['primary_color'] ?? null);
 		// Matches the background cunningham.css actually paints
 		// (--nldesign-color-background-dark), corrected in 585ceb7.
-		$this->assertSame('#E1E2E5', $meta['theming']['background_color'] ?? null);
+		$this->assertSame(expected: '#E1E2E5', actual: $meta['theming']['background_color'] ?? null);
 		$this->assertArrayNotHasKey(
-			'logo',
-			$meta['theming'] ?? [],
-			'The cunningham theming block must not carry a logo key.'
+			key: 'logo',
+			array: $meta['theming'] ?? [],
+			message: 'The cunningham theming block must not carry a logo key.'
 		);
 	}//end testTokenSetMetaDeclaresCunninghamDesignSystem()
 
@@ -234,23 +234,23 @@ class LasuiteDesignStackTest extends TestCase {
 		$defaults = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/defaults.css');
 
 		$this->assertStringContainsString(
-			'--lasuite--globals--colors--brand-600: #0659c5;',
-			$defaults,
-			'defaults.css must define the published Cunningham blue brand-600.'
+			needle: '--lasuite--globals--colors--brand-600: #0659c5;',
+			haystack: $defaults,
+			message: 'defaults.css must define the published Cunningham blue brand-600.'
 		);
 		// Checked as an active DECLARATION VALUE (": #hex;"), not a blanket
 		// substring — the file's own provenance header legitimately mentions
 		// these violet hex values in PROSE (documenting what brand-override.css
 		// changes), which must not trip this guard.
 		$this->assertDoesNotMatchRegularExpression(
-			'/:\s*#534fc2\s*;/i',
-			$defaults,
-			'defaults.css must never hard-code the deployed violet brand-600 (#534fc2) as a declaration value — that belongs in brand-override.css.'
+			pattern: '/:\s*#534fc2\s*;/i',
+			string: $defaults,
+			message: 'defaults.css must never hard-code the deployed violet brand-600 (#534fc2) as a declaration value — that belongs in brand-override.css.'
 		);
 		$this->assertDoesNotMatchRegularExpression(
-			'/:\s*#4844ad\s*;/i',
-			$defaults,
-			'defaults.css must never hard-code the deployed violet brand-650/logo (#4844ad) as a declaration value — that belongs in brand-override.css.'
+			pattern: '/:\s*#4844ad\s*;/i',
+			string: $defaults,
+			message: 'defaults.css must never hard-code the deployed violet brand-650/logo (#4844ad) as a declaration value — that belongs in brand-override.css.'
 		);
 	}//end testGeneratedDefaultsDefineTheBlueBaseNotTheViolet()
 
@@ -263,11 +263,11 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testGeneratedDefaultsCarryProvenanceHeader(): void {
 		$defaults = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/defaults.css');
 
-		$this->assertStringContainsString('@openfun/cunningham-tokens@', $defaults);
-		$this->assertStringContainsString('MIT licence', $defaults);
-		$this->assertStringContainsString('Token count: 1167', $defaults);
-		$this->assertStringContainsString('--c--<rest>', $defaults);
-		$this->assertStringContainsString('--lasuite--<rest>', $defaults);
+		$this->assertStringContainsString(needle: '@openfun/cunningham-tokens@', haystack: $defaults);
+		$this->assertStringContainsString(needle: 'MIT licence', haystack: $defaults);
+		$this->assertStringContainsString(needle: 'Token count: 1167', haystack: $defaults);
+		$this->assertStringContainsString(needle: '--c--<rest>', haystack: $defaults);
+		$this->assertStringContainsString(needle: '--lasuite--<rest>', haystack: $defaults);
 	}//end testGeneratedDefaultsCarryProvenanceHeader()
 
 	/**
@@ -284,31 +284,31 @@ class LasuiteDesignStackTest extends TestCase {
 		$override = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/brand-override.css');
 
 		// Provenance: generated from the vendored deployed source, not hand-authored.
-		$this->assertStringContainsString('GENERATED', $override);
-		$this->assertStringContainsString('suitenumerique/docs', $override);
-		$this->assertStringContainsString('--override', $override);
+		$this->assertStringContainsString(needle: 'GENERATED', haystack: $override);
+		$this->assertStringContainsString(needle: 'suitenumerique/docs', haystack: $override);
+		$this->assertStringContainsString(needle: '--override', haystack: $override);
 		// Brand ramp — the deployed violet.
 		$this->assertStringContainsString(
-			'--lasuite--globals--colors--brand-600: #534fc2;',
-			$override,
-			'brand-override.css must redeclare brand-600 to the deployed violet.'
+			needle: '--lasuite--globals--colors--brand-600: #534fc2;',
+			haystack: $override,
+			message: 'brand-override.css must redeclare brand-600 to the deployed violet.'
 		);
 		$this->assertStringContainsString(
-			'--lasuite--globals--colors--brand-650: #4844ad;',
-			$override,
-			'brand-override.css must redeclare brand-650 (also the logo colour) to the deployed violet.'
+			needle: '--lasuite--globals--colors--brand-650: #4844ad;',
+			haystack: $override,
+			message: 'brand-override.css must redeclare brand-650 (also the logo colour) to the deployed violet.'
 		);
 		// Violet-tinted neutrals — the delta now goes beyond the brand ramp.
 		$this->assertStringContainsString(
-			'--lasuite--globals--colors--gray-300: #a9a9bf;',
-			$override,
-			'brand-override.css must redeclare the gray ramp to the deployed violet-tinted neutrals.'
+			needle: '--lasuite--globals--colors--gray-300: #a9a9bf;',
+			haystack: $override,
+			message: 'brand-override.css must redeclare the gray ramp to the deployed violet-tinted neutrals.'
 		);
 		// La Suite's vivid semantic palette (distinct hue, not a tint).
 		$this->assertStringContainsString(
-			'--lasuite--globals--colors--success-500: #1e884a;',
-			$override,
-			"brand-override.css must redeclare the semantic palettes to La Suite's deployed values."
+			needle: '--lasuite--globals--colors--success-500: #1e884a;',
+			haystack: $override,
+			message: "brand-override.css must redeclare the semantic palettes to La Suite's deployed values."
 		);
 	}//end testBrandOverrideIsGeneratedAndResolvesViolet()
 
@@ -332,9 +332,9 @@ class LasuiteDesignStackTest extends TestCase {
 		$audited = array_unique(array_merge($mappedMatches[1], $commentedMatches[1]));
 
 		$this->assertGreaterThanOrEqual(
-			68,
-			\count($audited),
-			'The audited --color-* surface in overrides.css must be at least 68 variables.'
+			expected: 68,
+			actual: \count($audited),
+			message: 'The audited --color-* surface in overrides.css must be at least 68 variables.'
 		);
 
 		preg_match_all('/^\s*(--color-[a-zA-Z0-9-]+)\s*:/m', $bridge, $bridgeMapped);
@@ -344,9 +344,9 @@ class LasuiteDesignStackTest extends TestCase {
 		$missing = array_values(array_diff($audited, $bridgeCovered));
 
 		$this->assertSame(
-			[],
-			$missing,
-			'Every audited --color-* variable must appear in bridge.css as a mapping or a reasoned comment. Missing: ' . implode(', ', $missing)
+			expected: [],
+			actual: $missing,
+			message: 'Every audited --color-* variable must appear in bridge.css as a mapping or a reasoned comment. Missing: ' . implode(', ', $missing)
 		);
 	}//end testBridgeAccountsForEveryAuditedColorVariable()
 
@@ -365,9 +365,9 @@ class LasuiteDesignStackTest extends TestCase {
 		$bridge = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/bridge.css');
 
 		$this->assertMatchesRegularExpression(
-			'/--color-primary:\s*var\(--lasuite-color-brand-650\)\s*!important;/',
-			$bridge,
-			'bridge.css must derive --color-primary from --lasuite-color-brand-650 (both lasuite and cunningham share this file).'
+			pattern: '/--color-primary:\s*var\(--lasuite-color-brand-650\)\s*!important;/',
+			string: $bridge,
+			message: 'bridge.css must derive --color-primary from --lasuite-color-brand-650 (both lasuite and cunningham share this file).'
 		);
 	}//end testBridgeDerivesColorPrimaryFromBrand650()
 
@@ -380,9 +380,9 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testTokenSetMetaDeclaresLasuiteDesignSystem(): void {
 		$meta = $this->designSystemService()->getTokenSetMeta('lasuite');
 
-		$this->assertSame('lasuite', $meta['design_system'] ?? null);
-		$this->assertSame('#4844AD', $meta['theming']['primary_color'] ?? null);
-		$this->assertSame('#FFFFFF', $meta['theming']['background_color'] ?? null);
+		$this->assertSame(expected: 'lasuite', actual: $meta['design_system'] ?? null);
+		$this->assertSame(expected: '#4844AD', actual: $meta['theming']['primary_color'] ?? null);
+		$this->assertSame(expected: '#FFFFFF', actual: $meta['theming']['background_color'] ?? null);
 	}//end testTokenSetMetaDeclaresLasuiteDesignSystem()
 
 	/**
@@ -396,14 +396,14 @@ class LasuiteDesignStackTest extends TestCase {
 		$sets = $this->tokenSetService()->getAvailableTokenSets();
 		$byId = array_column($sets, null, 'id');
 
-		$this->assertArrayHasKey('lasuite', $byId, 'The lasuite token set must be discovered.');
-		$this->assertSame('lasuite', $byId['lasuite']['design_system']);
-		$this->assertSame('#4844AD', $byId['lasuite']['theming']['primary_color']);
-		$this->assertSame('#FFFFFF', $byId['lasuite']['theming']['background_color']);
+		$this->assertArrayHasKey(key: 'lasuite', array: $byId, message: 'The lasuite token set must be discovered.');
+		$this->assertSame(expected: 'lasuite', actual: $byId['lasuite']['design_system']);
+		$this->assertSame(expected: '#4844AD', actual: $byId['lasuite']['theming']['primary_color']);
+		$this->assertSame(expected: '#FFFFFF', actual: $byId['lasuite']['theming']['background_color']);
 		$this->assertArrayNotHasKey(
-			'logo',
-			$byId['lasuite']['theming'],
-			'The lasuite theming block must not carry a logo key (no state logos bundled).'
+			key: 'logo',
+			array: $byId['lasuite']['theming'],
+			message: 'The lasuite theming block must not carry a logo key (no state logos bundled).'
 		);
 	}//end testTokenSetServiceSurfacesLasuiteEntry()
 
@@ -416,7 +416,7 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testUnknownDesignSystemStillFallsBackSafely(): void {
 		$system = $this->designSystemService()->getDesignSystem('__does_not_exist__');
 
-		$this->assertSame([], $system['stylesheets']);
+		$this->assertSame(expected: [], actual: $system['stylesheets']);
 	}//end testUnknownDesignSystemStillFallsBackSafely()
 
 	/**
@@ -431,15 +431,15 @@ class LasuiteDesignStackTest extends TestCase {
 
 		$brand = $contrast->parseColor('#4844AD');
 		$white = $contrast->parseColor('#FFFFFF');
-		$this->assertNotNull($brand);
-		$this->assertNotNull($white);
+		$this->assertNotNull(actual: $brand);
+		$this->assertNotNull(actual: $white);
 
 		$ratio = $contrast->ratio($brand, $white);
 
 		$this->assertGreaterThanOrEqual(
-			4.5,
-			$ratio,
-			sprintf('brand-650 (#4844AD) vs white must be >= 4.5:1 for WCAG AA text; got %.2f:1.', $ratio)
+			expected: 4.5,
+			actual: $ratio,
+			message: sprintf('brand-650 (#4844AD) vs white must be >= 4.5:1 for WCAG AA text; got %.2f:1.', $ratio)
 		);
 	}//end testBrandPrimaryTextContrastMeetsAa()
 
@@ -460,7 +460,7 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testStatusFillsCarryWhiteTextAtAa(): void {
 		$contrast = new ContrastService();
 		$white = $contrast->parseColor('#FFFFFF');
-		$this->assertNotNull($white);
+		$this->assertNotNull(actual: $white);
 
 		$fillSets = [
 			// cunningham set — the blue npm base (defaults.css, no brand-override).
@@ -482,13 +482,13 @@ class LasuiteDesignStackTest extends TestCase {
 		foreach ($fillSets as $set => $fills) {
 			foreach ($fills as $name => $hex) {
 				$rgb = $contrast->parseColor($hex);
-				$this->assertNotNull($rgb, "Could not parse {$set} {$name} ({$hex}).");
+				$this->assertNotNull(actual: $rgb, message: "Could not parse {$set} {$name} ({$hex}).");
 
 				$ratio = $contrast->ratio($rgb, $white);
 				$this->assertGreaterThanOrEqual(
-					4.5,
-					$ratio,
-					sprintf('%s %s (%s) vs white must be >= 4.5:1 for WCAG AA text; got %.2f:1.', $set, $name, $hex, $ratio)
+					expected: 4.5,
+					actual: $ratio,
+					message: sprintf('%s %s (%s) vs white must be >= 4.5:1 for WCAG AA text; got %.2f:1.', $set, $name, $hex, $ratio)
 				);
 			}
 		}
@@ -503,7 +503,7 @@ class LasuiteDesignStackTest extends TestCase {
 	public function testFontsDirectoryCarriesOflLicenceAndExpectedWeights(): void {
 		$fontsDir = $this->repoRoot() . '/css/systems/lasuite/fonts';
 
-		$this->assertFileExists($fontsDir . '/OFL.txt', 'css/systems/lasuite/fonts/ must contain an OFL.txt licence file.');
+		$this->assertFileExists(filename: $fontsDir . '/OFL.txt', message: 'css/systems/lasuite/fonts/ must contain an OFL.txt licence file.');
 
 		$expected = [
 			'inter-latin-400-normal.woff2',
@@ -514,7 +514,7 @@ class LasuiteDesignStackTest extends TestCase {
 			'inter-latin-700-italic.woff2',
 		];
 		foreach ($expected as $file) {
-			$this->assertFileExists($fontsDir . '/' . $file, "Expected Inter font file missing: {$file}");
+			$this->assertFileExists(filename: $fontsDir . '/' . $file, message: "Expected Inter font file missing: {$file}");
 		}
 	}//end testFontsDirectoryCarriesOflLicenceAndExpectedWeights()
 
@@ -567,9 +567,9 @@ class LasuiteDesignStackTest extends TestCase {
 		}
 
 		$this->assertSame(
-			[],
-			$violations,
-			'A Marianne-named file was found outside the sanctioned gated location '
+			expected: [],
+			actual: $violations,
+			message: 'A Marianne-named file was found outside the sanctioned gated location '
 			. '(css/systems/lasuite/fonts/marianne/ or css/systems/lasuite/marianne.css): ' . implode(', ', $violations)
 		);
 	}//end testMarianneAssetsAreScopedToTheGatedDirectoryAndStylesheet()
@@ -605,9 +605,9 @@ class LasuiteDesignStackTest extends TestCase {
 			preg_match_all('/url\([^)]*\)/i', $contents, $matches);
 			foreach ($matches[0] as $url) {
 				$this->assertDoesNotMatchRegularExpression(
-					'/marianne/i',
-					$url,
-					str_replace($root . '/', '', $path) . " must not url()-source Marianne outside the gated marianne.css: {$url}"
+					pattern: '/marianne/i',
+					string: $url,
+					message: str_replace($root . '/', '', $path) . " must not url()-source Marianne outside the gated marianne.css: {$url}"
 				);
 			}
 		}
@@ -621,14 +621,14 @@ class LasuiteDesignStackTest extends TestCase {
 	 */
 	public function testTokenSetManifestEntryHasNoLogoKey(): void {
 		$json = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
-		$this->assertIsArray($json, 'token-sets.json must decode to an array.');
+		$this->assertIsArray(actual: $json, message: 'token-sets.json must decode to an array.');
 
 		$byId = array_column($json, null, 'id');
-		$this->assertArrayHasKey('lasuite', $byId, 'token-sets.json must contain a lasuite entry.');
+		$this->assertArrayHasKey(key: 'lasuite', array: $byId, message: 'token-sets.json must contain a lasuite entry.');
 		$this->assertArrayNotHasKey(
-			'logo',
-			$byId['lasuite']['theming'] ?? [],
-			'The lasuite theming block must not declare a logo key.'
+			key: 'logo',
+			array: $byId['lasuite']['theming'] ?? [],
+			message: 'The lasuite theming block must not declare a logo key.'
 		);
 	}//end testTokenSetManifestEntryHasNoLogoKey()
 
@@ -657,9 +657,9 @@ class LasuiteDesignStackTest extends TestCase {
 			] as $name
 		) {
 			$this->assertDoesNotMatchRegularExpression(
-				'/^\s*' . preg_quote($name, '/') . '\s*:/m',
-				$bridge,
-				"bridge.css must not ACTIVELY set {$name} (REQ-CSS-007 dark-mode compatibility)."
+				pattern: '/^\s*' . preg_quote($name, '/') . '\s*:/m',
+				string: $bridge,
+				message: "bridge.css must not ACTIVELY set {$name} (REQ-CSS-007 dark-mode compatibility)."
 			);
 		}
 	}//end testBridgeNeverSetsDarkModeCompatibilityVariables()
@@ -684,9 +684,9 @@ class LasuiteDesignStackTest extends TestCase {
 			] as $name
 		) {
 			$this->assertMatchesRegularExpression(
-				'/\/\*\s*' . preg_quote($name, '/') . '\s*:/',
-				$bridge,
-				"bridge.css must document {$name} as a commented, reasoned line."
+				pattern: '/\/\*\s*' . preg_quote($name, '/') . '\s*:/',
+				string: $bridge,
+				message: "bridge.css must document {$name} as a commented, reasoned line."
 			);
 		}
 	}//end testBridgeDocumentsDarkModeCompatVariablesWithAReason()
@@ -701,18 +701,18 @@ class LasuiteDesignStackTest extends TestCase {
 		$fonts = (string)file_get_contents($this->repoRoot() . '/css/systems/lasuite/fonts.css');
 
 		$this->assertMatchesRegularExpression(
-			'/--lasuite-font-family:\s*Marianne,\s*Inter,\s*sans-serif/',
-			$fonts,
-			'fonts.css must define --lasuite-font-family with Marianne first, Inter fallback.'
+			pattern: '/--lasuite-font-family:\s*Marianne,\s*Inter,\s*sans-serif/',
+			string: $fonts,
+			message: 'fonts.css must define --lasuite-font-family with Marianne first, Inter fallback.'
 		);
 
 		// Marianne must never appear inside a url() source.
 		preg_match_all('/url\([^)]*\)/i', $fonts, $urlMatches);
 		foreach ($urlMatches[0] as $url) {
 			$this->assertDoesNotMatchRegularExpression(
-				'/marianne/i',
-				$url,
-				"fonts.css must not url()-source Marianne: {$url}"
+				pattern: '/marianne/i',
+				string: $url,
+				message: "fonts.css must not url()-source Marianne: {$url}"
 			);
 		}
 	}//end testFontsLayerNeverUrlSourcesMarianne()
@@ -736,12 +736,12 @@ class LasuiteDesignStackTest extends TestCase {
 
 		// Isolate the #header rule block and assert it declares no `position`.
 		$matched = preg_match('/^#header,\s*\n\s*header#header\s*\{(.*?)\}/ms', $overrides, $m);
-		$this->assertSame(1, $matched, 'Could not locate the #header rule block in element-overrides.css.');
+		$this->assertSame(expected: 1, actual: $matched, message: 'Could not locate the #header rule block in element-overrides.css.');
 
 		$this->assertDoesNotMatchRegularExpression(
-			'/^\s*position\s*:/m',
-			$m[1],
-			'element-overrides.css must not set `position` on #header — Nextcloud needs it to stay '
+			pattern: '/^\s*position\s*:/m',
+			string: $m[1],
+			message: 'element-overrides.css must not set `position` on #header — Nextcloud needs it to stay '
 			. '`absolute` (out of flow) or a ~54px gap reappears between the header and app content.'
 		);
 	}//end testElementOverridesNeverForcesHeaderPosition()
@@ -774,20 +774,20 @@ class LasuiteDesignStackTest extends TestCase {
 		// long `var(a, var(b))` onto its own lines, and this test must not be
 		// the reason a stylesheet cannot be formatted.
 		$this->assertMatchesRegularExpression(
-			'/#content-vue\.content[^{]*\{[^}]*background-color:\s*var\(\s*'
+			pattern: '/#content-vue\.content[^{]*\{[^}]*background-color:\s*var\(\s*'
 			. '--lasuite--contextuals--background--surface--tertiary,\s*'
 			. 'var\(\s*--lasuite-color-gray-025\s*\)\s*\)/ms',
-			$overrides,
-			'The shell (#content-vue.content) must carry the grey canvas via the '
+			string: $overrides,
+			message: 'The shell (#content-vue.content) must carry the grey canvas via the '
 			. 'contextual surface token, falling back to gray-025.'
 		);
 
 		$this->assertMatchesRegularExpression(
-			'/#app-content-vue\s*\{[^}]*background:\s*var\(\s*'
+			pattern: '/#app-content-vue\s*\{[^}]*background:\s*var\(\s*'
 			. '--lasuite--contextuals--background--surface--primary,\s*'
 			. 'var\(\s*--lasuite-color-gray-000\s*\)\s*\)/ms',
-			$overrides,
-			'The app content must be the card surface, falling back to gray-000.'
+			string: $overrides,
+			message: 'The app content must be the card surface, falling back to gray-000.'
 		);
 	}//end testElementOverridesInvertsCanvasAndCard()
 }//end class

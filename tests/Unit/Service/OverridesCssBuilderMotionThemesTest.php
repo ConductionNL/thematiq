@@ -44,13 +44,13 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-937-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(contrast: new ContrastService(), parser: $parser, appManager: $appManager, logger: $this->createMock(originalClassName: LoggerInterface::class));
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
 				cssParser: $parser,
 				darkPalette: $darkPalette
 			)
@@ -100,9 +100,9 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 		$css = $this->service->getRawContent();
 
 		$this->assertSame(
-			['--animation-quick' => '400ms !important', '--animation-slow' => '800ms !important'],
-			$this->block(css: $css, selector: self::MOTION_SCOPE),
-			'a chosen theme declares the durations on body, so the override must too'
+			expected: ['--animation-quick' => '400ms !important', '--animation-slow' => '800ms !important'],
+			actual: $this->block(css: $css, selector: self::MOTION_SCOPE),
+			message: 'a chosen theme declares the durations on body, so the override must too'
 		);
 	}//end testMotionOverridesAreDeclaredOnBody()
 
@@ -113,7 +113,7 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 	public function testOnlyMotionGoesOnBody(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
 
-		$this->assertNull($this->block(css: $this->service->getRawContent(), selector: self::MOTION_SCOPE));
+		$this->assertNull(actual: $this->block(css: $this->service->getRawContent(), selector: self::MOTION_SCOPE));
 	}//end testOnlyMotionGoesOnBody()
 
 	/**
@@ -123,7 +123,7 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 		$tokens = ['--animation-quick' => '400ms', '--color-primary' => '#154273'];
 		$this->service->write(tokens: $tokens);
 
-		$this->assertSame($tokens, $this->service->read());
-		$this->assertSame([], $this->service->readDark());
+		$this->assertSame(expected: $tokens, actual: $this->service->read());
+		$this->assertSame(expected: [], actual: $this->service->readDark());
 	}//end testTheBodyCopyDoesNotChangeWhatIsReadBack()
 }//end class

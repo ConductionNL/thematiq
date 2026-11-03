@@ -130,7 +130,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	 * @return array<string, mixed> The audit result.
 	 */
 	private function audit(string $primary = '#123456'): array {
-		return (new TokenSetVocabularyAuditService(new CssParserService()))->auditSet(
+		return (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => $primary]]
@@ -149,14 +149,14 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 
 		$result = $this->audit();
 
-		$this->assertTrue($result['auditable']);
-		$this->assertSame([], $result['missingRequired']);
-		$this->assertSame(['--nldesign-color-blue-40'], $result['foreignNldesignNames']);
-		$this->assertFalse($result['complete']);
+		$this->assertTrue(condition: $result['auditable']);
+		$this->assertSame(expected: [], actual: $result['missingRequired']);
+		$this->assertSame(expected: ['--nldesign-color-blue-40'], actual: $result['foreignNldesignNames']);
+		$this->assertFalse(condition: $result['complete']);
 
 		// The control: the raw palette step under the brand prefix is not app vocabulary.
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(extra: "\t--example-color-blue-40: #1d4ed8;\n"));
-		$this->assertTrue($this->audit()['complete']);
+		$this->assertTrue(condition: $this->audit()['complete']);
 	}//end testANldesignNameNoLayerReadsIsForeign()
 
 	/**
@@ -175,19 +175,19 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 		$this->write(path: 'css/custom-overrides.css', css: ":root { --nldesign-typed-in-the-editor: 1px; }\n");
 		$this->write(path: 'css/custom-css.css', css: "body { color: var(--nldesign-typed-as-custom-css); }\n");
 
-		$vocabulary = (new TokenSetVocabularyAuditService(new CssParserService()))->declaredVocabulary(appPath: $this->appDir);
+		$vocabulary = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->declaredVocabulary(appPath: $this->appDir);
 
-		$this->assertContains('--nldesign-logo-url', $vocabulary);
-		$this->assertContains('--nldesign-color-primary', $vocabulary);
+		$this->assertContains(needle: '--nldesign-logo-url', haystack: $vocabulary);
+		$this->assertContains(needle: '--nldesign-color-primary', haystack: $vocabulary);
 		foreach (['--nldesign-only-in-tokens', '--nldesign-only-in-dark-tokens', '--nldesign-typed-in-the-editor', '--nldesign-typed-as-custom-css'] as $name) {
-			$this->assertNotContains($name, $vocabulary, $name . ' must not widen the vocabulary');
+			$this->assertNotContains(needle: $name, haystack: $vocabulary, message: $name . ' must not widen the vocabulary');
 		}
 
 		// So a set declaring the logo url is complete, and one declaring a runtime-only name is not.
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(extra: "\t--nldesign-logo-url: url(x.svg);\n"));
-		$this->assertTrue($this->audit()['complete']);
+		$this->assertTrue(condition: $this->audit()['complete']);
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(extra: "\t--nldesign-typed-in-the-editor: 1px;\n"));
-		$this->assertSame(['--nldesign-typed-in-the-editor'], $this->audit()['foreignNldesignNames']);
+		$this->assertSame(expected: ['--nldesign-typed-in-the-editor'], actual: $this->audit()['foreignNldesignNames']);
 	}//end testTheVocabularyIsEveryNonTokenLayerAndNeverTheRuntimeFiles()
 
 	/**
@@ -201,16 +201,16 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(extra: "\t--nldesign-tokenSetOrder-0: 0;\n"));
 
 		$result = $this->audit();
-		$this->assertSame(['--nldesign-tokenSetOrder-0'], $result['foreignNldesignNames']);
-		$this->assertFalse($result['complete']);
+		$this->assertSame(expected: ['--nldesign-tokenSetOrder-0'], actual: $result['foreignNldesignNames']);
+		$this->assertFalse(condition: $result['complete']);
 
 		// The scan and the parse share one character class: once a layer reads
 		// the camelCase name, it is vocabulary, exactly as written.
 		$this->write(path: 'css/systems/nldesign/element-overrides.css', css: "body { order: var(--nldesign-tokenSetOrder-0); }\n");
-		$service = new TokenSetVocabularyAuditService(new CssParserService());
-		$this->assertContains('--nldesign-tokenSetOrder-0', $service->declaredVocabulary(appPath: $this->appDir));
-		$this->assertNotContains('--nldesign-tokensetorder-0', $service->declaredVocabulary(appPath: $this->appDir));
-		$this->assertTrue($this->audit()['complete']);
+		$service = new TokenSetVocabularyAuditService(parser: new CssParserService());
+		$this->assertContains(needle: '--nldesign-tokenSetOrder-0', haystack: $service->declaredVocabulary(appPath: $this->appDir));
+		$this->assertNotContains(needle: '--nldesign-tokensetorder-0', haystack: $service->declaredVocabulary(appPath: $this->appDir));
+		$this->assertTrue(condition: $this->audit()['complete']);
 	}//end testACamelCaseNameIsRecognisedKeptAsWrittenAndReported()
 
 	/**
@@ -224,18 +224,18 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(primary: '#000000'));
 
 		$result = $this->audit(primary: '#333');
-		$this->assertTrue($result['primaryMismatch']);
-		$this->assertSame('#333333', $result['declaredPrimary']);
-		$this->assertSame('#000000', $result['cssPrimary']);
-		$this->assertFalse($result['complete']);
+		$this->assertTrue(condition: $result['primaryMismatch']);
+		$this->assertSame(expected: '#333333', actual: $result['declaredPrimary']);
+		$this->assertSame(expected: '#000000', actual: $result['cssPrimary']);
+		$this->assertFalse(condition: $result['complete']);
 
 		// Case and the 3-digit form are normalised before comparing.
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet(primary: '#ABC'));
 		$agreeing = $this->audit(primary: '#aabbcc');
-		$this->assertFalse($agreeing['primaryMismatch']);
-		$this->assertSame('#aabbcc', $agreeing['cssPrimary']);
-		$this->assertSame('#aabbcc', $agreeing['declaredPrimary']);
-		$this->assertTrue($agreeing['complete']);
+		$this->assertFalse(condition: $agreeing['primaryMismatch']);
+		$this->assertSame(expected: '#aabbcc', actual: $agreeing['cssPrimary']);
+		$this->assertSame(expected: '#aabbcc', actual: $agreeing['declaredPrimary']);
+		$this->assertTrue(condition: $agreeing['complete']);
 	}//end testAPrimaryThatDisagreesWithTheManifestIsAMismatchComparedNormalised()
 
 	/**
@@ -249,32 +249,32 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	public function testTheVocabularyFindingHasItsOwnKindAndShape(): void {
 		$this->write(path: 'css/tokens/example.css', css: ":root {\n\t--nldesign-color-primary: #000000;\n\t--nldesign-color-blue-40: #1d4ed8;\n}\n");
 
-		$service = new TokenSetVocabularyAuditService(new CssParserService());
+		$service = new TokenSetVocabularyAuditService(parser: new CssParserService());
 		$warnings = $service->warningsFor(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#333333']]
 		);
 
-		$this->assertCount(1, $warnings);
-		$this->assertSame(['kind', 'missing', 'foreign', 'primaryMismatch', 'declaredPrimary', 'cssPrimary'], array_keys($warnings[0]));
-		$this->assertSame('incomplete', $warnings[0]['kind']);
-		$this->assertContains('--nldesign-color-text', $warnings[0]['missing']);
-		$this->assertSame(['--nldesign-color-blue-40'], $warnings[0]['foreign']);
-		$this->assertTrue($warnings[0]['primaryMismatch']);
-		$this->assertSame('#333333', $warnings[0]['declaredPrimary']);
-		$this->assertSame('#000000', $warnings[0]['cssPrimary']);
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertSame(expected: ['kind', 'missing', 'foreign', 'primaryMismatch', 'declaredPrimary', 'cssPrimary'], actual: array_keys($warnings[0]));
+		$this->assertSame(expected: 'incomplete', actual: $warnings[0]['kind']);
+		$this->assertContains(needle: '--nldesign-color-text', haystack: $warnings[0]['missing']);
+		$this->assertSame(expected: ['--nldesign-color-blue-40'], actual: $warnings[0]['foreign']);
+		$this->assertTrue(condition: $warnings[0]['primaryMismatch']);
+		$this->assertSame(expected: '#333333', actual: $warnings[0]['declaredPrimary']);
+		$this->assertSame(expected: '#000000', actual: $warnings[0]['cssPrimary']);
 
 		// A contrast finding on the same channel keeps its own shape, with no kind.
 		$contrast = (new ContrastService())->check(declarations: ['--nldesign-color-primary' => '#777777', '--nldesign-color-primary-text' => '#888888']);
-		$this->assertNotSame([], $contrast);
+		$this->assertNotSame(expected: [], actual: $contrast);
 		foreach ($contrast as $finding) {
-			$this->assertArrayNotHasKey('kind', $finding);
-			$this->assertArrayHasKey('pair', $finding);
+			$this->assertArrayNotHasKey(key: 'kind', array: $finding);
+			$this->assertArrayHasKey(key: 'pair', array: $finding);
 		}
 
 		// A complete set emits nothing.
 		$this->write(path: 'css/tokens/example.css', css: $this->completeSet());
-		$this->assertSame([], $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]));
+		$this->assertSame(expected: [], actual: $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]));
 	}//end testTheVocabularyFindingHasItsOwnKindAndShape()
 }//end class

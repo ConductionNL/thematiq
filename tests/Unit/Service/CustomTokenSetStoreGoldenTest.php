@@ -85,9 +85,9 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testStoreMatchesTheGoldenRecording()
 
@@ -101,7 +101,7 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 	 */
 	private function runCase(Randomizer $random, array $sources): string {
 		$appConfig = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, $default = '') use (&$appConfig) {
 				return ($appConfig[$key] ?? $default);
@@ -205,19 +205,19 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 	 */
 	private function darkPalette(bool $throws, RuntimeFileStore $store): DarkPaletteService {
 		if ($throws === true) {
-			$dark = $this->createMock(DarkPaletteService::class);
+			$dark = $this->createMock(originalClassName: DarkPaletteService::class);
 			$dark->method('generateAndWrite')->willThrowException(new RuntimeException('dark generation failed'));
 			return $dark;
 		}
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
 
 		return new DarkPaletteService(
 			contrast: new ContrastService(),
 			parser: new CssParserService(),
 			appManager: $appManager,
-			logger: $this->createMock(LoggerInterface::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
 			store: $store
 		);
 	}//end darkPalette()

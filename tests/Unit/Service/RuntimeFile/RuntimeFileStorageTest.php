@@ -50,7 +50,7 @@ class RuntimeFileStorageTest extends TestCase {
 	}//end setUp()
 
 	protected function tearDown(): void {
-		$this->remove(dirname($this->appDir));
+		$this->remove(path: dirname($this->appDir));
 		parent::tearDown();
 	}//end tearDown()
 
@@ -58,7 +58,7 @@ class RuntimeFileStorageTest extends TestCase {
 		if (is_dir($path) === true) {
 			foreach (scandir($path) ?: [] as $entry) {
 				if ($entry !== '.' && $entry !== '..') {
-					$this->remove($path . '/' . $entry);
+					$this->remove(path: $path . '/' . $entry);
 				}
 			}
 
@@ -72,15 +72,15 @@ class RuntimeFileStorageTest extends TestCase {
 	}//end remove()
 
 	private function locator(): RuntimeFileLocator {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkTo')->willReturnCallback(static fn (string $app, string $file): string => '/custom_apps/' . $app . '/' . $file);
 		$urls->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => '/index.php/apps/thematiq/runtime/' . $args['name']);
-		$temp = $this->createMock(ITempManager::class);
+		$temp = $this->createMock(originalClassName: ITempManager::class);
 		$temp->method('getTemporaryFile')->willReturnCallback(fn (string $postfix): string => $this->storeDir . '/tmp' . bin2hex(random_bytes(3)) . $postfix);
 
-		return new RuntimeFileLocator($appManager, new DirectoryRuntimeFileStore($this->storeDir), $urls, $temp);
+		return new RuntimeFileLocator(appManager: $appManager, store: new DirectoryRuntimeFileStore(root: $this->storeDir), urlGenerator: $urls, tempManager: $temp);
 	}//end locator()
 
 	/**
@@ -110,55 +110,55 @@ class RuntimeFileStorageTest extends TestCase {
 	 * @dataProvider names
 	 */
 	public function testOnlyRuntimeNamesAreAllowed(string $name, bool $allowed): void {
-		$this->assertSame($allowed, (new RuntimeFileNames())->isAllowed($name), $name);
+		$this->assertSame(expected: $allowed, actual: (new RuntimeFileNames())->isAllowed($name), message: $name);
 	}//end testOnlyRuntimeNamesAreAllowed()
 
 	public function testTheStoreRefusesANameOutsideTheSet(): void {
-		$this->expectException(InvalidArgumentException::class);
-		(new DirectoryRuntimeFileStore($this->storeDir))->write('css/tokens/../../config/config.php', 'x');
+		$this->expectException(exception: InvalidArgumentException::class);
+		(new DirectoryRuntimeFileStore(root: $this->storeDir))->write('css/tokens/../../config/config.php', 'x');
 	}//end testTheStoreRefusesANameOutsideTheSet()
 
 	public function testTheDirectoryStoreRoundTripsAndRevisesOnChange(): void {
-		$store = new DirectoryRuntimeFileStore($this->storeDir);
-		$this->assertNull($store->read('css/custom-css.css'));
-		$this->assertSame('', $store->revision('css/custom-css.css'));
+		$store = new DirectoryRuntimeFileStore(root: $this->storeDir);
+		$this->assertNull(actual: $store->read('css/custom-css.css'));
+		$this->assertSame(expected: '', actual: $store->revision('css/custom-css.css'));
 
 		$store->write('css/custom-css.css', 'a { color: red; }');
 		$first = $store->revision('css/custom-css.css');
-		$this->assertSame('a { color: red; }', $store->read('css/custom-css.css'));
+		$this->assertSame(expected: 'a { color: red; }', actual: $store->read('css/custom-css.css'));
 
 		$store->write('css/custom-css.css', 'a { color: blue; }');
-		$this->assertNotSame($first, $store->revision('css/custom-css.css'));
+		$this->assertNotSame(expected: $first, actual: $store->revision('css/custom-css.css'));
 
 		$store->write('css/tokens/dark/x.css', ':root {}');
-		$this->assertSame(['css/tokens/dark/x.css'], $store->listDirectory('css/tokens/dark'));
+		$this->assertSame(expected: ['css/tokens/dark/x.css'], actual: $store->listDirectory('css/tokens/dark'));
 
 		$store->delete('css/custom-css.css');
 		$store->delete('css/custom-css.css');
-		$this->assertFalse($store->exists('css/custom-css.css'));
+		$this->assertFalse(condition: $store->exists('css/custom-css.css'));
 	}//end testTheDirectoryStoreRoundTripsAndRevisesOnChange()
 
 	public function testAShippedSetIsReadFromTheReleaseEvenWhenTheStoreHoldsTheSameName(): void {
 		$locator = $this->locator();
 		$locator->store()->write('css/tokens/utrecht.css', ':root { --nldesign-color-primary: red; }');
 
-		$this->assertTrue($locator->isProtected('css/tokens/utrecht.css'));
-		$this->assertTrue($locator->isProtected('css/tokens/dark/utrecht.css'));
-		$this->assertTrue($locator->isProtected('img/logos/utrecht.svg'));
-		$this->assertStringContainsString('#24578f', (string)$locator->read('css/tokens/utrecht.css'));
-		$this->assertSame('/custom_apps/thematiq/css/tokens/utrecht.css', $locator->url('css/tokens/utrecht.css'));
-		$this->assertSame(['css/tokens/utrecht.css'], $locator->listDirectory('css/tokens', '.css'));
+		$this->assertTrue(condition: $locator->isProtected('css/tokens/utrecht.css'));
+		$this->assertTrue(condition: $locator->isProtected('css/tokens/dark/utrecht.css'));
+		$this->assertTrue(condition: $locator->isProtected('img/logos/utrecht.svg'));
+		$this->assertStringContainsString(needle: '#24578f', haystack: (string)$locator->read('css/tokens/utrecht.css'));
+		$this->assertSame(expected: '/custom_apps/thematiq/css/tokens/utrecht.css', actual: $locator->url('css/tokens/utrecht.css'));
+		$this->assertSame(expected: ['css/tokens/utrecht.css'], actual: $locator->listDirectory('css/tokens', '.css'));
 	}//end testAShippedSetIsReadFromTheReleaseEvenWhenTheStoreHoldsTheSameName()
 
 	public function testAnUploadedSetIsReadFromTheStoreAndServedByRoute(): void {
 		$locator = $this->locator();
 		$locator->store()->write('css/tokens/gemeente-voorbeeld.css', ':root {}');
 
-		$this->assertFalse($locator->isProtected('css/tokens/gemeente-voorbeeld.css'));
-		$this->assertSame(':root {}', $locator->read('css/tokens/gemeente-voorbeeld.css'));
-		$this->assertStringStartsWith('/index.php/apps/thematiq/runtime/css/tokens/gemeente-voorbeeld.css?v=', (string)$locator->url('css/tokens/gemeente-voorbeeld.css'));
-		$this->assertSame(['css/tokens/gemeente-voorbeeld.css', 'css/tokens/utrecht.css'], $locator->listDirectory('css/tokens', '.css'));
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/gemeente-voorbeeld.css');
+		$this->assertFalse(condition: $locator->isProtected('css/tokens/gemeente-voorbeeld.css'));
+		$this->assertSame(expected: ':root {}', actual: $locator->read('css/tokens/gemeente-voorbeeld.css'));
+		$this->assertStringStartsWith(prefix: '/index.php/apps/thematiq/runtime/css/tokens/gemeente-voorbeeld.css?v=', string: (string)$locator->url('css/tokens/gemeente-voorbeeld.css'));
+		$this->assertSame(expected: ['css/tokens/gemeente-voorbeeld.css', 'css/tokens/utrecht.css'], actual: $locator->listDirectory('css/tokens', '.css'));
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/gemeente-voorbeeld.css');
 	}//end testAnUploadedSetIsReadFromTheStoreAndServedByRoute()
 
 	public function testTheStoreWinsOverAStaleAppDirectoryCopyOfARuntimeFile(): void {
@@ -166,11 +166,11 @@ class RuntimeFileStorageTest extends TestCase {
 		// so reads must too, or every save would silently stop applying.
 		file_put_contents($this->appDir . '/css/custom-overrides.css', ':root { --color-primary: stale; }');
 		$locator = $this->locator();
-		$this->assertStringContainsString('stale', (string)$locator->read('css/custom-overrides.css'));
+		$this->assertStringContainsString(needle: 'stale', haystack: (string)$locator->read('css/custom-overrides.css'));
 
 		$locator->store()->write('css/custom-overrides.css', ':root { --color-primary: fresh; }');
-		$this->assertStringContainsString('fresh', (string)$locator->read('css/custom-overrides.css'));
-		$this->assertStringStartsWith('/index.php/apps/thematiq/runtime/', (string)$locator->url('css/custom-overrides.css'));
+		$this->assertStringContainsString(needle: 'fresh', haystack: (string)$locator->read('css/custom-overrides.css'));
+		$this->assertStringStartsWith(prefix: '/index.php/apps/thematiq/runtime/', string: (string)$locator->url('css/custom-overrides.css'));
 	}//end testTheStoreWinsOverAStaleAppDirectoryCopyOfARuntimeFile()
 
 	public function testALocalPathOfARuntimeImageIsATemporaryCopy(): void {
@@ -178,45 +178,45 @@ class RuntimeFileStorageTest extends TestCase {
 		$locator->store()->write('img/backgrounds/utrecht-captured-background.jpg', 'JPEGDATA');
 
 		$path = (string)$locator->localPath('img/backgrounds/utrecht-captured-background.jpg');
-		$this->assertStringEndsWith('.jpg', $path);
-		$this->assertSame('JPEGDATA', file_get_contents($path));
-		$this->assertStringStartsNotWith($this->appDir, $path);
-		$this->assertNull($locator->localPath('img/backgrounds/missing.jpg'));
+		$this->assertStringEndsWith(suffix: '.jpg', string: $path);
+		$this->assertSame(expected: 'JPEGDATA', actual: file_get_contents($path));
+		$this->assertStringStartsNotWith(prefix: $this->appDir, string: $path);
+		$this->assertNull(actual: $locator->localPath('img/backgrounds/missing.jpg'));
 	}//end testALocalPathOfARuntimeImageIsATemporaryCopy()
 
 	public function testTheAppDataStoreUsesOneFlatFolderPerDirectory(): void {
-		$file = $this->createMock(ISimpleFile::class);
+		$file = $this->createMock(originalClassName: ISimpleFile::class);
 		$file->method('getContent')->willReturn('dark css');
-		$folder = $this->createMock(ISimpleFolder::class);
+		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('getFile')->with('example.css')->willReturn($file);
 		$folder->method('fileExists')->with('example.css')->willReturn(true);
-		$appData = $this->createMock(IAppData::class);
+		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->with('css-tokens-dark')->willReturn($folder);
 
-		$store = new AppDataRuntimeFileStore($appData);
-		$this->assertSame('dark css', $store->read('css/tokens/dark/example.css'));
-		$this->assertTrue($store->exists('css/tokens/dark/example.css'));
+		$store = new AppDataRuntimeFileStore(appData: $appData);
+		$this->assertSame(expected: 'dark css', actual: $store->read('css/tokens/dark/example.css'));
+		$this->assertTrue(condition: $store->exists('css/tokens/dark/example.css'));
 	}//end testTheAppDataStoreUsesOneFlatFolderPerDirectory()
 
 	public function testTheAppDataStoreCreatesItsFolderOnFirstWrite(): void {
-		$folder = $this->createMock(ISimpleFolder::class);
+		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturn(false);
 		$folder->expects($this->once())->method('newFile')->with('custom-css.css', 'a {}');
-		$appData = $this->createMock(IAppData::class);
+		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willThrowException(new NotFoundException());
 		$appData->expects($this->once())->method('newFolder')->with('css')->willReturn($folder);
 
-		(new AppDataRuntimeFileStore($appData))->write('css/custom-css.css', 'a {}');
+		(new AppDataRuntimeFileStore(appData: $appData))->write('css/custom-css.css', 'a {}');
 	}//end testTheAppDataStoreCreatesItsFolderOnFirstWrite()
 
 	public function testAMissingAppDataFileReadsAsAbsent(): void {
-		$appData = $this->createMock(IAppData::class);
+		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willThrowException(new NotFoundException());
 
-		$store = new AppDataRuntimeFileStore($appData);
-		$this->assertNull($store->read('css/custom-css.css'));
-		$this->assertFalse($store->exists('css/custom-css.css'));
-		$this->assertSame('', $store->revision('css/custom-css.css'));
-		$this->assertSame([], $store->listDirectory('css/tokens'));
+		$store = new AppDataRuntimeFileStore(appData: $appData);
+		$this->assertNull(actual: $store->read('css/custom-css.css'));
+		$this->assertFalse(condition: $store->exists('css/custom-css.css'));
+		$this->assertSame(expected: '', actual: $store->revision('css/custom-css.css'));
+		$this->assertSame(expected: [], actual: $store->listDirectory('css/tokens'));
 	}//end testAMissingAppDataFileReadsAsAbsent()
 }//end class

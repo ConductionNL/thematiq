@@ -51,11 +51,11 @@ class ComplianceReportTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(ComplianceReportService::class);
+		$this->service = $this->createMock(originalClassName: ComplianceReportService::class);
 		$this->service->method('renderJson')->willReturn("{\"scope\":\"x\"}\n");
 		$this->service->method('renderMarkdown')->willReturn("# Report\n");
 
-		$command = new ComplianceReport($this->service);
+		$command = new ComplianceReport(service: $this->service);
 
 		$application = new Application();
 		$application->add($command);
@@ -80,8 +80,8 @@ class ComplianceReportTest extends TestCase {
 	public function testDefaultFormatPrintsJsonAndExitsZero(): void {
 		$exitCode = $this->tester->execute([]);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertStringContainsString('"scope":"x"', $this->tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: '"scope":"x"', haystack: $this->tester->getDisplay());
 	}//end testDefaultFormatPrintsJsonAndExitsZero()
 
 	/**
@@ -90,8 +90,8 @@ class ComplianceReportTest extends TestCase {
 	public function testMarkdownFormatPrintsMarkdownAndExitsZero(): void {
 		$exitCode = $this->tester->execute(['--format' => 'markdown']);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertStringContainsString('# Report', $this->tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: '# Report', haystack: $this->tester->getDisplay());
 	}//end testMarkdownFormatPrintsMarkdownAndExitsZero()
 
 	/**
@@ -100,8 +100,8 @@ class ComplianceReportTest extends TestCase {
 	public function testUnknownFormatFailsWithNonZeroExit(): void {
 		$exitCode = $this->tester->execute(['--format' => 'yaml']);
 
-		$this->assertNotSame(0, $exitCode);
-		$this->assertStringContainsString('Unknown format', $this->tester->getDisplay());
+		$this->assertNotSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'Unknown format', haystack: $this->tester->getDisplay());
 	}//end testUnknownFormatFailsWithNonZeroExit()
 
 	/**
@@ -113,10 +113,10 @@ class ComplianceReportTest extends TestCase {
 
 		$exitCode = $this->tester->execute(['--format' => 'markdown', '--output' => $this->outputPath]);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertFileExists($this->outputPath);
-		$this->assertSame("# Report\n", file_get_contents($this->outputPath));
-		$this->assertStringNotContainsString('# Report', $this->tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertFileExists(filename: $this->outputPath);
+		$this->assertSame(expected: "# Report\n", actual: file_get_contents($this->outputPath));
+		$this->assertStringNotContainsString(needle: '# Report', haystack: $this->tester->getDisplay());
 	}//end testOutputOptionWritesIdenticalBytesToFile()
 
 	/**
@@ -124,34 +124,34 @@ class ComplianceReportTest extends TestCase {
 	 * failing verdict — the command only fails on generation errors.
 	 */
 	public function testExitCodeIsZeroRegardlessOfVerdict(): void {
-		$this->service = $this->createMock(ComplianceReportService::class);
+		$this->service = $this->createMock(originalClassName: ComplianceReportService::class);
 		$this->service->method('renderJson')->willReturn("{\"summary\":{\"verdict\":\"fail\"}}\n");
 
-		$command = new ComplianceReport($this->service);
+		$command = new ComplianceReport(service: $this->service);
 		$application = new Application();
 		$application->add($command);
 		$tester = new CommandTester($application->find('thematiq:compliance-report'));
 
 		$exitCode = $tester->execute([]);
 
-		$this->assertSame(0, $exitCode);
+		$this->assertSame(expected: 0, actual: $exitCode);
 	}//end testExitCodeIsZeroRegardlessOfVerdict()
 
 	/**
 	 * A generation exception is reported and yields a non-zero exit code.
 	 */
 	public function testGenerationFailureExitsNonZero(): void {
-		$failingService = $this->createMock(ComplianceReportService::class);
+		$failingService = $this->createMock(originalClassName: ComplianceReportService::class);
 		$failingService->method('renderJson')->willThrowException(new \RuntimeException('boom'));
 
-		$command = new ComplianceReport($failingService);
+		$command = new ComplianceReport(service: $failingService);
 		$application = new Application();
 		$application->add($command);
 		$tester = new CommandTester($application->find('thematiq:compliance-report'));
 
 		$exitCode = $tester->execute([]);
 
-		$this->assertNotSame(0, $exitCode);
-		$this->assertStringContainsString('boom', $tester->getDisplay());
+		$this->assertNotSame(expected: 0, actual: $exitCode);
+		$this->assertStringContainsString(needle: 'boom', haystack: $tester->getDisplay());
 	}//end testGenerationFailureExitsNonZero()
 }//end class

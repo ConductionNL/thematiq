@@ -87,10 +87,10 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 	 * @return array{declarations: array<string, string>, skipped: array<int, string>, imported: int, dark: array<string, string>}
 	 */
 	private function upload(string $json): array {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::appPath());
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService($appManager, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
+		$converter = new TokenSetConverterService(appManager: $appManager, cssParser: $parser, contrast: new ContrastService(), dtcgMapper: new DesignTokensMapper(), fonts: $this->createMock(originalClassName: FontService::class), logger: $this->createMock(originalClassName: LoggerInterface::class));
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		$skipped = [];
@@ -218,8 +218,8 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $differences, $id . ' as ' . $format);
-		$this->assertGreaterThan(0, $compared, 'the set has tokens to compare');
+		$this->assertSame(expected: [], actual: $differences, message: $id . ' as ' . $format);
+		$this->assertGreaterThan(expected: 0, actual: $compared, message: 'the set has tokens to compare');
 	}//end testShippedSetSurvivesTheRoundTrip()
 
 	/**
@@ -238,11 +238,11 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$back = $this->upload(json: (string)json_encode($kept));
 
 		$this->assertSame(
-			$this->normalise(value: $this->resolved(value: $original['--nldesign-color-primary'], set: $original)),
-			$this->normalise(value: $this->resolved(value: $back['declarations']['--nldesign-color-primary'], set: $back['declarations']))
+			expected: $this->normalise(value: $this->resolved(value: $original['--nldesign-color-primary'], set: $original)),
+			actual: $this->normalise(value: $this->resolved(value: $back['declarations']['--nldesign-color-primary'], set: $back['declarations']))
 		);
-		$this->assertGreaterThan(20, $back['imported']);
-		$this->assertSame([], $back['skipped']);
+		$this->assertGreaterThan(expected: 20, actual: $back['imported']);
+		$this->assertSame(expected: [], actual: $back['skipped']);
 	}//end testColoursSurviveAToolThatDropsTheExtensions()
 
 	/**
@@ -285,14 +285,14 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$dollar = $this->upload(json: (string)file_get_contents(self::appPath() . '/tests/fixtures/figma/tokens-studio-dtcg.json'));
 		$legacy = $this->upload(json: (string)file_get_contents(self::appPath() . '/tests/fixtures/figma/tokens-studio-legacy.json'));
 
-		$this->assertSame($dollar['declarations'], $legacy['declarations']);
-		$this->assertSame('#0b5fff', $dollar['declarations']['--nldesign-color-primary']);
-		$this->assertSame('#0b5fff', $dollar['declarations']['--nldesign-color-link'], 'a colour reference is stored as the colour it points at');
-		$this->assertSame('#1f883d', $dollar['declarations']['--nldesign-color-action']);
-		$this->assertSame('6px', $dollar['declarations']['--nldesign-border-radius']);
-		$this->assertSame('var(--nldesign-border-radius)', $dollar['declarations']['--nldesign-border-radius-large']);
-		$this->assertSame("'Fira Sans', sans-serif", $dollar['declarations']['--nldesign-font-family']);
-		$this->assertSame('700', $dollar['declarations']['--nldesign-font-weight-bold']);
+		$this->assertSame(expected: $dollar['declarations'], actual: $legacy['declarations']);
+		$this->assertSame(expected: '#0b5fff', actual: $dollar['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#0b5fff', actual: $dollar['declarations']['--nldesign-color-link'], message: 'a colour reference is stored as the colour it points at');
+		$this->assertSame(expected: '#1f883d', actual: $dollar['declarations']['--nldesign-color-action']);
+		$this->assertSame(expected: '6px', actual: $dollar['declarations']['--nldesign-border-radius']);
+		$this->assertSame(expected: 'var(--nldesign-border-radius)', actual: $dollar['declarations']['--nldesign-border-radius-large']);
+		$this->assertSame(expected: "'Fira Sans', sans-serif", actual: $dollar['declarations']['--nldesign-font-family']);
+		$this->assertSame(expected: '700', actual: $dollar['declarations']['--nldesign-font-weight-bold']);
 	}//end testBothSpellingsGiveTheSameSet()
 
 	/**
@@ -303,13 +303,13 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 	public function testWhatIsLeftOutIsReported(): void {
 		$back = $this->upload(json: (string)file_get_contents(self::appPath() . '/tests/fixtures/figma/tokens-studio-dtcg.json'));
 
-		$this->assertContains('concept: token-set-disabled', $back['skipped']);
-		$this->assertContains('nldesign.spacing.loop-a: alias-cycle', $back['skipped']);
-		$this->assertContains('nldesign.spacing.loop-b: alias-cycle', $back['skipped']);
-		$this->assertContains('nldesign.spacing.double: value-not-a-css-value', $back['skipped']);
-		$this->assertArrayNotHasKey('--nldesign-spacing-loop-a', $back['declarations']);
-		$this->assertArrayNotHasKey('--nldesign-spacing-double', $back['declarations']);
-		$this->assertArrayNotHasKey('--nldesign-color-concept', $back['declarations'], 'a switched off set is not read');
+		$this->assertContains(needle: 'concept: token-set-disabled', haystack: $back['skipped']);
+		$this->assertContains(needle: 'nldesign.spacing.loop-a: alias-cycle', haystack: $back['skipped']);
+		$this->assertContains(needle: 'nldesign.spacing.loop-b: alias-cycle', haystack: $back['skipped']);
+		$this->assertContains(needle: 'nldesign.spacing.double: value-not-a-css-value', haystack: $back['skipped']);
+		$this->assertArrayNotHasKey(key: '--nldesign-spacing-loop-a', array: $back['declarations']);
+		$this->assertArrayNotHasKey(key: '--nldesign-spacing-double', array: $back['declarations']);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-concept', array: $back['declarations'], message: 'a switched off set is not read');
 	}//end testWhatIsLeftOutIsReported()
 
 	/**
@@ -363,9 +363,9 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $differences, $id . ' ' . $file);
-		$this->assertCount(18, $expected, 'the plugin exported eighteen values for this design system');
-		$this->assertSame($this->normalise(value: (string)$expected['text']), $this->normalise(value: $back['declarations']['--thematiq-shell-text']));
+		$this->assertSame(expected: [], actual: $differences, message: $id . ' ' . $file);
+		$this->assertCount(expectedCount: 18, haystack: $expected, message: 'the plugin exported eighteen values for this design system');
+		$this->assertSame(expected: $this->normalise(value: (string)$expected['text']), actual: $this->normalise(value: $back['declarations']['--thematiq-shell-text']));
 
 		// The dark colours are the set's dark values (dark-colours-from-a-file), in every format;
 		// a light and dark file is not taken for two brands, and the dark set is not laid over the light one.
@@ -377,11 +377,11 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		ksort($expectedDark);
 		$dark = $back['dark'];
 		ksort($dark);
-		$this->assertNotSame([], $expectedDark, 'the plugin exported dark colours for this design system');
-		$this->assertSame($expectedDark, array_map('strtolower', $dark), $id . ' ' . $file . ' dark');
-		$this->assertSame([], $back['skipped']);
+		$this->assertNotSame(expected: [], actual: $expectedDark, message: 'the plugin exported dark colours for this design system');
+		$this->assertSame(expected: $expectedDark, actual: array_map('strtolower', $dark), message: $id . ' ' . $file . ' dark');
+		$this->assertSame(expected: [], actual: $back['skipped']);
 		if ($file !== 'w3c.tokens.json') {
-			$this->assertSame([], (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file)));
+			$this->assertSame(expected: [], actual: (new MultiBrandSource())->detectBrands(content: (string)file_get_contents($directory . $id . '.' . $file)));
 		}
 	}//end testAPluginDownloadKeepsEveryRole()
 }//end class

@@ -97,7 +97,7 @@ class SettingsControllerEndpointsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$app . '|' . $key] ?? $default)
 		);
@@ -107,31 +107,31 @@ class SettingsControllerEndpointsTest extends TestCase {
 			}
 		);
 
-		$auditService = $this->createMock(ThemingAuditService::class);
+		$auditService = $this->createMock(originalClassName: ThemingAuditService::class);
 		$auditService->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audited[] = [$action, $context];
 			}
 		);
 
-		$this->tokenSetService = $this->createMock(TokenSetService::class);
-		$this->previewService = $this->createMock(TokenSetPreviewService::class);
-		$this->appThemingService = $this->createMock(AppThemingService::class);
+		$this->tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
+		$this->previewService = $this->createMock(originalClassName: TokenSetPreviewService::class);
+		$this->appThemingService = $this->createMock(originalClassName: AppThemingService::class);
 
 		$this->controller = new SettingsController(
-			'thematiq',
-			$this->createMock(IRequest::class),
-			$config,
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->previewService,
-			$this->appThemingService,
-			$this->createMock(ComplianceReportService::class),
-			$auditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $config,
+			tokenSetService: $this->tokenSetService,
+			themingService: $this->createMock(originalClassName: ThemingService::class),
+			previewService: $this->previewService,
+			appThemingService: $this->appThemingService,
+			complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+			auditService: $auditService,
+			emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+			freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class),
+			groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+			activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class)
 		);
 	}//end setUp()
 
@@ -148,8 +148,8 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$response = $this->controller->getTokenSetPreview(tokenSetId: 'no-such-set');
 
-		$this->assertSame(404, $response->getStatus());
-		$this->assertSame(['error' => 'Token set not found'], $response->getData());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
+		$this->assertSame(expected: ['error' => 'Token set not found'], actual: $response->getData());
 	}//end testAnUnknownPreviewIs404AndResolvesNothing()
 
 	/**
@@ -165,9 +165,9 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$response = $this->controller->getTokenSetPreview(tokenSetId: 'rijkshuisstijl');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('rijkshuisstijl', $response->getData()['tokenSetId']);
-		$this->assertSame(['--nldesign-color-primary' => '#154273'], $response->getData()['resolved']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $response->getData()['tokenSetId']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#154273'], actual: $response->getData()['resolved']);
 	}//end testAKnownPreviewEchoesTheIdWithTheResolvedMap()
 
 	/**
@@ -193,16 +193,16 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$response = $this->controller->{$method}(false);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('ok', $response->getData()['status']);
-		$this->assertFalse($response->getData()[$property]);
-		$this->assertSame('0', $this->appConfig['thematiq|' . $key]);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'ok', actual: $response->getData()['status']);
+		$this->assertFalse(condition: $response->getData()[$property]);
+		$this->assertSame(expected: '0', actual: $this->appConfig['thematiq|' . $key]);
 
-		$this->assertCount(1, $this->audited);
-		$this->assertSame('toggle_changed', $this->audited[0][0]);
-		$this->assertSame($key, $this->audited[0][1]['key']);
-		$this->assertTrue($this->audited[0][1]['old']);
-		$this->assertFalse($this->audited[0][1]['new']);
+		$this->assertCount(expectedCount: 1, haystack: $this->audited);
+		$this->assertSame(expected: 'toggle_changed', actual: $this->audited[0][0]);
+		$this->assertSame(expected: $key, actual: $this->audited[0][1]['key']);
+		$this->assertTrue(condition: $this->audited[0][1]['old']);
+		$this->assertFalse(condition: $this->audited[0][1]['new']);
 	}//end testATogglePersistsEchoesAndAuditsThePreviousValue()
 
 	/**
@@ -219,9 +219,9 @@ class SettingsControllerEndpointsTest extends TestCase {
 	public function testATogglePersistsTheOnValue(string $method, string $key, string $property): void {
 		$response = $this->controller->{$method}(true);
 
-		$this->assertTrue($response->getData()[$property]);
-		$this->assertSame('1', $this->appConfig['thematiq|' . $key]);
-		$this->assertFalse($this->audited[0][1]['old']);
+		$this->assertTrue(condition: $response->getData()[$property]);
+		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|' . $key]);
+		$this->assertFalse(condition: $this->audited[0][1]['old']);
 	}//end testATogglePersistsTheOnValue()
 
 	/**
@@ -255,7 +255,7 @@ class SettingsControllerEndpointsTest extends TestCase {
 		$apps = [['id' => 'files', 'name' => 'Files', 'themed' => true]];
 		$this->appThemingService->method('getThemableApps')->willReturn($apps);
 
-		$this->assertSame($apps, $this->controller->getAppTheming()->getData()['apps']);
+		$this->assertSame(expected: $apps, actual: $this->controller->getAppTheming()->getData()['apps']);
 	}//end testTheThemableAppListIsPassedThrough()
 
 	/**
@@ -274,9 +274,9 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$response = $this->controller->setAppTheming(disabledApps: ['files', 'thematiq', 'settings']);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('ok', $response->getData()['status']);
-		$this->assertSame($stored, $response->getData()['disabledApps']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'ok', actual: $response->getData()['status']);
+		$this->assertSame(expected: $stored, actual: $response->getData()['disabledApps']);
 	}//end testTheExclusionListEchoesWhatWasStoredNotWhatWasSent()
 
 	/**
@@ -291,10 +291,10 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$this->controller->setAppTheming(disabledApps: ['files']);
 
-		$this->assertCount(1, $this->audited);
-		$this->assertSame('app_exclusions_changed', $this->audited[0][0]);
-		$this->assertSame(['dashboard'], $this->audited[0][1]['old']);
-		$this->assertSame(['files'], $this->audited[0][1]['new']);
+		$this->assertCount(expectedCount: 1, haystack: $this->audited);
+		$this->assertSame(expected: 'app_exclusions_changed', actual: $this->audited[0][0]);
+		$this->assertSame(expected: ['dashboard'], actual: $this->audited[0][1]['old']);
+		$this->assertSame(expected: ['files'], actual: $this->audited[0][1]['new']);
 	}//end testTheExclusionChangeIsAuditedWithBothSides()
 
 	/**
@@ -309,7 +309,7 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$response = $this->controller->setAppTheming();
 
-		$this->assertSame([], $response->getData()['disabledApps']);
+		$this->assertSame(expected: [], actual: $response->getData()['disabledApps']);
 	}//end testClearingTheExclusionListStoresAnEmptyList()
 
 	/**
@@ -323,17 +323,17 @@ class SettingsControllerEndpointsTest extends TestCase {
 	public function testASaveConfirmationStoresAndAuditsOnlyTheFlagThatChanged(): void {
 		$response = $this->controller->setSaveConfirmSettings(confirmSaveStock: false, confirmSaveTheme: true);
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(
-			['status' => 'ok', 'confirmSaveStock' => false, 'confirmSaveTheme' => true],
-			$response->getData()
+			expected: ['status' => 'ok', 'confirmSaveStock' => false, 'confirmSaveTheme' => true],
+			actual: $response->getData()
 		);
-		$this->assertSame('0', $this->appConfig['thematiq|confirm_save_stock']);
-		$this->assertArrayNotHasKey('thematiq|confirm_save_theme', $this->appConfig);
+		$this->assertSame(expected: '0', actual: $this->appConfig['thematiq|confirm_save_stock']);
+		$this->assertArrayNotHasKey(key: 'thematiq|confirm_save_theme', array: $this->appConfig);
 
-		$this->assertCount(1, $this->audited);
-		$this->assertSame('toggle_changed', $this->audited[0][0]);
-		$this->assertSame(['key' => 'confirm_save_stock', 'old' => true, 'new' => false], $this->audited[0][1]);
+		$this->assertCount(expectedCount: 1, haystack: $this->audited);
+		$this->assertSame(expected: 'toggle_changed', actual: $this->audited[0][0]);
+		$this->assertSame(expected: ['key' => 'confirm_save_stock', 'old' => true, 'new' => false], actual: $this->audited[0][1]);
 	}//end testASaveConfirmationStoresAndAuditsOnlyTheFlagThatChanged()
 
 	/**
@@ -349,10 +349,10 @@ class SettingsControllerEndpointsTest extends TestCase {
 
 		$this->controller->setSaveConfirmSettings(confirmSaveStock: true, confirmSaveTheme: true);
 
-		$this->assertSame('1', $this->appConfig['thematiq|confirm_save_stock']);
-		$this->assertSame('1', $this->appConfig['thematiq|confirm_save_theme']);
-		$this->assertCount(2, $this->audited);
-		$this->assertSame(['key' => 'confirm_save_stock', 'old' => false, 'new' => true], $this->audited[0][1]);
-		$this->assertSame(['key' => 'confirm_save_theme', 'old' => false, 'new' => true], $this->audited[1][1]);
+		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|confirm_save_stock']);
+		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|confirm_save_theme']);
+		$this->assertCount(expectedCount: 2, haystack: $this->audited);
+		$this->assertSame(expected: ['key' => 'confirm_save_stock', 'old' => false, 'new' => true], actual: $this->audited[0][1]);
+		$this->assertSame(expected: ['key' => 'confirm_save_theme', 'old' => false, 'new' => true], actual: $this->audited[1][1]);
 	}//end testBothSaveConfirmationsCanBeTurnedBackOn()
 }//end class

@@ -81,11 +81,11 @@ class LoginCopyServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->designSystemService = $this->createMock(DesignSystemService::class);
-		$this->initialState = $this->createMock(IInitialState::class);
-		$this->l10nFactory = $this->createMock(IFactory::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
+		$this->l10nFactory = $this->createMock(originalClassName: IFactory::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->scripts = 0;
 	}//end setUp()
 
@@ -95,7 +95,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * @return LoginCopyService
 	 */
 	private function service(): LoginCopyService {
-		$service = $this->getMockBuilder(LoginCopyService::class)
+		$service = $this->getMockBuilder(className: LoginCopyService::class)
 			->setConstructorArgs([$this->sources(), $this->logger])
 			->onlyMethods(['emitScript'])
 			->getMock();
@@ -150,7 +150,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * @return LayoutOptionsService&MockObject
 	 */
 	private function layout(string $layout): LayoutOptionsService {
-		$options = $this->createMock(LayoutOptionsService::class);
+		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$options->method('workplaceLayout')->willReturn($layout);
 
 		return $options;
@@ -164,7 +164,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * @return void
 	 */
 	private function language(string $language): void {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn($language);
 		$l10n->method('t')->willReturnCallback(fn (string $text) => ($language === 'nl' && $text === 'or' ? 'of' : $text));
 		$this->l10nFactory->method('get')->willReturn($l10n);
@@ -182,11 +182,11 @@ class LoginCopyServiceTest extends TestCase {
 
 		$copy = $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'nl');
 
-		$this->assertSame('Inloggen bij de werkplek', $copy['title']);
-		$this->assertSame('Voor medewerkers van Gemeente Zuiddrecht.', $copy['subtitle']);
-		$this->assertSame('Inloggen met uw gemeenteaccount', $copy['ssoLabel']);
-		$this->assertSame('Gebruikersnaam of e-mail', $copy['usernameLabel']);
-		$this->assertSame('Gemeente Zuiddrecht · werkplek op Nextcloud', $copy['footer']);
+		$this->assertSame(expected: 'Inloggen bij de werkplek', actual: $copy['title']);
+		$this->assertSame(expected: 'Voor medewerkers van Gemeente Zuiddrecht.', actual: $copy['subtitle']);
+		$this->assertSame(expected: 'Inloggen met uw gemeenteaccount', actual: $copy['ssoLabel']);
+		$this->assertSame(expected: 'Gebruikersnaam of e-mail', actual: $copy['usernameLabel']);
+		$this->assertSame(expected: 'Gemeente Zuiddrecht · werkplek op Nextcloud', actual: $copy['footer']);
 	}//end testZuiddrechtShipsTheBoardsCopy()
 
 	/**
@@ -198,9 +198,9 @@ class LoginCopyServiceTest extends TestCase {
 	public function testALanguageMapPicksTheRequestsLanguage(): void {
 		$this->configure(login: ['title' => ['nl' => 'Inloggen', 'en' => 'Log in'], 'footer' => 'Overal'], override: '');
 
-		$this->assertSame(['title' => 'Inloggen', 'footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl_NL'));
-		$this->assertSame(['title' => 'Log in', 'footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'en'));
-		$this->assertSame(['footer' => 'Overal'], $this->service()->resolveCopy(tokenSet: 'x', language: 'de'));
+		$this->assertSame(expected: ['title' => 'Inloggen', 'footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl_NL'));
+		$this->assertSame(expected: ['title' => 'Log in', 'footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'en'));
+		$this->assertSame(expected: ['footer' => 'Overal'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'de'));
 	}//end testALanguageMapPicksTheRequestsLanguage()
 
 	/**
@@ -215,14 +215,14 @@ class LoginCopyServiceTest extends TestCase {
 		);
 
 		$this->assertSame(
-			[
+			expected: [
 				'title' => 'Van de beheerder',
 				'subtitle' => 'Ook van de set',
 				'footerHint' => 'Ouder?',
 				'footerLinkLabel' => 'Mijn school',
 				'footerLinkUrl' => '/apps/portaliq/',
 			],
-			$this->service()->resolveCopy(tokenSet: 'x', language: 'nl')
+			actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl')
 		);
 	}//end testTheOverrideWinsKeyByKey()
 
@@ -245,7 +245,7 @@ class LoginCopyServiceTest extends TestCase {
 			override: '{not json'
 		);
 
-		$this->assertSame(['footerLinkLabel' => 'Mijn school'], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
+		$this->assertSame(expected: ['footerLinkLabel' => 'Mijn school'], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
 	}//end testWhatMayNotBeShownIsDropped()
 
 	/**
@@ -256,7 +256,7 @@ class LoginCopyServiceTest extends TestCase {
 	public function testAProtocolRelativeLinkIsDropped(): void {
 		$this->configure(login: ['footer_link_url' => '//elders.example/'], override: '');
 
-		$this->assertSame([], $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
+		$this->assertSame(expected: [], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'nl'));
 	}//end testAProtocolRelativeLinkIsDropped()
 
 	/**
@@ -268,12 +268,12 @@ class LoginCopyServiceTest extends TestCase {
 	 */
 	public function testTheLightWorkplaceLoadsTheScript(): void {
 		$this->configure(login: null);
-		$this->language('nl');
+		$this->language(language: 'nl');
 		$this->initialState->expects($this->once())->method('provideInitialState')->with(LoginCopyService::STATE_KEY, ['divider' => 'of']);
 
-		$this->service()->inject(tokenSet: 'x', layoutOptions: $this->layout('light'));
+		$this->service()->inject(tokenSet: 'x', layoutOptions: $this->layout(layout: 'light'));
 
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 	}//end testTheLightWorkplaceLoadsTheScript()
 
 	/**
@@ -283,12 +283,12 @@ class LoginCopyServiceTest extends TestCase {
 	 */
 	public function testTheDefaultLayoutLoadsNothing(): void {
 		$this->configure(login: ['title' => 'Inloggen']);
-		$this->language('nl');
+		$this->language(language: 'nl');
 		$this->initialState->expects($this->never())->method('provideInitialState');
 
-		$this->service()->inject(tokenSet: 'x', layoutOptions: $this->layout('default'));
+		$this->service()->inject(tokenSet: 'x', layoutOptions: $this->layout(layout: 'default'));
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testTheDefaultLayoutLoadsNothing()
 
 	/**
@@ -297,14 +297,14 @@ class LoginCopyServiceTest extends TestCase {
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 */
 	public function testAFailureIsLoggedAndLeavesThePage(): void {
-		$options = $this->createMock(LayoutOptionsService::class);
+		$options = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$options->method('workplaceLayout')->willThrowException(new RuntimeException('boom'));
 		$this->logger->expects($this->once())->method('warning');
 		$this->initialState->expects($this->never())->method('provideInitialState');
 
 		$this->service()->inject(tokenSet: 'x', layoutOptions: $options);
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testAFailureIsLoggedAndLeavesThePage()
 
 	/**
@@ -315,21 +315,21 @@ class LoginCopyServiceTest extends TestCase {
 	 */
 	public function testTheLoginEntryResolvesTheSetAndFailsOpen(): void {
 		$this->configure(login: ['title' => 'Inloggen']);
-		$this->language('nl');
-		$groups = $this->createMock(GroupThemingService::class);
+		$this->language(language: 'nl');
+		$groups = $this->createMock(originalClassName: GroupThemingService::class);
 		$groups->method('resolveTokenSetForRequest')->with(null)->willReturn('zuiddrecht');
 		$this->initialState->expects($this->once())->method('provideInitialState')->with(LoginCopyService::STATE_KEY, ['title' => 'Inloggen', 'divider' => 'of']);
 
-		$service = $this->getMockBuilder(LoginCopyService::class)
-			->setConstructorArgs([$this->sources(), $this->logger, $groups, $this->layout('light')])
+		$service = $this->getMockBuilder(className: LoginCopyService::class)
+			->setConstructorArgs([$this->sources(), $this->logger, $groups, $this->layout(layout: 'light')])
 			->onlyMethods(['emitScript'])
 			->getMock();
 		$service->injectForLogin();
 
-		$broken = $this->createMock(GroupThemingService::class);
+		$broken = $this->createMock(originalClassName: GroupThemingService::class);
 		$broken->method('resolveTokenSetForRequest')->willThrowException(new RuntimeException('boom'));
 		$this->logger->expects($this->once())->method('warning');
-		$failing = new LoginCopyService(sources: $this->sources(), logger: $this->logger, groupTheming: $broken, layoutOptions: $this->layout('light'));
+		$failing = new LoginCopyService(sources: $this->sources(), logger: $this->logger, groupTheming: $broken, layoutOptions: $this->layout(layout: 'light'));
 		$failing->injectForLogin();
 	}//end testTheLoginEntryResolvesTheSetAndFailsOpen()
 }//end class

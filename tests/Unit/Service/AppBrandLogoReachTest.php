@@ -52,7 +52,7 @@ class AppBrandLogoReachTest extends TestCase {
 	 * @return string The CSS.
 	 */
 	private function layerCss(): string {
-		$store = new AppBrandLogoStore($this->createMock(IAppData::class), new ImageSniffer());
+		$store = new AppBrandLogoStore(appData: $this->createMock(originalClassName: IAppData::class), sniffer: new ImageSniffer());
 
 		return $store->logoCss(large: '/brand/collectives/large', small: '/brand/collectives/small');
 	}//end layerCss()
@@ -115,7 +115,7 @@ class AppBrandLogoReachTest extends TestCase {
 			}
 		}
 
-		$this->fail('the brand layer has no rule for the header logo');
+		$this->fail(message: 'the brand layer has no rule for the header logo');
 	}//end brandRule()
 
 	/**
@@ -123,7 +123,7 @@ class AppBrandLogoReachTest extends TestCase {
 	 */
 	public function testTheBrandLogoOutranksEveryBundleHeaderLogoRule(): void {
 		$brand = $this->brandRule();
-		$this->assertSame('var(--nldesign-logo-url) !important', $brand['declarations']['background-image'] ?? null);
+		$this->assertSame(expected: 'var(--nldesign-logo-url) !important', actual: $brand['declarations']['background-image'] ?? null);
 
 		$checked = 0;
 		foreach (self::BUNDLES as $system => $file) {
@@ -140,16 +140,16 @@ class AppBrandLogoReachTest extends TestCase {
 
 				foreach ($headerLogo as $selector) {
 					$checked++;
-					$this->assertGreaterThan($this->specificity(selector: $selector), $brand['specificity'], $system . ': ' . $selector . ' outranks the brand logo');
+					$this->assertGreaterThan(expected: $this->specificity(selector: $selector), actual: $brand['specificity'], message: $system . ': ' . $selector . ' outranks the brand logo');
 				}
 
 				foreach ($set as $property) {
-					$this->assertArrayHasKey($property, $brand['declarations'], $system . ' sets ' . $property . ' on the header logo and the brand layer leaves it');
+					$this->assertArrayHasKey(key: $property, array: $brand['declarations'], message: $system . ' sets ' . $property . ' on the header logo and the brand layer leaves it');
 				}
 			}
 		}
 
-		$this->assertGreaterThan(0, $checked, 'no header-logo rule found in the bundles; the test would pass on nothing');
+		$this->assertGreaterThan(expected: 0, actual: $checked, message: 'no header-logo rule found in the bundles; the test would pass on nothing');
 	}//end testTheBrandLogoOutranksEveryBundleHeaderLogoRule()
 
 	/**
@@ -159,7 +159,7 @@ class AppBrandLogoReachTest extends TestCase {
 	public function testTheSmallLogoStillSwapsThroughTheVariable(): void {
 		$css = $this->layerCss();
 
-		$this->assertStringContainsString(':root{--nldesign-logo-url:url(/brand/collectives/large)', $css);
-		$this->assertStringContainsString('@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}', $css);
+		$this->assertStringContainsString(needle: ':root{--nldesign-logo-url:url(/brand/collectives/large)', haystack: $css);
+		$this->assertStringContainsString(needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}', haystack: $css);
 	}//end testTheSmallLogoStillSwapsThroughTheVariable()
 }//end class

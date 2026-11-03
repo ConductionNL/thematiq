@@ -51,15 +51,15 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 * @return ConfigSourceLockMiddleware The middleware.
 	 */
 	private function middleware(string $method, bool $locked): ConfigSourceLockMiddleware {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getMethod')->willReturn($method);
-		$source = $this->createMock(ConfigSourceService::class);
+		$source = $this->createMock(originalClassName: ConfigSourceService::class);
 		$source->method('isLocked')->willReturn($locked);
 		$source->method('getSourcePath')->willReturn('/srv/branding');
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn (string $text, array $params = []) => vsprintf($text, $params));
 
-		return new ConfigSourceLockMiddleware($request, $source, $l10n);
+		return new ConfigSourceLockMiddleware(request: $request, source: $source, l10n: $l10n);
 	}//end middleware()
 
 	/**
@@ -69,18 +69,18 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 */
 	public function testSettersAnswer423WhileLocked(): void {
 		$cases = [
-			[$this->createMock(SettingsController::class), 'setTokenSet'],
-			[$this->createMock(FontController::class), 'upload'],
+			[$this->createMock(originalClassName: SettingsController::class), 'setTokenSet'],
+			[$this->createMock(originalClassName: FontController::class), 'upload'],
 		];
 		foreach ($cases as [$controller, $method]) {
 			$middleware = $this->middleware(method: 'POST', locked: true);
 			try {
 				$middleware->beforeController($controller, $method);
-				$this->fail('A locked setter must be refused: ' . $method);
+				$this->fail(message: 'A locked setter must be refused: ' . $method);
 			} catch (ConfigSourceLockedException $e) {
 				$response = $middleware->afterException($controller, $method, $e);
-				$this->assertSame(423, $response->getStatus());
-				$this->assertStringContainsString('/srv/branding', $response->getData()['error']);
+				$this->assertSame(expected: 423, actual: $response->getStatus());
+				$this->assertStringContainsString(needle: '/srv/branding', haystack: $response->getData()['error']);
 			}
 		}
 	}//end testSettersAnswer423WhileLocked()
@@ -91,11 +91,11 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 * @return void
 	 */
 	public function testReadsSessionActionsAndUnlockedPass(): void {
-		$settings = $this->createMock(SettingsController::class);
+		$settings = $this->createMock(originalClassName: SettingsController::class);
 		$this->middleware(method: 'GET', locked: true)->beforeController($settings, 'getTokenSetPreview');
-		$this->middleware(method: 'POST', locked: true)->beforeController($this->createMock(PreviewController::class), 'start');
+		$this->middleware(method: 'POST', locked: true)->beforeController($this->createMock(originalClassName: PreviewController::class), 'start');
 		$this->middleware(method: 'POST', locked: false)->beforeController($settings, 'setTokenSet');
-		$this->addToAssertionCount(3);
+		$this->addToAssertionCount(count: 3);
 	}//end testReadsSessionActionsAndUnlockedPass()
 
 	/**
@@ -104,9 +104,9 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 * @return void
 	 */
 	public function testOtherExceptionsPassThrough(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(exception: RuntimeException::class);
 		$this->middleware(method: 'POST', locked: true)->afterException(
-			$this->createMock(SettingsController::class),
+			$this->createMock(originalClassName: SettingsController::class),
 			'setTokenSet',
 			new RuntimeException('boom')
 		);
@@ -119,13 +119,13 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 */
 	public function testStatusEndpointIsAdminOnly(): void {
 		$attributes = (new ReflectionMethod(ConfigSourceController::class, 'status'))->getAttributes(AuthorizedAdminSetting::class);
-		$this->assertCount(1, $attributes);
-		$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+		$this->assertCount(expectedCount: 1, haystack: $attributes);
+		$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 
-		$source = $this->createMock(ConfigSourceService::class);
+		$source = $this->createMock(originalClassName: ConfigSourceService::class);
 		$source->method('getStatus')->willReturn(['managed' => true, 'path' => '/srv/branding']);
-		$controller = new ConfigSourceController('thematiq', $this->createMock(IRequest::class), $source);
-		$this->assertSame('/srv/branding', $controller->status()->getData()['path']);
+		$controller = new ConfigSourceController(appName: 'thematiq', request: $this->createMock(originalClassName: IRequest::class), source: $source);
+		$this->assertSame(expected: '/srv/branding', actual: $controller->status()->getData()['path']);
 	}//end testStatusEndpointIsAdminOnly()
 
 	/**
@@ -134,18 +134,18 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 * @return void
 	 */
 	public function testApplyCommandFailsOnAnInvalidPackage(): void {
-		$source = $this->createMock(ConfigSourceService::class);
+		$source = $this->createMock(originalClassName: ConfigSourceService::class);
 		$source->method('applyIfChanged')->willReturn(
 			['status' => 'failed', 'errors' => [['section' => 'customFonts', 'message' => 'Missing font file fonts/custom-corporate.woff2.']]]
 		);
-		$command = new ConfigApply($source);
+		$command = new ConfigApply(source: $source);
 		$application = new Application();
 		$application->add($command);
 		$tester = new CommandTester($application->find((string)$command->getName()));
 
-		$this->assertSame(1, $tester->execute([]));
-		$this->assertStringContainsString('fonts/custom-corporate.woff2', $tester->getDisplay());
-		$this->assertSame('thematiq:config:apply', $command->getName());
+		$this->assertSame(expected: 1, actual: $tester->execute([]));
+		$this->assertStringContainsString(needle: 'fonts/custom-corporate.woff2', haystack: $tester->getDisplay());
+		$this->assertSame(expected: 'thematiq:config:apply', actual: $command->getName());
 	}//end testApplyCommandFailsOnAnInvalidPackage()
 
 	/**
@@ -154,14 +154,14 @@ class ConfigSourceLockMiddlewareTest extends TestCase {
 	 * @return void
 	 */
 	public function testApplyCommandSucceedsWhenApplied(): void {
-		$source = $this->createMock(ConfigSourceService::class);
+		$source = $this->createMock(originalClassName: ConfigSourceService::class);
 		$source->method('applyIfChanged')->willReturn(['status' => 'applied', 'revision' => '3f2a9c1', 'hash' => 'sha256:x']);
-		$command = new ConfigApply($source);
+		$command = new ConfigApply(source: $source);
 		$application = new Application();
 		$application->add($command);
 		$tester = new CommandTester($application->find((string)$command->getName()));
 
-		$this->assertSame(0, $tester->execute([]));
-		$this->assertStringContainsString('3f2a9c1', $tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $tester->execute([]));
+		$this->assertStringContainsString(needle: '3f2a9c1', haystack: $tester->getDisplay());
 	}//end testApplyCommandSucceedsWhenApplied()
 }//end class

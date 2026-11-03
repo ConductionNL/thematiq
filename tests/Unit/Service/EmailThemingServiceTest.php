@@ -72,16 +72,16 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->tokenSetService = $this->createMock(TokenSetService::class);
-		$this->previewService = $this->createMock(TokenSetPreviewService::class);
-		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
+		$this->previewService = $this->createMock(originalClassName: TokenSetPreviewService::class);
+		$this->urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 
 		$this->service = new EmailThemingService(
-			$this->config,
-			$this->tokenSetService,
-			$this->previewService,
-			$this->urlGenerator
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator
 		);
 	}//end setUp()
 
@@ -124,7 +124,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(false);
 		$this->config->expects($this->never())->method('setSystemValue');
 
-		$this->expectException(ForeignMailTemplateClassException::class);
+		$this->expectException(exception: ForeignMailTemplateClassException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnForeignClass()
 
@@ -139,7 +139,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(true);
 		$this->config->expects($this->never())->method('setSystemValue');
 
-		$this->expectException(ConfigReadOnlyException::class);
+		$this->expectException(exception: ConfigReadOnlyException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnReadOnlyFlag()
 
@@ -154,7 +154,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(false);
 		$this->config->method('setSystemValue')->willThrowException(new HintException('read-only', 'hint'));
 
-		$this->expectException(ConfigReadOnlyException::class);
+		$this->expectException(exception: ConfigReadOnlyException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnReadOnlyHintExceptionFromWrite()
 
@@ -179,7 +179,7 @@ class EmailThemingServiceTest extends TestCase {
 	public function testFooterUrlValidationRejectsJavascriptScheme(): void {
 		$this->config->expects($this->never())->method('setAppValue');
 
-		$this->expectException(FooterValidationException::class);
+		$this->expectException(exception: FooterValidationException::class);
 		$this->service->setFooterConfig('Org', 'javascript:alert(1)', '');
 	}//end testFooterUrlValidationRejectsJavascriptScheme()
 
@@ -189,7 +189,7 @@ class EmailThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterUrlValidationRejectsJunk(): void {
-		$this->expectException(FooterValidationException::class);
+		$this->expectException(exception: FooterValidationException::class);
 		$this->service->setFooterConfig('Org', 'not a url', '');
 	}//end testFooterUrlValidationRejectsJunk()
 
@@ -199,7 +199,7 @@ class EmailThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterUrlValidationAcceptsHttpsAndPersists(): void {
-		$this->config->expects($this->exactly(3))->method('setAppValue');
+		$this->config->expects($this->exactly(count: 3))->method('setAppValue');
 		$this->config->method('getAppValue')->willReturnCallback(
 			fn ($app, $key, $default) => match ($key) {
 				'email_footer_org_name' => 'Org',
@@ -211,9 +211,9 @@ class EmailThemingServiceTest extends TestCase {
 
 		$result = $this->service->setFooterConfig('Org', 'https://example.org/a11y', 'https://example.org/privacy');
 
-		$this->assertSame('Org', $result['orgName']);
-		$this->assertSame('https://example.org/a11y', $result['accessibilityUrl']);
-		$this->assertSame('https://example.org/privacy', $result['privacyUrl']);
+		$this->assertSame(expected: 'Org', actual: $result['orgName']);
+		$this->assertSame(expected: 'https://example.org/a11y', actual: $result['accessibilityUrl']);
+		$this->assertSame(expected: 'https://example.org/privacy', actual: $result['privacyUrl']);
 	}//end testFooterUrlValidationAcceptsHttpsAndPersists()
 
 	/**
@@ -224,7 +224,7 @@ class EmailThemingServiceTest extends TestCase {
 	public function testFooterUrlValidationAllowsEmptyValues(): void {
 		$this->config->method('getAppValue')->willReturn('');
 		$result = $this->service->setFooterConfig('', '', '');
-		$this->assertSame('', $result['accessibilityUrl']);
+		$this->assertSame(expected: '', actual: $result['accessibilityUrl']);
 	}//end testFooterUrlValidationAllowsEmptyValues()
 
 	/**
@@ -253,10 +253,10 @@ class EmailThemingServiceTest extends TestCase {
 
 		$theme = $this->service->getActiveEmailTheme();
 
-		$this->assertNotNull($theme);
-		$this->assertSame('#004699', $theme['primaryColor']);
-		$this->assertSame('#ffffff', $theme['primaryTextColor']);
-		$this->assertSame('https://cloud.example.com/apps/thematiq/img/logos/amsterdam.svg', $theme['logoUrl']);
+		$this->assertNotNull(actual: $theme);
+		$this->assertSame(expected: '#004699', actual: $theme['primaryColor']);
+		$this->assertSame(expected: '#ffffff', actual: $theme['primaryTextColor']);
+		$this->assertSame(expected: 'https://cloud.example.com/apps/thematiq/img/logos/amsterdam.svg', actual: $theme['logoUrl']);
 	}//end testGetActiveEmailThemeReturnsManifestTheming()
 
 	/**
@@ -279,10 +279,10 @@ class EmailThemingServiceTest extends TestCase {
 
 		$theme = $this->service->getActiveEmailTheme();
 
-		$this->assertNotNull($theme);
-		$this->assertSame('#24578F', $theme['primaryColor']);
-		$this->assertSame('#ffffff', $theme['primaryTextColor']);
-		$this->assertNull($theme['logoUrl']);
+		$this->assertNotNull(actual: $theme);
+		$this->assertSame(expected: '#24578F', actual: $theme['primaryColor']);
+		$this->assertSame(expected: '#ffffff', actual: $theme['primaryTextColor']);
+		$this->assertNull(actual: $theme['logoUrl']);
 	}//end testGetActiveEmailThemeFallsBackToResolvedColorsWithoutTheming()
 
 	/**
@@ -295,6 +295,6 @@ class EmailThemingServiceTest extends TestCase {
 			fn ($app, $key, $default) => ($key === 'token_set') ? 'nextcloud' : $default
 		);
 
-		$this->assertNull($this->service->getActiveEmailTheme());
+		$this->assertNull(actual: $this->service->getActiveEmailTheme());
 	}//end testGetActiveEmailThemeReturnsNullForNextcloud()
 }//end class

@@ -55,25 +55,25 @@ class TokenSetServiceProvenanceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-provenance-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => $default
 		);
 
-		$audit = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		$this->service = new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			$audit,
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			appManager: $appManager,
+			config: $config,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			audit: $audit,
+			cacheFactory: $cacheFactory,
+			vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 		);
 	}//end setUp()
 
@@ -108,7 +108,7 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	 * through discovery unmodified.
 	 */
 	public function testProvenanceFieldsSurviveDiscovery(): void {
-		$this->writeTokenFile('utrecht');
+		$this->writeTokenFile(id: 'utrecht');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -127,9 +127,9 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertArrayHasKey('utrecht', $byId);
-		$this->assertSame('1.2.0', $byId['utrecht']['upstreamVersion']);
-		$this->assertSame('abc123def456', $byId['utrecht']['upstreamRef']);
+		$this->assertArrayHasKey(key: 'utrecht', array: $byId);
+		$this->assertSame(expected: '1.2.0', actual: $byId['utrecht']['upstreamVersion']);
+		$this->assertSame(expected: 'abc123def456', actual: $byId['utrecht']['upstreamRef']);
 	}//end testProvenanceFieldsSurviveDiscovery()
 
 	/**
@@ -137,7 +137,7 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	 * with them, minus the two optional keys — absence never breaks discovery.
 	 */
 	public function testAbsentProvenanceFieldsDoNotAppear(): void {
-		$this->writeTokenFile('nextcloud');
+		$this->writeTokenFile(id: 'nextcloud');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -154,9 +154,9 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertArrayHasKey('nextcloud', $byId);
-		$this->assertArrayNotHasKey('upstreamVersion', $byId['nextcloud']);
-		$this->assertArrayNotHasKey('upstreamRef', $byId['nextcloud']);
+		$this->assertArrayHasKey(key: 'nextcloud', array: $byId);
+		$this->assertArrayNotHasKey(key: 'upstreamVersion', array: $byId['nextcloud']);
+		$this->assertArrayNotHasKey(key: 'upstreamRef', array: $byId['nextcloud']);
 	}//end testAbsentProvenanceFieldsDoNotAppear()
 
 	/**
@@ -164,7 +164,7 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	 * survives with just that one field.
 	 */
 	public function testUpstreamRefWithoutVersionSurvivesAlone(): void {
-		$this->writeTokenFile('rotterdam');
+		$this->writeTokenFile(id: 'rotterdam');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -182,7 +182,7 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertSame('shaonly000', $byId['rotterdam']['upstreamRef']);
-		$this->assertArrayNotHasKey('upstreamVersion', $byId['rotterdam']);
+		$this->assertSame(expected: 'shaonly000', actual: $byId['rotterdam']['upstreamRef']);
+		$this->assertArrayNotHasKey(key: 'upstreamVersion', array: $byId['rotterdam']);
 	}//end testUpstreamRefWithoutVersionSurvivesAlone()
 }//end class
