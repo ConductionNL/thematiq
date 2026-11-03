@@ -1108,8 +1108,7 @@ class TokenSetConverterService {
 	 * Resolve one value's `var()` references to a literal.
 	 *
 	 * @param string $value The raw value.
-	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The declarations,
-	 *        the names already on this chain (cycle guard) and the depth.
+	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The resolution chain.
 	 *
 	 * @return string|null The literal value, or null when a reference cannot be resolved.
 	 */
@@ -1607,8 +1606,7 @@ class TokenSetConverterService {
 	/**
 	 * Report a token kept in its section: under its `keep` policy's reason, else as unmapped when no rule names it.
 	 *
-	 * @param array{route: array{0: string, 1: string}, value: string, policy: array<string, mixed>|null, mapped: bool} $kept The
-	 *        source and target, the value, the table's policy and whether a rule reads it.
+	 * @param array{route: array{0: string, 1: string}, value: string, policy: array<string, mixed>|null, mapped: bool} $kept The kept token.
 	 * @param ConversionRun $run The conversion; gets the report entry.
 	 *
 	 * @return void
