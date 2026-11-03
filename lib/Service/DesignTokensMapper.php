@@ -860,20 +860,37 @@ class DesignTokensMapper {
 			return ['ok' => true, 'value' => (string)((int)$value)];
 		}
 
+		$weight = null;
 		if (is_string($value) === true) {
-			$trimmed = trim($value);
-			if (is_numeric($trimmed) === true) {
-				return ['ok' => true, 'value' => (string)((int)$trimmed)];
-			}
-
-			$key = strtolower($trimmed);
-			if (isset(self::FONT_WEIGHT_KEYWORDS[$key]) === true) {
-				return ['ok' => true, 'value' => (string)self::FONT_WEIGHT_KEYWORDS[$key]];
-			}
+			$weight = $this->fontWeightOf(text: trim($value));
 		}
 
-		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		if ($weight === null) {
+			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		}
+
+		return ['ok' => true, 'value' => $weight];
 	}//end serializeFontWeight()
+
+	/**
+	 * A font weight written as text: a number, or one of the CSS keywords.
+	 *
+	 * @param string $text The trimmed value.
+	 *
+	 * @return string|null The numeric weight, or null when the text is neither.
+	 */
+	private function fontWeightOf(string $text): ?string {
+		if (is_numeric($text) === true) {
+			return (string)((int)$text);
+		}
+
+		$key = strtolower($text);
+		if (isset(self::FONT_WEIGHT_KEYWORDS[$key]) === false) {
+			return null;
+		}
+
+		return (string)self::FONT_WEIGHT_KEYWORDS[$key];
+	}//end fontWeightOf()
 
 	/**
 	 * Extract a declared package version from a DTCG document, checked in
@@ -892,13 +909,9 @@ class DesignTokensMapper {
 			return $document['$version'];
 		}
 
-		$extensions = ($document['$extensions'] ?? null);
-		if (is_array($extensions) === true) {
-			foreach (['nl.nldesign.version', 'org.nldesign.version'] as $key) {
-				if (isset($extensions[$key]) === true && is_string($extensions[$key]) === true) {
-					return $extensions[$key];
-				}
-			}
+		$fromExtensions = $this->extensionVersion(extensions: ($document['$extensions'] ?? null));
+		if ($fromExtensions !== null) {
+			return $fromExtensions;
 		}
 
 		if (isset($document['version']) === true && is_string($document['version']) === true) {
@@ -907,6 +920,27 @@ class DesignTokensMapper {
 
 		return null;
 	}//end extractPackageVersion()
+
+	/**
+	 * The package version an NL Design System extension block declares.
+	 *
+	 * @param mixed $extensions The document's `$extensions`.
+	 *
+	 * @return string|null
+	 */
+	private function extensionVersion(mixed $extensions): ?string {
+		if (is_array($extensions) === false) {
+			return null;
+		}
+
+		foreach (['nl.nldesign.version', 'org.nldesign.version'] as $key) {
+			if (isset($extensions[$key]) === true && is_string($extensions[$key]) === true) {
+				return $extensions[$key];
+			}
+		}
+
+		return null;
+	}//end extensionVersion()
 
 	/**
 	 * Resolve a dotted DTCG path to a --nldesign target by longest suffix match.

@@ -587,6 +587,20 @@ class DesignTokensMapperTest extends TestCase {
 	}//end testPackageVersionExtractedFromExtensionsConvention()
 
 	/**
+	 * The `org.nldesign.version` spelling of the extension is read too.
+	 *
+	 * @return void
+	 */
+	public function testPackageVersionExtractedFromTheOrgExtensionSpelling(): void {
+		$document = [
+			'$extensions' => ['org.nldesign.version' => '1.8.2'],
+			'color' => ['primary' => ['$type' => 'color', '$value' => '#154273']],
+		];
+
+		$this->assertSame(expected: '1.8.2', actual: $this->mapper->map(document: $document)['packageVersion']);
+	}//end testPackageVersionExtractedFromTheOrgExtensionSpelling()
+
+	/**
 	 * A plain top-level `version` string is the third precedence tier.
 	 */
 	public function testPackageVersionExtractedFromPlainVersionField(): void {
