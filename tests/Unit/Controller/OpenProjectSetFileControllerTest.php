@@ -23,10 +23,12 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OpenProjectSetFileController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\OpenProjectSetFileOutput;
 use OCA\Thematiq\Service\OpenProjectSetFileWriter;
 use OCA\Thematiq\Service\ShellCatalogueService;
 use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetFileLocation;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Settings\Admin;
@@ -67,7 +69,18 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		return new OpenProjectSetFileController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, $writer, $l);
+		return new OpenProjectSetFileController(
+			appName: 'thematiq',
+			request: $this->createMock(IRequest::class),
+			location: new TokenSetFileLocation(
+				tokenSets: $tokenSets,
+				appManager: $appManager
+			),
+			output: new OpenProjectSetFileOutput(
+				writer: $writer,
+				l: $l
+			)
+		);
 	}//end controller()
 
 	/**

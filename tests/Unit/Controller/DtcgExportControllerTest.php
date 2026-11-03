@@ -26,8 +26,10 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\DesignTokensWriter;
+use OCA\Thematiq\Service\DtcgExportTools;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetFileLocation;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Settings\Admin;
@@ -80,7 +82,20 @@ final class DtcgExportControllerTest extends TestCase {
 		$request = $this->createMock(IRequest::class);
 		$request->method('getParam')->willReturnCallback(static fn (string $key, $default = null) => $key === 'format' ? ($format ?? $default) : $default);
 
-		return new DtcgExportController('thematiq', $request, $tokenSets, $appManager, $parser, new DesignTokensWriter(), new DeprecationRecords($config), $l);
+		return new DtcgExportController(
+			appName: 'thematiq',
+			request: $request,
+			location: new TokenSetFileLocation(
+				tokenSets: $tokenSets,
+				appManager: $appManager
+			),
+			tools: new DtcgExportTools(
+				cssParser: $parser,
+				writer: new DesignTokensWriter(),
+				deprecations: new DeprecationRecords($config),
+				l: $l
+			)
+		);
 	}//end controller()
 
 	/**
@@ -252,7 +267,21 @@ final class DtcgExportControllerTest extends TestCase {
 		$l->method('t')->willReturnArgument(0);
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnArgument(2);
-		$controller = new DtcgExportController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, new CssParserService(), new DesignTokensWriter(), new DeprecationRecords($config), $l, new DirectoryRuntimeFileStore($dir));
+		$controller = new DtcgExportController(
+			appName: 'thematiq',
+			request: $this->createMock(IRequest::class),
+			location: new TokenSetFileLocation(
+				tokenSets: $tokenSets,
+				appManager: $appManager,
+				store: new DirectoryRuntimeFileStore($dir)
+			),
+			tools: new DtcgExportTools(
+				cssParser: new CssParserService(),
+				writer: new DesignTokensWriter(),
+				deprecations: new DeprecationRecords($config),
+				l: $l
+			)
+		);
 
 		$document = json_decode((string)json_encode($controller->export(id: 'custom-gemeente-voorbeeld')->getData()), true);
 		exec('rm -rf ' . escapeshellarg($dir));

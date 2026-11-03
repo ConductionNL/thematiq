@@ -24,7 +24,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use InvalidArgumentException;
 use OCA\Thematiq\Controller\BrandFormController;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandFormService;
+use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\App\IAppManager;
@@ -43,6 +45,8 @@ use RuntimeException;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Controller\BrandFormController
+ * @uses   \OCA\Thematiq\Service\AuditAndTranslation
+ * @uses   \OCA\Thematiq\Service\BrandFormSources
  */
 class BrandFormCreateGoldenTest extends TestCase {
 
@@ -166,7 +170,19 @@ class BrandFormCreateGoldenTest extends TestCase {
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(static fn (string $text): string => $text);
 
-		$controller = new BrandFormController('thematiq', $request, $brandForm, $store, $apps, $audit, $l10n);
+		$controller = new BrandFormController(
+			appName: 'thematiq',
+			request: $request,
+			sources: new BrandFormSources(
+				brandForm: $brandForm,
+				store: $store,
+				apps: $apps
+			),
+			answers: new AuditAndTranslation(
+				audit: $audit,
+				l: $l10n
+			)
+		);
 		$response = $controller->create();
 
 		return (string)json_encode(

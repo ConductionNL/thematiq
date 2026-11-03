@@ -25,12 +25,14 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CatalogController;
 use OCA\Thematiq\Controller\OwnTokenController;
 use OCA\Thematiq\Controller\TokenDeprecationController;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
 use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\OwnTokenSources;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenDeprecationService;
@@ -165,7 +167,19 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return OwnTokenController
 	 */
 	private function own(array $params = []): OwnTokenController {
-		return new OwnTokenController('thematiq', $this->request($params), $this->ownTokens, $this->deprecations, $this->overrides, $this->audit, $this->l10n());
+		return new OwnTokenController(
+			appName: 'thematiq',
+			request: $this->request($params),
+			tokens: new OwnTokenSources(
+				ownTokens: $this->ownTokens,
+				deprecations: $this->deprecations,
+				overrides: $this->overrides
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $this->l10n()
+			)
+		);
 	}//end own()
 
 	/**

@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\BrandFormController;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandFormService;
+use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
@@ -142,13 +144,17 @@ class BrandFormControllerTest extends TestCase {
 		$l->method('t')->willReturnCallback(fn (string $text, $parameters = []) => vsprintf($text, (array)$parameters));
 
 		return new BrandFormController(
-			'thematiq',
-			$request,
-			new BrandFormService(new ContrastService(), new CssParserService()),
-			$this->store,
-			$repo,
-			$this->audit,
-			$l
+			appName: 'thematiq',
+			request: $request,
+			sources: new BrandFormSources(
+				brandForm: new BrandFormService(new ContrastService(), new CssParserService()),
+				store: $this->store,
+				apps: $repo
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $l
+			)
 		);
 	}//end controller()
 
