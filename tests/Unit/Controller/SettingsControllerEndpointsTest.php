@@ -20,6 +20,9 @@ use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -119,19 +122,25 @@ class SettingsControllerEndpointsTest extends TestCase {
 		$this->appThemingService = $this->createMock(AppThemingService::class);
 
 		$this->controller = new SettingsController(
-			'thematiq',
-			$this->createMock(IRequest::class),
-			$config,
-			$this->tokenSetService,
-			$this->createMock(ThemingService::class),
-			$this->previewService,
-			$this->appThemingService,
-			$this->createMock(ComplianceReportService::class),
-			$auditService,
-			$this->createMock(originalClassName: EmailThemingSettings::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'thematiq',
+			request: $this->createMock(IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $config,
+				auditService: $auditService,
+				appThemingService: $this->appThemingService,
+				groupThemingService: $this->createMock(GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->tokenSetService,
+				previewService: $this->previewService,
+				activeTokenSet: $this->createMock(ActiveTokenSetService::class),
+				themingService: $this->createMock(ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+			)
 		);
 	}//end setUp()
 
