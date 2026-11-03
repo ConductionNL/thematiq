@@ -271,7 +271,7 @@ class CssInjectionServiceTest extends TestCase {
 					$this->appBrands,
 				]
 			)
-			->onlyMethods(['emitStyle', 'emitStylesheetLink'])
+			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
 			->getMock();
 
 		$service->method('emitStyle')->willReturnCallback(
