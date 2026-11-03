@@ -34,29 +34,29 @@ class HealthControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testIndexDegradesWhenTheEngineIsAbsent(): void {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnMap([['thematiq', 'installed_version', '', '1.2.10']]);
 
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willThrowException(new RuntimeException('Class not found'));
 
 		$controller = new HealthController(
-			request: $this->createMock(IRequest::class),
+			request: $this->createMock(originalClassName: IRequest::class),
 			config: $config,
 			container: $container
 		);
 
 		$response = $controller->index();
 
-		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame(expected: Http::STATUS_OK, actual: $response->getStatus());
 		$this->assertSame(
-			[
+			expected: [
 				'status' => 'degraded',
 				'app' => 'thematiq',
 				'version' => '1.2.10',
 				'checks' => ['openregister' => 'unavailable'],
 			],
-			$response->getData()
+			actual: $response->getData()
 		);
 	}//end testIndexDegradesWhenTheEngineIsAbsent()
 }//end class

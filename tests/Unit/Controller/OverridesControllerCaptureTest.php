@@ -58,24 +58,29 @@ class OverridesControllerCaptureTest extends TestCase {
 	 */
 	private OverridesController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->request = $this->createMock(IRequest::class);
-		$this->config = $this->createMock(IConfig::class);
-		$this->capture = $this->createMock(BrandingCaptureService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->capture = $this->createMock(originalClassName: BrandingCaptureService::class);
 
 		$this->controller = new OverridesController(
 			appName: 'thematiq',
 			request: $this->request,
 			writes: new OverridesWrites(
-				overridesService: $this->createMock(CustomOverridesService::class),
+				overridesService: $this->createMock(originalClassName: CustomOverridesService::class),
 				cssParser: new CssParserService(),
-				auditService: $this->createMock(ThemingAuditService::class)
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class)
 			),
 			themingSync: new OverridesThemingSync(
 				config: $this->config,
-				themingService: $this->createMock(ThemingService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class),
 				brandingCapture: $this->capture
 			)
 		);
@@ -100,6 +105,8 @@ class OverridesControllerCaptureTest extends TestCase {
 
 	/**
 	 * The theme being saved gets the branding, and the editor gets it back.
+	 *
+	 * @return void
 	 */
 	public function testCapturesIntoTheSavedTheme(): void {
 		$this->saving(tokenSet: 'custom-openwoo');
@@ -110,12 +117,14 @@ class OverridesControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['captured' => true, 'primary_color' => '#23845c'], $response->getData()['theming']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['captured' => true, 'primary_color' => '#23845c'], actual: $response->getData()['theming']);
 	}//end testCapturesIntoTheSavedTheme()
 
 	/**
 	 * The stock set never captures: its branding is Nextcloud's own.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetIsNeverCaptured(): void {
 		$this->saving(tokenSet: 'nextcloud');
@@ -123,11 +132,13 @@ class OverridesControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertArrayNotHasKey('theming', $response->getData());
+		$this->assertArrayNotHasKey(key: 'theming', array: $response->getData());
 	}//end testTheStockSetIsNeverCaptured()
 
 	/**
 	 * Without a set named, the instance's active set is the one saved.
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedCapturesIntoTheActiveSet(): void {
 		$this->saving(tokenSet: '');

@@ -55,10 +55,10 @@ class DarkPaletteActionColourTest extends TestCase {
 	 */
 	private function generator(): DarkPaletteService {
 		return new DarkPaletteService(
-			new ContrastService(),
-			new CssParserService(),
-			$this->createMock(IAppManager::class),
-			$this->createMock(LoggerInterface::class)
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $this->createMock(originalClassName: IAppManager::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end generator()
 
@@ -96,10 +96,14 @@ class DarkPaletteActionColourTest extends TestCase {
 		$dark = $this->dark(light: self::LIGHT);
 
 		foreach (array_keys($dark) as $token) {
-			$this->assertStringNotContainsString('color-action', $token);
+			$this->assertStringNotContainsString(needle: 'color-action', haystack: $token);
 		}
 
-		$this->assertSame('#1a67a3', $dark['--nldesign-color-primary'], 'the primary keeps its light value: white reads on it');
+		$this->assertSame(
+			expected: '#1a67a3',
+			actual: $dark['--nldesign-color-primary'],
+			message: 'the primary keeps its light value: white reads on it'
+		);
 	}//end testASetWithoutAnActionColourIsUntouched()
 
 	/**
@@ -114,10 +118,10 @@ class DarkPaletteActionColourTest extends TestCase {
 			'--nldesign-color-action-text' => '#ffffff',
 		]));
 
-		$this->assertSame('#1a7f37', $dark['--nldesign-color-action']);
-		$this->assertSame('#116329', $dark['--nldesign-color-action-hover']);
-		$this->assertSame('#ffffff', $dark['--nldesign-color-action-text']);
-		$this->assertSame('#1a67a3', $dark['--nldesign-color-primary'], 'the primary is decided on its own pair');
+		$this->assertSame(expected: '#1a7f37', actual: $dark['--nldesign-color-action']);
+		$this->assertSame(expected: '#116329', actual: $dark['--nldesign-color-action-hover']);
+		$this->assertSame(expected: '#ffffff', actual: $dark['--nldesign-color-action-text']);
+		$this->assertSame(expected: '#1a67a3', actual: $dark['--nldesign-color-primary'], message: 'the primary is decided on its own pair');
 	}//end testAReadableActionColourKeepsItsLightValue()
 
 	/**
@@ -128,9 +132,13 @@ class DarkPaletteActionColourTest extends TestCase {
 	public function testAnActionColourWithoutATextGetsOne(): void {
 		$dark = $this->dark(light: (self::LIGHT + ['--nldesign-color-action' => '#1a7f37']));
 
-		$this->assertSame('#1a7f37', $dark['--nldesign-color-action']);
-		$this->assertSame('#ffffff', $dark['--nldesign-color-action-text']);
-		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $dark, 'the stylesheet darkens the dark action colour itself');
+		$this->assertSame(expected: '#1a7f37', actual: $dark['--nldesign-color-action']);
+		$this->assertSame(expected: '#ffffff', actual: $dark['--nldesign-color-action-text']);
+		$this->assertArrayNotHasKey(
+			key: '--nldesign-color-action-hover',
+			array: $dark,
+			message: 'the stylesheet darkens the dark action colour itself'
+		);
 	}//end testAnActionColourWithoutATextGetsOne()
 
 	/**
@@ -144,14 +152,18 @@ class DarkPaletteActionColourTest extends TestCase {
 	 */
 	public function testAnUnreadableActionColourIsRepaired(): void {
 		$light = (self::LIGHT + ['--nldesign-color-action' => '#7bd88f']);
-		$this->assertLessThan(4.5, $this->ratio(foreground: '#ffffff', background: '#7bd88f'), 'white on this green does not read in light');
+		$this->assertLessThan(
+			expected: 4.5,
+			actual: $this->ratio(foreground: '#ffffff', background: '#7bd88f'),
+			message: 'white on this green does not read in light'
+		);
 
 		$dark = $this->dark(light: $light);
 
-		$this->assertNotSame('#7bd88f', $dark['--nldesign-color-action'], 'no brand exception without a readable pair');
+		$this->assertNotSame(expected: '#7bd88f', actual: $dark['--nldesign-color-action'], message: 'no brand exception without a readable pair');
 		$this->assertGreaterThanOrEqual(
-			4.5,
-			$this->ratio(foreground: $dark['--nldesign-color-action-text'], background: $dark['--nldesign-color-action'])
+			expected: 4.5,
+			actual: $this->ratio(foreground: $dark['--nldesign-color-action-text'], background: $dark['--nldesign-color-action'])
 		);
 	}//end testAnUnreadableActionColourIsRepaired()
 }//end class

@@ -21,16 +21,15 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
-use OCA\Thematiq\Service\BrandFormService;
+use OCA\Thematiq\Service\AuditAndTranslation;
+use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
-use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Settings\Admin;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IL10N;
 use OCP\IRequest;
 use RuntimeException;
 
@@ -56,20 +55,14 @@ class BrandFormController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param BrandFormService $brandForm The derivation.
-	 * @param CustomTokenSetService $store The custom set store.
-	 * @param IAppManager $apps Resolves the app root (rules and defaults).
-	 * @param ThemingAuditService $audit The theming audit log.
-	 * @param IL10N $l Translations.
+	 * @param BrandFormSources $sources The brand form service, custom set storage and the app manager.
+	 * @param AuditAndTranslation $answers The audit trail and the translator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private BrandFormService $brandForm,
-		private CustomTokenSetService $store,
-		private IAppManager $apps,
-		private ThemingAuditService $audit,
-		private IL10N $l,
+		private readonly BrandFormSources $sources,
+		private readonly AuditAndTranslation $answers,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -83,7 +76,7 @@ class BrandFormController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function inputs(): JSONResponse {
-		return new JSONResponse($this->brandForm->inputs(appPath: $this->apps->getAppPath('thematiq')));
+		return new JSONResponse($this->sources->brandForm->inputs(appPath: $this->sources->apps->getAppPath('thematiq')));
 	}//end inputs()
 
 	/**
@@ -98,7 +91,7 @@ class BrandFormController extends Controller {
 	public function create(): JSONResponse {
 		$name = trim((string)$this->request->getParam('name', ''));
 		if ($name === '') {
-			return new JSONResponse(['error' => $this->l->t('A token set name is required.')], 400);
+			return new JSONResponse(['error' => $this->answers->l->t('A token set name is required.')], 400);
 		}
 
 		$input = $this->formInput();
@@ -139,14 +132,14 @@ class BrandFormController extends Controller {
 	 */
 	private function deriveFromRequest(): array|JSONResponse {
 		try {
-			return $this->brandForm->derive(
-				appPath: $this->apps->getAppPath('thematiq'),
+			return $this->sources->brandForm->derive(
+				appPath: $this->sources->apps->getAppPath('thematiq'),
 				primary: (string)$this->request->getParam('primary', ''),
 				background: (string)$this->request->getParam('background', ''),
 				action: (string)$this->request->getParam('action', '')
 			);
 		} catch (InvalidArgumentException $e) {
-			return new JSONResponse(['error' => $this->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
+			return new JSONResponse(['error' => $this->answers->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
 		}
 	}//end deriveFromRequest()
 
@@ -166,7 +159,7 @@ class BrandFormController extends Controller {
 			return $result;
 		}
 
-		$this->audit->log(
+		$this->answers->audit->log(
 			action: 'custom_set_uploaded',
 			context: ['id' => $result['id'], 'name' => $name, 'declarationCount' => count($input['derived']['declarations'])]
 		);
@@ -187,12 +180,19 @@ class BrandFormController extends Controller {
 	private function storeSet(string $name, array $input): array|JSONResponse {
 		$declarations = $input['derived']['declarations'];
 		try {
-			return $this->store->store(
-				displayName: $name,
-				description: trim((string)$this->request->getParam('description', '')),
-				declarations: $declarations,
-				theming: ['primary_color' => $declarations['--nldesign-color-primary'], 'background_color' => $declarations['--nldesign-color-nav-background']],
-				logoAsset: $input['logo']
+			return $this->sources->store->store(
+				set: new NewCustomTokenSet(
+					fields: [
+						'displayName' => $name,
+						'description' => trim((string)$this->request->getParam('description', '')),
+						'declarations' => $declarations,
+						'theming' => [
+							'primary_color' => $declarations['--nldesign-color-primary'],
+							'background_color' => $declarations['--nldesign-color-nav-background'],
+						],
+						'logoAsset' => $input['logo'],
+					]
+				)
 			);
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
@@ -231,12 +231,12 @@ class BrandFormController extends Controller {
 		$extension = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
 		$size = (int)($file['size'] ?? 0);
 		if ($size > CustomTokenSetValidator::MAX_SIZE) {
-			return new JSONResponse(['error' => $this->l->t('The logo exceeds the 512 KB size limit.')], 413);
+			return new JSONResponse(['error' => $this->answers->l->t('The logo exceeds the 512 KB size limit.')], 413);
 		}
 
 		$contents = (string)file_get_contents((string)$file['tmp_name']);
 		if (in_array($extension, self::LOGO_TYPES, true) === false || $this->isImage(extension: $extension, contents: $contents) === false) {
-			return new JSONResponse(['error' => $this->l->t('The logo must be an SVG, PNG, JPG, GIF or WebP image.')], 400);
+			return new JSONResponse(['error' => $this->answers->l->t('The logo must be an SVG, PNG, JPG, GIF or WebP image.')], 400);
 		}
 
 		return ['path' => 'logo.' . $extension, 'contents' => $contents];

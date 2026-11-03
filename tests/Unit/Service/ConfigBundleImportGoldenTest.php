@@ -640,7 +640,12 @@ class ConfigBundleImportGoldenTest extends TestCase {
 		$set = [];
 		$this->maybe(random: $random, bundle: $set, key: 'id', values: self::SET_IDS);
 		$this->maybe(random: $random, bundle: $set, key: 'name', values: ['Acme', '  ', ' Beta ', 'Gamma']);
-		$this->maybe(random: $random, bundle: $set, key: 'css', values: [':root{--x:1}', '', 5, 'body{color:red}', ':root{--refuse:1}', ':root{--y:2}']);
+		$this->maybe(
+			random: $random,
+			bundle: $set,
+			key: 'css',
+			values: [':root{--x:1}', '', 5, 'body{color:red}', ':root{--refuse:1}', ':root{--y:2}']
+		);
 		$this->maybe(random: $random, bundle: $set, key: 'description', values: ['Desc', 12]);
 		$this->maybe(random: $random, bundle: $set, key: 'theming', values: [['primary_color' => '#000'], 'x']);
 		$this->maybe(random: $random, bundle: $set, key: 'warnings', values: [['w1'], 'w']);

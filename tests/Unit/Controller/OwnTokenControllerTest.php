@@ -25,14 +25,17 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CatalogController;
 use OCA\Thematiq\Controller\OwnTokenController;
 use OCA\Thematiq\Controller\TokenDeprecationController;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\DeprecationRecords;
+use OCA\Thematiq\Service\DeprecationSources;
 use OCA\Thematiq\Service\OverridesSetContext;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OwnTokenService;
+use OCA\Thematiq\Service\OwnTokenSources;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenDeprecationService;
@@ -110,27 +113,37 @@ final class OwnTokenControllerTest extends TestCase {
 		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
 		copy(\dirname(__DIR__, 3) . '/css/systems/nldesign/defaults.css', $this->appDir . '/css/systems/nldesign/defaults.css');
 		$this->stored = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(function (string $app, string $key, $value): void {
 			$this->stored[$key] = (string)$value;
 		});
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$records = new DeprecationRecords($config);
-		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
-		$this->deprecations = new TokenDeprecationService($records, $this->ownTokens, $appManager, $parser);
-		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$records = new DeprecationRecords(config: $config);
+		$this->ownTokens = new OwnTokenService(config: $config, values: new TokenValueValidator(), records: $records);
+		$this->deprecations = new TokenDeprecationService(
+			records: $records,
+			ownTokens: $this->ownTokens,
+			appManager: $appManager,
+			cssParser: $parser
+		);
+		$dark = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($this->appDir),
+				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
 				darkPalette: $dark
 			),
 			setContext: new OverridesSetContext(ownTokens: $this->ownTokens)
 		);
-		$this->audit = $this->createMock(ThemingAuditService::class);
+		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
 	}//end setUp()
 
 	/**
@@ -150,7 +163,7 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return IRequest
 	 */
 	private function request(array $params): IRequest {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ($params[$key] ?? $default));
 		return $request;
 	}//end request()
@@ -161,7 +174,7 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return IL10N
 	 */
 	private function l10n(): IL10N {
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 		return $l;
 	}//end l10n()
@@ -174,7 +187,19 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return OwnTokenController
 	 */
 	private function own(array $params = []): OwnTokenController {
-		return new OwnTokenController('thematiq', $this->request($params), $this->ownTokens, $this->deprecations, $this->overrides, $this->audit, $this->l10n());
+		return new OwnTokenController(
+			appName: 'thematiq',
+			request: $this->request(params: $params),
+			tokens: new OwnTokenSources(
+				ownTokens: $this->ownTokens,
+				deprecations: $this->deprecations,
+				overrides: $this->overrides
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $this->l10n()
+			)
+		);
 	}//end own()
 
 	/**
@@ -185,7 +210,18 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return TokenDeprecationController
 	 */
 	private function deprecationController(array $params = []): TokenDeprecationController {
-		return new TokenDeprecationController('thematiq', $this->request($params), $this->deprecations, $this->overrides, $this->audit, $this->l10n());
+		return new TokenDeprecationController(
+			appName: 'thematiq',
+			request: $this->request(params: $params),
+			sources: new DeprecationSources(
+				deprecations: $this->deprecations,
+				overrides: $this->overrides
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $this->l10n()
+			)
+		);
 	}//end deprecationController()
 
 	/**
@@ -201,9 +237,9 @@ final class OwnTokenControllerTest extends TestCase {
 		foreach ($methods as $class => $names) {
 			foreach ($names as $method) {
 				$attributes = (new ReflectionMethod($class, $method))->getAttributes(AuthorizedAdminSetting::class);
-				$this->assertCount(1, $attributes, $class . '::' . $method);
-				$this->assertSame(Admin::class, ($attributes[0]->getArguments()['settings'] ?? null));
-				$this->assertSame([], (new ReflectionMethod($class, $method))->getAttributes(NoAdminRequired::class));
+				$this->assertCount(expectedCount: 1, haystack: $attributes, message: $class . '::' . $method);
+				$this->assertSame(expected: Admin::class, actual: ($attributes[0]->getArguments()['settings'] ?? null));
+				$this->assertSame(expected: [], actual: (new ReflectionMethod($class, $method))->getAttributes(NoAdminRequired::class));
 			}
 		}
 	}//end testEndpointsAreAdminOnly()
@@ -214,12 +250,15 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testCreateWritesFileAndAuditsOnce(): void {
-		$this->audit->expects($this->once())->method('log')->with('own_token_changed', $this->callback(fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent' && $c['old'] === null && $c['new']['value'] === '#e17000'));
+		$this->audit->expects($this->once())->method('log')->with(
+			'own_token_changed',
+			$this->callback(callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent' && $c['old'] === null && $c['new']['value'] === '#e17000')
+		);
 
-		$response = $this->own(['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000'])->create();
+		$response = $this->own(params: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000'])->create();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertStringContainsString('--nldesign-org-brand-accent: #e17000;', $this->overrides->getRawContent());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--nldesign-org-brand-accent: #e17000;', haystack: $this->overrides->getRawContent());
 	}//end testCreateWritesFileAndAuditsOnce()
 
 	/**
@@ -230,12 +269,12 @@ final class OwnTokenControllerTest extends TestCase {
 	public function testRefusedCreateIs400WithoutAudit(): void {
 		$this->audit->expects($this->never())->method('log');
 
-		$response = $this->own(['slug' => 'Brand_Accent', 'label' => 'x', 'type' => 'color', 'value' => '#000000'])->create();
+		$response = $this->own(params: ['slug' => 'Brand_Accent', 'label' => 'x', 'type' => 'color', 'value' => '#000000'])->create();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('name', $response->getData()['field']);
-		$this->assertStringContainsString('lowercase letters', $response->getData()['error']);
-		$this->assertSame([], $this->ownTokens->list());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'name', actual: $response->getData()['field']);
+		$this->assertStringContainsString(needle: 'lowercase letters', haystack: $response->getData()['error']);
+		$this->assertSame(expected: [], actual: $this->ownTokens->list());
 	}//end testRefusedCreateIs400WithoutAudit()
 
 	/**
@@ -245,16 +284,20 @@ final class OwnTokenControllerTest extends TestCase {
 	 */
 	public function testRemoveKeepsDeprecationAsRemoved(): void {
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
-		$this->deprecations->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'removalDate' => '2026-10-02'], today: '2026-10-02');
+		$this->deprecations->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'warning', 'removalDate' => '2026-10-02'],
+			today: '2026-10-02'
+		);
 		$this->overrides->rewriteAll();
 		$this->overrides->ensureExists();
 
 		$response = $this->own()->delete(name: '--nldesign-org-old-accent');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertStringNotContainsString('--nldesign-org-old-accent', $this->overrides->getRawContent());
-		$this->assertSame('removed', $this->deprecations->list()['--nldesign-org-old-accent']['state']);
-		$this->assertSame(404, $this->own()->delete(name: '--nldesign-org-old-accent')->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertStringNotContainsString(needle: '--nldesign-org-old-accent', haystack: $this->overrides->getRawContent());
+		$this->assertSame(expected: 'removed', actual: $this->deprecations->list()['--nldesign-org-old-accent']['state']);
+		$this->assertSame(expected: 404, actual: $this->own()->delete(name: '--nldesign-org-old-accent')->getStatus());
 	}//end testRemoveKeepsDeprecationAsRemoved()
 
 	/**
@@ -266,13 +309,13 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->audit->expects($this->once())->method('log')->with('token_deprecation_changed');
 
-		$refused = $this->deprecationController(['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing'])->save();
-		$this->assertSame(400, $refused->getStatus());
-		$this->assertSame('replacement', $refused->getData()['field']);
+		$refused = $this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing'])->save();
+		$this->assertSame(expected: 400, actual: $refused->getStatus());
+		$this->assertSame(expected: 'replacement', actual: $refused->getData()['field']);
 
-		$saved = $this->deprecationController(['token' => '--nldesign-org-old-accent', 'severity' => 'warning'])->save();
-		$this->assertSame(200, $saved->getStatus());
-		$this->assertStringContainsString('/* deprecated (warning) */', $this->overrides->getRawContent());
+		$saved = $this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning'])->save();
+		$this->assertSame(expected: 200, actual: $saved->getStatus());
+		$this->assertStringContainsString(needle: '/* deprecated (warning) */', haystack: $this->overrides->getRawContent());
 	}//end testDeprecationAuditedAndRefusalNot()
 
 	/**
@@ -281,11 +324,14 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAdoptRecordsNotices(): void {
-		$response = $this->deprecationController(['notices' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary']]])->adopt();
+		$response = $this->deprecationController(params: ['notices' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary']]])->adopt();
 
-		$this->assertSame(['--nldesign-color-primary'], $response->getData()['recorded']);
-		$this->assertSame('import', $this->deprecations->list()['--nldesign-color-primary']['source']);
-		$this->assertTrue($this->deprecationController()->list()->getData()['deprecations'][0]['own'] === false, 'a shipped name is notice only');
+		$this->assertSame(expected: ['--nldesign-color-primary'], actual: $response->getData()['recorded']);
+		$this->assertSame(expected: 'import', actual: $this->deprecations->list()['--nldesign-color-primary']['source']);
+		$this->assertTrue(
+			condition: $this->deprecationController()->list()->getData()['deprecations'][0]['own'] === false,
+			message: 'a shipped name is notice only'
+		);
 	}//end testAdoptRecordsNotices()
 
 	/**
@@ -296,15 +342,47 @@ final class OwnTokenControllerTest extends TestCase {
 	public function testDeprecationsShape(): void {
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']);
-		$this->deprecations->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'replacement' => '--nldesign-org-brand-accent', 'removalDate' => '2027-03-01'], today: '2026-10-02');
+		$this->deprecations->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'warning', 'replacement' => '--nldesign-org-brand-accent', 'removalDate' => '2027-03-01'],
+			today: '2026-10-02'
+		);
 
-		$catalog = new CatalogController('thematiq', $this->createMock(IRequest::class), $this->createMock(TokenSetService::class), $this->deprecations);
+		$catalog = new CatalogController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+			deprecations: $this->deprecations
+		);
 		$rows = $catalog->deprecations()->getData()['deprecations'];
 
-		$this->assertSame(['token', 'severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'due', 'state'], array_keys($rows[0]));
-		$this->assertSame('--nldesign-org-brand-accent', $rows[0]['replacement']);
+		$this->assertSame(
+			expected: ['token', 'severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'due', 'state'],
+			actual: array_keys($rows[0])
+		);
+		$this->assertSame(expected: '--nldesign-org-brand-accent', actual: $rows[0]['replacement']);
 		$method = new ReflectionMethod(CatalogController::class, 'deprecations');
-		$this->assertCount(1, $method->getAttributes(NoAdminRequired::class));
-		$this->assertSame([], $method->getAttributes(PublicPage::class));
+		$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(NoAdminRequired::class));
+		$this->assertSame(expected: [], actual: $method->getAttributes(PublicPage::class));
 	}//end testDeprecationsShape()
+	/**
+	 * Withdrawing a deprecation records the withdrawn record as the old value.
+	 *
+	 * @return void
+	 */
+	public function testWithdrawAuditsTheWithdrawnRecord(): void {
+		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
+		$this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning'])->save();
+		$logged = [];
+		$this->audit->method('log')->willReturnCallback(
+			static function (string $action, array $context) use (&$logged): void {
+				$logged[] = $context;
+			}
+		);
+
+		$this->deprecationController()->delete(token: '--nldesign-org-old-accent');
+
+		$this->assertSame(expected: 'warning', actual: ($logged[0]['old']['severity'] ?? null));
+		$this->assertNull(actual: $logged[0]['new']);
+	}//end testWithdrawAuditsTheWithdrawnRecord()
 }//end class

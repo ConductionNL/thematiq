@@ -57,6 +57,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with one shipped set, and an in-memory local cache.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -69,17 +71,17 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 		);
 		$this->writeTokenFile(css: ':root { --nldesign-color-primary: #007bc7; }');
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$appManager->method('getAppVersion')->willReturn('1.0.0');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => $default
 		);
 
 		$store = [];
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturnCallback(
 			static function (string $key) use (&$store) {
 				return ($store[$key] ?? null);
@@ -92,11 +94,11 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 			}
 		);
 
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$cacheFactory->method('createLocal')->willReturn($cache);
 
-		$audit = $this->createMock(ShippedTokenSetAuditService::class);
+		$audit = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 		$audit->method('warningsFor')->willReturnCallback(
 			function (): array {
 				$this->auditRuns++;
@@ -104,9 +106,9 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 			}
 		);
 
-		$vocabularyAudit = $this->createMock(TokenSetVocabularyAuditService::class);
+		$vocabularyAudit = $this->createMock(originalClassName: TokenSetVocabularyAuditService::class);
 		$vocabularyAudit->method('warningsFor')->willReturn([]);
-		$fontAudit = $this->createMock(TokenSetFontAuditService::class);
+		$fontAudit = $this->createMock(originalClassName: TokenSetFontAuditService::class);
 		$fontAudit->method('warningsFor')->willReturn([]);
 
 		$this->service = new TokenSetService(
@@ -116,7 +118,7 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 			runtime: new TokenSetRuntime(
 				config: $config,
 				cacheFactory: $cacheFactory,
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			audits: new TokenSetAudits(
 				audit: $audit,
@@ -128,6 +130,8 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		@unlink($this->appDir . '/css/tokens/utrecht.css');
@@ -152,24 +156,28 @@ class TokenSetServiceWarningsCacheTest extends TestCase {
 	/**
 	 * A second catalogue read with unchanged inputs takes the warnings from the
 	 * cache and returns the same warnings.
+	 *
+	 * @return void
 	 */
 	public function testSecondReadReusesTheCachedWarnings(): void {
 		$first = array_column($this->service->getAvailableTokenSets(), null, 'id');
 		$second = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertSame(1, $this->auditRuns, 'the audits must run once for unchanged inputs');
-		$this->assertSame([['pair' => 'text', 'verdict' => 'fail']], $first['utrecht']['warnings']);
-		$this->assertSame($first['utrecht']['warnings'], $second['utrecht']['warnings']);
+		$this->assertSame(expected: 1, actual: $this->auditRuns, message: 'the audits must run once for unchanged inputs');
+		$this->assertSame(expected: [['pair' => 'text', 'verdict' => 'fail']], actual: $first['utrecht']['warnings']);
+		$this->assertSame(expected: $first['utrecht']['warnings'], actual: $second['utrecht']['warnings']);
 	}//end testSecondReadReusesTheCachedWarnings()
 
 	/**
 	 * A set whose CSS changed is audited again rather than served stale warnings.
+	 *
+	 * @return void
 	 */
 	public function testChangedSetCssIsAuditedAgain(): void {
 		$this->service->getAvailableTokenSets();
 		$this->writeTokenFile(css: ':root { --nldesign-color-primary: #154273; }');
 		$this->service->getAvailableTokenSets();
 
-		$this->assertSame(2, $this->auditRuns, 'a changed set must not be served the warnings of its old CSS');
+		$this->assertSame(expected: 2, actual: $this->auditRuns, message: 'a changed set must not be served the warnings of its old CSS');
 	}//end testChangedSetCssIsAuditedAgain()
 }//end class

@@ -41,6 +41,8 @@ class PlaygroundStateServiceTest extends TestCase {
 	 *
 	 * @param TokenSetPreviewService|null $previewValues A stub, when the test needs its own.
 	 * @param TokenSetConverterService|null $converter A stub, when the test needs its own.
+	 * @param ?StockTokensService $stockTokens The stock tokens.
+	 * @param ?IL10N $l10n The l10n.
 	 *
 	 * @return PlaygroundStateService The service under test.
 	 */
@@ -50,17 +52,17 @@ class PlaygroundStateServiceTest extends TestCase {
 		?StockTokensService $stockTokens = null,
 		?IL10N $l10n = null,
 	): PlaygroundStateService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
 
 		if ($previewValues === null) {
-			$previewValues = $this->createMock(TokenSetPreviewService::class);
+			$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 			$previewValues->method('getResolvedTokens')->willReturn(['--nldesign-color-primary' => '#154273']);
 			$previewValues->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 		}
 
 		if ($converter === null) {
-			$converter = $this->createMock(TokenSetConverterService::class);
+			$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 			$converter->method('getReasons')->willReturn(['derived-by-nextcloud' => 'Calculated by Nextcloud.']);
 		}
 
@@ -69,7 +71,7 @@ class PlaygroundStateServiceTest extends TestCase {
 				appManager: $appManager,
 				previewValues: $previewValues,
 				converter: $converter,
-				stockTokens: ($stockTokens ?? $this->createMock(StockTokensService::class))
+				stockTokens: ($stockTokens ?? $this->createMock(originalClassName: StockTokensService::class))
 			),
 			l10n: ($l10n ?? $this->identityL10n())
 		);
@@ -85,7 +87,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * @return IL10N The stub.
 	 */
 	private function identityL10n(): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn (string $text): string => vsprintf($text, []));
 
 		return $l10n;
@@ -99,7 +101,7 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * @return IL10N The stub.
 	 */
 	private function markingL10n(array &$asked): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			function (string $text) use (&$asked): string {
 				$asked[] = $text;
@@ -116,31 +118,33 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * subtitle, paints note, token-less fact, reason and version note goes
 	 * through IL10N, and the data around them (ids, token names, codes) does
 	 * not.
+	 *
+	 * @return void
 	 */
 	public function testTheInventoryChromeIsTranslatedAndItsDataIsNot(): void {
 		$asked = [];
-		$state = $this->build(l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$state = $this->build(l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud');
 		$inventory = $state['playgroundInventory'];
 
 		foreach ($inventory['components'] as $component) {
-			$this->assertStringStartsWith('NL:', $component['title']);
-			$this->assertStringStartsWith('NL:', $component['subtitle']);
-			$this->assertStringStartsNotWith('NL:', $component['id']);
+			$this->assertStringStartsWith(prefix: 'NL:', string: $component['title']);
+			$this->assertStringStartsWith(prefix: 'NL:', string: $component['subtitle']);
+			$this->assertStringStartsNotWith(prefix: 'NL:', string: $component['id']);
 			foreach ($component['tokens'] ?? [] as $token) {
-				$this->assertStringStartsWith('NL:', $token['paints'], $component['id']);
-				$this->assertStringStartsWith('--', $token['name']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $token['paints'], message: $component['id']);
+				$this->assertStringStartsWith(prefix: '--', string: $token['name']);
 			}
 			foreach ($component['fixed'] ?? [] as $fixed) {
-				$this->assertStringStartsWith('NL:', $fixed['what']);
-				$this->assertStringStartsWith('NL:', $fixed['why']);
-				$this->assertStringStartsNotWith('NL:', $fixed['code']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $fixed['what']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $fixed['why']);
+				$this->assertStringStartsNotWith(prefix: 'NL:', string: $fixed['code']);
 			}
 			foreach ($component['versionNotes'] ?? [] as $note) {
-				$this->assertStringStartsWith('NL:', $note['text']);
+				$this->assertStringStartsWith(prefix: 'NL:', string: $note['text']);
 			}
 		}
 
-		$this->assertSame(['derived-by-nextcloud' => 'NL:Calculated by Nextcloud.'], $state['playgroundReasons']);
+		$this->assertSame(expected: ['derived-by-nextcloud' => 'NL:Calculated by Nextcloud.'], actual: $state['playgroundReasons']);
 	}//end testTheInventoryChromeIsTranslatedAndItsDataIsNot()
 
 	/**
@@ -151,21 +155,23 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * js/, cannot see them. This is the guard that can: a new title, paints
 	 * note or reason without an l10n/en.json key and an l10n/nl.json value
 	 * fails here.
+	 *
+	 * @return void
 	 */
 	public function testEveryChromeStringIsInTheCatalogueWithADutchTranslation(): void {
 		$root = __DIR__ . '/../../..';
 		$mapping = json_decode((string)file_get_contents($root . '/scripts/mapping/nlds-to-nextcloud.json'), true);
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('getReasons')->willReturn($mapping['reasons']);
 
 		$asked = [];
-		$this->build(converter: $converter, l10n: $this->markingL10n($asked))->getInitialState(tokenSetId: 'nextcloud');
+		$this->build(converter: $converter, l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud');
 		$asked = array_values(array_unique($asked));
 
 		$english = json_decode((string)file_get_contents($root . '/l10n/en.json'), true)['translations'];
 		$dutch = json_decode((string)file_get_contents($root . '/l10n/nl.json'), true)['translations'];
 
-		$this->assertGreaterThan(200, count($asked));
+		$this->assertGreaterThan(expected: 200, actual: count($asked));
 		$missing = [];
 		foreach ($asked as $text) {
 			if (isset($english[$text]) === false || is_string($dutch[$text] ?? null) === false || trim($dutch[$text]) === '') {
@@ -181,17 +187,23 @@ class PlaygroundStateServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $missing, 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.');
+		$this->assertSame(
+			expected: [],
+			actual: $missing,
+			message: 'Chrome strings with no l10n/en.json key or no Dutch translation in l10n/nl.json.'
+		);
 	}//end testEveryChromeStringIsInTheCatalogueWithADutchTranslation()
 
 	/**
 	 * Exactly the keys js/playground.js reads, and no others.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheKeysTheInstrumentReads(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
 		$this->assertSame(
-			[
+			expected: [
 				'playgroundInventory',
 				'playgroundReasons',
 				'playgroundTokens',
@@ -201,7 +213,7 @@ class PlaygroundStateServiceTest extends TestCase {
 				'playgroundSet',
 				'playgroundDarkTokens',
 			],
-			array_keys($state)
+			actual: array_keys($state)
 		);
 	}//end testItPublishesTheKeysTheInstrumentReads()
 
@@ -209,13 +221,15 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Task 3.3: the set's dark values are published from its generated dark stylesheet.
 	 *
 	 * @spec openspec/specs/own-component-preview/spec.md#requirement-the-frame-can-show-the-dark-theme
+	 *
+	 * @return void
 	 */
 	public function testDarkTokensPublished(): void {
 		$dark = $this->build()->getInitialState(tokenSetId: 'amsterdam')['playgroundDarkTokens'];
 
-		$this->assertNotSame([], $dark);
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6,8}$/i', (string)($dark['--nldesign-color-primary'] ?? ''));
-		$this->assertSame([], $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
+		$this->assertNotSame(expected: [], actual: $dark);
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6,8}$/i', string: (string)($dark['--nldesign-color-primary'] ?? ''));
+		$this->assertSame(expected: [], actual: $this->build()->getInitialState(tokenSetId: '../x')['playgroundDarkTokens']);
 	}//end testDarkTokensPublished()
 
 	/**
@@ -227,9 +241,11 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Rijkshuisstijl values. Exporting from that map wrote all of them into a
 	 * theme whose author had changed one colour, which is the whole reason the
 	 * two keys are separate.
+	 *
+	 * @return void
 	 */
 	public function testTheExportBaseIsWhatTheSetDeclares(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn(
 			[
 				'--nldesign-color-primary' => '#154273',
@@ -241,10 +257,10 @@ class PlaygroundStateServiceTest extends TestCase {
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$state = $this->build($previewValues)->getInitialState(tokenSetId: 'rijkshuisstijl');
+		$state = $this->build(previewValues: $previewValues)->getInitialState(tokenSetId: 'rijkshuisstijl');
 
-		$this->assertSame(['--nldesign-color-primary' => '#154273'], $state['playgroundExportTokens']);
-		$this->assertArrayHasKey('--nldesign-component-button-disabled-color', $state['playgroundTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#154273'], actual: $state['playgroundExportTokens']);
+		$this->assertArrayHasKey(key: '--nldesign-component-button-disabled-color', array: $state['playgroundTokens']);
 	}//end testTheExportBaseIsWhatTheSetDeclares()
 
 	/**
@@ -253,53 +269,59 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * `css/tokens/nextcloud.css` is a snapshot of one Nextcloud version, kept as
 	 * a fallback — saving "the Nextcloud theme plus my change" has to write what
 	 * this server is actually wearing.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetExportsWhatTheInstanceIsWearing(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn([]);
 		$previewValues->method('getDeclaredTokens')->willReturn(
 			['--nldesign-color-primary' => '#stale-snapshot']
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getTokens')->willReturn(['--nldesign-color-primary' => '#00679e']);
 
-		$state = $this->build($previewValues, null, $stockTokens)
+		$state = $this->build(previewValues: $previewValues, converter: null, stockTokens: $stockTokens)
 			->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['--nldesign-color-primary' => '#00679e'], $state['playgroundExportTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#00679e'], actual: $state['playgroundExportTokens']);
 	}//end testTheStockSetExportsWhatTheInstanceIsWearing()
 
 	/**
 	 * When the instance cannot be read, the shipped snapshot answers rather than
 	 * nothing — an export with no tokens is worse than one slightly behind.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetFallsBackToTheShippedSnapshot(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->method('getResolvedTokens')->willReturn([]);
 		$previewValues->method('getDeclaredTokens')->willReturn(
 			['--nldesign-color-primary' => '#0082c9']
 		);
 		$previewValues->method('getTokenSources')->willReturn([]);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getTokens')->willReturn([]);
 
-		$state = $this->build($previewValues, null, $stockTokens)
+		$state = $this->build(previewValues: $previewValues, converter: null, stockTokens: $stockTokens)
 			->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['--nldesign-color-primary' => '#0082c9'], $state['playgroundExportTokens']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#0082c9'], actual: $state['playgroundExportTokens']);
 	}//end testTheStockSetFallsBackToTheShippedSnapshot()
 
 	/**
 	 * The published set id is the one asked for, which is the set the page is
 	 * WEARING — a session preview changes it, and an export is named after it.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheSetItWasAskedFor(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'openwoo');
 
-		$this->assertSame('openwoo', $state['playgroundSet']);
+		$this->assertSame(expected: 'openwoo', actual: $state['playgroundSet']);
 	}//end testItPublishesTheSetItWasAskedFor()
 
 	/**
@@ -308,11 +330,13 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * The header specimen picks its markup by major version, so a string like
 	 * "34.0.4" or a full array would silently fail every comparison and leave
 	 * the switch opening on the wrong shape.
+	 *
+	 * @return void
 	 */
 	public function testItPublishesTheServerMajorAsAnInteger(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertIsInt($state['playgroundVersion']);
+		$this->assertIsInt(actual: $state['playgroundVersion']);
 	}//end testItPublishesTheServerMajorAsAnInteger()
 
 	/**
@@ -321,16 +345,20 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * Zero is not a version the switch offers, so the instrument falls back to
 	 * the newest header it knows — which is the right answer for an admin who
 	 * is asking what an upgrade looks like anyway.
+	 *
+	 * @return void
 	 */
 	public function testItSurvivesHavingNoServerToAsk(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertGreaterThanOrEqual(0, $state['playgroundVersion']);
+		$this->assertGreaterThanOrEqual(expected: 0, actual: $state['playgroundVersion']);
 	}//end testItSurvivesHavingNoServerToAsk()
 
 	/**
 	 * The inventory is the shipped file, decoded — the service adds nothing to
 	 * it and drops nothing from it.
+	 *
+	 * @return void
 	 */
 	public function testTheInventoryIsTheShippedFile(): void {
 		$shipped = json_decode(
@@ -338,13 +366,15 @@ class PlaygroundStateServiceTest extends TestCase {
 			true
 		);
 
-		$this->assertSame($shipped, $this->build()->getInventory());
-		$this->assertNotEmpty($shipped['components']);
+		$this->assertSame(expected: $shipped, actual: $this->build()->getInventory());
+		$this->assertNotEmpty(actual: $shipped['components']);
 	}//end testTheInventoryIsTheShippedFile()
 
 	/**
 	 * Every component names a tab the inventory itself declares. A chip under a
 	 * tab that does not exist is a chip no admin can ever reach.
+	 *
+	 * @return void
 	 */
 	public function testEveryComponentSitsUnderADeclaredTab(): void {
 		$inventory = $this->build()->getInventory();
@@ -352,9 +382,9 @@ class PlaygroundStateServiceTest extends TestCase {
 
 		foreach ($inventory['components'] as $component) {
 			$this->assertContains(
-				$component['tab'],
-				$tabs,
-				$component['id'] . ' names a tab the inventory does not declare.'
+				needle: $component['tab'],
+				haystack: $tabs,
+				message: $component['id'] . ' names a tab the inventory does not declare.'
 			);
 		}
 	}//end testEveryComponentSitsUnderADeclaredTab()
@@ -363,38 +393,44 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * The tabs are the token editor's own four, in its own order: the instrument
 	 * MOVES that strip rather than drawing a second one, so a tab here that the
 	 * editor does not render is a chip row with nothing above it.
+	 *
+	 * @return void
 	 */
 	public function testTheTabsAreTheTokenEditorsOwn(): void {
 		$inventory = $this->build()->getInventory();
 
 		$this->assertSame(
-			['login', 'content', 'status', 'typography'],
-			array_column($inventory['tabs'], 'id')
+			expected: ['login', 'content', 'status', 'typography'],
+			actual: array_column($inventory['tabs'], 'id')
 		);
 	}//end testTheTabsAreTheTokenEditorsOwn()
 
 	/**
 	 * The reason vocabulary is the converter's, so a row with no token and a
 	 * token an import had to skip are explained in the same words.
+	 *
+	 * @return void
 	 */
 	public function testTheReasonVocabularyIsTheConvertersOwn(): void {
 		$state = $this->build()->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame(['derived-by-nextcloud' => 'Calculated by Nextcloud.'], $state['playgroundReasons']);
+		$this->assertSame(expected: ['derived-by-nextcloud' => 'Calculated by Nextcloud.'], actual: $state['playgroundReasons']);
 	}//end testTheReasonVocabularyIsTheConvertersOwn()
 
 	/**
 	 * A missing mapping table costs the explanatory sentences and nothing else.
 	 * The instrument still builds, and every row still names its reason CODE.
+	 *
+	 * @return void
 	 */
 	public function testAMissingMappingTableCostsOnlyTheSentences(): void {
-		$converter = $this->createMock(TokenSetConverterService::class);
+		$converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 		$converter->method('getReasons')->willThrowException(new RuntimeException('missing'));
 
 		$state = $this->build(converter: $converter)->getInitialState(tokenSetId: 'nextcloud');
 
-		$this->assertSame([], $state['playgroundReasons']);
-		$this->assertNotEmpty($state['playgroundInventory']['components']);
+		$this->assertSame(expected: [], actual: $state['playgroundReasons']);
+		$this->assertNotEmpty(actual: $state['playgroundInventory']['components']);
 	}//end testAMissingMappingTableCostsOnlyTheSentences()
 
 	/**
@@ -439,30 +475,34 @@ class PlaygroundStateServiceTest extends TestCase {
 	 * An unreadable inventory yields an empty component list rather than an
 	 * exception: the instrument then does not build, and the token editor it
 	 * would have rebuilt keeps working.
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableInventoryYieldsAnEmptyOne(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(sys_get_temp_dir() . '/thematiq-does-not-exist');
 
 		$service = new PlaygroundStateService(
 			sources: new PlaygroundTokenSources(
 				appManager: $appManager,
-				previewValues: $this->createMock(TokenSetPreviewService::class),
-				converter: $this->createMock(TokenSetConverterService::class),
-				stockTokens: $this->createMock(StockTokensService::class)
+				previewValues: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				converter: $this->createMock(originalClassName: TokenSetConverterService::class),
+				stockTokens: $this->createMock(originalClassName: StockTokensService::class)
 			),
 			l10n: $this->identityL10n()
 		);
 
-		$this->assertSame(['version' => 0, 'tabs' => [], 'components' => []], $service->getInventory());
+		$this->assertSame(expected: ['version' => 0, 'tabs' => [], 'components' => []], actual: $service->getInventory());
 	}//end testAnUnreadableInventoryYieldsAnEmptyOne()
 
 	/**
 	 * The token values describe the set that was asked for, and the source map
 	 * comes from the stylesheet that actually makes the connection.
+	 *
+	 * @return void
 	 */
 	public function testItResolvesTheSetItWasAskedFor(): void {
-		$previewValues = $this->createMock(TokenSetPreviewService::class);
+		$previewValues = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$previewValues->expects($this->once())
 			->method('getResolvedTokens')
 			->with('custom-openwoo')
@@ -471,7 +511,7 @@ class PlaygroundStateServiceTest extends TestCase {
 
 		$state = $this->build(previewValues: $previewValues)->getInitialState(tokenSetId: 'custom-openwoo');
 
-		$this->assertSame(['--nldesign-color-primary' => '#a90061'], $state['playgroundTokens']);
-		$this->assertSame(['--color-primary' => '--nldesign-color-primary'], $state['playgroundTokenSources']);
+		$this->assertSame(expected: ['--nldesign-color-primary' => '#a90061'], actual: $state['playgroundTokens']);
+		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $state['playgroundTokenSources']);
 	}//end testItResolvesTheSetItWasAskedFor()
 }//end class

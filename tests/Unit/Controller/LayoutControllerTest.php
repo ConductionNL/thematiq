@@ -72,7 +72,7 @@ class LayoutControllerTest extends TestCase {
 		$this->stored = [];
 		$this->audit = [];
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, string $default = ''): string => ($this->stored[$key] ?? $default)
 		);
@@ -82,7 +82,7 @@ class LayoutControllerTest extends TestCase {
 			}
 		);
 
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturnCallback(
 			static function (string $tokenSetId): array {
 				if ($tokenSetId === 'zuiddrecht') {
@@ -93,10 +93,10 @@ class LayoutControllerTest extends TestCase {
 			}
 		);
 
-		$active = $this->createMock(ActiveTokenSetService::class);
+		$active = $this->createMock(originalClassName: ActiveTokenSetService::class);
 		$active->method('getActive')->willReturn('zuiddrecht');
 
-		$auditService = $this->createMock(ThemingAuditService::class);
+		$auditService = $this->createMock(originalClassName: ThemingAuditService::class);
 		$auditService->method('log')->willReturnCallback(
 			function (string $action, array $context = []): void {
 				$this->audit[] = ['action' => $action, 'context' => $context];
@@ -104,11 +104,11 @@ class LayoutControllerTest extends TestCase {
 		);
 
 		$this->controller = new LayoutController(
-			'thematiq',
-			$this->createMock(IRequest::class),
-			new LayoutOptionsService(config: $config, designSystemService: $designSystems),
-			$active,
-			$auditService
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			layoutOptions: new LayoutOptionsService(config: $config, designSystemService: $designSystems),
+			activeTokenSet: $active,
+			auditService: $auditService
 		);
 	}//end setUp()
 
@@ -116,15 +116,17 @@ class LayoutControllerTest extends TestCase {
 	 * A choice is stored, audited, and answered with what the page resolves to.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAChoiceIsStoredAndAudited(): void {
 		$response = $this->controller->save(workplaceLayout: 'default', brandStripe: '0');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('default', $this->stored['workplace_layout']);
-		$this->assertSame('0', $this->stored['brand_stripe']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'default', actual: $this->stored['workplace_layout']);
+		$this->assertSame(expected: '0', actual: $this->stored['brand_stripe']);
 		$this->assertSame(
-			[
+			expected: [
 				'status' => 'ok',
 				'workplaceLayout' => 'default',
 				'brandStripe' => '0',
@@ -143,14 +145,14 @@ class LayoutControllerTest extends TestCase {
 					'headerStyle' => 'default',
 				],
 			],
-			$response->getData()
+			actual: $response->getData()
 		);
 		$this->assertSame(
-			[
+			expected: [
 				['action' => 'toggle_changed', 'context' => ['key' => 'workplace_layout', 'old' => '', 'new' => 'default']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'brand_stripe', 'old' => '', 'new' => '0']],
 			],
-			$this->audit
+			actual: $this->audit
 		);
 	}//end testAChoiceIsStoredAndAudited()
 
@@ -158,12 +160,14 @@ class LayoutControllerTest extends TestCase {
 	 * The empty choice follows the theme, and the answer says what that is.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testTheEmptyChoiceAnswersWithTheSetsDefaults(): void {
 		$response = $this->controller->save(workplaceLayout: '', brandStripe: '');
 
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'light',
 				'brandStripe' => true,
 				'navigationWidth' => null,
@@ -172,9 +176,9 @@ class LayoutControllerTest extends TestCase {
 				'loginWatermark' => true,
 				'headerStyle' => 'default',
 			],
-			$response->getData()['resolved']
+			actual: $response->getData()['resolved']
 		);
-		$this->assertSame([], $this->audit, 'Storing what was already stored is not a change.');
+		$this->assertSame(expected: [], actual: $this->audit, message: 'Storing what was already stored is not a change.');
 	}//end testTheEmptyChoiceAnswersWithTheSetsDefaults()
 
 	/**
@@ -182,6 +186,8 @@ class LayoutControllerTest extends TestCase {
 	 * and the answer resolves them for the active set.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheNewerChoicesAreStoredAndAudited(): void {
 		$response = $this->controller->save(
@@ -194,14 +200,14 @@ class LayoutControllerTest extends TestCase {
 			headerStyle: 'workplace'
 		);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('300', $this->stored['navigation_width']);
-		$this->assertSame('soft', $this->stored['navigation_active_style']);
-		$this->assertSame('login', $this->stored['brand_stripe_placement']);
-		$this->assertSame('0', $this->stored['login_watermark']);
-		$this->assertSame('workplace', $this->stored['header_style']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: '300', actual: $this->stored['navigation_width']);
+		$this->assertSame(expected: 'soft', actual: $this->stored['navigation_active_style']);
+		$this->assertSame(expected: 'login', actual: $this->stored['brand_stripe_placement']);
+		$this->assertSame(expected: '0', actual: $this->stored['login_watermark']);
+		$this->assertSame(expected: 'workplace', actual: $this->stored['header_style']);
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'light',
 				'brandStripe' => true,
 				'navigationWidth' => 300,
@@ -210,17 +216,17 @@ class LayoutControllerTest extends TestCase {
 				'loginWatermark' => false,
 				'headerStyle' => 'workplace',
 			],
-			$response->getData()['resolved']
+			actual: $response->getData()['resolved']
 		);
 		$this->assertSame(
-			[
+			expected: [
 				['action' => 'toggle_changed', 'context' => ['key' => 'navigation_width', 'old' => '', 'new' => '300']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'navigation_active_style', 'old' => '', 'new' => 'soft']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'brand_stripe_placement', 'old' => '', 'new' => 'login']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'login_watermark', 'old' => '', 'new' => '0']],
 				['action' => 'toggle_changed', 'context' => ['key' => 'header_style', 'old' => '', 'new' => 'workplace']],
 			],
-			$this->audit
+			actual: $this->audit
 		);
 	}//end testTheNewerChoicesAreStoredAndAudited()
 
@@ -230,6 +236,7 @@ class LayoutControllerTest extends TestCase {
 	 *
 	 * @param string $layout The workplace layout sent.
 	 * @param string $stripe The brand stripe sent.
+	 * @param array $newer The newer choices sent alongside, from the provider.
 	 *
 	 * @return void
 	 *
@@ -240,9 +247,9 @@ class LayoutControllerTest extends TestCase {
 	public function testAnUnknownValueStoresNothing(string $layout, string $stripe, array $newer = []): void {
 		$response = $this->controller->save(...(['workplaceLayout' => $layout, 'brandStripe' => $stripe] + $newer));
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame([], $this->stored);
-		$this->assertSame([], $this->audit);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: [], actual: $this->stored);
+		$this->assertSame(expected: [], actual: $this->audit);
 	}//end testAnUnknownValueStoresNothing()
 
 	/**
@@ -266,11 +273,13 @@ class LayoutControllerTest extends TestCase {
 	 * The endpoint is delegated-admin only, like every other settings write.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheEndpointIsAdminOnly(): void {
 		$attributes = (new ReflectionMethod(LayoutController::class, 'save'))->getAttributes(AuthorizedAdminSetting::class);
 
-		$this->assertCount(1, $attributes);
-		$this->assertSame([Admin::class], array_values($attributes[0]->getArguments()));
+		$this->assertCount(expectedCount: 1, haystack: $attributes);
+		$this->assertSame(expected: [Admin::class], actual: array_values($attributes[0]->getArguments()));
 	}//end testTheEndpointIsAdminOnly()
 }//end class

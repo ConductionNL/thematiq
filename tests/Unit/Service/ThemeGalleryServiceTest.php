@@ -116,7 +116,7 @@ class ThemeGalleryServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$client = $this->createMock(IClient::class);
+		$client = $this->createMock(originalClassName: IClient::class);
 		$client->method('get')->willReturnCallback(
 			function (string $url, array $options) {
 				$this->requests[] = [$url, $options];
@@ -124,14 +124,16 @@ class ThemeGalleryServiceTest extends TestCase {
 					throw $this->answer;
 				}
 
-				$response = $this->createMock(IResponse::class);
+				$response = $this->createMock(originalClassName: IResponse::class);
 				$response->method('getStatusCode')->willReturn($this->answer[0]);
 				$response->method('getBody')->willReturn($this->answer[1]);
-				$response->method('getHeader')->willReturnCallback(fn (string $key) => ($key === 'ETag' ? $this->answer[2] : ''));
+				$response->method('getHeader')->willReturnCallback(fn (string $key) => (match ($key === 'ETag') {
+					true => $this->answer[2], default => ''
+				}));
 				return $response;
 			}
 		);
-		$this->clientService = $this->createMock(IClientService::class);
+		$this->clientService = $this->createMock(originalClassName: IClientService::class);
 		$this->clientService->method('newClient')->willReturn($client);
 	}//end setUp()
 
@@ -141,7 +143,7 @@ class ThemeGalleryServiceTest extends TestCase {
 	 * @return ThemeGalleryService The service.
 	 */
 	private function service(): ThemeGalleryService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -151,22 +153,22 @@ class ThemeGalleryServiceTest extends TestCase {
 			}
 		);
 
-		$customSets = $this->createMock(CustomTokenSetService::class);
+		$customSets = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$customSets->method('list')->willReturnCallback(fn () => $this->installed);
 
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn () => $this->now);
 
-		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig = $this->createMock(originalClassName: IAppConfig::class);
 		$appConfig->method('getValueString')->willReturnCallback(
 			function (string $app, string $key, string $default = '', bool $lazy = false): string {
-				$this->assertTrue($lazy, 'The cached index is a lazy value.');
+				$this->assertTrue(condition: $lazy, message: 'The cached index is a lazy value.');
 				return ($this->appConfig[$key] ?? $default);
 			}
 		);
 		$appConfig->method('setValueString')->willReturnCallback(
 			function (string $app, string $key, string $value, bool $lazy = false): bool {
-				$this->assertTrue($lazy, 'The cached index is a lazy value.');
+				$this->assertTrue(condition: $lazy, message: 'The cached index is a lazy value.');
 				$this->appConfig[$key] = $value;
 				return true;
 			}
@@ -177,7 +179,7 @@ class ThemeGalleryServiceTest extends TestCase {
 			fetching: new GalleryIndexFetch(
 				clientService: $this->clientService,
 				entries: new GalleryEntryValidator(),
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			customSets: $customSets,
 			cache: new GalleryIndexCache(
@@ -209,10 +211,10 @@ class ThemeGalleryServiceTest extends TestCase {
 
 		$result = $this->service()->browse();
 
-		$this->assertFalse($result['enabled']);
-		$this->assertSame('raw.githubusercontent.com', $result['host']);
-		$this->assertSame([], $result['entries']);
-		$this->assertSame([], $this->requests);
+		$this->assertFalse(condition: $result['enabled']);
+		$this->assertSame(expected: 'raw.githubusercontent.com', actual: $result['host']);
+		$this->assertSame(expected: [], actual: $result['entries']);
+		$this->assertSame(expected: [], actual: $this->requests);
 	}//end testAFreshInstallContactsNobody()
 
 	/**
@@ -227,13 +229,13 @@ class ThemeGalleryServiceTest extends TestCase {
 
 		$result = $this->service()->browse();
 
-		$this->assertSame('intranet.example.nl', $result['host']);
-		$this->assertCount(1, $this->requests);
-		$this->assertSame('https://intranet.example.nl/thematiq/index.json', $this->requests[0][0]);
-		$this->assertSame(10, $this->requests[0][1]['timeout']);
-		$this->assertArrayNotHasKey('cookies', $this->requests[0][1]);
-		$this->assertTrue($result['reachable']);
-		$this->assertSame('Provincie Utrecht', $result['entries'][0]['name']);
+		$this->assertSame(expected: 'intranet.example.nl', actual: $result['host']);
+		$this->assertCount(expectedCount: 1, haystack: $this->requests);
+		$this->assertSame(expected: 'https://intranet.example.nl/thematiq/index.json', actual: $this->requests[0][0]);
+		$this->assertSame(expected: 10, actual: $this->requests[0][1]['timeout']);
+		$this->assertArrayNotHasKey(key: 'cookies', array: $this->requests[0][1]);
+		$this->assertTrue(condition: $result['reachable']);
+		$this->assertSame(expected: 'Provincie Utrecht', actual: $result['entries'][0]['name']);
 	}//end testAMirrorIsReadAndNamedWithATenSecondTimeout()
 
 	/**
@@ -243,25 +245,25 @@ class ThemeGalleryServiceTest extends TestCase {
 	 */
 	public function testInvalidEntriesAreNotListed(): void {
 		$this->appConfig['gallery_enabled'] = 'yes';
-		$noLicence = self::entry(['id' => 'no-licence']);
+		$noLicence = self::entry(overrides: ['id' => 'no-licence']);
 		unset($noLicence['licence']);
 		$this->serve(
 			entries: [
 				self::entry(),
 				$noLicence,
-				self::entry(['id' => 'bad-hash', 'sha256' => 'abc']),
-				self::entry(['id' => 'plain-http', 'fileUrl' => 'http://gallery.example.nl/x.css']),
-				self::entry(['id' => 'bad-colour', 'swatches' => ['primary' => 'red', 'background' => '#fff', 'text' => '#000']]),
-				self::entry(['id' => 'Bad Id']),
+				self::entry(overrides: ['id' => 'bad-hash', 'sha256' => 'abc']),
+				self::entry(overrides: ['id' => 'plain-http', 'fileUrl' => 'http://gallery.example.nl/x.css']),
+				self::entry(overrides: ['id' => 'bad-colour', 'swatches' => ['primary' => 'red', 'background' => '#fff', 'text' => '#000']]),
+				self::entry(overrides: ['id' => 'Bad Id']),
 				'not an object',
 			]
 		);
 
 		$ids = array_column($this->service()->browse()['entries'], 'id');
 
-		$this->assertSame(['provincie-utrecht'], $ids);
+		$this->assertSame(expected: ['provincie-utrecht'], actual: $ids);
 		$cached = json_decode($this->appConfig['gallery_index_cache'], true);
-		$this->assertSame(['provincie-utrecht'], array_column($cached['entries'], 'id'), 'Only valid entries are cached.');
+		$this->assertSame(expected: ['provincie-utrecht'], actual: array_column($cached['entries'], 'id'), message: 'Only valid entries are cached.');
 	}//end testInvalidEntriesAreNotListed()
 
 	/**
@@ -275,8 +277,8 @@ class ThemeGalleryServiceTest extends TestCase {
 
 		$result = $this->service()->browse();
 
-		$this->assertFalse($result['reachable']);
-		$this->assertArrayNotHasKey('gallery_index_cache', $this->appConfig);
+		$this->assertFalse(condition: $result['reachable']);
+		$this->assertArrayNotHasKey(key: 'gallery_index_cache', array: $this->appConfig);
 	}//end testAnOversizedIndexIsReportedAsUnreachable()
 
 	/**
@@ -290,9 +292,9 @@ class ThemeGalleryServiceTest extends TestCase {
 
 		$result = $this->service()->browse();
 
-		$this->assertTrue($result['enabled']);
-		$this->assertFalse($result['reachable']);
-		$this->assertSame([], $result['entries']);
+		$this->assertTrue(condition: $result['enabled']);
+		$this->assertFalse(condition: $result['reachable']);
+		$this->assertSame(expected: [], actual: $result['entries']);
 	}//end testAnUnreachableIndexIsReported()
 
 	/**
@@ -304,7 +306,7 @@ class ThemeGalleryServiceTest extends TestCase {
 		$this->appConfig['gallery_enabled'] = 'yes';
 		$this->answer = [200, '<html>captive portal</html>', ''];
 
-		$this->assertFalse($this->service()->browse()['reachable']);
+		$this->assertFalse(condition: $this->service()->browse()['reachable']);
 	}//end testAMalformedIndexIsReportedAsUnreachable()
 
 	/**
@@ -319,15 +321,15 @@ class ThemeGalleryServiceTest extends TestCase {
 		$this->service()->browse();
 		$this->now += 600;
 		$this->service()->browse();
-		$this->assertCount(1, $this->requests);
+		$this->assertCount(expectedCount: 1, haystack: $this->requests);
 
 		$this->now += 3600;
 		$this->answer = [304, '', ''];
 		$result = $this->service()->browse();
 
-		$this->assertCount(2, $this->requests);
-		$this->assertSame('"v1"', $this->requests[1][1]['headers']['If-None-Match']);
-		$this->assertSame('Provincie Utrecht', $result['entries'][0]['name']);
+		$this->assertCount(expectedCount: 2, haystack: $this->requests);
+		$this->assertSame(expected: '"v1"', actual: $this->requests[1][1]['headers']['If-None-Match']);
+		$this->assertSame(expected: 'Provincie Utrecht', actual: $result['entries'][0]['name']);
 	}//end testTheIndexIsCachedForAnHourThenRevalidated()
 
 	/**
@@ -337,7 +339,10 @@ class ThemeGalleryServiceTest extends TestCase {
 	 */
 	public function testAnInstalledSetWithANewChecksumOffersAnUpdate(): void {
 		$this->appConfig['gallery_enabled'] = 'yes';
-		$this->serve(entries: [self::entry(['sha256' => str_repeat('b', 64)]), self::entry(['id' => 'gemeente-epe', 'name' => 'Gemeente Epe'])]);
+		$this->serve(entries: [self::entry(overrides: ['sha256' => str_repeat(
+			'b',
+			64
+		)]), self::entry(overrides: ['id' => 'gemeente-epe', 'name' => 'Gemeente Epe'])]);
 		$this->installed = [
 			[
 				'id' => 'custom-provincie-utrecht',
@@ -348,10 +353,10 @@ class ThemeGalleryServiceTest extends TestCase {
 
 		$entries = $this->service()->browse()['entries'];
 
-		$this->assertSame('custom-provincie-utrecht', $entries[0]['installed']);
-		$this->assertTrue($entries[0]['updateAvailable']);
-		$this->assertNull($entries[1]['installed']);
-		$this->assertFalse($entries[1]['updateAvailable']);
+		$this->assertSame(expected: 'custom-provincie-utrecht', actual: $entries[0]['installed']);
+		$this->assertTrue(condition: $entries[0]['updateAvailable']);
+		$this->assertNull(actual: $entries[1]['installed']);
+		$this->assertFalse(condition: $entries[1]['updateAvailable']);
 	}//end testAnInstalledSetWithANewChecksumOffersAnUpdate()
 
 	/**
@@ -362,11 +367,11 @@ class ThemeGalleryServiceTest extends TestCase {
 	public function testFindEntryReadsNothingWhileOff(): void {
 		$this->serve(entries: [self::entry()]);
 
-		$this->assertNull($this->service()->findEntry(galleryId: 'provincie-utrecht'));
-		$this->assertSame([], $this->requests);
+		$this->assertNull(actual: $this->service()->findEntry(galleryId: 'provincie-utrecht'));
+		$this->assertSame(expected: [], actual: $this->requests);
 
 		$this->appConfig['gallery_enabled'] = 'yes';
-		$this->assertSame('Provincie Utrecht', $this->service()->findEntry(galleryId: 'provincie-utrecht')['name']);
+		$this->assertSame(expected: 'Provincie Utrecht', actual: $this->service()->findEntry(galleryId: 'provincie-utrecht')['name']);
 	}//end testFindEntryReadsNothingWhileOff()
 
 	/**
@@ -377,8 +382,8 @@ class ThemeGalleryServiceTest extends TestCase {
 	public function testTheToggleIsStored(): void {
 		$service = $this->service();
 		$service->setEnabled(enabled: true);
-		$this->assertSame('yes', $this->appConfig['gallery_enabled']);
+		$this->assertSame(expected: 'yes', actual: $this->appConfig['gallery_enabled']);
 		$service->setEnabled(enabled: false);
-		$this->assertSame('no', $this->appConfig['gallery_enabled']);
+		$this->assertSame(expected: 'no', actual: $this->appConfig['gallery_enabled']);
 	}//end testTheToggleIsStored()
 }//end class

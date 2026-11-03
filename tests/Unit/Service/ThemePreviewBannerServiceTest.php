@@ -52,12 +52,14 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->previewService = $this->createMock(ThemePreviewService::class);
-		$this->userSession = $this->createMock(IUserSession::class);
-		$this->initialState = $this->createMock(IInitialState::class);
+		$this->previewService = $this->createMock(originalClassName: ThemePreviewService::class);
+		$this->userSession = $this->createMock(originalClassName: IUserSession::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
 	}//end setUp()
 
 	/**
@@ -68,7 +70,7 @@ class ThemePreviewBannerServiceTest extends TestCase {
 	 * @return ThemePreviewBannerService&MockObject The service under test.
 	 */
 	private function buildService(int &$assetCalls): ThemePreviewBannerService {
-		$service = $this->getMockBuilder(ThemePreviewBannerService::class)
+		$service = $this->getMockBuilder(className: ThemePreviewBannerService::class)
 			->setConstructorArgs([$this->previewService, $this->userSession, $this->initialState])
 			->onlyMethods(['emitPreviewAssets'])
 			->getMock();
@@ -84,6 +86,8 @@ class ThemePreviewBannerServiceTest extends TestCase {
 
 	/**
 	 * An active preview emits the banner assets and provides its initial state.
+	 *
+	 * @return void
 	 */
 	public function testActivePreviewEmitsAssetsAndState(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(
@@ -106,11 +110,13 @@ class ThemePreviewBannerServiceTest extends TestCase {
 		$service = $this->buildService(assetCalls: $assetCalls);
 		$service->inject(tokenSet: 'rijkshuisstijl', tokenSetMeta: ['name' => 'Rijkshuisstijl']);
 
-		$this->assertSame(1, $assetCalls);
+		$this->assertSame(expected: 1, actual: $assetCalls);
 	}//end testActivePreviewEmitsAssetsAndState()
 
 	/**
 	 * Without an active preview nothing at all is emitted.
+	 *
+	 * @return void
 	 */
 	public function testInactivePreviewEmitsNothing(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(['previewActive' => false]);
@@ -120,11 +126,13 @@ class ThemePreviewBannerServiceTest extends TestCase {
 		$service = $this->buildService(assetCalls: $assetCalls);
 		$service->inject(tokenSet: 'nextcloud', tokenSetMeta: []);
 
-		$this->assertSame(0, $assetCalls);
+		$this->assertSame(expected: 0, actual: $assetCalls);
 	}//end testInactivePreviewEmitsNothing()
 
 	/**
 	 * A throwing resolver fails open: no assets, no state, no exception.
+	 *
+	 * @return void
 	 */
 	public function testResolverFailureFailsOpen(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')
@@ -135,11 +143,13 @@ class ThemePreviewBannerServiceTest extends TestCase {
 		$service = $this->buildService(assetCalls: $assetCalls);
 		$service->inject(tokenSet: 'nextcloud', tokenSetMeta: []);
 
-		$this->assertSame(0, $assetCalls);
+		$this->assertSame(expected: 0, actual: $assetCalls);
 	}//end testResolverFailureFailsOpen()
 
 	/**
 	 * The token set id is used as the display name when the metadata has none.
+	 *
+	 * @return void
 	 */
 	public function testMissingNameFallsBackToTokenSetId(): void {
 		$this->previewService->method('resolveEffectiveTokenSet')->willReturn(['previewActive' => true]);
@@ -157,6 +167,6 @@ class ThemePreviewBannerServiceTest extends TestCase {
 		$service = $this->buildService(assetCalls: $assetCalls);
 		$service->inject(tokenSet: 'nextcloud', tokenSetMeta: []);
 
-		$this->assertSame(1, $assetCalls);
+		$this->assertSame(expected: 1, actual: $assetCalls);
 	}//end testMissingNameFallsBackToTokenSetId()
 }//end class

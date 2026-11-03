@@ -17,6 +17,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -135,7 +136,9 @@ class ShippedDarkContrastTest extends TestCase {
 	public static function highContrastSetProvider(): array {
 		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
 		$cases = [];
-		foreach ((is_array($manifest) === true ? $manifest : []) as $set) {
+		foreach ((match (is_array($manifest) === true) {
+			true => $manifest, default => []
+		}) as $set) {
 			if (self::isHighContrast(set: $set) === true) {
 				$cases[$set['id']] = [$set['id']];
 			}
@@ -157,38 +160,44 @@ class ShippedDarkContrastTest extends TestCase {
 
 	/**
 	 * The provider finds the shipped high-contrast set, so the AAA cases cannot pass empty.
+	 *
+	 * @return void
 	 */
 	public function testThereIsAHighContrastSet(): void {
-		$this->assertArrayHasKey('hoog-contrast', self::highContrastSetProvider());
+		$this->assertArrayHasKey(key: 'hoog-contrast', array: self::highContrastSetProvider());
 	}//end testThereIsAHighContrastSet()
 
 	/**
 	 * A high-contrast set ships a dark variant (thematiq#1023): without one its
 	 * surfaces stay white in Nextcloud's dark and dark-highcontrast themes.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider highContrastSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testHighContrastSetShipsADarkVariant(string $setId): void {
-		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', $setId . ' has no dark variant');
+		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css', message: $setId . ' has no dark variant');
 	}//end testHighContrastSetShipsADarkVariant()
 
 	/**
 	 * A high-contrast set's dark variant reaches AAA: 7:1 for text, 4.5:1 for
 	 * borders, fills and the focus ring.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider highContrastSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testHighContrastDarkVariantReachesAaa(string $setId): void {
-		$this->assertFileExists(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
+		$this->assertFileExists(filename: dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
 
 		$contrast = new ContrastService();
 		$value = $this->darkValues(setId: $setId);
 		$page = $value('--nldesign-color-background');
-		$this->assertNotNull($page, $setId . ' dark declares no page background');
+		$this->assertNotNull(actual: $page, message: $setId . ' dark declares no page background');
 
 		$failures = [];
 		foreach (self::AAA_PAIRS as $name => [$fgToken, $bgToken, $kind]) {
@@ -206,11 +215,20 @@ class ShippedDarkContrastTest extends TestCase {
 
 			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
 			if ($ratio === null || $ratio < $threshold) {
-				$failures[] = sprintf('%s: %s on %s = %s, needs %.1f:1', $name, $foreground, $background, ($ratio === null ? 'unmeasurable' : sprintf('%.2f:1', $ratio)), $threshold);
+				$failures[] = sprintf(
+					'%s: %s on %s = %s, needs %.1f:1',
+					$name,
+					$foreground,
+					$background,
+					(match ($ratio === null) {
+						true => 'unmeasurable', default => sprintf('%.2f:1', $ratio)
+					}),
+					$threshold
+				);
 			}
 		}
 
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testHighContrastDarkVariantReachesAaa()
 
 	/**
@@ -220,9 +238,11 @@ class ShippedDarkContrastTest extends TestCase {
 	 * dark-highcontrast theme). A token in one scope only would leave that
 	 * path half light.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider highContrastSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testHighContrastDarkVariantCoversBothScopesAlike(string $setId): void {
 		$css = (string)file_get_contents(dirname(__DIR__, 3) . '/css/tokens/dark/' . $setId . '.css');
@@ -230,22 +250,26 @@ class ShippedDarkContrastTest extends TestCase {
 
 		$media = [];
 		$this->assertSame(
-			1,
-			preg_match('/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/', $css, $media),
-			$setId . ': no system-preference dark scope'
+			expected: 1,
+			actual: preg_match(
+				'/@media \(prefers-color-scheme: dark\) \{\s*body:not\(\[data-theme-light\]\):not\(\[data-theme-dark\]\):not\(\[data-theme-light-highcontrast\]\):not\(\[data-theme-dark-highcontrast\]\) \{([^}]*)\}\s*\}/',
+				$css,
+				$media
+			),
+			message: $setId . ': no system-preference dark scope'
 		);
 		$explicit = [];
 		$this->assertSame(
-			1,
-			preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\] \{([^}]*)\}/', $css, $explicit),
-			$setId . ': no explicit dark scope'
+			expected: 1,
+			actual: preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\] \{([^}]*)\}/', $css, $explicit),
+			message: $setId . ': no explicit dark scope'
 		);
 
 		$parser = new CssParserService();
 		$fromMedia = ($parser->parseDeclarations(':root {' . $media[1] . '}') ?? []);
 		$fromExplicit = ($parser->parseDeclarations(':root {' . $explicit[1] . '}') ?? []);
-		$this->assertNotSame([], $fromMedia);
-		$this->assertSame($fromMedia, $fromExplicit, $setId . ': the two dark scopes differ');
+		$this->assertNotSame(expected: [], actual: $fromMedia);
+		$this->assertSame(expected: $fromMedia, actual: $fromExplicit, message: $setId . ': the two dark scopes differ');
 	}//end testHighContrastDarkVariantCoversBothScopesAlike()
 
 	/**
@@ -255,7 +279,7 @@ class ShippedDarkContrastTest extends TestCase {
 	 */
 	public static function darkSetProvider(): array {
 		$cases = [];
-		foreach (glob(dirname(__DIR__, 3) . '/css/tokens/dark/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: dirname(__DIR__, 3) . '/css/tokens/dark/*.css') as $file) {
 			$id = basename($file, '.css');
 			$cases[$id] = [$id];
 		}
@@ -265,17 +289,21 @@ class ShippedDarkContrastTest extends TestCase {
 
 	/**
 	 * The committed dark files exist at all, so the provider cannot pass empty.
+	 *
+	 * @return void
 	 */
 	public function testThereAreShippedDarkVariants(): void {
-		$this->assertGreaterThan(10, count(self::darkSetProvider()));
+		$this->assertGreaterThan(expected: 10, actual: count(self::darkSetProvider()));
 	}//end testThereAreShippedDarkVariants()
 
 	/**
 	 * Inputs and primary buttons reach 4.5:1 in the shipped dark variant.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider darkSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testInputsAndPrimaryButtonsReachAa(string $setId): void {
 		$contrast = new ContrastService();
@@ -298,13 +326,13 @@ class ShippedDarkContrastTest extends TestCase {
 			}
 
 			$ratio = $contrast->measure(foreground: $foreground, background: $background, page: $page);
-			$this->assertNotNull($ratio, $setId . ' ' . $name . ': cannot measure ' . $foreground . ' on ' . $background);
+			$this->assertNotNull(actual: $ratio, message: $setId . ' ' . $name . ': cannot measure ' . $foreground . ' on ' . $background);
 			if ($ratio < $threshold) {
 				$failures[] = sprintf('%s: %s on %s = %.2f:1', $name, $foreground, $background, $ratio);
 			}
 		}
 
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testInputsAndPrimaryButtonsReachAa()
 
 	/**
@@ -317,9 +345,11 @@ class ShippedDarkContrastTest extends TestCase {
 	 * tests/vitest/errorLabelContrast.spec.js resolves every system's real
 	 * cascade, lasuite included.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider darkSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testTheErrorLabelReadsOnTheErrorFill(string $setId): void {
 		$contrast = new ContrastService();
@@ -327,21 +357,31 @@ class ShippedDarkContrastTest extends TestCase {
 		$label = ($value('--nldesign-component-button-error-color') ?? '#ffffff');
 
 		$manifest = json_decode((string)file_get_contents(dirname(__DIR__, 3) . '/token-sets.json'), true);
-		$designSystem = (array_column((is_array($manifest) === true ? $manifest : []), 'design_system', 'id')[$setId] ?? 'nldesign');
+		$designSystem = (array_column(
+			(match (is_array($manifest) === true) {
+				true => $manifest, default => []
+			}),
+			'design_system',
+			'id'
+		)[$setId] ?? 'nldesign');
 		$fillToken = ([
 			'nldesign' => '--nldesign-color-error',
 			'high-contrast' => '--nldesign-color-error',
 			'summer-breeze' => '--summer-color-error',
 		][$designSystem] ?? null);
 		if ($fillToken === null) {
-			$this->addToAssertionCount(1);
+			$this->addToAssertionCount(count: 1);
 			return;
 		}
 
 		$fill = $value($fillToken);
-		$this->assertNotNull($fill, $setId . ' dark declares no ' . $fillToken);
+		$this->assertNotNull(actual: $fill, message: $setId . ' dark declares no ' . $fillToken);
 		$ratio = $contrast->measure(foreground: $label, background: $fill);
-		$this->assertGreaterThanOrEqual(4.5, (float)$ratio, sprintf('%s dark error label %s on %s', $setId, $label, $fill));
+		$this->assertGreaterThanOrEqual(
+			expected: 4.5,
+			actual: (float)$ratio,
+			message: sprintf('%s dark error label %s on %s', $setId, $label, $fill)
+		);
 	}//end testTheErrorLabelReadsOnTheErrorFill()
 
 	/**
@@ -353,24 +393,30 @@ class ShippedDarkContrastTest extends TestCase {
 	 * own dark page is #171717 (relative luminance 0.009); 0.05 leaves room
 	 * for a tinted dark surface and refuses anything that reads as light.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider darkSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testThePageBackgroundIsDark(string $setId): void {
 		$contrast = new ContrastService();
 		$page = $this->darkValues(setId: $setId)('--nldesign-color-background');
 		if ($page === null) {
 			// The set leaves the page background to Nextcloud's own dark theme.
-			$this->addToAssertionCount(1);
+			$this->addToAssertionCount(count: 1);
 			return;
 		}
 
 		$rgb = $contrast->parseColor(value: $page);
-		$this->assertNotNull($rgb, $setId . ': cannot parse ' . $page);
+		$this->assertNotNull(actual: $rgb, message: $setId . ': cannot parse ' . $page);
 		// Relative luminance from the ratio against black: (L + 0.05) / 0.05.
 		$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
-		$this->assertLessThanOrEqual(0.05, $luminance, sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance));
+		$this->assertLessThanOrEqual(
+			expected: 0.05,
+			actual: $luminance,
+			message: sprintf('%s dark page background %s has luminance %.3f', $setId, $page, $luminance)
+		);
 	}//end testThePageBackgroundIsDark()
 
 	/**
@@ -381,9 +427,11 @@ class ShippedDarkContrastTest extends TestCase {
 	 * be measured against, so its page pairs were skipped: nora's dark link
 	 * shipped at 3.57:1.
 	 *
+	 * @param string $setId The token set id.
+	 *
 	 * @dataProvider darkSetProvider
 	 *
-	 * @param string $setId The token set id.
+	 * @return void
 	 */
 	public function testTextAndLinksReadOnTheDarkPage(string $setId): void {
 		$contrast = new ContrastService();
@@ -403,8 +451,8 @@ class ShippedDarkContrastTest extends TestCase {
 			}
 		}
 
-		$this->assertNotNull($value('--nldesign-color-text'), $setId . ' has no main text colour to measure');
-		$this->assertSame([], $failures, $setId . ' dark');
+		$this->assertNotNull(actual: $value('--nldesign-color-text'), message: $setId . ' has no main text colour to measure');
+		$this->assertSame(expected: [], actual: $failures, message: $setId . ' dark');
 	}//end testTextAndLinksReadOnTheDarkPage()
 
 	/**

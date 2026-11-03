@@ -32,34 +32,38 @@ class AdminComplianceReportTest extends TestCase {
 
 	/**
 	 * The section ships both download links, marked for the browser to save.
+	 *
+	 * @return void
 	 */
 	public function testTheSectionShipsBothDownloadLinks(): void {
 		$template = (string)file_get_contents($this->root() . '/templates/settings/admin.php');
 
 		$section = strpos($template, 'id="nldesign-compliance-report"');
-		$this->assertNotFalse($section, 'The admin template must ship the contrast evidence report section.');
+		$this->assertNotFalse(condition: $section, message: 'The admin template must ship the contrast evidence report section.');
 
 		foreach (['nldesign-compliance-report-json', 'nldesign-compliance-report-markdown'] as $id) {
 			$this->assertMatchesRegularExpression(
-				'/<a[^>]*id="' . $id . '"[^>]*\bdownload\b/s',
-				$template,
-				"The $id link must be an anchor with the download attribute."
+				pattern: '/<a[^>]*id="' . $id . '"[^>]*\bdownload\b/s',
+				string: $template,
+				message: "The $id link must be an anchor with the download attribute."
 			);
-			$this->assertGreaterThan($section, strpos($template, 'id="' . $id . '"'), "$id must sit inside the section.");
+			$this->assertGreaterThan(expected: $section, actual: strpos($template, 'id="' . $id . '"'), message: "$id must sit inside the section.");
 		}
 	}//end testTheSectionShipsBothDownloadLinks()
 
 	/**
 	 * The URL the admin script builds is a registered, admin-only route.
+	 *
+	 * @return void
 	 */
 	public function testTheLinksPointAtTheRegisteredExportRoute(): void {
 		$script = (string)file_get_contents($this->root() . '/js/admin.js');
-		$this->assertStringContainsString("OC.generateUrl('/apps/thematiq/settings/compliance-report')", $script);
+		$this->assertStringContainsString(needle: "OC.generateUrl('/apps/thematiq/settings/compliance-report')", haystack: $script);
 
 		$routes = (string)file_get_contents($this->root() . '/appinfo/routes.php');
 		$this->assertStringContainsString(
-			"['name' => 'settings#complianceReport', 'url' => '/settings/compliance-report', 'verb' => 'GET']",
-			$routes
+			needle: "['name' => 'settings#complianceReport', 'url' => '/settings/compliance-report', 'verb' => 'GET']",
+			haystack: $routes
 		);
 	}//end testTheLinksPointAtTheRegisteredExportRoute()
 }//end class

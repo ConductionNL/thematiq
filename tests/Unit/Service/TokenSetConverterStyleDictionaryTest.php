@@ -58,20 +58,22 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	/**
 	 * Build the converter against the repository root, which holds its
 	 * mapping table and the two vocabulary stylesheets.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$this->converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -87,8 +89,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 			content: json_encode($document),
 			slug: 'voorbeeld',
 			displayName: 'Voorbeeld',
-			sourceName: 'tokens.json',
-			assetName: 'custom-voorbeeld'
+			options: ['sourceName' => 'tokens.json', 'assetName' => 'custom-voorbeeld']
 		);
 	}//end convert()
 
@@ -99,10 +100,12 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * vocabulary.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLeafPathBecomesASlugPrefixedTokenName(): void {
 		$result = $this->convert(
-			[
+			document: [
 				'color' => [
 					'Brand Primary' => ['value' => '#154273', 'type' => 'color'],
 					'nested' => ['deep' => ['value' => '#ffffff']],
@@ -110,10 +113,10 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('C', $result['inputKind']);
-		$this->assertSame(2, $result['imported']);
-		$this->assertStringContainsString('--voorbeeld-color-brand-primary: #154273;', $result['css']);
-		$this->assertStringContainsString('--voorbeeld-color-nested-deep: #ffffff;', $result['css']);
+		$this->assertSame(expected: 'C', actual: $result['inputKind']);
+		$this->assertSame(expected: 2, actual: $result['imported']);
+		$this->assertStringContainsString(needle: '--voorbeeld-color-brand-primary: #154273;', haystack: $result['css']);
+		$this->assertStringContainsString(needle: '--voorbeeld-color-nested-deep: #ffffff;', haystack: $result['css']);
 	}//end testTheLeafPathBecomesASlugPrefixedTokenName()
 
 	/**
@@ -127,12 +130,14 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * @dataProvider componentPrefixProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAComponentVocabularyIsNotReprefixed(string $prefix): void {
-		$result = $this->convert([$prefix => ['button' => ['border-radius' => ['value' => '4px']]]]);
+		$result = $this->convert(document: [$prefix => ['button' => ['border-radius' => ['value' => '4px']]]]);
 
-		$this->assertStringContainsString('--' . $prefix . '-button-border-radius: 4px;', $result['css']);
-		$this->assertStringNotContainsString('--voorbeeld-' . $prefix . '-button', $result['css']);
+		$this->assertStringContainsString(needle: '--' . $prefix . '-button-border-radius: 4px;', haystack: $result['css']);
+		$this->assertStringNotContainsString(needle: '--voorbeeld-' . $prefix . '-button', haystack: $result['css']);
 	}//end testAComponentVocabularyIsNotReprefixed()
 
 	/**
@@ -156,19 +161,21 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * into them would emit declarations named after a schema URL.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testMetadataKeysAreNotTokens(): void {
 		$result = $this->convert(
-			[
+			document: [
 				'$schema' => 'https://example.invalid/style-dictionary.json',
 				'$description' => 'Voorbeeld tokens',
 				'color' => ['primary' => ['value' => '#154273']],
 			]
 		);
 
-		$this->assertSame(1, $result['imported']);
-		$this->assertStringNotContainsString('schema', $result['css']);
-		$this->assertStringNotContainsString('example.invalid', $result['css']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
+		$this->assertStringNotContainsString(needle: 'schema', haystack: $result['css']);
+		$this->assertStringNotContainsString(needle: 'example.invalid', haystack: $result['css']);
 	}//end testMetadataKeysAreNotTokens()
 
 	/**
@@ -177,18 +184,20 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * string "Array".
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testANonScalarValueIsNotALeaf(): void {
 		$result = $this->convert(
-			[
+			document: [
 				'color' => ['primary' => ['value' => '#154273']],
 				'shadow' => ['elevation' => ['value' => ['x' => 0, 'y' => 1]]],
 			]
 		);
 
-		$this->assertSame(1, $result['imported']);
-		$this->assertStringNotContainsString('Array', $result['css']);
-		$this->assertStringNotContainsString('--voorbeeld-shadow-elevation:', $result['css']);
+		$this->assertSame(expected: 1, actual: $result['imported']);
+		$this->assertStringNotContainsString(needle: 'Array', haystack: $result['css']);
+		$this->assertStringNotContainsString(needle: '--voorbeeld-shadow-elevation:', haystack: $result['css']);
 	}//end testANonScalarValueIsNotALeaf()
 
 	/**
@@ -198,11 +207,13 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * silently emit the wrong vocabulary.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADtcgDocumentNamedTokensJsonIsStillReadAsDtcg(): void {
-		$result = $this->convert(['color' => ['primary' => ['$type' => 'color', '$value' => '#154273']]]);
+		$result = $this->convert(document: ['color' => ['primary' => ['$type' => 'color', '$value' => '#154273']]]);
 
-		$this->assertSame('B', $result['inputKind']);
+		$this->assertSame(expected: 'B', actual: $result['inputKind']);
 	}//end testADtcgDocumentNamedTokensJsonIsStillReadAsDtcg()
 
 	/**
@@ -211,12 +222,14 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * an empty token set.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADocumentWithNoLeavesIsRefused(): void {
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(422);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 422);
 
-		$this->convert(['color' => ['primary' => ['description' => 'no value here']]]);
+		$this->convert(document: ['color' => ['primary' => ['description' => 'no value here']]]);
 	}//end testADocumentWithNoLeavesIsRefused()
 
 	/**
@@ -226,10 +239,12 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * attributed to the wrong document.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDiagnosticsDescribeTheLastConversionOnly(): void {
 		$deprecated = $this->convert(
-			[
+			document: [
 				'color' => [
 					'primary' => [
 						'$type' => 'color',
@@ -240,16 +255,16 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('B', $deprecated['inputKind']);
+		$this->assertSame(expected: 'B', actual: $deprecated['inputKind']);
 		$warnings = $this->converter->getImportWarnings();
-		$this->assertCount(1, $warnings);
-		$this->assertSame('color.primary', $warnings[0]['path']);
-		$this->assertIsArray($this->converter->getMapperErrors());
+		$this->assertCount(expectedCount: 1, haystack: $warnings);
+		$this->assertSame(expected: 'color.primary', actual: $warnings[0]['path']);
+		$this->assertIsArray(actual: $this->converter->getMapperErrors());
 
 		// A Style Dictionary document carries no DTCG diagnostics at all, so
 		// the previous document's warning must not survive into it.
-		$this->convert(['color' => ['primary' => ['value' => '#154273']]]);
-		$this->assertSame([], $this->converter->getImportWarnings());
-		$this->assertSame([], $this->converter->getMapperErrors());
+		$this->convert(document: ['color' => ['primary' => ['value' => '#154273']]]);
+		$this->assertSame(expected: [], actual: $this->converter->getImportWarnings());
+		$this->assertSame(expected: [], actual: $this->converter->getMapperErrors());
 	}//end testDiagnosticsDescribeTheLastConversionOnly()
 }//end class

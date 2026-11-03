@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\OverridesSetContext;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
@@ -52,6 +53,11 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 */
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -67,32 +73,42 @@ class CustomOverridesServicePerSetTest extends TestCase {
 			)
 		);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->values[$key] ?? $default)
 		);
 
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
 				cssParser: $parser,
 				darkPalette: $darkPalette
 			),
 			setContext: new OverridesSetContext(
 				config: $config,
-				designSystems: new DesignSystemService($appManager, $config)
+				designSystems: new DesignSystemService(appManager: $appManager, config: $config)
 			)
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 
@@ -104,45 +120,62 @@ class CustomOverridesServicePerSetTest extends TestCase {
 
 	/**
 	 * The file name each kind of set is given.
+	 *
+	 * @return void
 	 */
 	public function testFileForNamesAFileOfItsOwnOnlyForASetOnNoDesignSystem(): void {
-		$this->assertSame('custom-overrides', CustomOverridesService::fileFor(tokenSet: 'amsterdam', designSystemId: 'nldesign'));
-		$this->assertSame('custom-overrides-nextcloud', CustomOverridesService::fileFor(tokenSet: 'nextcloud', designSystemId: 'nldesign'));
-		$this->assertSame('custom-overrides-custom-openwoo', CustomOverridesService::fileFor(tokenSet: 'custom-openwoo', designSystemId: 'none'));
-		$this->assertSame('custom-overrides-custom-openwoo', CustomOverridesService::fileFor(tokenSet: 'Custom-Open/Woo', designSystemId: 'none'));
+		$this->assertSame(expected: 'custom-overrides', actual: CustomOverridesService::fileFor(tokenSet: 'amsterdam', designSystemId: 'nldesign'));
+		$this->assertSame(
+			expected: 'custom-overrides-nextcloud',
+			actual: CustomOverridesService::fileFor(tokenSet: 'nextcloud', designSystemId: 'nldesign')
+		);
+		$this->assertSame(
+			expected: 'custom-overrides-custom-openwoo',
+			actual: CustomOverridesService::fileFor(tokenSet: 'custom-openwoo', designSystemId: 'none')
+		);
+		$this->assertSame(
+			expected: 'custom-overrides-custom-openwoo',
+			actual: CustomOverridesService::fileFor(tokenSet: 'Custom-Open/Woo', designSystemId: 'none')
+		);
 	}//end testFileForNamesAFileOfItsOwnOnlyForASetOnNoDesignSystem()
 
 	/**
 	 * The stock set writes its own file, and the shared file is untouched.
+	 *
+	 * @return void
 	 */
 	public function testTheStockSetWritesItsOwnFile(): void {
 		$this->service->write(tokens: ['--color-primary' => '#112233'], tokenSet: 'nextcloud');
 
-		$this->assertFileExists($this->appDir . '/css/custom-overrides-nextcloud.css');
-		$this->assertFileDoesNotExist($this->appDir . '/css/custom-overrides.css');
-		$this->assertSame(['--color-primary' => '#112233'], $this->service->read(tokenSet: 'nextcloud'));
+		$this->assertFileExists(filename: $this->appDir . '/css/custom-overrides-nextcloud.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/custom-overrides.css');
+		$this->assertSame(expected: ['--color-primary' => '#112233'], actual: $this->service->read(tokenSet: 'nextcloud'));
 	}//end testTheStockSetWritesItsOwnFile()
 
 	/**
 	 * A set on a design system shares the one file, and the stock set does
 	 * not see what it pinned.
+	 *
+	 * @return void
 	 */
 	public function testASetOnADesignSystemSharesTheFileAndStockDoesNotSeeIt(): void {
 		$this->service->write(tokens: ['--color-primary' => '#445566'], tokenSet: 'amsterdam');
 
-		$this->assertFileExists($this->appDir . '/css/custom-overrides.css');
-		$this->assertSame([], $this->service->read(tokenSet: 'nextcloud'));
+		$this->assertFileExists(filename: $this->appDir . '/css/custom-overrides.css');
+		$this->assertSame(expected: [], actual: $this->service->read(tokenSet: 'nextcloud'));
 	}//end testASetOnADesignSystemSharesTheFileAndStockDoesNotSeeIt()
 
 	/**
 	 * Without a set named, the instance's active set is meant.
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedMeansTheActiveSet(): void {
 		$this->values['token_set'] = 'nextcloud';
 		$this->service->ensureExists();
 
-		$this->assertFileExists($this->appDir . '/css/custom-overrides-nextcloud.css');
-		$this->assertSame([], $this->service->read());
+		$this->assertFileExists(filename: $this->appDir . '/css/custom-overrides-nextcloud.css');
+		$this->assertSame(expected: [], actual: $this->service->read());
 	}//end testNoSetNamedMeansTheActiveSet()
 
 	/**
@@ -151,26 +184,35 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 * disable/enable cycle is all a re-enabled app needs.
 	 *
 	 * @spec openspec/specs/custom-css-overrides/spec.md#token-overrides-survive-app-reinstall-if-css-directory-is-preserved
+	 *
+	 * @return void
 	 */
 	public function testOverridesLiveInTheFileAndNeverInAppConfig(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			})
 		);
 		$config->expects($this->never())->method('setAppValue');
 		$config->expects($this->never())->method('deleteAppValue');
 		$parser = new CssParserService();
 		$service = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($this->appDir),
+				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
-				darkPalette: new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class))
+				darkPalette: new DarkPaletteService(
+					contrast: new ContrastService(),
+					parser: $parser,
+					appManager: $appManager,
+					logger: $this->createMock(originalClassName: LoggerInterface::class)
+				)
 			),
 			setContext: new OverridesSetContext(
 				config: $config,
-				designSystems: new DesignSystemService($appManager, $config)
+				designSystems: new DesignSystemService(appManager: $appManager, config: $config)
 			)
 		);
 
@@ -178,7 +220,10 @@ class CustomOverridesServicePerSetTest extends TestCase {
 		$service->write(tokens: ['--color-primary' => '#445566']);
 
 		// The value comes back from the file alone.
-		$this->assertSame(['--color-primary' => '#445566'], $service->read());
-		$this->assertStringContainsString('--color-primary: #445566', (string)file_get_contents($this->appDir . '/css/custom-overrides.css'));
+		$this->assertSame(expected: ['--color-primary' => '#445566'], actual: $service->read());
+		$this->assertStringContainsString(
+			needle: '--color-primary: #445566',
+			haystack: (string)file_get_contents($this->appDir . '/css/custom-overrides.css')
+		);
 	}//end testOverridesLiveInTheFileAndNeverInAppConfig()
 }//end class

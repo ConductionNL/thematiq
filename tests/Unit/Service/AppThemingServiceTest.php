@@ -47,10 +47,12 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * Set up mocks before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
 		// Mock the REAL OCP interface. It previously mocked a test-only
 		// sub-interface that re-declared getEnabledApps() because "the OCP 31
 		// stub no longer types" it — but the stub was right and the production
@@ -58,36 +60,44 @@ class AppThemingServiceTest extends TestCase {
 		// Nextcloud 34. The mock was manufacturing the method under test, so
 		// this suite passed on every version where the panel 500'd. Mocking
 		// only what OCP actually declares is what makes that impossible.
-		$this->appManager = $this->createMock(IAppManager::class);
-		$this->service = new AppThemingService($this->config, $this->appManager);
+		$this->appManager = $this->createMock(originalClassName: IAppManager::class);
+		$this->service = new AppThemingService(config: $this->config, appManager: $this->appManager);
 	}//end setUp()
 
 	/**
 	 * Absent config returns an empty list (today's global theming).
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsDefaultsToEmpty(): void {
 		$this->config->method('getAppValue')->willReturn('[]');
-		$this->assertSame([], $this->service->getDisabledApps());
+		$this->assertSame(expected: [], actual: $this->service->getDisabledApps());
 	}//end testGetDisabledAppsDefaultsToEmpty()
 
 	/**
 	 * Malformed JSON degrades to an empty list, never an error.
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsMalformedJsonIsEmpty(): void {
 		$this->config->method('getAppValue')->willReturn('not-json{');
-		$this->assertSame([], $this->service->getDisabledApps());
+		$this->assertSame(expected: [], actual: $this->service->getDisabledApps());
 	}//end testGetDisabledAppsMalformedJsonIsEmpty()
 
 	/**
 	 * A stored list is read back, de-duplicated and string-filtered.
+	 *
+	 * @return void
 	 */
 	public function testGetDisabledAppsReadsStoredList(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar","files","calendar"]');
-		$this->assertSame(['calendar', 'files'], $this->service->getDisabledApps());
+		$this->assertSame(expected: ['calendar', 'files'], actual: $this->service->getDisabledApps());
 	}//end testGetDisabledAppsReadsStoredList()
 
 	/**
 	 * Unknown app ids are dropped on save (self-heal); known ids retained.
+	 *
+	 * @return void
 	 */
 	public function testSetDisabledAppsDropsUnknownIds(): void {
 		$this->appManager->method('isInstalled')->willReturnMap(
@@ -107,11 +117,13 @@ class AppThemingServiceTest extends TestCase {
 			);
 
 		$this->service->setDisabledApps(['files', 'uninstalled-app']);
-		$this->assertSame(['files'], json_decode((string)$captured, true));
+		$this->assertSame(expected: ['files'], actual: json_decode((string)$captured, true));
 	}//end testSetDisabledAppsDropsUnknownIds()
 
 	/**
 	 * Protected ids can never enter the exclusion list.
+	 *
+	 * @return void
 	 */
 	public function testSetDisabledAppsDropsProtectedIds(): void {
 		$this->appManager->method('isInstalled')->willReturn(true);
@@ -124,36 +136,42 @@ class AppThemingServiceTest extends TestCase {
 		);
 
 		$this->service->setDisabledApps(['calendar', 'thematiq', 'settings', 'theming']);
-		$this->assertSame(['calendar'], json_decode((string)$captured, true));
+		$this->assertSame(expected: ['calendar'], actual: json_decode((string)$captured, true));
 	}//end testSetDisabledAppsDropsProtectedIds()
 
 	/**
 	 * Null/unresolved app id is always themed.
+	 *
+	 * @return void
 	 */
 	public function testIsThemingDisabledForNullIsFalse(): void {
-		$this->assertFalse($this->service->isThemingDisabledFor(null));
-		$this->assertFalse($this->service->isThemingDisabledFor(''));
+		$this->assertFalse(condition: $this->service->isThemingDisabledFor(null));
+		$this->assertFalse(condition: $this->service->isThemingDisabledFor(''));
 	}//end testIsThemingDisabledForNullIsFalse()
 
 	/**
 	 * An app in the exclusion list is reported as disabled.
+	 *
+	 * @return void
 	 */
 	public function testIsThemingDisabledForExcludedApp(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar"]');
-		$this->assertTrue($this->service->isThemingDisabledFor('calendar'));
-		$this->assertFalse($this->service->isThemingDisabledFor('files'));
+		$this->assertTrue(condition: $this->service->isThemingDisabledFor('calendar'));
+		$this->assertFalse(condition: $this->service->isThemingDisabledFor('files'));
 	}//end testIsThemingDisabledForExcludedApp()
 
 	/**
 	 * The resolver extracts the app id from app-page paths and only those.
 	 *
-	 * @dataProvider pathProvider
-	 *
 	 * @param string|null $pathInfo The request path info.
 	 * @param string|null $expected The expected resolved app id.
+	 *
+	 * @dataProvider pathProvider
+	 *
+	 * @return void
 	 */
 	public function testResolveAppIdFromPath(?string $pathInfo, ?string $expected): void {
-		$this->assertSame($expected, $this->service->resolveAppIdFromPath($pathInfo));
+		$this->assertSame(expected: $expected, actual: $this->service->resolveAppIdFromPath($pathInfo));
 	}//end testResolveAppIdFromPath()
 
 	/**
@@ -177,6 +195,8 @@ class AppThemingServiceTest extends TestCase {
 
 	/**
 	 * getThemableApps omits protected ids, sorts by name, sets themed flag.
+	 *
+	 * @return void
 	 */
 	public function testGetThemableAppsListsEnabledAppsWithState(): void {
 		$this->config->method('getAppValue')->willReturn('["calendar"]');
@@ -190,16 +210,16 @@ class AppThemingServiceTest extends TestCase {
 		$ids = array_column($apps, 'id');
 
 		// Protected ids excluded.
-		$this->assertNotContains('nldesign', $ids);
-		$this->assertNotContains('settings', $ids);
-		$this->assertNotContains('theming', $ids);
+		$this->assertNotContains(needle: 'nldesign', haystack: $ids);
+		$this->assertNotContains(needle: 'settings', haystack: $ids);
+		$this->assertNotContains(needle: 'theming', haystack: $ids);
 
 		// Sorted by display name: Calendar before Files.
-		$this->assertSame(['calendar', 'files'], $ids);
+		$this->assertSame(expected: ['calendar', 'files'], actual: $ids);
 
 		// Themed flag reflects the exclusion list.
 		$byId = array_column($apps, 'themed', 'id');
-		$this->assertFalse($byId['calendar']);
-		$this->assertTrue($byId['files']);
+		$this->assertFalse(condition: $byId['calendar']);
+		$this->assertTrue(condition: $byId['files']);
 	}//end testGetThemableAppsListsEnabledAppsWithState()
 }//end class

@@ -82,6 +82,8 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 	 * still missing, and its value is not read as the CSS primary.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testCommentedOutDeclarationsNeverCount(): void {
 		$declarations = '';
@@ -96,29 +98,29 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 			":root {\n" . $declarations . "\t/* --nldesign-color-primary: red; */\n}\n"
 		);
 
-		$result = (new TokenSetVocabularyAuditService(new CssParserService()))->auditSet(
+		$result = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]
 		);
 
-		$this->assertTrue($result['auditable']);
-		$this->assertSame(['--nldesign-color-primary'], $result['missingRequired']);
-		$this->assertNull($result['cssPrimary']);
-		$this->assertFalse($result['primaryMismatch']);
-		$this->assertFalse($result['complete']);
+		$this->assertTrue(condition: $result['auditable']);
+		$this->assertSame(expected: ['--nldesign-color-primary'], actual: $result['missingRequired']);
+		$this->assertNull(actual: $result['cssPrimary']);
+		$this->assertFalse(condition: $result['primaryMismatch']);
+		$this->assertFalse(condition: $result['complete']);
 
 		// The control: the same file with the comment markers removed is complete.
 		file_put_contents(
 			$this->appDir . '/css/tokens/example.css',
 			":root {\n" . $declarations . "\t--nldesign-color-primary: #123456;\n}\n"
 		);
-		$control = (new TokenSetVocabularyAuditService(new CssParserService()))->auditSet(
+		$control = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'nldesign', 'theming' => ['primary_color' => '#123456']]
 		);
-		$this->assertTrue($control['complete']);
+		$this->assertTrue(condition: $control['complete']);
 	}//end testCommentedOutDeclarationsNeverCount()
 
 	/**
@@ -128,6 +130,8 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 	 * itself is not required, and the primary is compared on its own token.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testOwnVocabularySystemIsAuditedAgainstItsOwnNames(): void {
 		mkdir($this->appDir . '/css/systems/summer-breeze', 0777, true);
@@ -147,34 +151,37 @@ class TokenSetVocabularyAuditServiceTest extends TestCase {
 			":root {\n\t--summer-color-text: #02162e;\n\t--summer-color-primary: #21468b;\n\t--summer-unread: 4px;\n}\n"
 		);
 
-		$service = new TokenSetVocabularyAuditService(new CssParserService());
+		$service = new TokenSetVocabularyAuditService(parser: new CssParserService());
 		$result = $service->auditSet(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'summer-breeze', 'theming' => ['primary_color' => '#2874D1']]
 		);
 
-		$this->assertTrue($result['auditable']);
-		$this->assertSame('summer-breeze', $result['designSystem']);
-		$this->assertSame(['--summer-color-surface'], $result['missingRequired']);
-		$this->assertSame(['--summer-color-primary', '--summer-unread'], $result['foreignNldesignNames']);
-		$this->assertTrue($result['primaryMismatch']);
-		$this->assertSame('#21468b', $result['cssPrimary']);
-		$this->assertSame('#2874d1', $result['declaredPrimary']);
-		$this->assertFalse($result['complete']);
-		$this->assertNotSame([], $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'summer-breeze']));
+		$this->assertTrue(condition: $result['auditable']);
+		$this->assertSame(expected: 'summer-breeze', actual: $result['designSystem']);
+		$this->assertSame(expected: ['--summer-color-surface'], actual: $result['missingRequired']);
+		$this->assertSame(expected: ['--summer-color-primary', '--summer-unread'], actual: $result['foreignNldesignNames']);
+		$this->assertTrue(condition: $result['primaryMismatch']);
+		$this->assertSame(expected: '#21468b', actual: $result['cssPrimary']);
+		$this->assertSame(expected: '#2874d1', actual: $result['declaredPrimary']);
+		$this->assertFalse(condition: $result['complete']);
+		$this->assertNotSame(
+			expected: [],
+			actual: $service->warningsFor(appPath: $this->appDir, id: 'example', meta: ['design_system' => 'summer-breeze'])
+		);
 
 		// The control: declare what is read, drop what is not, agree on the primary.
 		file_put_contents(
 			$this->appDir . '/css/tokens/example.css',
 			":root {\n\t--summer-color-text: #02162e;\n\t--summer-color-surface: #ffffff;\n}\n"
 		);
-		$control = (new TokenSetVocabularyAuditService(new CssParserService()))->auditSet(
+		$control = (new TokenSetVocabularyAuditService(parser: new CssParserService()))->auditSet(
 			appPath: $this->appDir,
 			id: 'example',
 			meta: ['design_system' => 'summer-breeze', 'theming' => ['primary_color' => '#2874D1']]
 		);
-		$this->assertTrue($control['complete']);
-		$this->assertSame([], $service->warningsFor(appPath: $this->appDir, id: 'missing', meta: ['design_system' => 'none']));
+		$this->assertTrue(condition: $control['complete']);
+		$this->assertSame(expected: [], actual: $service->warningsFor(appPath: $this->appDir, id: 'missing', meta: ['design_system' => 'none']));
 	}//end testOwnVocabularySystemIsAuditedAgainstItsOwnNames()
 }//end class

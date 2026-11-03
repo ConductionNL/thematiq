@@ -39,8 +39,8 @@ class DesignTokenRefTest extends TestCase {
 	public function testKeepsPathAndDeprecatedAsGiven(): void {
 		foreach ([null, false, true, '', 'Use another token', ['severity' => 'error', 'message' => 'Gone']] as $deprecated) {
 			$token = new DesignTokenRef(path: 'color.primary', deprecated: $deprecated);
-			self::assertSame('color.primary', $token->path);
-			self::assertSame($deprecated, $token->deprecated);
+			self::assertSame(expected: 'color.primary', actual: $token->path);
+			self::assertSame(expected: $deprecated, actual: $token->deprecated);
 		}
 	}//end testKeepsPathAndDeprecatedAsGiven()
 
@@ -50,7 +50,7 @@ class DesignTokenRefTest extends TestCase {
 	 * @return void
 	 */
 	public function testRefusesANonStringPath(): void {
-		$this->expectException(TypeError::class);
+		$this->expectException(exception: TypeError::class);
 		new DesignTokenRef(path: 12, deprecated: null);
 	}//end testRefusesANonStringPath()
 }//end class

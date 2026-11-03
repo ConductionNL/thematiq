@@ -87,7 +87,7 @@ class ConverterColourRepairGoldenTest extends TestCase {
 				$draw = $random->getInt(0, 9);
 				if ($draw < 3) {
 					$semantic[$token] = self::COLOURS[$random->getInt(0, (count(self::COLOURS) - 1))];
-				} else if ($draw === 3) {
+				} elseif ($draw === 3) {
 					unset($semantic[$token]);
 				}
 			}
@@ -156,23 +156,23 @@ class ConverterColourRepairGoldenTest extends TestCase {
 		$min = $random->getInt(0, 4);
 		if ($min === 0) {
 			unset($pair['min']);
-		} else if ($min === 1) {
+		} elseif ($min === 1) {
 			$pair['min'] = 3;
-		} else if ($min === 2) {
+		} elseif ($min === 2) {
 			$pair['min'] = 7.0;
 		}
 
 		$adjust = $random->getInt(0, 3);
 		if ($adjust === 0) {
 			$pair['adjust'] = 'flip';
-		} else if ($adjust === 1) {
+		} elseif ($adjust === 1) {
 			$pair['adjust'] = 'lightness';
 		}
 
 		$repair = $random->getInt(0, 5);
 		if ($repair === 0) {
 			$pair['repair'] = 'background';
-		} else if ($repair === 1) {
+		} elseif ($repair === 1) {
 			unset($pair['repair']);
 		}
 
@@ -256,7 +256,12 @@ class ConverterColourRepairGoldenTest extends TestCase {
 		}
 
 		$components = [];
-		foreach ($service->repairComponents(component: $case['component'], semantic: $result, table: $case['table'], report: $report) as $token => $value) {
+		foreach ($service->repairComponents(
+			component: $case['component'],
+			semantic: $result,
+			table: $case['table'],
+			report: $report
+		) as $token => $value) {
 			if (($case['component'][$token] ?? null) !== $value) {
 				$components[$token] = $value;
 			}

@@ -76,7 +76,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		$this->stored = [];
-		$this->config = $this->createMock(IConfig::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
 		$this->config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, string $default = ''): string => ($this->stored[$key] ?? $default)
 		);
@@ -87,7 +87,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		);
 
 		$manifest = $this->shippedManifest();
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturnCallback(
 			static fn (string $tokenSetId): array => ($manifest[$tokenSetId] ?? [])
 		);
@@ -102,7 +102,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 */
 	private function shippedManifest(): array {
 		$decoded = json_decode((string)file_get_contents(\dirname(__DIR__, 3) . '/token-sets.json'), true);
-		$this->assertIsArray($decoded, 'token-sets.json must decode.');
+		$this->assertIsArray(actual: $decoded, message: 'token-sets.json must decode.');
 
 		$indexed = [];
 		foreach ($decoded as $entry) {
@@ -116,12 +116,14 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * Zuiddrecht carries both defaults, and wears them with nothing stored.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtWearsTheLightLayoutAndTheStripe(): void {
-		$this->assertSame('', $this->service->workplaceLayoutSetting());
-		$this->assertSame('', $this->service->brandStripeSetting());
-		$this->assertSame('light', $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
-		$this->assertTrue($this->service->brandStripe(tokenSet: 'zuiddrecht'));
+		$this->assertSame(expected: '', actual: $this->service->workplaceLayoutSetting());
+		$this->assertSame(expected: '', actual: $this->service->brandStripeSetting());
+		$this->assertSame(expected: 'light', actual: $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
+		$this->assertTrue(condition: $this->service->brandStripe(tokenSet: 'zuiddrecht'));
 	}//end testZuiddrechtWearsTheLightLayoutAndTheStripe()
 
 	/**
@@ -131,6 +133,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * leave it to the administrator.
 	 *
 	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
+	 *
+	 * @return void
 	 */
 	public function testTheSchoolSetsWearTheLightLayout(): void {
 		$expected = [
@@ -140,8 +144,8 @@ class LayoutOptionsServiceTest extends TestCase {
 			'warmtepompacademie' => false,
 		];
 		foreach ($expected as $id => $stripe) {
-			$this->assertSame('light', $this->service->workplaceLayout(tokenSet: $id), $id);
-			$this->assertSame($stripe, $this->service->brandStripe(tokenSet: $id), $id);
+			$this->assertSame(expected: 'light', actual: $this->service->workplaceLayout(tokenSet: $id), message: $id);
+			$this->assertSame(expected: $stripe, actual: $this->service->brandStripe(tokenSet: $id), message: $id);
 		}
 	}//end testTheSchoolSetsWearTheLightLayout()
 
@@ -151,6 +155,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * block has to be named here on purpose.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testEveryOtherShippedSetKeepsTheDefaultLayout(): void {
 		$changed = [];
@@ -166,8 +172,8 @@ class LayoutOptionsServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertGreaterThan(50, $walked, 'The walk must cover the shipped sets, not an empty list.');
-		$this->assertSame([], $changed);
+		$this->assertGreaterThan(expected: 50, actual: $walked, message: 'The walk must cover the shipped sets, not an empty list.');
+		$this->assertSame(expected: [], actual: $changed);
 	}//end testEveryOtherShippedSetKeepsTheDefaultLayout()
 
 	/**
@@ -175,10 +181,12 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * the defaults rather than failing the page render.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownSetResolvesToTheDefaults(): void {
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'default',
 				'brandStripe' => false,
 				'navigationWidth' => '',
@@ -187,7 +195,7 @@ class LayoutOptionsServiceTest extends TestCase {
 				'loginWatermark' => '1',
 				'headerStyle' => 'default',
 			],
-			$this->service->setDefaults(tokenSet: 'custom-does-not-exist')
+			actual: $this->service->setDefaults(tokenSet: 'custom-does-not-exist')
 		);
 	}//end testAnUnknownSetResolvesToTheDefaults()
 
@@ -197,10 +205,12 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * watermark to the built-in default.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testZuiddrechtWearsTheNewerDefaults(): void {
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'light',
 				'brandStripe' => true,
 				'navigationWidth' => 264,
@@ -209,15 +219,15 @@ class LayoutOptionsServiceTest extends TestCase {
 				'loginWatermark' => true,
 				'headerStyle' => 'workplace',
 			],
-			$this->service->resolved(tokenSet: 'zuiddrecht')
+			actual: $this->service->resolved(tokenSet: 'zuiddrecht')
 		);
 		$this->assertSame(
-			['workplace-layout', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
-			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+			expected: ['workplace-layout', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
+			actual: $this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
 		$this->assertSame(
-			[['id' => 'thematiq-navigation-width', 'css' => ':root { --thematiq-navigation-width: 264px; }']],
-			$this->service->inlineStyles(tokenSet: 'zuiddrecht')
+			expected: [['id' => 'thematiq-navigation-width', 'css' => ':root { --thematiq-navigation-width: 264px; }']],
+			actual: $this->service->inlineStyles(tokenSet: 'zuiddrecht')
 		);
 	}//end testZuiddrechtWearsTheNewerDefaults()
 
@@ -228,6 +238,8 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * Nextcloud's own top bar.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testEveryOtherShippedSetKeepsTheNewerDefaults(): void {
 		$changed = [];
@@ -257,8 +269,8 @@ class LayoutOptionsServiceTest extends TestCase {
 			}
 		}
 
-		$this->assertGreaterThan(60, $walked, 'The walk must cover the shipped sets, not an empty list.');
-		$this->assertSame([], $changed);
+		$this->assertGreaterThan(expected: 60, actual: $walked, message: 'The walk must cover the shipped sets, not an empty list.');
+		$this->assertSame(expected: [], actual: $changed);
 	}//end testEveryOtherShippedSetKeepsTheNewerDefaults()
 
 	/**
@@ -266,32 +278,37 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * choice follows the set again.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAStoredNewerChoiceWinsOverTheSet(): void {
-		$this->assertSame('', $this->service->setOption(key: 'workplace_layout', value: 'light'));
-		$this->assertSame('', $this->service->setOption(key: 'brand_stripe', value: '1'));
-		$this->assertSame('', $this->service->setOption(key: 'navigation_width', value: '320'));
-		$this->assertSame('', $this->service->setOption(key: 'navigation_active_style', value: 'default'));
-		$this->assertSame('', $this->service->setOption(key: 'brand_stripe_placement', value: 'login'));
-		$this->assertSame('', $this->service->setOption(key: 'login_watermark', value: '0'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'light'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'brand_stripe', value: '1'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'navigation_width', value: '320'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'navigation_active_style', value: 'default'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'brand_stripe_placement', value: 'login'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'login_watermark', value: '0'));
 
 		$resolved = $this->service->resolved(tokenSet: 'zuiddrecht');
-		$this->assertSame(320, $resolved['navigationWidth']);
-		$this->assertSame('default', $resolved['navigationActiveStyle']);
-		$this->assertSame('login', $resolved['brandStripePlacement']);
-		$this->assertFalse($resolved['loginWatermark']);
+		$this->assertSame(expected: 320, actual: $resolved['navigationWidth']);
+		$this->assertSame(expected: 'default', actual: $resolved['navigationActiveStyle']);
+		$this->assertSame(expected: 'login', actual: $resolved['brandStripePlacement']);
+		$this->assertFalse(condition: $resolved['loginWatermark']);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
-			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+			expected: ['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width'],
+			actual: $this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
-		$this->assertSame(':root { --thematiq-navigation-width: 320px; }', $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']);
-
-		$this->assertSame('320', $this->service->setOption(key: 'navigation_width', value: ''));
-		$this->assertSame('login', $this->service->setOption(key: 'brand_stripe_placement', value: 'header'));
-		$this->assertSame(264, $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-header-only', 'navigation-width'],
-			$this->service->stylesheets(tokenSet: 'zuiddrecht')
+			expected: ':root { --thematiq-navigation-width: 320px; }',
+			actual: $this->service->inlineStyles(tokenSet: 'zuiddrecht')[0]['css']
+		);
+
+		$this->assertSame(expected: '320', actual: $this->service->setOption(key: 'navigation_width', value: ''));
+		$this->assertSame(expected: 'login', actual: $this->service->setOption(key: 'brand_stripe_placement', value: 'header'));
+		$this->assertSame(expected: 264, actual: $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
+		$this->assertSame(
+			expected: ['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-header-only', 'navigation-width'],
+			actual: $this->service->stylesheets(tokenSet: 'zuiddrecht')
 		);
 	}//end testAStoredNewerChoiceWinsOverTheSet()
 
@@ -311,12 +328,12 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function testAValueAnOptionDoesNotAcceptIsRefused(string $key, string $value): void {
-		$this->assertFalse($this->service->accepts(key: $key, value: $value));
+		$this->assertFalse(condition: $this->service->accepts(key: $key, value: $value));
 		try {
 			$this->service->setOption(key: $key, value: $value);
-			$this->fail('Expected an InvalidArgumentException.');
+			$this->fail(message: 'Expected an InvalidArgumentException.');
 		} catch (InvalidArgumentException $e) {
-			$this->assertSame([], $this->stored);
+			$this->assertSame(expected: [], actual: $this->stored);
 		}
 	}//end testAValueAnOptionDoesNotAcceptIsRefused()
 
@@ -344,23 +361,25 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * option does not accept, both read as "follow": the page still renders.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableNewerValueFollowsTheBuiltInDefault(): void {
 		$this->stored['navigation_width'] = '12';
 		$this->stored['navigation_active_style'] = 'bold';
-		$this->assertSame('', $this->service->setting(key: 'navigation_width'));
-		$this->assertSame('', $this->service->setting(key: 'navigation_active_style'));
-		$this->assertSame(264, $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
+		$this->assertSame(expected: '', actual: $this->service->setting(key: 'navigation_width'));
+		$this->assertSame(expected: '', actual: $this->service->setting(key: 'navigation_active_style'));
+		$this->assertSame(expected: 264, actual: $this->service->resolved(tokenSet: 'zuiddrecht')['navigationWidth']);
 
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn(
 			['layout' => ['navigation_width' => 900, 'navigation_active_style' => 7, 'brand_stripe_placement' => 'roof', 'login_watermark' => 'no', 'header_style' => 'dark']]
 		);
 		$service = new LayoutOptionsService(config: $this->config, designSystemService: $designSystems);
 		$this->stored = [];
 		$this->assertSame(
-			['navigationWidth' => '', 'navigationActiveStyle' => 'default', 'brandStripePlacement' => 'header-and-login', 'loginWatermark' => '1', 'headerStyle' => 'default'],
-			array_diff_key($service->setDefaults(tokenSet: 'odd'), ['workplaceLayout' => 1, 'brandStripe' => 1])
+			expected: ['navigationWidth' => '', 'navigationActiveStyle' => 'default', 'brandStripePlacement' => 'header-and-login', 'loginWatermark' => '1', 'headerStyle' => 'default'],
+			actual: array_diff_key($service->setDefaults(tokenSet: 'odd'), ['workplaceLayout' => 1, 'brandStripe' => 1])
 		);
 	}//end testAnUnreadableNewerValueFollowsTheBuiltInDefault()
 
@@ -369,9 +388,11 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * the watermark is off and the stripe is on the login card only.
 	 *
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testASetMayDeclareEveryNewerDefault(): void {
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn(
 			[
 				'layout' => [
@@ -388,7 +409,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		$service = new LayoutOptionsService(config: $this->config, designSystemService: $designSystems);
 
 		$this->assertSame(
-			[
+			expected: [
 				'workplaceLayout' => 'light',
 				'brandStripe' => true,
 				'navigationWidth' => 240,
@@ -397,11 +418,11 @@ class LayoutOptionsServiceTest extends TestCase {
 				'loginWatermark' => false,
 				'headerStyle' => 'workplace',
 			],
-			$service->resolved(tokenSet: 'declares-all')
+			actual: $service->resolved(tokenSet: 'declares-all')
 		);
 		$this->assertSame(
-			['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
-			$service->stylesheets(tokenSet: 'declares-all')
+			expected: ['workplace-layout', 'login-watermark-off', 'header-workplace', 'brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'navigation-active-soft'],
+			actual: $service->stylesheets(tokenSet: 'declares-all')
 		);
 	}//end testASetMayDeclareEveryNewerDefault()
 
@@ -409,23 +430,27 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * The administrator's choice always wins, in both directions.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 *
+	 * @return void
 	 */
 	public function testAStoredChoiceWinsOverTheSet(): void {
-		$this->assertSame('', $this->service->setWorkplaceLayout(layout: 'default'));
-		$this->assertSame('', $this->service->setBrandStripe(stripe: '0'));
-		$this->assertSame('default', $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
-		$this->assertFalse($this->service->brandStripe(tokenSet: 'zuiddrecht'));
+		$this->assertSame(expected: '', actual: $this->service->setWorkplaceLayout(layout: 'default'));
+		$this->assertSame(expected: '', actual: $this->service->setBrandStripe(stripe: '0'));
+		$this->assertSame(expected: 'default', actual: $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
+		$this->assertFalse(condition: $this->service->brandStripe(tokenSet: 'zuiddrecht'));
 
-		$this->assertSame('default', $this->service->setWorkplaceLayout(layout: 'light'));
-		$this->assertSame('0', $this->service->setBrandStripe(stripe: '1'));
-		$this->assertSame('light', $this->service->workplaceLayout(tokenSet: 'utrecht'));
-		$this->assertTrue($this->service->brandStripe(tokenSet: 'utrecht'));
+		$this->assertSame(expected: 'default', actual: $this->service->setWorkplaceLayout(layout: 'light'));
+		$this->assertSame(expected: '0', actual: $this->service->setBrandStripe(stripe: '1'));
+		$this->assertSame(expected: 'light', actual: $this->service->workplaceLayout(tokenSet: 'utrecht'));
+		$this->assertTrue(condition: $this->service->brandStripe(tokenSet: 'utrecht'));
 	}//end testAStoredChoiceWinsOverTheSet()
 
 	/**
 	 * Storing the empty value hands the option back to the set.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testTheEmptyChoiceFollowsTheSetAgain(): void {
 		$this->service->setWorkplaceLayout(layout: 'light');
@@ -433,24 +458,26 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->service->setWorkplaceLayout(layout: '');
 		$this->service->setBrandStripe(stripe: '');
 
-		$this->assertSame('default', $this->service->workplaceLayout(tokenSet: 'utrecht'));
-		$this->assertFalse($this->service->brandStripe(tokenSet: 'utrecht'));
+		$this->assertSame(expected: 'default', actual: $this->service->workplaceLayout(tokenSet: 'utrecht'));
+		$this->assertFalse(condition: $this->service->brandStripe(tokenSet: 'utrecht'));
 	}//end testTheEmptyChoiceFollowsTheSetAgain()
 
 	/**
 	 * A value outside the three is refused and nothing is written.
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownLayoutIsRefused(): void {
 		try {
 			$this->service->setWorkplaceLayout(layout: 'wide');
-			$this->fail('An unknown layout must be refused.');
+			$this->fail(message: 'An unknown layout must be refused.');
 		} catch (InvalidArgumentException $e) {
-			$this->assertArrayNotHasKey('workplace_layout', $this->stored);
+			$this->assertArrayNotHasKey(key: 'workplace_layout', array: $this->stored);
 		}
 
-		$this->expectException(InvalidArgumentException::class);
+		$this->expectException(exception: InvalidArgumentException::class);
 		$this->service->setBrandStripe(stripe: 'true');
 	}//end testAnUnknownLayoutIsRefused()
 
@@ -459,14 +486,16 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * import) and is not one of the three is read as "follow the set".
 	 *
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableStoredValueFollowsTheSet(): void {
 		$this->stored = ['workplace_layout' => 'wide', 'brand_stripe' => 'yes'];
 
-		$this->assertSame('', $this->service->workplaceLayoutSetting());
-		$this->assertSame('', $this->service->brandStripeSetting());
-		$this->assertSame('light', $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
-		$this->assertFalse($this->service->brandStripe(tokenSet: 'utrecht'));
+		$this->assertSame(expected: '', actual: $this->service->workplaceLayoutSetting());
+		$this->assertSame(expected: '', actual: $this->service->brandStripeSetting());
+		$this->assertSame(expected: 'light', actual: $this->service->workplaceLayout(tokenSet: 'zuiddrecht'));
+		$this->assertFalse(condition: $this->service->brandStripe(tokenSet: 'utrecht'));
 	}//end testAnUnreadableStoredValueFollowsTheSet()
 
 	/**
@@ -475,19 +504,21 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * nothing, since the bar it places is the light one.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 *
+	 * @return void
 	 */
 	public function testTheWorkplaceHeaderNeedsTheLightLayout(): void {
-		$this->assertSame('', $this->service->setOption(key: 'header_style', value: 'workplace'));
-		$this->assertContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
-		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'utrecht'));
-		$this->assertSame('workplace', $this->service->resolved(tokenSet: 'utrecht')['headerStyle']);
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'workplace'));
+		$this->assertContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertNotContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'utrecht'));
+		$this->assertSame(expected: 'workplace', actual: $this->service->resolved(tokenSet: 'utrecht')['headerStyle']);
 
-		$this->assertSame('', $this->service->setOption(key: 'workplace_layout', value: 'default'));
-		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
+		$this->assertNotContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'zuiddrecht'));
 
-		$this->assertSame('workplace', $this->service->setOption(key: 'header_style', value: 'default'));
-		$this->assertSame('default', $this->service->setOption(key: 'workplace_layout', value: ''));
-		$this->assertNotContains('header-workplace', $this->service->stylesheets(tokenSet: 'zuiddrecht'));
-		$this->assertFalse($this->service->accepts(key: 'header_style', value: 'dark'));
+		$this->assertSame(expected: 'workplace', actual: $this->service->setOption(key: 'header_style', value: 'default'));
+		$this->assertSame(expected: 'default', actual: $this->service->setOption(key: 'workplace_layout', value: ''));
+		$this->assertNotContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'zuiddrecht'));
+		$this->assertFalse(condition: $this->service->accepts(key: 'header_style', value: 'dark'));
 	}//end testTheWorkplaceHeaderNeedsTheLightLayout()
 }//end class

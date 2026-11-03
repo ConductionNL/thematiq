@@ -83,11 +83,13 @@ class SummerBreezeContrastTest extends TestCase {
 	/**
 	 * Every pair reaches its threshold in the given mode.
 	 *
-	 * @dataProvider modeProvider
-	 *
 	 * @param string $mode The mode: light, media or explicit.
 	 *
+	 * @dataProvider modeProvider
+	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testEveryPaintedPairReachesAa(string $mode): void {
 		$contrast = new ContrastService();
@@ -97,28 +99,34 @@ class SummerBreezeContrastTest extends TestCase {
 		foreach (self::PAIRS as $name => $pair) {
 			[$fgToken, $bgToken] = $pair;
 			$threshold = ($pair[2] ?? 4.5);
-			$this->assertArrayHasKey($fgToken, $values, $mode . ': ' . $fgToken . ' is not declared');
-			$this->assertArrayHasKey($bgToken, $values, $mode . ': ' . $bgToken . ' is not declared');
+			$this->assertArrayHasKey(key: $fgToken, array: $values, message: $mode . ': ' . $fgToken . ' is not declared');
+			$this->assertArrayHasKey(key: $bgToken, array: $values, message: $mode . ': ' . $bgToken . ' is not declared');
 
-			$ratio = $contrast->measure(foreground: $values[$fgToken], background: $values[$bgToken], page: $values['--summer-color-background-plain']);
-			$this->assertNotNull($ratio, $mode . ' ' . $name . ': cannot measure ' . $values[$fgToken] . ' on ' . $values[$bgToken]);
+			$ratio = $contrast->measure(
+				foreground: $values[$fgToken],
+				background: $values[$bgToken],
+				page: $values['--summer-color-background-plain']
+			);
+			$this->assertNotNull(actual: $ratio, message: $mode . ' ' . $name . ': cannot measure ' . $values[$fgToken] . ' on ' . $values[$bgToken]);
 			if ($ratio < $threshold) {
 				$failures[] = sprintf('%s: %s on %s = %.2f:1 (needs %.1f:1)', $name, $values[$fgToken], $values[$bgToken], $ratio, $threshold);
 			}
 		}
 
-		$this->assertSame([], $failures, 'summer-breeze ' . $mode);
+		$this->assertSame(expected: [], actual: $failures, message: 'summer-breeze ' . $mode);
 	}//end testEveryPaintedPairReachesAa()
 
 	/**
 	 * The page and the panels are dark in both dark scopes and light in light
 	 * mode (relative luminance at most 0.05, at least 0.8).
 	 *
-	 * @dataProvider modeProvider
-	 *
 	 * @param string $mode The mode: light, media or explicit.
 	 *
+	 * @dataProvider modeProvider
+	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testSurfacesFollowTheMode(string $mode): void {
 		$contrast = new ContrastService();
@@ -126,14 +134,14 @@ class SummerBreezeContrastTest extends TestCase {
 
 		foreach (['--summer-color-surface', '--summer-color-background-plain'] as $token) {
 			$rgb = $contrast->parseColor(value: $values[$token]);
-			$this->assertNotNull($rgb, $mode . ': cannot parse ' . $token);
+			$this->assertNotNull(actual: $rgb, message: $mode . ': cannot parse ' . $token);
 			$luminance = (($contrast->ratio(first: $rgb, second: [0, 0, 0]) * 0.05) - 0.05);
 			if ($mode === 'light') {
-				$this->assertGreaterThanOrEqual(0.8, $luminance, sprintf('%s %s = %s', $mode, $token, $values[$token]));
+				$this->assertGreaterThanOrEqual(expected: 0.8, actual: $luminance, message: sprintf('%s %s = %s', $mode, $token, $values[$token]));
 				continue;
 			}
 
-			$this->assertLessThanOrEqual(0.05, $luminance, sprintf('%s %s = %s', $mode, $token, $values[$token]));
+			$this->assertLessThanOrEqual(expected: 0.05, actual: $luminance, message: sprintf('%s %s = %s', $mode, $token, $values[$token]));
 		}
 	}//end testSurfacesFollowTheMode()
 
@@ -143,6 +151,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * on a dark page.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testBothDarkScopesRemapEveryColourToken(): void {
 		$contrast = new ContrastService();
@@ -155,7 +165,7 @@ class SummerBreezeContrastTest extends TestCase {
 				&& $contrast->parseColorWithAlpha(value: $value) !== null,
 			ARRAY_FILTER_USE_BOTH
 		));
-		$this->assertNotEmpty($colours, 'The light set declares no --summer-color-* literal at all.');
+		$this->assertNotEmpty(actual: $colours, message: 'The light set declares no --summer-color-* literal at all.');
 
 		$summer = static fn (array $scope): array => array_filter(
 			$scope,
@@ -163,9 +173,21 @@ class SummerBreezeContrastTest extends TestCase {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		$this->assertSame([], array_values(array_diff($colours, array_keys($media))), 'Colour tokens the prefers-color-scheme scope leaves on their light value.');
-		$this->assertSame([], array_values(array_diff($colours, array_keys($explicit))), 'Colour tokens the explicit dark scope leaves on their light value.');
-		$this->assertSame($summer($media), $summer($explicit), 'The two dark scopes must declare the same --summer-* values.');
+		$this->assertSame(
+			expected: [],
+			actual: array_values(array_diff($colours, array_keys($media))),
+			message: 'Colour tokens the prefers-color-scheme scope leaves on their light value.'
+		);
+		$this->assertSame(
+			expected: [],
+			actual: array_values(array_diff($colours, array_keys($explicit))),
+			message: 'Colour tokens the explicit dark scope leaves on their light value.'
+		);
+		$this->assertSame(
+			expected: $summer($media),
+			actual: $summer($explicit),
+			message: 'The two dark scopes must declare the same --summer-* values.'
+		);
 	}//end testBothDarkScopesRemapEveryColourToken()
 
 	/**
@@ -173,14 +195,20 @@ class SummerBreezeContrastTest extends TestCase {
 	 * header names the light file's sha256.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testTheDarkFileWasGeneratedFromTheCurrentLightFile(): void {
 		$root = dirname(__DIR__, 3);
 		$dark = (string)file_get_contents($root . '/css/tokens/dark/summer-breeze.css');
 		$hash = hash('sha256', (string)file_get_contents($root . '/css/tokens/summer-breeze.css'));
 
-		$this->assertStringContainsString('GENERATED by', $dark);
-		$this->assertStringContainsString('sha256:' . $hash, $dark, 'css/tokens/dark/summer-breeze.css is stale: run php scripts/generate-dark-variants.php');
+		$this->assertStringContainsString(needle: 'GENERATED by', haystack: $dark);
+		$this->assertStringContainsString(
+			needle: 'sha256:' . $hash,
+			haystack: $dark,
+			message: 'css/tokens/dark/summer-breeze.css is stale: run php scripts/generate-dark-variants.php'
+		);
 	}//end testTheDarkFileWasGeneratedFromTheCurrentLightFile()
 
 	/**
@@ -190,6 +218,8 @@ class SummerBreezeContrastTest extends TestCase {
 	 * it reported 10.20:1, which is #ffffff on the defaults' #154273).
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md#requirement-summer-breeze-is-legible-in-light-and-in-both-dark-scopes
+	 *
+	 * @return void
 	 */
 	public function testTheShippedAuditMeasuresSummerBreezeOnItsOwnColours(): void {
 		$contrast = new ContrastService();
@@ -202,19 +232,29 @@ class SummerBreezeContrastTest extends TestCase {
 			}
 		}
 
-		$result = (new ShippedTokenSetAuditService($contrast, new CssParserService()))->auditSet(dirname(__DIR__, 3), 'summer-breeze', $theming);
+		$result = (new ShippedTokenSetAuditService(contrast: $contrast, parser: new CssParserService()))->auditSet(
+			dirname(__DIR__, 3),
+			'summer-breeze',
+			$theming
+		);
 
 		$this->assertSame(
-			round((float)$contrast->measure(foreground: $light['--summer-color-primary-text'], background: $light['--summer-color-primary']), 2),
-			$result['textRatio'],
-			'primary text on primary must be measured on --summer-color-primary-text and --summer-color-primary'
+			expected: round(
+				(float)$contrast->measure(foreground: $light['--summer-color-primary-text'], background: $light['--summer-color-primary']),
+				2
+			),
+			actual: $result['textRatio'],
+			message: 'primary text on primary must be measured on --summer-color-primary-text and --summer-color-primary'
 		);
 		$this->assertSame(
-			round((float)$contrast->measure(foreground: $light['--summer-color-primary'], background: $light['--summer-color-background-plain']), 2),
-			$result['uiRatio'],
-			'primary on background must be measured on --summer-color-primary and --summer-color-background-plain'
+			expected: round(
+				(float)$contrast->measure(foreground: $light['--summer-color-primary'], background: $light['--summer-color-background-plain']),
+				2
+			),
+			actual: $result['uiRatio'],
+			message: 'primary on background must be measured on --summer-color-primary and --summer-color-background-plain'
 		);
-		$this->assertSame('pass', $result['verdict']);
+		$this->assertSame(expected: 'pass', actual: $result['verdict']);
 	}//end testTheShippedAuditMeasuresSummerBreezeOnItsOwnColours()
 
 	/**
@@ -268,9 +308,9 @@ class SummerBreezeContrastTest extends TestCase {
 		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents(dirname(__DIR__, 3) . '/css/tokens/dark/summer-breeze.css'));
 
 		$start = strpos($css, '@media');
-		$this->assertNotFalse($start, 'The dark file has no prefers-color-scheme block.');
+		$this->assertNotFalse(condition: $start, message: 'The dark file has no prefers-color-scheme block.');
 		$open = strpos($css, '{', $start);
-		$this->assertNotFalse($open);
+		$this->assertNotFalse(condition: $open);
 
 		$depth = 0;
 		$end = $open;
@@ -289,8 +329,8 @@ class SummerBreezeContrastTest extends TestCase {
 		$parser = new CssParserService();
 		$media = ($parser->parseDeclarations(substr($css, $open + 1, $end - $open - 1)) ?? []);
 		$explicit = ($parser->parseDeclarations(substr($css, 0, $start) . substr($css, $end + 1)) ?? []);
-		$this->assertNotSame([], $media, 'The prefers-color-scheme scope declares nothing.');
-		$this->assertNotSame([], $explicit, 'The explicit dark scope declares nothing.');
+		$this->assertNotSame(expected: [], actual: $media, message: 'The prefers-color-scheme scope declares nothing.');
+		$this->assertNotSame(expected: [], actual: $explicit, message: 'The explicit dark scope declares nothing.');
 
 		return [$media, $explicit];
 	}//end darkScopes()

@@ -63,18 +63,16 @@ class BrandingCaptureServiceTest extends TestCase {
 
 	/**
 	 * Build the service against a temp app dir and an in-memory app config.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped('OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
-		}
-
 		$this->appDir = sys_get_temp_dir() . '/thematiq-capture-test-' . uniqid();
 		mkdir($this->appDir, 0777, true);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = ''): string => ($this->values[$app . '/' . $key] ?? (string)$default)
 		);
@@ -84,19 +82,25 @@ class BrandingCaptureServiceTest extends TestCase {
 			}
 		);
 
-		$this->imageManager = $this->createMock(ImageManager::class);
+		$this->imageManager = $this->createMock(originalClassName: ImageManager::class);
 
 		// The store keeps names exactly as the app-relative paths they replace,
 		// so the files this test inspects sit where they always did.
-		$this->service = new BrandingCaptureService($this->imageManager, $config, new DirectoryRuntimeFileStore($this->appDir));
+		$this->service = new BrandingCaptureService(
+			imageManager: $this->imageManager,
+			config: $config,
+			store: new DirectoryRuntimeFileStore(root: $this->appDir)
+		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (isset($this->appDir) === true && is_dir($this->appDir) === true) {
-			$this->rrmdir($this->appDir);
+			$this->rrmdir(dir: $this->appDir);
 		}
 
 		parent::tearDown();
@@ -117,7 +121,7 @@ class BrandingCaptureServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -143,7 +147,7 @@ class BrandingCaptureServiceTest extends TestCase {
 		);
 		$this->imageManager->method('getImage')->willReturnCallback(
 			function (string $key) use ($images): ISimpleFile {
-				$file = $this->createMock(ISimpleFile::class);
+				$file = $this->createMock(originalClassName: ISimpleFile::class);
 				$file->method('getContent')->willReturn($images[$key]['contents']);
 				return $file;
 			}
@@ -153,47 +157,53 @@ class BrandingCaptureServiceTest extends TestCase {
 	/**
 	 * The colours and a removed background image are captured, and stored
 	 * under the set.
+	 *
+	 * @return void
 	 */
 	public function testCapturesTheColoursAndARemovedBackground(): void {
 		$this->values['theming/primary_color'] = '#23845c';
 		$this->values['theming/background_color'] = '#ffffff';
 		$this->values['theming/backgroundMime'] = 'backgroundColor';
-		$this->uploads([]);
+		$this->uploads(images: []);
 
 		$theming = $this->service->capture(setId: 'custom-openwoo');
 
 		$this->assertSame(
-			[
+			expected: [
 				'captured' => true,
 				'primary_color' => '#23845c',
 				'background_color' => '#ffffff',
 				'background_mode' => 'color',
 			],
-			$theming
+			actual: $theming
 		);
-		$this->assertSame(['custom-openwoo' => $theming], $this->service->all());
+		$this->assertSame(expected: ['custom-openwoo' => $theming], actual: $this->service->all());
 	}//end testCapturesTheColoursAndARemovedBackground()
 
 	/**
 	 * With no image of its own and nothing removed, the background is
 	 * Nextcloud's default — which applying the theme must put back too.
+	 *
+	 * @return void
 	 */
 	public function testAnUntouchedBackgroundIsCapturedAsTheDefault(): void {
-		$this->uploads([]);
+		$this->uploads(images: []);
 
 		$theming = $this->service->capture(setId: 'amsterdam');
 
-		$this->assertSame('default', $theming['background_mode']);
+		$this->assertSame(expected: 'default', actual: $theming['background_mode']);
 	}//end testAnUntouchedBackgroundIsCapturedAsTheDefault()
 
 	/**
 	 * Every uploaded image is copied into the directory the sync accepts,
 	 * under a name that cannot overwrite a shipped logo, and the slot is
 	 * recorded as already holding it.
+	 *
+	 * @return void
 	 */
 	public function testCopiesEveryUploadedImage(): void {
 		$this->uploads(
-			[
+			images: [
 				'logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg>logo</svg>'],
 				'logoheader' => ['mime' => 'image/png', 'contents' => 'png-bytes'],
 				'favicon' => ['mime' => 'image/x-icon', 'contents' => 'ico-bytes'],
@@ -203,20 +213,22 @@ class BrandingCaptureServiceTest extends TestCase {
 
 		$theming = $this->service->capture(setId: 'custom-openwoo');
 
-		$this->assertSame('img/logos/custom-openwoo-captured-logo.svg', $theming['logo']);
-		$this->assertSame('img/logos/custom-openwoo-captured-logoheader.png', $theming['logoheader']);
-		$this->assertSame('img/logos/custom-openwoo-captured-favicon.ico', $theming['favicon']);
-		$this->assertSame('img/backgrounds/custom-openwoo-captured-background.jpg', $theming['background']);
-		$this->assertSame('image', $theming['background_mode']);
+		$this->assertSame(expected: 'img/logos/custom-openwoo-captured-logo.svg', actual: $theming['logo']);
+		$this->assertSame(expected: 'img/logos/custom-openwoo-captured-logoheader.png', actual: $theming['logoheader']);
+		$this->assertSame(expected: 'img/logos/custom-openwoo-captured-favicon.ico', actual: $theming['favicon']);
+		$this->assertSame(expected: 'img/backgrounds/custom-openwoo-captured-background.jpg', actual: $theming['background']);
+		$this->assertSame(expected: 'image', actual: $theming['background_mode']);
 
-		$this->assertSame('<svg>logo</svg>', file_get_contents($this->appDir . '/' . $theming['logo']));
-		$this->assertSame('jpeg-bytes', file_get_contents($this->appDir . '/' . $theming['background']));
-		$this->assertSame($theming['logo'], $this->values['thematiq/synced_logo']);
+		$this->assertSame(expected: '<svg>logo</svg>', actual: file_get_contents($this->appDir . '/' . $theming['logo']));
+		$this->assertSame(expected: 'jpeg-bytes', actual: file_get_contents($this->appDir . '/' . $theming['background']));
+		$this->assertSame(expected: $theming['logo'], actual: $this->values['thematiq/synced_logo']);
 	}//end testCopiesEveryUploadedImage()
 
 	/**
 	 * An image of a type core cannot take back, or one that cannot be read,
 	 * is left out rather than failing the save it rides on.
+	 *
+	 * @return void
 	 */
 	public function testAnImageThatCannotComeBackIsLeftOut(): void {
 		$this->values['theming/logoMime'] = 'image/tiff';
@@ -228,61 +240,69 @@ class BrandingCaptureServiceTest extends TestCase {
 
 		$theming = $this->service->capture(setId: 'custom-openwoo');
 
-		$this->assertArrayNotHasKey('logo', $theming);
-		$this->assertArrayNotHasKey('favicon', $theming);
+		$this->assertArrayNotHasKey(key: 'logo', array: $theming);
+		$this->assertArrayNotHasKey(key: 'favicon', array: $theming);
 	}//end testAnImageThatCannotComeBackIsLeftOut()
 
 	/**
 	 * An unreadable store reads as nothing captured.
+	 *
+	 * @return void
 	 */
 	public function testAnUnreadableStoreReadsAsEmpty(): void {
 		$this->values['thematiq/' . BrandingCaptureService::CAPTURED_KEY] = 'not json';
 
-		$this->assertSame([], $this->service->all());
+		$this->assertSame(expected: [], actual: $this->service->all());
 	}//end testAnUnreadableStoreReadsAsEmpty()
 
 	/**
 	 * Forgetting a set removes its captured branding and its copied images.
+	 *
+	 * @return void
 	 */
 	public function testForgetRemovesTheBrandingAndItsImages(): void {
-		$this->uploads(['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
+		$this->uploads(images: ['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
 		$theming = $this->service->capture(setId: 'custom-openwoo');
 
 		$this->service->forget(setId: 'custom-openwoo');
 
-		$this->assertSame([], $this->service->all());
-		$this->assertFileDoesNotExist($this->appDir . '/' . $theming['logo']);
+		$this->assertSame(expected: [], actual: $this->service->all());
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/' . $theming['logo']);
 	}//end testForgetRemovesTheBrandingAndItsImages()
 
 	/**
 	 * An image directory that cannot be created leaves the image out rather
 	 * than failing the save: the colours are still captured.
+	 *
+	 * @return void
 	 */
 	public function testAnUncreatableImageDirectoryLeavesTheImageOut(): void {
 		// A file where img/ should be, so img/logos can never be made.
 		file_put_contents($this->appDir . '/img', 'not a directory');
-		$this->uploads(['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
+		$this->uploads(images: ['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
 		$this->values['theming/primary_color'] = '#23845c';
 
-		$theming = $this->quietly(fn (): array => $this->service->capture(setId: 'custom-openwoo'));
+		$theming = $this->quietly(callback: fn (): array => $this->service->capture(setId: 'custom-openwoo'));
 
-		$this->assertArrayNotHasKey('logo', $theming);
-		$this->assertSame('#23845c', $theming['primary_color']);
-		$this->assertArrayNotHasKey('thematiq/synced_logo', $this->values);
+		$this->assertArrayNotHasKey(key: 'logo', array: $theming);
+		$this->assertSame(expected: '#23845c', actual: $theming['primary_color']);
+		$this->assertArrayNotHasKey(key: 'thematiq/synced_logo', array: $this->values);
 	}//end testAnUncreatableImageDirectoryLeavesTheImageOut()
 
 	/**
 	 * An image that cannot be written is left out the same way.
+	 *
+	 * @return void
 	 */
 	public function testAnUnwritableImageIsLeftOut(): void {
 		// A directory where the copy should land, so writing it fails.
 		mkdir($this->appDir . '/img/logos/custom-openwoo-captured-logo.svg', 0777, true);
-		$this->uploads(['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
+		$this->uploads(images: ['logo' => ['mime' => 'image/svg+xml', 'contents' => '<svg/>']]);
 
-		$theming = $this->quietly(fn (): array => $this->service->capture(setId: 'custom-openwoo'));
+		$theming = $this->quietly(callback: fn (): array => $this->service->capture(setId: 'custom-openwoo'));
 
-		$this->assertArrayNotHasKey('logo', $theming);
-		$this->assertArrayNotHasKey('thematiq/synced_logo', $this->values);
+		$this->assertArrayNotHasKey(key: 'logo', array: $theming);
+		$this->assertArrayNotHasKey(key: 'thematiq/synced_logo', array: $this->values);
 	}//end testAnUnwritableImageIsLeftOut()
 
 	/**

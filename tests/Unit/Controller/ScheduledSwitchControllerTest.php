@@ -52,17 +52,24 @@ class ScheduledSwitchControllerTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->service = $this->createMock(ScheduledSwitchService::class);
-		$user = $this->createMock(IUser::class);
+		$this->service = $this->createMock(originalClassName: ScheduledSwitchService::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('admin');
-		$session = $this->createMock(IUserSession::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
 		$session->method('getUser')->willReturn($user);
 
-		$this->controller = new ScheduledSwitchController('thematiq', $this->createMock(IRequest::class), $this->service, $session);
+		$this->controller = new ScheduledSwitchController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			service: $this->service,
+			userSession: $session
+		);
 	}//end setUp()
 
 	/**
 	 * GET lists the switches with the status block.
+	 *
+	 * @return void
 	 */
 	public function testIndexListsSwitchesAndStatus(): void {
 		$this->service->method('list')->willReturn([['id' => 'a1', 'tokenSet' => 'koningsdag-oranje']]);
@@ -70,12 +77,14 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 		$data = $this->controller->index()->getData();
 
-		$this->assertSame('a1', $data['switches'][0]['id']);
-		$this->assertSame('rijkshuisstijl', $data['status']['activeTokenSet']);
+		$this->assertSame(expected: 'a1', actual: $data['switches'][0]['id']);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $data['status']['activeTokenSet']);
 	}//end testIndexListsSwitchesAndStatus()
 
 	/**
 	 * POST plans a switch as the signed-in administrator.
+	 *
+	 * @return void
 	 */
 	public function testCreatePlansTheSwitchAsTheCurrentUser(): void {
 		$this->service->expects($this->once())->method('create')->with(
@@ -91,12 +100,14 @@ class ScheduledSwitchControllerTest extends TestCase {
 			endAt: '2027-04-28T06:00:00Z',
 		);
 
-		$this->assertSame(201, $response->getStatus());
-		$this->assertSame('a1', $response->getData()['switch']['id']);
+		$this->assertSame(expected: 201, actual: $response->getStatus());
+		$this->assertSame(expected: 'a1', actual: $response->getData()['switch']['id']);
 	}//end testCreatePlansTheSwitchAsTheCurrentUser()
 
 	/**
 	 * An empty end means no end.
+	 *
+	 * @return void
 	 */
 	public function testAnEmptyEndMeansNoEnd(): void {
 		$this->service->expects($this->once())->method('create')->with(
@@ -111,46 +122,54 @@ class ScheduledSwitchControllerTest extends TestCase {
 
 	/**
 	 * Scenario "Overlapping plans are refused": 400 with the reason.
+	 *
+	 * @return void
 	 */
 	public function testARefusedPlanAnswers400WithTheReason(): void {
-		$this->service->method('create')->willThrowException(new ScheduledSwitchException('The window overlaps a planned switch.'));
+		$this->service->method('create')->willThrowException(new ScheduledSwitchException(message: 'The window overlaps a planned switch.'));
 
 		$response = $this->controller->create(tokenSet: 'x', startAt: '2027-05-05T00:00:00Z', endAt: '2027-05-10T00:00:00Z');
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame('The window overlaps a planned switch.', $response->getData()['error']);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: 'The window overlaps a planned switch.', actual: $response->getData()['error']);
 	}//end testARefusedPlanAnswers400WithTheReason()
 
 	/**
 	 * DELETE cancels; an unknown id is 404.
+	 *
+	 * @return void
 	 */
 	public function testCancelAndUnknownCancel(): void {
-		$this->service->expects($this->exactly(2))->method('cancel')->willReturnCallback(
+		$this->service->expects($this->exactly(count: 2))->method('cancel')->willReturnCallback(
 			function (string $id): void {
 				if ($id === 'nope') {
-					throw new ScheduledSwitchNotFoundException('No planned switch nope.');
+					throw new ScheduledSwitchNotFoundException(message: 'No planned switch nope.');
 				}
 			}
 		);
 
-		$this->assertSame(200, $this->controller->cancel(id: 'a1')->getStatus());
-		$this->assertSame(404, $this->controller->cancel(id: 'nope')->getStatus());
+		$this->assertSame(expected: 200, actual: $this->controller->cancel(id: 'a1')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller->cancel(id: 'nope')->getStatus());
 	}//end testCancelAndUnknownCancel()
 
 	/**
 	 * Scenario "A non-admin cannot plan a switch": every endpoint carries
 	 * the admin setting attribute.
+	 *
+	 * @return void
 	 */
 	public function testEveryEndpointIsAdminOnly(): void {
 		foreach (['index', 'create', 'cancel'] as $method) {
 			$attributes = (new \ReflectionMethod(ScheduledSwitchController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "ScheduledSwitchController::{$method}() must carry #[AuthorizedAdminSetting]");
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertNotEmpty(actual: $attributes, message: "ScheduledSwitchController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 	}//end testEveryEndpointIsAdminOnly()
 
 	/**
 	 * The three routes exist.
+	 *
+	 * @return void
 	 */
 	public function testTheRoutesAreRegistered(): void {
 		$routes = require __DIR__ . '/../../../appinfo/routes.php';
@@ -162,12 +181,12 @@ class ScheduledSwitchControllerTest extends TestCase {
 		}
 
 		$this->assertSame(
-			[
+			expected: [
 				'scheduledSwitch#index' => 'GET /settings/scheduled-switches',
 				'scheduledSwitch#create' => 'POST /settings/scheduled-switches',
 				'scheduledSwitch#cancel' => 'DELETE /settings/scheduled-switches/{id}',
 			],
-			$found
+			actual: $found
 		);
 	}//end testTheRoutesAreRegistered()
 }//end class

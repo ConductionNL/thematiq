@@ -68,20 +68,22 @@ class TokenSetConverterProvenanceTest extends TestCase {
 
 	/**
 	 * Build the converter and open up `commentSafe()`.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$this->converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		$this->commentSafe = new ReflectionMethod(TokenSetConverterService::class, 'commentSafe');
@@ -105,6 +107,8 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * the deletions rearrange it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testNoShortStringCanLeaveATerminatorBehind(): void {
 		$alphabet = ['*', '/', "\x00", 'a'];
@@ -124,20 +128,20 @@ class TokenSetConverterProvenanceTest extends TestCase {
 		}
 
 		// 4 + 16 + 64 + 256, plus the empty string.
-		$this->assertCount(341, $inputs);
+		$this->assertCount(expectedCount: 341, haystack: $inputs);
 
 		foreach ($inputs as $input) {
-			$guarded = $this->guard($input);
+			$guarded = $this->guard(value: $input);
 
 			$this->assertStringNotContainsString(
-				'*',
-				$guarded,
-				'asterisk survived ' . var_export($input, true)
+				needle: '*',
+				haystack: $guarded,
+				message: 'asterisk survived ' . var_export($input, true)
 			);
 			$this->assertStringNotContainsString(
-				'/',
-				$guarded,
-				'slash survived ' . var_export($input, true)
+				needle: '/',
+				haystack: $guarded,
+				message: 'slash survived ' . var_export($input, true)
 			);
 		}
 	}//end testNoShortStringCanLeaveATerminatorBehind()
@@ -151,9 +155,11 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * @dataProvider reconstructionProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheSpellingsThatDefeatedTheFirstGuard(string $payload): void {
-		$this->assertStringNotContainsString('*/', $this->guard($payload));
+		$this->assertStringNotContainsString(needle: '*/', haystack: $this->guard(value: $payload));
 	}//end testTheSpellingsThatDefeatedTheFirstGuard()
 
 	/**
@@ -177,12 +183,14 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * provenance line intact, which is the whole point of recording it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOrdinaryValuesSurviveUnchanged(): void {
-		$this->assertSame('gemeente-voorbeeld-tokens.css', $this->guard('gemeente-voorbeeld-tokens.css'));
-		$this->assertSame('2.3.1', $this->guard('2.3.1'));
-		$this->assertSame('1.0.0-beta+build.7', $this->guard('1.0.0-beta+build.7'));
-		$this->assertSame('(pasted)', $this->guard('(pasted)'));
+		$this->assertSame(expected: 'gemeente-voorbeeld-tokens.css', actual: $this->guard(value: 'gemeente-voorbeeld-tokens.css'));
+		$this->assertSame(expected: '2.3.1', actual: $this->guard(value: '2.3.1'));
+		$this->assertSame(expected: '1.0.0-beta+build.7', actual: $this->guard(value: '1.0.0-beta+build.7'));
+		$this->assertSame(expected: '(pasted)', actual: $this->guard(value: '(pasted)'));
 	}//end testOrdinaryValuesSurviveUnchanged()
 
 	/**
@@ -190,10 +198,12 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * something, or the provenance line loses its shape.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAFullyStrippedValueFallsBackToAPlaceholder(): void {
-		$this->assertSame('(unnamed)', $this->guard('*/'));
-		$this->assertSame('(unnamed)', $this->guard("\x00\x01\x02"));
-		$this->assertSame('(unnamed)', $this->guard(''));
+		$this->assertSame(expected: '(unnamed)', actual: $this->guard(value: '*/'));
+		$this->assertSame(expected: '(unnamed)', actual: $this->guard(value: "\x00\x01\x02"));
+		$this->assertSame(expected: '(unnamed)', actual: $this->guard(value: ''));
 	}//end testAFullyStrippedValueFallsBackToAPlaceholder()
 }//end class

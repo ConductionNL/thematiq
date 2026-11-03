@@ -59,7 +59,10 @@ final class OpenProjectSetFileTest extends TestCase {
 	private function writer(): OpenProjectSetFileWriter {
 		$contrast = new ContrastService();
 
-		return new OpenProjectSetFileWriter(new ShellCatalogueService(new ShippedTokenSetAuditService($contrast, new CssParserService()), new ShellRoleMapper(colours: $contrast)));
+		return new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
+			declarations: new ShippedTokenSetAuditService(contrast: $contrast, parser: new CssParserService()),
+			mapper: new ShellRoleMapper(colours: $contrast)
+		));
 	}//end writer()
 
 	/**
@@ -70,10 +73,17 @@ final class OpenProjectSetFileTest extends TestCase {
 	 * @return array{declarations: array<string, string>, skipped: array<int, string>, dark: array<string, string>}
 	 */
 	private function upload(string $json): array {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::appPath());
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService($appManager, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		$skipped = [];
@@ -127,18 +137,22 @@ final class OpenProjectSetFileTest extends TestCase {
 	public function testASetFileComesBackWithTheSameRoles(string $id): void {
 		$file = $this->writer()->setFile(appPath: self::appPath(), id: $id, name: 'Naam', store: null);
 
-		$this->assertSame(['id', 'name', 'tokens', 'logo'], array_slice(array_keys($file), 0, 4));
-		$this->assertSame([], array_diff(array_keys($file), ['id', 'name', 'tokens', 'logo', 'dark', 'vocabulary']));
-		$this->assertSame(['file', 'inverse_file', 'licence', 'redistributable', 'basis'], array_keys($file['logo']));
+		$this->assertSame(expected: ['id', 'name', 'tokens', 'logo'], actual: array_slice(array_keys($file), 0, 4));
+		$this->assertSame(expected: [], actual: array_diff(array_keys($file), ['id', 'name', 'tokens', 'logo', 'dark', 'vocabulary']));
+		$this->assertSame(expected: ['file', 'inverse_file', 'licence', 'redistributable', 'basis'], actual: array_keys($file['logo']));
 
 		$back = $this->upload(json: (string)json_encode($file));
 		$roles = $this->roles(declarations: $back['declarations']);
 		foreach ($file['tokens'] as $role => $value) {
-			$this->assertSame(strtolower((string)$value), strtolower((string)$roles[$role]), $id . ' ' . $role);
+			$this->assertSame(expected: strtolower((string)$value), actual: strtolower((string)$roles[$role]), message: $id . ' ' . $role);
 		}
 
 		foreach (($file['vocabulary'] ?? []) as $key => $value) {
-			$this->assertSame(trim((string)$value), ($back['declarations']['--nldesign-' . $key] ?? null), $id . ' vocabulary ' . $key);
+			$this->assertSame(
+				expected: trim((string)$value),
+				actual: ($back['declarations']['--nldesign-' . $key] ?? null),
+				message: $id . ' vocabulary ' . $key
+			);
 		}
 	}//end testASetFileComesBackWithTheSameRoles()
 
@@ -169,18 +183,18 @@ final class OpenProjectSetFileTest extends TestCase {
 		$roles = $this->roles(declarations: $back['declarations']);
 
 		foreach ($file['tokens'] as $role => $value) {
-			$this->assertSame(strtolower((string)$value), strtolower((string)$roles[$role]), $role);
+			$this->assertSame(expected: strtolower((string)$value), actual: strtolower((string)$roles[$role]), message: $role);
 		}
 
-		$this->assertSame([], $back['skipped']);
+		$this->assertSame(expected: [], actual: $back['skipped']);
 
 		// The dark block: every dark role under its name, and the dark vocabulary with the prefix.
 		foreach ($file['dark']['tokens'] as $role => $value) {
-			$this->assertSame($value, $back['dark'][OpenProjectSetFile::ROLE_TOKENS[$role]], 'dark ' . $role);
+			$this->assertSame(expected: $value, actual: $back['dark'][OpenProjectSetFile::ROLE_TOKENS[$role]], message: 'dark ' . $role);
 		}
 
 		foreach (($file['dark']['vocabulary'] ?? []) as $key => $value) {
-			$this->assertSame($value, $back['dark']['--nldesign-' . $key], 'dark vocabulary ' . $key);
+			$this->assertSame(expected: $value, actual: $back['dark']['--nldesign-' . $key], message: 'dark vocabulary ' . $key);
 		}
 	}//end testAPluginSetFileKeepsEveryRole()
 
@@ -203,25 +217,25 @@ final class OpenProjectSetFileTest extends TestCase {
 		);
 
 		$this->assertSame(
-			['--nldesign-color-primary' => '#123456', '--thematiq-shell-menu' => '#eeeeee', '--nldesign-color-focus' => '#0000ff'],
-			(array)$document['$extensions']['nl.conduction.thematiq']['cssOnly']
+			expected: ['--nldesign-color-primary' => '#123456', '--thematiq-shell-menu' => '#eeeeee', '--nldesign-color-focus' => '#0000ff'],
+			actual: (array)$document['$extensions']['nl.conduction.thematiq']['cssOnly']
 		);
-		$this->assertSame('X', $document['$description']);
+		$this->assertSame(expected: 'X', actual: $document['$description']);
 		$this->assertSame(
-			[
+			expected: [
 				['path' => 'tokens.sparkle', 'reason' => 'unmapped'],
 				['path' => 'tokens.ink', 'reason' => 'value-not-a-css-value'],
 				['path' => 'tokens.muted', 'reason' => 'value-not-a-css-value'],
 				['path' => 'vocabulary.Bad_Key', 'reason' => 'unmapped'],
 				['path' => 'vocabulary.brand-stripe-height', 'reason' => 'value-not-a-css-value'],
 			],
-			$skipped
+			actual: $skipped
 		);
 
-		$this->assertTrue($reader->isSetFile(document: ['id' => 'x', 'tokens' => []]));
-		$this->assertFalse($reader->isSetFile(document: ['id' => 'x', 'tokens' => [], 'extra' => 1]), 'an unknown key');
-		$this->assertFalse($reader->isSetFile(document: ['tokens' => []]), 'no id');
-		$this->assertFalse($reader->isSetFile(document: ['id' => 'x', 'tokens' => '#fff']), 'tokens not an object');
+		$this->assertTrue(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => []]));
+		$this->assertFalse(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => [], 'extra' => 1]), message: 'an unknown key');
+		$this->assertFalse(condition: $reader->isSetFile(document: ['tokens' => []]), message: 'no id');
+		$this->assertFalse(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => '#fff']), message: 'tokens not an object');
 	}//end testWhatIsLeftOutIsNamed()
 
 	/**
@@ -235,12 +249,15 @@ final class OpenProjectSetFileTest extends TestCase {
 		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#123456', 'menu' => '#20242a']];
 		$back = $this->upload(json: (string)json_encode($file));
 
-		$this->assertSame('#20242a', $back['declarations']['--nldesign-color-nav-background']);
-		$this->assertSame('#20242a', $back['declarations']['--thematiq-shell-menu']);
-		$this->assertSame('#20242a', $this->roles(declarations: $back['declarations'])['menu']);
+		$this->assertSame(expected: '#20242a', actual: $back['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame(expected: '#20242a', actual: $back['declarations']['--thematiq-shell-menu']);
+		$this->assertSame(expected: '#20242a', actual: $this->roles(declarations: $back['declarations'])['menu']);
 
 		$file['vocabulary'] = ['color-nav-background' => '#ffffff'];
-		$this->assertSame('#ffffff', $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']
+		);
 	}//end testTheMenuColourBecomesTheNavigationColour()
 
 	/**
@@ -253,10 +270,10 @@ final class OpenProjectSetFileTest extends TestCase {
 		$reader = new OpenProjectSetFile();
 
 		foreach ([':root { --nldesign-color-primary: #123456; }', '{"color": {"primary": {"$value": "#123456"}}}', '{not json', ''] as $content) {
-			$this->assertSame($content, $reader->normalise(content: $content, skipped: $skipped));
+			$this->assertSame(expected: $content, actual: $reader->normalise(content: $content, skipped: $skipped));
 		}
 
-		$this->assertSame([], $skipped);
+		$this->assertSame(expected: [], actual: $skipped);
 	}//end testOtherContentIsNotTouched()
 
 	/**
@@ -267,8 +284,8 @@ final class OpenProjectSetFileTest extends TestCase {
 	public function testAnUploadedSetNamesNoLogo(): void {
 		$file = $this->writer()->setFile(appPath: self::appPath(), id: 'custom-does-not-ship', name: 'Eigen', store: null);
 
-		$this->assertSame(OpenProjectSetFileWriter::NO_LOGO, $file['logo']);
-		$this->assertSame('Eigen', $file['name']);
-		$this->assertArrayNotHasKey('dark', $file);
+		$this->assertSame(expected: OpenProjectSetFileWriter::NO_LOGO, actual: $file['logo']);
+		$this->assertSame(expected: 'Eigen', actual: $file['name']);
+		$this->assertArrayNotHasKey(key: 'dark', array: $file);
 	}//end testAnUploadedSetNamesNoLogo()
 }//end class

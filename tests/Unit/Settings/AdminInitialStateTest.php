@@ -68,6 +68,7 @@ class AdminInitialStateTest extends TestCase {
 	 * @param string $iconPackOverride The appconfig `icon_pack` value.
 	 * @param array<string, mixed> $captured Filled with key => value as provided.
 	 * @param string|null $playgroundSetAsked Filled with the set the playground state was assembled for.
+	 * @param string $environment The environment.
 	 *
 	 * @return Admin The system under test.
 	 */
@@ -80,9 +81,11 @@ class AdminInitialStateTest extends TestCase {
 	): Admin {
 		$captured = [];
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+			static fn (string $key, string $default = '') => (match ($key === 'thematiq.environment') {
+				true => $environment, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default = '') use ($iconPackOverride) {
@@ -98,7 +101,7 @@ class AdminInitialStateTest extends TestCase {
 			}
 		);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		// getForm() publishes the SELECTABLE list, which TokenSetSelectionPolicy
 		// now derives from this catalogue rather than from a second method on the
 		// service — so the real decision runs here instead of being stubbed out.
@@ -107,7 +110,7 @@ class AdminInitialStateTest extends TestCase {
 		$tokenSetService->method('getAvailableTokenSets')->willReturn(self::TOKEN_SETS);
 		$tokenSetService->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		$emailThemingService = $this->createMock(EmailThemingService::class);
+		$emailThemingService = $this->createMock(originalClassName: EmailThemingService::class);
 		$emailThemingService->method('getState')->willReturn(['state' => 'disabled']);
 		$emailThemingService->method('getFooterConfig')->willReturn(
 			[
@@ -117,15 +120,15 @@ class AdminInitialStateTest extends TestCase {
 			]
 		);
 
-		$previewService = $this->createMock(ThemePreviewService::class);
+		$previewService = $this->createMock(originalClassName: ThemePreviewService::class);
 		$previewService->method('getActivePreview')->willReturn($activePreview);
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('admin');
-		$userSession = $this->createMock(IUserSession::class);
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		$userSession->method('getUser')->willReturn($user);
 
-		$designSystemService = $this->createMock(DesignSystemService::class);
+		$designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystemService->method('resolveActiveIconPacks')->willReturn(['remixicon']);
 		$designSystemService->method('getDesignSystems')->willReturn(
 			[
@@ -136,7 +139,7 @@ class AdminInitialStateTest extends TestCase {
 			]
 		);
 
-		$initialState = $this->createMock(IInitialState::class);
+		$initialState = $this->createMock(originalClassName: IInitialState::class);
 		$initialState->method('provideInitialState')->willReturnCallback(
 			static function (string $key, $value) use (&$captured): void {
 				$captured[$key] = $value;
@@ -146,7 +149,7 @@ class AdminInitialStateTest extends TestCase {
 		// The playground's own state is a fixed stub: this suite is about the
 		// keys the panel publishes, and PlaygroundStateServiceTest is about what
 		// goes in them.
-		$playgroundState = $this->createMock(PlaygroundStateService::class);
+		$playgroundState = $this->createMock(originalClassName: PlaygroundStateService::class);
 		$playgroundState->method('getInitialState')->willReturnCallback(
 			static function (string $tokenSetId) use (&$playgroundSetAsked): array {
 				$playgroundSetAsked = $tokenSetId;
@@ -163,31 +166,33 @@ class AdminInitialStateTest extends TestCase {
 		);
 
 		return new Admin(
-			$config,
-			$tokenSetService,
-			$emailThemingService,
-			$previewService,
-			$userSession,
-			$designSystemService,
-			$initialState,
-			$this->createMock(IRequest::class),
-			$playgroundState
+			config: $config,
+			tokenSetService: $tokenSetService,
+			emailThemingService: $emailThemingService,
+			previewService: $previewService,
+			userSession: $userSession,
+			designSystemService: $designSystemService,
+			initialState: $initialState,
+			request: $this->createMock(originalClassName: IRequest::class),
+			playgroundState: $playgroundState
 		);
 	}//end buildAdmin()
 
 	/**
 	 * Every key the panel's scripts read MUST be published, with the values they
 	 * expect. A missing key is not a crash — it is a silent fallback.
+	 *
+	 * @return void
 	 */
 	public function testEveryKeyTheScriptReadsIsProvided(): void {
 		$captured = [];
-		$admin = $this->buildAdmin(null, '', $captured);
+		$admin = $this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured);
 
 		$response = $admin->getForm();
-		$this->assertInstanceOf(TemplateResponse::class, $response);
+		$this->assertInstanceOf(expected: TemplateResponse::class, actual: $response);
 
 		$this->assertSame(
-			[
+			expected: [
 				'tokenSets',
 				'currentTokenSet',
 				'confirmSaveStock',
@@ -202,13 +207,13 @@ class AdminInitialStateTest extends TestCase {
 				'playgroundSet',
 				'designSystemDocs',
 			],
-			array_keys($captured),
-			'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
+			actual: array_keys($captured),
+			message: 'js/admin.js reads the first four and js/playground.js the rest; publishing fewer makes either fall back silently.'
 		);
 
-		$this->assertSame(self::TOKEN_SETS, $captured['tokenSets']);
-		$this->assertSame('lasuite', $captured['currentTokenSet']);
-		$this->assertSame('design-system', $captured['iconPackSource']);
+		$this->assertSame(expected: self::TOKEN_SETS, actual: $captured['tokenSets']);
+		$this->assertSame(expected: 'lasuite', actual: $captured['currentTokenSet']);
+		$this->assertSame(expected: 'design-system', actual: $captured['iconPackSource']);
 
 		// NOT null. Nextcloud's InitialStateService accepts a scalar, an
 		// array or a JsonSerializable and silently DISCARDS anything else,
@@ -217,7 +222,7 @@ class AdminInitialStateTest extends TestCase {
 		// null, the panel still renders correctly and nothing but the server
 		// log records that the contract was broken. This assertion is what
 		// stops that from being reintroduced.
-		$this->assertSame([], $captured['activePreview']);
+		$this->assertSame(expected: [], actual: $captured['activePreview']);
 	}//end testEveryKeyTheScriptReadsIsProvided()
 
 	/**
@@ -225,45 +230,49 @@ class AdminInitialStateTest extends TestCase {
 	 * the script gets every design system's link to follow the dropdown (#662).
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md#requirement-documentation-link-follows-the-design-system
+	 *
+	 * @return void
 	 */
 	public function testTheDocumentationLinkFollowsTheDesignSystem(): void {
 		$captured = [];
-		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
+		$params = $this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured)->getForm()->getParams();
 
 		// The stub's active set is `lasuite`, whose design system is lasuite.
-		$this->assertSame('https://github.com/suitenumerique/cunningham', $params['documentationUrl']);
+		$this->assertSame(expected: 'https://github.com/suitenumerique/cunningham', actual: $params['documentationUrl']);
 		$this->assertSame(
-			[
+			expected: [
 				'nldesign' => 'https://nldesignsystem.nl',
 				'lasuite' => 'https://github.com/suitenumerique/cunningham',
 				'none' => Admin::DEFAULT_DOCUMENTATION_URL,
 				'evil' => Admin::DEFAULT_DOCUMENTATION_URL,
 			],
-			$captured['designSystemDocs'],
-			'A design system without docs, or with a non-https link, gets the app docs.'
+			actual: $captured['designSystemDocs'],
+			message: 'A design system without docs, or with a non-https link, gets the app docs.'
 		);
 
 		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/admin.php');
-		$this->assertStringNotContainsString('href="https://nldesign.app"', $template);
-		$this->assertStringContainsString("p(\$_['documentationUrl'])", $template);
+		$this->assertStringNotContainsString(needle: 'href="https://nldesign.app"', haystack: $template);
+		$this->assertStringContainsString(needle: "p(\$_['documentationUrl'])", haystack: $template);
 	}//end testTheDocumentationLinkFollowsTheDesignSystem()
 
 	/**
 	 * An active preview is published with the token set's DISPLAY NAME
 	 * resolved from the inventory, which is what the banner renders.
+	 *
+	 * @return void
 	 */
 	public function testActivePreviewIsPublishedWithResolvedName(): void {
 		$captured = [];
-		$admin = $this->buildAdmin(['tokenSet' => 'lasuite'], '', $captured);
+		$admin = $this->buildAdmin(activePreview: ['tokenSet' => 'lasuite'], iconPackOverride: '', captured: $captured);
 
 		$admin->getForm();
 
 		$this->assertSame(
-			[
+			expected: [
 				'tokenSet' => 'lasuite',
 				'name' => 'La Suite',
 			],
-			$captured['activePreview']
+			actual: $captured['activePreview']
 		);
 	}//end testActivePreviewIsPublishedWithResolvedName()
 
@@ -272,6 +281,8 @@ class AdminInitialStateTest extends TestCase {
 	 * wins over the instance-wide set, exactly as the render does — otherwise
 	 * the instrument would name the tokens of a theme the admin is not looking
 	 * at, which is worse than naming none.
+	 *
+	 * @return void
 	 */
 	public function testThePlaygroundDescribesThePreviewedSet(): void {
 		$captured = [];
@@ -279,25 +290,32 @@ class AdminInitialStateTest extends TestCase {
 
 		// The instance-wide set is `lasuite` (the stub config); the preview is
 		// deliberately a different one, or this would pass either way.
-		$this->buildAdmin(['tokenSet' => 'nextcloud'], '', $captured, $asked)->getForm();
-		$this->assertSame('nextcloud', $asked);
+		$this->buildAdmin(
+			activePreview: ['tokenSet' => 'nextcloud'],
+			iconPackOverride: '',
+			captured: $captured,
+			playgroundSetAsked: $asked
+		)->getForm();
+		$this->assertSame(expected: 'nextcloud', actual: $asked);
 
-		$this->buildAdmin(null, '', $captured, $asked)->getForm();
-		$this->assertSame('lasuite', $asked, 'with no preview it is the instance-wide set');
+		$this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured, playgroundSetAsked: $asked)->getForm();
+		$this->assertSame(expected: 'lasuite', actual: $asked, message: 'with no preview it is the instance-wide set');
 	}//end testThePlaygroundDescribesThePreviewedSet()
 
 	/**
 	 * When the appconfig override alone decides the icon pack, the published
 	 * source is `override` — the value js/admin.js uses to STOP re-deriving
 	 * the indicator from the dropdown.
+	 *
+	 * @return void
 	 */
 	public function testIconPackSourceReportsAnOverride(): void {
 		$captured = [];
-		$admin = $this->buildAdmin(null, 'remixicon', $captured);
+		$admin = $this->buildAdmin(activePreview: null, iconPackOverride: 'remixicon', captured: $captured);
 
 		$admin->getForm();
 
-		$this->assertSame('override', $captured['iconPackSource']);
+		$this->assertSame(expected: 'override', actual: $captured['iconPackSource']);
 	}//end testIconPackSourceReportsAnOverride()
 
 	/**
@@ -305,18 +323,20 @@ class AdminInitialStateTest extends TestCase {
 	 * on the item rather than on the panel rendering is deliberate: the panel
 	 * renders correctly with BOTH mechanisms present, which is exactly the
 	 * state this change exists to leave behind.
+	 *
+	 * @return void
 	 */
 	public function testTemplateShipsNoServerDataAttributes(): void {
 		$path = __DIR__ . '/../../../templates/settings/admin.php';
-		$this->assertFileExists($path);
+		$this->assertFileExists(filename: $path);
 
 		$template = (string)file_get_contents($path);
 
 		foreach (['data-token-sets=', 'data-current-token-set=', 'data-active-preview=', 'data-icon-pack-source='] as $attribute) {
 			$this->assertStringNotContainsString(
-				$attribute,
-				$template,
-				$attribute . ' is the transport ADR-004 rules out; it must not come back.'
+				needle: $attribute,
+				haystack: $template,
+				message: $attribute . ' is the transport ADR-004 rules out; it must not come back.'
 			);
 		}
 	}//end testTemplateShipsNoServerDataAttributes()
@@ -326,15 +346,23 @@ class AdminInitialStateTest extends TestCase {
 	 * occ command that sets it.
 	 *
 	 * @spec openspec/specs/environment-marker/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheFormCarriesTheDeclaredEnvironment(): void {
 		$captured = [];
-		$params = $this->buildAdmin(null, '', $captured, $unused, 'acceptance')->getForm()->getParams();
+		$params = $this->buildAdmin(
+			activePreview: null,
+			iconPackOverride: '',
+			captured: $captured,
+			playgroundSetAsked: $unused,
+			environment: 'acceptance'
+		)->getForm()->getParams();
 
-		$this->assertSame('acceptance', $params['environment']);
-		$this->assertSame('occ config:system:set thematiq.environment --value=<environment>', $params['environmentCommand']);
+		$this->assertSame(expected: 'acceptance', actual: $params['environment']);
+		$this->assertSame(expected: 'occ config:system:set thematiq.environment --value=<environment>', actual: $params['environmentCommand']);
 
-		$params = $this->buildAdmin(null, '', $captured)->getForm()->getParams();
-		$this->assertSame('', $params['environment']);
+		$params = $this->buildAdmin(activePreview: null, iconPackOverride: '', captured: $captured)->getForm()->getParams();
+		$this->assertSame(expected: '', actual: $params['environment']);
 	}//end testTheFormCarriesTheDeclaredEnvironment()
 }//end class

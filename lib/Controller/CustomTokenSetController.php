@@ -30,6 +30,7 @@ use OCA\Thematiq\Service\CustomSetSources;
 use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -361,11 +362,13 @@ class CustomTokenSetController extends Controller {
 			content: $upload['content'],
 			slug: $upload['slug'],
 			displayName: $upload['name'],
-			sourceName: $upload['sourceName'],
-			// An extracted logo lands under the SET's id, not the bare
-			// slug, so an uploaded theme named "Amsterdam" can never
-			// overwrite the shipped img/logos/amsterdam.svg.
-			assetName: CustomTokenSetService::ID_PREFIX . $upload['slug']
+			options: [
+				'sourceName' => $upload['sourceName'],
+				// An extracted logo lands under the SET's id, not the bare
+				// slug, so an uploaded theme named "Amsterdam" can never
+				// overwrite the shipped img/logos/amsterdam.svg.
+				'assetName' => CustomTokenSetService::ID_PREFIX . $upload['slug'],
+			]
 		);
 	}//end callConverter()
 
@@ -646,7 +649,7 @@ class CustomTokenSetController extends Controller {
 	 */
 	private function persist(string $name, array $parsed): JSONResponse {
 		try {
-			$result = $this->pipeline->service->store(...$this->storeArguments(name: $name, parsed: $parsed));
+			$result = $this->pipeline->service->store(set: new NewCustomTokenSet(fields: $this->storeArguments(name: $name, parsed: $parsed)));
 			if (empty($parsed['darkPins']) === false) {
 				$this->pipeline->service->keepDarkValues(id: $result['id'], declarations: $parsed['darkPins']);
 			}

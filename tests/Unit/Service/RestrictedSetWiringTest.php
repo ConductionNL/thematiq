@@ -141,123 +141,184 @@ class RestrictedSetWiringTest extends TestCase {
 	 */
 	private int $now;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->makeAppDir();
 		$this->config = $this->memoryConfig();
-		$this->tokenSets = $this->fixtureTokenSets($this->config);
+		$this->tokenSets = $this->fixtureTokenSets(config: $this->config);
 		$this->now = strtotime('2026-10-12T12:00:00+00:00');
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		$this->removeAppDir();
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * The instance wide switch refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testTheInstanceWideSwitchRefusesAndThenAccepts(): void {
-		$active = new ActiveTokenSetService($this->config, $this->tokenSets, $this->createMock(ThemingAuditService::class));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
 
 		try {
 			$active->switchTo('owned');
-			$this->fail('the restricted set became the active set without a confirmation');
+			$this->fail(message: 'the restricted set became the active set without a confirmation');
 		} catch (RestrictedSetNotConfirmedException $e) {
-			$this->assertArrayNotHasKey('token_set', $this->appValues, 'nothing is written on a refusal');
+			$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues, message: 'nothing is written on a refusal');
 		}
 
-		$this->assertSame('nextcloud', $active->switchTo('open'), 'an open-licensed set needs no confirmation');
+		$this->assertSame(expected: 'nextcloud', actual: $active->switchTo('open'), message: 'an open-licensed set needs no confirmation');
 
-		$this->confirmSet('owned');
+		$this->confirmSet(tokenSetId: 'owned');
 		$active->switchTo('owned');
-		$this->assertSame('owned', $this->appValues['token_set']);
+		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testTheInstanceWideSwitchRefusesAndThenAccepts()
 
+	/**
+	 * The active set chosen again is not a new use.
+	 *
+	 * @return void
+	 */
 	public function testTheActiveSetChosenAgainIsNotANewUse(): void {
 		$this->appValues['token_set'] = 'owned';
-		$active = new ActiveTokenSetService($this->config, $this->tokenSets, $this->createMock(ThemingAuditService::class));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
 
-		$this->assertSame('owned', $active->switchTo('owned'));
+		$this->assertSame(expected: 'owned', actual: $active->switchTo('owned'));
 	}//end testTheActiveSetChosenAgainIsNotANewUse()
 
+	/**
+	 * The command line switch refuses.
+	 *
+	 * @return void
+	 */
 	public function testTheCommandLineSwitchRefuses(): void {
-		$active = new ActiveTokenSetService($this->config, $this->tokenSets, $this->createMock(ThemingAuditService::class));
-		$tester = new CommandTester(new ThemeSet($active, $this->tokenSets, $this->createMock(ScheduledCoreThemingSync::class)));
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+		);
+		$tester = new CommandTester(new ThemeSet(
+			active: $active,
+			tokenSets: $this->tokenSets,
+			coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)
+		));
 
-		$this->assertSame(Command::FAILURE, $tester->execute(['token-set' => 'owned']));
-		$this->assertStringContainsString('Nothing was changed', $tester->getDisplay());
-		$this->assertArrayNotHasKey('token_set', $this->appValues);
+		$this->assertSame(expected: Command::FAILURE, actual: $tester->execute(['token-set' => 'owned']));
+		$this->assertStringContainsString(needle: 'Nothing was changed', haystack: $tester->getDisplay());
+		$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 
-		$this->confirmSet('owned');
-		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'owned']));
-		$this->assertSame('owned', $this->appValues['token_set']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'owned']));
+		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testTheCommandLineSwitchRefuses()
 
+	/**
+	 * A group mapping refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testAGroupMappingRefusesAndThenAccepts(): void {
 		$groups = $this->groupTheming();
 
 		try {
 			$groups->setMapping([['group' => 'sociaal', 'tokenSet' => 'open'], ['group' => 'ruimte', 'tokenSet' => 'owned']]);
-			$this->fail('a group got the restricted set without a confirmation');
+			$this->fail(message: 'a group got the restricted set without a confirmation');
 		} catch (GroupThemingValidationException $e) {
-			$this->assertSame('owned', $e->getRestrictedSet());
-			$this->assertArrayNotHasKey('group_token_sets', $this->appValues, 'the whole save is refused');
+			$this->assertSame(expected: 'owned', actual: $e->getRestrictedSet());
+			$this->assertArrayNotHasKey(key: 'group_token_sets', array: $this->appValues, message: 'the whole save is refused');
 		}
 
-		$this->confirmSet('owned');
+		$this->confirmSet(tokenSetId: 'owned');
 		$groups->setMapping([['group' => 'ruimte', 'tokenSet' => 'owned']]);
-		$this->assertSame([['group' => 'ruimte', 'tokenSet' => 'owned']], $groups->getMapping());
+		$this->assertSame(expected: [['group' => 'ruimte', 'tokenSet' => 'owned']], actual: $groups->getMapping());
 	}//end testAGroupMappingRefusesAndThenAccepts()
 
+	/**
+	 * A group that keeps its set is saved again but another group is not.
+	 *
+	 * @return void
+	 */
 	public function testAGroupThatKeepsItsSetIsSavedAgainButAnotherGroupIsNot(): void {
 		$this->appValues['group_token_sets'] = (string)json_encode([['group' => 'ruimte', 'tokenSet' => 'owned']]);
 		$groups = $this->groupTheming();
 
 		$groups->setMapping([['group' => 'ruimte', 'tokenSet' => 'owned'], ['group' => 'sociaal', 'tokenSet' => 'open']]);
-		$this->assertCount(2, $groups->getMapping());
+		$this->assertCount(expectedCount: 2, haystack: $groups->getMapping());
 
-		$this->expectException(GroupThemingValidationException::class);
+		$this->expectException(exception: GroupThemingValidationException::class);
 		$groups->setMapping([['group' => 'ruimte', 'tokenSet' => 'owned'], ['group' => 'sociaal', 'tokenSet' => 'owned']]);
 	}//end testAGroupThatKeepsItsSetIsSavedAgainButAnotherGroupIsNot()
 
+	/**
+	 * A delegated choice refuses.
+	 *
+	 * @return void
+	 */
 	public function testADelegatedChoiceRefuses(): void {
 		$this->appValues['group_token_sets'] = (string)json_encode(
 			[['group' => 'ruimte', 'tokenSet' => 'open', 'delegated' => true, 'allowedTokenSets' => ['open', 'owned']]]
 		);
-		$user = $this->createMock(IUser::class);
-		$userManager = $this->createMock(IUserManager::class);
+		$user = $this->createMock(originalClassName: IUser::class);
+		$userManager = $this->createMock(originalClassName: IUserManager::class);
 		$userManager->method('get')->willReturn($user);
-		$groupManager = $this->createMock(IGroupManager::class);
-		$groupManager->method('get')->willReturn($this->createMock(IGroup::class));
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
+		$groupManager->method('get')->willReturn($this->createMock(originalClassName: IGroup::class));
 		$groupManager->method('groupExists')->willReturn(true);
-		$subAdmin = $this->createMock(ISubAdmin::class);
+		$subAdmin = $this->createMock(originalClassName: ISubAdmin::class);
 		$subAdmin->method('isSubAdminOfGroup')->willReturn(true);
 		$delegated = new DelegatedGroupThemingService(
-			$this->groupTheming(),
-			$this->tokenSets,
-			$groupManager,
-			$userManager,
-			$subAdmin,
-			$this->createMock(ThemingAuditService::class)
+			groupTheming: $this->groupTheming(),
+			tokenSets: $this->tokenSets,
+			groupManager: $groupManager,
+			userManager: $userManager,
+			subAdmin: $subAdmin,
+			audit: $this->createMock(originalClassName: ThemingAuditService::class)
 		);
 
 		try {
 			$delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned');
-			$this->fail('a subadmin chose the restricted set without a confirmation');
+			$this->fail(message: 'a subadmin chose the restricted set without a confirmation');
 		} catch (GroupThemingValidationException $e) {
-			$this->assertSame('owned', $e->getRestrictedSet());
+			$this->assertSame(expected: 'owned', actual: $e->getRestrictedSet());
 		}
 
-		$this->confirmSet('owned');
-		$this->assertSame('owned', $delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned')['tokenSet']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned')['tokenSet']);
 	}//end testADelegatedChoiceRefuses()
 
+	/**
+	 * A preview refuses to start and to publish.
+	 *
+	 * @return void
+	 */
 	public function testAPreviewRefusesToStartAndToPublish(): void {
 		$preview = $this->preview();
 
 		try {
 			$preview->startPreview('admin', 'owned');
-			$this->fail('a preview of the restricted set started without a confirmation');
+			$this->fail(message: 'a preview of the restricted set started without a confirmation');
 		} catch (RestrictedSetNotConfirmedException $e) {
-			$this->assertSame([], $this->userValues);
+			$this->assertSame(expected: [], actual: $this->userValues);
 		}
 
 		// A preview that was started while the set was confirmed, and outlived the confirmation.
@@ -265,73 +326,93 @@ class RestrictedSetWiringTest extends TestCase {
 		$this->userValues['admin/preview_expires_at'] = (string)(time() + 600);
 		try {
 			$preview->publishPreview('admin');
-			$this->fail('the restricted set was published without a confirmation');
+			$this->fail(message: 'the restricted set was published without a confirmation');
 		} catch (RestrictedSetNotConfirmedException $e) {
-			$this->assertArrayNotHasKey('token_set', $this->appValues);
+			$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 		}
 
-		$this->confirmSet('owned');
-		$this->assertSame('owned', $preview->startPreview('admin', 'owned')['tokenSet']);
-		$this->assertSame('owned', $preview->publishPreview('admin'));
-		$this->assertSame('owned', $this->appValues['token_set']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 'owned', actual: $preview->startPreview('admin', 'owned')['tokenSet']);
+		$this->assertSame(expected: 'owned', actual: $preview->publishPreview('admin'));
+		$this->assertSame(expected: 'owned', actual: $this->appValues['token_set']);
 	}//end testAPreviewRefusesToStartAndToPublish()
 
+	/**
+	 * A preview of an unconfirmed set is not drawn.
+	 *
+	 * @return void
+	 */
 	public function testAPreviewOfAnUnconfirmedSetIsNotDrawn(): void {
 		$this->userValues['admin/preview_token_set'] = 'owned';
 		$this->userValues['admin/preview_expires_at'] = (string)(time() + 600);
 		$preview = $this->preview();
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('admin');
-		$session = $this->createMock(IUserSession::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
 		$session->method('getUser')->willReturn($user);
 
-		$this->assertSame('nextcloud', $preview->resolveEffectiveTokenSet($session, 'nextcloud')['tokenSet']);
+		$this->assertSame(expected: 'nextcloud', actual: $preview->resolveEffectiveTokenSet($session, 'nextcloud')['tokenSet']);
 
-		$this->confirmSet('owned');
-		$this->assertSame('owned', $preview->resolveEffectiveTokenSet($session, 'nextcloud')['tokenSet']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 'owned', actual: $preview->resolveEffectiveTokenSet($session, 'nextcloud')['tokenSet']);
 	}//end testAPreviewOfAnUnconfirmedSetIsNotDrawn()
 
+	/**
+	 * A planned switch refuses when planned and when it starts.
+	 *
+	 * @return void
+	 */
 	public function testAPlannedSwitchRefusesWhenPlannedAndWhenItStarts(): void {
 		$switches = $this->scheduledSwitches();
 
 		try {
 			$switches->create('owned', '2026-10-13T09:00:00+00:00', null, 'admin');
-			$this->fail('a switch to the restricted set was planned without a confirmation');
+			$this->fail(message: 'a switch to the restricted set was planned without a confirmation');
 		} catch (RestrictedSetNotConfirmedException $e) {
-			$this->assertSame('owned', $e->getTokenSetId());
-			$this->assertSame([], (new ScheduledSwitchStore($this->config))->all());
+			$this->assertSame(expected: 'owned', actual: $e->getTokenSetId());
+			$this->assertSame(expected: [], actual: (new ScheduledSwitchStore(config: $this->config))->all());
 		}
 
 		// Planned while confirmed, confirmation gone by the time it starts.
-		$this->confirmSet('owned');
+		$this->confirmSet(tokenSetId: 'owned');
 		$switches->create('owned', '2026-10-13T09:00:00+00:00', null, 'admin');
 		unset($this->appValues[RestrictedSetGate::CONFIG_KEY]);
 		$this->now = strtotime('2026-10-13T09:05:00+00:00');
 		$switches->runDue();
 
-		$stored = (new ScheduledSwitchStore($this->config))->all();
-		$this->assertSame('failed', $stored[0]['status']);
-		$this->assertStringContainsString('Nobody confirmed', $stored[0]['failureReason']);
-		$this->assertArrayNotHasKey('token_set', $this->appValues);
+		$stored = (new ScheduledSwitchStore(config: $this->config))->all();
+		$this->assertSame(expected: 'failed', actual: $stored[0]['status']);
+		$this->assertStringContainsString(needle: 'Nobody confirmed', haystack: $stored[0]['failureReason']);
+		$this->assertArrayNotHasKey(key: 'token_set', array: $this->appValues);
 	}//end testAPlannedSwitchRefusesWhenPlannedAndWhenItStarts()
 
+	/**
+	 * An app brand refuses and then accepts.
+	 *
+	 * @return void
+	 */
 	public function testAnAppBrandRefusesAndThenAccepts(): void {
 		$brands = $this->appBrands();
 
 		try {
 			$brands->setBrand('collectives', 'owned');
-			$this->fail('an app got the restricted set as its brand without a confirmation');
+			$this->fail(message: 'an app got the restricted set as its brand without a confirmation');
 		} catch (AppBrandException $e) {
-			$this->assertSame(AppBrandException::RESTRICTED_SET, $e->reason);
-			$this->assertSame(403, $e->getCode());
-			$this->assertArrayNotHasKey(AppBrandService::CONFIG_KEY, $this->appValues);
+			$this->assertSame(expected: AppBrandException::RESTRICTED_SET, actual: $e->reason);
+			$this->assertSame(expected: 403, actual: $e->getCode());
+			$this->assertArrayNotHasKey(key: AppBrandService::CONFIG_KEY, array: $this->appValues);
 		}
 
-		$this->confirmSet('owned');
-		$this->assertSame('owned', $brands->setBrand('collectives', 'owned')['tokenSet']);
+		$this->confirmSet(tokenSetId: 'owned');
+		$this->assertSame(expected: 'owned', actual: $brands->setBrand('collectives', 'owned')['tokenSet']);
 	}//end testAnAppBrandRefusesAndThenAccepts()
 
+	/**
+	 * A configuration bundle refuses every place it names the set.
+	 *
+	 * @return void
+	 */
 	public function testAConfigurationBundleRefusesEveryPlaceItNamesTheSet(): void {
 		$bundles = $this->bundles();
 		$places = [
@@ -342,33 +423,51 @@ class RestrictedSetWiringTest extends TestCase {
 
 		foreach ($places as $place => $bundle) {
 			$result = $bundles->import($bundle, true);
-			$this->assertFalse($result['valid'], $place);
-			$this->assertStringContainsString('"owned" is restricted to its owner', implode("\n", array_column($result['errors'], 'message')), $place);
+			$this->assertFalse(condition: $result['valid'], message: $place);
+			$this->assertStringContainsString(
+				needle: '"owned" is restricted to its owner',
+				haystack: implode("\n", array_column($result['errors'], 'message')),
+				message: $place
+			);
 		}
 
-		$this->confirmSet('owned');
+		$this->confirmSet(tokenSetId: 'owned');
 		foreach ($places as $place => $bundle) {
-			$this->assertStringNotContainsString('restricted to its owner', (string)json_encode($bundles->import($bundle, true)), $place);
+			$this->assertStringNotContainsString(
+				needle: 'restricted to its owner',
+				haystack: (string)json_encode($bundles->import($bundle, true)),
+				message: $place
+			);
 		}
 	}//end testAConfigurationBundleRefusesEveryPlaceItNamesTheSet()
 
+	/**
+	 * A bundle may keep the set that is active here.
+	 *
+	 * @return void
+	 */
 	public function testABundleMayKeepTheSetThatIsActiveHere(): void {
 		$this->appValues['token_set'] = 'owned';
 
 		$result = $this->bundles()->import(['config' => ['tokenSet' => 'owned']], true);
 
-		$this->assertStringNotContainsString('restricted to its owner', (string)json_encode($result));
+		$this->assertStringNotContainsString(needle: 'restricted to its owner', haystack: (string)json_encode($result));
 	}//end testABundleMayKeepTheSetThatIsActiveHere()
 
+	/**
+	 * The set list carries the licence and the confirmation.
+	 *
+	 * @return void
+	 */
 	public function testTheSetListCarriesTheLicenceAndTheConfirmation(): void {
-		$this->confirmSet('owned');
+		$this->confirmSet(tokenSetId: 'owned');
 		$byId = array_column($this->tokenSets->getAvailableTokenSets(), null, 'id');
 
-		$this->assertTrue($byId['owned']['licence']['restricted']);
-		$this->assertTrue($byId['owned']['licence']['confirmed']);
-		$this->assertFalse($byId['owned-two']['licence']['confirmed']);
-		$this->assertFalse($byId['open']['licence']['restricted']);
-		$this->assertArrayNotHasKey('licence', $byId['nextcloud']);
+		$this->assertTrue(condition: $byId['owned']['licence']['restricted']);
+		$this->assertTrue(condition: $byId['owned']['licence']['confirmed']);
+		$this->assertFalse(condition: $byId['owned-two']['licence']['confirmed']);
+		$this->assertFalse(condition: $byId['open']['licence']['restricted']);
+		$this->assertArrayNotHasKey(key: 'licence', array: $byId['nextcloud']);
 	}//end testTheSetListCarriesTheLicenceAndTheConfirmation()
 
 	/**
@@ -377,18 +476,18 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return GroupThemingService The service.
 	 */
 	private function groupTheming(): GroupThemingService {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('groupExists')->willReturn(true);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		return new GroupThemingService(
-			$this->config,
-			$groupManager,
-			$this->createMock(IUserSession::class),
-			$this->tokenSets,
-			$this->preview(),
-			$cacheFactory
+			config: $this->config,
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->tokenSets,
+			previewService: $this->preview(),
+			cacheFactory: $cacheFactory
 		);
 	}//end groupTheming()
 
@@ -398,10 +497,15 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return ThemePreviewService The service.
 	 */
 	private function preview(): ThemePreviewService {
-		$groupManager = $this->createMock(IGroupManager::class);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('isAdmin')->willReturn(true);
 
-		return new ThemePreviewService($this->config, $groupManager, $this->tokenSets, $this->createMock(LoggerInterface::class));
+		return new ThemePreviewService(
+			config: $this->config,
+			groupManager: $groupManager,
+			tokenSetService: $this->tokenSets,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 	}//end preview()
 
 	/**
@@ -410,24 +514,24 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return ScheduledSwitchService The service.
 	 */
 	private function scheduledSwitches(): ScheduledSwitchService {
-		$audit = $this->createMock(ThemingAuditService::class);
-		$time = $this->createMock(ITimeFactory::class);
+		$audit = $this->createMock(originalClassName: ThemingAuditService::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn () => $this->now);
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
 
 		return new ScheduledSwitchService(
-			store: new ScheduledSwitchStore($this->config),
+			store: new ScheduledSwitchStore(config: $this->config),
 			targets: new ScheduledSwitchTargets(
-				activeTokenSet: new ActiveTokenSetService($this->config, $this->tokenSets, $audit),
+				activeTokenSet: new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $audit),
 				tokenSets: $this->tokenSets,
-				coreSync: $this->createMock(ScheduledCoreThemingSync::class)
+				coreSync: $this->createMock(originalClassName: ScheduledCoreThemingSync::class)
 			),
 			runtime: new ScheduledSwitchRuntime(
 				auditService: $audit,
 				config: $this->config,
 				time: $time,
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			l10n: $l10n
 		);
@@ -439,16 +543,16 @@ class RestrictedSetWiringTest extends TestCase {
 	 * @return AppBrandService The service.
 	 */
 	private function appBrands(): AppBrandService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isInstalled')->willReturn(true);
 
 		return new AppBrandService(
-			$this->config,
-			$appManager,
-			$this->createMock(AppThemingService::class),
-			$this->tokenSets,
-			$this->createMock(AppBrandLogoStore::class),
-			$this->createMock(IURLGenerator::class)
+			config: $this->config,
+			appManager: $appManager,
+			appTheming: $this->createMock(originalClassName: AppThemingService::class),
+			tokenSets: $this->tokenSets,
+			logos: $this->createMock(originalClassName: AppBrandLogoStore::class),
+			urls: $this->createMock(originalClassName: IURLGenerator::class)
 		);
 	}//end appBrands()
 
@@ -461,15 +565,15 @@ class RestrictedSetWiringTest extends TestCase {
 		return new ConfigBundleService(
 			appSettings: new ConfigBundleAppSettings(
 				config: $this->config,
-				appManager: $this->createMock(IAppManager::class),
-				appThemingService: $this->createMock(AppThemingService::class),
-				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+				appManager: $this->createMock(originalClassName: IAppManager::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
 			),
 			tokenSources: new ConfigBundleTokenSources(
 				tokenSetService: $this->tokenSets,
-				overridesService: $this->createMock(CustomOverridesService::class),
-				scheduledSwitches: new ScheduledSwitchStore($this->config),
-				cssParser: $this->createMock(CssParserService::class)
+				overridesService: $this->createMock(originalClassName: CustomOverridesService::class),
+				scheduledSwitches: new ScheduledSwitchStore(config: $this->config),
+				cssParser: $this->createMock(originalClassName: CssParserService::class)
 			),
 			sections: new ConfigBundleSections(
 				customTokenSets: new CustomTokenSetsBundleSection(
@@ -478,12 +582,12 @@ class RestrictedSetWiringTest extends TestCase {
 					cssParser: $this->createMock(originalClassName: CssParserService::class),
 					appManager: $this->createMock(originalClassName: IAppManager::class)
 				),
-				extraSections: $this->createMock(BundleExtraSections::class)
+				extraSections: $this->createMock(originalClassName: BundleExtraSections::class)
 			),
 			branding: new ConfigBundleBranding(
-				emailThemingService: $this->createMock(EmailThemingService::class),
-				fontService: $this->createMock(FontService::class),
-				logger: $this->createMock(LoggerInterface::class)
+				emailThemingService: $this->createMock(originalClassName: EmailThemingService::class),
+				fontService: $this->createMock(originalClassName: FontService::class),
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 	}//end bundles()

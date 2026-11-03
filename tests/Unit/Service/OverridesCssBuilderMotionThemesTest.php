@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -36,29 +37,54 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 
 	private const MOTION_SCOPE = 'body:not([data-theme-reduced-motion])';
 
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The service.
+	 *
+	 * @var CustomOverridesService
+	 */
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appDir = sys_get_temp_dir() . '/thematiq-937-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
 				cssParser: $parser,
 				darkPalette: $darkPalette
 			)
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 
@@ -94,36 +120,42 @@ class OverridesCssBuilderMotionThemesTest extends TestCase {
 
 	/**
 	 * Motion overrides are declared on body for every chosen theme but reduced motion.
+	 *
+	 * @return void
 	 */
 	public function testMotionOverridesAreDeclaredOnBody(): void {
 		$this->service->write(tokens: ['--animation-quick' => '400ms', '--animation-slow' => '800ms', '--color-primary' => '#154273']);
 		$css = $this->service->getRawContent();
 
 		$this->assertSame(
-			['--animation-quick' => '400ms !important', '--animation-slow' => '800ms !important'],
-			$this->block(css: $css, selector: self::MOTION_SCOPE),
-			'a chosen theme declares the durations on body, so the override must too'
+			expected: ['--animation-quick' => '400ms !important', '--animation-slow' => '800ms !important'],
+			actual: $this->block(css: $css, selector: self::MOTION_SCOPE),
+			message: 'a chosen theme declares the durations on body, so the override must too'
 		);
 	}//end testMotionOverridesAreDeclaredOnBody()
 
 	/**
 	 * Only the motion tokens go on body: colours keep their own dark scopes,
 	 * and a file without motion overrides gets no body block.
+	 *
+	 * @return void
 	 */
 	public function testOnlyMotionGoesOnBody(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
 
-		$this->assertNull($this->block(css: $this->service->getRawContent(), selector: self::MOTION_SCOPE));
+		$this->assertNull(actual: $this->block(css: $this->service->getRawContent(), selector: self::MOTION_SCOPE));
 	}//end testOnlyMotionGoesOnBody()
 
 	/**
 	 * The body copy is not read back as a value or as a dark value.
+	 *
+	 * @return void
 	 */
 	public function testTheBodyCopyDoesNotChangeWhatIsReadBack(): void {
 		$tokens = ['--animation-quick' => '400ms', '--color-primary' => '#154273'];
 		$this->service->write(tokens: $tokens);
 
-		$this->assertSame($tokens, $this->service->read());
-		$this->assertSame([], $this->service->readDark());
+		$this->assertSame(expected: $tokens, actual: $this->service->read());
+		$this->assertSame(expected: [], actual: $this->service->readDark());
 	}//end testTheBodyCopyDoesNotChangeWhatIsReadBack()
 }//end class

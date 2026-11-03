@@ -21,9 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
-use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -90,19 +87,13 @@ class NotFoundCopyService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config Reads the administrator's override.
-	 * @param DesignSystemService $designSystemService Reads a set's manifest entry.
-	 * @param IInitialState $initialState The initial state channel.
-	 * @param IFactory $l10nFactory The language of this request.
+	 * @param PageCopySources $sources The config, the design systems, the initial state and the language factory.
 	 * @param LoggerInterface $logger Records a swallowed failure.
 	 * @param GroupThemingService $groupTheming Resolves the page's token set.
 	 * @param LayoutOptionsService $layoutOptions Resolves the page's layout.
 	 */
 	public function __construct(
-		private readonly IConfig $config,
-		private readonly DesignSystemService $designSystemService,
-		private readonly IInitialState $initialState,
-		private readonly IFactory $l10nFactory,
+		private readonly PageCopySources $sources,
 		private readonly LoggerInterface $logger,
 		private readonly GroupThemingService $groupTheming,
 		private readonly LayoutOptionsService $layoutOptions,
@@ -121,9 +112,9 @@ class NotFoundCopyService {
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {
-		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+		$meta = $this->sources->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$fromSet = ($meta['not_found'] ?? null);
-		$fromAdmin = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
+		$fromAdmin = json_decode($this->sources->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
 
 		$copy = [];
 		foreach ([$fromSet, $fromAdmin] as $source) {
@@ -188,8 +179,8 @@ class NotFoundCopyService {
 				return;
 			}
 
-			$language = $this->l10nFactory->get(Application::APP_ID)->getLanguageCode();
-			$this->initialState->provideInitialState(self::STATE_KEY, $this->resolveCopy(tokenSet: $tokenSet, language: $language));
+			$language = $this->sources->l10nFactory->get(Application::APP_ID)->getLanguageCode();
+			$this->sources->initialState->provideInitialState(self::STATE_KEY, $this->resolveCopy(tokenSet: $tokenSet, language: $language));
 			$this->emitScript();
 		} catch (Throwable $e) {
 			$this->logger->warning(

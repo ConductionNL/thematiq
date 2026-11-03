@@ -107,7 +107,7 @@ class NoteCardFillContrastTest extends TestCase {
 		$background = $service->parseColor(self::LIGHT_BACKGROUND);
 
 		$tokenFiles = glob(__DIR__ . '/../../css/tokens/*.css');
-		$this->assertNotEmpty($tokenFiles, 'No token sets found to audit.');
+		$this->assertNotEmpty(actual: $tokenFiles, message: 'No token sets found to audit.');
 
 		$audited = 0;
 
@@ -129,8 +129,8 @@ class NoteCardFillContrastTest extends TestCase {
 
 			$text = $service->parseColor($textMatch[1]);
 			$this->assertNotNull(
-				$text,
-				sprintf('Could not parse text colour "%s" in %s.', $textMatch[1], basename($file))
+				actual: $text,
+				message: sprintf('Could not parse text colour "%s" in %s.', $textMatch[1], basename($file))
 			);
 
 			foreach (self::STATUSES as $status) {
@@ -146,18 +146,18 @@ class NoteCardFillContrastTest extends TestCase {
 
 				$fill = $service->parseColor($matches[1]);
 				$this->assertNotNull(
-					$fill,
-					sprintf('Could not parse %s colour "%s" in %s.', $status, $matches[1], basename($file))
+					actual: $fill,
+					message: sprintf('Could not parse %s colour "%s" in %s.', $status, $matches[1], basename($file))
 				);
 
-				$tint = $this->mix($fill, $background, self::TINT_RATIO);
+				$tint = $this->mix(color: $fill, background: $background, ratio: self::TINT_RATIO);
 				$ratio = $service->ratio($text, $tint);
 				$audited++;
 
 				$this->assertGreaterThanOrEqual(
-					self::AA_NORMAL_TEXT,
-					$ratio,
-					sprintf(
+					expected: self::AA_NORMAL_TEXT,
+					actual: $ratio,
+					message: sprintf(
 						'Token set "%s" declares %s fill %s. css/error-contrast.css paints note cards with a '
 						. '%d%% tint of it (#%02x%02x%02x), and this set\'s body text %s only reaches %.2f:1 on '
 						. 'that tint — WCAG AA needs %.1f:1. Darken the text token or the status colour; do NOT '
@@ -177,7 +177,7 @@ class NoteCardFillContrastTest extends TestCase {
 			}//end foreach
 		}//end foreach
 
-		$this->assertGreaterThan(0, $audited, 'No status fills were audited — the regex stopped matching.');
+		$this->assertGreaterThan(expected: 0, actual: $audited, message: 'No status fills were audited — the regex stopped matching.');
 
 	}//end testEveryStatusFillTintCarriesBodyTextAtAaContrast()
 
@@ -192,7 +192,7 @@ class NoteCardFillContrastTest extends TestCase {
 	 */
 	public function testErrorContrastStylesheetPinsEveryStatusFill(): void {
 		$css = file_get_contents(__DIR__ . '/../../css/error-contrast.css');
-		$this->assertNotFalse($css, 'css/error-contrast.css is missing.');
+		$this->assertNotFalse(condition: $css, message: 'css/error-contrast.css is missing.');
 
 		// `\s*` sits after every `(` on purpose. The assertion is about the
 		// DECLARATION, not its layout: prettier wraps a long `color-mix()` with
@@ -200,14 +200,14 @@ class NoteCardFillContrastTest extends TestCase {
 		// stylesheet cannot be formatted.
 		foreach (self::STATUSES as $status) {
 			$this->assertMatchesRegularExpression(
-				sprintf(
+				pattern: sprintf(
 					'/\.notecard--%s\s*\{[^}]*--note-background:\s*color-mix\(\s*in srgb,\s*var\(\s*--color-%s\s*\)\s*%d%%/',
 					$status,
 					$status,
 					(int)(self::TINT_RATIO * 100)
 				),
-				$css,
-				sprintf(
+				string: $css,
+				message: sprintf(
 					'css/error-contrast.css no longer pins .notecard--%s to a %d%% tint of --color-%s. '
 					. 'Without it the note card paints the saturated brand fill under near-black text again '
 					. '(nldesign#268).',

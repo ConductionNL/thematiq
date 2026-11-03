@@ -89,41 +89,46 @@ class ThemingServiceTest extends TestCase {
 
 	/**
 	 * Build the service against a temp app dir holding one real logo file.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-
-		if (class_exists(ImageManager::class) === false) {
-			$this->markTestSkipped('OCA\Theming is not autoloadable in this environment (no installed Nextcloud root).');
-		}
 
 		$this->appDir = sys_get_temp_dir() . '/thematiq-theming-test-' . uniqid();
 		mkdir($this->appDir . '/img/logos', 0777, true);
 		mkdir($this->appDir . '/img/backgrounds', 0777, true);
 		file_put_contents($this->appDir . '/img/logos/present.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>');
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$this->imageManager = $this->createMock(ImageManager::class);
-		$this->themingDefaults = $this->createMock(ThemingDefaults::class);
+		$this->imageManager = $this->createMock(originalClassName: ImageManager::class);
+		$this->themingDefaults = $this->createMock(originalClassName: ThemingDefaults::class);
 
 		// A real locator over the temp app dir, with an empty store beside it:
 		// `present.svg` reads as a release file, as a shipped logo does.
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$this->service = new ThemingService(
-			$this->imageManager,
-			$this->themingDefaults,
-			new RuntimeFileLocator($appManager, new DirectoryRuntimeFileStore($this->appDir . '/.store'), $urls, $this->createMock(ITempManager::class))
+			imageManager: $this->imageManager,
+			themingDefaults: $this->themingDefaults,
+			files: new RuntimeFileLocator(
+				appManager: $appManager,
+				store: new DirectoryRuntimeFileStore(root: $this->appDir . '/.store'),
+				urlGenerator: $urls,
+				tempManager: $this->createMock(originalClassName: ITempManager::class)
+			)
 		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (isset($this->appDir) === true && is_dir($this->appDir) === true) {
-			$this->rrmdir($this->appDir);
+			$this->rrmdir(dir: $this->appDir);
 		}
 
 		parent::tearDown();
@@ -144,7 +149,7 @@ class ThemingServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -164,9 +169,11 @@ class ThemingServiceTest extends TestCase {
 	 * @dataProvider hexColorProvider
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testIsValidHexColor(string $color, bool $expected): void {
-		$this->assertSame($expected, $this->service->isValidHexColor(color: $color));
+		$this->assertSame(expected: $expected, actual: $this->service->isValidHexColor(color: $color));
 	}//end testIsValidHexColor()
 
 	/**
@@ -193,12 +200,14 @@ class ThemingServiceTest extends TestCase {
 	 * sync sends only what the set actually declares.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testValidateColorsAcceptsAbsentAndEmptyValues(): void {
-		$this->assertNull($this->service->validateColors(params: []));
-		$this->assertNull($this->service->validateColors(params: ['primary_color' => '']));
+		$this->assertNull(actual: $this->service->validateColors(params: []));
+		$this->assertNull(actual: $this->service->validateColors(params: ['primary_color' => '']));
 		$this->assertNull(
-			$this->service->validateColors(params: ['primary_color' => '#154273', 'background_color' => '#ffffff'])
+			actual: $this->service->validateColors(params: ['primary_color' => '#154273', 'background_color' => '#ffffff'])
 		);
 	}//end testValidateColorsAcceptsAbsentAndEmptyValues()
 
@@ -207,13 +216,15 @@ class ThemingServiceTest extends TestCase {
 	 * WHICH field it rejected rather than "invalid input".
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 *
+	 * @return void
 	 */
 	public function testValidateColorsNamesTheOffendingKey(): void {
 		$error = $this->service->validateColors(params: ['background_color' => 'not-a-colour']);
 
-		$this->assertIsString($error);
-		$this->assertStringContainsString('background_color', $error);
-		$this->assertStringContainsString('not-a-colour', $error);
+		$this->assertIsString(actual: $error);
+		$this->assertStringContainsString(needle: 'background_color', haystack: $error);
+		$this->assertStringContainsString(needle: 'not-a-colour', haystack: $error);
 	}//end testValidateColorsNamesTheOffendingKey()
 
 	/**
@@ -228,13 +239,15 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesTraversal(string $key, string $path): void {
 		$error = $this->service->validateImagePaths(params: [$key => $path]);
 
-		$this->assertIsString($error);
-		$this->assertStringContainsString('path traversal not allowed', $error);
-		$this->assertStringContainsString($key, $error);
+		$this->assertIsString(actual: $error);
+		$this->assertStringContainsString(needle: 'path traversal not allowed', haystack: $error);
+		$this->assertStringContainsString(needle: $key, haystack: $error);
 	}//end testValidateImagePathsRefusesTraversal()
 
 	/**
@@ -255,13 +268,15 @@ class ThemingServiceTest extends TestCase {
 	 * directories is refused on the prefix rule, before the existence check.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesDirectoriesOutsideTheAllowedTwo(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'css/tokens/utrecht.css']);
 
-		$this->assertIsString($error);
-		$this->assertStringContainsString('img/logos/', $error);
-		$this->assertStringContainsString('img/backgrounds/', $error);
+		$this->assertIsString(actual: $error);
+		$this->assertStringContainsString(needle: 'img/logos/', haystack: $error);
+		$this->assertStringContainsString(needle: 'img/backgrounds/', haystack: $error);
 	}//end testValidateImagePathsRefusesDirectoriesOutsideTheAllowedTwo()
 
 	/**
@@ -269,12 +284,14 @@ class ThemingServiceTest extends TestCase {
 	 * prefix rule says where a file may live, not that it does.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsRefusesAMissingFile(): void {
 		$error = $this->service->validateImagePaths(params: ['logo' => 'img/logos/absent.svg']);
 
-		$this->assertIsString($error);
-		$this->assertStringContainsString('Image file not found', $error);
+		$this->assertIsString(actual: $error);
+		$this->assertStringContainsString(needle: 'Image file not found', haystack: $error);
 	}//end testValidateImagePathsRefusesAMissingFile()
 
 	/**
@@ -282,11 +299,13 @@ class ThemingServiceTest extends TestCase {
 	 * that carries no image at all.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 *
+	 * @return void
 	 */
 	public function testValidateImagePathsAcceptsAnExistingFile(): void {
-		$this->assertNull($this->service->validateImagePaths(params: ['logo' => 'img/logos/present.svg']));
-		$this->assertNull($this->service->validateImagePaths(params: []));
-		$this->assertNull($this->service->validateImagePaths(params: ['logo' => '']));
+		$this->assertNull(actual: $this->service->validateImagePaths(params: ['logo' => 'img/logos/present.svg']));
+		$this->assertNull(actual: $this->service->validateImagePaths(params: []));
+		$this->assertNull(actual: $this->service->validateImagePaths(params: ['logo' => '']));
 	}//end testValidateImagePathsAcceptsAnExistingFile()
 
 	/**
@@ -294,6 +313,8 @@ class ThemingServiceTest extends TestCase {
 	 * No background colour means no `backgroundMime` write.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsWritesOnlyWhatWasGiven(): void {
 		$written = [];
@@ -305,8 +326,8 @@ class ThemingServiceTest extends TestCase {
 
 		$updated = $this->service->applyColors(params: ['primary_color' => '#154273']);
 
-		$this->assertSame(['primary_color'], $updated);
-		$this->assertSame(['primary_color' => '#154273'], $written);
+		$this->assertSame(expected: ['primary_color'], actual: $updated);
+		$this->assertSame(expected: ['primary_color' => '#154273'], actual: $written);
 	}//end testApplyColorsWritesOnlyWhatWasGiven()
 
 	/**
@@ -315,6 +336,8 @@ class ThemingServiceTest extends TestCase {
 	 * background colour with no accompanying image must also write that.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsRemovesTheDefaultBackgroundImage(): void {
 		$written = [];
@@ -326,8 +349,8 @@ class ThemingServiceTest extends TestCase {
 
 		$updated = $this->service->applyColors(params: ['background_color' => '#ffffff']);
 
-		$this->assertSame(['background_color'], $updated);
-		$this->assertSame('backgroundColor', ($written['backgroundMime'] ?? null));
+		$this->assertSame(expected: ['background_color'], actual: $updated);
+		$this->assertSame(expected: 'backgroundColor', actual: ($written['backgroundMime'] ?? null));
 	}//end testApplyColorsRemovesTheDefaultBackgroundImage()
 
 	/**
@@ -337,6 +360,8 @@ class ThemingServiceTest extends TestCase {
 	 * or, on a failed image write, would leave the two disagreeing.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 *
+	 * @return void
 	 */
 	public function testApplyColorsLeavesTheMimeAloneWhenAnImageIsAlsoGiven(): void {
 		$written = [];
@@ -350,14 +375,16 @@ class ThemingServiceTest extends TestCase {
 			params: ['background_color' => '#ffffff', 'background' => 'img/backgrounds/whatever.jpg']
 		);
 
-		$this->assertSame(['background_color'], $updated);
-		$this->assertArrayNotHasKey('backgroundMime', $written);
+		$this->assertSame(expected: ['background_color'], actual: $updated);
+		$this->assertArrayNotHasKey(key: 'backgroundMime', array: $written);
 	}//end testApplyColorsLeavesTheMimeAloneWhenAnImageIsAlsoGiven()
 
 	/**
 	 * A theme that captured Nextcloud's default background image gets that
 	 * image back — the background is undone to core's own — instead of the
 	 * colour-only background a plain background colour would otherwise force.
+	 *
+	 * @return void
 	 */
 	public function testACapturedDefaultBackgroundIsRestoredNotRemoved(): void {
 		$written = [];
@@ -372,13 +399,15 @@ class ThemingServiceTest extends TestCase {
 			params: ['background_color' => '#ffffff', 'background_mode' => 'default']
 		);
 
-		$this->assertSame(['background_color', 'background_mode'], $updated);
-		$this->assertArrayNotHasKey('backgroundMime', $written);
+		$this->assertSame(expected: ['background_color', 'background_mode'], actual: $updated);
+		$this->assertArrayNotHasKey(key: 'backgroundMime', array: $written);
 	}//end testACapturedDefaultBackgroundIsRestoredNotRemoved()
 
 	/**
 	 * A theme that captured "Remove background image" gets it back, whether
 	 * or not a background colour comes with it.
+	 *
+	 * @return void
 	 */
 	public function testACapturedRemovedBackgroundIsRemovedAgain(): void {
 		$written = [];
@@ -390,24 +419,28 @@ class ThemingServiceTest extends TestCase {
 
 		$updated = $this->service->applyColors(params: ['background_mode' => 'color']);
 
-		$this->assertSame(['background_mode'], $updated);
-		$this->assertSame('backgroundColor', ($written['backgroundMime'] ?? null));
+		$this->assertSame(expected: ['background_mode'], actual: $updated);
+		$this->assertSame(expected: 'backgroundColor', actual: ($written['backgroundMime'] ?? null));
 	}//end testACapturedRemovedBackgroundIsRemovedAgain()
 
 	/**
 	 * An unknown background state is refused before anything is written.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownBackgroundModeIsRefused(): void {
 		$this->assertSame(
-			'Invalid background_mode: tiled',
-			$this->service->validateImagePaths(params: ['background_mode' => 'tiled'])
+			expected: 'Invalid background_mode: tiled',
+			actual: $this->service->validateImagePaths(params: ['background_mode' => 'tiled'])
 		);
-		$this->assertNull($this->service->validateImagePaths(params: ['background_mode' => 'default']));
+		$this->assertNull(actual: $this->service->validateImagePaths(params: ['background_mode' => 'default']));
 	}//end testAnUnknownBackgroundModeIsRefused()
 
 	/**
 	 * The navigation-bar logo and the favicon are synced like the logo: the
 	 * stored file paired with its mime.
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesSyncsTheNavigationBarLogoAndFavicon(): void {
 		$this->imageManager->method('updateImage')->willReturn('image/svg+xml');
@@ -422,13 +455,15 @@ class ThemingServiceTest extends TestCase {
 			params: ['logoheader' => 'img/logos/present.svg', 'favicon' => 'img/logos/present.svg']
 		);
 
-		$this->assertSame(['logoheader', 'favicon'], $updated);
-		$this->assertSame(['logoheaderMime' => 'image/svg+xml', 'faviconMime' => 'image/svg+xml'], $mimes);
+		$this->assertSame(expected: ['logoheader', 'favicon'], actual: $updated);
+		$this->assertSame(expected: ['logoheaderMime' => 'image/svg+xml', 'faviconMime' => 'image/svg+xml'], actual: $mimes);
 	}//end testApplyImagesSyncsTheNavigationBarLogoAndFavicon()
 
 	/**
 	 * A theme that captured an image of its own never has it removed by the
 	 * colour: the image is written by applyImages() right after.
+	 *
+	 * @return void
 	 */
 	public function testACapturedImageBackgroundIsNotRemovedByTheColour(): void {
 		$written = [];
@@ -441,7 +476,7 @@ class ThemingServiceTest extends TestCase {
 
 		$this->service->applyColors(params: ['background_color' => '#ffffff', 'background_mode' => 'image']);
 
-		$this->assertArrayNotHasKey('backgroundMime', $written);
+		$this->assertArrayNotHasKey(key: 'backgroundMime', array: $written);
 	}//end testACapturedImageBackgroundIsNotRemovedByTheColour()
 
 	/**
@@ -453,6 +488,8 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesPairsTheStoredFileWithItsMime(): void {
 		$this->imageManager->expects($this->once())
@@ -469,8 +506,8 @@ class ThemingServiceTest extends TestCase {
 
 		$updated = $this->service->applyImages(params: ['logo' => 'img/logos/present.svg']);
 
-		$this->assertSame(['logo'], $updated);
-		$this->assertSame(['logoMime' => 'image/svg+xml'], $written);
+		$this->assertSame(expected: ['logo'], actual: $updated);
+		$this->assertSame(expected: ['logoMime' => 'image/svg+xml'], actual: $written);
 	}//end testApplyImagesPairsTheStoredFileWithItsMime()
 
 	/**
@@ -479,12 +516,14 @@ class ThemingServiceTest extends TestCase {
 	 * dark stylesheet instead.
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testApplyImagesIgnoresTheDarkLogo(): void {
 		$this->imageManager->expects($this->never())->method('updateImage');
 
-		$this->assertSame([], $this->service->applyImages(params: ['logo_dark' => 'img/logos/present.svg']));
-		$this->assertSame([], $this->service->applyImages(params: []));
+		$this->assertSame(expected: [], actual: $this->service->applyImages(params: ['logo_dark' => 'img/logos/present.svg']));
+		$this->assertSame(expected: [], actual: $this->service->applyImages(params: []));
 	}//end testApplyImagesIgnoresTheDarkLogo()
 
 	/**
@@ -494,6 +533,8 @@ class ThemingServiceTest extends TestCase {
 	 * in place after switching back to stock.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testResetToDefaultsUndoesEverySyncedSetting(): void {
 		$undone = [];
@@ -507,10 +548,10 @@ class ThemingServiceTest extends TestCase {
 
 		$reset = $this->service->resetToDefaults();
 
-		$this->assertSame(ThemingService::RESETTABLE, $reset);
-		$this->assertSame(ThemingService::RESETTABLE, $undone);
-		$this->assertContains('logo', $undone);
-		$this->assertContains('background', $undone);
+		$this->assertSame(expected: ThemingService::RESETTABLE, actual: $reset);
+		$this->assertSame(expected: ThemingService::RESETTABLE, actual: $undone);
+		$this->assertContains(needle: 'logo', haystack: $undone);
+		$this->assertContains(needle: 'background', haystack: $undone);
 	}//end testResetToDefaultsUndoesEverySyncedSetting()
 
 	/**
@@ -519,12 +560,14 @@ class ThemingServiceTest extends TestCase {
 	 * returns the admin-configured primary that a reset is removing.
 	 *
 	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGetDefaultColorsReadsCoreFallbacksNotTheConfiguredPrimary(): void {
 		$defaults = $this->service->getDefaultColors();
 
-		$this->assertSame(BackgroundService::DEFAULT_COLOR, $defaults['primary_color']);
-		$this->assertSame(BackgroundService::DEFAULT_BACKGROUND_COLOR, $defaults['background_color']);
+		$this->assertSame(expected: BackgroundService::DEFAULT_COLOR, actual: $defaults['primary_color']);
+		$this->assertSame(expected: BackgroundService::DEFAULT_BACKGROUND_COLOR, actual: $defaults['background_color']);
 	}//end testGetDefaultColorsReadsCoreFallbacksNotTheConfiguredPrimary()
 
 	/**
@@ -532,8 +575,10 @@ class ThemingServiceTest extends TestCase {
 	 * slot; it must be the same instance the service writes through.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 *
+	 * @return void
 	 */
 	public function testGetImageManagerReturnsTheInjectedInstance(): void {
-		$this->assertSame($this->imageManager, $this->service->getImageManager());
+		$this->assertSame(expected: $this->imageManager, actual: $this->service->getImageManager());
 	}//end testGetImageManagerReturnsTheInjectedInstance()
 }//end class

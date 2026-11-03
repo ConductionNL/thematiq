@@ -91,9 +91,9 @@ class ShellRoleMapperTest extends TestCase {
 	public function testAnEmptySetGetsTheDocumentedDefaults(): void {
 		$roles = $this->mapper()->map(tokens: []);
 
-		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles));
-		$this->assertSame(ShellRoleMapper::DEFAULTS, $roles);
-		$this->assertCount(19, $roles);
+		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($roles));
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS, actual: $roles);
+		$this->assertCount(expectedCount: 19, haystack: $roles);
 	}//end testAnEmptySetGetsTheDocumentedDefaults()
 
 	/**
@@ -106,11 +106,11 @@ class ShellRoleMapperTest extends TestCase {
 
 		$font = $roles['font-family'];
 		unset($roles['font-family']);
-		$this->assertSame('#ffffff', $roles['menu'], 'zuiddrecht keeps the white navigation column of the defaults');
+		$this->assertSame(expected: '#ffffff', actual: $roles['menu'], message: 'zuiddrecht keeps the white navigation column of the defaults');
 		unset($roles['menu']);
 
 		$this->assertSame(
-			[
+			expected: [
 				'primary' => '#3669A5',
 				'primary-deep' => '#234A78',
 				'primary-light' => '#EAF0F7',
@@ -129,10 +129,10 @@ class ShellRoleMapperTest extends TestCase {
 				'radius' => '8px',
 				'radius-lg' => '12px',
 			],
-			$roles
+			actual: $roles
 		);
-		$this->assertStringStartsWith("'Fira Sans', ", $font);
-		$this->assertStringNotContainsString("\n", $font);
+		$this->assertStringStartsWith(prefix: "'Fira Sans', ", string: $font);
+		$this->assertStringNotContainsString(needle: "\n", haystack: $font);
 	}//end testZuiddrechtMapsOntoItsOwnColours()
 
 	/**
@@ -146,15 +146,15 @@ class ShellRoleMapperTest extends TestCase {
 	public function testEveryShippedSetGetsEveryRole(string $id): void {
 		$roles = $this->mapper()->map(tokens: $this->shipped(id: $id));
 
-		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles), $id);
+		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($roles), message: $id);
 		foreach ($roles as $role => $value) {
-			$this->assertNotSame('', $value, $id . ' ' . $role);
-			$this->assertStringNotContainsString('var(', $value, $id . ' ' . $role);
-			$this->assertDoesNotMatchRegularExpression('/[;{}]/', $value, $id . ' ' . $role);
+			$this->assertNotSame(expected: '', actual: $value, message: $id . ' ' . $role);
+			$this->assertStringNotContainsString(needle: 'var(', haystack: $value, message: $id . ' ' . $role);
+			$this->assertDoesNotMatchRegularExpression(pattern: '/[;{}]/', string: $value, message: $id . ' ' . $role);
 		}
 
 		foreach (['radius', 'radius-lg'] as $role) {
-			$this->assertMatchesRegularExpression('/^[\d.]+(px|rem|em|%)$/', $roles[$role], $id . ' ' . $role);
+			$this->assertMatchesRegularExpression(pattern: '/^[\d.]+(px|rem|em|%)$/', string: $roles[$role], message: $id . ' ' . $role);
 		}
 	}//end testEveryShippedSetGetsEveryRole()
 
@@ -181,11 +181,11 @@ class ShellRoleMapperTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('#aa0000', $roles['primary']);
-		$this->assertSame('#aa00aa', $roles['action'], 'the main button follows its own token, not the element variable');
-		$this->assertSame('#000000', $roles['ink']);
-		$this->assertSame('2px', $roles['radius']);
-		$this->assertSame('Inter, sans-serif', $roles['font-family']);
+		$this->assertSame(expected: '#aa0000', actual: $roles['primary']);
+		$this->assertSame(expected: '#aa00aa', actual: $roles['action'], message: 'the main button follows its own token, not the element variable');
+		$this->assertSame(expected: '#000000', actual: $roles['ink']);
+		$this->assertSame(expected: '2px', actual: $roles['radius']);
+		$this->assertSame(expected: 'Inter, sans-serif', actual: $roles['font-family']);
 	}//end testAnAdministratorsOwnValueWins()
 
 	/**
@@ -201,8 +201,8 @@ class ShellRoleMapperTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('#0f2e51', $roles['primary-deep']);
-		$this->assertSame('#0f2e51', $roles['action-deep']);
+		$this->assertSame(expected: '#0f2e51', actual: $roles['primary-deep']);
+		$this->assertSame(expected: '#0f2e51', actual: $roles['action-deep']);
 	}//end testALighterHoverIsNotTakenAsTheDeepColour()
 
 	/**
@@ -221,12 +221,12 @@ class ShellRoleMapperTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('#3669a5', $roles['action'], 'the action colour is the primary colour');
-		$this->assertSame('#3669a5', $roles['link'], 'a link without its own colour is primary');
-		$this->assertSame('#ebf0f6', $roles['primary-light'], 'primary on white, one part in ten');
-		$this->assertSame('#404040', $roles['text'], 'halfway between ink and muted');
-		$this->assertSame('#cccccc', $roles['field'], 'a field without its own border wears the line colour');
-		$this->assertSame('4px', $roles['radius-lg'], 'the large radius falls back to the radius');
+		$this->assertSame(expected: '#3669a5', actual: $roles['action'], message: 'the action colour is the primary colour');
+		$this->assertSame(expected: '#3669a5', actual: $roles['link'], message: 'a link without its own colour is primary');
+		$this->assertSame(expected: '#ebf0f6', actual: $roles['primary-light'], message: 'primary on white, one part in ten');
+		$this->assertSame(expected: '#404040', actual: $roles['text'], message: 'halfway between ink and muted');
+		$this->assertSame(expected: '#cccccc', actual: $roles['field'], message: 'a field without its own border wears the line colour');
+		$this->assertSame(expected: '4px', actual: $roles['radius-lg'], message: 'the large radius falls back to the radius');
 	}//end testMissingRolesAreDerived()
 
 	/**
@@ -246,12 +246,12 @@ class ShellRoleMapperTest extends TestCase {
 			]
 		);
 
-		$this->assertSame(ShellRoleMapper::DEFAULTS['primary'], $roles['primary']);
-		$this->assertSame(ShellRoleMapper::DEFAULTS['primary'], $roles['link']);
-		$this->assertSame(ShellRoleMapper::DEFAULTS['line'], $roles['line']);
-		$this->assertSame(ShellRoleMapper::DEFAULTS['ink'], $roles['ink']);
-		$this->assertSame("'Fira Sans', Arial, sans-serif", $roles['font-family']);
-		$this->assertSame('0px', $roles['radius'], 'a bare 0 is given its unit');
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS['primary'], actual: $roles['primary']);
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS['primary'], actual: $roles['link']);
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS['line'], actual: $roles['line']);
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS['ink'], actual: $roles['ink']);
+		$this->assertSame(expected: "'Fira Sans', Arial, sans-serif", actual: $roles['font-family']);
+		$this->assertSame(expected: '0px', actual: $roles['radius'], message: 'a bare 0 is given its unit');
 	}//end testAnUnusableValueIsPassedOver()
 
 	/**
@@ -266,11 +266,11 @@ class ShellRoleMapperTest extends TestCase {
 	public function testAColourThatCannotBeMixedIsNotDerivedFrom(): void {
 		$roles = $this->mapper()->map(tokens: ['--nldesign-color-primary' => 'oklch(0.5 0.15 250)']);
 
-		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary']);
-		$this->assertSame('oklch(0.5 0.15 250)', $roles['primary-deep']);
-		$this->assertSame('oklch(0.5 0.15 250)', $roles['action']);
-		$this->assertSame('oklch(0.5 0.15 250)', $roles['action-deep']);
-		$this->assertSame(ShellRoleMapper::DEFAULTS['primary-light'], $roles['primary-light']);
+		$this->assertSame(expected: 'oklch(0.5 0.15 250)', actual: $roles['primary']);
+		$this->assertSame(expected: 'oklch(0.5 0.15 250)', actual: $roles['primary-deep']);
+		$this->assertSame(expected: 'oklch(0.5 0.15 250)', actual: $roles['action']);
+		$this->assertSame(expected: 'oklch(0.5 0.15 250)', actual: $roles['action-deep']);
+		$this->assertSame(expected: ShellRoleMapper::DEFAULTS['primary-light'], actual: $roles['primary-light']);
 	}//end testAColourThatCannotBeMixedIsNotDerivedFrom()
 
 	/**
@@ -284,8 +284,8 @@ class ShellRoleMapperTest extends TestCase {
 	public function testTheTextRoleReadsItsOwnToken(): void {
 		$tokens = ['--nldesign-color-text' => '#000000', '--nldesign-color-text-muted' => '#808080'];
 
-		$this->assertSame('#404040', $this->mapper()->map(tokens: $tokens)['text']);
-		$this->assertSame('#484a4d', $this->mapper()->map(tokens: ($tokens + ['--thematiq-shell-text' => '#484a4d']))['text']);
+		$this->assertSame(expected: '#404040', actual: $this->mapper()->map(tokens: $tokens)['text']);
+		$this->assertSame(expected: '#484a4d', actual: $this->mapper()->map(tokens: ($tokens + ['--thematiq-shell-text' => '#484a4d']))['text']);
 	}//end testTheTextRoleReadsItsOwnToken()
 
 	/**
@@ -295,10 +295,16 @@ class ShellRoleMapperTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheMenuIsTheNavigationColumn(): void {
-		$this->assertSame('#ffffff', $this->mapper()->map(tokens: [])['menu']);
-		$this->assertSame('#eeeeee', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee'])['menu']);
-		$this->assertSame('#dddddd', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--nldesign-component-navigation-background-color' => '#dddddd'])['menu']);
-		$this->assertSame('#123456', $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--thematiq-shell-menu' => '#123456'])['menu']);
+		$this->assertSame(expected: '#ffffff', actual: $this->mapper()->map(tokens: [])['menu']);
+		$this->assertSame(expected: '#eeeeee', actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee'])['menu']);
+		$this->assertSame(
+			expected: '#dddddd',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--nldesign-component-navigation-background-color' => '#dddddd'])['menu']
+		);
+		$this->assertSame(
+			expected: '#123456',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-nav-background' => '#eeeeee', '--thematiq-shell-menu' => '#123456'])['menu']
+		);
 	}//end testTheMenuIsTheNavigationColumn()
 
 	/**
@@ -307,8 +313,11 @@ class ShellRoleMapperTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheAccentFallsBackToTheErrorColour(): void {
-		$this->assertSame('#f5b82e', $this->mapper()->map(tokens: ['--nldesign-color-accent' => '#f5b82e', '--nldesign-color-error' => '#cc0000'])['accent']);
-		$this->assertSame('#cc0000', $this->mapper()->map(tokens: ['--nldesign-color-error' => '#cc0000'])['accent']);
+		$this->assertSame(
+			expected: '#f5b82e',
+			actual: $this->mapper()->map(tokens: ['--nldesign-color-accent' => '#f5b82e', '--nldesign-color-error' => '#cc0000'])['accent']
+		);
+		$this->assertSame(expected: '#cc0000', actual: $this->mapper()->map(tokens: ['--nldesign-color-error' => '#cc0000'])['accent']);
 	}//end testTheAccentFallsBackToTheErrorColour()
 
 	/**
@@ -326,33 +335,36 @@ class ShellRoleMapperTest extends TestCase {
 		];
 
 		$without = $this->mapper()->map(tokens: $set);
-		$this->assertSame('#1a67a3', $without['action'], 'no action colour: the action is the primary');
-		$this->assertSame('#124872', $without['action-deep']);
+		$this->assertSame(expected: '#1a67a3', actual: $without['action'], message: 'no action colour: the action is the primary');
+		$this->assertSame(expected: '#124872', actual: $without['action-deep']);
 
 		$full = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d', '--nldesign-color-action-hover' => '#197032']));
-		$this->assertSame('#1f883d', $full['action']);
-		$this->assertSame('#197032', $full['action-deep']);
-		$this->assertSame('#1a67a3', $full['primary'], 'the primary does not move with the action');
-		$this->assertSame('#124872', $full['primary-deep']);
-		$this->assertSame('#175a8e', $full['link'], 'links stay with the set');
+		$this->assertSame(expected: '#1f883d', actual: $full['action']);
+		$this->assertSame(expected: '#197032', actual: $full['action-deep']);
+		$this->assertSame(expected: '#1a67a3', actual: $full['primary'], message: 'the primary does not move with the action');
+		$this->assertSame(expected: '#124872', actual: $full['primary-deep']);
+		$this->assertSame(expected: '#175a8e', actual: $full['link'], message: 'links stay with the set');
 
 		// Without its own hover step the action darkens by 15%, as the page
 		// draws it, and never borrows the primary's blue hover.
 		$alone = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']));
-		$this->assertSame('#1a7434', $alone['action-deep']);
+		$this->assertSame(expected: '#1a7434', actual: $alone['action-deep']);
 
 		// An administrator's value for Nextcloud's element variable moves checked
 		// boxes and switches, not the main button, so the action role ignores it.
-		$element = $this->mapper()->map(tokens: ($set + ['--nldesign-color-action' => '#1f883d']), overrides: ['--color-primary-element' => '#aa0000']);
-		$this->assertSame('#1f883d', $element['action']);
+		$element = $this->mapper()->map(
+			tokens: ($set + ['--nldesign-color-action' => '#1f883d']),
+			overrides: ['--color-primary-element' => '#aa0000']
+		);
+		$this->assertSame(expected: '#1f883d', actual: $element['action']);
 
 		// An administrator's value for the main button's own token wins.
 		$button = $this->mapper()->map(
 			tokens: ($set + ['--nldesign-color-action' => '#1f883d']),
 			overrides: ['--nldesign-component-button-primary-action-background-color' => '#aa0000']
 		);
-		$this->assertSame('#aa0000', $button['action']);
-		$this->assertSame('#910000', $button['action-deep'], 'and hovers a little darker');
+		$this->assertSame(expected: '#aa0000', actual: $button['action']);
+		$this->assertSame(expected: '#910000', actual: $button['action-deep'], message: 'and hovers a little darker');
 	}//end testASetsActionColourIsTheActionRole()
 
 	/**
@@ -371,16 +383,24 @@ class ShellRoleMapperTest extends TestCase {
 			'--nldesign-color-background' => '#171a20',
 		];
 
-		$this->assertSame('#234a78', $this->mapper()->map(tokens: $dark)['primary-deep'], 'the plain mapping keeps the darker step');
+		$this->assertSame(
+			expected: '#234a78',
+			actual: $this->mapper()->map(tokens: $dark)['primary-deep'],
+			message: 'the plain mapping keeps the darker step'
+		);
 
 		$roles = $this->mapper()->mapDark(tokens: $dark);
-		$this->assertSame('#84aad7', $roles['primary-deep'], 'the dark mapping writes the primary on the tint, as Nextcloud does');
-		$this->assertSame('#84aad7', $roles['primary']);
-		$this->assertSame(ShellRoleMapper::ROLES, array_keys($roles));
+		$this->assertSame(
+			expected: '#84aad7',
+			actual: $roles['primary-deep'],
+			message: 'the dark mapping writes the primary on the tint, as Nextcloud does'
+		);
+		$this->assertSame(expected: '#84aad7', actual: $roles['primary']);
+		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($roles));
 
 		// A step that already reads is left alone.
 		$fine = $this->mapper()->mapDark(tokens: (['--nldesign-color-primary-hover' => '#7397c4'] + $dark));
-		$this->assertSame('#7397c4', $fine['primary-deep']);
+		$this->assertSame(expected: '#7397c4', actual: $fine['primary-deep']);
 	}//end testOnADarkPageTheSelectedItemsTextReads()
 
 	/**
@@ -391,14 +411,14 @@ class ShellRoleMapperTest extends TestCase {
 	public function testSummerBreezeIsReadByItsOwnNames(): void {
 		$roles = $this->mapper()->map(tokens: $this->shipped(id: 'summer-breeze'));
 
-		$this->assertSame('#21468b', $roles['primary']);
-		$this->assertSame('#1b3a75', $roles['primary-deep']);
-		$this->assertSame('#21468b', $roles['link']);
-		$this->assertSame('#02162e', $roles['ink']);
-		$this->assertSame('#e3e9f0', $roles['line']);
-		$this->assertSame('#7a8b9f', $roles['field']);
-		$this->assertSame('#f7f7f7', $roles['ground']);
-		$this->assertSame('12px', $roles['radius']);
-		$this->assertStringStartsWith("'Inter', ", $roles['font-family']);
+		$this->assertSame(expected: '#21468b', actual: $roles['primary']);
+		$this->assertSame(expected: '#1b3a75', actual: $roles['primary-deep']);
+		$this->assertSame(expected: '#21468b', actual: $roles['link']);
+		$this->assertSame(expected: '#02162e', actual: $roles['ink']);
+		$this->assertSame(expected: '#e3e9f0', actual: $roles['line']);
+		$this->assertSame(expected: '#7a8b9f', actual: $roles['field']);
+		$this->assertSame(expected: '#f7f7f7', actual: $roles['ground']);
+		$this->assertSame(expected: '12px', actual: $roles['radius']);
+		$this->assertStringStartsWith(prefix: "'Inter', ", string: $roles['font-family']);
 	}//end testSummerBreezeIsReadByItsOwnNames()
 }//end class

@@ -55,7 +55,7 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 	 * @return SettingsController The controller under test.
 	 */
 	private function makeController(): SettingsController {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
 				return ($this->configStore[$key] ?? $default);
@@ -69,23 +69,23 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 
 		return new SettingsController(
 			appName: 'nldesign',
-			request: $this->createMock(IRequest::class),
+			request: $this->createMock(originalClassName: IRequest::class),
 			settings: new SettingsConfigServices(
 				config: $config,
-				auditService: $this->createMock(ThemingAuditService::class),
-				appThemingService: $this->createMock(AppThemingService::class),
-				groupThemingService: $this->createMock(GroupThemingService::class)
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
 			),
 			tokenSets: new SettingsTokenSetServices(
-				tokenSetService: $this->createMock(TokenSetService::class),
-				previewService: $this->createMock(TokenSetPreviewService::class),
-				activeTokenSet: $this->createMock(ActiveTokenSetService::class),
-				themingService: $this->createMock(ThemingService::class)
+				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
 			),
 			reports: new SettingsReportServices(
-				complianceService: $this->createMock(ComplianceReportService::class),
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
 				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
-				freshnessService: $this->createMock(UpstreamFreshnessService::class)
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
 			)
 		);
 	}//end makeController()
@@ -93,43 +93,51 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 	/**
 	 * Both dark-variants routes carry #[AuthorizedAdminSetting] — non-admin
 	 * requests are rejected by that posture before the method body runs.
+	 *
+	 * @return void
 	 */
 	public function testBothEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getDarkVariants', 'setDarkVariants'] as $method) {
 			$reflection = new ReflectionMethod(SettingsController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "$method must carry #[AuthorizedAdminSetting]");
+			$this->assertNotEmpty(actual: $attributes, message: "$method must carry #[AuthorizedAdminSetting]");
 		}
 	}//end testBothEndpointsCarryAuthorizedAdminSetting()
 
 	/**
 	 * A fresh install (no `dark_variants` config value) defaults to enabled.
+	 *
+	 * @return void
 	 */
 	public function testDefaultIsEnabled(): void {
 		$controller = $this->makeController();
 
 		$data = $controller->getDarkVariants()->getData();
 
-		$this->assertTrue($data['enabled']);
+		$this->assertTrue(condition: $data['enabled']);
 	}//end testDefaultIsEnabled()
 
 	/**
 	 * A POST persists the disabled state, reflected by the subsequent GET.
+	 *
+	 * @return void
 	 */
 	public function testTogglePersists(): void {
 		$controller = $this->makeController();
 
 		$setResponse = $controller->setDarkVariants(false);
-		$this->assertSame(['status' => 'ok', 'enabled' => false], $setResponse->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'enabled' => false], actual: $setResponse->getData());
 
 		$after = $controller->getDarkVariants()->getData();
-		$this->assertFalse($after['enabled']);
+		$this->assertFalse(condition: $after['enabled']);
 
-		$this->assertSame('0', $this->configStore['dark_variants']);
+		$this->assertSame(expected: '0', actual: $this->configStore['dark_variants']);
 	}//end testTogglePersists()
 
 	/**
 	 * Re-enabling after a disable persists '1'.
+	 *
+	 * @return void
 	 */
 	public function testReEnablePersists(): void {
 		$controller = $this->makeController();
@@ -137,7 +145,7 @@ class SettingsControllerDarkVariantsTest extends TestCase {
 		$controller->setDarkVariants(false);
 		$controller->setDarkVariants(true);
 
-		$this->assertSame('1', $this->configStore['dark_variants']);
-		$this->assertTrue($controller->getDarkVariants()->getData()['enabled']);
+		$this->assertSame(expected: '1', actual: $this->configStore['dark_variants']);
+		$this->assertTrue(condition: $controller->getDarkVariants()->getData()['enabled']);
 	}//end testReEnablePersists()
 }//end class

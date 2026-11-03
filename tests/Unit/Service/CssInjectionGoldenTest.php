@@ -24,7 +24,12 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
 use OCA\Thematiq\Service\AppMenuService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionChrome;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -404,7 +409,11 @@ class CssInjectionGoldenTest extends TestCase {
 		$customCss->method('hasContent')->willReturn(($this->plain === false && $random->getInt(0, 1) === 1));
 		$fonts = $this->createMock(originalClassName: FontService::class);
 		$hasFonts = ($this->plain === false && $random->getInt(0, 1) === 1);
-		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => $this->failOr(failing: ($failing === 'fonts'), message: 'fonts', value: $hasFonts));
+		$fonts->method('hasFonts')->willReturnCallback(fn (): bool => $this->failOr(
+			failing: ($failing === 'fonts'),
+			message: 'fonts',
+			value: $hasFonts
+		));
 		$fonts->method('getRevision')->willReturn($random->getInt(1, 9));
 		$stock = $this->createMock(originalClassName: StockTokensService::class);
 		$stockCss = null;
@@ -412,7 +421,11 @@ class CssInjectionGoldenTest extends TestCase {
 			$stockCss = ":root {\n  --nldesign-color-primary: #0082c9;\n}\n";
 		}
 
-		$stock->method('getCss')->willReturnCallback(fn (): ?string => $this->failOr(failing: ($failing === 'stock'), message: 'stock', value: $stockCss));
+		$stock->method('getCss')->willReturnCallback(fn (): ?string => $this->failOr(
+			failing: ($failing === 'stock'),
+			message: 'stock',
+			value: $stockCss
+		));
 
 		$banner = $this->createMock(originalClassName: ThemePreviewBannerService::class);
 		$banner->method('inject')->willReturnCallback(
@@ -434,21 +447,25 @@ class CssInjectionGoldenTest extends TestCase {
 		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$config,
-					$this->designSystems(repo: $repo, config: $config, case: $case),
-					$customCss,
-					$fonts,
-					$urls,
-					$this->groupTheming(config: $config, case: $case),
-					$banner,
-					$logger,
-					$stock,
-					$runtimeFiles,
-					new LogoLayerService(config: $config, urlGenerator: $urls, logger: $logger, files: $runtimeFiles),
-					$this->brands(case: $case),
-					$scopes,
-					null,
-					...$this->collaborators(case: $case),
+					new CssInjectionContext(
+						config: $config,
+						designSystemService: $this->designSystems(repo: $repo, config: $config, case: $case),
+						urlGenerator: $urls,
+						logger: $logger
+					),
+					new CssInjectionLayers(
+						customCssService: $customCss,
+						fontService: $fonts,
+						previewBannerService: $banner,
+						brands: new CssInjectionBrands(groupThemingService: $this->groupTheming(config: $config, case: $case), appBrands: $this->brands(case: $case))
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $stock,
+						runtimeFiles: $runtimeFiles,
+						logoLayer: new LogoLayerService(config: $config, urlGenerator: $urls, logger: $logger, files: $runtimeFiles),
+						internalScopes: $scopes
+					),
+					new CssInjectionChrome(null, ...$this->collaborators(case: $case)),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])

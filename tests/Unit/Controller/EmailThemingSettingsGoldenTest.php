@@ -118,7 +118,10 @@ class EmailThemingSettingsGoldenTest extends TestCase {
 			static function (string $orgName, string $accessibilityUrl, string $privacyUrl) use (&$calls, $footerFault): array {
 				$calls[] = ['setFooterConfig', $orgName, $accessibilityUrl, $privacyUrl];
 				if ($footerFault === 0) {
-					throw new FooterValidationException(field: ['orgName', 'privacyUrl'][strlen($orgName) % 2], message: 'Footer refused: ' . $orgName);
+					throw new FooterValidationException(
+						field: ['orgName', 'privacyUrl'][strlen($orgName) % 2],
+						message: 'Footer refused: ' . $orgName
+					);
 				}
 
 				return [];

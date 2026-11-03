@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -35,30 +36,60 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	private const SYSTEM_DARK = 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])';
 	private const CHOSEN_DARK = 'body[data-theme-dark],' . "\n" . 'body[data-themes*=dark]';
 
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The dark palette.
+	 *
+	 * @var DarkPaletteService
+	 */
 	private DarkPaletteService $darkPalette;
+	/**
+	 * The service.
+	 *
+	 * @var CustomOverridesService
+	 */
 	private CustomOverridesService $service;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appDir = sys_get_temp_dir() . '/thematiq-698-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$this->darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$this->darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->service = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
 				cssParser: $parser,
 				darkPalette: $this->darkPalette
 			)
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 
@@ -77,7 +108,7 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	 */
 	private function block(string $css, string $selector): array {
 		$start = strpos($css, $selector . ' {');
-		$this->assertNotFalse($start, 'custom-overrides.css has no block for ' . $selector);
+		$this->assertNotFalse(condition: $start, message: 'custom-overrides.css has no block for ' . $selector);
 		$open = strpos($css, '{', $start);
 		$close = strpos($css, '}', $open);
 		preg_match_all('/(--[A-Za-z0-9_-]+)\s*:\s*([^;]+);/', substr($css, $open + 1, $close - $open - 1), $matches, PREG_SET_ORDER);
@@ -92,21 +123,26 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	/**
 	 * A colour override gets the same derived dark value in both dark scopes,
 	 * so both kinds of dark user see one colour.
+	 *
+	 * @return void
 	 */
 	public function testDarkScopesWritten(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
 		$css = $this->service->getRawContent();
 
 		$expected = $this->darkPalette->deriveDarkValue(token: '--color-primary', lightValue: '#154273');
-		$this->assertNotSame('#154273', $expected, 'a dark primary is derived, not the light value');
+		$this->assertNotSame(expected: '#154273', actual: $expected, message: 'a dark primary is derived, not the light value');
 
 		$systemDark = $this->block(css: $css, selector: self::SYSTEM_DARK);
 		$chosenDark = $this->block(css: $css, selector: self::CHOSEN_DARK);
 
-		$this->assertSame(['--color-primary' => $expected], $systemDark);
-		$this->assertSame(['--color-primary' => $expected], $chosenDark);
-		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $css);
-		$this->assertMatchesRegularExpression('/--color-primary: [^;]+ !important;/', substr($css, (int)strpos($css, 'body[data-theme-dark]')));
+		$this->assertSame(expected: ['--color-primary' => $expected], actual: $systemDark);
+		$this->assertSame(expected: ['--color-primary' => $expected], actual: $chosenDark);
+		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
+		$this->assertMatchesRegularExpression(
+			pattern: '/--color-primary: [^;]+ !important;/',
+			string: substr($css, (int)strpos($css, 'body[data-theme-dark]'))
+		);
 	}//end testDarkScopesWritten()
 
 	/**
@@ -117,6 +153,8 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 	 * #154273 turns light blue, and white text takes the text clamp to mid-grey
 	 * #9e9e9e, about 1.2:1 on it. The generated dark stylesheets repair such
 	 * pairs; the editor's dark scopes now run the same repair.
+	 *
+	 * @return void
 	 */
 	public function testAWhiteLabelOverrideStaysReadableInDark(): void {
 		$this->service->write(tokens: [
@@ -131,18 +169,27 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 		foreach ([self::SYSTEM_DARK, self::CHOSEN_DARK] as $selector) {
 			$dark = $this->block(css: $css, selector: $selector);
 			foreach ([['--color-primary-text', '--color-primary'], ['--color-primary-element-text', '--color-primary-element']] as [$fg, $bg]) {
-				$this->assertArrayHasKey($fg, $dark);
+				$this->assertArrayHasKey(key: $fg, array: $dark);
 				$ratio = $contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
-				$this->assertGreaterThanOrEqual(4.5, $ratio, sprintf('%s %s on %s in %s', $dark[$fg], $fg, $bg, $selector));
+				$this->assertGreaterThanOrEqual(
+					expected: 4.5,
+					actual: $ratio,
+					message: sprintf('%s %s on %s in %s', $dark[$fg], $fg, $bg, $selector)
+				);
 			}
 		}
 
 		// The editor shows the same dark value the file carries.
-		$this->assertSame($this->block(css: $css, selector: self::CHOSEN_DARK)['--color-primary-element-text'], $this->service->derivedDark()['--color-primary-element-text']);
+		$this->assertSame(
+			expected: $this->block(css: $css, selector: self::CHOSEN_DARK)['--color-primary-element-text'],
+			actual: $this->service->derivedDark()['--color-primary-element-text']
+		);
 	}//end testAWhiteLabelOverrideStaysReadableInDark()
 
 	/**
 	 * An administrator's own dark label is never rewritten, even when it fails.
+	 *
+	 * @return void
 	 */
 	public function testAnOwnDarkLabelIsNotRepaired(): void {
 		$this->service->write(
@@ -150,53 +197,64 @@ class CustomOverridesServiceDarkScopesTest extends TestCase {
 			darkTokens: ['--color-primary-element-text' => '#aaaaaa']
 		);
 
-		$this->assertSame('#aaaaaa', $this->block(css: $this->service->getRawContent(), selector: self::CHOSEN_DARK)['--color-primary-element-text']);
+		$this->assertSame(
+			expected: '#aaaaaa',
+			actual: $this->block(css: $this->service->getRawContent(), selector: self::CHOSEN_DARK)['--color-primary-element-text']
+		);
 	}//end testAnOwnDarkLabelIsNotRepaired()
 
 	/**
 	 * A component token gets no dark copy: the generated dark stylesheet already
 	 * gives both kinds of dark user the same body value, and a body-level copy
 	 * here would outrank the primary-lock layer.
+	 *
+	 * @return void
 	 */
 	public function testComponentTokensGetNoDarkCopy(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--nldesign-component-header-background-color' => '#112233']);
 		$css = $this->service->getRawContent();
 
-		$this->assertArrayNotHasKey('--nldesign-component-header-background-color', $this->block(css: $css, selector: self::CHOSEN_DARK));
+		$this->assertArrayNotHasKey(key: '--nldesign-component-header-background-color', array: $this->block(css: $css, selector: self::CHOSEN_DARK));
 	}//end testComponentTokensGetNoDarkCopy()
 
 	/**
 	 * An exported file imports back to its light values, not the dark copies
 	 * that follow them in the file.
+	 *
+	 * @return void
 	 */
 	public function testAnExportedFileReadsBackItsLightValues(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273']);
 
 		$this->assertSame(
-			['--color-primary' => '#154273'],
-			(new CssParserService())->parseOverridesFile(css: $this->service->getRawContent())
+			expected: ['--color-primary' => '#154273'],
+			actual: (new CssParserService())->parseOverridesFile(css: $this->service->getRawContent())
 		);
-		$this->assertSame(['--x' => '1px'], (new CssParserService())->parseOverridesFile(css: '--x: 1px;'));
+		$this->assertSame(expected: ['--x' => '1px'], actual: (new CssParserService())->parseOverridesFile(css: '--x: 1px;'));
 	}//end testAnExportedFileReadsBackItsLightValues()
 
 	/**
 	 * The light values still read back from the :root block alone.
+	 *
+	 * @return void
 	 */
 	public function testLightValuesReadBack(): void {
 		$this->service->write(tokens: ['--color-primary' => '#154273', '--border-radius' => '4px']);
 
-		$this->assertSame(['--color-primary' => '#154273', '--border-radius' => '4px'], $this->service->read());
+		$this->assertSame(expected: ['--color-primary' => '#154273', '--border-radius' => '4px'], actual: $this->service->read());
 	}//end testLightValuesReadBack()
 
 	/**
 	 * A colour the palette cannot parse keeps its light value in the dark
 	 * scopes, so the two kinds of dark user still agree.
+	 *
+	 * @return void
 	 */
 	public function testAnUnparseableColourKeepsItsValueInBothDarkScopes(): void {
 		$this->service->write(tokens: ['--color-primary' => 'var(--brand-blue)']);
 		$css = $this->service->getRawContent();
 
-		$this->assertSame(['--color-primary' => 'var(--brand-blue)'], $this->block(css: $css, selector: self::CHOSEN_DARK));
-		$this->assertSame(['--color-primary' => 'var(--brand-blue)'], $this->block(css: $css, selector: self::SYSTEM_DARK));
+		$this->assertSame(expected: ['--color-primary' => 'var(--brand-blue)'], actual: $this->block(css: $css, selector: self::CHOSEN_DARK));
+		$this->assertSame(expected: ['--color-primary' => 'var(--brand-blue)'], actual: $this->block(css: $css, selector: self::SYSTEM_DARK));
 	}//end testAnUnparseableColourKeepsItsValueInBothDarkScopes()
 }//end class

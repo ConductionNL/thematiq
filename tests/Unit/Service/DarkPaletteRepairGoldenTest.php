@@ -66,9 +66,9 @@ class DarkPaletteRepairGoldenTest extends TestCase {
 		$service = new DarkPaletteService(
 			contrast: new ContrastService(),
 			parser: new CssParserService(),
-			appManager: $this->createMock(IAppManager::class),
-			logger: $this->createMock(LoggerInterface::class),
-			store: $this->createMock(RuntimeFileStore::class)
+			appManager: $this->createMock(originalClassName: IAppManager::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			store: $this->createMock(originalClassName: RuntimeFileStore::class)
 		);
 
 		$parser = new CssParserService();
@@ -116,9 +116,9 @@ class DarkPaletteRepairGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testRepairMatchesTheGoldenRecording()
 

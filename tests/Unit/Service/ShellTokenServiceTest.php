@@ -71,30 +71,30 @@ class ShellTokenServiceTest extends TestCase {
 	): ShellTokenService {
 		$appPath = dirname(__DIR__, 3);
 
-		$activeSet = $this->createMock(ActiveTokenSetService::class);
+		$activeSet = $this->createMock(originalClassName: ActiveTokenSetService::class);
 		$activeSet->method('getActive')->willReturn($active);
 
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('getAppPath')->willReturn($appPath);
 		$tokenSets->method('isValidTokenSet')->willReturnCallback(
 			static fn (string $tokenSetId): bool => is_file($appPath . '/css/tokens/' . $tokenSetId . '.css')
 		);
 
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturnCallback(
 			static fn (string $tokenSetId): array => array_filter(
 				['name' => ($names[$tokenSetId] ?? null), 'theming' => ['background_color' => '#0277BD']]
 			)
 		);
 
-		$overridesService = $this->createMock(CustomOverridesService::class);
+		$overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
 		$overridesService->method('read')->willReturn($overrides);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getTokens')->willReturn($stock);
 
 		// The logo files this app ships, found the way LogoLayerService finds them.
-		$logos = $this->createMock(LogoLayerService::class);
+		$logos = $this->createMock(originalClassName: LogoLayerService::class);
 		$logos->method('shippedLogo')->willReturnCallback(
 			static function (string $name) use ($appPath): ?string {
 				$candidate = 'img/logos/' . $name . '.svg';
@@ -106,15 +106,15 @@ class ShellTokenServiceTest extends TestCase {
 			}
 		);
 
-		$files = $this->createMock(RuntimeFileLocator::class);
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
 		$files->method('url')->willReturnCallback(static fn (string $name): string => '/custom_apps/thematiq/' . $name);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, string $default = ''): string => ($theming[$key] ?? $default)
 		);
 
-		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$urlGenerator->method('getAbsoluteURL')->willReturnCallback(static fn (string $url): string => 'https://cloud.example.org' . $url);
 		$urlGenerator->method('linkToRoute')->willReturnCallback(
 			static function (string $route, array $parameters = []) use ($theming): string {
@@ -155,17 +155,20 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheDocumentHasTheContractsShape(): void {
 		$document = $this->service(active: 'zuiddrecht')->document();
 
-		$this->assertSame(['version', 'id', 'name', 'revision', 'tokens', 'logo'], array_keys($document));
-		$this->assertSame(1, $document['version']);
-		$this->assertSame('zuiddrecht', $document['id']);
-		$this->assertSame('Gemeente Zuiddrecht', $document['name']);
-		$this->assertMatchesRegularExpression('/^[0-9a-f]{16}$/', $document['revision']);
-		$this->assertSame(ShellRoleMapper::ROLES, array_keys($document['tokens']));
-		$this->assertSame('#3669A5', $document['tokens']['primary']);
-		$this->assertSame('#F5F6F8', $document['tokens']['ground']);
-		$this->assertSame(['url', 'inverse_url'], array_keys($document['logo']));
-		$this->assertSame('https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht.svg', $document['logo']['url']);
-		$this->assertSame('https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht-dark.svg', $document['logo']['inverse_url']);
+		$this->assertSame(expected: ['version', 'id', 'name', 'revision', 'tokens', 'logo'], actual: array_keys($document));
+		$this->assertSame(expected: 1, actual: $document['version']);
+		$this->assertSame(expected: 'zuiddrecht', actual: $document['id']);
+		$this->assertSame(expected: 'Gemeente Zuiddrecht', actual: $document['name']);
+		$this->assertMatchesRegularExpression(pattern: '/^[0-9a-f]{16}$/', string: $document['revision']);
+		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($document['tokens']));
+		$this->assertSame(expected: '#3669A5', actual: $document['tokens']['primary']);
+		$this->assertSame(expected: '#F5F6F8', actual: $document['tokens']['ground']);
+		$this->assertSame(expected: ['url', 'inverse_url'], actual: array_keys($document['logo']));
+		$this->assertSame(expected: 'https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht.svg', actual: $document['logo']['url']);
+		$this->assertSame(
+			expected: 'https://cloud.example.org/custom_apps/thematiq/img/logos/zuiddrecht-dark.svg',
+			actual: $document['logo']['inverse_url']
+		);
 	}//end testTheDocumentHasTheContractsShape()
 
 	/**
@@ -177,10 +180,10 @@ class ShellTokenServiceTest extends TestCase {
 		foreach (['zuiddrecht', 'nextcloud', 'rijkshuisstijl', 'summer-breeze', 'a-set-that-was-removed'] as $active) {
 			$tokens = $this->service(active: $active)->document()['tokens'];
 
-			$this->assertCount(19, $tokens, $active);
+			$this->assertCount(expectedCount: 19, haystack: $tokens, message: $active);
 			foreach ($tokens as $role => $value) {
-				$this->assertIsString($value, $active . ' ' . $role);
-				$this->assertNotSame('', $value, $active . ' ' . $role);
+				$this->assertIsString(actual: $value, message: $active . ' ' . $role);
+				$this->assertNotSame(expected: '', actual: $value, message: $active . ' ' . $role);
 			}
 		}
 	}//end testNoTokenIsEverEmpty()
@@ -193,10 +196,10 @@ class ShellTokenServiceTest extends TestCase {
 	public function testARemovedSetIsAnsweredAsTheStockSet(): void {
 		$document = $this->service(active: 'custom-that-was-removed')->document();
 
-		$this->assertSame('nextcloud', $document['id']);
-		$this->assertSame('Nextcloud (Base)', $document['name']);
-		$this->assertSame('#00679e', $document['tokens']['primary']);
-		$this->assertSame(['url' => null, 'inverse_url' => null], $document['logo']);
+		$this->assertSame(expected: 'nextcloud', actual: $document['id']);
+		$this->assertSame(expected: 'Nextcloud (Base)', actual: $document['name']);
+		$this->assertSame(expected: '#00679e', actual: $document['tokens']['primary']);
+		$this->assertSame(expected: ['url' => null, 'inverse_url' => null], actual: $document['logo']);
 	}//end testARemovedSetIsAnsweredAsTheStockSet()
 
 	/**
@@ -207,8 +210,8 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheStockSetTakesTheInstancesLiveValues(): void {
 		$document = $this->service(active: 'nextcloud', stock: ['--nldesign-color-primary' => '#7a1fa2'])->document();
 
-		$this->assertSame('#7a1fa2', $document['tokens']['primary']);
-		$this->assertSame('#222222', $document['tokens']['ink'], 'what the instance does not report stays as shipped');
+		$this->assertSame(expected: '#7a1fa2', actual: $document['tokens']['primary']);
+		$this->assertSame(expected: '#222222', actual: $document['tokens']['ink'], message: 'what the instance does not report stays as shipped');
 	}//end testTheStockSetTakesTheInstancesLiveValues()
 
 	/**
@@ -219,7 +222,7 @@ class ShellTokenServiceTest extends TestCase {
 	public function testAnotherSetIgnoresTheStockTheme(): void {
 		$document = $this->service(active: 'zuiddrecht', stock: ['--nldesign-color-primary' => '#7a1fa2'])->document();
 
-		$this->assertSame('#3669A5', $document['tokens']['primary']);
+		$this->assertSame(expected: '#3669A5', actual: $document['tokens']['primary']);
 	}//end testAnotherSetIgnoresTheStockTheme()
 
 	/**
@@ -230,7 +233,7 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheAdministratorsOwnValuesReachTheDocument(): void {
 		$document = $this->service(active: 'zuiddrecht', overrides: ['--color-primary' => '#aa0000'])->document();
 
-		$this->assertSame('#aa0000', $document['tokens']['primary']);
+		$this->assertSame(expected: '#aa0000', actual: $document['tokens']['primary']);
 	}//end testTheAdministratorsOwnValuesReachTheDocument()
 
 	/**
@@ -241,7 +244,7 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheLoginBackgroundIsNotThePageColour(): void {
 		$document = $this->service(active: 'vng')->document();
 
-		$this->assertSame('#ffffff', $document['tokens']['ground']);
+		$this->assertSame(expected: '#ffffff', actual: $document['tokens']['ground']);
 	}//end testTheLoginBackgroundIsNotThePageColour()
 
 	/**
@@ -252,7 +255,7 @@ class ShellTokenServiceTest extends TestCase {
 	public function testASetWithoutANameIsNamedAfterItsId(): void {
 		$document = $this->service(active: 'summer-breeze', names: [])->document();
 
-		$this->assertSame('Summer Breeze', $document['name']);
+		$this->assertSame(expected: 'Summer Breeze', actual: $document['name']);
 	}//end testASetWithoutANameIsNamedAfterItsId()
 
 	/**
@@ -263,7 +266,11 @@ class ShellTokenServiceTest extends TestCase {
 	public function testTheRevisionMovesWithEveryValue(): void {
 		$base = $this->service(active: 'zuiddrecht')->document()['revision'];
 
-		$this->assertSame($base, $this->service(active: 'zuiddrecht')->document()['revision'], 'the same document, the same revision');
+		$this->assertSame(
+			expected: $base,
+			actual: $this->service(active: 'zuiddrecht')->document()['revision'],
+			message: 'the same document, the same revision'
+		);
 
 		$changed = [
 			'another set' => $this->service(active: 'wilgenboom'),
@@ -271,12 +278,12 @@ class ShellTokenServiceTest extends TestCase {
 			'the name' => $this->service(active: 'zuiddrecht', names: ['zuiddrecht' => 'Zuiddrecht']),
 		];
 		foreach ($changed as $what => $service) {
-			$this->assertNotSame($base, $service->document()['revision'], $what);
+			$this->assertNotSame(expected: $base, actual: $service->document()['revision'], message: $what);
 		}
 
 		$stock = $this->service(active: 'nextcloud')->document()['revision'];
 		$withLogo = $this->service(active: 'nextcloud', theming: ['logoMime' => 'image/png'])->document()['revision'];
-		$this->assertNotSame($stock, $withLogo, 'the logo');
+		$this->assertNotSame(expected: $stock, actual: $withLogo, message: 'the logo');
 	}//end testTheRevisionMovesWithEveryValue()
 
 	/**
@@ -286,20 +293,28 @@ class ShellTokenServiceTest extends TestCase {
 	 */
 	public function testASetWithoutALogoOffersTheUploadedLogo(): void {
 		$none = $this->service(active: 'cunningham')->document()['logo'];
-		$this->assertSame(['url' => null, 'inverse_url' => null], $none);
+		$this->assertSame(expected: ['url' => null, 'inverse_url' => null], actual: $none);
 
 		$uploaded = $this->service(active: 'cunningham', theming: ['logoMime' => 'image/png', 'cachebuster' => '7'])->document()['logo'];
-		$this->assertSame('https://cloud.example.org/apps/theming/image/logo?v=7', $uploaded['url']);
-		$this->assertNull($uploaded['inverse_url']);
+		$this->assertSame(expected: 'https://cloud.example.org/apps/theming/image/logo?v=7', actual: $uploaded['url']);
+		$this->assertNull(actual: $uploaded['inverse_url']);
 
 		$header = $this->service(
 			active: 'cunningham',
 			theming: ['logoMime' => 'image/png', 'logoheaderMime' => 'image/svg+xml', 'cachebuster' => '7']
 		)->document()['logo'];
-		$this->assertSame('https://cloud.example.org/apps/theming/image/logoheader?v=7', $header['url'], 'the header logo comes first');
+		$this->assertSame(
+			expected: 'https://cloud.example.org/apps/theming/image/logoheader?v=7',
+			actual: $header['url'],
+			message: 'the header logo comes first'
+		);
 
 		$own = $this->service(active: 'zuiddrecht', theming: ['logoMime' => 'image/png'])->document()['logo'];
-		$this->assertStringEndsWith('/img/logos/zuiddrecht.svg', (string)$own['url'], "the set's own logo comes before the upload");
+		$this->assertStringEndsWith(
+			suffix: '/img/logos/zuiddrecht.svg',
+			string: (string)$own['url'],
+			message: "the set's own logo comes before the upload"
+		);
 	}//end testASetWithoutALogoOffersTheUploadedLogo()
 
 	/**
@@ -310,7 +325,7 @@ class ShellTokenServiceTest extends TestCase {
 	public function testAnUnservableUploadIsNotOffered(): void {
 		$logo = $this->service(active: 'cunningham', theming: ['logoMime' => 'image/png', 'routeFails' => '1'])->document()['logo'];
 
-		$this->assertNull($logo['url']);
+		$this->assertNull(actual: $logo['url']);
 	}//end testAnUnservableUploadIsNotOffered()
 
 	/**
@@ -322,7 +337,7 @@ class ShellTokenServiceTest extends TestCase {
 		$json = (string)json_encode($this->service(active: 'zuiddrecht', overrides: ['--color-primary' => '#aa0000'])->document());
 
 		foreach (['user', 'uid', 'group', 'email', 'password', 'token_set', 'description', 'warnings'] as $word) {
-			$this->assertStringNotContainsStringIgnoringCase('"' . $word, $json, $word);
+			$this->assertStringNotContainsStringIgnoringCase(needle: '"' . $word, haystack: $json, message: $word);
 		}
 	}//end testTheDocumentHoldsThemeValuesOnly()
 }//end class

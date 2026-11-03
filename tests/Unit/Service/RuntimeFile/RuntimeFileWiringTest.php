@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
@@ -32,6 +33,7 @@ use OCA\Thematiq\Service\TokenSetAudits;
 use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\IAppConfig;
@@ -52,15 +54,45 @@ use Psr\Log\LoggerInterface;
  */
 class RuntimeFileWiringTest extends TestCase {
 
+	/**
+	 * The base.
+	 *
+	 * @var string
+	 */
 	private string $base;
+	/**
+	 * The app dir.
+	 *
+	 * @var string
+	 */
 	private string $appDir;
+	/**
+	 * The store dir.
+	 *
+	 * @var string
+	 */
 	private string $storeDir;
+	/**
+	 * The store.
+	 *
+	 * @var DirectoryRuntimeFileStore
+	 */
 	private DirectoryRuntimeFileStore $store;
+	/**
+	 * The app manager.
+	 *
+	 * @var IAppManager
+	 */
 	private IAppManager $appManager;
 
 	/** @var array<string, string> */
 	private array $appValues = [];
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->base = sys_get_temp_dir() . '/thematiq-wiring-' . bin2hex(random_bytes(4));
@@ -73,21 +105,32 @@ class RuntimeFileWiringTest extends TestCase {
 		}
 
 		mkdir($this->storeDir, 0777, true);
-		$this->store = new DirectoryRuntimeFileStore($this->storeDir);
-		$this->appManager = $this->createMock(IAppManager::class);
+		$this->store = new DirectoryRuntimeFileStore(root: $this->storeDir);
+		$this->appManager = $this->createMock(originalClassName: IAppManager::class);
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		$this->remove($this->base);
+		$this->remove(path: $this->base);
 		parent::tearDown();
 	}//end tearDown()
 
+	/**
+	 * TestCase::remove(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return void
+	 */
 	private function remove(string $path): void {
 		if (is_dir($path) === true) {
-			foreach (scandir($path) ?: [] as $entry) {
+			foreach (FileList::entries(directory: $path) as $entry) {
 				if ($entry !== '.' && $entry !== '..') {
-					$this->remove($path . '/' . $entry);
+					$this->remove(path: $path . '/' . $entry);
 				}
 			}
 
@@ -99,6 +142,8 @@ class RuntimeFileWiringTest extends TestCase {
 
 	/**
 	 * Every file under a directory, relative path => sha256.
+	 *
+	 * @param string $root The root.
 	 *
 	 * @return array<string, string>
 	 */
@@ -114,8 +159,13 @@ class RuntimeFileWiringTest extends TestCase {
 		return $hashes;
 	}//end hashTree()
 
+	/**
+	 * TestCase::config(), as this test double answers it.
+	 *
+	 * @return IConfig
+	 */
 	private function config(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = ''): string => ($this->appValues[$app . '/' . $key] ?? (string)$default)
 		);
@@ -128,29 +178,65 @@ class RuntimeFileWiringTest extends TestCase {
 		return $config;
 	}//end config()
 
+	/**
+	 * TestCase::darkPalette(), as this test double answers it.
+	 *
+	 * @return DarkPaletteService
+	 */
 	private function darkPalette(): DarkPaletteService {
-		return new DarkPaletteService(new ContrastService(), new CssParserService(), $this->appManager, $this->createMock(LoggerInterface::class), $this->store);
+		return new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $this->appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
+			store: $this->store
+		);
 	}//end darkPalette()
 
+	/**
+	 * TestCase::locator(), as this test double answers it.
+	 *
+	 * @return RuntimeFileLocator
+	 */
 	private function locator(): RuntimeFileLocator {
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => '/runtime/' . $args['name']);
 
-		return new RuntimeFileLocator($this->appManager, $this->store, $urls, $this->createMock(ITempManager::class));
+		return new RuntimeFileLocator(
+			appManager: $this->appManager,
+			store: $this->store,
+			urlGenerator: $urls,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
+		);
 	}//end locator()
 
+	/**
+	 * A custom house style leaves the app directory unchanged.
+	 *
+	 * @return void
+	 */
 	public function testACustomHouseStyleLeavesTheAppDirectoryUnchanged(): void {
-		$before = $this->hashTree($this->appDir);
+		$before = $this->hashTree(root: $this->appDir);
 		$config = $this->config();
 		$dark = $this->darkPalette();
 
-		$sets = new CustomTokenSetService($this->store, $config, new CustomTokenSetValidator(), new ContrastService(), $dark);
+		$sets = new CustomTokenSetService(
+			store: $this->store,
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: $dark
+		);
 		$stored = $sets->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#24578f'],
-			css: ':root { --nldesign-color-primary: #24578f; }',
-			logoAsset: ['path' => 'logo.png', 'contents' => 'PNGDATA'],
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#24578f'],
+					'css' => ':root { --nldesign-color-primary: #24578f; }',
+					'logoAsset' => ['path' => 'logo.png', 'contents' => 'PNGDATA'],
+				]
+			)
 		);
 		$dark->generateAndWrite(setId: (string)$stored['id'], force: true);
 		(new CustomOverridesService(
@@ -160,16 +246,29 @@ class RuntimeFileWiringTest extends TestCase {
 				darkPalette: $dark
 			)
 		))->write(tokens: ['--color-primary' => '#24578f']);
-		$css = new CustomCssService($this->store, $this->createMock(IAppConfig::class), new CustomCssValidator());
-		$this->assertSame([], $css->write(css: '.header { color: red; }'));
+		$css = new CustomCssService(
+			store: $this->store,
+			appConfig: $this->createMock(originalClassName: IAppConfig::class),
+			validator: new CustomCssValidator()
+		);
+		$this->assertSame(expected: [], actual: $css->write(css: '.header { color: red; }'));
 
-		$this->assertSame($before, $this->hashTree($this->appDir), 'a writer changed, added or removed a file in the app directory');
-		$this->assertTrue($this->store->exists('css/tokens/' . $stored['id'] . '.css'));
-		$this->assertTrue($this->store->exists('img/logos/' . $stored['id'] . '.png'));
-		$this->assertTrue($this->store->exists('css/custom-overrides.css'));
-		$this->assertTrue($this->store->exists(CustomCssService::FILE));
+		$this->assertSame(
+			expected: $before,
+			actual: $this->hashTree(root: $this->appDir),
+			message: 'a writer changed, added or removed a file in the app directory'
+		);
+		$this->assertTrue(condition: $this->store->exists('css/tokens/' . $stored['id'] . '.css'));
+		$this->assertTrue(condition: $this->store->exists('img/logos/' . $stored['id'] . '.png'));
+		$this->assertTrue(condition: $this->store->exists('css/custom-overrides.css'));
+		$this->assertTrue(condition: $this->store->exists(CustomCssService::FILE));
 	}//end testACustomHouseStyleLeavesTheAppDirectoryUnchanged()
 
+	/**
+	 * An uploaded set is listed and valid.
+	 *
+	 * @return void
+	 */
 	public function testAnUploadedSetIsListedAndValid(): void {
 		$this->store->write('css/tokens/custom-gemeente-voorbeeld.css', ':root {}');
 		$this->appValues['thematiq/custom_token_sets'] = json_encode(['custom-gemeente-voorbeeld' => ['name' => 'Gemeente Voorbeeld']]);
@@ -180,52 +279,76 @@ class RuntimeFileWiringTest extends TestCase {
 			),
 			runtime: new TokenSetRuntime(
 				config: $this->config(),
-				cacheFactory: $this->createMock(\OCP\ICacheFactory::class),
-				logger: $this->createMock(LoggerInterface::class)
+				cacheFactory: $this->createMock(originalClassName: \OCP\ICacheFactory::class),
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			audits: new TokenSetAudits(
-				audit: $this->createMock(\OCA\Thematiq\Service\ShippedTokenSetAuditService::class),
-				vocabularyAudit: $this->createMock(\OCA\Thematiq\Service\TokenSetVocabularyAuditService::class)
+				audit: $this->createMock(originalClassName: \OCA\Thematiq\Service\ShippedTokenSetAuditService::class),
+				vocabularyAudit: $this->createMock(originalClassName: \OCA\Thematiq\Service\TokenSetVocabularyAuditService::class)
 			)
 		);
 
-		$this->assertTrue($service->isValidTokenSet('custom-gemeente-voorbeeld'));
-		$this->assertContains('custom-gemeente-voorbeeld', array_column($service->getAvailableTokenSets(), 'id'));
-		$this->assertContains('utrecht', array_column($service->getAvailableTokenSets(), 'id'));
+		$this->assertTrue(condition: $service->isValidTokenSet('custom-gemeente-voorbeeld'));
+		$this->assertContains(needle: 'custom-gemeente-voorbeeld', haystack: array_column($service->getAvailableTokenSets(), 'id'));
+		$this->assertContains(needle: 'utrecht', haystack: array_column($service->getAvailableTokenSets(), 'id'));
 	}//end testAnUploadedSetIsListedAndValid()
 
+	/**
+	 * A shipped dark variant is never rewritten at runtime.
+	 *
+	 * @return void
+	 */
 	public function testAShippedDarkVariantIsNeverRewrittenAtRuntime(): void {
-		$before = $this->hashTree($this->appDir);
+		$before = $this->hashTree(root: $this->appDir);
 		$result = $this->darkPalette()->generateAndWrite(setId: 'utrecht', force: true);
 
-		$this->assertSame('shipped', $result['reason']);
-		$this->assertFalse($result['written']);
-		$this->assertSame($before, $this->hashTree($this->appDir));
-		$this->assertFalse($this->store->exists('css/tokens/dark/utrecht.css'));
+		$this->assertSame(expected: 'shipped', actual: $result['reason']);
+		$this->assertFalse(condition: $result['written']);
+		$this->assertSame(expected: $before, actual: $this->hashTree(root: $this->appDir));
+		$this->assertFalse(condition: $this->store->exists('css/tokens/dark/utrecht.css'));
 	}//end testAShippedDarkVariantIsNeverRewrittenAtRuntime()
 
+	/**
+	 * An uploaded set gets its dark variant in the store.
+	 *
+	 * @return void
+	 */
 	public function testAnUploadedSetGetsItsDarkVariantInTheStore(): void {
 		$this->store->write('css/tokens/custom-gemeente-voorbeeld.css', ':root { --nldesign-color-primary: #24578f; }');
 		$result = $this->darkPalette()->generateAndWrite(setId: 'custom-gemeente-voorbeeld');
 
-		$this->assertTrue($result['written'], $result['reason']);
-		$this->assertStringContainsString('DarkPaletteService v' . DarkPaletteService::GENERATOR_VERSION, (string)$this->store->read('css/tokens/dark/custom-gemeente-voorbeeld.css'));
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark/custom-gemeente-voorbeeld.css');
+		$this->assertTrue(condition: $result['written'], message: $result['reason']);
+		$this->assertStringContainsString(
+			needle: 'DarkPaletteService v' . DarkPaletteService::GENERATOR_VERSION,
+			haystack: (string)$this->store->read('css/tokens/dark/custom-gemeente-voorbeeld.css')
+		);
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/custom-gemeente-voorbeeld.css');
 	}//end testAnUploadedSetGetsItsDarkVariantInTheStore()
 
+	/**
+	 * The route serves a runtime file with a policy that runs nothing.
+	 *
+	 * @return void
+	 */
 	public function testTheRouteServesARuntimeFileWithAPolicyThatRunsNothing(): void {
 		$this->store->write('img/logos/custom-gemeente-voorbeeld.svg', '<svg><script>alert(1)</script></svg>');
-		$controller = new RuntimeFileController('thematiq', $this->createMock(IRequest::class), $this->locator());
+		$controller = new RuntimeFileController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			files: $this->locator()
+		);
 
 		$response = $controller->serve('img/logos/custom-gemeente-voorbeeld.svg');
-		$this->assertSame(Http::STATUS_OK, $response->getStatus());
-		$headers = $response->getHeaders();
-		$this->assertSame('image/svg+xml', $headers['Content-Type']);
-		$this->assertSame('nosniff', $headers['X-Content-Type-Options']);
-		$this->assertStringContainsString('immutable', $headers['Cache-Control']);
+		$this->assertSame(expected: Http::STATUS_OK, actual: $response->getStatus());
+		// The response's own headers: Response::getHeaders() merges in request headers through
+		// Server::get(), which needs a Nextcloud server.
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
+		$this->assertSame(expected: 'image/svg+xml', actual: $headers['Content-Type']);
+		$this->assertSame(expected: 'nosniff', actual: $headers['X-Content-Type-Options']);
+		$this->assertStringContainsString(needle: 'immutable', haystack: $headers['Cache-Control']);
 		$policy = $response->getContentSecurityPolicy()->buildPolicy();
-		$this->assertStringContainsString("default-src 'none'", $policy);
-		$this->assertStringNotContainsString('script-src', str_replace("script-src 'none'", '', $policy));
+		$this->assertStringContainsString(needle: "default-src 'none'", haystack: $policy);
+		$this->assertStringNotContainsString(needle: 'script-src', haystack: str_replace("script-src 'none'", '', $policy));
 	}//end testTheRouteServesARuntimeFileWithAPolicyThatRunsNothing()
 
 	/**
@@ -243,41 +366,76 @@ class RuntimeFileWiringTest extends TestCase {
 
 	/**
 	 * @dataProvider refusedNames
+	 *
+	 * @param string $name The name.
+	 *
+	 * @return void
 	 */
 	public function testTheRouteRefusesEverythingElse(string $name): void {
 		$this->store->write('css/tokens/utrecht.css', ':root { --nldesign-color-primary: red; }');
-		$controller = new RuntimeFileController('thematiq', $this->createMock(IRequest::class), $this->locator());
+		$controller = new RuntimeFileController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			files: $this->locator()
+		);
 
-		$this->assertSame(Http::STATUS_NOT_FOUND, $controller->serve($name)->getStatus());
+		$this->assertSame(expected: Http::STATUS_NOT_FOUND, actual: $controller->serve($name)->getStatus());
 	}//end testTheRouteRefusesEverythingElse()
 
+	/**
+	 * The repair step moves an older installs files and keeps shipped ones.
+	 *
+	 * @return void
+	 */
 	public function testTheRepairStepMovesAnOlderInstallsFilesAndKeepsShippedOnes(): void {
 		file_put_contents($this->appDir . '/css/custom-overrides.css', ':root { --color-primary: #111111; }');
 		file_put_contents($this->appDir . '/css/tokens/custom-oud.css', ':root {}');
 		file_put_contents($this->appDir . '/img/logos/utrecht-captured-logo.png', 'PNG');
 		$shippedBefore = hash_file('sha256', $this->appDir . '/css/tokens/utrecht.css');
 
-		(new MoveRuntimeFilesToAppData($this->appManager, $this->store, $this->createMock(LoggerInterface::class)))->run($this->createMock(IOutput::class));
+		(new MoveRuntimeFilesToAppData(
+			appManager: $this->appManager,
+			store: $this->store,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))->run($this->createMock(originalClassName: IOutput::class));
 
 		foreach (['css/custom-overrides.css', 'css/tokens/custom-oud.css', 'img/logos/utrecht-captured-logo.png'] as $name) {
-			$this->assertTrue($this->store->exists($name), $name . ' was not moved into the store');
-			$this->assertFileDoesNotExist($this->appDir . '/' . $name, $name . ' is still in the app directory');
+			$this->assertTrue(condition: $this->store->exists($name), message: $name . ' was not moved into the store');
+			$this->assertFileDoesNotExist(filename: $this->appDir . '/' . $name, message: $name . ' is still in the app directory');
 		}
 
-		$this->assertSame($shippedBefore, hash_file('sha256', $this->appDir . '/css/tokens/utrecht.css'), 'a shipped file was touched');
-		$this->assertFileExists($this->appDir . '/img/logos/utrecht.svg');
+		$this->assertSame(
+			expected: $shippedBefore,
+			actual: hash_file('sha256', $this->appDir . '/css/tokens/utrecht.css'),
+			message: 'a shipped file was touched'
+		);
+		$this->assertFileExists(filename: $this->appDir . '/img/logos/utrecht.svg');
 	}//end testTheRepairStepMovesAnOlderInstallsFilesAndKeepsShippedOnes()
 
+	/**
+	 * The repair step keeps a newer stored copy.
+	 *
+	 * @return void
+	 */
 	public function testTheRepairStepKeepsANewerStoredCopy(): void {
 		$this->store->write('css/custom-overrides.css', ':root { --color-primary: #222222; }');
 		file_put_contents($this->appDir . '/css/custom-overrides.css', ':root { --color-primary: #111111; }');
 
-		(new MoveRuntimeFilesToAppData($this->appManager, $this->store, $this->createMock(LoggerInterface::class)))->run($this->createMock(IOutput::class));
+		(new MoveRuntimeFilesToAppData(
+			appManager: $this->appManager,
+			store: $this->store,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		))->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertStringContainsString('#222222', (string)$this->store->read('css/custom-overrides.css'));
-		$this->assertFileDoesNotExist($this->appDir . '/css/custom-overrides.css');
+		$this->assertStringContainsString(needle: '#222222', haystack: (string)$this->store->read('css/custom-overrides.css'));
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/custom-overrides.css');
 	}//end testTheRepairStepKeepsANewerStoredCopy()
 
+	/**
+	 * Every shipped dark variant is fresh for its source.
+	 *
+	 * @return void
+	 */
 	public function testEveryShippedDarkVariantIsFreshForItsSource(): void {
 		// Shipped dark variants are build output now: the release may never
 		// rewrite them, so a generator change without regeneration has to fail here.
@@ -287,9 +445,9 @@ class RuntimeFileWiringTest extends TestCase {
 		// (hoog-contrast, thematiq#1023): the generator never touches it, so
 		// it cannot go stale. Only an ineligible set may carry one.
 		$skipped = (new \ReflectionClassConstant(DarkPaletteService::class, 'SKIPPED_DESIGN_SYSTEMS'))->getValue();
-		$designSystems = array_column((json_decode((string)file_get_contents($repo . '/token-sets.json'), true) ?: []), 'design_system', 'id');
+		$designSystems = array_column((array)json_decode((string)file_get_contents($repo . '/token-sets.json'), true), 'design_system', 'id');
 		$stale = [];
-		foreach (glob($repo . '/css/tokens/dark/*.css') ?: [] as $dark) {
+		foreach (FileList::glob(pattern: $repo . '/css/tokens/dark/*.css') as $dark) {
 			$id = basename($dark, '.css');
 			$source = $reader->read($repo, 'css/tokens/' . $id . '.css', null);
 			$header = substr((string)file_get_contents($dark), 0, 512);
@@ -307,9 +465,14 @@ class RuntimeFileWiringTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $stale, 'run php scripts/generate-dark-variants.php and commit the result');
+		$this->assertSame(expected: [], actual: $stale, message: 'run php scripts/generate-dark-variants.php and commit the result');
 	}//end testEveryShippedDarkVariantIsFreshForItsSource()
 
+	/**
+	 * Nothing in lib writes files outside the known places.
+	 *
+	 * @return void
+	 */
 	public function testNothingInLibWritesFilesOutsideTheKnownPlaces(): void {
 		// Every place allowed to write a file, and why. A new write anywhere
 		// else is how runtime files used to end up in the signed app directory.
@@ -338,6 +501,10 @@ class RuntimeFileWiringTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $offenders, 'write runtime files through RuntimeFileStore, or add the file here with a reason');
+		$this->assertSame(
+			expected: [],
+			actual: $offenders,
+			message: 'write runtime files through RuntimeFileStore, or add the file here with a reason'
+		);
 	}//end testNothingInLibWritesFilesOutsideTheKnownPlaces()
 }//end class

@@ -47,8 +47,8 @@ class StockTokensServiceTest extends TestCase {
 	 * @return ICacheFactory The factory.
 	 */
 	private function cacheFactory(): ICacheFactory {
-		$factory = $this->createMock(ICacheFactory::class);
-		$factory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$factory = $this->createMock(originalClassName: ICacheFactory::class);
+		$factory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		return $factory;
 	}//end cacheFactory()
@@ -66,16 +66,16 @@ class StockTokensServiceTest extends TestCase {
 	 * @return StockTokensService The system under test.
 	 */
 	private function build(array $stock, array $sources): StockTokensService {
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn($sources);
 
-		$service = $this->getMockBuilder(StockTokensService::class)
+		$service = $this->getMockBuilder(className: StockTokensService::class)
 			->setConstructorArgs(
 				[
 					$preview,
-					$this->createMock(LoggerInterface::class),
+					$this->createMock(originalClassName: LoggerInterface::class),
 					$this->cacheFactory(),
-					$this->createMock(IConfig::class),
+					$this->createMock(originalClassName: IConfig::class),
 				]
 			)
 			->onlyMethods(['stockVariables'])
@@ -88,11 +88,13 @@ class StockTokensServiceTest extends TestCase {
 
 	/**
 	 * The instance's value reaches the token, under the token's name.
+	 *
+	 * @return void
 	 */
 	public function testEmitsTheInstanceValueUnderTheTokenName(): void {
 		$service = $this->build(
-			['--color-primary' => '#00679e', '--color-error' => '#FFE7E7'],
-			[
+			stock: ['--color-primary' => '#00679e', '--color-error' => '#FFE7E7'],
+			sources: [
 				'--color-primary' => '--nldesign-color-primary',
 				'--color-error' => '--nldesign-color-error',
 			]
@@ -100,9 +102,9 @@ class StockTokensServiceTest extends TestCase {
 
 		$css = $service->getCss();
 
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', (string)$css);
-		$this->assertStringContainsString('--nldesign-color-error:#FFE7E7;', (string)$css);
-		$this->assertStringStartsWith(':root{', (string)$css);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary:#00679e;', haystack: (string)$css);
+		$this->assertStringContainsString(needle: '--nldesign-color-error:#FFE7E7;', haystack: (string)$css);
+		$this->assertStringStartsWith(prefix: ':root{', string: (string)$css);
 	}//end testEmitsTheInstanceValueUnderTheTokenName()
 
 	/**
@@ -111,20 +113,22 @@ class StockTokensServiceTest extends TestCase {
 	 * Passing the reference through would reopen the cycle the service exists
 	 * to avoid — the token would point back at a variable `overrides.css` is
 	 * itself rewriting, and the browser would discard both.
+	 *
+	 * @return void
 	 */
 	public function testFollowsVarReferencesToALiteral(): void {
 		$service = $this->build(
-			[
+			stock: [
 				'--color-element-error' => '#c90000',
 				'--color-border-error' => 'var(--color-element-error)',
 			],
-			['--color-border-error' => '--nldesign-color-border-error']
+			sources: ['--color-border-error' => '--nldesign-color-border-error']
 		);
 
 		$css = (string)$service->getCss();
 
-		$this->assertStringContainsString('--nldesign-color-border-error:#c90000;', $css);
-		$this->assertStringNotContainsString('var(', $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-border-error:#c90000;', haystack: $css);
+		$this->assertStringNotContainsString(needle: 'var(', haystack: $css);
 	}//end testFollowsVarReferencesToALiteral()
 
 	/**
@@ -133,15 +137,17 @@ class StockTokensServiceTest extends TestCase {
 	 * Gradients and `color-mix()` are resolved by the browser against whatever
 	 * the cascade holds at paint time. Freezing one into a token would freeze
 	 * the value it had in some other theme.
+	 *
+	 * @return void
 	 */
 	public function testDropsCompositesItCannotResolve(): void {
 		$service = $this->build(
-			[
+			stock: [
 				'--color-primary' => '#00679e',
 				'--gradient-primary-background' => 'linear-gradient(40deg, var(--color-primary) 0%, transparent 100%)',
 				'--color-dangling' => 'var(--color-that-does-not-exist)',
 			],
-			[
+			sources: [
 				'--color-primary' => '--nldesign-color-primary',
 				'--gradient-primary-background' => '--nldesign-gradient-primary-background',
 				'--color-dangling' => '--nldesign-color-dangling',
@@ -150,9 +156,9 @@ class StockTokensServiceTest extends TestCase {
 
 		$css = (string)$service->getCss();
 
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $css);
-		$this->assertStringNotContainsString('--nldesign-gradient-primary-background', $css);
-		$this->assertStringNotContainsString('--nldesign-color-dangling', $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary:#00679e;', haystack: $css);
+		$this->assertStringNotContainsString(needle: '--nldesign-gradient-primary-background', haystack: $css);
+		$this->assertStringNotContainsString(needle: '--nldesign-color-dangling', haystack: $css);
 	}//end testDropsCompositesItCannotResolve()
 
 	/**
@@ -165,16 +171,18 @@ class StockTokensServiceTest extends TestCase {
 	 * win handed the token the text colour, which paints the header in a shade
 	 * nothing asked for. Measured live on 34.0.4 before the fix: #00293f
 	 * instead of #00679e.
+	 *
+	 * @return void
 	 */
 	public function testTakesTheValueOfTheVariableSharingTheTokenName(): void {
 		$service = $this->build(
-			[
+			stock: [
 				'--color-primary' => '#00679e',
 				'--color-primary-element' => '#00679e',
 				'--color-primary-light-text' => '#00293f',
 				'--color-primary-element-light-text' => '#00293f',
 			],
-			[
+			sources: [
 				// Deliberately ordered so the same-named variable is neither
 				// first nor last: neither position may be what decides.
 				'--color-primary-light-text' => '--nldesign-color-primary',
@@ -184,7 +192,7 @@ class StockTokensServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', (string)$service->getCss());
+		$this->assertStringContainsString(needle: '--nldesign-color-primary:#00679e;', haystack: (string)$service->getCss());
 	}//end testTakesTheValueOfTheVariableSharingTheTokenName()
 
 	/**
@@ -193,6 +201,8 @@ class StockTokensServiceTest extends TestCase {
 	 * Otherwise the emitted theme would depend on the order declarations
 	 * happen to appear in `overrides.css`, and reordering that file for
 	 * readability would silently change what the page looks like.
+	 *
+	 * @return void
 	 */
 	public function testPicksDeterministicallyWithoutANameMatch(): void {
 		$sources = [
@@ -201,11 +211,11 @@ class StockTokensServiceTest extends TestCase {
 		];
 		$stock = ['--color-zebra' => '#111111', '--color-apple' => '#222222'];
 
-		$first = $this->build($stock, $sources)->getCss();
-		$second = $this->build($stock, array_reverse($sources, true))->getCss();
+		$first = $this->build(stock: $stock, sources: $sources)->getCss();
+		$second = $this->build(stock: $stock, sources: array_reverse($sources, true))->getCss();
 
-		$this->assertSame($first, $second);
-		$this->assertStringContainsString('--nldesign-color-unnamed:#222222;', (string)$first);
+		$this->assertSame(expected: $first, actual: $second);
+		$this->assertStringContainsString(needle: '--nldesign-color-unnamed:#222222;', haystack: (string)$first);
 	}//end testPicksDeterministicallyWithoutANameMatch()
 
 	/**
@@ -213,16 +223,18 @@ class StockTokensServiceTest extends TestCase {
 	 *
 	 * The token set's vocabulary is `overrides.css`'s to define; this service
 	 * only fills it in.
+	 *
+	 * @return void
 	 */
 	public function testEmitsOnlyMappedVariables(): void {
 		$service = $this->build(
-			['--color-primary' => '#00679e', '--color-unmapped' => '#123456'],
-			['--color-primary' => '--nldesign-color-primary']
+			stock: ['--color-primary' => '#00679e', '--color-unmapped' => '#123456'],
+			sources: ['--color-primary' => '--nldesign-color-primary']
 		);
 
 		$css = (string)$service->getCss();
 
-		$this->assertStringNotContainsString('#123456', $css);
+		$this->assertStringNotContainsString(needle: '#123456', haystack: $css);
 	}//end testEmitsOnlyMappedVariables()
 
 	/**
@@ -232,23 +244,27 @@ class StockTokensServiceTest extends TestCase {
 	 * Null is what makes the caller fall back to the shipped file. An empty
 	 * block would be accepted as a valid layer and would leave the page with no
 	 * token values at all, which is the one outcome worse than a stale theme.
+	 *
+	 * @return void
 	 */
 	public function testReturnsNullWhenTheInstanceCannotBeRead(): void {
-		$service = $this->build([], ['--color-primary' => '--nldesign-color-primary']);
+		$service = $this->build(stock: [], sources: ['--color-primary' => '--nldesign-color-primary']);
 
-		$this->assertNull($service->getCss());
+		$this->assertNull(actual: $service->getCss());
 	}//end testReturnsNullWhenTheInstanceCannotBeRead()
 
 	/**
 	 * Nothing overlapping means nothing to emit, and that is also null.
+	 *
+	 * @return void
 	 */
 	public function testReturnsNullWhenNothingMaps(): void {
 		$service = $this->build(
-			['--color-primary' => '#00679e'],
-			['--color-something-else' => '--nldesign-color-something-else']
+			stock: ['--color-primary' => '#00679e'],
+			sources: ['--color-something-else' => '--nldesign-color-something-else']
 		);
 
-		$this->assertNull($service->getCss());
+		$this->assertNull(actual: $service->getCss());
 	}//end testReturnsNullWhenNothingMaps()
 
 	/**
@@ -257,18 +273,20 @@ class StockTokensServiceTest extends TestCase {
 	 * `inject()` and the stylesheet manifest both build the layer list, so an
 	 * unmemoised resolve would recompute the whole theme twice on a settings
 	 * page load.
+	 *
+	 * @return void
 	 */
 	public function testAsksTheInstanceOnlyOnce(): void {
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 
-		$service = $this->getMockBuilder(StockTokensService::class)
+		$service = $this->getMockBuilder(className: StockTokensService::class)
 			->setConstructorArgs(
 				[
 					$preview,
-					$this->createMock(LoggerInterface::class),
+					$this->createMock(originalClassName: LoggerInterface::class),
 					$this->cacheFactory(),
-					$this->createMock(IConfig::class),
+					$this->createMock(originalClassName: IConfig::class),
 				]
 			)
 			->onlyMethods(['stockVariables'])
@@ -284,18 +302,20 @@ class StockTokensServiceTest extends TestCase {
 
 	/**
 	 * A failed resolve is not retried either, for the same reason.
+	 *
+	 * @return void
 	 */
 	public function testDoesNotRetryAFailedResolve(): void {
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(['--color-primary' => '--nldesign-color-primary']);
 
-		$service = $this->getMockBuilder(StockTokensService::class)
+		$service = $this->getMockBuilder(className: StockTokensService::class)
 			->setConstructorArgs(
 				[
 					$preview,
-					$this->createMock(LoggerInterface::class),
+					$this->createMock(originalClassName: LoggerInterface::class),
 					$this->cacheFactory(),
-					$this->createMock(IConfig::class),
+					$this->createMock(originalClassName: IConfig::class),
 				]
 			)
 			->onlyMethods(['stockVariables'])
@@ -303,8 +323,8 @@ class StockTokensServiceTest extends TestCase {
 
 		$service->expects($this->once())->method('stockVariables')->willReturn([]);
 
-		$this->assertNull($service->getCss());
-		$this->assertNull($service->getCss());
+		$this->assertNull(actual: $service->getCss());
+		$this->assertNull(actual: $service->getCss());
 	}//end testDoesNotRetryAFailedResolve()
 
 	/* ---------------------------------------------------------------- */
@@ -330,15 +350,15 @@ class StockTokensServiceTest extends TestCase {
 		array $stock,
 		string $appVersion = '1.2.10',
 	): StockTokensService {
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(
 			['--color-primary' => '--nldesign-color-primary']
 		);
 
-		$factory = $this->createMock(ICacheFactory::class);
+		$factory = $this->createMock(originalClassName: ICacheFactory::class);
 		$factory->method('createDistributed')->willReturn($cache);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturn($version);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, string $default) use ($cachebuster, $appVersion): string {
@@ -354,8 +374,8 @@ class StockTokensServiceTest extends TestCase {
 			}
 		);
 
-		$service = $this->getMockBuilder(StockTokensService::class)
-			->setConstructorArgs([$preview, $this->createMock(LoggerInterface::class), $factory, $config])
+		$service = $this->getMockBuilder(className: StockTokensService::class)
+			->setConstructorArgs([$preview, $this->createMock(originalClassName: LoggerInterface::class), $factory, $config])
 			->onlyMethods(['stockVariables'])
 			->getMock();
 
@@ -371,24 +391,28 @@ class StockTokensServiceTest extends TestCase {
 	 * resolved on every page render, so an instance that never chose a token
 	 * set would otherwise recompute the theming app's entire variable map once
 	 * per request forever.
+	 *
+	 * @return void
 	 */
 	public function testAServedBlockComesFromTheCache(): void {
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturn(':root{--nldesign-color-primary:#cached;}');
 		$cache->expects($this->never())->method('set');
 
-		$service = $this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e']);
+		$service = $this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: ['--color-primary' => '#00679e']);
 
-		$this->assertSame(':root{--nldesign-color-primary:#cached;}', $service->getCss());
+		$this->assertSame(expected: ':root{--nldesign-color-primary:#cached;}', actual: $service->getCss());
 	}//end testAServedBlockComesFromTheCache()
 
 	/**
 	 * A resolved block is written back, under a key made of the three things
 	 * that can change the answer.
+	 *
+	 * @return void
 	 */
 	public function testAResolvedBlockIsCachedUnderVersionAndCachebuster(): void {
 		$written = [];
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturn(null);
 		$cache->method('set')->willReturnCallback(
 			static function (string $key, $value) use (&$written): bool {
@@ -398,11 +422,11 @@ class StockTokensServiceTest extends TestCase {
 			}
 		);
 
-		$service = $this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e']);
+		$service = $this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: ['--color-primary' => '#00679e']);
 		$service->getCss();
 
-		$this->assertArrayHasKey('34.0.4:7:1.2.10', $written);
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $written['34.0.4:7:1.2.10']);
+		$this->assertArrayHasKey(key: '34.0.4:7:1.2.10', array: $written);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary:#00679e;', haystack: $written['34.0.4:7:1.2.10']);
 	}//end testAResolvedBlockIsCachedUnderVersionAndCachebuster()
 
 	/**
@@ -413,10 +437,12 @@ class StockTokensServiceTest extends TestCase {
 	 * The third input is thematiq#621. The block is built from this app's own
 	 * `overrides.css` mapping, so upgrading Thematiq changes the answer, and a
 	 * key without the app version served the old mapping for a day.
+	 *
+	 * @return void
 	 */
 	public function testTheKeyMovesWhenAnyInputMoves(): void {
 		$keys = [];
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturnCallback(
 			static function (string $key) use (&$keys) {
 				$keys[] = $key;
@@ -425,12 +451,18 @@ class StockTokensServiceTest extends TestCase {
 			}
 		);
 
-		$this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e'])->getCss();
-		$this->buildCached($cache, '34.0.5', '7', ['--color-primary' => '#00679e'])->getCss();
-		$this->buildCached($cache, '34.0.4', '8', ['--color-primary' => '#00679e'])->getCss();
-		$this->buildCached($cache, '34.0.4', '7', ['--color-primary' => '#00679e'], '1.2.11')->getCss();
+		$this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached(cache: $cache, version: '34.0.5', cachebuster: '7', stock: ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '8', stock: ['--color-primary' => '#00679e'])->getCss();
+		$this->buildCached(
+			cache: $cache,
+			version: '34.0.4',
+			cachebuster: '7',
+			stock: ['--color-primary' => '#00679e'],
+			appVersion: '1.2.11'
+		)->getCss();
 
-		$this->assertSame(['34.0.4:7:1.2.10', '34.0.5:7:1.2.10', '34.0.4:8:1.2.10', '34.0.4:7:1.2.11'], $keys);
+		$this->assertSame(expected: ['34.0.4:7:1.2.10', '34.0.5:7:1.2.10', '34.0.4:8:1.2.10', '34.0.4:7:1.2.11'], actual: $keys);
 	}//end testTheKeyMovesWhenAnyInputMoves()
 
 	/**
@@ -445,11 +477,23 @@ class StockTokensServiceTest extends TestCase {
 	 *
 	 * The stand-in mirrors the two fields core keeps: the admin's colour and
 	 * the one the current user resolves to.
+	 *
+	 * @return void
 	 */
 	public function testTheBlockIsTheInstanceColourNotTheUsers(): void {
 		$theme = new class {
+			/**
+			 * The default primary color.
+			 *
+			 * @var string
+			 */
 			public string $defaultPrimaryColor = '#00679e';
 
+			/**
+			 * The primary color.
+			 *
+			 * @var string
+			 */
 			public string $primaryColor = '#ff00ff';
 
 			/**
@@ -461,12 +505,21 @@ class StockTokensServiceTest extends TestCase {
 			}
 		};
 
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(
 			['--color-primary' => '--nldesign-color-primary']
 		);
 
-		$service = new class($preview, $this->createMock(LoggerInterface::class), $this->cacheFactory(), $this->createMock(IConfig::class), $theme) extends StockTokensService {
+		$service = new class($preview, $this->createMock(originalClassName: LoggerInterface::class), $this->cacheFactory(), $this->createMock(originalClassName: IConfig::class), $theme) extends StockTokensService {
+			/**
+			 * Constructor.
+			 *
+			 * @param TokenSetPreviewService $sources The sources.
+			 * @param LoggerInterface $logger The logger.
+			 * @param ICacheFactory $cacheFactory The cache factory.
+			 * @param IConfig $config The config.
+			 * @param object $theme The theme.
+			 */
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,
@@ -487,8 +540,8 @@ class StockTokensServiceTest extends TestCase {
 
 		$css = (string)$service->getCss();
 
-		$this->assertStringContainsString('--nldesign-color-primary:#00679e;', $css);
-		$this->assertStringNotContainsString('#ff00ff', $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary:#00679e;', haystack: $css);
+		$this->assertStringNotContainsString(needle: '#ff00ff', haystack: $css);
 	}//end testTheBlockIsTheInstanceColourNotTheUsers()
 
 	/**
@@ -498,9 +551,16 @@ class StockTokensServiceTest extends TestCase {
 	 * This is the safety half of the same fact: the check above is what keeps
 	 * one account's colour out of everyone else's page, so a theming app whose
 	 * shape no longer allows it must reach the shipped file.
+	 *
+	 * @return void
 	 */
 	public function testAThemeWithoutAnAdminColourFallsBack(): void {
 		$theme = new class {
+			/**
+			 * The primary color.
+			 *
+			 * @var string
+			 */
 			public string $primaryColor = '#ff00ff';
 
 			/**
@@ -511,12 +571,21 @@ class StockTokensServiceTest extends TestCase {
 			}
 		};
 
-		$preview = $this->createMock(TokenSetPreviewService::class);
+		$preview = $this->createMock(originalClassName: TokenSetPreviewService::class);
 		$preview->method('getTokenSources')->willReturn(
 			['--color-primary' => '--nldesign-color-primary']
 		);
 
-		$service = new class($preview, $this->createMock(LoggerInterface::class), $this->cacheFactory(), $this->createMock(IConfig::class), $theme) extends StockTokensService {
+		$service = new class($preview, $this->createMock(originalClassName: LoggerInterface::class), $this->cacheFactory(), $this->createMock(originalClassName: IConfig::class), $theme) extends StockTokensService {
+			/**
+			 * Constructor.
+			 *
+			 * @param TokenSetPreviewService $sources The sources.
+			 * @param LoggerInterface $logger The logger.
+			 * @param ICacheFactory $cacheFactory The cache factory.
+			 * @param IConfig $config The config.
+			 * @param object $theme The theme.
+			 */
 			public function __construct(
 				TokenSetPreviewService $sources,
 				LoggerInterface $logger,
@@ -535,7 +604,7 @@ class StockTokensServiceTest extends TestCase {
 			}
 		};
 
-		$this->assertNull($service->getCss());
+		$this->assertNull(actual: $service->getCss());
 	}//end testAThemeWithoutAnAdminColourFallsBack()
 
 	/**
@@ -544,14 +613,16 @@ class StockTokensServiceTest extends TestCase {
 	 * The theming app being absent or throwing does not move the cache key
 	 * when it is put back, so a cached failure would outlive its own cause and
 	 * hold the instance on the shipped snapshot indefinitely.
+	 *
+	 * @return void
 	 */
 	public function testAFailedResolveIsNotCached(): void {
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturn(null);
 		$cache->expects($this->never())->method('set');
 
-		$service = $this->buildCached($cache, '34.0.4', '7', []);
+		$service = $this->buildCached(cache: $cache, version: '34.0.4', cachebuster: '7', stock: []);
 
-		$this->assertNull($service->getCss());
+		$this->assertNull(actual: $service->getCss());
 	}//end testAFailedResolveIsNotCached()
 }//end class

@@ -31,24 +31,26 @@ class AdminFontNoticeTest extends TestCase {
 	/**
 	 * The license notice must be present, translatable (ENGLISH key), and
 	 * positioned before the upload control markup.
+	 *
+	 * @return void
 	 */
 	public function testLicenseNoticePrecedesUploadControl(): void {
 		$path = __DIR__ . '/../../../templates/settings/admin.php';
-		$this->assertFileExists($path);
+		$this->assertFileExists(filename: $path);
 
 		$template = (string)file_get_contents($path);
 
 		$noticeKey = 'Only upload fonts your organization holds a license to self-host. Licensing responsibility rests with the uploader.';
 		$noticePos = strpos($template, $noticeKey);
-		$this->assertNotFalse($noticePos, 'The license-responsibility notice must ship in the admin template.');
+		$this->assertNotFalse(condition: $noticePos, message: 'The license-responsibility notice must ship in the admin template.');
 
 		$uploadButtonPos = strpos($template, 'nldesign-font-upload-btn');
-		$this->assertNotFalse($uploadButtonPos, 'The font upload control must ship in the admin template.');
+		$this->assertNotFalse(condition: $uploadButtonPos, message: 'The font upload control must ship in the admin template.');
 
 		$this->assertLessThan(
-			$uploadButtonPos,
-			$noticePos,
-			'The license notice must appear above the upload control in document order.'
+			expected: $uploadButtonPos,
+			actual: $noticePos,
+			message: 'The license notice must appear above the upload control in document order.'
 		);
 	}//end testLicenseNoticePrecedesUploadControl()
 }//end class
