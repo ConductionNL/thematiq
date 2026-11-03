@@ -58,6 +58,8 @@ use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\GroupDelegationRules;
 use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\OverridesCssBuilder;
+use OCA\Thematiq\Service\OverridesSetContext;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OwnTokenService;
 use OCA\Thematiq\Service\PackageTokenSourceConverter;
 use OCA\Thematiq\Service\RestrictedSetGate;
@@ -157,6 +159,8 @@ use ReflectionProperty;
 #[UsesClass(ConfigSourceLock::class)]
 #[UsesClass(ConfigSourceSteps::class)]
 #[UsesClass(CustomOverridesService::class)]
+#[UsesClass(OverridesSetContext::class)]
+#[UsesClass(OverridesStorage::class)]
 #[UsesClass(CustomTokenSetService::class)]
 #[UsesClass(CustomTokenSetsBundleSection::class)]
 #[UsesClass(DarkPaletteService::class)]

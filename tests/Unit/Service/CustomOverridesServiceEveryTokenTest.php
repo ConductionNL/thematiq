@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\TokenValueValidator;
 use OCP\App\IAppManager;
@@ -43,7 +44,7 @@ class CustomOverridesServiceEveryTokenTest extends TestCase {
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
 		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class), $this->store);
-		$this->service = new CustomOverridesService($this->store, $parser, $dark);
+		$this->service = new CustomOverridesService(storage: new OverridesStorage(store: $this->store, cssParser: $parser, darkPalette: $dark));
 	}
 
 	protected function tearDown(): void {

@@ -28,8 +28,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
-use OCP\IConfig;
 use RuntimeException;
 
 /**
@@ -90,47 +88,12 @@ class CustomOverridesService {
 	public const FILE = 'custom-overrides';
 
 	/**
-	 * Where the overrides files are stored: app data, never the app directory.
-	 *
-	 * @var RuntimeFileStore
-	 */
-	private RuntimeFileStore $store;
-
-	/**
-	 * The CSS parser service (shared :root-block parsing, avoids duplication).
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
 	 * Builds the file content, deriving each colour override's dark value exactly
 	 * as the generated dark stylesheets do.
 	 *
 	 * @var OverridesCssBuilder
 	 */
 	private OverridesCssBuilder $css;
-
-	/**
-	 * The administrator's own tokens, rendered after the editor's.
-	 *
-	 * @var OwnTokenService|null
-	 */
-	private ?OwnTokenService $ownTokens;
-
-	/**
-	 * The app config, for the active set when a caller names none.
-	 *
-	 * @var IConfig|null
-	 */
-	private ?IConfig $config;
-
-	/**
-	 * Which design system a set wears, for choosing its file.
-	 *
-	 * @var DesignSystemService|null
-	 */
-	private ?DesignSystemService $designSystems;
 
 	/**
 	 * The value grammar per token type.
@@ -150,31 +113,15 @@ class CustomOverridesService {
 	/**
 	 * Constructor.
 	 *
-	 * @param RuntimeFileStore $store Where the overrides files are stored.
-	 * @param CssParserService $cssParser CSS parser for :root block extraction.
-	 * @param DarkPaletteService $darkPalette Derives each colour override's dark value.
-	 * @param IConfig|null $config The app config. With the next one, what picks a set's own file;
-	 *                             without them every set reads the shared file.
-	 * @param DesignSystemService|null $designSystems The token set metadata.
-	 * @param TokenValueValidator|null $values The value grammar per token type.
-	 * @param OwnTokenService|null $ownTokens The administrator's own tokens; without it the file holds none.
+	 * @param OverridesStorage $storage The runtime store, the CSS parser and the dark palette.
+	 * @param OverridesSetContext $setContext The config, the design systems, the value grammar and the own tokens; each optional.
 	 */
 	public function __construct(
-		RuntimeFileStore $store,
-		CssParserService $cssParser,
-		DarkPaletteService $darkPalette,
-		?IConfig $config = null,
-		?DesignSystemService $designSystems = null,
-		?TokenValueValidator $values = null,
-		?OwnTokenService $ownTokens = null,
+		private readonly OverridesStorage $storage,
+		private readonly OverridesSetContext $setContext = new OverridesSetContext(),
 	) {
-		$this->store = $store;
-		$this->cssParser = $cssParser;
-		$this->config = $config;
-		$this->designSystems = $designSystems;
-		$this->values = ($values ?? new TokenValueValidator());
-		$this->css = new OverridesCssBuilder(darkPalette: $darkPalette, values: $this->values);
-		$this->ownTokens = $ownTokens;
+		$this->values = ($setContext->values ?? new TokenValueValidator());
+		$this->css = new OverridesCssBuilder(darkPalette: $storage->darkPalette, values: $this->values);
 	}//end __construct()
 
 	/**
@@ -207,19 +154,19 @@ class CustomOverridesService {
 	private function getFilePath(?string $tokenSet): string {
 		// Built without the set lookup (a caller that constructs the service
 		// by hand): the shared file, which is every set's on a design system.
-		if ($this->config === null || $this->designSystems === null) {
+		if ($this->setContext->config === null || $this->setContext->designSystems === null) {
 			return 'css/' . self::FILE . '.css';
 		}
 
 		if ($tokenSet === null) {
-			$tokenSet = $this->config->getAppValue(
+			$tokenSet = $this->setContext->config->getAppValue(
 				Application::APP_ID,
 				'token_set',
 				CssInjectionService::STOCK_TOKEN_SET
 			);
 		}
 
-		$meta = $this->designSystems->getTokenSetMeta(tokenSetId: $tokenSet);
+		$meta = $this->setContext->designSystems->getTokenSetMeta(tokenSetId: $tokenSet);
 		$file = self::fileFor(tokenSet: $tokenSet, designSystemId: (string)($meta['design_system'] ?? 'nldesign'));
 
 		return 'css/' . $file . '.css';
@@ -239,7 +186,7 @@ class CustomOverridesService {
 	 */
 	public function ensureExists(?string $tokenSet = null): void {
 		$name = $this->getFilePath(tokenSet: $tokenSet);
-		if ($this->store->exists(name: $name) === false) {
+		if ($this->storage->store->exists(name: $name) === false) {
 			$this->writeFile(tokens: [], name: $name);
 		}
 
@@ -258,7 +205,7 @@ class CustomOverridesService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
 	 */
 	public function read(?string $tokenSet = null): array {
-		$content = $this->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
+		$content = $this->storage->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
 		if ($content === null) {
 			return [];
 		}
@@ -331,11 +278,11 @@ class CustomOverridesService {
 	public function rewriteAll(): array {
 		$changed = [];
 		$names = array_filter(
-			$this->store->listDirectory(directory: 'css'),
+			$this->storage->store->listDirectory(directory: 'css'),
 			static fn (string $name): bool => preg_match('#^css/' . self::FILE . '(-[a-z0-9-]+)?\.css$#', $name) === 1
 		);
 		foreach ($names as $name) {
-			$css = (string)$this->store->read(name: $name);
+			$css = (string)$this->storage->store->read(name: $name);
 			// The editable filter also drops the motion twins: the registry lists only the editor's names.
 			$tokens = $this->filterEditable(tokens: $this->parseDeclarations(css: $css));
 			$own = $this->ownDarkValues(css: $css);
@@ -435,7 +382,7 @@ class CustomOverridesService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
 	 */
 	private function writeFile(array $tokens, string $name, array $darkTokens = []): void {
-		$this->store->write(name: $name, content: $this->buildCss(tokens: $tokens, darkTokens: $darkTokens));
+		$this->storage->store->write(name: $name, content: $this->buildCss(tokens: $tokens, darkTokens: $darkTokens));
 
 	}//end writeFile()
 
@@ -450,7 +397,7 @@ class CustomOverridesService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
 	 */
 	private function buildCss(array $tokens, array $darkTokens = []): string {
-		return $this->css->build(tokens: $tokens, darkTokens: $darkTokens, own: $this->ownTokens?->css());
+		return $this->css->build(tokens: $tokens, darkTokens: $darkTokens, own: $this->setContext->ownTokens?->css());
 	}//end buildCss()
 
 	/**
@@ -474,7 +421,7 @@ class CustomOverridesService {
 
 		// Read a stored token back under the Nextcloud name the editor uses.
 		$tokens = [];
-		foreach ($this->cssParser->parseRootBlock(css: $css) as $name => $value) {
+		foreach ($this->storage->cssParser->parseRootBlock(css: $css) as $name => $value) {
 			$tokens[($byToken[$name] ?? $name)] = $value;
 		}
 
@@ -491,7 +438,7 @@ class CustomOverridesService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
 	 */
 	public function getRawContent(?string $tokenSet = null): string {
-		$content = $this->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
+		$content = $this->storage->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
 		if ($content === null) {
 			return self::CSS_HEADER . PHP_EOL . ':root {}' . PHP_EOL;
 		}

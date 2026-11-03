@@ -24,6 +24,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
@@ -149,7 +150,13 @@ class RuntimeFileWiringTest extends TestCase {
 			logoAsset: ['path' => 'logo.png', 'contents' => 'PNGDATA'],
 		);
 		$dark->generateAndWrite(setId: (string)$stored['id'], force: true);
-		(new CustomOverridesService($this->store, new CssParserService(), $dark))->write(tokens: ['--color-primary' => '#24578f']);
+		(new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: $this->store,
+				cssParser: new CssParserService(),
+				darkPalette: $dark
+			)
+		))->write(tokens: ['--color-primary' => '#24578f']);
 		$css = new CustomCssService($this->store, $this->createMock(IAppConfig::class), new CustomCssValidator());
 		$this->assertSame([], $css->write(css: '.header { color: red; }'));
 

@@ -168,9 +168,10 @@ class ComplianceReportService {
 		// is never scored against values the browser never received.
 		$declarations = [];
 		if ($designSystemId !== 'none') {
+			$setCss = (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css');
 			$declarations = array_merge(
 				$this->parseCssFile(path: $appPath . '/css/systems/' . $designSystemId . '/defaults.css'),
-				($this->measuring->cssParser->parseDeclarations(content: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css')) ?? [])
+				($this->measuring->cssParser->parseDeclarations(content: $setCss) ?? [])
 			);
 		}
 
