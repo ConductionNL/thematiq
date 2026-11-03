@@ -55,6 +55,13 @@ class LayoutControllerTest extends TestCase {
 	private array $audit = [];
 
 	/**
+	 * The request parameters the controller reads.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private array $params = [];
+
+	/**
 	 * The controller under test.
 	 *
 	 * @var LayoutController
@@ -71,6 +78,7 @@ class LayoutControllerTest extends TestCase {
 		parent::setUp();
 		$this->stored = [];
 		$this->audit = [];
+		$this->params = [];
 
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
@@ -103,9 +111,16 @@ class LayoutControllerTest extends TestCase {
 			}
 		);
 
+		$request = $this->createMock(IRequest::class);
+		$request->method('getParam')->willReturnCallback(
+			fn (string $key, $default = null) => match (array_key_exists($key, $this->params)) {
+				true => $this->params[$key], default => $default
+			}
+		);
+
 		$this->controller = new LayoutController(
 			'thematiq',
-			$this->createMock(IRequest::class),
+			$request,
 			new LayoutOptionsService(config: $config, designSystemService: $designSystems),
 			$active,
 			$auditService
@@ -118,7 +133,7 @@ class LayoutControllerTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
 	public function testAChoiceIsStoredAndAudited(): void {
-		$response = $this->controller->save(workplaceLayout: 'default', brandStripe: '0');
+		$response = $this->save(params: ['workplaceLayout' => 'default', 'brandStripe' => '0']);
 
 		$this->assertSame(200, $response->getStatus());
 		$this->assertSame('default', $this->stored['workplace_layout']);
@@ -160,7 +175,7 @@ class LayoutControllerTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testTheEmptyChoiceAnswersWithTheSetsDefaults(): void {
-		$response = $this->controller->save(workplaceLayout: '', brandStripe: '');
+		$response = $this->save(params: ['workplaceLayout' => '', 'brandStripe' => '']);
 
 		$this->assertSame(
 			[
@@ -184,14 +199,16 @@ class LayoutControllerTest extends TestCase {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function testTheNewerChoicesAreStoredAndAudited(): void {
-		$response = $this->controller->save(
-			workplaceLayout: '',
-			brandStripe: '',
-			navigationWidth: '300',
-			navigationActiveStyle: 'soft',
-			brandStripePlacement: 'login',
-			loginWatermark: '0',
-			headerStyle: 'workplace'
+		$response = $this->save(
+			params: [
+				'workplaceLayout' => '',
+				'brandStripe' => '',
+				'navigationWidth' => '300',
+				'navigationActiveStyle' => 'soft',
+				'brandStripePlacement' => 'login',
+				'loginWatermark' => '0',
+				'headerStyle' => 'workplace',
+			]
 		);
 
 		$this->assertSame(200, $response->getStatus());
@@ -238,12 +255,56 @@ class LayoutControllerTest extends TestCase {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
 	public function testAnUnknownValueStoresNothing(string $layout, string $stripe, array $newer = []): void {
-		$response = $this->controller->save(...(['workplaceLayout' => $layout, 'brandStripe' => $stripe] + $newer));
+		$response = $this->save(params: (['workplaceLayout' => $layout, 'brandStripe' => $stripe] + $newer));
 
 		$this->assertSame(400, $response->getStatus());
 		$this->assertSame([], $this->stored);
 		$this->assertSame([], $this->audit);
 	}//end testAnUnknownValueStoresNothing()
+
+	/**
+	 * A value that is not a string, such as an array in the JSON body, refuses the request like an unknown value.
+	 *
+	 * @param mixed $value The value sent for the navigation width.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider notAStringProvider
+	 */
+	public function testAValueThatIsNotAStringStoresNothing(mixed $value): void {
+		$response = $this->save(params: ['workplaceLayout' => 'light', 'navigationWidth' => $value]);
+
+		$this->assertSame(400, $response->getStatus());
+		$this->assertSame([], $this->stored);
+		$this->assertSame([], $this->audit);
+	}//end testAValueThatIsNotAStringStoresNothing()
+
+	/**
+	 * Values a JSON body can carry that are not strings.
+	 *
+	 * @return array<string, array{0: mixed}>
+	 */
+	public static function notAStringProvider(): array {
+		return [
+			'an array' => [['300']],
+			'a number' => [300],
+			'a flag' => [true],
+			'null' => [null],
+		];
+	}//end notAStringProvider()
+
+	/**
+	 * Save with the given request parameters.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 *
+	 * @return \OCP\AppFramework\Http\JSONResponse
+	 */
+	private function save(array $params): \OCP\AppFramework\Http\JSONResponse {
+		$this->params = $params;
+
+		return $this->controller->save();
+	}//end save()
 
 	/**
 	 * Requests with one value outside the allowed three.

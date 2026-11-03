@@ -151,7 +151,9 @@ class LayoutControllerSaveGoldenTest extends TestCase {
 		);
 		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(
-			static fn (string $key, $default = null) => (array_key_exists($key, $params) === true ? $params[$key] : $default)
+			static fn (string $key, $default = null) => match (array_key_exists($key, $params)) {
+				true => $params[$key], default => $default
+			}
 		);
 
 		$controller = new LayoutController(
