@@ -45,7 +45,10 @@ use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenDeprecationService;
 use OCA\Thematiq\Service\TokenLifecycleBundleSection;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetPreviewService;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCA\Thematiq\Service\TokenValueValidator;
@@ -200,12 +203,18 @@ class ConfigBundleServiceTest extends TestCase {
 		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
 
 		$this->tokenSetService = new TokenSetService(
-			$appManager,
-			$config,
-			$logger,
-			new ShippedTokenSetAuditService($contrast, $cssParser),
-			$cacheFactory,
-			new TokenSetVocabularyAuditService($cssParser)
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $logger
+			),
+			audits: new TokenSetAudits(
+				audit: new ShippedTokenSetAuditService($contrast, $cssParser),
+				vocabularyAudit: new TokenSetVocabularyAuditService($cssParser)
+			)
 		);
 
 		$appThemingService = new AppThemingService($config, $appManager);

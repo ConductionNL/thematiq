@@ -50,7 +50,10 @@ use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ScheduledSwitchTargets;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetFontAuditService;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCA\Thematiq\Tests\Unit\Support\RestrictedSetFixture;
@@ -97,6 +100,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[CoversClass(CustomTokenSetsBundleSection::class)]
 #[CoversClass(ThemeSet::class)]
 #[CoversClass(TokenSetService::class)]
+#[UsesClass(TokenSetAudits::class)]
+#[UsesClass(TokenSetFiles::class)]
+#[UsesClass(TokenSetRuntime::class)]
 #[CoversClass(RestrictedSetGate::class)]
 #[CoversClass(RestrictedSetsInBundle::class)]
 #[CoversClass(RestrictedSetNotConfirmedException::class)]

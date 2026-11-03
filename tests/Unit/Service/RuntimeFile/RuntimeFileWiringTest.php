@@ -28,6 +28,9 @@ use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -171,13 +174,19 @@ class RuntimeFileWiringTest extends TestCase {
 		$this->store->write('css/tokens/custom-gemeente-voorbeeld.css', ':root {}');
 		$this->appValues['thematiq/custom_token_sets'] = json_encode(['custom-gemeente-voorbeeld' => ['name' => 'Gemeente Voorbeeld']]);
 		$service = new TokenSetService(
-			$this->appManager,
-			$this->config(),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(\OCA\Thematiq\Service\ShippedTokenSetAuditService::class),
-			$this->createMock(\OCP\ICacheFactory::class),
-			$this->createMock(\OCA\Thematiq\Service\TokenSetVocabularyAuditService::class),
-			$this->store,
+			setFiles: new TokenSetFiles(
+				appManager: $this->appManager,
+				store: $this->store
+			),
+			runtime: new TokenSetRuntime(
+				config: $this->config(),
+				cacheFactory: $this->createMock(\OCP\ICacheFactory::class),
+				logger: $this->createMock(LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $this->createMock(\OCA\Thematiq\Service\ShippedTokenSetAuditService::class),
+				vocabularyAudit: $this->createMock(\OCA\Thematiq\Service\TokenSetVocabularyAuditService::class)
+			)
 		);
 
 		$this->assertTrue($service->isValidTokenSet('custom-gemeente-voorbeeld'));
