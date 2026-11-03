@@ -16,6 +16,8 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCP\IConfig;
@@ -82,13 +84,17 @@ class OverridesControllerAuditTest extends TestCase {
 		$this->themingService = $this->createMock(ThemingService::class);
 
 		$this->controller = new OverridesController(
-			'nldesign',
-			$this->request,
-			$this->overridesService,
-			new CssParserService(),
-			$this->auditService,
-			$this->config,
-			$this->themingService
+			appName: 'nldesign',
+			request: $this->request,
+			writes: new OverridesWrites(
+				overridesService: $this->overridesService,
+				cssParser: new CssParserService(),
+				auditService: $this->auditService
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->config,
+				themingService: $this->themingService
+			)
 		);
 	}//end setUp()
 
@@ -268,4 +274,19 @@ class OverridesControllerAuditTest extends TestCase {
 
 		return $path;
 	}//end writeTempCssFile()
+	/**
+	 * The overrides read answers the set's dark overrides and its derived dark values from the service.
+	 *
+	 * @return void
+	 */
+	public function testTheReadAnswersTheDarkOverridesAndDerivedValues(): void {
+		$this->overridesService->method('read')->willReturn([]);
+		$this->overridesService->method('readDark')->willReturn(['--color-primary' => '#0b2a4a']);
+		$this->overridesService->method('derivedDark')->willReturn(['--color-primary-text' => '#ffffff']);
+
+		$data = $this->controller->getOverrides()->getData();
+
+		$this->assertSame(expected: ['--color-primary' => '#0b2a4a'], actual: $data['darkOverrides']);
+		$this->assertSame(expected: ['--color-primary-text' => '#ffffff'], actual: $data['darkDerived']);
+	}//end testTheReadAnswersTheDarkOverridesAndDerivedValues()
 }//end class

@@ -28,19 +28,16 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\CssInjectionService;
-use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
-use OCA\Thematiq\Service\ThemingAuditService;
-use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\TokenRegistry;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IConfig;
 use OCP\IRequest;
 
 /**
@@ -78,78 +75,20 @@ class OverridesController extends Controller {
 	private const WRITE_FAILED = 'The token overrides could not be saved. Check that the web server can write to the app\'s css/ directory.';
 
 	/**
-	 * The custom overrides service.
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
-
-	/**
-	 * The CSS parser service.
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
-	 * The theming audit trail service.
-	 *
-	 * @var ThemingAuditService
-	 */
-	private ThemingAuditService $auditService;
-
-	/**
-	 * The app config, for the active token set.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The theming service, for resetting core theming with the theme.
-	 *
-	 * @var ThemingService
-	 */
-	private ThemingService $themingService;
-
-	/**
-	 * Copies Nextcloud's own branding into the theme on save. Optional so a
-	 * caller that builds this controller by hand need not know about it; the
-	 * container always injects it.
-	 *
-	 * @var BrandingCaptureService|null
-	 */
-	private ?BrandingCaptureService $brandingCapture;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param CustomOverridesService $overridesService The custom overrides service.
-	 * @param CssParserService $cssParser The CSS parser service.
-	 * @param ThemingAuditService $auditService The theming audit trail service.
-	 * @param IConfig $config The app config.
-	 * @param ThemingService $themingService The theming service.
-	 * @param BrandingCaptureService|null $brandingCapture Copies Nextcloud's branding into the theme on save.
+	 * @param OverridesWrites $writes The overrides service, the CSS parser and the audit trail.
+	 * @param OverridesThemingSync $themingSync The config, core theming and the branding capture.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		CustomOverridesService $overridesService,
-		CssParserService $cssParser,
-		ThemingAuditService $auditService,
-		IConfig $config,
-		ThemingService $themingService,
-		?BrandingCaptureService $brandingCapture = null,
+		private readonly OverridesWrites $writes,
+		private readonly OverridesThemingSync $themingSync,
 	) {
 		parent::__construct(appName: $appName, request: $request);
-		$this->overridesService = $overridesService;
-		$this->cssParser = $cssParser;
-		$this->auditService = $auditService;
-		$this->config = $config;
-		$this->themingService = $themingService;
-		$this->brandingCapture = $brandingCapture;
 	}//end __construct()
 
 	/**
@@ -180,15 +119,15 @@ class OverridesController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getOverrides(): JSONResponse {
-		$overrides = $this->overridesService->read(tokenSet: $this->requestedTokenSet());
+		$overrides = $this->writes->overridesService->read(tokenSet: $this->requestedTokenSet());
 		$registry = TokenRegistry::getTokens();
 		$tabs = TokenRegistry::getTabLabels();
 
 		return new JSONResponse(
 			[
 				'overrides' => $overrides,
-				'darkOverrides' => $this->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
-				'darkDerived' => $this->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
+				'darkOverrides' => $this->writes->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
+				'darkDerived' => $this->writes->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
 				// Listed per component group, below the tabs. Only what a row shows:
 				// the selectors the server writes rules for would triple the payload.
@@ -267,7 +206,7 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'darkOverrides must be an object'], 400);
 		}
 
-		$rejected = $this->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
+		$rejected = $this->writes->overridesService->findRejected(tokens: $overrides, darkTokens: $darkOverrides);
 		if (empty($rejected) === false) {
 			return $this->rejectedResponse(rejected: $rejected);
 		}
@@ -285,15 +224,15 @@ class OverridesController extends Controller {
 	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	private function writeOverrides(array $tokens): ?JSONResponse {
-		$before = $this->overridesService->read(tokenSet: $tokens['tokenSet']);
+		$before = $this->writes->overridesService->read(tokenSet: $tokens['tokenSet']);
 
 		try {
-			$this->overridesService->write(tokens: $tokens['overrides'], tokenSet: $tokens['tokenSet'], darkTokens: $tokens['darkOverrides']);
+			$this->writes->overridesService->write(tokens: $tokens['overrides'], tokenSet: $tokens['tokenSet'], darkTokens: $tokens['darkOverrides']);
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
-		$this->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => $tokens['overrides']]);
+		$this->writes->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => $tokens['overrides']]);
 
 		return null;
 	}//end writeOverrides()
@@ -313,12 +252,12 @@ class OverridesController extends Controller {
 	 */
 	private function savedResponse(array $tokens): array {
 		$response = ['status' => 'ok', 'written' => count($tokens['overrides'])];
-		$setId = ($tokens['tokenSet'] ?? $this->config->getAppValue(Application::APP_ID, 'token_set', CssInjectionService::STOCK_TOKEN_SET));
+		$setId = ($tokens['tokenSet'] ?? $this->themingSync->config->getAppValue(Application::APP_ID, 'token_set', CssInjectionService::STOCK_TOKEN_SET));
 		if ($this->request->getParam('captureTheming', false) === true
-			&& $this->brandingCapture !== null
+			&& $this->themingSync->brandingCapture !== null
 			&& $setId !== CssInjectionService::STOCK_TOKEN_SET
 		) {
-			$response['theming'] = $this->brandingCapture->capture(setId: $setId);
+			$response['theming'] = $this->themingSync->brandingCapture->capture(setId: $setId);
 		}
 
 		return $response;
@@ -359,19 +298,19 @@ class OverridesController extends Controller {
 	 */
 	private function resetToStock(): JSONResponse {
 		$stock = CssInjectionService::STOCK_TOKEN_SET;
-		$previous = $this->config->getAppValue(Application::APP_ID, 'token_set', $stock);
+		$previous = $this->themingSync->config->getAppValue(Application::APP_ID, 'token_set', $stock);
 
 		$emptied = $this->emptyOverrides(tokenSets: array_unique([$previous, $stock]));
 		if ($emptied instanceof JSONResponse) {
 			return $emptied;
 		}
 
-		$this->config->setAppValue(Application::APP_ID, 'token_set', $stock);
-		$this->themingService->resetToDefaults();
+		$this->themingSync->config->setAppValue(Application::APP_ID, 'token_set', $stock);
+		$this->themingSync->themingService->resetToDefaults();
 		// Nothing is synced any more, so nothing is remembered as synced: the
 		// same keys SettingsController::resetThemingValues() clears.
 		foreach (['logo', 'background'] as $imageKey) {
-			$this->config->deleteAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey);
+			$this->themingSync->config->deleteAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey);
 		}
 
 		$this->logReset(emptied: $emptied, change: ['old' => $previous, 'new' => $stock]);
@@ -391,10 +330,10 @@ class OverridesController extends Controller {
 	private function emptyOverrides(array $tokenSets): array|JSONResponse {
 		$emptied = [];
 		foreach ($tokenSets as $tokenSet) {
-			$before = $this->overridesService->read(tokenSet: $tokenSet);
+			$before = $this->writes->overridesService->read(tokenSet: $tokenSet);
 
 			try {
-				$this->overridesService->write(tokens: [], tokenSet: $tokenSet);
+				$this->writes->overridesService->write(tokens: [], tokenSet: $tokenSet);
 			} catch (\RuntimeException) {
 				return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 			}
@@ -419,11 +358,11 @@ class OverridesController extends Controller {
 	 */
 	private function logReset(array $emptied, array $change): void {
 		foreach ($emptied as $before) {
-			$this->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => []]);
+			$this->writes->auditService->log(action: 'overrides_written', context: ['old' => $before, 'new' => []]);
 		}
 
 		if ($change['old'] !== $change['new']) {
-			$this->auditService->log(action: 'token_set_changed', context: $change);
+			$this->writes->auditService->log(action: 'token_set_changed', context: $change);
 		}
 	}//end logReset()
 
@@ -436,7 +375,7 @@ class OverridesController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function exportOverrides(): DataDownloadResponse {
-		$content = $this->overridesService->getRawContent(tokenSet: $this->requestedTokenSet());
+		$content = $this->writes->overridesService->getRawContent(tokenSet: $this->requestedTokenSet());
 
 		return new DataDownloadResponse(
 			data: $content,
@@ -469,7 +408,7 @@ class OverridesController extends Controller {
 		}
 
 		// The light values only; an exported file also carries the dark blocks.
-		$parsed = $this->cssParser->parseOverridesFile(css: $content);
+		$parsed = $this->writes->cssParser->parseOverridesFile(css: $content);
 		if ($parsed === null) {
 			return new JSONResponse(
 				['error' => 'No CSS custom property declarations found in the uploaded file'],
@@ -552,13 +491,13 @@ class OverridesController extends Controller {
 		$import = $this->editableTokens(parsed: $parsed);
 
 		try {
-			$this->overridesService->write(tokens: $import['tokens'], tokenSet: $this->requestedTokenSet());
+			$this->writes->overridesService->write(tokens: $import['tokens'], tokenSet: $this->requestedTokenSet());
 		} catch (\RuntimeException) {
 			return new JSONResponse(['error' => self::WRITE_FAILED], 500);
 		}
 
 		$counts = ['imported' => count($import['tokens']), 'skipped' => $import['skipped']];
-		$this->auditService->log(action: 'overrides_imported', context: $counts + ['new' => $rawContent, 'newIsCss' => true]);
+		$this->writes->auditService->log(action: 'overrides_imported', context: $counts + ['new' => $rawContent, 'newIsCss' => true]);
 
 		return new JSONResponse(['status' => 'ok'] + $counts);
 	}//end writeImportedTokens()
