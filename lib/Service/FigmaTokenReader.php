@@ -81,27 +81,17 @@ class FigmaTokenReader {
 	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
 	public function normalise(string $content, array &$skipped): string {
-		$trimmed = ltrim($content);
-		if ($trimmed === '' || $trimmed[0] !== '{') {
+		$document = $this->jsonObject(content: $content);
+		if ($document === null) {
 			return $content;
 		}
 
-		$document = json_decode($trimmed, true);
-		if (is_array($document) === false) {
-			return $content;
-		}
-
-		$sets = new TokensStudioSets();
-		$studio = $sets->isSingleFile(document: $document);
+		$read = $this->studioRead(document: $document, skipped: $skipped);
+		$document = $read['document'];
+		$dark = $read['dark'];
 		$darkValues = new FileDarkValues();
-		$dark = $darkValues->pluginDark(document: $document);
-		if ($studio === true) {
-			$dark += $darkValues->fromTree(tree: $this->respelled(node: $sets->darkTree(document: $document), depth: 0));
-			$document = $sets->merged(document: $document, skipped: $skipped);
-		}
-
-		$own = (is_array($document['nldesign'] ?? null) === true && is_string($document['$extensions'][self::EXTENSION]['setId'] ?? null) === false);
-		if ($studio === false && $own === false) {
+		$own = $this->isOwnFile(document: $document);
+		if ($read['studio'] === false && $own === false) {
 			return $darkValues->withDark(content: $content, document: $document, dark: $dark);
 		}
 
@@ -114,6 +104,60 @@ class FigmaTokenReader {
 	}//end normalise()
 
 	/**
+	 * The content as a JSON object, or null when it does not start like one or does not decode to one.
+	 *
+	 * @param string $content The uploaded content.
+	 *
+	 * @return array<string, mixed>|null The decoded document.
+	 */
+	private function jsonObject(string $content): ?array {
+		$trimmed = ltrim($content);
+		if ($trimmed === '' || $trimmed[0] !== '{') {
+			return null;
+		}
+
+		$document = json_decode($trimmed, true);
+		if (is_array($document) === false) {
+			return null;
+		}
+
+		return $document;
+	}//end jsonObject()
+
+	/**
+	 * The document with a single-file Tokens Studio export merged into one tree, and the dark
+	 * values the file carries: the plugin's own, and for a Tokens Studio file its dark sets.
+	 *
+	 * @param array<string, mixed> $document The decoded document.
+	 * @param array<int, array{path: string, reason: string}> $skipped What was left out and why, appended to.
+	 *
+	 * @return array{document: array<string, mixed>, dark: array<string, string>, studio: bool} The document, the dark values, and whether it was a Tokens Studio file.
+	 */
+	private function studioRead(array $document, array &$skipped): array {
+		$sets = new TokensStudioSets();
+		$studio = $sets->isSingleFile(document: $document);
+		$darkValues = new FileDarkValues();
+		$dark = $darkValues->pluginDark(document: $document);
+		if ($studio === true) {
+			$dark += $darkValues->fromTree(tree: $this->respelled(node: $sets->darkTree(document: $document), depth: 0));
+			$document = $sets->merged(document: $document, skipped: $skipped);
+		}
+
+		return ['document' => $document, 'dark' => $dark, 'studio' => $studio];
+	}//end studioRead()
+
+	/**
+	 * Whether a document is a thematiq export not yet named for upload: it has an `nldesign` group and no set id.
+	 *
+	 * @param array<string, mixed> $document The document.
+	 *
+	 * @return bool True for such a file.
+	 */
+	private function isOwnFile(array $document): bool {
+		return is_array($document['nldesign'] ?? null) === true && is_string($document['$extensions'][self::EXTENSION]['setId'] ?? null) === false;
+	}//end isOwnFile()
+
+	/**
 	 * The tree in the `$value` spelling, with W3C type names.
 	 *
 	 * @param array<string, mixed> $node A group or a token.
@@ -123,27 +167,50 @@ class FigmaTokenReader {
 	 */
 	private function respelled(array $node, int $depth): array {
 		if ((new TokensStudioSets())->isToken(node: $node) === true) {
-			if (array_key_exists('$value', $node) === false) {
-				$respelled = ['$value' => $node['value'], '$type' => ($node['type'] ?? null), '$description' => ($node['description'] ?? null)];
-				$node = ($respelled + array_diff_key($node, ['value' => 1, 'type' => 1, 'description' => 1]));
-				$node = array_filter($node, static fn ($member): bool => $member !== null);
-			}
-
-			if (is_string($node['$type'] ?? null) === true && isset(self::TYPES[$node['$type']]) === true) {
-				$node['$type'] = self::TYPES[$node['$type']];
-			}
-
-			return $node;
+			return $this->respelledToken(node: $node);
 		}
 
 		foreach ($node as $key => $child) {
-			if (is_array($child) === true && str_starts_with((string)$key, '$') === false && $depth < self::MAX_DEPTH) {
+			if ($this->isGroupChild(key: $key, child: $child) === true && $depth < self::MAX_DEPTH) {
 				$node[$key] = $this->respelled(node: $child, depth: ($depth + 1));
 			}
 		}
 
 		return $node;
 	}//end respelled()
+
+	/**
+	 * A token in the `$value` spelling, its type a W3C type name.
+	 *
+	 * @param array<string, mixed> $node The token.
+	 *
+	 * @return array<string, mixed> The token.
+	 */
+	private function respelledToken(array $node): array {
+		if (array_key_exists('$value', $node) === false) {
+			$respelled = ['$value' => $node['value'], '$type' => ($node['type'] ?? null), '$description' => ($node['description'] ?? null)];
+			$node = ($respelled + array_diff_key($node, ['value' => 1, 'type' => 1, 'description' => 1]));
+			$node = array_filter($node, static fn ($member): bool => $member !== null);
+		}
+
+		if (is_string($node['$type'] ?? null) === true && isset(self::TYPES[$node['$type']]) === true) {
+			$node['$type'] = self::TYPES[$node['$type']];
+		}
+
+		return $node;
+	}//end respelledToken()
+
+	/**
+	 * Whether a member of a group is a child group or token, not metadata.
+	 *
+	 * @param int|string $key The member's key.
+	 * @param mixed $child The member.
+	 *
+	 * @return bool True for a child to descend into.
+	 */
+	private function isGroupChild(int|string $key, mixed $child): bool {
+		return is_array($child) === true && str_starts_with((string)$key, '$') === false;
+	}//end isGroupChild()
 
 	/**
 	 * Give every token of a thematiq file its CSS name back: the path joined by dashes.
@@ -212,18 +279,43 @@ class FigmaTokenReader {
 		}
 
 		$value = trim((string)$value);
+
+		return ($this->referenceVar(value: $value, leaves: $leaves) ?? $this->plainCss(value: $value));
+	}//end cssValue()
+
+	/**
+	 * A reference to another token of the file, as `var()`.
+	 *
+	 * @param string $value The trimmed value.
+	 * @param array<string, mixed> $leaves Every token of the file by dotted path.
+	 *
+	 * @return string|null The `var()`, or null when the value is no reference to a token the file holds.
+	 */
+	private function referenceVar(string $value, array $leaves): ?string {
 		if (preg_match('/^\{([a-z][a-z0-9]*(?:\.[a-z0-9-]+)+)\}$/', $value, $match) === 1 && isset($leaves[$match[1]]) === true) {
 			return 'var(--' . str_replace('.', '-', $match[1]) . ')';
 		}
 
-		// A sum over references is not a CSS value. Everything else is judged by the token set
-		// validator, which sees the file that would be stored: a data: image may hold markup.
+		return null;
+	}//end referenceVar()
+
+	/**
+	 * A value without references as CSS.
+	 *
+	 * A sum over references is not a CSS value. Everything else is judged by the token set
+	 * validator, which sees the file that would be stored: a data: image may hold markup.
+	 *
+	 * @param string $value The trimmed value.
+	 *
+	 * @return string|null The value, or null when it still holds a brace.
+	 */
+	private function plainCss(string $value): ?string {
 		if (str_contains($value, '{') === true || str_contains($value, '}') === true) {
 			return null;
 		}
 
 		return $value;
-	}//end cssValue()
+	}//end plainCss()
 
 	/**
 	 * Whether following a token's references leads back to a token already passed.
