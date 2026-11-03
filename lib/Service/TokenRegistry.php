@@ -262,11 +262,7 @@ class TokenRegistry implements TokenRegistryInterface {
 			$raw = file_get_contents($path);
 		}
 
-		if ($raw === false) {
-			return [];
-		}
-
-		$decoded = json_decode($raw, true);
+		$decoded = json_decode((string)$raw, true);
 		if (is_array($decoded) === false) {
 			return [];
 		}
