@@ -38,6 +38,13 @@ class TestableNLDesignEMailTemplate extends NLDesignEMailTemplate {
 	private ?EmailThemingService $stubService = null;
 
 	/**
+	 * Whether this server embeds in the header; null asks the real server.
+	 *
+	 * @var bool|null
+	 */
+	private ?bool $embedsInHeader = null;
+
+	/**
 	 * Inject a stubbed service (or null, to simulate total resolution failure).
 	 *
 	 * @param EmailThemingService|null $service The stubbed service.
@@ -57,6 +64,39 @@ class TestableNLDesignEMailTemplate extends NLDesignEMailTemplate {
 	protected function getEmailThemingService(): ?EmailThemingService {
 		return $this->stubService;
 	}//end getEmailThemingService()
+
+	/**
+	 * Decide whether this server embeds in the header.
+	 *
+	 * @param bool|null $embeds The answer, or null for the real server's.
+	 *
+	 * @return void
+	 */
+	public function setEmbedsInHeader(?bool $embeds): void {
+		$this->embedsInHeader = $embeds;
+	}//end setEmbedsInHeader()
+
+	/**
+	 * The chosen answer, else the real server's.
+	 *
+	 * @return bool
+	 */
+	protected function serverEmbedsInHeader(): bool {
+		return ($this->embedsInHeader ?? parent::serverEmbedsInHeader());
+	}//end serverEmbedsInHeader()
+
+	/**
+	 * The HTML as this server's message would take it.
+	 *
+	 * @return string
+	 */
+	public function messageHtml(): string {
+		if (method_exists(EMailTemplate::class, 'renderHtmlWithInlineImages') === true) {
+			return $this->renderHtmlWithInlineImages();
+		}
+
+		return $this->renderHtml();
+	}//end messageHtml()
 }//end class
 
 /**
@@ -212,7 +252,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$template = $this->brandedTemplate(logoUrl: $url, image: ['content' => '<svg/>', 'mimeType' => 'image/svg+xml']);
 
-		$html = $template->renderHtmlWithInlineImages();
+		$html = $template->messageHtml();
 
 		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $html);
 		$this->assertStringNotContainsString(needle: $url, haystack: $html);
@@ -229,7 +269,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$template = $this->brandedTemplate(logoUrl: $url, image: null);
 
-		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->renderHtmlWithInlineImages());
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->messageHtml());
 		$this->assertSame(expected: [], actual: $template->getInlineImages());
 	}//end testAnUnreadableBrandedLogoStaysLinked()
 
@@ -242,9 +282,50 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$this->themingDefaults->method('getLogoImage')->willReturn(['content' => 'instance', 'mimeType' => 'image/png']);
 		$template = $this->brandedTemplate(logoUrl: null, image: ['content' => 'wrong', 'mimeType' => 'image/png']);
 
-		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->renderHtmlWithInlineImages());
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->messageHtml());
 		$this->assertSame(expected: 'instance', actual: $template->getInlineImages()[0]['content']);
 	}//end testABrandedHeaderWithoutALogoEmbedsTheInstanceLogo()
+
+	/**
+	 * On a server that attaches without asking, the header itself refers to the embedded logo.
+	 *
+	 * @return void
+	 */
+	public function testAHeaderEmbedsOnAServerThatAttachesWithoutAsking(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
+		$service->method('getActiveEmailTheme')->willReturn($theme);
+		$service->method('getActiveEmailLogoImage')->willReturn(['content' => '<svg/>', 'mimeType' => 'image/svg+xml']);
+		$template = $this->makeTemplate(service: $service);
+		$template->setEmbedsInHeader(embeds: true);
+		$template->addHeader();
+
+		$html = $template->renderHtml();
+
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $html);
+		$this->assertStringNotContainsString(needle: $url, haystack: $html);
+		$this->assertSame(expected: '<svg/>', actual: $template->getInlineImages()[0]['content']);
+	}//end testAHeaderEmbedsOnAServerThatAttachesWithoutAsking()
+
+	/**
+	 * On such a server a logo without bytes stays a link, and nothing is attached.
+	 *
+	 * @return void
+	 */
+	public function testAHeaderKeepsTheLinkWithoutBytes(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
+		$service->method('getActiveEmailTheme')->willReturn($theme);
+		$service->method('getActiveEmailLogoImage')->willReturn(null);
+		$template = $this->makeTemplate(service: $service);
+		$template->setEmbedsInHeader(embeds: true);
+		$template->addHeader();
+
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->renderHtml());
+		$this->assertSame(expected: [], actual: $template->getInlineImages());
+	}//end testAHeaderKeepsTheLinkWithoutBytes()
 
 	/**
 	 * A stock header is still embedded by the parent.
@@ -256,7 +337,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$template = $this->makeTemplate(service: null);
 		$template->addHeader();
 
-		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->renderHtmlWithInlineImages());
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->messageHtml());
 		$this->assertSame(expected: 'instance', actual: $template->getInlineImages()[0]['content']);
 	}//end testAStockHeaderIsEmbeddedByTheParent()
 
@@ -273,7 +354,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$template = $this->makeTemplate(service: $service);
 		$template->addHeader();
 
-		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->renderHtmlWithInlineImages());
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->messageHtml());
 		$this->assertSame(expected: [], actual: $template->getInlineImages());
 	}//end testAFailingLogoReadStaysLinked()
 

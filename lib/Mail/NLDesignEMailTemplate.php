@@ -188,12 +188,47 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			$this->header,
 			[
 				$theme['primaryColor'],
-				$logoUrl,
+				$this->headerLogoSource(logoUrl: $logoUrl),
 				$this->themingDefaults->getName(),
 				$this->logoSizeAttributes(),
 			]
 		);
 	}//end addHeader()
+
+	/**
+	 * Whether the server attaches what getInlineImages() holds without asking for
+	 * renderHtmlWithInlineImages(), so the header itself has to refer to the embedded logo.
+	 *
+	 * Released 35 servers do this. Later ones embed while rendering, and older ones embed nothing.
+	 *
+	 * @return bool True when the header embeds the logo.
+	 */
+	protected function serverEmbedsInHeader(): bool {
+		return method_exists(EMailTemplate::class, 'getInlineImages') === true
+			&& method_exists(EMailTemplate::class, 'renderHtmlWithInlineImages') === false;
+	}//end serverEmbedsInHeader()
+
+	/**
+	 * What the header's image points at: the embedded logo on a server that expects it there, else the URL.
+	 *
+	 * @param string $logoUrl The logo's absolute URL.
+	 *
+	 * @return string The image source.
+	 */
+	private function headerLogoSource(string $logoUrl): string {
+		if ($this->serverEmbedsInHeader() === false) {
+			return $logoUrl;
+		}
+
+		$image = $this->headerLogoImage();
+		if ($image === null) {
+			return $logoUrl;
+		}
+
+		$this->inlineImages[] = ['name' => 'logo'] + $image;
+
+		return 'cid:logo';
+	}//end headerLogoSource()
 
 	/**
 	 * The logo's size attributes, so it displays nicely in Outlook; mirrors the parent's behaviour.
@@ -211,8 +246,8 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	/**
 	 * The HTML part with a branded header's logo embedded instead of linked.
 	 *
-	 * The parent replaces only the logo URL it wrote itself, kept in a private member, so a
-	 * branded header has to do this itself. Nextcloud before 34 has no inline logos and never calls this.
+	 * Where the server renders through this method, the parent replaces only the logo URL it
+	 * wrote itself, kept in a private member, so a branded header has to do this itself.
 	 *
 	 * @return string The HTML; the caller attaches getInlineImages() afterwards.
 	 *
