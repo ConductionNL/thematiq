@@ -22,6 +22,7 @@ namespace OCA\Thematiq\Mail;
 
 use OC\Mail\EMailTemplate;
 use OCA\Thematiq\Service\EmailThemingService;
+use ReflectionClass;
 
 /**
  * Branded email template — extends the server's private EMailTemplate.
@@ -204,7 +205,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 * @return bool True when the header embeds the logo.
 	 */
 	protected function serverEmbedsInHeader(): bool {
-		$server = new \ReflectionClass(EMailTemplate::class);
+		$server = new ReflectionClass(EMailTemplate::class);
 
 		return $server->hasMethod('getInlineImages') === true
 			&& $server->hasMethod('renderHtmlWithInlineImages') === false;
