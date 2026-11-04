@@ -66,9 +66,9 @@ class CustomCssServiceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-custom-css-' . bin2hex(random_bytes(6));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->appConfig = $this->createMock(originalClassName: IAppConfig::class);
 		$this->service = new CustomCssService(
-			store: new DirectoryRuntimeFileStore($this->appDir),
+			store: new DirectoryRuntimeFileStore(root: $this->appDir),
 			appConfig: $this->appConfig,
 			validator: new CustomCssValidator(),
 		);
@@ -118,7 +118,7 @@ class CustomCssServiceTest extends TestCase {
 
 		$this->service->setEnabled(enabled: true);
 
-		$this->assertFalse($this->service->isEnabled(), 'off by default');
+		$this->assertFalse(condition: $this->service->isEnabled(), message: 'off by default');
 	}
 
 	/**
@@ -127,8 +127,8 @@ class CustomCssServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testMissingFileReadsAsEmpty(): void {
-		$this->assertSame('', $this->service->read());
-		$this->assertFalse($this->service->hasContent());
+		$this->assertSame(expected: '', actual: $this->service->read());
+		$this->assertFalse(condition: $this->service->hasContent());
 	}
 
 	/**
@@ -139,10 +139,10 @@ class CustomCssServiceTest extends TestCase {
 	public function testSavedCssReadsBackExactlyAsWritten(): void {
 		$css = ".header {\n\tcolor: red;\n}";
 
-		$this->assertSame([], $this->service->write(css: $css));
+		$this->assertSame(expected: [], actual: $this->service->write(css: $css));
 
-		$this->assertSame($css, $this->service->read());
-		$this->assertStringStartsWith(CustomCssService::FILE_HEADER, (string)file_get_contents($this->file()));
+		$this->assertSame(expected: $css, actual: $this->service->read());
+		$this->assertStringStartsWith(prefix: CustomCssService::FILE_HEADER, string: (string)file_get_contents($this->file()));
 	}
 
 	/**
@@ -154,8 +154,8 @@ class CustomCssServiceTest extends TestCase {
 		$this->service->write(css: 'a { color: red; }');
 		$this->service->write(css: $this->service->read());
 
-		$this->assertSame(1, substr_count((string)file_get_contents($this->file()), CustomCssService::FILE_HEADER));
-		$this->assertSame('a { color: red; }', $this->service->read());
+		$this->assertSame(expected: 1, actual: substr_count((string)file_get_contents($this->file()), CustomCssService::FILE_HEADER));
+		$this->assertSame(expected: 'a { color: red; }', actual: $this->service->read());
 	}
 
 	/**
@@ -167,7 +167,7 @@ class CustomCssServiceTest extends TestCase {
 		$header = CustomCssService::FILE_HEADER;
 		file_put_contents($this->file(), $header . $header . "a { color: red; }\n\n");
 
-		$this->assertSame('a { color: red; }', $this->service->read());
+		$this->assertSame(expected: 'a { color: red; }', actual: $this->service->read());
 	}
 
 	/**
@@ -179,8 +179,8 @@ class CustomCssServiceTest extends TestCase {
 		$this->service->write(css: 'a { color: red; }');
 		$this->service->write(css: '');
 
-		$this->assertSame('', $this->service->read());
-		$this->assertFalse($this->service->hasContent());
+		$this->assertSame(expected: '', actual: $this->service->read());
+		$this->assertFalse(condition: $this->service->hasContent());
 	}
 
 	/**
@@ -191,7 +191,7 @@ class CustomCssServiceTest extends TestCase {
 	public function testFileWithoutHeaderIsReturnedAsIs(): void {
 		file_put_contents($this->file(), "b { color: blue; }\n");
 
-		$this->assertSame("b { color: blue; }\n", $this->service->read());
+		$this->assertSame(expected: "b { color: blue; }\n", actual: $this->service->read());
 	}
 
 	/**
@@ -205,8 +205,8 @@ class CustomCssServiceTest extends TestCase {
 
 		$errors = $this->service->write(css: '@import url("https://evil.example/x.css");');
 
-		$this->assertNotEmpty($errors);
-		$this->assertSame($before, file_get_contents($this->file()));
+		$this->assertNotEmpty(actual: $errors);
+		$this->assertSame(expected: $before, actual: file_get_contents($this->file()));
 	}
 
 	/**
@@ -218,7 +218,7 @@ class CustomCssServiceTest extends TestCase {
 		$this->service->write(css: 'a { color: red; }');
 		chmod($this->file(), 0444);
 		if (is_writable($this->file()) === true) {
-			$this->markTestSkipped('Running as a user that ignores directory permissions.');
+			$this->markTestSkipped(message: 'Running as a user that ignores directory permissions.');
 		}
 
 		// file_put_contents() warns before it returns false; the service turns
@@ -226,13 +226,13 @@ class CustomCssServiceTest extends TestCase {
 		set_error_handler(static fn (): bool => true, E_WARNING);
 		try {
 			$this->service->write(css: 'b { color: blue; }');
-			$this->fail('Expected a RuntimeException.');
+			$this->fail(message: 'Expected a RuntimeException.');
 		} catch (RuntimeException $e) {
-			$this->assertStringContainsString('Could not write', $e->getMessage());
+			$this->assertStringContainsString(needle: 'Could not write', haystack: $e->getMessage());
 		} finally {
 			restore_error_handler();
 		}
 
-		$this->assertSame('a { color: red; }', $this->service->read());
+		$this->assertSame(expected: 'a { color: red; }', actual: $this->service->read());
 	}
 }//end class

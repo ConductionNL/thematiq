@@ -17,9 +17,13 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -112,6 +116,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * is the filter, not discovery — and because a full catalogue build audits
 	 * every shipped set's CSS, which made this class alone take longer than
 	 * the rest of the suite put together.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -142,7 +148,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 		// this state the filter could stop filtering and every assertion below
 		// would still pass.
 		mkdir($this->appDir . '/css/systems/nldesign', 0777, true);
-		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $layer) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/systems/nldesign/*.css') as $layer) {
 			copy($layer, $this->appDir . '/css/systems/nldesign/' . basename($layer));
 		}
 		copy($this->repoRoot() . '/design-systems.json', $this->appDir . '/design-systems.json');
@@ -170,6 +176,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 
 	/**
 	 * Remove the synthetic app directory.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		foreach (glob($this->appDir . '/css/tokens/*') as $file) {
@@ -200,16 +208,16 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @return TokenSetService The service under test.
 	 */
 	private function service(array $appConfig, ?string $appPath = null): TokenSetService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appPath ?? $this->appDir);
 		$appManager->method('getAppVersion')->willReturn('3.4.0');
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ($appConfig[$key] ?? $default)
 		);
 
-		$cache = $this->createMock(ICache::class);
+		$cache = $this->createMock(originalClassName: ICache::class);
 		$cache->method('get')->willReturnCallback(
 			static fn (string $key) => (self::$wcagStore[$key] ?? null)
 		);
@@ -220,16 +228,22 @@ class TokenSetServiceSelectableTest extends TestCase {
 				return true;
 			}
 		);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
 		$cacheFactory->method('createDistributed')->willReturn($cache);
 
 		return new TokenSetService(
-			$appManager,
-			$config,
-			$this->createMock(LoggerInterface::class),
-			new ShippedTokenSetAuditService(new ContrastService(), new CssParserService()),
-			$cacheFactory,
-			new TokenSetVocabularyAuditService(new CssParserService())
+			setFiles: new TokenSetFiles(
+				appManager: $appManager
+			),
+			runtime: new TokenSetRuntime(
+				config: $config,
+				cacheFactory: $cacheFactory,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService()),
+				vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
+			)
 		);
 	}//end service()
 
@@ -254,8 +268,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 */
 	private function selectable(array $appConfig, ?string $appPath = null): array {
 		return (new TokenSetSelectionPolicy())->selectable(
-			tokenSets: $this->service($appConfig, $appPath),
-			config: $this->configFor($appConfig),
+			tokenSets: $this->service(appConfig: $appConfig, appPath: $appPath),
+			config: $this->configFor(appConfig: $appConfig),
 			appPath: ($appPath ?? $this->appDir)
 		);
 	}//end selectable()
@@ -268,7 +282,7 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @return IConfig The configured mock.
 	 */
 	private function configFor(array $appConfig): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ($appConfig[$key] ?? $default)
 		);
@@ -276,6 +290,12 @@ class TokenSetServiceSelectableTest extends TestCase {
 		return $config;
 	}//end configFor()
 
+	/**
+	 * TestCase::ids(), as this test double answers it.
+	 *
+	 * @param array $sets The sets.
+	 * @return array
+	 */
 	private function ids(array $sets): array {
 		return array_map(static fn (array $set): string => (string)$set['id'], $sets);
 	}//end ids()
@@ -290,21 +310,23 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * discovery finds it, and it has no name to show.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testStockInstanceOffersEveryNamedCompleteSet(): void {
 		$config = ['token_set' => 'nextcloud'];
 
-		$selectable = $this->ids($this->selectable($config));
-		$all = $this->ids($this->service($config)->getAvailableTokenSets());
+		$selectable = $this->ids(sets: $this->selectable(appConfig: $config));
+		$all = $this->ids(sets: $this->service(appConfig: $config)->getAvailableTokenSets());
 
-		$this->assertEqualsCanonicalizing(self::COMPLETE_SETS, $selectable);
-		$this->assertNotContains(self::INCOMPLETE_SET, $selectable, 'A vocabulary-incomplete set must not be offered.');
-		$this->assertNotContains(self::UNNAMED_SET, $selectable, 'A set with no manifest entry must not be offered.');
+		$this->assertEqualsCanonicalizing(expected: self::COMPLETE_SETS, actual: $selectable);
+		$this->assertNotContains(needle: self::INCOMPLETE_SET, haystack: $selectable, message: 'A vocabulary-incomplete set must not be offered.');
+		$this->assertNotContains(needle: self::UNNAMED_SET, haystack: $selectable, message: 'A set with no manifest entry must not be offered.');
 
 		// The catalogue is NOT what was narrowed — only the picker is.
-		$this->assertContains(self::INCOMPLETE_SET, $all);
-		$this->assertContains(self::UNNAMED_SET, $all);
-		$this->assertGreaterThan(count($selectable), count($all));
+		$this->assertContains(needle: self::INCOMPLETE_SET, haystack: $all);
+		$this->assertContains(needle: self::UNNAMED_SET, haystack: $all);
+		$this->assertGreaterThan(expected: count($selectable), actual: count($all));
 	}//end testStockInstanceOffersEveryNamedCompleteSet()
 
 	/**
@@ -318,20 +340,22 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * offered anyway.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testTheActiveSetIsAlwaysSelectable(): void {
 		foreach ([self::INCOMPLETE_SET, self::UNNAMED_SET] as $id) {
-			$selectable = $this->ids($this->selectable(['token_set' => $id]));
+			$selectable = $this->ids(sets: $this->selectable(appConfig: ['token_set' => $id]));
 
-			$this->assertContains($id, $selectable, $id . ' is active, so it must still be offered.');
-			$this->assertContains('nextcloud', $selectable);
+			$this->assertContains(needle: $id, haystack: $selectable, message: $id . ' is active, so it must still be offered.');
+			$this->assertContains(needle: 'nextcloud', haystack: $selectable);
 		}
 
 		// ...and it is genuinely filtered out when it is NOT the active set, so
 		// the assertion above is not passing on a filter that keeps everything.
 		$this->assertNotContains(
-			self::INCOMPLETE_SET,
-			$this->ids($this->selectable(['token_set' => 'nextcloud']))
+			needle: self::INCOMPLETE_SET,
+			haystack: $this->ids(sets: $this->selectable(appConfig: ['token_set' => 'nextcloud']))
 		);
 	}//end testTheActiveSetIsAlwaysSelectable()
 
@@ -341,6 +365,8 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * theme that is still being applied.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testASetUsedByAGroupMappingIsSelectable(): void {
 		// The mapping points at the two sets the filter would otherwise drop,
@@ -353,12 +379,12 @@ class TokenSetServiceSelectableTest extends TestCase {
 		);
 
 		$selectable = $this->ids(
-			$this->selectable(['token_set' => 'nextcloud', 'group_token_sets' => $mapping])
+			sets: $this->selectable(appConfig: ['token_set' => 'nextcloud', 'group_token_sets' => $mapping])
 		);
 
-		$this->assertContains(self::INCOMPLETE_SET, $selectable);
-		$this->assertContains(self::UNNAMED_SET, $selectable);
-		$this->assertContains('nextcloud', $selectable);
+		$this->assertContains(needle: self::INCOMPLETE_SET, haystack: $selectable);
+		$this->assertContains(needle: self::UNNAMED_SET, haystack: $selectable);
+		$this->assertContains(needle: 'nextcloud', haystack: $selectable);
 	}//end testASetUsedByAGroupMappingIsSelectable()
 
 	/**
@@ -372,11 +398,13 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * @dataProvider unusableMappingProvider
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testAnUnusableGroupMappingIsIgnored(string $mapping): void {
 		$this->assertEqualsCanonicalizing(
-			self::COMPLETE_SETS,
-			$this->ids($this->selectable(['token_set' => 'nextcloud', 'group_token_sets' => $mapping]))
+			expected: self::COMPLETE_SETS,
+			actual: $this->ids(sets: $this->selectable(appConfig: ['token_set' => 'nextcloud', 'group_token_sets' => $mapping]))
 		);
 	}//end testAnUnusableGroupMappingIsIgnored()
 
@@ -402,15 +430,17 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * filter on an empty string would make every id with no name match.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testAnEmptyActiveSetAddsNothing(): void {
 		$this->assertEqualsCanonicalizing(
-			self::COMPLETE_SETS,
-			$this->ids($this->selectable(['token_set' => '']))
+			expected: self::COMPLETE_SETS,
+			actual: $this->ids(sets: $this->selectable(appConfig: ['token_set' => '']))
 		);
 		$this->assertEqualsCanonicalizing(
-			self::COMPLETE_SETS,
-			$this->ids($this->selectable([]))
+			expected: self::COMPLETE_SETS,
+			actual: $this->ids(sets: $this->selectable(appConfig: []))
 		);
 	}//end testAnEmptyActiveSetAddsNothing()
 
@@ -421,23 +451,25 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * off both.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testSelectableEntriesAreCatalogueEntriesInCatalogueOrder(): void {
 		$config = ['token_set' => 'nextcloud'];
 
-		$all = $this->service($config)->getAvailableTokenSets();
-		$selectable = $this->selectable($config);
+		$all = $this->service(appConfig: $config)->getAvailableTokenSets();
+		$selectable = $this->selectable(appConfig: $config);
 
-		$this->assertNotEmpty($selectable);
+		$this->assertNotEmpty(actual: $selectable);
 		foreach ($selectable as $entry) {
-			$this->assertContains($entry, $all);
+			$this->assertContains(needle: $entry, haystack: $all);
 		}
 
 		$expected = self::COMPLETE_SETS;
 		$order = array_values(
-			array_filter($this->ids($all), static fn (string $id): bool => in_array($id, $expected, true))
+			array_filter($this->ids(sets: $all), static fn (string $id): bool => in_array($id, $expected, true))
 		);
-		$this->assertSame($order, $this->ids($selectable));
+		$this->assertSame(expected: $order, actual: $this->ids(sets: $selectable));
 	}//end testSelectableEntriesAreCatalogueEntriesInCatalogueOrder()
 
 	/**
@@ -459,18 +491,20 @@ class TokenSetServiceSelectableTest extends TestCase {
 	 * purpose: a synthetic one would pass while the shipped sets were hidden.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
+	 *
+	 * @return void
 	 */
 	public function testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue(): void {
 		$config = ['token_set' => 'nextcloud'];
 
-		$all = $this->service($config, $this->repoRoot())->getAvailableTokenSets();
-		$selectable = $this->ids($this->selectable($config, $this->repoRoot()));
+		$all = $this->service(appConfig: $config, appPath: $this->repoRoot())->getAvailableTokenSets();
+		$selectable = $this->ids(sets: $this->selectable(appConfig: $config, appPath: $this->repoRoot()));
 
 		$manifest = json_decode((string)file_get_contents($this->repoRoot() . '/token-sets.json'), true);
-		$this->assertIsArray($manifest);
+		$this->assertIsArray(actual: $manifest);
 		$named = array_column($manifest, 'id');
 
-		$audit = new TokenSetVocabularyAuditService(new CssParserService());
+		$audit = new TokenSetVocabularyAuditService(parser: new CssParserService());
 		$incomplete = [];
 		foreach ($audit->auditAll($this->repoRoot()) as $result) {
 			if ($result['complete'] === false) {
@@ -481,26 +515,26 @@ class TokenSetServiceSelectableTest extends TestCase {
 		$expected = array_values(array_diff($named, $incomplete));
 
 		$this->assertEqualsCanonicalizing(
-			$expected,
-			$selectable,
-			"The admin picker must offer every named shipped set the vocabulary audit passes.\n"
+			expected: $expected,
+			actual: $selectable,
+			message: "The admin picker must offer every named shipped set the vocabulary audit passes.\n"
 			. 'Withheld: ' . implode(', ', array_diff($expected, $selectable)) . "\n"
 			. 'Offered but should not be: ' . implode(', ', array_diff($selectable, $expected))
 		);
 
 		// The guarantee is not vacuous: the catalogue is strictly larger,
 		// and what it holds beyond the picker is a file with no manifest entry.
-		$unnamed = array_values(array_diff($this->ids($all), $named));
-		$this->assertNotSame([], $unnamed, 'This control needs at least one token file with no manifest entry.');
+		$unnamed = array_values(array_diff($this->ids(sets: $all), $named));
+		$this->assertNotSame(expected: [], actual: $unnamed, message: 'This control needs at least one token file with no manifest entry.');
 		foreach ($unnamed as $id) {
-			$this->assertNotContains($id, $selectable, $id . ' has no manifest entry, so it must not be offered.');
+			$this->assertNotContains(needle: $id, haystack: $selectable, message: $id . ' has no manifest entry, so it must not be offered.');
 		}
 
 		// And it is a real widening, not a rename of the old two-set list.
 		$this->assertGreaterThan(
-			50,
-			count($selectable),
-			'All 59 shipped sets but the role layer are expected to be selectable; a count near 2 means the picker was narrowed again.'
+			expected: 50,
+			actual: count($selectable),
+			message: 'All 59 shipped sets but the role layer are expected to be selectable; a count near 2 means the picker was narrowed again.'
 		);
 	}//end testEveryNamedShippedSetTheAuditPassesIsOfferedOnTheRealCatalogue()
 }//end class

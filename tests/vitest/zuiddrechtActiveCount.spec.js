@@ -15,13 +15,19 @@ import path from 'node:path'
 import postcss from 'postcss'
 import { describe, expect, it } from 'vitest'
 
-const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'), 'utf8')
+const css = fs.readFileSync(
+	path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'),
+	'utf8',
+)
 
 describe('zuiddrecht selected quick-filter count', () => {
 	it('leaves the count ground to the library', () => {
 		const grounds = []
 		postcss.parse(css).walkRules((rule) => {
-			if (rule.selector.includes('.cn-quick-filter-bar__tab--active') && rule.selector.includes('.cn-quick-filter-bar__count')) {
+			if (
+				rule.selector.includes('.cn-quick-filter-bar__tab--active')
+				&& rule.selector.includes('.cn-quick-filter-bar__count')
+			) {
 				rule.walkDecls(/^background/, (d) => grounds.push(d.value))
 			}
 		})

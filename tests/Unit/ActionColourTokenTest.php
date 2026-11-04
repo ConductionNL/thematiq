@@ -203,9 +203,9 @@ class ActionColourTokenTest extends TestCase {
 			foreach ($declarations as $property => $expected) {
 				$values = $this->valuesOf(css: $css, property: $property);
 
-				$this->assertNotSame([], $values, $file . ' no longer declares ' . $property);
+				$this->assertNotSame(expected: [], actual: $values, message: $file . ' no longer declares ' . $property);
 				foreach ($values as $value) {
-					$this->assertSame($expected, $value, $file . ' ' . $property);
+					$this->assertSame(expected: $expected, actual: $value, message: $file . ' ' . $property);
 				}
 			}
 		}
@@ -224,9 +224,9 @@ class ActionColourTokenTest extends TestCase {
 			foreach ($declarations as $property => $expected) {
 				$values = $this->valuesOf(css: $css, property: $property);
 
-				$this->assertNotSame([], $values, $file . ' no longer declares ' . $property);
+				$this->assertNotSame(expected: [], actual: $values, message: $file . ' no longer declares ' . $property);
 				foreach ($values as $value) {
-					$this->assertSame($expected, $value, $file . ' ' . $property);
+					$this->assertSame(expected: $expected, actual: $value, message: $file . ' ' . $property);
 				}
 			}
 		}
@@ -237,8 +237,16 @@ class ActionColourTokenTest extends TestCase {
 			$css = $this->css(file: substr((string)$path, (strlen(self::root()) + 1)));
 			foreach (['--color-primary-element', '--color-primary-element-hover', '--color-primary-element-text', '--color-primary'] as $property) {
 				foreach ($this->valuesOf(css: $css, property: $property) as $value) {
-					$this->assertStringNotContainsString('color-action', $value, basename((string)$path) . ' ' . $property);
-					$this->assertStringNotContainsString('thematiq-action-hover', $value, basename((string)$path) . ' ' . $property);
+					$this->assertStringNotContainsString(
+						needle: 'color-action',
+						haystack: $value,
+						message: basename((string)$path) . ' ' . $property
+					);
+					$this->assertStringNotContainsString(
+						needle: 'thematiq-action-hover',
+						haystack: $value,
+						message: basename((string)$path) . ' ' . $property
+					);
 				}
 			}
 		}
@@ -265,20 +273,24 @@ class ActionColourTokenTest extends TestCase {
 			$file = substr((string)$path, (strlen(self::root()) + 1));
 			$css = $this->css(file: $file);
 
-			$this->assertDoesNotMatchRegularExpression('/--nldesign-color-action[\w-]*\s*:/', $css, $file . ' declares the action colour');
+			$this->assertDoesNotMatchRegularExpression(
+				pattern: '/--nldesign-color-action[\w-]*\s*:/',
+				string: $css,
+				message: $file . ' declares the action colour'
+			);
 
 			// The one read with nothing behind it is the hover step's own
 			// mix, which is meant to be invalid without an action colour.
 			$css = str_replace('color-mix(in srgb, var(--nldesign-color-action) 85%, black)', '', $css);
 			$this->assertDoesNotMatchRegularExpression(
-				'/var\(\s*(--nldesign-color-action[\w-]*|--thematiq-action-hover)\s*\)/',
-				$css,
-				$file . ' reads the action colour without a fallback'
+				pattern: '/var\(\s*(--nldesign-color-action[\w-]*|--thematiq-action-hover)\s*\)/',
+				string: $css,
+				message: $file . ' reads the action colour without a fallback'
 			);
 			$reads += preg_match_all('/var\(\s*(--nldesign-color-action[\w-]*|--thematiq-action-hover)\s*,/', $css);
 		}
 
-		$this->assertGreaterThanOrEqual(14, $reads, 'the readers this test guards are gone');
+		$this->assertGreaterThanOrEqual(expected: 14, actual: $reads, message: 'the readers this test guards are gone');
 	}//end testTheTokenIsOptionalEverywhere()
 
 	/**
@@ -293,17 +305,25 @@ class ActionColourTokenTest extends TestCase {
 			(array)glob(self::root() . '/css/token-overrides/*.css')
 		);
 
-		$this->assertGreaterThan(100, count($files));
+		$this->assertGreaterThan(expected: 100, actual: count($files));
 		$declaring = [];
 		foreach ($files as $path) {
-			$this->assertStringNotContainsString('--thematiq-action-hover', (string)file_get_contents((string)$path), (string)$path);
+			$this->assertStringNotContainsString(
+				needle: '--thematiq-action-hover',
+				haystack: (string)file_get_contents((string)$path),
+				message: (string)$path
+			);
 			if (str_contains((string)file_get_contents((string)$path), '--nldesign-color-action') === true) {
 				$declaring[basename((string)$path, '.css')] = true;
 			}
 		}
 
 		ksort($declaring);
-		$this->assertSame(array_keys(self::SETS_WITH_AN_ACTION_COLOUR), array_keys($declaring), 'a set gained or lost an action colour: that is a visible decision, name it here');
+		$this->assertSame(
+			expected: array_keys(self::SETS_WITH_AN_ACTION_COLOUR),
+			actual: array_keys($declaring),
+			message: 'a set gained or lost an action colour: that is a visible decision, name it here'
+		);
 	}//end testNoShippedSetDeclaresAnActionColour()
 
 	/**
@@ -324,17 +344,21 @@ class ActionColourTokenTest extends TestCase {
 		if (isset(self::SETS_WITH_AN_ACTION_COLOUR[$id]) === true) {
 			// A set with an action colour: the action is that colour, its primary is not, and the text on it reads.
 			$roles = (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $declared);
-			$this->assertSame(self::SETS_WITH_AN_ACTION_COLOUR[$id], $roles['action'], $id);
-			$this->assertNotSame($roles['primary'], $roles['action'], $id);
-			$this->assertSame($declared['--nldesign-color-primary'], $roles['primary'], $id);
-			$this->assertSame([], (new ContrastService())->check(declarations: $declared), $id . ': the text on the action colour must reach 4.5:1');
+			$this->assertSame(expected: self::SETS_WITH_AN_ACTION_COLOUR[$id], actual: $roles['action'], message: $id);
+			$this->assertNotSame(expected: $roles['primary'], actual: $roles['action'], message: $id);
+			$this->assertSame(expected: $declared['--nldesign-color-primary'], actual: $roles['primary'], message: $id);
+			$this->assertSame(
+				expected: [],
+				actual: (new ContrastService())->check(declarations: $declared),
+				message: $id . ': the text on the action colour must reach 4.5:1'
+			);
 
 			return;
 		}
 
-		$this->assertArrayNotHasKey('--nldesign-color-action', $declared, $id);
-		$this->assertArrayNotHasKey('--nldesign-color-action-hover', $declared, $id);
-		$this->assertArrayNotHasKey('--nldesign-color-action-text', $declared, $id);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-action', array: $declared, message: $id);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-action-hover', array: $declared, message: $id);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-action-text', array: $declared, message: $id);
 
 		// The main button's tokens still end at the primary (or at the set's own value).
 		$own = ((new CssParserService())->parseDeclarations(content: (string)file_get_contents(self::root() . '/css/tokens/' . $id . '.css')) ?? []);
@@ -347,13 +371,13 @@ class ActionColourTokenTest extends TestCase {
 		];
 		foreach ($button as $token => $primary) {
 			if (isset($own[$token]) === false) {
-				$this->assertSame($declared[$primary], $declared[$token], $id . ' ' . $token);
+				$this->assertSame(expected: $declared[$primary], actual: $declared[$token], message: $id . ' ' . $token);
 			}
 		}
 
 		// The contrast warnings hold no action pair.
 		foreach ((new ContrastService())->check(declarations: $declared) as $warning) {
-			$this->assertStringNotContainsString('action', $warning['pair'], $id);
+			$this->assertStringNotContainsString(needle: 'action', haystack: $warning['pair'], message: $id);
 		}
 
 		// The shell roles: the action is what a set without the token always got.
@@ -361,9 +385,9 @@ class ActionColourTokenTest extends TestCase {
 		$before = (new ShellRoleMapper(colours: new ContrastService()))->map(
 			tokens: array_diff_key($declared, ['--nldesign-color-action' => 1, '--nldesign-color-action-hover' => 1])
 		);
-		$this->assertSame($before, $roles, $id);
+		$this->assertSame(expected: $before, actual: $roles, message: $id);
 		if (isset($declared['--summer-color-primary']) === false) {
-			$this->assertSame($declared['--nldesign-color-primary'], $roles['action'], $id);
+			$this->assertSame(expected: $declared['--nldesign-color-primary'], actual: $roles['action'], message: $id);
 		}
 	}//end testAShippedSetResolvesAsBefore()
 
@@ -373,21 +397,21 @@ class ActionColourTokenTest extends TestCase {
 	 * @return void
 	 */
 	public function testThePreviewMapIsUnchanged(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::root());
-		$preview = new TokenSetPreviewService($appManager);
+		$preview = new TokenSetPreviewService(appManager: $appManager);
 
 		$sources = $preview->getTokenSources();
-		$this->assertSame('--nldesign-color-primary', $sources['--color-primary-element']);
-		$this->assertSame('--nldesign-color-primary-hover', $sources['--color-primary-element-hover']);
-		$this->assertSame('--nldesign-color-primary-text', $sources['--color-primary-element-text']);
-		$this->assertSame('--nldesign-color-primary', $sources['--color-primary']);
-		$this->assertNotContains('--nldesign-color-action', $sources);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $sources['--color-primary-element']);
+		$this->assertSame(expected: '--nldesign-color-primary-hover', actual: $sources['--color-primary-element-hover']);
+		$this->assertSame(expected: '--nldesign-color-primary-text', actual: $sources['--color-primary-element-text']);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $sources['--color-primary']);
+		$this->assertNotContains(needle: '--nldesign-color-action', haystack: $sources);
 
 		$colours = $preview->getResolvedColors(tokenSetId: 'zuiddrecht');
-		$this->assertSame('#3669A5', $colours['--color-primary-element']);
-		$this->assertSame('#234A78', $colours['--color-primary-element-hover']);
-		$this->assertSame('#ffffff', $colours['--color-primary-element-text']);
+		$this->assertSame(expected: '#3669A5', actual: $colours['--color-primary-element']);
+		$this->assertSame(expected: '#234A78', actual: $colours['--color-primary-element-hover']);
+		$this->assertSame(expected: '#ffffff', actual: $colours['--color-primary-element-text']);
 	}//end testThePreviewMapIsUnchanged()
 
 	/**
@@ -400,15 +424,24 @@ class ActionColourTokenTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheDarkVariantsAreUnchanged(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(self::root());
-		$generator = new DarkPaletteService(new ContrastService(), new CssParserService(), $appManager, $this->createMock(LoggerInterface::class));
+		$generator = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 
 		foreach (['zuiddrecht', 'utrecht', 'rijkshuisstijl', 'conduction-new', 'wilgenboom'] as $id) {
 			$result = $generator->generateForSet(setId: $id);
-			$this->assertNotNull($result, $id);
+			$this->assertNotNull(actual: $result, message: $id);
 
-			$this->assertSame((string)file_get_contents(self::root() . '/css/tokens/dark/' . $id . '.css'), $result['css'], $id);
+			$this->assertSame(
+				expected: (string)file_get_contents(self::root() . '/css/tokens/dark/' . $id . '.css'),
+				actual: $result['css'],
+				message: $id
+			);
 		}
 	}//end testTheDarkVariantsAreUnchanged()
 
@@ -419,10 +452,10 @@ class ActionColourTokenTest extends TestCase {
 	 */
 	public function testASetWithAnActionColourIsFollowed(): void {
 		$generator = new DarkPaletteService(
-			new ContrastService(),
-			new CssParserService(),
-			$this->createMock(IAppManager::class),
-			$this->createMock(LoggerInterface::class)
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $this->createMock(originalClassName: IAppManager::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 		$light = array_merge(
 			((new CssParserService())->parseDeclarations(content: (string)file_get_contents(self::root() . '/css/systems/nldesign/defaults.css')) ?? []),
@@ -432,11 +465,11 @@ class ActionColourTokenTest extends TestCase {
 		$dark = $generator->deriveDarkDeclarations(lightDeclarations: $light);
 		$withoutAction = $generator->deriveDarkDeclarations(lightDeclarations: array_diff_key($light, ['--nldesign-color-action' => 1]));
 
-		$this->assertArrayHasKey('--nldesign-color-action', $dark, 'the dark variant carries the action colour');
+		$this->assertArrayHasKey(key: '--nldesign-color-action', array: $dark, message: 'the dark variant carries the action colour');
 		$this->assertNotSame(
-			$withoutAction['--nldesign-component-button-primary-action-background-color'],
-			$dark['--nldesign-component-button-primary-action-background-color'],
-			'the dark main button is derived from the action colour, not from the primary'
+			expected: $withoutAction['--nldesign-component-button-primary-action-background-color'],
+			actual: $dark['--nldesign-component-button-primary-action-background-color'],
+			message: 'the dark main button is derived from the action colour, not from the primary'
 		);
 	}//end testASetWithAnActionColourIsFollowed()
 
@@ -458,9 +491,9 @@ class ActionColourTokenTest extends TestCase {
 			":root {\n\t--nldesign-color-primary: #1a67a3;\n\t--nldesign-color-primary-hover: #124872;\n\t--nldesign-color-action: #1f883d;\n}\n"
 		);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appPath);
-		$green = (new TokenSetPreviewService($appManager))->getResolvedColors(tokenSetId: 'green-button');
+		$green = (new TokenSetPreviewService(appManager: $appManager))->getResolvedColors(tokenSetId: 'green-button');
 
 		foreach (['defaults', 'overrides'] as $sheet) {
 			unlink($appPath . '/css/systems/nldesign/' . $sheet . '.css');
@@ -473,9 +506,13 @@ class ActionColourTokenTest extends TestCase {
 		rmdir($appPath . '/css');
 		rmdir($appPath);
 
-		$this->assertSame('#1a67a3', $green['--color-primary']);
-		$this->assertSame('#1a67a3', $green['--color-primary-element'], 'checked boxes and switches stay with the primary');
-		$this->assertSame('#124872', $green['--color-primary-element-hover']);
+		$this->assertSame(expected: '#1a67a3', actual: $green['--color-primary']);
+		$this->assertSame(
+			expected: '#1a67a3',
+			actual: $green['--color-primary-element'],
+			message: 'checked boxes and switches stay with the primary'
+		);
+		$this->assertSame(expected: '#124872', actual: $green['--color-primary-element-hover']);
 	}//end testThePreviewKeepsTheElementVariablesOnThePrimary()
 
 	/**
@@ -492,28 +529,32 @@ class ActionColourTokenTest extends TestCase {
 			array_filter($warnings, static fn (array $warning): bool => str_contains($warning['pair'], 'action'))
 		);
 
-		$this->assertSame([], $contrast->check(declarations: $set), 'a set without an action colour: no warning at all');
+		$this->assertSame(expected: [], actual: $contrast->check(declarations: $set), message: 'a set without an action colour: no warning at all');
 		$this->assertSame(
-			[],
-			$contrast->check(declarations: ($set + ['--nldesign-color-action' => '#154273', '--nldesign-color-action-text' => '#ffffff'])),
-			'an action pair equal to the primary pair is the primary pair'
+			expected: [],
+			actual: $contrast->check(declarations: ($set + ['--nldesign-color-action' => '#154273', '--nldesign-color-action-text' => '#ffffff'])),
+			message: 'an action pair equal to the primary pair is the primary pair'
 		);
-		$this->assertSame([], $contrast->check(declarations: ($set + ['--nldesign-color-action' => '#1a7f37'])), 'white on a dark green reads');
+		$this->assertSame(
+			expected: [],
+			actual: $contrast->check(declarations: ($set + ['--nldesign-color-action' => '#1a7f37'])),
+			message: 'white on a dark green reads'
+		);
 
 		// White on a light green: the set moved the fill and kept the primary's text.
 		$pale = $actionWarnings($contrast->check(declarations: ($set + ['--nldesign-color-action' => '#7bd88f'])));
-		$this->assertCount(1, $pale);
-		$this->assertSame('--nldesign-color-action-text vs --nldesign-color-action', $pale[0]['pair']);
-		$this->assertSame(4.5, $pale[0]['threshold']);
-		$this->assertLessThan(4.5, $pale[0]['ratio']);
+		$this->assertCount(expectedCount: 1, haystack: $pale);
+		$this->assertSame(expected: '--nldesign-color-action-text vs --nldesign-color-action', actual: $pale[0]['pair']);
+		$this->assertSame(expected: 4.5, actual: $pale[0]['threshold']);
+		$this->assertLessThan(expected: 4.5, actual: $pale[0]['ratio']);
 
 		// Only the text moved: grey on the primary.
 		$grey = $actionWarnings($contrast->check(declarations: ($set + ['--nldesign-color-action-text' => '#5a6b7d'])));
-		$this->assertCount(1, $grey);
+		$this->assertCount(expectedCount: 1, haystack: $grey);
 
 		// A value that cannot be measured is never a pass.
 		$unknown = $actionWarnings($contrast->check(declarations: ($set + ['--nldesign-color-action' => 'var(--brand-green)'])));
-		$this->assertCount(1, $unknown);
-		$this->assertTrue($unknown[0]['unevaluated']);
+		$this->assertCount(expectedCount: 1, haystack: $unknown);
+		$this->assertTrue(condition: $unknown[0]['unevaluated']);
 	}//end testTheTextOnTheActionColourIsChecked()
 }//end class

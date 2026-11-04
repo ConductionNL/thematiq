@@ -53,6 +53,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with a minimal defaults.css + tokens/ layout.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -72,9 +74,11 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -86,14 +90,14 @@ class DarkPaletteServiceTest extends TestCase {
 	 * @return DarkPaletteService The constructed service.
 	 */
 	private function makeService(string $appDir): DarkPaletteService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appDir);
 
 		return new DarkPaletteService(
-			$this->contrast,
-			new CssParserService(),
-			$appManager,
-			$this->createMock(LoggerInterface::class)
+			contrast: $this->contrast,
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end makeService()
 
@@ -116,7 +120,7 @@ class DarkPaletteServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -146,7 +150,9 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$delta = ($max - $min);
 		if ($max === $r) {
-			$h = ((($g - $b) / $delta) + (($g < $b) ? 6 : 0));
+			$h = ((($g - $b) / $delta) + (match ($g < $b) {
+				true => 6, default => 0
+			}));
 		} elseif ($max === $g) {
 			$h = ((($b - $r) / $delta) + 2);
 		} else {
@@ -155,12 +161,16 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$h = fmod($h * 60, 360);
 
-		return ($h < 0) ? ($h + 360) : $h;
+		return match ($h < 0) {
+			true => $h + 360, default => $h
+		};
 	}//end hueOf()
 
 	/**
 	 * Hue is preserved (within 2°) for a background-class token that is NOT
 	 * the brand-primary exception token.
+	 *
+	 * @return void
 	 */
 	public function testHuePreservedForBackgroundToken(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-header-background' => '#154273']);
@@ -171,38 +181,44 @@ class DarkPaletteServiceTest extends TestCase {
 		$delta = abs($sourceHue - $derivedHue);
 		$delta = min($delta, (360 - $delta));
 
-		$this->assertLessThan(2.0, $delta);
+		$this->assertLessThan(expected: 2.0, actual: $delta);
 	}//end testHuePreservedForBackgroundToken()
 
 	/**
 	 * Thematiq#696: a translucent surface stays translucent in dark mode. The
 	 * dark channels come from the opaque colour, the light alpha is kept.
+	 *
+	 * @return void
 	 */
 	public function testTranslucentSurfaceKeepsAlpha(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-hero-cell-background' => 'rgba(255, 255, 255, 0.08)']);
 
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}14$/i', $derived['--nldesign-hero-cell-background']);
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6}14$/i', string: $derived['--nldesign-hero-cell-background']);
 		$opaque = $this->service->deriveDarkDeclarations(['--nldesign-hero-cell-background' => '#ffffff']);
 		$this->assertSame(
-			strtolower($opaque['--nldesign-hero-cell-background']),
-			strtolower(substr($derived['--nldesign-hero-cell-background'], 0, 7))
+			expected: strtolower($opaque['--nldesign-hero-cell-background']),
+			actual: strtolower(substr($derived['--nldesign-hero-cell-background'], 0, 7))
 		);
 	}//end testTranslucentSurfaceKeepsAlpha()
 
 	/**
 	 * Thematiq#696: an 8-digit hex token is darkened, not skipped, and keeps its alpha.
+	 *
+	 * @return void
 	 */
 	public function testEightDigitHexIsDarkenedAndKeepsAlpha(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-overlay' => '#00000080']);
 
-		$this->assertArrayHasKey('--nldesign-color-overlay', $derived);
-		$this->assertMatchesRegularExpression('/^#[0-9a-f]{6}80$/i', $derived['--nldesign-color-overlay']);
+		$this->assertArrayHasKey(key: '--nldesign-color-overlay', array: $derived);
+		$this->assertMatchesRegularExpression(pattern: '/^#[0-9a-f]{6}80$/i', string: $derived['--nldesign-color-overlay']);
 	}//end testEightDigitHexIsDarkenedAndKeepsAlpha()
 
 	/**
 	 * The brand-primary exception keeps `--nldesign-color-primary` at its
 	 * light value (hue delta 0) when the light primary/primary-text pair
 	 * already passes AA — the rijkshuisstijl blue stays recognisable.
+	 *
+	 * @return void
 	 */
 	public function testBrandPrimaryExceptionKeepsRecognisableBlue(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -212,12 +228,14 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame('#154273', $derived['--nldesign-color-primary']);
+		$this->assertSame(expected: '#154273', actual: $derived['--nldesign-color-primary']);
 	}//end testBrandPrimaryExceptionKeepsRecognisableBlue()
 
 	/**
 	 * A failing brand primary (light pair below AA) is NOT exempted — it
 	 * gets the normal background-class dark transform instead of being kept as-is.
+	 *
+	 * @return void
 	 */
 	public function testFailingBrandPrimaryIsNotExempted(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -228,29 +246,33 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertNotSame('#ffff99', $derived['--nldesign-color-primary']);
+		$this->assertNotSame(expected: '#ffff99', actual: $derived['--nldesign-color-primary']);
 	}//end testFailingBrandPrimaryIsNotExempted()
 
 	/**
 	 * A light background token (L≈0.96) derives to a dark lightness in [0.08, 0.16].
+	 *
+	 * @return void
 	 */
 	public function testLightBackgroundDerivesToDarkLightness(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#F5F6F7']);
 
 		$l = $this->lightnessOf(hex: $derived['--nldesign-color-background']);
-		$this->assertGreaterThanOrEqual(0.08, $l);
-		$this->assertLessThanOrEqual(0.16, $l);
+		$this->assertGreaterThanOrEqual(expected: 0.08, actual: $l);
+		$this->assertLessThanOrEqual(expected: 0.16, actual: $l);
 	}//end testLightBackgroundDerivesToDarkLightness()
 
 	/**
 	 * A dark-ish text token (L≈0.2) derives to a light lightness in [0.62, 0.92].
+	 *
+	 * @return void
 	 */
 	public function testDarkTextDerivesToLightLightness(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-text' => '#333333']);
 
 		$l = $this->lightnessOf(hex: $derived['--nldesign-color-text']);
-		$this->assertGreaterThanOrEqual(0.62, $l);
-		$this->assertLessThanOrEqual(0.92, $l);
+		$this->assertGreaterThanOrEqual(expected: 0.62, actual: $l);
+		$this->assertLessThanOrEqual(expected: 0.92, actual: $l);
 	}//end testDarkTextDerivesToLightLightness()
 
 	/**
@@ -268,6 +290,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 	/**
 	 * Non-color tokens (size, font-family) never appear in the dark output.
+	 *
+	 * @return void
 	 */
 	public function testNonColorTokensPassThroughUntouched(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -277,8 +301,8 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertArrayNotHasKey('--nldesign-size-lint', $derived);
-		$this->assertArrayNotHasKey('--nldesign-font-family', $derived);
+		$this->assertArrayNotHasKey(key: '--nldesign-size-lint', array: $derived);
+		$this->assertArrayNotHasKey(key: '--nldesign-font-family', array: $derived);
 	}//end testNonColorTokensPassThroughUntouched()
 
 	/**
@@ -287,6 +311,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * The alias here points at a token the set does not declare, so there is no
 	 * literal to derive from. An alias whose target IS declared is a different
 	 * case entirely — see {@see self::testAnAliasIsResolvedToTheLiteralItPointsAt()}.
+	 *
+	 * @return void
 	 */
 	public function testUnparseableValuesAreSkipped(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -296,7 +322,7 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $derived);
+		$this->assertSame(expected: [], actual: $derived);
 	}//end testUnparseableValuesAreSkipped()
 
 	/**
@@ -312,6 +338,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * Measured on a live portal before this fix: dark mode repainted 51% of the
 	 * page while every text token stayed light-mode dark, leaving a heading at
 	 * contrast 1.06 against its own band.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasIsResolvedToTheLiteralItPointsAt(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -321,16 +349,18 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertArrayHasKey('--utrecht-document-color', $derived);
+		$this->assertArrayHasKey(key: '--utrecht-document-color', array: $derived);
 		// A LITERAL, not an alias: the emitted value must not depend on where
 		// the block sits in the cascade.
-		$this->assertStringStartsWith('#', $derived['--utrecht-document-color']);
+		$this->assertStringStartsWith(prefix: '#', string: $derived['--utrecht-document-color']);
 		// And it must land light, because it is text.
-		$this->assertGreaterThanOrEqual(0.62, $this->lightnessOf(hex: $derived['--utrecht-document-color']));
+		$this->assertGreaterThanOrEqual(expected: 0.62, actual: $this->lightnessOf(hex: $derived['--utrecht-document-color']));
 	}//end testAnAliasIsResolvedToTheLiteralItPointsAt()
 
 	/**
 	 * An alias chain is followed to the end.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasChainIsFollowedToItsLiteral(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -342,7 +372,7 @@ class DarkPaletteServiceTest extends TestCase {
 		);
 
 		// White surface -> near-black.
-		$this->assertLessThanOrEqual(0.16, $this->lightnessOf(hex: $derived['--utrecht-document-background-color']));
+		$this->assertLessThanOrEqual(expected: 0.16, actual: $this->lightnessOf(hex: $derived['--utrecht-document-background-color']));
 	}//end testAnAliasChainIsFollowedToItsLiteral()
 
 	/**
@@ -350,6 +380,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * A token set is authored input; two tokens pointing at each other must
 	 * cost a bounded number of hops, not the process.
+	 *
+	 * @return void
 	 */
 	public function testACyclicAliasTerminates(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -359,12 +391,14 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $derived);
+		$this->assertSame(expected: [], actual: $derived);
 	}//end testACyclicAliasTerminates()
 
 	/**
 	 * A `var()` FALLBACK is used only when the target is absent — which is what
 	 * the browser does with it.
+	 *
+	 * @return void
 	 */
 	public function testAnAliasFallbackIsUsedOnlyWhenTheTargetIsAbsent(): void {
 		// The two sources are chosen so the OUTCOMES differ: #FFFFFF derives to
@@ -372,7 +406,7 @@ class DarkPaletteServiceTest extends TestCase {
 		// Sources that happened to derive to the same place would let this pass
 		// whichever branch ran.
 		$absent = $this->service->deriveDarkDeclarations(['--utrecht-heading-1-color' => 'var(--nope, #FFFFFF)']);
-		$this->assertLessThanOrEqual(0.7, $this->lightnessOf(hex: $absent['--utrecht-heading-1-color']));
+		$this->assertLessThanOrEqual(expected: 0.7, actual: $this->lightnessOf(hex: $absent['--utrecht-heading-1-color']));
 
 		$present = $this->service->deriveDarkDeclarations(
 			[
@@ -381,7 +415,7 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 		// Derived from #111111, NOT from the ignored #FFFFFF fallback.
-		$this->assertGreaterThanOrEqual(0.85, $this->lightnessOf(hex: $present['--utrecht-heading-1-color']));
+		$this->assertGreaterThanOrEqual(expected: 0.85, actual: $this->lightnessOf(hex: $present['--utrecht-heading-1-color']));
 	}//end testAnAliasFallbackIsUsedOnlyWhenTheTargetIsAbsent()
 
 	/**
@@ -389,6 +423,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * Half-substituting a shorthand would corrupt it, and it is not a colour
 	 * this service can derive in the first place.
+	 *
+	 * @return void
 	 */
 	public function testACompoundValueContainingAVarIsNotResolved(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -398,7 +434,7 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertArrayNotHasKey('--utrecht-border', $derived);
+		$this->assertArrayNotHasKey(key: '--utrecht-border', array: $derived);
 	}//end testACompoundValueContainingAVarIsNotResolved()
 
 	/**
@@ -409,6 +445,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * every `--utrecht-heading-N-color` in the background class, so the tokens
 	 * that paint body copy were darkened towards black exactly like the
 	 * surfaces they sit on.
+	 *
+	 * @return void
 	 */
 	public function testTheUtrechtColorConventionSplitsTextFromSurface(): void {
 		// A MID-TONE source, deliberately. The two classes use different
@@ -425,12 +463,12 @@ class DarkPaletteServiceTest extends TestCase {
 		);
 
 		// Text takes the clamp...
-		$this->assertGreaterThanOrEqual(0.60, $this->lightnessOf(hex: $derived['--utrecht-document-color']));
+		$this->assertGreaterThanOrEqual(expected: 0.60, actual: $this->lightnessOf(hex: $derived['--utrecht-document-color']));
 		// ...its surface goes dark...
-		$this->assertLessThanOrEqual(0.16, $this->lightnessOf(hex: $derived['--utrecht-document-background-color']));
+		$this->assertLessThanOrEqual(expected: 0.16, actual: $this->lightnessOf(hex: $derived['--utrecht-document-background-color']));
 		// ...and an outline is not the glyphs, so it must NOT be pulled into
 		// the text class just because its name ends in `-color`.
-		$this->assertLessThan(0.60, $this->lightnessOf(hex: $derived['--utrecht-focus-outline-color']));
+		$this->assertLessThan(expected: 0.60, actual: $this->lightnessOf(hex: $derived['--utrecht-focus-outline-color']));
 	}//end testTheUtrechtColorConventionSplitsTextFromSurface()
 
 	/**
@@ -439,6 +477,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * "text" used to be matched as a substring, so a white
 	 * `--nldesign-component-textbox-background-color` took the text clamp and
 	 * shipped as mid-grey #9e9e9e under light #d5ddf0 input text (1.96:1).
+	 *
+	 * @return void
 	 */
 	public function testATextboxSurfaceIsNotTextClass(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -450,11 +490,11 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertLessThanOrEqual(0.16, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-background-color']));
-		$this->assertLessThan(0.60, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-border-color']));
+		$this->assertLessThanOrEqual(expected: 0.16, actual: $this->lightnessOf(hex: $derived['--nldesign-component-textbox-background-color']));
+		$this->assertLessThan(expected: 0.60, actual: $this->lightnessOf(hex: $derived['--nldesign-component-textbox-border-color']));
 		// The typed text and a `-text` token stay text-class.
-		$this->assertGreaterThanOrEqual(0.60, $this->lightnessOf(hex: $derived['--nldesign-component-textbox-color']));
-		$this->assertGreaterThanOrEqual(0.60, $this->lightnessOf(hex: $derived['--nldesign-color-button-primary-text']));
+		$this->assertGreaterThanOrEqual(expected: 0.60, actual: $this->lightnessOf(hex: $derived['--nldesign-component-textbox-color']));
+		$this->assertGreaterThanOrEqual(expected: 0.60, actual: $this->lightnessOf(hex: $derived['--nldesign-color-button-primary-text']));
 	}//end testATextboxSurfaceIsNotTextClass()
 
 	/**
@@ -462,6 +502,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * These are the dark values development shipped for rijkshuisstijl: a
 	 * white label clamped to #9e9e9e on the derived light-blue primary fill.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesControlLabels(): void {
 		$result = $this->service->verifyAndRepair(
@@ -479,7 +521,7 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 		$d = $result['declarations'];
 		foreach ([
 			['--nldesign-color-button-primary-text', '--nldesign-color-button-primary-background'],
@@ -487,7 +529,11 @@ class DarkPaletteServiceTest extends TestCase {
 			['--nldesign-component-button-primary-action-hover-color', '--nldesign-component-button-primary-action-hover-background-color'],
 			['--nldesign-component-textbox-color', '--nldesign-component-textbox-background-color'],
 		] as [$fg, $bg]) {
-			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]),
+				message: $fg . ' on ' . $bg
+			);
 		}
 	}//end testTheRepairLoopFixesControlLabels()
 
@@ -498,6 +544,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * over its dark navigation (#171717), 22% hovered, with the label in the
 	 * main text colour. These are conduction-new's dark values: #7499de read
 	 * 6.4:1 on the page but 4.37:1 on the wash, and 3.70:1 hovered.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash(): void {
 		$result = $this->service->verifyAndRepair(
@@ -508,10 +556,14 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 		$text = $result['declarations']['--nldesign-color-text'];
 		foreach (['16%' => '#31343a', '22%' => '#3b3f47'] as $share => $wash) {
-			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $text, background: $wash), $text . ' on the ' . $share . ' wash ' . $wash);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $text, background: $wash),
+				message: $text . ' on the ' . $share . ' wash ' . $wash
+			);
 		}
 	}//end testTheRepairLoopFixesTheTextOnTheSelectedNavigationWash()
 
@@ -520,19 +572,23 @@ class DarkPaletteServiceTest extends TestCase {
 	 *
 	 * vng's theming background_color #0277BD stood in for the page background
 	 * and inverted to #42b1f3. The page keeps its hue but lands dark.
+	 *
+	 * @return void
 	 */
 	public function testAMidTonePageBackgroundDerivesDark(): void {
 		$derived = $this->service->deriveDarkDeclarations(['--nldesign-color-background' => '#0277BD']);
 
 		$page = $derived['--nldesign-color-background'];
-		$this->assertLessThanOrEqual(0.125, $this->lightnessOf(hex: $page));
-		$this->assertEqualsWithDelta($this->hueOf(hex: '#0277BD'), $this->hueOf(hex: $page), 2.0);
+		$this->assertLessThanOrEqual(expected: 0.125, actual: $this->lightnessOf(hex: $page));
+		$this->assertEqualsWithDelta(expected: $this->hueOf(hex: '#0277BD'), actual: $this->hueOf(hex: $page), delta: 2.0);
 		// Light body text still reads on it.
-		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: '#d5ddf0', background: $page));
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: '#d5ddf0', background: $page));
 	}//end testAMidTonePageBackgroundDerivesDark()
 
 	/**
 	 * `-rgb` companion tokens are regenerated from their derived base token.
+	 *
+	 * @return void
 	 */
 	public function testRgbCompanionsMatchDerivedBase(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -543,12 +599,14 @@ class DarkPaletteServiceTest extends TestCase {
 		);
 
 		$expectedRgb = $this->contrast->parseColor(value: $derived['--nldesign-color-error']);
-		$this->assertSame(implode(', ', $expectedRgb), $derived['--nldesign-color-error-rgb']);
+		$this->assertSame(expected: implode(', ', $expectedRgb), actual: $derived['--nldesign-color-error-rgb']);
 	}//end testRgbCompanionsMatchDerivedBase()
 
 	/**
 	 * A pathological pair (bright yellow bg / white fg) is repaired by the
 	 * verification loop to a passing pair (snap fallback).
+	 *
+	 * @return void
 	 */
 	public function testPathologicalPairIsRepairedToPassing(): void {
 		$result = $this->service->verifyAndRepair(
@@ -558,13 +616,15 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $this->contrast->check(declarations: $result['declarations']));
-		$this->assertNotSame('#FFFFFF', $result['declarations']['--nldesign-color-primary-text']);
+		$this->assertSame(expected: [], actual: $this->contrast->check(declarations: $result['declarations']));
+		$this->assertNotSame(expected: '#FFFFFF', actual: $result['declarations']['--nldesign-color-primary-text']);
 	}//end testPathologicalPairIsRepairedToPassing()
 
 	/**
 	 * A hand-authored (protected) failing pair is emitted unchanged and
 	 * produces a warning — never rewritten by the loop.
+	 *
+	 * @return void
 	 */
 	public function testHandAuthoredFailurePreservedAndWarned(): void {
 		// Identical fg/bg -> ratio exactly 1:1, unambiguously below the 4.5:1
@@ -579,13 +639,15 @@ class DarkPaletteServiceTest extends TestCase {
 			protectedTokens: ['--nldesign-color-primary', '--nldesign-color-primary-text']
 		);
 
-		$this->assertSame('#4844AD', $result['declarations']['--nldesign-color-primary']);
-		$this->assertSame('#4844AD', $result['declarations']['--nldesign-color-primary-text']);
-		$this->assertNotEmpty($result['warnings']);
+		$this->assertSame(expected: '#4844AD', actual: $result['declarations']['--nldesign-color-primary']);
+		$this->assertSame(expected: '#4844AD', actual: $result['declarations']['--nldesign-color-primary-text']);
+		$this->assertNotEmpty(actual: $result['warnings']);
 	}//end testHandAuthoredFailurePreservedAndWarned()
 
 	/**
 	 * A passing pair produces no warnings and is left untouched.
+	 *
+	 * @return void
 	 */
 	public function testPassingPairProducesNoWarnings(): void {
 		$result = $this->service->verifyAndRepair(
@@ -595,13 +657,15 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 	}//end testPassingPairProducesNoWarnings()
 
 	/**
 	 * `renderDarkCss()` emits the exact dual-scope selector shape from
 	 * design.md §2: the four `:not()` exclusions and the explicit
 	 * `body[data-theme-dark], body[data-themes*=dark]` block.
+	 *
+	 * @return void
 	 */
 	public function testRenderDarkCssSelectorShape(): void {
 		$css = $this->service->renderDarkCss(
@@ -610,16 +674,16 @@ class DarkPaletteServiceTest extends TestCase {
 			sourceHash: 'sha256:deadbeef'
 		);
 
-		$this->assertStringContainsString('@media (prefers-color-scheme: dark) {', $css);
+		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark) {', haystack: $css);
 		$this->assertStringContainsString(
-			'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {',
-			$css
+			needle: 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {',
+			haystack: $css
 		);
-		$this->assertStringContainsString('body[data-theme-dark],', $css);
-		$this->assertStringContainsString('body[data-themes*=dark] {', $css);
-		$this->assertStringContainsString('--nldesign-color-primary: #4844ad;', $css);
-		$this->assertStringContainsString('sha256:deadbeef', $css);
-		$this->assertStringNotContainsString('!important', $css);
+		$this->assertStringContainsString(needle: 'body[data-theme-dark],', haystack: $css);
+		$this->assertStringContainsString(needle: 'body[data-themes*=dark] {', haystack: $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #4844ad;', haystack: $css);
+		$this->assertStringContainsString(needle: 'sha256:deadbeef', haystack: $css);
+		$this->assertStringNotContainsString(needle: '!important', haystack: $css);
 	}//end testRenderDarkCssSelectorShape()
 
 	/**
@@ -636,6 +700,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * Asserted through the PUBLIC surface — the header text a real run writes
 	 * and a real freshness check reads — rather than by reflecting on the
 	 * private method, so it fails if either half drifts from the other.
+	 *
+	 * @return void
 	 */
 	public function testAnArtefactFromAnOlderGeneratorIsNotFresh(): void {
 		$tokenCss = ":root {\n\t--nldesign-color-primary: #154273;\n}\n";
@@ -653,42 +719,48 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$result = $this->service->generateAndWrite(setId: 'aset');
 
-		$this->assertTrue($result['written'], 'A v0 artefact must be regenerated: ' . $result['reason']);
+		$this->assertTrue(condition: $result['written'], message: 'A v0 artefact must be regenerated: ' . $result['reason']);
 		$this->assertStringContainsString(
-			'DarkPaletteService v' . DarkPaletteService::GENERATOR_VERSION . ' ',
-			(string)file_get_contents($darkFile)
+			needle: 'DarkPaletteService v' . DarkPaletteService::GENERATOR_VERSION . ' ',
+			haystack: (string)file_get_contents($darkFile)
 		);
 
 		// And the other direction, or the check would be satisfied by never
 		// considering anything fresh: the file it just wrote IS fresh.
 		$second = $this->service->generateAndWrite(setId: 'aset');
-		$this->assertFalse($second['written']);
-		$this->assertSame('fresh', $second['reason']);
+		$this->assertFalse(condition: $second['written']);
+		$this->assertSame(expected: 'fresh', actual: $second['reason']);
 	}//end testAnArtefactFromAnOlderGeneratorIsNotFresh()
 
 	/**
 	 * `!important` is never used — body-level scope already out-specifies the
 	 * light `:root` layer without it.
+	 *
+	 * @return void
 	 */
 	public function testGeneratedCssNeverUsesImportant(): void {
 		$css = $this->service->renderDarkCss(setId: 'x', declarations: ['--nldesign-color-primary' => '#000000'], sourceHash: 'sha256:abc');
-		$this->assertStringNotContainsString('!important', $css);
+		$this->assertStringNotContainsString(needle: '!important', haystack: $css);
 	}//end testGeneratedCssNeverUsesImportant()
 
 	/**
 	 * Eligibility: `none` and `high-contrast` design systems are excluded;
 	 * everything else is eligible.
+	 *
+	 * @return void
 	 */
 	public function testEligibility(): void {
-		$this->assertFalse($this->service->isEligible(designSystemId: 'none'));
-		$this->assertFalse($this->service->isEligible(designSystemId: 'high-contrast'));
-		$this->assertTrue($this->service->isEligible(designSystemId: 'nldesign'));
-		$this->assertTrue($this->service->isEligible(designSystemId: 'lasuite'));
+		$this->assertFalse(condition: $this->service->isEligible(designSystemId: 'none'));
+		$this->assertFalse(condition: $this->service->isEligible(designSystemId: 'high-contrast'));
+		$this->assertTrue(condition: $this->service->isEligible(designSystemId: 'nldesign'));
+		$this->assertTrue(condition: $this->service->isEligible(designSystemId: 'lasuite'));
 	}//end testEligibility()
 
 	/**
 	 * `generateForSet()` merges hand-authored dark-block overrides over the
 	 * derived declarations — the override wins.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetHandAuthoredOverrideWins(): void {
 		file_put_contents(
@@ -703,8 +775,8 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$generated = $this->service->generateForSet(setId: 'example');
 
-		$this->assertNotNull($generated);
-		$this->assertStringContainsString('--nldesign-color-primary: #4844AD;', $generated['css']);
+		$this->assertNotNull(actual: $generated);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #4844AD;', haystack: $generated['css']);
 	}//end testGenerateForSetHandAuthoredOverrideWins()
 
 	/**
@@ -713,6 +785,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * chip and button label from `--nldesign-component-button-error-color`,
 	 * falling back to white; white on the lighter red a dark variant derives
 	 * from #d70d0d (#e72e2e) is 4.35:1, and so is near-black #111111.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetGivesTheErrorLabelAReadableColour(): void {
 		file_put_contents(
@@ -726,16 +800,22 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$generated = $this->service->generateForSet(setId: 'example');
 
-		$this->assertNotNull($generated);
+		$this->assertNotNull(actual: $generated);
 		$fill = [];
 		$label = [];
-		$this->assertSame(1, preg_match('/--nldesign-color-error: (#[0-9a-f]{6});/', $generated['css'], $fill));
-		$this->assertSame(1, preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label), 'no error label in the dark variant');
-		$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $label[1], background: $fill[1]));
+		$this->assertSame(expected: 1, actual: preg_match('/--nldesign-color-error: (#[0-9a-f]{6});/', $generated['css'], $fill));
+		$this->assertSame(
+			expected: 1,
+			actual: preg_match('/--nldesign-component-button-error-color: (#[0-9a-f]{6});/', $generated['css'], $label),
+			message: 'no error label in the dark variant'
+		);
+		$this->assertGreaterThanOrEqual(expected: 4.5, actual: $this->contrast->measure(foreground: $label[1], background: $fill[1]));
 	}//end testGenerateForSetGivesTheErrorLabelAReadableColour()
 
 	/**
 	 * A label the set chooses itself is kept when it reads, never replaced.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetKeepsAReadableHandAuthoredErrorLabel(): void {
 		file_put_contents(
@@ -750,13 +830,15 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$generated = $this->service->generateForSet(setId: 'example');
 
-		$this->assertNotNull($generated);
-		$this->assertStringContainsString('--nldesign-component-button-error-color: #1a0000;', $generated['css']);
+		$this->assertNotNull(actual: $generated);
+		$this->assertStringContainsString(needle: '--nldesign-component-button-error-color: #1a0000;', haystack: $generated['css']);
 	}//end testGenerateForSetKeepsAReadableHandAuthoredErrorLabel()
 
 	/**
 	 * `generateForSet()` returns null for an ineligible design system
 	 * (`none`) — no dark output is built at all.
+	 *
+	 * @return void
 	 */
 	public function testGenerateForSetSkipsIneligibleDesignSystem(): void {
 		file_put_contents(
@@ -765,12 +847,14 @@ class DarkPaletteServiceTest extends TestCase {
 		);
 		file_put_contents($this->appDir . '/css/tokens/stock.css', ":root {\n\t--nldesign-color-primary: #0082c9;\n}\n");
 
-		$this->assertNull($this->service->generateForSet(setId: 'stock'));
+		$this->assertNull(actual: $this->service->generateForSet(setId: 'stock'));
 	}//end testGenerateForSetSkipsIneligibleDesignSystem()
 
 	/**
 	 * `generateAndWrite()` writes the file, and a second call without
 	 * `--force` is a no-op (fresh-file skip) — idempotence.
+	 *
+	 * @return void
 	 */
 	public function testGenerateAndWriteIsIdempotentWithoutForce(): void {
 		file_put_contents(
@@ -780,20 +864,22 @@ class DarkPaletteServiceTest extends TestCase {
 		file_put_contents($this->appDir . '/css/tokens/idem.css', ":root {\n\t--nldesign-color-primary: #154273;\n}\n");
 
 		$first = $this->service->generateAndWrite(setId: 'idem');
-		$this->assertTrue($first['written']);
+		$this->assertTrue(condition: $first['written']);
 
 		$darkFile = $this->appDir . '/css/tokens/dark/idem.css';
 		$firstWritten = file_get_contents($darkFile);
 
 		$second = $this->service->generateAndWrite(setId: 'idem');
-		$this->assertFalse($second['written']);
-		$this->assertTrue($second['skipped']);
-		$this->assertSame('fresh', $second['reason']);
-		$this->assertSame($firstWritten, file_get_contents($darkFile));
+		$this->assertFalse(condition: $second['written']);
+		$this->assertTrue(condition: $second['skipped']);
+		$this->assertSame(expected: 'fresh', actual: $second['reason']);
+		$this->assertSame(expected: $firstWritten, actual: file_get_contents($darkFile));
 	}//end testGenerateAndWriteIsIdempotentWithoutForce()
 
 	/**
 	 * `--force` rewrites despite a fresh hash.
+	 *
+	 * @return void
 	 */
 	public function testGenerateAndWriteForceRewrites(): void {
 		file_put_contents(
@@ -805,12 +891,14 @@ class DarkPaletteServiceTest extends TestCase {
 		$this->service->generateAndWrite(setId: 'idem');
 		$result = $this->service->generateAndWrite(setId: 'idem', force: true);
 
-		$this->assertTrue($result['written']);
+		$this->assertTrue(condition: $result['written']);
 	}//end testGenerateAndWriteForceRewrites()
 
 	/**
 	 * `discoverAllSetIds()` finds every `.css` file directly under
 	 * `css/tokens/` (not the `dark/` subdirectory itself).
+	 *
+	 * @return void
 	 */
 	public function testDiscoverAllSetIds(): void {
 		file_put_contents($this->appDir . '/css/tokens/one.css', ':root { --nldesign-color-primary: #000; }');
@@ -819,25 +907,27 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$ids = $this->service->discoverAllSetIds();
 
-		$this->assertContains('one', $ids);
-		$this->assertContains('two', $ids);
-		$this->assertNotContains('dark', $ids);
+		$this->assertContains(needle: 'one', haystack: $ids);
+		$this->assertContains(needle: 'two', haystack: $ids);
+		$this->assertNotContains(needle: 'dark', haystack: $ids);
 	}//end testDiscoverAllSetIds()
 
 	/**
 	 * Deleting a custom set's dark variant removes the file (best-effort, no
 	 * exception when it never existed).
+	 *
+	 * @return void
 	 */
 	public function testDeleteDarkVariant(): void {
 		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
 		file_put_contents($this->appDir . '/css/tokens/dark/custom-x.css', '/* generated */');
 
 		$this->service->deleteDarkVariant(setId: 'custom-x');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark/custom-x.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/custom-x.css');
 
 		// Deleting again (already gone) must not throw.
 		$this->service->deleteDarkVariant(setId: 'custom-x');
-		$this->addToAssertionCount(1);
+		$this->addToAssertionCount(count: 1);
 	}//end testDeleteDarkVariant()
 
 	/**
@@ -848,32 +938,53 @@ class DarkPaletteServiceTest extends TestCase {
 	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function testDarkValuesFromAFileWin(): void {
-		file_put_contents($this->appDir . '/css/tokens/custom-x.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n");
-		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'));
+		file_put_contents(
+			$this->appDir . '/css/tokens/custom-x.css',
+			":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-color-background: #ffffff;\n}\n"
+		);
+		$this->assertSame(expected: [], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'));
 
-		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8', '--nldesign-color-background' => '#202124']);
-		$this->assertSame(['--nldesign-color-background' => '#202124', '--nldesign-color-primary' => '#8ab4f8'], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'));
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'custom-x',
+			declarations: ['--nldesign-color-primary' => '#8ab4f8', '--nldesign-color-background' => '#202124']
+		);
+		$this->assertSame(
+			expected: ['--nldesign-color-background' => '#202124', '--nldesign-color-primary' => '#8ab4f8'],
+			actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x')
+		);
 
 		$css = (string)($this->service->generateForSet(setId: 'custom-x')['css'] ?? '');
-		$this->assertStringContainsString('--nldesign-color-primary: #8ab4f8;', $css);
-		$this->assertStringContainsString('--nldesign-color-background: #202124;', $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #8ab4f8;', haystack: $css);
+		$this->assertStringContainsString(needle: '--nldesign-color-background: #202124;', haystack: $css);
 
 		// A shipped set keeps its own dark block; nothing is written for it.
-		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'example', declarations: ['--nldesign-color-primary' => '#000000']);
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/example.css');
-		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'example'));
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'example',
+			declarations: ['--nldesign-color-primary' => '#000000']
+		);
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark-pins/example.css');
+		$this->assertSame(expected: [], actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'example'));
 
 		$this->service->deleteDarkVariant(setId: 'custom-x');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/custom-x.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark-pins/custom-x.css');
 
-		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: ['--nldesign-color-primary' => '#8ab4f8']);
-		(new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->write(setId: 'custom-x', declarations: []);
-		$this->assertSame([], (new DarkPins(new DirectoryRuntimeFileStore($this->appDir)))->read(setId: 'custom-x'), 'an empty map removes the file');
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(
+			setId: 'custom-x',
+			declarations: ['--nldesign-color-primary' => '#8ab4f8']
+		);
+		(new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->write(setId: 'custom-x', declarations: []);
+		$this->assertSame(
+			expected: [],
+			actual: (new DarkPins(store: new DirectoryRuntimeFileStore(root: $this->appDir)))->read(setId: 'custom-x'),
+			message: 'an empty map removes the file'
+		);
 	}//end testDarkValuesFromAFileWin()
 
 	/**
 	 * `logo_dark` theming metadata is emitted as a dark-scoped
 	 * `--nldesign-logo-url` override, relative to `css/tokens/dark/`.
+	 *
+	 * @return void
 	 */
 	public function testLogoDarkEmitsRelativeLogoUrlOverride(): void {
 		file_put_contents(
@@ -892,10 +1003,10 @@ class DarkPaletteServiceTest extends TestCase {
 
 		$generated = $this->service->generateForSet(setId: 'withlogo');
 
-		$this->assertNotNull($generated);
+		$this->assertNotNull(actual: $generated);
 		$this->assertStringContainsString(
-			"--nldesign-logo-url: url('../../../img/logos/withlogo-dark.svg');",
-			$generated['css']
+			needle: "--nldesign-logo-url: url('../../../img/logos/withlogo-dark.svg');",
+			haystack: $generated['css']
 		);
 	}//end testLogoDarkEmitsRelativeLogoUrlOverride()
 
@@ -904,6 +1015,8 @@ class DarkPaletteServiceTest extends TestCase {
 	 * variant, surface and text together, so the light values keep applying
 	 * (thematiq#1021). Inverted, La Frankendesk's #1b1b23 footer became
 	 * #cbcbd6 under a #9e9e9e label.
+	 *
+	 * @return void
 	 */
 	public function testAnAlreadyDarkFooterKeepsItsLightValues(): void {
 		$derived = $this->service->deriveDarkDeclarations(
@@ -916,15 +1029,17 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertArrayHasKey('--nldesign-color-background', $derived);
+		$this->assertArrayHasKey(key: '--nldesign-color-background', array: $derived);
 		foreach (['--nldesign-color-footer-background', '--nldesign-color-footer-text', '--frankendesk-footer-link-color', '--frankendesk-footer-brand-color'] as $token) {
-			$this->assertArrayNotHasKey($token, $derived, $token . ' belongs to a dark footer and must keep its light value');
+			$this->assertArrayNotHasKey(key: $token, array: $derived, message: $token . ' belongs to a dark footer and must keep its light value');
 		}
 	}//end testAnAlreadyDarkFooterKeepsItsLightValues()
 
 	/**
 	 * A light footer still derives dark, and an alias to a dark literal
 	 * counts as dark (conduction-new's `var(--c-cobalt-900)`).
+	 *
+	 * @return void
 	 */
 	public function testOnlyAnAlreadyDarkFooterIsLeftAlone(): void {
 		$light = $this->service->deriveDarkDeclarations(
@@ -933,8 +1048,8 @@ class DarkPaletteServiceTest extends TestCase {
 				'--nldesign-color-footer-text' => '#333333',
 			]
 		);
-		$this->assertArrayHasKey('--nldesign-color-footer-background', $light);
-		$this->assertArrayHasKey('--nldesign-color-footer-text', $light);
+		$this->assertArrayHasKey(key: '--nldesign-color-footer-background', array: $light);
+		$this->assertArrayHasKey(key: '--nldesign-color-footer-text', array: $light);
 
 		$aliased = $this->service->deriveDarkDeclarations(
 			[
@@ -943,14 +1058,16 @@ class DarkPaletteServiceTest extends TestCase {
 				'--nldesign-color-footer-text' => '#ffffff',
 			]
 		);
-		$this->assertArrayNotHasKey('--nldesign-color-footer-background', $aliased);
-		$this->assertArrayNotHasKey('--nldesign-color-footer-text', $aliased);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-footer-background', array: $aliased);
+		$this->assertArrayNotHasKey(key: '--nldesign-color-footer-text', array: $aliased);
 	}//end testOnlyAnAlreadyDarkFooterIsLeftAlone()
 
 	/**
 	 * The hero band's foregrounds are repaired against the primary fill they
 	 * sit on, a light footer's text against its derived surface, and the
 	 * semantic link colour and its hover against the page.
+	 *
+	 * @return void
 	 */
 	public function testTheRepairLoopFixesTheHeroAndFooterForegrounds(): void {
 		$result = $this->service->verifyAndRepair(
@@ -967,7 +1084,7 @@ class DarkPaletteServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 		$d = $result['declarations'];
 		foreach ([
 			['--nldesign-hero-title-color', '--nldesign-color-primary'],
@@ -976,7 +1093,11 @@ class DarkPaletteServiceTest extends TestCase {
 			['--nldesign-color-link', '--nldesign-color-background'],
 			['--nldesign-color-link-hover', '--nldesign-color-background'],
 		] as [$fg, $bg]) {
-			$this->assertGreaterThanOrEqual(4.5, $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]), $fg . ' on ' . $bg);
+			$this->assertGreaterThanOrEqual(
+				expected: 4.5,
+				actual: $this->contrast->measure(foreground: $d[$fg], background: $d[$bg]),
+				message: $fg . ' on ' . $bg
+			);
 		}
 	}//end testTheRepairLoopFixesTheHeroAndFooterForegrounds()
 
@@ -987,16 +1108,21 @@ class DarkPaletteServiceTest extends TestCase {
 	 * declarations underneath for every token the variant leaves out.
 	 *
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
+	 *
+	 * @return void
 	 */
 	public function testFrankendeskBandsReadInItsGeneratedDarkVariant(): void {
 		$realAppRoot = dirname(__DIR__, 3);
 		$service = $this->makeService(appDir: $realAppRoot);
 		$generated = $service->generateForSet(setId: 'frankendesk');
-		$this->assertNotNull($generated);
+		$this->assertNotNull(actual: $generated);
 
 		$parser = new CssParserService();
 		$light = ($parser->parseDeclarations(content: (string)file_get_contents($realAppRoot . '/css/tokens/frankendesk.css')) ?? []);
-		$this->assertSame(1, preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block));
+		$this->assertSame(
+			expected: 1,
+			actual: preg_match('/body\[data-theme-dark\],\s*body\[data-themes\*=dark\]\s*\{([^}]*)\}/', $generated['css'], $block)
+		);
 		$dark = array_merge($light, ($parser->parseDeclarations(content: $block[1]) ?? []));
 
 		$pairs = [
@@ -1014,8 +1140,8 @@ class DarkPaletteServiceTest extends TestCase {
 		];
 		foreach ($pairs as [$fg, $bg]) {
 			$ratio = $this->contrast->measure(foreground: $dark[$fg], background: $dark[$bg]);
-			$this->assertNotNull($ratio, $fg);
-			$this->assertGreaterThanOrEqual(4.5, $ratio, $fg . ' ' . $dark[$fg] . ' on ' . $bg . ' ' . $dark[$bg]);
+			$this->assertNotNull(actual: $ratio, message: $fg);
+			$this->assertGreaterThanOrEqual(expected: 4.5, actual: $ratio, message: $fg . ' ' . $dark[$fg] . ' on ' . $bg . ' ' . $dark[$bg]);
 		}
 	}//end testFrankendeskBandsReadInItsGeneratedDarkVariant()
 
@@ -1025,25 +1151,27 @@ class DarkPaletteServiceTest extends TestCase {
 	 * at its AA threshold — the verification-loop contract, exercised
 	 * against the actual worktree files (not synthetic fixtures).
 	 *
+	 * @param string $setId The shipped token set id.
+	 *
 	 * @dataProvider shippedSetProvider
 	 *
-	 * @param string $setId The shipped token set id.
+	 * @return void
 	 */
 	public function testRealShippedSetsPassContrastAfterGeneration(string $setId): void {
 		$realAppRoot = dirname(__DIR__, 3);
 		if (is_file($realAppRoot . '/css/tokens/' . $setId . '.css') === false) {
-			$this->markTestSkipped('Real app tree not available at ' . $realAppRoot);
+			$this->markTestSkipped(message: 'Real app tree not available at ' . $realAppRoot);
 		}
 
 		$service = $this->makeService(appDir: $realAppRoot);
 		$generated = $service->generateForSet(setId: $setId);
 
-		$this->assertNotNull($generated);
+		$this->assertNotNull(actual: $generated);
 
 		foreach ($generated['warnings'] as $warning) {
 			$this->assertTrue(
-				($warning['unevaluated'] ?? false) === true,
-				'Unexpected non-unevaluated contrast warning for ' . $setId . ': ' . $warning['pair'] . ' = ' . ($warning['ratio'] ?? 'n/a')
+				condition: ($warning['unevaluated'] ?? false) === true,
+				message: 'Unexpected non-unevaluated contrast warning for ' . $setId . ': ' . $warning['pair'] . ' = ' . ($warning['ratio'] ?? 'n/a')
 			);
 		}
 	}//end testRealShippedSetsPassContrastAfterGeneration()

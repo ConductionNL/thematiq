@@ -14,6 +14,8 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OverridesController;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCP\IConfig;
@@ -49,20 +51,29 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	 */
 	private OverridesController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->request = $this->createMock(IRequest::class);
-		$this->overrides = $this->createMock(CustomOverridesService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->overrides = $this->createMock(originalClassName: CustomOverridesService::class);
 
 		$this->controller = new OverridesController(
-			'thematiq',
-			$this->request,
-			$this->overrides,
-			new CssParserService(),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(ThemingService::class)
+			appName: 'thematiq',
+			request: $this->request,
+			writes: new OverridesWrites(
+				overridesService: $this->overrides,
+				cssParser: new CssParserService(),
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class)
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			)
 		);
 	}//end setUp()
 
@@ -80,6 +91,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	/**
 	 * The named set's overrides come back with the registry the editor
 	 * renders them against.
+	 *
+	 * @return void
 	 */
 	public function testReadsTheNamedSetsOverrides(): void {
 		$this->asking(tokenSet: 'custom-openwoo');
@@ -90,9 +103,9 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 		$data = $this->controller->getOverrides()->getData();
 
-		$this->assertSame(['--color-primary' => '#112233'], $data['overrides']);
-		$this->assertNotEmpty($data['registry']);
-		$this->assertNotEmpty($data['tabs']);
+		$this->assertSame(expected: ['--color-primary' => '#112233'], actual: $data['overrides']);
+		$this->assertNotEmpty(actual: $data['registry']);
+		$this->assertNotEmpty(actual: $data['tabs']);
 	}//end testReadsTheNamedSetsOverrides()
 
 	/**
@@ -101,6 +114,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	 * @param mixed $tokenSet The parameter's value.
 	 *
 	 * @dataProvider noSetProvider
+	 *
+	 * @return void
 	 */
 	public function testNoSetNamedLeavesTheChoiceToTheService($tokenSet): void {
 		$this->asking(tokenSet: $tokenSet);
@@ -123,6 +138,8 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 	/**
 	 * The export is the named set's file, as a CSS download.
+	 *
+	 * @return void
 	 */
 	public function testExportsTheNamedSetsFile(): void {
 		$this->asking(tokenSet: 'custom-openwoo');
@@ -133,7 +150,10 @@ class OverridesControllerPerSetReadTest extends TestCase {
 
 		$response = $this->controller->exportOverrides();
 
-		$this->assertSame('text/css', $response->getHeaders()['Content-Type']);
-		$this->assertStringContainsString('custom-overrides.css', $response->getHeaders()['Content-Disposition']);
+		// The response's own headers: Response::getHeaders() merges in request headers through
+		// Server::get(), which needs a Nextcloud server.
+		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
+		$this->assertSame(expected: 'text/css', actual: $headers['Content-Type']);
+		$this->assertStringContainsString(needle: 'custom-overrides.css', haystack: $headers['Content-Disposition']);
 	}//end testExportsTheNamedSetsFile()
 }//end class

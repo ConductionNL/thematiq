@@ -69,13 +69,15 @@ class HeaderUserServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->userSession = $this->createMock(IUserSession::class);
-		$this->accountManager = $this->createMock(IAccountManager::class);
-		$this->initialState = $this->createMock(IInitialState::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->userSession = $this->createMock(originalClassName: IUserSession::class);
+		$this->accountManager = $this->createMock(originalClassName: IAccountManager::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->scripts = 0;
 	}//end setUp()
 
@@ -85,7 +87,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * @return HeaderUserService
 	 */
 	private function service(): HeaderUserService {
-		$service = $this->getMockBuilder(HeaderUserService::class)
+		$service = $this->getMockBuilder(className: HeaderUserService::class)
 			->setConstructorArgs([$this->userSession, $this->accountManager, $this->initialState, $this->logger])
 			->onlyMethods(['emitScript'])
 			->getMock();
@@ -107,13 +109,13 @@ class HeaderUserServiceTest extends TestCase {
 	 * @return void
 	 */
 	private function signIn(string $name, string $role): void {
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getDisplayName')->willReturn($name);
 		$this->userSession->method('getUser')->willReturn($user);
 
-		$property = $this->createMock(IAccountProperty::class);
+		$property = $this->createMock(originalClassName: IAccountProperty::class);
 		$property->method('getValue')->willReturn($role);
-		$account = $this->createMock(IAccount::class);
+		$account = $this->createMock(originalClassName: IAccount::class);
 		$account->method('getProperty')->with(IAccountManager::PROPERTY_ROLE)->willReturn($property);
 		$this->accountManager->method('getAccount')->with($user)->willReturn($account);
 	}//end signIn()
@@ -126,7 +128,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * @return LayoutOptionsService
 	 */
 	private function layout(array $sheets = ['workplace-layout', 'header-workplace']): LayoutOptionsService {
-		$layout = $this->createMock(LayoutOptionsService::class);
+		$layout = $this->createMock(originalClassName: LayoutOptionsService::class);
 		$layout->method('stylesheets')->willReturn($sheets);
 
 		return $layout;
@@ -136,6 +138,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * The board's person: the name and the role, handed over once with the script.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testTheNameAndTheRoleAreHandedToTheScript(): void {
 		$this->signIn(name: 'Pieter Jansen', role: ' Woo-coördinator ');
@@ -144,7 +148,7 @@ class HeaderUserServiceTest extends TestCase {
 
 		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 	}//end testTheNameAndTheRoleAreHandedToTheScript()
 
 	/**
@@ -152,11 +156,13 @@ class HeaderUserServiceTest extends TestCase {
 	 * bar shows the name only.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testWithoutARoleTheNameStandsAlone(): void {
 		$this->signIn(name: 'admin', role: '');
 
-		$this->assertSame(['name' => 'admin', 'role' => ''], $this->service()->person());
+		$this->assertSame(expected: ['name' => 'admin', 'role' => ''], actual: $this->service()->person());
 	}//end testWithoutARoleTheNameStandsAlone()
 
 	/**
@@ -164,6 +170,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * handed over and no script loads.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testNobodySignedInLoadsNothing(): void {
 		$this->userSession->method('getUser')->willReturn(null);
@@ -171,7 +179,7 @@ class HeaderUserServiceTest extends TestCase {
 
 		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testNobodySignedInLoadsNothing()
 
 	/**
@@ -179,6 +187,8 @@ class HeaderUserServiceTest extends TestCase {
 	 * layout) gets no state and no script, even with somebody signed in.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testWithoutTheWorkplaceBarNothingLoads(): void {
 		$this->signIn(name: 'Pieter Jansen', role: 'Woo-coördinator');
@@ -186,7 +196,7 @@ class HeaderUserServiceTest extends TestCase {
 
 		$this->service()->inject(tokenSet: 'utrecht', layoutOptions: $this->layout(sheets: ['workplace-layout']));
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testWithoutTheWorkplaceBarNothingLoads()
 
 	/**
@@ -194,9 +204,11 @@ class HeaderUserServiceTest extends TestCase {
 	 * no state, no script, no exception.
 	 *
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 *
+	 * @return void
 	 */
 	public function testAFailureIsLoggedAndLeavesTheAvatar(): void {
-		$user = $this->createMock(IUser::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getDisplayName')->willReturn('Pieter Jansen');
 		$this->userSession->method('getUser')->willReturn($user);
 		$this->accountManager->method('getAccount')->willThrowException(new RuntimeException('accounts table gone'));
@@ -205,6 +217,6 @@ class HeaderUserServiceTest extends TestCase {
 
 		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
 
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testAFailureIsLoggedAndLeavesTheAvatar()
 }//end class

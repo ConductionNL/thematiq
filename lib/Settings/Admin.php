@@ -58,6 +58,17 @@ class Admin implements IDelegatedSettings {
 	public const DEFAULT_DOCUMENTATION_URL = 'https://thematiq.conduction.nl';
 
 	/**
+	 * The form state the template receives, in this order.
+	 *
+	 * @var array<int, string>
+	 */
+	private const TEMPLATE_STATE_KEYS = [
+		'tokenSets', 'currentTokenSet', 'currentDesignSystem', 'hideSlogan', 'showMenuLabels', 'primaryDrivesComponents',
+		'darkVariantsEnabled', 'marianneEnabled', 'emailThemingState', 'emailFooterConfig', 'occEnableCommand',
+		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource',
+	];
+
+	/**
 	 * The application configuration service.
 	 *
 	 * @var IConfig
@@ -177,103 +188,129 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
+		$state = $this->formState();
+		$this->publishBootState(state: $state);
+
+		return new TemplateResponse(Application::APP_ID, 'settings/admin', $this->templateParams(state: $state));
+	}//end getForm()
+
+	/**
+	 * Everything the form shows: the selectable sets, the current one and its design system, the
+	 * flags, the e-mail theming, the signed-in admin's preview and the active icon packs.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function formState(): array {
 		// The PICKER, not the catalogue. See TokenSetSelectionPolicy.
 		$tokenSets = $this->selectableTokenSets();
+		$currentTokenSet = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$state = ['tokenSets' => $tokenSets, 'currentTokenSet' => $currentTokenSet] + $this->flagState();
+		$state['currentDesignSystem'] = $this->designSystemOf(tokenSets: $tokenSets, tokenSetId: $currentTokenSet);
+		$state['emailThemingState'] = $this->emailThemingService->getState();
+		$state['emailFooterConfig'] = $this->emailThemingService->getFooterConfig();
+		$state['occEnableCommand'] = EmailThemingService::OCC_ENABLE_COMMAND;
+		$state['occDisableCommand'] = EmailThemingService::OCC_DISABLE_COMMAND;
+		$state['activePreview'] = $this->getActivePreviewForCurrentUser();
+		[$state['activeIconPacks'], $state['iconPackSource']] = $this->getActiveIconPackIndicator(tokenSetId: $currentTokenSet);
 
-		$currentTokenSet = $this->config->getAppValue(
-			Application::APP_ID,
-			'token_set',
-			'nextcloud'
-		);
+		return $state;
+	}//end formState()
 
-		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
-		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
+	/**
+	 * The admin's on/off choices.
+	 *
+	 * `primaryDrivesComponents`: whether the brand primary overrules every component token it used
+	 * to drive. OFF by default, which costs nothing visually: with no per-component value stored,
+	 * the component tokens already resolve to the brand primary. Turning it ON gives that back up.
+	 * `confirmSaveStock`/`confirmSaveTheme`: whether Save overrides asks first. Both default ON: the
+	 * first save is the one most worth a question, and the dialogs are the only place the "keep
+	 * this as a new token set" choice is offered.
+	 *
+	 * @return array<string, bool>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function flagState(): array {
+		return [
+			'hideSlogan' => $this->isFlagOn(key: 'hide_slogan'),
+			'showMenuLabels' => $this->isFlagOn(key: 'show_menu_labels'),
+			'primaryDrivesComponents' => $this->isFlagOn(key: 'primary_drives_components'),
+			'confirmSaveStock' => $this->isFlagOn(key: 'confirm_save_stock', fallback: '1'),
+			'confirmSaveTheme' => $this->isFlagOn(key: 'confirm_save_theme', fallback: '1'),
+			'darkVariantsEnabled' => $this->isFlagOn(key: 'dark_variants', fallback: '1'),
+			'marianneEnabled' => $this->isFlagOn(key: 'marianne_enabled'),
+		];
+	}//end flagState()
 
-		// Whether the brand primary overrules every component token it used to
-		// drive. OFF by default, and that costs nothing visually: with no
-		// per-component value stored, the component tokens already resolve to the
-		// brand primary, so an instance that has never opened the playground
-		// renders identically either way. Turning it ON is the deliberate choice
-		// to give that back up — the primary wins again and the per-component
-		// colour controls lock.
-		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
-
-		// Whether Save overrides asks first. Both default ON: the first save an
-		// admin makes is the one most worth a question, and the dialogs are the
-		// only place the "keep this as a new token set" choice is offered.
-		$confirmSaveStock = $this->isFlagOn(key: 'confirm_save_stock', fallback: '1');
-		$confirmSaveTheme = $this->isFlagOn(key: 'confirm_save_theme', fallback: '1');
-
-		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
-		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
-
-		// The design system backing the current token set — resolved from the
-		// already-fetched $tokenSets inventory (TokenSetService surfaces
-		// `design_system` per entry), so no new service dependency is needed
-		// just to gate the Marianne notice's initial server-rendered
-		// visibility (js/admin.js re-derives it client-side on selection
-		// change from the same `data-design-system` option attribute).
-		$currentDesignSystem = 'nldesign';
+	/**
+	 * The design system behind a token set, from the already-fetched inventory.
+	 *
+	 * It gates the Marianne notice's server-rendered visibility; js/admin.js re-derives it
+	 * client-side on selection change from the same `data-design-system` option attribute.
+	 *
+	 * @param array<int, array<string, mixed>> $tokenSets The selectable sets.
+	 * @param string $tokenSetId The current set.
+	 *
+	 * @return string `nldesign` when the set is not among them.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function designSystemOf(array $tokenSets, string $tokenSetId): string {
 		foreach ($tokenSets as $tokenSet) {
-			if ($tokenSet['id'] === $currentTokenSet) {
-				$currentDesignSystem = $tokenSet['design_system'];
-				break;
+			if ($tokenSet['id'] === $tokenSetId) {
+				return $tokenSet['design_system'];
 			}
 		}
 
-		$emailThemingState = $this->emailThemingService->getState();
-		$emailFooterConfig = $this->emailThemingService->getFooterConfig();
+		return 'nldesign';
+	}//end designSystemOf()
 
-		$activePreview = $this->getActivePreviewForCurrentUser();
+	/**
+	 * Publish the server state js/admin.js needs at boot over the canonical channel (ADR-004).
+	 *
+	 * The save-confirmation flags go through initial state rather than the template because the two
+	 * controls they drive are rendered by js/admin.js inside the token editor.
+	 *
+	 * @param array<string, mixed> $state The form state.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function publishBootState(array $state): void {
+		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme'] as $key) {
+			$this->initialState->provideInitialState($key, $state[$key]);
+		}
 
-		[$activeIconPacks, $iconPackSource] = $this->getActiveIconPackIndicator(tokenSetId: $currentTokenSet);
+		$this->publishPreviewState(activePreview: $state['activePreview'], iconPackSource: $state['iconPackSource']);
+		$this->publishPlaygroundState(currentTokenSet: $state['currentTokenSet'], activePreview: $state['activePreview']);
+	}//end publishBootState()
 
-		// Server state that js/admin.js needs at boot, carried over the
-		// canonical channel (ADR-004) rather than `data-*` attributes on the
-		// rendered markup. The template still receives these values for the
-		// parts it renders server-side; what changed is where the SCRIPT
-		// reads them from.
-		$this->initialState->provideInitialState('tokenSets', $tokenSets);
-		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
+	/**
+	 * The template parameters: the form state, the mock switch, the environment marker, the
+	 * layout choices and the documentation link.
+	 *
+	 * `?mock=1` layers the theming-makeover visual shells (js/admin-mock.js, css/admin-mock.css)
+	 * over the real panel so they can be screenshotted from a running instance.
+	 *
+	 * @param array<string, mixed> $state The form state.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function templateParams(array $state): array {
+		$params = [];
+		foreach (self::TEMPLATE_STATE_KEYS as $key) {
+			$params[$key] = $state[$key];
+		}
 
-		// The save-confirmation flags. Through initial state rather than the
-		// template because the two controls they drive are rendered by
-		// js/admin.js inside the token editor, which the template does not own.
-		$this->initialState->provideInitialState('confirmSaveStock', $confirmSaveStock);
-		$this->initialState->provideInitialState('confirmSaveTheme', $confirmSaveTheme);
-		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
+		$params['mockUi'] = ($this->request->getParam('mock') === '1');
 
-		$this->publishPlaygroundState(
-			currentTokenSet: $currentTokenSet,
-			activePreview: $activePreview
-		);
-
-		return new TemplateResponse(
-			Application::APP_ID,
-			'settings/admin',
-			[
-				'tokenSets' => $tokenSets,
-				'currentTokenSet' => $currentTokenSet,
-				'currentDesignSystem' => $currentDesignSystem,
-				'hideSlogan' => $hideSlogan,
-				'showMenuLabels' => $showMenuLabels,
-				'primaryDrivesComponents' => $drivesComponents,
-				'darkVariantsEnabled' => $darkVariantsEnabled,
-				'marianneEnabled' => $marianneEnabled,
-				'emailThemingState' => $emailThemingState,
-				'emailFooterConfig' => $emailFooterConfig,
-				'occEnableCommand' => EmailThemingService::OCC_ENABLE_COMMAND,
-				'occDisableCommand' => EmailThemingService::OCC_DISABLE_COMMAND,
-				'activePreview' => $activePreview,
-				'activeIconPacks' => $activeIconPacks,
-				'iconPackSource' => $iconPackSource,
-				// Presentation mock: `?mock=1` layers the theming-makeover visual shells
-				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
-				// can be screenshotted from a running instance. Nothing else changes.
-				'mockUi' => ($this->request->getParam('mock') === '1'),
-			] + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $currentDesignSystem)
-		);
-	}//end getForm()
+		return $params + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $state['currentDesignSystem']);
+	}//end templateParams()
 
 	/**
 	 * The administrator's own layout choices, as stored. An empty value means

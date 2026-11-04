@@ -56,12 +56,12 @@ final class OwnTokenServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$this->stored = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(function (string $app, string $key, $value): void {
 			$this->stored[$key] = (string)$value;
 		});
-		$this->service = new OwnTokenService($config, new TokenValueValidator(), new DeprecationRecords($config));
+		$this->service = new OwnTokenService(config: $config, values: new TokenValueValidator(), records: new DeprecationRecords(config: $config));
 	}//end setUp()
 
 	/**
@@ -76,10 +76,10 @@ final class OwnTokenServiceTest extends TestCase {
 	private function assertRefused(array $input, string $field, int $status = 400): void {
 		try {
 			$this->service->create(input: $input);
-			$this->fail('expected a refusal for ' . $field);
+			$this->fail(message: 'expected a refusal for ' . $field);
 		} catch (InvalidArgumentException $e) {
-			$this->assertSame($field, $e->getMessage());
-			$this->assertSame($status, $e->getCode());
+			$this->assertSame(expected: $field, actual: $e->getMessage());
+			$this->assertSame(expected: $status, actual: $e->getCode());
 		}
 	}//end assertRefused()
 
@@ -91,8 +91,8 @@ final class OwnTokenServiceTest extends TestCase {
 	public function testBrandAccentIsStored(): void {
 		$token = $this->service->create(input: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000', 'darkValue' => '#ff9a3c']);
 
-		$this->assertSame('--nldesign-org-brand-accent', $token['name']);
-		$this->assertSame('#ff9a3c', $this->service->list()['--nldesign-org-brand-accent']['darkValue']);
+		$this->assertSame(expected: '--nldesign-org-brand-accent', actual: $token['name']);
+		$this->assertSame(expected: '#ff9a3c', actual: $this->service->list()['--nldesign-org-brand-accent']['darkValue']);
 	}//end testBrandAccentIsStored()
 
 	/**
@@ -102,12 +102,12 @@ final class OwnTokenServiceTest extends TestCase {
 	 */
 	public function testNameRule(): void {
 		foreach (['Brand_Accent', 'brand--accent', '-brand', 'brand-', '', str_repeat('a', 49)] as $slug) {
-			$this->assertRefused(['slug' => $slug, 'label' => 'x', 'type' => 'text', 'value' => 'x'], 'name');
+			$this->assertRefused(input: ['slug' => $slug, 'label' => 'x', 'type' => 'text', 'value' => 'x'], field: 'name');
 		}
 
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 		$this->service->create(input: ['slug' => str_repeat('a', 48), 'label' => 'x', 'type' => 'text', 'value' => 'x']);
-		$this->assertCount(1, $this->service->list());
+		$this->assertCount(expectedCount: 1, haystack: $this->service->list());
 	}//end testNameRule()
 
 	/**
@@ -119,7 +119,7 @@ final class OwnTokenServiceTest extends TestCase {
 		$input = ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000'];
 		$this->service->create(input: $input);
 
-		$this->assertRefused($input, 'duplicate');
+		$this->assertRefused(input: $input, field: 'duplicate');
 	}//end testDuplicateRefused()
 
 	/**
@@ -128,16 +128,16 @@ final class OwnTokenServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testValueCheckedByType(): void {
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'color', 'value' => 'dark blue'], 'value');
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'duration', 'value' => '150'], 'value');
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'easing', 'value' => 'cubic-bezier(2, 0, 0, 1)'], 'value');
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'color', 'value' => '#000', 'darkValue' => 'nope'], 'darkValue');
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'text', 'value' => 'x', 'darkValue' => '#000'], 'darkValue');
-		$this->assertRefused(['slug' => 'a', 'label' => 'x', 'type' => 'shadow', 'value' => 'x'], 'type');
-		$this->assertRefused(['slug' => 'a', 'label' => '', 'type' => 'text', 'value' => 'x'], 'label');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'color', 'value' => 'dark blue'], field: 'value');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'duration', 'value' => '150'], field: 'value');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'easing', 'value' => 'cubic-bezier(2, 0, 0, 1)'], field: 'value');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'color', 'value' => '#000', 'darkValue' => 'nope'], field: 'darkValue');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'text', 'value' => 'x', 'darkValue' => '#000'], field: 'darkValue');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => 'x', 'type' => 'shadow', 'value' => 'x'], field: 'type');
+		$this->assertRefused(input: ['slug' => 'a', 'label' => '', 'type' => 'text', 'value' => 'x'], field: 'label');
 
 		$this->service->create(input: ['slug' => 'speed', 'label' => 'Speed', 'type' => 'duration', 'value' => '150ms']);
-		$this->assertSame('150ms', $this->service->list()['--nldesign-org-speed']['value']);
+		$this->assertSame(expected: '150ms', actual: $this->service->list()['--nldesign-org-speed']['value']);
 	}//end testValueCheckedByType()
 
 	/**
@@ -146,10 +146,10 @@ final class OwnTokenServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testNameCannotInjectCss(): void {
-		$this->assertRefused(['slug' => 'brand;}body{display:none', 'label' => 'x', 'type' => 'text', 'value' => 'x'], 'name');
-		$this->assertRefused(['slug' => 'brand', 'label' => 'x', 'type' => 'text', 'value' => 'red; } body { display: none'], 'value');
-		$this->assertFalse(OwnTokenService::isOwnName(name: '--nldesign-org-brand;}body{display:none'));
-		$this->assertSame([], $this->service->list());
+		$this->assertRefused(input: ['slug' => 'brand;}body{display:none', 'label' => 'x', 'type' => 'text', 'value' => 'x'], field: 'name');
+		$this->assertRefused(input: ['slug' => 'brand', 'label' => 'x', 'type' => 'text', 'value' => 'red; } body { display: none'], field: 'value');
+		$this->assertFalse(condition: OwnTokenService::isOwnName(name: '--nldesign-org-brand;}body{display:none'));
+		$this->assertSame(expected: [], actual: $this->service->list());
 	}//end testNameCannotInjectCss()
 
 	/**
@@ -161,12 +161,12 @@ final class OwnTokenServiceTest extends TestCase {
 		$created = $this->service->create(input: ['slug' => 'accent', 'label' => 'Accent', 'type' => 'color', 'value' => '#e17000']);
 		$updated = $this->service->update(name: '--nldesign-org-accent', input: ['label' => 'Accent 2', 'type' => 'color', 'value' => '#000000']);
 
-		$this->assertSame($created['createdAt'], $updated['createdAt']);
-		$this->assertSame('#000000', $this->service->list()['--nldesign-org-accent']['value']);
+		$this->assertSame(expected: $created['createdAt'], actual: $updated['createdAt']);
+		$this->assertSame(expected: '#000000', actual: $this->service->list()['--nldesign-org-accent']['value']);
 		$this->service->remove(name: '--nldesign-org-accent');
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 
-		$this->expectExceptionCode(404);
+		$this->expectExceptionCode(code: 404);
 		$this->service->remove(name: '--nldesign-org-accent');
 	}//end testUpdateAndRemove()
 
@@ -179,9 +179,9 @@ final class OwnTokenServiceTest extends TestCase {
 		$this->service->create(input: ['slug' => 'keep', 'label' => 'Keep', 'type' => 'text', 'value' => 'x']);
 		try {
 			$this->service->replaceAll(tokens: ['--nldesign-org-a' => ['label' => 'A', 'type' => 'text', 'value' => 'a'], '--color-primary' => ['label' => 'B', 'type' => 'text', 'value' => 'b']]);
-			$this->fail('expected a refusal');
+			$this->fail(message: 'expected a refusal');
 		} catch (InvalidArgumentException) {
-			$this->assertArrayHasKey('--nldesign-org-keep', $this->service->list());
+			$this->assertArrayHasKey(key: '--nldesign-org-keep', array: $this->service->list());
 		}
 	}//end testReplaceAllChecksEveryToken()
 }//end class

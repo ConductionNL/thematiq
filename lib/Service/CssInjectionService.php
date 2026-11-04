@@ -22,10 +22,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
-use OCP\IConfig;
-use OCP\IURLGenerator;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -48,12 +44,12 @@ use Throwable;
  *
  * @spec openspec/specs/css-architecture/spec.md
  *
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - this class IS the cascade: one branch per layer the page may emit, and the order of
- *   those branches is the specification. Splitting it would spread the load order across files, which is the defect the single
- *   designSystemLayers() list exists to prevent.
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - for the same reason: every collaborator here answers "does this layer load, and with
- *   what". A layer whose source lived behind a facade would be a layer whose position in the cascade is decided somewhere other than
- *   designSystemLayers(), which is exactly what this class exists to prevent.
+ * The set-dependent layers are listed by {@see TokenSetLayers::forSet()}; this
+ * class emits that list and the set-independent layers after it.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - every collaborator here answers "does this layer load, and with what". A layer
+ *   whose source lived behind a facade would be a layer whose position in the cascade is decided somewhere other than inject()
+ *   and TokenSetLayers::forSet(), which is exactly what the two exist to prevent.
  */
 class CssInjectionService {
 
@@ -62,7 +58,7 @@ class CssInjectionService {
 	 *
 	 * @var string
 	 */
-	private const THEMED_CONTEXTS_KEY = 'themed_contexts';
+	private const string THEMED_CONTEXTS_KEY = 'themed_contexts';
 
 	/**
 	 * The render-context names the `themed_contexts` allow-list recognizes.
@@ -72,90 +68,10 @@ class CssInjectionService {
 	 *
 	 * @var string[]
 	 */
-	private const VALID_CONTEXTS = ['user', 'login', 'guest', 'public', 'error'];
+	private const array VALID_CONTEXTS = ['user', 'login', 'guest', 'public', 'error'];
 
-	/**
-	 * The application configuration service.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * Resolves which design system a token set uses and its stylesheet order.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystemService;
-
-	/**
-	 * Gates and reads the freeform custom CSS layer.
-	 *
-	 * @var CustomCssService
-	 */
-	private CustomCssService $customCssService;
-
-	/**
-	 * Resolves admin-uploaded custom fonts.
-	 *
-	 * @var FontService
-	 */
-	private FontService $fontService;
-
-	/**
-	 * Builds the URL to the generated custom-fonts stylesheet route.
-	 *
-	 * @var IURLGenerator
-	 */
-	private IURLGenerator $urlGenerator;
-
-	/**
-	 * Resolves the effective token set for the requesting user (per-group
-	 * mapping, falling back to the instance default).
-	 *
-	 * @var GroupThemingService
-	 */
-	private GroupThemingService $groupThemingService;
-
-	/**
-	 * Injects the admin theme-preview banner (assets + initial state).
-	 *
-	 * @var ThemePreviewBannerService
-	 */
-	private ThemePreviewBannerService $previewBannerService;
-
-	/**
-	 * Records a layer that failed, so a skipped layer is never silent.
-	 *
-	 * @var LoggerInterface
-	 */
-	private LoggerInterface $logger;
-
-	/**
-	 * Resolves the `nextcloud` set from the running instance rather than from
-	 * the shipped snapshot of it.
-	 *
-	 * @var StockTokensService
-	 */
-	private StockTokensService $stockTokens;
-
-	/**
-	 * @var RuntimeFileLocator Finds runtime files: uploaded sets, dark variants, overrides, custom CSS.
-	 */
-	private RuntimeFileLocator $runtimeFiles;
-
-	/** @var AppBrandService The brand per app (openspec/specs/per-app-theming/spec.md). */
-	private AppBrandService $appBrands;
-
-	/** @var array<string, string>|null The rendered app's logo layer for this request, when its brand applies. */
-	private ?array $brandLogo = null;
-
-	/**
-	 * Builds the rules that carry a set's internal tokens onto their components.
-	 *
-	 * @var InternalScopesService
-	 */
-	private InternalScopesService $internalScopes;
+	/** @var TokenSetLayers The set-dependent layers, in cascade order. */
+	private TokenSetLayers $setLayers;
 
 	/** @var LayoutOptionsService Resolves the workplace layout and the brand stripe for a token set. */
 	private LayoutOptionsService $layoutOptions;
@@ -163,60 +79,47 @@ class CssInjectionService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config The config service.
-	 * @param DesignSystemService $designSystemService The design system resolver.
-	 * @param CustomCssService $customCssService The freeform custom CSS service.
-	 * @param FontService $fontService The custom font resolver.
-	 * @param IURLGenerator $urlGenerator The URL generator.
-	 * @param GroupThemingService $groupThemingService The per-group token-set resolver.
-	 * @param ThemePreviewBannerService $previewBannerService The theme-preview banner injector.
-	 * @param LoggerInterface $logger The logger for skipped layers.
-	 * @param StockTokensService $stockTokens Resolves the `nextcloud` set from the running instance.
-	 * @param RuntimeFileLocator $runtimeFiles Finds files thematiq wrote at runtime, which live in app data.
-	 * @param LogoLayerService $logoLayer Resolves the active set's logo layer.
-	 * @param AppBrandService $appBrands The brand per app.
-	 * @param InternalScopesService|null $internalScopes Builds the internal scopes; defaults to one reading through $runtimeFiles.
-	 * @param LayoutOptionsService|null $layoutOptions Resolves the workplace layout and the brand stripe; defaults to one reading $config.
-	 * @param HeaderUserService|null $headerUser The name and role in the workplace top bar; null leaves the avatar alone.
-	 * @param AppMenuService|null $appMenu The sections of the apps menu in the workplace top bar; null keeps one grid.
-	 * @param SearchPlaceholderService|null $searchPlaceholder The words in the top bar's search field per app; null keeps Nextcloud's.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - Nextcloud's container injects through the constructor and nothing else, so the
-	 *   parameter count is the collaborator count; see the class note on why that count is what it is.
+	 * @param CssInjectionContext $context The app config, the design systems, the URL generator and the log.
+	 * @param CssInjectionLayers $layers The custom CSS, the fonts, the preview banner, and the set and brand per request.
+	 * @param CssInjectionTokenFiles $files The stock tokens, the runtime files, the logo layer and the internal scopes.
+	 * @param CssInjectionChrome $chrome The workplace layout and the top bar parts.
 	 */
 	public function __construct(
-		IConfig $config,
-		DesignSystemService $designSystemService,
-		CustomCssService $customCssService,
-		FontService $fontService,
-		IURLGenerator $urlGenerator,
-		GroupThemingService $groupThemingService,
-		ThemePreviewBannerService $previewBannerService,
-		LoggerInterface $logger,
-		StockTokensService $stockTokens,
-		RuntimeFileLocator $runtimeFiles,
-		private readonly LogoLayerService $logoLayer,
-		AppBrandService $appBrands,
-		?InternalScopesService $internalScopes = null,
-		?LayoutOptionsService $layoutOptions = null,
-		private readonly ?HeaderUserService $headerUser = null,
-		private readonly ?AppMenuService $appMenu = null,
-		private readonly ?SearchPlaceholderService $searchPlaceholder = null,
+		private readonly CssInjectionContext $context,
+		private readonly CssInjectionLayers $layers,
+		private readonly CssInjectionTokenFiles $files,
+		private readonly CssInjectionChrome $chrome = new CssInjectionChrome(),
 	) {
-		$this->config = $config;
-		$this->designSystemService = $designSystemService;
-		$this->customCssService = $customCssService;
-		$this->fontService = $fontService;
-		$this->urlGenerator = $urlGenerator;
-		$this->groupThemingService = $groupThemingService;
-		$this->previewBannerService = $previewBannerService;
-		$this->logger = $logger;
-		$this->stockTokens = $stockTokens;
-		$this->runtimeFiles = $runtimeFiles;
-		$this->appBrands = $appBrands;
-		$this->internalScopes = ($internalScopes ?? new InternalScopesService(files: $runtimeFiles));
-		$this->layoutOptions = ($layoutOptions ?? new LayoutOptionsService(config: $config, designSystemService: $designSystemService));
+		$this->layoutOptions = ($chrome->layoutOptions ?? new LayoutOptionsService(
+			config: $context->config,
+			designSystemService: $context->designSystemService
+		));
+		$this->setLayers = self::setLayersFrom(context: $context, files: $files);
 	}//end __construct()
+
+	/**
+	 * The set-dependent layers, read through the token files.
+	 *
+	 * @param CssInjectionContext $context The app config, the design systems and the log.
+	 * @param CssInjectionTokenFiles $files The stock tokens, the runtime files, the logo layer and the internal scopes.
+	 *
+	 * @return TokenSetLayers
+	 */
+	private static function setLayersFrom(CssInjectionContext $context, CssInjectionTokenFiles $files): TokenSetLayers {
+		$entries = new TokenSetLayerEntries(
+			runtimeFiles: $files->runtimeFiles,
+			stockTokens: $files->stockTokens,
+			internalScopes: ($files->internalScopes ?? new InternalScopesService(files: $files->runtimeFiles)),
+			logger: $context->logger
+		);
+
+		return new TokenSetLayers(
+			designSystemService: $context->designSystemService,
+			config: $context->config,
+			logoLayer: $files->logoLayer,
+			entries: $entries
+		);
+	}//end setLayersFrom()
 
 	/**
 	 * Run one cascade layer, isolated from every other layer.
@@ -246,7 +149,7 @@ class CssInjectionService {
 		try {
 			$work();
 		} catch (Throwable $e) {
-			$this->logger->warning(
+			$this->context->logger->warning(
 				'nldesign: stylesheet layer "' . $layer . '" was skipped; the rest of the cascade still ran.',
 				[
 					'app' => Application::APP_ID,
@@ -283,61 +186,96 @@ class CssInjectionService {
 			return;
 		}
 
-		// The active set is the per-group resolution (group mapping → instance
-		// default). With no mapping configured this is the plain appconfig
-		// value, so behaviour is byte-identical to a single-tenant instance.
-		//
-		// This block is the one PREREQUISITE, not a layer: every layer below
-		// is a function of it, so there is nothing to degrade to if it fails.
-		// It is still isolated, so a resolver failure logs and renders the
-		// page unthemed instead of throwing into the listener's catch-all.
-		try {
-			$brand = $this->appBrands->brandFor(appId: $appId);
-			$tokenSet = $this->groupThemingService->resolveTokenSetForRequest(appBrandSet: ($brand['tokenSet'] ?? null));
-			$this->brandLogo = $this->appBrands->logoLayer(brand: $brand, tokenSet: $tokenSet, styleId: self::LOGO_STYLE_ID);
-
-			$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
-			$designSystemId = $tokenSetMeta['design_system'] ?? 'nldesign';
-		} catch (Throwable $e) {
-			$this->logger->warning(
-				'nldesign: could not resolve the active token set; no stylesheet layer was injected.',
-				[
-					'app' => Application::APP_ID,
-					'exception' => $e,
-				]
-			);
+		$page = $this->resolvePage(appId: $appId);
+		if ($page === null) {
 			return;
 		}
 
-		// EVERY LAYER BELOW IS INDEPENDENT — see runLayer() and nldesign#264.
-		// One failing layer must not be able to cancel the layers after it.
-		// 2/2b/3. Design-system stylesheets, Marianne, token + contrast layers.
+		// EVERY LAYER IS INDEPENDENT: see runLayer() and nldesign#264.
+		$this->injectStylesheetLayers(page: $page);
+		$this->injectPageLayers(page: $page, appId: $appId);
+	}//end inject()
+
+	/**
+	 * The active token set of this page and what it wears.
+	 *
+	 * The active set is the per-group resolution (group mapping, then the
+	 * instance default). With no mapping configured this is the plain
+	 * appconfig value, so behaviour is byte-identical to a single-tenant instance.
+	 *
+	 * This is the one PREREQUISITE, not a layer: every layer is a function of
+	 * it, so there is nothing to degrade to if it fails. It is still isolated,
+	 * so a resolver failure logs and renders the page unthemed instead of
+	 * throwing into the listener's catch-all.
+	 *
+	 * @param string|null $appId The rendered app, for its brand.
+	 *
+	 * @return array{tokenSet: string, tokenSetMeta: array, designSystemId: mixed}|null The page, or null when unresolved.
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	private function resolvePage(?string $appId): ?array {
+		try {
+			$resolved = $this->layers->brands->forApp(appId: $appId, styleId: self::LOGO_STYLE_ID);
+			$tokenSet = $resolved['tokenSet'];
+			$this->setLayers->useBrandLogo(brandLogo: $resolved['logo']);
+			$tokenSetMeta = $this->context->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+		} catch (Throwable $e) {
+			$this->context->logger->warning(
+				'nldesign: could not resolve the active token set; no stylesheet layer was injected.',
+				['app' => Application::APP_ID, 'exception' => $e]
+			);
+			return null;
+		}
+
+		return ['tokenSet' => $tokenSet, 'tokenSetMeta' => $tokenSetMeta, 'designSystemId' => ($tokenSetMeta['design_system'] ?? 'nldesign')];
+	}//end resolvePage()
+
+	/**
+	 * The stylesheet layers: 2/2b/3 design-system, Marianne, token and contrast
+	 * layers; 4/4.1 custom overrides, then freeform custom CSS; 4.5 custom
+	 * fonts; 5 the conditional stylesheets.
+	 *
+	 * @param array{tokenSet: string, tokenSetMeta: array, designSystemId: mixed} $page The page.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md
+	 * @spec openspec/specs/custom-fonts/spec.md
+	 */
+	private function injectStylesheetLayers(array $page): void {
+		$tokenSet = $page['tokenSet'];
+		$designSystemId = $page['designSystemId'];
 		$this->runLayer(
 			layer: 'design-system-styles',
 			work: fn () => $this->injectDesignSystemStyles(designSystemId: $designSystemId, tokenSet: $tokenSet)
 		);
-
-		// 4/4.1. Custom overrides, then freeform custom CSS.
-		$this->runLayer(
-			layer: 'override-styles',
-			work: fn () => $this->injectOverrideStyles(tokenSet: $tokenSet, designSystemId: $designSystemId)
-		);
-
-		// 4.5. Custom fonts.
+		$this->runLayer(layer: 'override-styles', work: fn () => $this->injectOverrideStyles(tokenSet: $tokenSet, designSystemId: $designSystemId));
 		$this->runLayer(layer: 'custom-font-link', work: fn () => $this->injectCustomFontLink(designSystemId: $designSystemId));
-
-		// 5. Conditional stylesheets, and the person the workplace top bar names.
 		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
-		$this->runLayer(layer: 'header-user', work: fn () => $this->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		$this->runLayer(layer: 'app-menu', work: fn () => $this->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
-		$this->runLayer(layer: 'search-placeholder', work: fn () => $this->searchPlaceholder?->inject(appId: $appId));
+	}//end injectStylesheetLayers()
 
-		// 6. Preview banner: only with a preview active for this user; others pay nothing.
+	/**
+	 * The person the workplace top bar names, its apps menu and search words,
+	 * then (6) the preview banner: only with a preview active for this user.
+	 *
+	 * @param array{tokenSet: string, tokenSetMeta: array, designSystemId: mixed} $page The page.
+	 * @param string|null $appId The rendered app, for its search words.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/per-app-theming/spec.md
+	 */
+	private function injectPageLayers(array $page, ?string $appId): void {
+		$tokenSet = $page['tokenSet'];
+		$this->runLayer(layer: 'header-user', work: fn () => $this->chrome->headerUser?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'app-menu', work: fn () => $this->chrome->appMenu?->inject(tokenSet: $tokenSet, layoutOptions: $this->layoutOptions));
+		$this->runLayer(layer: 'search-placeholder', work: fn () => $this->chrome->searchPlaceholder?->inject(appId: $appId));
 		$this->runLayer(
 			layer: 'preview-banner',
-			work: fn () => $this->previewBannerService->inject(tokenSet: $tokenSet, tokenSetMeta: $tokenSetMeta)
+			work: fn () => $this->layers->previewBannerService->inject(tokenSet: $tokenSet, tokenSetMeta: $page['tokenSetMeta'])
 		);
-	}//end inject()
+	}//end injectPageLayers()
 
 	/**
 	 * Emit the design-system stylesheets and, for every system that reads
@@ -356,7 +294,7 @@ class CssInjectionService {
 		// runtime layer is a header, so once one is emitted, the static layers
 		// after it are linked as headers too, or they would move ahead of it.
 		$linked = false;
-		foreach ($this->designSystemLayers(designSystemId: $designSystemId, tokenSet: $tokenSet) as $entry) {
+		foreach ($this->setLayers->forSet(designSystemId: $designSystemId, tokenSet: $tokenSet) as $entry) {
 			$linked = ($linked === true || $entry['kind'] === 'runtime');
 			if ($linked === true && $entry['kind'] === 'file') {
 				$this->emitStylesheetLink(url: $this->staticLayerUrl(file: (string)$entry['file']));
@@ -375,266 +313,13 @@ class CssInjectionService {
 	 * @return string The URL.
 	 */
 	private function staticLayerUrl(string $file): string {
-		$version = $this->config->getAppValue(Application::APP_ID, 'installed_version', '0');
+		$version = $this->context->config->getAppValue(Application::APP_ID, 'installed_version', '0');
 
-		return $this->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
+		return $this->context->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
 	}//end staticLayerUrl()
 
 	/**
-	 * The set-dependent part of the cascade, as DATA.
-	 *
-	 * Every layer whose presence or content depends on the active token set
-	 * (or on the design system that set belongs to) is listed here, in cascade
-	 * order, and {@see self::injectDesignSystemStyles()} emits the list
-	 * verbatim. {@see self::getStylesheetManifest()} hands the SAME list to the
-	 * admin panel, which is how a set can be applied to the page the admin is
-	 * looking at without a reload: the client removes the elements this list
-	 * produced for the old set and inserts the ones it produces for the new
-	 * one. One owner for the cascade, so the two can never disagree about
-	 * which files make up a set.
-	 *
-	 * The set-INDEPENDENT layers — custom-overrides.css, custom-css.css, the
-	 * hide-slogan / show-menu-labels toggles, the preview banner — are
-	 * deliberately not here: they are emitted after this list by `inject()`,
-	 * do not change when the set changes, and must keep their position AFTER
-	 * the set layers so an admin's overrides still win.
-	 *
-	 * Returns ordered entries: `kind` is `file` (a stylesheet under `css/`, `file` without
-	 * extension) or `inline` (a `<style>` block, `css`, with the element `id` the client
-	 * replaces).
-	 *
-	 * @param string $designSystemId The resolved design system id.
-	 * @param string $tokenSet The token set id.
-	 *
-	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
-	 *
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - the path count IS the number of
-	 *   layer combinations a page can emit, and each branch here is one
-	 *   documented condition. Extracting halves would move part of the load
-	 *   order out of the one list that states it.
-	 *
-	 * @spec openspec/specs/css-architecture/spec.md
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
-	 */
-	private function designSystemLayers(string $designSystemId, string $tokenSet): array {
-		$designSystem = $this->designSystemService->getDesignSystem(id: $designSystemId);
-		$layers = [];
-
-		// 2. Load design system stylesheets in declared order.
-		// For "none" (stock Nextcloud) this array is empty — no CSS loads.
-		foreach ($designSystem['stylesheets'] as $stylesheet) {
-			$layers[] = ['layer' => 'design-system', 'kind' => 'file', 'file' => $stylesheet];
-		}
-
-		// 2b. Marianne (French State typeface) — gated, inert-by-default
-		// self-hosted font layer, emitted directly after the design-system
-		// stylesheets above (which already include the base
-		// systems/lasuite/fonts layer) so its real @font-face declarations
-		// exist. See marianneLayer() for the gate condition.
-		$marianne = $this->marianneLayer(designSystemId: $designSystemId);
-		if ($marianne !== null) {
-			$layers[] = $marianne;
-		}
-
-		// 3. Load token values (only when a design system reads --nldesign-* vars).
-		if ($designSystemId === 'none') {
-			return array_merge($layers, $this->noDesignSystemLayers(tokenSet: $tokenSet));
-		}
-
-		// 3a-1. The `nextcloud` set normally takes the `none` branch above. It
-		// reaches this line only when its metadata could not be read and the
-		// design system defaulted, and then the resolved block still beats the
-		// shipped snapshot. See stockTokenLayer().
-		$tokenLayer = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
-		if ($tokenSet === self::STOCK_TOKEN_SET) {
-			$tokenLayer = ($this->stockTokenLayer() ?? $tokenLayer);
-		}
-
-		$layers[] = $tokenLayer;
-
-		// 3a0. The logo as an ABSOLUTE url, overriding the relative one the token
-		// file declares. See LogoLayerService::layer() — a relative url() inside a custom
-		// property is resolved against the stylesheet that USES it, and the use
-		// sites sit at different depths.
-		$logo = ($this->brandLogo ?? $this->logoLayer->layer(tokenSet: $tokenSet));
-		if ($logo !== null) {
-			$layers[] = $logo;
-		}
-
-		// 3a. Element overrides belonging to this token set, directly after its
-		// tokens so they win the cascade over the design system's shared
-		// element-overrides.css (emitted in step 2). Kept OUT of the token file
-		// because a shipped token file is exactly one flat `:root { }` block and
-		// the scoped-application contract depends on that shape.
-		if (is_file($this->appPath() . '/css/token-overrides/' . $tokenSet . '.css') === true) {
-			$layers[] = ['layer' => 'token-overrides', 'kind' => 'file', 'file' => 'token-overrides/' . $tokenSet];
-		}
-
-		// 3b. Generated dark-mode variant, directly after the light layer
-		// so its media-query/attribute-scoped rules override it — only
-		// when the toggle is on AND a generated file exists for this set.
-		// A disabled toggle or a set without a variant adds nothing.
-		$withDark = $this->hasDarkVariantLayer(tokenSet: $tokenSet);
-		if ($withDark === true) {
-			$layers[] = $this->fileLayer(layer: 'dark-variant', file: 'tokens/dark/' . $tokenSet);
-			// 3b-1. The dark logo as an absolute url, after the dark file that
-			// names it relatively. See LogoLayerService::darkLayers().
-			$layers = array_merge($layers, $this->logoLayer->darkLayers(tokenSet: $tokenSet, brandLogo: ($this->brandLogo !== null)));
-		}
-
-		// Functional contrast fix shared by all design systems: app icons
-		// that carry their white fill on <path> vanish on light surfaces
-		// in the NC 34 app-management list (see css/icon-contrast.css).
-		$layers[] = ['layer' => 'contrast', 'kind' => 'file', 'file' => 'icon-contrast'];
-		// Functional contrast fix shared by all design systems: our error
-		// fill is a saturated brand red where Nextcloud's is pale, so the
-		// components painting --color-error-text on it lose all contrast
-		// (see css/error-contrast.css).
-		$layers[] = ['layer' => 'contrast', 'kind' => 'file', 'file' => 'error-contrast'];
-
-		// 3.9. Component scopes, last of the set layers: it captures the `:root`
-		// declarations the layers above make, and the admin's own overrides come
-		// after it and are allowed to move the brand values those captures resolve
-		// to. It rides with the set layers rather than beside them so `none` stays
-		// stock — that branch returns above — and so the manifest carries it, which
-		// is what lets the client add and remove it without a reload.
-		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
-		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
-
-		return array_merge(
-			$layers,
-			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark)
-		);
-	}//end designSystemLayers()
-
-	/**
-	 * The set layers of a token set on the `none` design system.
-	 *
-	 * STOCK STILL GETS THE COMPONENT LAYER, and that is the difference between
-	 * a themable instance and an inert one.
-	 *
-	 * `none` means "no design system", not "the app does nothing". Every
-	 * instance STARTS on the stock `nextcloud` set, so without this the token
-	 * editor and the playground could not move a single colour until an admin
-	 * had already picked some other theme — you had to have a theme before you
-	 * could make one.
-	 *
-	 * Emitting it costs nothing visually. This layer only REDIRECTS Nextcloud's
-	 * own variables inside a component's subtree, and every component token is
-	 * undeclared until somebody sets one, so an untouched stock instance
-	 * resolves each redirect straight back to the captured global and renders
-	 * byte-identically to stock. What it buys is that the overrides file —
-	 * which is emitted after this list whatever the design system — finally has
-	 * something reading the tokens it writes.
-	 *
-	 * A CUSTOM set on `none` is a theme saved off stock Nextcloud, and its file
-	 * is the only place its values live — the header colour an admin set and
-	 * saved as a theme, for one. The stock set itself has no file to load: it
-	 * IS the running Nextcloud. Leaving the custom file out too put the saved
-	 * theme in the dropdown and none of it on the page.
-	 *
-	 * THE STOCK SET'S TOKENS ARE THE INSTANCE'S OWN. Its `--nldesign-*` values
-	 * are resolved from the running theme (see stockTokenLayer()), so the page
-	 * declares what this Nextcloud actually wears. Nothing on a `none` page
-	 * paints from them, so stock still renders as stock; what reads them is the
-	 * admin panel, which compares the live values against the set an admin is
-	 * about to apply. When the instance cannot be read nothing is emitted:
-	 * the shipped snapshot is never the stock set's layer (thematiq#620).
-	 *
-	 * @param string $tokenSet The token set id.
-	 *
-	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}>
-	 *                                                                                                                 The entries, in cascade order.
-	 *
-	 * @spec openspec/specs/css-architecture/spec.md
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
-	 */
-	private function noDesignSystemLayers(string $tokenSet): array {
-		$layers = [];
-		if ($tokenSet !== self::STOCK_TOKEN_SET) {
-			$layers[] = $this->fileLayer(layer: 'tokens', file: 'tokens/' . $tokenSet);
-		}
-
-		if ($tokenSet === self::STOCK_TOKEN_SET) {
-			$stock = $this->stockTokenLayer();
-			if ($stock !== null) {
-				$layers[] = $stock;
-			}
-		}
-
-		$layers[] = ['layer' => 'theme-scopes', 'kind' => 'file', 'file' => 'theme-scopes'];
-		$layers[] = ['layer' => 'component-scopes', 'kind' => 'file', 'file' => 'component-scopes'];
-
-		return array_merge(
-			$layers,
-			// This branch injects no dark variant, so none is read for the scopes either.
-			$this->internalScopesLayer(tokenSet: $tokenSet, designSystemId: 'none', withDark: false)
-		);
-	}//end noDesignSystemLayers()
-
-	/**
-	 * The internal scopes as an inline layer, after the component scopes, or
-	 * nothing when the set and the overrides give no internal token a value.
-	 *
-	 * Its own failure degrades only itself: the set's other layers still emit.
-	 *
-	 * @param string $tokenSet The token set.
-	 * @param string $designSystemId The design system the set wears.
-	 * @param bool $withDark Whether the set's dark variant is part of the cascade.
-	 *
-	 * @return array<int, array{layer: string, kind: string, css: string, id: string}> Zero or one entry.
-	 *
-	 * @spec openspec/specs/css-architecture/spec.md
-	 */
-	private function internalScopesLayer(string $tokenSet, string $designSystemId, bool $withDark): array {
-		try {
-			$css = $this->internalScopes->forSet(tokenSet: $tokenSet, designSystemId: $designSystemId, withDark: $withDark);
-		} catch (Throwable $e) {
-			$this->logger->warning(
-				'thematiq: the internal scopes layer was skipped; the rest of the cascade still ran.',
-				['app' => Application::APP_ID, 'exception' => $e]
-			);
-			return [];
-		}
-
-		if ($css === '') {
-			return [];
-		}
-
-		return [['layer' => 'internal-scopes', 'kind' => 'inline', 'css' => $css, 'id' => self::INTERNAL_SCOPES_STYLE_ID]];
-	}//end internalScopesLayer()
-
-	/**
-	 * The `nextcloud` set's token layer, resolved from the running instance.
-	 *
-	 * The `nextcloud` set is the one set whose values belong to something
-	 * else: it exists to reproduce the appearance of the running instance, and
-	 * that appearance changes with every Nextcloud release. A shipped file can
-	 * only ever hold a snapshot of one version, so it is resolved from the
-	 * instance instead. See StockTokensService for the measurements and for
-	 * why a stylesheet cannot do this with var().
-	 *
-	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline
-	 *                                                                          layer, or null when the instance could not be read.
-	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
-	 */
-	private function stockTokenLayer(): ?array {
-		$css = $this->stockTokens->getCss();
-		if ($css === null) {
-			return null;
-		}
-
-		return [
-			'layer' => 'tokens',
-			'kind' => 'inline',
-			'css' => $css,
-			'id' => self::STOCK_TOKENS_STYLE_ID,
-		];
-	}//end stockTokenLayer()
-
-	/**
-	 * Emit one entry from {@see self::designSystemLayers()}.
+	 * Emit one entry from {@see TokenSetLayers::forSet()}.
 	 *
 	 * @param array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string} $entry The layer entry.
 	 *
@@ -647,7 +332,7 @@ class CssInjectionService {
 		}
 
 		if ($entry['kind'] === 'runtime') {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: (string)$entry['name']));
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: (string)$entry['name']));
 			return;
 		}
 
@@ -655,28 +340,11 @@ class CssInjectionService {
 	}//end emitLayer()
 
 	/**
-	 * A stylesheet layer: a shipped static file, or a runtime file linked by route.
-	 *
-	 * @param string $layer The layer name.
-	 * @param string $file The stylesheet path relative to `css/`, without extension.
-	 *
-	 * @return array{layer: string, kind: string, file?: string, name?: string} The layer entry.
-	 */
-	private function fileLayer(string $layer, string $file): array {
-		$name = 'css/' . $file . '.css';
-		if ($this->runtimeFiles->inStore(name: $name) === true) {
-			return ['layer' => $layer, 'kind' => 'runtime', 'name' => $name];
-		}
-
-		return ['layer' => $layer, 'kind' => 'file', 'file' => $file];
-	}//end fileLayer()
-
-	/**
 	 * The stylesheet manifest for a token set: what the page would carry for
 	 * it, resolved to URLs, so the admin panel can swap one set for another
 	 * without a reload.
 	 *
-	 * Built from {@see self::designSystemLayers()} — the list `inject()` emits
+	 * Built from {@see TokenSetLayers::forSet()} — the list `inject()` emits
 	 * — so the client never has to guess which `<link>`s belong to Thematiq or
 	 * in which order they go. The set-independent layers (custom overrides,
 	 * freeform CSS, the toggles) are not part of the manifest: they do not
@@ -702,50 +370,64 @@ class CssInjectionService {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function getStylesheetManifest(string $tokenSet): array {
-		$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+		$tokenSetMeta = $this->context->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$designSystemId = (string)($tokenSetMeta['design_system'] ?? 'nldesign');
-		$layers = [];
-		foreach ($this->designSystemLayers(designSystemId: $designSystemId, tokenSet: $tokenSet) as $entry) {
-			if ($entry['kind'] === 'inline') {
-				$layers[] = [
-					'layer' => $entry['layer'],
-					'kind' => 'inline',
-					'id' => (string)($entry['id'] ?? ''),
-					'css' => (string)$entry['css'],
-				];
-				continue;
-			}
-
-			if ($entry['kind'] === 'runtime') {
-				$layers[] = [
-					'layer' => $entry['layer'],
-					'kind' => 'file',
-					'href' => $this->runtimeFiles->routeUrl(name: (string)$entry['name']),
-				];
-				continue;
-			}
-
-			$layers[] = ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->staticLayerUrl(file: (string)$entry['file'])];
-		}
-
-		// 4.5 Custom fonts — see injectCustomFontLink(): only for a design
-		// system that reads token variables, and only when fonts exist.
-		if ($designSystemId !== 'none' && $this->fontService->hasFonts() === true) {
-			$layers[] = [
-				'layer' => 'custom-font',
-				'kind' => 'file',
-				'href' => $this->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->fontService->getRevision(),
-			];
-		}
+		$layers = array_map(
+			fn (array $entry): array => $this->manifestLayer(entry: $entry),
+			$this->setLayers->forSet(designSystemId: $designSystemId, tokenSet: $tokenSet)
+		);
 
 		return [
 			'tokenSet' => $tokenSet,
 			'designSystem' => $designSystemId,
-			'layers' => $layers,
+			'layers' => array_merge($layers, $this->customFontLayers(designSystemId: $designSystemId)),
 			// Not layers of the set: the two conditional stylesheets that can follow it.
 			'layout' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
 		];
 	}//end getStylesheetManifest()
+
+	/**
+	 * One set layer as the manifest carries it: inline CSS with its element
+	 * id, or a stylesheet resolved to its URL.
+	 *
+	 * @param array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string} $entry The layer entry.
+	 *
+	 * @return array{layer: string, kind: string, href?: string, css?: string, id?: string}
+	 *
+	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 */
+	private function manifestLayer(array $entry): array {
+		if ($entry['kind'] === 'inline') {
+			return ['layer' => $entry['layer'], 'kind' => 'inline', 'id' => (string)($entry['id'] ?? ''), 'css' => (string)$entry['css']];
+		}
+
+		if ($entry['kind'] === 'runtime') {
+			return ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->files->runtimeFiles->routeUrl(name: (string)$entry['name'])];
+		}
+
+		return ['layer' => $entry['layer'], 'kind' => 'file', 'href' => $this->staticLayerUrl(file: (string)$entry['file'])];
+	}//end manifestLayer()
+
+	/**
+	 * The generated custom-fonts stylesheet (4.5), only for a design system
+	 * that reads token variables, and only when fonts exist; so it appears or
+	 * disappears with the set.
+	 *
+	 * @param string $designSystemId The resolved design system id.
+	 *
+	 * @return array<int, array{layer: string, kind: string, href: string}> Zero or one entry.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md
+	 */
+	private function customFontLayers(string $designSystemId): array {
+		if ($designSystemId === 'none' || $this->layers->fontService->hasFonts() === false) {
+			return [];
+		}
+
+		$href = $this->context->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->layers->fontService->getRevision();
+
+		return [['layer' => 'custom-font', 'kind' => 'file', 'href' => $href]];
+	}//end customFontLayers()
 
 	/**
 	 * Emit the admin-authored override layers: the always-present
@@ -772,18 +454,18 @@ class CssInjectionService {
 		// Kept in app data and linked only once saved: writing it on render
 		// is what gave every instance a code integrity warning.
 		$overridesName = 'css/' . $overridesFile . '.css';
-		if ($this->runtimeFiles->store()->exists(name: $overridesName) === true) {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: $overridesName));
+		if ($this->files->runtimeFiles->store()->exists(name: $overridesName) === true) {
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: $overridesName));
 		}
 
 		// 4.1 Freeform custom CSS — admin-authored arbitrary rules. Emitted
 		// AFTER custom-overrides so administrator intent wins the cascade, and
 		// only when the feature is switched on AND something is actually
 		// stored, so an instance that never opts in loads nothing at all.
-		if ($this->customCssService->isEnabled() === true
-			&& $this->customCssService->hasContent() === true
+		if ($this->layers->customCssService->isEnabled() === true
+			&& $this->layers->customCssService->hasContent() === true
 		) {
-			$this->emitStylesheetLink(url: $this->runtimeFiles->routeUrl(name: CustomCssService::FILE));
+			$this->emitStylesheetLink(url: $this->files->runtimeFiles->routeUrl(name: CustomCssService::FILE));
 		}
 	}//end injectOverrideStyles()
 
@@ -804,12 +486,9 @@ class CssInjectionService {
 		// file under css/) AFTER the token-set styles so the font tokens win
 		// the cascade, and only when at least one font is configured, so a
 		// themed instance with zero uploaded fonts issues no extra request.
-		if ($designSystemId === 'none' || $this->fontService->hasFonts() === false) {
-			return;
+		foreach ($this->customFontLayers(designSystemId: $designSystemId) as $layer) {
+			$this->emitStylesheetLink(url: $layer['href']);
 		}
-
-		$cssUrl = $this->urlGenerator->linkToRoute('thematiq.font.css') . '?v=' . $this->fontService->getRevision();
-		$this->emitStylesheetLink(url: $cssUrl);
 	}//end injectCustomFontLink()
 
 	/**
@@ -840,11 +519,11 @@ class CssInjectionService {
 		// addStyle() entries the toggles landed before custom-overrides. The
 		// spec puts them after it (css-architecture, hide-slogan, menu-labels),
 		// which is also where the admin page appends them on a toggle.
-		if ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'hide-slogan'));
 		}
 
-		if ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
@@ -856,7 +535,7 @@ class CssInjectionService {
 
 		// A header, so it follows the overrides and custom CSS links: it must
 		// come last, or a stored value would beat the lock.
-		if ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
+		if ($this->context->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1') {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'primary-lock'));
 		}
 	}//end injectConditionalStyles()
@@ -870,7 +549,7 @@ class CssInjectionService {
 	 *
 	 * @var string
 	 */
-	public const LOGO_STYLE_ID = 'nldesign-logo-url';
+	public const string LOGO_STYLE_ID = 'nldesign-logo-url';
 
 	/**
 	 * The `id` the dark logo `<style>` carries on the page (see
@@ -879,7 +558,7 @@ class CssInjectionService {
 	 *
 	 * @var string
 	 */
-	public const DARK_LOGO_STYLE_ID = 'thematiq-dark-logo-url';
+	public const string DARK_LOGO_STYLE_ID = 'thematiq-dark-logo-url';
 
 	/**
 	 * The token set that means "look like this Nextcloud", and therefore the
@@ -887,7 +566,7 @@ class CssInjectionService {
 	 *
 	 * @var string
 	 */
-	public const STOCK_TOKEN_SET = 'nextcloud';
+	public const string STOCK_TOKEN_SET = TokenSetLayers::STOCK_TOKEN_SET;
 
 	/**
 	 * The `id` the resolved stock-tokens `<style>` carries on the page.
@@ -897,12 +576,12 @@ class CssInjectionService {
 	 *
 	 * @var string
 	 */
-	public const STOCK_TOKENS_STYLE_ID = 'nldesign-stock-tokens';
+	public const string STOCK_TOKENS_STYLE_ID = TokenSetLayerEntries::STOCK_TOKENS_STYLE_ID;
 
 	/**
 	 * The id of the inline `<style>` carrying the internal scopes.
 	 */
-	public const INTERNAL_SCOPES_STYLE_ID = 'thematiq-internal-scopes';
+	public const string INTERNAL_SCOPES_STYLE_ID = TokenSetLayerEntries::INTERNAL_SCOPES_STYLE_ID;
 
 	/**
 	 * Emit one inline `<style>` block into the page head.
@@ -930,64 +609,6 @@ class CssInjectionService {
 	}//end emitInlineStyle()
 
 	/**
-	 * The app's own directory on disk.
-	 *
-	 * @return string The absolute app path.
-	 *
-	 * @spec openspec/specs/app-token-set-selection/spec.md
-	 */
-	protected function appPath(): string {
-		return dirname(__DIR__, 2);
-	}//end appPath()
-
-	/**
-	 * Add the generated dark-mode stylesheet, when ALL of: the `dark_variants`
-	 * app config is enabled, and a generated `css/tokens/dark/{set}.css` file
-	 * exists for the active set. A missing file or a disabled toggle simply
-	 * adds nothing — never an error.
-	 *
-	 * @param string $tokenSet The active token set id.
-	 *
-	 * @return bool True when the dark-variant layer is part of this set's cascade.
-	 *
-	 * @spec openspec/specs/dark-mode/spec.md
-	 */
-	private function hasDarkVariantLayer(string $tokenSet): bool {
-		$darkVariantsEnabled = ($this->config->getAppValue(Application::APP_ID, 'dark_variants', '1') === '1');
-		if ($darkVariantsEnabled === false) {
-			return false;
-		}
-
-		return $this->designSystemService->hasGeneratedDarkVariant(tokenSetId: $tokenSet);
-	}//end hasDarkVariantLayer()
-
-	/**
-	 * Add the gated, self-hosted Marianne (French State typeface) stylesheet,
-	 * when BOTH the active design system is `lasuite` AND an admin has
-	 * acknowledged eligibility via the `marianne_enabled` appconfig flag
-	 * (default `'0'`). While the flag is off — or the design system is not
-	 * `lasuite` — this adds nothing, so no `@font-face` `url()` source for
-	 * Marianne exists and the fonts.css family stack falls through to Inter.
-	 *
-	 * @param string $designSystemId The resolved design system id for the active token set.
-	 *
-	 * @return array{layer: string, kind: string, file: string}|null The layer entry, or null when gated off.
-	 *
-	 * @spec openspec/specs/marianne-font/spec.md
-	 */
-	private function marianneLayer(string $designSystemId): ?array {
-		if ($designSystemId !== 'lasuite') {
-			return null;
-		}
-
-		if ($this->config->getAppValue(Application::APP_ID, 'marianne_enabled', '0') !== '1') {
-			return null;
-		}
-
-		return ['layer' => 'marianne', 'kind' => 'file', 'file' => 'systems/lasuite/marianne'];
-	}//end marianneLayer()
-
-	/**
 	 * Whether a render context must receive nldesign CSS.
 	 *
 	 * A context outside {@see VALID_CONTEXTS} (an unmapped or future
@@ -1009,7 +630,7 @@ class CssInjectionService {
 			return true;
 		}
 
-		$raw = $this->config->getAppValue(Application::APP_ID, self::THEMED_CONTEXTS_KEY, '[]');
+		$raw = $this->context->config->getAppValue(Application::APP_ID, self::THEMED_CONTEXTS_KEY, '[]');
 		$decoded = json_decode($raw, true);
 		if (is_array($decoded) === false || empty($decoded) === true) {
 			return true;

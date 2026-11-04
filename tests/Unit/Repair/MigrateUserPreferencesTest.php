@@ -102,7 +102,7 @@ final class MigrateUserPreferencesTest extends TestCase {
 	 * @return IConfig
 	 */
 	private function config(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 
 		$config->method('getUserKeys')
 			->willReturnCallback(
@@ -145,7 +145,7 @@ final class MigrateUserPreferencesTest extends TestCase {
 	 * @return IUserManager
 	 */
 	private function userManager(?array $userIds = null, bool $throw = false): IUserManager {
-		$userManager = $this->createMock(IUserManager::class);
+		$userManager = $this->createMock(originalClassName: IUserManager::class);
 
 		if ($throw === true) {
 			$userManager->method('callForSeenUsers')
@@ -157,7 +157,7 @@ final class MigrateUserPreferencesTest extends TestCase {
 			->willReturnCallback(
 				function (Closure $callback) use ($userIds): void {
 					foreach (($userIds ?? array_keys($this->store)) as $userId) {
-						$user = $this->createMock(IUser::class);
+						$user = $this->createMock(originalClassName: IUser::class);
 						$user->method('getUID')->willReturn($userId);
 						$callback($user);
 					}
@@ -180,9 +180,9 @@ final class MigrateUserPreferencesTest extends TestCase {
 		?LoggerInterface $logger = null,
 	): MigrateUserPreferences {
 		return new MigrateUserPreferences(
-			$this->config(),
-			($userManager ?? $this->userManager()),
-			($logger ?? $this->createMock(LoggerInterface::class))
+			config: $this->config(),
+			userManager: ($userManager ?? $this->userManager()),
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 
 	}//end step()
@@ -198,11 +198,11 @@ final class MigrateUserPreferencesTest extends TestCase {
 			'bob' => [self::OLD => ['preview_token_set' => 'amsterdam']],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('utrecht', $this->store['alice'][self::NEW]['preview_token_set']);
-		$this->assertSame('1756000000', $this->store['alice'][self::NEW]['preview_expires_at']);
-		$this->assertSame('amsterdam', $this->store['bob'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'utrecht', actual: $this->store['alice'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: '1756000000', actual: $this->store['alice'][self::NEW]['preview_expires_at']);
+		$this->assertSame(expected: 'amsterdam', actual: $this->store['bob'][self::NEW]['preview_token_set']);
 
 	}//end testCopiesEveryUsersPreferences()
 
@@ -226,11 +226,11 @@ final class MigrateUserPreferencesTest extends TestCase {
 			'carol' => [self::OLD => ['preview_token_set' => 'rotterdam']],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('utrecht', $this->store['alice'][self::NEW]['preview_token_set']);
-		$this->assertSame('amsterdam', $this->store['bob'][self::NEW]['preview_token_set']);
-		$this->assertSame('rotterdam', $this->store['carol'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'utrecht', actual: $this->store['alice'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'amsterdam', actual: $this->store['bob'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'rotterdam', actual: $this->store['carol'][self::NEW]['preview_token_set']);
 
 	}//end testMigratesEveryStoredKeyRegardlessOfItsValue()
 
@@ -249,9 +249,9 @@ final class MigrateUserPreferencesTest extends TestCase {
 			'alice' => [self::OLD => ['some_future_preference' => 'kept']],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('kept', $this->store['alice'][self::NEW]['some_future_preference']);
+		$this->assertSame(expected: 'kept', actual: $this->store['alice'][self::NEW]['some_future_preference']);
 
 	}//end testMigratesAKeyTheStepDoesNotKnowAbout()
 
@@ -263,9 +263,9 @@ final class MigrateUserPreferencesTest extends TestCase {
 	public function testLeavesTheOldPreferencesIntact(): void {
 		$this->store = ['alice' => [self::OLD => ['preview_token_set' => 'utrecht']]];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('utrecht', $this->store['alice'][self::OLD]['preview_token_set']);
+		$this->assertSame(expected: 'utrecht', actual: $this->store['alice'][self::OLD]['preview_token_set']);
 
 	}//end testLeavesTheOldPreferencesIntact()
 
@@ -282,9 +282,9 @@ final class MigrateUserPreferencesTest extends TestCase {
 			],
 		];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('nieuw', $this->store['alice'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'nieuw', actual: $this->store['alice'][self::NEW]['preview_token_set']);
 
 	}//end testDoesNotOverwriteAPreferenceAlreadySetUnderTheNewAppId()
 
@@ -297,10 +297,10 @@ final class MigrateUserPreferencesTest extends TestCase {
 		$this->store = ['alice' => [self::OLD => ['preview_token_set' => 'utrecht']]];
 
 		$step = $this->step();
-		$step->run($this->createMock(IOutput::class));
-		$step->run($this->createMock(IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('utrecht', $this->store['alice'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'utrecht', actual: $this->store['alice'][self::NEW]['preview_token_set']);
 
 	}//end testIsIdempotent()
 
@@ -312,9 +312,9 @@ final class MigrateUserPreferencesTest extends TestCase {
 	public function testSkipsPreferencesWithNoStoredValue(): void {
 		$this->store = ['alice' => [self::OLD => ['preview_token_set' => '']]];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertArrayNotHasKey(self::NEW, $this->store['alice']);
+		$this->assertArrayNotHasKey(key: self::NEW, array: $this->store['alice']);
 
 	}//end testSkipsPreferencesWithNoStoredValue()
 
@@ -324,14 +324,14 @@ final class MigrateUserPreferencesTest extends TestCase {
 	 * @return void
 	 */
 	public function testReportsNothingToDoWhenNoUserHasStoredPreferences(): void {
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())
 			->method('info')
-			->with($this->stringContains('nothing to do'));
+			->with($this->stringContains(string: 'nothing to do'));
 
-		$this->step($this->userManager(['alice']))->run($output);
+		$this->step(userManager: $this->userManager(userIds: ['alice']))->run($output);
 
-		$this->assertSame([], $this->store);
+		$this->assertSame(expected: [], actual: $this->store);
 
 	}//end testReportsNothingToDoWhenNoUserHasStoredPreferences()
 
@@ -349,11 +349,11 @@ final class MigrateUserPreferencesTest extends TestCase {
 
 		$this->keysThrowFor = ['bob'];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('utrecht', $this->store['alice'][self::NEW]['preview_token_set']);
-		$this->assertSame('rotterdam', $this->store['carol'][self::NEW]['preview_token_set']);
-		$this->assertArrayNotHasKey(self::NEW, $this->store['bob']);
+		$this->assertSame(expected: 'utrecht', actual: $this->store['alice'][self::NEW]['preview_token_set']);
+		$this->assertSame(expected: 'rotterdam', actual: $this->store['carol'][self::NEW]['preview_token_set']);
+		$this->assertArrayNotHasKey(key: self::NEW, array: $this->store['bob']);
 
 	}//end testOneUnreadableUserDoesNotStopTheWalk()
 
@@ -366,15 +366,15 @@ final class MigrateUserPreferencesTest extends TestCase {
 		$this->store = ['alice' => [self::OLD => ['preview_token_set' => 'utrecht']]];
 		$this->writeThrowsFor = ['alice'];
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
 			->with(
-				$this->stringContains('could not migrate one user preference'),
-				$this->arrayHasKey('key')
+				$this->stringContains(string: 'could not migrate one user preference'),
+				$this->arrayHasKey(key: 'key')
 			);
 
-		$this->step(logger: $logger)->run($this->createMock(IOutput::class));
+		$this->step(logger: $logger)->run($this->createMock(originalClassName: IOutput::class));
 
 	}//end testLogsAPreferenceItCouldNotMigrate()
 
@@ -389,18 +389,18 @@ final class MigrateUserPreferencesTest extends TestCase {
 	 * @return void
 	 */
 	public function testUserEnumerationFailureWarnsInsteadOfThrowing(): void {
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())
 			->method('warning')
-			->with($this->stringContains('user enumeration failed'));
+			->with($this->stringContains(string: 'user enumeration failed'));
 		$output->expects($this->never())->method('info');
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
-			->with($this->stringContains('could not enumerate users'));
+			->with($this->stringContains(string: 'could not enumerate users'));
 
-		$step = $this->step($this->userManager(throw: true), $logger);
+		$step = $this->step(userManager: $this->userManager(throw: true), logger: $logger);
 		$step->run($output);
 
 	}//end testUserEnumerationFailureWarnsInsteadOfThrowing()
@@ -413,8 +413,8 @@ final class MigrateUserPreferencesTest extends TestCase {
 	public function testGetNameNamesBothAppIds(): void {
 		$name = $this->step()->getName();
 
-		$this->assertStringContainsString(self::OLD, $name);
-		$this->assertStringContainsString('thematiq', $name);
+		$this->assertStringContainsString(needle: self::OLD, haystack: $name);
+		$this->assertStringContainsString(needle: 'thematiq', haystack: $name);
 
 	}//end testGetNameNamesBothAppIds()
 

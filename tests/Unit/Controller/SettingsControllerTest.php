@@ -18,8 +18,12 @@ use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -44,19 +48,25 @@ class SettingsControllerTest extends TestCase {
 	 */
 	private function makeController(EmailThemingService $emailThemingService): SettingsController {
 		return new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(TokenSetService::class),
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->createMock(ThemingAuditService::class),
-			$emailThemingService,
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $this->createMock(originalClassName: IConfig::class),
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+				emailTheming: new EmailThemingSettings(emailThemingService: $emailThemingService),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end makeController()
 
@@ -67,23 +77,23 @@ class SettingsControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetEmailThemingReturns409WithOccCommandsOnReadOnly(): void {
-		$emailThemingService = $this->createMock(EmailThemingService::class);
+		$emailThemingService = $this->createMock(originalClassName: EmailThemingService::class);
 		$emailThemingService->expects($this->once())->method('setFooterConfig')
 			->with('Org', '', '')
 			->willReturn(['orgName' => 'Org', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 		$emailThemingService->method('enable')
-			->willThrowException(new ConfigReadOnlyException('occ enable-cmd', 'occ disable-cmd'));
+			->willThrowException(new ConfigReadOnlyException(occEnableCommand: 'occ enable-cmd', occDisableCommand: 'occ disable-cmd'));
 		$emailThemingService->method('getFooterConfig')
 			->willReturn(['orgName' => 'Org', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 
-		$controller = $this->makeController($emailThemingService);
+		$controller = $this->makeController(emailThemingService: $emailThemingService);
 		$response = $controller->setEmailTheming(true, 'Org', '', '');
 
-		$this->assertSame(409, $response->getStatus());
+		$this->assertSame(expected: 409, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('config_read_only', $data['error']);
-		$this->assertSame('occ enable-cmd', $data['occEnable']);
-		$this->assertSame('occ disable-cmd', $data['occDisable']);
+		$this->assertSame(expected: 'config_read_only', actual: $data['error']);
+		$this->assertSame(expected: 'occ enable-cmd', actual: $data['occEnable']);
+		$this->assertSame(expected: 'occ disable-cmd', actual: $data['occDisable']);
 	}//end testSetEmailThemingReturns409WithOccCommandsOnReadOnly()
 
 	/**
@@ -94,7 +104,7 @@ class SettingsControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterSaveSucceedsWhenToggleFailsReadOnly(): void {
-		$emailThemingService = $this->createMock(EmailThemingService::class);
+		$emailThemingService = $this->createMock(originalClassName: EmailThemingService::class);
 		$emailThemingService->expects($this->once())->method('setFooterConfig')
 			->with('Gemeente Voorbeeld', 'https://voorbeeld.nl/a11y', 'https://voorbeeld.nl/privacy')
 			->willReturn(
@@ -105,7 +115,7 @@ class SettingsControllerTest extends TestCase {
 				]
 			);
 		$emailThemingService->method('enable')
-			->willThrowException(new ConfigReadOnlyException('occ enable-cmd', 'occ disable-cmd'));
+			->willThrowException(new ConfigReadOnlyException(occEnableCommand: 'occ enable-cmd', occDisableCommand: 'occ disable-cmd'));
 		$emailThemingService->method('getFooterConfig')->willReturn(
 			[
 				'orgName' => 'Gemeente Voorbeeld',
@@ -114,7 +124,7 @@ class SettingsControllerTest extends TestCase {
 			]
 		);
 
-		$controller = $this->makeController($emailThemingService);
+		$controller = $this->makeController(emailThemingService: $emailThemingService);
 		$response = $controller->setEmailTheming(
 			true,
 			'Gemeente Voorbeeld',
@@ -122,11 +132,11 @@ class SettingsControllerTest extends TestCase {
 			'https://voorbeeld.nl/privacy'
 		);
 
-		$this->assertSame(409, $response->getStatus());
+		$this->assertSame(expected: 409, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('Gemeente Voorbeeld', $data['footer']['orgName']);
-		$this->assertSame('https://voorbeeld.nl/a11y', $data['footer']['accessibilityUrl']);
-		$this->assertSame('https://voorbeeld.nl/privacy', $data['footer']['privacyUrl']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $data['footer']['orgName']);
+		$this->assertSame(expected: 'https://voorbeeld.nl/a11y', actual: $data['footer']['accessibilityUrl']);
+		$this->assertSame(expected: 'https://voorbeeld.nl/privacy', actual: $data['footer']['privacyUrl']);
 	}//end testFooterSaveSucceedsWhenToggleFailsReadOnly()
 
 	/**
@@ -136,7 +146,7 @@ class SettingsControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testSetEmailThemingSucceeds(): void {
-		$emailThemingService = $this->createMock(EmailThemingService::class);
+		$emailThemingService = $this->createMock(originalClassName: EmailThemingService::class);
 		$emailThemingService->expects($this->once())->method('setFooterConfig')
 			->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 		$emailThemingService->expects($this->once())->method('enable');
@@ -145,12 +155,12 @@ class SettingsControllerTest extends TestCase {
 		$emailThemingService->method('getFooterConfig')
 			->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 
-		$controller = $this->makeController($emailThemingService);
+		$controller = $this->makeController(emailThemingService: $emailThemingService);
 		$response = $controller->setEmailTheming(true, '', '', '');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('ok', $data['status']);
-		$this->assertSame('enabled', $data['state']['state']);
+		$this->assertSame(expected: 'ok', actual: $data['status']);
+		$this->assertSame(expected: 'enabled', actual: $data['state']['state']);
 	}//end testSetEmailThemingSucceeds()
 }//end class

@@ -21,9 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
-use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -98,19 +95,13 @@ class LoginCopyService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config Reads the administrator's override.
-	 * @param DesignSystemService $designSystemService Reads a set's manifest entry.
-	 * @param IInitialState $initialState The initial state channel.
-	 * @param IFactory $l10nFactory The language of this request.
+	 * @param PageCopySources $sources The config, the design systems, the initial state and the language factory.
 	 * @param LoggerInterface $logger Records a swallowed failure.
 	 * @param GroupThemingService|null $groupTheming Resolves the login page's token set; null in unit tests of {@see self::inject()}.
 	 * @param LayoutOptionsService|null $layoutOptions Resolves the login page's layout; null in unit tests of {@see self::inject()}.
 	 */
 	public function __construct(
-		private readonly IConfig $config,
-		private readonly DesignSystemService $designSystemService,
-		private readonly IInitialState $initialState,
-		private readonly IFactory $l10nFactory,
+		private readonly PageCopySources $sources,
 		private readonly LoggerInterface $logger,
 		private readonly ?GroupThemingService $groupTheming = null,
 		private readonly ?LayoutOptionsService $layoutOptions = null,
@@ -161,9 +152,9 @@ class LoginCopyService {
 	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {
-		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
+		$meta = $this->sources->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$fromSet = ($meta['login'] ?? null);
-		$fromAdmin = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
+		$fromAdmin = json_decode($this->sources->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
 
 		$copy = [];
 		foreach ([$fromSet, $fromAdmin] as $source) {
@@ -204,11 +195,11 @@ class LoginCopyService {
 				return;
 			}
 
-			$l10n = $this->l10nFactory->get(Application::APP_ID);
+			$l10n = $this->sources->l10nFactory->get(Application::APP_ID);
 			$copy = $this->resolveCopy(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
 			$copy['divider'] = ($copy['divider'] ?? $l10n->t('or'));
 
-			$this->initialState->provideInitialState(self::STATE_KEY, $copy);
+			$this->sources->initialState->provideInitialState(self::STATE_KEY, $copy);
 			$this->emitScript();
 		} catch (Throwable $e) {
 			$this->logger->warning(

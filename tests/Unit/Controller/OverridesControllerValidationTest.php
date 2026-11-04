@@ -18,9 +18,13 @@ use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\OverridesStorage;
+use OCA\Thematiq\Service\OverridesThemingSync;
+use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -66,26 +70,47 @@ class OverridesControllerValidationTest extends TestCase {
 	 */
 	private IRequest $request;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->appDir = sys_get_temp_dir() . '/thematiq-694-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
 		$parser = new CssParserService();
-		$darkPalette = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
-		$this->overridesService = new CustomOverridesService(new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')), $parser, $darkPalette);
+		$darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
+		$this->overridesService = new CustomOverridesService(
+			storage: new OverridesStorage(
+				store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+				cssParser: $parser,
+				darkPalette: $darkPalette
+			)
+		);
 		$this->overridesService->write(tokens: ['--color-primary' => '#000000']);
 
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->request = $this->createMock(IRequest::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/*') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/*') as $file) {
 			unlink($file);
 		}
 
@@ -103,18 +128,24 @@ class OverridesControllerValidationTest extends TestCase {
 	 */
 	private function controller(CustomOverridesService $service): OverridesController {
 		return new OverridesController(
-			'thematiq',
-			$this->request,
-			$service,
-			new CssParserService(),
-			$this->auditService,
-			$this->createMock(IConfig::class),
-			$this->createMock(ThemingService::class)
+			appName: 'thematiq',
+			request: $this->request,
+			writes: new OverridesWrites(
+				overridesService: $service,
+				cssParser: new CssParserService(),
+				auditService: $this->auditService
+			),
+			themingSync: new OverridesThemingSync(
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			)
 		);
 	}//end controller()
 
 	/**
 	 * An unknown token name is refused with 400 naming it, and nothing is written.
+	 *
+	 * @return void
 	 */
 	public function testUnknownTokenIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -124,14 +155,16 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('--not-a-registry-token', json_encode($response->getData()));
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--not-a-registry-token', haystack: json_encode($response->getData()));
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testUnknownTokenIs400()
 
 	/**
 	 * A value the writer would drop (a CSS injection attempt) is refused with 400
 	 * naming the token, and nothing is written.
+	 *
+	 * @return void
 	 */
 	public function testWrongValueIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -141,13 +174,15 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('--color-primary', json_encode($response->getData()));
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--color-primary', haystack: json_encode($response->getData()));
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testWrongValueIs400()
 
 	/**
 	 * A value that is not a string is refused with 400 instead of a type error.
+	 *
+	 * @return void
 	 */
 	public function testNonStringValueIs400(): void {
 		$this->request->method('getParams')->willReturn(
@@ -156,13 +191,15 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertSame(['--color-primary' => '#000000'], $this->overridesService->read());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertSame(expected: ['--color-primary' => '#000000'], actual: $this->overridesService->read());
 	}//end testNonStringValueIs400()
 
 	/**
 	 * A valid save reports the count that reached the file, and the audit entry
 	 * records exactly what was written.
+	 *
+	 * @return void
 	 */
 	public function testValidSaveReportsAndAuditsWhatWasWritten(): void {
 		$this->request->method('getParams')->willReturn(
@@ -180,20 +217,22 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $this->overridesService)->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(2, $response->getData()['written']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 2, actual: $response->getData()['written']);
 		$this->assertSame(
-			['--color-primary' => '#112233', '--color-primary-element' => '#445566'],
-			$this->overridesService->read()
+			expected: ['--color-primary' => '#112233', '--color-primary-element' => '#445566'],
+			actual: $this->overridesService->read()
 		);
 	}//end testValidSaveReportsAndAuditsWhatWasWritten()
 
 	/**
 	 * A write failure answers 500 with a generic message, never the file path
 	 * the service puts in its exception text.
+	 *
+	 * @return void
 	 */
 	public function testWriteFailureHidesPath(): void {
-		$failing = $this->getMockBuilder(CustomOverridesService::class)
+		$failing = $this->getMockBuilder(className: CustomOverridesService::class)
 			->disableOriginalConstructor()
 			->onlyMethods(['read', 'write', 'findRejected'])
 			->getMock();
@@ -206,8 +245,8 @@ class OverridesControllerValidationTest extends TestCase {
 
 		$response = $this->controller(service: $failing)->setOverrides();
 
-		$this->assertSame(500, $response->getStatus());
-		$this->assertStringNotContainsString('/var/www', json_encode($response->getData()));
-		$this->assertStringNotContainsString('custom-overrides.css', json_encode($response->getData()));
+		$this->assertSame(expected: 500, actual: $response->getStatus());
+		$this->assertStringNotContainsString(needle: '/var/www', haystack: json_encode($response->getData()));
+		$this->assertStringNotContainsString(needle: 'custom-overrides.css', haystack: json_encode($response->getData()));
 	}//end testWriteFailureHidesPath()
 }//end class

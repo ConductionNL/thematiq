@@ -77,14 +77,14 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 */
 	public function testTheTwoConditions(): void {
 		$entries = [
-			$this->entry('good'),
-			$this->entry('unnamed'),
-			$this->entry('broken', [['kind' => 'incomplete', 'missing' => ['--nldesign-color-text']]]),
+			$this->entry(id: 'good'),
+			$this->entry(id: 'unnamed'),
+			$this->entry(id: 'broken', warnings: [['kind' => 'incomplete', 'missing' => ['--nldesign-color-text']]]),
 		];
 
 		$selectable = $this->policy()->filter($entries, ['good', 'broken'], '', []);
 
-		$this->assertSame(['good'], $this->ids($selectable));
+		$this->assertSame(expected: ['good'], actual: $this->ids(entries: $selectable));
 	}//end testTheTwoConditions()
 
 	/**
@@ -98,14 +98,14 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 */
 	public function testOnlyTheIncompleteKindWithholdsASet(): void {
 		$entries = [
-			$this->entry('contrast', [['kind' => 'contrast', 'pair' => 'primary/bg', 'ratio' => '2.5']]),
-			$this->entry('font', [['kind' => 'font', 'family' => 'Avenir']]),
-			$this->entry('vocab', [['kind' => 'incomplete']]),
+			$this->entry(id: 'contrast', warnings: [['kind' => 'contrast', 'pair' => 'primary/bg', 'ratio' => '2.5']]),
+			$this->entry(id: 'font', warnings: [['kind' => 'font', 'family' => 'Avenir']]),
+			$this->entry(id: 'vocab', warnings: [['kind' => 'incomplete']]),
 		];
 
-		$selectable = $this->ids($this->policy()->filter($entries, ['contrast', 'font', 'vocab'], '', []));
+		$selectable = $this->ids(entries: $this->policy()->filter($entries, ['contrast', 'font', 'vocab'], '', []));
 
-		$this->assertSame(['contrast', 'font'], $selectable);
+		$this->assertSame(expected: ['contrast', 'font'], actual: $selectable);
 	}//end testOnlyTheIncompleteKindWithholdsASet()
 
 	/**
@@ -118,17 +118,17 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 */
 	public function testTheThreeSurvivorsOutrankBothConditions(): void {
 		$entries = [
-			$this->entry('active', [['kind' => 'incomplete']]),
-			$this->entry('mapped'),
-			$this->entry('custom-upload', [['kind' => 'incomplete']]),
-			$this->entry('dropped', [['kind' => 'incomplete']]),
+			$this->entry(id: 'active', warnings: [['kind' => 'incomplete']]),
+			$this->entry(id: 'mapped'),
+			$this->entry(id: 'custom-upload', warnings: [['kind' => 'incomplete']]),
+			$this->entry(id: 'dropped', warnings: [['kind' => 'incomplete']]),
 		];
 
 		// None of them is named, so only the survival rules can keep them.
-		$selectable = $this->ids($this->policy()->filter($entries, [], 'active', ['mapped']));
+		$selectable = $this->ids(entries: $this->policy()->filter($entries, [], 'active', ['mapped']));
 
-		$this->assertSame(['active', 'mapped', 'custom-upload'], $selectable);
-		$this->assertNotContains('dropped', $selectable);
+		$this->assertSame(expected: ['active', 'mapped', 'custom-upload'], actual: $selectable);
+		$this->assertNotContains(needle: 'dropped', haystack: $selectable);
 	}//end testTheThreeSurvivorsOutrankBothConditions()
 
 	/**
@@ -141,9 +141,9 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testAnEmptyActiveSetAddsNothing(): void {
-		$entries = [['name' => 'no id at all'], $this->entry('named')];
+		$entries = [['name' => 'no id at all'], $this->entry(id: 'named')];
 
-		$this->assertSame(['named'], $this->ids($this->policy()->filter($entries, ['named'], '', [])));
+		$this->assertSame(expected: ['named'], actual: $this->ids(entries: $this->policy()->filter($entries, ['named'], '', [])));
 	}//end testAnEmptyActiveSetAddsNothing()
 
 	/**
@@ -158,15 +158,15 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	public function testUnusableWarningsAreTreatedAsNone(): void {
 		$policy = $this->policy();
 
-		$this->assertFalse($policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => 'oops']));
-		$this->assertFalse($policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => []]));
-		$this->assertFalse($policy->isVocabularyIncomplete(['id' => 'a']));
-		$this->assertFalse($policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => ['not an array']]));
-		$this->assertFalse($policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => [['kind' => 'other']]]));
+		$this->assertFalse(condition: $policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => 'oops']));
+		$this->assertFalse(condition: $policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => []]));
+		$this->assertFalse(condition: $policy->isVocabularyIncomplete(['id' => 'a']));
+		$this->assertFalse(condition: $policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => ['not an array']]));
+		$this->assertFalse(condition: $policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => [['kind' => 'other']]]));
 
 		// ...and the one shape that does withhold a set, so the above is not
 		// passing on a check that answers false to everything.
-		$this->assertTrue($policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => [['kind' => 'incomplete']]]));
+		$this->assertTrue(condition: $policy->isVocabularyIncomplete(['id' => 'a', 'warnings' => [['kind' => 'incomplete']]]));
 	}//end testUnusableWarningsAreTreatedAsNone()
 
 	/**
@@ -183,7 +183,7 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-only-fully-functional-brands-are-selectable
 	 */
 	public function testAnUnusableGroupMappingYieldsNoIds(string $mapping): void {
-		$this->assertSame([], $this->policy()->mappedIds($mapping));
+		$this->assertSame(expected: [], actual: $this->policy()->mappedIds($mapping));
 	}//end testAnUnusableGroupMappingYieldsNoIds()
 
 	/**
@@ -224,8 +224,8 @@ class TokenSetSelectionPolicyTest extends TestCase {
 		);
 
 		$this->assertSame(
-			['amsterdam', 'utrecht', 'amsterdam'],
-			$this->policy()->mappedIds((string)$mapping)
+			expected: ['amsterdam', 'utrecht', 'amsterdam'],
+			actual: $this->policy()->mappedIds((string)$mapping)
 		);
 	}//end testAUsableGroupMappingYieldsItsIds()
 
@@ -245,27 +245,29 @@ class TokenSetSelectionPolicyTest extends TestCase {
 		$probe = sys_get_temp_dir() . '/thematiq-policy-' . getmypid();
 		@mkdir($probe, 0777, true);
 
-		$service = $this->createMock(TokenSetService::class);
+		$service = $this->createMock(originalClassName: TokenSetService::class);
 		$service->method('getAvailableTokenSets')->willReturn(
-			[$this->entry('amsterdam'), $this->entry('utrecht')]
+			[$this->entry(id: 'amsterdam'), $this->entry(id: 'utrecht')]
 		);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			static fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'utrecht' : $default)
+			static fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'utrecht', default => $default
+			})
 		);
 
 		// No token-sets.json at all.
 		$this->assertSame(
-			['utrecht'],
-			$this->ids($this->policy()->selectable($service, $config, $probe))
+			expected: ['utrecht'],
+			actual: $this->ids(entries: $this->policy()->selectable($service, $config, $probe))
 		);
 
 		// Present but not a JSON list.
 		file_put_contents($probe . '/token-sets.json', '{"id":"amsterdam"}');
 		$this->assertSame(
-			['utrecht'],
-			$this->ids($this->policy()->selectable($service, $config, $probe))
+			expected: ['utrecht'],
+			actual: $this->ids(entries: $this->policy()->selectable($service, $config, $probe))
 		);
 
 		// Present, a list, with one usable entry and two unusable ones.
@@ -274,8 +276,8 @@ class TokenSetSelectionPolicyTest extends TestCase {
 			json_encode([['id' => 'amsterdam'], ['name' => 'no id'], 'not an entry', ['id' => 42]])
 		);
 		$this->assertSame(
-			['amsterdam', 'utrecht'],
-			$this->ids($this->policy()->selectable($service, $config, $probe))
+			expected: ['amsterdam', 'utrecht'],
+			actual: $this->ids(entries: $this->policy()->selectable($service, $config, $probe))
 		);
 
 		unlink($probe . '/token-sets.json');
@@ -297,15 +299,15 @@ class TokenSetSelectionPolicyTest extends TestCase {
 		@mkdir($probe, 0777, true);
 		file_put_contents($probe . '/token-sets.json', json_encode([['id' => 'amsterdam']]));
 
-		$service = $this->createMock(TokenSetService::class);
-		$service->method('getAvailableTokenSets')->willReturn([$this->entry('amsterdam')]);
+		$service = $this->createMock(originalClassName: TokenSetService::class);
+		$service->method('getAvailableTokenSets')->willReturn([$this->entry(id: 'amsterdam')]);
 
 		// A bare mock answers null for every key.
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 
 		$this->assertSame(
-			['amsterdam'],
-			$this->ids($this->policy()->selectable($service, $config, $probe))
+			expected: ['amsterdam'],
+			actual: $this->ids(entries: $this->policy()->selectable($service, $config, $probe))
 		);
 
 		unlink($probe . '/token-sets.json');
@@ -323,15 +325,15 @@ class TokenSetSelectionPolicyTest extends TestCase {
 	 */
 	public function testTheFilterPreservesOrderAndEntries(): void {
 		$entries = [
-			$this->entry('zebra'),
-			$this->entry('dropped', [['kind' => 'incomplete']]),
-			$this->entry('alpha'),
+			$this->entry(id: 'zebra'),
+			$this->entry(id: 'dropped', warnings: [['kind' => 'incomplete']]),
+			$this->entry(id: 'alpha'),
 		];
 
 		$selectable = $this->policy()->filter($entries, ['zebra', 'dropped', 'alpha'], '', []);
 
-		$this->assertSame(['zebra', 'alpha'], $this->ids($selectable));
-		$this->assertSame($entries[0], $selectable[0]);
-		$this->assertSame($entries[2], $selectable[1]);
+		$this->assertSame(expected: ['zebra', 'alpha'], actual: $this->ids(entries: $selectable));
+		$this->assertSame(expected: $entries[0], actual: $selectable[0]);
+		$this->assertSame(expected: $entries[2], actual: $selectable[1]);
 	}//end testTheFilterPreservesOrderAndEntries()
 }//end class

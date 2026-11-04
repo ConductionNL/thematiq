@@ -46,10 +46,10 @@ class TokenReferenceControllerTest extends TestCase {
 	 * @return TokenReferenceController The controller.
 	 */
 	private function controller(): TokenReferenceController {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ($this->params[$key] ?? $default));
 
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('getAvailableTokenSets')->willReturn(
 			[
 				['id' => 'amsterdam', 'name' => 'Gemeente Amsterdam', 'theming' => []],
@@ -57,15 +57,15 @@ class TokenReferenceControllerTest extends TestCase {
 			]
 		);
 
-		$reference = $this->createMock(TokenReferenceService::class);
+		$reference = $this->createMock(originalClassName: TokenReferenceService::class);
 		$reference->method('render')->willReturnCallback(
 			fn (string $appPath, array $set, string $format) => $format . ':' . $set['id'] . ':' . $appPath
 		);
 
-		$apps = $this->createMock(IAppManager::class);
+		$apps = $this->createMock(originalClassName: IAppManager::class);
 		$apps->method('getAppPath')->willReturn('/srv/apps/thematiq');
 
-		return new TokenReferenceController('thematiq', $request, $tokenSets, $reference, $apps);
+		return new TokenReferenceController(appName: 'thematiq', request: $request, tokenSets: $tokenSets, reference: $reference, apps: $apps);
 	}//end controller()
 
 	/**
@@ -89,9 +89,9 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$response = $this->controller()->show(id: 'custom-gemeente-x');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('html:custom-gemeente-x:/srv/apps/thematiq', $response->render());
-		$this->assertStringStartsWith('text/html', $this->headers($response)['Content-Type']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'html:custom-gemeente-x:/srv/apps/thematiq', actual: $response->render());
+		$this->assertStringStartsWith(prefix: 'text/html', string: $this->headers(response: $response)['Content-Type']);
 	}//end testTheHtmlReferenceOfACustomSet()
 
 	/**
@@ -104,9 +104,12 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$response = $this->controller()->show(id: 'custom-gemeente-x');
 
-		$this->assertSame('md-plain:custom-gemeente-x:/srv/apps/thematiq', $response->render());
-		$this->assertStringStartsWith('text/markdown', $this->headers($response)['Content-Type']);
-		$this->assertSame('attachment; filename="custom-gemeente-x-tokens.md"', $this->headers($response)['Content-Disposition']);
+		$this->assertSame(expected: 'md-plain:custom-gemeente-x:/srv/apps/thematiq', actual: $response->render());
+		$this->assertStringStartsWith(prefix: 'text/markdown', string: $this->headers(response: $response)['Content-Type']);
+		$this->assertSame(
+			expected: 'attachment; filename="custom-gemeente-x-tokens.md"',
+			actual: $this->headers(response: $response)['Content-Disposition']
+		);
 	}//end testTheMarkdownDownload()
 
 	/**
@@ -119,7 +122,7 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$response = $this->controller()->show(id: 'custom-gemeente-x');
 
-		$this->assertStringStartsWith('md-plain:', $response->render());
+		$this->assertStringStartsWith(prefix: 'md-plain:', string: $response->render());
 	}//end testTheMarkdownDownloadCarriesNoSwatchImages()
 
 	/**
@@ -128,10 +131,10 @@ class TokenReferenceControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testUnknownIdAndFormat(): void {
-		$this->assertSame(404, $this->controller()->show(id: 'nope')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller()->show(id: 'nope')->getStatus());
 
 		$this->params = ['format' => 'pdf'];
-		$this->assertStringStartsWith('html:', $this->controller()->show(id: 'amsterdam')->render());
+		$this->assertStringStartsWith(prefix: 'html:', string: $this->controller()->show(id: 'amsterdam')->render());
 	}//end testUnknownIdAndFormat()
 
 	/**
@@ -142,8 +145,8 @@ class TokenReferenceControllerTest extends TestCase {
 	public function testSignedInOnlyNeverPublic(): void {
 		$method = new \ReflectionMethod(TokenReferenceController::class, 'show');
 
-		$this->assertNotEmpty($method->getAttributes(NoAdminRequired::class));
-		$this->assertEmpty($method->getAttributes(PublicPage::class));
+		$this->assertNotEmpty(actual: $method->getAttributes(NoAdminRequired::class));
+		$this->assertEmpty(actual: $method->getAttributes(PublicPage::class));
 	}//end testSignedInOnlyNeverPublic()
 
 	/**
@@ -160,6 +163,6 @@ class TokenReferenceControllerTest extends TestCase {
 			}
 		}
 
-		$this->assertSame(['tokenReference#show' => 'GET /api/token-sets/{id}/reference'], $found);
+		$this->assertSame(expected: ['tokenReference#show' => 'GET /api/token-sets/{id}/reference'], actual: $found);
 	}//end testTheRouteIsRegistered()
 }//end class

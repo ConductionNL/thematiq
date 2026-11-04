@@ -6,7 +6,7 @@ define('PHPUNIT_RUN', 1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// vendor/ is a symlink into a shared checkout (e.g. a git worktree's vendor/
+// The vendor/ directory is a symlink into a shared checkout (e.g. a git worktree's vendor/
 // points at the main checkout so `composer install` never has to run twice).
 // Composer's generated autoload_psr4.php computes its base directory from
 // __DIR__, which PHP resolves through that symlink — so without this fix the
@@ -106,6 +106,22 @@ spl_autoload_register(static function (string $class): void {
 	}
 });
 
+// Without a booted server, the test doubles under tests/doubles/ stand in for
+// the server classes the app extends or mocks (OC\Mail\EMailTemplate and the
+// theming app's OCA\Theming classes). A booted server defines \OC, and then
+// its own autoloaders supply the real classes.
+spl_autoload_register(static function (string $class): void {
+	$served = (str_starts_with($class, 'OC\\') === true || str_starts_with($class, 'OCA\\Theming\\') === true);
+	if ($served === false || class_exists('OC', false) === true) {
+		return;
+	}
+
+	$path = __DIR__ . '/doubles/' . str_replace('\\', '/', $class) . '.php';
+	if (is_file($path) === true) {
+		require_once $path;
+	}
+});
+
 /**
  * Tell whether a Nextcloud root is an INSTALLED instance, not just a source tree.
  *
@@ -153,7 +169,7 @@ function thematiq_nc_root_is_installed(string $ncRoot): bool {
 // Only an INSTALLED root is booted; a bare source tree runs in pure-unit mode
 // with the composer autoload and the stubs above. NC's tests/autoload.php
 // requires lib/base.php itself, so it sits behind the same guard.
-if (!defined('OC_CONSOLE')) {
+if (defined('OC_CONSOLE') === false) {
 	$thematiqNcRoot = realpath(__DIR__ . '/../../..');
 	if ($thematiqNcRoot !== false && file_exists($thematiqNcRoot . '/lib/base.php') === true) {
 		if (thematiq_nc_root_is_installed($thematiqNcRoot) === true) {
@@ -202,7 +218,7 @@ if (!defined('OC_CONSOLE')) {
 
 	unset($thematiqNcRoot);
 
-	if (class_exists('\OC_App')) {
+	if (class_exists('\OC_App') === true) {
 		\OC_App::loadApps();
 		// The APP ID, which is `thematiq` since 2026-08-22. Loading `nldesign`
 		// asked the server for an app that no longer exists — a second silent

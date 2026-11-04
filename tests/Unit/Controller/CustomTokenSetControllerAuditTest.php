@@ -16,6 +16,9 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DesignSystemService;
@@ -81,18 +84,23 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	 */
 	private CustomTokenSetController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(CustomTokenSetService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->themingService = $this->createMock(ThemingService::class);
-		$this->request = $this->createMock(IRequest::class);
+		$this->service = $this->createMock(originalClassName: CustomTokenSetService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->themingService = $this->createMock(originalClassName: ThemingService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, array $params = []) => $text);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -101,35 +109,43 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 		// validator, so a bare mock returns null and the controller has no CSS
 		// to validate. Its app path is the repo root, which is where the
 		// mapping table it reads lives.
-		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager = $this->createMock(originalClassName: IAppManager::class);
 		$repoAppManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$repoAppManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $repoAppManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		$this->controller = new CustomTokenSetController(
-			'nldesign',
-			$this->request,
-			$this->service,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->auditService,
-			$config,
-			$converter,
-			$this->themingService,
-			$this->createMock(DesignSystemService::class)
+			appName: 'nldesign',
+			request: $this->request,
+			pipeline: new CustomSetUploadPipeline(
+				service: $this->service,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: $converter
+			),
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->auditService,
+				config: $config,
+				themingService: $this->themingService
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			)
 		);
 	}//end setUp()
 
 	/**
 	 * A successful CSS upload logs one custom_set_uploaded entry with the
 	 * id, name, declaration count, and a hashed content identifier.
+	 *
+	 * @return void
 	 */
 	public function testUploadLogsOneEntry(): void {
 		$css = ':root { --nldesign-color-primary: #007bc7; }';
@@ -159,7 +175,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_uploaded',
-				$this->callback(function (array $context): bool {
+				$this->callback(callback: function (array $context): bool {
 					return ($context['id'] === 'custom-gemeente-voorbeeld')
 						&& ($context['name'] === 'Gemeente Voorbeeld')
 						&& ($context['declarationCount'] === 1)
@@ -169,12 +185,14 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testUploadLogsOneEntry()
 
 	/**
 	 * Deleting the currently active custom set logs custom_set_deleted with
 	 * activeReset === true.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetLogsActiveReset(): void {
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
@@ -187,7 +205,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_deleted',
-				$this->callback(function (array $context): bool {
+				$this->callback(callback: function (array $context): bool {
 					return ($context['id'] === 'custom-gemeente-voorbeeld')
 						&& ($context['activeReset'] === true)
 						&& str_starts_with($context['contentHash'], 'sha256:');
@@ -196,7 +214,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->delete(id: 'custom-gemeente-voorbeeld');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testDeleteActiveSetLogsActiveReset()
 
 	/**
@@ -206,6 +224,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	 * Resetting `token_set` alone left the deleted set's primary colour and
 	 * logo on the login page, in e-mails and in the mobile apps, with no set
 	 * left in the dropdown to explain where they came from.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetResetsCoreTheming(): void {
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
@@ -222,6 +242,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 	/**
 	 * Deleting a set that is NOT active leaves core theming alone — it belongs
 	 * to whichever set is still applied.
+	 *
+	 * @return void
 	 */
 	public function testDeleteInactiveSetLeavesCoreThemingAlone(): void {
 		$this->appConfig['token_set'] = 'nextcloud';
@@ -237,6 +259,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 	/**
 	 * Deleting a non-active custom set logs activeReset === false.
+	 *
+	 * @return void
 	 */
 	public function testDeleteInactiveSetLogsNoActiveReset(): void {
 		$this->appConfig['token_set'] = 'nextcloud';
@@ -249,7 +273,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'custom_set_deleted',
-				$this->callback(fn (array $context): bool => ($context['activeReset'] === false))
+				$this->callback(callback: fn (array $context): bool => ($context['activeReset'] === false))
 			);
 
 		$this->controller->delete(id: 'custom-gemeente-voorbeeld');
@@ -257,6 +281,8 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 	/**
 	 * A 404 (nothing to delete) logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testDeleteNotFoundLogsNothing(): void {
 		$this->service->method('isCustomId')->willReturn(true);
@@ -267,7 +293,7 @@ class CustomTokenSetControllerAuditTest extends TestCase {
 
 		$response = $this->controller->delete(id: 'custom-does-not-exist');
 
-		$this->assertSame(404, $response->getStatus());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
 	}//end testDeleteNotFoundLogsNothing()
 
 	/**

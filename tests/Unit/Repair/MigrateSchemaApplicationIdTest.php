@@ -51,12 +51,12 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	private function db(array $underNew, array $underOld, array &$written = []) {
 		$mk = function (array $slugs) {
-			$r = $this->createMock(IResult::class);
+			$r = $this->createMock(originalClassName: IResult::class);
 			$r->method('fetchAll')->willReturn(array_map(static fn (string $s): array => ['slug' => $s], $slugs));
 			return $r;
 		};
 
-		$db = $this->createMock(IDBConnection::class);
+		$db = $this->createMock(originalClassName: IDBConnection::class);
 		$db->method('executeQuery')->willReturnOnConsecutiveCalls($mk($underNew), $mk($underOld));
 		$db->method('executeStatement')->willReturnCallback(
 			function (string $sql, array $params) use (&$written): int {
@@ -75,18 +75,18 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	public function testMovesASchemaThatHasNoTwin(): void {
 		$written = [];
-		$db = $this->db([], ['case', 'task'], $written);
+		$db = $this->db(underNew: [], underOld: ['case', 'task'], written: $written);
 
-		$step = new MigrateSchemaApplicationId($db, $this->createMock(LoggerInterface::class));
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $this->createMock(originalClassName: LoggerInterface::class));
 
-		$output = $this->createMock(IOutput::class);
-		$output->expects(self::once())->method('info')->with(self::stringContains('2 schema(s) moved'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects(self::once())->method('info')->with(self::stringContains(string: '2 schema(s) moved'));
 
 		$step->run($output);
 
 		self::assertSame(
-			[['thematiq', 'nldesign', 'case'], ['thematiq', 'nldesign', 'task']],
-			$written
+			expected: [['thematiq', 'nldesign', 'case'], ['thematiq', 'nldesign', 'task']],
+			actual: $written
 		);
 
 	}//end testMovesASchemaThatHasNoTwin()
@@ -102,19 +102,19 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	public function testRefusesASlugThatWouldCollide(): void {
 		$written = [];
-		$db = $this->db(['case'], ['case', 'task'], $written);
+		$db = $this->db(underNew: ['case'], underOld: ['case', 'task'], written: $written);
 
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects(self::once())->method('warning')->with(self::stringContains('refusing to create a duplicate'));
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects(self::once())->method('warning')->with(self::stringContains(string: 'refusing to create a duplicate'));
 
-		$step = new MigrateSchemaApplicationId($db, $logger);
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $logger);
 
-		$output = $this->createMock(IOutput::class);
-		$output->expects(self::once())->method('info')->with(self::stringContains('1 schema(s) moved to thematiq, 1 refused'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects(self::once())->method('info')->with(self::stringContains(string: '1 schema(s) moved to thematiq, 1 refused'));
 
 		$step->run($output);
 
-		self::assertSame([['thematiq', 'nldesign', 'task']], $written);
+		self::assertSame(expected: [['thematiq', 'nldesign', 'task']], actual: $written);
 
 	}//end testRefusesASlugThatWouldCollide()
 
@@ -128,12 +128,12 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	public function testTheCollisionCheckIsCaseInsensitive(): void {
 		$written = [];
-		$db = $this->db(['Case'], ['case'], $written);
+		$db = $this->db(underNew: ['Case'], underOld: ['case'], written: $written);
 
-		$step = new MigrateSchemaApplicationId($db, $this->createMock(LoggerInterface::class));
-		$step->run($this->createMock(IOutput::class));
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
 
-		self::assertSame([], $written);
+		self::assertSame(expected: [], actual: $written);
 
 	}//end testTheCollisionCheckIsCaseInsensitive()
 
@@ -144,13 +144,13 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	public function testNothingOnTheOldAppIdIsANoOp(): void {
 		$written = [];
-		$db = $this->db([], [], $written);
+		$db = $this->db(underNew: [], underOld: [], written: $written);
 		$db->expects(self::never())->method('executeStatement');
 
-		$step = new MigrateSchemaApplicationId($db, $this->createMock(LoggerInterface::class));
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $this->createMock(originalClassName: LoggerInterface::class));
 
-		$output = $this->createMock(IOutput::class);
-		$output->expects(self::once())->method('info')->with(self::stringContains('nothing to do'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects(self::once())->method('info')->with(self::stringContains(string: 'nothing to do'));
 
 		$step->run($output);
 
@@ -166,17 +166,17 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 * @return void
 	 */
 	public function testAFailedReadIsNotTreatedAsAnEmptyResult(): void {
-		$db = $this->createMock(IDBConnection::class);
+		$db = $this->createMock(originalClassName: IDBConnection::class);
 		$db->method('executeQuery')->willThrowException(new \OCP\DB\Exception('read failed'));
 		$db->expects(self::never())->method('executeStatement');
 
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects(self::once())->method('warning')->with(self::stringContains('could not read schemas'));
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects(self::once())->method('warning')->with(self::stringContains(string: 'could not read schemas'));
 
-		$step = new MigrateSchemaApplicationId($db, $logger);
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $logger);
 
-		$output = $this->createMock(IOutput::class);
-		$output->expects(self::once())->method('info')->with(self::stringContains('nothing done'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects(self::once())->method('info')->with(self::stringContains(string: 'nothing done'));
 
 		$step->run($output);
 
@@ -189,21 +189,21 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 */
 	public function testAFailingUpdateIsLoggedNotThrown(): void {
 		$mk = function (array $slugs) {
-			$r = $this->createMock(IResult::class);
+			$r = $this->createMock(originalClassName: IResult::class);
 			$r->method('fetchAll')->willReturn(array_map(static fn (string $s): array => ['slug' => $s], $slugs));
 			return $r;
 		};
-		$db = $this->createMock(IDBConnection::class);
+		$db = $this->createMock(originalClassName: IDBConnection::class);
 		$db->method('executeQuery')->willReturnOnConsecutiveCalls($mk([]), $mk(['case']));
 		$db->method('executeStatement')->willThrowException(new \OCP\DB\Exception('write refused'));
 
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects(self::once())->method('warning')->with(self::stringContains('could not move schema'));
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects(self::once())->method('warning')->with(self::stringContains(string: 'could not move schema'));
 
-		$step = new MigrateSchemaApplicationId($db, $logger);
+		$step = new MigrateSchemaApplicationId(db: $db, logger: $logger);
 
-		$output = $this->createMock(IOutput::class);
-		$output->expects(self::once())->method('info')->with(self::stringContains('0 schema(s) moved'));
+		$output = $this->createMock(originalClassName: IOutput::class);
+		$output->expects(self::once())->method('info')->with(self::stringContains(string: '0 schema(s) moved'));
 
 		$step->run($output);
 
@@ -215,15 +215,15 @@ final class MigrateSchemaApplicationIdTest extends TestCase {
 	 * @return void
 	 */
 	public function testShippedIdsAreWellFormed(): void {
-		self::assertNotSame(MigrateSchemaApplicationId::OLD_APP_ID, MigrateSchemaApplicationId::NEW_APP_ID);
-		self::assertMatchesRegularExpression('/^[a-z][a-z0-9_-]*$/', MigrateSchemaApplicationId::OLD_APP_ID);
-		self::assertMatchesRegularExpression('/^[a-z][a-z0-9_-]*$/', MigrateSchemaApplicationId::NEW_APP_ID);
+		self::assertNotSame(expected: MigrateSchemaApplicationId::OLD_APP_ID, actual: MigrateSchemaApplicationId::NEW_APP_ID);
+		self::assertMatchesRegularExpression(pattern: '/^[a-z][a-z0-9_-]*$/', string: MigrateSchemaApplicationId::OLD_APP_ID);
+		self::assertMatchesRegularExpression(pattern: '/^[a-z][a-z0-9_-]*$/', string: MigrateSchemaApplicationId::NEW_APP_ID);
 		self::assertTrue(
-			(new ReflectionClass(MigrateSchemaApplicationId::class))->implementsInterface(IRepairStep::class)
+			condition: (new ReflectionClass(MigrateSchemaApplicationId::class))->implementsInterface(IRepairStep::class)
 		);
-		self::assertNotSame('', (new MigrateSchemaApplicationId(
-			$this->createMock(IDBConnection::class),
-			$this->createMock(LoggerInterface::class)
+		self::assertNotSame(expected: '', actual: (new MigrateSchemaApplicationId(
+			db: $this->createMock(originalClassName: IDBConnection::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		))->getName());
 
 	}//end testShippedIdsAreWellFormed()

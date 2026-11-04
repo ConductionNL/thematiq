@@ -60,19 +60,19 @@ class ContrastVerdictDocumentTest extends TestCase {
 	 */
 	public function testEveryVerdictFieldIsCarriedThrough(): void {
 		$rendered = (new ContrastVerdictDocument())->render(
-			[$this->row('amsterdam', 'pass'), $this->row('vng', 'fail', 2.5)]
+			[$this->row(id: 'amsterdam', verdict: 'pass'), $this->row(id: 'vng', verdict: 'fail', uiRatio: 2.5)]
 		);
 
 		$decoded = json_decode($rendered, true);
-		$this->assertIsArray($decoded);
-		$this->assertStringContainsString('do not edit by hand', (string)$decoded['$comment']);
-		$this->assertSame(['amsterdam', 'vng'], array_keys($decoded['sets']));
-		$this->assertSame('pass', $decoded['sets']['amsterdam']['verdict']);
-		$this->assertSame('fail', $decoded['sets']['vng']['verdict']);
-		$this->assertSame(2.5, $decoded['sets']['vng']['uiRatio']);
-		$this->assertSame(7.5, $decoded['sets']['vng']['textRatio']);
-		$this->assertSame(4.5, $decoded['sets']['vng']['textThreshold']);
-		$this->assertSame(3.0, $decoded['sets']['vng']['uiThreshold']);
+		$this->assertIsArray(actual: $decoded);
+		$this->assertStringContainsString(needle: 'do not edit by hand', haystack: (string)$decoded['$comment']);
+		$this->assertSame(expected: ['amsterdam', 'vng'], actual: array_keys($decoded['sets']));
+		$this->assertSame(expected: 'pass', actual: $decoded['sets']['amsterdam']['verdict']);
+		$this->assertSame(expected: 'fail', actual: $decoded['sets']['vng']['verdict']);
+		$this->assertSame(expected: 2.5, actual: $decoded['sets']['vng']['uiRatio']);
+		$this->assertSame(expected: 7.5, actual: $decoded['sets']['vng']['textRatio']);
+		$this->assertSame(expected: 4.5, actual: $decoded['sets']['vng']['textThreshold']);
+		$this->assertSame(expected: 3.0, actual: $decoded['sets']['vng']['uiThreshold']);
 	}//end testEveryVerdictFieldIsCarriedThrough()
 
 	/**
@@ -85,12 +85,12 @@ class ContrastVerdictDocumentTest extends TestCase {
 	 */
 	public function testAnUnmeasuredPairStaysNullRatherThanZero(): void {
 		$rendered = (new ContrastVerdictDocument())->render(
-			[$this->row('probe', 'unevaluated', null)]
+			[$this->row(id: 'probe', verdict: 'unevaluated', uiRatio: null)]
 		);
 
-		$this->assertStringContainsString('"uiRatio": null', $rendered);
+		$this->assertStringContainsString(needle: '"uiRatio": null', haystack: $rendered);
 		$decoded = json_decode($rendered, true);
-		$this->assertNull($decoded['sets']['probe']['uiRatio']);
+		$this->assertNull(actual: $decoded['sets']['probe']['uiRatio']);
 	}//end testAnUnmeasuredPairStaysNullRatherThanZero()
 
 	/**
@@ -103,16 +103,16 @@ class ContrastVerdictDocumentTest extends TestCase {
 	 */
 	public function testRenderingIsDeterministicAndNewlineTerminated(): void {
 		$document = new ContrastVerdictDocument();
-		$rows = [$this->row('b', 'pass'), $this->row('a', 'pass')];
+		$rows = [$this->row(id: 'b', verdict: 'pass'), $this->row(id: 'a', verdict: 'pass')];
 
 		$first = $document->render($rows);
 
-		$this->assertSame($first, $document->render($rows));
-		$this->assertStringEndsWith("\n", $first);
+		$this->assertSame(expected: $first, actual: $document->render($rows));
+		$this->assertStringEndsWith(suffix: "\n", string: $first);
 		// Row order is the caller's: auditAll() sorts, this does not re-sort,
 		// so a change of ordering there shows up in the file rather than being
 		// silently normalised away.
-		$this->assertSame(['b', 'a'], array_keys(json_decode($first, true)['sets']));
+		$this->assertSame(expected: ['b', 'a'], actual: array_keys(json_decode($first, true)['sets']));
 	}//end testRenderingIsDeterministicAndNewlineTerminated()
 
 	/**
@@ -127,8 +127,8 @@ class ContrastVerdictDocumentTest extends TestCase {
 	public function testAnEmptyAuditRendersAnObjectNotAList(): void {
 		$rendered = (new ContrastVerdictDocument())->render([]);
 
-		$this->assertStringContainsString('"sets": {}', $rendered);
-		$this->assertSame([], json_decode($rendered, true)['sets']);
+		$this->assertStringContainsString(needle: '"sets": {}', haystack: $rendered);
+		$this->assertSame(expected: [], actual: json_decode($rendered, true)['sets']);
 	}//end testAnEmptyAuditRendersAnObjectNotAList()
 
 	/**
@@ -145,26 +145,26 @@ class ContrastVerdictDocumentTest extends TestCase {
 	public function testThePairsNameWhatTheAuditCompared(): void {
 		$pairs = json_decode((new ContrastVerdictDocument())->render([]), true)['pairs'];
 
-		$this->assertSame(ShippedTokenSetAuditService::TEXT_PAIR, $pairs['textRatio']);
-		$this->assertSame(ShippedTokenSetAuditService::UI_PAIR, $pairs['uiRatio']);
+		$this->assertSame(expected: ShippedTokenSetAuditService::TEXT_PAIR, actual: $pairs['textRatio']);
+		$this->assertSame(expected: ShippedTokenSetAuditService::UI_PAIR, actual: $pairs['uiRatio']);
 
 		// Named explicitly too, so a change to BOTH the service and the document
 		// still has to be deliberate: the assertion above alone would follow a
 		// renamed constant anywhere it went.
 		$this->assertSame(
-			[
+			expected: [
 				'foreground' => '--nldesign-color-primary-text',
 				'background' => '--nldesign-color-primary',
 			],
-			$pairs['textRatio'],
-			'textRatio is primary-text ON primary, not body ink on the page'
+			actual: $pairs['textRatio'],
+			message: 'textRatio is primary-text ON primary, not body ink on the page'
 		);
 		$this->assertSame(
-			[
+			expected: [
 				'foreground' => '--nldesign-color-primary',
 				'background' => '--nldesign-color-background',
 			],
-			$pairs['uiRatio']
+			actual: $pairs['uiRatio']
 		);
 	}//end testThePairsNameWhatTheAuditCompared()
 }//end class

@@ -37,6 +37,8 @@ class TokenCssShapeTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -51,8 +53,8 @@ class TokenCssShapeTest extends TestCase {
 		$tokensDir = $this->repoRoot() . '/css/tokens';
 		$files = glob($tokensDir . '/*.css');
 
-		$this->assertIsArray($files, 'css/tokens/ must be readable.');
-		$this->assertNotEmpty($files, 'css/tokens/ must contain at least one shipped set.');
+		$this->assertIsArray(actual: $files, message: 'css/tokens/ must be readable.');
+		$this->assertNotEmpty(actual: $files, message: 'css/tokens/ must contain at least one shipped set.');
 
 		return $files;
 	}//end shippedTokenCssFiles()
@@ -62,6 +64,8 @@ class TokenCssShapeTest extends TestCase {
 	 * exactly one `:root { }` block and no at-rule.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedTokenCssFileIsFlatRootOnly(): void {
 		foreach ($this->shippedTokenCssFiles() as $file) {
@@ -73,9 +77,9 @@ class TokenCssShapeTest extends TestCase {
 			$stripped = (string)preg_replace('#/\*.*?\*/#s', '', $css);
 
 			$this->assertSame(
-				0,
-				preg_match('/@[a-z-]+/i', $stripped),
-				$basename . ' MUST NOT contain an at-rule (@media, @supports, @import, @font-face, ...).'
+				expected: 0,
+				actual: preg_match('/@[a-z-]+/i', $stripped),
+				message: $basename . ' MUST NOT contain an at-rule (@media, @supports, @import, @font-face, ...).'
 			);
 
 			$selectors = [];
@@ -89,14 +93,14 @@ class TokenCssShapeTest extends TestCase {
 			}
 
 			$this->assertCount(
-				1,
-				$selectors,
-				$basename . ' MUST contain exactly one selector block (found: ' . implode(', ', $selectors) . ').'
+				expectedCount: 1,
+				haystack: $selectors,
+				message: $basename . ' MUST contain exactly one selector block (found: ' . implode(', ', $selectors) . ').'
 			);
 			$this->assertSame(
-				':root',
-				strtolower($selectors[0]),
-				$basename . ' MUST use ":root" as its only selector (found "' . $selectors[0] . '").'
+				expected: ':root',
+				actual: strtolower($selectors[0]),
+				message: $basename . ' MUST use ":root" as its only selector (found "' . $selectors[0] . '").'
 			);
 		}//end foreach
 	}//end testEveryShippedTokenCssFileIsFlatRootOnly()
@@ -108,13 +112,15 @@ class TokenCssShapeTest extends TestCase {
 	 * expected to satisfy the flat `:root`-only shape.
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 *
+	 * @return void
 	 */
 	public function testDarkVariantsAreExcludedFromTheContract(): void {
 		$darkDir = $this->repoRoot() . '/css/tokens/dark';
 		$files = glob($darkDir . '/*.css');
 
-		$this->assertIsArray($files);
-		$this->assertNotEmpty($files, 'css/tokens/dark/ must contain at least one generated variant to exercise the exclusion.');
+		$this->assertIsArray(actual: $files);
+		$this->assertNotEmpty(actual: $files, message: 'css/tokens/dark/ must contain at least one generated variant to exercise the exclusion.');
 
 		$atRuleFound = false;
 		foreach ($files as $file) {
@@ -125,8 +131,8 @@ class TokenCssShapeTest extends TestCase {
 		}
 
 		$this->assertTrue(
-			$atRuleFound,
-			'At least one dark variant is expected to use @media — confirming the exclusion is meaningful, not vacuous.'
+			condition: $atRuleFound,
+			message: 'At least one dark variant is expected to use @media — confirming the exclusion is meaningful, not vacuous.'
 		);
 	}//end testDarkVariantsAreExcludedFromTheContract()
 }//end class

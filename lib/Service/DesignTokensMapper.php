@@ -192,10 +192,7 @@ class DesignTokensMapper {
 		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
 		$referenceOnly = array_flip($referenceOnlyPaths);
 
-		$declarations = [];
-		$skipped = [];
-		$errors = [];
-		$warnings = [];
+		$mapping = new DesignTokensMapping();
 
 		foreach ($leaves as $path => $leaf) {
 			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
@@ -204,20 +201,12 @@ class DesignTokensMapper {
 				continue;
 			}
 
-			$this->processLeaf(
-				path: $path,
-				leaf: $leaf,
-				leaves: $leaves,
-				declarations: $declarations,
-				skipped: $skipped,
-				errors: $errors,
-				warnings: $warnings
-			);
+			$this->processLeaf(path: $path, leaf: $leaf, leaves: $leaves, mapping: $mapping);
 		}
 
 		// The root cssOnly map: values DTCG has no type for, written by thematiq's own export.
 		// Tokens win over it; every entry passes the validator downstream like any declaration.
-		$declarations += $this->cssOnly(document: $document);
+		$declarations = $mapping->declarations + $this->cssOnly(document: $document);
 
 		return [
 			'declarations' => $declarations,
@@ -225,9 +214,9 @@ class DesignTokensMapper {
 			// A document thematiq itself exported: the converter keeps every name as it is.
 			'thematiqExport' => is_string($document['$extensions'][self::EXTENSION]['setId'] ?? null),
 			'imported' => count($declarations),
-			'skipped' => $skipped,
-			'errors' => $errors,
-			'warnings' => $warnings,
+			'skipped' => $mapping->skipped,
+			'errors' => $mapping->errors,
+			'warnings' => $mapping->warnings,
 			'packageVersion' => $this->extractPackageVersion(document: $document),
 		];
 	}//end map()
@@ -358,24 +347,13 @@ class DesignTokensMapper {
 	 * @param string $path The leaf's dotted path.
 	 * @param array<string, mixed> $leaf The leaf data ({value, type, deprecated}).
 	 * @param array<string, array<string, mixed>> $leaves The full leaf table (for alias resolution).
-	 * @param array<string, string> $declarations Accumulated declarations (by reference).
-	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
-	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
-	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processLeaf(
-		string $path,
-		array $leaf,
-		array $leaves,
-		array &$declarations,
-		array &$skipped,
-		array &$errors,
-		array &$warnings,
-	): void {
+	private function processLeaf(string $path, array $leaf, array $leaves, DesignTokensMapping $mapping): void {
 		$rawValue = $leaf['value'];
 		$ownType = $leaf['type'];
 		$deprecated = $leaf['deprecated'];
@@ -387,7 +365,7 @@ class DesignTokensMapper {
 		if (is_string($rawValue) === true && $this->aliasResolver->isAlias(value: $rawValue) === true) {
 			$resolved = $this->aliasResolver->resolve(startPath: $path, leaves: $leaves);
 			if ($resolved['ok'] !== true) {
-				$errors[] = [
+				$mapping->errors[] = [
 					'path' => $path,
 					'reason' => $resolved['reason'],
 					'detail' => ($resolved['detail'] ?? ''),
@@ -404,20 +382,16 @@ class DesignTokensMapper {
 		}//end if
 
 		if ($type === null) {
-			$errors[] = ['path' => $path, 'reason' => 'missing-type'];
+			$mapping->errors[] = ['path' => $path, 'reason' => 'missing-type'];
 
 			return;
 		}
 
 		$this->dispatchByType(
 			type: $type,
-			path: $path,
+			token: new DesignTokenRef(path: $path, deprecated: $deprecated),
 			value: $this->originalText(leaf: $leaf, value: $value, type: $type),
-			deprecated: $deprecated,
-			declarations: $declarations,
-			skipped: $skipped,
-			errors: $errors,
-			warnings: $warnings
+			mapping: $mapping
 		);
 	}//end processLeaf()
 
@@ -427,38 +401,17 @@ class DesignTokensMapper {
 	 * method's own cyclomatic complexity and length in check.
 	 *
 	 * @param string $type The resolved `$type`.
-	 * @param string $path The leaf's dotted path.
+	 * @param DesignTokenRef $token The leaf's path and `$deprecated` value.
 	 * @param mixed $value The resolved `$value`.
-	 * @param mixed $deprecated The leaf's raw `$deprecated` value, if any.
-	 * @param array<string, string> $declarations Accumulated declarations (by reference).
-	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
-	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
-	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function dispatchByType(
-		string $type,
-		string $path,
-		$value,
-		$deprecated,
-		array &$declarations,
-		array &$skipped,
-		array &$errors,
-		array &$warnings,
-	): void {
+	private function dispatchByType(string $type, DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
 		if ($type === 'typography') {
-			$this->processTypographyComposite(
-				path: $path,
-				value: $value,
-				deprecated: $deprecated,
-				declarations: $declarations,
-				skipped: $skipped,
-				errors: $errors,
-				warnings: $warnings
-			);
+			$this->processTypographyComposite(token: $token, value: $value, mapping: $mapping);
 
 			return;
 		}
@@ -476,15 +429,7 @@ class DesignTokensMapper {
 			default => $this->serializeScalarPassthrough(value: $value),
 		};
 
-		$this->assignSingleTarget(
-			path: $path,
-			deprecated: $deprecated,
-			result: $result,
-			declarations: $declarations,
-			skipped: $skipped,
-			errors: $errors,
-			warnings: $warnings
-		);
+		$this->assignSingleTarget(token: $token, result: $result, mapping: $mapping);
 	}//end dispatchByType()
 
 	/**
@@ -530,34 +475,23 @@ class DesignTokensMapper {
 	/**
 	 * Assign a serialized single-target result to its `--nldesign-*` target.
 	 *
-	 * @param string $path The token's dotted path.
-	 * @param mixed $deprecated The token's raw `$deprecated` value, if any.
+	 * @param DesignTokenRef $token The token's path and `$deprecated` value.
 	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
-	 * @param array<string, string> $declarations Accumulated declarations (by reference).
-	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
-	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
-	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function assignSingleTarget(
-		string $path,
-		$deprecated,
-		array $result,
-		array &$declarations,
-		array &$skipped,
-		array &$errors,
-		array &$warnings,
-	): void {
+	private function assignSingleTarget(DesignTokenRef $token, array $result, DesignTokensMapping $mapping): void {
+		$path = $token->path;
 		if ($result['ok'] !== true) {
 			$entry = ['path' => $path, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
 			if (isset($result['detail']) === true) {
 				$entry['detail'] = $result['detail'];
 			}
 
-			$errors[] = $entry;
+			$mapping->errors[] = $entry;
 
 			return;
 		}
@@ -565,25 +499,25 @@ class DesignTokensMapper {
 		// The thematiq extension names the target before the suffix table is tried.
 		$target = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
 		if ($target === null) {
-			$skipped[] = ['path' => $path, 'reason' => 'unmapped-path'];
+			$mapping->skipped[] = ['path' => $path, 'reason' => 'unmapped-path'];
 
 			return;
 		}
 
 		// First match wins for a given target; later collisions are skipped
 		// so a more specific path earlier in the document is preserved.
-		if (isset($declarations[$target]) === true) {
-			$skipped[] = ['path' => $path, 'reason' => 'duplicate-target', 'detail' => $target];
+		if (isset($mapping->declarations[$target]) === true) {
+			$mapping->skipped[] = ['path' => $path, 'reason' => 'duplicate-target', 'detail' => $target];
 
 			return;
 		}
 
-		$declarations[$target] = $result['value'];
+		$mapping->declarations[$target] = $result['value'];
 		if (isset($result['adapted']) === true) {
 			$this->adapted[] = ['path' => $path, 'target' => $target, 'value' => $result['value']] + $result['adapted'];
 		}
 
-		$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings, token: $target);
+		$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings, token: $target);
 	}//end assignSingleTarget()
 
 	/**
@@ -594,29 +528,18 @@ class DesignTokensMapper {
 	 * exists; sub-properties without a target are counted as skipped with
 	 * their sub-path (`<path>.<subKey>`), never guessed or dropped silently.
 	 *
-	 * @param string $path The composite token's dotted path.
+	 * @param DesignTokenRef $token The composite token's path and `$deprecated` value.
 	 * @param mixed $value The resolved `$value` (expected object/array).
-	 * @param mixed $deprecated The token's raw `$deprecated` value, if any.
-	 * @param array<string, string> $declarations Accumulated declarations (by reference).
-	 * @param array<int, array<string, string>> $skipped Accumulated skips (by reference).
-	 * @param array<int, array<string, string>> $errors Accumulated errors (by reference).
-	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
+	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processTypographyComposite(
-		string $path,
-		$value,
-		$deprecated,
-		array &$declarations,
-		array &$skipped,
-		array &$errors,
-		array &$warnings,
-	): void {
+	private function processTypographyComposite(DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
+		$path = $token->path;
 		if (is_array($value) === false) {
-			$errors[] = ['path' => $path, 'reason' => 'unsupported-value-shape'];
+			$mapping->errors[] = ['path' => $path, 'reason' => 'unsupported-value-shape'];
 
 			return;
 		}
@@ -632,7 +555,7 @@ class DesignTokensMapper {
 			$target = (self::TYPOGRAPHY_SUBPROPERTY_TARGETS[$subKey] ?? null);
 
 			if ($target === null) {
-				$skipped[] = ['path' => $subPath, 'reason' => 'unmapped-path'];
+				$mapping->skipped[] = ['path' => $subPath, 'reason' => 'unmapped-path'];
 				continue;
 			}
 
@@ -642,21 +565,21 @@ class DesignTokensMapper {
 			}
 
 			if ($result['ok'] !== true) {
-				$errors[] = ['path' => $subPath, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
+				$mapping->errors[] = ['path' => $subPath, 'reason' => ($result['reason'] ?? 'unsupported-value-shape')];
 				continue;
 			}
 
-			if (isset($declarations[$target]) === true) {
-				$skipped[] = ['path' => $subPath, 'reason' => 'duplicate-target', 'detail' => $target];
+			if (isset($mapping->declarations[$target]) === true) {
+				$mapping->skipped[] = ['path' => $subPath, 'reason' => 'duplicate-target', 'detail' => $target];
 				continue;
 			}
 
-			$declarations[$target] = $result['value'];
+			$mapping->declarations[$target] = $result['value'];
 			$anyMapped = true;
 		}//end foreach
 
 		if ($anyMapped === true) {
-			$this->maybeWarnDeprecated(path: $path, deprecated: $deprecated, warnings: $warnings);
+			$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings);
 		}
 	}//end processTypographyComposite()
 
@@ -937,20 +860,37 @@ class DesignTokensMapper {
 			return ['ok' => true, 'value' => (string)((int)$value)];
 		}
 
+		$weight = null;
 		if (is_string($value) === true) {
-			$trimmed = trim($value);
-			if (is_numeric($trimmed) === true) {
-				return ['ok' => true, 'value' => (string)((int)$trimmed)];
-			}
-
-			$key = strtolower($trimmed);
-			if (isset(self::FONT_WEIGHT_KEYWORDS[$key]) === true) {
-				return ['ok' => true, 'value' => (string)self::FONT_WEIGHT_KEYWORDS[$key]];
-			}
+			$weight = $this->fontWeightOf(text: trim($value));
 		}
 
-		return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		if ($weight === null) {
+			return ['ok' => false, 'reason' => 'unsupported-value-shape'];
+		}
+
+		return ['ok' => true, 'value' => $weight];
 	}//end serializeFontWeight()
+
+	/**
+	 * A font weight written as text: a number, or one of the CSS keywords.
+	 *
+	 * @param string $text The trimmed value.
+	 *
+	 * @return string|null The numeric weight, or null when the text is neither.
+	 */
+	private function fontWeightOf(string $text): ?string {
+		if (is_numeric($text) === true) {
+			return (string)((int)$text);
+		}
+
+		$key = strtolower($text);
+		if (isset(self::FONT_WEIGHT_KEYWORDS[$key]) === false) {
+			return null;
+		}
+
+		return (string)self::FONT_WEIGHT_KEYWORDS[$key];
+	}//end fontWeightOf()
 
 	/**
 	 * Extract a declared package version from a DTCG document, checked in
@@ -969,13 +909,9 @@ class DesignTokensMapper {
 			return $document['$version'];
 		}
 
-		$extensions = ($document['$extensions'] ?? null);
-		if (is_array($extensions) === true) {
-			foreach (['nl.nldesign.version', 'org.nldesign.version'] as $key) {
-				if (isset($extensions[$key]) === true && is_string($extensions[$key]) === true) {
-					return $extensions[$key];
-				}
-			}
+		$fromExtensions = $this->extensionVersion(extensions: ($document['$extensions'] ?? null));
+		if ($fromExtensions !== null) {
+			return $fromExtensions;
 		}
 
 		if (isset($document['version']) === true && is_string($document['version']) === true) {
@@ -984,6 +920,27 @@ class DesignTokensMapper {
 
 		return null;
 	}//end extractPackageVersion()
+
+	/**
+	 * The package version an NL Design System extension block declares.
+	 *
+	 * @param mixed $extensions The document's `$extensions`.
+	 *
+	 * @return string|null
+	 */
+	private function extensionVersion(mixed $extensions): ?string {
+		if (is_array($extensions) === false) {
+			return null;
+		}
+
+		foreach (['nl.nldesign.version', 'org.nldesign.version'] as $key) {
+			if (isset($extensions[$key]) === true && is_string($extensions[$key]) === true) {
+				return $extensions[$key];
+			}
+		}
+
+		return null;
+	}//end extensionVersion()
 
 	/**
 	 * Resolve a dotted DTCG path to a --nldesign target by longest suffix match.

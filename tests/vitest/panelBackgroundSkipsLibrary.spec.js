@@ -13,7 +13,12 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const css = fs.readFileSync(path.join(ROOT, 'css/systems/nldesign/element-overrides.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+const css = fs
+	.readFileSync(
+		path.join(ROOT, 'css/systems/nldesign/element-overrides.css'),
+		'utf8',
+	)
+	.replace(/\/\*[\s\S]*?\*\//g, '')
 
 describe('the solid-ground panel catch-all', () => {
 	it('skips nextcloud-vue elements', () => {

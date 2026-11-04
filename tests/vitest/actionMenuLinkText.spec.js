@@ -33,7 +33,10 @@ function declarations(element, prop) {
 	const out = []
 	overrides.walkDecls(prop, (decl) => {
 		const rule = decl.parent
-		if (rule.type !== 'rule' || (rule.parent.type === 'atrule' && rule.parent.name !== 'media')) {
+		if (
+			rule.type !== 'rule'
+			|| (rule.parent.type === 'atrule' && rule.parent.name !== 'media')
+		) {
 			return
 		}
 		const hit = rule.selectors.find((selector) => {
@@ -44,7 +47,11 @@ function declarations(element, prop) {
 			}
 		})
 		if (hit) {
-			out.push({ selector: hit.trim(), value: decl.value, important: decl.important })
+			out.push({
+				selector: hit.trim(),
+				value: decl.value,
+				important: decl.important,
+			})
 		}
 	})
 	return out
@@ -69,18 +76,32 @@ describe('an action menu link item reads as a menu entry', () => {
 	})
 
 	it('is still painted only through that ink by the id-level link rule', () => {
-		const forced = declarations($('menu-link'), 'color').filter((entry) => entry.important && entry.selector.includes('#'))
+		const forced = declarations($('menu-link'), 'color').filter(
+			(entry) => entry.important && entry.selector.includes('#'),
+		)
 		expect(forced.length).toBeGreaterThan(0)
-		forced.forEach((entry) => expect(entry.value).toMatch(/^var\(--nldesign-color-on-surface/))
+		forced.forEach((entry) =>
+			expect(entry.value).toMatch(/^var\(--nldesign-color-on-surface/),
+		)
 	})
 
 	it('takes away the underline with a class-level rule', () => {
 		const decoration = declarations($('menu-link'), 'text-decoration')
-		expect(decoration).toContainEqual({ selector: '.action-link', value: 'none', important: true })
+		expect(decoration).toContainEqual({
+			selector: '.action-link',
+			value: 'none',
+			important: true,
+		})
 	})
 
 	it('leaves a link in prose alone', () => {
-		expect(declarations($('prose-link'), '--nldesign-color-on-surface')).toEqual([])
-		expect(declarations($('prose-link'), 'text-decoration').filter((entry) => entry.value === 'none')).toEqual([])
+		expect(declarations($('prose-link'), '--nldesign-color-on-surface')).toEqual(
+			[],
+		)
+		expect(
+			declarations($('prose-link'), 'text-decoration').filter(
+				(entry) => entry.value === 'none',
+			),
+		).toEqual([])
 	})
 })

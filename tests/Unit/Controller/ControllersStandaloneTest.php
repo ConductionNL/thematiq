@@ -62,7 +62,7 @@ class ControllersStandaloneTest extends TestCase {
 	 */
 	public function testNoControllerNamesAnotherAppsClass(): void {
 		$files = glob(dirname(__DIR__, 3) . '/lib/Controller/*.php');
-		$this->assertNotEmpty($files, 'the controller directory was found');
+		$this->assertNotEmpty(actual: $files, message: 'the controller directory was found');
 
 		$foreign = [];
 		foreach ($files as $file) {
@@ -73,6 +73,6 @@ class ControllersStandaloneTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $foreign, 'a controller names another app\'s class, so every route 500s without that app');
+		$this->assertSame(expected: [], actual: $foreign, message: 'a controller names another app\'s class, so every route 500s without that app');
 	}//end testNoControllerNamesAnotherAppsClass()
 }//end class

@@ -1172,25 +1172,36 @@ class DarkPaletteService {
 	 */
 	private function regenerateRgbCompanions(array $lightDeclarations, array $darkDeclarations): array {
 		foreach (array_keys($lightDeclarations) as $token) {
-			if (str_ends_with($token, '-rgb') === false) {
-				continue;
+			$companion = $this->rgbCompanion(token: (string)$token, darkDeclarations: $darkDeclarations);
+			if ($companion !== null) {
+				$darkDeclarations[$token] = $companion;
 			}
-
-			$baseToken = substr($token, 0, -4);
-			if (isset($darkDeclarations[$baseToken]) === false) {
-				continue;
-			}
-
-			$rgb = $this->contrast->parseColor(value: $darkDeclarations[$baseToken]);
-			if ($rgb === null) {
-				continue;
-			}
-
-			$darkDeclarations[$token] = $rgb[0] . ', ' . $rgb[1] . ', ' . $rgb[2];
 		}
 
 		return $darkDeclarations;
 	}//end regenerateRgbCompanions()
+
+	/**
+	 * The dark `r, g, b` value of an `-rgb` companion token, from the dark value of the colour it repeats.
+	 *
+	 * @param string $token The light set's token.
+	 * @param array<string, string> $darkDeclarations The dark declarations.
+	 *
+	 * @return string|null Null when the token is no companion, or its colour has no readable dark value.
+	 */
+	private function rgbCompanion(string $token, array $darkDeclarations): ?string {
+		$baseToken = substr($token, 0, -4);
+		if (str_ends_with($token, '-rgb') === false || isset($darkDeclarations[$baseToken]) === false) {
+			return null;
+		}
+
+		$rgb = $this->contrast->parseColor(value: $darkDeclarations[$baseToken]);
+		if ($rgb === null) {
+			return null;
+		}
+
+		return $rgb[0] . ', ' . $rgb[1] . ', ' . $rgb[2];
+	}//end rgbCompanion()
 
 	/**
 	 * Run the WCAG verification/repair loop over a candidate dark
@@ -1219,51 +1230,111 @@ class DarkPaletteService {
 
 		for ($round = 0; $round < self::MAX_REPAIR_ROUNDS; $round++) {
 			$warnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
-			$fixableFound = false;
-
-			foreach ($warnings as $warning) {
-				if (($warning['unevaluated'] ?? false) === true) {
-					continue;
-				}
-
-				[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
-				if (isset($protected[$fgName]) === true || isset($protected[$bgName]) === true) {
-					// Hand-authored failure: warn only, never rewritten.
-					continue;
-				}
-
-				// An earlier repair in this round may already have fixed this pair
-				// through a shared foreground; repairing again would overshoot it.
-				$bgValue = (string)$this->pairBackground(declarations: $declarations, token: $bgName);
-				$ratio = $this->contrast->measure(
-					foreground: $declarations[$fgName],
-					background: $bgValue,
-					page: ($declarations['--nldesign-color-background'] ?? null)
-				);
-				if ($ratio !== null && $ratio >= $warning['threshold']) {
-					continue;
-				}
-
-				$fixableFound = true;
-				$declarations[$fgName] = $this->repairForeground(
-					fgValue: $declarations[$fgName],
-					bgValue: $bgValue,
-					threshold: $warning['threshold']
-				);
-			}//end foreach
-
-			if ($fixableFound === false) {
+			$repaired = $this->repairRound(
+				declarations: $declarations,
+				warnings: $this->repairableWarnings(warnings: $warnings, protected: $protected)
+			);
+			if ($repaired === null) {
 				break;
 			}
-		}//end for
 
-		$finalWarnings = $this->failingPairs(declarations: $declarations, pairs: $pairs);
+			$declarations = $repaired;
+		}
 
 		return [
 			'declarations' => $declarations,
-			'warnings' => $finalWarnings,
+			'warnings' => $this->failingPairs(declarations: $declarations, pairs: $pairs),
 		];
 	}//end verifyAndRepair()
+
+	/**
+	 * The failing pairs the repair may rewrite: evaluated, and naming no protected token.
+	 *
+	 * A hand-authored (protected) failure stays a warning and is never rewritten.
+	 *
+	 * @param array<int, array<string, mixed>> $warnings The failing pairs of this round.
+	 * @param array<string, int> $protected Protected token names as keys.
+	 *
+	 * @return array<int, array<string, mixed>> The repairable pairs, in order.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairableWarnings(array $warnings, array $protected): array {
+		$repairable = [];
+		foreach ($warnings as $warning) {
+			if (($warning['unevaluated'] ?? false) === true) {
+				continue;
+			}
+
+			[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
+			if (isset($protected[$fgName]) === false && isset($protected[$bgName]) === false) {
+				$repairable[] = $warning;
+			}
+		}
+
+		return $repairable;
+	}//end repairableWarnings()
+
+	/**
+	 * Repair each failing pair once, in order.
+	 *
+	 * @param array<string, string> $declarations The candidate dark declarations.
+	 * @param array<int, array<string, mixed>> $warnings The repairable pairs.
+	 *
+	 * @return array<string, string>|null The repaired declarations, or null when no pair still failed.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairRound(array $declarations, array $warnings): ?array {
+		$fixableFound = false;
+		foreach ($warnings as $warning) {
+			$repaired = $this->repairPair(declarations: $declarations, warning: $warning);
+			if ($repaired !== null) {
+				$declarations = $repaired;
+				$fixableFound = true;
+			}
+		}
+
+		if ($fixableFound === false) {
+			return null;
+		}
+
+		return $declarations;
+	}//end repairRound()
+
+	/**
+	 * Repair one failing pair's foreground.
+	 *
+	 * An earlier repair in the same round may already have fixed the pair through a shared
+	 * foreground, so the pair is measured again first; repairing it again would overshoot.
+	 *
+	 * @param array<string, string> $declarations The candidate dark declarations.
+	 * @param array<string, mixed> $warning The failing pair.
+	 *
+	 * @return array<string, string>|null The declarations with the foreground repaired, or null when the pair passes.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairPair(array $declarations, array $warning): ?array {
+		[$fgName, $bgName] = $this->splitPairLabel(label: $warning['pair']);
+		$bgValue = (string)$this->pairBackground(declarations: $declarations, token: $bgName);
+		$ratio = $this->contrast->measure(
+			foreground: $declarations[$fgName],
+			background: $bgValue,
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+		if ($ratio !== null && $ratio >= $warning['threshold']) {
+			return null;
+		}
+
+		$declarations[$fgName] = $this->repairForeground(
+			fgValue: $declarations[$fgName],
+			bgValue: $bgValue,
+			threshold: $warning['threshold']
+		);
+
+		return $declarations;
+	}//end repairPair()
 
 	/**
 	 * The failing pairs of a dark declaration map: {@see ContrastService::check()}'s
@@ -1577,37 +1648,73 @@ class DarkPaletteService {
 		}
 
 		$light = $this->resolveLightDeclarations(appPath: $appPath, setId: $setId, theming: $meta['theming']);
-		$derived = $this->deriveDarkDeclarations(lightDeclarations: $light);
+		$run = ['meta' => $meta, 'light' => $light, 'derived' => $this->deriveDarkDeclarations(lightDeclarations: $light)];
 		// The dark values an uploaded file brought (dark-colours-from-a-file) win over the derived
 		// ones and are protected from repair, like a hand-authored dark block; the block wins over them.
 		$pins = (new DarkPins(store: $this->store, parser: $this->parser))->read(setId: $setId);
-		$overrides = array_merge($pins, $this->parser->parseDarkBlock(css: $tokenCss));
+		$run['overrides'] = array_merge($pins, $this->parser->parseDarkBlock(css: $tokenCss));
 
+		$repaired = $this->repairedDarkPalette(run: $run, merged: $this->mergedDarkPalette(run: $run));
+
+		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
+		$css = $this->renderDarkCss(setId: $setId, declarations: $repaired['declarations'], sourceHash: $sourceHash);
+
+		return ['css' => $css, 'warnings' => $repaired['warnings']];
+	}//end generateForSet()
+
+	/**
+	 * The derived dark values with the set's own dark values on top, the
+	 * error label, and the dark logo when the set has one.
+	 *
+	 * @param array<string, mixed> $run The set's meta, light, derived and override declarations.
+	 *
+	 * @return array<string, string> The merged dark declarations.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function mergedDarkPalette(array $run): array {
 		$merged = $this->withErrorLabel(
-			declarations: array_merge($derived, $overrides),
-			designSystemId: $meta['design_system'],
-			protectedTokens: array_keys($overrides)
+			declarations: array_merge($run['derived'], $run['overrides']),
+			designSystemId: $run['meta']['design_system'],
+			protectedTokens: array_keys($run['overrides'])
 		);
 
-		if (isset($meta['theming']['logo_dark']) === true && is_string($meta['theming']['logo_dark']) === true) {
-			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $meta['theming']['logo_dark']) . "')";
+		$logoDark = ($run['meta']['theming']['logo_dark'] ?? null);
+		if (is_string($logoDark) === true) {
+			$merged['--nldesign-logo-url'] = "url('" . $this->relativeDarkLogoPath(logoDarkPath: $logoDark) . "')";
 		}
 
-		// A fill that is transparent in light (a secondary button at rest) is
-		// not a colour, so it derives nothing; its label still has to read on
-		// the page it shows. It joins the repair as `transparent` and leaves
-		// before rendering, so the light value keeps applying (thematiq#969).
-		$transparentFills = $this->transparentFills(light: $light, dark: $merged);
+		return $merged;
+	}//end mergedDarkPalette()
+
+	/**
+	 * Repair the merged dark declarations, then check the error label again
+	 * against the fill that ships, sorted by token name.
+	 *
+	 * A fill that is transparent in light (a secondary button at rest) is
+	 * not a colour, so it derives nothing; its label still has to read on
+	 * the page it shows. It joins the repair as `transparent` and leaves
+	 * before rendering, so the light value keeps applying (thematiq#969).
+	 *
+	 * @param array<string, mixed> $run The set's meta, light and override declarations.
+	 * @param array<string, string> $merged The merged dark declarations.
+	 *
+	 * @return array{declarations: array<string, string>, warnings: array<int, mixed>} The repaired palette.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function repairedDarkPalette(array $run, array $merged): array {
+		$transparentFills = $this->transparentFills(light: $run['light'], dark: $merged);
 		$merged = array_merge($merged, array_fill_keys($transparentFills, 'transparent'));
 
-		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($overrides));
+		$repaired = $this->verifyAndRepair(declarations: $merged, protectedTokens: array_keys($run['overrides']));
 		// The repair may move the error fill itself (summer-breeze repairs
 		// --summer-color-error as text on its surface), so the label is
 		// checked again against the fill that ships.
 		$repaired['declarations'] = $this->withErrorLabel(
 			declarations: $repaired['declarations'],
-			designSystemId: $meta['design_system'],
-			protectedTokens: array_keys($overrides)
+			designSystemId: $run['meta']['design_system'],
+			protectedTokens: array_keys($run['overrides'])
 		);
 		foreach ($transparentFills as $fill) {
 			unset($repaired['declarations'][$fill]);
@@ -1615,11 +1722,8 @@ class DarkPaletteService {
 
 		ksort($repaired['declarations']);
 
-		$sourceHash = 'sha256:' . hash(algo: 'sha256', data: $tokenCss);
-		$css = $this->renderDarkCss(setId: $setId, declarations: $repaired['declarations'], sourceHash: $sourceHash);
-
-		return ['css' => $css, 'warnings' => $repaired['warnings']];
-	}//end generateForSet()
+		return $repaired;
+	}//end repairedDarkPalette()
 
 	/**
 	 * Give the error label a dark value that reads on the error fill (thematiq#1027).
@@ -1653,15 +1757,27 @@ class DarkPaletteService {
 			return $declarations;
 		}
 
-		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
-		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
-		$declarations[self::ERROR_LABEL] = '#ffffff';
-		if ($black > $white) {
-			$declarations[self::ERROR_LABEL] = '#000000';
-		}
+		$declarations[self::ERROR_LABEL] = $this->labelInkOn(fill: $fill);
 
 		return $declarations;
 	}//end withErrorLabel()
+
+	/**
+	 * White or black, whichever reads better on a fill; white on a tie.
+	 *
+	 * @param string $fill The fill colour.
+	 *
+	 * @return string
+	 */
+	private function labelInkOn(string $fill): string {
+		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
+		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
+		if ($black > $white) {
+			return '#000000';
+		}
+
+		return '#ffffff';
+	}//end labelInkOn()
 
 	/**
 	 * Build the dark-scoped logo url()'s path, relative to `css/tokens/dark/`.
@@ -1972,7 +2088,7 @@ class DarkPaletteService {
 		$lightness = $this->clamp(value: $lightness, min: 0.0, max: 1.0);
 
 		if ($saturation === 0.0) {
-			$v = (int)round($lightness * 255);
+			$v = $this->toByte(unit: $lightness);
 
 			return [$v, $v, $v];
 		}
@@ -1995,9 +2111,9 @@ class DarkPaletteService {
 		$b = $this->hueToRgbChannel(p: $p, q: $q, t: ($hNorm - (1 / 3)));
 
 		return [
-			(int)round($r * 255),
-			(int)round($g * 255),
-			(int)round($b * 255),
+			$this->toByte(unit: $r),
+			$this->toByte(unit: $g),
+			$this->toByte(unit: $b),
 		];
 	}//end hslToRgb()
 
@@ -2064,7 +2180,7 @@ class DarkPaletteService {
 			return '';
 		}
 
-		return sprintf('%02x', $this->clampInt(value: (int)round($alpha * 255)));
+		return sprintf('%02x', $this->clampInt(value: $this->toByte(unit: $alpha)));
 	}//end alphaSuffix()
 
 	/**
@@ -2079,6 +2195,27 @@ class DarkPaletteService {
 	private function clamp(float $value, float $min, float $max): float {
 		return max($min, min($max, $value));
 	}//end clamp()
+
+	/**
+	 * Scale a [0, 1] value to a 0-255 channel, halves rounded up.
+	 *
+	 * The product is first rounded to 15 significant digits, so float noise such as
+	 * 101.49999999999999 gives the same channel on every PHP version: PHP 8.3's round()
+	 * did this pre-rounding itself, PHP 8.4's round() does not.
+	 *
+	 * @param float $unit The value, normalised to [0, 1].
+	 *
+	 * @return int The channel value.
+	 */
+	private function toByte(float $unit): int {
+		$value = ($unit * 255);
+		if (abs($value) < 1.0E-9) {
+			return 0;
+		}
+
+		$scale = (10 ** (14 - (int)floor(log10(abs($value)))));
+		return (int)round(round($value * $scale) / $scale);
+	}//end toByte()
 
 	/**
 	 * Clamp an int channel into [0, 255].

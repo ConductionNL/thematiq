@@ -67,25 +67,29 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * Set up mocked collaborators before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(FontService::class);
+		$this->service = $this->createMock(originalClassName: FontService::class);
 
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, $params = []) => $text);
 
-		$this->request = $this->createMock(IRequest::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 
 		$this->tmpUploadPath = sys_get_temp_dir() . '/nldesign-font-upload-' . uniqid();
 		file_put_contents($this->tmpUploadPath, "wOF2\x00\x01payload");
 
-		$this->controller = new FontController('nldesign', $this->request, $this->service, $l);
+		$this->controller = new FontController(appName: 'nldesign', request: $this->request, service: $this->service, l: $l);
 	}//end setUp()
 
 	/**
 	 * Remove the temp upload file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if (file_exists($this->tmpUploadPath) === true) {
@@ -137,6 +141,8 @@ class FontControllerTest extends TestCase {
 
 	/**
 	 * A successful upload returns the stored id.
+	 *
+	 * @return void
 	 */
 	public function testUploadSuccessReturnsId(): void {
 		$this->stubUpload(size: 20);
@@ -144,12 +150,14 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['id' => 'custom-rijks-sans'], $response->getData());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['id' => 'custom-rijks-sans'], actual: $response->getData());
 	}//end testUploadSuccessReturnsId()
 
 	/**
 	 * Missing uploaded file returns 400.
+	 *
+	 * @return void
 	 */
 	public function testUploadNoFileReturns400(): void {
 		$this->request->method('getParam')->willReturnMap([
@@ -160,12 +168,14 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testUploadNoFileReturns400()
 
 	/**
 	 * A reported size over the 2 MB cap is rejected with 413 before the
 	 * service is even invoked.
+	 *
+	 * @return void
 	 */
 	public function testUploadOversizeReturns413(): void {
 		$this->stubUpload(size: ((2 * 1024 * 1024) + 1));
@@ -173,11 +183,13 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(413, $response->getStatus());
+		$this->assertSame(expected: 413, actual: $response->getStatus());
 	}//end testUploadOversizeReturns413()
 
 	/**
 	 * A validator/service RuntimeException(422) surfaces as a 422 response.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceRejectsBadNameAs422(): void {
 		$this->stubUpload(size: 20);
@@ -187,11 +199,13 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(422, $response->getStatus());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
 	}//end testUploadServiceRejectsBadNameAs422()
 
 	/**
 	 * A collision (RuntimeException 409) surfaces as a 409 response.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceRejectsCollisionAs409(): void {
 		$this->stubUpload(size: 20);
@@ -201,11 +215,13 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(409, $response->getStatus());
+		$this->assertSame(expected: 409, actual: $response->getStatus());
 	}//end testUploadServiceRejectsCollisionAs409()
 
 	/**
 	 * A non-HTTP exception code is clamped to 500.
+	 *
+	 * @return void
 	 */
 	public function testUploadServiceUnexpectedCodeClampsTo500(): void {
 		$this->stubUpload(size: 20);
@@ -213,45 +229,53 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(500, $response->getStatus());
+		$this->assertSame(expected: 500, actual: $response->getStatus());
 	}//end testUploadServiceUnexpectedCodeClampsTo500()
 
 	/**
 	 * list() returns the service's font list.
+	 *
+	 * @return void
 	 */
 	public function testListReturnsFonts(): void {
 		$this->service->method('list')->willReturn([['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans']]);
 
 		$response = $this->controller->list();
 
-		$this->assertSame(['fonts' => [['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans']]], $response->getData());
+		$this->assertSame(expected: ['fonts' => [['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans']]], actual: $response->getData());
 	}//end testListReturnsFonts()
 
 	/**
 	 * delete() returns ok on success.
+	 *
+	 * @return void
 	 */
 	public function testDeleteSuccess(): void {
 		$this->service->method('delete')->with('custom-rijks-sans')->willReturn(true);
 
 		$response = $this->controller->delete(id: 'custom-rijks-sans');
 
-		$this->assertSame(['status' => 'ok'], $response->getData());
+		$this->assertSame(expected: ['status' => 'ok'], actual: $response->getData());
 	}//end testDeleteSuccess()
 
 	/**
 	 * delete() returns 404 for an unknown id.
+	 *
+	 * @return void
 	 */
 	public function testDeleteNotFoundReturns404(): void {
 		$this->service->method('delete')->willReturn(false);
 
 		$response = $this->controller->delete(id: 'custom-ghost');
 
-		$this->assertSame(404, $response->getStatus());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
 	}//end testDeleteNotFoundReturns404()
 
 	/**
 	 * serve() returns the font bytes with immutable cache headers and an
 	 * ETag derived from the manifest revision.
+	 *
+	 * @return void
 	 */
 	public function testServeReturnsImmutableCacheHeadersAndETag(): void {
 		$this->service->method('readFontBytes')->with('custom-rijks-sans')->willReturn('wOF2payload');
@@ -259,28 +283,32 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->serve(id: 'custom-rijks-sans');
 
-		$this->assertSame(200, $response->getStatus());
-		$headers = $this->rawHeaders($response);
-		$this->assertArrayHasKey('Cache-Control', $headers);
-		$this->assertStringContainsString('public', $headers['Cache-Control']);
-		$this->assertStringContainsString('max-age=31536000', $headers['Cache-Control']);
-		$this->assertStringContainsString('immutable', $headers['Cache-Control']);
-		$this->assertSame('3', $response->getETag());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$headers = $this->rawHeaders(response: $response);
+		$this->assertArrayHasKey(key: 'Cache-Control', array: $headers);
+		$this->assertStringContainsString(needle: 'public', haystack: $headers['Cache-Control']);
+		$this->assertStringContainsString(needle: 'max-age=31536000', haystack: $headers['Cache-Control']);
+		$this->assertStringContainsString(needle: 'immutable', haystack: $headers['Cache-Control']);
+		$this->assertSame(expected: '3', actual: $response->getETag());
 	}//end testServeReturnsImmutableCacheHeadersAndETag()
 
 	/**
 	 * serve() returns a bare 404 for an unknown id.
+	 *
+	 * @return void
 	 */
 	public function testServeReturns404ForUnknownId(): void {
 		$this->service->method('readFontBytes')->willReturn(null);
 
 		$response = $this->controller->serve(id: 'custom-ghost');
 
-		$this->assertSame(404, $response->getStatus());
+		$this->assertSame(expected: 404, actual: $response->getStatus());
 	}//end testServeReturns404ForUnknownId()
 
 	/**
 	 * css() returns text/css with an empty body when no fonts exist.
+	 *
+	 * @return void
 	 */
 	public function testCssEmptyStylesheetWhenNoFonts(): void {
 		$this->service->method('buildCss')->willReturn('');
@@ -288,13 +316,15 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->css();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('text/css', $this->rawHeaders($response)['Content-Type']);
-		$this->assertSame('', $response->render());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'text/css', actual: $this->rawHeaders(response: $response)['Content-Type']);
+		$this->assertSame(expected: '', actual: $response->render());
 	}//end testCssEmptyStylesheetWhenNoFonts()
 
 	/**
 	 * css() returns the generated stylesheet with the revision as ETag.
+	 *
+	 * @return void
 	 */
 	public function testCssReturnsGeneratedStylesheet(): void {
 		$this->service->method('buildCss')->willReturn('@font-face { font-family: "Rijks Sans"; }');
@@ -302,36 +332,40 @@ class FontControllerTest extends TestCase {
 
 		$response = $this->controller->css();
 
-		$this->assertStringContainsString('@font-face', $response->render());
-		$this->assertSame('2', $response->getETag());
+		$this->assertStringContainsString(needle: '@font-face', haystack: $response->render());
+		$this->assertSame(expected: '2', actual: $response->getETag());
 	}//end testCssReturnsGeneratedStylesheet()
 
 	/**
 	 * upload/list/delete are admin-only (AuthorizedAdminSetting).
+	 *
+	 * @return void
 	 */
 	public function testUploadListDeleteCarryAuthorizedAdminSetting(): void {
 		foreach (['upload', 'list', 'delete'] as $method) {
 			$ref = new ReflectionMethod(FontController::class, $method);
 			$this->assertNotEmpty(
-				$ref->getAttributes(AuthorizedAdminSetting::class),
-				$method . '() must carry #[AuthorizedAdminSetting]'
+				actual: $ref->getAttributes(AuthorizedAdminSetting::class),
+				message: $method . '() must carry #[AuthorizedAdminSetting]'
 			);
 		}
 	}//end testUploadListDeleteCarryAuthorizedAdminSetting()
 
 	/**
 	 * serve/css are deliberately public (PublicPage + NoCSRFRequired).
+	 *
+	 * @return void
 	 */
 	public function testServeAndCssCarryPublicPage(): void {
 		foreach (['serve', 'css'] as $method) {
 			$ref = new ReflectionMethod(FontController::class, $method);
 			$this->assertNotEmpty(
-				$ref->getAttributes(PublicPage::class),
-				$method . '() must carry #[PublicPage]'
+				actual: $ref->getAttributes(PublicPage::class),
+				message: $method . '() must carry #[PublicPage]'
 			);
 			$this->assertNotEmpty(
-				$ref->getAttributes(NoCSRFRequired::class),
-				$method . '() must carry #[NoCSRFRequired]'
+				actual: $ref->getAttributes(NoCSRFRequired::class),
+				message: $method . '() must carry #[NoCSRFRequired]'
 			);
 		}
 	}//end testServeAndCssCarryPublicPage()

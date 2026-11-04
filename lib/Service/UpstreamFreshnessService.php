@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
@@ -269,48 +270,16 @@ class UpstreamFreshnessService {
 	private function doRunCheck(): void {
 		$client = $this->clientService->newClient();
 		$manifestUrl = $this->getManifestUrl();
-		$etag = $this->config->getAppValue(Application::APP_ID, self::CONFIG_ETAG, '');
-
-		$headers = ['Accept' => 'application/vnd.github.sha'];
-		if ($etag !== '') {
-			$headers['If-None-Match'] = $etag;
-		}
-
-		$response = $client->get($manifestUrl, ['timeout' => 10, 'headers' => $headers]);
-		$status = $response->getStatusCode();
+		$response = $client->get($manifestUrl, ['timeout' => 10, 'headers' => $this->manifestHeaders()]);
 
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_CHECKED_AT, (string)time());
 
-		if ($status === 304) {
-			// Steady state — nothing more to do this run.
+		$headSha = $this->acceptedHeadSha(response: $response);
+		if ($headSha === null) {
 			return;
 		}
 
-		if ($status !== 200) {
-			$this->logger->info(
-				'nldesign upstream-freshness check received unexpected status ' . $status,
-				['app' => Application::APP_ID]
-			);
-			return;
-		}
-
-		$headSha = trim($response->getBody());
-		if ($headSha === '' || preg_match('/^[0-9a-f]{7,40}$/i', $headSha) !== 1) {
-			// Malformed body — discard without touching the stored ETag, so
-			// the next valid check is not masked by a bad one.
-			$this->logger->info(
-				'nldesign upstream-freshness check received a malformed head revision.',
-				['app' => Application::APP_ID]
-			);
-			return;
-		}
-
-		$newEtag = $response->getHeader('ETag');
-		if ($newEtag !== '') {
-			$this->config->setAppValue(Application::APP_ID, self::CONFIG_ETAG, $newEtag);
-		}
-
-		$this->config->setAppValue(Application::APP_ID, self::CONFIG_HEAD_SHA, $headSha);
+		$this->storeHead(response: $response, headSha: $headSha);
 
 		$staleSets = $this->getStaleComparableSets(headSha: $headSha);
 		if (empty($staleSets) === true) {
@@ -320,6 +289,94 @@ class UpstreamFreshnessService {
 
 		$this->attributeAndStoreNotices(staleSets: $staleSets, headSha: $headSha, client: $client, manifestUrl: $manifestUrl);
 	}//end doRunCheck()
+
+	/**
+	 * The request headers of the manifest check: the head revision only, and
+	 * the stored ETag for a conditional request.
+	 *
+	 * @return array<string, string> The headers.
+	 *
+	 * @spec openspec/specs/upstream-freshness/spec.md
+	 */
+	private function manifestHeaders(): array {
+		$headers = ['Accept' => 'application/vnd.github.sha'];
+		$etag = $this->config->getAppValue(Application::APP_ID, self::CONFIG_ETAG, '');
+		if ($etag !== '') {
+			$headers['If-None-Match'] = $etag;
+		}
+
+		return $headers;
+	}//end manifestHeaders()
+
+	/**
+	 * The head revision a manifest answer carries, or null when this run has
+	 * nothing more to do: 304 (steady state), another status than 200, or a
+	 * malformed body. A malformed body leaves the stored ETag alone, so the
+	 * next valid check is not masked by a bad one.
+	 *
+	 * @param IResponse $response The manifest answer.
+	 *
+	 * @return string|null The head revision, or null.
+	 *
+	 * @spec openspec/specs/upstream-freshness/spec.md
+	 */
+	private function acceptedHeadSha(IResponse $response): ?string {
+		$status = $response->getStatusCode();
+		if ($status === 304) {
+			return null;
+		}
+
+		if ($status !== 200) {
+			$this->logger->info(
+				'nldesign upstream-freshness check received unexpected status ' . $status,
+				['app' => Application::APP_ID]
+			);
+			return null;
+		}
+
+		return $this->wellFormedHead(body: $response->getBody());
+	}//end acceptedHeadSha()
+
+	/**
+	 * The head revision in a manifest body, or null when it is not one.
+	 *
+	 * @param string $body The manifest body.
+	 *
+	 * @return string|null The trimmed head revision, or null.
+	 *
+	 * @spec openspec/specs/upstream-freshness/spec.md
+	 */
+	private function wellFormedHead(string $body): ?string {
+		$headSha = trim($body);
+		if ($headSha === '' || preg_match('/^[0-9a-f]{7,40}$/i', $headSha) !== 1) {
+			$this->logger->info(
+				'nldesign upstream-freshness check received a malformed head revision.',
+				['app' => Application::APP_ID]
+			);
+			return null;
+		}
+
+		return $headSha;
+	}//end wellFormedHead()
+
+	/**
+	 * Store the answer's ETag, when it has one, and the head revision.
+	 *
+	 * @param IResponse $response The manifest answer.
+	 * @param string $headSha The accepted head revision.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/upstream-freshness/spec.md
+	 */
+	private function storeHead(IResponse $response, string $headSha): void {
+		$newEtag = $response->getHeader('ETag');
+		if ($newEtag !== '') {
+			$this->config->setAppValue(Application::APP_ID, self::CONFIG_ETAG, $newEtag);
+		}
+
+		$this->config->setAppValue(Application::APP_ID, self::CONFIG_HEAD_SHA, $headSha);
+	}//end storeHead()
 
 	/**
 	 * Installed, comparable sets whose recorded upstreamRef differs from the

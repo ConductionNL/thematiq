@@ -29,7 +29,10 @@
 		var request = function (options) {
 			options = options || {}
 			options.headers = Object.assign(
-				{ requesttoken: OC.requestToken, 'Content-Type': 'application/json' },
+				{
+					requesttoken: OC.requestToken,
+					'Content-Type': 'application/json',
+				},
 				options.headers || {},
 			)
 			return fetch(url, options).then(function (res) {

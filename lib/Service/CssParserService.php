@@ -37,117 +37,16 @@ class CssParserService {
 	/**
 	 * Parse CSS custom property declarations from a raw CSS string.
 	 *
-	 * Matches all lines like: --some-token: some-value;
+	 * Matches all declarations like: --some-token: some-value; ({@see CssDeclarationScanner}).
 	 *
 	 * @param string $content The raw CSS content.
 	 *
 	 * @return array<string, string>|null Parsed token map, or null if none found.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are states,
-	 *   not helpers, and extracting them would pass the whole state between methods.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are states, not
-	 *   helpers, and extracting them would pass the whole state between methods.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - a CSS tokenizer is a state machine: comments, strings, nesting and fallbacks are
-	 *   states, not helpers, and extracting them would pass the whole state between methods.
 	 */
 	public function parseDeclarations(string $content): ?array {
-		// Scanned character by character rather than matched with one regex,
-		// because a `;` is only a declaration terminator when it is NOT inside a
-		// string or a `url(…)`. The previous `([^;]+);` pattern stopped at the
-		// first `;` it saw, and the `;` in `url("data:image/svg+xml;base64,…")`
-		// is the first one: every such declaration came back truncated to
-		// `url("data:image/svg+xml`, an unterminated CSS string. Written back
-		// out, that single unclosed quote swallowed the whole rest of the
-		// `:root` block — an NL Design System theme carrying three inline logos
-		// lost 650 of its 740 declarations, including every colour, while the
-		// file still looked plausible in an editor.
-		//
-		// Terminators are `;` at paren depth 0 and `}` (which also ends the last
-		// declaration of a rule when it has no trailing `;` — legal CSS the old
-		// pattern could not see at all). Anything that is not `--name: value` is
-		// skipped, so a selector, an at-rule or a stray brace is simply not a
-		// declaration.
-		$parsed = [];
-		$length = strlen($content);
-		$buffer = '';
-		$depth = 0;
-		$quote = null;
-
-		for ($index = 0; $index < $length; $index++) {
-			$char = $content[$index];
-
-			if ($quote !== null) {
-				$buffer .= $char;
-
-				// A backslash escape inside a string consumes the next byte, so
-				// an escaped quote cannot end the string early.
-				if ($char === '\\' && ($index + 1) < $length) {
-					$buffer .= $content[($index + 1)];
-					$index++;
-					continue;
-				}
-
-				if ($char === $quote) {
-					$quote = null;
-				}
-
-				continue;
-			}//end if
-
-			// Comments are skipped outright, never buffered. They are not
-			// declarations, and their prose is actively hostile to a scanner:
-			// an apostrophe in "the theme's own steps" would otherwise open a
-			// string that stays open until the next apostrophe several comments
-			// later, swallowing every declaration in between.
-			if ($char === '/' && ($index + 1) < $length && $content[($index + 1)] === '*') {
-				$end = strpos($content, '*/', ($index + 2));
-				if ($end === false) {
-					break;
-				}
-
-				$index = ($end + 1);
-				continue;
-			}
-
-			if ($char === '"' || $char === '\'') {
-				$quote = $char;
-				$buffer .= $char;
-				continue;
-			}
-
-			if ($char === '(') {
-				$depth++;
-				$buffer .= $char;
-				continue;
-			}
-
-			if ($char === ')') {
-				$depth = max(0, ($depth - 1));
-				$buffer .= $char;
-				continue;
-			}
-
-			if (($char === ';' && $depth === 0) || $char === '}') {
-				$this->collectDeclaration(chunk: $buffer, parsed: $parsed);
-				$buffer = '';
-
-				// A rule boundary also resets an unbalanced `(` so one malformed
-				// value cannot swallow every declaration after it.
-				if ($char === '}') {
-					$depth = 0;
-				}
-
-				continue;
-			}
-
-			$buffer .= $char;
-		}//end for
-
-		// Whatever is left after the last terminator (a final declaration with
-		// neither `;` nor `}`).
-		$this->collectDeclaration(chunk: $buffer, parsed: $parsed);
+		$parsed = (new CssDeclarationScanner(content: $content))->scan();
 
 		if (empty($parsed) === true) {
 			return null;
@@ -155,42 +54,6 @@ class CssParserService {
 
 		return $parsed;
 	}//end parseDeclarations()
-
-	/**
-	 * Add one scanned chunk to the declaration map when it is a custom property.
-	 *
-	 * The chunk may carry leading junk (`:root {`, `}`, a selector) because the
-	 * scanner splits on terminators rather than on rule boundaries, so the
-	 * custom-property name is located inside it rather than assumed to start it.
-	 * A chunk with no `--name:` at all is not a declaration and is dropped.
-	 *
-	 * @param string $chunk The raw text between two terminators.
-	 * @param array<string, string> $parsed The declaration map, appended to by reference.
-	 *
-	 * @return void
-	 */
-	private function collectDeclaration(string $chunk, array &$parsed): void {
-		if (trim($chunk) === '') {
-			return;
-		}
-
-		if (preg_match('/(--[\w-]+)\s*:\s*(.*)$/s', $chunk, $match) !== 1) {
-			return;
-		}
-
-		$value = trim($match[2]);
-
-		// Strip a trailing !important so persisted overrides (which are written
-		// with !important to win the cascade) round-trip back to the editor as
-		// the clean value the admin entered.
-		$value = trim(preg_replace('/\s*!\s*important\s*$/i', '', $value));
-
-		if ($value === '') {
-			return;
-		}
-
-		$parsed[trim($match[1])] = $value;
-	}//end collectDeclaration()
 
 	/**
 	 * Parse CSS custom property declarations from within a :root {} block.

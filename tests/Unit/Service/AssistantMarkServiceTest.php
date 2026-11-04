@@ -59,21 +59,21 @@ class AssistantMarkServiceTest extends TestCase {
 	 * @return AssistantMarkService The service.
 	 */
 	private function service(): AssistantMarkService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(
 			function (string $app, string $key, $value): void {
 				$this->app[$key] = (string)$value;
 			}
 		);
-		$email = $this->createMock(EmailThemingService::class);
+		$email = $this->createMock(originalClassName: EmailThemingService::class);
 		$email->method('getFooterConfig')->willReturnCallback(
 			fn (): array => ['orgName' => $this->footerName, 'accessibilityUrl' => '', 'privacyUrl' => '']
 		);
-		$capabilities = $this->createMock(Capabilities::class);
+		$capabilities = $this->createMock(originalClassName: Capabilities::class);
 		$capabilities->method('getCapabilities')->willReturn(['nldesign' => ['logos' => ['default' => '/apps/thematiq/img/logos/voorbeeld.svg']]]);
 
-		return new AssistantMarkService($config, $email, $capabilities);
+		return new AssistantMarkService(config: $config, emailTheming: $email, capabilities: $capabilities);
 	}//end service()
 
 	/**
@@ -82,7 +82,7 @@ class AssistantMarkServiceTest extends TestCase {
 	 * @return IL10N The translator.
 	 */
 	private function dutch(): IL10N {
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(
 			fn (string $text, array $params = []): string => vsprintf(
 				['Approved by %s' => 'Goedgekeurd door %s', '%s logo' => 'Logo van %s'][$text] ?? $text,
@@ -99,8 +99,8 @@ class AssistantMarkServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOffByDefault(): void {
-		$this->assertSame(['enabled' => false], $this->service()->forUser(l10n: $this->dutch()));
-		$this->assertFalse($this->service()->getSettings()['enabled']);
+		$this->assertSame(expected: ['enabled' => false], actual: $this->service()->forUser(l10n: $this->dutch()));
+		$this->assertFalse(condition: $this->service()->getSettings()['enabled']);
 	}//end testOffByDefault()
 
 	/**
@@ -112,10 +112,13 @@ class AssistantMarkServiceTest extends TestCase {
 		$this->service()->save(enabled: true, organisation: '', logo: '');
 
 		$mark = $this->service()->forUser(l10n: $this->dutch());
-		$this->assertTrue($mark['enabled']);
-		$this->assertSame('Goedgekeurd door Gemeente Voorbeeld', $mark['label']);
-		$this->assertSame('Gemeente Voorbeeld', $mark['organisation']);
-		$this->assertSame(['url' => '/apps/thematiq/img/logos/voorbeeld.svg', 'alt' => 'Logo van Gemeente Voorbeeld'], $mark['logo']);
+		$this->assertTrue(condition: $mark['enabled']);
+		$this->assertSame(expected: 'Goedgekeurd door Gemeente Voorbeeld', actual: $mark['label']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $mark['organisation']);
+		$this->assertSame(
+			expected: ['url' => '/apps/thematiq/img/logos/voorbeeld.svg', 'alt' => 'Logo van Gemeente Voorbeeld'],
+			actual: $mark['logo']
+		);
 	}//end testOnWithDefaults()
 
 	/**
@@ -126,11 +129,11 @@ class AssistantMarkServiceTest extends TestCase {
 	public function testOnWithOwnNameAndLogo(): void {
 		$settings = $this->service()->save(enabled: true, organisation: 'Provincie Utrecht', logo: 'https://example.org/utrecht.svg');
 
-		$this->assertSame('Provincie Utrecht', $settings['organisation']);
-		$this->assertSame('Gemeente Voorbeeld', $settings['organisationDefault']);
+		$this->assertSame(expected: 'Provincie Utrecht', actual: $settings['organisation']);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $settings['organisationDefault']);
 		$mark = $this->service()->forUser(l10n: $this->dutch());
-		$this->assertSame('Goedgekeurd door Provincie Utrecht', $mark['label']);
-		$this->assertSame('https://example.org/utrecht.svg', $mark['logo']['url']);
+		$this->assertSame(expected: 'Goedgekeurd door Provincie Utrecht', actual: $mark['label']);
+		$this->assertSame(expected: 'https://example.org/utrecht.svg', actual: $mark['logo']['url']);
 	}//end testOnWithOwnNameAndLogo()
 
 	/**
@@ -142,13 +145,13 @@ class AssistantMarkServiceTest extends TestCase {
 		$this->footerName = '';
 		try {
 			$this->service()->save(enabled: true, organisation: '  ', logo: '');
-			$this->fail('Refused without a name.');
+			$this->fail(message: 'Refused without a name.');
 		} catch (AssistantMarkException $e) {
-			$this->assertSame(AssistantMarkService::ERROR_NAME, $e->getCode());
+			$this->assertSame(expected: AssistantMarkService::ERROR_NAME, actual: $e->getCode());
 		}
 
-		$this->assertSame(['enabled' => false], $this->service()->forUser(l10n: $this->dutch()));
-		$this->assertArrayNotHasKey('assistant_mark_enabled', $this->app);
+		$this->assertSame(expected: ['enabled' => false], actual: $this->service()->forUser(l10n: $this->dutch()));
+		$this->assertArrayNotHasKey(key: 'assistant_mark_enabled', array: $this->app);
 	}//end testEmptyNameKeepsTheMarkOff()
 
 	/**
@@ -160,9 +163,9 @@ class AssistantMarkServiceTest extends TestCase {
 		foreach (['javascript:alert(1)', 'http://example.org/x.svg', '//evil.example/x.svg'] as $logo) {
 			try {
 				$this->service()->save(enabled: true, organisation: 'X', logo: $logo);
-				$this->fail('Refused: ' . $logo);
+				$this->fail(message: 'Refused: ' . $logo);
 			} catch (AssistantMarkException $e) {
-				$this->assertSame(AssistantMarkService::ERROR_LOGO, $e->getCode());
+				$this->assertSame(expected: AssistantMarkService::ERROR_LOGO, actual: $e->getCode());
 			}
 		}
 	}//end testUnsafeLogoIsRefused()
@@ -174,12 +177,12 @@ class AssistantMarkServiceTest extends TestCase {
 	 */
 	public function testEndpointAttributes(): void {
 		$show = new ReflectionMethod(AssistantMarkController::class, 'show');
-		$this->assertCount(1, $show->getAttributes(NoAdminRequired::class));
-		$this->assertCount(0, $show->getAttributes(PublicPage::class), 'No session, no answer.');
+		$this->assertCount(expectedCount: 1, haystack: $show->getAttributes(NoAdminRequired::class));
+		$this->assertCount(expectedCount: 0, haystack: $show->getAttributes(PublicPage::class), message: 'No session, no answer.');
 		foreach (['settings', 'save'] as $method) {
 			$attributes = (new ReflectionMethod(AssistantMarkController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes);
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertCount(expectedCount: 1, haystack: $attributes);
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 	}//end testEndpointAttributes()
 
@@ -189,18 +192,28 @@ class AssistantMarkServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testControllerAnswers(): void {
-		$controller = new AssistantMarkController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->dutch());
-		$this->assertSame(['enabled' => false], $controller->show()->getData());
+		$controller = new AssistantMarkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			mark: $this->service(),
+			l10n: $this->dutch()
+		);
+		$this->assertSame(expected: ['enabled' => false], actual: $controller->show()->getData());
 
 		$saved = $controller->save(enabled: true);
-		$this->assertSame(200, $saved->getStatus());
-		$this->assertSame('Goedgekeurd door Gemeente Voorbeeld', $saved->getData()['preview']['label']);
-		$this->assertSame('Goedgekeurd door Gemeente Voorbeeld', $controller->show()->getData()['label']);
+		$this->assertSame(expected: 200, actual: $saved->getStatus());
+		$this->assertSame(expected: 'Goedgekeurd door Gemeente Voorbeeld', actual: $saved->getData()['preview']['label']);
+		$this->assertSame(expected: 'Goedgekeurd door Gemeente Voorbeeld', actual: $controller->show()->getData()['label']);
 
 		$this->footerName = '';
-		$refused = (new AssistantMarkController('thematiq', $this->createMock(IRequest::class), $this->service(), $this->dutch()))
+		$refused = (new AssistantMarkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			mark: $this->service(),
+			l10n: $this->dutch()
+		))
 			->save(enabled: true, organisation: '');
-		$this->assertSame(422, $refused->getStatus());
-		$this->assertStringContainsString('organisation name', $refused->getData()['error']);
+		$this->assertSame(expected: 422, actual: $refused->getStatus());
+		$this->assertStringContainsString(needle: 'organisation name', haystack: $refused->getData()['error']);
 	}//end testControllerAnswers()
 }//end class

@@ -50,16 +50,16 @@ class TokenSetConverterParityTest extends TestCase {
 	 * @return TokenSetConverterService
 	 */
 	private function converter(): TokenSetConverterService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		return new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end converter()
 
@@ -92,7 +92,7 @@ class TokenSetConverterParityTest extends TestCase {
 			content: $content,
 			slug: $fixture['slug'],
 			displayName: $fixture['displayName'],
-			sourceName: $fixture['sourceName']
+			options: ['sourceName' => $fixture['sourceName']]
 		);
 	}//end convert()
 
@@ -110,64 +110,68 @@ class TokenSetConverterParityTest extends TestCase {
 	/**
 	 * The emitted CSS is byte-equal, provenance block and mapping table hash included.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */
 	public function testTheEmittedCssIsByteEqual(array $fixture): void {
-		$result = $this->convert($fixture);
-		$expected = $this->expected($fixture['name']);
+		$result = $this->convert(fixture: $fixture);
+		$expected = $this->expected(name: $fixture['name']);
 
-		$this->assertSame($expected['inputKind'], $result['inputKind']);
-		$this->assertSame($expected['css'], $result['css']);
+		$this->assertSame(expected: $expected['inputKind'], actual: $result['inputKind']);
+		$this->assertSame(expected: $expected['css'], actual: $result['css']);
 	}//end testTheEmittedCssIsByteEqual()
 
 	/**
 	 * The report holds the same entries in the same order, and the counts agree.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */
 	public function testTheReportIsStructurallyEqual(array $fixture): void {
-		$result = $this->convert($fixture);
-		$expected = $this->expected($fixture['name']);
+		$result = $this->convert(fixture: $fixture);
+		$expected = $this->expected(name: $fixture['name']);
 
 		$shape = static fn (array $entry): array => [
 			'source' => (string)$entry['source'],
 			'target' => (string)$entry['target'],
 			'action' => (string)$entry['action'],
 			'reason' => $entry['reason'] ?? null,
-			'value' => (isset($entry['value']) === true ? (string)$entry['value'] : null),
+			'value' => (match (isset($entry['value']) === true) {
+				true => (string)$entry['value'], default => null
+			}),
 		];
 
-		$this->assertSame(array_map($shape, $expected['report']), array_map($shape, $result['report']));
-		$this->assertSame($expected['counts'], $result['counts']);
+		$this->assertSame(expected: array_map($shape, $expected['report']), actual: array_map($shape, $result['report']));
+		$this->assertSame(expected: $expected['counts'], actual: $result['counts']);
 	}//end testTheReportIsStructurallyEqual()
 
 	/**
 	 * The manifest entry and the extracted logo agree.
 	 *
-	 * @dataProvider fixtureProvider
-	 *
 	 * @param array<string, string> $fixture The fixture entry.
+	 *
+	 * @dataProvider fixtureProvider
 	 *
 	 * @return void
 	 */
 	public function testTheManifestEntryAndLogoAgree(array $fixture): void {
-		$result = $this->convert($fixture);
-		$expected = $this->expected($fixture['name']);
+		$result = $this->convert(fixture: $fixture);
+		$expected = $this->expected(name: $fixture['name']);
 
-		$this->assertEquals($expected['manifestEntry'], $result['manifestEntry']);
+		$this->assertEquals(expected: $expected['manifestEntry'], actual: $result['manifestEntry']);
 
 		$logo = $result['logoAsset'];
 		$this->assertSame(
-			$expected['logoAsset'],
-			($logo === null) ? null : ['path' => $logo['path'], 'base64' => base64_encode($logo['contents'])]
+			expected: $expected['logoAsset'],
+			actual: match ($logo === null) {
+				true => null, default => ['path' => $logo['path'], 'base64' => base64_encode($logo['contents'])]
+			}
 		);
 	}//end testTheManifestEntryAndLogoAgree()
 }//end class

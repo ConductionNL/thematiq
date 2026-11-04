@@ -56,7 +56,11 @@ use RuntimeException;
  * gets 26 tokens back needs to be told what happened to the other 671.
  *
  * @phpstan-type ReportEntry array{source: string, target: string, action: string, reason: string|null, value: string|null, original?: string}
+ * @phpstan-type RuleInput array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
+ * @phpstan-type SetSource array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
  * @psalm-type   ReportEntry array{source: string, target: string, action: string, reason: string|null, value: string|null, original?: string}
+ * @psalm-type   RuleInput array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
+ * @psalm-type   SetSource array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
  *
  * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
  *
@@ -101,6 +105,11 @@ class TokenSetConverterService {
 	 * @var array<int, string>
 	 */
 	public const COMPONENT_PREFIXES = ['--utrecht-', '--ams-', '--denhaag-', '--conduction-'];
+
+	/**
+	 * The options convert() takes, at their defaults, in the order callers have always given them.
+	 */
+	public const CONVERT_OPTIONS = ['sourceName' => null, 'assetName' => null, 'referenceOnlyPaths' => [], 'repairContrast' => false];
 
 	/**
 	 * Role heads that mean "a raw design-token VALUE", not a component part.
@@ -225,14 +234,18 @@ class TokenSetConverterService {
 	 * @param string $content The raw pasted or uploaded content.
 	 * @param string $slug The token set slug, which is also the brand prefix (`--{slug}-*`).
 	 * @param string $displayName The human-readable set name for the manifest entry.
-	 * @param string|null $sourceName Optional source label (file name or package) for the provenance block.
-	 * @param string|null $assetName Base name for an extracted logo, WITHOUT extension. Defaults to
-	 *                               the slug; the admin upload path passes `custom-{slug}` so an
-	 *                               uploaded theme can never overwrite a shipped `img/logos/{slug}.svg`.
-	 * @param array<int, string> $referenceOnlyPaths Dotted token paths that resolve aliases but are not
-	 *                                               emitted (a Tokens Studio `source` set of one brand).
-	 * @param bool $repairContrast Bring the converted pairs to WCAG AA (the nightly sync); off for an admin's upload,
-	 *                             which keeps its own colours and reports contrast warnings instead (thematiq#993).
+	 * @param array<string, mixed> $options Optional inputs, each at its CONVERT_OPTIONS default when left out:
+	 *                                      `sourceName`, a source label (file name or package) for the provenance block;
+	 *                                      `assetName`, the base name for an extracted logo, WITHOUT extension, by default
+	 *                                      the slug (the admin upload passes `custom-{slug}`, so an uploaded theme can
+	 *                                      never overwrite a shipped `img/logos/{slug}.svg`); `referenceOnlyPaths`, dotted
+	 *                                      token paths that resolve aliases but are not emitted (a Tokens Studio `source`
+	 *                                      set of one brand); `repairContrast`, bring the converted pairs to WCAG AA (the
+	 *                                      nightly sync), off for an admin's upload, which keeps its own colours and
+	 *                                      reports contrast warnings instead (thematiq#993).
+	 *
+	 * @phpstan-param array{sourceName?: string|null, assetName?: string|null, referenceOnlyPaths?: array<int, string>, repairContrast?: bool} $options
+	 * @psalm-param   array{sourceName?: string|null, assetName?: string|null, referenceOnlyPaths?: array<int, string>, repairContrast?: bool} $options
 	 *
 	 * @return array{
 	 *     css: string,
@@ -251,206 +264,262 @@ class TokenSetConverterService {
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - `$repairContrast` switches one optional stage of the pipeline on for the
-	 *   nightly sync; the upload path is the same pipeline without it, not a second responsibility.
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per accepted input shape and per optional stage of the pipeline.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the conversion pipeline reads top to bottom as the order it runs in — detect, parse,
-	 *   classify, map, emit — and is far easier to follow whole than chased across a dozen private methods.
 	 */
 	public function convert(
 		string $content,
 		string $slug,
 		string $displayName,
-		?string $sourceName = null,
-		?string $assetName = null,
-		array $referenceOnlyPaths = [],
-		bool $repairContrast = false,
+		array $options = [],
 	): array {
-		$this->referenceOnlyPaths = $referenceOnlyPaths;
-		$report = [];
+		$options = array_replace(self::CONVERT_OPTIONS, $options);
+		$this->referenceOnlyPaths = $options['referenceOnlyPaths'];
 		$this->importWarnings = [];
 		$this->mapperErrors = [];
+		$run = new ConversionRun(slug: $slug, displayName: $displayName);
+		$run->sourceName = $options['sourceName'];
+		$run->assetName = ($options['assetName'] ?? $slug);
+		$run->repairContrast = $options['repairContrast'];
 
-		// The OpenProject plugin's set file, then a file from a Figma tool: token sets merged, the `value` spelling respelled,
-		// thematiq's own paths given their CSS names back. Any other content is untouched.
-		$leftOut = [];
-		$content = (new OpenProjectSetFile())->normalise(content: $content, skipped: $leftOut);
-		$content = (new FigmaTokenReader())->normalise(content: $content, skipped: $leftOut);
-		foreach ($leftOut as $entry) {
-			$report[] = ['source' => $entry['path'], 'target' => '', 'action' => 'skipped', 'reason' => $entry['reason'], 'value' => null];
+		// Detect, parse, then the two outcomes that end early; after that the app's own layers are built.
+		$declarations = $this->readDeclarations(content: $content, run: $run);
+		$early = $this->earlyResult(declarations: $declarations, run: $run);
+		if ($early !== null) {
+			return $early;
 		}
 
-		$inputKind = $this->detectInput(content: $content);
-		$sourceVersion = null;
-
-		// Two guards rather than if/else: only one of them can run, and the
-		// report must not be appended to twice.
-		$isJson = ($inputKind === 'B' || $inputKind === 'C');
-		$declarations = [];
-
-		if ($isJson === true) {
-			$decoded = json_decode($content, true);
-			$declarations = $this->declarationsFromJson(
-				decoded: $decoded,
-				kind: $inputKind,
-				slug: $slug,
-				version: $sourceVersion,
-				report: $report
-			);
-		}
-
-		if ($isJson === false) {
-			$declarations = $this->parseCssBlocks(content: $content, report: $report);
-		}
-
-		// Thematiq's own export comes back as it went out, without the conversion rules.
-		if ($isJson === true && $declarations !== [] && $this->isThematiqExport(content: $content) === true) {
-			return ['darkDeclarations' => $this->darkFrom(content: $content)] + $this->thematiqExportResult(
-				declarations: $declarations,
-				slug: $slug,
-				displayName: $displayName,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
-				report: $report
-			);
-		}
-
-		if (empty($declarations) === true) {
-			// A document we UNDERSTOOD but could map nothing out of is a
-			// reportable OUTCOME, not an exceptional one: the admin made a
-			// fixable mistake and needs the per-token reasons to fix it. An
-			// exception carries a message and nothing else, which is why the
-			// diagnostics used to die here. Content we could not read at all
-			// still throws — that is the malformed case the spec separates.
-			if ($report !== []) {
-				return $this->zeroYieldResult(report: $report, inputKind: $inputKind);
-			}
-
-			throw new RuntimeException(
-				'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
-				. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
-				. ' tokens.json, or an existing :root token set.',
-				422
-			);
-		}
-
-		// A value pointing at a remote host never reaches the emitted file: a
-		// token set is served to every anonymous visitor, so an external url()
-		// would be a third-party request on the login page.
-		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
-
-		// Resolve `var()` chains to literals so the file stands on its own. A
-		// token set is also served on the login page and in e-mails, where the
-		// source theme's own variables do not exist.
-		$declarations = $this->resolveVars(declarations: $declarations, report: $report);
-
-		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
-		// so they can be measured and given a dark variant (thematiq#993).
-		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
-		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $report);
-
-		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
-		// the sections are built: Nextcloud's core theming takes a logo as a
-		// path on disk, never as a data URI, so this is the only step that can
-		// give a converted theme a `theming.logo` at all.
-		$logo = $this->extractLogo(
-			declarations: $declarations,
-			slug: $slug,
-			assetName: ($assetName ?? $slug),
-			report: $report
-		);
-
-		if ($logo !== null) {
-			// The source declaration is re-emitted from `$logo['css']` after the
-			// rules run; every other slot carrying the same artwork points at it
-			// instead of repeating the payload (the shape opencatalogi.css uses).
-			unset($declarations[$logo['source']]);
-			foreach ($logo['aliases'] as $alias) {
-				$declarations[$alias] = 'var(--nldesign-logo-url)';
-			}
-		}
+		$declarations = $this->prepareDeclarations(declarations: $declarations, run: $run);
 
 		// How many declarations the admin's document actually yielded. This is
 		// what 'imported' means to an admin — what THEY supplied that could be
 		// used — and it is counted here, where the input parse ends, because
 		// everything after this point is the app's own emitted layer.
-		$importedCount = count($declarations);
+		$run->imported = count($declarations);
 
-		// Split the input into the three emitted sections.
-		$sections = $this->classify(declarations: $declarations, slug: $slug, report: $report);
+		return $this->conversionResult(layers: $this->emittedLayers(declarations: $declarations, run: $run), run: $run);
+	}//end convert()
+
+	/**
+	 * Read the document into custom property declarations: normalise a plugin or Figma file,
+	 * detect the input kind and parse it.
+	 *
+	 * @param string $content The raw content.
+	 * @param ConversionRun $run The conversion; gets the input kind, the package version and,
+	 *                           for a thematiq export, its dark values.
+	 *
+	 * @return array<string, string> The declarations, empty when nothing could be read.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function readDeclarations(string $content, ConversionRun $run): array {
+		$leftOut = [];
+		$content = (new ToolTokenFileNormaliser())->normalise(content: $content, skipped: $leftOut);
+		foreach ($leftOut as $entry) {
+			$run->report[] = $this->reportEntry(route: [$entry['path'], ''], outcome: ['skipped', $entry['reason'], null]);
+		}
+
+		$run->inputKind = $this->detectInput(content: $content);
+		if ($run->inputKind !== 'B' && $run->inputKind !== 'C') {
+			return $this->parseCssBlocks(content: $content, report: $run->report);
+		}
+
+		return $this->jsonDeclarations(content: $content, run: $run);
+	}//end readDeclarations()
+
+	/**
+	 * The declarations of a JSON document (input B or C), with its package version, and the dark
+	 * values when it is thematiq's own export.
+	 *
+	 * @param string $content The normalised document.
+	 * @param ConversionRun $run The conversion; gets the package version and the export's dark values.
+	 *
+	 * @return array<string, string>
+	 */
+	private function jsonDeclarations(string $content, ConversionRun $run): array {
+		$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $run->inputKind, slug: $run->slug, report: $run->report);
+		$run->sourceVersion = $parsed['version'];
+
+		// Thematiq's own export comes back as it went out, without the conversion rules.
+		if ($parsed['declarations'] !== [] && $this->isThematiqExport(content: $content) === true) {
+			$run->exportDark = $this->darkFrom(content: $content);
+		}
+
+		return $parsed['declarations'];
+	}//end jsonDeclarations()
+
+	/**
+	 * The result for a thematiq export or for a document that yielded nothing, or null to go on.
+	 *
+	 * @param array<string, string> $declarations The declarations read.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 *
+	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
+	 *
+	 * @spec openspec/specs/custom-token-sets/spec.md
+	 */
+	private function earlyResult(array $declarations, ConversionRun $run): ?array {
+		if ($run->exportDark !== null) {
+			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(
+				declarations: $declarations,
+				source: $run->source(),
+				report: $run->report
+			);
+		}
+
+		if ($declarations !== []) {
+			return null;
+		}
+
+		// A document we UNDERSTOOD but could map nothing out of is a
+		// reportable OUTCOME, not an exceptional one: the admin made a
+		// fixable mistake and needs the per-token reasons to fix it. An
+		// exception carries a message and nothing else, which is why the
+		// diagnostics used to die here. Content we could not read at all
+		// still throws — that is the malformed case the spec separates.
+		if ($run->report !== []) {
+			return $this->zeroYieldResult(report: $run->report, inputKind: $run->inputKind);
+		}
+
+		throw new RuntimeException(
+			'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
+			. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
+			. ' tokens.json, or an existing :root token set.',
+			422
+		);
+	}//end earlyResult()
+
+	/**
+	 * Make the declarations stand on their own: no remote url(), no var() chains, measurable
+	 * colours, and the logo lifted out into a file.
+	 *
+	 * @param array<string, string> $declarations The declarations read.
+	 * @param ConversionRun $run The conversion; gets the extracted logo.
+	 *
+	 * @return array<string, string>
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function prepareDeclarations(array $declarations, ConversionRun $run): array {
+		// A value pointing at a remote host never reaches the emitted file: a
+		// token set is served to every anonymous visitor, so an external url()
+		// would be a third-party request on the login page.
+		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $run->report);
+
+		// Resolve `var()` chains to literals so the file stands on its own. A
+		// token set is also served on the login page and in e-mails, where the
+		// source theme's own variables do not exist.
+		$declarations = $this->resolveVars(declarations: $declarations, report: $run->report);
+
+		// Colours written as hsl(), hsla() or an 8-digit hex become hex or rgba(),
+		// so they can be measured and given a dark variant (thematiq#993).
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$declarations = $colourRepair->normaliseColours(declarations: $declarations, report: $run->report);
+
+		// Lift the theme's logo out of the stylesheet and into a file, BEFORE
+		// the sections are built: Nextcloud's core theming takes a logo as a
+		// path on disk, never as a data URI, so this is the only step that can
+		// give a converted theme a `theming.logo` at all.
+		$run->logo = $this->extractLogo(declarations: $declarations, run: $run);
+
+		if ($run->logo !== null) {
+			// The source declaration is re-emitted from `$logo['css']` after the
+			// rules run; every other slot carrying the same artwork points at it
+			// instead of repeating the payload (the shape opencatalogi.css uses).
+			unset($declarations[$run->logo['source']]);
+			foreach ($run->logo['aliases'] as $alias) {
+				$declarations[$alias] = 'var(--nldesign-logo-url)';
+			}
+		}
+
+		return $declarations;
+	}//end prepareDeclarations()
+
+	/**
+	 * The three emitted layers: the input split into palette and component, and the semantic
+	 * layer the rules derive.
+	 *
+	 * @param array<string, string> $declarations The prepared declarations.
+	 * @param ConversionRun $run The conversion; gets the manifest the rules write.
+	 *
+	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function emittedLayers(array $declarations, ConversionRun $run): array {
+		$sections = $this->classify(declarations: $declarations, run: $run);
 
 		// The semantic layer, from the table. `existing` carries input D's
 		// hand-authored values, which win over anything the rules derive.
-		// `$manifest` is an out-parameter; declaring it first keeps it from
-		// being read before `runRules()` has written it.
-		$manifest = [];
 		$semantic = $this->runRules(
-			declarations: $declarations,
-			existing: $sections['semantic'],
-			slug: $slug,
-			manifest: $manifest,
-			report: $report
+			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $run->slug],
+			run: $run
 		);
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
 		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
-		if ($repairContrast === true) {
-			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $manifest, report: $report);
+		if ($run->repairContrast === true) {
+			$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $run->manifest, report: $run->report);
 			$sections['component'] = $colourRepair->repairComponents(
 				component: $sections['component'],
 				semantic: $semantic,
 				table: $this->table(),
-				report: $report
+				report: $run->report
 			);
 		}
 
-		if ($logo !== null) {
-			$semantic['--nldesign-logo-url'] = $logo['css'];
+		if ($run->logo !== null) {
+			$semantic['--nldesign-logo-url'] = $run->logo['css'];
 		}
 
-		$counts = $this->countActions(report: $report);
+		return ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
+	}//end emittedLayers()
 
-		$css = $this->buildCss(
-			palette: $sections['palette'],
-			component: $sections['component'],
-			semantic: $semantic,
-			slug: $slug,
-			inputKind: $inputKind,
-			sourceName: $sourceName,
-			sourceVersion: $sourceVersion,
-			counts: $counts
-		);
-
-		// Only set when the logo was DECODED out of the theme, so the caller has
-		// bytes to write. A theme that already pointed at a file on disk yields
-		// a `theming.logo` with no asset to create.
-		$logoAsset = null;
-		if ($logo !== null && $logo['contents'] !== null) {
-			$logoAsset = ['path' => $logo['path'], 'contents' => $logo['contents']];
-		}
+	/**
+	 * The converted set: the stylesheet, its manifest entry, the report and the logo file.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The emitted layers.
+	 * @param ConversionRun $run The finished conversion.
+	 *
+	 * @return array<string, mixed> The shape convert() returns.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 */
+	private function conversionResult(array $layers, ConversionRun $run): array {
+		$counts = $this->countActions(report: $run->report);
+		$source = $run->source();
 
 		return [
-			'css' => $css,
-			'imported' => $importedCount,
-			'manifestEntry' => $this->buildManifestEntry(
-				slug: $slug,
-				displayName: $displayName,
-				semantic: $semantic,
-				manifest: $manifest,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
-				logo: $logo
-			),
-			'report' => $report,
-			'inputKind' => $inputKind,
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: $run->inputKind, counts: $counts),
+			'imported' => $run->imported,
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $layers['semantic'], manifest: $run->manifest, logo: $run->logo),
+			'report' => $run->report,
+			'inputKind' => $run->inputKind,
 			'counts' => $counts,
-			'logoAsset' => $logoAsset,
+			'logoAsset' => $this->logoAsset(logo: $run->logo),
 			'importWarnings' => $this->importWarnings,
 			'errors' => $this->mapperErrors,
 		];
-	}//end convert()
+	}//end conversionResult()
+
+	/**
+	 * The logo file the caller has to write, or null.
+	 *
+	 * Only set when the logo was DECODED out of the theme, so the caller has bytes to write. A
+	 * theme that already pointed at a file on disk yields a `theming.logo` with no asset to create.
+	 *
+	 * @param array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null $logo The extracted logo.
+	 *
+	 * @return array{path: string, contents: string}|null
+	 */
+	private function logoAsset(?array $logo): ?array {
+		if ($logo === null || $logo['contents'] === null) {
+			return null;
+		}
+
+		return ['path' => $logo['path'], 'contents' => $logo['contents']];
+	}//end logoAsset()
 
 	/**
 	 * Whether a document is one thematiq itself exported: its root carries the
@@ -498,24 +567,14 @@ class TokenSetConverterService {
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
 	 * @param array<string, string> $declarations The mapped declarations.
-	 * @param string $slug The new set's slug.
-	 * @param string $displayName The new set's name.
-	 * @param string|null $sourceName The file name.
-	 * @param string|null $sourceVersion The document's package version.
+	 * @param SetSource $source The new set's slug and name, the file name and the document's package version.
 	 * @param array<int, array<string, mixed>> $report The report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(
-		array $declarations,
-		string $slug,
-		string $displayName,
-		?string $sourceName,
-		?string $sourceVersion,
-		array $report,
-	): array {
+	private function thematiqExportResult(array $declarations, array $source, array $report): array {
 		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
 
 		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
@@ -525,7 +584,7 @@ class TokenSetConverterService {
 			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
 		}
 
-		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $slug, report: $report);
+		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $source['slug'], report: $report);
 		$counts = $this->countActions(report: $report);
 		$manifest = [];
 		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
@@ -534,25 +593,9 @@ class TokenSetConverterService {
 		}
 
 		return [
-			'css' => $this->buildCss(
-				palette: $layers['palette'],
-				component: $layers['component'],
-				semantic: $layers['semantic'],
-				slug: $slug,
-				inputKind: 'B',
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion,
-				counts: $counts
-			),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: 'B', counts: $counts),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(
-				slug: $slug,
-				displayName: $displayName,
-				semantic: [],
-				manifest: $manifest,
-				sourceName: $sourceName,
-				sourceVersion: $sourceVersion
-			),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: [], manifest: $manifest),
 			'report' => $report,
 			'inputKind' => 'B',
 			'counts' => $counts,
@@ -839,15 +882,14 @@ class TokenSetConverterService {
 	 * @param array<mixed> $decoded The decoded JSON.
 	 * @param string $kind `B` or `C`.
 	 * @param string $slug The brand prefix for input C names.
-	 * @param string|null $version Set to the declared package version when the input carries one.
 	 * @param array<int, ReportEntry> $report The report, appended to by reference.
 	 *
-	 * @return array<string, string> Declaration name => value.
+	 * @return array{declarations: array<string, string>, version: string|null} Declaration name => value, and the
+	 *                                                                           package version when the input declares one.
 	 */
-	private function declarationsFromJson(array $decoded, string $kind, string $slug, ?string &$version, array &$report): array {
+	private function declarationsFromJson(array $decoded, string $kind, string $slug, array &$report): array {
 		if ($kind === 'B') {
 			$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
-			$version = $mapped['packageVersion'];
 			$this->importWarnings = $mapped['warnings'];
 			$this->mapperErrors = $mapped['errors'];
 
@@ -873,13 +915,12 @@ class TokenSetConverterService {
 				];
 			}
 
-			return $mapped['declarations'];
+			return ['declarations' => $mapped['declarations'], 'version' => $mapped['packageVersion']];
 		}
 
-		$declarations = [];
-		$this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug, declarations: $declarations);
+		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug);
 
-		return $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug);
+		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug), 'version' => null];
 	}//end declarationsFromJson()
 
 	/**
@@ -906,11 +947,8 @@ class TokenSetConverterService {
 			return null;
 		}
 
-		foreach (self::COMPONENT_PREFIXES as $prefix) {
-			$bare = trim($prefix, '-');
-			if (str_starts_with($joined, $bare . '-') === true) {
-				return '--' . $joined;
-			}
+		if ($this->hasComponentPrefix(name: '--' . $joined) === true) {
+			return '--' . $joined;
 		}
 
 		return '--' . $slug . '-' . $joined;
@@ -936,21 +974,30 @@ class TokenSetConverterService {
 		foreach ($declarations as $name => $value) {
 			$resolved[$name] = (string)preg_replace_callback(
 				'/\{([^{}]+)\}/',
-				function (array $match) use ($slug): string {
-					$target = $this->styleDictionaryName(path: explode('.', trim($match[1])), slug: $slug);
-
-					if ($target === null) {
-						return $match[0];
-					}
-
-					return 'var(' . $target . ')';
-				},
+				fn (array $match): string => $this->aliasReference(match: $match, slug: $slug),
 				$value
 			);
 		}
 
 		return $resolved;
 	}//end resolveStyleDictionaryAliases()
+
+	/**
+	 * One `{a.b.c}` alias as a var() of the custom property it names, or the alias unchanged.
+	 *
+	 * @param array<int, string> $match The whole alias and its dotted path.
+	 * @param string $slug The brand slug.
+	 *
+	 * @return string
+	 */
+	private function aliasReference(array $match, string $slug): string {
+		$target = $this->styleDictionaryName(path: explode('.', trim($match[1])), slug: $slug);
+		if ($target === null) {
+			return $match[0];
+		}
+
+		return 'var(' . $target . ')';
+	}//end aliasReference()
 
 	/**
 	 * Flatten a Style Dictionary tree into custom-property declarations.
@@ -964,32 +1011,31 @@ class TokenSetConverterService {
 	 * @param mixed $node The current node.
 	 * @param array<int, string> $path The path walked so far.
 	 * @param string $slug The brand prefix.
-	 * @param array<string, string> $declarations Collected declarations, by reference.
 	 * @param int $depth Current recursion depth.
 	 *
-	 * @return void
-	 *
+	 * @return array<string, string> The declarations under this node, in document order.
 	 */
-	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, array &$declarations, int $depth = 0): void {
+	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, int $depth = 0): array {
 		if (is_array($node) === false || $depth > 12) {
-			return;
+			return [];
 		}
 
 		if (array_key_exists('value', $node) === true && is_array($node['value']) === false) {
 			// A reference-only token (a Tokens Studio `source` set) is not part of the brand.
 			if (in_array(implode('.', $path), $this->referenceOnlyPaths, true) === true) {
-				return;
+				return [];
 			}
 
 			$prefixed = $this->styleDictionaryName(path: $path, slug: $slug);
 			if ($prefixed === null) {
-				return;
+				return [];
 			}
 
-			$declarations[$prefixed] = trim((string)$node['value']);
-
-			return;
+			return [$prefixed => trim((string)$node['value'])];
 		}
+
+		// A later leaf that gets the same name replaces the value and keeps the first one's place.
+		$declarations = [];
 
 		foreach ($node as $key => $child) {
 			// PHP turns a numeric key such as a palette step ("500") into an int; it is still a path segment.
@@ -998,14 +1044,13 @@ class TokenSetConverterService {
 				continue;
 			}
 
-			$this->collectStyleDictionaryLeaves(
-				node: $child,
-				path: array_merge($path, [$key]),
-				slug: $slug,
-				declarations: $declarations,
-				depth: ($depth + 1)
+			$declarations = array_replace(
+				$declarations,
+				$this->collectStyleDictionaryLeaves(node: $child, path: array_merge($path, [$key]), slug: $slug, depth: ($depth + 1))
 			);
 		}
+
+		return $declarations;
 	}//end collectStyleDictionaryLeaves()
 
 	/**
@@ -1024,13 +1069,7 @@ class TokenSetConverterService {
 
 		foreach ($declarations as $name => $value) {
 			if (preg_match('#url\(\s*[\'"]?(?:https?:)?//#i', $value) === 1) {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => 'external-url-blocked',
-					'value' => null,
-				];
+				$report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', 'external-url-blocked', null]);
 				continue;
 			}
 
@@ -1056,16 +1095,10 @@ class TokenSetConverterService {
 		$resolved = [];
 
 		foreach ($declarations as $name => $value) {
-			$literal = $this->resolveValue(value: $value, declarations: $declarations, seen: [$name => true], depth: 0);
+			$literal = $this->resolveValue(value: $value, chain: ['declarations' => $declarations, 'seen' => [$name => true], 'depth' => 0]);
 
 			if ($literal === null) {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => 'unresolved-var',
-					'value' => $value,
-				];
+				$report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', 'unresolved-var', $value]);
 				continue;
 			}
 
@@ -1079,54 +1112,26 @@ class TokenSetConverterService {
 	 * Resolve one value's `var()` references to a literal.
 	 *
 	 * @param string $value The raw value.
-	 * @param array<string, string> $declarations The full declaration map.
-	 * @param array<string, bool> $seen Names already on this chain (cycle guard).
-	 * @param int $depth Current depth.
+	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The resolution chain.
 	 *
 	 * @return string|null The literal value, or null when a reference cannot be resolved.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per value form the table accepts (literal, reference, alias, function).
 	 */
-	private function resolveValue(string $value, array $declarations, array $seen, int $depth): ?string {
+	private function resolveValue(string $value, array $chain): ?string {
 		if (str_contains($value, 'var(') === false) {
 			return trim($value);
 		}
 
-		if ($depth >= self::MAX_VAR_DEPTH) {
+		if ($chain['depth'] >= self::MAX_VAR_DEPTH) {
 			return null;
 		}
 
 		$failed = false;
 		$result = preg_replace_callback(
 			'/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\)[^()]*)*))?\)/',
-			function (array $match) use ($declarations, $seen, $depth, &$failed): string {
-				$reference = $match[1];
-				$fallback = ($match[2] ?? null);
-
-				if (isset($seen[$reference]) === false && array_key_exists($reference, $declarations) === true) {
-					$inner = $this->resolveValue(
-						value: $declarations[$reference],
-						declarations: $declarations,
-						seen: array_merge($seen, [$reference => true]),
-						depth: ($depth + 1)
-					);
-
-					if ($inner !== null) {
-						return $inner;
-					}
-				}
-
-				if ($fallback !== null && trim($fallback) !== '') {
-					$inner = $this->resolveValue(
-						value: trim($fallback),
-						declarations: $declarations,
-						seen: $seen,
-						depth: ($depth + 1)
-					);
-
-					if ($inner !== null) {
-						return $inner;
-					}
+			function (array $match) use ($chain, &$failed): string {
+				$inner = $this->resolveReference(match: $match, chain: $chain);
+				if ($inner !== null) {
+					return $inner;
 				}
 
 				$failed = true;
@@ -1142,6 +1147,32 @@ class TokenSetConverterService {
 
 		return trim($result);
 	}//end resolveValue()
+
+	/**
+	 * One `var()` reference resolved: the declared token when it resolves, else the fallback.
+	 *
+	 * @param array<int, string> $match The reference name and, when given, the fallback.
+	 * @param array{declarations: array<string, string>, seen: array<string, bool>, depth: int} $chain The chain so far.
+	 *
+	 * @return string|null The literal, or null when neither resolves.
+	 */
+	private function resolveReference(array $match, array $chain): ?string {
+		$reference = $match[1];
+		if (isset($chain['seen'][$reference]) === false && array_key_exists($reference, $chain['declarations']) === true) {
+			$deeper = ['seen' => array_merge($chain['seen'], [$reference => true]), 'depth' => ($chain['depth'] + 1)] + $chain;
+			$inner = $this->resolveValue(value: $chain['declarations'][$reference], chain: $deeper);
+			if ($inner !== null) {
+				return $inner;
+			}
+		}
+
+		$fallback = ($match[2] ?? null);
+		if ($fallback === null || trim($fallback) === '') {
+			return null;
+		}
+
+		return $this->resolveValue(value: trim($fallback), chain: ['depth' => ($chain['depth'] + 1)] + $chain);
+	}//end resolveReference()
 
 	/**
 	 * Lift the theme's logo out of the declarations and into a writable asset.
@@ -1160,79 +1191,117 @@ class TokenSetConverterService {
 	 * Returns the extracted logo, or null when the theme declares none.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string $slug The brand slug, substituted for `{p}`.
-	 * @param string $assetName Base name for the written file, without extension.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion: the slug substituted for `{p}`, the base name for the written
+	 *                           file and the report.
 	 *
 	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
 	 */
-	private function extractLogo(array $declarations, string $slug, string $assetName, array &$report): ?array {
+	private function extractLogo(array $declarations, ConversionRun $run): ?array {
 		$spec = ($this->table()['logo'] ?? null);
 		if (is_array($spec) === false) {
 			return null;
 		}
 
-		foreach ($this->logoCandidates(declarations: $declarations, slug: $slug, spec: $spec) as $name) {
-			$value = $declarations[$name];
-
-			$target = null;
-			if (preg_match('/url\(\s*([\'"]?)(.*?)\1\s*\)/is', $value, $matches) === 1) {
-				$target = trim($matches[2]);
+		foreach ($this->logoCandidates(declarations: $declarations, slug: $run->slug, spec: $spec) as $name) {
+			$logo = $this->logoFrom(step: ['name' => $name, 'declarations' => $declarations, 'spec' => $spec], run: $run);
+			if ($logo !== null) {
+				return $logo;
 			}
-
-			if ($target === null || $target === '' || strcasecmp($target, 'none') === 0) {
-				continue;
-			}
-
-			$decoded = $this->decodeLogoUri(uri: $target, spec: $spec);
-
-			if ($decoded === null) {
-				// A local path the theme already resolved: keep it, no bytes.
-				$path = $this->localLogoPath(target: $target, spec: $spec);
-				if ($path === null) {
-					$report[] = [
-						'source' => $name,
-						'target' => '--nldesign-logo-url',
-						'action' => 'skipped',
-						'reason' => 'logo-format-unsupported',
-						'value' => $this->logoValueLabel(value: $value),
-					];
-					continue;
-				}
-
-				return [
-					'source' => $name,
-					'aliases' => $this->logoAliases(declarations: $declarations, source: $name, value: $value),
-					'path' => $path,
-					'css' => "url('../../" . $path . "')",
-					'contents' => null,
-				];
-			}//end if
-
-			$path = (string)$spec['directory'] . '/' . $assetName . '.' . $decoded['extension'];
-
-			$report[] = [
-				'source' => $name,
-				'target' => '--nldesign-logo-url',
-				'action' => 'applied',
-				'reason' => (string)($spec['reason'] ?? 'logo-extracted'),
-				'value' => $path,
-			];
-
-			return [
-				'source' => $name,
-				'aliases' => $this->logoAliases(declarations: $declarations, source: $name, value: $value),
-				'path' => $path,
-				'css' => "url('../../" . $path . "')",
-				'contents' => $decoded['contents'],
-			];
-		}//end foreach
+		}
 
 		return null;
 	}//end extractLogo()
+
+	/**
+	 * The logo one candidate declaration carries, or null to try the next.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>} $step The candidate,
+	 *                                                                                                   the declarations and the table's logo spec.
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
+	 */
+	private function logoFrom(array $step, ConversionRun $run): ?array {
+		$target = $this->logoTarget(value: $step['declarations'][$step['name']]);
+		if ($target === null) {
+			return null;
+		}
+
+		$decoded = $this->decodeLogoUri(uri: $target, spec: $step['spec']);
+		if ($decoded === null) {
+			return $this->localLogo(step: $step + ['target' => $target], run: $run);
+		}
+
+		$path = (string)$step['spec']['directory'] . '/' . $run->assetName . '.' . $decoded['extension'];
+		$reason = (string)($step['spec']['reason'] ?? 'logo-extracted');
+		$run->report[] = $this->reportEntry(route: [$step['name'], '--nldesign-logo-url'], outcome: ['applied', $reason, $path]);
+
+		return $this->logoResult(step: $step, file: ['path' => $path, 'contents' => $decoded['contents']]);
+	}//end logoFrom()
+
+	/**
+	 * The address inside a declaration's url(), or null when it holds none.
+	 *
+	 * @param string $value The declaration's value.
+	 *
+	 * @return string|null
+	 */
+	private function logoTarget(string $value): ?string {
+		if (preg_match('/url\(\s*([\'"]?)(.*?)\1\s*\)/is', $value, $matches) !== 1) {
+			return null;
+		}
+
+		$target = trim($matches[2]);
+		if ($target === '' || strcasecmp($target, 'none') === 0) {
+			return null;
+		}
+
+		return $target;
+	}//end logoTarget()
+
+	/**
+	 * A logo the theme already resolved to a local path: kept, no bytes. Reported and skipped
+	 * when the path is not one the table accepts.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>, target: string} $step The candidate and its address.
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
+	 */
+	private function localLogo(array $step, ConversionRun $run): ?array {
+		$path = $this->localLogoPath(target: $step['target'], spec: $step['spec']);
+		if ($path !== null) {
+			return $this->logoResult(step: $step, file: ['path' => $path, 'contents' => null]);
+		}
+
+		$label = $this->logoValueLabel(value: $step['declarations'][$step['name']]);
+		$run->report[] = $this->reportEntry(route: [$step['name'], '--nldesign-logo-url'], outcome: ['skipped', 'logo-format-unsupported', $label]);
+
+		return null;
+	}//end localLogo()
+
+	/**
+	 * The extracted logo: its source token, the tokens that repeat it, the file and its stylesheet reference.
+	 *
+	 * @param array{name: string, declarations: array<string, string>, spec: array<string, mixed>, target?: string} $step The candidate.
+	 * @param array{path: string, contents: string|null} $file The logo file's path and its bytes, when decoded.
+	 *
+	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}
+	 */
+	private function logoResult(array $step, array $file): array {
+		$value = $step['declarations'][$step['name']];
+
+		return [
+			'source' => $step['name'],
+			'aliases' => $this->logoAliases(declarations: $step['declarations'], source: $step['name'], value: $value),
+			'path' => $file['path'],
+			'css' => "url('../../" . $file['path'] . "')",
+			'contents' => $file['contents'],
+		];
+	}//end logoResult()
 
 	/**
 	 * The logo tokens to try, in the table's priority order.
@@ -1388,172 +1457,223 @@ class TokenSetConverterService {
 	 * semantic sections, applying the table's `never` policy on the way.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
-	 * @param string $slug The brand slug.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion; its report is appended to.
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
-	 *   specification of what goes where.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per declaration shape the three emitted sections accept; the branches are the
-	 *   specification of what goes where.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - one branch per declaration shape the three emitted sections accept; the branches are
-	 *   the specification of what goes where.
 	 */
-	private function classify(array $declarations, string $slug, array &$report): array {
-		$palette = [];
-		$component = [];
-		$semantic = [];
-
-		$ruleTargets = $this->ruleTargets(slug: $slug);
+	private function classify(array $declarations, ConversionRun $run): array {
+		$run->sections = ['palette' => [], 'component' => [], 'semantic' => []];
+		$run->ruleTargets = $this->ruleTargets(slug: $run->slug);
 
 		foreach ($declarations as $name => $value) {
-			$policy = $this->policyFor(name: $name, slug: $slug);
+			$this->classifyOne(run: $run, declaration: [$name, $value]);
+		}
 
-			if ($policy !== null && ($policy['action'] ?? '') === 'skip') {
-				$report[] = [
-					'source' => $name,
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => (string)$policy['reason'],
-					'value' => $value,
-				];
-				continue;
-			}
-
-			// A real semantic token: input D's hand-authored value, which add-only
-			// re-conversion must not overwrite. Checked before the role, because an
-			// app name such as `--nldesign-animation-quick` or
-			// `--nldesign-header-border-bottom` has a component-shaped role too, and
-			// moving it under the brand prefix changed a value the set had chosen.
-			if (str_starts_with($name, '--nldesign-') === true
-				&& (isset($this->vocabulary()[$name]) === true || isset($ruleTargets['targets'][$name]) === true)
-			) {
-				$semantic[$name] = $value;
-				$report[] = [
-					'source' => $name,
-					'target' => $name,
-					'action' => 'kept',
-					'reason' => 'kept-existing-value',
-					'value' => $value,
-				];
-				continue;
-			}
-
-			// Component or palette is decided by the ROLE, not the prefix: a
-			// theme using an unknown namespace still names the job in the name,
-			// and everything that is not one of the value scales is a component
-			// token that has to survive verbatim.
-			$role = $this->roleOf(name: $name);
-			$isComponent = ($role !== '' && $this->isPaletteRole(role: $role) === false);
-
-			if ($isComponent === true) {
-				// The prefix decides only what it is CALLED. A recognised design
-				// system prefix is kept as-is, because `utrecht-bridge.css` and
-				// Conduction's apps read those exact names; an unfamiliar prefix
-				// is moved under the set's own, keeping the role intact, so the
-				// emitted file carries one namespace the validator accepts
-				// instead of a vendor name nothing in this app knows.
-				$emitted = $name;
-				$isKnownPrefix = false;
-				foreach (self::COMPONENT_PREFIXES as $prefix) {
-					if (str_starts_with($name, $prefix) === true) {
-						$isKnownPrefix = true;
-						break;
-					}
-				}
-
-				if ($isKnownPrefix === false) {
-					$emitted = '--' . $slug . '-' . $role;
-				}
-
-				$component[$emitted] = $value;
-
-				if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
-					$report[] = [
-						'source' => $name,
-						'target' => $emitted,
-						'action' => 'kept',
-						'reason' => (string)$policy['reason'],
-						'value' => $value,
-					];
-					continue;
-				}
-
-				// A component token a rule consumes is reported by runRules() as
-				// `applied`; one no rule names is still emitted for the NLDS
-				// components that read it, and named here so the mapping table
-				// can be extended. Checked by role as well as by name, because
-				// that is how runRules() resolves its sources.
-				if (isset($ruleTargets['sources'][$name]) === false
-					&& isset($ruleTargets['roles'][$role]) === false
-				) {
-					$report[] = [
-						'source' => $name,
-						'target' => $emitted,
-						'action' => 'kept',
-						'reason' => 'unmapped',
-						'value' => $value,
-					];
-				}
-
-				continue;
-			}//end if
-
-			if (str_starts_with($name, '--nldesign-') === true) {
-				// A raw upstream palette step dumped under the app's prefix,
-				// where it masquerades as app vocabulary while nothing can read
-				// it. Moved to the brand prefix, where the semantic layer can.
-				$renamed = '--' . $slug . '-' . substr($name, strlen('--nldesign-'));
-				$palette[$renamed] = $value;
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'adapted',
-					'reason' => 'palette-reprefixed',
-					'value' => $value,
-				];
-				continue;
-			}//end if
-
-			// Everything else is brand palette. Names already under the slug keep
-			// their name; a theme using its own prefix is re-namespaced so one
-			// set never carries two vocabularies.
-			$renamed = $name;
-			if (str_starts_with($name, '--' . $slug . '-') === false) {
-				$renamed = '--' . $slug . '-' . $role;
-			}
-
-			$palette[$renamed] = $value;
-
-			if ($policy !== null && ($policy['action'] ?? '') === 'keep') {
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'kept',
-					'reason' => (string)$policy['reason'],
-					'value' => $value,
-				];
-				continue;
-			}
-
-			if (isset($ruleTargets['sources'][$name]) === false) {
-				$report[] = [
-					'source' => $name,
-					'target' => $renamed,
-					'action' => 'kept',
-					'reason' => 'unmapped',
-					'value' => $value,
-				];
-			}
-		}//end foreach
-
-		return [
-			'palette' => $palette,
-			'component' => $component,
-			'semantic' => $semantic,
-		];
+		return $run->sections;
 	}//end classify()
+
+	/**
+	 * Put one declaration in its section and report what happened to it.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return void
+	 */
+	private function classifyOne(ConversionRun $run, array $declaration): void {
+		[$name, $value] = $declaration;
+		$policy = $this->policyFor(name: $name, slug: $run->slug);
+		if ($this->skippedByPolicy(run: $run, declaration: [$name, $value, $policy]) === true
+			|| $this->keptSemantic(run: $run, declaration: $declaration) === true
+		) {
+			return;
+		}
+
+		// Component or palette is decided by the ROLE, not the prefix: a
+		// theme using an unknown namespace still names the job in the name,
+		// and everything that is not one of the value scales is a component
+		// token that has to survive verbatim.
+		$role = $this->roleOf(name: $name);
+		if ($role !== '' && $this->isPaletteRole(role: $role) === false) {
+			$this->classifyComponent(run: $run, declaration: [$name, $value, $role, $policy]);
+			return;
+		}
+
+		$this->classifyPalette(run: $run, declaration: [$name, $value, $role, $policy]);
+	}//end classifyOne()
+
+	/**
+	 * Report a declaration the table's `skip` policy drops, and say whether it was one.
+	 *
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 * @param array{0: string, 1: string, 2: array<string, mixed>|null} $declaration The name, the value and the policy.
+	 *
+	 * @return bool True when the declaration is dropped.
+	 */
+	private function skippedByPolicy(ConversionRun $run, array $declaration): bool {
+		[$name, $value, $policy] = $declaration;
+		if ($policy === null || ($policy['action'] ?? '') !== 'skip') {
+			return false;
+		}
+
+		$run->report[] = $this->reportEntry(route: [$name, ''], outcome: ['skipped', (string)$policy['reason'], $value]);
+		return true;
+	}//end skippedByPolicy()
+
+	/**
+	 * Keep a real semantic token as it is, and say whether the declaration was one.
+	 *
+	 * Input D's hand-authored value, which add-only re-conversion must not overwrite. Checked
+	 * before the role, because an app name such as `--nldesign-animation-quick` or
+	 * `--nldesign-header-border-bottom` has a component-shaped role too, and moving it under
+	 * the brand prefix changed a value the set had chosen.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return bool True when the declaration went to the semantic section.
+	 */
+	private function keptSemantic(ConversionRun $run, array $declaration): bool {
+		[$name, $value] = $declaration;
+		if (str_starts_with($name, '--nldesign-') === false
+			|| (isset($this->vocabulary()[$name]) === false && isset($run->ruleTargets['targets'][$name]) === false)
+		) {
+			return false;
+		}
+
+		$run->sections['semantic'][$name] = $value;
+		$run->report[] = $this->reportEntry(route: [$name, $name], outcome: ['kept', 'kept-existing-value', $value]);
+		return true;
+	}//end keptSemantic()
+
+	/**
+	 * Put a component token in the component section, under its own name or the set's prefix.
+	 *
+	 * The prefix decides only what it is CALLED. A recognised design system prefix is kept
+	 * as-is, because `utrecht-bridge.css` and Conduction's apps read those exact names; an
+	 * unfamiliar prefix is moved under the set's own, keeping the role intact, so the emitted
+	 * file carries one namespace the validator accepts instead of a vendor name nothing in
+	 * this app knows.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string, 2: string, 3: array<string, mixed>|null} $declaration The name, value, role and policy.
+	 *
+	 * @return void
+	 */
+	private function classifyComponent(ConversionRun $run, array $declaration): void {
+		[$name, $value, $role, $policy] = $declaration;
+		$emitted = $name;
+		if ($this->hasComponentPrefix(name: $name) === false) {
+			$emitted = '--' . $run->slug . '-' . $role;
+		}
+
+		$run->sections['component'][$emitted] = $value;
+
+		// A component token a rule consumes is reported by runRules() as
+		// `applied`; one no rule names is still emitted for the NLDS
+		// components that read it, and named here so the mapping table
+		// can be extended. Checked by role as well as by name, because
+		// that is how runRules() resolves its sources.
+		$mapped = (isset($run->ruleTargets['sources'][$name]) === true || isset($run->ruleTargets['roles'][$role]) === true);
+		$this->reportKept(kept: ['route' => [$name, $emitted], 'value' => $value, 'policy' => $policy, 'mapped' => $mapped], run: $run);
+	}//end classifyComponent()
+
+	/**
+	 * Put a palette token in the brand palette, under the set's prefix.
+	 *
+	 * A raw upstream palette step dumped under the app's prefix masquerades as app vocabulary
+	 * while nothing can read it, so it moves to the brand prefix, where the semantic layer
+	 * can. Names already under the slug keep their name; a theme using its own prefix is
+	 * re-namespaced so one set never carries two vocabularies.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string, 2: string, 3: array<string, mixed>|null} $declaration The name, value, role and policy.
+	 *
+	 * @return void
+	 */
+	private function classifyPalette(ConversionRun $run, array $declaration): void {
+		[$name, $value, $role, $policy] = $declaration;
+		if ($this->reprefixedPalette(run: $run, declaration: [$name, $value]) === true) {
+			return;
+		}
+
+		$renamed = $name;
+		if (str_starts_with($name, '--' . $run->slug . '-') === false) {
+			$renamed = '--' . $run->slug . '-' . $role;
+		}
+
+		$run->sections['palette'][$renamed] = $value;
+		$mapped = isset($run->ruleTargets['sources'][$name]);
+		$this->reportKept(kept: ['route' => [$name, $renamed], 'value' => $value, 'policy' => $policy, 'mapped' => $mapped], run: $run);
+	}//end classifyPalette()
+
+	/**
+	 * Report a token kept in its section: under its `keep` policy's reason, else as unmapped when no rule names it.
+	 *
+	 * @param array{route: array{0: string, 1: string}, value: string, policy: array<string, mixed>|null, mapped: bool} $kept The kept token.
+	 * @param ConversionRun $run The conversion; gets the report entry.
+	 *
+	 * @return void
+	 */
+	private function reportKept(array $kept, ConversionRun $run): void {
+		if ($kept['policy'] !== null && ($kept['policy']['action'] ?? '') === 'keep') {
+			$run->report[] = $this->reportEntry(route: $kept['route'], outcome: ['kept', (string)$kept['policy']['reason'], $kept['value']]);
+			return;
+		}
+
+		if ($kept['mapped'] === false) {
+			$run->report[] = $this->reportEntry(route: $kept['route'], outcome: ['kept', 'unmapped', $kept['value']]);
+		}
+	}//end reportKept()
+
+	/**
+	 * Move a palette step dumped under the app's own prefix to the brand prefix, and say whether it was one.
+	 *
+	 * @param ConversionRun $run The conversion.
+	 * @param array{0: string, 1: string} $declaration The name and the value.
+	 *
+	 * @return bool True when the declaration carried the app's prefix.
+	 */
+	private function reprefixedPalette(ConversionRun $run, array $declaration): bool {
+		[$name, $value] = $declaration;
+		if (str_starts_with($name, '--nldesign-') === false) {
+			return false;
+		}
+
+		$renamed = '--' . $run->slug . '-' . substr($name, strlen('--nldesign-'));
+		$run->sections['palette'][$renamed] = $value;
+		$run->report[] = $this->reportEntry(route: [$name, $renamed], outcome: ['adapted', 'palette-reprefixed', $value]);
+		return true;
+	}//end reprefixedPalette()
+
+	/**
+	 * Whether a component token carries one of the design system prefixes kept verbatim.
+	 *
+	 * @param string $name The token.
+	 *
+	 * @return bool
+	 */
+	private function hasComponentPrefix(string $name): bool {
+		foreach (self::COMPONENT_PREFIXES as $prefix) {
+			if (str_starts_with($name, $prefix) === true) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end hasComponentPrefix()
+
+	/**
+	 * One report entry.
+	 *
+	 * @param array{0: string, 1: string} $route The source token and the target it went to ('' when dropped).
+	 * @param array{0: string, 1: string, 2: string|null} $outcome The action, the reason code and the value.
+	 *
+	 * @return array{source: string, target: string, action: string, reason: string, value: string|null}
+	 */
+	private function reportEntry(array $route, array $outcome): array {
+		return ['source' => $route[0], 'target' => $route[1], 'action' => $outcome[0], 'reason' => $outcome[1], 'value' => $outcome[2]];
+	}//end reportEntry()
 
 	/**
 	 * Every rule target and every named source, for O(1) lookups.
@@ -1608,18 +1728,29 @@ class TokenSetConverterService {
 
 		$names = [];
 		foreach ($this->vocabularyFiles(directory: $this->appManager->getAppPath('thematiq') . '/css') as $path) {
-			$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents($path));
-			if (preg_match_all('/(--nldesign-[\w-]+)/', $css, $matches) > 0) {
-				foreach ($matches[1] as $name) {
-					$names[$name] = true;
-				}
-			}
+			$names += $this->vocabularyIn(path: $path);
 		}
 
 		$this->knownVocabulary = $names;
 
 		return $this->knownVocabulary;
 	}//end vocabulary()
+
+	/**
+	 * The `--nldesign-*` names one stylesheet uses outside its comments.
+	 *
+	 * @param string $path The stylesheet.
+	 *
+	 * @return array<string, true> Name => true.
+	 */
+	private function vocabularyIn(string $path): array {
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', (string)file_get_contents($path));
+		if (preg_match_all('/(--nldesign-[\w-]+)/', $css, $matches) === 0) {
+			return [];
+		}
+
+		return array_fill_keys($matches[1], true);
+	}//end vocabularyIn()
 
 	/**
 	 * Every stylesheet under a directory, skipping `tokens/` and the runtime files, sorted.
@@ -1819,125 +1950,183 @@ class TokenSetConverterService {
 	 * fallback runs and the entry is `adapted`, never `applied` — an admin has
 	 * to be able to tell the theme's own value from one this app invented.
 	 *
-	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $existing Values the input already declared (input D wins).
-	 * @param string $slug The brand slug.
-	 * @param array<string, string> $manifest Manifest targets, written by reference.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
+	 * @param ConversionRun $run The conversion: its semantic section is the start (input D wins), and it gets
+	 *                           the manifest targets and the report entries.
 	 *
 	 * @return array<string, string> The semantic layer.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
-	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest target and
-	 *   report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
-	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - the rule walker is the table interpreter: source lookup, fallback, guard, manifest
-	 *   target and report entry are one pass per rule, and rules must stay ordered because later ones read earlier targets.
 	 */
-	private function runRules(array $declarations, array $existing, string $slug, array &$manifest, array &$report): array {
-		$semantic = $existing;
-		$manifest = [];
+	private function runRules(array $input, ConversionRun $run): array {
+		$run->ruleInput = $input;
+		$run->semantic = $run->sections['semantic'];
+		$run->manifest = [];
 
 		foreach ($this->table()['rules'] as $rule) {
-			$target = (string)($rule['target'] ?? '');
-			if ($target === '') {
-				continue;
+			$entry = $this->ruleEntry(rule: $rule, run: $run);
+			if ($entry !== null) {
+				$this->recordRule(entry: $entry, run: $run);
 			}
+		}
 
-			$isManifest = str_starts_with($target, 'manifest:');
-
-			// Add-only: a value the set already carries is never recomputed.
-			if ($isManifest === false && array_key_exists($target, $semantic) === true) {
-				continue;
-			}
-
-			if (isset($rule['when']) === true && $this->whenSatisfied(when: $rule['when'], semantic: $semantic) === false) {
-				continue;
-			}
-
-			$value = null;
-			$action = 'applied';
-			$reason = null;
-			if (isset($rule['reason']) === true) {
-				$reason = (string)$rule['reason'];
-			}
-
-			$sourceName = '';
-
-			$byRole = $this->indexByRole(declarations: $declarations);
-			$declared = $this->firstDeclaredSource(rule: $rule, declarations: $declarations, byRole: $byRole, slug: $slug);
-			if ($declared !== null) {
-				$value = $declared['value'];
-				$sourceName = $declared['source'];
-			}
-
-			if ($value === null) {
-				$derived = $this->applyFallback(
-					fallback: ($rule['fallback'] ?? null),
-					semantic: $semantic,
-					declarations: $declarations
-				);
-
-				if ($derived === null) {
-					continue;
-				}
-
-				$value = $derived['value'];
-				$action = 'adapted';
-				$sourceName = $derived['source'];
-				if ($reason === null) {
-					$reason = $derived['reason'];
-				}
-			}
-
-			if (isset($rule['transform']) === true && $sourceName !== '' && $action === 'applied') {
-				$value = $this->transform(
-					kind: (string)$rule['transform'],
-					value: $value,
-					args: ($rule['args'] ?? []),
-					semantic: $semantic
-				);
-			}
-
-			$entry = [
-				'source' => $sourceName,
-				'target' => $target,
-				'action' => $action,
-				'reason' => $reason,
-				'value' => $value,
-			];
-
-			if (isset($rule['guard']) === true) {
-				$guarded = $this->applyGuard(
-					guard: $rule['guard'],
-					value: $value,
-					semantic: $this->guardSemantic(guard: $rule['guard'], semantic: $semantic, declarations: $declarations, byRole: $byRole, slug: $slug)
-				);
-				if ($guarded['value'] !== $value) {
-					$entry['original'] = $value;
-					$entry['action'] = 'adapted';
-					$value = $guarded['value'];
-					$entry['value'] = $value;
-				}
-
-				if ($guarded['reason'] !== null) {
-					$entry['reason'] = $guarded['reason'];
-				}
-			}
-
-			if ($isManifest === true) {
-				$manifest[substr($target, strlen('manifest:'))] = $value;
-			}
-
-			if ($isManifest === false) {
-				$semantic[$target] = $value;
-			}
-
-			$report[] = $entry;
-		}//end foreach
-
-		return $semantic;
+		return $run->semantic;
 	}//end runRules()
+
+	/**
+	 * The report entry one rule produces, or null when the rule does not apply or finds no value.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function ruleEntry(array $rule, ConversionRun $run): ?array {
+		if ($this->ruleApplies(rule: $rule, run: $run) === false) {
+			return null;
+		}
+
+		$entry = $this->ruleValue(rule: $rule, run: $run);
+		if ($entry === null || isset($rule['guard']) === false) {
+			return $entry;
+		}
+
+		return $this->guardedEntry(step: ['rule' => $rule, 'entry' => $entry], run: $run);
+	}//end ruleEntry()
+
+	/**
+	 * Whether a rule has a target this run may still fill, and its condition holds.
+	 *
+	 * Add-only: a value the set already carries is never recomputed.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return bool
+	 */
+	private function ruleApplies(array $rule, ConversionRun $run): bool {
+		$target = (string)($rule['target'] ?? '');
+		if ($target === '') {
+			return false;
+		}
+
+		if (str_starts_with($target, 'manifest:') === false && array_key_exists($target, $run->semantic) === true) {
+			return false;
+		}
+
+		return (isset($rule['when']) === false || $this->whenSatisfied(when: $rule['when'], semantic: $run->semantic) === true);
+	}//end ruleApplies()
+
+	/**
+	 * A rule's value: the first source the input declares, else the fallback, then its transform.
+	 *
+	 * @param array<string, mixed> $rule The table rule.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null The report entry, or null when neither a source nor the fallback gives a value.
+	 */
+	private function ruleValue(array $rule, ConversionRun $run): ?array {
+		$entry = [
+			'source' => '',
+			'target' => (string)$rule['target'],
+			'action' => 'applied',
+			'reason' => null,
+			'value' => null,
+		];
+
+		if (isset($rule['reason']) === true) {
+			$entry['reason'] = (string)$rule['reason'];
+		}
+
+		$declared = $this->firstDeclaredSource(rule: $rule, input: $run->ruleInput);
+		if ($declared !== null) {
+			$entry['value'] = $declared['value'];
+			$entry['source'] = $declared['source'];
+		}
+
+		if ($entry['value'] === null) {
+			return $this->fallbackEntry(step: ['rule' => $rule, 'entry' => $entry], run: $run);
+		}
+
+		if (isset($rule['transform']) === true && $entry['source'] !== '') {
+			$entry['value'] = $this->transform(
+				kind: (string)$rule['transform'],
+				value: $entry['value'],
+				args: ($rule['args'] ?? []),
+				semantic: $run->semantic
+			);
+		}
+
+		return $entry;
+	}//end ruleValue()
+
+	/**
+	 * A rule's entry from its fallback, `adapted`, or null when the fallback gives nothing.
+	 *
+	 * @param array{rule: array<string, mixed>, entry: array<string, mixed>} $step The rule and its entry so far.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function fallbackEntry(array $step, ConversionRun $run): ?array {
+		$fallback = ($step['rule']['fallback'] ?? null);
+		$derived = $this->applyFallback(fallback: $fallback, semantic: $run->semantic, declarations: $run->ruleInput['declarations']);
+		if ($derived === null) {
+			return null;
+		}
+
+		$entry = $step['entry'];
+		$entry['value'] = $derived['value'];
+		$entry['action'] = 'adapted';
+		$entry['source'] = $derived['source'];
+		$entry['reason'] = ($entry['reason'] ?? $derived['reason']);
+
+		return $entry;
+	}//end fallbackEntry()
+
+	/**
+	 * A rule's entry after its guard: the guarded value, `adapted` when the guard changed it.
+	 *
+	 * @param array{rule: array<string, mixed>, entry: array<string, mixed>} $step The rule and its entry so far.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function guardedEntry(array $step, ConversionRun $run): array {
+		[$rule, $entry] = [$step['rule'], $step['entry']];
+		$against = $this->guardSemantic(guard: $rule['guard'], semantic: $run->semantic, input: $run->ruleInput);
+		$guarded = $this->applyGuard(guard: $rule['guard'], value: $entry['value'], semantic: $against);
+		if ($guarded['value'] !== $entry['value']) {
+			$entry['original'] = $entry['value'];
+			$entry['action'] = 'adapted';
+			$entry['value'] = $guarded['value'];
+		}
+
+		if ($guarded['reason'] !== null) {
+			$entry['reason'] = $guarded['reason'];
+		}
+
+		return $entry;
+	}//end guardedEntry()
+
+	/**
+	 * Write a rule's value to the manifest or the semantic layer, and report it.
+	 *
+	 * @param array<string, mixed> $entry The rule's report entry.
+	 * @param ConversionRun $run The conversion so far.
+	 *
+	 * @return void
+	 */
+	private function recordRule(array $entry, ConversionRun $run): void {
+		$target = (string)$entry['target'];
+		if (str_starts_with($target, 'manifest:') === true) {
+			$run->manifest[substr($target, strlen('manifest:'))] = $entry['value'];
+		}
+
+		if (str_starts_with($target, 'manifest:') === false) {
+			$run->semantic[$target] = $entry['value'];
+		}
+
+		$run->report[] = $entry;
+	}//end recordRule()
 
 	/**
 	 * The first of a rule's sources the input declares, by name or by role.
@@ -1948,25 +2137,23 @@ class TokenSetConverterService {
 	 * Mirrors `firstDeclaredSource()` in js/lib/tokenConverter.js.
 	 *
 	 * @param array<string, mixed> $rule The table rule.
-	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $byRole The input indexed by role.
-	 * @param string $slug The brand slug.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 *
 	 * @return array{value: string, source: string}|null The value and where it came from, or null.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
-	private function firstDeclaredSource(array $rule, array $declarations, array $byRole, string $slug): ?array {
+	private function firstDeclaredSource(array $rule, array $input): ?array {
 		foreach (($rule['sources'] ?? []) as $candidate) {
-			$concrete = $this->withSlug(name: (string)$candidate, slug: $slug);
+			$concrete = $this->withSlug(name: (string)$candidate, slug: $input['slug']);
 
-			if (array_key_exists($concrete, $declarations) === true) {
-				return ['value' => $declarations[$concrete], 'source' => $concrete];
+			if (array_key_exists($concrete, $input['declarations']) === true) {
+				return ['value' => $input['declarations'][$concrete], 'source' => $concrete];
 			}
 
 			$role = $this->roleOf(name: $concrete);
-			if ($role !== '' && array_key_exists($role, $byRole) === true) {
-				return ['value' => $byRole[$role], 'source' => $role . ' (by role)'];
+			if ($role !== '' && array_key_exists($role, $input['byRole']) === true) {
+				return ['value' => $input['byRole'][$role], 'source' => $role . ' (by role)'];
 			}
 		}
 
@@ -1984,15 +2171,13 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, mixed> $guard The rule's guard.
 	 * @param array<string, string> $semantic The semantic layer so far.
-	 * @param array<string, string> $declarations The resolved input.
-	 * @param array<string, string> $byRole The input indexed by role.
-	 * @param string $slug The brand slug.
+	 * @param RuleInput $input The resolved input, the same input indexed by role, and the brand slug.
 	 *
 	 * @return array<string, string> The semantic layer, with the partner filled in when the theme declares it.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
-	private function guardSemantic(array $guard, array $semantic, array $declarations, array $byRole, string $slug): array {
+	private function guardSemantic(array $guard, array $semantic, array $input): array {
 		$against = (string)($guard['against'] ?? '');
 		if (($guard['kind'] ?? '') !== 'contrast' || $against === '' || array_key_exists($against, $semantic) === true) {
 			return $semantic;
@@ -2003,7 +2188,7 @@ class TokenSetConverterService {
 				continue;
 			}
 
-			$declared = $this->firstDeclaredSource(rule: $partner, declarations: $declarations, byRole: $byRole, slug: $slug);
+			$declared = $this->firstDeclaredSource(rule: $partner, input: $input);
 			if ($declared !== null) {
 				$semantic[$against] = $declared['value'];
 			}
@@ -2132,11 +2317,7 @@ class TokenSetConverterService {
 		if ($ramp === []) {
 			// A theme with no neutral greys still needs a body text and a border
 			// colour: the table's default, not a missing token (thematiq#1006).
-			if (is_string($default) === false || $default === '') {
-				return null;
-			}
-
-			return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
+			return $this->rampDefault(default: $default);
 		}
 
 		$picked = $this->pickByCriterion(spec: $spec, ramp: $ramp, semantic: $semantic);
@@ -2144,12 +2325,23 @@ class TokenSetConverterService {
 			return ['value' => $picked, 'source' => '(brand ramp)', 'reason' => 'derived-from-brand'];
 		}
 
+		return $this->rampDefault(default: $default);
+	}//end pickFromRamp()
+
+	/**
+	 * The table's default for a ramp role, or null when it names none.
+	 *
+	 * @param mixed $default The rule's `default`.
+	 *
+	 * @return array{value: string, source: string, reason: string}|null
+	 */
+	private function rampDefault(mixed $default): ?array {
 		if (is_string($default) === false || $default === '') {
 			return null;
 		}
 
 		return ['value' => $default, 'source' => '(Nextcloud default)', 'reason' => 'nextcloud-default-used'];
-	}//end pickFromRamp()
+	}//end rampDefault()
 
 	/**
 	 * Every near-grey colour the theme declares (channels within 12 of each other).
@@ -2185,84 +2377,106 @@ class TokenSetConverterService {
 	 *
 	 * @return string|null The picked colour, or null when no grey in the ramp qualifies.
 	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - picking from a colour ramp is a search with several accept and reject conditions, each a branch.
 	 */
 	private function pickByCriterion(array $spec, array $ramp, array $semantic): ?string {
-		$criterion = (string)($spec['criterion'] ?? 'darkest');
-
 		// The page background the picked grey has to stand apart from. A ramp
 		// of one grey still has a "darkest" and a "nearest" member, and when
 		// that grey is the background itself every role came out white on
 		// white (#933). No readable candidate means no pick: the role then
 		// falls back to the defaults, like a set that declares no greys.
-		$background = $this->contrast->parseColor(
-			value: ($semantic[(string)($spec['background'] ?? '--nldesign-color-nav-background')] ?? '#ffffff')
-		);
-		if ($background === null) {
-			$background = [255, 255, 255];
-		}
+		$backgroundToken = (string)($spec['background'] ?? '--nldesign-color-nav-background');
+		$background = $this->rgbOrWhite(value: ($semantic[$backgroundToken] ?? '#ffffff'));
+		$min = (float)($spec['min'] ?? 4.5);
+		$against = $this->rgbOrWhite(value: ($semantic[(string)($spec['against'] ?? '')] ?? '#ffffff'));
+		$target = (string)($spec['target'] ?? '#f2f2f2');
 
-		if ($criterion === 'darkest') {
-			uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
+		return match ((string)($spec['criterion'] ?? 'darkest')) {
+			'darkest' => $this->darkestReadable(ramp: $ramp, limits: ['against' => $background, 'min' => $min]),
+			'nearestLuminance' => $this->nearestLuminance(ramp: $ramp, limits: ['background' => $background, 'target' => $target]),
+			'minContrast' => $this->lightestReadable(ramp: $ramp, limits: ['against' => $against, 'min' => $min]),
+			default => null,
+		};
+	}//end pickByCriterion()
 
-			$darkest = array_key_first($ramp);
-			if ($this->contrast->ratio(first: $ramp[$darkest], second: $background) < (float)($spec['min'] ?? 4.5)) {
-				return null;
-			}
+	/**
+	 * A colour as RGB, or white when it cannot be read.
+	 *
+	 * @param string $value The colour.
+	 *
+	 * @return array{0: int, 1: int, 2: int}
+	 */
+	private function rgbOrWhite(string $value): array {
+		return ($this->contrast->parseColor(value: $value) ?? [255, 255, 255]);
+	}//end rgbOrWhite()
 
-			return $darkest;
-		}
+	/**
+	 * The darkest grey of a ramp, when it is readable against the background.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $limits The background and the ratio to clear.
+	 *
+	 * @return string|null
+	 */
+	private function darkestReadable(array $ramp, array $limits): ?string {
+		uasort($ramp, fn (array $a, array $b) => array_sum($a) <=> array_sum($b));
 
-		if ($criterion === 'nearestLuminance') {
-			$targetRgb = $this->contrast->parseColor(value: (string)($spec['target'] ?? '#f2f2f2'));
-			if ($targetRgb === null) {
-				return null;
-			}
-
-			$best = null;
-			$bestDistance = null;
-			foreach ($ramp as $hex => $rgb) {
-				$distance = abs(array_sum($rgb) - array_sum($targetRgb));
-
-				// A grey nearer the background than the target reads as the
-				// background: a border or hover in that colour is invisible.
-				if ($distance >= abs(array_sum($rgb) - array_sum($background))) {
-					continue;
-				}
-
-				if ($bestDistance === null || $distance < $bestDistance) {
-					$bestDistance = $distance;
-					$best = $hex;
-				}
-			}
-
-			return $best;
-		}
-
-		if ($criterion === 'minContrast') {
-			$againstValue = ($semantic[(string)($spec['against'] ?? '')] ?? '#ffffff');
-			$againstRgb = $this->contrast->parseColor(value: $againstValue);
-			if ($againstRgb === null) {
-				$againstRgb = [255, 255, 255];
-			}
-
-			$min = (float)($spec['min'] ?? 4.5);
-
-			// The LIGHTEST grey that still clears the ratio: a muted role should
-			// be as quiet as it is allowed to be, not as dark as possible.
-			uasort($ramp, fn (array $a, array $b) => array_sum($b) <=> array_sum($a));
-			foreach ($ramp as $hex => $rgb) {
-				if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $min) {
-					return (string)$hex;
-				}
-			}
-
+		$darkest = array_key_first($ramp);
+		if ($this->contrast->ratio(first: $ramp[$darkest], second: $limits['against']) < $limits['min']) {
 			return null;
-		}//end if
+		}
+
+		return $darkest;
+	}//end darkestReadable()
+
+	/**
+	 * The grey of a ramp nearest the target luminance that is not nearer the background.
+	 *
+	 * A grey nearer the background than the target reads as the background: a border or hover
+	 * in that colour is invisible.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{background: array{0: int, 1: int, 2: int}, target: string} $limits The background and the target colour.
+	 *
+	 * @return string|null
+	 */
+	private function nearestLuminance(array $ramp, array $limits): ?string {
+		$targetRgb = $this->contrast->parseColor(value: $limits['target']);
+		if ($targetRgb === null) {
+			return null;
+		}
+
+		$best = null;
+		$bestDistance = null;
+		foreach ($ramp as $hex => $rgb) {
+			$distance = abs(array_sum($rgb) - array_sum($targetRgb));
+			if ($distance < abs(array_sum($rgb) - array_sum($limits['background'])) && ($bestDistance === null || $distance < $bestDistance)) {
+				$bestDistance = $distance;
+				$best = $hex;
+			}
+		}
+
+		return $best;
+	}//end nearestLuminance()
+
+	/**
+	 * The LIGHTEST grey that still clears the ratio: a muted role should be as quiet as it is
+	 * allowed to be, not as dark as possible.
+	 *
+	 * @param array<string, array{0: int, 1: int, 2: int}> $ramp Hex => RGB.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $limits The colour to read against and the ratio to clear.
+	 *
+	 * @return string|null
+	 */
+	private function lightestReadable(array $ramp, array $limits): ?string {
+		uasort($ramp, fn (array $a, array $b) => array_sum($b) <=> array_sum($a));
+		foreach ($ramp as $hex => $rgb) {
+			if ($this->contrast->ratio(first: $rgb, second: $limits['against']) >= $limits['min']) {
+				return (string)$hex;
+			}
+		}
 
 		return null;
-	}//end pickByCriterion()
+	}//end lightestReadable()
 
 	/**
 	 * Apply one of the closed transform set.
@@ -2323,62 +2537,99 @@ class TokenSetConverterService {
 	 * @param array<string, string> $semantic The semantic layer so far.
 	 *
 	 * @return array{value: string, reason: string|null} The (possibly corrected) value and the reason when it changed.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would
-	 *   be worse than a long switch.
-	 * @SuppressWarnings(PHPMD.NPathComplexity) - one branch per guard the mapping table may name; a guard that silently did nothing would be
-	 *   worse than a long switch.
 	 */
 	private function applyGuard(array $guard, string $value, array $semantic): array {
 		$kind = (string)($guard['kind'] ?? '');
-
 		if ($kind === 'fontAvailable') {
-			if ($this->fontIsAvailable(stack: $value) === false) {
-				return ['value' => $value, 'reason' => (string)($guard['onFail'] ?? 'font-not-bundled')];
-			}
+			return $this->fontGuard(guard: $guard, value: $value);
+		}
 
+		$against = ($semantic[(string)($guard['against'] ?? '')] ?? null);
+		if ($kind !== 'contrast' || $against === null) {
 			return ['value' => $value, 'reason' => null];
 		}
 
-		if ($kind !== 'contrast') {
-			return ['value' => $value, 'reason' => null];
+		return $this->contrastGuard(guard: $guard, pair: ['value' => $value, 'against' => $against]);
+	}//end applyGuard()
+
+	/**
+	 * The `fontAvailable` guard: keep the value, and report when its first family is not available.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param string $value The font stack.
+	 *
+	 * @return array{value: string, reason: string|null}
+	 */
+	private function fontGuard(array $guard, string $value): array {
+		if ($this->fontIsAvailable(stack: $value) === false) {
+			return ['value' => $value, 'reason' => $this->guardReason(guard: $guard, fallback: 'font-not-bundled')];
 		}
 
-		$againstName = (string)($guard['against'] ?? '');
-		$againstValue = ($semantic[$againstName] ?? null);
-		if ($againstValue === null) {
-			return ['value' => $value, 'reason' => null];
-		}
+		return ['value' => $value, 'reason' => null];
+	}//end fontGuard()
 
-		$rgb = $this->contrast->parseColor(value: $value);
-		$againstRgb = $this->contrast->parseColor(value: $againstValue);
+	/**
+	 * The `contrast` guard: darken the value until it clears the minimum ratio against its pair.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param array{value: string, against: string} $pair The value and the colour it must contrast with.
+	 *
+	 * @return array{value: string, reason: string|null}
+	 */
+	private function contrastGuard(array $guard, array $pair): array {
+		$rgb = $this->contrast->parseColor(value: $pair['value']);
+		$againstRgb = $this->contrast->parseColor(value: $pair['against']);
 		if ($rgb === null || $againstRgb === null) {
-			return ['value' => $value, 'reason' => null];
+			return ['value' => $pair['value'], 'reason' => null];
 		}
 
-		$min = (float)($guard['min'] ?? 4.5);
-		if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $min) {
-			return ['value' => $value, 'reason' => null];
+		$target = ['against' => $againstRgb, 'min' => (float)($guard['min'] ?? 4.5)];
+		if ($this->contrast->ratio(first: $rgb, second: $againstRgb) >= $target['min']) {
+			return ['value' => $pair['value'], 'reason' => null];
 		}
 
-		// Darken in fixed steps until the pair clears the ratio. Bounded at 10
-		// steps so a pathological pair cannot spin, and the ORIGINAL is kept in
-		// the report entry so the admin sees what the theme actually asked for.
+		return [
+			'value' => $this->darkenToClear(value: $pair['value'], target: $target),
+			'reason' => $this->guardReason(guard: $guard, fallback: 'contrast-adjusted'),
+		];
+	}//end contrastGuard()
+
+	/**
+	 * Darken a colour in fixed steps until it clears the target ratio.
+	 *
+	 * Bounded at MAX_CONTRAST_STEPS so a pathological pair cannot spin; the
+	 * caller keeps the ORIGINAL in the report entry, so the admin sees what the
+	 * theme actually asked for.
+	 *
+	 * @param string $value The colour to darken.
+	 * @param array{against: array{0: int, 1: int, 2: int}, min: float} $target The colour it must contrast with, parsed, and the minimum ratio.
+	 *
+	 * @return string The first step that clears the ratio, or the last one tried.
+	 */
+	private function darkenToClear(string $value, array $target): string {
 		$candidate = $value;
 		for ($step = 0; $step < self::MAX_CONTRAST_STEPS; $step++) {
 			$candidate = $this->darken(value: $candidate, fraction: 0.1);
 			$candidateRgb = $this->contrast->parseColor(value: $candidate);
-			if ($candidateRgb === null) {
-				break;
-			}
-
-			if ($this->contrast->ratio(first: $candidateRgb, second: $againstRgb) >= $min) {
-				return ['value' => $candidate, 'reason' => (string)($guard['onFail'] ?? 'contrast-adjusted')];
+			if ($candidateRgb === null || $this->contrast->ratio(first: $candidateRgb, second: $target['against']) >= $target['min']) {
+				return $candidate;
 			}
 		}
 
-		return ['value' => $candidate, 'reason' => (string)($guard['onFail'] ?? 'contrast-adjusted')];
-	}//end applyGuard()
+		return $candidate;
+	}//end darkenToClear()
+
+	/**
+	 * The reason a guard reports when it changes or flags a value.
+	 *
+	 * @param array<string, mixed> $guard The guard spec.
+	 * @param string $fallback The reason when the spec names none.
+	 *
+	 * @return string
+	 */
+	private function guardReason(array $guard, string $fallback): string {
+		return (string)($guard['onFail'] ?? $fallback);
+	}//end guardReason()
 
 	/**
 	 * Whether the first family of a font stack is bundled or uploaded.
@@ -2398,16 +2649,27 @@ class TokenSetConverterService {
 			return true;
 		}
 
-		$slug = $this->fonts->slugify(name: $first);
+		// The two families this app bundles itself.
+		return ($this->isUploadedFont(family: $first) === true || in_array(strtolower($first), ['marianne', 'inter'], true) === true);
+	}//end fontIsAvailable()
+
+	/**
+	 * Whether an administrator uploaded a font of this family, by id or by name.
+	 *
+	 * @param string $family The family name.
+	 *
+	 * @return bool
+	 */
+	private function isUploadedFont(string $family): bool {
+		$slug = $this->fonts->slugify(name: $family);
 		foreach ($this->fonts->list() as $font) {
-			if (($font['id'] ?? '') === $slug || strcasecmp((string)($font['name'] ?? ''), $first) === 0) {
+			if (($font['id'] ?? '') === $slug || strcasecmp((string)($font['name'] ?? ''), $family) === 0) {
 				return true;
 			}
 		}
 
-		// The two families this app bundles itself.
-		return in_array(strtolower($first), ['marianne', 'inter'], true);
-	}//end fontIsAvailable()
+		return false;
+	}//end isUploadedFont()
 
 	/**
 	 * Darken a hex colour by a fraction. Mirrors `darkenHex()` in
@@ -2587,27 +2849,18 @@ class TokenSetConverterService {
 	 * the same reason. No at-rules and exactly one selector, which is what
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
-	 * @param array<string, string> $palette The brand palette section.
-	 * @param array<string, string> $component The component layer.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param string $slug The brand slug.
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The
+	 *        brand palette, the component layer and the semantic layer.
+	 * @param SetSource $source The brand slug, the source label and the source package version.
 	 * @param string $inputKind The detected input kind.
-	 * @param string|null $sourceName The source label, when known.
-	 * @param string|null $sourceVersion The source package version, when declared.
 	 * @param array<string, int> $counts The action tally.
 	 *
 	 * @return string The complete CSS file.
 	 */
-	private function buildCss(
-		array $palette,
-		array $component,
-		array $semantic,
-		string $slug,
-		string $inputKind,
-		?string $sourceName,
-		?string $sourceVersion,
-		array $counts,
-	): string {
+	private function buildCss(array $layers, array $source, string $inputKind, array $counts): string {
+		$palette = $layers['palette'];
+		$component = $layers['component'];
+		$semantic = $layers['semantic'];
 		ksort($palette);
 		ksort($component);
 		ksort($semantic);
@@ -2650,9 +2903,9 @@ class TokenSetConverterService {
 		// `[a-z0-9-]` by `CustomTokenSetService::slugify()`, the converter and
 		// table versions come from the repository's own mapping table, and the
 		// counts are integers.
-		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($sourceName ?? '(pasted)'));
-		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($sourceVersion ?? '(not declared)'));
-		$lines[] = "\t *    slug:            " . $slug;
+		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($source['sourceName'] ?? '(pasted)'));
+		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($source['sourceVersion'] ?? '(not declared)'));
+		$lines[] = "\t *    slug:            " . $source['slug'];
 		$lines[] = "\t *    converter:       " . (string)($table['converterVersion'] ?? '0');
 		$lines[] = "\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16);
 		$lines[] = "\t *    applied:         " . $counts['applied'];
@@ -2757,25 +3010,14 @@ class TokenSetConverterService {
 	 * `--color-main-background`, which stays Nextcloud-owned so dark mode keeps
 	 * working.
 	 *
-	 * @param string $slug The set slug.
-	 * @param string $displayName The display name.
+	 * @param SetSource $source The set slug and display name, the source label and the source version.
 	 * @param array<string, string> $semantic The semantic layer.
 	 * @param array<string, string> $manifest Manifest values produced by the rules.
-	 * @param string|null $sourceName The source label, when known.
-	 * @param string|null $sourceVersion The source version, when declared.
 	 * @param array<string, mixed>|null $logo The extracted logo, from {@see self::extractLogo()}.
 	 *
 	 * @return array<string, mixed> The manifest entry.
 	 */
-	private function buildManifestEntry(
-		string $slug,
-		string $displayName,
-		array $semantic,
-		array $manifest,
-		?string $sourceName,
-		?string $sourceVersion,
-		?array $logo = null,
-	): array {
+	private function buildManifestEntry(array $source, array $semantic, array $manifest, ?array $logo = null): array {
 		$theming = [];
 
 		$primary = ($manifest['theming.primary_color'] ?? ($semantic['--nldesign-color-primary'] ?? null));
@@ -2794,9 +3036,9 @@ class TokenSetConverterService {
 		}
 
 		$entry = [
-			'id' => $slug,
-			'name' => $displayName,
-			'description' => 'Converted from ' . ($sourceName ?? 'a pasted design-system theme') . '.',
+			'id' => $source['slug'],
+			'name' => $source['displayName'],
+			'description' => 'Converted from ' . ($source['sourceName'] ?? 'a pasted design-system theme') . '.',
 			'design_system' => 'nldesign',
 		];
 
@@ -2804,12 +3046,12 @@ class TokenSetConverterService {
 			$entry['theming'] = $theming;
 		}
 
-		if ($sourceName !== null) {
-			$entry['upstreamRef'] = $sourceName;
+		if ($source['sourceName'] !== null) {
+			$entry['upstreamRef'] = $source['sourceName'];
 		}
 
-		if ($sourceVersion !== null) {
-			$entry['upstreamVersion'] = $sourceVersion;
+		if ($source['sourceVersion'] !== null) {
+			$entry['upstreamVersion'] = $source['sourceVersion'];
 		}
 
 		return $entry;

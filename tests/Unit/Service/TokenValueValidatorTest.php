@@ -57,6 +57,6 @@ class TokenValueValidatorTest extends TestCase {
 	 */
 	#[DataProvider('cases')]
 	public function testGrammar(string $type, string $value, bool $accepted): void {
-		$this->assertSame($accepted, (new TokenValueValidator())->isValid(type: $type, value: $value));
+		$this->assertSame(expected: $accepted, actual: (new TokenValueValidator())->isValid(type: $type, value: $value));
 	}//end testGrammar()
 }//end class

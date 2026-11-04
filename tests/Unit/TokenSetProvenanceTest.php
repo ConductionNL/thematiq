@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit;
 
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -58,6 +59,8 @@ class TokenSetProvenanceTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -70,7 +73,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 */
 	private function shippedSets(): array {
 		$sets = [];
-		foreach (glob($this->repoRoot() . '/css/tokens/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/tokens/*.css') as $file) {
 			$sets[basename($file, '.css')] = (string)file_get_contents($file);
 		}
 
@@ -81,6 +84,8 @@ class TokenSetProvenanceTest extends TestCase {
 	 * The first fifteen lines of a file: where a generator names itself.
 	 *
 	 * @param string $css The file contents.
+	 *
+	 * @return string
 	 */
 	private function head(string $css): string {
 		return implode("\n", \array_slice(explode("\n", $css), 0, 15));
@@ -94,7 +99,7 @@ class TokenSetProvenanceTest extends TestCase {
 	private function convertedSetIds(): array {
 		$ids = [];
 		foreach ($this->shippedSets() as $id => $css) {
-			if (str_contains($this->head($css), self::CONVERTER_MARKER) === true) {
+			if (str_contains($this->head(css: $css), self::CONVERTER_MARKER) === true) {
 				$ids[] = $id;
 			}
 		}
@@ -107,13 +112,15 @@ class TokenSetProvenanceTest extends TestCase {
 	 * version, mapping table hash and counts.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 *
+	 * @return void
 	 */
 	public function testEveryConvertedSetCarriesACompleteProvenanceBlock(): void {
 		$converted = $this->convertedSetIds();
 		$this->assertGreaterThanOrEqual(
-			38,
-			\count($converted),
-			'38 shipped sets were converter output when nlds-theme-converter was archived; fewer means a header was lost.'
+			expected: 38,
+			actual: \count($converted),
+			message: '38 shipped sets were converter output when nlds-theme-converter was archived; fewer means a header was lost.'
 		);
 
 		$sets = $this->shippedSets();
@@ -127,7 +134,11 @@ class TokenSetProvenanceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $offenders, "Converted sets with an incomplete provenance block:\n  - " . implode("\n  - ", $offenders));
+		$this->assertSame(
+			expected: [],
+			actual: $offenders,
+			message: "Converted sets with an incomplete provenance block:\n  - " . implode("\n  - ", $offenders)
+		);
 	}//end testEveryConvertedSetCarriesACompleteProvenanceBlock()
 
 	/**
@@ -135,23 +146,37 @@ class TokenSetProvenanceTest extends TestCase {
 	 * converter provenance, so the sync treats it as not its own.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 *
+	 * @return void
 	 */
 	public function testBrandFileSetsNameTheirGeneratorNotTheConverter(): void {
-		$this->assertFileExists($this->repoRoot() . '/scripts/generate-brand-set.mjs', 'The brand-file entry point must stay.');
+		$this->assertFileExists(filename: $this->repoRoot() . '/scripts/generate-brand-set.mjs', message: 'The brand-file entry point must stay.');
 
 		$brandSets = [];
 		foreach ($this->shippedSets() as $id => $css) {
-			if (str_contains($this->head($css), self::BRAND_MARKER) === false) {
+			if (str_contains($this->head(css: $css), self::BRAND_MARKER) === false) {
 				continue;
 			}
 
 			$brandSets[] = $id;
-			$this->assertStringNotContainsString(self::CONVERTER_MARKER, $css, $id . ' is a brand-file set and must not claim to be converter output.');
-			$this->assertDoesNotMatchRegularExpression('/^\s*\*\s+mapping table:/m', $css, $id . ' must carry no converter provenance block.');
+			$this->assertStringNotContainsString(
+				needle: self::CONVERTER_MARKER,
+				haystack: $css,
+				message: $id . ' is a brand-file set and must not claim to be converter output.'
+			);
+			$this->assertDoesNotMatchRegularExpression(
+				pattern: '/^\s*\*\s+mapping table:/m',
+				string: $css,
+				message: $id . ' must carry no converter provenance block.'
+			);
 		}
 
 		foreach (['denhaag', 'example-gemeente'] as $known) {
-			$this->assertContains($known, $brandSets, $known . ' is built from a brand file and must name scripts/generate-brand-set.mjs.');
+			$this->assertContains(
+				needle: $known,
+				haystack: $brandSets,
+				message: $known . ' is built from a brand file and must name scripts/generate-brand-set.mjs.'
+			);
 		}
 	}//end testBrandFileSetsNameTheirGeneratorNotTheConverter()
 
@@ -160,14 +185,24 @@ class TokenSetProvenanceTest extends TestCase {
 	 * converter provenance.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
+	 *
+	 * @return void
 	 */
 	public function testSummerBreezeDeclaresNoNldesignLayer(): void {
 		$css = ($this->shippedSets()['summer-breeze'] ?? null);
-		$this->assertNotNull($css, 'css/tokens/summer-breeze.css must be shipped.');
+		$this->assertNotNull(actual: $css, message: 'css/tokens/summer-breeze.css must be shipped.');
 
 		$code = (string)preg_replace('#/\*.*?\*/#s', '', $css);
-		$this->assertDoesNotMatchRegularExpression('/--nldesign-[a-z0-9-]+\s*:/', $code, 'summer-breeze must declare no --nldesign-* property.');
-		$this->assertMatchesRegularExpression('/--summer-color-primary\s*:/', $code, 'summer-breeze must declare its own primary.');
-		$this->assertStringNotContainsString(self::CONVERTER_MARKER, $css, 'summer-breeze is not converter output.');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/--nldesign-[a-z0-9-]+\s*:/',
+			string: $code,
+			message: 'summer-breeze must declare no --nldesign-* property.'
+		);
+		$this->assertMatchesRegularExpression(
+			pattern: '/--summer-color-primary\s*:/',
+			string: $code,
+			message: 'summer-breeze must declare its own primary.'
+		);
+		$this->assertStringNotContainsString(needle: self::CONVERTER_MARKER, haystack: $css, message: 'summer-breeze is not converter output.');
 	}//end testSummerBreezeDeclaresNoNldesignLayer()
 }//end class

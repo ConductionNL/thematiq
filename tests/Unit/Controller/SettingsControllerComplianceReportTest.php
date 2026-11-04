@@ -17,8 +17,11 @@ use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
-use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -51,36 +54,48 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * Set up the controller with mocked collaborators.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'utrecht' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'utrecht', default => $default
+			})
 		);
 		$config->method('getSystemValue')->willReturnCallback(
-			fn (string $key, $default = '') => ($key === 'instanceid' ? 'inst123' : $default)
+			fn (string $key, $default = '') => (match ($key === 'instanceid') {
+				true => 'inst123', default => $default
+			})
 		);
 
-		$this->complianceReportService = $this->createMock(ComplianceReportService::class);
+		$this->complianceReportService = $this->createMock(originalClassName: ComplianceReportService::class);
 		$this->complianceReportService->method('renderJson')->willReturn("{\"scope\":\"x\"}\n");
 		$this->complianceReportService->method('renderMarkdown')->willReturn("# Report\n");
 
 		$this->controller = new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$config,
-			$this->createMock(TokenSetService::class),
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->complianceReportService,
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(EmailThemingService::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $config,
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->complianceReportService,
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end setUp()
 
@@ -110,41 +125,47 @@ class SettingsControllerComplianceReportTest extends TestCase {
 
 	/**
 	 * The default (json) format returns a JSON download with attachment disposition.
+	 *
+	 * @return void
 	 */
 	public function testDefaultFormatReturnsJsonDownload(): void {
 		$response = $this->controller->complianceReport();
 
-		$this->assertInstanceOf(DataDownloadResponse::class, $response);
+		$this->assertInstanceOf(expected: DataDownloadResponse::class, actual: $response);
 		$headers = $this->rawHeaders(response: $response);
-		$this->assertArrayHasKey('Content-Disposition', $headers);
-		$this->assertStringStartsWith('attachment;', $headers['Content-Disposition']);
-		$this->assertStringContainsString('nldesign-compliance-inst123-utrecht-', $headers['Content-Disposition']);
+		$this->assertArrayHasKey(key: 'Content-Disposition', array: $headers);
+		$this->assertStringStartsWith(prefix: 'attachment;', string: $headers['Content-Disposition']);
+		$this->assertStringContainsString(needle: 'nldesign-compliance-inst123-utrecht-', haystack: $headers['Content-Disposition']);
 		// The real OCP DataDownloadResponse quotes the filename; the standalone
 		// OCP stub does not — assert the extension without the quoting flavour.
-		$this->assertStringContainsString('.json', $headers['Content-Disposition']);
-		$this->assertSame('application/json', $headers['Content-Type']);
+		$this->assertStringContainsString(needle: '.json', haystack: $headers['Content-Disposition']);
+		$this->assertSame(expected: 'application/json', actual: $headers['Content-Type']);
 	}//end testDefaultFormatReturnsJsonDownload()
 
 	/**
 	 * format=markdown returns a Markdown download with attachment disposition.
+	 *
+	 * @return void
 	 */
 	public function testMarkdownFormatReturnsMarkdownDownload(): void {
 		$response = $this->controller->complianceReport(format: 'markdown');
 
-		$this->assertInstanceOf(DataDownloadResponse::class, $response);
+		$this->assertInstanceOf(expected: DataDownloadResponse::class, actual: $response);
 		$headers = $this->rawHeaders(response: $response);
-		$this->assertStringContainsString('.md', $headers['Content-Disposition']);
-		$this->assertSame('text/markdown', $headers['Content-Type']);
-		$this->assertSame("# Report\n", $response->render());
+		$this->assertStringContainsString(needle: '.md', haystack: $headers['Content-Disposition']);
+		$this->assertSame(expected: 'text/markdown', actual: $headers['Content-Type']);
+		$this->assertSame(expected: "# Report\n", actual: $response->render());
 	}//end testMarkdownFormatReturnsMarkdownDownload()
 
 	/**
 	 * An unknown format returns a 400 JSON error, not a report download.
+	 *
+	 * @return void
 	 */
 	public function testUnknownFormatReturns400(): void {
 		$response = $this->controller->complianceReport(format: 'yaml');
 
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame(400, $response->getStatus());
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testUnknownFormatReturns400()
 }//end class
