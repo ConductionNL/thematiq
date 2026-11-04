@@ -38,6 +38,13 @@ class TestableNLDesignEMailTemplate extends NLDesignEMailTemplate {
 	private ?EmailThemingService $stubService = null;
 
 	/**
+	 * Whether this server embeds in the header; null asks the real server.
+	 *
+	 * @var bool|null
+	 */
+	private ?bool $embedsInHeader = null;
+
+	/**
 	 * Inject a stubbed service (or null, to simulate total resolution failure).
 	 *
 	 * @param EmailThemingService|null $service The stubbed service.
@@ -57,6 +64,39 @@ class TestableNLDesignEMailTemplate extends NLDesignEMailTemplate {
 	protected function getEmailThemingService(): ?EmailThemingService {
 		return $this->stubService;
 	}//end getEmailThemingService()
+
+	/**
+	 * Decide whether this server embeds in the header.
+	 *
+	 * @param bool|null $embeds The answer, or null for the real server's.
+	 *
+	 * @return void
+	 */
+	public function setEmbedsInHeader(?bool $embeds): void {
+		$this->embedsInHeader = $embeds;
+	}//end setEmbedsInHeader()
+
+	/**
+	 * The chosen answer, else the real server's.
+	 *
+	 * @return bool
+	 */
+	protected function serverEmbedsInHeader(): bool {
+		return ($this->embedsInHeader ?? parent::serverEmbedsInHeader());
+	}//end serverEmbedsInHeader()
+
+	/**
+	 * The HTML as this server's message would take it.
+	 *
+	 * @return string
+	 */
+	public function messageHtml(): string {
+		if (method_exists(EMailTemplate::class, 'renderHtmlWithInlineImages') === true) {
+			return $this->renderHtmlWithInlineImages();
+		}
+
+		return $this->renderHtml();
+	}//end messageHtml()
 }//end class
 
 /**
@@ -183,6 +223,140 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '#0082c9', haystack: $html);
 		$this->assertStringContainsString(needle: 'https://cloud.example.com/apps/thematiq/img/logos/test.svg', haystack: $html);
 	}//end testHeaderAndButtonUseActiveTokenSetTheme()
+
+	/**
+	 * A template with a branded header, over a service answering the given logo and image.
+	 *
+	 * @param string|null $logoUrl The theme's logo URL.
+	 * @param array{content: string, mimeType: string}|null $image The logo's bytes.
+	 *
+	 * @return TestableNLDesignEMailTemplate The template, its header added.
+	 */
+	private function brandedTemplate(?string $logoUrl, ?array $image): TestableNLDesignEMailTemplate {
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$service->method('getActiveEmailTheme')->willReturn(['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $logoUrl]);
+		$service->method('getActiveEmailLogoImage')->willReturn($image);
+		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
+		$template = $this->makeTemplate(service: $service);
+		$template->addHeader();
+
+		return $template;
+	}//end brandedTemplate()
+
+	/**
+	 * A branded logo is embedded, replacing its link, with the set's own bytes.
+	 *
+	 * @return void
+	 */
+	public function testABrandedLogoIsEmbedded(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$template = $this->brandedTemplate(logoUrl: $url, image: ['content' => '<svg/>', 'mimeType' => 'image/svg+xml']);
+
+		$html = $template->messageHtml();
+
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $html);
+		$this->assertStringNotContainsString(needle: $url, haystack: $html);
+		$this->assertStringContainsString(needle: ' width="32" height="32"', haystack: $html);
+		$this->assertSame(expected: [['name' => 'logo', 'content' => '<svg/>', 'mimeType' => 'image/svg+xml']], actual: $template->getInlineImages());
+	}//end testABrandedLogoIsEmbedded()
+
+	/**
+	 * A branded logo whose bytes cannot be read stays a link.
+	 *
+	 * @return void
+	 */
+	public function testAnUnreadableBrandedLogoStaysLinked(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$template = $this->brandedTemplate(logoUrl: $url, image: null);
+
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->messageHtml());
+		$this->assertSame(expected: [], actual: $template->getInlineImages());
+	}//end testAnUnreadableBrandedLogoStaysLinked()
+
+	/**
+	 * A branded header without a logo of its own embeds the instance's logo, not the set's bytes.
+	 *
+	 * @return void
+	 */
+	public function testABrandedHeaderWithoutALogoEmbedsTheInstanceLogo(): void {
+		$this->themingDefaults->method('getLogoImage')->willReturn(['content' => 'instance', 'mimeType' => 'image/png']);
+		$template = $this->brandedTemplate(logoUrl: null, image: ['content' => 'wrong', 'mimeType' => 'image/png']);
+
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->messageHtml());
+		$this->assertSame(expected: 'instance', actual: $template->getInlineImages()[0]['content']);
+	}//end testABrandedHeaderWithoutALogoEmbedsTheInstanceLogo()
+
+	/**
+	 * On a server that attaches without asking, the header itself refers to the embedded logo.
+	 *
+	 * @return void
+	 */
+	public function testAHeaderEmbedsOnAServerThatAttachesWithoutAsking(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
+		$service->method('getActiveEmailTheme')->willReturn($theme);
+		$service->method('getActiveEmailLogoImage')->willReturn(['content' => '<svg/>', 'mimeType' => 'image/svg+xml']);
+		$template = $this->makeTemplate(service: $service);
+		$template->setEmbedsInHeader(embeds: true);
+		$template->addHeader();
+
+		$html = $template->renderHtml();
+
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $html);
+		$this->assertStringNotContainsString(needle: $url, haystack: $html);
+		$this->assertSame(expected: '<svg/>', actual: $template->getInlineImages()[0]['content']);
+	}//end testAHeaderEmbedsOnAServerThatAttachesWithoutAsking()
+
+	/**
+	 * On such a server a logo without bytes stays a link, and nothing is attached.
+	 *
+	 * @return void
+	 */
+	public function testAHeaderKeepsTheLinkWithoutBytes(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
+		$service->method('getActiveEmailTheme')->willReturn($theme);
+		$service->method('getActiveEmailLogoImage')->willReturn(null);
+		$template = $this->makeTemplate(service: $service);
+		$template->setEmbedsInHeader(embeds: true);
+		$template->addHeader();
+
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->renderHtml());
+		$this->assertSame(expected: [], actual: $template->getInlineImages());
+	}//end testAHeaderKeepsTheLinkWithoutBytes()
+
+	/**
+	 * A stock header is still embedded by the parent.
+	 *
+	 * @return void
+	 */
+	public function testAStockHeaderIsEmbeddedByTheParent(): void {
+		$this->themingDefaults->method('getLogoImage')->willReturn(['content' => 'instance', 'mimeType' => 'image/png']);
+		$template = $this->makeTemplate(service: null);
+		$template->addHeader();
+
+		$this->assertStringContainsString(needle: 'src="cid:logo"', haystack: $template->messageHtml());
+		$this->assertSame(expected: 'instance', actual: $template->getInlineImages()[0]['content']);
+	}//end testAStockHeaderIsEmbeddedByTheParent()
+
+	/**
+	 * A failing logo read leaves the mail intact, the logo linked.
+	 *
+	 * @return void
+	 */
+	public function testAFailingLogoReadStaysLinked(): void {
+		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$service->method('getActiveEmailTheme')->willReturn(['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url]);
+		$service->method('getActiveEmailLogoImage')->willThrowException(new \RuntimeException('store down'));
+		$template = $this->makeTemplate(service: $service);
+		$template->addHeader();
+
+		$this->assertStringContainsString(needle: 'src="' . $url . '"', haystack: $template->messageHtml());
+		$this->assertSame(expected: [], actual: $template->getInlineImages());
+	}//end testAFailingLogoReadStaysLinked()
 
 	/**
 	 * A body button takes the active token set's colours on its own, without a header.
