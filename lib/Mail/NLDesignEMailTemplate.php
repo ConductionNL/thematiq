@@ -204,8 +204,10 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 * @return bool True when the header embeds the logo.
 	 */
 	protected function serverEmbedsInHeader(): bool {
-		return method_exists(EMailTemplate::class, 'getInlineImages') === true
-			&& method_exists(EMailTemplate::class, 'renderHtmlWithInlineImages') === false;
+		$server = new \ReflectionClass(EMailTemplate::class);
+
+		return $server->hasMethod('getInlineImages') === true
+			&& $server->hasMethod('renderHtmlWithInlineImages') === false;
 	}//end serverEmbedsInHeader()
 
 	/**
