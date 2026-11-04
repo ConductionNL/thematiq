@@ -47,6 +47,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\DarkPins
  * @uses   \OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames
  */
 class DarkPaletteWriteGoldenTest extends TestCase {
 
