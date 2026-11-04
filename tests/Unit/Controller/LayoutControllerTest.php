@@ -113,9 +113,7 @@ class LayoutControllerTest extends TestCase {
 
 		$request = $this->createMock(IRequest::class);
 		$request->method('getParam')->willReturnCallback(
-			fn (string $key, $default = null) => match (array_key_exists($key, $this->params)) {
-				true => $this->params[$key], default => $default
-			}
+			fn (string $key, $default = null) => $this->params[$key] ?? $default
 		);
 
 		$this->controller = new LayoutController(
@@ -287,6 +285,19 @@ class LayoutControllerTest extends TestCase {
 	}//end testAValueThatIsNotAStringStoresNothing()
 
 	/**
+	 * IRequest::getParam() answers its default for an explicit null, so a null means follow the theme.
+	 *
+	 * @return void
+	 */
+	public function testAnExplicitNullReadsAsAbsent(): void {
+		$response = $this->save(params: ['workplaceLayout' => 'light', 'navigationWidth' => null]);
+
+		$this->assertSame(200, $response->getStatus());
+		$this->assertSame('', $this->stored['navigation_width']);
+		$this->assertSame('', $response->getData()['navigationWidth']);
+	}//end testAnExplicitNullReadsAsAbsent()
+
+	/**
 	 * Values a JSON body can carry that are not strings.
 	 *
 	 * @return array<string, array{0: mixed}>
@@ -296,7 +307,6 @@ class LayoutControllerTest extends TestCase {
 			'an array' => [['300']],
 			'a number' => [300],
 			'a flag' => [true],
-			'null' => [null],
 		];
 	}//end notAStringProvider()
 
