@@ -25,16 +25,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Settings;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\PlaygroundStateService;
-use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
-use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
 
@@ -76,25 +70,18 @@ class Admin implements IDelegatedSettings {
 	private IConfig $config;
 
 	/**
-	 * The token set service.
+	 * The services the form reads its state from.
 	 *
-	 * @var TokenSetService
+	 * @var AdminFormServices
 	 */
-	private TokenSetService $tokenSetService;
+	private AdminFormServices $services;
 
 	/**
-	 * The email theming service.
+	 * The initial state, the request and the playground boot state.
 	 *
-	 * @var EmailThemingService
+	 * @var AdminPageState
 	 */
-	private EmailThemingService $emailThemingService;
-
-	/**
-	 * The theme preview service (drives the active-preview row).
-	 *
-	 * @var ThemePreviewService
-	 */
-	private ThemePreviewService $previewService;
+	private AdminPageState $page;
 
 	/**
 	 * The user session — resolves the requesting admin's uid for the
@@ -105,77 +92,23 @@ class Admin implements IDelegatedSettings {
 	private IUserSession $userSession;
 
 	/**
-	 * Resolves the active icon pack (icon-packs spec) for the read-only
-	 * admin indicator.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystemService;
-
-	/**
-	 * Carries server-side state to js/admin.js.
-	 *
-	 * The panel used to serialise this state into `data-*` attributes on the
-	 * `#nldesign-settings` div and have admin.js read it back with
-	 * `getAttribute()`. That is the pattern ADR-004 rules out: it breaks on
-	 * CSP-hardened instances, and it breaks SILENTLY — any markup change that
-	 * moves or renames the carrying element leaves admin.js parsing an empty
-	 * string and rendering as though the server had sent nothing at all.
-	 *
-	 * @var IInitialState
-	 */
-	private IInitialState $initialState;
-
-	/**
-	 * The current request — read only for the `?mock=1` switch that layers the
-	 * presentation mock (js/admin-mock.js) over the panel.
-	 *
-	 * @var IRequest
-	 */
-	private IRequest $request;
-
-	/**
-	 * Assembles what the component playground instrument reads at boot: the
-	 * component inventory, the reason vocabulary and the active set's token
-	 * values.
-	 *
-	 * @var PlaygroundStateService
-	 */
-	private PlaygroundStateService $playgroundState;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
-	 * @param TokenSetService $tokenSetService The token set service.
-	 * @param EmailThemingService $emailThemingService The email theming service.
-	 * @param ThemePreviewService $previewService The theme preview service.
 	 * @param IUserSession $userSession The user session.
-	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
-	 * @param IInitialState $initialState Carries server state to admin.js.
-	 * @param IRequest $request The current request (presentation-mock switch).
-	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
+	 * @param AdminFormServices $services The services the form reads its state from.
+	 * @param AdminPageState $page The initial state, the request and the playground boot state.
 	 */
 	public function __construct(
 		IConfig $config,
-		TokenSetService $tokenSetService,
-		EmailThemingService $emailThemingService,
-		ThemePreviewService $previewService,
 		IUserSession $userSession,
-		DesignSystemService $designSystemService,
-		IInitialState $initialState,
-		IRequest $request,
-		PlaygroundStateService $playgroundState,
+		AdminFormServices $services,
+		AdminPageState $page,
 	) {
 		$this->config = $config;
-		$this->tokenSetService = $tokenSetService;
-		$this->emailThemingService = $emailThemingService;
-		$this->previewService = $previewService;
 		$this->userSession = $userSession;
-		$this->designSystemService = $designSystemService;
-		$this->initialState = $initialState;
-		$this->request = $request;
-		$this->playgroundState = $playgroundState;
+		$this->services = $services;
+		$this->page = $page;
 	}//end __construct()
 
 	/**
@@ -208,8 +141,8 @@ class Admin implements IDelegatedSettings {
 		$currentTokenSet = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
 		$state = ['tokenSets' => $tokenSets, 'currentTokenSet' => $currentTokenSet] + $this->flagState();
 		$state['currentDesignSystem'] = $this->designSystemOf(tokenSets: $tokenSets, tokenSetId: $currentTokenSet);
-		$state['emailThemingState'] = $this->emailThemingService->getState();
-		$state['emailFooterConfig'] = $this->emailThemingService->getFooterConfig();
+		$state['emailThemingState'] = $this->services->emailTheming->getState();
+		$state['emailFooterConfig'] = $this->services->emailTheming->getFooterConfig();
 		$state['occEnableCommand'] = EmailThemingService::OCC_ENABLE_COMMAND;
 		$state['occDisableCommand'] = EmailThemingService::OCC_DISABLE_COMMAND;
 		$state['activePreview'] = $this->getActivePreviewForCurrentUser();
@@ -281,7 +214,7 @@ class Admin implements IDelegatedSettings {
 	 */
 	private function publishBootState(array $state): void {
 		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme'] as $key) {
-			$this->initialState->provideInitialState($key, $state[$key]);
+			$this->page->initialState->provideInitialState($key, $state[$key]);
 		}
 
 		$this->publishPreviewState(activePreview: $state['activePreview'], iconPackSource: $state['iconPackSource']);
@@ -307,7 +240,7 @@ class Admin implements IDelegatedSettings {
 			$params[$key] = $state[$key];
 		}
 
-		$params['mockUi'] = ($this->request->getParam('mock') === '1');
+		$params['mockUi'] = ($this->page->request->getParam('mock') === '1');
 
 		return $params + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $state['currentDesignSystem']);
 	}//end templateParams()
@@ -380,7 +313,7 @@ class Admin implements IDelegatedSettings {
 	 */
 	private function documentationParams(string $designSystem): array {
 		$urls = [];
-		foreach ($this->designSystemService->getDesignSystems() as $id => $entry) {
+		foreach ($this->services->designSystems->getDesignSystems() as $id => $entry) {
 			$url = ($entry['documentation_url'] ?? '');
 			// Only an https link: the manifest must not put a javascript: URL in the header.
 			if (is_string($url) === false || str_starts_with($url, 'https://') === false) {
@@ -390,7 +323,7 @@ class Admin implements IDelegatedSettings {
 			$urls[(string)$id] = $url;
 		}
 
-		$this->initialState->provideInitialState('designSystemDocs', $urls);
+		$this->page->initialState->provideInitialState('designSystemDocs', $urls);
 
 		return ['documentationUrl' => ($urls[$designSystem] ?? self::DEFAULT_DOCUMENTATION_URL)];
 	}//end documentationParams()
@@ -433,8 +366,8 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/icon-packs/spec.md
 	 */
 	private function publishPreviewState(?array $activePreview, string $iconPackSource): void {
-		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
-		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+		$this->page->initialState->provideInitialState('activePreview', ($activePreview ?? []));
+		$this->page->initialState->provideInitialState('iconPackSource', $iconPackSource);
 	}//end publishPreviewState()
 
 	/**
@@ -464,8 +397,8 @@ class Admin implements IDelegatedSettings {
 			$playgroundSet = $activePreview['tokenSet'];
 		}
 
-		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
-			$this->initialState->provideInitialState($key, $value);
+		foreach ($this->page->playground->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
+			$this->page->initialState->provideInitialState($key, $value);
 		}
 	}//end publishPlaygroundState()
 
@@ -482,7 +415,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/icon-packs/spec.md
 	 */
 	private function getActiveIconPackIndicator(string $tokenSetId): array {
-		$activeIconPacks = $this->designSystemService->resolveActiveIconPacks(tokenSetId: $tokenSetId);
+		$activeIconPacks = $this->services->designSystems->resolveActiveIconPacks(tokenSetId: $tokenSetId);
 
 		$override = trim($this->config->getAppValue(Application::APP_ID, 'icon_pack', ''));
 
@@ -509,12 +442,12 @@ class Admin implements IDelegatedSettings {
 			return null;
 		}
 
-		$preview = $this->previewService->getActivePreview(uid: $uid);
+		$preview = $this->services->previews->getActivePreview(uid: $uid);
 		if ($preview === null) {
 			return null;
 		}
 
-		$meta = $this->tokenSetService->getAvailableTokenSets();
+		$meta = $this->services->tokenSets->getAvailableTokenSets();
 		$name = $preview['tokenSet'];
 		foreach ($meta as $tokenSet) {
 			if ($tokenSet['id'] === $preview['tokenSet']) {
@@ -621,9 +554,9 @@ class Admin implements IDelegatedSettings {
 	 */
 	private function selectableTokenSets(): array {
 		return (new TokenSetSelectionPolicy())->selectable(
-			tokenSets: $this->tokenSetService,
+			tokenSets: $this->services->tokenSets,
 			config: $this->config,
-			appPath: $this->tokenSetService->getAppPath()
+			appPath: $this->services->tokenSets->getAppPath()
 		);
 	}//end selectableTokenSets()
 
