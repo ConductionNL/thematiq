@@ -54,9 +54,11 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 	 * Build a SettingsController wired to a real UpstreamFreshnessService
 	 * (backed by the in-memory config store) and stubbed sibling
 	 * dependencies not exercised by the upstream-freshness endpoints.
+	 *
+	 * @return SettingsController
 	 */
 	private function makeController(): SettingsController {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
 				return ($this->configStore[$key] ?? $default);
@@ -68,33 +70,33 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 			}
 		);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getAvailableTokenSets')->willReturn([]);
 
 		$upstreamFreshnessService = new UpstreamFreshnessService(
-			$config,
-			$this->createMock(IClientService::class),
-			$tokenSetService,
-			$this->createMock(LoggerInterface::class)
+			config: $config,
+			clientService: $this->createMock(originalClassName: IClientService::class),
+			tokenSetService: $tokenSetService,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		return new SettingsController(
 			appName: 'nldesign',
-			request: $this->createMock(IRequest::class),
+			request: $this->createMock(originalClassName: IRequest::class),
 			settings: new SettingsConfigServices(
 				config: $config,
-				auditService: $this->createMock(ThemingAuditService::class),
-				appThemingService: $this->createMock(AppThemingService::class),
-				groupThemingService: $this->createMock(GroupThemingService::class)
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
 			),
 			tokenSets: new SettingsTokenSetServices(
 				tokenSetService: $tokenSetService,
-				previewService: $this->createMock(TokenSetPreviewService::class),
-				activeTokenSet: $this->createMock(ActiveTokenSetService::class),
-				themingService: $this->createMock(ThemingService::class)
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
 			),
 			reports: new SettingsReportServices(
-				complianceService: $this->createMock(ComplianceReportService::class),
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
 				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
 				freshnessService: $upstreamFreshnessService
 			)
@@ -105,34 +107,40 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 	 * All three upstream-freshness routes carry the AuthorizedAdminSetting
 	 * attribute — non-admin requests are rejected by that posture before the
 	 * method body ever runs.
+	 *
+	 * @return void
 	 */
 	public function testAllThreeEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getUpstreamFreshness', 'setUpstreamFreshness', 'dismissUpstreamNotice'] as $method) {
 			$reflection = new \ReflectionMethod(SettingsController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "$method must carry #[AuthorizedAdminSetting]");
+			$this->assertNotEmpty(actual: $attributes, message: "$method must carry #[AuthorizedAdminSetting]");
 		}
 	}//end testAllThreeEndpointsCarryAuthorizedAdminSetting()
 
 	/**
 	 * The toggle POST persists the enabled state, reflected by the GET.
+	 *
+	 * @return void
 	 */
 	public function testToggleEnabledPersists(): void {
 		$controller = $this->makeController();
 
 		$before = $controller->getUpstreamFreshness()->getData();
-		$this->assertFalse($before['enabled']);
+		$this->assertFalse(condition: $before['enabled']);
 
 		$setResponse = $controller->setUpstreamFreshness(true);
-		$this->assertSame(['status' => 'ok', 'enabled' => true], $setResponse->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'enabled' => true], actual: $setResponse->getData());
 
 		$after = $controller->getUpstreamFreshness()->getData();
-		$this->assertTrue($after['enabled']);
+		$this->assertTrue(condition: $after['enabled']);
 	}//end testToggleEnabledPersists()
 
 	/**
 	 * A dismiss POST round-trips into the filtered getStatus() output: the
 	 * dismissed notice disappears from the subsequent GET.
+	 *
+	 * @return void
 	 */
 	public function testDismissRoundTripsIntoFilteredStatus(): void {
 		$this->configStore['upstream_updates'] = json_encode(
@@ -150,12 +158,12 @@ class SettingsControllerUpstreamFreshnessTest extends TestCase {
 		$controller = $this->makeController();
 
 		$before = $controller->getUpstreamFreshness()->getData();
-		$this->assertCount(1, $before['notices']);
+		$this->assertCount(expectedCount: 1, haystack: $before['notices']);
 
 		$dismissResponse = $controller->dismissUpstreamNotice('utrecht', '1.0.0');
-		$this->assertSame(['status' => 'ok'], $dismissResponse->getData());
+		$this->assertSame(expected: ['status' => 'ok'], actual: $dismissResponse->getData());
 
 		$after = $controller->getUpstreamFreshness()->getData();
-		$this->assertSame([], $after['notices']);
+		$this->assertSame(expected: [], actual: $after['notices']);
 	}//end testDismissRoundTripsIntoFilteredStatus()
 }//end class

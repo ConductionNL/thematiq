@@ -45,6 +45,11 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 
 	private const SYSTEMS = ['nldesign', 'none', 'summer-breeze', 'lasuite', 'high-contrast', 'unknown-system', 7, null];
 
+	/**
+	 * The directory.
+	 *
+	 * @var string
+	 */
 	private string $directory = '';
 
 	private const PRIMARIES = ['#154273', '#FFF', '#fff', ' #ffffff ', '#12345', 'red', 7, null, '#000'];
@@ -56,7 +61,7 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 	 */
 	public function testAuditMatchesTheGoldenRecording(): void {
 		$appPath = dirname(__DIR__, 3);
-		$service = new TokenSetVocabularyAuditService(new CssParserService());
+		$service = new TokenSetVocabularyAuditService(parser: new CssParserService());
 		$manifest = json_decode((string)file_get_contents($appPath . '/token-sets.json'), true);
 		$entries = [];
 		foreach ($manifest as $entry) {
@@ -100,7 +105,10 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 		for ($seed = 1; $seed <= 90; $seed++) {
 			$random = new Randomizer(new Mt19937($seed));
 			$css = ":root {\n";
-			foreach ($random->pickArrayKeys(array_flip(array_merge($vocabulary, TokenSetVocabularyAuditService::REQUIRED_TOKENS)), $random->getInt(1, 40)) as $name) {
+			foreach ($random->pickArrayKeys(
+				array_flip(array_merge($vocabulary, TokenSetVocabularyAuditService::REQUIRED_TOKENS)),
+				$random->getInt(1, 40)
+			) as $name) {
 				$css .= "\t" . $name . ': #' . $random->getBytesFromString('0123456789abcdef', 6) . ";\n";
 			}
 
@@ -120,7 +128,10 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 			}
 
 			file_put_contents($synthetic . '/css/tokens/golden-' . $seed . '.css', $css . "}\n");
-			$meta = ['design_system' => self::SYSTEMS[$random->getInt(0, 3)], 'theming' => ['primary_color' => self::PRIMARIES[$random->getInt(0, (count(self::PRIMARIES) - 1))]]];
+			$meta = ['design_system' => self::SYSTEMS[$random->getInt(0, 3)], 'theming' => ['primary_color' => self::PRIMARIES[$random->getInt(
+				0,
+				(count(self::PRIMARIES) - 1)
+			)]]];
 			$actual['synthetic:' . $seed] = (string)json_encode(
 				['meta' => $meta, 'audit' => $service->auditSet(appPath: $synthetic, id: 'golden-' . $seed, meta: $meta)],
 				JSON_UNESCAPED_SLASHES
@@ -132,9 +143,9 @@ class TokenSetVocabularyAuditGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testAuditMatchesTheGoldenRecording()
 

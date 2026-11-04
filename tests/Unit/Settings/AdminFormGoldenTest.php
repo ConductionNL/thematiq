@@ -76,9 +76,9 @@ class AdminFormGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testFormMatchesTheGoldenRecording()
 
@@ -111,37 +111,41 @@ class AdminFormGoldenTest extends TestCase {
 		}
 
 		$environment = ['', ' Test ', 'production'][$random->getInt(0, 2)];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = '') => ($key === 'thematiq.environment' ? $environment : $default)
+			static fn (string $key, string $default = '') => (match ($key === 'thematiq.environment') {
+				true => $environment, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ($values[$key] ?? $default)
 		);
 
-		$tokenSetService = $this->createMock(TokenSetService::class);
+		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSetService->method('getAvailableTokenSets')->willReturn(self::TOKEN_SETS);
 		$tokenSetService->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		$email = $this->createMock(EmailThemingService::class);
+		$email = $this->createMock(originalClassName: EmailThemingService::class);
 		$email->method('getState')->willReturn(['state' => ['enabled', 'disabled'][$random->getInt(0, 1)]]);
 		$email->method('getFooterConfig')->willReturn(['orgName' => 'Zuid', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 
 		$preview = [null, ['tokenSet' => 'lasuite'], ['tokenSet' => 'gone']][$random->getInt(0, 2)];
-		$previewService = $this->createMock(ThemePreviewService::class);
+		$previewService = $this->createMock(originalClassName: ThemePreviewService::class);
 		$previewService->method('getActivePreview')->willReturn($preview);
 
-		$userSession = $this->createMock(IUserSession::class);
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
 		if ($random->getInt(0, 4) !== 0) {
-			$user = $this->createMock(IUser::class);
+			$user = $this->createMock(originalClassName: IUser::class);
 			$user->method('getUID')->willReturn('admin');
 			$userSession->method('getUser')->willReturn($user);
 		}
 
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$packs = [['remixicon'], ['lucide', 'remixicon'], []][$random->getInt(0, 2)];
 		$designSystems->method('resolveActiveIconPacks')->willReturnCallback(
-			static fn (string $tokenSetId): array => ($tokenSetId === 'lasuite') ? ['lucide'] : $packs
+			static fn (string $tokenSetId): array => match ($tokenSetId === 'lasuite') {
+				true => ['lucide'], default => $packs
+			}
 		);
 		$designSystems->method('getDesignSystems')->willReturn(
 			[
@@ -152,22 +156,32 @@ class AdminFormGoldenTest extends TestCase {
 		);
 
 		$published = [];
-		$initialState = $this->createMock(IInitialState::class);
+		$initialState = $this->createMock(originalClassName: IInitialState::class);
 		$initialState->method('provideInitialState')->willReturnCallback(
 			static function (string $key, $value) use (&$published): void {
 				$published[] = [$key, $value];
 			}
 		);
 
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturn(['1', null, '0'][$random->getInt(0, 2)]);
 
-		$playground = $this->createMock(PlaygroundStateService::class);
+		$playground = $this->createMock(originalClassName: PlaygroundStateService::class);
 		$playground->method('getInitialState')->willReturnCallback(
 			static fn (string $tokenSetId): array => ['playgroundSet' => $tokenSetId, 'playgroundVersion' => 34]
 		);
 
-		$admin = new Admin($config, $tokenSetService, $email, $previewService, $userSession, $designSystems, $initialState, $request, $playground);
+		$admin = new Admin(
+			config: $config,
+			tokenSetService: $tokenSetService,
+			emailThemingService: $email,
+			previewService: $previewService,
+			userSession: $userSession,
+			designSystemService: $designSystems,
+			initialState: $initialState,
+			request: $request,
+			playgroundState: $playground
+		);
 		$response = $admin->getForm();
 
 		return (string)json_encode(

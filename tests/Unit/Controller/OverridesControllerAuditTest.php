@@ -74,14 +74,19 @@ class OverridesControllerAuditTest extends TestCase {
 	 */
 	private ThemingService $themingService;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->overridesService = $this->createMock(CustomOverridesService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->request = $this->createMock(IRequest::class);
-		$this->config = $this->createMock(IConfig::class);
-		$this->themingService = $this->createMock(ThemingService::class);
+		$this->overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->themingService = $this->createMock(originalClassName: ThemingService::class);
 
 		$this->controller = new OverridesController(
 			appName: 'nldesign',
@@ -101,6 +106,8 @@ class OverridesControllerAuditTest extends TestCase {
 	/**
 	 * Overrides are written to the file of the set the request names, so
 	 * edits made on the stock set land in the stock set's own file.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesWritesTheRequestedSetsFile(): void {
 		$this->request->method('getParams')->willReturn(
@@ -114,18 +121,22 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testSetOverridesWritesTheRequestedSetsFile()
 
 	/**
 	 * The reset empties the overrides of the set that was active AND of the
 	 * stock set, makes the stock set active, resets core theming, and records
 	 * each change in the audit vocabulary it already has.
+	 *
+	 * @return void
 	 */
 	public function testResetEmptiesBothFilesAndReturnsToStock(): void {
 		$this->request->method('getParams')->willReturn(['reset' => true]);
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn (string $app, string $key, $default = '') => ($key === 'token_set' ? 'amsterdam' : $default)
+			fn (string $app, string $key, $default = '') => (match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			})
 		);
 		$this->overridesService->method('read')->willReturnMap(
 			[
@@ -152,13 +163,15 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['amsterdam' => [], 'nextcloud' => []], $written);
-		$this->assertSame(['overrides_written', 'overrides_written', 'token_set_changed'], $actions);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['amsterdam' => [], 'nextcloud' => []], actual: $written);
+		$this->assertSame(expected: ['overrides_written', 'overrides_written', 'token_set_changed'], actual: $actions);
 	}//end testResetEmptiesBothFilesAndReturnsToStock()
 
 	/**
 	 * A reset whose file write fails changes nothing else and says so.
+	 *
+	 * @return void
 	 */
 	public function testResetWriteFailureLeavesTheSetAndThemingAlone(): void {
 		$this->request->method('getParams')->willReturn(['reset' => true]);
@@ -172,12 +185,14 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(500, $response->getStatus());
+		$this->assertSame(expected: 500, actual: $response->getStatus());
 	}//end testResetWriteFailureLeavesTheSetAndThemingAlone()
 
 	/**
 	 * A successful setOverrides() logs exactly one overrides_written entry
 	 * with the pre-write and post-write token maps.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesLogsOneEntryWithOldAndNew(): void {
 		$this->overridesService->method('read')->willReturn(['--nldesign-color-primary' => '#000000']);
@@ -197,11 +212,13 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testSetOverridesLogsOneEntryWithOldAndNew()
 
 	/**
 	 * A validation failure (non-array overrides) logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesRejectsNonArrayWithoutLogging(): void {
 		$this->request->method('getParams')->willReturn(['overrides' => 'not-an-array']);
@@ -210,12 +227,14 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testSetOverridesRejectsNonArrayWithoutLogging()
 
 	/**
 	 * A write failure (RuntimeException) logs nothing — the audit trail
 	 * only records successful writes.
+	 *
+	 * @return void
 	 */
 	public function testSetOverridesWriteFailureLogsNothing(): void {
 		$this->overridesService->method('read')->willReturn([]);
@@ -226,12 +245,14 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->setOverrides();
 
-		$this->assertSame(500, $response->getStatus());
+		$this->assertSame(expected: 500, actual: $response->getStatus());
 	}//end testSetOverridesWriteFailureLogsNothing()
 
 	/**
 	 * A successful import logs one overrides_imported entry with the
 	 * imported/skipped counts and a hashed CSS payload — never the raw CSS.
+	 *
+	 * @return void
 	 */
 	public function testImportOverridesLogsHashedPayload(): void {
 		$css = ':root { --color-primary: #007bc7; }';
@@ -248,7 +269,7 @@ class OverridesControllerAuditTest extends TestCase {
 			->method('log')
 			->with(
 				'overrides_imported',
-				$this->callback(function (array $context) use ($css): bool {
+				$this->callback(callback: function (array $context) use ($css): bool {
 					return ($context['imported'] === 1)
 						&& ($context['skipped'] === 0)
 						&& ($context['new'] === $css)
@@ -258,7 +279,7 @@ class OverridesControllerAuditTest extends TestCase {
 
 		$response = $this->controller->importOverrides();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testImportOverridesLogsHashedPayload()
 
 	/**

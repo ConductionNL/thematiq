@@ -23,11 +23,13 @@ namespace OCA\Thematiq\Tests\Unit\Controller;
 use OCA\Thematiq\Controller\OpenProjectSetFileController;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\OpenProjectSetFileOutput;
 use OCA\Thematiq\Service\OpenProjectSetFileWriter;
 use OCA\Thematiq\Service\ShellCatalogueService;
 use OCA\Thematiq\Service\ShellRoleMapper;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFileLocation;
 use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
@@ -57,24 +59,38 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 	 * @return OpenProjectSetFileController
 	 */
 	private function controller(): OpenProjectSetFileController {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, $default = '') => $default);
-		$cache = $this->createMock(ICacheFactory::class);
-		$cache->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cache = $this->createMock(originalClassName: ICacheFactory::class);
+		$cache->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$parser = new CssParserService();
-		$audit = new ShippedTokenSetAuditService(new ContrastService(), $parser);
+		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: $parser);
 		$tokenSets = new TokenSetService(
 			setFiles: new TokenSetFiles(appManager: $appManager),
-			runtime: new TokenSetRuntime(config: $config, cacheFactory: $cache, logger: $this->createMock(LoggerInterface::class)),
-			audits: new TokenSetAudits(audit: $audit, vocabularyAudit: new TokenSetVocabularyAuditService($parser))
+			runtime: new TokenSetRuntime(config: $config, cacheFactory: $cache, logger: $this->createMock(originalClassName: LoggerInterface::class)),
+			audits: new TokenSetAudits(audit: $audit, vocabularyAudit: new TokenSetVocabularyAuditService(parser: $parser))
 		);
-		$writer = new OpenProjectSetFileWriter(new ShellCatalogueService($audit, new ShellRoleMapper(colours: new ContrastService())));
-		$l = $this->createMock(IL10N::class);
+		$writer = new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
+			declarations: $audit,
+			mapper: new ShellRoleMapper(colours: new ContrastService())
+		));
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		return new OpenProjectSetFileController('thematiq', $this->createMock(IRequest::class), $tokenSets, $appManager, $writer, $l);
+		return new OpenProjectSetFileController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			location: new TokenSetFileLocation(
+				tokenSets: $tokenSets,
+				appManager: $appManager
+			),
+			output: new OpenProjectSetFileOutput(
+				writer: $writer,
+				l: $l
+			)
+		);
 	}//end controller()
 
 	/**
@@ -86,14 +102,14 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 		$response = $this->controller()->export(id: 'cunningham');
 		$file = json_decode((string)json_encode($response->getData()), true);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('cunningham', $file['id']);
-		$this->assertSame('#1f883d', $file['tokens']['action']);
-		$this->assertCount(19, $file['tokens']);
-		$this->assertArrayHasKey('redistributable', $file['logo']);
-		$this->assertArrayHasKey('tokens', $file['dark']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'cunningham', actual: $file['id']);
+		$this->assertSame(expected: '#1f883d', actual: $file['tokens']['action']);
+		$this->assertCount(expectedCount: 19, haystack: $file['tokens']);
+		$this->assertArrayHasKey(key: 'redistributable', array: $file['logo']);
+		$this->assertArrayHasKey(key: 'tokens', array: $file['dark']);
 		$headers = (new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response);
-		$this->assertSame('attachment; filename="thematiq-cunningham.json"', $headers['Content-Disposition']);
+		$this->assertSame(expected: 'attachment; filename="thematiq-cunningham.json"', actual: $headers['Content-Disposition']);
 	}//end testTheSetFileHoldsTheRolesAndTheLogo()
 
 	/**
@@ -102,8 +118,8 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnUnknownSetIs404(): void {
-		$this->assertSame(404, $this->controller()->export(id: 'does-not-exist')->getStatus());
-		$this->assertSame(404, $this->controller()->export(id: '../token-sets')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller()->export(id: 'does-not-exist')->getStatus());
+		$this->assertSame(expected: 404, actual: $this->controller()->export(id: '../token-sets')->getStatus());
 	}//end testAnUnknownSetIs404()
 
 	/**
@@ -114,7 +130,7 @@ final class OpenProjectSetFileControllerTest extends TestCase {
 	public function testAdminOnly(): void {
 		$attributes = (new ReflectionMethod(OpenProjectSetFileController::class, 'export'))->getAttributes(AuthorizedAdminSetting::class);
 
-		$this->assertCount(1, $attributes);
-		$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings']);
+		$this->assertCount(expectedCount: 1, haystack: $attributes);
+		$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings']);
 	}//end testAdminOnly()
 }//end class

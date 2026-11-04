@@ -100,7 +100,11 @@ class UpstreamFreshnessRunGoldenTest extends TestCase {
 		);
 
 		$head = [self::HEAD, '  ' . self::HEAD . "\n", '', 'not-a-sha', 'ABCDEF1234567890ABCDEF1234567890ABCDEF12', 'abc12'][$random->getInt(0, 5)];
-		$manifest = $this->response(status: [200, 200, 200, 304, 500][$random->getInt(0, 4)], body: $head, etag: ['', 'W/"new"'][$random->getInt(0, 1)]);
+		$manifest = $this->response(
+			status: [200, 200, 200, 304, 500][$random->getInt(0, 4)],
+			body: $head,
+			etag: ['', 'W/"new"'][$random->getInt(0, 1)]
+		);
 		$compare = $this->compareOutcome(random: $random);
 
 		$client = $this->createMock(originalClassName: IClient::class);

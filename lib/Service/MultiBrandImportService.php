@@ -277,9 +277,7 @@ class MultiBrandImportService {
 				content: $cut['content'],
 				slug: $slug,
 				displayName: $displayName,
-				sourceName: $fileName,
-				assetName: CustomTokenSetId::PREFIX . $slug,
-				referenceOnlyPaths: $cut['referenceOnlyPaths']
+				options: ['sourceName' => $fileName, 'assetName' => CustomTokenSetId::PREFIX . $slug, 'referenceOnlyPaths' => $cut['referenceOnlyPaths']]
 			);
 		} catch (RuntimeException $e) {
 			throw new RuntimeException('Brand "' . $key . '": ' . $e->getMessage(), 422);
@@ -313,11 +311,15 @@ class MultiBrandImportService {
 	 */
 	private function storeBrand(string $sourceId, string $key, array $plan, ?string $fileName): array {
 		$result = $this->storage->customSets->store(
-			displayName: $plan['displayName'],
-			description: '',
-			declarations: $plan['accepted'],
-			css: $plan['css'],
-			theming: $plan['theming']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => $plan['displayName'],
+					'description' => '',
+					'declarations' => $plan['accepted'],
+					'css' => $plan['css'],
+					'theming' => $plan['theming'],
+				]
+			)
 		);
 
 		$entry = ($this->storage->customSets->getManifest()[$result['id']] ?? []);

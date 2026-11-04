@@ -63,16 +63,20 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 	/**
 	 * Set up.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->versions = $this->createMock(ThemeVersionService::class);
-		$this->bundles = $this->createMock(ConfigBundleService::class);
-		$this->audit = $this->createMock(ThemingAuditService::class);
-		$this->fonts = $this->createMock(FontService::class);
+		$this->versions = $this->createMock(originalClassName: ThemeVersionService::class);
+		$this->bundles = $this->createMock(originalClassName: ConfigBundleService::class);
+		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->fonts = $this->createMock(originalClassName: FontService::class);
 
 		$this->versions->method('get')->willReturnCallback(
-			fn (string $id): ?array => $id === $this->version['id'] ? $this->version : null
+			fn (string $id): ?array => match ($id === $this->version['id']) {
+				true => $this->version, default => null
+			}
 		);
 		$this->versions->method('list')->willReturn([['id' => '20260929170000-0001'], ['id' => $this->version['id']]]);
 		$this->bundles->method('export')->willReturn(
@@ -91,22 +95,27 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	 * @return ThemeVersionRestoreService The service.
 	 */
 	private function service(): ThemeVersionRestoreService {
-		return new ThemeVersionRestoreService($this->versions, $this->bundles, $this->audit, $this->fonts);
+		return new ThemeVersionRestoreService(versions: $this->versions, bundles: $this->bundles, audit: $this->audit, fonts: $this->fonts);
 	}//end service()
 
 	/**
 	 * The preview is a dry-run import plus the changes it will make.
+	 *
+	 * @return void
 	 */
 	public function testThePreviewListsTheChangesAndWritesNothing(): void {
-		$this->bundles->expects($this->once())->method('import')->with($this->version['bundle'], true)->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
+		$this->bundles->expects($this->once())->method('import')->with(
+			$this->version['bundle'],
+			true
+		)->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
 		$this->audit->expects($this->never())->method('log');
 
 		$preview = $this->service()->preview(id: $this->version['id']);
 
-		$this->assertTrue($preview['valid']);
-		$this->assertContains(['field' => 'tokenSet', 'from' => 'custom-bad', 'to' => 'rijkshuisstijl'], $preview['changes']);
-		$this->assertSame(['custom-bad'], $preview['customTokenSets']['remove']);
-		$this->assertSame([['id' => 'gone-font', 'name' => 'Gone Sans', 'role' => 'heading']], $preview['missingFonts']);
+		$this->assertTrue(condition: $preview['valid']);
+		$this->assertContains(needle: ['field' => 'tokenSet', 'from' => 'custom-bad', 'to' => 'rijkshuisstijl'], haystack: $preview['changes']);
+		$this->assertSame(expected: ['custom-bad'], actual: $preview['customTokenSets']['remove']);
+		$this->assertSame(expected: [['id' => 'gone-font', 'name' => 'Gone Sans', 'role' => 'heading']], actual: $preview['missingFonts']);
 	}//end testThePreviewListsTheChangesAndWritesNothing()
 
 	/**
@@ -114,23 +123,27 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 	 * count; a version 1 bundle without them names no change there.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThePreviewNamesAChangeInPlannedSwitches(): void {
 		$this->bundles->method('import')->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
 		$preview = $this->service()->preview(id: $this->version['id']);
-		$this->assertNotContains('scheduledSwitches', array_column($preview['changes'], 'field'));
+		$this->assertNotContains(needle: 'scheduledSwitches', haystack: array_column($preview['changes'], 'field'));
 
 		$this->version['bundle']['config']['scheduledSwitches'] = [['id' => 'a1', 'tokenSet' => 'koningsdag-oranje']];
 		$preview = $this->service()->preview(id: $this->version['id']);
-		$this->assertContains(['field' => 'scheduledSwitches', 'from' => 0, 'to' => 1], $preview['changes']);
+		$this->assertContains(needle: ['field' => 'scheduledSwitches', 'from' => 0, 'to' => 1], haystack: $preview['changes']);
 	}//end testThePreviewNamesAChangeInPlannedSwitches()
 
 	/**
 	 * A restore imports the bundle and records version_restored with the
 	 * version it replaced.
+	 *
+	 * @return void
 	 */
 	public function testARestoreImportsAndIsAudited(): void {
-		$this->bundles->expects($this->exactly(2))->method('import')->willReturnCallback(
+		$this->bundles->expects($this->exactly(count: 2))->method('import')->willReturnCallback(
 			fn (array $bundle, bool $dryRun = false): array => ['valid' => true, 'dryRun' => $dryRun, 'applied' => !$dryRun]
 		);
 		$this->audit->expects($this->once())->method('log')->with(
@@ -140,11 +153,13 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 		$result = $this->service()->restore(id: $this->version['id']);
 
-		$this->assertTrue($result['applied']);
+		$this->assertTrue(condition: $result['applied']);
 	}//end testARestoreImportsAndIsAudited()
 
 	/**
 	 * A restore from occ records the actor it is given, as the other commands do.
+	 *
+	 * @return void
 	 */
 	public function testARestoreRecordsTheGivenActor(): void {
 		$this->bundles->method('import')->willReturnCallback(
@@ -155,11 +170,13 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 			['old' => '20260929170000-0001', 'new' => $this->version['id'], 'actor' => 'cli']
 		);
 
-		$this->assertTrue($this->service()->restore(id: $this->version['id'], actor: 'cli')['applied']);
+		$this->assertTrue(condition: $this->service()->restore(id: $this->version['id'], actor: 'cli')['applied']);
 	}//end testARestoreRecordsTheGivenActor()
 
 	/**
 	 * A version that no longer validates is refused whole: nothing applied, nothing audited.
+	 *
+	 * @return void
 	 */
 	public function testAnInvalidVersionWritesNothing(): void {
 		$this->bundles->expects($this->once())->method('import')->with($this->version['bundle'], true)->willReturn(
@@ -169,17 +186,19 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 
 		$result = $this->service()->restore(id: $this->version['id']);
 
-		$this->assertFalse($result['applied']);
-		$this->assertSame('custom-x', $result['errors'][0]['id']);
+		$this->assertFalse(condition: $result['applied']);
+		$this->assertSame(expected: 'custom-x', actual: $result['errors'][0]['id']);
 	}//end testAnInvalidVersionWritesNothing()
 
 	/**
 	 * An unknown id is null, for a 404.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownIdIsNull(): void {
 		$this->bundles->expects($this->never())->method('import');
 
-		$this->assertNull($this->service()->preview(id: '20200101000000-0001'));
-		$this->assertNull($this->service()->restore(id: '20200101000000-0001'));
+		$this->assertNull(actual: $this->service()->preview(id: '20200101000000-0001'));
+		$this->assertNull(actual: $this->service()->restore(id: '20200101000000-0001'));
 	}//end testAnUnknownIdIsNull()
 }//end class

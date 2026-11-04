@@ -55,7 +55,7 @@ final class ColorSpaceConverterTest extends TestCase {
 	 * @return void
 	 */
 	public function testEverySpaceHasACase(): void {
-		$this->assertSame(ColorSpaceConverter::SPACES, array_keys(self::fixture()));
+		$this->assertSame(expected: ColorSpaceConverter::SPACES, actual: array_keys(self::fixture()));
 	}//end testEverySpaceHasACase()
 
 	/**
@@ -73,7 +73,12 @@ final class ColorSpaceConverterTest extends TestCase {
 		$actual = $converter->toHex(rgb: (array)$converter->toSrgb(space: $space, components: $components));
 
 		foreach ([1, 3, 5] as $offset) {
-			$this->assertEqualsWithDelta(hexdec(substr($expected, $offset, 2)), hexdec(substr($actual, $offset, 2)), 1, $space . ': ' . $actual . ' vs ' . $expected);
+			$this->assertEqualsWithDelta(
+				expected: hexdec(substr($expected, $offset, 2)),
+				actual: hexdec(substr($actual, $offset, 2)),
+				delta: 1,
+				message: $space . ': ' . $actual . ' vs ' . $expected
+			);
 		}
 	}//end testConvertsToTheReference()
 
@@ -86,10 +91,10 @@ final class ColorSpaceConverterTest extends TestCase {
 		$converter = new ColorSpaceConverter();
 		$red = (array)$converter->toSrgb(space: 'display-p3', components: [1, 0, 0]);
 
-		$this->assertFalse($converter->isInGamut(rgb: $red));
-		$this->assertSame('#ff0000', $converter->toHex(rgb: $red));
-		$this->assertTrue($converter->isInGamut(rgb: (array)$converter->toSrgb(space: 'oklch', components: [0.5, 0.1, 250])));
-		$this->assertNull($converter->toSrgb(space: 'cmyk', components: [0, 0, 0]));
-		$this->assertSame('#15427380', $converter->toHex(rgb: [0.0824, 0.2588, 0.451], alpha: 0.5));
+		$this->assertFalse(condition: $converter->isInGamut(rgb: $red));
+		$this->assertSame(expected: '#ff0000', actual: $converter->toHex(rgb: $red));
+		$this->assertTrue(condition: $converter->isInGamut(rgb: (array)$converter->toSrgb(space: 'oklch', components: [0.5, 0.1, 250])));
+		$this->assertNull(actual: $converter->toSrgb(space: 'cmyk', components: [0, 0, 0]));
+		$this->assertSame(expected: '#15427380', actual: $converter->toHex(rgb: [0.0824, 0.2588, 0.451], alpha: 0.5));
 	}//end testGamutAndUnknownSpace()
 }//end class

@@ -109,21 +109,21 @@ class ConfigApplyTest extends TestCase {
 			(string)json_encode(['nldesign' => ['color' => ['$type' => 'color', 'primary' => ['$value' => $primary]]]])
 		);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
-		$customSets = $this->createMock(CustomTokenSetService::class);
+		$customSets = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$customSets->method('isCustomId')->willReturnCallback(fn (string $id): bool => str_starts_with($id, 'custom-'));
-		$fonts = $this->createMock(FontService::class);
+		$fonts = $this->createMock(originalClassName: FontService::class);
 		$fonts->method('getManifest')->willReturn([]);
-		$bundles = $this->createMock(ConfigBundleService::class);
+		$bundles = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundles->method('export')->willReturn([]);
 		$bundles->method('import')->willReturnCallback(
 			function (array $bundle, bool $dryRun = false): array {
@@ -135,11 +135,11 @@ class ConfigApplyTest extends TestCase {
 			}
 		);
 		$packages = new BrandingPackageService(
-			new BrandingPackageReader(),
-			$bundles,
-			$fonts,
-			new FontValidator(),
-			new PackageTokenSourceConverter(
+			reader: new BrandingPackageReader(),
+			bundleService: $bundles,
+			fontService: $fonts,
+			fontValidator: new FontValidator(),
+			tokenSources: new PackageTokenSourceConverter(
 				converter: $converter,
 				customSets: $customSets,
 				values: new DtcgValueChecker(values: new TokenValueValidator())
@@ -147,9 +147,11 @@ class ConfigApplyTest extends TestCase {
 		);
 
 		$app = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			fn (string $key, string $default = ''): string => $key === 'thematiq.config_source' ? $this->dir : $default
+			fn (string $key, string $default = ''): string => match ($key === 'thematiq.config_source') {
+				true => $this->dir, default => $default
+			}
 		);
 		$config->method('getAppValue')->willReturnCallback(fn (string $appId, string $key, $default = '') => ($app[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(
@@ -157,7 +159,7 @@ class ConfigApplyTest extends TestCase {
 				$app[$key] = (string)$value;
 			}
 		);
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturn(1790000000);
 
 		$source = new ConfigSourceService(
@@ -166,19 +168,19 @@ class ConfigApplyTest extends TestCase {
 				reader: new BrandingPackageReader(),
 				packageService: $packages,
 				bundleService: $bundles,
-				audit: $this->createMock(ThemingAuditService::class)
+				audit: $this->createMock(originalClassName: ThemingAuditService::class)
 			),
 			lock: new ConfigSourceLock(
-				locking: $this->createMock(ILockingProvider::class),
-				appConfig: $this->createMock(IAppConfig::class)
+				locking: $this->createMock(originalClassName: ILockingProvider::class),
+				appConfig: $this->createMock(originalClassName: IAppConfig::class)
 			),
 			clock: new ConfigSourceClock(
 				time: $time,
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 
-		$tester = new CommandTester(new ConfigApply($source));
+		$tester = new CommandTester(new ConfigApply(source: $source));
 		$tester->execute([]);
 
 		return $tester;
@@ -192,10 +194,10 @@ class ConfigApplyTest extends TestCase {
 	public function testAnInvalidColourExitsNonZeroNamingTheToken(): void {
 		$tester = $this->applyPackage(primary: 'not-a-colour');
 
-		$this->assertSame(1, $tester->getStatusCode());
-		$this->assertStringContainsString('nldesign.color.primary', $tester->getDisplay());
-		$this->assertStringContainsString('not-a-colour', $tester->getDisplay());
-		$this->assertSame(0, $this->applied);
+		$this->assertSame(expected: 1, actual: $tester->getStatusCode());
+		$this->assertStringContainsString(needle: 'nldesign.color.primary', haystack: $tester->getDisplay());
+		$this->assertStringContainsString(needle: 'not-a-colour', haystack: $tester->getDisplay());
+		$this->assertSame(expected: 0, actual: $this->applied);
 	}//end testAnInvalidColourExitsNonZeroNamingTheToken()
 
 	/**
@@ -206,7 +208,7 @@ class ConfigApplyTest extends TestCase {
 	public function testAValidColourApplies(): void {
 		$tester = $this->applyPackage(primary: '#8a2be2');
 
-		$this->assertSame(0, $tester->getStatusCode(), $tester->getDisplay());
-		$this->assertSame(1, $this->applied);
+		$this->assertSame(expected: 0, actual: $tester->getStatusCode(), message: $tester->getDisplay());
+		$this->assertSame(expected: 1, actual: $this->applied);
 	}//end testAValidColourApplies()
 }//end class

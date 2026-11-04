@@ -28,6 +28,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\OverridesStorage;
 use OCA\Thematiq\Service\OverridesThemingSync;
 use OCA\Thematiq\Service\OverridesWrites;
@@ -85,13 +86,18 @@ class TokenValueTypesTest extends TestCase {
 	protected function setUp(): void {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-value-types-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css/tokens', 0777, true);
-		$this->appManager = $this->createMock(IAppManager::class);
+		$this->appManager = $this->createMock(originalClassName: IAppManager::class);
 		$this->appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$this->darkPalette = new DarkPaletteService(new ContrastService(), $parser, $this->appManager, $this->createMock(LoggerInterface::class));
+		$this->darkPalette = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $this->appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($this->appDir),
+				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
 				darkPalette: $this->darkPalette
 			)
@@ -116,7 +122,7 @@ class TokenValueTypesTest extends TestCase {
 	 * @return array{0: int, 1: array<string, mixed>} Status and data.
 	 */
 	private function post(array $params): array {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParams')->willReturn($params);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ($params[$key] ?? $default));
 		$response = (new OverridesController(
@@ -125,11 +131,11 @@ class TokenValueTypesTest extends TestCase {
 			writes: new OverridesWrites(
 				overridesService: $this->overrides,
 				cssParser: new CssParserService(),
-				auditService: $this->createMock(ThemingAuditService::class)
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class)
 			),
 			themingSync: new OverridesThemingSync(
-				config: $this->createMock(IConfig::class),
-				themingService: $this->createMock(ThemingService::class)
+				config: $this->createMock(originalClassName: IConfig::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
 			)
 		))->setOverrides();
 
@@ -143,12 +149,12 @@ class TokenValueTypesTest extends TestCase {
 	 */
 	public function testDurationWithoutUnitIs400(): void {
 		$before = $this->overrides->getRawContent();
-		[$status, $data] = $this->post(['overrides' => ['--animation-quick' => '150']]);
+		[$status, $data] = $this->post(params: ['overrides' => ['--animation-quick' => '150']]);
 
-		$this->assertSame(400, $status);
-		$this->assertStringContainsString('--animation-quick', json_encode($data));
-		$this->assertStringContainsString('duration', json_encode($data));
-		$this->assertSame($before, $this->overrides->getRawContent());
+		$this->assertSame(expected: 400, actual: $status);
+		$this->assertStringContainsString(needle: '--animation-quick', haystack: json_encode($data));
+		$this->assertStringContainsString(needle: 'duration', haystack: json_encode($data));
+		$this->assertSame(expected: $before, actual: $this->overrides->getRawContent());
 	}//end testDurationWithoutUnitIs400()
 
 	/**
@@ -157,11 +163,11 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testMalformedColourIs400(): void {
-		[$status, $data] = $this->post(['overrides' => ['--color-primary' => '#15427']]);
+		[$status, $data] = $this->post(params: ['overrides' => ['--color-primary' => '#15427']]);
 
-		$this->assertSame(400, $status);
-		$this->assertStringContainsString('--color-primary', json_encode($data));
-		$this->assertStringContainsString('color', (string)($data['rejected']['--color-primary'] ?? ''));
+		$this->assertSame(expected: 400, actual: $status);
+		$this->assertStringContainsString(needle: '--color-primary', haystack: json_encode($data));
+		$this->assertStringContainsString(needle: 'color', haystack: (string)($data['rejected']['--color-primary'] ?? ''));
 	}//end testMalformedColourIs400()
 
 	/**
@@ -170,9 +176,9 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testEasingOutOfRangeIs400(): void {
-		[$status] = $this->post(['overrides' => ['--nldesign-animation-easing' => 'cubic-bezier(1.5, 0, 0, 1)']]);
+		[$status] = $this->post(params: ['overrides' => ['--nldesign-animation-easing' => 'cubic-bezier(1.5, 0, 0, 1)']]);
 
-		$this->assertSame(400, $status);
+		$this->assertSame(expected: 400, actual: $status);
 	}//end testEasingOutOfRangeIs400()
 
 	/**
@@ -181,9 +187,9 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testInjectionStillRefusedAfterTypeCheck(): void {
-		[$status] = $this->post(['overrides' => ['--border-radius' => '4px; } body { display: none']]);
+		[$status] = $this->post(params: ['overrides' => ['--border-radius' => '4px; } body { display: none']]);
 
-		$this->assertSame(400, $status);
+		$this->assertSame(expected: 400, actual: $status);
 	}//end testInjectionStillRefusedAfterTypeCheck()
 
 	/**
@@ -192,13 +198,13 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testMotionOverrideWritesBothNames(): void {
-		[$status] = $this->post(['overrides' => ['--animation-quick' => '150ms']]);
+		[$status] = $this->post(params: ['overrides' => ['--animation-quick' => '150ms']]);
 		$css = $this->overrides->getRawContent();
 
-		$this->assertSame(200, $status);
-		$this->assertStringContainsString('--animation-quick: 150ms !important;', $css);
-		$this->assertStringContainsString('--nldesign-animation-quick: 150ms !important;', $css);
-		$this->assertSame(['--animation-quick' => '150ms'], $this->overrides->read(), 'the twin is not an editor value');
+		$this->assertSame(expected: 200, actual: $status);
+		$this->assertStringContainsString(needle: '--animation-quick: 150ms !important;', haystack: $css);
+		$this->assertStringContainsString(needle: '--nldesign-animation-quick: 150ms !important;', haystack: $css);
+		$this->assertSame(expected: ['--animation-quick' => '150ms'], actual: $this->overrides->read(), message: 'the twin is not an editor value');
 	}//end testMotionOverrideWritesBothNames()
 
 	/**
@@ -207,10 +213,13 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testCustomEasingIsSaved(): void {
-		[$status] = $this->post(['overrides' => ['--nldesign-animation-easing' => 'cubic-bezier(0.2, 0, 0, 1)']]);
+		[$status] = $this->post(params: ['overrides' => ['--nldesign-animation-easing' => 'cubic-bezier(0.2, 0, 0, 1)']]);
 
-		$this->assertSame(200, $status);
-		$this->assertStringContainsString('--nldesign-animation-easing: cubic-bezier(0.2, 0, 0, 1) !important;', $this->overrides->getRawContent());
+		$this->assertSame(expected: 200, actual: $status);
+		$this->assertStringContainsString(
+			needle: '--nldesign-animation-easing: cubic-bezier(0.2, 0, 0, 1) !important;',
+			haystack: $this->overrides->getRawContent()
+		);
 	}//end testCustomEasingIsSaved()
 
 	/**
@@ -221,9 +230,9 @@ class TokenValueTypesTest extends TestCase {
 	public function testMotionTokensAreTyped(): void {
 		$tokens = TokenRegistry::getTokens();
 
-		$this->assertSame('duration', $tokens['--animation-quick']['type']);
-		$this->assertSame('duration', $tokens['--animation-slow']['type']);
-		$this->assertSame('easing', $tokens['--nldesign-animation-easing']['type']);
+		$this->assertSame(expected: 'duration', actual: $tokens['--animation-quick']['type']);
+		$this->assertSame(expected: 'duration', actual: $tokens['--animation-slow']['type']);
+		$this->assertSame(expected: 'easing', actual: $tokens['--nldesign-animation-easing']['type']);
 	}//end testMotionTokensAreTyped()
 
 	/**
@@ -236,10 +245,17 @@ class TokenValueTypesTest extends TestCase {
 		$theme = (string)file_get_contents($root . '/css/systems/nldesign/theme.css');
 		preg_match_all('/transition[a-z-]*\s*:([^;]*);/i', $theme, $declarations);
 		foreach ($declarations[1] as $value) {
-			$this->assertDoesNotMatchRegularExpression('/\)\s+ease\b(?!-)/', $value, 'a transition still uses a bare ease: ' . trim($value));
+			$this->assertDoesNotMatchRegularExpression(
+				pattern: '/\)\s+ease\b(?!-)/',
+				string: $value,
+				message: 'a transition still uses a bare ease: ' . trim($value)
+			);
 		}
 
-		$this->assertMatchesRegularExpression('/--nldesign-animation-easing:\s*ease;/', (string)file_get_contents($root . '/css/systems/nldesign/defaults.css'));
+		$this->assertMatchesRegularExpression(
+			pattern: '/--nldesign-animation-easing:\s*ease;/',
+			string: (string)file_get_contents($root . '/css/systems/nldesign/defaults.css')
+		);
 	}//end testThemeTransitionsReadTheEasingToken()
 
 	/**
@@ -249,12 +265,12 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testOwnDarkValueIsWrittenAndReadBack(): void {
-		[$status] = $this->post(['overrides' => ['--color-primary' => '#154273', '--color-primary-element' => '#154273'], 'darkOverrides' => ['--color-primary' => '#5b9bd5']]);
+		[$status] = $this->post(params: ['overrides' => ['--color-primary' => '#154273', '--color-primary-element' => '#154273'], 'darkOverrides' => ['--color-primary' => '#5b9bd5']]);
 		$css = $this->overrides->getRawContent();
 
-		$this->assertSame(200, $status);
-		$this->assertSame(2, substr_count($css, '--color-primary: #5b9bd5 !important;'));
-		$this->assertSame(['--color-primary' => '#5b9bd5'], $this->overrides->readDark());
+		$this->assertSame(expected: 200, actual: $status);
+		$this->assertSame(expected: 2, actual: substr_count($css, '--color-primary: #5b9bd5 !important;'));
+		$this->assertSame(expected: ['--color-primary' => '#5b9bd5'], actual: $this->overrides->readDark());
 	}//end testOwnDarkValueIsWrittenAndReadBack()
 
 	/**
@@ -263,12 +279,16 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testEmptyDarkValueIsDerived(): void {
-		$this->post(['overrides' => ['--color-primary' => '#154273']]);
+		$this->post(params: ['overrides' => ['--color-primary' => '#154273']]);
 
 		$derived = $this->darkPalette->deriveDarkValue(token: '--color-primary', lightValue: '#154273');
-		$this->assertStringContainsString('--color-primary: ' . $derived . ' !important;', $this->overrides->getRawContent());
-		$this->assertSame([], $this->overrides->readDark());
-		$this->assertSame(['--color-primary' => $derived], $this->overrides->derivedDark(), 'the editor shows it as the placeholder');
+		$this->assertStringContainsString(needle: '--color-primary: ' . $derived . ' !important;', haystack: $this->overrides->getRawContent());
+		$this->assertSame(expected: [], actual: $this->overrides->readDark());
+		$this->assertSame(
+			expected: ['--color-primary' => $derived],
+			actual: $this->overrides->derivedDark(),
+			message: 'the editor shows it as the placeholder'
+		);
 	}//end testEmptyDarkValueIsDerived()
 
 	/**
@@ -277,11 +297,11 @@ class TokenValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	public function testDarkValueIsTypeChecked(): void {
-		[$status] = $this->post(['overrides' => ['--color-primary' => '#154273'], 'darkOverrides' => ['--color-primary' => 'dark blue']]);
-		$this->assertSame(400, $status);
+		[$status] = $this->post(params: ['overrides' => ['--color-primary' => '#154273'], 'darkOverrides' => ['--color-primary' => 'dark blue']]);
+		$this->assertSame(expected: 400, actual: $status);
 
-		[$status] = $this->post(['overrides' => ['--color-primary' => '#154273'], 'darkOverrides' => ['--border-radius' => '#000000']]);
-		$this->assertSame(400, $status);
+		[$status] = $this->post(params: ['overrides' => ['--color-primary' => '#154273'], 'darkOverrides' => ['--border-radius' => '#000000']]);
+		$this->assertSame(expected: 400, actual: $status);
 	}//end testDarkValueIsTypeChecked()
 
 	/**
@@ -291,7 +311,7 @@ class TokenValueTypesTest extends TestCase {
 	 */
 	public function testTranslucentPrimaryIsBlendedForCore(): void {
 		$stored = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') use (&$stored) {
 				return ($stored[$key] ?? $default);
@@ -302,14 +322,36 @@ class TokenValueTypesTest extends TestCase {
 				$stored[$key] = (string)$value;
 			}
 		);
-		$store = new CustomTokenSetService(new DirectoryRuntimeFileStore($this->appDir), $config, new CustomTokenSetValidator(), new ContrastService(), $this->darkPalette);
+		$store = new CustomTokenSetService(
+			store: new DirectoryRuntimeFileStore(root: $this->appDir),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: $this->darkPalette
+		);
 
-		$store->store(displayName: 'Doorschijnend', description: '', declarations: ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff']);
-		$store->store(displayName: 'Dekkend', description: '', declarations: ['--nldesign-color-primary' => '#154273']);
+		$store->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Doorschijnend',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#15427380', '--nldesign-color-background' => '#ffffff'],
+				]
+			)
+		);
+		$store->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Dekkend',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#154273'],
+				]
+			)
+		);
 
 		$manifest = array_column($store->list(), null, 'id');
-		$this->assertSame('#8aa0b9', $manifest['custom-doorschijnend']['theming']['primary_color'] ?? null);
-		$this->assertSame('#15427380', $manifest['custom-doorschijnend']['theming']['primary_color_original'] ?? null);
-		$this->assertSame('#154273', $manifest['custom-dekkend']['theming']['primary_color'] ?? null);
+		$this->assertSame(expected: '#8aa0b9', actual: $manifest['custom-doorschijnend']['theming']['primary_color'] ?? null);
+		$this->assertSame(expected: '#15427380', actual: $manifest['custom-doorschijnend']['theming']['primary_color_original'] ?? null);
+		$this->assertSame(expected: '#154273', actual: $manifest['custom-dekkend']['theming']['primary_color'] ?? null);
 	}//end testTranslucentPrimaryIsBlendedForCore()
 }//end class

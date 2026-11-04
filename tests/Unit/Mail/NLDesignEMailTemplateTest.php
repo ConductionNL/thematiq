@@ -93,22 +93,22 @@ class NLDesignEMailTemplateTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->themingDefaults = $this->createMock(Defaults::class);
+		$this->themingDefaults = $this->createMock(originalClassName: Defaults::class);
 		$this->themingDefaults->method('getDefaultColorPrimary')->willReturn('#0082c9');
 		$this->themingDefaults->method('getDefaultTextColorPrimary')->willReturn('#ffffff');
 		$this->themingDefaults->method('getLogo')->willReturn('/core/img/logo/logo.svg');
 		$this->themingDefaults->method('getName')->willReturn('Nextcloud');
 		$this->themingDefaults->method('getSlogan')->willReturn('');
 
-		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$this->urlGenerator->method('getAbsoluteURL')->willReturnCallback(
 			fn (string $url) => 'https://cloud.example.com' . $url
 		);
 
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn (string $text, $params = []) => $text);
 
-		$this->l10nFactory = $this->createMock(IFactory::class);
+		$this->l10nFactory = $this->createMock(originalClassName: IFactory::class);
 		$this->l10nFactory->method('get')->willReturn($l10n);
 	}//end setUp()
 
@@ -159,7 +159,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testHeaderAndButtonUseActiveTokenSetTheme(): void {
-		$service = $this->createMock(EmailThemingService::class);
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$service->method('getActiveEmailTheme')->willReturn(
 			[
 				'primaryColor' => '#154273',
@@ -169,7 +169,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		);
 		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 
-		$template = $this->makeTemplate($service);
+		$template = $this->makeTemplate(service: $service);
 		$template->setSubject('Test');
 		$template->addHeader();
 		$template->addHeading('Heading');
@@ -179,9 +179,29 @@ class NLDesignEMailTemplateTest extends TestCase {
 
 		$html = $template->renderHtml();
 
-		$this->assertStringContainsString('#154273', $html);
-		$this->assertStringContainsString('https://cloud.example.com/apps/thematiq/img/logos/test.svg', $html);
+		$this->assertStringContainsString(needle: '#154273', haystack: $html);
+		$this->assertStringNotContainsString(needle: '#0082c9', haystack: $html);
+		$this->assertStringContainsString(needle: 'https://cloud.example.com/apps/thematiq/img/logos/test.svg', haystack: $html);
 	}//end testHeaderAndButtonUseActiveTokenSetTheme()
+
+	/**
+	 * A body button takes the active token set's colours on its own, without a header.
+	 *
+	 * @return void
+	 */
+	public function testBodyButtonUsesActiveTokenSetColours(): void {
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
+		$service->method('getActiveEmailTheme')->willReturn(['primaryColor' => '#154273', 'primaryTextColor' => '#fefefe', 'logoUrl' => null]);
+		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
+
+		$template = $this->makeTemplate(service: $service);
+		$template->addBodyButton('Click', 'https://example.org/action');
+		$html = $template->renderHtml();
+
+		$this->assertStringContainsString(needle: '#154273', haystack: $html);
+		$this->assertStringContainsString(needle: '#fefefe', haystack: $html);
+		$this->assertStringNotContainsString(needle: '#0082c9', haystack: $html);
+	}//end testBodyButtonUsesActiveTokenSetColours()
 
 	/**
 	 * (b) Configured footer org name and both URLs appear in the HTML part
@@ -190,7 +210,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterConfigRendersInBothParts(): void {
-		$service = $this->createMock(EmailThemingService::class);
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$service->method('getActiveEmailTheme')->willReturn(null);
 		$service->method('getFooterConfig')->willReturn(
 			[
@@ -200,20 +220,20 @@ class NLDesignEMailTemplateTest extends TestCase {
 			]
 		);
 
-		$template = $this->makeTemplate($service);
+		$template = $this->makeTemplate(service: $service);
 		$template->addHeader();
 		$template->addFooter();
 
 		$html = $template->renderHtml();
 		$text = $template->renderText();
 
-		$this->assertStringContainsString('Gemeente Voorbeeld', $html);
-		$this->assertStringContainsString('https://voorbeeld.nl/toegankelijkheid', $html);
-		$this->assertStringContainsString('https://voorbeeld.nl/privacy', $html);
+		$this->assertStringContainsString(needle: 'Gemeente Voorbeeld', haystack: $html);
+		$this->assertStringContainsString(needle: 'https://voorbeeld.nl/toegankelijkheid', haystack: $html);
+		$this->assertStringContainsString(needle: 'https://voorbeeld.nl/privacy', haystack: $html);
 
-		$this->assertStringContainsString('Gemeente Voorbeeld', $text);
-		$this->assertStringContainsString('https://voorbeeld.nl/toegankelijkheid', $text);
-		$this->assertStringContainsString('https://voorbeeld.nl/privacy', $text);
+		$this->assertStringContainsString(needle: 'Gemeente Voorbeeld', haystack: $text);
+		$this->assertStringContainsString(needle: 'https://voorbeeld.nl/toegankelijkheid', haystack: $text);
+		$this->assertStringContainsString(needle: 'https://voorbeeld.nl/privacy', haystack: $text);
 	}//end testFooterConfigRendersInBothParts()
 
 	/**
@@ -223,7 +243,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testNullServiceFallsBackToStockRendering(): void {
-		$branded = $this->makeTemplate(null);
+		$branded = $this->makeTemplate(service: null);
 		$stock = $this->makeStockTemplate();
 
 		foreach ([$branded, $stock] as $tpl) {
@@ -235,8 +255,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 			$tpl->addFooter();
 		}
 
-		$this->assertSame($stock->renderHtml(), $branded->renderHtml());
-		$this->assertSame($stock->renderText(), $branded->renderText());
+		$this->assertSame(expected: $stock->renderHtml(), actual: $branded->renderHtml());
+		$this->assertSame(expected: $stock->renderText(), actual: $branded->renderText());
 	}//end testNullServiceFallsBackToStockRendering()
 
 	/**
@@ -247,7 +267,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testPlainTextPartStaysIntact(): void {
-		$service = $this->createMock(EmailThemingService::class);
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$service->method('getActiveEmailTheme')->willReturn(
 			[
 				'primaryColor' => '#154273',
@@ -257,7 +277,7 @@ class NLDesignEMailTemplateTest extends TestCase {
 		);
 		$service->method('getFooterConfig')->willReturn(['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => '']);
 
-		$template = $this->makeTemplate($service);
+		$template = $this->makeTemplate(service: $service);
 		$template->addHeader();
 		$template->addHeading('Heading');
 		$template->addBodyText('Body text');
@@ -266,9 +286,9 @@ class NLDesignEMailTemplateTest extends TestCase {
 
 		$text = $template->renderText();
 
-		$this->assertStringContainsString('https://example.org/action', $text);
-		$this->assertStringContainsString('Nextcloud', $text);
-		$this->assertStringNotContainsString('<', $text);
+		$this->assertStringContainsString(needle: 'https://example.org/action', haystack: $text);
+		$this->assertStringContainsString(needle: 'Nextcloud', haystack: $text);
+		$this->assertStringNotContainsString(needle: '<', haystack: $text);
 	}//end testPlainTextPartStaysIntact()
 
 	/**
@@ -278,24 +298,25 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterValuesAreOutputEncoded(): void {
-		$service = $this->createMock(EmailThemingService::class);
+		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$service->method('getActiveEmailTheme')->willReturn(null);
 		$service->method('getFooterConfig')->willReturn(
 			[
 				'orgName' => '<script>alert(1)</script>',
 				'accessibilityUrl' => 'https://voorbeeld.nl/a"onclick="x',
-				'privacyUrl' => '',
+				'privacyUrl' => 'https://voorbeeld.nl/p"onmouseover="y',
 			]
 		);
 
-		$template = $this->makeTemplate($service);
+		$template = $this->makeTemplate(service: $service);
 		$template->addHeader();
 		$template->addFooter();
 
 		$html = $template->renderHtml();
 
-		$this->assertStringNotContainsString('<script>', $html);
-		$this->assertStringContainsString('&lt;script&gt;', $html);
-		$this->assertStringNotContainsString('"onclick="x"', $html);
+		$this->assertStringNotContainsString(needle: '<script>', haystack: $html);
+		$this->assertStringContainsString(needle: '&lt;script&gt;', haystack: $html);
+		$this->assertStringNotContainsString(needle: '"onclick="x"', haystack: $html);
+		$this->assertStringNotContainsString(needle: '"onmouseover="y"', haystack: $html);
 	}//end testFooterValuesAreOutputEncoded()
 }//end class

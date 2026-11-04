@@ -46,6 +46,7 @@ use RuntimeException;
  *
  * @covers \OCA\Thematiq\Service\BrandingPackageService
  * @covers \OCA\Thematiq\Service\PackageTokenSourceConverter
+ * @uses \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 
@@ -112,9 +113,10 @@ class BrandingPackageTokenSourcesGoldenTest extends TestCase {
 				string $content,
 				string $slug,
 				string $displayName,
-				?string $sourceName = null,
-				?string $assetName = null
+				array $options,
 			) use (&$calls): array {
+				$sourceName = $options['sourceName'];
+				$assetName = $options['assetName'];
 				$calls[] = ['convert', compact('content', 'slug', 'displayName', 'sourceName', 'assetName')];
 				$mode = (json_decode($content, true)['mode'] ?? 'ok');
 				if ($mode === 'throw') {

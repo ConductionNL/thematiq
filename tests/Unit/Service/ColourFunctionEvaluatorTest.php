@@ -51,13 +51,13 @@ class ColourFunctionEvaluatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testHslSpellings(): void {
-		$this->assertSame('#ff0000', $this->evaluator->evaluate('hsl(0 100% 50%)'));
-		$this->assertSame('#00ff00', $this->evaluator->evaluate('hsl(120, 100%, 50%)'));
-		$this->assertSame('#0000ff', $this->evaluator->evaluate('hsl(240deg 100% 50%)'));
-		$this->assertSame('#808080', $this->evaluator->evaluate('hsla(0, 0%, 50.2%, 0.5)'));
-		$this->assertSame('#ff0000', $this->evaluator->evaluate('hsl(-360 100% 50%)'), 'A negative hue wraps.');
+		$this->assertSame(expected: '#ff0000', actual: $this->evaluator->evaluate('hsl(0 100% 50%)'));
+		$this->assertSame(expected: '#00ff00', actual: $this->evaluator->evaluate('hsl(120, 100%, 50%)'));
+		$this->assertSame(expected: '#0000ff', actual: $this->evaluator->evaluate('hsl(240deg 100% 50%)'));
+		$this->assertSame(expected: '#808080', actual: $this->evaluator->evaluate('hsla(0, 0%, 50.2%, 0.5)'));
+		$this->assertSame(expected: '#ff0000', actual: $this->evaluator->evaluate('hsl(-360 100% 50%)'), message: 'A negative hue wraps.');
 		// westervoort's warning, as the set declares it (Python colorsys agrees).
-		$this->assertSame('#917036', $this->evaluator->evaluate('hsl(38deg 46% 39%)'));
+		$this->assertSame(expected: '#917036', actual: $this->evaluator->evaluate('hsl(38deg 46% 39%)'));
 	}
 
 	/**
@@ -66,10 +66,14 @@ class ColourFunctionEvaluatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testColorMixWithBlack(): void {
-		$this->assertSame('#713800', $this->evaluator->evaluate('color-mix(in srgb, #e17000 50%, #000)'));
-		$this->assertSame('#808080', $this->evaluator->evaluate('color-mix(in srgb, #ffffff 50%, #000000)'));
-		$this->assertSame('#800000', $this->evaluator->evaluate('color-mix(in srgb, hsl(0 100% 50%) 50%, #000)'));
-		$this->assertSame('#ffffff', $this->evaluator->evaluate('color-mix(in srgb, #ffffff 150%, #000)'), 'A share above 100% is capped.');
+		$this->assertSame(expected: '#713800', actual: $this->evaluator->evaluate('color-mix(in srgb, #e17000 50%, #000)'));
+		$this->assertSame(expected: '#808080', actual: $this->evaluator->evaluate('color-mix(in srgb, #ffffff 50%, #000000)'));
+		$this->assertSame(expected: '#800000', actual: $this->evaluator->evaluate('color-mix(in srgb, hsl(0 100% 50%) 50%, #000)'));
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->evaluator->evaluate('color-mix(in srgb, #ffffff 150%, #000)'),
+			message: 'A share above 100% is capped.'
+		);
 	}
 
 	/**
@@ -78,13 +82,13 @@ class ColourFunctionEvaluatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testUnknownValuesAreLeftAlone(): void {
-		$this->assertSame('#123456', $this->evaluator->evaluate(' #123456 '));
-		$this->assertSame('transparent', $this->evaluator->evaluate('transparent'));
-		$this->assertSame('color-mix(in oklch, #fff 50%, #000)', $this->evaluator->evaluate('color-mix(in oklch, #fff 50%, #000)'));
+		$this->assertSame(expected: '#123456', actual: $this->evaluator->evaluate(' #123456 '));
+		$this->assertSame(expected: 'transparent', actual: $this->evaluator->evaluate('transparent'));
+		$this->assertSame(expected: 'color-mix(in oklch, #fff 50%, #000)', actual: $this->evaluator->evaluate('color-mix(in oklch, #fff 50%, #000)'));
 		$this->assertSame(
-			'color-mix(in srgb, currentcolor 50%, #000)',
-			$this->evaluator->evaluate('color-mix(in srgb, currentcolor 50%, #000)'),
-			'A mix of a colour it cannot read stays unevaluated.'
+			expected: 'color-mix(in srgb, currentcolor 50%, #000)',
+			actual: $this->evaluator->evaluate('color-mix(in srgb, currentcolor 50%, #000)'),
+			message: 'A mix of a colour it cannot read stays unevaluated.'
 		);
 	}
 }

@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Controller;
 
 use OCA\Thematiq\Controller\BrandFormController;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandFormService;
+use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
@@ -99,9 +101,9 @@ class BrandFormControllerTest extends TestCase {
 	protected function setUp(): void {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-brand-form-controller-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(
 			function (string $app, string $key, $value): void {
@@ -109,13 +111,18 @@ class BrandFormControllerTest extends TestCase {
 			}
 		);
 		$this->store = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(new ContrastService(), new CssParserService(), $appManager, $this->createMock(LoggerInterface::class))
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			)
 		);
-		$this->audit = $this->createMock(ThemingAuditService::class);
+		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
 	}//end setUp()
 
 	/**
@@ -133,22 +140,26 @@ class BrandFormControllerTest extends TestCase {
 	 * @return BrandFormController The controller.
 	 */
 	private function controller(): BrandFormController {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getParam')->willReturnCallback(fn (string $key, $default = null) => ($this->params[$key] ?? $default));
 		$request->method('getUploadedFile')->willReturnCallback(fn (string $key) => $this->logo);
-		$repo = $this->createMock(IAppManager::class);
+		$repo = $this->createMock(originalClassName: IAppManager::class);
 		$repo->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, $parameters = []) => vsprintf($text, (array)$parameters));
 
 		return new BrandFormController(
-			'thematiq',
-			$request,
-			new BrandFormService(new ContrastService(), new CssParserService()),
-			$this->store,
-			$repo,
-			$this->audit,
-			$l
+			appName: 'thematiq',
+			request: $request,
+			sources: new BrandFormSources(
+				brandForm: new BrandFormService(contrast: new ContrastService(), parser: new CssParserService()),
+				store: $this->store,
+				apps: $repo
+			),
+			answers: new AuditAndTranslation(
+				audit: $this->audit,
+				l: $l
+			)
 		);
 	}//end controller()
 
@@ -166,21 +177,21 @@ class BrandFormControllerTest extends TestCase {
 
 		$response = $this->controller()->create();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('custom-gemeente-voorbeeld', $data['id']);
-		$this->assertSame('#ffffff', $data['textOnPrimary']);
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $data['id']);
+		$this->assertSame(expected: '#ffffff', actual: $data['textOnPrimary']);
 		$css = (string)file_get_contents($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css');
 		foreach (TokenSetVocabularyAuditService::REQUIRED_TOKENS as $token) {
-			$this->assertStringContainsString($token . ':', $css);
+			$this->assertStringContainsString(needle: $token . ':', haystack: $css);
 		}
 
 		$entry = $this->store->list()[0];
-		$this->assertSame('Gemeente Voorbeeld', $entry['name']);
-		$this->assertSame('#c8102e', $entry['theming']['primary_color']);
-		$this->assertSame('img/logos/custom-gemeente-voorbeeld.svg', $entry['theming']['logo']);
-		$this->assertFileExists($this->appDir . '/img/logos/custom-gemeente-voorbeeld.svg');
-		$this->assertFileExists($this->appDir . '/css/tokens/dark/custom-gemeente-voorbeeld.css');
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $entry['name']);
+		$this->assertSame(expected: '#c8102e', actual: $entry['theming']['primary_color']);
+		$this->assertSame(expected: 'img/logos/custom-gemeente-voorbeeld.svg', actual: $entry['theming']['logo']);
+		$this->assertFileExists(filename: $this->appDir . '/img/logos/custom-gemeente-voorbeeld.svg');
+		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/custom-gemeente-voorbeeld.css');
 	}//end testCreatesACompleteSetWithThemingAndLogo()
 
 	/**
@@ -190,13 +201,16 @@ class BrandFormControllerTest extends TestCase {
 	 */
 	public function testTakenNameStoresNothing(): void {
 		$this->params = ['name' => 'Gemeente Voorbeeld', 'primary' => '#c8102e', 'background' => '#ffffff'];
-		$this->assertSame(200, $this->controller()->create()->getStatus());
+		$this->assertSame(expected: 200, actual: $this->controller()->create()->getStatus());
 
 		$this->params['primary'] = '#00ff00';
 		$response = $this->controller()->create();
 
-		$this->assertSame(409, $response->getStatus());
-		$this->assertStringContainsString('#c8102e', (string)file_get_contents($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css'));
+		$this->assertSame(expected: 409, actual: $response->getStatus());
+		$this->assertStringContainsString(
+			needle: '#c8102e',
+			haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css')
+		);
 	}//end testTakenNameStoresNothing()
 
 	/**
@@ -207,8 +221,8 @@ class BrandFormControllerTest extends TestCase {
 	public function testInvalidColourIs400(): void {
 		$this->params = ['name' => 'Rood', 'primary' => 'red', 'background' => '#ffffff'];
 
-		$this->assertSame(400, $this->controller()->create()->getStatus());
-		$this->assertSame([], $this->store->list());
+		$this->assertSame(expected: 400, actual: $this->controller()->create()->getStatus());
+		$this->assertSame(expected: [], actual: $this->store->list());
 	}//end testInvalidColourIs400()
 
 	/**
@@ -222,8 +236,8 @@ class BrandFormControllerTest extends TestCase {
 		$this->logo = ['tmp_name' => $file, 'name' => 'logo.php', 'size' => 13, 'error' => UPLOAD_ERR_OK];
 		$this->params = ['name' => 'Rood', 'primary' => '#c8102e', 'background' => '#ffffff'];
 
-		$this->assertSame(400, $this->controller()->create()->getStatus());
-		$this->assertSame([], $this->store->list());
+		$this->assertSame(expected: 400, actual: $this->controller()->create()->getStatus());
+		$this->assertSame(expected: [], actual: $this->store->list());
 	}//end testLogoOfTheWrongTypeIs400()
 
 	/**
@@ -236,8 +250,8 @@ class BrandFormControllerTest extends TestCase {
 
 		$response = $this->controller()->create();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertLessThan(3.0, $response->getData()['uiRatio']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertLessThan(expected: 3.0, actual: $response->getData()['uiRatio']);
 	}//end testLowContrastIsStoredWithTheRatios()
 
 	/**
@@ -248,8 +262,8 @@ class BrandFormControllerTest extends TestCase {
 	public function testEndpointsAreAdminOnly(): void {
 		foreach (['create', 'inputs'] as $method) {
 			$attributes = (new ReflectionMethod(BrandFormController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes, $method);
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
+			$this->assertCount(expectedCount: 1, haystack: $attributes, message: $method);
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings'] ?? $attributes[0]->getArguments()[0]);
 		}
 	}//end testEndpointsAreAdminOnly()
 
@@ -261,7 +275,7 @@ class BrandFormControllerTest extends TestCase {
 	public function testInputsServeRulesAndDefaults(): void {
 		$data = $this->controller()->inputs()->getData();
 
-		$this->assertArrayHasKey('--nldesign-color-primary', $data['rules']);
-		$this->assertArrayHasKey('--nldesign-color-text', $data['defaults']);
+		$this->assertArrayHasKey(key: '--nldesign-color-primary', array: $data['rules']);
+		$this->assertArrayHasKey(key: '--nldesign-color-text', array: $data['defaults']);
 	}//end testInputsServeRulesAndDefaults()
 }//end class

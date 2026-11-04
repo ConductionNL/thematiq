@@ -47,6 +47,8 @@ class GenerateDarkVariantsTest extends TestCase {
 	 * Set up a temp app dir with a shipped-set-shaped fixture:
 	 * `amsterdam` (nldesign, eligible), `nextcloud` (none, skipped), and
 	 * `hoog-contrast` (high-contrast, skipped) — mirroring the real manifest.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -73,17 +75,17 @@ class GenerateDarkVariantsTest extends TestCase {
 		file_put_contents($this->appDir . '/css/tokens/nextcloud.css', ":root {\n\t--nldesign-color-primary: #0082c9;\n}\n");
 		file_put_contents($this->appDir . '/css/tokens/hoog-contrast.css', ":root {\n\t--nldesign-color-primary: #000000;\n}\n");
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
 		$darkPalette = new DarkPaletteService(
-			new ContrastService(),
-			new CssParserService(),
-			$appManager,
-			$this->createMock(LoggerInterface::class)
+			contrast: new ContrastService(),
+			parser: new CssParserService(),
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
-		$command = new GenerateDarkVariants($darkPalette);
+		$command = new GenerateDarkVariants(darkPalette: $darkPalette);
 		$app = new Application();
 		$app->add($command);
 		$this->tester = new CommandTester($app->find('thematiq:generate-dark-variants'));
@@ -91,9 +93,11 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -116,7 +120,7 @@ class GenerateDarkVariantsTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -127,50 +131,58 @@ class GenerateDarkVariantsTest extends TestCase {
 
 	/**
 	 * `--set=amsterdam` writes only that set's file.
+	 *
+	 * @return void
 	 */
 	public function testSetOptionWritesOnlyThatFile(): void {
 		$exitCode = $this->tester->execute(['--set' => 'amsterdam']);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertFileExists($this->appDir . '/css/tokens/dark/amsterdam.css');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark/nextcloud.css');
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/amsterdam.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/nextcloud.css');
 	}//end testSetOptionWritesOnlyThatFile()
 
 	/**
 	 * A full run skips `none`/`high-contrast` sets without failing the exit code.
+	 *
+	 * @return void
 	 */
 	public function testFullRunSkipsIneligibleSetsWithZeroExitCode(): void {
 		$exitCode = $this->tester->execute([]);
 
-		$this->assertSame(0, $exitCode);
-		$this->assertFileExists($this->appDir . '/css/tokens/dark/amsterdam.css');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark/nextcloud.css');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark/hoog-contrast.css');
+		$this->assertSame(expected: 0, actual: $exitCode);
+		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/amsterdam.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/nextcloud.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark/hoog-contrast.css');
 
 		$display = $this->tester->getDisplay();
-		$this->assertStringContainsString('nextcloud: skipped (ineligible)', $display);
-		$this->assertStringContainsString('hoog-contrast: skipped (ineligible)', $display);
+		$this->assertStringContainsString(needle: 'nextcloud: skipped (ineligible)', haystack: $display);
+		$this->assertStringContainsString(needle: 'hoog-contrast: skipped (ineligible)', haystack: $display);
 	}//end testFullRunSkipsIneligibleSetsWithZeroExitCode()
 
 	/**
 	 * A forced full run, and a forced run of that set alone, leave a shipped
 	 * hand-written high-contrast dark variant byte for byte (thematiq#1023):
 	 * the generator only reaches AA, and that file is held to AAA by hand.
+	 *
+	 * @return void
 	 */
 	public function testForcedRunLeavesAHandWrittenHighContrastVariantAlone(): void {
 		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
 		$handWritten = "/* HAND-WRITTEN */\nbody[data-theme-dark],\nbody[data-themes*=dark] {\n\t--nldesign-color-background: #000000;\n}\n";
 		file_put_contents($this->appDir . '/css/tokens/dark/hoog-contrast.css', $handWritten);
 
-		$this->assertSame(0, $this->tester->execute(['--force' => true]));
-		$this->assertSame(0, $this->tester->execute(['--set' => 'hoog-contrast', '--force' => true]));
+		$this->assertSame(expected: 0, actual: $this->tester->execute(['--force' => true]));
+		$this->assertSame(expected: 0, actual: $this->tester->execute(['--set' => 'hoog-contrast', '--force' => true]));
 
-		$this->assertSame($handWritten, file_get_contents($this->appDir . '/css/tokens/dark/hoog-contrast.css'));
-		$this->assertStringContainsString('hoog-contrast: skipped (ineligible)', $this->tester->getDisplay());
+		$this->assertSame(expected: $handWritten, actual: file_get_contents($this->appDir . '/css/tokens/dark/hoog-contrast.css'));
+		$this->assertStringContainsString(needle: 'hoog-contrast: skipped (ineligible)', haystack: $this->tester->getDisplay());
 	}//end testForcedRunLeavesAHandWrittenHighContrastVariantAlone()
 
 	/**
 	 * A second run without `--force` skips the now-fresh file.
+	 *
+	 * @return void
 	 */
 	public function testSecondRunWithoutForceSkipsFreshFile(): void {
 		$this->tester->execute(['--set' => 'amsterdam']);
@@ -182,18 +194,20 @@ class GenerateDarkVariantsTest extends TestCase {
 		$this->tester->execute(['--set' => 'amsterdam']);
 		$display = $this->tester->getDisplay();
 
-		$this->assertStringContainsString('amsterdam: skipped (fresh)', $display);
+		$this->assertStringContainsString(needle: 'amsterdam: skipped (fresh)', haystack: $display);
 	}//end testSecondRunWithoutForceSkipsFreshFile()
 
 	/**
 	 * `--force` rewrites despite a fresh hash.
+	 *
+	 * @return void
 	 */
 	public function testForceRewritesFreshFile(): void {
 		$this->tester->execute(['--set' => 'amsterdam']);
 		$this->tester->execute(['--set' => 'amsterdam', '--force' => true]);
 
 		$display = $this->tester->getDisplay();
-		$this->assertStringContainsString('amsterdam', $display);
-		$this->assertStringNotContainsString('amsterdam: skipped (fresh)', $display);
+		$this->assertStringContainsString(needle: 'amsterdam', haystack: $display);
+		$this->assertStringNotContainsString(needle: 'amsterdam: skipped (fresh)', haystack: $display);
 	}//end testForceRewritesFreshFile()
 }//end class

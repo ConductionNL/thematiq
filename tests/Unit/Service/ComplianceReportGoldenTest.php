@@ -60,10 +60,17 @@ class ComplianceReportGoldenTest extends TestCase {
 
 	private const FIXTURE = __DIR__ . '/../fixtures/golden/compliance-report.golden.json';
 
+	private const MARKDOWN_FIXTURE = __DIR__ . '/../fixtures/golden/compliance-report-markdown.golden.json';
+
 	private const COLOURS = ['#000000', '#ffffff', '#154273', '#767676', '#fff', 'rgb(0, 0, 0)', 'rgba(0, 0, 0, 0.5)', 'transparent', 'not-a-colour', 'red', '#12345'];
 
 	private const NLDESIGN = ['--nldesign-color-primary', '--nldesign-color-primary-text', '--nldesign-color-background', '--nldesign-color-text', '--nldesign-color-a', '--nldesign-color-b', '--nldesign-color-c'];
 
+	/**
+	 * The directory.
+	 *
+	 * @var string
+	 */
 	private string $directory = '';
 
 	/**
@@ -84,8 +91,11 @@ class ComplianceReportGoldenTest extends TestCase {
 	public function testPairsMatchTheGoldenRecording(): void {
 		$actual = [];
 		for ($seed = 1; $seed <= 60; $seed++) {
-			$report = $this->report(random: new Randomizer(new Mt19937($seed)));
-			$actual['seed:' . $seed] = (string)json_encode(['pairs' => $report['pairs'], 'summary' => $report['summary']], (JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION));
+			$report = $this->report(random: new Randomizer(new Mt19937($seed)))->generate();
+			$actual['seed:' . $seed] = (string)json_encode(
+				['pairs' => $report['pairs'], 'summary' => $report['summary']],
+				(JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION)
+			);
 		}
 
 		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
@@ -93,20 +103,46 @@ class ComplianceReportGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], 'case ' . $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: 'case ' . $name);
 		}
 	}//end testPairsMatchTheGoldenRecording()
+
+	/**
+	 * The Markdown rendering of the same seeded reports, compared with its recording.
+	 * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
+	 *
+	 * @return void
+	 */
+	public function testMarkdownMatchesTheGoldenRecording(): void {
+		$actual = [];
+		for ($seed = 1; $seed <= 20; $seed++) {
+			$actual['seed:' . $seed] = $this->report(random: new Randomizer(new Mt19937($seed)))->renderMarkdown();
+		}
+
+		if (getenv('THEMATIQ_GOLDEN_RECORD') === '1') {
+			file_put_contents(
+				self::MARKDOWN_FIXTURE,
+				json_encode($actual, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . "\n"
+			);
+		}
+
+		$expected = json_decode((string)file_get_contents(self::MARKDOWN_FIXTURE), true);
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
+		foreach ($expected as $name => $markdown) {
+			self::assertSame(expected: $markdown, actual: $actual[$name], message: 'case ' . $name);
+		}
+	}//end testMarkdownMatchesTheGoldenRecording()
 
 	/**
 	 * One report over a seeded app directory.
 	 *
 	 * @param Randomizer $random The seeded source.
 	 *
-	 * @return array<string, mixed>
+	 * @return ComplianceReportService The service over the seeded directory.
 	 */
-	private function report(Randomizer $random): array {
+	private function report(Randomizer $random): ComplianceReportService {
 		$this->removeDirectory();
 		$this->directory = sys_get_temp_dir() . '/thematiq-compliance-golden-' . getmypid();
 		mkdir($this->directory . '/css/systems/nldesign', 0777, true);
@@ -122,14 +158,20 @@ class ComplianceReportGoldenTest extends TestCase {
 			$meta['theming'] = ['background_color' => ['#fafafa', '', 'rgba(0, 0, 0, 0.1)'][$random->getInt(0, 2)]];
 		}
 
-		$tokens = array_map(static fn (array $pair): array => [$pair['fg'], $pair['bg']], (new ReflectionClassConstant(ComplianceReportService::class, 'PAIR_MATRIX'))->getValue());
+		$tokens = array_map(
+			static fn (array $pair): array => [$pair['fg'], $pair['bg']],
+			(new ReflectionClassConstant(ComplianceReportService::class, 'PAIR_MATRIX'))->getValue()
+		);
 		$tokens = array_values(array_unique(array_merge(...$tokens)));
 
 		$mapping = [];
 		$overrides = [];
 		foreach ($tokens as $token) {
 			if ($random->getInt(0, 5) > 0) {
-				$mapping[$token] = $this->pick(random: $random, values: ['var(' . $this->pick(random: $random, values: self::NLDESIGN) . ')', $this->pick(random: $random, values: self::COLOURS)]);
+				$mapping[$token] = $this->pick(
+					random: $random,
+					values: ['var(' . $this->pick(random: $random, values: self::NLDESIGN) . ')', $this->pick(random: $random, values: self::COLOURS)]
+				);
 			}
 
 			if ($random->getInt(0, 7) === 0) {
@@ -158,7 +200,7 @@ class ComplianceReportGoldenTest extends TestCase {
 		$this->writeCss(name: 'css/systems/nldesign/overrides.css', declarations: $mapping);
 		$this->writeCss(name: 'css/tokens/golden.css', declarations: $set);
 
-		return $this->service(meta: $meta, overrides: $overrides)->generate();
+		return $this->service(meta: $meta, overrides: $overrides);
 	}//end report()
 
 	/**
@@ -170,14 +212,14 @@ class ComplianceReportGoldenTest extends TestCase {
 	 * @return ComplianceReportService
 	 */
 	private function service(array $meta, array $overrides): ComplianceReportService {
-		$overridesService = $this->createMock(CustomOverridesService::class);
+		$overridesService = $this->createMock(originalClassName: CustomOverridesService::class);
 		$overridesService->method('read')->willReturn($overrides);
-		$designSystems = $this->createMock(DesignSystemService::class);
+		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn($meta);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->directory);
 		$appManager->method('getAppVersion')->willReturn('0.0.0');
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('golden');
 		$config->method('getSystemValue')->willReturn('');
 
@@ -186,13 +228,13 @@ class ComplianceReportGoldenTest extends TestCase {
 			theme: new ThemeSelectionSources(
 				overrides: $overridesService,
 				designSystems: $designSystems,
-				customSets: $this->createMock(CustomTokenSetService::class)
+				customSets: $this->createMock(originalClassName: CustomTokenSetService::class)
 			),
 			instance: new InstanceReportContext(
 				appManager: $appManager,
 				config: $config,
-				urlGenerator: $this->createMock(IURLGenerator::class),
-				timeFactory: $this->createMock(ITimeFactory::class)
+				urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+				timeFactory: $this->createMock(originalClassName: ITimeFactory::class)
 			)
 		);
 	}//end service()

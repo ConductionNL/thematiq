@@ -28,8 +28,13 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Controller\AppBrandController;
 use OCA\Thematiq\Service\AppBrandLogoStore;
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\AppBrandSources;
 use OCA\Thematiq\Service\AppThemingService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -103,7 +108,7 @@ class AppBrandServiceTest extends TestCase {
 	 * @return IConfig The config.
 	 */
 	private function config(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->app[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(
 			function (string $app, string $key, $value): void {
@@ -120,7 +125,7 @@ class AppBrandServiceTest extends TestCase {
 	 * @return TokenSetService The double.
 	 */
 	private function tokenSets(): TokenSetService {
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturnCallback(
 			fn (string $id): bool => in_array($id, ['rijkshuisstijl', 'gemeente-a-huisstijl', 'kennisbank', 'amsterdam'], true)
 		);
@@ -135,20 +140,24 @@ class AppBrandServiceTest extends TestCase {
 	 * @return AppBrandService The service.
 	 */
 	private function brands(): AppBrandService {
-		$appManager = $this->createMock(IAppManager::class);
-		$appManager->method('isInstalled')->willReturnCallback(fn (string $id): bool => in_array($id, ['collectives', 'files', 'spreed', 'settings'], true));
-		$folder = $this->createMock(ISimpleFolder::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('isInstalled')->willReturnCallback(fn (string $id): bool => in_array(
+			$id,
+			['collectives', 'files', 'spreed', 'settings'],
+			true
+		));
+		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturnCallback(fn (string $name): bool => isset($this->files[$name]));
 		$folder->method('newFile')->willReturnCallback(
 			function (string $name, $content = null): ISimpleFile {
 				$this->files[$name] = (string)$content;
 
-				return $this->createMock(ISimpleFile::class);
+				return $this->createMock(originalClassName: ISimpleFile::class);
 			}
 		);
 		$folder->method('getFile')->willReturnCallback(
 			function (string $name): ISimpleFile {
-				$file = $this->createMock(ISimpleFile::class);
+				$file = $this->createMock(originalClassName: ISimpleFile::class);
 				$file->method('getContent')->willReturnCallback(fn (): string => $this->files[$name]);
 				$file->method('delete')->willReturnCallback(
 					function () use ($name): void {
@@ -159,18 +168,18 @@ class AppBrandServiceTest extends TestCase {
 				return $file;
 			}
 		);
-		$appData = $this->createMock(IAppData::class);
+		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willReturn($folder);
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(fn (string $route, array $params): string => '/brand/' . $params['appId'] . '/' . $params['size']);
 
 		return new AppBrandService(
-			$this->config(),
-			$appManager,
-			new AppThemingService($this->config(), $appManager),
-			$this->tokenSets(),
-			new AppBrandLogoStore($appData, new ImageSniffer()),
-			$urls
+			config: $this->config(),
+			appManager: $appManager,
+			appTheming: new AppThemingService(config: $this->config(), appManager: $appManager),
+			tokenSets: $this->tokenSets(),
+			logos: new AppBrandLogoStore(appData: $appData, sniffer: new ImageSniffer()),
+			urls: $urls
 		);
 	}//end brands()
 
@@ -183,55 +192,64 @@ class AppBrandServiceTest extends TestCase {
 	 * @return CssInjectionService The service.
 	 */
 	private function injection(array &$styles, array &$inline): CssInjectionService {
-		$session = $this->createMock(IUserSession::class);
-		$user = $this->createMock(IUser::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('piet');
-		$session->method('getUser')->willReturnCallback(fn (): ?IUser => ($this->signedIn === true ? $user : null));
-		$groupManager = $this->createMock(IGroupManager::class);
+		$session->method('getUser')->willReturnCallback(fn (): ?IUser => (match ($this->signedIn === true) {
+			true => $user, default => null
+		}));
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
 		$groupManager->method('getUserGroupIds')->willReturn(['gemeente-a']);
-		$preview = $this->createMock(ThemePreviewService::class);
+		$preview = $this->createMock(originalClassName: ThemePreviewService::class);
 		$preview->method('resolveEffectiveTokenSet')->willReturnCallback(
 			fn (IUserSession $s, string $active): array => ['tokenSet' => ($this->preview ?? $active), 'previewActive' => ($this->preview !== null), 'expiresAt' => null]
 		);
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 		$this->app['group_token_sets'] = '[{"group":"gemeente-a","tokenSet":"gemeente-a-huisstijl"}]';
-		$groupTheming = new GroupThemingService($this->config(), $groupManager, $session, $this->tokenSets(), $preview, $cacheFactory);
+		$groupTheming = new GroupThemingService(
+			config: $this->config(),
+			groupManager: $groupManager,
+			userSession: $session,
+			tokenSetService: $this->tokenSets(),
+			previewService: $preview,
+			cacheFactory: $cacheFactory
+		);
 
-		$designSystem = $this->createMock(DesignSystemService::class);
+		$designSystem = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystem->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
 		$designSystem->method('getDesignSystem')->willReturn(['id' => 'nldesign', 'name' => 'NL', 'description' => '', 'stylesheets' => ['systems/nldesign/theme']]);
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkTo')->willReturnCallback(fn (string $app, string $file): string => '/apps/' . $app . '/' . $file);
 		$urls->method('imagePath')->willReturn('/core/img/logo/logo.svg');
-		$stock = $this->createMock(StockTokensService::class);
+		$stock = $this->createMock(originalClassName: StockTokensService::class);
 		$stock->method('getCss')->willReturn(null);
 
-		$repo = $this->createMock(IAppManager::class);
+		$repo = $this->createMock(originalClassName: IAppManager::class);
 		$repo->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$runtimeFiles = new RuntimeFileLocator(
-			$repo,
-			new DirectoryRuntimeFileStore(sys_get_temp_dir() . '/thematiq-brand-' . bin2hex(random_bytes(4))),
-			$urls,
-			$this->createMock(ITempManager::class)
+			appManager: $repo,
+			store: new DirectoryRuntimeFileStore(root: sys_get_temp_dir() . '/thematiq-brand-' . bin2hex(random_bytes(4))),
+			urlGenerator: $urls,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
 		);
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 
-		$service = $this->getMockBuilder(CssInjectionService::class)
+		$service = $this->getMockBuilder(className: CssInjectionService::class)
 			->setConstructorArgs(
 				[
-					$this->config(),
-					$designSystem,
-					$this->createMock(CustomCssService::class),
-					$this->createMock(FontService::class),
-					$urls,
-					$groupTheming,
-					$this->createMock(ThemePreviewBannerService::class),
-					$logger,
-					$stock,
-					$runtimeFiles,
-					new LogoLayerService($this->config(), $urls, $logger, $runtimeFiles),
-					$this->brands(),
+					new CssInjectionContext(config: $this->config(), designSystemService: $designSystem, urlGenerator: $urls, logger: $logger),
+					new CssInjectionLayers(
+						customCssService: $this->createMock(originalClassName: CustomCssService::class),
+						fontService: $this->createMock(originalClassName: FontService::class),
+						previewBannerService: $this->createMock(originalClassName: ThemePreviewBannerService::class),
+						brands: new CssInjectionBrands(groupThemingService: $groupTheming, appBrands: $this->brands())
+					),
+					new CssInjectionTokenFiles(
+						stockTokens: $stock,
+						runtimeFiles: $runtimeFiles,
+						logoLayer: new LogoLayerService(config: $this->config(), urlGenerator: $urls, logger: $logger, files: $runtimeFiles)
+					),
 				]
 			)
 			->onlyMethods(['emitStyle', 'emitStylesheetLink', 'emitInlineStyle'])
@@ -291,8 +309,8 @@ class AppBrandServiceTest extends TestCase {
 	public function testBrandedAppLooksTheSameForEveryGroup(): void {
 		$this->brandCollectives();
 
-		$this->assertSame('kennisbank', $this->render(context: 'user', appId: 'collectives')[0]);
-		$this->assertSame('gemeente-a-huisstijl', $this->render(context: 'user', appId: 'files')[0]);
+		$this->assertSame(expected: 'kennisbank', actual: $this->render(context: 'user', appId: 'collectives')[0]);
+		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $this->render(context: 'user', appId: 'files')[0]);
 	}//end testBrandedAppLooksTheSameForEveryGroup()
 
 	/**
@@ -305,8 +323,12 @@ class AppBrandServiceTest extends TestCase {
 		$this->preview = 'amsterdam';
 
 		[$set, $inline] = $this->render(context: 'user', appId: 'collectives');
-		$this->assertSame('amsterdam', $set);
-		$this->assertStringNotContainsString('/brand/collectives', implode('', $inline), 'The brand logo goes with the brand set.');
+		$this->assertSame(expected: 'amsterdam', actual: $set);
+		$this->assertStringNotContainsString(
+			needle: '/brand/collectives',
+			haystack: implode('', $inline),
+			message: 'The brand logo goes with the brand set.'
+		);
 	}//end testPreviewStillWins()
 
 	/**
@@ -318,8 +340,8 @@ class AppBrandServiceTest extends TestCase {
 		$this->brandCollectives();
 
 		$this->signedIn = false;
-		$this->assertSame('rijkshuisstijl', $this->render(context: 'login', appId: null)[0]);
-		$this->assertSame('rijkshuisstijl', $this->render(context: 'public', appId: 'collectives')[0]);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->render(context: 'login', appId: null)[0]);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->render(context: 'public', appId: 'collectives')[0]);
 	}//end testSessionlessAndLoginKeepTheDefault()
 
 	/**
@@ -332,13 +354,16 @@ class AppBrandServiceTest extends TestCase {
 
 		$css = implode('', $this->render(context: 'user', appId: 'collectives')[1]);
 
-		$this->assertStringContainsString(':root{--nldesign-logo-url:url(/brand/collectives/large)', $css);
-		$this->assertStringContainsString('@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}', $css);
+		$this->assertStringContainsString(needle: ':root{--nldesign-logo-url:url(/brand/collectives/large)', haystack: $css);
+		$this->assertStringContainsString(
+			needle: '@media (max-width:1024px){:root{--nldesign-logo-url:url(/brand/collectives/small)}}',
+			haystack: $css
+		);
 
 		$brands = json_decode($this->app['app_brands'], true);
 		$brands['collectives']['logoSmall'] = null;
 		$this->app['app_brands'] = json_encode($brands);
-		$this->assertStringNotContainsString('@media', implode('', $this->render(context: 'user', appId: 'collectives')[1]));
+		$this->assertStringNotContainsString(needle: '@media', haystack: implode('', $this->render(context: 'user', appId: 'collectives')[1]));
 	}//end testLogoLayerUsesLargeAndSmall()
 
 	/**
@@ -356,13 +381,13 @@ class AppBrandServiceTest extends TestCase {
 		foreach ($cases as [$appId, $set, $reason]) {
 			try {
 				$this->brands()->setBrand(appId: $appId, tokenSet: $set);
-				$this->fail('Refused: ' . $appId);
+				$this->fail(message: 'Refused: ' . $appId);
 			} catch (AppBrandException $e) {
-				$this->assertSame($reason, $e->reason);
+				$this->assertSame(expected: $reason, actual: $e->reason);
 			}
 		}
 
-		$this->assertArrayNotHasKey('app_brands', $this->app);
+		$this->assertArrayNotHasKey(key: 'app_brands', array: $this->app);
 	}//end testRefusals()
 
 	/**
@@ -380,13 +405,13 @@ class AppBrandServiceTest extends TestCase {
 		foreach ($cases as [$bytes, $status]) {
 			try {
 				$this->brands()->storeLogo(appId: 'collectives', size: 'large', bytes: $bytes);
-				$this->fail('Refused with ' . $status);
+				$this->fail(message: 'Refused with ' . $status);
 			} catch (AppBrandException $e) {
-				$this->assertSame($status, $e->getCode());
+				$this->assertSame(expected: $status, actual: $e->getCode());
 			}
 		}
 
-		$this->assertSame([], $this->files);
+		$this->assertSame(expected: [], actual: $this->files);
 	}//end testLogoChecks()
 
 	/**
@@ -397,8 +422,8 @@ class AppBrandServiceTest extends TestCase {
 	public function testStaleBrandIsIgnored(): void {
 		$this->app['app_brands'] = '{"removedapp":{"tokenSet":"kennisbank"}}';
 
-		$this->assertNull($this->brands()->brandFor(appId: 'removedapp'));
-		$this->assertTrue($this->brands()->getBrands()['removedapp']['stale']);
+		$this->assertNull(actual: $this->brands()->brandFor(appId: 'removedapp'));
+		$this->assertTrue(condition: $this->brands()->getBrands()['removedapp']['stale']);
 	}//end testStaleBrandIsIgnored()
 
 	/**
@@ -409,20 +434,58 @@ class AppBrandServiceTest extends TestCase {
 	public function testEndpoints(): void {
 		foreach (['index', 'save', 'remove', 'uploadLogo'] as $method) {
 			$attributes = (new ReflectionMethod(AppBrandController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes);
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertCount(expectedCount: 1, haystack: $attributes);
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 
-		$this->assertCount(1, (new ReflectionMethod(AppBrandController::class, 'logo'))->getAttributes(NoAdminRequired::class));
+		$this->assertCount(
+			expectedCount: 1,
+			haystack: (new ReflectionMethod(AppBrandController::class, 'logo'))->getAttributes(NoAdminRequired::class)
+		);
 
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
-		$appTheming = $this->createMock(AppThemingService::class);
-		$controller = new AppBrandController('thematiq', $this->createMock(IRequest::class), $this->brands(), $appTheming, $this->tokenSets(), $l10n);
+		$appTheming = $this->createMock(originalClassName: AppThemingService::class);
+		$controller = new AppBrandController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			sources: new AppBrandSources(
+				brands: $this->brands(),
+				appTheming: $appTheming,
+				tokenSets: $this->tokenSets()
+			),
+			l10n: $l10n
+		);
 		$refused = $controller->save(appId: 'settings', tokenSet: 'kennisbank');
-		$this->assertSame(422, $refused->getStatus());
-		$this->assertStringContainsString('settings pages always follow the house style', $refused->getData()['error']);
-		$this->assertSame(200, $controller->save(appId: 'collectives', tokenSet: 'kennisbank')->getStatus());
-		$this->assertSame(404, $controller->logo(appId: 'collectives', size: 'large')->getStatus());
+		$this->assertSame(expected: 422, actual: $refused->getStatus());
+		$this->assertStringContainsString(needle: 'settings pages always follow the house style', haystack: $refused->getData()['error']);
+		$this->assertSame(expected: 200, actual: $controller->save(appId: 'collectives', tokenSet: 'kennisbank')->getStatus());
+		$this->assertSame(expected: 404, actual: $controller->logo(appId: 'collectives', size: 'large')->getStatus());
 	}//end testEndpoints()
+
+	/**
+	 * The index answers the stored brands, the themed apps and the public catalogue.
+	 *
+	 * @return void
+	 */
+	public function testIndexAnswersBrandsAppsAndSets(): void {
+		$appTheming = $this->createMock(originalClassName: AppThemingService::class);
+		$appTheming->method('getThemableApps')->willReturn([['id' => 'files', 'themed' => true], ['id' => 'spreed', 'themed' => false]]);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
+		$tokenSets->method('getPublicCatalogue')->willReturn([['id' => 'kennisbank']]);
+		$brands = $this->brands();
+		$brands->setBrand(appId: 'collectives', tokenSet: 'kennisbank');
+
+		$controller = new AppBrandController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			sources: new AppBrandSources(brands: $brands, appTheming: $appTheming, tokenSets: $tokenSets),
+			l10n: $this->createMock(originalClassName: IL10N::class)
+		);
+		$data = $controller->index()->getData();
+
+		$this->assertSame(expected: ['collectives'], actual: array_keys((array)$data['brands']));
+		$this->assertSame(expected: [['id' => 'files', 'themed' => true]], actual: $data['apps']);
+		$this->assertSame(expected: [['id' => 'kennisbank']], actual: $data['tokenSets']);
+	}//end testIndexAnswersBrandsAppsAndSets()
 }//end class

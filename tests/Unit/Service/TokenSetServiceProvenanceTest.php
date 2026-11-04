@@ -21,6 +21,7 @@ use OCA\Thematiq\Service\TokenSetFiles;
 use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -51,6 +52,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -58,17 +61,17 @@ class TokenSetServiceProvenanceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-provenance-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => $default
 		);
 
-		$audit = new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
-		$cacheFactory = $this->createMock(ICacheFactory::class);
-		$cacheFactory->method('createDistributed')->willReturn($this->createMock(ICache::class));
+		$audit = new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
 
 		$this->service = new TokenSetService(
 			setFiles: new TokenSetFiles(
@@ -77,20 +80,22 @@ class TokenSetServiceProvenanceTest extends TestCase {
 			runtime: new TokenSetRuntime(
 				config: $config,
 				cacheFactory: $cacheFactory,
-				logger: $this->createMock(LoggerInterface::class)
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			),
 			audits: new TokenSetAudits(
 				audit: $audit,
-				vocabularyAudit: new TokenSetVocabularyAuditService(new CssParserService())
+				vocabularyAudit: new TokenSetVocabularyAuditService(parser: new CssParserService())
 			)
 		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		foreach (glob($this->appDir . '/css/tokens/*') ?: [] as $f) {
+		foreach (FileList::glob(pattern: $this->appDir . '/css/tokens/*') as $f) {
 			unlink($f);
 		}
 
@@ -115,9 +120,11 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	/**
 	 * A manifest entry with upstreamVersion/upstreamRef carries both fields
 	 * through discovery unmodified.
+	 *
+	 * @return void
 	 */
 	public function testProvenanceFieldsSurviveDiscovery(): void {
-		$this->writeTokenFile('utrecht');
+		$this->writeTokenFile(id: 'utrecht');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -136,17 +143,19 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertArrayHasKey('utrecht', $byId);
-		$this->assertSame('1.2.0', $byId['utrecht']['upstreamVersion']);
-		$this->assertSame('abc123def456', $byId['utrecht']['upstreamRef']);
+		$this->assertArrayHasKey(key: 'utrecht', array: $byId);
+		$this->assertSame(expected: '1.2.0', actual: $byId['utrecht']['upstreamVersion']);
+		$this->assertSame(expected: 'abc123def456', actual: $byId['utrecht']['upstreamRef']);
 	}//end testProvenanceFieldsSurviveDiscovery()
 
 	/**
 	 * A manifest entry without provenance fields behaves identically to one
 	 * with them, minus the two optional keys — absence never breaks discovery.
+	 *
+	 * @return void
 	 */
 	public function testAbsentProvenanceFieldsDoNotAppear(): void {
-		$this->writeTokenFile('nextcloud');
+		$this->writeTokenFile(id: 'nextcloud');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -163,17 +172,19 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertArrayHasKey('nextcloud', $byId);
-		$this->assertArrayNotHasKey('upstreamVersion', $byId['nextcloud']);
-		$this->assertArrayNotHasKey('upstreamRef', $byId['nextcloud']);
+		$this->assertArrayHasKey(key: 'nextcloud', array: $byId);
+		$this->assertArrayNotHasKey(key: 'upstreamVersion', array: $byId['nextcloud']);
+		$this->assertArrayNotHasKey(key: 'upstreamRef', array: $byId['nextcloud']);
 	}//end testAbsentProvenanceFieldsDoNotAppear()
 
 	/**
 	 * A manifest entry with only upstreamRef (no version resolvable upstream)
 	 * survives with just that one field.
+	 *
+	 * @return void
 	 */
 	public function testUpstreamRefWithoutVersionSurvivesAlone(): void {
-		$this->writeTokenFile('rotterdam');
+		$this->writeTokenFile(id: 'rotterdam');
 		file_put_contents(
 			$this->appDir . '/token-sets.json',
 			json_encode(
@@ -191,7 +202,7 @@ class TokenSetServiceProvenanceTest extends TestCase {
 
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
-		$this->assertSame('shaonly000', $byId['rotterdam']['upstreamRef']);
-		$this->assertArrayNotHasKey('upstreamVersion', $byId['rotterdam']);
+		$this->assertSame(expected: 'shaonly000', actual: $byId['rotterdam']['upstreamRef']);
+		$this->assertArrayNotHasKey(key: 'upstreamVersion', array: $byId['rotterdam']);
 	}//end testUpstreamRefWithoutVersionSurvivesAlone()
 }//end class

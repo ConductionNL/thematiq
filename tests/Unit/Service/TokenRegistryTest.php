@@ -13,24 +13,28 @@ use PHPUnit\Framework\TestCase;
 class TokenRegistryTest extends TestCase {
 	/**
 	 * Test that getTokens returns a non-empty array with correct structure.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensReturnsNonEmptyArray(): void {
 		$tokens = TokenRegistry::getTokens();
 
-		$this->assertNotEmpty($tokens);
-		$this->assertIsArray($tokens);
+		$this->assertNotEmpty(actual: $tokens);
+		$this->assertIsArray(actual: $tokens);
 	}
 
 	/**
 	 * Test that every token entry has the required keys: tab, type, label.
+	 *
+	 * @return void
 	 */
 	public function testEveryTokenHasRequiredKeys(): void {
 		$tokens = TokenRegistry::getTokens();
 
 		foreach ($tokens as $name => $meta) {
-			$this->assertArrayHasKey('tab', $meta, "Token {$name} is missing 'tab' key");
-			$this->assertArrayHasKey('type', $meta, "Token {$name} is missing 'type' key");
-			$this->assertArrayHasKey('label', $meta, "Token {$name} is missing 'label' key");
+			$this->assertArrayHasKey(key: 'tab', array: $meta, message: "Token {$name} is missing 'tab' key");
+			$this->assertArrayHasKey(key: 'type', array: $meta, message: "Token {$name} is missing 'type' key");
+			$this->assertArrayHasKey(key: 'label', array: $meta, message: "Token {$name} is missing 'label' key");
 		}
 	}
 
@@ -44,14 +48,16 @@ class TokenRegistryTest extends TestCase {
 	 * to lock.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testEveryTokenDeclaresItsLayer(): void {
 		$tokens = TokenRegistry::getTokens();
 
 		foreach ($tokens as $name => $meta) {
-			$this->assertArrayHasKey('group', $meta, "Token {$name} is missing 'group'");
-			$this->assertArrayHasKey('primary', $meta, "Token {$name} is missing 'primary'");
-			$this->assertIsBool($meta['primary'], "Token {$name} has a non-boolean 'primary'");
+			$this->assertArrayHasKey(key: 'group', array: $meta, message: "Token {$name} is missing 'group'");
+			$this->assertArrayHasKey(key: 'primary', array: $meta, message: "Token {$name} is missing 'primary'");
+			$this->assertIsBool(actual: $meta['primary'], message: "Token {$name} has a non-boolean 'primary'");
 		}
 	}//end testEveryTokenDeclaresItsLayer()
 
@@ -63,14 +69,16 @@ class TokenRegistryTest extends TestCase {
 	 * very control the setting hands authority to.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheBrandLayerIsNeverLocked(): void {
 		$brand = TokenRegistry::getBrandTokens();
 
-		$this->assertNotEmpty($brand);
+		$this->assertNotEmpty(actual: $brand);
 		foreach ($brand as $name => $meta) {
-			$this->assertSame('brand', $meta['group'], "Brand token {$name} is not grouped under 'brand'");
-			$this->assertFalse($meta['primary'], "Brand token {$name} would be locked by the setting");
+			$this->assertSame(expected: 'brand', actual: $meta['group'], message: "Brand token {$name} is not grouped under 'brand'");
+			$this->assertFalse(condition: $meta['primary'], message: "Brand token {$name} would be locked by the setting");
 		}
 	}//end testTheBrandLayerIsNeverLocked()
 
@@ -84,17 +92,19 @@ class TokenRegistryTest extends TestCase {
 	 * swatch. An entry without it renders an empty control.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheComponentLayerNamesTheGlobalItReplaces(): void {
 		$components = TokenRegistry::getComponentTokens();
 
-		$this->assertNotEmpty($components, 'the mapping table produced no component tokens');
+		$this->assertNotEmpty(actual: $components, message: 'the mapping table produced no component tokens');
 
 		foreach ($components as $name => $meta) {
-			$this->assertStringStartsWith('--nldesign-component-', $name);
-			$this->assertNotSame('brand', $meta['group'], "Component token {$name} claims the brand layer");
-			$this->assertArrayHasKey('global', $meta, "Component token {$name} names no global");
-			$this->assertStringStartsWith('--', $meta['global'], "Component token {$name} has a malformed global");
+			$this->assertStringStartsWith(prefix: '--nldesign-component-', string: $name);
+			$this->assertNotSame(expected: 'brand', actual: $meta['group'], message: "Component token {$name} claims the brand layer");
+			$this->assertArrayHasKey(key: 'global', array: $meta, message: "Component token {$name} names no global");
+			$this->assertStringStartsWith(prefix: '--', string: $meta['global'], message: "Component token {$name} has a malformed global");
 		}
 	}//end testTheComponentLayerNamesTheGlobalItReplaces()
 
@@ -102,29 +112,35 @@ class TokenRegistryTest extends TestCase {
 	 * getTokens() is both layers, and neither shadows the other.
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
+	 *
+	 * @return void
 	 */
 	public function testGetTokensIsBothLayers(): void {
 		$brand = TokenRegistry::getBrandTokens();
 		$components = TokenRegistry::getComponentTokens();
 		$all = TokenRegistry::getTokens();
 
-		$this->assertSame([], array_intersect_key($brand, $components), 'the two layers share a token name');
-		$this->assertCount(count($brand) + count($components), $all);
+		$this->assertSame(expected: [], actual: array_intersect_key($brand, $components), message: 'the two layers share a token name');
+		$this->assertCount(expectedCount: count($brand) + count($components), haystack: $all);
 	}//end testGetTokensIsBothLayers()
 
 	/**
 	 * Test that all token names start with '--'.
+	 *
+	 * @return void
 	 */
 	public function testTokenNamesStartWithDoubleDash(): void {
 		$tokens = TokenRegistry::getTokens();
 
 		foreach (array_keys($tokens) as $name) {
-			$this->assertStringStartsWith('--', $name, "Token name '{$name}' should start with '--'");
+			$this->assertStringStartsWith(prefix: '--', string: $name, message: "Token name '{$name}' should start with '--'");
 		}
 	}
 
 	/**
 	 * Test that all token types are either 'color' or 'text'.
+	 *
+	 * @return void
 	 */
 	public function testTokenTypesAreValid(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -134,15 +150,17 @@ class TokenRegistryTest extends TestCase {
 
 		foreach ($tokens as $name => $meta) {
 			$this->assertContains(
-				$meta['type'],
-				$validTypes,
-				"Token {$name} has invalid type '{$meta['type']}'"
+				needle: $meta['type'],
+				haystack: $validTypes,
+				message: "Token {$name} has invalid type '{$meta['type']}'"
 			);
 		}
 	}
 
 	/**
 	 * Test that all token tabs are among the known set.
+	 *
+	 * @return void
 	 */
 	public function testTokenTabsAreValid(): void {
 		$tokens = TokenRegistry::getTokens();
@@ -150,73 +168,83 @@ class TokenRegistryTest extends TestCase {
 
 		foreach ($tokens as $name => $meta) {
 			$this->assertContains(
-				$meta['tab'],
-				$validTabs,
-				"Token {$name} has invalid tab '{$meta['tab']}'"
+				needle: $meta['tab'],
+				haystack: $validTabs,
+				message: "Token {$name} has invalid tab '{$meta['tab']}'"
 			);
 		}
 	}
 
 	/**
 	 * Test getTabLabels returns labels for all known tabs.
+	 *
+	 * @return void
 	 */
 	public function testGetTabLabelsCoversAllTabs(): void {
 		$tabLabels = TokenRegistry::getTabLabels();
 
-		$this->assertArrayHasKey('login', $tabLabels);
-		$this->assertArrayHasKey('content', $tabLabels);
-		$this->assertArrayHasKey('status', $tabLabels);
-		$this->assertArrayHasKey('typography', $tabLabels);
-		$this->assertCount(4, $tabLabels);
+		$this->assertArrayHasKey(key: 'login', array: $tabLabels);
+		$this->assertArrayHasKey(key: 'content', array: $tabLabels);
+		$this->assertArrayHasKey(key: 'status', array: $tabLabels);
+		$this->assertArrayHasKey(key: 'typography', array: $tabLabels);
+		$this->assertCount(expectedCount: 4, haystack: $tabLabels);
 	}
 
 	/**
 	 * Test getTokenNames returns the same keys as getTokens.
+	 *
+	 * @return void
 	 */
 	public function testGetTokenNamesMatchesGetTokensKeys(): void {
 		$names = TokenRegistry::getTokenNames();
 		$tokenKeys = array_keys(TokenRegistry::getTokens());
 
-		$this->assertSame($tokenKeys, $names);
+		$this->assertSame(expected: $tokenKeys, actual: $names);
 	}
 
 	/**
 	 * Test isEditable returns true for a known token.
+	 *
+	 * @return void
 	 */
 	public function testIsEditableReturnsTrueForKnownToken(): void {
-		$this->assertTrue(TokenRegistry::isEditable('--color-primary'));
-		$this->assertTrue(TokenRegistry::isEditable('--font-face'));
+		$this->assertTrue(condition: TokenRegistry::isEditable('--color-primary'));
+		$this->assertTrue(condition: TokenRegistry::isEditable('--font-face'));
 	}
 
 	/**
 	 * Test isEditable returns false for an unknown token.
+	 *
+	 * @return void
 	 */
 	public function testIsEditableReturnsFalseForUnknownToken(): void {
-		$this->assertFalse(TokenRegistry::isEditable('--nonexistent-token'));
-		$this->assertFalse(TokenRegistry::isEditable(''));
-		$this->assertFalse(TokenRegistry::isEditable('color-primary'));
+		$this->assertFalse(condition: TokenRegistry::isEditable('--nonexistent-token'));
+		$this->assertFalse(condition: TokenRegistry::isEditable(''));
+		$this->assertFalse(condition: TokenRegistry::isEditable('color-primary'));
 	}
 
 	/**
 	 * Test getTokensByTab groups tokens correctly.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensByTabGroupsCorrectly(): void {
 		$grouped = TokenRegistry::getTokensByTab();
 
 		// Should have exactly 4 tab groups.
-		$this->assertCount(4, $grouped);
-		$this->assertArrayHasKey('login', $grouped);
-		$this->assertArrayHasKey('content', $grouped);
-		$this->assertArrayHasKey('status', $grouped);
-		$this->assertArrayHasKey('typography', $grouped);
+		$this->assertCount(expectedCount: 4, haystack: $grouped);
+		$this->assertArrayHasKey(key: 'login', array: $grouped);
+		$this->assertArrayHasKey(key: 'content', array: $grouped);
+		$this->assertArrayHasKey(key: 'status', array: $grouped);
+		$this->assertArrayHasKey(key: 'typography', array: $grouped);
 
 		// Every token within a group should have the matching tab value.
 		foreach ($grouped as $tab => $tokens) {
 			foreach ($tokens as $name => $meta) {
 				$this->assertSame(
-					$tab,
-					$meta['tab'],
-					"Token {$name} is in tab group '{$tab}' but has tab value '{$meta['tab']}'"
+					expected: $tab,
+					actual: $meta['tab'],
+					message: "Token {$name} is in tab group '{$tab}' but has tab value '{$meta['tab']}'"
 				);
 			}
 		}
@@ -224,6 +252,8 @@ class TokenRegistryTest extends TestCase {
 
 	/**
 	 * Test that the total count of grouped tokens equals the total token count.
+	 *
+	 * @return void
 	 */
 	public function testGetTokensByTabPreservesAllTokens(): void {
 		$grouped = TokenRegistry::getTokensByTab();
@@ -232,17 +262,19 @@ class TokenRegistryTest extends TestCase {
 			$totalGrouped += count($tokens);
 		}
 
-		$this->assertSame(count(TokenRegistry::getTokens()), $totalGrouped);
+		$this->assertSame(expected: count(TokenRegistry::getTokens()), actual: $totalGrouped);
 	}
 
 	/**
 	 * Test that --color-primary exists and belongs to the login tab.
+	 *
+	 * @return void
 	 */
 	public function testColorPrimaryIsInLoginTab(): void {
 		$tokens = TokenRegistry::getTokens();
 
-		$this->assertArrayHasKey('--color-primary', $tokens);
-		$this->assertSame('login', $tokens['--color-primary']['tab']);
-		$this->assertSame('color', $tokens['--color-primary']['type']);
+		$this->assertArrayHasKey(key: '--color-primary', array: $tokens);
+		$this->assertSame(expected: 'login', actual: $tokens['--color-primary']['tab']);
+		$this->assertSame(expected: 'color', actual: $tokens['--color-primary']['type']);
 	}
 }

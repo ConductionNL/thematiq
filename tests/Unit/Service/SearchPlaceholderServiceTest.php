@@ -64,14 +64,14 @@ class SearchPlaceholderServiceTest extends TestCase {
 	 * @return SearchPlaceholderService The service.
 	 */
 	private function service(): SearchPlaceholderService {
-		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig = $this->createMock(originalClassName: IAppConfig::class);
 		$appConfig->method('getValueString')->willReturnCallback(
 			fn (string $app, string $key, string $default = '') => ($this->values[$app][$key] ?? $default)
 		);
 
-		$factory = $this->createMock(IFactory::class);
+		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturnCallback(function (string $app) {
-			$l10n = $this->createMock(IL10N::class);
+			$l10n = $this->createMock(originalClassName: IL10N::class);
 			$l10n->method('t')->willReturnCallback(fn (string $text) => $app.':'.$text);
 			return $l10n;
 		});
@@ -113,72 +113,86 @@ class SearchPlaceholderServiceTest extends TestCase {
 
 	/**
 	 * Set up the mocks.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->initialState = $this->createMock(IInitialState::class);
-		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
+		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->values = [];
 		$this->scripts = 0;
 	}
 
 	/**
 	 * An app's own text, translated through the app's catalogue (DqKop).
+	 *
+	 * @return void
 	 */
 	public function testTheAppsOwnTextThroughItsCatalogue(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
-		$this->assertSame('dossiq:Search cases, documents or contacts', $this->service()->placeholderFor('dossiq'));
+		$this->assertSame(expected: 'dossiq:Search cases, documents or contacts', actual: $this->service()->placeholderFor('dossiq'));
 	}
 
 	/**
 	 * The theme's entry for the app wins over the app's own text.
+	 *
+	 * @return void
 	 */
 	public function testTheThemesEntryWins(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
 		$this->values['thematiq']['search_placeholders'] = json_encode(['dossiq' => 'Search the case files']);
-		$this->assertSame('dossiq:Search the case files', $this->service()->placeholderFor('dossiq'));
+		$this->assertSame(expected: 'dossiq:Search the case files', actual: $this->service()->placeholderFor('dossiq'));
 	}
 
 	/**
 	 * The theme's `*` entry for an app that names none, through thematiq's catalogue.
+	 *
+	 * @return void
 	 */
 	public function testTheThemesDefault(): void {
 		$this->values['thematiq']['search_placeholders'] = json_encode(['*' => 'Search everything']);
-		$this->assertSame('thematiq:Search everything', $this->service()->placeholderFor('files'));
-		$this->assertSame('thematiq:Search everything', $this->service()->placeholderFor(null));
+		$this->assertSame(expected: 'thematiq:Search everything', actual: $this->service()->placeholderFor('files'));
+		$this->assertSame(expected: 'thematiq:Search everything', actual: $this->service()->placeholderFor(null));
 	}
 
 	/**
 	 * With no words anywhere, or a broken map, nothing is named.
+	 *
+	 * @return void
 	 */
 	public function testNothingNamed(): void {
-		$this->assertNull($this->service()->placeholderFor('dossiq'));
+		$this->assertNull(actual: $this->service()->placeholderFor('dossiq'));
 		$this->values['thematiq']['search_placeholders'] = '{not json';
-		$this->assertNull($this->service()->placeholderFor('dossiq'));
+		$this->assertNull(actual: $this->service()->placeholderFor('dossiq'));
 	}
 
 	/**
 	 * Inject provides the words and loads the script; with none it does neither.
+	 *
+	 * @return void
 	 */
 	public function testInjectProvidesAndLoads(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases, documents or contacts';
 		$this->initialState->expects($this->once())->method('provideInitialState')
 			->with('search-placeholder', 'dossiq:Search cases, documents or contacts');
 		$this->service()->inject('dossiq');
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 
 		$this->service()->inject('files');
-		$this->assertSame(1, $this->scripts);
+		$this->assertSame(expected: 1, actual: $this->scripts);
 	}
 
 	/**
 	 * A failure is logged and the page keeps Nextcloud's words.
+	 *
+	 * @return void
 	 */
 	public function testFailsOpen(): void {
 		$this->values['dossiq']['search_placeholder'] = 'Search cases';
 		$this->initialState->method('provideInitialState')->willThrowException(new RuntimeException('boom'));
 		$this->logger->expects($this->once())->method('warning');
 		$this->service()->inject('dossiq');
-		$this->assertSame(0, $this->scripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
 	}
 }

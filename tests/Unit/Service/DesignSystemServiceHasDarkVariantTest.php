@@ -42,6 +42,8 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir with a `css/tokens/dark/` directory.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -49,20 +51,22 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-dsservice-test-' . uniqid();
 		mkdir($this->appDir . '/css/tokens/dark', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('');
 
-		$this->service = new DesignSystemService($appManager, $config);
+		$this->service = new DesignSystemService(appManager: $appManager, config: $config);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -85,7 +89,7 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -96,17 +100,21 @@ class DesignSystemServiceHasDarkVariantTest extends TestCase {
 
 	/**
 	 * True when the generated file exists.
+	 *
+	 * @return void
 	 */
 	public function testTrueWhenFileExists(): void {
 		file_put_contents($this->appDir . '/css/tokens/dark/amsterdam.css', '/* generated */');
 
-		$this->assertTrue($this->service->hasGeneratedDarkVariant(tokenSetId: 'amsterdam'));
+		$this->assertTrue(condition: $this->service->hasGeneratedDarkVariant(tokenSetId: 'amsterdam'));
 	}//end testTrueWhenFileExists()
 
 	/**
 	 * False when the file is absent — no error.
+	 *
+	 * @return void
 	 */
 	public function testFalseWhenFileAbsent(): void {
-		$this->assertFalse($this->service->hasGeneratedDarkVariant(tokenSetId: 'nonexistent'));
+		$this->assertFalse(condition: $this->service->hasGeneratedDarkVariant(tokenSetId: 'nonexistent'));
 	}//end testFalseWhenFileAbsent()
 }//end class

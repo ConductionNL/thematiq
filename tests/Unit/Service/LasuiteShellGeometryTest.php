@@ -15,7 +15,11 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppBrandService;
+use OCA\Thematiq\Service\CssInjectionBrands;
+use OCA\Thematiq\Service\CssInjectionContext;
+use OCA\Thematiq\Service\CssInjectionLayers;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssInjectionTokenFiles;
 use OCA\Thematiq\Service\CustomCssService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\FontService;
@@ -60,48 +64,58 @@ class LasuiteShellGeometryTest extends TestCase {
 	 * @return CssInjectionService The service under test.
 	 */
 	private function service(string $serverVersion): CssInjectionService {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getSystemValueString')->willReturnCallback(
-			static fn (string $key, string $default = ''): string => ($key === 'version' ? $serverVersion : $default)
+			static fn (string $key, string $default = ''): string => (match ($key === 'version') {
+				true => $serverVersion, default => $default
+			})
 		);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, string $default = ''): string => $default
 		);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->root());
 
-		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 		$urlGenerator->method('linkTo')->willReturnCallback(
 			static fn (string $appName, string $file): string => '/apps/' . $appName . '/' . $file
 		);
 
-		$stockTokens = $this->createMock(StockTokensService::class);
+		$stockTokens = $this->createMock(originalClassName: StockTokensService::class);
 		$stockTokens->method('getCss')->willReturn(null);
 
-		$routes = $this->createMock(IURLGenerator::class);
+		$routes = $this->createMock(originalClassName: IURLGenerator::class);
 		$routes->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => 'runtime:' . $args['name']);
 		$runtimeFiles = new RuntimeFileLocator(
-			$appManager,
-			new DirectoryRuntimeFileStore(sys_get_temp_dir() . '/thematiq-shell-geometry-' . getmypid()),
-			$routes,
-			$this->createMock(ITempManager::class)
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: sys_get_temp_dir() . '/thematiq-shell-geometry-' . getmypid()),
+			urlGenerator: $routes,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
 		);
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 
 		return new CssInjectionService(
-			$config,
-			new DesignSystemService($appManager, $config),
-			$this->createMock(CustomCssService::class),
-			$this->createMock(FontService::class),
-			$urlGenerator,
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ThemePreviewBannerService::class),
-			$logger,
-			$stockTokens,
-			$runtimeFiles,
-			new LogoLayerService($config, $urlGenerator, $logger, $runtimeFiles),
-			$this->createMock(AppBrandService::class)
+			context: new CssInjectionContext(
+				config: $config,
+				designSystemService: new DesignSystemService(appManager: $appManager, config: $config),
+				urlGenerator: $urlGenerator,
+				logger: $logger
+			),
+			layers: new CssInjectionLayers(
+				customCssService: $this->createMock(originalClassName: CustomCssService::class),
+				fontService: $this->createMock(originalClassName: FontService::class),
+				previewBannerService: $this->createMock(originalClassName: ThemePreviewBannerService::class),
+				brands: new CssInjectionBrands(
+					groupThemingService: $this->createMock(originalClassName: GroupThemingService::class),
+					appBrands: $this->createMock(originalClassName: AppBrandService::class)
+				)
+			),
+			files: new CssInjectionTokenFiles(
+				stockTokens: $stockTokens,
+				runtimeFiles: $runtimeFiles,
+				logoLayer: new LogoLayerService(config: $config, urlGenerator: $urlGenerator, logger: $logger, files: $runtimeFiles)
+			)
 		);
 	}//end service()
 
@@ -128,77 +142,109 @@ class LasuiteShellGeometryTest extends TestCase {
 	/**
 	 * On Nextcloud 35 the lasuite set loads the shell layer directly after its
 	 * design-system stylesheets and before the token layer.
+	 *
+	 * @return void
 	 */
 	public function testLasuiteOnNextcloud35LoadsTheShellLayerAfterTheDesignSystem(): void {
 		$files = $this->files(tokenSet: 'lasuite', serverVersion: '35.0.1.0');
 
-		$this->assertContains(self::SHELL_NC35, $files);
+		$this->assertContains(needle: self::SHELL_NC35, haystack: $files);
 		$shell = array_search(self::SHELL_NC35, $files, true);
-		$this->assertSame(array_search('systems/lasuite/element-overrides', $files, true) + 1, $shell);
-		$this->assertGreaterThan($shell, array_search('tokens/lasuite', $files, true));
+		$this->assertSame(expected: array_search('systems/lasuite/element-overrides', $files, true) + 1, actual: $shell);
+		$this->assertGreaterThan(expected: $shell, actual: array_search('tokens/lasuite', $files, true));
 	}//end testLasuiteOnNextcloud35LoadsTheShellLayerAfterTheDesignSystem()
 
 	/**
 	 * A major the layer was not written against gets no shell layer at all:
 	 * the stock Nextcloud geometry stays, rather than half-fitting overrides.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownNextcloudMajorGetsNoShellLayer(): void {
 		foreach (['34.0.5.0', '36.0.0.0', ''] as $version) {
-			$this->assertNotContains(self::SHELL_NC35, $this->files(tokenSet: 'lasuite', serverVersion: $version), "version '$version'");
+			$this->assertNotContains(
+				needle: self::SHELL_NC35,
+				haystack: $this->files(tokenSet: 'lasuite', serverVersion: $version),
+				message: "version '$version'"
+			);
 		}
 	}//end testAnUnknownNextcloudMajorGetsNoShellLayer()
 
 	/**
 	 * The geometry belongs to the La Suite deployment, not to the unbranded
 	 * Cunningham sibling or any other design system.
+	 *
+	 * @return void
 	 */
 	public function testOnlyTheLasuiteSetLoadsTheShellLayer(): void {
 		foreach (['cunningham', 'rijkshuisstijl', 'nextcloud'] as $set) {
-			$this->assertNotContains(self::SHELL_NC35, $this->files(tokenSet: $set, serverVersion: '35.0.1.0'), $set);
+			$this->assertNotContains(needle: self::SHELL_NC35, haystack: $this->files(tokenSet: $set, serverVersion: '35.0.1.0'), message: $set);
 		}
 	}//end testOnlyTheLasuiteSetLoadsTheShellLayer()
 
 	/**
 	 * Every version-scoped stylesheet the manifest declares exists on disk.
+	 *
+	 * @return void
 	 */
 	public function testEveryVersionScopedStylesheetExists(): void {
 		$systems = json_decode((string)file_get_contents($this->root() . '/design-systems.json'), true);
 		$declared = 0;
 		foreach ($systems as $system) {
 			foreach (($system['versioned_stylesheets'] ?? []) as $major => $stylesheets) {
-				$this->assertMatchesRegularExpression('/^\d+$/', (string)$major, "{$system['id']}: keys are Nextcloud majors.");
+				$this->assertMatchesRegularExpression(
+					pattern: '/^\d+$/',
+					string: (string)$major,
+					message: "{$system['id']}: keys are Nextcloud majors."
+				);
 				foreach ($stylesheets as $stylesheet) {
 					$declared++;
-					$this->assertFileExists($this->root() . '/css/' . $stylesheet . '.css');
+					$this->assertFileExists(filename: $this->root() . '/css/' . $stylesheet . '.css');
 				}
 			}
 		}
 
-		$this->assertGreaterThan(0, $declared);
+		$this->assertGreaterThan(expected: 0, actual: $declared);
 	}//end testEveryVersionScopedStylesheetExists()
 
 	/**
 	 * The shell layer sets La Suite Docs' header row height through
 	 * Nextcloud's own variable, so every consumer of it follows.
+	 *
+	 * @return void
 	 */
 	public function testTheShellLayerSetsTheLaSuiteHeaderHeight(): void {
 		$css = (string)file_get_contents($this->root() . '/css/' . self::SHELL_NC35 . '.css');
-		$this->assertMatchesRegularExpression('/body\s*\{[^}]*--header-height:\s*64px\s*!important/s', $css);
+		$this->assertMatchesRegularExpression(pattern: '/body\s*\{[^}]*--header-height:\s*64px\s*!important/s', string: $css);
 	}//end testTheShellLayerSetsTheLaSuiteHeaderHeight()
 
 	/**
 	 * The shared La Suite overrides follow the header height instead of
 	 * assuming Nextcloud 34's 50px, so a taller (or the NC 35 shorter) header
 	 * leaves no gap under it and keeps the search field centred.
+	 *
+	 * @return void
 	 */
 	public function testTheSharedOverridesFollowTheHeaderHeight(): void {
 		$css = (string)file_get_contents($this->root() . '/css/systems/lasuite/element-overrides.css');
-		$this->assertDoesNotMatchRegularExpression('/margin:\s*50px\s+0\s+0/', $css, '#content must clear var(--header-height), not 50px.');
-		$this->assertDoesNotMatchRegularExpression('/inset-block-start:\s*8px/', $css, 'The search field must centre on var(--header-height).');
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/margin:\s*50px\s+0\s+0/',
+			string: $css,
+			message: '#content must clear var(--header-height), not 50px.'
+		);
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/inset-block-start:\s*8px/',
+			string: $css,
+			message: 'The search field must centre on var(--header-height).'
+		);
 		// #932: core centres the field's row on NC 35, so the field sits on it
 		// with inset-block: 0 and auto block margins instead of a fixed offset.
-		$this->assertDoesNotMatchRegularExpression('/inset-block-start:\s*15px/', $css, 'A fixed 15px offset pushes the field below the centre of the 64px header.');
-		$this->assertStringContainsString('inset-block: 0 !important;', $css);
-		$this->assertStringContainsString('margin-block: auto !important;', $css);
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/inset-block-start:\s*15px/',
+			string: $css,
+			message: 'A fixed 15px offset pushes the field below the centre of the 64px header.'
+		);
+		$this->assertStringContainsString(needle: 'inset-block: 0 !important;', haystack: $css);
+		$this->assertStringContainsString(needle: 'margin-block: auto !important;', haystack: $css);
 	}//end testTheSharedOverridesFollowTheHeaderHeight()
 }//end class

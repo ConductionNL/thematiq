@@ -29,6 +29,7 @@ use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetConverterService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -100,6 +101,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 	/**
 	 * Wire the controller over a temp app dir and a real converter.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -107,10 +110,10 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-upload-writes-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -121,27 +124,29 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(
-				new ContrastService(),
-				new CssParserService(),
-				$appManager,
-				$this->createMock(LoggerInterface::class)
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 
-		$l = $this->createMock(IL10N::class);
-		$l->method('t')->willReturnCallback(fn (string $text, $p = []) => (empty($p) ? $text : vsprintf($text, $p)));
+		$l = $this->createMock(originalClassName: IL10N::class);
+		$l->method('t')->willReturnCallback(fn (string $text, $p = []) => match (empty($p)) {
+			true => $text, default => vsprintf($text, $p)
+		});
 
 		// The converter reads its mapping table and vocabulary stylesheets from
 		// the REPO; everything it writes still goes through the service above.
-		$repoAppManager = $this->createMock(IAppManager::class);
+		$repoAppManager = $this->createMock(originalClassName: IAppManager::class);
 		$repoAppManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
-		$this->request = $this->createMock(IRequest::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 		$this->controller = new CustomTokenSetController(
 			appName: 'thematiq',
 			request: $this->request,
@@ -150,31 +155,33 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 				validator: new CustomTokenSetValidator(),
 				cssParser: new CssParserService(),
 				converter: new TokenSetConverterService(
-					$repoAppManager,
-					new CssParserService(),
-					new ContrastService(),
-					new DesignTokensMapper(),
-					$this->createMock(FontService::class),
-					$this->createMock(LoggerInterface::class)
+					appManager: $repoAppManager,
+					cssParser: new CssParserService(),
+					contrast: new ContrastService(),
+					dtcgMapper: new DesignTokensMapper(),
+					fonts: $this->createMock(originalClassName: FontService::class),
+					logger: $this->createMock(originalClassName: LoggerInterface::class)
 				)
 			),
 			records: new CustomSetRecords(
 				l: $l,
-				auditService: $this->createMock(ThemingAuditService::class),
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
 				config: $config,
-				themingService: $this->createMock(ThemingService::class)
+				themingService: $this->createMock(originalClassName: ThemingService::class)
 			),
 			sources: new CustomSetSources(
-				designSystems: $this->createMock(DesignSystemService::class)
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
 			)
 		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -197,7 +204,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -211,6 +218,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @param string $css The uploaded document.
 	 * @param string $name The token set display name.
+	 * @param string $fileName The file name.
 	 *
 	 * @return \OCP\AppFramework\Http\JSONResponse The upload response.
 	 */
@@ -219,7 +227,9 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		file_put_contents($tmpFile, $css);
 
 		$this->request->method('getParam')->willReturnCallback(
-			fn (string $key, $default = null) => ($key === 'name' ? $name : $default)
+			fn (string $key, $default = null) => (match ($key === 'name') {
+				true => $name, default => $default
+			})
 		);
 		$this->request->method('getUploadedFile')->willReturn(
 			['tmp_name' => $tmpFile, 'name' => $fileName, 'size' => strlen($css)]
@@ -255,7 +265,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @return array<int, string> The file names.
 	 */
 	private function writtenFiles(): array {
-		return array_map('basename', (glob($this->appDir . '/css/tokens/*.css') ?: []));
+		return array_map('basename', (FileList::glob(pattern: $this->appDir . '/css/tokens/*.css')));
 	}//end writtenFiles()
 
 	/**
@@ -270,19 +280,21 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider smuggledValueProvider
 	 *
 	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 *
+	 * @return void
 	 */
 	public function testAForbiddenValueUnderANameTheValidatorSkipsIsRefused(string $name, string $value): void {
 		$css = ":root {\n  --nldesign-color-primary: #154273;\n  " . $name . ': ' . $value . ";\n}\n";
 
-		$response = $this->upload($css);
+		$response = $this->upload(css: $css);
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertStringContainsString($name, $response->getData()['error']);
-		$this->assertStringContainsString('forbidden value', $response->getData()['error']);
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: $name, haystack: $response->getData()['error']);
+		$this->assertStringContainsString(needle: 'forbidden value', haystack: $response->getData()['error']);
 
 		// Nothing partial: no manifest entry, no file.
-		$this->assertSame([], $this->service->list());
-		$this->assertSame([], $this->writtenFiles());
+		$this->assertSame(expected: [], actual: $this->service->list());
+		$this->assertSame(expected: [], actual: $this->writtenFiles());
 	}//end testAForbiddenValueUnderANameTheValidatorSkipsIsRefused()
 
 	/**
@@ -308,18 +320,20 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * would claim the value gate catches something it never sees.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnImportInsideAValueIsDroppedBeforeItIsEverStored(): void {
 		$response = $this->upload(
-			":root {\n  --nldesign-color-primary: #154273;\n  --ams-brandColor: @import url(evil.css);\n}\n"
+			css: ":root {\n  --nldesign-color-primary: #154273;\n  --ams-brandColor: @import url(evil.css);\n}\n"
 		);
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
 		$stored = (string)$this->service->getRawContent(id: 'custom-gemeente-voorbeeld');
-		$this->assertStringNotContainsString('@import', $stored);
-		$this->assertStringNotContainsString('evil.css', $stored);
-		$this->assertStringNotContainsString('--ams-brandColor', $stored);
+		$this->assertStringNotContainsString(needle: '@import', haystack: $stored);
+		$this->assertStringNotContainsString(needle: 'evil.css', haystack: $stored);
+		$this->assertStringNotContainsString(needle: '--ams-brandColor', haystack: $stored);
 	}//end testAnImportInsideAValueIsDroppedBeforeItIsEverStored()
 
 	/**
@@ -327,12 +341,14 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * did not move from one set to the other, it widened to cover both.
 	 *
 	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 *
+	 * @return void
 	 */
 	public function testAForbiddenValueUnderAnAcceptedNameIsStillRefused(): void {
-		$response = $this->upload(":root {\n  --nldesign-color-primary: expression(alert(1));\n}\n");
+		$response = $this->upload(css: ":root {\n  --nldesign-color-primary: expression(alert(1));\n}\n");
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertSame([], $this->writtenFiles());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertSame(expected: [], actual: $this->writtenFiles());
 	}//end testAForbiddenValueUnderAnAcceptedNameIsStillRefused()
 
 	/**
@@ -341,17 +357,19 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * component layer is the reason those prefixes are accepted at all.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAWellFormedComponentTokenStillStores(): void {
 		$response = $this->upload(
-			":root {\n  --nldesign-color-primary: #154273;\n  --utrecht-button-border-radius: 4px;\n}\n"
+			css: ":root {\n  --nldesign-color-primary: #154273;\n  --utrecht-button-border-radius: 4px;\n}\n"
 		);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame(['custom-gemeente-voorbeeld.css'], $this->writtenFiles());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['custom-gemeente-voorbeeld.css'], actual: $this->writtenFiles());
 
 		$stored = (string)$this->service->getRawContent(id: 'custom-gemeente-voorbeeld');
-		$this->assertStringContainsString('--utrecht-button-border-radius: 4px;', $stored);
+		$this->assertStringContainsString(needle: '--utrecht-button-border-radius: 4px;', haystack: $stored);
 	}//end testAWellFormedComponentTokenStillStores()
 
 	/**
@@ -369,22 +387,24 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider provenancePayloadProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAFilenameCannotCloseTheProvenanceComment(string $payload): void {
 		$response = $this->upload(
-			":root {\n  --nldesign-color-primary: #154273;\n}\n",
-			'Filename Probe',
-			$payload
+			css: ":root {\n  --nldesign-color-primary: #154273;\n}\n",
+			name: 'Filename Probe',
+			fileName: $payload
 		);
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
 		// The comment must still be one comment: nothing the filename carried
 		// may survive as executable CSS.
-		$live = $this->liveCssOf('custom-filename-probe');
-		$this->assertStringNotContainsString('attacker.example', $live);
-		$this->assertStringNotContainsString('expression(', $live);
-		$this->assertProvenanceValueIsInert('custom-filename-probe', 'source:');
+		$live = $this->liveCssOf(id: 'custom-filename-probe');
+		$this->assertStringNotContainsString(needle: 'attacker.example', haystack: $live);
+		$this->assertStringNotContainsString(needle: 'expression(', haystack: $live);
+		$this->assertProvenanceValueIsInert(id: 'custom-filename-probe', label: 'source:');
 	}//end testAFilenameCannotCloseTheProvenanceComment()
 
 	/**
@@ -397,6 +417,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @dataProvider provenancePayloadProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testADocumentVersionCannotCloseTheProvenanceComment(string $payload): void {
 		$document = json_encode(
@@ -406,14 +428,14 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 			]
 		);
 
-		$response = $this->upload($document, 'Version Probe', 'theme.tokens.json');
+		$response = $this->upload(css: $document, name: 'Version Probe', fileName: 'theme.tokens.json');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
-		$live = $this->liveCssOf('custom-version-probe');
-		$this->assertStringNotContainsString('attacker.example', $live);
-		$this->assertStringNotContainsString('expression(', $live);
-		$this->assertProvenanceValueIsInert('custom-version-probe', 'source version:');
+		$live = $this->liveCssOf(id: 'custom-version-probe');
+		$this->assertStringNotContainsString(needle: 'attacker.example', haystack: $live);
+		$this->assertStringNotContainsString(needle: 'expression(', haystack: $live);
+		$this->assertProvenanceValueIsInert(id: 'custom-version-probe', label: 'source version:');
 	}//end testADocumentVersionCannotCloseTheProvenanceComment()
 
 	/**
@@ -455,14 +477,14 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @return void
 	 */
 	private function assertProvenanceValueIsInert(string $id, string $label): void {
-		$value = $this->provenanceValueOf($id, $label);
+		$value = $this->provenanceValueOf(id: $id, label: $label);
 
-		$this->assertStringNotContainsString('*', $value, 'no asterisk may survive into the provenance line');
-		$this->assertStringNotContainsString('/', $value, 'no slash may survive into the provenance line');
+		$this->assertStringNotContainsString(needle: '*', haystack: $value, message: 'no asterisk may survive into the provenance line');
+		$this->assertStringNotContainsString(needle: '/', haystack: $value, message: 'no slash may survive into the provenance line');
 		$this->assertMatchesRegularExpression(
-			'/^[\x20-\x7E]*$/',
-			$value,
-			'only printable ASCII may reach the provenance line'
+			pattern: '/^[\x20-\x7E]*$/',
+			string: $value,
+			message: 'only printable ASCII may reach the provenance line'
 		);
 	}//end assertProvenanceValueIsInert()
 
@@ -489,17 +511,19 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * strips comment terminators, it does not blank the field.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnOrdinaryFilenameIsStillRecorded(): void {
 		$this->upload(
-			":root {\n  --nldesign-color-primary: #154273;\n}\n",
-			'Gemeente Voorbeeld',
-			'gemeente-voorbeeld-tokens.css'
+			css: ":root {\n  --nldesign-color-primary: #154273;\n}\n",
+			name: 'Gemeente Voorbeeld',
+			fileName: 'gemeente-voorbeeld-tokens.css'
 		);
 
 		$this->assertSame(
-			'gemeente-voorbeeld-tokens.css',
-			$this->provenanceValueOf('custom-gemeente-voorbeeld', 'source:')
+			expected: 'gemeente-voorbeeld-tokens.css',
+			actual: $this->provenanceValueOf(id: 'custom-gemeente-voorbeeld', label: 'source:')
 		);
 	}//end testAnOrdinaryFilenameIsStillRecorded()
 
@@ -513,29 +537,31 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * overwrote a declared value would silently re-theme their brand.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAHandAuthoredUploadIsStoredBackfilledButNeverOverwritten(): void {
 		$response = $this->upload(
-			":root {\n  --nldesign-color-primary: #7d3f98;\n  --nldesign-color-primary-text: #ffffff;\n}\n"
+			css: ":root {\n  --nldesign-color-primary: #7d3f98;\n  --nldesign-color-primary-text: #ffffff;\n}\n"
 		);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('D', $response->getData()['inputKind']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'D', actual: $response->getData()['inputKind']);
 		// `imported` counts what the ADMIN'S document yielded, not the file.
-		$this->assertSame(2, $response->getData()['imported']);
+		$this->assertSame(expected: 2, actual: $response->getData()['imported']);
 
 		$stored = (string)$this->service->getRawContent(id: 'custom-gemeente-voorbeeld');
 		$declarations = (new CssParserService())->parseRootBlock(css: $stored);
 
 		// What the admin wrote survives exactly.
-		$this->assertSame('#7d3f98', $declarations['--nldesign-color-primary']);
-		$this->assertSame('#ffffff', $declarations['--nldesign-color-primary-text']);
+		$this->assertSame(expected: '#7d3f98', actual: $declarations['--nldesign-color-primary']);
+		$this->assertSame(expected: '#ffffff', actual: $declarations['--nldesign-color-primary-text']);
 
 		// And the file carries far more than was uploaded, filled from the
 		// mapping table's fallbacks rather than left to the cascade.
-		$this->assertGreaterThan(2, count($declarations));
-		$this->assertArrayHasKey('--nldesign-color-link', $declarations);
-		$this->assertArrayHasKey('--nldesign-border-radius', $declarations);
+		$this->assertGreaterThan(expected: 2, actual: count($declarations));
+		$this->assertArrayHasKey(key: '--nldesign-color-link', array: $declarations);
+		$this->assertArrayHasKey(key: '--nldesign-border-radius', array: $declarations);
 
 		// The report says so per token, so the backfill is inspectable rather
 		// than silent: every derived token names why it was derived.
@@ -543,7 +569,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 			$response->getData()['report'],
 			static fn (array $entry): bool => ($entry['action'] ?? '') === 'adapted'
 		);
-		$this->assertNotEmpty($derived);
+		$this->assertNotEmpty(actual: $derived);
 	}//end testAHandAuthoredUploadIsStoredBackfilledButNeverOverwritten()
 	/**
 	 * Submit pasted content instead of a file.
@@ -574,7 +600,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	public function testAPasteStoresWhatTheSameFileStores(): void {
 		$theme = '.openwoo-theme { --utrecht-button-primary-action-background-color: #23845c; --utrecht-page-max-inline-size: 1200px; }';
 
-		$this->assertSame(200, $this->upload($theme, 'OpenWOO', 'design-tokens.css')->getStatus());
+		$this->assertSame(expected: 200, actual: $this->upload(css: $theme, name: 'OpenWOO', fileName: 'design-tokens.css')->getStatus());
 		$uploaded = (string)$this->service->getRawContent(id: 'custom-openwoo');
 
 		// A clean instance: same bytes, other way in.
@@ -582,11 +608,11 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 		$this->appConfig = [];
 		$this->setUp();
 
-		$response = $this->paste($theme, 'OpenWOO', 'design-tokens.css');
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame($uploaded, (string)$this->service->getRawContent(id: 'custom-openwoo'));
-		$this->assertSame('A', $response->getData()['inputKind']);
-		$this->assertArrayHasKey('layout-fixed-by-nextcloud', $response->getData()['reasons']);
+		$response = $this->paste(content: $theme, name: 'OpenWOO', sourceName: 'design-tokens.css');
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: $uploaded, actual: (string)$this->service->getRawContent(id: 'custom-openwoo'));
+		$this->assertSame(expected: 'A', actual: $response->getData()['inputKind']);
+		$this->assertArrayHasKey(key: 'layout-fixed-by-nextcloud', array: $response->getData()['reasons']);
 	}//end testAPasteStoresWhatTheSameFileStores()
 
 	/**
@@ -597,11 +623,11 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnEmptyPasteIsRefusedAndStoresNothing(): void {
-		$response = $this->paste("  \n ");
+		$response = $this->paste(content: "  \n ");
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertStringContainsString('paste', $response->getData()['error']);
-		$this->assertSame([], $this->writtenFiles());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: 'paste', haystack: $response->getData()['error']);
+		$this->assertSame(expected: [], actual: $this->writtenFiles());
 	}//end testAnEmptyPasteIsRefusedAndStoresNothing()
 
 	/**
@@ -612,10 +638,10 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnOversizedPasteIsRefused(): void {
-		$response = $this->paste(':root { --nldesign-color-primary: #154273; }' . str_repeat(' ', CustomTokenSetValidator::MAX_SIZE));
+		$response = $this->paste(content: ':root { --nldesign-color-primary: #154273; }' . str_repeat(' ', CustomTokenSetValidator::MAX_SIZE));
 
-		$this->assertSame(413, $response->getStatus());
-		$this->assertSame([], $this->writtenFiles());
+		$this->assertSame(expected: 413, actual: $response->getStatus());
+		$this->assertSame(expected: [], actual: $this->writtenFiles());
 	}//end testAnOversizedPasteIsRefused()
 
 	/**
@@ -627,14 +653,14 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 */
 	public function testAFileIsReadByItsContentNotItsExtension(): void {
 		$response = $this->upload(
-			'.openwoo-theme { --utrecht-button-primary-action-background-color: #23845c; }',
-			'OpenWOO',
-			'tokens.json'
+			css: '.openwoo-theme { --utrecht-button-primary-action-background-color: #23845c; }',
+			name: 'OpenWOO',
+			fileName: 'tokens.json'
 		);
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('A', $response->getData()['inputKind']);
-		$this->assertStringContainsString('--nldesign-color-primary: #23845c', $this->liveCssOf('custom-openwoo'));
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'A', actual: $response->getData()['inputKind']);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #23845c', haystack: $this->liveCssOf(id: 'custom-openwoo'));
 	}//end testAFileIsReadByItsContentNotItsExtension()
 
 	/**
@@ -650,15 +676,15 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 		$response = $this->upload(css: $file, name: 'Kopie', fileName: 'thematiq-cunningham.json');
 
-		$this->assertSame(200, $response->getStatus(), json_encode($response->getData()));
-		$this->assertGreaterThan(15, $response->getData()['darkValues']);
+		$this->assertSame(expected: 200, actual: $response->getStatus(), message: json_encode($response->getData()));
+		$this->assertGreaterThan(expected: 15, actual: $response->getData()['darkValues']);
 		$pins = (string)file_get_contents($this->appDir . '/css/tokens/dark-pins/custom-kopie.css');
-		$this->assertStringContainsString('--nldesign-color-primary: ' . $darkPrimary . ';', $pins);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: ' . $darkPrimary . ';', haystack: $pins);
 		$dark = (string)file_get_contents($this->appDir . '/css/tokens/dark/custom-kopie.css');
-		$this->assertStringContainsString('--nldesign-color-primary: ' . $darkPrimary . ';', $dark);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: ' . $darkPrimary . ';', haystack: $dark);
 
 		$this->service->delete(id: 'custom-kopie');
-		$this->assertFileDoesNotExist($this->appDir . '/css/tokens/dark-pins/custom-kopie.css');
+		$this->assertFileDoesNotExist(filename: $this->appDir . '/css/tokens/dark-pins/custom-kopie.css');
 	}//end testDarkValuesFromAFileAreKept()
 
 	/**
@@ -673,8 +699,8 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 
 		$response = $this->upload(css: (string)json_encode($file), name: 'Boos', fileName: 'x.json');
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertStringContainsString('--nldesign-color-primary', $response->getData()['error']);
-		$this->assertSame([], $this->writtenFiles());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: '--nldesign-color-primary', haystack: $response->getData()['error']);
+		$this->assertSame(expected: [], actual: $this->writtenFiles());
 	}//end testAForbiddenDarkValueIsRefused()
 }//end class

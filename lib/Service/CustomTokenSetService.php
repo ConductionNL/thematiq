@@ -155,27 +155,7 @@ class CustomTokenSetService {
 	 * it (the contrast banner keys off `pair`/`ratio`; an import warning
 	 * carries `path`/`message`).
 	 *
-	 * @param string $displayName The admin display name.
-	 * @param string $description Optional description.
-	 * @param array<string, string> $declarations The whitelisted declarations.
-	 * @param string|null $version The declared DTCG package version, verbatim (never fabricated).
-	 * @param array<int, array{path: string, message: string|null}> $importWarnings DTCG `$deprecated` import warnings, if any.
-	 * @param string|null $css Canonical file text to write verbatim instead of re-serialising `$declarations`. The
-	 *                         converter path passes its own emitted file, whose four commented sections and
-	 *                         provenance block are the point of it — `serialize()` would flatten both away. The
-	 *                         caller MUST have validated these exact bytes; this parameter never bypasses a gate,
-	 *                         it only chooses which already-validated text is stored.
-	 * @param array<string, string> $theming Theming values to merge OVER the derived ones. The converter routes a
-	 *                                       theme's page background to `theming.background_color` on purpose (so
-	 *                                       Nextcloud keeps owning `--color-main-background` and dark mode), and
-	 *                                       `deriveTheming()` cannot see that decision from the declarations alone.
-	 * @param array{path: string, contents: string}|null $logoAsset A logo the converter decoded out of the theme,
-	 *                                                              to be written under `img/logos/`. Nextcloud's core theming takes a
-	 *                                                              logo as a FILE (`ImageManager::updateImage()`), so a theme's inline
-	 *                                                              `data:` URI has to become one before `theming.logo` can mean anything.
-	 * @param string|null $designSystem The design system this set was created FROM, when the caller knows it.
-	 *                                  Decides which stylesheet layers the set emits; left unset for an
-	 *                                  upload of an unknown document, which still resolves to nldesign.
+	 * @param NewCustomTokenSet $set The new set's fields, each documented on NewCustomTokenSet.
 	 *
 	 * @return array{id: string, warnings: array<int, array<string, mixed>>} The result.
 	 *
@@ -187,40 +167,31 @@ class CustomTokenSetService {
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 */
-	public function store(
-		string $displayName,
-		string $description,
-		array $declarations,
-		?string $version = null,
-		array $importWarnings = [],
-		?string $css = null,
-		array $theming = [],
-		?array $logoAsset = null,
-		?string $designSystem = null,
-	): array {
-		$id = $this->reserveId(displayName: $displayName);
+	public function store(NewCustomTokenSet $set): array {
+		$id = $this->reserveId(displayName: $set->displayName);
 		$this->writeFile(
 			name: $this->getCssPath(id: $id),
-			contents: ($css ?? $this->validator->serialize(declarations: $declarations))
+			contents: ($set->css ?? $this->validator->serialize(declarations: $set->declarations))
 		);
 
 		// Written before the manifest entry that points at it: `theming.logo`
 		// is validated by ThemingService against the file EXISTING, so a
 		// manifest entry naming a file that was never written would fail the
 		// sync with "Image file not found" instead of updating the logo.
-		if ($logoAsset !== null) {
-			$theming = $this->withLogoAsset(theming: $theming, logo: ['id' => $id, 'asset' => $logoAsset]);
+		$theming = $set->theming;
+		if ($set->logoAsset !== null) {
+			$theming = $this->withLogoAsset(theming: $theming, logo: ['id' => $id, 'asset' => $set->logoAsset]);
 		}
 
-		$warnings = $this->contrast->check(declarations: $declarations);
+		$warnings = $this->contrast->check(declarations: $set->declarations);
 		$entry = $this->withOptionalFields(
 			entry: [
-				'name' => $displayName,
-				'description' => $this->describe(description: $description, displayName: $displayName),
-				'theming' => array_merge($this->deriveTheming(declarations: $declarations), $theming),
+				'name' => $set->displayName,
+				'description' => $this->describe(description: $set->description, displayName: $set->displayName),
+				'theming' => array_merge($this->deriveTheming(declarations: $set->declarations), $theming),
 				'warnings' => $warnings,
 			],
-			optional: ['version' => $version, 'importWarnings' => $importWarnings, 'designSystem' => $designSystem]
+			optional: ['version' => $set->version, 'importWarnings' => $set->importWarnings, 'designSystem' => $set->designSystem]
 		);
 		$this->register(id: $id, entry: $entry);
 

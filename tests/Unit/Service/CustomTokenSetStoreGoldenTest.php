@@ -27,6 +27,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -52,6 +53,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\DarkPaletteService
  * @uses   \OCA\Thematiq\Service\DarkPins
+ * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
  */
 class CustomTokenSetStoreGoldenTest extends TestCase {
 
@@ -85,9 +87,9 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: $name);
 		}
 	}//end testStoreMatchesTheGoldenRecording()
 
@@ -101,7 +103,7 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 	 */
 	private function runCase(Randomizer $random, array $sources): string {
 		$appConfig = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static function (string $app, string $key, $default = '') use (&$appConfig) {
 				return ($appConfig[$key] ?? $default);
@@ -159,7 +161,7 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 		);
 
 		try {
-			$outcome = ['result' => $service->store(...$arguments)];
+			$outcome = ['result' => $service->store(set: new NewCustomTokenSet(fields: $arguments))];
 		} catch (RuntimeException $e) {
 			$outcome = ['exception' => $e->getCode(), 'message' => $e->getMessage()];
 		}
@@ -205,19 +207,19 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 	 */
 	private function darkPalette(bool $throws, RuntimeFileStore $store): DarkPaletteService {
 		if ($throws === true) {
-			$dark = $this->createMock(DarkPaletteService::class);
+			$dark = $this->createMock(originalClassName: DarkPaletteService::class);
 			$dark->method('generateAndWrite')->willThrowException(new RuntimeException('dark generation failed'));
 			return $dark;
 		}
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(dirname(__DIR__, 3));
 
 		return new DarkPaletteService(
 			contrast: new ContrastService(),
 			parser: new CssParserService(),
 			appManager: $appManager,
-			logger: $this->createMock(LoggerInterface::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class),
 			store: $store
 		);
 	}//end darkPalette()
@@ -248,10 +250,23 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 			) {
 			}
 
+			/**
+			 * RuntimeFileStore::read(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return ?string
+			 */
 			public function read(string $name): ?string {
 				return ($this->files[$name] ?? null);
 			}
 
+			/**
+			 * RuntimeFileStore::write(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @param string $content The content.
+			 * @return void
+			 */
 			public function write(string $name, string $content): void {
 				foreach ($this->refused as $prefix) {
 					if (str_starts_with($name, $prefix) === true) {
@@ -274,14 +289,32 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 				$this->files[$name] = $content;
 			}
 
+			/**
+			 * RuntimeFileStore::exists(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return bool
+			 */
 			public function exists(string $name): bool {
 				return isset($this->files[$name]);
 			}
 
+			/**
+			 * RuntimeFileStore::delete(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return void
+			 */
 			public function delete(string $name): void {
 				unset($this->files[$name]);
 			}
 
+			/**
+			 * RuntimeFileStore::listDirectory(), as this test double answers it.
+			 *
+			 * @param string $directory The directory.
+			 * @return array
+			 */
 			public function listDirectory(string $directory): array {
 				$names = [];
 				foreach (array_keys($this->files) as $name) {
@@ -294,6 +327,12 @@ class CustomTokenSetStoreGoldenTest extends TestCase {
 				return $names;
 			}
 
+			/**
+			 * RuntimeFileStore::revision(), as this test double answers it.
+			 *
+			 * @param string $name The name.
+			 * @return string
+			 */
 			public function revision(string $name): string {
 				return hash('sha256', ($this->files[$name] ?? ''));
 			}

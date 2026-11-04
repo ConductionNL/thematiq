@@ -42,25 +42,54 @@ class HealthControllerEngineResultTest extends TestCase {
 	 */
 	private function controllerWithEngineResult(string $status, array $checks, int $httpCode): HealthController {
 		$manifest = new class {
+			/**
+			 * The cors.
+			 *
+			 * @var bool
+			 */
 			public bool $cors = false;
 		};
 
 		$loader = new class($manifest) {
+			/**
+			 * Constructor.
+			 *
+			 * @param object $manifest The manifest.
+			 */
 			public function __construct(
 				private object $manifest,
 			) {
 			}
 
+			/**
+			 * Load.
+			 *
+			 * @param string $appId The app id.
+			 * @return object
+			 */
 			public function load(string $appId): object {
 				return $this->manifest;
 			}
 
+			/**
+			 * App version.
+			 *
+			 * @param string $appId The app id.
+			 * @return string
+			 */
 			public function appVersion(string $appId): string {
 				return '9.9.9';
 			}
 		};
 
 		$result = new class($status, $checks, $httpCode) {
+			/**
+			 * Constructor.
+			 *
+			 * @param string $status The status.
+			 * @param array $checks The checks.
+			 * @param int $httpStatusCode The http status code.
+			 */
 			public function __construct(
 				public string $status,
 				public array $checks,
@@ -70,26 +99,37 @@ class HealthControllerEngineResultTest extends TestCase {
 		};
 
 		$executor = new class($result) {
+			/**
+			 * Constructor.
+			 *
+			 * @param object $result The result.
+			 */
 			public function __construct(
 				private object $result,
 			) {
 			}
 
+			/**
+			 * Execute.
+			 *
+			 * @param object $manifest The manifest.
+			 * @return object
+			 */
 			public function execute(object $manifest): object {
 				return $this->result;
 			}
 		};
 
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willReturnMap([
 			['OCA\\OpenRegister\\AppHost\\Observability\\ManifestLoader', $loader],
 			['OCA\\OpenRegister\\AppHost\\Observability\\HealthCheckExecutor', $executor],
 		]);
 
 		return new HealthController(
-			$this->createMock(IRequest::class),
-			$this->createMock(IConfig::class),
-			$container
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $this->createMock(originalClassName: IConfig::class),
+			container: $container
 		);
 	}//end controllerWithEngineResult()
 
@@ -99,6 +139,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Critical
 	 * check failure yields 503 under adr006 policy".
+	 *
+	 * @return void
 	 */
 	public function testCriticalEngineFailureIsServedAs503(): void {
 		$response = $this->controllerWithEngineResult(
@@ -107,12 +149,12 @@ class HealthControllerEngineResultTest extends TestCase {
 			httpCode: 503
 		)->index();
 
-		$this->assertSame(503, $response->getStatus());
+		$this->assertSame(expected: 503, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('error', $data['status']);
-		$this->assertSame('thematiq', $data['app']);
-		$this->assertSame('9.9.9', $data['version']);
-		$this->assertStringStartsWith('failed', $data['checks']['database']);
+		$this->assertSame(expected: 'error', actual: $data['status']);
+		$this->assertSame(expected: 'thematiq', actual: $data['app']);
+		$this->assertSame(expected: '9.9.9', actual: $data['version']);
+		$this->assertStringStartsWith(prefix: 'failed', string: $data['checks']['database']);
 	}//end testCriticalEngineFailureIsServedAs503()
 
 	/**
@@ -121,6 +163,8 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Degraded
 	 * filesystem check does not error the overall status".
+	 *
+	 * @return void
 	 */
 	public function testDegradedFilesystemIsServedAs200Degraded(): void {
 		$response = $this->controllerWithEngineResult(
@@ -129,11 +173,11 @@ class HealthControllerEngineResultTest extends TestCase {
 			httpCode: 200
 		)->index();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$data = $response->getData();
-		$this->assertSame('degraded', $data['status']);
-		$this->assertStringStartsWith('failed', $data['checks']['filesystem']);
-		$this->assertSame('ok', $data['checks']['database']);
+		$this->assertSame(expected: 'degraded', actual: $data['status']);
+		$this->assertStringStartsWith(prefix: 'failed', string: $data['checks']['filesystem']);
+		$this->assertSame(expected: 'ok', actual: $data['checks']['database']);
 	}//end testDegradedFilesystemIsServedAs200Degraded()
 
 	/**
@@ -142,20 +186,26 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Nextcloud
 	 * boots when OpenRegister is absent" (the response half).
+	 *
+	 * @return void
 	 */
 	public function testEngineAbsentDegradesTo200(): void {
-		$container = $this->createMock(ContainerInterface::class);
+		$container = $this->createMock(originalClassName: ContainerInterface::class);
 		$container->method('get')->willThrowException(new \RuntimeException('class not found'));
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('1.0.0');
 
-		$response = (new HealthController($this->createMock(IRequest::class), $config, $container))->index();
+		$response = (new HealthController(
+			request: $this->createMock(originalClassName: IRequest::class),
+			config: $config,
+			container: $container
+		))->index();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(
-			['status' => 'degraded', 'app' => 'thematiq', 'version' => '1.0.0', 'checks' => ['openregister' => 'unavailable']],
-			$response->getData()
+			expected: ['status' => 'degraded', 'app' => 'thematiq', 'version' => '1.0.0', 'checks' => ['openregister' => 'unavailable']],
+			actual: $response->getData()
 		);
 	}//end testEngineAbsentDegradesTo200()
 
@@ -167,12 +217,14 @@ class HealthControllerEngineResultTest extends TestCase {
 	 *
 	 * Proves openspec/specs/prometheus-metrics/spec.md, scenario "Nextcloud
 	 * boots when OpenRegister is absent" (the boot half).
+	 *
+	 * @return void
 	 */
 	public function testControllerNamesNoOpenRegisterClassInCode(): void {
 		$source = (string)file_get_contents(__DIR__ . '/../../../lib/Controller/HealthController.php');
 
-		$this->assertDoesNotMatchRegularExpression('/^use\s+OCA\\\\OpenRegister\\\\/m', $source);
-		$this->assertMatchesRegularExpression('/^class HealthController extends Controller \{$/m', $source);
-		$this->assertSame('OCP\AppFramework\Controller', get_parent_class(HealthController::class));
+		$this->assertDoesNotMatchRegularExpression(pattern: '/^use\s+OCA\\\\OpenRegister\\\\/m', string: $source);
+		$this->assertMatchesRegularExpression(pattern: '/^class HealthController extends Controller \{$/m', string: $source);
+		$this->assertSame(expected: 'OCP\AppFramework\Controller', actual: get_parent_class(HealthController::class));
 	}//end testControllerNamesNoOpenRegisterClassInCode()
 }//end class

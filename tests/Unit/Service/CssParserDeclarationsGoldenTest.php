@@ -90,9 +90,9 @@ class CssParserDeclarationsGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $value) {
-			self::assertSame($value, $actual[$name], $name);
+			self::assertSame(expected: $value, actual: $actual[$name], message: $name);
 		}
 	}//end testDeclarationsMatchTheGoldenRecording()
 }//end class

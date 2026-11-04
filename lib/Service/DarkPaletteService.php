@@ -1172,25 +1172,36 @@ class DarkPaletteService {
 	 */
 	private function regenerateRgbCompanions(array $lightDeclarations, array $darkDeclarations): array {
 		foreach (array_keys($lightDeclarations) as $token) {
-			if (str_ends_with($token, '-rgb') === false) {
-				continue;
+			$companion = $this->rgbCompanion(token: (string)$token, darkDeclarations: $darkDeclarations);
+			if ($companion !== null) {
+				$darkDeclarations[$token] = $companion;
 			}
-
-			$baseToken = substr($token, 0, -4);
-			if (isset($darkDeclarations[$baseToken]) === false) {
-				continue;
-			}
-
-			$rgb = $this->contrast->parseColor(value: $darkDeclarations[$baseToken]);
-			if ($rgb === null) {
-				continue;
-			}
-
-			$darkDeclarations[$token] = $rgb[0] . ', ' . $rgb[1] . ', ' . $rgb[2];
 		}
 
 		return $darkDeclarations;
 	}//end regenerateRgbCompanions()
+
+	/**
+	 * The dark `r, g, b` value of an `-rgb` companion token, from the dark value of the colour it repeats.
+	 *
+	 * @param string $token The light set's token.
+	 * @param array<string, string> $darkDeclarations The dark declarations.
+	 *
+	 * @return string|null Null when the token is no companion, or its colour has no readable dark value.
+	 */
+	private function rgbCompanion(string $token, array $darkDeclarations): ?string {
+		$baseToken = substr($token, 0, -4);
+		if (str_ends_with($token, '-rgb') === false || isset($darkDeclarations[$baseToken]) === false) {
+			return null;
+		}
+
+		$rgb = $this->contrast->parseColor(value: $darkDeclarations[$baseToken]);
+		if ($rgb === null) {
+			return null;
+		}
+
+		return $rgb[0] . ', ' . $rgb[1] . ', ' . $rgb[2];
+	}//end rgbCompanion()
 
 	/**
 	 * Run the WCAG verification/repair loop over a candidate dark
@@ -1746,15 +1757,27 @@ class DarkPaletteService {
 			return $declarations;
 		}
 
-		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
-		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
-		$declarations[self::ERROR_LABEL] = '#ffffff';
-		if ($black > $white) {
-			$declarations[self::ERROR_LABEL] = '#000000';
-		}
+		$declarations[self::ERROR_LABEL] = $this->labelInkOn(fill: $fill);
 
 		return $declarations;
 	}//end withErrorLabel()
+
+	/**
+	 * White or black, whichever reads better on a fill; white on a tie.
+	 *
+	 * @param string $fill The fill colour.
+	 *
+	 * @return string
+	 */
+	private function labelInkOn(string $fill): string {
+		$white = ($this->contrast->measure(foreground: '#ffffff', background: $fill) ?? 0.0);
+		$black = ($this->contrast->measure(foreground: '#000000', background: $fill) ?? 0.0);
+		if ($black > $white) {
+			return '#000000';
+		}
+
+		return '#ffffff';
+	}//end labelInkOn()
 
 	/**
 	 * Build the dark-scoped logo url()'s path, relative to `css/tokens/dark/`.

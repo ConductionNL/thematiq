@@ -66,16 +66,21 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$this->stored = [];
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(function (string $app, string $key, $value): void {
 			$this->stored[$key] = (string)$value;
 		});
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
-		$records = new DeprecationRecords($config);
-		$this->ownTokens = new OwnTokenService($config, new TokenValueValidator(), $records);
-		$this->service = new TokenDeprecationService($records, $this->ownTokens, $appManager, new CssParserService());
+		$records = new DeprecationRecords(config: $config);
+		$this->ownTokens = new OwnTokenService(config: $config, values: new TokenValueValidator(), records: $records);
+		$this->service = new TokenDeprecationService(
+			records: $records,
+			ownTokens: $this->ownTokens,
+			appManager: $appManager,
+			cssParser: new CssParserService()
+		);
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']);
 	}//end setUp()
@@ -87,20 +92,28 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 */
 	public function testReplacementMustExist(): void {
 		try {
-			$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'replacement' => '--nldesign-org-missing'], today: '2026-10-02');
-			$this->fail('expected a refusal');
+			$this->service->deprecate(
+				token: '--nldesign-org-old-accent',
+				input: ['severity' => 'warning', 'replacement' => '--nldesign-org-missing'],
+				today: '2026-10-02'
+			);
+			$this->fail(message: 'expected a refusal');
 		} catch (InvalidArgumentException $e) {
-			$this->assertSame('replacement', $e->getMessage());
+			$this->assertSame(expected: 'replacement', actual: $e->getMessage());
 		}
 
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 
 		// An own token, an editor token and a defaults.css name all count as existing.
 		foreach (['--nldesign-org-brand-accent', '--color-primary', '--nldesign-color-primary'] as $replacement) {
-			$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'replacement' => $replacement], today: '2026-10-02');
+			$this->service->deprecate(
+				token: '--nldesign-org-old-accent',
+				input: ['severity' => 'warning', 'replacement' => $replacement],
+				today: '2026-10-02'
+			);
 		}
 
-		$this->assertSame('--nldesign-color-primary', $this->service->list()['--nldesign-org-old-accent']['replacement']);
+		$this->assertSame(expected: '--nldesign-color-primary', actual: $this->service->list()['--nldesign-org-old-accent']['replacement']);
 	}//end testReplacementMustExist()
 
 	/**
@@ -111,15 +124,23 @@ final class TokenDeprecationServiceTest extends TestCase {
 	public function testPastDateRefused(): void {
 		foreach (['2026-10-01', '2026-02-30', 'tomorrow'] as $date) {
 			try {
-				$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'info', 'removalDate' => $date], today: '2026-10-02');
-				$this->fail('expected a refusal for ' . $date);
+				$this->service->deprecate(
+					token: '--nldesign-org-old-accent',
+					input: ['severity' => 'info', 'removalDate' => $date],
+					today: '2026-10-02'
+				);
+				$this->fail(message: 'expected a refusal for ' . $date);
 			} catch (InvalidArgumentException $e) {
-				$this->assertSame('removalDate', $e->getMessage());
+				$this->assertSame(expected: 'removalDate', actual: $e->getMessage());
 			}
 		}
 
-		$record = $this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'info', 'removalDate' => '2026-10-02'], today: '2026-10-02');
-		$this->assertSame('2026-10-02', $record['removalDate']);
+		$record = $this->service->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'info', 'removalDate' => '2026-10-02'],
+			today: '2026-10-02'
+		);
+		$this->assertSame(expected: '2026-10-02', actual: $record['removalDate']);
 	}//end testPastDateRefused()
 
 	/**
@@ -128,11 +149,15 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDueAfterDate(): void {
-		$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'removalDate' => '2027-03-01'], today: '2026-10-02');
+		$this->service->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'warning', 'removalDate' => '2027-03-01'],
+			today: '2026-10-02'
+		);
 
-		$this->assertFalse($this->service->list(today: '2027-03-01')['--nldesign-org-old-accent']['due']);
-		$this->assertTrue($this->service->list(today: '2027-03-02')['--nldesign-org-old-accent']['due']);
-		$this->assertTrue($this->ownTokens->exists(name: '--nldesign-org-old-accent'));
+		$this->assertFalse(condition: $this->service->list(today: '2027-03-01')['--nldesign-org-old-accent']['due']);
+		$this->assertTrue(condition: $this->service->list(today: '2027-03-02')['--nldesign-org-old-accent']['due']);
+		$this->assertTrue(condition: $this->ownTokens->exists(name: '--nldesign-org-old-accent'));
 	}//end testDueAfterDate()
 
 	/**
@@ -142,9 +167,13 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 */
 	public function testValueNeverChanged(): void {
 		$before = $this->ownTokens->list();
-		$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'critical', 'replacement' => '--nldesign-org-brand-accent'], today: '2026-10-02');
+		$this->service->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'critical', 'replacement' => '--nldesign-org-brand-accent'],
+			today: '2026-10-02'
+		);
 
-		$this->assertSame($before, $this->ownTokens->list());
+		$this->assertSame(expected: $before, actual: $this->ownTokens->list());
 	}//end testValueNeverChanged()
 
 	/**
@@ -153,15 +182,19 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testCommentText(): void {
-		$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning', 'replacement' => '--nldesign-org-brand-accent', 'removalDate' => '2027-03-01'], today: '2026-10-02');
+		$this->service->deprecate(
+			token: '--nldesign-org-old-accent',
+			input: ['severity' => 'warning', 'replacement' => '--nldesign-org-brand-accent', 'removalDate' => '2027-03-01'],
+			today: '2026-10-02'
+		);
 		$this->service->deprecate(token: '--nldesign-color-primary-light', input: ['severity' => 'info'], today: '2026-10-02');
 
 		$this->assertSame(
-			[
+			expected: [
 				'--nldesign-color-primary-light' => 'deprecated (info)',
 				'--nldesign-org-old-accent' => 'deprecated (warning): use --nldesign-org-brand-accent, removal 2027-03-01',
 			],
-			$this->service->comments()
+			actual: $this->service->comments()
 		);
 	}//end testCommentText()
 
@@ -175,7 +208,7 @@ final class TokenDeprecationServiceTest extends TestCase {
 		$this->ownTokens->remove(name: '--nldesign-org-old-accent');
 		$this->service->markRemoved(token: '--nldesign-org-old-accent');
 
-		$this->assertSame('removed', $this->service->publicList()[0]['state']);
+		$this->assertSame(expected: 'removed', actual: $this->service->publicList()[0]['state']);
 	}//end testRemovedTokenKeepsItsRecord()
 
 	/**
@@ -184,7 +217,7 @@ final class TokenDeprecationServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOnlyThematiqNames(): void {
-		$this->expectExceptionMessage('token');
+		$this->expectExceptionMessage(message: 'token');
 		$this->service->deprecate(token: '--color-primary', input: ['severity' => 'info']);
 	}//end testOnlyThematiqNames()
 
@@ -201,10 +234,10 @@ final class TokenDeprecationServiceTest extends TestCase {
 			]
 		);
 
-		$this->assertSame(['--nldesign-color-primary'], $recorded);
+		$this->assertSame(expected: ['--nldesign-color-primary'], actual: $recorded);
 		$record = $this->service->list()['--nldesign-color-primary'];
-		$this->assertSame('warning', $record['severity']);
-		$this->assertSame('import', $record['source']);
-		$this->assertSame('Use color.brand.primary instead', $record['message']);
+		$this->assertSame(expected: 'warning', actual: $record['severity']);
+		$this->assertSame(expected: 'import', actual: $record['source']);
+		$this->assertSame(expected: 'Use color.brand.primary instead', actual: $record['message']);
 	}//end testImportNoticesAdopted()
 }//end class

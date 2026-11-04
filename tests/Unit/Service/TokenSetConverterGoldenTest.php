@@ -123,9 +123,9 @@ class TokenSetConverterGoldenTest extends TestCase {
 		}
 
 		$expected = json_decode((string)file_get_contents(self::FIXTURE), true);
-		self::assertSame(array_keys($expected), array_keys($actual));
+		self::assertSame(expected: array_keys($expected), actual: array_keys($actual));
 		foreach ($expected as $name => $json) {
-			self::assertSame($json, $actual[$name], 'case ' . $name);
+			self::assertSame(expected: $json, actual: $actual[$name], message: 'case ' . $name);
 		}
 	}//end testConvertMatchesTheGoldenRecording()
 
@@ -150,19 +150,29 @@ class TokenSetConverterGoldenTest extends TestCase {
 		$recorded = $arguments;
 		unset($recorded['content']);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
 		try {
-			$result = $converter->convert(...$arguments);
+			$result = $converter->convert(
+				content: $arguments['content'],
+				slug: $arguments['slug'],
+				displayName: $arguments['displayName'],
+				options: [
+					'sourceName' => $arguments['sourceName'],
+					'assetName' => $arguments['assetName'],
+					'referenceOnlyPaths' => $arguments['referenceOnlyPaths'],
+					'repairContrast' => $arguments['repairContrast'],
+				]
+			);
 		} catch (RuntimeException $exception) {
 			$result = ['refused' => $exception->getMessage(), 'code' => $exception->getCode()];
 		}
@@ -171,7 +181,10 @@ class TokenSetConverterGoldenTest extends TestCase {
 			$result['logoAsset']['contents'] = base64_encode($result['logoAsset']['contents']);
 		}
 
-		return (string)json_encode(['arguments' => $recorded, 'result' => $result], (JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION));
+		return (string)json_encode(
+			['arguments' => $recorded, 'result' => $result],
+			(JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION)
+		);
 	}//end convertSeeded()
 
 	/**
@@ -189,13 +202,33 @@ class TokenSetConverterGoldenTest extends TestCase {
 		$export = (new DesignTokensWriter())->write(declarations: self::EXPORTED, setId: 'golden', setName: 'Golden', appVersion: 'golden');
 		$inputs['export'] = (string)json_encode($export);
 		$inputs['export-without-shell-menu'] = (string)json_encode(
-			(new DesignTokensWriter())->write(declarations: ['--nldesign-color-primary' => 'var(--x-blue)', '--x-blue' => '#0b71a1'], setId: 'g', setName: 'G', appVersion: 'golden')
+			(new DesignTokensWriter())->write(
+				declarations: ['--nldesign-color-primary' => 'var(--x-blue)', '--x-blue' => '#0b71a1'],
+				setId: 'g',
+				setName: 'G',
+				appVersion: 'golden'
+			)
 		);
-		$inputs['export-without-tokens'] = (string)json_encode((new DesignTokensWriter())->write(declarations: [], setId: 'e', setName: 'E', appVersion: 'golden'));
+		$inputs['export-without-tokens'] = (string)json_encode((new DesignTokensWriter())->write(
+			declarations: [],
+			setId: 'e',
+			setName: 'E',
+			appVersion: 'golden'
+		));
 
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
 		$inputs['root-set-with-logo'] = ":root {\n  --nldesign-color-primary: #154273;\n  --conduction-logo-header-background-image: url(\"data:image/svg+xml;base64,"
 			. base64_encode($svg) . "\");\n  --nldesign-color-page-background: #fafafa;\n  --utrecht-button-primary-action-background-color: var(--nldesign-color-primary);\n}\n";
+		$inputs['root-set-logo-after-none'] = ":root {\n  --nldesign-logo-url: url(none);\n  --conduction-logo-header-background-image: url(\" data:image/svg+xml;base64,"
+			. base64_encode($svg) . " \");\n  --nldesign-color-primary: #154273;\n}\n";
+		$inputs['root-set-logo-after-empty-url'] = ":root {\n  --nldesign-logo-url: url('');\n  --conduction-logo-navbar-background-image: url('data:image/svg+xml;base64,"
+			. base64_encode($svg) . "');\n  --nldesign-color-primary: #154273;\n}\n";
+		$inputs['var-chains'] = ":root {\n  --nldesign-color-primary: var(--golden-a, #154273);\n  --golden-a: var(--golden-b);\n  --golden-b: var(--golden-a);\n"
+			. "  --nldesign-color-text: var(--golden-missing, var(--golden-also-missing, #222222));\n  --nldesign-color-error: var(--golden-missing, );\n"
+			. "  --nldesign-color-success: var(--golden-ok);\n  --golden-ok: #00aa00;\n  --nldesign-color-warning: var(--golden-step-0);\n"
+			. "  --golden-step-0: var(--golden-step-1);\n  --golden-step-1: var(--golden-step-2);\n  --golden-step-2: var(--golden-step-3);\n  --golden-step-3: var(--golden-step-4);\n  --golden-step-4: var(--golden-step-5);\n  --golden-step-5: var(--golden-step-6);\n  --golden-step-6: var(--golden-step-7);\n  --golden-step-7: var(--golden-step-8);\n  --golden-step-8: var(--golden-step-9);\n  --golden-step-9: var(--golden-step-10);\n  --golden-step-10: var(--golden-step-11);\n  --golden-step-11: var(--golden-step-12);\n  --golden-step-12: #cc8800;\n  --nldesign-color-info: var(--golden-step-6);\n}\n";
+		$inputs['theme-bundled-font'] = ".demo-theme {\n  --demo-color-primary: #154273;\n  --utrecht-document-font-family: Marianne, sans-serif;\n}\n";
+		$inputs['hsl-units'] = ".demo-theme {\n  --demo-color-primary: hsl(0.6turn, 70%, 30%);\n  --demo-color-text: hsl(3.5rad, 40%, 20%);\n  --demo-color-accent: hsl(120deg, 60%, 35%);\n}\n";
 		$inputs['root-set-logo-on-disk'] = ":root {\n  --nldesign-color-primary: #0b71a1;\n  --nldesign-logo-url: url('../../img/logos/rijkshuisstijl.svg');\n}\n";
 		$inputs['theme-block'] = ".demo-theme {\n  --demo-color-primary: hsl(210, 70%, 30%);\n  --demo-color-text: #ffffffcc;\n"
 			. "  --utrecht-button-primary-action-background-color: var(--demo-color-primary);\n  --utrecht-document-font-family: 'Fira Sans', sans-serif;\n}\n";

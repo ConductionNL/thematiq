@@ -62,13 +62,18 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 	protected function setUp(): void {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-repair-types-' . bin2hex(random_bytes(4));
 		mkdir($this->appDir . '/css', 0777, true);
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 		$parser = new CssParserService();
-		$dark = new DarkPaletteService(new ContrastService(), $parser, $appManager, $this->createMock(LoggerInterface::class));
+		$dark = new DarkPaletteService(
+			contrast: new ContrastService(),
+			parser: $parser,
+			appManager: $appManager,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$this->overrides = new CustomOverridesService(
 			storage: new OverridesStorage(
-				store: new DirectoryRuntimeFileStore($this->appDir),
+				store: new DirectoryRuntimeFileStore(root: $this->appDir),
 				cssParser: $parser,
 				darkPalette: $dark
 			)
@@ -97,8 +102,8 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 	 * @return void
 	 */
 	private function runStep(): void {
-		(new MigrateOverrideValueTypes($this->overrides, $this->createMock(LoggerInterface::class)))
-			->run($this->createMock(IOutput::class));
+		(new MigrateOverrideValueTypes(overrides: $this->overrides, logger: $this->createMock(originalClassName: LoggerInterface::class)))
+			->run($this->createMock(originalClassName: IOutput::class));
 	}//end runStep()
 
 	/**
@@ -110,14 +115,14 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		$this->runStep();
 		$css = $this->overrides->getRawContent();
 
-		$this->assertStringContainsString('--nldesign-animation-quick: 150ms !important;', $css);
-		$this->assertStringContainsString('@media (prefers-color-scheme: dark)', $css);
-		$this->assertStringContainsString('body[data-theme-dark]', $css);
+		$this->assertStringContainsString(needle: '--nldesign-animation-quick: 150ms !important;', haystack: $css);
+		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
+		$this->assertStringContainsString(needle: 'body[data-theme-dark]', haystack: $css);
 		$this->assertSame(
-			['--color-primary' => '#154273', '--animation-quick' => '150ms', '--border-radius' => '4px'],
-			$this->overrides->read()
+			expected: ['--color-primary' => '#154273', '--animation-quick' => '150ms', '--border-radius' => '4px'],
+			actual: $this->overrides->read()
 		);
-		$this->assertSame([], $this->overrides->readDark(), 'the dark value is derived, not the administrator\'s own');
+		$this->assertSame(expected: [], actual: $this->overrides->readDark(), message: 'the dark value is derived, not the administrator\'s own');
 	}//end testOldFileGainsTwinAndDarkScopes()
 
 	/**
@@ -129,11 +134,11 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 		$this->overrides->write(tokens: ['--color-primary' => '#154273'], darkTokens: ['--color-primary' => '#5b9bd5']);
 		$before = $this->overrides->getRawContent();
 
-		$this->assertSame([], $this->overrides->rewriteAll());
+		$this->assertSame(expected: [], actual: $this->overrides->rewriteAll());
 		$this->runStep();
 
-		$this->assertSame($before, $this->overrides->getRawContent());
-		$this->assertSame(['--color-primary' => '#5b9bd5'], $this->overrides->readDark());
+		$this->assertSame(expected: $before, actual: $this->overrides->getRawContent());
+		$this->assertSame(expected: ['--color-primary' => '#5b9bd5'], actual: $this->overrides->readDark());
 	}//end testOwnDarkValueKeptAndSecondRunIsNoop()
 
 	/**
@@ -149,10 +154,10 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 
 		$changed = $this->overrides->rewriteAll();
 
-		$this->assertContains('custom-overrides-custom-school.css', $changed);
+		$this->assertContains(needle: 'custom-overrides-custom-school.css', haystack: $changed);
 		$this->assertStringContainsString(
-			'--nldesign-animation-slow: 400ms !important;',
-			(string)file_get_contents($this->appDir . '/css/custom-overrides-custom-school.css')
+			needle: '--nldesign-animation-slow: 400ms !important;',
+			haystack: (string)file_get_contents($this->appDir . '/css/custom-overrides-custom-school.css')
 		);
 	}//end testPerSetFileIsRewritten()
 
@@ -164,13 +169,16 @@ final class MigrateOverrideValueTypesTest extends TestCase {
 	public function testUnwritableDirectoryDoesNotThrow(): void {
 		// The store writes the file in place, so the file itself is what cannot be written.
 		chmod($this->appDir . '/css/custom-overrides.css', 0444);
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 
 		// The write's own PHP warning is expected; the step must turn the failure into output.
 		set_error_handler(static fn (): bool => true, E_WARNING);
 		try {
-			(new MigrateOverrideValueTypes($this->overrides, $this->createMock(LoggerInterface::class)))->run($output);
+			(new MigrateOverrideValueTypes(
+				overrides: $this->overrides,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			))->run($output);
 		} finally {
 			restore_error_handler();
 			chmod($this->appDir . '/css/custom-overrides.css', 0644);
