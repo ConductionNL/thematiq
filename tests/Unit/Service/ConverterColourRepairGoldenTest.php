@@ -42,6 +42,7 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
  * @uses   \OCA\Thematiq\Service\ConverterComponentRepair
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner

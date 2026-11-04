@@ -97,31 +97,37 @@ class ContrastService {
 				page: ($declarations['--nldesign-color-background'] ?? null)
 			);
 
-			$pairLabel = $pair['fg'] . ' vs ' . $pair['bg'];
-
-			if ($ratio === null) {
-				$warnings[] = [
-					'pair' => $pairLabel,
-					'ratio' => null,
-					'threshold' => $pair['threshold'],
-					'level' => 'AA',
-					'unevaluated' => true,
-				];
-				continue;
-			}
-
-			if ($ratio < $pair['threshold']) {
-				$warnings[] = [
-					'pair' => $pairLabel,
-					'ratio' => round($ratio, 2),
-					'threshold' => $pair['threshold'],
-					'level' => 'AA',
-				];
+			$warning = $this->ratioWarning(pair: $pair, ratio: $ratio);
+			if ($warning !== null) {
+				$warnings[] = $warning;
 			}
 		}//end foreach
 
 		return array_merge($warnings, $this->checkAction(declarations: $declarations));
 	}//end check()
+
+	/**
+	 * The warning for a measured pair: unevaluated when there is no ratio, failing below the threshold.
+	 *
+	 * @param array{fg: string, bg: string, threshold: float} $pair The pair.
+	 * @param float|null $ratio The measured ratio, or null when it could not be measured.
+	 *
+	 * @return array<string, mixed>|null The warning (pair, ratio, threshold, level, unevaluated), or null when the pair passes.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
+	 */
+	public function ratioWarning(array $pair, ?float $ratio): ?array {
+		$label = $pair['fg'] . ' vs ' . $pair['bg'];
+		if ($ratio === null) {
+			return ['pair' => $label, 'ratio' => null, 'threshold' => $pair['threshold'], 'level' => 'AA', 'unevaluated' => true];
+		}
+
+		if ($ratio < $pair['threshold']) {
+			return ['pair' => $label, 'ratio' => round($ratio, 2), 'threshold' => $pair['threshold'], 'level' => 'AA'];
+		}
+
+		return null;
+	}//end ratioWarning()
 
 	/**
 	 * The text on the action colour, checked like the text on the primary.
@@ -141,12 +147,12 @@ class ContrastService {
 	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	private function checkAction(array $declarations): array {
-		$primary = ($declarations['--nldesign-color-primary'] ?? null);
-		$primaryText = ($declarations['--nldesign-color-primary-text'] ?? null);
-		$action = ($declarations['--nldesign-color-action'] ?? $primary);
-		$actionText = ($declarations['--nldesign-color-action-text'] ?? $primaryText);
+		$action = ($declarations['--nldesign-color-action'] ?? ($declarations['--nldesign-color-primary'] ?? null));
+		$actionText = ($declarations['--nldesign-color-action-text'] ?? ($declarations['--nldesign-color-primary-text'] ?? null));
 
-		if ($action === null || $actionText === null || ($action === $primary && $actionText === $primaryText)) {
+		if ($action === null || $actionText === null
+			|| $this->isPrimaryPair(declarations: $declarations, action: $action, actionText: $actionText) === true
+		) {
 			return [];
 		}
 
@@ -156,22 +162,30 @@ class ContrastService {
 			page: ($declarations['--nldesign-color-background'] ?? null)
 		);
 
-		$warning = [
-			'pair' => '--nldesign-color-action-text vs --nldesign-color-action',
-			'ratio' => null,
-			'threshold' => self::ROLE_TEXT_THRESHOLD,
-			'level' => 'AA',
-		];
-		if ($ratio === null) {
-			return [array_merge($warning, ['unevaluated' => true])];
+		$warning = $this->ratioWarning(
+			pair: ['fg' => '--nldesign-color-action-text', 'bg' => '--nldesign-color-action', 'threshold' => self::ROLE_TEXT_THRESHOLD],
+			ratio: $ratio
+		);
+		if ($warning === null) {
+			return [];
 		}
 
-		if ($ratio < self::ROLE_TEXT_THRESHOLD) {
-			return [array_merge($warning, ['ratio' => round($ratio, 2)])];
-		}
-
-		return [];
+		return [$warning];
 	}//end checkAction()
+
+	/**
+	 * Whether the action pair is the primary pair itself, so {@see self::PAIRS} already measured it.
+	 *
+	 * @param array<string, string> $declarations Map of token name => value.
+	 * @param string $action The action colour.
+	 * @param string $actionText The text on it.
+	 *
+	 * @return bool True when both sides equal their primary counterparts.
+	 */
+	private function isPrimaryPair(array $declarations, string $action, string $actionText): bool {
+		return $action === ($declarations['--nldesign-color-primary'] ?? null)
+			&& $actionText === ($declarations['--nldesign-color-primary-text'] ?? null);
+	}//end isPrimaryPair()
 
 	/**
 	 * Evaluate an arbitrary list of candidate colors against one background,
@@ -325,13 +339,7 @@ class ContrastService {
 		}
 
 		if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)(%?)\s*)?\)$/', $value, $match) === 1) {
-			$alpha = 1.0;
-			if (isset($match[4]) === true && $match[4] !== '') {
-				$alpha = (float)$match[4];
-				if (($match[5] ?? '') === '%') {
-					$alpha = ($alpha / 100);
-				}
-			}
+			$alpha = $this->functionAlpha(match: $match);
 
 			return [
 				min(255, (int)$match[1]),
@@ -343,6 +351,26 @@ class ContrastService {
 
 		return null;
 	}//end parseColorWithAlpha()
+
+	/**
+	 * The alpha of a matched rgb()/rgba(): 1.0 when absent, a percentage divided by 100.
+	 *
+	 * @param array<int, string> $match The match: channels, then the alpha number and its `%`.
+	 *
+	 * @return float The alpha, not yet clamped.
+	 */
+	private function functionAlpha(array $match): float {
+		if (isset($match[4]) === false || $match[4] === '') {
+			return 1.0;
+		}
+
+		$alpha = (float)$match[4];
+		if (($match[5] ?? '') === '%') {
+			return ($alpha / 100);
+		}
+
+		return $alpha;
+	}//end functionAlpha()
 
 	/**
 	 * Expand and parse the digits of a 3, 4, 6 or 8 digit hex colour.
@@ -438,20 +466,31 @@ class ContrastService {
 			return null;
 		}
 
-		$white = [255, 255, 255];
-		$pageRgb = $white;
-		$pageRgba = null;
-		if ($page !== null) {
-			$pageRgba = $this->parseColorWithAlpha(value: $page);
-		}
-
-		if ($pageRgba !== null) {
-			$pageRgb = $this->blend(top: $pageRgba, under: $white);
-		}
-
+		$pageRgb = $this->pageBackground(page: $page);
 		$bgRgb = $this->blend(top: $bgRgba, under: $pageRgb);
 		$fgRgb = $this->blend(top: $fgRgba, under: $bgRgb);
 
 		return $this->ratio(first: $fgRgb, second: $bgRgb);
 	}//end measure()
+
+	/**
+	 * The page background as it renders: over white, and white when there is none or it does not parse.
+	 *
+	 * @param string|null $page The page background.
+	 *
+	 * @return array{0: int, 1: int, 2: int} The page background's RGB.
+	 */
+	private function pageBackground(?string $page): array {
+		$white = [255, 255, 255];
+		if ($page === null) {
+			return $white;
+		}
+
+		$pageRgba = $this->parseColorWithAlpha(value: $page);
+		if ($pageRgba === null) {
+			return $white;
+		}
+
+		return $this->blend(top: $pageRgba, under: $white);
+	}//end pageBackground()
 }//end class

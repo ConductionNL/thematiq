@@ -44,7 +44,7 @@ class MultiBrandSource {
 	 *
 	 * @var string
 	 */
-	private const BRAND_SELECTOR = '/^\.([a-z0-9]+(?:-[a-z0-9]+)*)-theme$/';
+	public const BRAND_SELECTOR = '/^\.([a-z0-9]+(?:-[a-z0-9]+)*)-theme$/';
 
 	/**
 	 * Constructor.
@@ -105,37 +105,9 @@ class MultiBrandSource {
 			return $this->cutTheme(document: $decoded, key: $key);
 		}
 
-		$shared = [];
-		$own = null;
-		foreach ($this->reader->blocks(css: $content) as $block) {
-			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
-				if ($match[1] === $key) {
-					$own = $block;
-				}
-
-				continue;
-			}
-
-			// A modifier of another brand (`.zuid-theme--dark`) is that brand's, not shared.
-			if (preg_match('/^\.([a-z0-9-]+)-theme--/', $block['selector']) === 1) {
-				continue;
-			}
-
-			$shared[] = $block;
-		}
-
-		if ($own === null) {
+		$css = (new BrandCssCut())->css(blocks: $this->reader->blocks(css: $content), key: $key);
+		if ($css === null) {
 			throw new RuntimeException('unknown brand: ' . $key, 422);
-		}
-
-		$css = '';
-		foreach (array_merge($shared, [$own]) as $block) {
-			$lines = [];
-			foreach ($block['declarations'] as $name => $value) {
-				$lines[] = '  ' . $name . ': ' . $value . ';';
-			}
-
-			$css .= $block['selector'] . " {\n" . implode("\n", $lines) . "\n}\n";
 		}
 
 		return ['content' => $css, 'referenceOnlyPaths' => []];
@@ -234,19 +206,7 @@ class MultiBrandSource {
 		$names = array_keys($selected);
 		usort(
 			$names,
-			static function (string $first, string $second) use ($order): int {
-				$firstAt = array_search($first, $order, true);
-				$secondAt = array_search($second, $order, true);
-				if ($firstAt === false && $secondAt === false) {
-					return strcmp($first, $second);
-				}
-
-				if ($firstAt === false || $secondAt === false) {
-					return (int)($firstAt === false) - (int)($secondAt === false);
-				}
-
-				return $firstAt <=> $secondAt;
-			}
+			static fn (string $first, string $second): int => self::compareInOrder(first: $first, second: $second, order: $order)
 		);
 
 		$merged = [];
@@ -260,6 +220,29 @@ class MultiBrandSource {
 	}//end mergeSets()
 
 	/**
+	 * Compare two set names by their place in the set order; names it does not list follow, by name.
+	 *
+	 * @param string $first The first name.
+	 * @param string $second The second name.
+	 * @param array<int, string> $order The set order.
+	 *
+	 * @return int Below, at or above zero, as for usort().
+	 */
+	private static function compareInOrder(string $first, string $second, array $order): int {
+		$firstAt = array_search($first, $order, true);
+		$secondAt = array_search($second, $order, true);
+		if ($firstAt === false && $secondAt === false) {
+			return strcmp($first, $second);
+		}
+
+		if ($firstAt === false || $secondAt === false) {
+			return (int)($firstAt === false) - (int)($secondAt === false);
+		}
+
+		return $firstAt <=> $secondAt;
+	}//end compareInOrder()
+
+	/**
 	 * Recursive replace: a token (a node with `$value` or `value`) replaces whatever sits at its path.
 	 *
 	 * @param array<string, mixed> $base The tree so far.
@@ -269,9 +252,7 @@ class MultiBrandSource {
 	 */
 	private function replaceTree(array $base, array $over): array {
 		foreach ($over as $key => $node) {
-			$bothGroups = is_array($node) === true && $this->isToken(node: $node) === false
-				&& is_array($base[$key] ?? null) === true && $this->isToken(node: $base[$key]) === false;
-			if ($bothGroups === true) {
+			if ($this->isGroupNode(node: $node) === true && $this->isGroupNode(node: ($base[$key] ?? null)) === true) {
 				$base[$key] = $this->replaceTree(base: $base[$key], over: $node);
 				continue;
 			}
@@ -281,6 +262,17 @@ class MultiBrandSource {
 
 		return $base;
 	}//end replaceTree()
+
+	/**
+	 * Whether a node is a group: an array that is not a token.
+	 *
+	 * @param mixed $node The node.
+	 *
+	 * @return bool True for a group.
+	 */
+	private function isGroupNode(mixed $node): bool {
+		return is_array($node) === true && $this->isToken(node: $node) === false;
+	}//end isGroupNode()
 
 	/**
 	 * Whether a node is a token.

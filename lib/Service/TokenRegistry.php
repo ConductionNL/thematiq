@@ -208,24 +208,14 @@ class TokenRegistry implements TokenRegistryInterface {
 		}
 
 		self::$settableTokens = [];
-		$raw = false;
-		if (is_file(self::STATUS_PATH) === true) {
-			$raw = file_get_contents(self::STATUS_PATH);
-		}
-
-		$decoded = [];
-		if ($raw !== false) {
-			$decoded = json_decode($raw, true);
-		}
+		$decoded = self::readJsonFile(path: self::STATUS_PATH);
 
 		// The status file also marks the internal variables settable. Those are
 		// edited by their own token name (see getInternalTokens()), not as brand
 		// rows under the Nextcloud name, so they are left out here.
 		$internal = self::getInternalTokens();
 		foreach (($decoded['variables'] ?? []) as $name => $entry) {
-			if (($entry['status'] ?? '') !== 'settable' || is_string($entry['token'] ?? null) === false
-				|| isset($internal[$entry['token']]) === true
-			) {
+			if (self::isBrandSettable(entry: $entry, internal: $internal) === false) {
 				continue;
 			}
 
@@ -244,6 +234,41 @@ class TokenRegistry implements TokenRegistryInterface {
 
 		return self::$settableTokens;
 	}//end getSettableTokens()
+
+	/**
+	 * Whether a variable-status entry is a settable brand row: marked settable, naming its
+	 * token, and not one of the internal variables.
+	 *
+	 * @param mixed $entry The variable-status entry.
+	 * @param array<string, array<string, mixed>> $internal The internal tokens, by token name.
+	 *
+	 * @return bool True for a settable brand row.
+	 */
+	private static function isBrandSettable(mixed $entry, array $internal): bool {
+		return ($entry['status'] ?? '') === 'settable' && is_string($entry['token'] ?? null) === true
+			&& isset($internal[$entry['token']]) === false;
+	}//end isBrandSettable()
+
+	/**
+	 * A JSON file of the app decoded, or an empty array when it is missing, unreadable or not an object.
+	 *
+	 * @param string $path The file.
+	 *
+	 * @return array<mixed> The decoded content.
+	 */
+	private static function readJsonFile(string $path): array {
+		$raw = false;
+		if (is_file($path) === true) {
+			$raw = file_get_contents($path);
+		}
+
+		$decoded = json_decode((string)$raw, true);
+		if (is_array($decoded) === false) {
+			return [];
+		}
+
+		return $decoded;
+	}//end readJsonFile()
 
 	/**
 	 * The `--nldesign-nc-*` token a settable variable is stored as, or null for any other name.
@@ -277,45 +302,52 @@ class TokenRegistry implements TokenRegistryInterface {
 
 		self::$componentTokens = [];
 
-		$raw = false;
-		if (is_file(self::COMPONENT_TOKENS_PATH) === true) {
-			$raw = file_get_contents(self::COMPONENT_TOKENS_PATH);
-		}
-
-		if ($raw === false) {
-			return self::$componentTokens;
-		}
-
-		$decoded = json_decode($raw, true);
-		if (is_array($decoded) === false || is_array($decoded['components'] ?? null) === false) {
+		$decoded = self::readJsonFile(path: self::COMPONENT_TOKENS_PATH);
+		if (is_array($decoded['components'] ?? null) === false) {
 			return self::$componentTokens;
 		}
 
 		foreach ($decoded['components'] as $componentId => $component) {
-			if (is_array($component['tokens'] ?? null) === false) {
-				continue;
-			}
-
-			foreach ($component['tokens'] as $name => $meta) {
-				self::$componentTokens[$name] = [
-					'tab' => (string)($component['tab'] ?? 'content'),
-					'type' => (string)($meta['type'] ?? 'text'),
-					'label' => (string)($meta['label'] ?? $name),
-					'group' => (string)$componentId,
-					'primary' => (($meta['primary'] ?? false) === true),
-					// The Nextcloud variable this token replaces inside the
-					// component. A component token is deliberately undeclared
-					// until someone sets one, so `getComputedStyle` reports it
-					// as the empty string — the editor reads this global
-					// instead, and shows the colour the component is ACTUALLY
-					// wearing rather than a blank swatch.
-					'global' => (string)($meta['global'] ?? ''),
-				];
+			if (is_array($component['tokens'] ?? null) === true) {
+				self::$componentTokens = array_replace(
+					self::$componentTokens,
+					self::componentRows(componentId: (string)$componentId, component: $component)
+				);
 			}
 		}
 
 		return self::$componentTokens;
 	}//end getComponentTokens()
+
+	/**
+	 * The editor rows of one component's tokens.
+	 *
+	 * @param string $componentId The component id.
+	 * @param array<string, mixed> $component The component, with its `tokens` map.
+	 *
+	 * @return array<string, array<string, mixed>> Token name => row.
+	 */
+	private static function componentRows(string $componentId, array $component): array {
+		$rows = [];
+		foreach ($component['tokens'] as $name => $meta) {
+			$rows[$name] = [
+				'tab' => (string)($component['tab'] ?? 'content'),
+				'type' => (string)($meta['type'] ?? 'text'),
+				'label' => (string)($meta['label'] ?? $name),
+				'group' => $componentId,
+				'primary' => (($meta['primary'] ?? false) === true),
+				// The Nextcloud variable this token replaces inside the
+				// component. A component token is deliberately undeclared
+				// until someone sets one, so `getComputedStyle` reports it
+				// as the empty string — the editor reads this global
+				// instead, and shows the colour the component is ACTUALLY
+				// wearing rather than a blank swatch.
+				'global' => (string)($meta['global'] ?? ''),
+			];
+		}
+
+		return $rows;
+	}//end componentRows()
 
 	/**
 	 * Returns login and branding tab tokens.
@@ -503,22 +535,8 @@ class TokenRegistry implements TokenRegistryInterface {
 		}
 
 		self::$internalTokens = [];
-		$raw = false;
-		if (is_file(self::INTERNAL_TOKENS_PATH) === true) {
-			$raw = file_get_contents(self::INTERNAL_TOKENS_PATH);
-		}
-
-		$decoded = [];
-		if ($raw !== false) {
-			$decoded = json_decode($raw, true);
-		}
-
-		self::$themeStock = [];
-		foreach (($decoded['themeStock'] ?? []) as $name => $stock) {
-			if (is_array($stock) === true) {
-				self::$themeStock[(string)$name] = ['light' => (string)($stock['light'] ?? ''), 'dark' => (string)($stock['dark'] ?? '')];
-			}
-		}
+		$decoded = self::readJsonFile(path: self::INTERNAL_TOKENS_PATH);
+		self::$themeStock = self::themeStock(stocks: ($decoded['themeStock'] ?? []));
 
 		foreach (($decoded['tokens'] ?? []) as $token => $entry) {
 			if (is_array($entry) === false || is_string($entry['variable'] ?? null) === false) {
@@ -539,6 +557,24 @@ class TokenRegistry implements TokenRegistryInterface {
 
 		return self::$internalTokens;
 	}//end getInternalTokens()
+
+	/**
+	 * The theme stock values of the internal tokens file: light and dark, by variable.
+	 *
+	 * @param mixed $stocks The file's `themeStock` map.
+	 *
+	 * @return array<string, array{light: string, dark: string}> The stock values.
+	 */
+	private static function themeStock(mixed $stocks): array {
+		$themeStock = [];
+		foreach ((array)$stocks as $name => $stock) {
+			if (is_array($stock) === true) {
+				$themeStock[(string)$name] = ['light' => (string)($stock['light'] ?? ''), 'dark' => (string)($stock['dark'] ?? '')];
+			}
+		}
+
+		return $themeStock;
+	}//end themeStock()
 
 	/**
 	 * Returns tokens grouped by tab.
