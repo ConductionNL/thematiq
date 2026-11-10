@@ -97,6 +97,13 @@ class ScheduledSwitchServiceTest extends TestCase {
 	private ScheduledSwitchService $service;
 
 	/**
+	 * Every warning the service logged: [message, context].
+	 *
+	 * @var array<int, array{0: string, 1: array<string, mixed>}>
+	 */
+	private array $warnings = [];
+
+	/**
 	 * Build the service on the doubles.
 	 *
 	 * @return void
@@ -181,7 +188,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 				auditService: $auditService,
 				config: $config,
 				time: $time,
-				logger: $this->createMock(originalClassName: LoggerInterface::class)
+				logger: $this->warningLogger()
 			),
 			l10n: $l10n
 		);
@@ -194,6 +201,22 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 *
 	 * @return void
 	 */
+	/**
+	 * A logger that records its warnings.
+	 *
+	 * @return LoggerInterface The logger.
+	 */
+	private function warningLogger(): LoggerInterface {
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->method('warning')->willReturnCallback(
+			function (string $message, array $context = []): void {
+				$this->warnings[] = [$message, $context];
+			}
+		);
+
+		return $logger;
+	}//end warningLogger()
+
 	private function at(string $iso): void {
 		$this->now = (int)strtotime($iso);
 	}//end at()
@@ -844,4 +867,75 @@ class ScheduledSwitchServiceTest extends TestCase {
 		$this->store['core/backgroundjobs_mode'] = 'cron';
 		$this->assertFalse(condition: $this->service->getStatus()['cronWarning']);
 	}//end testStatusNamesTheLastRunTheCronModeAndTheActiveWindow()
+
+	/**
+	 * A start, a kept set and an end that cannot be applied each log one warning naming the switch and the set.
+	 *
+	 * @return void
+	 */
+	public function testEachSwitchThatCannotBeAppliedLogsAWarning(): void {
+		$failing = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
+		$this->sets = ['rijkshuisstijl', 'koningsdag-oranje', 'nextcloud'];
+		$this->at(iso: '2027-04-21T00:03:00Z');
+		$this->service->runDue();
+
+		$this->assertSame(
+			expected: [
+				[
+					'thematiq: planned switch {id} to {set} failed: {why}',
+					['id' => $failing['id'], 'set' => 'custom-campagne', 'why' => 'Invalid token set'],
+				],
+			],
+			actual: $this->warnings
+		);
+
+		$entry = $this->planKingsDay();
+		$this->at(iso: '2027-04-26T16:03:00Z');
+		$this->service->runDue();
+		$this->store['thematiq/token_set'] = 'nextcloud';
+		$this->sets = ['rijkshuisstijl', 'nextcloud'];
+		$this->at(iso: '2027-04-27T10:00:00Z');
+		$this->service->runDue();
+
+		$this->assertSame(
+			expected: [
+				'thematiq: running switch {id} could not keep {set} active: the set does not exist',
+				['id' => $entry['id'], 'set' => 'koningsdag-oranje'],
+			],
+			actual: $this->warnings[1]
+		);
+
+		$this->sets = ['koningsdag-oranje', 'nextcloud'];
+		$this->at(iso: '2027-04-28T06:02:00Z');
+		$this->service->runDue();
+
+		$this->assertSame(
+			expected: ['thematiq: planned switch {id} could not go back to {set}', ['id' => $entry['id'], 'set' => 'rijkshuisstijl']],
+			actual: $this->warnings[2]
+		);
+		$this->assertCount(expectedCount: 3, haystack: $this->warnings);
+	}//end testEachSwitchThatCannotBeAppliedLogsAWarning()
+
+	/**
+	 * A planned entry carries exactly its fields, in UTC, with a 16-character hex id.
+	 *
+	 * @return void
+	 */
+	public function testAPlannedEntryCarriesItsFieldsInUtc(): void {
+		$entry = $this->planKingsDay();
+
+		$this->assertMatchesRegularExpression(pattern: '/^[0-9a-f]{16}$/', string: $entry['id']);
+		unset($entry['id']);
+		$this->assertSame(
+			expected: [
+				'tokenSet' => 'koningsdag-oranje',
+				'startAt' => '2027-04-26T16:00:00Z',
+				'endAt' => '2027-04-28T06:00:00Z',
+				'createdBy' => 'admin',
+				'createdAt' => '2027-04-20T12:00:00Z',
+				'status' => 'planned',
+			],
+			actual: $entry
+		);
+	}//end testAPlannedEntryCarriesItsFieldsInUtc()
 }//end class
