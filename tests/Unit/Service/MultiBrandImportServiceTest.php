@@ -25,7 +25,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Controller\TokenSourceController;
 use OCA\Thematiq\Service\BrandConversion;
+use OCA\Thematiq\Service\BrandDocument;
 use OCA\Thematiq\Service\BrandImportRecords;
+use OCA\Thematiq\Service\BrandSelection;
 use OCA\Thematiq\Service\BrandSetStorage;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
@@ -305,7 +307,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testStoredBrandKeepsTheConvertedCssAndTheming(): void {
-		$result = $this->imports->import(sourceName: 'Stad', content: $this->brandsWithSourceSetAndLogo(), keys: ['noord', 'zuid']);
+		$result = $this->imports->import(
+			sourceName: 'Stad',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->brandsWithSourceSetAndLogo()), keys: ['noord', 'zuid'])
+		);
 
 		$this->assertSame(expected: 'custom-stad-zuid', actual: $result['sets'][1]['id']);
 		$manifest = $this->sets->getManifest()['custom-stad-zuid'];
@@ -319,7 +324,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testASourceSetTokenIsNotPartOfTheBrand(): void {
-		$this->imports->import(sourceName: 'Stad', content: $this->brandsWithSourceSetAndLogo(), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Stad',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->brandsWithSourceSetAndLogo()), keys: ['noord', 'zuid'])
+		);
 
 		$this->assertStringNotContainsString(needle: 'raw-blue', haystack: (string)$this->sets->getRawContent(id: 'custom-stad-noord'));
 	}//end testASourceSetTokenIsNotPartOfTheBrand()
@@ -330,7 +338,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testABrandLogoIsNamedAfterItsSet(): void {
-		$this->imports->import(sourceName: 'Stad', content: $this->brandsWithSourceSetAndLogo(), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Stad',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->brandsWithSourceSetAndLogo()), keys: ['noord', 'zuid'])
+		);
 
 		foreach (['noord', 'zuid'] as $key) {
 			$logo = (string)($this->sets->getManifest()['custom-stad-' . $key]['theming']['logo'] ?? '');
@@ -368,7 +379,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 		);
 
 		try {
-			$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+			$this->imports->import(
+				sourceName: 'Voorbeeld',
+				selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+			);
 			$this->fail(message: 'expected a refusal');
 		} catch (RuntimeException $e) {
 			$this->assertSame(expected: 409, actual: $e->getCode());
@@ -385,11 +399,14 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testUpdateReplacesEveryBrand(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 		$this->audit->expects($this->once())->method('log')->with('custom_source_updated', $this->anything());
 		$changed = str_replace('#154273', '#0b2a4a', $this->fixture(name: 'two-brand-classes.css'));
 
-		$report = $this->imports->update(sourceId: 'voorbeeld', content: $changed);
+		$report = $this->imports->update(sourceId: 'voorbeeld', document: new BrandDocument(content: $changed));
 
 		$this->assertSame(expected: ['noord', 'zuid'], actual: $report['updated']);
 		$this->assertStringContainsString(needle: '#0b2a4a', haystack: (string)$this->sets->getRawContent(id: 'custom-voorbeeld-noord'));
@@ -405,11 +422,14 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testMissingBrandIsKept(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 		$next = ":root { --voorbeeld-radius: 4px; }\n.noord-theme { --voorbeeld-color-primary: #154273; }\n"
 			. ".west-theme { --voorbeeld-color-primary: #2e7d32; }\n";
 
-		$report = $this->imports->update(sourceId: 'voorbeeld', content: $next);
+		$report = $this->imports->update(sourceId: 'voorbeeld', document: new BrandDocument(content: $next));
 
 		$this->assertSame(expected: ['zuid'], actual: $report['missing']);
 		$this->assertSame(expected: ['west'], actual: $report['new']);
@@ -423,7 +443,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOneFailingBrandReplacesNothing(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 		$before = $this->sets->getRawContent(id: 'custom-voorbeeld-noord');
 		$this->audit->expects($this->never())->method('log');
 		$bad = str_replace(
@@ -433,7 +456,7 @@ final class MultiBrandImportServiceTest extends TestCase {
 		);
 
 		try {
-			$this->imports->update(sourceId: 'voorbeeld', content: $bad);
+			$this->imports->update(sourceId: 'voorbeeld', document: new BrandDocument(content: $bad));
 			$this->fail(message: 'expected a refusal');
 		} catch (RuntimeException $e) {
 			$this->assertSame(expected: 422, actual: $e->getCode());
@@ -449,7 +472,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDeletingLastBrandRemovesSource(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 		$controller = $this->uploadController(params: []);
 
 		$controller->delete(id: 'custom-voorbeeld-noord');
@@ -466,7 +492,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	public function testEachBrandCarriesItsOwnContrastWarnings(): void {
 		$css = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #ffff00; --nldesign-color-primary-text: #ffffff; }\n"
 			. ".donker-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n";
-		$result = $this->imports->import(sourceName: 'Proef', content: $css, keys: ['licht', 'donker']);
+		$result = $this->imports->import(
+			sourceName: 'Proef',
+			selection: new BrandSelection(document: new BrandDocument(content: $css), keys: ['licht', 'donker'])
+		);
 		$warnings = array_column($result['sets'], 'warnings', 'brand');
 
 		$this->assertNotSame(expected: [], actual: $warnings['licht']);
@@ -481,10 +510,16 @@ final class MultiBrandImportServiceTest extends TestCase {
 	public function testUpdateRecomputesTheContrastWarnings(): void {
 		$good = ":root { --voorbeeld-x: 1px; }\n.licht-theme { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }\n"
 			. ".donker-theme { --nldesign-color-primary: #0b2a4a; --nldesign-color-primary-text: #ffffff; }\n";
-		$this->imports->import(sourceName: 'Proef', content: $good, keys: ['licht', 'donker']);
+		$this->imports->import(
+			sourceName: 'Proef',
+			selection: new BrandSelection(document: new BrandDocument(content: $good), keys: ['licht', 'donker'])
+		);
 		$before = $this->sets->getManifest()['custom-proef-licht']['warnings'];
 
-		$this->imports->update(sourceId: 'proef', content: str_replace(search: '#154273', replace: '#ffff00', subject: $good));
+		$this->imports->update(
+			sourceId: 'proef',
+			document: new BrandDocument(content: str_replace(search: '#154273', replace: '#ffff00', subject: $good))
+		);
 
 		$this->assertNotSame(expected: $before, actual: $this->sets->getManifest()['custom-proef-licht']['warnings']);
 	}//end testUpdateRecomputesTheContrastWarnings()
@@ -495,7 +530,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testDarkVariantWrittenPerBrand(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 
 		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/custom-voorbeeld-noord.css');
 		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/custom-voorbeeld-zuid.css');
@@ -507,7 +545,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testIncompleteBrandFallsBackToDefaults(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'three-themes.tokens.json'), keys: ['oost', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'three-themes.tokens.json')), keys: ['oost', 'zuid'])
+		);
 		$declarations = (new CssParserService())->parseRootBlock(css: (string)$this->sets->getRawContent(id: 'custom-voorbeeld-oost'));
 
 		$this->assertArrayHasKey(key: '--nldesign-color-primary-hover', array: $declarations);
@@ -544,6 +585,7 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$document['$themes'][1]['name'] = 'Noord';
 		$this->assertCount(expectedCount: 2, haystack: $this->imports->brands(content: (string)json_encode($document)));
 	}//end testALightAndDarkFileIsNotTwoBrands()
+
 	/**
 	 * An import records its source and audits each stored brand with the uploaded file's name.
 	 *
@@ -556,7 +598,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 		});
 		$content = $this->fixture(name: 'two-brand-classes.css');
 
-		$result = $this->imports->import(sourceName: 'Voorbeeld', content: $content, keys: ['noord', 'zuid'], fileName: 'stad.css');
+		$result = $this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $content, fileName: 'stad.css'), keys: ['noord', 'zuid'])
+		);
 
 		$this->assertSame(expected: 'voorbeeld', actual: $result['sourceId']);
 		$this->assertSame(expected: ['noord', 'zuid'], actual: array_column($result['sets'], 'brand'));
@@ -589,11 +634,17 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testImportOfAnExistingSourceIs409(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord'])
+		);
 		$before = $this->imports->records();
 
 		try {
-			$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['zuid']);
+			$this->imports->import(
+				sourceName: 'Voorbeeld',
+				selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['zuid'])
+			);
 			$this->fail(message: 'expected a refusal');
 		} catch (RuntimeException $e) {
 			$this->assertSame(expected: 409, actual: $e->getCode());
@@ -610,7 +661,10 @@ final class MultiBrandImportServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testUpdateAuditsTheHashesAndRestampsTheRecord(): void {
-		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$this->imports->import(
+			sourceName: 'Voorbeeld',
+			selection: new BrandSelection(document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')), keys: ['noord', 'zuid'])
+		);
 		$oldHash = $this->imports->records()['voorbeeld']['contentHash'];
 		$calls = [];
 		$this->audit->method('log')->willReturnCallback(function (string $action, array $context) use (&$calls): void {
@@ -618,7 +672,7 @@ final class MultiBrandImportServiceTest extends TestCase {
 		});
 		$changed = str_replace('#154273', '#0b2a4a', $this->fixture(name: 'two-brand-classes.css'));
 
-		$report = $this->imports->update(sourceId: 'voorbeeld', content: $changed, fileName: 'stad-2.css');
+		$report = $this->imports->update(sourceId: 'voorbeeld', document: new BrandDocument(content: $changed, fileName: 'stad-2.css'));
 
 		$this->assertSame(expected: ['updated' => ['noord', 'zuid'], 'missing' => [], 'new' => []], actual: $report);
 		$record = $this->imports->records()['voorbeeld'];
@@ -652,6 +706,6 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$this->expectExceptionCode(code: 404);
 		$this->expectExceptionMessage(message: 'Unknown source.');
 
-		$this->imports->update(sourceId: 'onbekend', content: $this->fixture(name: 'two-brand-classes.css'));
+		$this->imports->update(sourceId: 'onbekend', document: new BrandDocument(content: $this->fixture(name: 'two-brand-classes.css')));
 	}//end testUpdateOfAnUnknownSourceIs404()
 }//end class
