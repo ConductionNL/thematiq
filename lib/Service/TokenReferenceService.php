@@ -424,32 +424,12 @@ class TokenReferenceService {
 		foreach ($model['groups'] as $heading => $rows) {
 			array_push($lines, '', '## ' . $heading, '', '| Token | Value | Dark mode | Source | Paints |', '|---|---|---|---|---|');
 			foreach ($rows as $row) {
-				$lines[] = $this->markdownRow(row: $row, cell: $cell);
+				$lines[] = $this->cells->markdownRow(row: $row, cell: $cell);
 			}
 		}
 
 		return implode("\n", $lines) . "\n";
 	}//end markdown()
-
-	/**
-	 * One Markdown table row.
-	 *
-	 * @param array<string, mixed> $row The row.
-	 * @param string $cell The value formatter of TokenReferenceCells: `mdValue` or `mdPlainValue`.
-	 *
-	 * @return string The table row.
-	 */
-	private function markdownRow(array $row, string $cell): string {
-		$cells = [
-			'`' . $row['name'] . '`',
-			$this->cells->$cell(value: $row['value']),
-			$this->cells->$cell(value: $row['dark']),
-			$row['source'],
-			$this->cells->paints(list: $row['paints']),
-		];
-
-		return str_replace('|  |', '| |', '| ' . implode(' | ', $cells) . ' |');
-	}//end markdownRow()
 
 	/**
 	 * The HTML page.
@@ -461,7 +441,7 @@ class TokenReferenceService {
 	private function html(array $model): string {
 		$out = $this->htmlHead(model: $model);
 		foreach ($model['groups'] as $heading => $rows) {
-			$table = $this->htmlTable(rows: $rows);
+			$table = $this->cells->htmlTable(rows: $rows);
 			if ($heading === self::UNREAD) {
 				$out .= '<details>' . "\n" . '<summary>' . $this->cells->esc(text: $heading) . '</summary>' . "\n" . $table . '</details>' . "\n";
 				continue;
@@ -498,24 +478,5 @@ class TokenReferenceService {
 			) . '</p>' . "\n"
 			. '<p>' . $this->cells->esc(text: $model['contrast']) . '</p>' . "\n";
 	}//end htmlHead()
-
-	/**
-	 * One HTML table.
-	 *
-	 * @param array<int, array<string, mixed>> $rows The rows.
-	 *
-	 * @return string HTML.
-	 */
-	private function htmlTable(array $rows): string {
-		$out = '<table>' . "\n" . '<thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Dark mode</th>'
-			. '<th scope="col">Source</th><th scope="col">Paints</th></tr></thead>' . "\n" . '<tbody>' . "\n";
-		foreach ($rows as $row) {
-			$out .= '<tr><td><code>' . $this->cells->esc(text: $row['name']) . '</code></td><td>' . $this->cells->htmlValue(value: $row['value']) . '</td><td>'
-				. $this->cells->htmlValue(value: $row['dark']) . '</td><td>' . $row['source'] . '</td><td>'
-				. $this->cells->esc(text: str_replace('`', '', $this->cells->paints(list: $row['paints']))) . '</td></tr>' . "\n";
-		}
-
-		return $out . '</tbody>' . "\n" . '</table>' . "\n";
-	}//end htmlTable()
 
 }//end class
