@@ -41,7 +41,7 @@ final class AppDataFolder {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	public static function open(IAppData $appData, string $name): ISimpleFolder {
+	public function open(IAppData $appData, string $name): ISimpleFolder {
 		try {
 			return $appData->getFolder($name);
 		} catch (NotFoundException $e) {

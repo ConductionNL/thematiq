@@ -258,6 +258,6 @@ class ThemeVersionService {
 	 * @return ISimpleFolder The folder.
 	 */
 	private function getFolder(): ISimpleFolder {
-		return AppDataFolder::open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER_NAME);
+		return (new AppDataFolder())->open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER_NAME);
 	}//end getFolder()
 }//end class

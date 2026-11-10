@@ -483,7 +483,7 @@ class ThemingAuditService {
 	 * @throws \Throwable Any appdata failure.
 	 */
 	private function getAuditFolder(): ISimpleFolder {
-		return AppDataFolder::open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER_NAME);
+		return (new AppDataFolder())->open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER_NAME);
 	}//end getAuditFolder()
 
 	/**

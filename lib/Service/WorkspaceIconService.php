@@ -262,6 +262,6 @@ class WorkspaceIconService {
 	 * @return ISimpleFolder The folder.
 	 */
 	private function folder(): ISimpleFolder {
-		return AppDataFolder::open(appData: $this->appData, name: self::FOLDER);
+		return (new AppDataFolder())->open(appData: $this->appData, name: self::FOLDER);
 	}//end folder()
 }//end class

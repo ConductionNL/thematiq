@@ -200,6 +200,6 @@ class OwnComponentService {
 	 * @return ISimpleFolder
 	 */
 	private function folder(): ISimpleFolder {
-		return AppDataFolder::open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER);
+		return (new AppDataFolder())->open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER);
 	}//end folder()
 }//end class
