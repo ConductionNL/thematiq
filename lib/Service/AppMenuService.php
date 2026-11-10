@@ -135,7 +135,7 @@ class AppMenuService {
 				continue;
 			}
 
-			$menu = array_merge($menu, CopyValues::picked(source: $source, fields: new CopyFields(keys: self::KEYS, language: $language)));
+			$menu = array_merge($menu, CopyValues::picked(values: CopyValues::only(source: $source, keys: self::KEYS), language: $language));
 
 			if (is_array($source['groups'] ?? null) === true) {
 				$menu['groups'] = self::groups(rows: $source['groups'], language: $language);

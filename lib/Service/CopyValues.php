@@ -100,21 +100,40 @@ class CopyValues {
 	}//end camel()
 
 	/**
-	 * The copy fields one source states, picked in the request's language, by camel-case name.
+	 * The values a source states for a page's copy keys, in the keys' order; null for a key it leaves out.
 	 *
 	 * @param array<mixed> $source A token set's or the administrator's copy block.
-	 * @param CopyFields $fields The keys to read and the language.
+	 * @param array<int, string> $keys The copy keys, in snake case.
 	 *
-	 * @return array<string, string> Camel-case name => value, for each key the source states.
+	 * @return array<string, mixed> Key => value as written.
 	 *
 	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
-	public static function picked(array $source, CopyFields $fields): array {
+	public static function only(array $source, array $keys): array {
+		$values = [];
+		foreach ($keys as $key) {
+			$values[$key] = ($source[$key] ?? null);
+		}
+
+		return $values;
+	}//end only()
+
+	/**
+	 * Copy values picked in the request's language, by camel-case name, leaving out the ones with no usable text.
+	 *
+	 * @param array<string, mixed> $values Key => value as written, from {@see self::only()}.
+	 * @param string $language The request's language code.
+	 *
+	 * @return array<string, string> Camel-case name => value.
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 */
+	public static function picked(array $values, string $language): array {
 		$copy = [];
-		foreach ($fields->keys as $key) {
-			$value = self::pick(value: ($source[$key] ?? null), language: $fields->language);
-			if ($value !== null) {
-				$copy[self::camel(key: $key)] = $value;
+		foreach ($values as $key => $value) {
+			$picked = self::pick(value: $value, language: $language);
+			if ($picked !== null) {
+				$copy[self::camel(key: $key)] = $picked;
 			}
 		}
 

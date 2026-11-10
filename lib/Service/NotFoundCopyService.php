@@ -122,7 +122,7 @@ class NotFoundCopyService {
 				continue;
 			}
 
-			$copy = array_merge($copy, CopyValues::picked(source: $source, fields: new CopyFields(keys: self::KEYS, language: $language)));
+			$copy = array_merge($copy, CopyValues::picked(values: CopyValues::only(source: $source, keys: self::KEYS), language: $language));
 
 			if (is_array($source['links'] ?? null) === true) {
 				$copy['links'] = self::links(rows: $source['links'], language: $language);
