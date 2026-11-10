@@ -919,4 +919,39 @@ class ThemingAuditServiceTest extends TestCase {
 		$this->assertSame(expected: 'koningsdag-oranje', actual: $entry['new']);
 		$this->assertSame(expected: 'abc123', actual: $entry['switchId']);
 	}//end testScheduledSwitchAppliedIsAcceptedWithSystemActor()
+
+	/**
+	 * Each dropped or degraded entry logs its own warning; a smuggled versionId never reaches the entry.
+	 *
+	 * @return void
+	 */
+	public function testTheWarningsOfADroppedOrDegradedEntry(): void {
+		$warnings = [];
+		$this->logger->method('warning')->willReturnCallback(
+			function (string $message, array $context = []) use (&$warnings): void {
+				$warnings[] = [$message, $context];
+			}
+		);
+		$throwing = $this->createMock(originalClassName: ThemeVersionService::class);
+		$throwing->method('capture')->willThrowException(new \RuntimeException('boom'));
+
+		$this->makeService()->log(action: 'not_an_action', context: []);
+		$this->makeService(versions: $throwing)->log(action: 'overrides_written', context: ['versionId' => 'forged']);
+		$quiet = $this->createMock(originalClassName: ThemeVersionService::class);
+		$quiet->method('capture')->willReturn(null);
+		$this->makeService(versions: $quiet)->log(action: 'overrides_written', context: ['note' => "\xB1"]);
+
+		$this->assertSame(
+			expected: [
+				['nldesign audit: rejected unknown action "{action}" — entry dropped', ['action' => 'not_an_action']],
+				['nldesign audit: no version was kept for action "{action}": {message}', ['action' => 'overrides_written', 'message' => 'boom']],
+				['nldesign audit: could not encode entry for action "{action}"', ['action' => 'overrides_written']],
+			],
+			actual: $warnings
+		);
+		$entries = $this->makeService(versions: $quiet)->getRecent(limit: 5);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
+		$this->assertArrayNotHasKey(key: 'versionId', array: $entries[0]);
+		$this->assertSame(expected: '1', actual: $this->appConfig['audit_entries_total']);
+	}//end testTheWarningsOfADroppedOrDegradedEntry()
 }//end class
