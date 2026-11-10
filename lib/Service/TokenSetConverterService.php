@@ -544,7 +544,7 @@ class TokenSetConverterService {
 		$source = $run->source();
 
 		return [
-			'css' => $this->buildCss(layers: $layers, provenance: new ConversionProvenance(source: $source, inputKind: $run->inputKind, counts: $counts)),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: $run->inputKind, counts: $counts),
 			'imported' => $run->imported,
 			'manifestEntry' => $this->buildManifestEntry(source: $source, theming: $this->runTheming(semantic: $layers['semantic'], run: $run)),
 			'report' => $run->report,
@@ -630,16 +630,17 @@ class TokenSetConverterService {
 		$report = $run->report;
 		$declarations = $this->withNavigationColour(declarations: $this->stripExternalUrls(declarations: $declarations, report: $report));
 		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $run->slug, report: $report);
-		$provenance = new ConversionProvenance(source: $run->source(), inputKind: 'B', counts: $this->countActions(report: $report));
+		$source = $run->source();
+		$counts = $this->countActions(report: $report);
 		$theming = $this->colourTheming(semantic: [], manifest: $this->exportManifest(layers: $layers));
 
 		return [
-			'css' => $this->buildCss(layers: $layers, provenance: $provenance),
+			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: 'B', counts: $counts),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(source: $provenance->source, theming: $theming),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, theming: $theming),
 			'report' => $report,
 			'inputKind' => 'B',
-			'counts' => $provenance->counts,
+			'counts' => $counts,
 			'logoAsset' => null,
 			'importWarnings' => $this->importWarnings,
 			'errors' => $this->mapperErrors,
@@ -1048,7 +1049,7 @@ class TokenSetConverterService {
 			return $this->dtcgDeclarations(decoded: $decoded, run: $run);
 		}
 
-		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, at: new StyleDictionaryPath(slug: $run->slug));
+		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $run->slug);
 
 		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $run->slug), 'version' => null];
 	}//end declarationsFromJson()
@@ -1083,7 +1084,7 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, mixed> $skip The mapper's skip record.
 	 *
-	 * @return ReportEntry The entry.
+	 * @return array{source: string, target: string, action: string, reason: string, value: null} The entry.
 	 */
 	private function unmappedEntry(array $skip): array {
 		return [
@@ -1100,7 +1101,7 @@ class TokenSetConverterService {
 	 *
 	 * @param array<string, mixed> $entry The mapper's adapted record.
 	 *
-	 * @return ReportEntry The entry.
+	 * @return array{source: string, target: string, action: string, reason: string, value: string, original: string} The entry.
 	 */
 	private function gamutEntry(array $entry): array {
 		return [
@@ -1199,46 +1200,38 @@ class TokenSetConverterService {
 	 * step must never end up under the app's own `--nldesign-` vocabulary.
 	 *
 	 * @param mixed $node The current node.
-	 * @param StyleDictionaryPath $at The brand prefix, the path walked so far and the recursion depth.
+	 * @param array<int, string> $path The path walked so far.
+	 * @param string $slug The brand prefix.
+	 * @param int $depth Current recursion depth.
 	 *
 	 * @return array<string, string> The declarations under this node, in document order.
 	 */
-	private function collectStyleDictionaryLeaves(mixed $node, StyleDictionaryPath $at): array {
-		if ($this->isWalkable(node: $node, depth: $at->depth) === false) {
+	private function collectStyleDictionaryLeaves(mixed $node, array $path, string $slug, int $depth = 0): array {
+		if ($this->isWalkable(node: $node, depth: $depth) === false) {
 			return [];
 		}
 
 		if ($this->isStyleDictionaryLeaf(node: $node) === true) {
-			return $this->leafDeclaration(node: $node, at: $at);
+			$prefixed = $this->styleDictionaryLeafName(path: $path, slug: $slug);
+			if ($prefixed === null) {
+				return [];
+			}
+
+			return [$prefixed => trim((string)$node['value'])];
 		}
 
 		// A later leaf that gets the same name replaces the value and keeps the first one's place.
 		$declarations = [];
 
 		foreach ($this->styleDictionaryChildren(node: $node) as [$key, $child]) {
-			$below = new StyleDictionaryPath(slug: $at->slug, path: array_merge($at->path, [$key]), depth: ($at->depth + 1));
-			$declarations = array_replace($declarations, $this->collectStyleDictionaryLeaves(node: $child, at: $below));
+			$declarations = array_replace(
+				$declarations,
+				$this->collectStyleDictionaryLeaves(node: $child, path: array_merge($path, [$key]), slug: $slug, depth: ($depth + 1))
+			);
 		}
 
 		return $declarations;
 	}//end collectStyleDictionaryLeaves()
-
-	/**
-	 * The declaration a Style Dictionary leaf becomes, or none when it is not part of the brand.
-	 *
-	 * @param array<mixed> $node The leaf.
-	 * @param StyleDictionaryPath $at The brand prefix and the leaf's path.
-	 *
-	 * @return array<string, string> Name => value, or nothing.
-	 */
-	private function leafDeclaration(array $node, StyleDictionaryPath $at): array {
-		$prefixed = $this->styleDictionaryLeafName(path: $at->path, slug: $at->slug);
-		if ($prefixed === null) {
-			return [];
-		}
-
-		return [$prefixed => trim((string)$node['value'])];
-	}//end leafDeclaration()
 
 	/**
 	 * Whether a Style Dictionary node is a tree the walk descends into.
@@ -2435,8 +2428,12 @@ class TokenSetConverterService {
 		}
 
 		if (isset($rule['transform']) === true && $entry['source'] !== '') {
-			$transform = new TokenTransform(kind: (string)$rule['transform'], args: ($rule['args'] ?? []), semantic: $run->semantic);
-			$entry['value'] = $this->transform(transform: $transform, value: $entry['value']);
+			$entry['value'] = $this->transform(
+				kind: (string)$rule['transform'],
+				value: $entry['value'],
+				args: ($rule['args'] ?? []),
+				semantic: $run->semantic
+			);
 		}
 
 		return $entry;
@@ -2752,8 +2749,10 @@ class TokenSetConverterService {
 
 		return [
 			'value' => $this->transform(
-				transform: new TokenTransform(kind: (string)($spec['transform'] ?? 'copy'), args: ($spec['args'] ?? []), semantic: $semantic),
-				value: $base
+				kind: (string)($spec['transform'] ?? 'copy'),
+				value: $base,
+				args: ($spec['args'] ?? []),
+				semantic: $semantic
 			),
 			'source' => $from,
 			'reason' => 'derived-from-brand',
@@ -2964,29 +2963,42 @@ class TokenSetConverterService {
 	/**
 	 * Apply one of the closed transform set.
 	 *
-	 * @param TokenTransform $transform The transform name, its arguments and the semantic layer so far.
+	 * @param string $kind The transform name.
 	 * @param string $value The input value.
+	 * @param array<string, mixed> $args Transform arguments.
+	 * @param array<string, string> $semantic The semantic layer so far (for `mix` against another token).
 	 *
 	 * @return string The transformed value.
 	 */
-	private function transform(TokenTransform $transform, string $value): string {
-		$args = $transform->args;
+	private function transform(string $kind, string $value, array $args, array $semantic): string {
 		$transforms = [
 			'darken' => fn (): string => $this->darken(value: $value, fraction: (float)($args['fraction'] ?? 0.1)),
-			'mix' => fn (): string => $this->mix(value: $value, transform: $transform),
+			'mix' => fn (): string => $this->mix(
+				value: $value,
+				with: $this->mixPartner(args: $args, semantic: $semantic),
+				weight: (float)($args['weight'] ?? 0.5)
+			),
 			'rgbTriplet' => fn (): string => $this->rgbTriplet(value: $value),
 			'alpha' => fn (): string => $this->alpha(value: $value, fraction: (float)($args['fraction'] ?? 0.5)),
-			'radiusScale' => fn (): string => $this->radiusScale(value: $value, args: $args),
-			'onColor' => fn (): string => $this->onColor(background: $value, args: $args),
+			'radiusScale' => fn (): string => $this->radiusScale(
+				value: $value,
+				factor: (float)($args['factor'] ?? 2),
+				clampPx: (float)($args['clampPx'] ?? 16)
+			),
+			'onColor' => fn (): string => $this->onColor(
+				background: $value,
+				light: (string)($args['light'] ?? '#ffffff'),
+				dark: (string)($args['dark'] ?? '#000000')
+			),
 			'literal' => fn (): string => str_replace('{value}', $value, (string)($args['template'] ?? '{value}')),
 		];
 
 		// `copy` and an unknown kind return the value unchanged.
-		if (isset($transforms[$transform->kind]) === false) {
+		if (isset($transforms[$kind]) === false) {
 			return $value;
 		}
 
-		return $transforms[$transform->kind]();
+		return $transforms[$kind]();
 	}//end transform()
 
 	/**
@@ -3182,13 +3194,12 @@ class TokenSetConverterService {
 	 * derived tint matches what Nextcloud would have computed itself.
 	 *
 	 * @param string $value The base colour.
-	 * @param TokenTransform $transform The transform: `with`, the colour to mix in, and `weight`, the share of the base retained (0-1).
+	 * @param string $with The colour to mix in.
+	 * @param float $weight The share of the base retained (0-1).
 	 *
 	 * @return string The mixed colour, or the input when either side is not a colour.
 	 */
-	private function mix(string $value, TokenTransform $transform): string {
-		$with = $this->mixPartner(args: $transform->args, semantic: $transform->semantic);
-		$weight = (float)($transform->args['weight'] ?? 0.5);
+	private function mix(string $value, string $with, float $weight): string {
 		$base = $this->contrast->parseColor(value: $value);
 		$other = $this->contrast->parseColor(value: $with);
 		if ($base === null || $other === null) {
@@ -3245,13 +3256,12 @@ class TokenSetConverterService {
 	 * Scale a px radius by a factor and clamp it.
 	 *
 	 * @param string $value The radius (e.g. `4px`).
-	 * @param array<string, mixed> $args The transform's arguments: `factor`, the multiplier, and `clampPx`, the maximum in px.
+	 * @param float $factor The multiplier.
+	 * @param float $clampPx The maximum in px.
 	 *
 	 * @return string The scaled radius, or the input when it is not a px length.
 	 */
-	private function radiusScale(string $value, array $args): string {
-		$factor = (float)($args['factor'] ?? 2);
-		$clampPx = (float)($args['clampPx'] ?? 16);
+	private function radiusScale(string $value, float $factor, float $clampPx): string {
 		if (preg_match('/^\s*([\d.]+)px\s*$/', $value, $match) !== 1) {
 			return $value;
 		}
@@ -3265,13 +3275,12 @@ class TokenSetConverterService {
 	 * Pick the legible foreground for a background colour.
 	 *
 	 * @param string $background The background colour.
-	 * @param array<string, mixed> $args The transform's arguments: `light` and `dark`, the foreground candidates.
+	 * @param string $light The light foreground candidate.
+	 * @param string $dark The dark foreground candidate.
 	 *
 	 * @return string Whichever candidate contrasts better.
 	 */
-	private function onColor(string $background, array $args): string {
-		$light = (string)($args['light'] ?? '#ffffff');
-		$dark = (string)($args['dark'] ?? '#000000');
+	private function onColor(string $background, string $light, string $dark): string {
 		$rgb = $this->contrast->parseColor(value: $background);
 		if ($rgb === null) {
 			return $dark;
@@ -3330,11 +3339,13 @@ class TokenSetConverterService {
 	 * `TokenCssShapeTest` enforces for every shipped set.
 	 *
 	 * @param array<string, array<string, string>> $layers The brand palette, the component layer and the semantic layer.
-	 * @param ConversionProvenance $provenance The set and its source, the input kind and the action tally.
+	 * @param SetSource $source The brand slug, the source label and the source package version.
+	 * @param string $inputKind The detected input kind.
+	 * @param array<string, int> $counts The action tally.
 	 *
 	 * @return string The complete CSS file.
 	 */
-	private function buildCss(array $layers, ConversionProvenance $provenance): string {
+	private function buildCss(array $layers, array $source, string $inputKind, array $counts): string {
 		$lines = [
 			'/* GENERATED by Thematiq TokenSetConverterService — do not edit by hand.',
 			' * Re-run the conversion instead; hand edits are lost on the next run. */',
@@ -3344,7 +3355,7 @@ class TokenSetConverterService {
 			$lines = [...$lines, ...$this->sectionLines(comment: $comment, declarations: $layers[$layer]), ''];
 		}
 
-		$lines = [...$lines, ...$this->provenanceLines(provenance: $provenance), "\t */", '}', ''];
+		$lines = [...$lines, ...$this->provenanceLines(source: $source, inputKind: $inputKind), ...$this->tallyLines(counts: $counts), "\t */", '}', ''];
 
 		return implode("\n", $lines);
 	}//end buildCss()
@@ -3368,15 +3379,15 @@ class TokenSetConverterService {
 	}//end sectionLines()
 
 	/**
-	 * The provenance comment, without its closing line.
+	 * The provenance comment up to the action tally.
 	 *
-	 * @param ConversionProvenance $provenance The set and its source, the input kind and the action tally.
+	 * @param SetSource $source The brand slug, the source label and the source package version.
+	 * @param string $inputKind The detected input kind.
 	 *
 	 * @return array<int, string> The lines.
 	 */
-	private function provenanceLines(ConversionProvenance $provenance): array {
+	private function provenanceLines(array $source, string $inputKind): array {
 		$table = $this->table();
-		$source = $provenance->source;
 
 		// The only two values in this block that come from OUTSIDE the app, and
 		// therefore the only two that have to be made comment-safe. The rest is
@@ -3387,13 +3398,12 @@ class TokenSetConverterService {
 		// counts are integers.
 		return [
 			"\t/* 4. Provenance — enough to tell two runs apart without running anything.",
-			"\t *    input kind:      " . $provenance->inputKind . ' (' . $this->inputKindLabel(kind: $provenance->inputKind) . ')',
+			"\t *    input kind:      " . $inputKind . ' (' . $this->inputKindLabel(kind: $inputKind) . ')',
 			"\t *    source:          " . $this->commentSafe(value: ($source['sourceName'] ?? '(pasted)')),
 			"\t *    source version:  " . $this->commentSafe(value: ($source['sourceVersion'] ?? '(not declared)')),
 			"\t *    slug:            " . $source['slug'],
 			"\t *    converter:       " . (string)($table['converterVersion'] ?? '0'),
 			"\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16),
-			...$this->tallyLines(counts: $provenance->counts),
 		];
 	}//end provenanceLines()
 
