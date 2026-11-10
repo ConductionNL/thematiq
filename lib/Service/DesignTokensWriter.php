@@ -42,6 +42,17 @@ class DesignTokensWriter {
 	public const EXTENSION = 'nl.conduction.thematiq';
 
 	/**
+	 * The fields of a deprecation record a `$deprecated` note names, in order, with the text around each.
+	 *
+	 * @var array<string, array{0: string, 1: string}>
+	 */
+	private const DEPRECATION_NOTE_PARTS = [
+		'replacement' => ['Use ', ' instead'],
+		'removalDate' => ['removal ', ''],
+		'message' => ['', ''],
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DtcgValueTyper $typer Types each value by its shape.
@@ -65,43 +76,84 @@ class DesignTokensWriter {
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
 	 */
 	public function write(array $declarations, string $setId, string $setName, string $appVersion, array $deprecations = []): array {
-		$typed = [];
-		$cssOnly = [];
-		foreach ($declarations as $name => $value) {
+		$download = new TokenSetDownload(
+			setId: $setId,
+			setName: $setName,
+			declarations: $declarations,
+			appVersion: $appVersion,
+			deprecations: $deprecations
+		);
+
+		return $this->document(download: $download);
+	}//end write()
+
+	/**
+	 * The DTCG document of a download.
+	 *
+	 * @param TokenSetDownload $download The set, its declarations, the app version and the deprecation records.
+	 *
+	 * @return array<string, mixed> The DTCG document.
+	 *
+	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-each-value-gets-a-dtcg-type-by-its-shape
+	 */
+	public function document(TokenSetDownload $download): array {
+		$run = new DtcgWriteRun(declarations: $download->declarations, deprecations: $download->deprecations);
+		$this->typeDeclarations(run: $run);
+		$this->assignPaths(run: $run);
+		$this->resolveAliases(run: $run);
+
+		$run->document = ['$description' => $download->setName];
+		foreach (array_keys($run->typed) as $name) {
+			$this->place(run: $run, name: (string)$name);
+		}
+
+		$run->document['$extensions'] = [
+			self::EXTENSION => ['setId' => $download->setId, 'appVersion' => $download->appVersion, 'cssOnly' => (object)$run->cssOnly],
+		];
+
+		return $this->groupsAsObjects(node: $run->document);
+	}//end document()
+
+	/**
+	 * Type each declaration by its shape; a value DTCG has no type for goes to cssOnly.
+	 *
+	 * @param DtcgWriteRun $run The run; its typed and cssOnly maps are filled.
+	 *
+	 * @return void
+	 */
+	private function typeDeclarations(DtcgWriteRun $run): void {
+		foreach ($run->declarations as $name => $value) {
 			$token = $this->typer->typed(name: (string)$name, value: trim((string)$value));
 			if ($token === null) {
-				$cssOnly[(string)$name] = trim((string)$value);
+				$run->cssOnly[(string)$name] = trim((string)$value);
 				continue;
 			}
 
-			$typed[(string)$name] = $token;
+			$run->typed[(string)$name] = $token;
+		}
+	}//end typeDeclarations()
+
+	/**
+	 * A typed token as the document holds it: with its CSS name, and the text a colour was written in.
+	 *
+	 * @param DtcgWriteRun $run The run.
+	 * @param string $name The token's custom property.
+	 *
+	 * @return array<string, mixed> The token.
+	 */
+	private function documentToken(DtcgWriteRun $run, string $name): array {
+		$token = $run->typed[$name];
+		$token['$extensions'] = [self::EXTENSION => ['cssVariable' => $name]];
+		// A colour keeps the text it was written in when that is not its hex, so an upload
+		// gives back `rgb(…)` or `hsl(…)` as it was, not only the same colour.
+		$text = trim((string)$run->declarations[$name]);
+		$hex = strtolower((string)($token['$value']['hex'] ?? ''));
+		if (($token['$type'] ?? null) === 'color' && is_array($token['$value']) === true && strtolower($text) !== $hex) {
+			$token['$extensions'][self::EXTENSION]['css'] = $text;
 		}
 
-		$paths = $this->paths(names: array_keys($typed), cssOnly: $cssOnly, declarations: $declarations);
-		$typed = array_intersect_key($typed, $paths);
-		$typed = $this->resolveAliases(typed: $typed, paths: $paths, cssOnly: $cssOnly, declarations: $declarations);
-
-		$document = ['$description' => $setName];
-		foreach ($typed as $name => $token) {
-			$token['$extensions'] = [self::EXTENSION => ['cssVariable' => $name]];
-			// A colour keeps the text it was written in when that is not its hex, so an upload
-			// gives back `rgb(…)` or `hsl(…)` as it was, not only the same colour.
-			$text = trim((string)$declarations[$name]);
-			$hex = strtolower((string)($token['$value']['hex'] ?? ''));
-			if (($token['$type'] ?? null) === 'color' && is_array($token['$value']) === true && strtolower($text) !== $hex) {
-				$token['$extensions'][self::EXTENSION]['css'] = $text;
-			}
-
-			$token = $this->withDeprecation(token: $token, record: ($deprecations[$name] ?? null));
-			$this->place(document: $document, path: $paths[$name], token: $token);
-		}
-
-		$document['$extensions'] = [
-			self::EXTENSION => ['setId' => $setId, 'appVersion' => $appVersion, 'cssOnly' => (object)$cssOnly],
-		];
-
-		return $this->groupsAsObjects(node: $document);
-	}//end write()
+		return $this->withDeprecation(token: $token, record: ($run->deprecations[$name] ?? null));
+	}//end documentToken()
 
 	/**
 	 * Every group as an object, so a group whose keys happen to be 0, 1, 2 still encodes as
@@ -140,61 +192,68 @@ class DesignTokensWriter {
 	 * The path of every typed token. A name whose path would sit inside another token's path
 	 * (a group and a token at once) is written to cssOnly instead.
 	 *
-	 * @param array<int, string> $names The typed names.
-	 * @param array<string, string> $cssOnly The untyped map, extended in place.
-	 * @param array<string, string> $declarations The declared values.
+	 * @param DtcgWriteRun $run The run; its paths are set, its cssOnly map extended and its typed map narrowed to the tokens with a path.
 	 *
-	 * @return array<string, array<int, string>> Name => path.
+	 * @return void
 	 */
-	private function paths(array $names, array &$cssOnly, array $declarations): array {
-		$paths = [];
+	private function assignPaths(DtcgWriteRun $run): void {
 		$joined = [];
-		foreach ($names as $name) {
-			$paths[$name] = $this->pathOf(name: $name);
-			$joined[$name] = implode('.', $paths[$name]);
+		foreach (array_keys($run->typed) as $name) {
+			$run->paths[$name] = $this->pathOf(name: $name);
+			$joined[$name] = implode('.', $run->paths[$name]);
 		}
 
 		foreach ($joined as $name => $path) {
-			foreach ($joined as $other) {
-				if (str_starts_with($other, $path . '.') === true) {
-					$cssOnly[$name] = trim((string)$declarations[$name]);
-					unset($paths[$name]);
-					break;
-				}
+			if ($this->holdsAPathBelow(joined: $joined, path: $path) === true) {
+				$run->cssOnly[$name] = trim((string)$run->declarations[$name]);
+				unset($run->paths[$name]);
 			}
 		}
 
-		return $paths;
-	}//end paths()
+		$run->typed = array_intersect_key($run->typed, $run->paths);
+	}//end assignPaths()
+
+	/**
+	 * Whether any of the joined paths sits below a path.
+	 *
+	 * @param array<string, string> $joined Name => path joined with dots.
+	 * @param string $path The joined path.
+	 *
+	 * @return bool True when another token's path starts inside it.
+	 */
+	private function holdsAPathBelow(array $joined, string $path): bool {
+		foreach ($joined as $other) {
+			if (str_starts_with($other, $path . '.') === true) {
+				return true;
+			}
+		}
+
+		return false;
+	}//end holdsAPathBelow()
 
 	/**
 	 * Turn each `var()` into a DTCG alias to its target's path, with the target's type. A
 	 * `var()` whose target is not a token of this document goes to cssOnly.
 	 *
-	 * @param array<string, array<string, mixed>> $typed Name => token.
-	 * @param array<string, array<int, string>> $paths Name => path.
-	 * @param array<string, string> $cssOnly The untyped map, extended in place.
-	 * @param array<string, string> $declarations The declared values.
+	 * @param DtcgWriteRun $run The run; its typed map has the aliases resolved, its cssOnly map is extended.
 	 *
-	 * @return array<string, array<string, mixed>> The tokens, aliases resolved.
+	 * @return void
 	 */
-	private function resolveAliases(array $typed, array $paths, array &$cssOnly, array $declarations): array {
-		foreach ($typed as $name => $token) {
+	private function resolveAliases(DtcgWriteRun $run): void {
+		foreach ($run->typed as $name => $token) {
 			if (isset($token['$alias']) === false) {
 				continue;
 			}
 
-			$type = $this->terminalType(name: $token['$alias'], typed: $typed);
-			if ($type === null || isset($paths[$token['$alias']]) === false) {
-				$cssOnly[$name] = trim((string)$declarations[$name]);
-				unset($typed[$name]);
+			$type = $this->terminalType(name: $token['$alias'], typed: $run->typed);
+			if ($type === null || isset($run->paths[$token['$alias']]) === false) {
+				$run->cssOnly[$name] = trim((string)$run->declarations[$name]);
+				unset($run->typed[$name]);
 				continue;
 			}
 
-			$typed[$name] = ['$type' => $type, '$value' => '{' . implode('.', $paths[$token['$alias']]) . '}'];
+			$run->typed[$name] = ['$type' => $type, '$value' => '{' . implode('.', $run->paths[$token['$alias']]) . '}'];
 		}
-
-		return $typed;
 	}//end resolveAliases()
 
 	/**
@@ -228,23 +287,7 @@ class DesignTokensWriter {
 			return $token;
 		}
 
-		$parts = [];
-		if (($record['replacement'] ?? '') !== '') {
-			$parts[] = 'Use ' . $record['replacement'] . ' instead';
-		}
-
-		if (($record['removalDate'] ?? '') !== '') {
-			$parts[] = 'removal ' . $record['removalDate'];
-		}
-
-		if (($record['message'] ?? '') !== '') {
-			$parts[] = $record['message'];
-		}
-
-		$token['$deprecated'] = true;
-		if ($parts !== []) {
-			$token['$deprecated'] = implode('; ', $parts);
-		}
+		$token['$deprecated'] = $this->deprecationNote(record: $record);
 		$token['$extensions'][self::EXTENSION]['deprecation'] = array_filter(
 			[
 				'severity' => (string)($record['severity'] ?? 'warning'),
@@ -258,37 +301,46 @@ class DesignTokensWriter {
 	}//end withDeprecation()
 
 	/**
-	 * Put a token at its path.
+	 * The `$deprecated` value of a deprecation: what it says, or true when it says nothing.
 	 *
-	 * @param array<string, mixed> $document The document, changed in place.
-	 * @param array<int, string> $path The path.
-	 * @param array<string, mixed> $token The token.
+	 * @param array<string, mixed> $record The deprecation.
+	 *
+	 * @return bool|string The note.
+	 */
+	private function deprecationNote(array $record): bool|string {
+		$parts = [];
+		foreach (self::DEPRECATION_NOTE_PARTS as $field => [$before, $after]) {
+			if (($record[$field] ?? '') !== '') {
+				$parts[] = $before . $record[$field] . $after;
+			}
+		}
+
+		if ($parts === []) {
+			return true;
+		}
+
+		return implode('; ', $parts);
+	}//end deprecationNote()
+
+	/**
+	 * Put a typed token at its path in the document.
+	 *
+	 * @param DtcgWriteRun $run The run; its document is changed.
+	 * @param string $name The token's custom property.
 	 *
 	 * @return void
 	 */
-	private function place(array &$document, array $path, array $token): void {
-		$document = $this->placed(node: $document, path: $path, token: $token);
-	}//end place()
-
-	/**
-	 * A node with the token set at the path below it.
-	 *
-	 * @param array<string, mixed> $node The node.
-	 * @param array<int, string> $path The path below it.
-	 * @param array<string, mixed> $token The token.
-	 *
-	 * @return array<string, mixed>
-	 */
-	private function placed(array $node, array $path, array $token): array {
-		$segment = (string)array_shift($path);
-		if ($path === []) {
-			$node[$segment] = $token;
-			return $node;
+	private function place(DtcgWriteRun $run, string $name): void {
+		$token = $this->documentToken(run: $run, name: $name);
+		$path = $run->paths[$name];
+		$last = (string)array_shift($path);
+		$node = &$run->document;
+		foreach ($path as $segment) {
+			$node[$last] = (array)($node[$last] ?? []);
+			$node = &$node[$last];
+			$last = (string)$segment;
 		}
 
-		$child = (array)($node[$segment] ?? []);
-		$node[$segment] = $this->placed(node: $child, path: $path, token: $token);
-
-		return $node;
-	}//end placed()
+		$node[$last] = $token;
+	}//end place()
 }//end class

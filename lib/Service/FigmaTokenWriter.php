@@ -72,38 +72,107 @@ class FigmaTokenWriter {
 	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 */
 	public function write(array $document, array $declarations, string $format, string $setId, string $setName): array {
+		$download = new TokenSetDownload(setId: $setId, setName: $setName, declarations: $declarations, format: $format);
+
+		return $this->inFormat(document: $document, download: $download);
+	}//end write()
+
+	/**
+	 * The W3C document of a download in the format it asks for.
+	 *
+	 * @param array<string, mixed> $document The W3C document of the set, as DesignTokensWriter wrote it.
+	 * @param TokenSetDownload $download The set, its declarations and the format.
+	 *
+	 * @return array<string, mixed> The document to encode as JSON.
+	 *
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
+	 */
+	public function inFormat(array $document, TokenSetDownload $download): array {
+		$format = $download->format;
 		if ($format !== 'figma' && $format !== 'tokens-studio' && $format !== 'tokens-studio-legacy') {
 			return $document;
 		}
 
 		$document = (array)json_decode((string)json_encode($document), true);
 		if ($format === 'figma') {
-			$document = $this->withColourStrings(node: $document);
-			$document['$extensions'][self::EXTENSION]['cssOnly'] = (object)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
-
-			return (array)$this->grouped(node: $document, valueKey: '$value');
+			return $this->figmaDocument(document: $document);
 		}
 
-		$valueKey = '$value';
-		$typeKey = '$type';
-		if ($format === 'tokens-studio-legacy') {
-			$valueKey = 'value';
-			$typeKey = 'type';
+		return $this->studioDocument(document: $document, download: $download);
+	}//end inFormat()
+
+	/**
+	 * The W3C document as Figma's own import reads it: colours as strings, every group an object.
+	 *
+	 * @param array<string, mixed> $document The W3C document, decoded to arrays.
+	 *
+	 * @return array<string, mixed> The document.
+	 */
+	private function figmaDocument(array $document): array {
+		$document = $this->withColourStrings(node: $document);
+		$document['$extensions'][self::EXTENSION]['cssOnly'] = (object)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
+
+		return (array)$this->grouped(node: $document, valueKey: '$value');
+	}//end figmaDocument()
+
+	/**
+	 * The W3C document as a Tokens Studio file: one token set, one theme that enables it.
+	 *
+	 * @param array<string, mixed> $document The W3C document, decoded to arrays.
+	 * @param TokenSetDownload $download The set, its declarations and the format.
+	 *
+	 * @return array<string, mixed> The file.
+	 */
+	private function studioDocument(array $document, TokenSetDownload $download): array {
+		$run = new StudioWriteRun(declarations: $download->declarations, valueKey: '$value', typeKey: '$type');
+		if ($download->format === 'tokens-studio-legacy') {
+			$run = new StudioWriteRun(declarations: $download->declarations, valueKey: 'value', typeKey: 'type');
 		}
 
-		$tree = [];
-		$this->studioTokens(node: $document, declarations: $declarations, keys: [$valueKey, $typeKey], tree: $tree);
-		foreach ((array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []) as $name => $value) {
-			$path = array_values(array_filter(explode('-', ltrim((string)$name, '-'), 3), static fn (string $part): bool => $part !== ''));
-			$this->place(tree: $tree, path: $path, token: [$valueKey => (string)$value, $typeKey => 'other'], valueKey: $valueKey);
-		}
+		$this->placeTypedTokens(run: $run, document: $document);
+		$this->placeCssOnly(run: $run, document: $document);
+
+		$setId = $download->setId;
 
 		return [
-			$setId => $this->grouped(node: $tree, valueKey: $valueKey),
-			'$themes' => [['id' => $setId, 'name' => $setName, 'selectedTokenSets' => (object)[$setId => 'enabled']]],
+			$setId => $this->grouped(node: $run->tree, valueKey: $run->valueKey),
+			'$themes' => [['id' => $setId, 'name' => $download->setName, 'selectedTokenSets' => (object)[$setId => 'enabled']]],
 			'$metadata' => ['tokenSetOrder' => [$setId]],
 		];
-	}//end write()
+	}//end studioDocument()
+
+	/**
+	 * Every token of the W3C document as a Tokens Studio token, at the same path.
+	 *
+	 * @param StudioWriteRun $run The run; its tree is filled.
+	 * @param array<string, mixed> $document The W3C document, decoded to arrays.
+	 *
+	 * @return void
+	 */
+	private function placeTypedTokens(StudioWriteRun $run, array $document): void {
+		foreach ($this->w3cTokensOf(node: $document) as [$path, $w3cToken]) {
+			$value = $this->studioValue(token: $w3cToken, declarations: $run->declarations);
+			if ($value !== null) {
+				$type = (self::STUDIO_TYPES[(string)($w3cToken['$type'] ?? '')] ?? 'other');
+				$this->place(run: $run, token: new StudioToken(path: $path, token: [$run->valueKey => $value, $run->typeKey => $type]));
+			}
+		}
+	}//end placeTypedTokens()
+
+	/**
+	 * Every value of the `cssOnly` map as a Tokens Studio token of type `other`, at the path its name gives.
+	 *
+	 * @param StudioWriteRun $run The run; its tree is filled.
+	 * @param array<string, mixed> $document The W3C document, decoded to arrays.
+	 *
+	 * @return void
+	 */
+	private function placeCssOnly(StudioWriteRun $run, array $document): void {
+		foreach ((array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []) as $name => $value) {
+			$path = array_values(array_filter(explode('-', ltrim((string)$name, '-'), 3), static fn (string $part): bool => $part !== ''));
+			$this->place(run: $run, token: new StudioToken(path: $path, token: [$run->valueKey => (string)$value, $run->typeKey => 'other']));
+		}
+	}//end placeCssOnly()
 
 	/**
 	 * The file name of a download.
@@ -132,11 +201,7 @@ class FigmaTokenWriter {
 	 */
 	private function withColourStrings(array $node): array {
 		if (array_key_exists('$value', $node) === true) {
-			if (is_array($node['$value']) === true && ($node['$type'] ?? null) === 'color') {
-				$node['$value'] = ($this->colourString(value: $node['$value']) ?? $node['$value']);
-			}
-
-			return $node;
+			return $this->withColourString(token: $node);
 		}
 
 		foreach ($node as $key => $child) {
@@ -149,6 +214,21 @@ class FigmaTokenWriter {
 	}//end withColourStrings()
 
 	/**
+	 * A token with its colour object as a string.
+	 *
+	 * @param array<string, mixed> $token A token.
+	 *
+	 * @return array<string, mixed> The same token.
+	 */
+	private function withColourString(array $token): array {
+		if (is_array($token['$value']) === true && ($token['$type'] ?? null) === 'color') {
+			$token['$value'] = ($this->colourString(value: $token['$value']) ?? $token['$value']);
+		}
+
+		return $token;
+	}//end withColourString()
+
+	/**
 	 * A colour object as `#rrggbb`, or as `rgba()` when it is not opaque.
 	 *
 	 * @param array<string, mixed> $value The W3C colour value.
@@ -156,8 +236,8 @@ class FigmaTokenWriter {
 	 * @return string|null The string, or null for a colour without a hex.
 	 */
 	private function colourString(array $value): ?string {
-		$hex = ($value['hex'] ?? null);
-		if (is_string($hex) === false || preg_match('/^#[0-9a-fA-F]{6}$/', $hex) !== 1) {
+		$hex = $this->hexOf(value: $value);
+		if ($hex === null) {
 			return null;
 		}
 
@@ -172,17 +252,31 @@ class FigmaTokenWriter {
 	}//end colourString()
 
 	/**
-	 * Every token of the W3C document as a Tokens Studio token, at the same path.
+	 * The `#rrggbb` of a colour object.
+	 *
+	 * @param array<string, mixed> $value The W3C colour value.
+	 *
+	 * @return string|null The hex, or null when it has none.
+	 */
+	private function hexOf(array $value): ?string {
+		$hex = ($value['hex'] ?? null);
+		if (is_string($hex) === false || preg_match('/^#[0-9a-fA-F]{6}$/', $hex) !== 1) {
+			return null;
+		}
+
+		return $hex;
+	}//end hexOf()
+
+	/**
+	 * Every token of a W3C group with its path, depth first in document order.
 	 *
 	 * @param array<string, mixed> $node A group of the W3C document.
-	 * @param array<string, string> $declarations The set's declarations.
-	 * @param array{0: string, 1: string} $keys The value key and the type key.
-	 * @param array<string, mixed> $tree The Tokens Studio tree, filled in place.
 	 * @param array<int, string> $path The path of the group.
 	 *
-	 * @return void
+	 * @return array<int, array{0: array<int, string>, 1: array<string, mixed>}> Path and token, per token.
 	 */
-	private function studioTokens(array $node, array $declarations, array $keys, array &$tree, array $path = []): void {
+	private function w3cTokensOf(array $node, array $path = []): array {
+		$found = [];
 		foreach ($node as $key => $child) {
 			if (is_array($child) === false || str_starts_with((string)$key, '$') === true) {
 				continue;
@@ -190,17 +284,15 @@ class FigmaTokenWriter {
 
 			$here = [...$path, (string)$key];
 			if (array_key_exists('$value', $child) === false) {
-				$this->studioTokens(node: $child, declarations: $declarations, keys: $keys, tree: $tree, path: $here);
+				$found = [...$found, ...$this->w3cTokensOf(node: $child, path: $here)];
 				continue;
 			}
 
-			$value = $this->studioValue(token: $child, declarations: $declarations);
-			if ($value !== null) {
-				$type = (self::STUDIO_TYPES[(string)($child['$type'] ?? '')] ?? 'other');
-				$this->place(tree: $tree, path: $here, token: [$keys[0] => $value, $keys[1] => $type], valueKey: $keys[0]);
-			}
+			$found[] = [$here, $child];
 		}
-	}//end studioTokens()
+
+		return $found;
+	}//end w3cTokensOf()
 
 	/**
 	 * The string a Tokens Studio token holds: the reference, the colour, or the CSS value as declared.
@@ -211,58 +303,85 @@ class FigmaTokenWriter {
 	 * @return string|null The value, or null when the token has none to write.
 	 */
 	private function studioValue(array $token, array $declarations): ?string {
+		return ($this->referenceOf(token: $token)
+			?? $this->colourOf(token: $token)
+			?? $this->declaredValueOf(token: $token, declarations: $declarations));
+	}//end studioValue()
+
+	/**
+	 * A token's value when it is a reference, `{group.token}`.
+	 *
+	 * @param array<string, mixed> $token The W3C token.
+	 *
+	 * @return string|null The reference, or null when the value is not one.
+	 */
+	private function referenceOf(array $token): ?string {
 		$value = $token['$value'];
 		if (is_string($value) === true && preg_match('/^\{[^{}]+\}$/', $value) === 1) {
 			return $value;
 		}
 
-		if (is_array($value) === true && ($token['$type'] ?? null) === 'color') {
-			$colour = $this->colourString(value: $value);
-			if ($colour !== null) {
-				return $colour;
-			}
+		return null;
+	}//end referenceOf()
+
+	/**
+	 * A colour token's value as a string.
+	 *
+	 * @param array<string, mixed> $token The W3C token.
+	 *
+	 * @return string|null The colour, or null when the token is no colour object with a hex.
+	 */
+	private function colourOf(array $token): ?string {
+		if (is_array($token['$value']) === false || ($token['$type'] ?? null) !== 'color') {
+			return null;
 		}
 
+		return $this->colourString(value: $token['$value']);
+	}//end colourOf()
+
+	/**
+	 * The CSS value the set declares for a token's custom property, as declared.
+	 *
+	 * @param array<string, mixed> $token The W3C token.
+	 * @param array<string, string> $declarations The set's declarations.
+	 *
+	 * @return string|null The value, or null when the set declares none.
+	 */
+	private function declaredValueOf(array $token, array $declarations): ?string {
 		$name = ($token['$extensions'][self::EXTENSION]['cssVariable'] ?? null);
 		if (is_string($name) === true && isset($declarations[$name]) === true) {
 			return trim((string)$declarations[$name]);
 		}
 
 		return null;
-	}//end studioValue()
+	}//end declaredValueOf()
 
 	/**
 	 * Put a token at its path, unless a token or a group is already in the way.
 	 *
-	 * @param array<string, mixed> $tree The tree, changed in place.
-	 * @param array<int, string> $path The path.
-	 * @param array<string, string> $token The token.
-	 * @param string $valueKey The key that marks a token.
+	 * @param StudioWriteRun $run The run; its tree is changed.
+	 * @param StudioToken $token The token and its path.
 	 *
 	 * @return void
 	 */
-	private function place(array &$tree, array $path, array $token, string $valueKey): void {
+	private function place(StudioWriteRun $run, StudioToken $token): void {
+		$path = $token->path;
 		if ($path === []) {
 			return;
 		}
 
-		$node = &$tree;
+		$node = &$run->tree;
 		$last = array_pop($path);
 		foreach ($path as $segment) {
-			if (isset($node[$segment]) === false) {
-				$node[$segment] = [];
-			}
-
-			if (array_key_exists($valueKey, $node[$segment]) === true) {
+			$node[$segment] = ($node[$segment] ?? []);
+			if (array_key_exists($run->valueKey, $node[$segment]) === true) {
 				return;
 			}
 
 			$node = &$node[$segment];
 		}
 
-		if (isset($node[$last]) === false) {
-			$node[$last] = $token;
-		}
+		$node[$last] ??= $token->token;
 	}//end place()
 
 	/**
