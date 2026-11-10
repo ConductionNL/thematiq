@@ -214,11 +214,22 @@ class ThemingAuditService {
 			return;
 		}
 
-		$entry = $this->buildEntry(action: $action, context: $context);
+		$entry = $this->withVersion(entry: $this->buildEntry(action: $action, context: $context), action: $action);
+		$this->persist(entry: $entry, action: $action);
+	}//end log()
 
-		// Keep the configuration this change produced, so the entry can be
-		// restored later. A capture that fails leaves the entry without a
-		// versionId and never blocks it (openspec/specs/theme-versions/spec.md).
+	/**
+	 * Keep the configuration this change produced, so the entry can be
+	 * restored later. A capture that fails leaves the entry without a
+	 * versionId and never blocks it (openspec/specs/theme-versions/spec.md).
+	 * A versionId the context carried is never kept.
+	 *
+	 * @param array<string, mixed> $entry The built entry.
+	 * @param string $action The audited action.
+	 *
+	 * @return array<string, mixed> The entry, with the versionId of the kept version when there is one.
+	 */
+	private function withVersion(array $entry, string $action): array {
 		unset($entry['versionId']);
 		try {
 			$versionId = $this->versionService->capture(auditAction: $action, actor: (string)$entry['actor']);
@@ -232,6 +243,18 @@ class ThemingAuditService {
 			);
 		}
 
+		return $entry;
+	}//end withVersion()
+
+	/**
+	 * Append the entry as one JSON line and count it; a failure is logged, never thrown.
+	 *
+	 * @param array<string, mixed> $entry The entry.
+	 * @param string $action The audited action, for the warnings.
+	 *
+	 * @return void
+	 */
+	private function persist(array $entry, string $action): void {
 		$line = json_encode($entry, JSON_UNESCAPED_SLASHES);
 		if ($line === false) {
 			$this->logger->warning('nldesign audit: could not encode entry for action "{action}"', ['action' => $action]);
@@ -239,17 +262,28 @@ class ThemingAuditService {
 		}
 
 		try {
-			$this->appendLine(line: $line);
-
-			$total = ((int)$this->config->getAppValue(Application::APP_ID, self::COUNTER_KEY, '0') + 1);
-			$this->config->setAppValue(Application::APP_ID, self::COUNTER_KEY, (string)$total);
+			$this->appendAndCount(line: $line);
 		} catch (\Throwable $e) {
 			$this->logger->warning(
 				'nldesign audit: failed to persist entry for action "{action}": {message}',
 				['action' => $action, 'message' => $e->getMessage()]
 			);
 		}
-	}//end log()
+	}//end persist()
+
+	/**
+	 * Append one line to the log, then count it.
+	 *
+	 * @param string $line The JSON line.
+	 *
+	 * @return void
+	 */
+	private function appendAndCount(string $line): void {
+		$this->appendLine(line: $line);
+
+		$total = ((int)$this->config->getAppValue(Application::APP_ID, self::COUNTER_KEY, '0') + 1);
+		$this->config->setAppValue(Application::APP_ID, self::COUNTER_KEY, (string)$total);
+	}//end appendAndCount()
 
 	/**
 	 * Read the most recent entries, newest first.
