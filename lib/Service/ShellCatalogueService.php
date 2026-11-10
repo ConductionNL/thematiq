@@ -123,9 +123,32 @@ class ShellCatalogueService {
 	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
 	public function build(string $appPath, ?string $generatedFrom = null): array {
-		$manifest = $this->manifest(appPath: $appPath);
-		$annotations = $this->licences->annotations(appPath: $appPath);
+		$evidence = new CatalogueEvidence(
+			appPath: $appPath,
+			manifest: $this->manifest(appPath: $appPath),
+			annotations: $this->licences->annotations(appPath: $appPath)
+		);
 
+		$sets = $this->setsOf(evidence: $evidence);
+		$fonts = $this->fonts->fontsOf(evidence: $evidence, families: $this->familiesOf(sets: $sets));
+		$digest = 'sets:' . substr(hash('sha256', (string)json_encode([$sets, $fonts])), 0, 16);
+
+		return [
+			'version' => self::VERSION,
+			'generated_from' => ($generatedFrom ?? $digest),
+			'sets' => $sets,
+			'fonts' => $fonts,
+		];
+	}//end build()
+
+	/**
+	 * The ids of the shipped sets: one per `css/tokens/<id>.css`, sorted.
+	 *
+	 * @param string $appPath The app root path.
+	 *
+	 * @return string[] The ids.
+	 */
+	private function shippedIds(string $appPath): array {
 		$ids = [];
 		$files = glob($appPath . '/css/tokens/*.css');
 		if ($files === false) {
@@ -138,32 +161,45 @@ class ShellCatalogueService {
 
 		sort($ids, SORT_STRING);
 
+		return $ids;
+	}//end shippedIds()
+
+	/**
+	 * The catalogue's sets, in id order, each with its logo block.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 *
+	 * @return array<int, array<string, mixed>> The sets.
+	 */
+	private function setsOf(CatalogueEvidence $evidence): array {
 		$sets = [];
+		foreach ($this->shippedIds(appPath: $evidence->appPath) as $id) {
+			$name = $this->nameOf(id: $id, meta: $evidence->metaOf(id: $id));
+			$set = $this->entry(appPath: $evidence->appPath, id: $id, name: $name, store: null);
+			$logo = ['logo' => $this->logoOf(evidence: $evidence, id: $id)];
+			$sets[] = (array_slice($set, 0, 3, true) + $logo + array_slice($set, 3, null, true));
+		}
+
+		return $sets;
+	}//end setsOf()
+
+	/**
+	 * The font families the sets name, each with the ids of the sets that name it.
+	 *
+	 * @param array<int, array<string, mixed>> $sets The catalogue's sets.
+	 *
+	 * @return array<string, string[]> Family => set ids, in set order.
+	 */
+	private function familiesOf(array $sets): array {
 		$families = [];
-		foreach ($ids as $id) {
-			$meta = ($manifest[$id] ?? []);
-			$set = $this->entry(appPath: $appPath, id: $id, name: $this->nameOf(id: $id, meta: $meta), store: null);
-			$logo = ['logo' => $this->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $annotations)];
-			$set = (array_slice($set, 0, 3, true) + $logo + array_slice($set, 3, null, true));
-			$tokens = $set['tokens'];
-
-			$sets[] = $set;
-
-			foreach ($this->fonts->familiesIn(stack: $tokens['font-family']) as $family) {
-				$families[$family][] = $id;
+		foreach ($sets as $set) {
+			foreach ($this->fonts->familiesIn(stack: $set['tokens']['font-family']) as $family) {
+				$families[$family][] = $set['id'];
 			}
 		}
 
-		$fonts = $this->fonts->fontsOf(appPath: $appPath, families: $families, manifest: $manifest, annotations: $annotations);
-		$digest = 'sets:' . substr(hash('sha256', (string)json_encode([$sets, $fonts])), 0, 16);
-
-		return [
-			'version' => self::VERSION,
-			'generated_from' => ($generatedFrom ?? $digest),
-			'sets' => $sets,
-			'fonts' => $fonts,
-		];
-	}//end build()
+		return $families;
+	}//end familiesOf()
 
 	/**
 	 * One set in the shape the catalogue and the OpenProject plugin's set file share:
@@ -341,88 +377,179 @@ class ShellCatalogueService {
 	/**
 	 * The logo block of one set.
 	 *
-	 * @param string $appPath The app root path.
+	 * @param CatalogueEvidence $evidence The app root, the set's manifest entry and the `REUSE.toml` annotations.
 	 * @param string $id The set id.
-	 * @param array<string, mixed> $meta The set's manifest entry.
-	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
 	 *
 	 * @return array{file: string|null, inverse_file: string|null, licence: string|null, redistributable: bool|null, basis: string|null} The block.
 	 *
 	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
-	public function logoOf(string $appPath, string $id, array $meta, array $annotations): array {
-		$file = $this->logoFile(appPath: $appPath, name: $id);
-		$inverse = $this->logoFile(appPath: $appPath, name: $id . '-dark');
-		if ($file === null) {
-			return ['file' => null, 'inverse_file' => $inverse, 'licence' => null, 'redistributable' => null, 'basis' => null];
+	public function logoOf(CatalogueEvidence $evidence, string $id): array {
+		$logo = new CatalogueLogo(
+			id: $id,
+			file: $this->logoFile(appPath: $evidence->appPath, name: $id),
+			inverse: $this->logoFile(appPath: $evidence->appPath, name: $id . '-dark')
+		);
+		if ($logo->file === null) {
+			return ['file' => null, 'inverse_file' => $logo->inverse, 'licence' => null, 'redistributable' => null, 'basis' => null];
 		}
 
-		$verdict = $this->logoVerdict(appPath: $appPath, id: $id, file: $file, meta: $meta, annotations: $annotations);
+		return $this->logoBlock(evidence: $evidence, logo: $logo);
+	}//end logoOf()
+
+	/**
+	 * The logo block of a set that has a light logo.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the set's manifest entry and the `REUSE.toml` annotations.
+	 * @param CatalogueLogo $logo The set's logo files; the light one is there.
+	 *
+	 * @return array{file: string|null, inverse_file: string|null, licence: string|null, redistributable: bool|null, basis: string|null} The block.
+	 */
+	private function logoBlock(CatalogueEvidence $evidence, CatalogueLogo $logo): array {
+		$verdict = $this->logoVerdict(evidence: $evidence, logo: $logo);
 
 		// A dark logo stands with the light one when it says it was made from
 		// it, or when the reason holds for the whole set. A reason read from
 		// the light file alone does not cover a second drawing.
-		if ($inverse !== null && $verdict['redistributable'] === true && $verdict['scope'] === 'file'
-			&& preg_match(self::DERIVED_PATTERN, (string)file_get_contents($appPath . '/' . $inverse)) !== 1
-			&& preg_match(self::OWN_FILE_PATTERN, (string)file_get_contents($appPath . '/' . $inverse)) !== 1
+		if ($logo->inverse !== null && $verdict['redistributable'] === true && $verdict['scope'] === 'file'
+			&& $this->inverseSaysNothing(appPath: $evidence->appPath, inverse: $logo->inverse) === true
 		) {
-			$verdict = [
-				'licence' => $verdict['licence'],
-				'redistributable' => null,
-				'basis' => 'The light logo says it is ours; the dark logo says nothing about itself.',
-			];
+			$verdict = $this->unclaimedInverse(licence: $verdict['licence']);
 		}
 
 		return [
-			'file' => $file,
-			'inverse_file' => $inverse,
+			'file' => $logo->file,
+			'inverse_file' => $logo->inverse,
 			'licence' => $verdict['licence'],
 			'redistributable' => $verdict['redistributable'],
 			'basis' => $verdict['basis'],
 		];
-	}//end logoOf()
+	}//end logoBlock()
+
+	/**
+	 * The verdict for a set whose light logo says it is ours and whose dark logo says nothing about itself.
+	 *
+	 * @param string|null $licence The licence of the light logo.
+	 *
+	 * @return array{licence: string|null, redistributable: null, basis: string} The verdict.
+	 */
+	private function unclaimedInverse(?string $licence): array {
+		return [
+			'licence' => $licence,
+			'redistributable' => null,
+			'basis' => 'The light logo says it is ours; the dark logo says nothing about itself.',
+		];
+	}//end unclaimedInverse()
+
+	/**
+	 * Whether a dark logo says neither that it was made from the light one nor that it is ours.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $inverse The dark logo's repository-relative path.
+	 *
+	 * @return bool True when the file says nothing about itself.
+	 */
+	private function inverseSaysNothing(string $appPath, string $inverse): bool {
+		return preg_match(self::DERIVED_PATTERN, (string)file_get_contents($appPath . '/' . $inverse)) !== 1
+			&& preg_match(self::OWN_FILE_PATTERN, (string)file_get_contents($appPath . '/' . $inverse)) !== 1;
+	}//end inverseSaysNothing()
 
 	/**
 	 * What the repository says about one set's logo.
 	 *
-	 * @param string $appPath The app root path.
-	 * @param string $id The set id.
-	 * @param string $file The logo's repository-relative path.
-	 * @param array<string, mixed> $meta The set's manifest entry.
-	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
+	 * @param CatalogueEvidence $evidence The app root, the set's manifest entry and the `REUSE.toml` annotations.
+	 * @param CatalogueLogo $logo The set's logo files; the light one is there.
 	 *
 	 * @return array{licence: string|null, redistributable: bool|null, basis: string, scope?: string} The verdict.
 	 */
-	private function logoVerdict(string $appPath, string $id, string $file, array $meta, array $annotations): array {
+	private function logoVerdict(CatalogueEvidence $evidence, CatalogueLogo $logo): array {
+		$restricted = $this->restrictedLogo(evidence: $evidence, id: $logo->id);
+		if ($restricted !== null) {
+			return $restricted;
+		}
+
+		$file = (string)$logo->file;
+		$licence = $this->licences->licenceOf(file: $file, annotations: $evidence->annotations)['licence'];
+		if ($licence === null) {
+			return $this->unclaimedLogo(licence: null);
+		}
+
+		return ($this->ownSetLogo(meta: $evidence->metaOf(id: $logo->id), licence: $licence)
+			?? $this->ownFileLogo(contents: (string)file_get_contents($evidence->appPath . '/' . $file), licence: $licence)
+			?? $this->unclaimedLogo(licence: $licence));
+	}//end logoVerdict()
+
+	/**
+	 * The verdict for a logo the repository says may not be passed on, while it still says so.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the set's manifest entry and the `REUSE.toml` annotations.
+	 * @param string $id The set id.
+	 *
+	 * @return array{licence: string, redistributable: bool, basis: string}|null The verdict, or null when it is not restricted.
+	 */
+	private function restrictedLogo(CatalogueEvidence $evidence, string $id): ?array {
 		$restricted = (self::RESTRICTED_LOGOS[$id] ?? null);
-		if ($restricted !== null && str_contains($this->licences->read(path: $appPath . '/' . $restricted['source']), $restricted['quote']) === true) {
-			return [
-				'licence' => $restricted['licence'],
-				'redistributable' => false,
-				'basis' => $restricted['source'] . ': "' . $restricted['quote'] . '"',
-			];
+		if ($restricted === null || str_contains($this->licences->read(path: $evidence->appPath . '/' . $restricted['source']), $restricted['quote']) === false) {
+			return null;
 		}
 
-		$licence = $this->licences->licenceOf(file: $file, annotations: $annotations)['licence'];
-		$description = (string)($meta['description'] ?? '');
-		if ($licence !== null && preg_match(self::OWN_SET_PATTERN, $description, $match) === 1) {
-			return [
-				'licence' => $licence,
-				'redistributable' => true,
-				'basis' => 'token-sets.json describes the set as ours or made up ("' . $match[0] . '"); REUSE.toml: ' . $licence . '.',
-				'scope' => 'set',
-			];
+		return [
+			'licence' => $restricted['licence'],
+			'redistributable' => false,
+			'basis' => $restricted['source'] . ': "' . $restricted['quote'] . '"',
+		];
+	}//end restrictedLogo()
+
+	/**
+	 * The verdict for a logo of a set `token-sets.json` describes as ours or made up.
+	 *
+	 * @param array<string, mixed> $meta The set's manifest entry.
+	 * @param string $licence The licence `REUSE.toml` gives the file.
+	 *
+	 * @return array{licence: string, redistributable: bool, basis: string, scope: string}|null The verdict, or null when the description says no such thing.
+	 */
+	private function ownSetLogo(array $meta, string $licence): ?array {
+		if (preg_match(self::OWN_SET_PATTERN, (string)($meta['description'] ?? ''), $match) !== 1) {
+			return null;
 		}
 
-		if ($licence !== null && preg_match(self::OWN_FILE_PATTERN, (string)file_get_contents($appPath . '/' . $file), $match) === 1) {
-			return [
-				'licence' => $licence,
-				'redistributable' => true,
-				'basis' => 'The file says it is our own drawing ("' . $match[0] . '"), not the organisation\'s artwork; REUSE.toml: ' . $licence . '.',
-				'scope' => 'file',
-			];
+		return [
+			'licence' => $licence,
+			'redistributable' => true,
+			'basis' => 'token-sets.json describes the set as ours or made up ("' . $match[0] . '"); REUSE.toml: ' . $licence . '.',
+			'scope' => 'set',
+		];
+	}//end ownSetLogo()
+
+	/**
+	 * The verdict for a logo file that says it is our own drawing.
+	 *
+	 * @param string $contents The logo file's contents.
+	 * @param string $licence The licence `REUSE.toml` gives the file.
+	 *
+	 * @return array{licence: string, redistributable: bool, basis: string, scope: string}|null The verdict, or null when the file says no such thing.
+	 */
+	private function ownFileLogo(string $contents, string $licence): ?array {
+		if (preg_match(self::OWN_FILE_PATTERN, $contents, $match) !== 1) {
+			return null;
 		}
 
+		return [
+			'licence' => $licence,
+			'redistributable' => true,
+			'basis' => 'The file says it is our own drawing ("' . $match[0] . '"), not the organisation\'s artwork; REUSE.toml: ' . $licence . '.',
+			'scope' => 'file',
+		];
+	}//end ownFileLogo()
+
+	/**
+	 * The verdict for a logo nothing in the repository makes a statement about.
+	 *
+	 * @param string|null $licence The licence `REUSE.toml` gives the file, or null.
+	 *
+	 * @return array{licence: string|null, redistributable: null, basis: string} The verdict.
+	 */
+	private function unclaimedLogo(?string $licence): array {
 		$stated = null;
 		if ($licence !== null) {
 			$stated = $licence . ' by the repository default in REUSE.toml; the holder of the artwork is not stated';
@@ -433,7 +560,7 @@ class ShellCatalogueService {
 			'redistributable' => null,
 			'basis' => 'Nothing in the repository says whose artwork this is or that it may be passed on.',
 		];
-	}//end logoVerdict()
+	}//end unclaimedLogo()
 
 	/**
 	 * The first `img/logos/<name>.<ext>` there is, in the order the header draws it.
