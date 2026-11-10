@@ -48,6 +48,20 @@ class ReuseLicences {
 	}//end read()
 
 	/**
+	 * Whether a file of the repository still holds a statement written down about it.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param array{source: string, quote: string} $statement The repository-relative file and the words it says.
+	 *
+	 * @return bool True while the file holds the quote.
+	 *
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 */
+	public function stillSays(string $appPath, array $statement): bool {
+		return str_contains($this->read(path: $appPath . '/' . $statement['source']), $statement['quote']);
+	}//end stillSays()
+
+	/**
 	 * The licence `REUSE.toml` gives a file.
 	 *
 	 * An `override` annotation that names the file wins. Without one the

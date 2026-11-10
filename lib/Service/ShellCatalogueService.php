@@ -485,11 +485,11 @@ class ShellCatalogueService {
 	 * @param CatalogueEvidence $evidence The app root, the set's manifest entry and the `REUSE.toml` annotations.
 	 * @param string $id The set id.
 	 *
-	 * @return array{licence: string, redistributable: bool, basis: string}|null The verdict, or null when it is not restricted.
+	 * @return array{licence: string, redistributable: bool, basis: string}|null Null when not restricted.
 	 */
 	private function restrictedLogo(CatalogueEvidence $evidence, string $id): ?array {
 		$restricted = (self::RESTRICTED_LOGOS[$id] ?? null);
-		if ($restricted === null || str_contains($this->licences->read(path: $evidence->appPath . '/' . $restricted['source']), $restricted['quote']) === false) {
+		if ($restricted === null || $this->licences->stillSays(appPath: $evidence->appPath, statement: $restricted) === false) {
 			return null;
 		}
 
@@ -506,7 +506,7 @@ class ShellCatalogueService {
 	 * @param array<string, mixed> $meta The set's manifest entry.
 	 * @param string $licence The licence `REUSE.toml` gives the file.
 	 *
-	 * @return array{licence: string, redistributable: bool, basis: string, scope: string}|null The verdict, or null when the description says no such thing.
+	 * @return array{licence: string, redistributable: bool, basis: string, scope: string}|null Null when the description says not.
 	 */
 	private function ownSetLogo(array $meta, string $licence): ?array {
 		if (preg_match(self::OWN_SET_PATTERN, (string)($meta['description'] ?? ''), $match) !== 1) {

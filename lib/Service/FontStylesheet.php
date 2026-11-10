@@ -43,6 +43,8 @@ final class FontStylesheet {
 	 * The stylesheet's directory, relative to the app root.
 	 *
 	 * @return string The repository-relative directory.
+	 *
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
 	 */
 	public function directory(): string {
 		return dirname(substr($this->path, (strlen($this->appPath) + 1)));

@@ -153,11 +153,11 @@ class ShellCatalogueFonts {
 	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
 	 * @param CatalogueFont $font The family.
 	 *
-	 * @return array{licence: string|null, licence_files: string[], redistributable: bool, basis: string}|null The verdict, or null when it is not restricted.
+	 * @return array{licence: string|null, licence_files: string[], redistributable: bool, basis: string}|null Null when not restricted.
 	 */
 	private function restrictedVerdict(CatalogueEvidence $evidence, CatalogueFont $font): ?array {
 		$restricted = (self::RESTRICTED_FONTS[$font->family] ?? null);
-		if ($restricted === null || str_contains($this->licences->read(path: $evidence->appPath . '/' . $restricted['source']), $restricted['quote']) === false) {
+		if ($restricted === null || $this->licences->stillSays(appPath: $evidence->appPath, statement: $restricted) === false) {
 			return null;
 		}
 
@@ -175,7 +175,7 @@ class ShellCatalogueFonts {
 	 * @param string $appPath The app root path.
 	 * @param CatalogueFont $font The family.
 	 *
-	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null The verdict, or null when its licence does not allow it.
+	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null Null when its licence does not allow it.
 	 */
 	private function licensedVerdict(string $appPath, CatalogueFont $font): ?array {
 		$licence = $font->licence;
@@ -197,7 +197,7 @@ class ShellCatalogueFonts {
 	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
 	 * @param CatalogueFont $font The family.
 	 *
-	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null The verdict, or null when it is shipped or no set describes it.
+	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null Null when shipped or undescribed.
 	 */
 	private function declaredVerdict(CatalogueEvidence $evidence, CatalogueFont $font): ?array {
 		$declared = $this->declaredBy(evidence: $evidence, font: $font);

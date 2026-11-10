@@ -48,6 +48,8 @@ final class CatalogueEvidence {
 	 * @param string $id The set id.
 	 *
 	 * @return array<string, mixed> The entry.
+	 *
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
 	public function metaOf(string $id): array {
 		return ($this->manifest[$id] ?? []);
