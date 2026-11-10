@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 /**
-/**
  * The light block or the dark block of a set file, with its place in the file.
  *
  * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set

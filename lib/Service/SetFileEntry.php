@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 /**
-/**
  * A value of a set file: the CSS name it is kept under (null for a key the
  * file should not have), the value as written, and where it sits.
  *

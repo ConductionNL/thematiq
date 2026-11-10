@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 /**
-/**
  * One read of a set file: the declarations of the block being read, and what
  * was left out and why.
  *
