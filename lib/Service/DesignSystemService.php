@@ -484,27 +484,6 @@ class DesignSystemService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
 	 */
 	private function readJsonManifest(string $path): array {
-		if (file_exists($path) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($path);
-		if ($content === false) {
-			return [];
-		}
-
-		$data = json_decode($content, true);
-		if (is_array($data) === false) {
-			return [];
-		}
-
-		$indexed = [];
-		foreach ($data as $entry) {
-			if (isset($entry['id']) === true) {
-				$indexed[$entry['id']] = $entry;
-			}
-		}
-
-		return $indexed;
+		return IndexedJsonManifest::read(path: $path);
 	}//end readJsonManifest()
 }//end class

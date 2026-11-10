@@ -225,8 +225,7 @@ class FigmaTokenReader {
 	 * @return array<string, mixed> The document.
 	 */
 	private function named(array $document, array &$skipped): array {
-		$leaves = [];
-		$this->leaves(node: $document, path: [], leaves: $leaves, depth: 0);
+		$leaves = DtcgTokenLeaves::of(tree: $document);
 		$cssOnly = (array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
 
 		foreach ($leaves as $dotted => $leaf) {
@@ -263,34 +262,6 @@ class FigmaTokenReader {
 
 		return $document;
 	}//end named()
-
-	/**
-	 * Every token under a group, by dotted path.
-	 *
-	 * @param array<string, mixed> $node The group.
-	 * @param array<int, string> $path The group's path.
-	 * @param array<string, array<string, mixed>> $leaves Filled in place: dotted path to `path` and `token`.
-	 * @param int $depth The depth, guarded.
-	 *
-	 * @return void
-	 */
-	private function leaves(array $node, array $path, array &$leaves, int $depth): void {
-		foreach ($node as $key => $child) {
-			if (is_array($child) === false || str_starts_with((string)$key, '$') === true) {
-				continue;
-			}
-
-			$here = [...$path, (string)$key];
-			if (array_key_exists('$value', $child) === true) {
-				$leaves[implode('.', $here)] = ['path' => $here, 'token' => $child];
-				continue;
-			}
-
-			if ($depth < self::MAX_DEPTH) {
-				$this->leaves(node: $child, path: $here, leaves: $leaves, depth: ($depth + 1));
-			}
-		}
-	}//end leaves()
 
 	/**
 	 * Replace the token at a path, or remove it.
