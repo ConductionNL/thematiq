@@ -124,29 +124,47 @@ class RuntimeFileLocator {
 	 * @return array<string, true> Ids as keys.
 	 */
 	private function shippedIds(): array {
-		if ($this->shippedIds !== null) {
-			return $this->shippedIds;
-		}
-
-		$this->shippedIds = [];
-		$manifest = $this->appPath() . '/token-sets.json';
-		if (is_file($manifest) === false) {
-			return $this->shippedIds;
-		}
-
-		$sets = json_decode((string)file_get_contents($manifest), true);
-		if (is_array($sets) === false) {
-			return $this->shippedIds;
-		}
-
-		foreach ($sets as $set) {
-			if (is_array($set) === true && isset($set['id']) === true) {
-				$this->shippedIds[(string)$set['id']] = true;
-			}
+		if ($this->shippedIds === null) {
+			$this->shippedIds = $this->readShippedIds();
 		}
 
 		return $this->shippedIds;
 	}//end shippedIds()
+
+	/**
+	 * Read the ids of the sets the release's `token-sets.json` lists.
+	 *
+	 * @return array<string, true> Ids as keys; empty when the manifest is missing or unusable.
+	 */
+	private function readShippedIds(): array {
+		$ids = [];
+		foreach ($this->manifestSets() as $set) {
+			if (is_array($set) === true && isset($set['id']) === true) {
+				$ids[(string)$set['id']] = true;
+			}
+		}
+
+		return $ids;
+	}//end readShippedIds()
+
+	/**
+	 * The entries of the release's `token-sets.json`.
+	 *
+	 * @return array<mixed> The entries; empty when the file is missing or not a list.
+	 */
+	private function manifestSets(): array {
+		$manifest = $this->appPath() . '/token-sets.json';
+		if (is_file($manifest) === false) {
+			return [];
+		}
+
+		$sets = json_decode((string)file_get_contents($manifest), true);
+		if (is_array($sets) === false) {
+			return [];
+		}
+
+		return $sets;
+	}//end manifestSets()
 
 	/**
 	 * Whether a name is a runtime file the store holds, and not a protected shipped one.
@@ -214,23 +232,7 @@ class RuntimeFileLocator {
 	 */
 	public function listDirectory(string $directory, string $suffix = ''): array {
 		$directory = trim($directory, '/');
-		$names = [];
-		$paths = glob($this->appPath() . '/' . $directory . '/*');
-		if ($paths === false) {
-			$paths = [];
-		}
-
-		foreach ($paths as $path) {
-			if (is_file($path) === true) {
-				$names[] = $directory . '/' . basename($path);
-			}
-		}
-
-		foreach ($this->store->listDirectory(directory: $directory) as $name) {
-			if ($this->isProtected(name: $name) === false) {
-				$names[] = $name;
-			}
-		}
+		$names = array_merge($this->shippedNames(directory: $directory), $this->runtimeNames(directory: $directory));
 
 		if ($suffix !== '') {
 			$names = array_filter($names, static fn (string $name): bool => str_ends_with($name, $suffix));
@@ -241,6 +243,47 @@ class RuntimeFileLocator {
 
 		return $names;
 	}//end listDirectory()
+
+	/**
+	 * The files the app directory holds in one directory.
+	 *
+	 * @param string $directory An app-relative directory, without surrounding slashes.
+	 *
+	 * @return array<int, string> Full app-relative names.
+	 */
+	private function shippedNames(string $directory): array {
+		$paths = glob($this->appPath() . '/' . $directory . '/*');
+		if ($paths === false) {
+			return [];
+		}
+
+		$names = [];
+		foreach ($paths as $path) {
+			if (is_file($path) === true) {
+				$names[] = $directory . '/' . basename($path);
+			}
+		}
+
+		return $names;
+	}//end shippedNames()
+
+	/**
+	 * The runtime files the store holds in one directory, without protected shipped names.
+	 *
+	 * @param string $directory An app-relative directory, without surrounding slashes.
+	 *
+	 * @return array<int, string> Full app-relative names.
+	 */
+	private function runtimeNames(string $directory): array {
+		$names = [];
+		foreach ($this->store->listDirectory(directory: $directory) as $name) {
+			if ($this->isProtected(name: $name) === false) {
+				$names[] = $name;
+			}
+		}
+
+		return $names;
+	}//end runtimeNames()
 
 	/**
 	 * The URL a browser loads a file from.
@@ -294,11 +337,7 @@ class RuntimeFileLocator {
 	 */
 	public function localPath(string $name): ?string {
 		if ($this->inStore(name: $name) === false) {
-			if ($this->isShipped(name: $name) === false) {
-				return null;
-			}
-
-			return $this->appPath() . '/' . ltrim($name, '/');
+			return $this->shippedPath(name: $name);
 		}
 
 		$content = $this->store->read(name: $name);
@@ -306,6 +345,35 @@ class RuntimeFileLocator {
 			return null;
 		}
 
+		return $this->temporaryCopy(name: $name, content: $content);
+	}//end localPath()
+
+	/**
+	 * The path of a shipped file in the app directory.
+	 *
+	 * @param string $name An app-relative name.
+	 *
+	 * @return string|null The path, or null when the app directory does not hold it.
+	 */
+	private function shippedPath(string $name): string|null {
+		if ($this->isShipped(name: $name) === false) {
+			return null;
+		}
+
+		return $this->appPath() . '/' . ltrim($name, '/');
+	}//end shippedPath()
+
+	/**
+	 * Copy a runtime file's content into a temporary file with the same extension.
+	 *
+	 * @param string $name The runtime file's name.
+	 * @param string $content Its content.
+	 *
+	 * @return string The temporary file's path.
+	 *
+	 * @throws RuntimeException When the temporary copy cannot be made.
+	 */
+	private function temporaryCopy(string $name, string $content): string {
 		$extension = (string)pathinfo($name, PATHINFO_EXTENSION);
 		$postfix = '';
 		if ($extension !== '') {
@@ -318,7 +386,7 @@ class RuntimeFileLocator {
 		}
 
 		return $path;
-	}//end localPath()
+	}//end temporaryCopy()
 
 	/**
 	 * The content type a runtime file is served with.
