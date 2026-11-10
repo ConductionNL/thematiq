@@ -388,11 +388,7 @@ class TokenSetConverterService {
 	 */
 	private function earlyResult(array $declarations, ConversionRun $run): ?array {
 		if ($run->exportDark !== null) {
-			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(
-				declarations: $declarations,
-				source: $run->source(),
-				report: $run->report
-			);
+			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(declarations: $declarations, run: $run);
 		}
 
 		if ($declarations !== []) {
@@ -409,13 +405,22 @@ class TokenSetConverterService {
 			return $this->zeroYieldResult(report: $run->report, inputKind: $run->inputKind);
 		}
 
-		throw new RuntimeException(
+		throw $this->noPropertiesFound();
+	}//end earlyResult()
+
+	/**
+	 * The refusal for content that holds no custom property at all.
+	 *
+	 * @return RuntimeException The exception, with status 422.
+	 */
+	private function noPropertiesFound(): RuntimeException {
+		return new RuntimeException(
 			'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
 			. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
 			. ' tokens.json, or an existing :root token set.',
 			422
 		);
-	}//end earlyResult()
+	}//end noPropertiesFound()
 
 	/**
 	 * Make the declarations stand on their own: no remote url(), no var() chains, measurable
@@ -483,26 +488,46 @@ class TokenSetConverterService {
 			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $run->slug],
 			run: $run
 		);
+		$layers = ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
 		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
 		if ($run->repairContrast === true) {
-			$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
-			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $run->manifest, report: $run->report);
-			$sections['component'] = $colourRepair->repairComponents(
-				component: $sections['component'],
-				semantic: $semantic,
-				table: $this->table(),
-				report: $run->report
-			);
+			$layers = $this->contrastRepaired(layers: $layers, run: $run);
 		}
 
 		if ($run->logo !== null) {
-			$semantic['--nldesign-logo-url'] = $run->logo['css'];
+			$layers['semantic']['--nldesign-logo-url'] = $run->logo['css'];
 		}
 
-		return ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
+		return $layers;
 	}//end emittedLayers()
+
+	/**
+	 * The layers with the semantic pairs and the theme's own component pairs brought to their thresholds.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The emitted layers.
+	 * @param ConversionRun $run The conversion; its manifest values and report are updated.
+	 *
+	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} The repaired layers.
+	 */
+	private function contrastRepaired(array $layers, ConversionRun $run): array {
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$layers['semantic'] = $colourRepair->repairContrast(
+			semantic: $layers['semantic'],
+			table: $this->table(),
+			manifest: $run->manifest,
+			report: $run->report
+		);
+		$layers['component'] = $colourRepair->repairComponents(
+			component: $layers['component'],
+			semantic: $layers['semantic'],
+			table: $this->table(),
+			report: $run->report
+		);
+
+		return $layers;
+	}//end contrastRepaired()
 
 	/**
 	 * The converted set: the stylesheet, its manifest entry, the report and the logo file.
@@ -595,43 +620,67 @@ class TokenSetConverterService {
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
 	 * @param array<string, string> $declarations The mapped declarations.
-	 * @param SetSource $source The new set's slug and name, the file name and the document's package version.
-	 * @param array<int, array<string, mixed>> $report The report so far.
+	 * @param ConversionRun $run The conversion: the new set's slug and name, the file name, the document's package version and the report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(array $declarations, array $source, array $report): array {
-		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
+	private function thematiqExportResult(array $declarations, ConversionRun $run): array {
+		$report = $run->report;
+		$declarations = $this->withNavigationColour(declarations: $this->stripExternalUrls(declarations: $declarations, report: $report));
+		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $run->slug, report: $report);
+		$provenance = new ConversionProvenance(source: $run->source(), inputKind: 'B', counts: $this->countActions(report: $report));
+		$theming = $this->colourTheming(semantic: [], manifest: $this->exportManifest(layers: $layers));
 
-		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
-		// set's navigation colour, which the bundles paint and the dark variant follows; the
-		// plugin's own name stays, so the next download carries it back.
+		return [
+			'css' => $this->buildCss(layers: $layers, provenance: $provenance),
+			'imported' => count($declarations),
+			'manifestEntry' => $this->buildManifestEntry(source: $provenance->source, theming: $theming),
+			'report' => $report,
+			'inputKind' => 'B',
+			'counts' => $provenance->counts,
+			'logoAsset' => null,
+			'importWarnings' => $this->importWarnings,
+			'errors' => $this->mapperErrors,
+		];
+	}//end thematiqExportResult()
+
+	/**
+	 * The declarations with the OpenProject plugin's menu colour as the navigation colour.
+	 *
+	 * The OpenProject plugin's menu colour is the navigation column here. It is copied to the
+	 * set's navigation colour, which the bundles paint and the dark variant follows; the
+	 * plugin's own name stays, so the next download carries it back.
+	 *
+	 * @param array<string, string> $declarations The declarations.
+	 *
+	 * @return array<string, string> The declarations.
+	 */
+	private function withNavigationColour(array $declarations): array {
 		if (isset($declarations['--thematiq-shell-menu']) === true && isset($declarations['--nldesign-color-nav-background']) === false) {
 			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
 		}
 
-		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $source['slug'], report: $report);
-		$counts = $this->countActions(report: $report);
+		return $declarations;
+	}//end withNavigationColour()
+
+	/**
+	 * The manifest values of a thematiq export: its primary, when the layers state it as a literal colour.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The split layers.
+	 *
+	 * @return array<string, string> The manifest values.
+	 */
+	private function exportManifest(array $layers): array {
 		$manifest = [];
 		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
 		if ($primary !== null) {
 			$manifest['theming.primary_color'] = $primary;
 		}
 
-		return [
-			'css' => $this->buildCss(layers: $layers, provenance: new ConversionProvenance(source: $source, inputKind: 'B', counts: $counts)),
-			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(source: $source, theming: $this->colourTheming(semantic: [], manifest: $manifest)),
-			'report' => $report,
-			'inputKind' => 'B',
-			'counts' => $counts,
-			'logoAsset' => null,
-			'importWarnings' => $this->importWarnings,
-			'errors' => $this->mapperErrors,
-		];
-	}//end thematiqExportResult()
+		return $manifest;
+	}//end exportManifest()
 
 	/**
 	 * A token's value with its var() chain followed inside the set, when it ends in a hex colour.
@@ -803,12 +852,7 @@ class TokenSetConverterService {
 
 		$stripped = (string)preg_replace('#/\*.*?\*/#s', '', $content);
 		if (preg_match('/--[\w-]+\s*:/', $stripped) !== 1) {
-			throw new RuntimeException(
-				'The content is not a theme this app can convert. Accepted: built theme CSS with a'
-				. ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
-				. ' Style Dictionary tokens.json, or an existing :root token set.',
-				422
-			);
+			throw $this->notConvertible();
 		}
 
 		if (preg_match('/:root\s*\{/i', $stripped) === 1 && preg_match('/--nldesign-/', $stripped) === 1) {
@@ -817,6 +861,20 @@ class TokenSetConverterService {
 
 		return 'A';
 	}//end detectInput()
+
+	/**
+	 * The refusal for content that is neither JSON this app reads nor CSS with custom properties.
+	 *
+	 * @return RuntimeException The exception, with status 422.
+	 */
+	private function notConvertible(): RuntimeException {
+		return new RuntimeException(
+			'The content is not a theme this app can convert. Accepted: built theme CSS with a'
+			. ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
+			. ' Style Dictionary tokens.json, or an existing :root token set.',
+			422
+		);
+	}//end notConvertible()
 
 	/**
 	 * Which JSON shape the content is: a DTCG document (it has a `$value` leaf, or thematiq
