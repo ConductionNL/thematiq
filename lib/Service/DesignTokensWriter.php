@@ -334,7 +334,8 @@ class DesignTokensWriter {
 		$token = $this->documentToken(run: $run, name: $name);
 		$path = $run->paths[$name];
 		$last = (string)array_shift($path);
-		$node = &$run->document;
+		$document = $run->document;
+		$node = &$document;
 		foreach ($path as $segment) {
 			$node[$last] = (array)($node[$last] ?? []);
 			$node = &$node[$last];
@@ -342,5 +343,7 @@ class DesignTokensWriter {
 		}
 
 		$node[$last] = $token;
+		unset($node);
+		$run->document = $document;
 	}//end place()
 }//end class

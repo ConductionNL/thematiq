@@ -295,11 +295,27 @@ class FigmaTokenWriter {
 			return;
 		}
 
-		$node = &$run->tree;
+		$tree = $run->tree;
+		$this->placeIn(tree: $tree, token: $token);
+		$run->tree = $tree;
+	}//end place()
+
+	/**
+	 * Put a token at its path in a tree, unless a token is in the way; groups on the way are created.
+	 *
+	 * @param array<string, mixed> $tree The tree, changed in place.
+	 * @param StudioToken $token The token and its path; the value key is the token's first key.
+	 *
+	 * @return void
+	 */
+	private function placeIn(array &$tree, StudioToken $token): void {
+		$path = $token->path;
+		$valueKey = (string)array_key_first($token->token);
+		$node = &$tree;
 		$last = array_pop($path);
 		foreach ($path as $segment) {
 			$node[$segment] = ($node[$segment] ?? []);
-			if (array_key_exists($run->valueKey, $node[$segment]) === true) {
+			if (array_key_exists($valueKey, $node[$segment]) === true) {
 				return;
 			}
 
@@ -307,7 +323,7 @@ class FigmaTokenWriter {
 		}
 
 		$node[$last] ??= $token->token;
-	}//end place()
+	}//end placeIn()
 
 	/**
 	 * Every group as an object, so a group with the keys 0, 1, 2 still encodes as a JSON object.
