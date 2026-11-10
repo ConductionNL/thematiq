@@ -98,4 +98,26 @@ class CopyValues {
 	public static function camel(string $key): string {
 		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
 	}//end camel()
+
+	/**
+	 * The copy fields one source states, picked in the request's language, by camel-case name.
+	 *
+	 * @param array<mixed> $source A token set's or the administrator's copy block.
+	 * @param CopyFields $fields The keys to read and the language.
+	 *
+	 * @return array<string, string> Camel-case name => value, for each key the source states.
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 */
+	public static function picked(array $source, CopyFields $fields): array {
+		$copy = [];
+		foreach ($fields->keys as $key) {
+			$value = self::pick(value: ($source[$key] ?? null), language: $fields->language);
+			if ($value !== null) {
+				$copy[self::camel(key: $key)] = $value;
+			}
+		}
+
+		return $copy;
+	}//end picked()
 }//end class

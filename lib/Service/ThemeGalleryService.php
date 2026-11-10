@@ -111,7 +111,7 @@ class ThemeGalleryService {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-the-gallery-is-opt-in-and-disclosed
 	 */
 	public function isEnabled(): bool {
-		return $this->config->getAppValue(Application::APP_ID, self::CONFIG_ENABLED, 'no') === 'yes';
+		return (new AppConfigToggle(config: $this->config, key: self::CONFIG_ENABLED))->isOn();
 	}//end isEnabled()
 
 	/**
@@ -124,12 +124,7 @@ class ThemeGalleryService {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-the-gallery-is-opt-in-and-disclosed
 	 */
 	public function setEnabled(bool $enabled): void {
-		$value = 'no';
-		if ($enabled === true) {
-			$value = 'yes';
-		}
-
-		$this->config->setAppValue(Application::APP_ID, self::CONFIG_ENABLED, $value);
+		(new AppConfigToggle(config: $this->config, key: self::CONFIG_ENABLED))->set(enabled: $enabled);
 	}//end setEnabled()
 
 	/**

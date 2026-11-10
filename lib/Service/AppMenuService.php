@@ -135,12 +135,7 @@ class AppMenuService {
 				continue;
 			}
 
-			foreach (self::KEYS as $key) {
-				$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
-				if ($value !== null) {
-					$menu[CopyValues::camel(key: $key)] = $value;
-				}
-			}
+			$menu = array_merge($menu, CopyValues::picked(source: $source, fields: new CopyFields(keys: self::KEYS, language: $language)));
 
 			if (is_array($source['groups'] ?? null) === true) {
 				$menu['groups'] = self::groups(rows: $source['groups'], language: $language);
