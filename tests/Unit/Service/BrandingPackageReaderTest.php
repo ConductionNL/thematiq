@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\BrandingPackageReader;
+use OCA\Thematiq\Service\PackageContent;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use ZipArchive;
@@ -216,8 +217,10 @@ final class BrandingPackageReaderTest extends TestCase {
 	public function testWritingAPackageListsWhatItWrote(): void {
 		$written = $this->reader->write(
 			dir: $this->tmp . '/out/',
-			bundle: ['name' => 'Gemeente', 'url' => 'https://example.org/a'],
-			fonts: ['inter' => 'FONT-I', 'Bad Id' => 'x', '../escape' => 'y', 'serif-2' => 'FONT-S']
+			content: new PackageContent(
+				bundle: ['name' => 'Gemeente', 'url' => 'https://example.org/a'],
+				fonts: ['inter' => 'FONT-I', 'Bad Id' => 'x', '../escape' => 'y', 'serif-2' => 'FONT-S']
+			)
 		);
 
 		$this->assertSame(expected: ['bundle.json', 'fonts/inter.woff2', 'fonts/serif-2.woff2'], actual: $written);
