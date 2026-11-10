@@ -2377,12 +2377,8 @@ class TokenSetConverterService {
 		}
 
 		if (isset($rule['transform']) === true && $entry['source'] !== '') {
-			$entry['value'] = $this->transform(
-				kind: (string)$rule['transform'],
-				value: $entry['value'],
-				args: ($rule['args'] ?? []),
-				semantic: $run->semantic
-			);
+			$transform = new TokenTransform(kind: (string)$rule['transform'], args: ($rule['args'] ?? []), semantic: $run->semantic);
+			$entry['value'] = $this->transform(transform: $transform, value: $entry['value']);
 		}
 
 		return $entry;
@@ -2698,10 +2694,8 @@ class TokenSetConverterService {
 
 		return [
 			'value' => $this->transform(
-				kind: (string)($spec['transform'] ?? 'copy'),
-				value: $base,
-				args: ($spec['args'] ?? []),
-				semantic: $semantic
+				transform: new TokenTransform(kind: (string)($spec['transform'] ?? 'copy'), args: ($spec['args'] ?? []), semantic: $semantic),
+				value: $base
 			),
 			'source' => $from,
 			'reason' => 'derived-from-brand',
@@ -2912,42 +2906,29 @@ class TokenSetConverterService {
 	/**
 	 * Apply one of the closed transform set.
 	 *
-	 * @param string $kind The transform name.
+	 * @param TokenTransform $transform The transform name, its arguments and the semantic layer so far.
 	 * @param string $value The input value.
-	 * @param array<string, mixed> $args Transform arguments.
-	 * @param array<string, string> $semantic The semantic layer so far (for `mix` against another token).
 	 *
 	 * @return string The transformed value.
 	 */
-	private function transform(string $kind, string $value, array $args, array $semantic): string {
+	private function transform(TokenTransform $transform, string $value): string {
+		$args = $transform->args;
 		$transforms = [
 			'darken' => fn (): string => $this->darken(value: $value, fraction: (float)($args['fraction'] ?? 0.1)),
-			'mix' => fn (): string => $this->mix(
-				value: $value,
-				with: $this->mixPartner(args: $args, semantic: $semantic),
-				weight: (float)($args['weight'] ?? 0.5)
-			),
+			'mix' => fn (): string => $this->mix(value: $value, transform: $transform),
 			'rgbTriplet' => fn (): string => $this->rgbTriplet(value: $value),
 			'alpha' => fn (): string => $this->alpha(value: $value, fraction: (float)($args['fraction'] ?? 0.5)),
-			'radiusScale' => fn (): string => $this->radiusScale(
-				value: $value,
-				factor: (float)($args['factor'] ?? 2),
-				clampPx: (float)($args['clampPx'] ?? 16)
-			),
-			'onColor' => fn (): string => $this->onColor(
-				background: $value,
-				light: (string)($args['light'] ?? '#ffffff'),
-				dark: (string)($args['dark'] ?? '#000000')
-			),
+			'radiusScale' => fn (): string => $this->radiusScale(value: $value, args: $args),
+			'onColor' => fn (): string => $this->onColor(background: $value, args: $args),
 			'literal' => fn (): string => str_replace('{value}', $value, (string)($args['template'] ?? '{value}')),
 		];
 
 		// `copy` and an unknown kind return the value unchanged.
-		if (isset($transforms[$kind]) === false) {
+		if (isset($transforms[$transform->kind]) === false) {
 			return $value;
 		}
 
-		return $transforms[$kind]();
+		return $transforms[$transform->kind]();
 	}//end transform()
 
 	/**
@@ -3143,12 +3124,13 @@ class TokenSetConverterService {
 	 * derived tint matches what Nextcloud would have computed itself.
 	 *
 	 * @param string $value The base colour.
-	 * @param string $with The colour to mix in.
-	 * @param float $weight The share of the base retained (0-1).
+	 * @param TokenTransform $transform The transform: `with`, the colour to mix in, and `weight`, the share of the base retained (0-1).
 	 *
 	 * @return string The mixed colour, or the input when either side is not a colour.
 	 */
-	private function mix(string $value, string $with, float $weight): string {
+	private function mix(string $value, TokenTransform $transform): string {
+		$with = $this->mixPartner(args: $transform->args, semantic: $transform->semantic);
+		$weight = (float)($transform->args['weight'] ?? 0.5);
 		$base = $this->contrast->parseColor(value: $value);
 		$other = $this->contrast->parseColor(value: $with);
 		if ($base === null || $other === null) {
@@ -3205,12 +3187,13 @@ class TokenSetConverterService {
 	 * Scale a px radius by a factor and clamp it.
 	 *
 	 * @param string $value The radius (e.g. `4px`).
-	 * @param float $factor The multiplier.
-	 * @param float $clampPx The maximum in px.
+	 * @param array<string, mixed> $args The transform's arguments: `factor`, the multiplier, and `clampPx`, the maximum in px.
 	 *
 	 * @return string The scaled radius, or the input when it is not a px length.
 	 */
-	private function radiusScale(string $value, float $factor, float $clampPx): string {
+	private function radiusScale(string $value, array $args): string {
+		$factor = (float)($args['factor'] ?? 2);
+		$clampPx = (float)($args['clampPx'] ?? 16);
 		if (preg_match('/^\s*([\d.]+)px\s*$/', $value, $match) !== 1) {
 			return $value;
 		}
@@ -3224,12 +3207,13 @@ class TokenSetConverterService {
 	 * Pick the legible foreground for a background colour.
 	 *
 	 * @param string $background The background colour.
-	 * @param string $light The light foreground candidate.
-	 * @param string $dark The dark foreground candidate.
+	 * @param array<string, mixed> $args The transform's arguments: `light` and `dark`, the foreground candidates.
 	 *
 	 * @return string Whichever candidate contrasts better.
 	 */
-	private function onColor(string $background, string $light, string $dark): string {
+	private function onColor(string $background, array $args): string {
+		$light = (string)($args['light'] ?? '#ffffff');
+		$dark = (string)($args['dark'] ?? '#000000');
 		$rgb = $this->contrast->parseColor(value: $background);
 		if ($rgb === null) {
 			return $dark;
