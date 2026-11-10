@@ -55,17 +55,7 @@ class SetFileReader {
 			return $store->read(name: $name);
 		}
 
-		$path = rtrim($appPath, '/') . '/' . $name;
-		if (is_file($path) === false) {
-			return null;
-		}
-
-		$content = file_get_contents($path);
-		if ($content === false) {
-			return null;
-		}
-
-		return $content;
+		return LocalFile::contents(path: rtrim($appPath, '/') . '/' . $name);
 	}//end read()
 
 	/**
