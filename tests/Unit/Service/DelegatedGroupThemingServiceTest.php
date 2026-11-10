@@ -537,4 +537,62 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			l10n: $this->l10n()
 		))->getSection());
 	}//end testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups()
+
+	/**
+	 * Each refusal names its reason, checked in order: subadmin first, then delegated, then allowed.
+	 *
+	 * @return void
+	 */
+	public function testEachRefusalNamesItsReason(): void {
+		$this->subAdmins[] = 'anna:concern';
+		$this->subAdmins[] = 'anna:ghost';
+		$cases = [
+			['gemeente-b', 'amsterdam', 'You are not a subadmin of this group.'],
+			['concern', 'concern', 'The house style of this group is not delegated.'],
+			['ghost', 'rijkshuisstijl', 'The house style of this group is not delegated.'],
+			['gemeente-a', 'amsterdam', 'This token set is not allowed for this group.'],
+		];
+		foreach ($cases as [$group, $set, $message]) {
+			try {
+				$this->service()->requireDelegatedChoice(uid: 'anna', group: $group, tokenSet: $set);
+				$this->fail(message: 'Refused: ' . $group);
+			} catch (DelegationRefusedException $e) {
+				$this->assertSame(expected: $message, actual: $e->getMessage());
+			}
+		}
+
+		$this->assertSame(expected: 'gemeente-a', actual: $this->service()->requireDelegatedChoice(uid: 'anna', group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl')['group']);
+	}//end testEachRefusalNamesItsReason()
+
+	/**
+	 * Choosing the set the group already has changes and audits nothing, and returns the entry.
+	 *
+	 * @return void
+	 */
+	public function testChoosingTheCurrentSetChangesNothing(): void {
+		$before = $this->app['group_token_sets'];
+
+		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', group: 'gemeente-a', tokenSet: 'rijkshuisstijl');
+
+		$this->assertSame(expected: ['group' => 'gemeente-a', 'tokenSet' => 'rijkshuisstijl'], actual: array_intersect_key($entry, ['group' => 1, 'tokenSet' => 1]));
+		$this->assertSame(expected: $before, actual: $this->app['group_token_sets']);
+		$this->assertSame(expected: [], actual: $this->audited);
+	}//end testChoosingTheCurrentSetChangesNothing()
+
+	/**
+	 * The list holds only the subadmin's delegated groups, in mapping order, each with the fields the page reads.
+	 *
+	 * @return void
+	 */
+	public function testTheListHoldsOnlyTheSubadminsDelegatedGroups(): void {
+		$this->subAdmins[] = 'anna:gemeente-b';
+		$this->subAdmins[] = 'anna:concern';
+
+		$list = $this->service()->listForUser(uid: 'anna');
+
+		$this->assertSame(expected: ['gemeente-a', 'gemeente-b'], actual: array_column($list, 'group'));
+		$this->assertSame(expected: ['group', 'displayName', 'tokenSet', 'allowedTokenSets'], actual: array_keys($list[1]));
+		$this->assertSame(expected: ['rijkshuisstijl', 'amsterdam'], actual: array_column($list[1]['allowedTokenSets'], 'id'));
+		$this->assertSame(expected: [], actual: $this->service()->listForUser(uid: 'bert'));
+	}//end testTheListHoldsOnlyTheSubadminsDelegatedGroups()
 }//end class
