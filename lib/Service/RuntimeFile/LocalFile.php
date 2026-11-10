@@ -36,7 +36,7 @@ final class LocalFile {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	public static function contents(string $path): ?string {
+	public function contents(string $path): ?string {
 		if (is_file($path) === false) {
 			return null;
 		}

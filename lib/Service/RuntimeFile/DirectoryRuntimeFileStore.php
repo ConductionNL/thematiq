@@ -60,7 +60,7 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	public function read(string $name): ?string {
 		$this->names->assertAllowed(name: $name);
 
-		return LocalFile::contents(path: $this->path(name: $name));
+		return (new LocalFile())->contents(path: $this->path(name: $name));
 	}//end read()
 
 	/**

@@ -55,7 +55,7 @@ class SetFileReader {
 			return $store->read(name: $name);
 		}
 
-		return LocalFile::contents(path: rtrim($appPath, '/') . '/' . $name);
+		return (new LocalFile())->contents(path: rtrim($appPath, '/') . '/' . $name);
 	}//end read()
 
 	/**
