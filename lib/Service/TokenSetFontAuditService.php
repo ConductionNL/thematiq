@@ -196,12 +196,10 @@ class TokenSetFontAuditService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function auditSet(string $appPath, string $id, array $meta): array {
-		$designSystem = (string)($meta['design_system'] ?? 'nldesign');
 		$declarations = $this->setDeclarations(appPath: $appPath, id: $id);
 		$family = $this->familyOf(declarations: $declarations);
 		$declared = $this->fontBlock(meta: $meta);
-		$selfHosted = ($family !== null
-			&& \in_array($family, $this->selfHostedFamilies(appPath: $appPath, designSystem: $designSystem), true) === true);
+		$selfHosted = ($family !== null && \in_array($family, $this->systemFaces(appPath: $appPath, meta: $meta), true) === true);
 		$kind = ($this->servedKind(family: $family, selfHosted: $selfHosted) ?? $this->declaredKind(declared: $declared));
 
 		return [
@@ -214,6 +212,18 @@ class TokenSetFontAuditService {
 			'ok' => ($kind !== 'undeclared'),
 		];
 	}//end auditSet()
+
+	/**
+	 * The families the set's design system serves itself.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param array<string, mixed> $meta The set's manifest entry, naming its design system (`nldesign` when none).
+	 *
+	 * @return array<int, string> The self-hosted family names.
+	 */
+	private function systemFaces(string $appPath, array $meta): array {
+		return $this->selfHostedFamilies(appPath: $appPath, designSystem: (string)($meta['design_system'] ?? 'nldesign'));
+	}//end systemFaces()
 
 	/**
 	 * The custom properties a shipped set's file declares, [] when it has no file.
@@ -372,7 +382,7 @@ class TokenSetFontAuditService {
 	 *
 	 * @return string|null `system` or `self-hosted`, or null when it is neither.
 	 */
-	private function servedKind(?string $family, bool $selfHosted): ?string {
+	private function servedKind(string|null $family, bool $selfHosted): string|null {
 		// A set that names no family of its own leaves the choice to its design
 		// system's own stylesheet; there is nothing here to serve or to declare.
 		if ($family === null || \in_array($family, self::SYSTEM_FAMILIES, true) === true) {
