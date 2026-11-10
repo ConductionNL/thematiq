@@ -120,38 +120,61 @@ class TokenSetFontAuditService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function selfHostedFamilies(string $appPath, string $designSystem): array {
-		$manifestPath = $appPath . '/design-systems.json';
-		if (is_readable($manifestPath) === false) {
-			return [];
-		}
-
-		$manifest = json_decode((string)file_get_contents($manifestPath), true);
-		if (is_array($manifest) === false) {
-			return [];
-		}
-
 		$families = [];
-		foreach ($manifest as $system) {
+		foreach ($this->readJson(path: $appPath . '/design-systems.json') as $system) {
 			if (is_array($system) === false || ($system['id'] ?? null) !== $designSystem) {
 				continue;
 			}
 
-			foreach (($system['stylesheets'] ?? []) as $stylesheet) {
-				$path = $appPath . '/css/' . $stylesheet . '.css';
-				if (is_file($path) === false) {
-					continue;
-				}
-
-				$css = (string)file_get_contents($path);
-				preg_match_all("/font-family:\s*'([^']+)'/", $this->stripComments(css: $css), $matches);
-				foreach ($matches[1] as $family) {
-					$families[$family] = true;
-				}
-			}
+			$families += $this->linkedFaces(appPath: $appPath, stylesheets: ($system['stylesheets'] ?? []));
 		}
 
 		return array_keys($families);
 	}//end selfHostedFamilies()
+
+	/**
+	 * The families the linked stylesheets that exist declare an `@font-face` for.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param mixed $stylesheets The design system's stylesheet names, relative to `css/` without `.css`.
+	 *
+	 * @return array<string, true> The family names, in the order first found.
+	 */
+	private function linkedFaces(string $appPath, mixed $stylesheets): array {
+		$families = [];
+		foreach ($stylesheets as $stylesheet) {
+			$path = $appPath . '/css/' . $stylesheet . '.css';
+			if (is_file($path) === false) {
+				continue;
+			}
+
+			$css = (string)file_get_contents($path);
+			preg_match_all("/font-family:\s*'([^']+)'/", $this->stripComments(css: $css), $matches);
+			$families += array_fill_keys($matches[1], true);
+		}
+
+		return $families;
+	}//end linkedFaces()
+
+	/**
+	 * A JSON document of the app as an array, [] when it cannot be read or is no array.
+	 *
+	 * @param string $path The file path.
+	 *
+	 * @return array<mixed> The decoded document.
+	 */
+	private function readJson(string $path): array {
+		if (is_readable($path) === false) {
+			return [];
+		}
+
+		$decoded = json_decode((string)file_get_contents($path), true);
+		if (is_array($decoded) === false) {
+			return [];
+		}
+
+		return $decoded;
+	}//end readJson()
 
 	/**
 	 * Audit one shipped set's typeface.
@@ -174,41 +197,77 @@ class TokenSetFontAuditService {
 	 */
 	public function auditSet(string $appPath, string $id, array $meta): array {
 		$designSystem = (string)($meta['design_system'] ?? 'nldesign');
-		$path = $appPath . '/css/tokens/' . $id . '.css';
-		$declarations = [];
-		if (is_file($path) === true) {
-			$declarations = ($this->parser->parseDeclarations(content: (string)file_get_contents($path)) ?? []);
-		}
-
-		$stack = ($declarations[self::FAMILY_TOKEN] ?? null);
-		$family = null;
-		if ($stack !== null) {
-			$resolved = $this->parser->resolveVarChain(value: $stack, declarations: $declarations);
-			if ($resolved['value'] !== null) {
-				$family = $this->firstFamily(stack: $resolved['value']);
-			}
-		}
-
-		$declared = ($meta['font'] ?? null);
-		if (is_array($declared) === false) {
-			$declared = null;
-		}
-
+		$declarations = $this->setDeclarations(appPath: $appPath, id: $id);
+		$family = $this->familyOf(declarations: $declarations);
+		$declared = $this->fontBlock(meta: $meta);
 		$selfHosted = ($family !== null
 			&& \in_array($family, $this->selfHostedFamilies(appPath: $appPath, designSystem: $designSystem), true) === true);
-
-		$kind = $this->classify(family: $family, selfHosted: $selfHosted, declared: $declared);
+		$kind = ($this->servedKind(family: $family, selfHosted: $selfHosted) ?? $this->declaredKind(declared: $declared));
 
 		return [
 			'id' => $id,
 			'family' => $family,
-			'stack' => $stack,
+			'stack' => ($declarations[self::FAMILY_TOKEN] ?? null),
 			'kind' => $kind,
 			'selfHosted' => $selfHosted,
 			'declared' => $declared,
 			'ok' => ($kind !== 'undeclared'),
 		];
 	}//end auditSet()
+
+	/**
+	 * The custom properties a shipped set's file declares, [] when it has no file.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $id The token set id.
+	 *
+	 * @return array<string, string> The declarations.
+	 */
+	private function setDeclarations(string $appPath, string $id): array {
+		$path = $appPath . '/css/tokens/' . $id . '.css';
+		if (is_file($path) === false) {
+			return [];
+		}
+
+		return ($this->parser->parseDeclarations(content: (string)file_get_contents($path)) ?? []);
+	}//end setDeclarations()
+
+	/**
+	 * The first family a set's font token names, its var() chain resolved.
+	 *
+	 * @param array<string, string> $declarations The set's declarations.
+	 *
+	 * @return string|null The family, or null when the set names none.
+	 */
+	private function familyOf(array $declarations): ?string {
+		$stack = ($declarations[self::FAMILY_TOKEN] ?? null);
+		if ($stack === null) {
+			return null;
+		}
+
+		$resolved = $this->parser->resolveVarChain(value: $stack, declarations: $declarations);
+		if ($resolved['value'] === null) {
+			return null;
+		}
+
+		return $this->firstFamily(stack: $resolved['value']);
+	}//end familyOf()
+
+	/**
+	 * The set's `font` block, null when it has none.
+	 *
+	 * @param array<string, mixed> $meta The set's manifest entry.
+	 *
+	 * @return array<string, mixed>|null The block.
+	 */
+	private function fontBlock(array $meta): ?array {
+		$declared = ($meta['font'] ?? null);
+		if (is_array($declared) === false) {
+			return null;
+		}
+
+		return $declared;
+	}//end fontBlock()
 
 	/**
 	 * Audit every shipped set in `css/tokens/`, ordered by id.
@@ -220,18 +279,7 @@ class TokenSetFontAuditService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
 	public function auditAll(string $appPath): array {
-		$manifest = [];
-		$manifestPath = $appPath . '/token-sets.json';
-		if (is_readable($manifestPath) === true) {
-			$decoded = json_decode((string)file_get_contents($manifestPath), true);
-			if (is_array($decoded) === true) {
-				foreach ($decoded as $entry) {
-					if (is_array($entry) === true && is_string(($entry['id'] ?? null)) === true) {
-						$manifest[$entry['id']] = $entry;
-					}
-				}
-			}
-		}
+		$manifest = $this->manifestById(appPath: $appPath);
 
 		$files = glob($appPath . '/css/tokens/*.css');
 		if (is_array($files) === false) {
@@ -248,6 +296,24 @@ class TokenSetFontAuditService {
 
 		return $results;
 	}//end auditAll()
+
+	/**
+	 * The `token-sets.json` entries that have a string id, by id.
+	 *
+	 * @param string $appPath The app root path.
+	 *
+	 * @return array<string, array<string, mixed>> The entries.
+	 */
+	private function manifestById(string $appPath): array {
+		$manifest = [];
+		foreach ($this->readJson(path: $appPath . '/token-sets.json') as $entry) {
+			if (is_array($entry) === true && is_string(($entry['id'] ?? null)) === true) {
+				$manifest[$entry['id']] = $entry;
+			}
+		}
+
+		return $manifest;
+	}//end manifestById()
 
 	/**
 	 * The non-blocking admin warning for one set's typeface.
@@ -274,31 +340,39 @@ class TokenSetFontAuditService {
 			return [];
 		}
 
-		$declared = ($result['declared'] ?? []);
-
-		return [
-			[
-				'kind' => 'font',
-				'family' => $result['family'],
-				'licence' => ($declared['licence'] ?? null),
-				'licenceHolder' => ($declared['licenceHolder'] ?? null),
-				'action' => ($declared['action'] ?? null),
-				'note' => ($declared['note'] ?? null),
-			],
-		];
+		return [$this->fontWarning(result: $result)];
 	}//end warningsFor()
 
 	/**
-	 * Classify one set's typeface into the three acceptable outcomes, or
-	 * `undeclared`.
+	 * The warning entry for a set whose family cannot be served: the family, the licence position and the action.
+	 *
+	 * @param array<string, mixed> $result The set's audit result.
+	 *
+	 * @return array<string, mixed> The warning.
+	 */
+	private function fontWarning(array $result): array {
+		$declared = ($result['declared'] ?? []);
+
+		return [
+			'kind' => 'font',
+			'family' => $result['family'],
+			'licence' => ($declared['licence'] ?? null),
+			'licenceHolder' => ($declared['licenceHolder'] ?? null),
+			'action' => ($declared['action'] ?? null),
+			'note' => ($declared['note'] ?? null),
+		];
+	}//end fontWarning()
+
+	/**
+	 * Whether a set's typeface needs nothing served: it names a system family
+	 * (or none), or a linked stylesheet serves it.
 	 *
 	 * @param string|null $family The first family the set names, or null.
 	 * @param bool $selfHosted Whether a linked stylesheet declares it.
-	 * @param array<string,mixed>|null $declared The set's `font` block, when it has one.
 	 *
-	 * @return string One of `self-hosted`, `system`, `declared`, `undeclared`.
+	 * @return string|null `system` or `self-hosted`, or null when it is neither.
 	 */
-	private function classify(?string $family, bool $selfHosted, ?array $declared): string {
+	private function servedKind(?string $family, bool $selfHosted): ?string {
 		// A set that names no family of its own leaves the choice to its design
 		// system's own stylesheet; there is nothing here to serve or to declare.
 		if ($family === null || \in_array($family, self::SYSTEM_FAMILIES, true) === true) {
@@ -309,12 +383,23 @@ class TokenSetFontAuditService {
 			return 'self-hosted';
 		}
 
+		return null;
+	}//end servedKind()
+
+	/**
+	 * Whether a set whose typeface is not served says so in full.
+	 *
+	 * @param array<string,mixed>|null $declared The set's `font` block, when it has one.
+	 *
+	 * @return string `declared` or `undeclared`.
+	 */
+	private function declaredKind(?array $declared): string {
 		if ($this->declaresUndistributable(declared: $declared) === true) {
 			return 'declared';
 		}
 
 		return 'undeclared';
-	}//end classify()
+	}//end declaredKind()
 
 	/**
 	 * Whether a `font` block says, in full, that the family cannot be served.
