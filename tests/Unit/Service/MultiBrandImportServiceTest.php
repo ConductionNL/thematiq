@@ -544,4 +544,114 @@ final class MultiBrandImportServiceTest extends TestCase {
 		$document['$themes'][1]['name'] = 'Noord';
 		$this->assertCount(expectedCount: 2, haystack: $this->imports->brands(content: (string)json_encode($document)));
 	}//end testALightAndDarkFileIsNotTwoBrands()
+	/**
+	 * An import records its source and audits each stored brand with the uploaded file's name.
+	 *
+	 * @return void
+	 */
+	public function testImportRecordsTheSourceAndAuditsEachBrand(): void {
+		$calls = [];
+		$this->audit->method('log')->willReturnCallback(function (string $action, array $context) use (&$calls): void {
+			$calls[] = [$action, $context];
+		});
+		$content = $this->fixture(name: 'two-brand-classes.css');
+
+		$result = $this->imports->import(sourceName: 'Voorbeeld', content: $content, keys: ['noord', 'zuid'], fileName: 'stad.css');
+
+		$this->assertSame(expected: 'voorbeeld', actual: $result['sourceId']);
+		$this->assertSame(expected: ['noord', 'zuid'], actual: array_column($result['sets'], 'brand'));
+		$this->assertSame(expected: ['custom-voorbeeld-noord', 'custom-voorbeeld-zuid'], actual: array_column($result['sets'], 'id'));
+		$record = $this->imports->records()['voorbeeld'];
+		$this->assertSame(expected: ['name', 'inputKind', 'contentHash', 'brands', 'updatedAt'], actual: array_keys($record));
+		$this->assertSame(expected: 'Voorbeeld', actual: $record['name']);
+		$this->assertSame(expected: ['noord' => 'custom-voorbeeld-noord', 'zuid' => 'custom-voorbeeld-zuid'], actual: $record['brands']);
+		$this->assertNotSame(expected: '', actual: $record['inputKind']);
+		$this->assertNotSame(expected: '', actual: $record['contentHash']);
+		$this->assertSame(expected: ['custom_set_uploaded', 'custom_set_uploaded'], actual: array_column($calls, 0));
+		$this->assertSame(
+			expected: ['id', 'name', 'declarationCount', 'sourceId', 'brand', 'file'],
+			actual: array_keys($calls[0][1])
+		);
+		$this->assertSame(expected: 'custom-voorbeeld-zuid', actual: $calls[1][1]['id']);
+		$this->assertSame(expected: 'Voorbeeld: Zuid', actual: $calls[1][1]['name']);
+		$this->assertSame(expected: 'voorbeeld', actual: $calls[1][1]['sourceId']);
+		$this->assertSame(expected: 'zuid', actual: $calls[1][1]['brand']);
+		$this->assertSame(expected: 'stad.css', actual: $calls[1][1]['file']);
+		$this->assertSame(
+			expected: ['source' => ['id' => 'voorbeeld', 'brand' => 'noord']],
+			actual: array_intersect_key($this->sets->getManifest()['custom-voorbeeld-noord'], ['source' => true])
+		);
+	}//end testImportRecordsTheSourceAndAuditsEachBrand()
+
+	/**
+	 * A second import under a source name that exists is refused with 409, writing nothing.
+	 *
+	 * @return void
+	 */
+	public function testImportOfAnExistingSourceIs409(): void {
+		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord']);
+		$before = $this->imports->records();
+
+		try {
+			$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['zuid']);
+			$this->fail(message: 'expected a refusal');
+		} catch (RuntimeException $e) {
+			$this->assertSame(expected: 409, actual: $e->getCode());
+			$this->assertSame(expected: 'A source named "Voorbeeld" already exists. Update it instead.', actual: $e->getMessage());
+		}
+
+		$this->assertSame(expected: $before, actual: $this->imports->records());
+		$this->assertArrayNotHasKey(key: 'custom-voorbeeld-zuid', array: $this->sets->getManifest());
+	}//end testImportOfAnExistingSourceIs409()
+
+	/**
+	 * An update audits the old and new content hash with its report, and restamps the record.
+	 *
+	 * @return void
+	 */
+	public function testUpdateAuditsTheHashesAndRestampsTheRecord(): void {
+		$this->imports->import(sourceName: 'Voorbeeld', content: $this->fixture(name: 'two-brand-classes.css'), keys: ['noord', 'zuid']);
+		$oldHash = $this->imports->records()['voorbeeld']['contentHash'];
+		$calls = [];
+		$this->audit->method('log')->willReturnCallback(function (string $action, array $context) use (&$calls): void {
+			$calls[] = [$action, $context];
+		});
+		$changed = str_replace('#154273', '#0b2a4a', $this->fixture(name: 'two-brand-classes.css'));
+
+		$report = $this->imports->update(sourceId: 'voorbeeld', content: $changed, fileName: 'stad-2.css');
+
+		$this->assertSame(expected: ['updated' => ['noord', 'zuid'], 'missing' => [], 'new' => []], actual: $report);
+		$record = $this->imports->records()['voorbeeld'];
+		$this->assertNotSame(expected: $oldHash, actual: $record['contentHash']);
+		$this->assertSame(expected: ['name', 'inputKind', 'contentHash', 'brands', 'updatedAt'], actual: array_keys($record));
+		$this->assertSame(
+			expected: [
+				[
+					'custom_source_updated',
+					[
+						'sourceId' => 'voorbeeld',
+						'old' => $oldHash,
+						'new' => $record['contentHash'],
+						'updated' => ['noord', 'zuid'],
+						'missing' => [],
+					],
+				],
+			],
+			actual: $calls
+		);
+		$this->assertSame(expected: ['id' => 'voorbeeld', 'brand' => 'noord'], actual: $this->sets->getManifest()['custom-voorbeeld-noord']['source']);
+	}//end testUpdateAuditsTheHashesAndRestampsTheRecord()
+
+	/**
+	 * An update of a source that is not recorded is refused with 404.
+	 *
+	 * @return void
+	 */
+	public function testUpdateOfAnUnknownSourceIs404(): void {
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 404);
+		$this->expectExceptionMessage(message: 'Unknown source.');
+
+		$this->imports->update(sourceId: 'onbekend', content: $this->fixture(name: 'two-brand-classes.css'));
+	}//end testUpdateOfAnUnknownSourceIs404()
 }//end class
