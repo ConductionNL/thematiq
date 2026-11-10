@@ -51,7 +51,7 @@ class ReuseLicences {
 	 * Whether a file of the repository still holds a statement written down about it.
 	 *
 	 * @param string $appPath The app root path.
-	 * @param array{source: string, quote: string} $statement The repository-relative file and the words it says.
+	 * @param array<string, string> $statement The repository-relative file (`source`) and the words it says (`quote`).
 	 *
 	 * @return bool True while the file holds the quote.
 	 *
