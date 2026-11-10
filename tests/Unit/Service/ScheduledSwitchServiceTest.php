@@ -23,6 +23,8 @@ use OCA\Thematiq\Service\ScheduledSwitchRuntime;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ScheduledSwitchTargets;
+use OCA\Thematiq\Service\SwitchPlan;
+use OCA\Thematiq\Service\SwitchWindow;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -227,12 +229,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return array<string, mixed> The planned entry.
 	 */
 	private function planKingsDay(): array {
-		return $this->service->create(
-			tokenSet: 'koningsdag-oranje',
-			startAt: '2027-04-26T18:00:00+02:00',
-			endAt: '2027-04-28T08:00:00+02:00',
-			createdBy: 'admin'
-		);
+		return $this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-26T18:00:00+02:00', endAt: '2027-04-28T08:00:00+02:00')), createdBy: 'admin');
 	}//end planKingsDay()
 
 	/**
@@ -259,10 +256,10 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOverlappingPlanIsRefused(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-07T00:00:00Z', createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-07T00:00:00Z')), createdBy: 'admin');
 
 		try {
-			$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-05-05T00:00:00Z', endAt: '2027-05-10T00:00:00Z', createdBy: 'admin');
+			$this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-05-05T00:00:00Z', endAt: '2027-05-10T00:00:00Z')), createdBy: 'admin');
 			$this->fail(message: 'An overlapping window was accepted.');
 		} catch (ScheduledSwitchException $e) {
 			$this->assertStringContainsString(needle: 'overlaps', haystack: $e->getMessage());
@@ -277,10 +274,10 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOpenEndedSwitchOverlapsEveryLaterWindow(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: null, createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-05-01T00:00:00Z', endAt: null)), createdBy: 'admin');
 
 		$this->expectException(exception: ScheduledSwitchException::class);
-		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-06-01T00:00:00Z', endAt: '2027-06-02T00:00:00Z', createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-06-01T00:00:00Z', endAt: '2027-06-02T00:00:00Z')), createdBy: 'admin');
 	}//end testOpenEndedSwitchOverlapsEveryLaterWindow()
 
 	/**
@@ -291,7 +288,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	public function testUnknownTokenSetIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
 		$this->expectExceptionMessage(message: 'does not exist');
-		$this->service->create(tokenSet: 'bestaat-niet', startAt: '2027-05-01T00:00:00Z', endAt: null, createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'bestaat-niet', window: new SwitchWindow(startAt: '2027-05-01T00:00:00Z', endAt: null)), createdBy: 'admin');
 	}//end testUnknownTokenSetIsRefused()
 
 	/**
@@ -302,7 +299,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	public function testEndBeforeStartIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
 		$this->expectExceptionMessage(message: 'after the start');
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-01T00:00:00Z', createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-05-01T00:00:00Z', endAt: '2027-05-01T00:00:00Z')), createdBy: 'admin');
 	}//end testEndBeforeStartIsRefused()
 
 	/**
@@ -313,7 +310,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 */
 	public function testAWindowThatIsAlreadyOverIsRefused(): void {
 		try {
-			$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-20T12:00:00Z', createdBy: 'admin');
+			$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-20T12:00:00Z')), createdBy: 'admin');
 			$this->fail(message: 'A window that ended was accepted.');
 		} catch (ScheduledSwitchException $e) {
 			$this->assertStringContainsString(needle: 'in the future', haystack: $e->getMessage());
@@ -321,12 +318,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 
 		$this->assertSame(expected: [], actual: $this->service->list());
 
-		$entry = $this->service->create(
-			tokenSet: 'koningsdag-oranje',
-			startAt: '2027-04-19T08:00:00Z',
-			endAt: '2027-04-21T08:00:00Z',
-			createdBy: 'admin'
-		);
+		$entry = $this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-19T08:00:00Z', endAt: '2027-04-21T08:00:00Z')), createdBy: 'admin');
 		$this->assertSame(expected: 'planned', actual: $entry['status']);
 	}//end testAWindowThatIsAlreadyOverIsRefused()
 
@@ -337,7 +329,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 */
 	public function testUnparsableTimeIsRefused(): void {
 		$this->expectException(exception: ScheduledSwitchException::class);
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: 'next tuesday-ish', endAt: null, createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: 'next tuesday-ish', endAt: null)), createdBy: 'admin');
 	}//end testUnparsableTimeIsRefused()
 
 	/**
@@ -385,13 +377,8 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testBackToBackSwitchesPlannedOutOfOrderReturnToTheOriginalLook(): void {
-		$later = $this->service->create(
-			tokenSet: 'custom-campagne',
-			startAt: '2027-05-01T17:00:00Z',
-			endAt: '2027-05-01T19:00:00Z',
-			createdBy: 'admin'
-		);
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-05-01T15:00:00Z', endAt: '2027-05-01T17:00:00Z', createdBy: 'admin');
+		$later = $this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-05-01T17:00:00Z', endAt: '2027-05-01T19:00:00Z')), createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-05-01T15:00:00Z', endAt: '2027-05-01T17:00:00Z')), createdBy: 'admin');
 
 		$this->at(iso: '2027-05-01T15:01:00Z');
 		$this->service->runDue();
@@ -598,7 +585,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testASetWithoutThemingWritesNoCoreTheming(): void {
-		$this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z')), createdBy: 'admin');
 		$this->theming->expects($this->never())->method('applyColors');
 
 		$this->at(iso: '2027-04-21T00:03:00Z');
@@ -630,7 +617,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testOpenEndedSwitchLeavesTheListOnceApplied(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-21T00:00:00Z', endAt: null)), createdBy: 'admin');
 
 		$this->at(iso: '2027-04-21T00:04:00Z');
 		$this->service->runDue();
@@ -645,12 +632,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testASwitchToADeletedSetFailsVisibly(): void {
-		$entry = $this->service->create(
-			tokenSet: 'custom-campagne',
-			startAt: '2027-04-21T00:00:00Z',
-			endAt: '2027-04-22T00:00:00Z',
-			createdBy: 'admin'
-		);
+		$entry = $this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z')), createdBy: 'admin');
 		$this->sets = ['rijkshuisstijl', 'koningsdag-oranje', 'nextcloud'];
 
 		$this->at(iso: '2027-04-21T00:03:00Z');
@@ -719,7 +701,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnOpenEndedSwitchTakesNoSnapshot(): void {
-		$this->service->create(tokenSet: 'koningsdag-oranje', startAt: '2027-04-21T00:00:00Z', endAt: null, createdBy: 'admin');
+		$this->service->create(plan: new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-21T00:00:00Z', endAt: null)), createdBy: 'admin');
 
 		$this->at(iso: '2027-04-21T00:04:00Z');
 		$this->service->runDue();
@@ -874,7 +856,7 @@ class ScheduledSwitchServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testEachSwitchThatCannotBeAppliedLogsAWarning(): void {
-		$failing = $this->service->create(tokenSet: 'custom-campagne', startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z', createdBy: 'admin');
+		$failing = $this->service->create(plan: new SwitchPlan(tokenSet: 'custom-campagne', window: new SwitchWindow(startAt: '2027-04-21T00:00:00Z', endAt: '2027-04-22T00:00:00Z')), createdBy: 'admin');
 		$this->sets = ['rijkshuisstijl', 'koningsdag-oranje', 'nextcloud'];
 		$this->at(iso: '2027-04-21T00:03:00Z');
 		$this->service->runDue();
