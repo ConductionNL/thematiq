@@ -484,6 +484,6 @@ class DesignSystemService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-38
 	 */
 	private function readJsonManifest(string $path): array {
-		return IndexedJsonManifest::read(path: $path);
+		return (new IndexedJsonManifest())->read(path: $path);
 	}//end readJsonManifest()
 }//end class

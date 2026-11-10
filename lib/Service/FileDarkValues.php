@@ -94,7 +94,7 @@ class FileDarkValues {
 	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function fromTree(array $tree): array {
-		$leaves = DtcgTokenLeaves::of(tree: $tree);
+		$leaves = (new DtcgTokenLeaves())->leavesOf(tree: $tree);
 
 		$out = [];
 		foreach ($leaves as $leaf) {

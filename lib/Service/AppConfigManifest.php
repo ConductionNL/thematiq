@@ -24,8 +24,9 @@ use OCA\Thematiq\AppInfo\Application;
 use OCP\IConfig;
 
 /**
- * The manifest of uploaded custom sets or fonts: an object indexed by id,
- * stored as JSON under one app config key, and listed by name.
+ * One app config key of this app: the manifest of uploaded custom sets or
+ * fonts (an object indexed by id, stored as JSON and listed by name), or a
+ * plain value such as a revision counter.
  *
  * @spec openspec/specs/custom-fonts/spec.md
  */
@@ -79,6 +80,32 @@ final class AppConfigManifest {
 	}//end save()
 
 	/**
+	 * The stored value as it is.
+	 *
+	 * @param string $default The value when none is stored.
+	 *
+	 * @return string The value.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md
+	 */
+	public function value(string $default): string {
+		return $this->config->getAppValue(Application::APP_ID, $this->key, $default);
+	}//end value()
+
+	/**
+	 * Store a plain value.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md
+	 */
+	public function setValue(string $value): void {
+		$this->config->setAppValue(Application::APP_ID, $this->key, $value);
+	}//end setValue()
+
+	/**
 	 * One manifest entry as a listing returns it: its metadata with its id.
 	 *
 	 * @param int|string $id The entry's id.
@@ -88,7 +115,7 @@ final class AppConfigManifest {
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
-	public static function listed(int|string $id, mixed $meta): array {
+	public function listed(int|string $id, mixed $meta): array {
 		$entry = [];
 		if (is_array($meta) === true) {
 			$entry = $meta;
@@ -108,7 +135,7 @@ final class AppConfigManifest {
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
-	public static function byName(array $entries): array {
+	public function byName(array $entries): array {
 		usort($entries, fn ($a, $b) => strcasecmp(($a['name'] ?? $a['id']), ($b['name'] ?? $b['id'])));
 
 		return $entries;
@@ -126,7 +153,7 @@ final class AppConfigManifest {
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
-	public static function slugify(string $name): string {
+	public function slugify(string $name): string {
 		$slug = strtolower(trim($name));
 		$slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
 		$slug = trim($slug, '-');

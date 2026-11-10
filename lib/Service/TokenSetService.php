@@ -529,7 +529,7 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md
 	 */
 	private function readManifest(string $manifestPath): array {
-		return IndexedJsonManifest::read(path: $manifestPath);
+		return (new IndexedJsonManifest())->read(path: $manifestPath);
 	}//end readManifest()
 
 	/**

@@ -39,7 +39,7 @@ final class IndexedJsonManifest {
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
 	 */
-	public static function read(string $path): array {
+	public function read(string $path): array {
 		if (file_exists($path) === false) {
 			return [];
 		}
@@ -54,7 +54,7 @@ final class IndexedJsonManifest {
 			return [];
 		}
 
-		return self::indexed(data: $data);
+		return $this->indexed(data: $data);
 	}//end read()
 
 	/**
@@ -64,7 +64,7 @@ final class IndexedJsonManifest {
 	 *
 	 * @return array<string, array<string, mixed>> Entries indexed by id.
 	 */
-	private static function indexed(array $data): array {
+	private function indexed(array $data): array {
 		$indexed = [];
 		foreach ($data as $entry) {
 			if (isset($entry['id']) === true) {

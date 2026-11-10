@@ -225,7 +225,7 @@ class FigmaTokenReader {
 	 * @return array<string, mixed> The document.
 	 */
 	private function named(array $document, array &$skipped): array {
-		$leaves = DtcgTokenLeaves::of(tree: $document);
+		$leaves = (new DtcgTokenLeaves())->leavesOf(tree: $document);
 		$cssOnly = (array)($document['$extensions'][self::EXTENSION]['cssOnly'] ?? []);
 
 		foreach ($leaves as $dotted => $leaf) {

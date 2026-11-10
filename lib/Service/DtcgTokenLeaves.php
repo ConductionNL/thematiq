@@ -45,9 +45,9 @@ final class DtcgTokenLeaves {
 	 *
 	 * @spec openspec/specs/figma-token-files/spec.md#requirement-a-file-from-figma-becomes-a-custom-token-set
 	 */
-	public static function of(array $tree): array {
-		return self::under(node: $tree, path: []);
-	}//end of()
+	public function leavesOf(array $tree): array {
+		return $this->under(node: $tree, path: []);
+	}//end leavesOf()
 
 	/**
 	 * Every token under a group; a later token at the same dotted path replaces the value and keeps the first one's place.
@@ -57,14 +57,14 @@ final class DtcgTokenLeaves {
 	 *
 	 * @return array<string, array{path: array<int, string>, token: array<string, mixed>}> Dotted path to `path` and `token`.
 	 */
-	private static function under(array $node, array $path): array {
+	private function under(array $node, array $path): array {
 		$leaves = [];
 		foreach ($node as $key => $child) {
 			if (is_array($child) === false || str_starts_with((string)$key, '$') === true) {
 				continue;
 			}
 
-			$leaves = array_replace($leaves, self::childLeaves(child: $child, here: [...$path, (string)$key]));
+			$leaves = array_replace($leaves, $this->childLeaves(child: $child, here: [...$path, (string)$key]));
 		}
 
 		return $leaves;
@@ -78,13 +78,13 @@ final class DtcgTokenLeaves {
 	 *
 	 * @return array<string, array{path: array<int, string>, token: array<string, mixed>}> Dotted path to `path` and `token`.
 	 */
-	private static function childLeaves(array $child, array $here): array {
+	private function childLeaves(array $child, array $here): array {
 		if (array_key_exists('$value', $child) === true) {
 			return [implode('.', $here) => ['path' => $here, 'token' => $child]];
 		}
 
 		if ((count($here) - 1) < self::MAX_DEPTH) {
-			return self::under(node: $child, path: $here);
+			return $this->under(node: $child, path: $here);
 		}
 
 		return [];
