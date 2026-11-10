@@ -77,6 +77,37 @@ class CustomCssValidator {
 	];
 
 	/**
+	 * Patterns checked before the url() rule, with their messages.
+	 *
+	 * `@import` fetches a remote stylesheet on every page load — both an
+	 * exfiltration channel (the request itself carries the referrer) and a
+	 * content-injection vector. `@charset` can change how the remaining
+	 * bytes are decoded.
+	 *
+	 * @var array<string, string>
+	 */
+	private const BLOCKED_BEFORE_URLS = [
+		'/@(?:import|charset)\b/i' => '@import and @charset are not allowed.',
+	];
+
+	/**
+	 * Patterns checked after the url() rule, with their messages.
+	 *
+	 * Legacy script-execution vectors: modern engines ignore them, but they
+	 * cost nothing to refuse and keep the rule set honest. And, as defence in
+	 * depth, HTML tags: the document is served as a linked stylesheet, not
+	 * inlined, so a breakout is not currently reachable — but refusing the
+	 * sequences means a future change to inline delivery cannot silently turn
+	 * this into an XSS sink.
+	 *
+	 * @var array<string, string>
+	 */
+	private const BLOCKED_AFTER_URLS = [
+		'/(?:expression\s*\(|behavior\s*:|-moz-binding\s*:)/i' => 'expression(), behavior: and -moz-binding: are not allowed.',
+		'#</\s*style|<\s*script#i' => 'HTML tags are not allowed in custom CSS.',
+	];
+
+	/**
 	 * Validate a freeform CSS document.
 	 *
 	 * @param string $css The admin-submitted CSS.
@@ -87,51 +118,86 @@ class CustomCssValidator {
 	 * @spec openspec/specs/custom-css-freeform/spec.md
 	 */
 	public function validate(string $css): array {
+		return [
+			...$this->sizeErrors(css: $css),
+			...$this->matchedErrors(css: $css, rules: self::BLOCKED_BEFORE_URLS),
+			...$this->urlErrors(css: $css),
+			...$this->matchedErrors(css: $css, rules: self::BLOCKED_AFTER_URLS),
+			...$this->reservedErrors(css: $css),
+			...$this->braceErrors(css: $css),
+		];
+	}//end validate()
+
+	/**
+	 * The error for a document over the size limit.
+	 *
+	 * @param string $css The submitted CSS.
+	 *
+	 * @return array<int, string> The error, or none.
+	 */
+	private function sizeErrors(string $css): array {
+		if (strlen($css) <= self::MAX_BYTES) {
+			return [];
+		}
+
+		return [sprintf('Custom CSS is %d bytes, which exceeds the %d byte limit.', strlen($css), self::MAX_BYTES)];
+	}//end sizeErrors()
+
+	/**
+	 * The message of every rule whose pattern the document matches, in the rules' order.
+	 *
+	 * @param string $css The submitted CSS.
+	 * @param array<string, string> $rules Pattern => message.
+	 *
+	 * @return array<int, string> The errors.
+	 */
+	private function matchedErrors(string $css, array $rules): array {
 		$errors = [];
-
-		if (strlen($css) > self::MAX_BYTES) {
-			$errors[] = sprintf(
-				'Custom CSS is %d bytes, which exceeds the %d byte limit.',
-				strlen($css),
-				self::MAX_BYTES
-			);
+		foreach ($rules as $pattern => $message) {
+			if (preg_match($pattern, $css) === 1) {
+				$errors[] = $message;
+			}
 		}
 
-		// `@import` fetches a remote stylesheet on every page load — both an
-		// exfiltration channel (the request itself carries the referrer) and a
-		// content-injection vector. `@charset` can change how the remaining
-		// bytes are decoded.
-		if (preg_match('/@(?:import|charset)\b/i', $css) === 1) {
-			$errors[] = '@import and @charset are not allowed.';
-		}
+		return $errors;
+	}//end matchedErrors()
 
-		// The url() function is the classic CSS exfiltration channel: with
-		// attribute selectors it can leak page content to a third party via
-		// background-image, @font-face src, cursor or list-style-image.
-		// Relative/same-origin references and data: URIs cannot reach another
-		// origin, so those remain available for legitimate theming.
+	/**
+	 * The error for a url() that could reach another origin.
+	 *
+	 * The url() function is the classic CSS exfiltration channel: with
+	 * attribute selectors it can leak page content to a third party via
+	 * background-image, @font-face src, cursor or list-style-image.
+	 * Relative/same-origin references and data: URIs cannot reach another
+	 * origin, so those remain available for legitimate theming.
+	 *
+	 * @param string $css The submitted CSS.
+	 *
+	 * @return array<int, string> The error, or none.
+	 */
+	private function urlErrors(string $css): array {
 		$offendingScheme = $this->firstDisallowedUrlScheme(css: $css);
-		if ($offendingScheme !== null) {
-			$errors[] = sprintf(
+		if ($offendingScheme === null) {
+			return [];
+		}
+
+		return [
+			sprintf(
 				'External url() references are not allowed (found "%s"); use a relative path or a data: URI.',
 				$offendingScheme
-			);
-		}
+			),
+		];
+	}//end urlErrors()
 
-		// Legacy script-execution vectors. Modern engines ignore them, but
-		// they cost nothing to refuse and keep the rule set honest.
-		if (preg_match('/(?:expression\s*\(|behavior\s*:|-moz-binding\s*:)/i', $css) === 1) {
-			$errors[] = 'expression(), behavior: and -moz-binding: are not allowed.';
-		}
-
-		// Defence in depth. The document is served as a linked stylesheet, not
-		// inlined, so a breakout is not currently reachable — but refusing the
-		// sequences means a future change to inline delivery cannot silently
-		// turn this into an XSS sink.
-		if (preg_match('#</\s*style|<\s*script#i', $css) === 1) {
-			$errors[] = 'HTML tags are not allowed in custom CSS.';
-		}
-
+	/**
+	 * The errors for the reserved dark-mode variables the document sets.
+	 *
+	 * @param string $css The submitted CSS.
+	 *
+	 * @return array<int, string> One error per reserved variable set.
+	 */
+	private function reservedErrors(string $css): array {
+		$errors = [];
 		foreach (self::RESERVED_VARIABLES as $reserved) {
 			if (preg_match('/' . preg_quote($reserved, '/') . '\s*:/', $css) === 1) {
 				$errors[] = sprintf(
@@ -141,15 +207,27 @@ class CustomCssValidator {
 			}
 		}
 
-		// The document is emitted verbatim as the last stylesheet. An
-		// unbalanced brace would swallow — or prematurely close — the rules
-		// around it, so the cascade must never receive one.
-		if ($this->bracesAreBalanced(css: $css) === false) {
-			$errors[] = 'Unbalanced braces: every { must have a matching }.';
+		return $errors;
+	}//end reservedErrors()
+
+	/**
+	 * The error for unbalanced braces.
+	 *
+	 * The document is emitted verbatim as the last stylesheet. An
+	 * unbalanced brace would swallow — or prematurely close — the rules
+	 * around it, so the cascade must never receive one.
+	 *
+	 * @param string $css The submitted CSS.
+	 *
+	 * @return array<int, string> The error, or none.
+	 */
+	private function braceErrors(string $css): array {
+		if ($this->bracesAreBalanced(css: $css) === true) {
+			return [];
 		}
 
-		return $errors;
-	}//end validate()
+		return ['Unbalanced braces: every { must have a matching }.'];
+	}//end braceErrors()
 
 	/**
 	 * Return the first url() scheme in the document that is not permitted.
