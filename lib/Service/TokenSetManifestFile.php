@@ -37,7 +37,7 @@ final class TokenSetManifestFile {
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 */
-	public static function entries(string $appPath): array {
+	public function entries(string $appPath): array {
 		$manifestPath = $appPath . '/token-sets.json';
 		if (is_readable($manifestPath) === false) {
 			return [];

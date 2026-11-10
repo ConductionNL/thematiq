@@ -1693,7 +1693,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function loadSetMeta(string $appPath, string $setId): array {
-		foreach (TokenSetManifestFile::entries(appPath: $appPath) as $entry) {
+		foreach ((new TokenSetManifestFile())->entries(appPath: $appPath) as $entry) {
 			if (is_array($entry) === true && ($entry['id'] ?? null) === $setId) {
 				return $this->setMeta(entry: $entry);
 			}

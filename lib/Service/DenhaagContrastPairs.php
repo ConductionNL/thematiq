@@ -163,7 +163,7 @@ class DenhaagContrastPairs {
 			foreach (($row['denhaag'] ?? []) as $pair => $result) {
 				$counts[$result['verdict']]++;
 				if ($result['verdict'] !== 'pass') {
-					$named[] = $pair . ' ' . ContrastReportCells::ratio(ratio: $result['ratio']);
+					$named[] = $pair . ' ' . (new ContrastReportCells())->ratio(ratio: $result['ratio']);
 				}
 			}
 

@@ -304,8 +304,8 @@ class ComplianceReportService {
 			$pair['background'],
 			($pair['foregroundValue'] ?? '—'),
 			($pair['backgroundValue'] ?? '—'),
-			ContrastReportCells::ratio(ratio: $pair['ratio']),
-			ContrastReportCells::threshold(threshold: $pair['threshold']),
+			(new ContrastReportCells())->ratio(ratio: $pair['ratio']),
+			(new ContrastReportCells())->threshold(threshold: $pair['threshold']),
 			$pair['basis'],
 			$pair['verdict']
 		);

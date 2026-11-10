@@ -299,16 +299,15 @@ class ShippedTokenSetAuditService {
 	 */
 	public function auditSet(string $appPath, string $id, array $theming, string $level = 'AA'): array {
 		$declarations = $this->resolveDeclarations(appPath: $appPath, id: $id, theming: $theming);
-		$thresholds = WcagThresholds::fromLevel(level: $level);
-		$ratios = $this->pairRatios(declarations: $declarations);
+		$measurement = $this->measure(declarations: $declarations, level: $level);
 
 		return [
 			'id' => $id,
-			'textRatio' => $ratios->text,
-			'uiRatio' => $ratios->ui,
-			'textThreshold' => $thresholds->text,
-			'uiThreshold' => $thresholds->ui,
-			'verdict' => $this->classify(ratios: $ratios, thresholds: $thresholds),
+			'textRatio' => $measurement->textRatio,
+			'uiRatio' => $measurement->uiRatio,
+			'textThreshold' => $measurement->textThreshold,
+			'uiThreshold' => $measurement->uiThreshold,
+			'verdict' => $measurement->verdict(),
 			'pairs' => $this->settablePairs->pairs(declarations: $declarations),
 			// Reported, not part of the verdict: the Den Haag pairs judge what a
 			// portal draws, and the verdict above stays what the apply dialog
@@ -318,21 +317,31 @@ class ShippedTokenSetAuditService {
 	}//end auditSet()
 
 	/**
-	 * The primary/text and primary/background ratios of a set.
+	 * A set's primary/text and primary/background ratios, and the thresholds of its level.
 	 *
 	 * The constants, not literals: the document publishes the same two, so
 	 * the pair it names and the pair measured here cannot drift apart.
 	 *
 	 * @param array<string, string> $declarations The resolved declarations.
+	 * @param string $level The WCAG threshold profile: 'AA' or 'AAA' (7:1 / 4.5:1).
 	 *
-	 * @return PairRatios The two ratios.
+	 * @return ContrastMeasurement The ratios and thresholds.
 	 */
-	private function pairRatios(array $declarations): PairRatios {
-		return new PairRatios(
-			text: $this->pairRatio(declarations: $declarations, pair: self::TEXT_PAIR),
-			ui: $this->pairRatio(declarations: $declarations, pair: self::UI_PAIR)
+	private function measure(array $declarations, string $level): ContrastMeasurement {
+		$textThreshold = self::AA_TEXT;
+		$uiThreshold = self::AA_UI;
+		if ($level === 'AAA') {
+			$textThreshold = self::AAA_TEXT;
+			$uiThreshold = self::AAA_UI;
+		}
+
+		return new ContrastMeasurement(
+			textRatio: $this->pairRatio(declarations: $declarations, pair: self::TEXT_PAIR),
+			uiRatio: $this->pairRatio(declarations: $declarations, pair: self::UI_PAIR),
+			textThreshold: $textThreshold,
+			uiThreshold: $uiThreshold
 		);
-	}//end pairRatios()
+	}//end measure()
 
 	/**
 	 * The declarations a portal sees for a set: defaults, the public bridge, the set.
@@ -534,13 +543,15 @@ class ShippedTokenSetAuditService {
 	 * @return string The Markdown row.
 	 */
 	private function reportRow(array $row): string {
+		$cells = new ContrastReportCells();
+
 		return sprintf(
 			'| %s | %s | %s | %s | %s | %s |',
 			$row['id'],
-			ContrastReportCells::ratio(ratio: $row['textRatio']),
-			ContrastReportCells::threshold(threshold: $row['textThreshold']),
-			ContrastReportCells::ratio(ratio: $row['uiRatio']),
-			ContrastReportCells::threshold(threshold: $row['uiThreshold']),
+			$cells->ratio(ratio: $row['textRatio']),
+			$cells->threshold(threshold: $row['textThreshold']),
+			$cells->ratio(ratio: $row['uiRatio']),
+			$cells->threshold(threshold: $row['uiThreshold']),
 			$row['verdict']
 		);
 	}//end reportRow()
@@ -554,7 +565,7 @@ class ShippedTokenSetAuditService {
 	 */
 	private function auditableSets(string $appPath): array {
 		$sets = [];
-		foreach (TokenSetManifestFile::entries(appPath: $appPath) as $set) {
+		foreach ((new TokenSetManifestFile())->entries(appPath: $appPath) as $set) {
 			if ($this->isAuditable(set: $set) === true) {
 				$sets[] = $set;
 			}
@@ -622,25 +633,5 @@ class ShippedTokenSetAuditService {
 
 		return round($ratio, 2);
 	}//end pairRatio()
-
-	/**
-	 * Classify a set from its two pair ratios and thresholds.
-	 *
-	 * @param PairRatios $ratios The primary/text and primary/background ratios.
-	 * @param WcagThresholds $thresholds The applicable thresholds.
-	 *
-	 * @return string One of `pass`, `fail`, `unevaluated`.
-	 */
-	private function classify(PairRatios $ratios, WcagThresholds $thresholds): string {
-		if ($ratios->text === null || $ratios->ui === null) {
-			return 'unevaluated';
-		}
-
-		if ($ratios->text >= $thresholds->text && $ratios->ui >= $thresholds->ui) {
-			return 'pass';
-		}
-
-		return 'fail';
-	}//end classify()
 
 }//end class

@@ -37,7 +37,7 @@ final class ContrastReportCells {
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
 	 */
-	public static function ratio(?float $ratio): string {
+	public function ratio(?float $ratio): string {
 		if ($ratio === null) {
 			return '—';
 		}
@@ -54,7 +54,7 @@ final class ContrastReportCells {
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-reproducible-contrast-report
 	 */
-	public static function threshold(float $threshold): string {
+	public function threshold(float $threshold): string {
 		return number_format($threshold, 1, '.', '') . ':1';
 	}//end threshold()
 }//end class
