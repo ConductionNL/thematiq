@@ -304,8 +304,8 @@ class ComplianceReportService {
 			$pair['background'],
 			($pair['foregroundValue'] ?? '—'),
 			($pair['backgroundValue'] ?? '—'),
-			$this->formatRatio(ratio: $pair['ratio']),
-			$this->formatThreshold(threshold: $pair['threshold']),
+			ContrastReportCells::ratio(ratio: $pair['ratio']),
+			ContrastReportCells::threshold(threshold: $pair['threshold']),
 			$pair['basis'],
 			$pair['verdict']
 		);
@@ -740,32 +740,6 @@ class ComplianceReportService {
 
 		return hash('sha256', implode("\n", $lines));
 	}//end computeOverridesHash()
-
-	/**
-	 * Format a ratio for Markdown (2 decimals, em dash when unevaluated).
-	 *
-	 * @param float|null $ratio The ratio.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatRatio(?float $ratio): string {
-		if ($ratio === null) {
-			return '—';
-		}
-
-		return number_format($ratio, 2, '.', '') . ':1';
-	}//end formatRatio()
-
-	/**
-	 * Format a threshold for Markdown.
-	 *
-	 * @param float $threshold The threshold.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatThreshold(float $threshold): string {
-		return number_format($threshold, 1, '.', '') . ':1';
-	}//end formatThreshold()
 
 	/**
 	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.

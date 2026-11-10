@@ -56,6 +56,28 @@ class CssParserService {
 	}//end parseDeclarations()
 
 	/**
+	 * Parse a CSS file into a --token => value map (empty when absent or unreadable).
+	 *
+	 * @param string $filePath The absolute file path.
+	 *
+	 * @return array<string, string> The parsed declarations.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
+	 */
+	public function parseFile(string $filePath): array {
+		if (is_file($filePath) === false) {
+			return [];
+		}
+
+		$content = file_get_contents($filePath);
+		if ($content === false) {
+			return [];
+		}
+
+		return ($this->parseDeclarations(content: $content) ?? []);
+	}//end parseFile()
+
+	/**
 	 * Parse CSS custom property declarations from within a :root {} block.
 	 *
 	 * @param string $css The raw CSS string containing a :root {} block.
