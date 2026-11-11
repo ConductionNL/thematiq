@@ -160,8 +160,7 @@ class ConfigSourceService {
 		}
 
 		if ($this->isUnchanged(force: $force, hash: $hash) === true) {
-			$this->clearStaleError(hash: $hash);
-			return ['status' => 'unchanged', 'hash' => $hash];
+			return $this->unchangedOnDisk(hash: $hash);
 		}
 
 		return $this->applyUnderLock(package: new ConfigSourcePackage(path: $path, hash: $hash), force: $force);
@@ -185,20 +184,49 @@ class ConfigSourceService {
 		}
 
 		try {
-			// Compared again under the lock: a replica that read the hash while
-			// another one was applying this package would apply it a second
-			// time, with a second `config_imported` entry and version. The
-			// cached app config of this request predates that apply.
-			$this->lock->appConfig->clearCache();
-			if ($this->isUnchanged(force: $force, hash: $package->hash) === true) {
-				return ['status' => 'unchanged', 'hash' => $package->hash];
-			}
-
-			return $this->apply(package: $package);
+			return $this->applyIfStillChanged(package: $package, force: $force);
 		} finally {
 			$this->lock->locking->releaseLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
 		}
 	}//end applyUnderLock()
+
+	/**
+	 * Under the lock: apply the package unless another replica applied it meanwhile.
+	 *
+	 * Compared again under the lock: a replica that read the hash while
+	 * another one was applying this package would apply it a second
+	 * time, with a second `config_imported` entry and version. The
+	 * cached app config of this request predates that apply.
+	 *
+	 * @param ConfigSourcePackage $package The package and its hash.
+	 * @param bool $force Apply even when the hash is unchanged.
+	 *
+	 * @return array<string, mixed> The outcome.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function applyIfStillChanged(ConfigSourcePackage $package, bool $force): array {
+		$this->lock->appConfig->clearCache();
+		if ($this->isUnchanged(force: $force, hash: $package->hash) === true) {
+			return ['status' => 'unchanged', 'hash' => $package->hash];
+		}
+
+		return $this->apply(package: $package);
+	}//end applyIfStillChanged()
+
+	/**
+	 * The answer for a package that is the one last applied, forgetting the error of a later one.
+	 *
+	 * @param string $hash The package hash.
+	 *
+	 * @return array<string, mixed> The `unchanged` outcome.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function unchangedOnDisk(string $hash): array {
+		$this->clearStaleError(hash: $hash);
+		return ['status' => 'unchanged', 'hash' => $hash];
+	}//end unchangedOnDisk()
 
 	/**
 	 * Whether the package on disk is the one last applied, and no forced apply was asked.
@@ -227,6 +255,19 @@ class ConfigSourceService {
 			return ['managed' => false];
 		}
 
+		return $this->managedStatus(path: $path);
+	}//end getStatus()
+
+	/**
+	 * The status while a source is set.
+	 *
+	 * @param string $path The package path.
+	 *
+	 * @return array<string, mixed> `{managed, path, locked, revision, appliedAt, lastError, drift}`.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function managedStatus(string $path): array {
 		$state = $this->getApp(key: self::KEY_STATE);
 		$lastError = $this->lastError();
 		$appliedAt = $this->appliedAt();
@@ -240,7 +281,7 @@ class ConfigSourceService {
 			'lastError' => $lastError,
 			'drift' => ($state !== '' && $state !== $this->stateFingerprint()),
 		];
-	}//end getStatus()
+	}//end managedStatus()
 
 	/**
 	 * The recorded error of the last failed apply.
