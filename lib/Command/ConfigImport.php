@@ -83,17 +83,33 @@ class ConfigImport extends ConfigBundleCommand {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$path = (string)$input->getArgument('file');
-		$dryRun = ($input->getOption('dry-run') === true);
+		$request = new ImportRequest(
+			path: (string)$input->getArgument('file'),
+			dryRun: ($input->getOption('dry-run') === true)
+		);
 
 		try {
-			$result = $this->runImport(output: $output, path: $path, dryRun: $dryRun);
+			$result = $this->runImport(output: $output, request: $request);
 		} catch (Throwable $e) {
 			$output->writeln('<error>Configuration import failed: ' . $e->getMessage() . '</error>');
 
 			return Command::FAILURE;
 		}
 
+		return $this->report(output: $output, result: $result);
+	}//end execute()
+
+	/**
+	 * Print the outcome of an import and return its exit code.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param array<string, mixed>|null $result The import result, or null when the bundle could not be read.
+	 *
+	 * @return int The exit code.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function report(OutputInterface $output, ?array $result): int {
 		if ($result === null) {
 			return Command::FAILURE;
 		}
@@ -107,32 +123,29 @@ class ConfigImport extends ConfigBundleCommand {
 		$this->printSections(output: $output, result: $result);
 
 		return Command::SUCCESS;
-	}//end execute()
+	}//end report()
 
 	/**
 	 * Import a package (directory or ZIP) or a bare bundle file.
 	 *
 	 * @param OutputInterface $output The console output.
-	 * @param string $path The argument.
-	 * @param bool $dryRun Validate only.
+	 * @param ImportRequest $request The path and whether to validate only.
 	 *
 	 * @return array<string, mixed>|null The import result, or null when a bare bundle could not be read.
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
-	 *
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag) - the --dry-run switch, passed through.
 	 */
-	private function runImport(OutputInterface $output, string $path, bool $dryRun): ?array {
-		if ($this->packages->isPackage(path: $path) === true) {
-			return $this->packages->import(path: $path, dryRun: $dryRun);
+	private function runImport(OutputInterface $output, ImportRequest $request): ?array {
+		if ($this->packages->isPackage(path: $request->path) === true) {
+			return $this->packages->import(path: $request->path, dryRun: $request->dryRun);
 		}
 
-		$bundle = $this->readBundle(output: $output, path: $path);
+		$bundle = $this->readBundle(output: $output, path: $request->path);
 		if ($bundle === null) {
 			return null;
 		}
 
-		return $this->service->import(bundle: $bundle, dryRun: $dryRun);
+		return $this->service->import(bundle: $bundle, dryRun: $request->dryRun);
 	}//end runImport()
 
 	/**
@@ -146,16 +159,8 @@ class ConfigImport extends ConfigBundleCommand {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function readBundle(OutputInterface $output, string $path): ?array {
-		if (is_readable($path) === false) {
-			$output->writeln('<error>Cannot read bundle file: ' . $path . '</error>');
-
-			return null;
-		}
-
-		$content = file_get_contents($path);
-		if ($content === false) {
-			$output->writeln('<error>Cannot read bundle file: ' . $path . '</error>');
-
+		$content = $this->readContent(output: $output, path: $path);
+		if ($content === null) {
 			return null;
 		}
 
@@ -168,6 +173,31 @@ class ConfigImport extends ConfigBundleCommand {
 
 		return $decoded;
 	}//end readBundle()
+
+	/**
+	 * Read the bundle file, reporting a missing or unreadable file.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param string $path The bundle file path.
+	 *
+	 * @return string|null The file content, or null when it cannot be read.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function readContent(OutputInterface $output, string $path): ?string {
+		$content = false;
+		if (is_readable($path) === true) {
+			$content = file_get_contents($path);
+		}
+
+		if ($content === false) {
+			$output->writeln('<error>Cannot read bundle file: ' . $path . '</error>');
+
+			return null;
+		}
+
+		return $content;
+	}//end readContent()
 
 	/**
 	 * Print the full-error listing for a failed (or unresolvable) import.

@@ -104,11 +104,8 @@ class ComplianceReport extends Command {
 			return Command::FAILURE;
 		}
 
-		try {
-			$content = $this->renderContent(format: $format);
-		} catch (Throwable $e) {
-			$output->writeln('<error>Compliance report generation failed: ' . $e->getMessage() . '</error>');
-
+		$content = $this->renderedReport(output: $output, format: $format);
+		if ($content === null) {
 			return Command::FAILURE;
 		}
 
@@ -137,6 +134,26 @@ class ComplianceReport extends Command {
 
 		return Command::SUCCESS;
 	}//end deliver()
+
+	/**
+	 * Render the report, reporting a generation failure.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param string $format The requested format ("json" or "markdown").
+	 *
+	 * @return string|null The rendered report, or null when generation failed.
+	 *
+	 * @spec openspec/specs/compliance-evidence/spec.md
+	 */
+	private function renderedReport(OutputInterface $output, string $format): ?string {
+		try {
+			return $this->renderContent(format: $format);
+		} catch (Throwable $e) {
+			$output->writeln('<error>Compliance report generation failed: ' . $e->getMessage() . '</error>');
+
+			return null;
+		}
+	}//end renderedReport()
 
 	/**
 	 * Render the report content for the requested format.
