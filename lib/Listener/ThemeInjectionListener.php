@@ -93,32 +93,7 @@ class ThemeInjectionListener implements IEventListener {
 		}
 
 		try {
-			if ($event instanceof BeforeLoginTemplateRenderedEvent) {
-				// Login is never an app page — the per-app guard never runs.
-				$this->styles->cssInjectionService->inject(context: 'login');
-				// The board's words and order, on a themed login page only
-				// (openspec/changes/login-page-board-parity).
-				if ($this->styles->cssInjectionService->isContextThemed(context: 'login') === true) {
-					$this->pageCopy->loginCopy?->injectForLogin();
-				}
-
-				return;
-			}
-
-			if ($event instanceof BeforeTemplateRenderedEvent) {
-				$response = $event->getResponse();
-
-				if ($this->isThemingDisabledForResponse(response: $response) === true) {
-					return;
-				}
-
-				$this->styles->cssInjectionService->inject(
-					context: $this->resolveContext(response: $response),
-					appId: $this->resolveAppId(response: $response)
-				);
-
-				$this->injectNotFoundCopy(response: $response);
-			}
+			$this->injectFor(event: $event);
 		} catch (Throwable $e) {
 			// Fail open: a listener failure must never break page rendering
 			// (theming is presentation, never a hard dependency).
@@ -135,6 +110,58 @@ class ThemeInjectionListener implements IEventListener {
 		}//end try
 
 	}//end handle()
+
+	/**
+	 * Inject the CSS and page copy for a login or template render; other events add nothing.
+	 *
+	 * @param Event $event The dispatched event.
+	 *
+	 * @return void
+	 */
+	private function injectFor(Event $event): void {
+		if ($event instanceof BeforeLoginTemplateRenderedEvent) {
+			$this->injectLogin();
+
+			return;
+		}
+
+		if ($event instanceof BeforeTemplateRenderedEvent) {
+			$this->injectTemplate(response: $event->getResponse());
+		}
+	}//end injectFor()
+
+	/**
+	 * The login page: its CSS, and the board's words and order on a themed login page only
+	 * (openspec/changes/login-page-board-parity). Login is never an app page — the per-app guard never runs.
+	 *
+	 * @return void
+	 */
+	private function injectLogin(): void {
+		$this->styles->cssInjectionService->inject(context: 'login');
+		if ($this->styles->cssInjectionService->isContextThemed(context: 'login') === true) {
+			$this->pageCopy->loginCopy?->injectForLogin();
+		}
+	}//end injectLogin()
+
+	/**
+	 * A template render: its CSS unless the app is excluded, then the not-found copy.
+	 *
+	 * @param TemplateResponse $response The response being rendered.
+	 *
+	 * @return void
+	 */
+	private function injectTemplate(TemplateResponse $response): void {
+		if ($this->isThemingDisabledForResponse(response: $response) === true) {
+			return;
+		}
+
+		$this->styles->cssInjectionService->inject(
+			context: $this->resolveContext(response: $response),
+			appId: $this->resolveAppId(response: $response)
+		);
+
+		$this->injectNotFoundCopy(response: $response);
+	}//end injectTemplate()
 
 	/**
 	 * Nextcloud's own "page not found" page, drawn as the NietGevonden board
