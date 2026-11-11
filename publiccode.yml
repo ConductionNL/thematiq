@@ -1,0 +1,63 @@
+publiccodeYmlVersion: "0.4"
+
+name: Thematiq
+url: "https://github.com/ConductionNL/thematiq"
+softwareVersion: "1.2.10"
+releaseDate: "2026-09-29"
+developmentStatus: stable
+softwareType: addon
+
+platforms:
+  - nextcloud
+
+categories:
+  - graphic-design
+  - it-management
+
+description:
+  nl:
+    shortDescription: "Je huisstijl op elk Nextcloud-scherm"
+    longDescription: |
+      Thematiq geeft je hele Nextcloud je eigen huisstijl, vanaf één
+      instellingenpagina. Geen CSS, geen ontwikkelaar, geen nieuwe build.
+      Nextcloud Theming zet een kleur, een achtergrond en een logo. Thematiq
+      stijlt de rest: knoppen, tabellen, statuskleuren, lettertypes en
+      afgeronde hoeken. Je ziet elke wijziging live voordat je opslaat, en
+      daarna volgt elke app. Kant-en-klare thema's volgen NL Design System.
+    features:
+      - Thema live bewerken en per groep instellen
+      - Eigen webfonts uploaden
+      - Kant-en-klare thema's volgens NL Design System
+      - Contrastrapport volgens WCAG
+      - Configuratie exporteren en importeren
+  en:
+    shortDescription: "Your house style on every Nextcloud screen"
+    longDescription: |
+      Thematiq styles your whole Nextcloud from one settings page. No CSS, no
+      developer, no rebuild. Nextcloud Theming sets a colour, a background and
+      a logo. Thematiq styles everything else: buttons, tables, status colours,
+      fonts and corner radius. You see each change live before you save it, and
+      after saving every app follows. Ready-made government themes follow NL
+      Design System.
+    features:
+      - Live theme editing and themes per group
+      - Self-hosted web fonts
+      - Ready-made NL Design System themes
+      - WCAG contrast report
+      - Configuration export and import
+
+legal:
+  license: EUPL-1.2
+
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - nl
+    - en
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Conduction Development Team
+      email: info@conduction.nl
+      affiliation: Conduction B.V.
