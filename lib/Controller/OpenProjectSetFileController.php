@@ -64,17 +64,11 @@ class OpenProjectSetFileController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function export(string $id): JSONResponse {
-		if (preg_match('/^[a-z0-9][a-z0-9-]*$/', $id) !== 1 || $this->location->tokenSets->isValidTokenSet(tokenSetId: $id) === false) {
+		if ($this->location->knows(id: $id) === false) {
 			return new JSONResponse(['error' => $this->output->l->t('Token set not found.')], 404);
 		}
 
-		$name = $id;
-		foreach ($this->location->tokenSets->getAvailableTokenSets() as $set) {
-			if (($set['id'] ?? null) === $id) {
-				$name = (string)($set['name'] ?? $id);
-			}
-		}
-
+		$name = $this->location->nameOf(id: $id);
 		$appPath = $this->location->appManager->getAppPath(Application::APP_ID);
 		$file = $this->output->writer->setFile(appPath: $appPath, id: $id, name: $name, store: $this->location->store);
 		$response = new JSONResponse($file);
