@@ -263,9 +263,8 @@ class UpstreamFreshnessService {
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
 	private function doRunCheck(): void {
-		$client = $this->clientService->newClient();
-		$manifestUrl = $this->getManifestUrl();
-		$response = $client->get($manifestUrl, ['timeout' => 10, 'headers' => $this->manifestHeaders()]);
+		$run = new FreshnessRun(client: $this->clientService->newClient(), manifestUrl: $this->getManifestUrl());
+		$response = $run->client->get($run->manifestUrl, ['timeout' => 10, 'headers' => $this->manifestHeaders()]);
 
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_CHECKED_AT, (string)time());
 
@@ -282,7 +281,8 @@ class UpstreamFreshnessService {
 			return;
 		}
 
-		$this->attributeAndStoreNotices(staleSets: $staleSets, headSha: $headSha, client: $client, manifestUrl: $manifestUrl);
+		$run->headSha = $headSha;
+		$this->attributeAndStoreNotices(staleSets: $staleSets, run: $run);
 	}//end doRunCheck()
 
 	/**
@@ -418,20 +418,41 @@ class UpstreamFreshnessService {
 	 * stale set).
 	 *
 	 * @param array<string, array{name: string, upstreamRef: string, upstreamVersion: string|null}> $staleSets Stale sets indexed by id.
-	 * @param string $headSha The fetched head SHA.
-	 * @param IClient $client The already-created client (reused).
-	 * @param string $manifestUrl The pinned manifest URL.
+	 * @param FreshnessRun $run The check: the reused client, the manifest URL and the head SHA.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
-	private function attributeAndStoreNotices(array $staleSets, string $headSha, IClient $client, string $manifestUrl): void {
-		$baseRef = $this->pickBaseRef(staleSets: $staleSets);
+	private function attributeAndStoreNotices(array $staleSets, FreshnessRun $run): void {
+		$changedPaths = $this->changedPathsOrNull(run: $run, baseRef: $this->pickBaseRef(staleSets: $staleSets));
+		if ($changedPaths === null) {
+			$this->storeGenericNotice(headSha: $run->headSha);
+			return;
+		}
 
-		$changedPaths = null;
+		$run->changedPaths = $changedPaths;
+		$notices = $this->getUpdatesMap();
+		$matched = $this->matchedNotices(staleSets: $staleSets, run: $run);
+		if ($matched === []) {
+			$this->storeGenericNotice(headSha: $run->headSha);
+			return;
+		}
+
+		$this->setUpdatesMap(map: array_replace($notices, $matched));
+	}//end attributeAndStoreNotices()
+
+	/**
+	 * The paths the compare request lists, or null when it fails in any way (logged at info level).
+	 *
+	 * @param FreshnessRun $run The check.
+	 * @param string $baseRef The compare base.
+	 *
+	 * @return array<int, string>|null The changed paths.
+	 */
+	private function changedPathsOrNull(FreshnessRun $run, string $baseRef): array|null {
 		try {
-			$changedPaths = $this->fetchChangedPaths(client: $client, manifestUrl: $manifestUrl, baseRef: $baseRef, headSha: $headSha);
+			return $this->fetchChangedPaths(run: $run, baseRef: $baseRef);
 		} catch (\Throwable $e) {
 			$this->logger->info(
 				'nldesign upstream-freshness attribution failed; storing a generic notice: ' . $e->getMessage(),
@@ -439,35 +460,33 @@ class UpstreamFreshnessService {
 			);
 		}
 
-		if ($changedPaths === null) {
-			$this->storeGenericNotice(headSha: $headSha);
-			return;
-		}
+		return null;
+	}//end changedPathsOrNull()
 
-		$matchedAny = false;
-		$notices = $this->getUpdatesMap();
+	/**
+	 * A notice for every stale set a changed path belongs to.
+	 *
+	 * @param array<string, array{name: string, upstreamRef: string, upstreamVersion: string|null}> $staleSets Stale sets indexed by id.
+	 * @param FreshnessRun $run The check, with the head SHA and the changed paths.
+	 *
+	 * @return array<string, array<string, mixed>> The notices, indexed by set id.
+	 */
+	private function matchedNotices(array $staleSets, FreshnessRun $run): array {
+		$notices = [];
 		foreach ($staleSets as $setId => $set) {
-			if ($this->changedPathsMatchOrg(changedPaths: $changedPaths, orgId: $setId) === false) {
-				continue;
+			if ($this->changedPathsMatchOrg(changedPaths: $run->changedPaths, orgId: $setId) === true) {
+				$notices[$setId] = [
+					'installedRef' => $set['upstreamRef'],
+					'installedVersion' => $set['upstreamVersion'],
+					'headSha' => $run->headSha,
+					'upstreamVersion' => $set['upstreamVersion'],
+					'detectedAt' => time(),
+				];
 			}
-
-			$notices[$setId] = [
-				'installedRef' => $set['upstreamRef'],
-				'installedVersion' => $set['upstreamVersion'],
-				'headSha' => $headSha,
-				'upstreamVersion' => $set['upstreamVersion'],
-				'detectedAt' => time(),
-			];
-			$matchedAny = true;
 		}
 
-		if ($matchedAny === false) {
-			$this->storeGenericNotice(headSha: $headSha);
-			return;
-		}
-
-		$this->setUpdatesMap(map: $notices);
-	}//end attributeAndStoreNotices()
+		return $notices;
+	}//end matchedNotices()
 
 	/**
 	 * Pick the compare-request base ref from the stale sets' recorded
@@ -498,22 +517,20 @@ class UpstreamFreshnessService {
 	 * non-200 status or unparseable body (caller degrades to a generic
 	 * notice) — this is the second and last request of the run.
 	 *
-	 * @param IClient $client The already-created HTTP client.
-	 * @param string $manifestUrl The pinned manifest URL (compare URL is derived from it).
-	 * @param string $baseRef The base ref (oldest/only installed upstreamRef).
-	 * @param string $headSha The fetched upstream head SHA.
+	 * @param FreshnessRun $run The check: the reused client, the manifest URL and the head SHA.
+	 * @param string $baseRef The compare base.
 	 *
 	 * @return array<int, string>|null The list of changed file paths, or null when unresolvable.
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
-	private function fetchChangedPaths(IClient $client, string $manifestUrl, string $baseRef, string $headSha): ?array {
-		$compareUrl = $this->buildCompareUrl(manifestUrl: $manifestUrl, baseRef: $baseRef, headSha: $headSha);
+	private function fetchChangedPaths(FreshnessRun $run, string $baseRef): ?array {
+		$compareUrl = $this->buildCompareUrl(run: $run, baseRef: $baseRef);
 		if ($compareUrl === null) {
 			return null;
 		}
 
-		$response = $client->get($compareUrl, ['timeout' => 10, 'headers' => ['Accept' => 'application/vnd.github+json']]);
+		$response = $run->client->get($compareUrl, ['timeout' => 10, 'headers' => ['Accept' => 'application/vnd.github+json']]);
 		if ($response->getStatusCode() !== 200) {
 			return null;
 		}
@@ -540,24 +557,23 @@ class UpstreamFreshnessService {
 	 * manifest URL does not follow the expected GitHub commits-API shape —
 	 * e.g. an admin-overridden mirror with an incompatible layout.
 	 *
-	 * @param string $manifestUrl The pinned manifest URL.
-	 * @param string $baseRef The base ref for the comparison.
-	 * @param string $headSha The head SHA for the comparison.
+	 * @param FreshnessRun $run The check: the manifest URL and the head SHA.
+	 * @param string $baseRef The compare base.
 	 *
 	 * @return string|null The compare URL, or null when it cannot be derived.
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
-	private function buildCompareUrl(string $manifestUrl, string $baseRef, string $headSha): ?string {
+	private function buildCompareUrl(FreshnessRun $run, string $baseRef): ?string {
 		$marker = '/commits/';
-		$pos = strpos($manifestUrl, $marker);
+		$pos = strpos($run->manifestUrl, $marker);
 		if ($pos === false) {
 			return null;
 		}
 
-		$repoBase = substr($manifestUrl, 0, $pos);
+		$repoBase = substr($run->manifestUrl, 0, $pos);
 
-		return $repoBase . '/compare/' . rawurlencode($baseRef) . '...' . rawurlencode($headSha);
+		return $repoBase . '/compare/' . rawurlencode($baseRef) . '...' . rawurlencode($run->headSha);
 	}//end buildCompareUrl()
 
 	/**
