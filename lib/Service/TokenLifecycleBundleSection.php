@@ -76,21 +76,13 @@ class TokenLifecycleBundleSection {
 	 */
 	public function validate(array $bundle, array &$errors): array {
 		$resolved = ['ownTokens' => null, 'tokenDeprecations' => null];
-		$checks = [
-			'ownTokens' => fn (array $value): array => $this->ownTokens->checkAll(tokens: $value),
-			'tokenDeprecations' => fn (array $value): array => $this->deprecations->checkAll(records: $value),
-		];
-		foreach ($checks as $key => $check) {
+		foreach (array_keys($resolved) as $key) {
 			if (array_key_exists($key, $bundle) === false) {
 				continue;
 			}
 
 			try {
-				if (is_array($bundle[$key]) === false) {
-					throw new InvalidArgumentException('shape', 400);
-				}
-
-				$resolved[$key] = $check($bundle[$key]);
+				$resolved[$key] = $this->checked(key: $key, value: $bundle[$key]);
 			} catch (InvalidArgumentException $e) {
 				$errors[] = ['section' => $key, 'message' => '"' . $key . '" holds an entry that fails its checks (' . $e->getMessage() . ').'];
 			}
@@ -98,6 +90,28 @@ class TokenLifecycleBundleSection {
 
 		return $resolved;
 	}//end validate()
+
+	/**
+	 * One section checked by its own service.
+	 *
+	 * @param string $key `ownTokens` or `tokenDeprecations`.
+	 * @param mixed $value The section.
+	 *
+	 * @return array<string, mixed> The checked section.
+	 *
+	 * @throws InvalidArgumentException When the section is not an object or holds an entry that fails.
+	 */
+	private function checked(string $key, mixed $value): array {
+		if (is_array($value) === false) {
+			throw new InvalidArgumentException('shape', 400);
+		}
+
+		if ($key === 'ownTokens') {
+			return $this->ownTokens->checkAll(tokens: $value);
+		}
+
+		return $this->deprecations->checkAll(records: $value);
+	}//end checked()
 
 	/**
 	 * Apply the validated keys.
@@ -113,14 +127,7 @@ class TokenLifecycleBundleSection {
 			return false;
 		}
 
-		if ($resolved['ownTokens'] !== null) {
-			$this->ownTokens->replaceAll(tokens: $resolved['ownTokens']);
-		}
-
-		if ($resolved['tokenDeprecations'] !== null) {
-			$this->deprecations->replaceAll(records: $resolved['tokenDeprecations']);
-		}
-
+		$this->replaceSections(resolved: $resolved);
 		$applied = $resolved['ownTokens'] !== null || $resolved['tokenDeprecations'] !== null;
 		if ($applied === true) {
 			// Every set's overrides file carries the own tokens and their notices.
@@ -129,6 +136,23 @@ class TokenLifecycleBundleSection {
 
 		return $applied;
 	}//end apply()
+
+	/**
+	 * Replace what each validated section carries: the own tokens, then the deprecations.
+	 *
+	 * @param array{ownTokens: array<string, mixed>|null, tokenDeprecations: array<string, mixed>|null} $resolved The validated sections.
+	 *
+	 * @return void
+	 */
+	private function replaceSections(array $resolved): void {
+		if ($resolved['ownTokens'] !== null) {
+			$this->ownTokens->replaceAll(tokens: $resolved['ownTokens']);
+		}
+
+		if ($resolved['tokenDeprecations'] !== null) {
+			$this->deprecations->replaceAll(records: $resolved['tokenDeprecations']);
+		}
+	}//end replaceSections()
 
 	/**
 	 * The import summary for the two keys.
