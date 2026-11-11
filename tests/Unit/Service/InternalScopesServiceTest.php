@@ -15,6 +15,7 @@ use OCA\Thematiq\Service\InternalScopesService;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\TokenRegistry;
+use OCA\Thematiq\Service\TokenSetWear;
 use OCP\App\IAppManager;
 use OCP\ITempManager;
 use OCP\IURLGenerator;
@@ -89,7 +90,7 @@ class InternalScopesServiceTest extends TestCase {
 		);
 		$this->store->write('css/custom-overrides.css', ":root {\n\t--nldesign-nc-plyr-audio-control-background-hover: #f4f1ea !important;\n}\n");
 
-		$css = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
+		$css = $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true));
 
 		$this->assertSame(expected: 2, actual: substr_count($css, '{'), message: $css);
 		$this->assertStringContainsString(needle: '--dp-hover-color: var(--nldesign-nc-dp-hover-color);', haystack: $css);
@@ -109,8 +110,8 @@ class InternalScopesServiceTest extends TestCase {
 	public function testNothingSetMeansNoRules(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-color-primary: #154273;\n\t--nldesign-nc-color-mark: #ffe08a;\n}\n");
 
-		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true));
-		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'missing', designSystemId: 'nldesign', withDark: true));
+		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true)));
+		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'missing', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true)));
 	}
 
 	/**
@@ -120,9 +121,9 @@ class InternalScopesServiceTest extends TestCase {
 	 */
 	public function testAnOverrideSaveIsReflectedOnTheNextBuild(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
-		$before = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
+		$before = $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true));
 		$this->store->write('css/custom-overrides.css', ":root {\n\t--nldesign-cn-kpi-accent: #24578f !important;\n}\n");
-		$after = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
+		$after = $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true));
 
 		$this->assertSame(expected: 1, actual: substr_count($before, '{'));
 		$this->assertSame(expected: 2, actual: substr_count($after, '{'));
@@ -140,7 +141,7 @@ class InternalScopesServiceTest extends TestCase {
 			"body[data-theme-dark], body[data-themes*=dark] {\n\t--nldesign-nc-dp-hover-color: #333333;\n}\n"
 		);
 
-		$css = $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: true);
+		$css = $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: true));
 
 		$this->assertStringContainsString(needle: '@media (prefers-color-scheme: dark)', haystack: $css);
 		$this->assertStringContainsString(needle: ':where(body[data-theme-dark], body[data-themes*=dark]) :is(', haystack: $css);
@@ -160,7 +161,7 @@ class InternalScopesServiceTest extends TestCase {
 	public function testADarkVariantThatIsNotInjectedIsNotRead(): void {
 		$this->store->write('css/tokens/dark/custom-test.css', "body[data-theme-dark] {\n\t--nldesign-nc-dp-hover-color: #333333;\n}\n");
 
-		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'custom-test', designSystemId: 'nldesign', withDark: false));
+		$this->assertSame(expected: '', actual: $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: 'nldesign', withDark: false)));
 	}
 
 	/**
@@ -243,7 +244,7 @@ class InternalScopesServiceTest extends TestCase {
 
 		$out = [];
 		foreach ([['nldesign', true], ['nldesign', false], ['none', true]] as [$system, $dark]) {
-			$out[] = substr(hash('sha256', $this->service->forSet(tokenSet: 'custom-test', designSystemId: $system, withDark: $dark)), 0, 12);
+			$out[] = substr(hash('sha256', $this->service->forSet(tokenSet: 'custom-test', wear: new TokenSetWear(designSystemId: $system, withDark: $dark))), 0, 12);
 		}
 
 		$this->assertSame(expected: ['c8f0c41f0c66', '6886c669a9f9', 'aa02dc6643c1'], actual: $out);
