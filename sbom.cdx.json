@@ -1,0 +1,157 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:a17c145e-6421-484c-a433-647eceb8e84c",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-11-11T17:28:35Z",
+    "tools": [
+      {
+        "name": "composer",
+        "version": "2.10.2"
+      },
+      {
+        "vendor": "cyclonedx",
+        "name": "cyclonedx-php-composer",
+        "version": "v6.2.0",
+        "externalReferences": [
+          {
+            "type": "distribution",
+            "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-composer/zipball/934440a5ef7c3c3cdb58c3c3d389d412630ccbf6",
+            "comment": "dist reference: 934440a5ef7c3c3cdb58c3c3d389d412630ccbf6"
+          },
+          {
+            "type": "vcs",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-composer.git",
+            "comment": "source reference: 934440a5ef7c3c3cdb58c3c3d389d412630ccbf6"
+          },
+          {
+            "type": "website",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-composer/#readme",
+            "comment": "as detected from Composer manifest 'homepage'"
+          },
+          {
+            "type": "issue-tracker",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-composer/issues",
+            "comment": "as detected from Composer manifest 'support.issues'"
+          },
+          {
+            "type": "vcs",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-composer/",
+            "comment": "as detected from Composer manifest 'support.source'"
+          }
+        ]
+      },
+      {
+        "vendor": "cyclonedx",
+        "name": "cyclonedx-library",
+        "version": "v4.0.0",
+        "externalReferences": [
+          {
+            "type": "distribution",
+            "url": "https://api.github.com/repos/CycloneDX/cyclonedx-php-library/zipball/c95a371894c4e32bea42bfa024f2ab5092cbb292",
+            "comment": "dist reference: c95a371894c4e32bea42bfa024f2ab5092cbb292"
+          },
+          {
+            "type": "vcs",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-library.git",
+            "comment": "source reference: c95a371894c4e32bea42bfa024f2ab5092cbb292"
+          },
+          {
+            "type": "website",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-library/#readme",
+            "comment": "as detected from Composer manifest 'homepage'"
+          },
+          {
+            "type": "documentation",
+            "url": "https://cyclonedx-php-library.readthedocs.io",
+            "comment": "as detected from Composer manifest 'support.docs'"
+          },
+          {
+            "type": "issue-tracker",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-library/issues",
+            "comment": "as detected from Composer manifest 'support.issues'"
+          },
+          {
+            "type": "vcs",
+            "url": "https://github.com/CycloneDX/cyclonedx-php-library/",
+            "comment": "as detected from Composer manifest 'support.source'"
+          }
+        ]
+      }
+    ],
+    "component": {
+      "bom-ref": "conductionnl/thematiq-dev-development",
+      "type": "application",
+      "name": "thematiq",
+      "version": "dev-development",
+      "group": "conductionnl",
+      "description": "Thematiq — NL Design System theming for Nextcloud",
+      "author": "Conduction b.v.",
+      "licenses": [
+        {
+          "license": {
+            "id": "EUPL-1.2"
+          }
+        }
+      ],
+      "purl": "pkg:composer/conductionnl/thematiq@dev-development",
+      "properties": [
+        {
+          "name": "cdx:composer:package:distReference",
+          "value": "8c5d5783ad6f75685146f359f4a29e2fcd94d5e5"
+        },
+        {
+          "name": "cdx:composer:package:sourceReference",
+          "value": "8c5d5783ad6f75685146f359f4a29e2fcd94d5e5"
+        },
+        {
+          "name": "cdx:composer:package:type",
+          "value": "library"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "fira-sans",
+      "group": "@fontsource",
+      "version": "5.3.0",
+      "bom-ref": "thematiq@0.1.0|@fontsource/fira-sans@5.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "OFL-1.1"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40fontsource/fira-sans@5.3.0",
+      "externalReferences": [
+        {
+          "url": "https://registry.npmjs.org/@fontsource/fira-sans/-/fira-sans-5.3.0.tgz",
+          "type": "distribution",
+          "hashes": [
+            {
+              "alg": "SHA-512",
+              "content": "cf548a486ede4619b7b2b95beeb4378fbed03f84cfece171099e3051684276dfb784e17d2b4032bf26e902ccfaf8958d702555ec0a82edd6ce4f77baecfdabe4"
+            }
+          ],
+          "comment": "as detected from npm-ls property \"resolved\" and property \"integrity\""
+        }
+      ],
+      "properties": [
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/@fontsource/fira-sans"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "conductionnl/thematiq-dev-development"
+    }
+  ]
+}
