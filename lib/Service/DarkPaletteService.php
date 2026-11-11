@@ -776,7 +776,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function resolveLightDeclarations(string $appPath, string $setId, array $theming = []): array {
-		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
+		$declarations = $this->parser->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
 		$tokenCss = $this->readTokenCss(setId: $setId);
 		if ($tokenCss !== null) {
@@ -1693,7 +1693,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function loadSetMeta(string $appPath, string $setId): array {
-		foreach ($this->manifestEntries(appPath: $appPath) as $entry) {
+		foreach ((new TokenSetManifestFile())->entries(appPath: $appPath) as $entry) {
 			if (is_array($entry) === true && ($entry['id'] ?? null) === $setId) {
 				return $this->setMeta(entry: $entry);
 			}
@@ -1701,27 +1701,6 @@ class DarkPaletteService {
 
 		return ['design_system' => 'nldesign', 'theming' => []];
 	}//end loadSetMeta()
-
-	/**
-	 * The entries of the app's `token-sets.json`, or none when it is unreadable or not a list.
-	 *
-	 * @param string $appPath The app's install path.
-	 *
-	 * @return array<mixed> The entries.
-	 */
-	private function manifestEntries(string $appPath): array {
-		$manifestPath = $appPath . '/token-sets.json';
-		if (is_readable($manifestPath) === false) {
-			return [];
-		}
-
-		$manifest = json_decode((string)file_get_contents($manifestPath), true);
-		if (is_array($manifest) === false) {
-			return [];
-		}
-
-		return $manifest;
-	}//end manifestEntries()
 
 	/**
 	 * A manifest entry's design system and theming block.
@@ -2123,28 +2102,6 @@ class DarkPaletteService {
 
 		return str_contains($header, $sourceHash);
 	}//end isFresh()
-
-	/**
-	 * Parse a CSS file's `:root`-scoped declarations into a map (empty when absent/unreadable).
-	 *
-	 * @param string $filePath The absolute file path.
-	 *
-	 * @return array<string, string> The parsed declarations.
-	 *
-	 * @spec openspec/specs/dark-mode/spec.md
-	 */
-	private function parseFile(string $filePath): array {
-		if (is_file($filePath) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($filePath);
-		if ($content === false) {
-			return [];
-		}
-
-		return ($this->parser->parseDeclarations(content: $content) ?? []);
-	}//end parseFile()
 
 	/**
 	 * Convert an RGB triple to [hue, saturation, lightness] (hue in degrees
