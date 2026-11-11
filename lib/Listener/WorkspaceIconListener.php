@@ -84,10 +84,7 @@ class WorkspaceIconListener implements IEventListener {
 			return;
 		}
 
-		$favicon = $this->setFavicon();
-		if ($favicon !== null) {
-			$this->emit(tag: 'link', attributes: ['rel' => 'icon', 'type' => 'image/svg+xml', 'href' => $favicon], text: '');
-		}
+		$this->emitSetFavicon();
 
 		try {
 			$status = $this->icons->status();
@@ -97,6 +94,29 @@ class WorkspaceIconListener implements IEventListener {
 			return;
 		}
 
+		$this->emitImages(status: $status);
+	}//end handle()
+
+	/**
+	 * Link the active set's favicon, when it declares a usable one.
+	 *
+	 * @return void
+	 */
+	private function emitSetFavicon(): void {
+		$favicon = $this->setFavicon();
+		if ($favicon !== null) {
+			$this->emit(tag: 'link', attributes: ['rel' => 'icon', 'type' => 'image/svg+xml', 'href' => $favicon], text: '');
+		}
+	}//end emitSetFavicon()
+
+	/**
+	 * Add a tag per stored image: the touch icon link, then the mobile logo style.
+	 *
+	 * @param array<string, string|null> $status The image addresses by kind, null when unset.
+	 *
+	 * @return void
+	 */
+	private function emitImages(array $status): void {
 		if ($status['touch-icon'] !== null) {
 			$this->emit(tag: 'link', attributes: ['rel' => 'apple-touch-icon', 'sizes' => '180x180', 'href' => $status['touch-icon']], text: '');
 		}
@@ -104,7 +124,7 @@ class WorkspaceIconListener implements IEventListener {
 		if ($status['mobile-logo'] !== null) {
 			$this->emit(tag: 'style', attributes: ['id' => self::STYLE_ID], text: $this->icons->mobileLogoCss(url: $status['mobile-logo']));
 		}
-	}//end handle()
+	}//end emitImages()
 
 	/**
 	 * The address of the active set's favicon, when it declares an SVG one.
@@ -121,17 +141,27 @@ class WorkspaceIconListener implements IEventListener {
 			return null;
 		}
 
-		if (is_string($path) === false
-			|| str_starts_with(haystack: $path, needle: 'img/logos/') === false
-			|| str_ends_with(haystack: $path, needle: '.svg') === false
-			|| str_contains(haystack: $path, needle: '..') === true
-		) {
+		if ($this->isSetFaviconPath(path: $path) === false) {
 			return null;
 		}
 
 		// IURLGenerator::imagePath() prepends "img/" itself.
 		return $this->urls->imagePath(appName: Application::APP_ID, file: substr($path, 4));
 	}//end setFavicon()
+
+	/**
+	 * Whether a declared favicon is an SVG under `img/logos/` that does not climb out of it.
+	 *
+	 * @param mixed $path The declared path.
+	 *
+	 * @return bool True when it may be linked.
+	 */
+	private function isSetFaviconPath(mixed $path): bool {
+		return is_string($path) === true
+			&& str_starts_with(haystack: $path, needle: 'img/logos/') === true
+			&& str_ends_with(haystack: $path, needle: '.svg') === true
+			&& str_contains(haystack: $path, needle: '..') === false;
+	}//end isSetFaviconPath()
 
 	/**
 	 * Add one tag to the page head. Overridable, so a test can capture it.
