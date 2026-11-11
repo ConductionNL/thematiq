@@ -115,16 +115,14 @@ export function resolve(value, decl, depth = 0) {
 }
 
 /**
- * Build the generated section from the mapping, the vendored sources and the defaults.
+ * What the pinned packages say: the properties the components read, and the
+ * values the tokens package declares.
  *
- * @param {object} mapping The parsed mapping file.
- * @param {string} mappingText The mapping file as text, for its hash.
+ * @param {object} sources The mapping's `sources`: `components` and `tokens`, name => version.
  * @param {(file: string) => string} readSource Reads a vendored file by name.
- * @param {Map<string, string>} defaults The --nldesign-* defaults.
- * @return {{section: string, count: number}} The section text and how many properties it declares.
+ * @return {{needBare: Set<string>, needAll: Set<string>, tokenDecl: Map<string, string>}} Read without a fallback, read at all, and the token values.
  */
-export function buildSection(mapping, mappingText, readSource, defaults) {
-	const { components, tokens } = mapping.sources
+function readPinnedSources({ components, tokens }, readSource) {
 	const needBare = new Set()
 	const needAll = new Set()
 	for (const [name, version] of Object.entries(components)) {
@@ -139,95 +137,126 @@ export function buildSection(mapping, mappingText, readSource, defaults) {
 			tokenDecl.set(k, v)
 		}
 	}
+	return { needBare, needAll, tokenDecl }
+}
 
-	const fallbackOf = (token) => {
-		const literal = defaults.get(token)
-		if (literal !== undefined && literal.includes('var(') === false) {
-			return literal
-		}
-		if (token === '--nldesign-color-background') {
-			return '#fff'
-		}
-		throw new Error(`No literal default for ${token} in css/systems/nldesign/defaults.css`)
+/**
+ * The literal default of an --nldesign-* token, for use as a var() fallback.
+ *
+ * @param {string} token The token name.
+ * @param {Map<string, string>} defaults The --nldesign-* defaults.
+ * @return {string} The literal.
+ */
+function literalDefault(token, defaults) {
+	const literal = defaults.get(token)
+	if (literal !== undefined && literal.includes('var(') === false) {
+		return literal
 	}
-	const colourExpr = (rule) => {
-		if (rule.ref !== undefined) {
-			if (mapping.derived?.[rule.ref] === undefined) {
-				throw new Error(`${rule.ref} is referenced but not declared under "derived"`)
-			}
-			return `var(${rule.ref})`
-		}
-		if (rule.shade !== undefined) {
-			// Darker text from the set's own hue: the status colour mixed with
-			// black, so the hue stays and only the lightness drops.
-			return `color-mix(in srgb, var(${rule.shade}, ${fallbackOf(rule.shade)}) ${rule.percent}%, #000)`
-		}
-		if (rule.token !== undefined) {
-			return `var(${rule.token}, ${fallbackOf(rule.token)})`
-		}
-		if (rule.tint !== undefined) {
-			const rgb = fallbackOf(`${rule.tint}-rgb`)
-			return `rgba(var(${rule.tint}-rgb, ${rgb}), ${rule.alpha})`
-		}
-		return rule.value.replace('{focus}', `var(--nldesign-color-focus, ${fallbackOf('--nldesign-color-focus')})`)
+	if (token === '--nldesign-color-background') {
+		return '#fff'
 	}
+	throw new Error(`No literal default for ${token} in css/systems/nldesign/defaults.css`)
+}
 
-	const lines = []
-	// Derived tokens first: the Den Haag properties below read them.
-	for (const [name, rule] of Object.entries(mapping.derived ?? {})) {
-		lines.push(`\t${name}: ${colourExpr(rule)};`)
+/**
+ * The value of a colour rule: a derived token, a shade or tint of a set
+ * colour, a set colour, or a literal that may name the focus colour.
+ *
+ * @param {object} rule The colour rule.
+ * @param {object} mapping The parsed mapping file.
+ * @param {Map<string, string>} defaults The --nldesign-* defaults.
+ * @return {string} The CSS value.
+ */
+function colourExpression(rule, mapping, defaults) {
+	if (rule.ref !== undefined) {
+		if (mapping.derived?.[rule.ref] === undefined) {
+			throw new Error(`${rule.ref} is referenced but not declared under "derived"`)
+		}
+		return `var(${rule.ref})`
 	}
+	if (rule.shade !== undefined) {
+		// Darker text from the set's own hue: the status colour mixed with
+		// black, so the hue stays and only the lightness drops.
+		return `color-mix(in srgb, var(${rule.shade}, ${literalDefault(rule.shade, defaults)}) ${rule.percent}%, #000)`
+	}
+	if (rule.token !== undefined) {
+		return `var(${rule.token}, ${literalDefault(rule.token, defaults)})`
+	}
+	if (rule.tint !== undefined) {
+		const rgb = literalDefault(`${rule.tint}-rgb`, defaults)
+		return `rgba(var(${rule.tint}-rgb, ${rgb}), ${rule.alpha})`
+	}
+	return rule.value.replace('{focus}', `var(--nldesign-color-focus, ${literalDefault('--nldesign-color-focus', defaults)})`)
+}
+
+/**
+ * The geometry value of a property the tokens package declares, resolved to
+ * a literal; a radius reads the set's corner radius first.
+ *
+ * @param {string} name The property.
+ * @param {object} mapping The parsed mapping file.
+ * @param {Map<string, string>} tokenDecl The tokens package's declarations.
+ * @return {{value?: string, problem?: string}} The value, or why there is none.
+ */
+function tokenPackageValue(name, mapping, tokenDecl) {
+	const literal = resolve(tokenDecl.get(name), tokenDecl)
+	if (literal === null) {
+		return { problem: `${name}: its value in the tokens package does not resolve` }
+	}
+	if (COLOUR_LITERAL.test(literal) === true) {
+		return { problem: `${name}: resolves to a Den Haag colour (${literal}) the mapping does not name` }
+	}
+	return { value: /-border-radius$/.test(name) === true ? `var(${mapping.radiusToken}, ${literal})` : literal }
+}
+
+/**
+ * The value one Den Haag property gets, by the first rule that covers it.
+ *
+ * @param {string} name The property.
+ * @param {object} mapping The parsed mapping file.
+ * @param {object} pinned What `readPinnedSources()` returned.
+ * @param {Map<string, string>} defaults The --nldesign-* defaults.
+ * @return {{value?: string, problem?: string}} The value, a problem, or neither when the component's own fallback is left in place.
+ */
+function propertyValue(name, mapping, pinned, defaults) {
+	const colour = mapping.colours[name]
+	const explicit = mapping.explicit[name]
+	const alias = mapping.aliases[name]
+
+	if (colour !== undefined) {
+		return { value: colourExpression(colour, mapping, defaults) }
+	}
+	if (/-font-family$/.test(name) === true) {
+		// Den Haag names TheSans, which this app does not ship: the set font wins,
+		// and a generic family is the only honest fallback.
+		return { value: `var(${mapping.fontFamily.token}, sans-serif)` }
+	}
+	if (pinned.tokenDecl.has(name) === true) {
+		return tokenPackageValue(name, mapping, pinned.tokenDecl)
+	}
+	if (explicit !== undefined) {
+		return { value: explicit.radius !== undefined ? `var(${mapping.radiusToken}, ${explicit.radius})` : explicit.value }
+	}
+	if (alias !== undefined) {
+		return { value: `var(${alias.alias})` }
+	}
+	if (pinned.needBare.has(name) === true) {
+		return { problem: `${name}: read without a fallback, and no rule gives it a value` }
+	}
+	// Read only with a fallback of the component's own: leave it to the component.
+	return {}
+}
+
+/**
+ * Mapping entries that point at nothing: a colour or website rule no pinned
+ * component reads, a website rule on the wrong token, an alias with no target.
+ *
+ * @param {object} mapping The parsed mapping file.
+ * @param {object} pinned What `readPinnedSources()` returned.
+ * @return {string[]} The problems.
+ */
+function staleMappingEntries(mapping, { needAll, tokenDecl }) {
 	const problems = []
-	const names = [...needAll].sort()
-	for (const name of names) {
-		const colour = mapping.colours[name]
-		const explicit = mapping.explicit[name]
-		const alias = mapping.aliases[name]
-		let value = null
-
-		if (colour !== undefined) {
-			value = colourExpr(colour)
-		} else if (/-font-family$/.test(name) === true) {
-			// Den Haag names TheSans, which this app does not ship: the set font wins,
-			// and a generic family is the only honest fallback.
-			value = `var(${mapping.fontFamily.token}, sans-serif)`
-		} else if (tokenDecl.has(name) === true) {
-			const literal = resolve(tokenDecl.get(name), tokenDecl)
-			if (literal === null) {
-				problems.push(`${name}: its value in the tokens package does not resolve`)
-				continue
-			}
-			if (COLOUR_LITERAL.test(literal) === true) {
-				problems.push(`${name}: resolves to a Den Haag colour (${literal}) the mapping does not name`)
-				continue
-			}
-			value = /-border-radius$/.test(name) === true ? `var(${mapping.radiusToken}, ${literal})` : literal
-		} else if (explicit !== undefined) {
-			value = explicit.radius !== undefined ? `var(${mapping.radiusToken}, ${explicit.radius})` : explicit.value
-		} else if (alias !== undefined) {
-			value = `var(${alias.alias})`
-		} else if (needBare.has(name) === true) {
-			problems.push(`${name}: read without a fallback, and no rule gives it a value`)
-			continue
-		} else {
-			// Read only with a fallback of the component's own: leave it to the component.
-			continue
-		}
-
-		if (value === '') {
-			// An empty token value means "unset" upstream; leave the component's own behaviour.
-			continue
-		}
-		// A website vocabulary token refines the role: a set that names it wins,
-		// every other set keeps the value above as the fallback
-		// (openspec/changes/zuiddrecht-website-type-and-controls).
-		const website = mapping.website?.[name]
-		if (website !== undefined) {
-			value = `var(${website.token}, ${value})`
-		}
-		lines.push(`\t${name}: ${value};`)
-	}
-
 	for (const name of Object.keys(mapping.colours)) {
 		if (needAll.has(name) === false) {
 			problems.push(`${name}: in the mapping, but no pinned component reads it`)
@@ -250,7 +279,45 @@ export function buildSection(mapping, mappingText, readSource, defaults) {
 			problems.push(`${alias.alias}: an alias target with no value`)
 		}
 	}
+	return problems
+}
 
+/**
+ * Build the generated section from the mapping, the vendored sources and the defaults.
+ *
+ * @param {object} mapping The parsed mapping file.
+ * @param {string} mappingText The mapping file as text, for its hash.
+ * @param {(file: string) => string} readSource Reads a vendored file by name.
+ * @param {Map<string, string>} defaults The --nldesign-* defaults.
+ * @return {{section: string, count: number}} The section text and how many properties it declares.
+ */
+export function buildSection(mapping, mappingText, readSource, defaults) {
+	const { components, tokens } = mapping.sources
+	const pinned = readPinnedSources(mapping.sources, readSource)
+
+	const lines = []
+	// Derived tokens first: the Den Haag properties below read them.
+	for (const [name, rule] of Object.entries(mapping.derived ?? {})) {
+		lines.push(`\t${name}: ${colourExpression(rule, mapping, defaults)};`)
+	}
+	const problems = []
+	for (const name of [...pinned.needAll].sort()) {
+		const { value, problem } = propertyValue(name, mapping, pinned, defaults)
+		if (problem !== undefined) {
+			problems.push(problem)
+		}
+		if (value === undefined || value === '') {
+			// An empty token value means "unset" upstream; leave the component's own behaviour.
+			continue
+		}
+		// A website vocabulary token refines the role: a set that names it wins,
+		// every other set keeps the value above as the fallback
+		// (openspec/changes/zuiddrecht-website-type-and-controls).
+		const website = mapping.website?.[name]
+		lines.push(`\t${name}: ${website !== undefined ? `var(${website.token}, ${value})` : value};`)
+	}
+
+	problems.push(...staleMappingEntries(mapping, pinned))
 	if (problems.length > 0) {
 		throw new Error('The Den Haag mapping is incomplete:\n  ' + problems.join('\n  '))
 	}
