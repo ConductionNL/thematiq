@@ -332,14 +332,19 @@ final class WorkspaceIconServiceTest extends TestCase {
 	 * @param array<int, array<string, mixed>> $tags Filled with the emitted tags.
 	 * @param LoggerInterface|null $logger The logger.
 	 * @param array<string, mixed> $setMeta The active set's manifest entry.
+	 * @param RuntimeException|null $metaFails Thrown by the manifest lookup instead, when given.
 	 *
 	 * @return WorkspaceIconListener
 	 */
-	private function listener(WorkspaceIconService $service, array &$tags, ?LoggerInterface $logger = null, array $setMeta = []): WorkspaceIconListener {
+	private function listener(WorkspaceIconService $service, array &$tags, ?LoggerInterface $logger = null, array $setMeta = [], ?RuntimeException $metaFails = null): WorkspaceIconListener {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturn('zuiddrecht');
 		$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$designSystems->method('getTokenSetMeta')->willReturn($setMeta);
+		if ($metaFails !== null) {
+			$designSystems = $this->createMock(originalClassName: DesignSystemService::class);
+			$designSystems->method('getTokenSetMeta')->willThrowException($metaFails);
+		}
 		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('imagePath')->willReturnCallback(
 			fn (string $appName, string $file): string => '/custom_apps/' . $appName . '/img/' . $file
@@ -484,4 +489,41 @@ final class WorkspaceIconServiceTest extends TestCase {
 			$this->assertSame(expected: [], actual: $tags, message: (string)json_encode($setMeta));
 		}
 	}//end testTheListenerSkipsAnUnusableSetFavicon()
+	/**
+	 * Scenario: the set favicon comes first, survives unreadable images, and an unreadable set adds only the images.
+	 *
+	 * @return void
+	 */
+	public function testTheListenerOrderAndItsFailures(): void {
+		$setMeta = ['theming' => ['favicon' => 'img/logos/zuiddrecht-emblem.svg']];
+		$service = $this->service();
+		$service->store(kind: 'touch-icon', bytes: self::png(width: 180, height: 180));
+		$service->store(kind: 'mobile-logo', bytes: self::png(width: 300, height: 80));
+		$page = $this->createMock(originalClassName: BeforeTemplateRenderedEvent::class);
+
+		$tags = [];
+		$this->listener(service: $service, tags: $tags, setMeta: $setMeta)->handle(event: $page);
+		$this->assertSame(expected: [['link', 'icon'], ['link', 'apple-touch-icon'], ['style', null]], actual: array_map(static fn (array $t): array => [$t['tag'], ($t['attributes']['rel'] ?? null)], $tags));
+
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with('Thematiq: the set favicon could not be read.', $this->arrayHasKey('exception'));
+		$tags = [];
+		$this->listener(service: $service, tags: $tags, logger: $logger, metaFails: new RuntimeException('manifest down'))->handle(event: $page);
+		$this->assertSame(expected: ['link', 'style'], actual: array_column($tags, 'tag'));
+
+		$appData = $this->createMock(originalClassName: IAppData::class);
+		$appData->method('getFolder')->willThrowException(new RuntimeException('storage down'));
+		$broken = new WorkspaceIconService(appData: $appData, sniffer: new ImageSniffer(), urls: $this->createMock(originalClassName: IURLGenerator::class));
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with('Thematiq: the workspace icons could not be read.', $this->arrayHasKey('exception'));
+		$tags = [];
+		$this->listener(service: $broken, tags: $tags, logger: $logger, setMeta: $setMeta)->handle(event: $page);
+		$this->assertSame(expected: [['link', 'icon']], actual: array_map(static fn (array $t): array => [$t['tag'], ($t['attributes']['rel'] ?? null)], $tags));
+
+		foreach ([['theming' => ['favicon' => 7]], ['theming' => ['favicon' => 'img/logos/x.SVG']], ['theming' => 'x']] as $odd) {
+			$tags = [];
+			$this->listener(service: $service, tags: $tags, setMeta: $odd)->handle(event: $page);
+			$this->assertSame(expected: ['apple-touch-icon', null], actual: array_map(static fn (array $t): ?string => ($t['attributes']['rel'] ?? null), $tags), message: (string)json_encode($odd));
+		}
+	}//end testTheListenerOrderAndItsFailures()
 }//end class
