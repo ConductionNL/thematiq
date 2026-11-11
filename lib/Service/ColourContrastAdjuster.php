@@ -59,14 +59,7 @@ class ColourContrastAdjuster {
 	public function repairLightness(array $foreground, array $background, float $min): array {
 		$hsl = $this->parser->rgbToHsl(rgb: $foreground);
 		for ($step = 1; $step <= self::MAX_STEPS; $step++) {
-			$delta = ($step * 0.005);
-			foreach ([($hsl[2] - $delta), ($hsl[2] + $delta)] as $lightness) {
-				if ($lightness < 0 || $lightness > 1) {
-					continue;
-				}
-
-				$channels = $this->parser->hslToRgb(hue: $hsl[0], saturation: $hsl[1], lightness: $lightness);
-				$rgb = [$this->channel(value: $channels[0]), $this->channel(value: $channels[1]), $this->channel(value: $channels[2])];
+			foreach ($this->stepCandidates(hsl: $hsl, step: $step) as $rgb) {
 				if ($this->contrast->ratio(first: $rgb, second: $background) >= $min) {
 					return $rgb;
 				}
@@ -75,6 +68,27 @@ class ColourContrastAdjuster {
 
 		return $this->blackOrWhite(background: $background, preferWhite: false);
 	}//end repairLightness()
+
+	/**
+	 * The colours one step darker and one step lighter, in that order, each only when its lightness is in 0..1.
+	 * Yielded one at a time, so the next is computed only when the previous one falls short.
+	 *
+	 * @param array{0: float, 1: float, 2: float} $hsl The foreground's hue, saturation and lightness.
+	 * @param int $step The step, in half percents of lightness.
+	 *
+	 * @return \Generator<int, array{0: int, 1: int, 2: int}> The candidates.
+	 */
+	private function stepCandidates(array $hsl, int $step): \Generator {
+		$delta = ($step * 0.005);
+		foreach ([($hsl[2] - $delta), ($hsl[2] + $delta)] as $lightness) {
+			if ($lightness < 0 || $lightness > 1) {
+				continue;
+			}
+
+			$channels = $this->parser->hslToRgb(hue: $hsl[0], saturation: $hsl[1], lightness: $lightness);
+			yield [$this->channel(value: $channels[0]), $this->channel(value: $channels[1]), $this->channel(value: $channels[2])];
+		}
+	}//end stepCandidates()
 
 	/**
 	 * Whichever of white and black contrasts more with the background.
