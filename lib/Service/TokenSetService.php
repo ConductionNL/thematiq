@@ -529,28 +529,7 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md
 	 */
 	private function readManifest(string $manifestPath): array {
-		if (file_exists($manifestPath) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($manifestPath);
-		if ($content === false) {
-			return [];
-		}
-
-		$data = json_decode($content, true);
-		if (is_array($data) === false) {
-			return [];
-		}
-
-		$indexed = [];
-		foreach ($data as $entry) {
-			if (isset($entry['id']) === true) {
-				$indexed[$entry['id']] = $entry;
-			}
-		}
-
-		return $indexed;
+		return (new IndexedJsonManifest())->read(path: $manifestPath);
 	}//end readManifest()
 
 	/**
