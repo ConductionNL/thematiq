@@ -104,7 +104,7 @@ class GalleryInstallService {
 			'entry' => $entry,
 			'existing' => $existing,
 			'name' => $name,
-			'prepared' => $this->prepare(name: $name, content: $content, fileUrl: (string)$entry['fileUrl']),
+			'prepared' => $this->prepare(name: $name, file: new GalleryFile(content: $content, fileUrl: (string)$entry['fileUrl'])),
 		];
 	}//end prepareInstall()
 
@@ -340,29 +340,56 @@ class GalleryInstallService {
 	 * Convert and validate exactly as an upload is, before anything is written.
 	 *
 	 * @param string $name The display name the set is stored under.
-	 * @param string $content The downloaded file.
-	 * @param string $fileUrl Its URL, whose file name tells the converter nothing it relies on.
+	 * @param GalleryFile $file The downloaded file and its URL, whose file name tells the converter nothing it relies on.
 	 *
 	 * @return array{converted: array<string, mixed>, accepted: array<string, string>}
 	 *
 	 * @throws GalleryException 422 when the upload path refuses the file.
 	 */
-	private function prepare(string $name, string $content, string $fileUrl): array {
+	private function prepare(string $name, GalleryFile $file): array {
 		$slug = $this->records->customSets->slugify(name: $name);
+		$converted = $this->converted(set: new GallerySetName(name: $name, slug: $slug), file: $file);
+		$css = $this->checkedCss(converted: $converted);
+
+		return ['converted' => $converted, 'accepted' => $this->acceptedDeclarations(css: $css, slug: $slug)];
+	}//end prepare()
+
+	/**
+	 * The file converted into a token set.
+	 *
+	 * @param GallerySetName $set The set's name and slug.
+	 * @param GalleryFile $file The verified file.
+	 *
+	 * @return array<string, mixed> The conversion.
+	 *
+	 * @throws GalleryException 422 when the converter refuses the file.
+	 */
+	private function converted(GallerySetName $set, GalleryFile $file): array {
 		try {
-			$converted = $this->pipeline->converter->convert(
-				content: $content,
-				slug: $slug,
-				displayName: $name,
+			return $this->pipeline->converter->convert(
+				content: $file->content,
+				slug: $set->slug,
+				displayName: $set->name,
 				options: [
-					'sourceName' => basename((string)parse_url($fileUrl, PHP_URL_PATH)),
-					'assetName' => CustomTokenSetId::PREFIX . $slug,
+					'sourceName' => basename((string)parse_url($file->fileUrl, PHP_URL_PATH)),
+					'assetName' => CustomTokenSetId::PREFIX . $set->slug,
 				]
 			);
 		} catch (RuntimeException $e) {
 			throw new GalleryException(message: $this->refused(reason: $e->getMessage()), code: 422, previous: $e);
 		}
+	}//end converted()
 
+	/**
+	 * The converted CSS, when it maps at least one token and holds no selector other than `:root`.
+	 *
+	 * @param array<string, mixed> $converted The conversion.
+	 *
+	 * @return string The CSS.
+	 *
+	 * @throws GalleryException 422 otherwise.
+	 */
+	private function checkedCss(array $converted): string {
 		if ((int)($converted['imported'] ?? 0) === 0) {
 			throw new GalleryException(message: $this->refused(reason: $this->l10n->t('nothing in it maps onto a Nextcloud token')), code: 422);
 		}
@@ -372,14 +399,28 @@ class GalleryInstallService {
 			throw new GalleryException(message: $this->refused(reason: $this->l10n->t('it contains a selector other than :root')), code: 422);
 		}
 
+		return $css;
+	}//end checkedCss()
+
+	/**
+	 * The declarations the custom set validator accepts.
+	 *
+	 * @param string $css The converted CSS.
+	 * @param string $slug The set's slug.
+	 *
+	 * @return array<string, string> The accepted declarations.
+	 *
+	 * @throws GalleryException 422 when the validator refuses them.
+	 */
+	private function acceptedDeclarations(string $css, string $slug): array {
 		$split = $this->pipeline->validator->validateDeclarations(declarations: $this->pipeline->cssParser->parseRootBlock(css: $css), slug: $slug);
 		if ($split === null) {
 			$error = $this->pipeline->validator->getLastError();
 			throw new GalleryException(message: $this->refused(reason: (string)($error['message'] ?? '')), code: 422);
 		}
 
-		return ['converted' => $converted, 'accepted' => $split['accepted']];
-	}//end prepare()
+		return $split['accepted'];
+	}//end acceptedDeclarations()
 
 	/**
 	 * The refusal sentence.
