@@ -2133,7 +2133,7 @@ class DarkPaletteService {
 			$s = ($delta / (2 - $max - $min));
 		}
 
-		$h = $this->hueSector(r: $r, g: $g, b: $b, max: $max, delta: $delta);
+		$h = $this->hueSector(channels: [$r, $g, $b], delta: $delta);
 
 		// Use fmod(), not `%` — the hue is a float, and PHP's `%` silently
 		// truncates both operands to int, which would corrupt sub-degree hue
@@ -2152,17 +2152,18 @@ class DarkPaletteService {
 	 * returns instead of an if/else-if/else chain, one sector per channel
 	 * being the maximum.
 	 *
-	 * @param float $r The red channel, normalised to [0, 1].
-	 * @param float $g The green channel, normalised to [0, 1].
-	 * @param float $b The blue channel, normalised to [0, 1].
-	 * @param float $max The maximum of r/g/b.
-	 * @param float $delta The max-min spread.
+	 * @param array{0: float, 1: float, 2: float} $channels The red, green and blue channels, normalised to [0, 1].
+	 * @param float $delta The spread between the largest and the smallest channel (non-zero).
 	 *
 	 * @return float The pre-normalisation hue sector value.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function hueSector(float $r, float $g, float $b, float $max, float $delta): float {
+	private function hueSector(array $channels, float $delta): float {
+		$r = (float)$channels[0];
+		$g = (float)$channels[1];
+		$b = (float)$channels[2];
+		$max = max($r, $g, $b);
 		if ($max === $g) {
 			return ((($b - $r) / $delta) + 2);
 		}
