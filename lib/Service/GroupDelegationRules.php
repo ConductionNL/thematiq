@@ -78,23 +78,7 @@ class GroupDelegationRules {
 			return $clean;
 		}
 
-		$allowed = ($entry['allowedTokenSets'] ?? null);
-		if (is_array($allowed) === false || $allowed === []) {
-			throw new GroupThemingValidationException(entry: $entry, reason: 'A delegated group needs at least one allowed token set.');
-		}
-
-		$cleanAllowed = [];
-		foreach ($allowed as $setId) {
-			if (is_string($setId) === false || $isAvailable($setId) === false) {
-				throw new GroupThemingValidationException(
-					entry: $entry,
-					reason: sprintf('Allowed token set %s is not available.', (string)json_encode($setId))
-				);
-			}
-
-			$cleanAllowed[$setId] = true;
-		}
-
+		$cleanAllowed = $this->availableSets(entry: $entry, isAvailable: $isAvailable);
 		if (isset($cleanAllowed[$clean['tokenSet']]) === false) {
 			throw new GroupThemingValidationException(
 				entry: $entry,
@@ -107,6 +91,50 @@ class GroupDelegationRules {
 
 		return $clean;
 	}//end validate()
+
+	/**
+	 * The submitted allowed sets, each checked to be available, as a lookup in submitted order.
+	 *
+	 * @param array<array-key, mixed> $entry The submitted entry.
+	 * @param callable(string): bool $isAvailable Whether a token set id is available.
+	 *
+	 * @return array<string, true> Set id => true.
+	 *
+	 * @throws GroupThemingValidationException When a set is not a string or not available.
+	 */
+	private function availableSets(array $entry, callable $isAvailable): array {
+		$cleanAllowed = [];
+		foreach ($this->allowedList(entry: $entry) as $setId) {
+			if (is_string($setId) === false || $isAvailable($setId) === false) {
+				throw new GroupThemingValidationException(
+					entry: $entry,
+					reason: sprintf('Allowed token set %s is not available.', (string)json_encode($setId))
+				);
+			}
+
+			$cleanAllowed[$setId] = true;
+		}
+
+		return $cleanAllowed;
+	}//end availableSets()
+
+	/**
+	 * The submitted allowed list, which a delegated entry needs non-empty.
+	 *
+	 * @param array<array-key, mixed> $entry The submitted entry.
+	 *
+	 * @return array<array-key, mixed> The list as submitted.
+	 *
+	 * @throws GroupThemingValidationException When the list is absent, not a list or empty.
+	 */
+	private function allowedList(array $entry): array {
+		$allowed = ($entry['allowedTokenSets'] ?? null);
+		if (is_array($allowed) === false || $allowed === []) {
+			throw new GroupThemingValidationException(entry: $entry, reason: 'A delegated group needs at least one allowed token set.');
+		}
+
+		return $allowed;
+	}//end allowedList()
 
 	/**
 	 * Whether a submitted flag is on.
