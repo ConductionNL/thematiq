@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use InvalidArgumentException;
+use OCA\Thematiq\Service\BrandColours;
 use OCA\Thematiq\Service\BrandFormService;
+use OCA\Thematiq\Service\BrandPalette;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
@@ -81,7 +83,7 @@ class BrandFormServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testRedAndWhiteGiveACompleteSetWithReadableText(): void {
-		$result = $this->service->derive(appPath: $this->root, primary: '#C8102E', background: '#fff');
+		$result = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#C8102E', background: '#fff')));
 
 		$this->assertSame(expected: '#c8102e', actual: $result['declarations']['--nldesign-color-primary']);
 		$this->assertSame(expected: '#ffffff', actual: $result['declarations']['--nldesign-color-primary-text']);
@@ -98,7 +100,7 @@ class BrandFormServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLightPrimaryGetsBlackText(): void {
-		$result = $this->service->derive(appPath: $this->root, primary: '#ffd200', background: '#ffffff');
+		$result = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#ffd200', background: '#ffffff')));
 		$defaults = $this->service->inputs(appPath: $this->root)['defaults'];
 
 		$this->assertSame(expected: '#000000', actual: $result['textOnPrimary']);
@@ -115,11 +117,11 @@ class BrandFormServiceTest extends TestCase {
 	public function testMidToneAndDarkPrimaries(): void {
 		$this->assertSame(
 			expected: '#000000',
-			actual: $this->service->derive(appPath: $this->root, primary: '#808080', background: '#ffffff')['textOnPrimary']
+			actual: $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#808080', background: '#ffffff')))['textOnPrimary']
 		);
 		$this->assertSame(
 			expected: '#ffffff',
-			actual: $this->service->derive(appPath: $this->root, primary: '#154273', background: '#ffffff')['textOnPrimary']
+			actual: $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#154273', background: '#ffffff')))['textOnPrimary']
 		);
 	}//end testMidToneAndDarkPrimaries()
 
@@ -129,7 +131,7 @@ class BrandFormServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLowUiContrastIsReportedNotRefused(): void {
-		$result = $this->service->derive(appPath: $this->root, primary: '#ffd200', background: '#ffffff');
+		$result = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#ffd200', background: '#ffffff')));
 
 		$this->assertLessThan(expected: 3.0, actual: $result['uiRatio']);
 	}//end testLowUiContrastIsReportedNotRefused()
@@ -141,7 +143,7 @@ class BrandFormServiceTest extends TestCase {
 	 */
 	public function testNonHexColourIsRefused(): void {
 		$this->expectException(exception: InvalidArgumentException::class);
-		$this->service->derive(appPath: $this->root, primary: 'red', background: '#ffffff');
+		$this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: 'red', background: '#ffffff')));
 	}//end testNonHexColourIsRefused()
 
 	/**
@@ -160,12 +162,7 @@ class BrandFormServiceTest extends TestCase {
 		foreach ($fixture['cases'] as $case) {
 			$this->assertSame(
 				expected: $case['expected'],
-				actual: $this->service->derive(
-					appPath: $this->root,
-					primary: $case['primary'],
-					background: $case['background'],
-					action: $case['action']
-				),
+				actual: $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: $case['primary'], background: $case['background']), action: $case['action'])),
 				message: $case['primary'] . ' on ' . $case['background'] . ' with ' . ($case['action'] ?? 'no action colour')
 			);
 		}
@@ -179,8 +176,8 @@ class BrandFormServiceTest extends TestCase {
 	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
 	public function testWithoutAnActionColourTheSetHoldsNoActionToken(): void {
-		$plain = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff');
-		$empty = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '');
+		$plain = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff')));
+		$empty = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff'), action: ''));
 
 		$this->assertSame(expected: $plain, actual: $empty, message: 'an empty field is no action colour');
 		$this->assertNull(actual: $plain['textOnAction']);
@@ -198,8 +195,8 @@ class BrandFormServiceTest extends TestCase {
 	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
 	public function testAnActionColourBringsItsHoverAndText(): void {
-		$plain = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff');
-		$green = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#1F883D');
+		$plain = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff')));
+		$green = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff'), action: '#1F883D'));
 
 		$this->assertSame(expected: '#1f883d', actual: $green['declarations']['--nldesign-color-action']);
 		$this->assertSame(
@@ -223,11 +220,11 @@ class BrandFormServiceTest extends TestCase {
 			message: 'the header stays with the primary'
 		);
 
-		$yellow = $this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: '#ffd200');
+		$yellow = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff'), action: '#ffd200'));
 		$this->assertSame(expected: '#000000', actual: $yellow['declarations']['--nldesign-color-action-text'], message: 'black reads on yellow');
 
 		$this->expectException(exception: \InvalidArgumentException::class);
-		$this->service->derive(appPath: $this->root, primary: '#1a67a3', background: '#ffffff', action: 'green');
+		$this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff'), action: 'green'));
 	}//end testAnActionColourBringsItsHoverAndText()
 
 	/**
@@ -236,7 +233,7 @@ class BrandFormServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAuditFindsNothingMissing(): void {
-		$declarations = $this->service->derive(appPath: $this->root, primary: '#c8102e', background: '#ffffff')['declarations'];
+		$declarations = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#c8102e', background: '#ffffff')))['declarations'];
 		$tree = $this->appTreeWith(css: (new CustomTokenSetValidator())->serialize(declarations: $declarations));
 
 		try {
@@ -264,11 +261,7 @@ class BrandFormServiceTest extends TestCase {
 			appManager: $this->createMock(originalClassName: IAppManager::class),
 			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		))
-			->deriveDarkDeclarations(lightDeclarations: $this->service->derive(
-				appPath: $this->root,
-				primary: '#c8102e',
-				background: '#ffffff'
-			)['declarations']);
+			->deriveDarkDeclarations(lightDeclarations: $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#c8102e', background: '#ffffff')))['declarations']);
 
 		$primary = $contrast->parseColor(value: $dark['--nldesign-color-primary']);
 		$text = $contrast->parseColor(value: $dark['--nldesign-color-primary-text']);

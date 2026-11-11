@@ -126,17 +126,37 @@ class HealthController extends Controller {
 	public function index(): JSONResponse {
 		$engine = $this->engineResult();
 		if ($engine === null) {
-			return new JSONResponse(
-				[
-					'status' => 'degraded',
-					'app' => $this->appName,
-					'version' => $this->config->getAppValue(Application::APP_ID, 'installed_version', ''),
-					'checks' => ['openregister' => 'unavailable'],
-				],
-				Http::STATUS_OK
-			);
+			return $this->degraded();
 		}
 
+		return $this->engineResponse(engine: $engine);
+	}//end index()
+
+	/**
+	 * The answer when the observability engine is not there: degraded, served as 200.
+	 *
+	 * @return JSONResponse The response.
+	 */
+	private function degraded(): JSONResponse {
+		return new JSONResponse(
+			[
+				'status' => 'degraded',
+				'app' => $this->appName,
+				'version' => $this->config->getAppValue(Application::APP_ID, 'installed_version', ''),
+				'checks' => ['openregister' => 'unavailable'],
+			],
+			Http::STATUS_OK
+		);
+	}//end degraded()
+
+	/**
+	 * The engine's answer, with the cross-origin headers when its manifest allows them.
+	 *
+	 * @param array{status: string, version: string, checks: array<string, mixed>, httpStatus: int, cors: bool} $engine The engine's result.
+	 *
+	 * @return JSONResponse The response.
+	 */
+	private function engineResponse(array $engine): JSONResponse {
 		$response = new JSONResponse(
 			[
 				'status' => $engine['status'],
@@ -148,12 +168,23 @@ class HealthController extends Controller {
 		);
 
 		if ($engine['cors'] === true) {
-			$response->addHeader('Access-Control-Allow-Origin', '*');
-			$response->addHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+			$this->allowCrossOrigin(response: $response);
 		}
 
 		return $response;
-	}//end index()
+	}//end engineResponse()
+
+	/**
+	 * Let any origin read the health answer with GET.
+	 *
+	 * @param JSONResponse $response The response.
+	 *
+	 * @return void
+	 */
+	private function allowCrossOrigin(JSONResponse $response): void {
+		$response->addHeader('Access-Control-Allow-Origin', '*');
+		$response->addHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+	}//end allowCrossOrigin()
 
 	/**
 	 * Run the AppHost observability engine for this app.
@@ -164,23 +195,31 @@ class HealthController extends Controller {
 	 */
 	private function engineResult(): ?array {
 		try {
-			$manifestLoader = $this->container->get(self::MANIFEST_LOADER);
-			$executor = $this->container->get(self::HEALTH_EXECUTOR);
-
-			$appId = $this->appName;
-			$manifest = $manifestLoader->load(appId: $appId);
-			$result = $executor->execute(manifest: $manifest);
-
-			return [
-				'status' => (string)$result->status,
-				'version' => (string)$manifestLoader->appVersion(appId: $appId),
-				'checks' => (array)$result->checks,
-				'httpStatus' => (int)$result->httpStatusCode,
-				'cors' => ($manifest->cors === true),
-			];
+			return $this->runEngine();
 		} catch (\Throwable $e) {
 			return null;
-		}//end try
-
+		}
 	}//end engineResult()
+
+	/**
+	 * Run the engine's health checks for this app's manifest.
+	 *
+	 * @return array{status: string, version: string, checks: array<string, mixed>, httpStatus: int, cors: bool} The result.
+	 */
+	private function runEngine(): array {
+		$manifestLoader = $this->container->get(self::MANIFEST_LOADER);
+		$executor = $this->container->get(self::HEALTH_EXECUTOR);
+
+		$appId = $this->appName;
+		$manifest = $manifestLoader->load(appId: $appId);
+		$result = $executor->execute(manifest: $manifest);
+
+		return [
+			'status' => (string)$result->status,
+			'version' => (string)$manifestLoader->appVersion(appId: $appId),
+			'checks' => (array)$result->checks,
+			'httpStatus' => (int)$result->httpStatusCode,
+			'cors' => ($manifest->cors === true),
+		];
+	}//end runEngine()
 }//end class

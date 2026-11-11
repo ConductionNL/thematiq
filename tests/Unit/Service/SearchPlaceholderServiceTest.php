@@ -195,4 +195,29 @@ class SearchPlaceholderServiceTest extends TestCase {
 		$this->service()->inject('dossiq');
 		$this->assertSame(expected: 0, actual: $this->scripts);
 	}
+	/**
+	 * The map keeps only string keys with non-blank string texts, trimmed; the app's own text is trimmed too.
+	 *
+	 * @return void
+	 */
+	public function testTheMapIsFilteredAndTheOrderHolds(): void {
+		$this->values['thematiq']['search_placeholders'] = json_encode(['files' => '   ', 'deck' => 7, '*' => '  Search all  ', 'mail' => ' Search mail ', 0 => 'numbered']);
+		$this->values['files']['search_placeholder'] = '  Own files text ';
+		$this->values['deck']['search_placeholder'] = '   ';
+		$cases = [
+			'files' => 'files:Own files text',
+			'deck' => 'thematiq:Search all',
+			'mail' => 'mail:Search mail',
+			'0' => 'thematiq:Search all',
+			'' => 'thematiq:Search all',
+		];
+		foreach ($cases as $app => $expected) {
+			$this->assertSame(expected: $expected, actual: $this->service()->placeholderFor((string)$app), message: (string)$app);
+		}
+
+		$this->values['thematiq']['search_placeholders'] = '"a string"';
+		$this->assertSame(expected: 'files:Own files text', actual: $this->service()->placeholderFor('files'));
+		$this->assertNull(actual: $this->service()->placeholderFor('deck'));
+		$this->assertNull(actual: $this->service()->placeholderFor(''));
+	}
 }

@@ -75,8 +75,7 @@ class InternalScopesService {
 	 * The internal scopes for a set as the page wears it.
 	 *
 	 * @param string $tokenSet The resolved token set.
-	 * @param string $designSystemId The design system the set wears.
-	 * @param bool $withDark Whether the set's dark variant is injected.
+	 * @param TokenSetWear $wear The design system the set wears and whether its dark variant is injected.
 	 *
 	 * @return string The CSS, or the empty string when no internal token is set.
 	 *
@@ -84,15 +83,12 @@ class InternalScopesService {
 	 *
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
-	public function forSet(string $tokenSet, string $designSystemId, bool $withDark): string {
+	public function forSet(string $tokenSet, TokenSetWear $wear): string {
 		$light = (string)$this->files->read(name: 'css/tokens/' . $tokenSet . '.css');
 		$overrides = (string)$this->files->read(
-			name: 'css/' . CustomOverridesService::fileFor(tokenSet: $tokenSet, designSystemId: $designSystemId) . '.css'
+			name: 'css/' . CustomOverridesService::fileFor(tokenSet: $tokenSet, designSystemId: $wear->designSystemId) . '.css'
 		);
-		$dark = '';
-		if ($withDark === true) {
-			$dark = (string)$this->files->read(name: 'css/tokens/dark/' . $tokenSet . '.css');
-		}
+		$dark = $this->darkCss(tokenSet: $tokenSet, withDark: $wear->withDark);
 
 		return $this->build(
 			lightNames: array_merge(
@@ -102,6 +98,22 @@ class InternalScopesService {
 			anyNames: $this->declaredNames(css: $light . "\n" . $overrides . "\n" . $dark)
 		);
 	}//end forSet()
+
+	/**
+	 * The set's dark variant, when it is injected.
+	 *
+	 * @param string $tokenSet The resolved token set.
+	 * @param bool $withDark Whether the set's dark variant is injected.
+	 *
+	 * @return string The stylesheet, or empty.
+	 */
+	private function darkCss(string $tokenSet, bool $withDark): string {
+		if ($withDark === true) {
+			return (string)$this->files->read(name: 'css/tokens/dark/' . $tokenSet . '.css');
+		}
+
+		return '';
+	}//end darkCss()
 
 	/**
 	 * The rules for the internal tokens given a value.
@@ -116,6 +128,26 @@ class InternalScopesService {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public function build(array $lightNames, array $anyNames): string {
+		$rules = $this->rules(lightNames: $lightNames, anyNames: $anyNames);
+		if ($rules === []) {
+			return '';
+		}
+
+		return "/* thematiq internal scopes: the internal tokens this set and the overrides give a value. */\n"
+			. implode("\n", $rules) . "\n";
+	}//end build()
+
+	/**
+	 * One scoped rule per internal token given a value, in name order.
+	 *
+	 * @param array<int, string> $lightNames Names declared on `:root`, which apply in every theme.
+	 * @param array<int, string> $anyNames Names declared anywhere, including dark scopes only.
+	 *
+	 * @return list<string> The rules.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 */
+	private function rules(array $lightNames, array $anyNames): array {
 		$internal = TokenRegistry::getInternalTokens();
 		$light = array_flip($lightNames);
 		$names = array_values(array_unique(array_merge($lightNames, $anyNames)));
@@ -127,27 +159,44 @@ class InternalScopesService {
 				continue;
 			}
 
-			$selectors = $internal[$token]['selectors'];
-			if ($internal[$token]['mode'] === 'body' || $selectors === []) {
-				$selectors = ['body'];
-			}
-
-			$declaration = "\t" . $internal[$token]['variable'] . ': var(' . $token . ');';
-			if (isset($light[$token]) === true) {
-				$rules[] = ':is(' . implode(', ', $selectors) . ')' . self::BUMP . " {\n" . $declaration . "\n}";
-				continue;
-			}
-
-			$rules[] = $this->darkOnly(selectors: $selectors, declaration: $declaration);
+			$rules[] = $this->scopedRule(rule: $this->internalRule(entry: $internal[$token], token: $token), isLight: isset($light[$token]));
 		}
 
-		if ($rules === []) {
-			return '';
+		return $rules;
+	}//end rules()
+
+	/**
+	 * An internal token's selectors (`body` for a body-mode token or one without selectors) and its declaration.
+	 *
+	 * @param array<string, mixed> $entry The registry entry.
+	 * @param string $token The token name.
+	 *
+	 * @return InternalRule The unscoped rule.
+	 */
+	private function internalRule(array $entry, string $token): InternalRule {
+		$selectors = $entry['selectors'];
+		if ($entry['mode'] === 'body' || $selectors === []) {
+			$selectors = ['body'];
 		}
 
-		return "/* thematiq internal scopes: the internal tokens this set and the overrides give a value. */\n"
-			. implode("\n", $rules) . "\n";
-	}//end build()
+		return new InternalRule(selectors: $selectors, declaration: "\t" . $entry['variable'] . ': var(' . $token . ');');
+	}//end internalRule()
+
+	/**
+	 * The rule in every theme for a token declared on `:root`, else the dark-only rules.
+	 *
+	 * @param InternalRule $rule The unscoped rule.
+	 * @param bool $isLight Whether the token is declared on `:root`.
+	 *
+	 * @return string The CSS.
+	 */
+	private function scopedRule(InternalRule $rule, bool $isLight): string {
+		if ($isLight === true) {
+			return ':is(' . implode(', ', $rule->selectors) . ')' . self::BUMP . " {\n" . $rule->declaration . "\n}";
+		}
+
+		return $this->darkOnly(selectors: $rule->selectors, declaration: $rule->declaration);
+	}//end scopedRule()
 
 	/**
 	 * The rule for a token declared only in dark scopes: in light the token is

@@ -177,8 +177,31 @@ class MigrateStoredClassNames implements IRepairStep {
 	 *  The email theming it restores is specified where it is read.
 	 */
 	public function run(IOutput $output): void {
+		$configured = $this->configuredClass(output: $output);
+		if ($configured === null) {
+			return;
+		}
+
+		$nothingToDo = $this->nothingToDo(configured: $configured);
+		if ($nothingToDo !== null) {
+			$output->info($nothingToDo);
+			return;
+		}
+
+		$this->rewriteMailTemplateClass(output: $output);
+
+	}//end run()
+
+	/**
+	 * The stored mail template class, or null when it cannot be read.
+	 *
+	 * @param IOutput $output The output interface for progress reporting.
+	 *
+	 * @return string|null The class name, or null after reporting the read failure.
+	 */
+	private function configuredClass(IOutput $output): ?string {
 		try {
-			$configured = (string)$this->config->getSystemValue(
+			return (string)$this->config->getSystemValue(
 				EmailThemingService::MAIL_TEMPLATE_CLASS_KEY,
 				''
 			);
@@ -192,37 +215,36 @@ class MigrateStoredClassNames implements IRepairStep {
 			$output->warning(
 				'MigrateStoredClassNames: mail_template_class is unreadable; stored class name left as-is.'
 			);
-			return;
+			return null;
 		}//end try
+	}//end configuredClass()
 
+	/**
+	 * Why the stored class needs no rewrite, or null when it names the old class.
+	 *
+	 * @param string $configured The stored mail template class.
+	 *
+	 * @return string|null The message to report, or null to rewrite.
+	 */
+	private function nothingToDo(string $configured): ?string {
 		if ($configured === '') {
-			$output->info(
-				'MigrateStoredClassNames: no mail template configured on this install; nothing to do.'
-			);
-			return;
+			return 'MigrateStoredClassNames: no mail template configured on this install; nothing to do.';
 		}
 
 		if ($configured === NLDesignEMailTemplate::class) {
-			$output->info(
-				'MigrateStoredClassNames: mail_template_class already names the thematiq template; nothing to do.'
-			);
-			return;
+			return 'MigrateStoredClassNames: mail_template_class already names the thematiq template; nothing to do.';
 		}
 
 		// Anything that is neither empty nor either of this app's own class
 		// names belongs to somebody else. Never clobber it: an enterprise mail
 		// template configured by the admin is not this migration's business.
 		if ($configured !== self::OLD_MAIL_TEMPLATE_CLASS) {
-			$output->info(
-				'MigrateStoredClassNames: mail_template_class names a foreign template ('
-				. $configured . '); left untouched.'
-			);
-			return;
+			return 'MigrateStoredClassNames: mail_template_class names a foreign template ('
+				. $configured . '); left untouched.';
 		}
 
-		$this->rewriteMailTemplateClass(output: $output);
-
-	}//end run()
+		return null;
+	}//end nothingToDo()
 
 	/**
 	 * Write the new mail template FQCN, reporting any reason it cannot be done.
@@ -243,18 +265,7 @@ class MigrateStoredClassNames implements IRepairStep {
 				NLDesignEMailTemplate::class
 			);
 		} catch (Throwable $e) {
-			// The config_is_read_only flag can miss a filesystem-level
-			// read-only config.php (e.g. chmod 444) — the write itself throws
-			// in that case. Mirrors EmailThemingService::enable().
-			$this->logger->warning(
-				'Thematiq: could not rewrite mail_template_class; branded emails stay disabled until it is set by hand',
-				[
-					'from' => self::OLD_MAIL_TEMPLATE_CLASS,
-					'to' => NLDesignEMailTemplate::class,
-					'exception' => $e->getMessage(),
-				]
-			);
-			$this->reportUnwritable(output: $output, reason: 'the write failed: ' . $e->getMessage());
+			$this->reportFailedWrite(output: $output, error: $e);
 			return;
 		}//end try
 
@@ -264,6 +275,30 @@ class MigrateStoredClassNames implements IRepairStep {
 		);
 
 	}//end rewriteMailTemplateClass()
+
+	/**
+	 * Log and report a write of the new class name that threw.
+	 *
+	 * The config_is_read_only flag can miss a filesystem-level read-only
+	 * config.php (e.g. chmod 444) — the write itself throws in that case.
+	 * Mirrors EmailThemingService::enable().
+	 *
+	 * @param IOutput $output The output interface for progress reporting.
+	 * @param Throwable $error What the write threw.
+	 *
+	 * @return void
+	 */
+	private function reportFailedWrite(IOutput $output, Throwable $error): void {
+		$this->logger->warning(
+			'Thematiq: could not rewrite mail_template_class; branded emails stay disabled until it is set by hand',
+			[
+				'from' => self::OLD_MAIL_TEMPLATE_CLASS,
+				'to' => NLDesignEMailTemplate::class,
+				'exception' => $error->getMessage(),
+			]
+		);
+		$this->reportUnwritable(output: $output, reason: 'the write failed: ' . $error->getMessage());
+	}//end reportFailedWrite()
 
 	/**
 	 * Whether Nextcloud reports config.php as read-only.

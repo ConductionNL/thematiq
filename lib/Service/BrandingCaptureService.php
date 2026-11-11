@@ -138,23 +138,57 @@ class BrandingCaptureService {
 	public function capture(string $setId): array {
 		$this->deleteFiles(setId: $setId);
 
-		$theming = ['captured' => true];
+		$theming = ['captured' => true] + $this->capturedColours() + ['background_mode' => $this->backgroundMode()];
+		$theming = $this->withCapturedImages(setId: $setId, theming: $theming);
 
+		$captured = $this->all();
+		$captured[$setId] = $theming;
+		$this->save(captured: $captured);
+
+		return $theming;
+	}//end capture()
+
+	/**
+	 * The primary and background colours core theming holds, each when set.
+	 *
+	 * @return array<string, string> Colour key => value.
+	 */
+	private function capturedColours(): array {
+		$colours = [];
 		foreach (['primary_color', 'background_color'] as $colorKey) {
 			$value = $this->config->getAppValue('theming', $colorKey, '');
 			if ($value !== '') {
-				$theming[$colorKey] = $value;
+				$colours[$colorKey] = $value;
 			}
 		}
 
-		// Three states, not two: an image of the admin's own, the image
-		// removed in favour of the plain colour, or Nextcloud's default image.
-		$backgroundMime = $this->config->getAppValue('theming', 'backgroundMime', '');
-		$theming['background_mode'] = 'default';
-		if ($backgroundMime === 'backgroundColor') {
-			$theming['background_mode'] = 'color';
+		return $colours;
+	}//end capturedColours()
+
+	/**
+	 * Which of the three background states core theming is in, before an
+	 * image of the admin's own is found: the image removed in favour of the
+	 * plain colour, or Nextcloud's default image.
+	 *
+	 * @return string `color` or `default`.
+	 */
+	private function backgroundMode(): string {
+		if ($this->config->getAppValue('theming', 'backgroundMime', '') === 'backgroundColor') {
+			return 'color';
 		}
 
+		return 'default';
+	}//end backgroundMode()
+
+	/**
+	 * Copy each of the admin's images into the theme and record its slot as synced to the copy.
+	 *
+	 * @param string $setId The token set.
+	 * @param array<string, mixed> $theming The theming block so far.
+	 *
+	 * @return array<string, mixed> The block with the copied images; a copied background makes the mode `image`.
+	 */
+	private function withCapturedImages(string $setId, array $theming): array {
 		foreach (self::IMAGE_KEYS as $imageKey) {
 			$path = $this->copyImage(setId: $setId, imageKey: $imageKey);
 			if ($path === null) {
@@ -169,12 +203,8 @@ class BrandingCaptureService {
 			$this->config->setAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey, $path);
 		}
 
-		$captured = $this->all();
-		$captured[$setId] = $theming;
-		$this->save(captured: $captured);
-
 		return $theming;
-	}//end capture()
+	}//end withCapturedImages()
 
 	/**
 	 * Every set's captured branding, by set id.
@@ -224,22 +254,13 @@ class BrandingCaptureService {
 	 * @return string|null The app-relative path written, or null when the slot holds no image of the admin's.
 	 */
 	private function copyImage(string $setId, string $imageKey): ?string {
-		if ($this->imageManager->hasImage($imageKey) === false) {
-			return null;
-		}
-
-		$mime = $this->config->getAppValue('theming', $imageKey . 'Mime', '');
-		$extension = (self::EXTENSIONS[$mime] ?? null);
+		$extension = $this->imageExtension(imageKey: $imageKey);
 		if ($extension === null) {
 			return null;
 		}
 
-		try {
-			$contents = $this->imageManager->getImage($imageKey)->getContent();
-		} catch (\Throwable $e) {
-			// An unreadable slot is left out of the theme rather than failing
-			// the save it rides on: the tokens still saved, only this image
-			// will not come back with the theme.
+		$contents = $this->imageContents(imageKey: $imageKey);
+		if ($contents === null) {
 			return null;
 		}
 
@@ -252,6 +273,40 @@ class BrandingCaptureService {
 
 		return $name;
 	}//end copyImage()
+
+	/**
+	 * The file extension of an image slot the admin filled, by its stored MIME type.
+	 *
+	 * @param string $imageKey The image slot.
+	 *
+	 * @return string|null The extension, or null when the slot is empty or of a type not kept.
+	 */
+	private function imageExtension(string $imageKey): string|null {
+		if ($this->imageManager->hasImage($imageKey) === false) {
+			return null;
+		}
+
+		$mime = $this->config->getAppValue('theming', $imageKey . 'Mime', '');
+
+		return (self::EXTENSIONS[$mime] ?? null);
+	}//end imageExtension()
+
+	/**
+	 * The bytes of an image slot. An unreadable slot is left out of the theme
+	 * rather than failing the save it rides on: the tokens still saved, only
+	 * this image will not come back with the theme.
+	 *
+	 * @param string $imageKey The image slot.
+	 *
+	 * @return string|null The bytes, or null when the slot cannot be read.
+	 */
+	private function imageContents(string $imageKey): string|null {
+		try {
+			return $this->imageManager->getImage($imageKey)->getContent();
+		} catch (\Throwable $e) {
+			return null;
+		}
+	}//end imageContents()
 
 	/**
 	 * Remove every image copied for a set, whatever its extension.

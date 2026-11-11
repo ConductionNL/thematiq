@@ -88,6 +88,17 @@ class DtcgValueTyper {
 			return null;
 		}
 
+		return ['$type' => 'color', '$value' => $this->colourObject(parsed: $parsed)];
+	}//end colorToken()
+
+	/**
+	 * The DTCG colour object of a parsed colour: rounded components, the hex fallback and any alpha below 1.
+	 *
+	 * @param array{space: string, components: array<int, float>, alpha: float|null} $parsed The parsed colour.
+	 *
+	 * @return array<string, mixed> The colour object.
+	 */
+	private function colourObject(array $parsed): array {
 		$rgb = (array)$this->converter->toSrgb(space: $parsed['space'], components: $parsed['components']);
 		$object = [
 			'colorSpace' => $parsed['space'],
@@ -98,8 +109,8 @@ class DtcgValueTyper {
 			$object['alpha'] = round($parsed['alpha'], 3);
 		}
 
-		return ['$type' => 'color', '$value' => $object];
-	}//end colorToken()
+		return $object;
+	}//end colourObject()
 
 	/**
 	 * A dimension (px, rem), a duration (ms, s) or a cubic Bézier curve.
@@ -109,15 +120,37 @@ class DtcgValueTyper {
 	 * @return array<string, mixed>|null
 	 */
 	private function unitToken(string $value): ?array {
-		if (preg_match('/^(' . self::NUMBER . ')(px|rem|ms|s)$/', $value, $match) === 1 && $this->exact(numbers: [$match[1]]) === true) {
-			$type = 'dimension';
-			if ($match[2] === 'ms' || $match[2] === 's') {
-				$type = 'duration';
-			}
+		return ($this->dimensionToken(value: $value) ?? $this->bezierToken(value: $value));
+	}//end unitToken()
 
-			return ['$type' => $type, '$value' => ['value' => $this->toNumber(text: $match[1]), 'unit' => $match[2]]];
+	/**
+	 * A dimension (px, rem) or a duration (ms, s), written exactly.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function dimensionToken(string $value): array|null {
+		if (preg_match('/^(' . self::NUMBER . ')(px|rem|ms|s)$/', $value, $match) !== 1 || $this->exact(numbers: [$match[1]]) === false) {
+			return null;
 		}
 
+		$type = 'dimension';
+		if ($match[2] === 'ms' || $match[2] === 's') {
+			$type = 'duration';
+		}
+
+		return ['$type' => $type, '$value' => ['value' => $this->toNumber(text: $match[1]), 'unit' => $match[2]]];
+	}//end dimensionToken()
+
+	/**
+	 * A cubic Bézier curve, written exactly.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function bezierToken(string $value): array|null {
 		$n = '\s*(' . self::NUMBER . ')\s*';
 		// DTCG 2025.10 section 8.6: both x values lie in 0..1; a curve outside that stays CSS only.
 		if (preg_match('/^cubic-bezier\(' . $n . ',' . $n . ',' . $n . ',' . $n . '\)$/', $value, $match) === 1
@@ -128,7 +161,7 @@ class DtcgValueTyper {
 		}
 
 		return null;
-	}//end unitToken()
+	}//end bezierToken()
 
 	/**
 	 * A font stack in a font-family token, or a weight in a font-weight token. A stack is
@@ -140,10 +173,34 @@ class DtcgValueTyper {
 	 * @return array<string, mixed>|null
 	 */
 	private function fontToken(string $name, string $value): ?array {
+		return ($this->fontWeightToken(name: $name, value: $value) ?? $this->fontFamilyToken(name: $name, value: $value));
+	}//end fontToken()
+
+	/**
+	 * A weight from 1 to 1000 in a font-weight token.
+	 *
+	 * @param string $name The custom property.
+	 * @param string $value The value.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function fontWeightToken(string $name, string $value): array|null {
 		if (str_contains($name, 'font-weight') === true && preg_match('/^\d+$/', $value) === 1 && (int)$value >= 1 && (int)$value <= 1000) {
 			return ['$type' => 'fontWeight', '$value' => (int)$value];
 		}
 
+		return null;
+	}//end fontWeightToken()
+
+	/**
+	 * A font stack in a font-family token, when the importer writes it back to the same text.
+	 *
+	 * @param string $name The custom property.
+	 * @param string $value The value.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function fontFamilyToken(string $name, string $value): array|null {
 		if (str_contains($name, 'font-family') === false || preg_match('/[()]/', $value) === 1) {
 			return null;
 		}
@@ -155,7 +212,7 @@ class DtcgValueTyper {
 		}
 
 		return ['$type' => 'fontFamily', '$value' => $families];
-	}//end fontToken()
+	}//end fontFamilyToken()
 
 	/**
 	 * A plain number.

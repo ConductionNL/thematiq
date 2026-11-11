@@ -158,21 +158,53 @@ class LoginCopyService {
 
 		$copy = [];
 		foreach ([$fromSet, $fromAdmin] as $source) {
-			if (is_array($source) === false) {
-				continue;
-			}
-
-			foreach (self::KEYS as $key) {
-				$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
-				$linkable = ($key !== 'footer_link_url' || ($value !== null && CopyValues::isAddress(value: $value) === true));
-				if ($value !== null && $linkable === true) {
-					$copy[CopyValues::camel(key: $key)] = $value;
-				}
+			if (is_array($source) === true) {
+				$copy = array_replace($copy, $this->sourceCopy(source: $source, language: $language));
 			}
 		}
 
 		return $copy;
 	}//end resolveCopy()
+
+	/**
+	 * The values one source gives that may be shown, in key order, under their camel-case names.
+	 *
+	 * @param array<array-key, mixed> $source The set's `login` block or the administrator's override.
+	 * @param string $language The request's language.
+	 *
+	 * @return array<string, string> The copy.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the not-found page.
+	 */
+	private function sourceCopy(array $source, string $language): array {
+		$copy = [];
+		foreach (self::KEYS as $key) {
+			$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
+			if ($this->isShown(key: $key, value: $value) === true) {
+				$copy[CopyValues::camel(key: $key)] = $value;
+			}
+		}
+
+		return $copy;
+	}//end sourceCopy()
+
+	/**
+	 * Whether a picked value may be shown: any value, and for the footer link only a web address or a path here.
+	 *
+	 * @param string $key The copy key.
+	 * @param string|null $value The picked value, null when there is none.
+	 *
+	 * @return bool True when it may be shown.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the not-found page.
+	 */
+	private function isShown(string $key, string|null $value): bool {
+		if ($value === null) {
+			return false;
+		}
+
+		return ($key !== 'footer_link_url' || CopyValues::isAddress(value: $value) === true);
+	}//end isShown()
 
 	/**
 	 * Provide the copy and load the script, for a login page drawn by the
@@ -191,16 +223,9 @@ class LoginCopyService {
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
-			if ($layoutOptions->workplaceLayout(tokenSet: $tokenSet) !== LayoutOptionsService::LAYOUT_LIGHT) {
-				return;
+			if ($layoutOptions->workplaceLayout(tokenSet: $tokenSet) === LayoutOptionsService::LAYOUT_LIGHT) {
+				$this->provideCopy(tokenSet: $tokenSet);
 			}
-
-			$l10n = $this->sources->l10nFactory->get(Application::APP_ID);
-			$copy = $this->resolveCopy(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
-			$copy['divider'] = ($copy['divider'] ?? $l10n->t('or'));
-
-			$this->sources->initialState->provideInitialState(self::STATE_KEY, $copy);
-			$this->emitScript();
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: the login copy failed for this render; the login page keeps Nextcloud\'s words.',
@@ -208,6 +233,22 @@ class LoginCopyService {
 			);
 		}//end try
 	}//end inject()
+
+	/**
+	 * Provide the copy, with a divider in the request's language when none is set, and load the script.
+	 *
+	 * @param string $tokenSet The active token set.
+	 *
+	 * @return void
+	 */
+	private function provideCopy(string $tokenSet): void {
+		$l10n = $this->sources->l10nFactory->get(Application::APP_ID);
+		$copy = $this->resolveCopy(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
+		$copy['divider'] = ($copy['divider'] ?? $l10n->t('or'));
+
+		$this->sources->initialState->provideInitialState(self::STATE_KEY, $copy);
+		$this->emitScript();
+	}//end provideCopy()
 
 	/**
 	 * Load js/login-copy.js. A seam, so unit tests need no Nextcloud bootstrap.

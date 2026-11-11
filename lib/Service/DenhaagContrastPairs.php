@@ -163,7 +163,7 @@ class DenhaagContrastPairs {
 			foreach (($row['denhaag'] ?? []) as $pair => $result) {
 				$counts[$result['verdict']]++;
 				if ($result['verdict'] !== 'pass') {
-					$named[] = $pair . ' ' . $this->formatRatio(ratio: $result['ratio']);
+					$named[] = $pair . ' ' . (new ContrastReportCells())->ratio(ratio: $result['ratio']);
 				}
 			}
 
@@ -282,18 +282,4 @@ class DenhaagContrastPairs {
 
 		return null;
 	}//end cutCall()
-	/**
-	 * Format a ratio for the report (2 decimals, or a dash when unevaluated).
-	 *
-	 * @param float|null $ratio The ratio.
-	 *
-	 * @return string The cell text.
-	 */
-	private function formatRatio(?float $ratio): string {
-		if ($ratio === null) {
-			return '—';
-		}
-
-		return number_format($ratio, 2, '.', '') . ':1';
-	}//end formatRatio()
 }//end class

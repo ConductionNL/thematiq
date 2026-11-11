@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
-use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\App\IAppManager;
@@ -81,7 +80,7 @@ class AppBrandService {
 	 */
 	public function getBrands(): array {
 		$result = [];
-		foreach ($this->stored() as $appId => $brand) {
+		foreach ($this->records()->all() as $appId => $brand) {
 			$brand['stale'] = ($this->problem(appId: $appId, tokenSet: $brand['tokenSet']) !== null);
 			$result[$appId] = $brand;
 		}
@@ -107,22 +106,32 @@ class AppBrandService {
 			throw new AppBrandException(reason: $problem);
 		}
 
-		$brands = $this->stored();
-		try {
-			$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: ($brands[$appId]['tokenSet'] ?? null));
-		} catch (RestrictedSetNotConfirmedException $e) {
-			throw new AppBrandException(reason: AppBrandException::RESTRICTED_SET, status: 403);
-		}
+		$brands = $this->records()->all();
+		$this->assertMayApply(tokenSet: $tokenSet, current: ($brands[$appId]['tokenSet'] ?? null));
 
-		$brands[$appId] = [
-			'tokenSet' => $tokenSet,
-			'logoLarge' => ($brands[$appId]['logoLarge'] ?? null),
-			'logoSmall' => ($brands[$appId]['logoSmall'] ?? null),
-		];
-		$this->save(brands: $brands);
+		$brands[$appId] = $this->records()->withLogos(stored: ($brands[$appId] ?? null), tokenSet: $tokenSet);
+		$this->records()->save(brands: $brands);
 
 		return $brands[$appId];
 	}//end setBrand()
+
+	/**
+	 * Refuse a restricted set nobody confirmed, unless the app already carries it.
+	 *
+	 * @param string $tokenSet The set id.
+	 * @param string|null $current The set the app's brand carries now, if any.
+	 *
+	 * @return void
+	 *
+	 * @throws AppBrandException 403 for a restricted set nobody confirmed.
+	 */
+	private function assertMayApply(string $tokenSet, string|null $current): void {
+		try {
+			$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: $current);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			throw new AppBrandException(reason: AppBrandException::RESTRICTED_SET, status: 403);
+		}
+	}//end assertMayApply()
 
 	/**
 	 * Remove an app's brand and its logos.
@@ -134,7 +143,7 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function removeBrand(string $appId): void {
-		$brands = $this->stored();
+		$brands = $this->records()->all();
 		if (isset($brands[$appId]) === false) {
 			return;
 		}
@@ -144,7 +153,7 @@ class AppBrandService {
 		}
 
 		unset($brands[$appId]);
-		$this->save(brands: $brands);
+		$this->records()->save(brands: $brands);
 	}//end removeBrand()
 
 	/**
@@ -161,13 +170,13 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function storeLogo(string $appId, string $size, string $bytes): array {
-		$brands = $this->stored();
+		$brands = $this->records()->all();
 		if (isset($brands[$appId]) === false || in_array($size, self::SIZES, true) === false) {
 			throw new AppBrandException(reason: AppBrandException::NOT_INSTALLED, status: 404);
 		}
 
 		$brands[$appId]['logo' . ucfirst($size)] = $this->logos->store(appId: $appId, size: $size, bytes: $bytes);
-		$this->save(brands: $brands);
+		$this->records()->save(brands: $brands);
 
 		return $brands[$appId];
 	}//end storeLogo()
@@ -183,7 +192,7 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function readLogo(string $appId, string $size): ?array {
-		$meta = ($this->stored()[$appId]['logo' . ucfirst($size)] ?? null);
+		$meta = ($this->records()->all()[$appId]['logo' . ucfirst($size)] ?? null);
 		if (in_array($size, self::SIZES, true) === false || is_array($meta) === false) {
 			return null;
 		}
@@ -205,22 +214,34 @@ class AppBrandService {
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	public function brandFor(?string $appId): ?array {
+	public function brandFor(string|null $appId): array|null {
 		if ($appId === null || $appId === '') {
 			return null;
 		}
 
-		$brand = ($this->stored()[$appId] ?? null);
+		$brand = $this->applicableBrand(appId: $appId);
+		if ($brand === null) {
+			return null;
+		}
+
+		return ['tokenSet' => $brand['tokenSet']] + $this->logoUrls(appId: $appId, brand: $brand);
+	}//end brandFor()
+
+	/**
+	 * An app's stored brand, when the app may still carry it.
+	 *
+	 * @param string $appId The app id.
+	 *
+	 * @return array<string, mixed>|null The brand, or null when there is none or it is stale.
+	 */
+	private function applicableBrand(string $appId): array|null {
+		$brand = ($this->records()->all()[$appId] ?? null);
 		if ($brand === null || $this->problem(appId: $appId, tokenSet: $brand['tokenSet']) !== null) {
 			return null;
 		}
 
-		return [
-			'tokenSet' => $brand['tokenSet'],
-			'large' => $this->logoUrl(appId: $appId, size: 'large', meta: $brand['logoLarge']),
-			'small' => $this->logoUrl(appId: $appId, size: 'small', meta: $brand['logoSmall']),
-		];
-	}//end brandFor()
+		return $brand;
+	}//end applicableBrand()
 
 	/**
 	 * The configuration bundle section: set per app, logos as metadata only.
@@ -230,7 +251,7 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function exportBundle(): array {
-		return $this->stored();
+		return $this->records()->all();
 	}//end exportBundle()
 
 	/**
@@ -244,30 +265,7 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function validateBundle(mixed $section, callable $setExists): array {
-		if ($section === null) {
-			return ['errors' => [], 'value' => null];
-		}
-
-		if ($section instanceof \stdClass) {
-			// The export writes an empty map as an object, so it reads back as `{}`.
-			$section = (array)$section;
-		}
-
-		if (is_array($section) === false) {
-			return ['errors' => ['"appBrands" must be an object keyed by app id.'], 'value' => null];
-		}
-
-		$value = [];
-		foreach ($section as $appId => $brand) {
-			$tokenSet = ($this->arrayOrNull(value: $brand)['tokenSet'] ?? null);
-			if (is_string($tokenSet) === false || $setExists($tokenSet) === false) {
-				return ['errors' => ['"appBrands.' . $appId . '" names no available token set.'], 'value' => null];
-			}
-
-			$value[(string)$appId] = $tokenSet;
-		}
-
-		return ['errors' => [], 'value' => $value];
+		return $this->records()->validateBundle(section: $section, setExists: $setExists);
 	}//end validateBundle()
 
 	/**
@@ -281,17 +279,13 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function applyBundle(array $value): void {
-		$stored = $this->stored();
+		$stored = $this->records()->all();
 		$brands = [];
 		foreach ($value as $appId => $tokenSet) {
-			$brands[$appId] = [
-				'tokenSet' => $tokenSet,
-				'logoLarge' => ($stored[$appId]['logoLarge'] ?? null),
-				'logoSmall' => ($stored[$appId]['logoSmall'] ?? null),
-			];
+			$brands[$appId] = $this->records()->withLogos(stored: ($stored[$appId] ?? null), tokenSet: $tokenSet);
 		}
 
-		$this->save(brands: $brands);
+		$this->records()->save(brands: $brands);
 	}//end applyBundle()
 
 	/**
@@ -305,12 +299,9 @@ class AppBrandService {
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	private function problem(string $appId, string $tokenSet): ?string {
-		if (in_array($appId, AppThemingService::PROTECTED_IDS, true) === true) {
-			return AppBrandException::PROTECTED;
-		}
-
-		if ($appId === '' || $this->appManager->isInstalled($appId) === false) {
-			return AppBrandException::NOT_INSTALLED;
+		$problem = $this->installProblem(appId: $appId);
+		if ($problem !== null) {
+			return $problem;
 		}
 
 		if ($this->appTheming->isThemingDisabledFor(appId: $appId) === true) {
@@ -325,63 +316,32 @@ class AppBrandService {
 	}//end problem()
 
 	/**
-	 * The stored brands, cleaned.
+	 * Why an app cannot carry any brand: it is protected, or it is not installed.
 	 *
-	 * @return array<string, array{tokenSet: string, logoLarge: array<string, mixed>|null, logoSmall: array<string, mixed>|null}> The brands.
+	 * @param string $appId The app id.
 	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
+	 * @return string|null One of the AppBrandException reasons, or null.
 	 */
-	private function stored(): array {
-		$raw = json_decode((string)$this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, '{}'), true);
-		if (is_array($raw) === false) {
-			return [];
+	private function installProblem(string $appId): string|null {
+		if (in_array($appId, AppThemingService::PROTECTED_IDS, true) === true) {
+			return AppBrandException::PROTECTED;
 		}
 
-		$brands = [];
-		foreach ($raw as $appId => $brand) {
-			if (is_array($brand) === false || is_string($brand['tokenSet'] ?? null) === false) {
-				continue;
-			}
-
-			$brands[(string)$appId] = [
-				'tokenSet' => $brand['tokenSet'],
-				'logoLarge' => $this->arrayOrNull(value: ($brand['logoLarge'] ?? null)),
-				'logoSmall' => $this->arrayOrNull(value: ($brand['logoSmall'] ?? null)),
-			];
-		}
-
-		return $brands;
-	}//end stored()
-
-	/**
-	 * An array, or null for anything else.
-	 *
-	 * @param mixed $value The value.
-	 *
-	 * @return array<string, mixed>|null The array, or null.
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
-	 */
-	private function arrayOrNull(mixed $value): ?array {
-		if (is_array($value) === true) {
-			return $value;
+		if ($appId === '' || $this->appManager->isInstalled($appId) === false) {
+			return AppBrandException::NOT_INSTALLED;
 		}
 
 		return null;
-	}//end arrayOrNull()
+	}//end installProblem()
 
 	/**
-	 * Persist the brands.
+	 * The stored brands and their bundle form.
 	 *
-	 * @param array<string, mixed> $brands The brands.
-	 *
-	 * @return void
-	 *
-	 * @spec openspec/specs/per-app-theming/spec.md
+	 * @return AppBrandRecords The records, in this app's config.
 	 */
-	private function save(array $brands): void {
-		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, (string)json_encode((object)$brands));
-	}//end save()
+	private function records(): AppBrandRecords {
+		return new AppBrandRecords(config: $this->config);
+	}//end records()
 
 	/**
 	 * The logo layer for a page, when the rendered app's brand applies to it.
@@ -400,24 +360,28 @@ class AppBrandService {
 	}//end logoLayer()
 
 	/**
-	 * A logo URL, versioned by upload time so a new logo is not served from cache.
+	 * The large and small logo URLs of a brand, versioned by upload time so a new logo is not served from cache.
 	 *
 	 * @param string $appId The app id.
-	 * @param string $size The size.
-	 * @param array<string, mixed>|null $meta The logo metadata.
+	 * @param array<string, mixed> $brand The app's brand.
 	 *
-	 * @return string|null The URL, or null without a logo.
+	 * @return array{large: string|null, small: string|null} The URLs, null without a logo.
 	 *
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
-	private function logoUrl(string $appId, string $size, ?array $meta): ?string {
-		if ($meta === null) {
-			return null;
+	private function logoUrls(string $appId, array $brand): array {
+		$urls = [];
+		foreach (['large' => 'logoLarge', 'small' => 'logoSmall'] as $size => $key) {
+			$meta = $brand[$key];
+			$urls[$size] = null;
+			if ($meta !== null) {
+				$urls[$size] = $this->urls->linkToRoute(
+					'thematiq.appBrand.logo',
+					['appId' => $appId, 'size' => $size, 'v' => (int)($meta['uploadedAt'] ?? 0)]
+				);
+			}
 		}
 
-		return $this->urls->linkToRoute(
-			'thematiq.appBrand.logo',
-			['appId' => $appId, 'size' => $size, 'v' => (int)($meta['uploadedAt'] ?? 0)]
-		);
-	}//end logoUrl()
+		return $urls;
+	}//end logoUrls()
 }//end class

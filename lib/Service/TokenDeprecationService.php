@@ -105,20 +105,32 @@ class TokenDeprecationService {
 	public function publicList(): array {
 		$out = [];
 		foreach ($this->list() as $token => $record) {
-			$out[] = [
-				'token' => $token,
-				'severity' => (string)$record['severity'],
-				'replacement' => ($record['replacement'] ?? null),
-				'removalDate' => ($record['removalDate'] ?? null),
-				'message' => ($record['message'] ?? null),
-				'deprecatedAt' => (string)($record['deprecatedAt'] ?? ''),
-				'due' => $record['due'],
-				'state' => $record['state'],
-			];
+			$out[] = $this->publicRecord(token: $token, record: $record);
 		}
 
 		return $out;
 	}//end publicList()
+
+	/**
+	 * One deprecation as consuming apps read it.
+	 *
+	 * @param int|string $token The deprecated name, as the record list keys it.
+	 * @param array<string, mixed> $record The record with its `due` flag.
+	 *
+	 * @return array<string, mixed> Shape: {token, severity, replacement, removalDate, message, deprecatedAt, due, state}.
+	 */
+	private function publicRecord(int|string $token, array $record): array {
+		return [
+			'token' => $token,
+			'severity' => (string)$record['severity'],
+			'replacement' => ($record['replacement'] ?? null),
+			'removalDate' => ($record['removalDate'] ?? null),
+			'message' => ($record['message'] ?? null),
+			'deprecatedAt' => (string)($record['deprecatedAt'] ?? ''),
+			'due' => $record['due'],
+			'state' => $record['state'],
+		];
+	}//end publicRecord()
 
 	/**
 	 * Record or change a deprecation.
@@ -217,17 +229,7 @@ class TokenDeprecationService {
 				continue;
 			}
 
-			$record = ['severity' => 'warning', 'deprecatedAt' => gmdate(DATE_ATOM), 'source' => 'import', 'state' => 'active'];
-			if (in_array(($notice['severity'] ?? ''), self::SEVERITIES, true) === true) {
-				$record['severity'] = (string)$notice['severity'];
-			}
-
-			$message = trim((string)($notice['message'] ?? ''));
-			if ($message !== '' && OverridesCssBuilder::isUnsafeValue(value: $message) === false) {
-				$record['message'] = mb_substr($message, 0, 500);
-			}
-
-			$records[$token] = $record;
+			$records[$token] = $this->importedRecord(notice: $notice);
 			$recorded[] = $token;
 		}
 
@@ -235,6 +237,29 @@ class TokenDeprecationService {
 
 		return $recorded;
 	}//end adoptImportNotices()
+
+	/**
+	 * The record an import notice becomes: severity warning unless it names a known one, and its message when safe.
+	 *
+	 * @param array<string, mixed> $notice The notice.
+	 *
+	 * @return array<string, string> The record.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - the injection filter is a pure function shared with the CSS writer
+	 */
+	private function importedRecord(array $notice): array {
+		$record = ['severity' => 'warning', 'deprecatedAt' => gmdate(DATE_ATOM), 'source' => 'import', 'state' => 'active'];
+		if (in_array(($notice['severity'] ?? ''), self::SEVERITIES, true) === true) {
+			$record['severity'] = (string)$notice['severity'];
+		}
+
+		$message = trim((string)($notice['message'] ?? ''));
+		if ($message !== '' && OverridesCssBuilder::isUnsafeValue(value: $message) === false) {
+			$record['message'] = mb_substr($message, 0, 500);
+		}
+
+		return $record;
+	}//end importedRecord()
 
 	/**
 	 * Check every record of a configuration bundle, without storing them. Replacements and

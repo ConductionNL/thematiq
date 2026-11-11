@@ -187,4 +187,41 @@ class ContrastControllerTest extends TestCase {
 		$this->assertArrayNotHasKey(key: 'allowed', array: $data);
 		$this->assertArrayNotHasKey(key: 'verdict', array: $data);
 	}//end testResponseEnvelopeHasNoVerdictKeys()
+	/**
+	 * Every refused request with its message, and what an accepted one passes on: only name, value and role.
+	 *
+	 * @return void
+	 */
+	public function testEveryRefusalAndTheNormalisedCandidates(): void {
+		$candidateError = 'each candidate must have name, value, and role ("text"|"ui")';
+		$ok = ['name' => 'a', 'value' => '#000', 'role' => 'ui'];
+		$cases = [
+			[[], 'background must be a non-empty string'],
+			[['background' => '', 'candidates' => []], 'background must be a non-empty string'],
+			[['background' => 7, 'candidates' => []], 'background must be a non-empty string'],
+			[['background' => '#fff'], 'candidates must be an array'],
+			[['background' => '#fff', 'candidates' => 'x'], 'candidates must be an array'],
+			[['background' => '#fff', 'candidates' => [$ok, 'x']], $candidateError],
+			[['background' => '#fff', 'candidates' => [['name' => 1] + $ok]], $candidateError],
+			[['background' => '#fff', 'candidates' => [['value' => null] + $ok]], $candidateError],
+			[['background' => '#fff', 'candidates' => [['role' => 'TEXT'] + $ok]], $candidateError],
+			[['background' => '#fff', 'candidates' => [['name' => 'a', 'value' => '#000']]], $candidateError],
+		];
+		foreach ($cases as [$params, $error]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getParams')->willReturn($params);
+			$service = $this->createMock(originalClassName: ContrastService::class);
+			$service->expects($this->never())->method('evaluate');
+			$response = (new ContrastController(appName: 'thematiq', request: $request, contrastService: $service))->evaluate();
+			$this->assertSame(expected: [400, ['error' => $error]], actual: [$response->getStatus(), $response->getData()], message: (string)json_encode($params));
+		}
+
+		$request = $this->createMock(originalClassName: IRequest::class);
+		$request->method('getParams')->willReturn(['background' => '#fff', 'candidates' => ['k' => ['extra' => 1] + $ok, ['role' => 'text'] + $ok]]);
+		$service = $this->createMock(originalClassName: ContrastService::class);
+		$service->expects($this->once())->method('evaluate')->with([$ok, ['role' => 'text'] + $ok], '#fff')->willReturn([]);
+		$response = (new ContrastController(appName: 'thematiq', request: $request, contrastService: $service))->evaluate();
+		$this->assertSame(expected: ['results' => []], actual: $response->getData());
+		$this->assertSame(expected: 200, actual: (new ContrastController(appName: 'thematiq', request: $request, contrastService: $this->createMock(originalClassName: ContrastService::class)))->evaluate()->getStatus());
+	}//end testEveryRefusalAndTheNormalisedCandidates()
 }//end class

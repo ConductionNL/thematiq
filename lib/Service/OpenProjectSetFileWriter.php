@@ -70,7 +70,8 @@ class OpenProjectSetFileWriter {
 		$logo = self::NO_LOGO;
 		foreach ((array)json_decode($this->licences->read(path: $appPath . '/token-sets.json'), true) as $meta) {
 			if (is_array($meta) === true && ($meta['id'] ?? null) === $id) {
-				$logo = $this->catalogue->logoOf(appPath: $appPath, id: $id, meta: $meta, annotations: $this->licences->annotations(appPath: $appPath));
+				$evidence = new CatalogueEvidence(appPath: $appPath, manifest: [$id => $meta], annotations: $this->licences->annotations(appPath: $appPath));
+				$logo = $this->catalogue->logoOf(evidence: $evidence, id: $id);
 			}
 		}
 

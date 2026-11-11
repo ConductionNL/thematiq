@@ -284,12 +284,24 @@ class EmailThemingService {
 			return null;
 		}
 
+		return $this->withLogo(colors: $colors, theming: $theming);
+	}//end getActiveEmailTheme()
+
+	/**
+	 * The resolved colours with the set's logo address.
+	 *
+	 * @param array{primaryColor: string, primaryTextColor: string} $colors The resolved colours.
+	 * @param array<string, mixed> $theming The manifest `theming` block.
+	 *
+	 * @return array{primaryColor: string, primaryTextColor: string, logoUrl: ?string} The theme.
+	 */
+	private function withLogo(array $colors, array $theming): array {
 		return [
 			'primaryColor' => $colors['primaryColor'],
 			'primaryTextColor' => $colors['primaryTextColor'],
-			'logoUrl' => $this->resolveLogoUrl(logoPath: ($theming['logo'] ?? null)),
+			'logoUrl' => (new EmailLogoAddress(urlGenerator: $this->urlGenerator, files: $this->files))->urlOf(logoPath: ($theming['logo'] ?? null)),
 		];
-	}//end getActiveEmailTheme()
+	}//end withLogo()
 
 	/**
 	 * The theming block of a token set.
@@ -322,9 +334,8 @@ class EmailThemingService {
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
 	public function getActiveEmailLogoImage(): ?array {
-		$theming = $this->activeTheming(tokenSetId: $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'));
-		$logo = ($theming['logo'] ?? null);
-		if ($this->files === null || is_string($logo) === false || preg_match(self::INLINE_LOGO_PATH, $logo) !== 1) {
+		$logo = $this->inlineLogoPath();
+		if ($logo === null || $this->files === null) {
 			return null;
 		}
 
@@ -335,6 +346,21 @@ class EmailThemingService {
 
 		return ['content' => $content, 'mimeType' => $this->files->contentType(name: $logo)];
 	}//end getActiveEmailLogoImage()
+
+	/**
+	 * The active set's logo path when it may be embedded: an image under `img/`, with a file locator to read it.
+	 *
+	 * @return string|null The path, or null when the logo stays linked.
+	 */
+	private function inlineLogoPath(): string|null {
+		$theming = $this->activeTheming(tokenSetId: $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'));
+		$logo = ($theming['logo'] ?? null);
+		if ($this->files === null || is_string($logo) === false || preg_match(self::INLINE_LOGO_PATH, $logo) !== 1) {
+			return null;
+		}
+
+		return $logo;
+	}//end inlineLogoPath()
 
 	/**
 	 * Resolve the primary color / primary text color for a token set,
@@ -350,15 +376,7 @@ class EmailThemingService {
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
 	private function resolveThemeColors(array $theming, string $tokenSetId): ?array {
-		$primaryColor = $theming['primary_color'] ?? null;
-		$primaryTextColor = $theming['primary_text_color'] ?? null;
-
-		if ($primaryColor === null || $primaryTextColor === null) {
-			$resolved = $this->previewService->getResolvedColors(tokenSetId: $tokenSetId);
-			$primaryColor = $primaryColor ?? ($resolved['--color-primary'] ?? null);
-			$primaryTextColor = $primaryTextColor ?? ($resolved['--color-primary-text'] ?? null);
-		}
-
+		[$primaryColor, $primaryTextColor] = $this->colourValues(theming: $theming, tokenSetId: $tokenSetId);
 		if ($primaryColor === null) {
 			return null;
 		}
@@ -368,6 +386,26 @@ class EmailThemingService {
 			'primaryTextColor' => ($primaryTextColor ?? '#ffffff'),
 		];
 	}//end resolveThemeColors()
+
+	/**
+	 * The manifest's primary and primary text colour, each missing one taken from the resolved colours.
+	 *
+	 * @param array<string, mixed> $theming The manifest `theming` block (possibly empty).
+	 * @param string $tokenSetId The active token set identifier.
+	 *
+	 * @return array{0: mixed, 1: mixed} The primary and the primary text colour, null where neither has one.
+	 */
+	private function colourValues(array $theming, string $tokenSetId): array {
+		$primaryColor = $theming['primary_color'] ?? null;
+		$primaryTextColor = $theming['primary_text_color'] ?? null;
+		if ($primaryColor !== null && $primaryTextColor !== null) {
+			return [$primaryColor, $primaryTextColor];
+		}
+
+		$resolved = $this->previewService->getResolvedColors(tokenSetId: $tokenSetId);
+
+		return [($primaryColor ?? ($resolved['--color-primary'] ?? null)), ($primaryTextColor ?? ($resolved['--color-primary-text'] ?? null))];
+	}//end colourValues()
 
 	/**
 	 * Find a token set's metadata entry by id.
@@ -387,46 +425,6 @@ class EmailThemingService {
 
 		return null;
 	}//end findTokenSetEntry()
-
-	/**
-	 * Resolve a token set's logo path to an absolute URL.
-	 *
-	 * @param string|null $logoPath The logo path from token-sets.json (e.g. 'img/logos/amsterdam.svg').
-	 *
-	 * @return string|null The absolute URL, or null when unresolvable.
-	 *
-	 * @spec openspec/specs/email-theming/spec.md
-	 */
-	private function resolveLogoUrl(?string $logoPath): ?string {
-		if ($logoPath === null || $logoPath === '') {
-			return null;
-		}
-
-		// An uploaded or captured logo lives in app data and is served by the
-		// runtime file route; a mail client needs that URL absolute.
-		if ($this->files !== null && $this->files->isShipped(name: $logoPath) === false) {
-			$url = $this->files->url(name: $logoPath);
-			if ($url === null) {
-				return null;
-			}
-
-			return $this->urlGenerator->getAbsoluteURL($url);
-		}
-
-		// IURLGenerator::imagePath() resolves relative to the app's img/
-		// directory itself, so a stored path already prefixed with 'img/'
-		// must have that prefix stripped before being passed in.
-		$relative = $logoPath;
-		if (str_starts_with($relative, 'img/') === true) {
-			$relative = substr($relative, 4);
-		}
-
-		try {
-			return $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath(Application::APP_ID, $relative));
-		} catch (\Throwable $e) {
-			return null;
-		}
-	}//end resolveLogoUrl()
 
 	/**
 	 * Whether the nldesign branded template is the configured mail template.
@@ -452,14 +450,7 @@ class EmailThemingService {
 		$configured = (string)$this->config->getSystemValue(self::MAIL_TEMPLATE_CLASS_KEY, '');
 		$configReadOnly = $this->config->getSystemValueBool('config_is_read_only', false);
 
-		$state = 'disabled';
-		$foreignClass = null;
-		if ($configured === NLDesignEMailTemplate::class) {
-			$state = 'enabled';
-		} elseif ($configured !== '') {
-			$state = 'foreign';
-			$foreignClass = $configured;
-		}
+		[$state, $foreignClass] = $this->templateState(configured: $configured);
 
 		return [
 			'state' => $state,
@@ -467,6 +458,25 @@ class EmailThemingService {
 			'foreignClass' => $foreignClass,
 		];
 	}//end getState()
+
+	/**
+	 * Which template the configured class is.
+	 *
+	 * @param string $configured The configured `mail_template_class`.
+	 *
+	 * @return array{0: string, 1: string|null} `disabled`, `enabled` or `foreign`, and the foreign class.
+	 */
+	private function templateState(string $configured): array {
+		if ($configured === NLDesignEMailTemplate::class) {
+			return ['enabled', null];
+		}
+
+		if ($configured !== '') {
+			return ['foreign', $configured];
+		}
+
+		return ['disabled', null];
+	}//end templateState()
 
 	/**
 	 * Enable the nldesign branded template.

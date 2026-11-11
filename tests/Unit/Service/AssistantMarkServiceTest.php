@@ -216,4 +216,44 @@ class AssistantMarkServiceTest extends TestCase {
 		$this->assertSame(expected: 422, actual: $refused->getStatus());
 		$this->assertStringContainsString(needle: 'organisation name', haystack: $refused->getData()['error']);
 	}//end testControllerAnswers()
+
+	/**
+	 * The bundle section: absent, malformed in each field, an unusable logo, and a valid one trimmed.
+	 *
+	 * @return void
+	 */
+	public function testTheBundleSectionIsValidated(): void {
+		$shape = ['errors' => ['"assistantMark" must be an object with enabled, organisation and logo.'], 'value' => null];
+		$cases = [
+			[null, ['errors' => [], 'value' => null]],
+			['on', $shape],
+			[['enabled' => 'yes'], $shape],
+			[['organisation' => 7], $shape],
+			[['logo' => ['x']], $shape],
+			[['enabled' => true, 'logo' => 'javascript:alert(1)'], ['errors' => ['"assistantMark.logo" must be an https address or a path on this server.'], 'value' => null]],
+			[['enabled' => null, 'organisation' => null, 'logo' => null], ['errors' => [], 'value' => ['enabled' => false, 'organisation' => '', 'logo' => '']]],
+			[[], ['errors' => [], 'value' => ['enabled' => false, 'organisation' => '', 'logo' => '']]],
+			[['enabled' => true, 'organisation' => ' Utrecht ', 'logo' => ' /apps/x.svg '], ['errors' => [], 'value' => ['enabled' => true, 'organisation' => 'Utrecht', 'logo' => '/apps/x.svg']]],
+		];
+		foreach ($cases as [$section, $expected]) {
+			$this->assertSame(expected: $expected, actual: $this->service()->validateBundle(section: $section), message: json_encode($section));
+		}
+	}//end testTheBundleSectionIsValidated()
+
+	/**
+	 * Without a logo of its own or of the house style, the mark carries none.
+	 *
+	 * @return void
+	 */
+	public function testNoLogoAnywhereCarriesNone(): void {
+		$this->service()->save(enabled: true, organisation: 'X', logo: '');
+		$service = new AssistantMarkService(
+			config: $this->createConfiguredMock(IConfig::class, []),
+			emailTheming: $this->createMock(originalClassName: EmailThemingService::class),
+			capabilities: $this->createMock(originalClassName: Capabilities::class)
+		);
+
+		$this->assertSame(expected: ['enabled' => false], actual: $service->forUser(l10n: $this->dutch()));
+		$this->app['assistant_mark_enabled'] = '1';
+	}//end testNoLogoAnywhereCarriesNone()
 }//end class

@@ -361,4 +361,38 @@ class GalleryInstallServiceTest extends TestCase {
 			haystack: (string)file_get_contents($this->appDir . '/css/tokens/custom-provincie-utrecht.css')
 		);
 	}//end testAnUpdateReplacesTheSetAndKeepsItActive()
+	/**
+	 * What the conversion step answers for a stylesheet that is not a theme, one with no token it maps, and one with a
+	 * foreign block, with the exact message.
+	 *
+	 * @return void
+	 */
+	public function testEachConversionRefusalExactly(): void {
+		$bodies = [
+			"body { color: red; }\n",
+			":root { --not-a-token: 1px; }\n",
+			":root { --nldesign-color-primary: #154273; }\n.x { color: red; }\n",
+		];
+		$messages = [];
+		foreach ($bodies as $body) {
+			$this->body = $body;
+			$this->entry = ThemeGalleryServiceTest::entry(['sha256' => hash('sha256', $this->body)]);
+			try {
+				$this->service()->install(galleryId: 'provincie-utrecht');
+				$messages[] = 'installed';
+			} catch (GalleryException $e) {
+				$messages[] = $e->getCode() . ' ' . $e->getMessage();
+			}
+		}
+
+		$this->assertSame(
+			expected: [
+				'422 The file was refused, so nothing was installed: The content is not a theme this app can convert. Accepted: built theme CSS with a class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a Style Dictionary tokens.json, or an existing :root token set.',
+				'installed',
+				'installed',
+			],
+			actual: $messages
+		);
+		$this->assertCount(expectedCount: 1, haystack: $this->customSets->list());
+	}//end testEachConversionRefusalExactly()
 }//end class
