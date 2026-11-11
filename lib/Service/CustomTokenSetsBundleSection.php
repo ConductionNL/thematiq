@@ -33,6 +33,13 @@ use OCP\App\IAppManager;
 class CustomTokenSetsBundleSection {
 
 	/**
+	 * The optional fields an entry carries over, in order, and whether each must be a list.
+	 *
+	 * @var array<string, bool>
+	 */
+	private const OPTIONAL_FIELDS = ['warnings' => true, 'version' => false, 'importWarnings' => true];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param CustomTokenSetService $customSets The custom token set storage.
@@ -143,36 +150,77 @@ class CustomTokenSetsBundleSection {
 	 */
 	private function validateShape(array $item, array &$errors): ?array {
 		$set = $item['set'];
-		$index = $item['index'];
-		if (is_array($set) === false) {
-			$errors[] = ['section' => 'customTokenSets', 'index' => $index, 'message' => 'Entry must be an object.'];
+		$problem = $this->shapeProblem(set: $set);
+		if ($problem !== null) {
+			$errors[] = ['section' => 'customTokenSets', 'index' => $item['index']] + $problem;
 
 			return null;
+		}
+
+		return [
+			'id' => (string)$set['id'],
+			'name' => trim((string)$set['name']),
+			'css' => $set['css'],
+			'index' => $item['index'],
+			'set' => $set,
+		];
+	}//end validateShape()
+
+	/**
+	 * What is wrong with an entry's shape, with the id when it has one.
+	 *
+	 * @param mixed $set The raw entry.
+	 *
+	 * @return array{id?: string, message: string}|null The problem, or null when the shape is fine.
+	 */
+	private function shapeProblem(mixed $set): array|null {
+		if (is_array($set) === false) {
+			return ['message' => 'Entry must be an object.'];
 		}
 
 		$id = (string)($set['id'] ?? '');
 		if ($this->customSets->isCustomId(id: $id) === false) {
-			$errors[] = ['section' => 'customTokenSets', 'index' => $index, 'id' => $id, 'message' => 'Invalid custom token set id.'];
+			return ['id' => $id, 'message' => 'Invalid custom token set id.'];
+		}
 
+		$message = ($this->nameProblem(set: $set) ?? $this->cssProblem(set: $set));
+		if ($message === null) {
 			return null;
 		}
 
-		$name = trim((string)($set['name'] ?? ''));
-		if ($name === '') {
-			$errors[] = ['section' => 'customTokenSets', 'index' => $index, 'id' => $id, 'message' => 'Missing "name".'];
+		return ['id' => $id, 'message' => $message];
+	}//end shapeProblem()
 
-			return null;
+	/**
+	 * The problem when an entry has no name.
+	 *
+	 * @param array<string, mixed> $set The raw entry.
+	 *
+	 * @return string|null The problem, or null.
+	 */
+	private function nameProblem(array $set): string|null {
+		if (trim((string)($set['name'] ?? '')) === '') {
+			return 'Missing "name".';
 		}
 
+		return null;
+	}//end nameProblem()
+
+	/**
+	 * The problem when an entry's css is missing or not a non-empty string.
+	 *
+	 * @param array<string, mixed> $set The raw entry.
+	 *
+	 * @return string|null The problem, or null.
+	 */
+	private function cssProblem(array $set): string|null {
 		$css = ($set['css'] ?? null);
 		if (is_string($css) === false || $css === '') {
-			$errors[] = ['section' => 'customTokenSets', 'index' => $index, 'id' => $id, 'message' => 'Missing or invalid "css".'];
-
-			return null;
+			return 'Missing or invalid "css".';
 		}
 
-		return ['id' => $id, 'name' => $name, 'css' => $css, 'index' => $index, 'set' => $set];
-	}//end validateShape()
+		return null;
+	}//end cssProblem()
 
 	/**
 	 * Validate a `customTokenSets[]` entry's CSS: no disallowed selector,
@@ -186,37 +234,41 @@ class CustomTokenSetsBundleSection {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function validateDeclarations(array $shape, array &$errors): ?array {
-		$id = $shape['id'];
-		$css = $shape['css'];
-		$index = $shape['index'];
-		if ($this->validator->hasDisallowedSelector(css: $css) === true) {
-			$errors[] = [
-				'section' => 'customTokenSets',
-				'index' => $index,
-				'id' => $id,
-				'message' => 'The CSS contains a selector or at-rule other than :root.',
-			];
+		if ($this->validator->hasDisallowedSelector(css: $shape['css']) === true) {
+			$errors[] = $this->entryError(shape: $shape, message: 'The CSS contains a selector or at-rule other than :root.');
 
 			return null;
 		}
 
-		$slug = substr($id, strlen(CustomTokenSetService::ID_PREFIX));
-		$declarations = $this->cssParser->parseRootBlock(css: $css);
+		$slug = substr($shape['id'], strlen(CustomTokenSetService::ID_PREFIX));
+		$declarations = $this->cssParser->parseRootBlock(css: $shape['css']);
 		$split = $this->validator->validateDeclarations(declarations: $declarations, slug: $slug);
 		if ($split === null) {
 			$validatorError = $this->validator->getLastError();
-			$errors[] = [
-				'section' => 'customTokenSets',
-				'index' => $index,
-				'id' => $id,
-				'message' => ($validatorError['message'] ?? 'Declaration validation failed.'),
-			];
+			$errors[] = $this->entryError(shape: $shape, message: ($validatorError['message'] ?? 'Declaration validation failed.'));
 
 			return null;
 		}
 
 		return $split['accepted'];
 	}//end validateDeclarations()
+
+	/**
+	 * The error for a set whose shape is fine.
+	 *
+	 * @param array{id: string, index: int} $shape The set's position and id.
+	 * @param string $message What is wrong.
+	 *
+	 * @return array<string, mixed> The error.
+	 */
+	private function entryError(array $shape, string $message): array {
+		return [
+			'section' => 'customTokenSets',
+			'index' => $shape['index'],
+			'id' => $shape['id'],
+			'message' => $message,
+		];
+	}//end entryError()
 
 	/**
 	 * Build the resolved, ready-to-write entry from a shape-and-declaration-valid set.
@@ -230,35 +282,18 @@ class CustomTokenSetsBundleSection {
 	 */
 	private function buildResolvedEntry(array $shape, array $accepted): array {
 		$set = $shape['set'];
-		$theming = [];
-		if (is_array($set['theming'] ?? null) === true) {
-			$theming = $set['theming'];
-		}
-
 		$entry = [
 			'name' => $shape['name'],
 			'description' => (string)($set['description'] ?? ''),
-			'theming' => $theming,
-		];
-
-		if (isset($set['warnings']) === true && is_array($set['warnings']) === true) {
-			$entry['warnings'] = $set['warnings'];
-		}
-
-		if (isset($set['version']) === true) {
-			$entry['version'] = $set['version'];
-		}
-
-		if (isset($set['importWarnings']) === true && is_array($set['importWarnings']) === true) {
-			$entry['importWarnings'] = $set['importWarnings'];
-		}
+			'theming' => $this->themingOf(set: $set),
+		] + $this->optionalFields(set: $set);
 
 		// The design system the set was created on. Dropped here, a theme saved
 		// off stock Nextcloud came back from a version restore or a bundle as an
 		// NL Design System one, with every layer of that system on top of it.
 		// Allow-listed, like the upload's claim: it decides which stylesheets load.
-		$designSystem = ($set['design_system'] ?? null);
-		if (is_string($designSystem) === true && in_array($designSystem, $this->shippedDesignSystemIds(), true) === true) {
+		$designSystem = $this->shippedDesignSystem(set: $set);
+		if ($designSystem !== null) {
 			$entry['design_system'] = $designSystem;
 		}
 
@@ -268,6 +303,55 @@ class CustomTokenSetsBundleSection {
 			'css' => $this->validator->serialize(declarations: $accepted),
 		];
 	}//end buildResolvedEntry()
+
+	/**
+	 * The set's theming block, [] when it has none.
+	 *
+	 * @param array<string, mixed> $set The raw entry.
+	 *
+	 * @return array<string, mixed> The block.
+	 */
+	private function themingOf(array $set): array {
+		if (is_array($set['theming'] ?? null) === true) {
+			return $set['theming'];
+		}
+
+		return [];
+	}//end themingOf()
+
+	/**
+	 * The optional fields the set carries over: its warnings and import warnings when they are lists, and its version.
+	 *
+	 * @param array<string, mixed> $set The raw entry.
+	 *
+	 * @return array<string, mixed> The fields, in that order.
+	 */
+	private function optionalFields(array $set): array {
+		$fields = [];
+		foreach (self::OPTIONAL_FIELDS as $field => $mustBeList) {
+			if (isset($set[$field]) === true && ($mustBeList === false || is_array($set[$field]) === true)) {
+				$fields[$field] = $set[$field];
+			}
+		}
+
+		return $fields;
+	}//end optionalFields()
+
+	/**
+	 * The design system the set names, when the app ships it.
+	 *
+	 * @param array<string, mixed> $set The raw entry.
+	 *
+	 * @return string|null The design-system id, or null.
+	 */
+	private function shippedDesignSystem(array $set): string|null {
+		$designSystem = ($set['design_system'] ?? null);
+		if (is_string($designSystem) === true && in_array($designSystem, $this->shippedDesignSystemIds(), true) === true) {
+			return $designSystem;
+		}
+
+		return null;
+	}//end shippedDesignSystem()
 
 	/**
 	 * The ids of the design systems the app ships, from its design-systems.json.
