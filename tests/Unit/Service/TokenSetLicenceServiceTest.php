@@ -307,4 +307,82 @@ class TokenSetLicenceServiceTest extends TestCase {
 		$this->assertNull(actual: $this->service->describe('nextcloud'));
 		$this->assertFalse(condition: $this->service->describe('open')['licence']['restricted']);
 	}//end testTheSettingsPageGetsEveryRestrictedSetAndItsLicence()
+	/**
+	 * Golden: confirming, the refusals, every place that holds a confirmation and the withdrawal, with their records.
+	 *
+	 * @return void
+	 */
+	public function testTheConfirmAndWithdrawGolden(): void {
+		$this->appValues[TokenSetLicenceService::AWAITING_KEY] = '{"owned":"2026-01-01","owned-two":"2026-02-02"}';
+		$this->assertSame(expected: ['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00'], actual: $this->service->confirm('owned', 'ruben'));
+		$this->assertSame(expected: '{"owned-two":"2026-02-02"}', actual: $this->appValues[TokenSetLicenceService::AWAITING_KEY]);
+		$this->assertSame(
+			expected: [['restricted_set_confirmed', ['old' => null, 'new' => 'owned', 'actor' => 'ruben', 'licence' => 'LicenseRef-Voorbeeld', 'holder' => 'Gemeente Voorbeeld']]],
+			actual: $this->audit
+		);
+		$this->assertSame(
+			expected: [['thematiq: {uid} confirmed that this organisation may use the restricted token set {set}', ['uid' => 'ruben', 'set' => 'owned', 'app' => 'thematiq']]],
+			actual: $this->logged
+		);
+
+		$refused = [];
+		foreach ([['open', 'ruben'], ['ghost', 'ruben'], ['owned-two', '']] as [$set, $uid]) {
+			try {
+				$this->service->confirm($set, $uid);
+			} catch (InvalidArgumentException $e) {
+				$refused[] = $e->getMessage();
+			}
+		}
+
+		$this->assertSame(expected: ['Not a restricted token set: open', 'Not a restricted token set: ghost', 'Not a restricted token set: owned-two'], actual: $refused);
+
+		$this->appValues['token_set'] = 'owned';
+		$this->appValues['group_token_sets'] = '[{"group":"ruimte","tokenSet":"owned"},{"tokenSet":"owned"},"junk",{"group":"other","tokenSet":"open"}]';
+		$this->appValues[AppBrandService::CONFIG_KEY] = '{"collectives":{"tokenSet":"owned"},"deck":{"tokenSet":"open"},"files":"owned"}';
+		$this->appValues['scheduled_switches'] = '[{"id":"s1","tokenSet":"owned","status":"planned"},{"tokenSet":"open","revertTo":"owned","status":"running"},{"id":"s3","tokenSet":"owned"}]';
+		$this->assertSame(
+			expected: [
+				['kind' => 'instance', 'id' => ''],
+				['kind' => 'group', 'id' => 'ruimte'],
+				['kind' => 'group', 'id' => '1'],
+				['kind' => 'app', 'id' => 'collectives'],
+				['kind' => 'switch', 'id' => 's1'],
+				['kind' => 'switch', 'id' => ''],
+			],
+			actual: $this->service->appliedIn('owned')
+		);
+		try {
+			$this->service->withdraw('owned', 'noor');
+			$this->fail(message: 'withdrawn while applied');
+		} catch (RestrictedSetInUseException $e) {
+			$this->assertCount(expectedCount: 6, haystack: $e->getAppliedIn());
+		}
+
+		unset($this->appValues['token_set'], $this->appValues['group_token_sets'], $this->appValues[AppBrandService::CONFIG_KEY], $this->appValues['scheduled_switches']);
+		$this->service->withdraw('owned', 'noor');
+		$this->assertSame(
+			expected: ['restricted_set_confirmation_withdrawn', ['old' => 'owned', 'new' => null, 'actor' => 'noor', 'confirmedBy' => 'ruben', 'confirmedAt' => '2026-10-12T20:15:00+00:00']],
+			actual: $this->audit[1]
+		);
+		$this->assertSame(
+			expected: ['thematiq: {uid} withdrew the confirmation for the restricted token set {set}', ['uid' => 'noor', 'set' => 'owned', 'app' => 'thematiq']],
+			actual: $this->logged[1]
+		);
+		$this->assertCount(expectedCount: 2, haystack: $this->audit);
+	}//end testTheConfirmAndWithdrawGolden()
+
+	/**
+	 * The settings page's entry per restricted set, exactly.
+	 *
+	 * @return void
+	 */
+	public function testTheRestrictedSetEntriesExactly(): void {
+		$sets = $this->service->restrictedSets();
+		$this->assertSame(expected: ['id', 'name', 'licence', 'confirmation'], actual: array_keys($sets[0]));
+		$this->assertSame(expected: [null, null, null], actual: array_column($sets, 'confirmation'));
+		foreach ($sets as $set) {
+			$this->assertIsArray(actual: $set['licence']);
+			$this->assertIsString(actual: $set['name']);
+		}
+	}//end testTheRestrictedSetEntriesExactly()
 }//end class
