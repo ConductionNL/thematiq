@@ -467,4 +467,20 @@ class TokenSetPreviewServiceTest extends TestCase {
 	public function testResolvedColoursAreEmptyWithoutTheStylesheets(): void {
 		$this->assertSame(expected: [], actual: $this->build()->getResolvedColors(tokenSetId: 'no-such-set'));
 	}//end testResolvedColoursAreEmptyWithoutTheStylesheets()
+	/**
+	 * Golden: the resolved colours of shipped sets over the app's own stylesheets, recorded before the split as a hash.
+	 *
+	 * @return void
+	 */
+	public function testTheShippedSetsResolvedColoursGolden(): void {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn((string)realpath(__DIR__ . '/../../..'));
+		$service = new TokenSetPreviewService(appManager: $appManager);
+		$out = [];
+		foreach (['amsterdam', 'rijkshuisstijl', 'nextcloud', 'utrecht', 'not-a-set'] as $id) {
+			$out[$id] = $service->getResolvedColors(tokenSetId: $id);
+		}
+
+		$this->assertSame(expected: '9a40148c77bfdc0e 49', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16) . ' ' . count($out['amsterdam']));
+	}//end testTheShippedSetsResolvedColoursGolden()
 }//end class
