@@ -103,15 +103,25 @@ class ThemingService {
 	 */
 	public function validateColors(array $params): ?string {
 		foreach (['primary_color', 'background_color'] as $colorKey) {
-			if (isset($params[$colorKey]) === true && $params[$colorKey] !== '') {
-				if ($this->isValidHexColor(color: $params[$colorKey]) === false) {
-					return "Invalid hex color for $colorKey: {$params[$colorKey]}";
-				}
+			if ($this->hasValue(params: $params, key: $colorKey) === true && $this->isValidHexColor(color: $params[$colorKey]) === false) {
+				return "Invalid hex color for $colorKey: {$params[$colorKey]}";
 			}
 		}
 
 		return null;
 	}//end validateColors()
+
+	/**
+	 * Whether a request parameter is given and not empty.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 * @param string $key The parameter.
+	 *
+	 * @return bool True when it holds a value.
+	 */
+	private function hasValue(array $params, string $key): bool {
+		return isset($params[$key]) === true && $params[$key] !== '';
+	}//end hasValue()
 
 	/**
 	 * Validate image path parameters from the request.
@@ -131,24 +141,49 @@ class ThemingService {
 		// (nextcloud/server#47357); the dark logo is delivered by nldesign's
 		// own generated dark stylesheet instead.
 		foreach (['logo', 'logoheader', 'favicon', 'background', 'logo_dark'] as $imageKey) {
-			if (isset($params[$imageKey]) === true && $params[$imageKey] !== '') {
-				$error = $this->validateSinglePath(
-					imageKey: $imageKey,
-					imagePath: $params[$imageKey]
-				);
-				if ($error !== null) {
-					return $error;
-				}
+			$error = $this->imagePathError(params: $params, imageKey: $imageKey);
+			if ($error !== null) {
+				return $error;
 			}
 		}
 
+		return $this->backgroundModeError(params: $params);
+	}//end validateImagePaths()
+
+	/**
+	 * What is wrong with one image parameter, when it is given.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 * @param string $imageKey The image slot.
+	 *
+	 * @return string|null The error, or null when it is absent, empty or fine.
+	 */
+	private function imagePathError(array $params, string $imageKey): string|null {
+		if ($this->hasValue(params: $params, key: $imageKey) === false) {
+			return null;
+		}
+
+		return $this->validateSinglePath(
+			imageKey: $imageKey,
+			imagePath: $params[$imageKey]
+		);
+	}//end imagePathError()
+
+	/**
+	 * What is wrong with the background mode, when one is given.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 *
+	 * @return string|null The error, or null.
+	 */
+	private function backgroundModeError(array $params): string|null {
 		$mode = ($params['background_mode'] ?? '');
 		if ($mode !== '' && in_array($mode, ['image', 'color', 'default'], true) === false) {
 			return "Invalid background_mode: $mode";
 		}
 
 		return null;
-	}//end validateImagePaths()
+	}//end backgroundModeError()
 
 	/**
 	 * Validate a single image path for security and existence.
@@ -161,16 +196,9 @@ class ThemingService {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
 	 */
 	private function validateSinglePath(string $imageKey, string $imagePath): ?string {
-		$hasDotDot = str_contains($imagePath, '..');
-		$startsSlash = str_starts_with($imagePath, '/');
-		if ($hasDotDot === true || $startsSlash === true) {
-			return "Invalid image path for $imageKey: path traversal not allowed";
-		}
-
-		$inLogos = str_starts_with($imagePath, 'img/logos/');
-		$inBgs = str_starts_with($imagePath, 'img/backgrounds/');
-		if ($inLogos === false && $inBgs === false) {
-			return "Invalid image path for $imageKey: must be in img/logos/ or img/backgrounds/";
+		$problem = $this->pathShapeProblem(imagePath: $imagePath);
+		if ($problem !== null) {
+			return "Invalid image path for $imageKey: $problem";
 		}
 
 		if ($this->files->exists(name: $imagePath) === false) {
@@ -179,6 +207,29 @@ class ThemingService {
 
 		return null;
 	}//end validateSinglePath()
+
+	/**
+	 * What is wrong with the shape of an image path: a traversal, or a place outside the image directories.
+	 *
+	 * @param string $imagePath The app-relative path.
+	 *
+	 * @return string|null The problem, or null.
+	 */
+	private function pathShapeProblem(string $imagePath): string|null {
+		$hasDotDot = str_contains($imagePath, '..');
+		$startsSlash = str_starts_with($imagePath, '/');
+		if ($hasDotDot === true || $startsSlash === true) {
+			return 'path traversal not allowed';
+		}
+
+		$inLogos = str_starts_with($imagePath, 'img/logos/');
+		$inBgs = str_starts_with($imagePath, 'img/backgrounds/');
+		if ($inLogos === false && $inBgs === false) {
+			return 'must be in img/logos/ or img/backgrounds/';
+		}
+
+		return null;
+	}//end pathShapeProblem()
 
 	/**
 	 * Apply color changes to the theming defaults.
@@ -219,15 +270,7 @@ class ThemingService {
 		// (`default`), or an image of its own (`image`, which applyImages()
 		// writes right after).
 		$mode = ($params['background_mode'] ?? '');
-		if ($mode === 'color') {
-			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
-			$updated[] = 'background_mode';
-
-			return $updated;
-		}
-
-		if ($mode === 'default') {
-			$this->themingDefaults->undo(setting: 'background');
+		if ($this->applyCapturedMode(mode: $mode) === true) {
 			$updated[] = 'background_mode';
 
 			return $updated;
@@ -240,15 +283,35 @@ class ThemingService {
 		// Set it here unless the same request also brings a background image,
 		// which applyImages() writes (and whose mime then overrides this)
 		// right after.
-		if ($mode === ''
-			&& in_array('background_color', $updated, true) === true
-			&& (isset($params['background']) === false || $params['background'] === '')
-		) {
+		if ($mode === '' && in_array('background_color', $updated, true) === true && $this->hasValue(params: $params, key: 'background') === false) {
 			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
 		}
 
 		return $updated;
 	}//end applyColors()
+
+	/**
+	 * Restore a captured background state: the image removed in favour of the colour, or Nextcloud's default image.
+	 *
+	 * @param string $mode The captured background mode, '' when none.
+	 *
+	 * @return bool True when the mode was `color` or `default` and was applied.
+	 */
+	private function applyCapturedMode(string $mode): bool {
+		if ($mode === 'color') {
+			$this->themingDefaults->set(setting: 'backgroundMime', value: 'backgroundColor');
+
+			return true;
+		}
+
+		if ($mode === 'default') {
+			$this->themingDefaults->undo(setting: 'background');
+
+			return true;
+		}
+
+		return false;
+	}//end applyCapturedMode()
 
 	/**
 	 * Apply image changes to the theming image manager.
