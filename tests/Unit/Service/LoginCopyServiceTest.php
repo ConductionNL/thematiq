@@ -370,4 +370,23 @@ class LoginCopyServiceTest extends TestCase {
 		);
 		$failing->injectForLogin();
 	}//end testTheLoginEntryResolvesTheSetAndFailsOpen()
+	/**
+	 * Keys keep the place they first appear in; an override that may not be shown keeps the set's value.
+	 *
+	 * @return void
+	 */
+	public function testTheOrderAndAnOverrideThatMayNotBeShown(): void {
+		$this->configure(
+			login: ['subtitle' => 'Set subtitle', 'footer_link_url' => 'https://set.example/', 'divider' => ['nl' => 'of', 'en' => 'or']],
+			override: (string)json_encode(['title' => ['en' => 'Admin title', 'de' => 'Titel'], 'footer_link_url' => 'javascript:x', 'subtitle' => ''])
+		);
+		$this->assertSame(
+			expected: ['subtitle' => 'Set subtitle', 'divider' => 'or', 'footerLinkUrl' => 'https://set.example/', 'title' => 'Admin title'],
+			actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'en')
+		);
+
+		$this->setUp();
+		$this->configure(login: null, override: '"a string"');
+		$this->assertSame(expected: [], actual: $this->service()->resolveCopy(tokenSet: 'x', language: 'en'));
+	}//end testTheOrderAndAnOverrideThatMayNotBeShown()
 }//end class
