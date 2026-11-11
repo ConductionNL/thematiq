@@ -92,19 +92,12 @@ class GenerateDarkVariants extends Command {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$force = ($input->getOption('force') !== false);
-		$onlySet = $input->getOption('set');
-
-		$ids = $this->darkPalette->discoverAllSetIds();
-		if (is_string($onlySet) === true && $onlySet !== '') {
-			$ids = [$onlySet];
-		}
-
 		$failed = false;
-		foreach ($ids as $id) {
-			$result = $this->darkPalette->generateAndWrite(setId: $id, force: $force);
-			$this->reportResult(output: $output, setId: $id, result: $result);
+		foreach ($this->setIds(input: $input) as $id) {
+			$outcome = new DarkVariantOutcome(setId: $id, result: $this->darkPalette->generateAndWrite(setId: $id, force: $force));
+			$this->reportResult(output: $output, outcome: $outcome);
 
-			if ($result['reason'] === 'write-failed') {
+			if ($outcome->writeFailed() === true) {
 				$failed = true;
 			}
 		}
@@ -117,49 +110,66 @@ class GenerateDarkVariants extends Command {
 	}//end execute()
 
 	/**
+	 * The token set ids to generate: every discovered set, or only the one `--set` names.
+	 *
+	 * @param InputInterface $input The console input.
+	 *
+	 * @return array<int, string> The set ids.
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md
+	 */
+	private function setIds(InputInterface $input): array {
+		$onlySet = $input->getOption('set');
+		$ids = $this->darkPalette->discoverAllSetIds();
+		if (is_string($onlySet) === true && $onlySet !== '') {
+			$ids = [$onlySet];
+		}
+
+		return $ids;
+	}//end setIds()
+
+	/**
 	 * Report one set's generation result to the console.
 	 *
 	 * @param OutputInterface $output The console output.
-	 * @param string $setId The token set id.
-	 * @param array{written: bool, skipped: bool, reason: string, warnings: array<int, array<string, mixed>>} $result The generation result.
+	 * @param DarkVariantOutcome $outcome The set id and its generation result.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function reportResult(OutputInterface $output, string $setId, array $result): void {
-		$this->reportOutcomeLine(output: $output, setId: $setId, result: $result);
+	private function reportResult(OutputInterface $output, DarkVariantOutcome $outcome): void {
+		$this->reportOutcomeLine(output: $output, outcome: $outcome);
 
-		foreach ($result['warnings'] as $warning) {
+		foreach ($outcome->result['warnings'] as $warning) {
 			$ratio = ($warning['ratio'] ?? 'unevaluated');
 			$output->writeln('  <comment>contrast warning</comment>: ' . $warning['pair'] . ' = ' . $ratio . ' (needs ' . $warning['threshold'] . ':1)');
 		}
 	}//end reportResult()
 
 	/**
-	 * Write the single written/skipped/failed outcome line for one set.
+	 * Print the written, write-failed or skipped line for one set.
 	 *
 	 * @param OutputInterface $output The console output.
-	 * @param string $setId The token set id.
-	 * @param array{written: bool, skipped: bool, reason: string, warnings: array<int, array<string, mixed>>} $result The generation result.
+	 * @param DarkVariantOutcome $outcome The set id and its generation result.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function reportOutcomeLine(OutputInterface $output, string $setId, array $result): void {
-		if ($result['written'] === true) {
-			$output->writeln('<info>' . $setId . '</info>: written');
+	private function reportOutcomeLine(OutputInterface $output, DarkVariantOutcome $outcome): void {
+		if ($outcome->result['written'] === true) {
+			$output->writeln('<info>' . $outcome->setId . '</info>: written');
 
 			return;
 		}
 
-		if ($result['reason'] === 'write-failed') {
-			$output->writeln('<error>' . $setId . '</error>: write failed');
+		if ($outcome->writeFailed() === true) {
+			$output->writeln('<error>' . $outcome->setId . '</error>: write failed');
 
 			return;
 		}
 
-		$output->writeln($setId . ': skipped (' . $result['reason'] . ')');
+		$output->writeln($outcome->setId . ': skipped (' . $outcome->result['reason'] . ')');
 	}//end reportOutcomeLine()
 }//end class
