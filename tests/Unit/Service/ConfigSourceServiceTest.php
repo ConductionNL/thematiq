@@ -76,6 +76,13 @@ class ConfigSourceServiceTest extends TestCase {
 	private int $imports = 0;
 
 	/**
+	 * What the service did, in order: lock calls, cache clears, imports and log lines.
+	 *
+	 * @var array<int, string>
+	 */
+	private array $trail = [];
+
+	/**
 	 * What the package import answers.
 	 *
 	 * @var array<string, mixed>
@@ -158,6 +165,7 @@ class ConfigSourceServiceTest extends TestCase {
 		$packages->method('import')->willReturnCallback(
 			function (): array {
 				$this->imports++;
+				$this->trail[] = 'import';
 
 				return $this->importResult;
 			}
@@ -175,7 +183,8 @@ class ConfigSourceServiceTest extends TestCase {
 
 		$locking = $this->createMock(originalClassName: ILockingProvider::class);
 		$locking->method('acquireLock')->willReturnCallback(
-			function (): void {
+			function (string $name, int $type): void {
+				$this->trail[] = 'acquire ' . $name . ' ' . $type;
 				if ($this->lockBusy === true) {
 					throw new LockedException('thematiq-config-source');
 				}
@@ -186,6 +195,18 @@ class ConfigSourceServiceTest extends TestCase {
 			}
 		);
 
+		$locking->method('releaseLock')->willReturnCallback(
+			function (string $name, int $type): void {
+				$this->trail[] = 'release ' . $name . ' ' . $type;
+			}
+		);
+		$appConfig = $this->createMock(originalClassName: IAppConfig::class);
+		$appConfig->method('clearCache')->willReturnCallback(
+			function (): void {
+				$this->trail[] = 'clearCache';
+			}
+		);
+
 		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturn(1790000000);
 
@@ -193,6 +214,12 @@ class ConfigSourceServiceTest extends TestCase {
 		$logger->method('error')->willReturnCallback(
 			function (string $message): void {
 				$this->errors[] = $message;
+				$this->trail[] = 'error';
+			}
+		);
+		$logger->method('info')->willReturnCallback(
+			function (string $message): void {
+				$this->trail[] = 'info ' . $message;
 			}
 		);
 
@@ -206,7 +233,7 @@ class ConfigSourceServiceTest extends TestCase {
 			),
 			lock: new ConfigSourceLock(
 				locking: $locking,
-				appConfig: $this->createMock(originalClassName: IAppConfig::class)
+				appConfig: $appConfig
 			),
 			clock: new ConfigSourceClock(
 				time: $time,
@@ -387,4 +414,67 @@ class ConfigSourceServiceTest extends TestCase {
 		unset($this->system['thematiq.config_source']);
 		$this->assertFalse(condition: $this->service()->isLocked());
 	}//end testLockNeedsASource()
+	/**
+	 * Golden: what each apply does under the lock, in order, and what it answers.
+	 *
+	 * @return void
+	 */
+	public function testTheLockedApplyGolden(): void {
+		$hash = (new BrandingPackageReader())->hash(path: $this->dir);
+		$runs = [];
+		$run = function (string $name, bool $force) use (&$runs, $hash): void {
+			$this->trail = [];
+			$result = $this->service()->applyIfChanged(force: $force);
+			$runs[$name] = str_replace([$hash, $this->dir], ['H', 'DIR'], (string)json_encode([$result, $this->trail], JSON_UNESCAPED_SLASHES));
+		};
+
+		$run('first', false);
+		$run('unchanged', false);
+		$run('forced', true);
+		$this->importResult = ['valid' => false, 'errors' => [['section' => 'package', 'message' => 'Broken.']]];
+		$run('forced-invalid', true);
+		$this->lockBusy = true;
+		$run('busy-forced', true);
+		$run('busy-unchanged', false);
+
+		$lock = 'thematiq-config-source ' . ILockingProvider::LOCK_EXCLUSIVE;
+		$this->assertSame(
+			expected: [
+				'first' => '[{"status":"applied","revision":"3f2a9c1","hash":"H"},["acquire ' . $lock . '","clearCache","import","info thematiq: applied the branding package from DIR (3f2a9c1).","release ' . $lock . '"]]',
+				'unchanged' => '[{"status":"unchanged","hash":"H"},[]]',
+				'forced' => '[{"status":"applied","revision":"3f2a9c1","hash":"H"},["acquire ' . $lock . '","clearCache","import","info thematiq: applied the branding package from DIR (3f2a9c1).","release ' . $lock . '"]]',
+				'forced-invalid' => '[{"status":"failed","errors":[{"section":"package","message":"Broken."}],"hash":"H"},["acquire ' . $lock . '","clearCache","import","error","release ' . $lock . '"]]',
+				'busy-forced' => '[{"status":"busy"},["acquire ' . $lock . '"]]',
+				'busy-unchanged' => '[{"status":"unchanged","hash":"H"},[]]',
+			],
+			actual: $runs
+		);
+		$this->assertSame(
+			expected: [['config_imported', ['actor' => 'system', 'source' => 'deployment', 'revision' => '3f2a9c1', 'hash' => $hash]]],
+			actual: array_slice($this->audited, 0, 1)
+		);
+		$this->assertCount(expectedCount: 2, haystack: $this->audited);
+	}//end testTheLockedApplyGolden()
+
+	/**
+	 * A revision-less package is reported and audited by its hash; the status shows what was stored.
+	 *
+	 * @return void
+	 */
+	public function testARevisionlessApplyAndAFreshStatus(): void {
+		$this->assertSame(
+			expected: ['managed' => true, 'path' => $this->dir, 'locked' => false, 'revision' => null, 'appliedAt' => null, 'lastError' => null, 'drift' => false],
+			actual: $this->service()->getStatus()
+		);
+
+		$hash = (new BrandingPackageReader())->hash(path: $this->dir);
+		$this->importResult = ['valid' => true, 'revision' => ''];
+		$this->assertSame(expected: ['status' => 'applied', 'revision' => null, 'hash' => $hash], actual: $this->service()->applyIfChanged());
+		$this->assertSame(expected: 'info thematiq: applied the branding package from ' . $this->dir . ' (' . $hash . ').', actual: $this->trail[3]);
+		$this->assertNull(actual: $this->audited[0][1]['revision']);
+
+		$this->app['config_source_last_error'] = 'not json';
+		$status = $this->service()->getStatus();
+		$this->assertSame(expected: [null, null, gmdate('c', 1790000000), false], actual: [$status['revision'], $status['lastError'], $status['appliedAt'], $status['drift']]);
+	}//end testARevisionlessApplyAndAFreshStatus()
 }//end class
