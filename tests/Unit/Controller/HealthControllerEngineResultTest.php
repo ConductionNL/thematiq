@@ -37,10 +37,11 @@ class HealthControllerEngineResultTest extends TestCase {
 	 * @param string $status The engine's overall status.
 	 * @param array<string,string> $checks The engine's per-check results.
 	 * @param int $httpCode The HTTP code the engine's policy resolved.
+	 * @param bool $cors Whether the manifest allows cross-origin reads.
 	 *
 	 * @return HealthController
 	 */
-	private function controllerWithEngineResult(string $status, array $checks, int $httpCode): HealthController {
+	private function controllerWithEngineResult(string $status, array $checks, int $httpCode, bool $cors = false): HealthController {
 		$manifest = new class {
 			/**
 			 * The cors.
@@ -49,6 +50,7 @@ class HealthControllerEngineResultTest extends TestCase {
 			 */
 			public bool $cors = false;
 		};
+		$manifest->cors = $cors;
 
 		$loader = new class($manifest) {
 			/**
@@ -227,4 +229,22 @@ class HealthControllerEngineResultTest extends TestCase {
 		$this->assertMatchesRegularExpression(pattern: '/^class HealthController extends Controller \{$/m', string: $source);
 		$this->assertSame(expected: 'OCP\AppFramework\Controller', actual: get_parent_class(HealthController::class));
 	}//end testControllerNamesNoOpenRegisterClassInCode()
+	/**
+	 * The exact body, status and headers with and without cross-origin reads.
+	 *
+	 * @return void
+	 */
+	public function testTheExactAnswerWithAndWithoutCors(): void {
+		$headers = static fn (\OCP\AppFramework\Http\Response $response): array => array_intersect_key(
+			(new \ReflectionProperty(\OCP\AppFramework\Http\Response::class, 'headers'))->getValue($response),
+			['Access-Control-Allow-Origin' => 1, 'Access-Control-Allow-Methods' => 1]
+		);
+		foreach ([false => [], true => ['Access-Control-Allow-Origin' => '*', 'Access-Control-Allow-Methods' => 'GET, OPTIONS']] as $cors => $expected) {
+			$response = $this->controllerWithEngineResult(status: 'ok', checks: ['database' => 'ok'], httpCode: 200, cors: (bool)$cors)->index();
+			$this->assertSame(
+				expected: [200, ['status' => 'ok', 'app' => 'thematiq', 'version' => '9.9.9', 'checks' => ['database' => 'ok']], $expected],
+				actual: [$response->getStatus(), $response->getData(), $headers($response)]
+			);
+		}
+	}//end testTheExactAnswerWithAndWithoutCors()
 }//end class
