@@ -178,6 +178,7 @@ async function flush(rounds = 8) {
 async function loadAdmin() {
 	vi.resetModules()
 	await import('../../js/lib/appTheming.js')
+	await import('../../js/lib/themingPlan.js')
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
