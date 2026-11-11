@@ -369,4 +369,39 @@ class FontControllerTest extends TestCase {
 			);
 		}
 	}//end testServeAndCssCarryPublicPage()
+	/**
+	 * Every upload refusal with its exact answer, and the arguments a stored upload passes on.
+	 *
+	 * @return void
+	 */
+	public function testEveryUploadAnswerExactly(): void {
+		$cases = [
+			[[], [400, 'No font file uploaded.']],
+			[['size' => 1], [400, 'No font file uploaded.']],
+			[['tmp_name' => $this->tmpUploadPath, 'size' => (2 * 1024 * 1024 + 1)], [413, 'Font file exceeds the 2 MB size limit.']],
+			[['tmp_name' => $this->tmpUploadPath . '-missing', 'size' => 1], [400, 'Could not read the uploaded file.']],
+		];
+		foreach ($cases as [$file, $answer]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getParam')->willReturnMap([['name', '', ' Rijks Sans '], ['role', 'body', ' heading ']]);
+			$request->method('getUploadedFile')->willReturn($file);
+			$service = $this->createMock(originalClassName: FontService::class);
+			$service->expects($this->never())->method('store');
+			$l = $this->createMock(originalClassName: IL10N::class);
+			$l->method('t')->willReturnCallback(fn (string $text) => $text);
+			$response = @(new FontController(appName: 'thematiq', request: $request, service: $service, l: $l))->upload();
+			$this->assertSame(expected: $answer, actual: [$response->getStatus(), $response->getData()['error']], message: (string)json_encode($file));
+		}
+
+		foreach ([[['tmp_name' => $this->tmpUploadPath, 'size' => 7], 7], [['tmp_name' => $this->tmpUploadPath], 13]] as [$file, $size]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getParam')->willReturnMap([['name', '', ' Rijks Sans '], ['role', 'body', ' heading ']]);
+			$request->method('getUploadedFile')->willReturn($file);
+			$service = $this->createMock(originalClassName: FontService::class);
+			$service->expects($this->once())->method('store')->with('Rijks Sans', 'heading', "wOF2\x00\x01payload", $size)->willReturn(['id' => 'custom-x', 'other' => 1]);
+			$l = $this->createMock(originalClassName: IL10N::class);
+			$response = (new FontController(appName: 'thematiq', request: $request, service: $service, l: $l))->upload();
+			$this->assertSame(expected: [200, ['id' => 'custom-x']], actual: [$response->getStatus(), $response->getData()]);
+		}
+	}//end testEveryUploadAnswerExactly()
 }//end class
