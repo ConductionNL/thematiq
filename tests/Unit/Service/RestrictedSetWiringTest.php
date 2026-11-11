@@ -30,6 +30,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\DelegatedChoice;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -298,14 +299,14 @@ class RestrictedSetWiringTest extends TestCase {
 		);
 
 		try {
-			$delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned');
+			$delegated->setDelegatedTokenSet('sub', new DelegatedChoice('ruimte', 'owned'));
 			$this->fail(message: 'a subadmin chose the restricted set without a confirmation');
 		} catch (GroupThemingValidationException $e) {
 			$this->assertSame(expected: 'owned', actual: $e->getRestrictedSet());
 		}
 
 		$this->confirmSet(tokenSetId: 'owned');
-		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned')['tokenSet']);
+		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', new DelegatedChoice('ruimte', 'owned'))['tokenSet']);
 	}//end testADelegatedChoiceRefuses()
 
 	/**
