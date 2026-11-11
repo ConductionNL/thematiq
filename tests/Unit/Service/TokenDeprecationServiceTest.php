@@ -240,4 +240,53 @@ final class TokenDeprecationServiceTest extends TestCase {
 		$this->assertSame(expected: 'import', actual: $record['source']);
 		$this->assertSame(expected: 'Use color.brand.primary instead', actual: $record['message']);
 	}//end testImportNoticesAdopted()
+	/**
+	 * Golden: which import notices become records, with exactly which fields, and the public list of them.
+	 *
+	 * @return void
+	 */
+	public function testImportNoticesAndThePublicListGolden(): void {
+		$this->service->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'info'], today: '2026-10-02');
+		$recorded = $this->service->adoptImportNotices(
+			notices: [
+				['token' => '--nldesign-a', 'severity' => 'critical', 'message' => '  Trimmed  '],
+				['token' => '--nldesign-b', 'severity' => 'loud', 'message' => ''],
+				['token' => '--nldesign-c', 'message' => 'x' . str_repeat('y', 600)],
+				['token' => '--nldesign-d', 'severity' => 'info', 'message' => 'a; } body { color: red'],
+				['token' => '--nldesign-a', 'severity' => 'info', 'message' => 'second time'],
+				['token' => '--nldesign-org-old-accent', 'message' => 'already recorded'],
+				['token' => 'not-a-variable', 'message' => 'refused'],
+				['message' => 'no token'],
+				['token' => '--nldesign-e', 'severity' => 'warning', 'message' => 7],
+			]
+		);
+
+		$this->assertSame(expected: ['--nldesign-a', '--nldesign-b', '--nldesign-c', '--nldesign-d', '--nldesign-e'], actual: $recorded);
+		$strip = static function (array $record): array {
+			unset($record['deprecatedAt']);
+
+			return $record;
+		};
+		$list = $this->service->list();
+		$this->assertSame(
+			expected: [
+				'--nldesign-a' => ['severity' => 'critical', 'source' => 'import', 'state' => 'active', 'message' => 'Trimmed'],
+				'--nldesign-b' => ['severity' => 'warning', 'source' => 'import', 'state' => 'active'],
+				'--nldesign-c' => ['severity' => 'warning', 'source' => 'import', 'state' => 'active', 'message' => 'x' . str_repeat('y', 499)],
+				'--nldesign-d' => ['severity' => 'info', 'source' => 'import', 'state' => 'active'],
+				'--nldesign-e' => ['severity' => 'warning', 'source' => 'import', 'state' => 'active', 'message' => '7'],
+			],
+			actual: array_map(static fn (array $r): array => array_diff_key($strip($r), ['due' => 1]), array_diff_key($list, ['--nldesign-org-old-accent' => 1]))
+		);
+		$this->assertMatchesRegularExpression(pattern: '/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\+00:00$/', string: $list['--nldesign-a']['deprecatedAt']);
+
+		$public = array_column($this->service->publicList(), null, 'token');
+		$this->assertSame(expected: ['token', 'severity', 'replacement', 'removalDate', 'message', 'deprecatedAt', 'due', 'state'], actual: array_keys($public['--nldesign-b']));
+		$this->assertSame(
+			expected: ['--nldesign-b', 'warning', null, null, null, $list['--nldesign-b']['deprecatedAt'], $list['--nldesign-b']['due'], 'active'],
+			actual: array_values($public['--nldesign-b'])
+		);
+		$this->assertSame(expected: 'Trimmed', actual: $public['--nldesign-a']['message']);
+		$this->assertSame(expected: 'info', actual: $public['--nldesign-org-old-accent']['severity']);
+	}//end testImportNoticesAndThePublicListGolden()
 }//end class

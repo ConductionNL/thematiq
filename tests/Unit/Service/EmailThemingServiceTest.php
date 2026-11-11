@@ -488,4 +488,116 @@ class EmailThemingServiceTest extends TestCase {
 
 		$this->assertNull(actual: $this->service->getActiveEmailTheme());
 	}//end testGetActiveEmailThemeReturnsNullForNextcloud()
+	/**
+	 * The service over an active set `custom-a` with this theming block, and optionally a runtime file locator.
+	 *
+	 * @param array<string, mixed> $theming The set's `theming` block.
+	 * @param RuntimeFileLocator|null $files The locator, or null for none.
+	 *
+	 * @return EmailThemingService
+	 */
+	private function serviceWithTheming(array $theming, ?RuntimeFileLocator $files = null): EmailThemingService {
+		$this->config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, string $default = ''): string => (['token_set' => 'custom-a'][$key] ?? $default)
+		);
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'other'], ['id' => 'custom-a', 'theming' => $theming]]);
+		$this->urlGenerator->method('getAbsoluteURL')->willReturnCallback(static fn (string $url): string => 'https://cloud.example' . $url);
+
+		return new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $files
+		);
+	}//end serviceWithTheming()
+
+	/**
+	 * An uploaded logo links to its runtime route, a shipped one to the app's images; an unresolvable one to nothing.
+	 *
+	 * @return void
+	 */
+	public function testTheLogoAddressPerKind(): void {
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$files->method('isShipped')->willReturnCallback(static fn (string $name): bool => str_starts_with($name, 'img/'));
+		$files->method('url')->willReturnCallback(static fn (string $name): ?string => ($name === 'custom/logo.svg' ? '/apps/thematiq/runtime/logo.svg' : null));
+		$cases = [
+			'custom/logo.svg' => 'https://cloud.example/apps/thematiq/runtime/logo.svg',
+			'custom/gone.svg' => null,
+			'img/logos/a.svg' => 'https://cloud.example/custom_apps/thematiq/img/logos/a.svg',
+			'' => null,
+		];
+		foreach ($cases as $logo => $expected) {
+			$this->setUp();
+			$this->urlGenerator->method('imagePath')->willReturnCallback(static fn (string $app, string $file): string => '/custom_apps/' . $app . '/img/' . $file);
+			$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+			$theme = $this->serviceWithTheming(theming: ['logo' => $logo], files: $files)->getActiveEmailTheme();
+			$this->assertSame(expected: ['primaryColor' => '#123456', 'primaryTextColor' => '#ffffff', 'logoUrl' => $expected], actual: $theme, message: (string)$logo);
+		}
+
+		$this->setUp();
+		$this->urlGenerator->method('imagePath')->willReturnCallback(
+			static fn (string $app, string $file): string => ($file === 'logos/a.svg' ? '/custom_apps/' . $app . '/img/' . $file : throw new \RuntimeException('no such image'))
+		);
+		$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+		$this->assertSame(
+			expected: 'https://cloud.example/custom_apps/thematiq/img/logos/a.svg',
+			actual: $this->serviceWithTheming(theming: ['logo' => 'logos/a.svg'])->getActiveEmailTheme()['logoUrl'],
+			message: 'without a locator every logo is shipped, and a path without img/ is passed as it is'
+		);
+		$this->setUp();
+		$this->urlGenerator->method('imagePath')->willThrowException(new \RuntimeException('no such image'));
+		$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+		$this->assertNull(actual: $this->serviceWithTheming(theming: ['logo' => 'img/broken.svg'])->getActiveEmailTheme()['logoUrl']);
+	}//end testTheLogoAddressPerKind()
+
+	/**
+	 * The manifest colours win; the resolved colours fill only what is missing, and only when something is.
+	 *
+	 * @return void
+	 */
+	public function testTheColoursAndTheirFallback(): void {
+		$this->previewService->expects($this->never())->method('getResolvedColors');
+		$this->assertSame(
+			expected: ['primaryColor' => '#111111', 'primaryTextColor' => '#222222', 'logoUrl' => null],
+			actual: $this->serviceWithTheming(theming: ['primary_color' => '#111111', 'primary_text_color' => '#222222'])->getActiveEmailTheme()
+		);
+
+		$cases = [
+			[['primary_text_color' => '#222222'], ['--color-primary' => '#333333', '--color-primary-text' => '#444444'], ['primaryColor' => '#333333', 'primaryTextColor' => '#222222', 'logoUrl' => null]],
+			[['primary_color' => '#111111'], ['--color-primary' => '#333333', '--color-primary-text' => '#444444'], ['primaryColor' => '#111111', 'primaryTextColor' => '#444444', 'logoUrl' => null]],
+			[[], ['--color-primary-text' => '#444444'], null],
+			[[], [], null],
+		];
+		foreach ($cases as [$theming, $resolved, $expected]) {
+			$this->setUp();
+			$this->previewService->expects($this->once())->method('getResolvedColors')->with('custom-a')->willReturn($resolved);
+			$this->assertSame(expected: $expected, actual: $this->serviceWithTheming(theming: $theming)->getActiveEmailTheme(), message: (string)json_encode($theming));
+		}
+
+		$this->setUp();
+		$this->config->method('getAppValue')->willReturn('unknown-set');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a']]);
+		$this->assertNull(actual: $this->service->getActiveEmailTheme());
+		$this->assertNull(actual: $this->service->getActiveEmailLogoImage());
+	}//end testTheColoursAndTheirFallback()
+
+	/**
+	 * The toggle state per configured template class.
+	 *
+	 * @return void
+	 */
+	public function testTheToggleState(): void {
+		$cases = [
+			['', false, ['state' => 'disabled', 'configReadOnly' => false, 'foreignClass' => null]],
+			[NLDesignEMailTemplate::class, true, ['state' => 'enabled', 'configReadOnly' => true, 'foreignClass' => null]],
+			['OCA\\Other\\Template', false, ['state' => 'foreign', 'configReadOnly' => false, 'foreignClass' => 'OCA\\Other\\Template']],
+		];
+		foreach ($cases as [$class, $readOnly, $expected]) {
+			$this->setUp();
+			$this->config->method('getSystemValue')->willReturn($class);
+			$this->config->method('getSystemValueBool')->willReturn($readOnly);
+			$this->assertSame(expected: $expected, actual: $this->service->getState());
+		}
+	}//end testTheToggleState()
 }//end class

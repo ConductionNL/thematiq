@@ -112,23 +112,31 @@ class Capabilities implements IPublicCapability {
 	 */
 	private function buildPayload(): array {
 		$tokenSetId = $this->config->getAppValue(appName: Application::APP_ID, key: 'token_set', default: 'nextcloud');
-		$hideSlogan = $this->config->getAppValue(appName: Application::APP_ID, key: 'hide_slogan', default: '0') === '1';
-		$showMenuLabels = $this->config->getAppValue(appName: Application::APP_ID, key: 'show_menu_labels', default: '0') === '1';
+		$toggles = $this->toggles();
 
-		$tokenSetMeta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSetId);
-		$designSystemId = ($tokenSetMeta['design_system'] ?? 'nldesign');
+		$set = new CapabilityTokenSet(id: $tokenSetId, meta: $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSetId));
 
 		return [
 			'version' => $this->appManager->getAppVersion(appId: Application::APP_ID),
-			'tokenSet' => $this->buildTokenSet(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
-			'designSystem' => $designSystemId,
+			'tokenSet' => $this->buildTokenSet(set: $set),
+			'designSystem' => ($set->meta['design_system'] ?? 'nldesign'),
 			'iconPacks' => $this->designSystemService->resolveActiveIconPacks(tokenSetId: $tokenSetId),
-			'wcagLevel' => $this->computeWcagLevel(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
-			'logos' => $this->buildLogos(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta),
-			'hideSlogan' => $hideSlogan,
-			'showMenuLabels' => $showMenuLabels,
-		];
+			'wcagLevel' => $this->computeWcagLevel(set: $set),
+			'logos' => $this->buildLogos(set: $set),
+		] + $toggles;
 	}//end buildPayload()
+
+	/**
+	 * The slogan and menu-label presentation toggles.
+	 *
+	 * @return array{hideSlogan: bool, showMenuLabels: bool} The toggles.
+	 */
+	private function toggles(): array {
+		return [
+			'hideSlogan' => $this->config->getAppValue(appName: Application::APP_ID, key: 'hide_slogan', default: '0') === '1',
+			'showMenuLabels' => $this->config->getAppValue(appName: Application::APP_ID, key: 'show_menu_labels', default: '0') === '1',
+		];
+	}//end toggles()
 
 	/**
 	 * Resolve the active token set's `{ id, name, version }` triple.
@@ -140,30 +148,29 @@ class Capabilities implements IPublicCapability {
 	 * to read one name. `name` falls back to the id and `version` is null when
 	 * the active set has no manifest entry (custom/unknown set).
 	 *
-	 * @param string               $tokenSetId   The active token set id (appconfig `token_set`).
-	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for an unknown set).
+	 * @param CapabilityTokenSet $set The active set and its manifest entry (empty for an unknown set).
 	 *
 	 * @return array{id: string, name: string, version: string|null} The token set descriptor.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md#requirement-theming-capability-payload
 	 */
-	private function buildTokenSet(string $tokenSetId, array $tokenSetMeta): array {
+	private function buildTokenSet(CapabilityTokenSet $set): array {
 		// The version reported here is the upstream provenance recorded by the
 		// token-sync workflow (`upstreamVersion`), present only for sets
 		// generated from an upstream release — null for hand-maintained and
 		// custom sets.
-		$name = $tokenSetId;
-		if (is_string($tokenSetMeta['name'] ?? null) === true && $tokenSetMeta['name'] !== '') {
-			$name = $tokenSetMeta['name'];
+		$name = $set->id;
+		if (is_string($set->meta['name'] ?? null) === true && $set->meta['name'] !== '') {
+			$name = $set->meta['name'];
 		}
 
 		$version = null;
-		if (isset($tokenSetMeta['upstreamVersion']) === true) {
-			$version = (string)$tokenSetMeta['upstreamVersion'];
+		if (isset($set->meta['upstreamVersion']) === true) {
+			$version = (string)$set->meta['upstreamVersion'];
 		}
 
 		return [
-			'id' => $tokenSetId,
+			'id' => $set->id,
 			'name' => $name,
 			'version' => $version,
 		];
@@ -179,36 +186,60 @@ class Capabilities implements IPublicCapability {
 	 * when the set declares no logo — always an empty object, never `[]`, so
 	 * it serializes as JSON `{}`.
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for custom/unknown sets).
+	 * @param CapabilityTokenSet $set The active set and its manifest entry (empty for custom/unknown sets).
 	 *
 	 * @return array<string, string>|stdClass The logo variant map.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
-	private function buildLogos(string $tokenSetId, array $tokenSetMeta): array|stdClass {
-		$logoPath = ($tokenSetMeta['theming']['logo'] ?? null);
+	private function buildLogos(CapabilityTokenSet $set): array|stdClass {
+		$logoPath = ($set->meta['theming']['logo'] ?? null);
 		if (is_string($logoPath) === false || $logoPath === '') {
 			return new stdClass();
 		}
 
-		// Theming.logo is stored app-relative (e.g. "img/logos/x.svg");
-		// IURLGenerator::imagePath() prepends "img/" itself.
-		$relative = $logoPath;
-		if (str_starts_with(haystack: $relative, needle: 'img/') === true) {
-			$relative = substr($relative, 4);
-		}
+		$logos = ['default' => $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $this->imageRelative(path: $logoPath))];
 
-		$logos = ['default' => $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $relative)];
-
-		$emblem = 'logos/' . $tokenSetId . '-emblem.svg';
-		$appPath = $this->appManager->getAppPath(appId: Application::APP_ID);
-		if (is_file($appPath . '/img/' . $emblem) === true) {
-			$logos['emblem'] = $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $emblem);
+		$emblem = $this->emblemUrl(tokenSetId: $set->id);
+		if ($emblem !== null) {
+			$logos['emblem'] = $emblem;
 		}
 
 		return $logos;
 	}//end buildLogos()
+
+	/**
+	 * A logo path relative to `img/`: theming.logo is stored app-relative
+	 * (e.g. "img/logos/x.svg"), and IURLGenerator::imagePath() prepends "img/" itself.
+	 *
+	 * @param string $path The app-relative path.
+	 *
+	 * @return string The path without its `img/` prefix.
+	 */
+	private function imageRelative(string $path): string {
+		if (str_starts_with(haystack: $path, needle: 'img/') === true) {
+			return substr($path, 4);
+		}
+
+		return $path;
+	}//end imageRelative()
+
+	/**
+	 * The web path of the set's emblem, when it ships `img/logos/<id>-emblem.svg`.
+	 *
+	 * @param string $tokenSetId The active token set id.
+	 *
+	 * @return string|null The web path, or null.
+	 */
+	private function emblemUrl(string $tokenSetId): string|null {
+		$emblem = 'logos/' . $tokenSetId . '-emblem.svg';
+		$appPath = $this->appManager->getAppPath(appId: Application::APP_ID);
+		if (is_file($appPath . '/img/' . $emblem) === false) {
+			return null;
+		}
+
+		return $this->urlGenerator->imagePath(appName: Application::APP_ID, file: $emblem);
+	}//end emblemUrl()
 
 	/**
 	 * Compute the audited WCAG contrast level for the active token set, cached.
@@ -218,26 +249,25 @@ class Capabilities implements IPublicCapability {
 	 * fabricate a conformance claim. Otherwise resolves via
 	 * `ShippedTokenSetAuditService::auditSet()`, cached per active set id.
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry (empty for custom/unknown sets).
+	 * @param CapabilityTokenSet $set The active set and its manifest entry (empty for custom/unknown sets).
 	 *
 	 * @return string|null One of `AAA`, `AA`, `fail`, or null.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
-	private function computeWcagLevel(string $tokenSetId, array $tokenSetMeta): ?string {
-		$designSystemId = ($tokenSetMeta['design_system'] ?? null);
-		if (empty($tokenSetMeta) === true || $designSystemId === 'none') {
+	private function computeWcagLevel(CapabilityTokenSet $set): ?string {
+		$designSystemId = ($set->meta['design_system'] ?? null);
+		if (empty($set->meta) === true || $designSystemId === 'none') {
 			return null;
 		}
 
-		$cacheKey = 'level-' . $tokenSetId;
+		$cacheKey = 'level-' . $set->id;
 		$cached = $this->cache->get(key: $cacheKey);
 		if (is_string($cached) === true) {
 			return $cached;
 		}
 
-		$level = $this->auditWcagLevel(tokenSetId: $tokenSetId, tokenSetMeta: $tokenSetMeta, designSystemId: (string)$designSystemId);
+		$level = $this->auditWcagLevel(set: $set, designSystemId: (string)$designSystemId);
 		$this->cache->set(key: $cacheKey, value: $level, ttl: self::WCAG_CACHE_TTL);
 
 		return $level;
@@ -246,46 +276,50 @@ class Capabilities implements IPublicCapability {
 	/**
 	 * Run the contrast audit(s) for a set known to have a real design system.
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active set's manifest entry.
+	 * @param CapabilityTokenSet $set The active set and its manifest entry.
 	 * @param string $designSystemId The set's resolved design system id.
 	 *
 	 * @return string One of `AAA`, `AA`, or `fail`.
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
-	private function auditWcagLevel(string $tokenSetId, array $tokenSetMeta, string $designSystemId): string {
-		$appPath = $this->appManager->getAppPath(appId: Application::APP_ID);
-		$theming = ($tokenSetMeta['theming'] ?? []);
-
-		$declaresAaa = ($designSystemId === 'high-contrast' || ($tokenSetMeta['contrast_level'] ?? null) === 'AAA');
-
-		$passesAa = $this->auditService->auditSet(
-			appPath: $appPath,
-			id: $tokenSetId,
-			theming: $theming,
-			level: 'AA'
-		)['verdict'] === 'pass';
-
-		if ($declaresAaa === true) {
-			$passesAaa = $this->auditService->auditSet(
-				appPath: $appPath,
-				id: $tokenSetId,
-				theming: $theming,
-				level: 'AAA'
-			)['verdict'] === 'pass';
-
-			if ($passesAaa === true) {
-				return 'AAA';
-			}
+	private function auditWcagLevel(CapabilityTokenSet $set, string $designSystemId): string {
+		$levels = ['AA'];
+		if ($designSystemId === 'high-contrast' || ($set->meta['contrast_level'] ?? null) === 'AAA') {
+			$levels[] = 'AAA';
 		}
 
-		if ($passesAa === true) {
+		$passes = $this->auditPasses(set: $set, levels: $levels);
+		if (($passes['AAA'] ?? false) === true) {
+			return 'AAA';
+		}
+
+		if ($passes['AA'] === true) {
 			return 'AA';
 		}
 
 		return 'fail';
 	}//end auditWcagLevel()
+
+	/**
+	 * Run the contrast audit at each level, in order.
+	 *
+	 * @param CapabilityTokenSet $set The active set and its manifest entry.
+	 * @param array<int, string> $levels The levels, `AA` first.
+	 *
+	 * @return array<string, bool> Whether the set passes, per level.
+	 */
+	private function auditPasses(CapabilityTokenSet $set, array $levels): array {
+		$appPath = $this->appManager->getAppPath(appId: Application::APP_ID);
+		$theming = ($set->meta['theming'] ?? []);
+
+		$passes = [];
+		foreach ($levels as $level) {
+			$passes[$level] = $this->auditService->auditSet(appPath: $appPath, id: $set->id, theming: $theming, level: $level)['verdict'] === 'pass';
+		}
+
+		return $passes;
+	}//end auditPasses()
 
 	/**
 	 * The degraded minimal payload returned when `buildPayload()` throws.
@@ -301,27 +335,12 @@ class Capabilities implements IPublicCapability {
 	 * @spec openspec/specs/icon-packs/spec.md
 	 */
 	private function minimalPayload(): array {
-		$version = 'unknown';
-		try {
-			$version = $this->appManager->getAppVersion(appId: Application::APP_ID);
-		} catch (\Throwable $exception) {
-			// Fall through to the safe literal — the degrade path must not itself throw.
-		}
-
-		$tokenSetId = 'nextcloud';
-		try {
-			$tokenSetId = $this->config->getAppValue(appName: Application::APP_ID, key: 'token_set', default: 'nextcloud');
-		} catch (\Throwable $exception) {
-			// Fall through to the safe literal.
-		}
+		$version = $this->safeVersion();
+		$tokenSetId = $this->safeTokenSetId();
 
 		return [
 			'version' => $version,
-			'tokenSet' => [
-				'id' => $tokenSetId,
-				'name' => $tokenSetId,
-				'version' => null,
-			],
+			'tokenSet' => $this->minimalTokenSet(tokenSetId: $tokenSetId),
 			'designSystem' => null,
 			'iconPacks' => [],
 			'wcagLevel' => null,
@@ -330,4 +349,45 @@ class Capabilities implements IPublicCapability {
 			'showMenuLabels' => false,
 		];
 	}//end minimalPayload()
+
+	/**
+	 * The degraded token set descriptor: `name` falls back to the id, no version.
+	 *
+	 * @param string $tokenSetId The active token set id, or the safe literal.
+	 *
+	 * @return array{id: string, name: string, version: null} The descriptor.
+	 */
+	private function minimalTokenSet(string $tokenSetId): array {
+		return [
+			'id' => $tokenSetId,
+			'name' => $tokenSetId,
+			'version' => null,
+		];
+	}//end minimalTokenSet()
+
+	/**
+	 * The app version, `unknown` when it cannot be read: the degrade path must not itself throw.
+	 *
+	 * @return string The version.
+	 */
+	private function safeVersion(): string {
+		try {
+			return $this->appManager->getAppVersion(appId: Application::APP_ID);
+		} catch (\Throwable $exception) {
+			return 'unknown';
+		}
+	}//end safeVersion()
+
+	/**
+	 * The active token set id, `nextcloud` when it cannot be read.
+	 *
+	 * @return string The id.
+	 */
+	private function safeTokenSetId(): string {
+		try {
+			return $this->config->getAppValue(appName: Application::APP_ID, key: 'token_set', default: 'nextcloud');
+		} catch (\Throwable $exception) {
+			return 'nextcloud';
+		}
+	}//end safeTokenSetId()
 }//end class

@@ -98,4 +98,45 @@ class CopyValues {
 	public static function camel(string $key): string {
 		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
 	}//end camel()
+
+	/**
+	 * The values a source states for a page's copy keys, in the keys' order; null for a key it leaves out.
+	 *
+	 * @param array<mixed> $source A token set's or the administrator's copy block.
+	 * @param array<int, string> $keys The copy keys, in snake case.
+	 *
+	 * @return array<string, mixed> Key => value as written.
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 */
+	public static function only(array $source, array $keys): array {
+		$values = [];
+		foreach ($keys as $key) {
+			$values[$key] = ($source[$key] ?? null);
+		}
+
+		return $values;
+	}//end only()
+
+	/**
+	 * Copy values picked in the request's language, by camel-case name, leaving out the ones with no usable text.
+	 *
+	 * @param array<string, mixed> $values Key => value as written, from {@see self::only()}.
+	 * @param string $language The request's language code.
+	 *
+	 * @return array<string, string> Camel-case name => value.
+	 *
+	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 */
+	public static function picked(array $values, string $language): array {
+		$copy = [];
+		foreach ($values as $key => $value) {
+			$picked = self::pick(value: $value, language: $language);
+			if ($picked !== null) {
+				$copy[self::camel(key: $key)] = $picked;
+			}
+		}
+
+		return $copy;
+	}//end picked()
 }//end class

@@ -82,84 +82,131 @@ class ShellCatalogueFonts {
 	/**
 	 * The font list: every family a set names that is not a system font.
 	 *
-	 * @param string $appPath The app root path.
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
 	 * @param array<string, string[]> $families Family => the ids of the sets that name it.
-	 * @param array<string, array<string, mixed>> $manifest The manifest entries, by id.
-	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
 	 *
 	 * @return array<int, array<string, mixed>> The entries, by family name.
 	 *
 	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-font-is-redistributable-only-under-a-stated-licence
 	 */
-	public function fontsOf(string $appPath, array $families, array $manifest, array $annotations): array {
-		$shipped = $this->fontFiles(appPath: $appPath);
+	public function fontsOf(CatalogueEvidence $evidence, array $families): array {
+		$shipped = $this->fontFiles(appPath: $evidence->appPath);
 		ksort($families, SORT_STRING);
 
 		$fonts = [];
 		foreach ($families as $family => $ids) {
 			$files = ($shipped[strtolower($family)] ?? []);
-			$verdict = $this->fontVerdict(appPath: $appPath, family: $family, files: $files, ids: $ids, manifest: $manifest, annotations: $annotations);
-			$fonts[] = [
-				'family' => $family,
-				'sets' => $ids,
-				'shipped' => ($files !== []),
-				'files' => $files,
-				'licence' => $verdict['licence'],
-				'licence_files' => $verdict['licence_files'],
-				'redistributable' => $verdict['redistributable'],
-				'basis' => $verdict['basis'],
-			];
+			$licence = $this->statedLicence(files: $files, annotations: $evidence->annotations);
+			$font = new CatalogueFont(family: $family, sets: $ids, files: $files, licence: $licence);
+			$fonts[] = $this->fontEntry(evidence: $evidence, font: $font);
 		}
 
 		return $fonts;
 	}//end fontsOf()
 
 	/**
+	 * One entry of the font list.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 * @param CatalogueFont $font The family.
+	 *
+	 * @return array<string, mixed> The entry.
+	 */
+	private function fontEntry(CatalogueEvidence $evidence, CatalogueFont $font): array {
+		$verdict = $this->fontVerdict(evidence: $evidence, font: $font);
+
+		return [
+			'family' => $font->family,
+			'sets' => $font->sets,
+			'shipped' => ($font->files !== []),
+			'files' => $font->files,
+			'licence' => $verdict['licence'],
+			'licence_files' => $verdict['licence_files'],
+			'redistributable' => $verdict['redistributable'],
+			'basis' => $verdict['basis'],
+		];
+	}//end fontEntry()
+
+	/**
 	 * What the repository says about one font family.
 	 *
-	 * @param string $appPath The app root path.
-	 * @param string $family The family name.
-	 * @param string[] $files The font files thematiq ships for it.
-	 * @param string[] $ids The sets that name it.
-	 * @param array<string, array<string, mixed>> $manifest The manifest entries, by id.
-	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 * @param CatalogueFont $font The family.
 	 *
 	 * @return array{licence: string|null, licence_files: string[], redistributable: bool|null, basis: string} The verdict.
 	 */
-	private function fontVerdict(string $appPath, string $family, array $files, array $ids, array $manifest, array $annotations): array {
-		$licence = $this->statedLicence(files: $files, annotations: $annotations);
-
-		$restricted = (self::RESTRICTED_FONTS[$family] ?? null);
-		if ($restricted !== null && str_contains($this->licences->read(path: $appPath . '/' . $restricted['source']), $restricted['quote']) === true) {
-			return [
-				'licence' => $licence,
+	private function fontVerdict(CatalogueEvidence $evidence, CatalogueFont $font): array {
+		return ($this->restrictedVerdict(evidence: $evidence, font: $font)
+			?? $this->licensedVerdict(appPath: $evidence->appPath, font: $font)
+			?? $this->declaredVerdict(evidence: $evidence, font: $font)
+			?? [
+				'licence' => $font->licence,
 				'licence_files' => [],
-				'redistributable' => false,
-				'basis' => $restricted['source'] . ': "' . $restricted['quote'] . '"',
-			];
+				'redistributable' => null,
+				'basis' => 'The repository neither ships this family under a stated licence nor says it may not be passed on.',
+			]);
+	}//end fontVerdict()
+
+	/**
+	 * The verdict for a family the repository says may not be passed on, while it still says so.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 * @param CatalogueFont $font The family.
+	 *
+	 * @return array{licence: string|null, licence_files: string[], redistributable: bool, basis: string}|null Null when not restricted.
+	 */
+	private function restrictedVerdict(CatalogueEvidence $evidence, CatalogueFont $font): ?array {
+		$restricted = (self::RESTRICTED_FONTS[$font->family] ?? null);
+		if ($restricted === null || $this->licences->stillSays(appPath: $evidence->appPath, statement: $restricted) === false) {
+			return null;
 		}
 
-		if ($licence !== null && isset(self::FONT_LICENCE_NOTICES[$licence]) === true) {
-			return [
-				'licence' => $licence,
-				'licence_files' => $this->noticesFor(appPath: $appPath, files: $files, notice: self::FONT_LICENCE_NOTICES[$licence]),
-				'redistributable' => true,
-				'basis' => 'REUSE.toml names these files ' . $licence . ', and LICENSES/' . $licence . '.txt allows redistribution with its notice.',
-			];
-		}
+		return [
+			'licence' => $font->licence,
+			'licence_files' => [],
+			'redistributable' => false,
+			'basis' => $restricted['source'] . ': "' . $restricted['quote'] . '"',
+		];
+	}//end restrictedVerdict()
 
-		$declared = $this->declaredBy(family: $family, ids: $ids, manifest: $manifest);
-		if ($declared !== null && $files === []) {
-			return $declared;
+	/**
+	 * The verdict for a family whose files carry a licence that allows passing them on.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param CatalogueFont $font The family.
+	 *
+	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null Null when its licence does not allow it.
+	 */
+	private function licensedVerdict(string $appPath, CatalogueFont $font): ?array {
+		$licence = $font->licence;
+		if ($licence === null || isset(self::FONT_LICENCE_NOTICES[$licence]) === false) {
+			return null;
 		}
 
 		return [
 			'licence' => $licence,
-			'licence_files' => [],
-			'redistributable' => null,
-			'basis' => 'The repository neither ships this family under a stated licence nor says it may not be passed on.',
+			'licence_files' => $this->noticesFor(appPath: $appPath, font: $font),
+			'redistributable' => true,
+			'basis' => 'REUSE.toml names these files ' . $licence . ', and LICENSES/' . $licence . '.txt allows redistribution with its notice.',
 		];
-	}//end fontVerdict()
+	}//end licensedVerdict()
+
+	/**
+	 * What a set's `font` block says about a family thematiq does not ship.
+	 *
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 * @param CatalogueFont $font The family.
+	 *
+	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null Null when shipped or undescribed.
+	 */
+	private function declaredVerdict(CatalogueEvidence $evidence, CatalogueFont $font): ?array {
+		$declared = $this->declaredBy(evidence: $evidence, font: $font);
+		if ($font->files !== []) {
+			return null;
+		}
+
+		return $declared;
+	}//end declaredVerdict()
 
 	/**
 	 * The one licence `REUSE.toml` names for all of a family's files.
@@ -172,30 +219,46 @@ class ShellCatalogueFonts {
 	private function statedLicence(array $files, array $annotations): ?string {
 		$licence = null;
 		foreach ($files as $file) {
-			$found = $this->licences->licenceOf(file: $file, annotations: $annotations);
-			if ($found['stated'] === false || $found['licence'] === null || ($licence !== null && $found['licence'] !== $licence)) {
+			$found = $this->ownLicenceOf(file: $file, annotations: $annotations);
+			if ($found === null || ($licence !== null && $found !== $licence)) {
 				return null;
 			}
 
-			$licence = $found['licence'];
+			$licence = $found;
 		}
 
 		return $licence;
 	}//end statedLicence()
 
 	/**
+	 * The licence `REUSE.toml` names for one file by name.
+	 *
+	 * @param string $file The font file.
+	 * @param array<int, array{paths: string[], licence: string, override: bool}> $annotations The `REUSE.toml` annotations.
+	 *
+	 * @return string|null The SPDX identifier, or null when the file has none of its own.
+	 */
+	private function ownLicenceOf(string $file, array $annotations): ?string {
+		$found = $this->licences->licenceOf(file: $file, annotations: $annotations);
+		if ($found['stated'] === false || $found['licence'] === null) {
+			return null;
+		}
+
+		return $found['licence'];
+	}//end ownLicenceOf()
+
+	/**
 	 * What a set's `font` block in `token-sets.json` says about a family it names and thematiq does not ship.
 	 *
-	 * @param string $family The family name.
-	 * @param string[] $ids The sets that name it.
-	 * @param array<string, array<string, mixed>> $manifest The manifest entries, by id.
+	 * @param CatalogueEvidence $evidence The app root, the manifest and the `REUSE.toml` annotations.
+	 * @param CatalogueFont $font The family.
 	 *
 	 * @return array{licence: string, licence_files: string[], redistributable: bool, basis: string}|null The verdict, or null when no set describes it.
 	 */
-	private function declaredBy(string $family, array $ids, array $manifest): ?array {
-		foreach ($ids as $id) {
-			$declared = ($manifest[$id]['font'] ?? null);
-			if (is_array($declared) === false || strcasecmp((string)($declared['family'] ?? ''), $family) !== 0) {
+	private function declaredBy(CatalogueEvidence $evidence, CatalogueFont $font): ?array {
+		foreach ($font->sets as $id) {
+			$declared = ($evidence->manifest[$id]['font'] ?? null);
+			if (is_array($declared) === false || strcasecmp((string)($declared['family'] ?? ''), $font->family) !== 0) {
 				continue;
 			}
 
@@ -211,17 +274,17 @@ class ShellCatalogueFonts {
 	}//end declaredBy()
 
 	/**
-	 * The licence notices that must travel with a set of font files: the notice file in each of their directories.
+	 * The licence notices that must travel with a family's files: the notice file of its licence in each of their directories.
 	 *
 	 * @param string $appPath The app root path.
-	 * @param string[] $files The font files.
-	 * @param string $notice The notice's file name.
+	 * @param CatalogueFont $font The family; its licence has a notice.
 	 *
 	 * @return string[] The repository-relative paths, sorted.
 	 */
-	private function noticesFor(string $appPath, array $files, string $notice): array {
+	private function noticesFor(string $appPath, CatalogueFont $font): array {
+		$notice = self::FONT_LICENCE_NOTICES[(string)$font->licence];
 		$notices = [];
-		foreach ($files as $file) {
+		foreach ($font->files as $file) {
 			$candidate = dirname($file) . '/' . $notice;
 			if (is_file($appPath . '/' . $candidate) === true) {
 				$notices[$candidate] = true;
@@ -241,31 +304,10 @@ class ShellCatalogueFonts {
 	 * @return array<string, string[]> Lower-cased family => repository-relative files that exist, sorted.
 	 */
 	private function fontFiles(string $appPath): array {
-		$sheets = glob($appPath . '/css/systems/*/*.css');
-		if ($sheets === false) {
-			$sheets = [];
-		}
-
-		$sheets[] = $appPath . '/css/fonts.css';
-		sort($sheets, SORT_STRING);
-
 		$families = [];
-		foreach ($sheets as $sheet) {
-			$css = (string)preg_replace('#/\*.*?\*/#s', '', $this->licences->read(path: $sheet));
-			$directory = dirname(substr($sheet, (strlen($appPath) + 1)));
-			preg_match_all('/@font-face\s*\{([^}]*)\}/', $css, $faces);
-			foreach ($faces[1] as $face) {
-				if (preg_match('/font-family:\s*[\'"]?([^\'";]+)[\'"]?\s*;/', $face, $name) !== 1) {
-					continue;
-				}
-
-				preg_match_all('/url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/', $face, $urls);
-				foreach ($urls[1] as $url) {
-					$file = $directory . '/' . $url;
-					if (str_contains($url, '..') === false && is_file($appPath . '/' . $file) === true) {
-						$families[strtolower(trim($name[1]))][$file] = true;
-					}
-				}
+		foreach ($this->stylesheets(appPath: $appPath) as $sheet) {
+			foreach ($this->facesIn(sheet: new FontStylesheet(appPath: $appPath, path: $sheet)) as $family => $files) {
+				$families[$family] = (($families[$family] ?? []) + $files);
 			}
 		}
 
@@ -278,4 +320,86 @@ class ShellCatalogueFonts {
 			$families
 		);
 	}//end fontFiles()
+
+	/**
+	 * The stylesheets that may declare font faces, sorted.
+	 *
+	 * @param string $appPath The app root path.
+	 *
+	 * @return string[] The absolute paths.
+	 */
+	private function stylesheets(string $appPath): array {
+		$sheets = glob($appPath . '/css/systems/*/*.css');
+		if ($sheets === false) {
+			$sheets = [];
+		}
+
+		$sheets[] = $appPath . '/css/fonts.css';
+		sort($sheets, SORT_STRING);
+
+		return $sheets;
+	}//end stylesheets()
+
+	/**
+	 * The font files one stylesheet has an `@font-face` for.
+	 *
+	 * @param FontStylesheet $sheet The stylesheet.
+	 *
+	 * @return array<string, array<string, true>> Lower-cased family => repository-relative files that exist, in the sheet's order.
+	 */
+	private function facesIn(FontStylesheet $sheet): array {
+		$css = (string)preg_replace('#/\*.*?\*/#s', '', $this->licences->read(path: $sheet->path));
+		preg_match_all('/@font-face\s*\{([^}]*)\}/', $css, $faces);
+
+		$families = [];
+		foreach ($faces[1] as $face) {
+			$family = $this->familyOf(face: $face);
+			if ($family === null) {
+				continue;
+			}
+
+			foreach ($this->shippedFilesOf(sheet: $sheet, face: $face) as $file) {
+				$families[$family][$file] = true;
+			}
+		}
+
+		return $families;
+	}//end facesIn()
+
+	/**
+	 * The lower-cased family an `@font-face` body declares.
+	 *
+	 * @param string $face The body of the `@font-face` rule.
+	 *
+	 * @return string|null The family, or null when it declares none.
+	 */
+	private function familyOf(string $face): ?string {
+		if (preg_match('/font-family:\s*[\'"]?([^\'";]+)[\'"]?\s*;/', $face, $name) !== 1) {
+			return null;
+		}
+
+		return strtolower(trim($name[1]));
+	}//end familyOf()
+
+	/**
+	 * The files an `@font-face` body points at that exist inside the repository.
+	 *
+	 * @param FontStylesheet $sheet The stylesheet the rule is in.
+	 * @param string $face The body of the `@font-face` rule.
+	 *
+	 * @return string[] The repository-relative paths, in the rule's order.
+	 */
+	private function shippedFilesOf(FontStylesheet $sheet, string $face): array {
+		preg_match_all('/url\(\s*[\'"]?([^\'")]+)[\'"]?\s*\)/', $face, $urls);
+
+		$files = [];
+		foreach ($urls[1] as $url) {
+			$file = $sheet->directory() . '/' . $url;
+			if (str_contains($url, '..') === false && is_file($sheet->appPath . '/' . $file) === true) {
+				$files[] = $file;
+			}
+		}
+
+		return $files;
+	}//end shippedFilesOf()
 }//end class

@@ -97,4 +97,22 @@ final class ColorSpaceConverterTest extends TestCase {
 		$this->assertNull(actual: $converter->toSrgb(space: 'cmyk', components: [0, 0, 0]));
 		$this->assertSame(expected: '#15427380', actual: $converter->toHex(rgb: [0.0824, 0.2588, 0.451], alpha: 0.5));
 	}//end testGamutAndUnknownSpace()
+	/**
+	 * Golden: every known space over a grid of components, recorded on the code before the split as a hash of
+	 * the exact floats.
+	 *
+	 * @return void
+	 */
+	public function testEverySpaceGolden(): void {
+		$converter = new ColorSpaceConverter();
+		$grid = [[0, 0, 0], [1, 1, 1], [0.5, 0.25, 0.75], [-0.1, 1.2, 0.3], [50, 20, -30], [100, 0, 0], [30, 60, 90], [0.7, 0.15, 400], [210, 40, 60], [0.2, 0.9, 0.05]];
+		$out = [];
+		foreach (ColorSpaceConverter::SPACES as $space) {
+			foreach ($grid as $components) {
+				$out[] = $converter->toSrgb(space: $space, components: $components);
+			}
+		}
+
+		$this->assertSame(expected: '86f9f8a39a68455d 140', actual: substr(hash('sha256', serialize($out)), 0, 16) . ' ' . count($out));
+	}//end testEverySpaceGolden()
 }//end class

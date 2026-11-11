@@ -106,7 +106,7 @@ class ScheduledSwitchStore {
 	}//end save()
 
 	/**
-	 * The entries an import stores: the bundle's, merged with the running ones.
+	 * The validated bundle entries to store over the current ones.
 	 *
 	 * A bundle carries portable fields only, so every entry arrives as
 	 * `planned`. Storing that as it is put a running switch back to planned,
@@ -125,6 +125,27 @@ class ScheduledSwitchStore {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function mergeImported(array $imported, int $now): array {
+		$running = $this->runningById();
+
+		$result = [];
+		foreach ($imported as $entry) {
+			$stored = ($running[$entry['id']] ?? null);
+			if ($stored !== null) {
+				$result[] = $this->withRunningState(entry: $entry, stored: $stored);
+			} elseif ($this->hasEnded(end: $entry['endAt'], now: $now) === false) {
+				$result[] = $entry;
+			}
+		}
+
+		return $result;
+	}//end mergeImported()
+
+	/**
+	 * The stored running entries that have a string id, by id.
+	 *
+	 * @return array<string, array<string, mixed>> The entries.
+	 */
+	private function runningById(): array {
 		$running = [];
 		foreach ($this->all() as $entry) {
 			if (($entry['status'] ?? null) === 'running' && is_string($entry['id'] ?? null) === true) {
@@ -132,29 +153,26 @@ class ScheduledSwitchStore {
 			}
 		}
 
-		$result = [];
-		foreach ($imported as $entry) {
-			$stored = ($running[$entry['id']] ?? null);
-			if ($stored !== null) {
-				foreach (self::RUNNING_FIELDS as $field) {
-					if (array_key_exists($field, $stored) === true) {
-						$entry[$field] = $stored[$field];
-					}
-				}
+		return $running;
+	}//end runningById()
 
-				$result[] = $entry;
-				continue;
+	/**
+	 * An imported entry with the runtime fields of the stored running entry it replaces.
+	 *
+	 * @param array<string, mixed> $entry The imported entry.
+	 * @param array<string, mixed> $stored The stored running entry with the same id.
+	 *
+	 * @return array<string, mixed> The entry to store.
+	 */
+	private function withRunningState(array $entry, array $stored): array {
+		foreach (self::RUNNING_FIELDS as $field) {
+			if (array_key_exists($field, $stored) === true) {
+				$entry[$field] = $stored[$field];
 			}
-
-			if ($this->hasEnded(end: $entry['endAt'], now: $now) === true) {
-				continue;
-			}
-
-			$result[] = $entry;
 		}
 
-		return $result;
-	}//end mergeImported()
+		return $entry;
+	}//end withRunningState()
 
 	/**
 	 * Whether a window's end has passed. A window without an end never ends.
@@ -226,20 +244,45 @@ class ScheduledSwitchStore {
 	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public function findOverlap(array $candidate, array $entries): ?array {
-		[$start, $end] = $this->window(entry: $candidate);
+		$window = $this->window(entry: $candidate);
 		foreach ($entries as $entry) {
-			if (($entry['status'] ?? 'planned') === 'failed' || ($entry['id'] ?? null) === ($candidate['id'] ?? null)) {
+			if ($this->outOfOverlap(entry: $entry, candidate: $candidate) === true) {
 				continue;
 			}
 
-			[$otherStart, $otherEnd] = $this->window(entry: $entry);
-			if ($start < $otherEnd && $otherStart < $end) {
+			if ($this->overlaps(window: $window, entry: $entry) === true) {
 				return $entry;
 			}
 		}
 
 		return null;
 	}//end findOverlap()
+
+	/**
+	 * Whether an entry's window overlaps a window.
+	 *
+	 * @param array{0: int, 1: int} $window The start and end in seconds.
+	 * @param array<string, mixed> $entry The entry.
+	 *
+	 * @return bool True when they overlap.
+	 */
+	private function overlaps(array $window, array $entry): bool {
+		[$otherStart, $otherEnd] = $this->window(entry: $entry);
+
+		return $window[0] < $otherEnd && $otherStart < $window[1];
+	}//end overlaps()
+
+	/**
+	 * Whether an entry is left out of the overlap check: it failed, or it is the candidate itself.
+	 *
+	 * @param array<string, mixed> $entry The entry.
+	 * @param array<string, mixed> $candidate The entry being checked.
+	 *
+	 * @return bool True when it is left out.
+	 */
+	private function outOfOverlap(array $entry, array $candidate): bool {
+		return ($entry['status'] ?? 'planned') === 'failed' || ($entry['id'] ?? null) === ($candidate['id'] ?? null);
+	}//end outOfOverlap()
 
 	/**
 	 * Validate a bundle's planned switches.
@@ -252,95 +295,8 @@ class ScheduledSwitchStore {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	public function validateImport(mixed $raw, callable $setExists): array {
-		if (is_array($raw) === false || array_is_list($raw) === false) {
-			return ['entries' => [], 'errors' => ['"config.scheduledSwitches" must be a list.']];
-		}
-
-		$entries = [];
-		$errors = [];
-		foreach ($raw as $index => $item) {
-			$entry = $this->validateImportEntry(item: $item, index: $index, setExists: $setExists, errors: $errors);
-			if ($entry === null) {
-				continue;
-			}
-
-			$overlap = $this->findOverlap(candidate: $entry, entries: $entries);
-			if ($overlap !== null) {
-				$errors[] = 'Planned switch ' . $index . ' overlaps planned switch ' . (string)$overlap['id'] . '.';
-				continue;
-			}
-
-			$entries[] = $entry;
-		}
-
-		return ['entries' => $entries, 'errors' => $errors];
+		return (new SwitchImportValidation(store: $this))->validate(raw: $raw, setExists: $setExists);
 	}//end validateImport()
-
-	/**
-	 * Validate one bundle entry.
-	 *
-	 * @param mixed $item The entry.
-	 * @param int $index Its position, for the error message.
-	 * @param callable $setExists Answers whether a token set id exists.
-	 * @param array<int,string> $errors Accumulator.
-	 *
-	 * @return array<string, mixed>|null The normalised entry, or null when it failed.
-	 */
-	private function validateImportEntry(mixed $item, int $index, callable $setExists, array &$errors): ?array {
-		$prefix = 'Planned switch ' . $index . ': ';
-		if (is_array($item) === false || is_string($item['id'] ?? null) === false || is_string($item['tokenSet'] ?? null) === false) {
-			$errors[] = $prefix . 'needs a string "id" and "tokenSet".';
-			return null;
-		}
-
-		$start = $this->toUtc(value: ($item['startAt'] ?? null));
-		$end = null;
-		if (($item['endAt'] ?? null) !== null) {
-			$end = $this->toUtc(value: $item['endAt']);
-		}
-
-		$message = $this->importProblem(item: $item, start: $start, end: $end, setExists: $setExists);
-		if ($message !== null) {
-			$errors[] = $prefix . $message;
-			return null;
-		}
-
-		return [
-			'id' => $item['id'],
-			'tokenSet' => $item['tokenSet'],
-			'startAt' => $start,
-			'endAt' => $end,
-			'createdBy' => (string)($item['createdBy'] ?? ''),
-			'createdAt' => (string)($item['createdAt'] ?? ''),
-			'status' => 'planned',
-		];
-	}//end validateImportEntry()
-
-	/**
-	 * What is wrong with one bundle entry whose id and token set are strings, if anything.
-	 *
-	 * @param array<string, mixed> $item The entry.
-	 * @param string|null $start Its start in UTC, null when it does not parse.
-	 * @param string|null $end Its end in UTC, null when absent or unparsable.
-	 * @param callable $setExists Answers whether a token set id exists.
-	 *
-	 * @return string|null The problem, or null when the entry is fine.
-	 */
-	private function importProblem(array $item, ?string $start, ?string $end, callable $setExists): ?string {
-		if ($start === null || (($item['endAt'] ?? null) !== null && $end === null)) {
-			return 'a time does not parse.';
-		}
-
-		if ($end !== null && strtotime($end) <= strtotime($start)) {
-			return 'the end is not after the start.';
-		}
-
-		if ($setExists($item['tokenSet']) !== true) {
-			return 'token set "' . $item['tokenSet'] . '" is neither installed nor in this bundle.';
-		}
-
-		return null;
-	}//end importProblem()
 
 	/**
 	 * The window of an entry in seconds; no end means forever.

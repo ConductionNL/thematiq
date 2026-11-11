@@ -37,6 +37,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConfigApply extends Command {
 
 	/**
+	 * The line and exit code for each status that settles the run without applying,
+	 * keyed by status.
+	 *
+	 * @var array<string, array{0: string, 1: int}>
+	 */
+	private const SETTLED = [
+		'unchanged' => ['<info>The branding package did not change. Nothing to do.</info>', Command::SUCCESS],
+		'unconfigured' => [
+			'<error>No branding package is configured. Set thematiq.config_source in config.php.</error>',
+			Command::FAILURE,
+		],
+		'busy' => ['<error>Another apply is running. Try again in a moment.</error>', Command::FAILURE],
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ConfigSourceService $source The configuration source service.
@@ -78,26 +93,35 @@ class ConfigApply extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$result = $this->source->applyIfChanged(force: ($input->getOption('force') === true));
 
-		switch ($result['status']) {
-			case 'applied':
-				$output->writeln('<info>Branding package applied (' . ($result['revision'] ?? $result['hash']) . ').</info>');
-				return Command::SUCCESS;
-			case 'unchanged':
-				$output->writeln('<info>The branding package did not change. Nothing to do.</info>');
-				return Command::SUCCESS;
-			case 'unconfigured':
-				$output->writeln('<error>No branding package is configured. Set thematiq.config_source in config.php.</error>');
-				return Command::FAILURE;
-			case 'busy':
-				$output->writeln('<error>Another apply is running. Try again in a moment.</error>');
-				return Command::FAILURE;
+		if ($result['status'] === 'applied') {
+			$output->writeln('<info>Branding package applied (' . ($result['revision'] ?? $result['hash']) . ').</info>');
+			return Command::SUCCESS;
 		}
 
-		$output->writeln('<error>The branding package was not applied, nothing changed:</error>');
-		foreach (($result['errors'] ?? []) as $error) {
-			$output->writeln('  - [' . ($error['section'] ?? 'unknown') . '] ' . ($error['message'] ?? 'Unknown error.'));
+		if (isset(self::SETTLED[$result['status']]) === true) {
+			$output->writeln(self::SETTLED[$result['status']][0]);
+			return self::SETTLED[$result['status']][1];
 		}
+
+		$this->printNotApplied(output: $output, errors: ($result['errors'] ?? []));
 
 		return Command::FAILURE;
 	}//end execute()
+
+	/**
+	 * Print why the package was not applied, one line per error.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param array<int, array<string, mixed>> $errors The per-section errors.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function printNotApplied(OutputInterface $output, array $errors): void {
+		$output->writeln('<error>The branding package was not applied, nothing changed:</error>');
+		foreach ($errors as $error) {
+			$output->writeln('  - [' . ($error['section'] ?? 'unknown') . '] ' . ($error['message'] ?? 'Unknown error.'));
+		}
+	}//end printNotApplied()
 }//end class

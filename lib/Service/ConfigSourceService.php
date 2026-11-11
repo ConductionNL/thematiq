@@ -159,11 +159,24 @@ class ConfigSourceService {
 			return $this->fail(errors: [['section' => 'package', 'message' => $e->getMessage()]], hash: 'unreadable:' . $path);
 		}
 
-		if ($force === false && $hash === $this->getApp(key: self::KEY_HASH)) {
-			$this->clearStaleError(hash: $hash);
-			return ['status' => 'unchanged', 'hash' => $hash];
+		if ($this->isUnchanged(force: $force, hash: $hash) === true) {
+			return $this->unchangedOnDisk(hash: $hash);
 		}
 
+		return $this->applyUnderLock(package: new ConfigSourcePackage(path: $path, hash: $hash), force: $force);
+	}//end applyIfChanged()
+
+	/**
+	 * Apply the package while holding the replica lock, unless another replica applied it meanwhile.
+	 *
+	 * @param ConfigSourcePackage $package The package and its hash.
+	 * @param bool $force Apply even when the hash is unchanged.
+	 *
+	 * @return array<string, mixed> The outcome; `busy` when another replica holds the lock.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function applyUnderLock(ConfigSourcePackage $package, bool $force): array {
 		try {
 			$this->lock->locking->acquireLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
 		} catch (LockedException $e) {
@@ -171,20 +184,63 @@ class ConfigSourceService {
 		}
 
 		try {
-			// Compared again under the lock: a replica that read the hash while
-			// another one was applying this package would apply it a second
-			// time, with a second `config_imported` entry and version. The
-			// cached app config of this request predates that apply.
-			$this->lock->appConfig->clearCache();
-			if ($force === false && $hash === $this->getApp(key: self::KEY_HASH)) {
-				return ['status' => 'unchanged', 'hash' => $hash];
-			}
-
-			return $this->apply(path: $path, hash: $hash);
+			return $this->applyIfStillChanged(package: $package, force: $force);
 		} finally {
 			$this->lock->locking->releaseLock(self::LOCK_NAME, ILockingProvider::LOCK_EXCLUSIVE);
 		}
-	}//end applyIfChanged()
+	}//end applyUnderLock()
+
+	/**
+	 * Under the lock: apply the package unless another replica applied it meanwhile.
+	 *
+	 * Compared again under the lock: a replica that read the hash while
+	 * another one was applying this package would apply it a second
+	 * time, with a second `config_imported` entry and version. The
+	 * cached app config of this request predates that apply.
+	 *
+	 * @param ConfigSourcePackage $package The package and its hash.
+	 * @param bool $force Apply even when the hash is unchanged.
+	 *
+	 * @return array<string, mixed> The outcome.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function applyIfStillChanged(ConfigSourcePackage $package, bool $force): array {
+		$this->lock->appConfig->clearCache();
+		if ($this->isUnchanged(force: $force, hash: $package->hash) === true) {
+			return ['status' => 'unchanged', 'hash' => $package->hash];
+		}
+
+		return $this->apply(package: $package);
+	}//end applyIfStillChanged()
+
+	/**
+	 * The answer for a package that is the one last applied, forgetting the error of a later one.
+	 *
+	 * @param string $hash The package hash.
+	 *
+	 * @return array<string, mixed> The `unchanged` outcome.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function unchangedOnDisk(string $hash): array {
+		$this->clearStaleError(hash: $hash);
+		return ['status' => 'unchanged', 'hash' => $hash];
+	}//end unchangedOnDisk()
+
+	/**
+	 * Whether the package on disk is the one last applied, and no forced apply was asked.
+	 *
+	 * @param bool $force Apply even when the hash is unchanged.
+	 * @param string $hash The package hash.
+	 *
+	 * @return bool True when there is nothing to apply.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function isUnchanged(bool $force, string $hash): bool {
+		return ($force === false && $hash === $this->getApp(key: self::KEY_HASH));
+	}//end isUnchanged()
 
 	/**
 	 * What the settings page shows about the source.
@@ -199,17 +255,22 @@ class ConfigSourceService {
 			return ['managed' => false];
 		}
 
-		$state = $this->getApp(key: self::KEY_STATE);
-		$lastError = json_decode($this->getApp(key: self::KEY_ERROR), true);
-		if (is_array($lastError) === false) {
-			$lastError = null;
-		}
+		return $this->managedStatus(path: $path);
+	}//end getStatus()
 
-		$appliedAt = null;
-		$appliedTime = (int)$this->getApp(key: self::KEY_APPLIED_AT);
-		if ($appliedTime > 0) {
-			$appliedAt = gmdate('c', $appliedTime);
-		}
+	/**
+	 * The status while a source is set.
+	 *
+	 * @param string $path The package path.
+	 *
+	 * @return array<string, mixed> `{managed, path, locked, revision, appliedAt, lastError, drift}`.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function managedStatus(string $path): array {
+		$state = $this->getApp(key: self::KEY_STATE);
+		$lastError = $this->lastError();
+		$appliedAt = $this->appliedAt();
 
 		return [
 			'managed' => true,
@@ -220,44 +281,102 @@ class ConfigSourceService {
 			'lastError' => $lastError,
 			'drift' => ($state !== '' && $state !== $this->stateFingerprint()),
 		];
-	}//end getStatus()
+	}//end managedStatus()
+
+	/**
+	 * The recorded error of the last failed apply.
+	 *
+	 * @return array<string, mixed>|null The error, or null when none is recorded.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function lastError(): array|null {
+		$lastError = json_decode($this->getApp(key: self::KEY_ERROR), true);
+		if (is_array($lastError) === false) {
+			return null;
+		}
+
+		return $lastError;
+	}//end lastError()
+
+	/**
+	 * When the package was last applied.
+	 *
+	 * @return string|null The ISO 8601 time, or null when it never was.
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function appliedAt(): string|null {
+		$appliedTime = (int)$this->getApp(key: self::KEY_APPLIED_AT);
+		if ($appliedTime > 0) {
+			return gmdate('c', $appliedTime);
+		}
+
+		return null;
+	}//end appliedAt()
 
 	/**
 	 * Apply the package under the lock and record the outcome.
 	 *
-	 * @param string $path The package path.
-	 * @param string $hash The package hash.
+	 * @param ConfigSourcePackage $package The package and its hash.
 	 *
 	 * @return array<string, mixed> The outcome.
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	private function apply(string $path, string $hash): array {
-		$result = $this->steps->packageService->import(path: $path);
+	private function apply(ConfigSourcePackage $package): array {
+		$result = $this->steps->packageService->import(path: $package->path);
 		if ($result['valid'] === false) {
-			return $this->fail(errors: $result['errors'], hash: $hash);
+			return $this->fail(errors: $result['errors'], hash: $package->hash);
 		}
 
 		$revision = (string)($result['revision'] ?? '');
+		$this->recordApplied(hash: $package->hash, revision: $revision);
+		$this->reportApplied(package: $package, revision: $this->nullIfEmpty(value: $revision));
+
+		return ['status' => 'applied', 'revision' => $this->nullIfEmpty(value: $revision), 'hash' => $package->hash];
+	}//end apply()
+
+	/**
+	 * Store what was applied: hash, revision, time and the running configuration's fingerprint; forget the last error.
+	 *
+	 * @param string $hash The package hash.
+	 * @param string $revision The package revision, empty when it has none.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function recordApplied(string $hash, string $revision): void {
 		$this->setApp(key: self::KEY_HASH, value: $hash);
 		$this->setApp(key: self::KEY_REVISION, value: $revision);
 		$this->setApp(key: self::KEY_APPLIED_AT, value: (string)$this->clock->time->getTime());
 		$this->setApp(key: self::KEY_STATE, value: $this->stateFingerprint());
 		$this->config->deleteAppValue(Application::APP_ID, self::KEY_ERROR);
+	}//end recordApplied()
 
+	/**
+	 * Audit the apply as the system and log it.
+	 *
+	 * @param ConfigSourcePackage $package The package and its hash.
+	 * @param string|null $revision The package revision, or null when it has none.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-as-code/spec.md
+	 */
+	private function reportApplied(ConfigSourcePackage $package, string|null $revision): void {
 		$this->steps->audit->log(
 			action: 'config_imported',
 			context: [
 				'actor' => 'system',
 				'source' => 'deployment',
-				'revision' => $this->nullIfEmpty(value: $revision),
-				'hash' => $hash,
+				'revision' => $revision,
+				'hash' => $package->hash,
 			]
 		);
-		$this->clock->logger->info('thematiq: applied the branding package from ' . $path . ' (' . ($this->nullIfEmpty(value: $revision) ?? $hash) . ').');
-
-		return ['status' => 'applied', 'revision' => $this->nullIfEmpty(value: $revision), 'hash' => $hash];
-	}//end apply()
+		$this->clock->logger->info('thematiq: applied the branding package from ' . $package->path . ' (' . ($revision ?? $package->hash) . ').');
+	}//end reportApplied()
 
 	/**
 	 * An empty string as null.

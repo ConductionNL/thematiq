@@ -30,6 +30,7 @@ use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\CustomTokenSetsBundleSection;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
+use OCA\Thematiq\Service\DelegatedChoice;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\AppBrandException;
@@ -48,6 +49,8 @@ use OCA\Thematiq\Service\ScheduledSwitchRuntime;
 use OCA\Thematiq\Service\ScheduledSwitchService;
 use OCA\Thematiq\Service\ScheduledSwitchStore;
 use OCA\Thematiq\Service\ScheduledSwitchTargets;
+use OCA\Thematiq\Service\SwitchPlan;
+use OCA\Thematiq\Service\SwitchWindow;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetAudits;
@@ -296,14 +299,14 @@ class RestrictedSetWiringTest extends TestCase {
 		);
 
 		try {
-			$delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned');
+			$delegated->setDelegatedTokenSet('sub', new DelegatedChoice('ruimte', 'owned'));
 			$this->fail(message: 'a subadmin chose the restricted set without a confirmation');
 		} catch (GroupThemingValidationException $e) {
 			$this->assertSame(expected: 'owned', actual: $e->getRestrictedSet());
 		}
 
 		$this->confirmSet(tokenSetId: 'owned');
-		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', 'ruimte', 'owned')['tokenSet']);
+		$this->assertSame(expected: 'owned', actual: $delegated->setDelegatedTokenSet('sub', new DelegatedChoice('ruimte', 'owned'))['tokenSet']);
 	}//end testADelegatedChoiceRefuses()
 
 	/**
@@ -367,7 +370,7 @@ class RestrictedSetWiringTest extends TestCase {
 		$switches = $this->scheduledSwitches();
 
 		try {
-			$switches->create('owned', '2026-10-13T09:00:00+00:00', null, 'admin');
+			$switches->create(new SwitchPlan('owned', new SwitchWindow('2026-10-13T09:00:00+00:00', null)), 'admin');
 			$this->fail(message: 'a switch to the restricted set was planned without a confirmation');
 		} catch (RestrictedSetNotConfirmedException $e) {
 			$this->assertSame(expected: 'owned', actual: $e->getTokenSetId());
@@ -376,7 +379,7 @@ class RestrictedSetWiringTest extends TestCase {
 
 		// Planned while confirmed, confirmation gone by the time it starts.
 		$this->confirmSet(tokenSetId: 'owned');
-		$switches->create('owned', '2026-10-13T09:00:00+00:00', null, 'admin');
+		$switches->create(new SwitchPlan('owned', new SwitchWindow('2026-10-13T09:00:00+00:00', null)), 'admin');
 		unset($this->appValues[RestrictedSetGate::CONFIG_KEY]);
 		$this->now = strtotime('2026-10-13T09:05:00+00:00');
 		$switches->runDue();

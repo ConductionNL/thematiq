@@ -75,6 +75,13 @@ class AssistantMarkService {
 	public const ERROR_LOGO = 2;
 
 	/**
+	 * The type check of each field a bundle section may carry.
+	 *
+	 * @var array<string, callable-string>
+	 */
+	private const SECTION_TYPES = ['enabled' => 'is_bool', 'organisation' => 'is_string', 'logo' => 'is_string'];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config App config.
@@ -121,10 +128,7 @@ class AssistantMarkService {
 	public function save(bool $enabled, string $organisation, string $logo): array {
 		$organisation = trim($organisation);
 		$logo = trim($logo);
-		if ($logo !== '' && $this->isUsableLogo(url: $logo) === false) {
-			throw new AssistantMarkException(message: 'The logo is not an https address or a path on this server.', code: self::ERROR_LOGO);
-		}
-
+		$this->assertSavableLogo(logo: $logo);
 		if ($enabled === true && $organisation === '' && $this->defaultOrganisation() === '') {
 			throw new AssistantMarkException(message: 'The approved mark needs an organisation name.', code: self::ERROR_NAME);
 		}
@@ -149,15 +153,7 @@ class AssistantMarkService {
 			return ['enabled' => false];
 		}
 
-		$logo = null;
-		$url = $this->get(key: self::KEY_LOGO);
-		if ($url === '') {
-			$url = (string)$this->defaultLogo();
-		}
-
-		if ($url !== '') {
-			$logo = ['url' => $url, 'alt' => $l10n->t('%s logo', [$organisation])];
-		}
+		$logo = $this->logoFor(organisation: $organisation, l10n: $l10n);
 
 		return [
 			'enabled' => true,
@@ -196,17 +192,11 @@ class AssistantMarkService {
 			return ['errors' => [], 'value' => null];
 		}
 
-		if (is_array($section) === false || is_bool($section['enabled'] ?? false) === false
-			|| is_string($section['organisation'] ?? '') === false || is_string($section['logo'] ?? '') === false
-		) {
+		if ($this->isSectionShape(section: $section) === false) {
 			return ['errors' => ['"assistantMark" must be an object with enabled, organisation and logo.'], 'value' => null];
 		}
 
-		$value = [
-			'enabled' => (($section['enabled'] ?? false) === true),
-			'organisation' => trim((string)($section['organisation'] ?? '')),
-			'logo' => trim((string)($section['logo'] ?? '')),
-		];
+		$value = $this->sectionValue(section: $section);
 		if ($value['logo'] !== '' && $this->isUsableLogo(url: $value['logo']) === false) {
 			return ['errors' => ['"assistantMark.logo" must be an https address or a path on this server.'], 'value' => null];
 		}
@@ -233,6 +223,86 @@ class AssistantMarkService {
 		$this->config->setAppValue(Application::APP_ID, self::KEY_LOGO, $value['logo']);
 		$this->config->setAppValue(Application::APP_ID, self::KEY_ENABLED, $enabled);
 	}//end applyBundle()
+
+	/**
+	 * Refuse a logo that is neither empty, an https address nor a path on this server.
+	 *
+	 * @param string $logo The trimmed logo address.
+	 *
+	 * @return void
+	 *
+	 * @throws AssistantMarkException When the logo is not usable.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	private function assertSavableLogo(string $logo): void {
+		if ($logo !== '' && $this->isUsableLogo(url: $logo) === false) {
+			throw new AssistantMarkException(message: 'The logo is not an https address or a path on this server.', code: self::ERROR_LOGO);
+		}
+	}//end assertSavableLogo()
+
+	/**
+	 * The logo the mark shows: the own logo, else the house style logo.
+	 *
+	 * @param string $organisation The organisation name, for the alternative text.
+	 * @param IL10N  $l10n         The requesting user's translations.
+	 *
+	 * @return array{url: string, alt: string}|null The logo, or null when neither is set.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	private function logoFor(string $organisation, IL10N $l10n): array|null {
+		$url = $this->get(key: self::KEY_LOGO);
+		if ($url === '') {
+			$url = (string)$this->defaultLogo();
+		}
+
+		if ($url === '') {
+			return null;
+		}
+
+		return ['url' => $url, 'alt' => $l10n->t('%s logo', [$organisation])];
+	}//end logoFor()
+
+	/**
+	 * Whether a bundle section is an object whose present fields have the right types.
+	 *
+	 * @param mixed $section The section.
+	 *
+	 * @return bool True when the shape is right.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	private function isSectionShape(mixed $section): bool {
+		if (is_array($section) === false) {
+			return false;
+		}
+
+		foreach (self::SECTION_TYPES as $key => $check) {
+			if (isset($section[$key]) === true && $check($section[$key]) === false) {
+				return false;
+			}
+		}
+
+		return true;
+	}//end isSectionShape()
+
+	/**
+	 * The values of a well-shaped bundle section, trimmed, absent ones defaulted.
+	 *
+	 * @param array<string, mixed> $section The section.
+	 *
+	 * @return array{enabled: bool, organisation: string, logo: string} The values.
+	 *
+	 * @spec openspec/specs/assistant-approved-mark/spec.md
+	 */
+	private function sectionValue(array $section): array {
+		return [
+			'enabled' => (($section['enabled'] ?? false) === true),
+			'organisation' => trim((string)($section['organisation'] ?? '')),
+			'logo' => trim((string)($section['logo'] ?? '')),
+		];
+	}//end sectionValue()
 
 	/**
 	 * The organisation name the mark shows: the own name, else the email footer name.

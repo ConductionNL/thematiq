@@ -122,12 +122,7 @@ class NotFoundCopyService {
 				continue;
 			}
 
-			foreach (self::KEYS as $key) {
-				$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
-				if ($value !== null) {
-					$copy[CopyValues::camel(key: $key)] = $value;
-				}
-			}
+			$copy = array_merge($copy, CopyValues::picked(values: CopyValues::only(source: $source, keys: self::KEYS), language: $language));
 
 			if (is_array($source['links'] ?? null) === true) {
 				$copy['links'] = self::links(rows: $source['links'], language: $language);
