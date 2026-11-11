@@ -154,15 +154,29 @@ class ThemeSet extends Command {
 		try {
 			$this->switchTo(target: $switch->to, output: $output);
 		} catch (RestrictedSetNotConfirmedException $e) {
-			$output->writeln(
-				'<error>' . $switch->to . ' is the house style of another organisation. An administrator first confirms in the '
-				. 'Thematiq admin settings that your organisation may use it. Nothing was changed.</error>'
-			);
+			$this->reportRestricted(target: $switch->to, output: $output);
 			return false;
 		}
 
 		return true;
 	}//end switchUnlessActive()
+
+	/**
+	 * Report a restricted set the organisation has not been confirmed for.
+	 *
+	 * @param string $target The token set id.
+	 * @param OutputInterface $output The output.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
+	 */
+	private function reportRestricted(string $target, OutputInterface $output): void {
+		$output->writeln(
+			'<error>' . $target . ' is the house style of another organisation. An administrator first confirms in the '
+			. 'Thematiq admin settings that your organisation may use it. Nothing was changed.</error>'
+		);
+	}//end reportRestricted()
 
 	/**
 	 * Switch the active token set and print the switch.
