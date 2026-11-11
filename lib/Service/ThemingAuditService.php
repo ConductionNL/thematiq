@@ -24,7 +24,6 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\AppData\IAppDataFactory;
-use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
 use OCP\IUserSession;
@@ -484,13 +483,7 @@ class ThemingAuditService {
 	 * @throws \Throwable Any appdata failure.
 	 */
 	private function getAuditFolder(): ISimpleFolder {
-		$root = $this->appDataFactory->get(Application::APP_ID);
-
-		try {
-			return $root->getFolder(self::FOLDER_NAME);
-		} catch (NotFoundException $e) {
-			return $root->newFolder(self::FOLDER_NAME);
-		}
+		return (new AppDataFolder())->open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER_NAME);
 	}//end getAuditFolder()
 
 	/**
