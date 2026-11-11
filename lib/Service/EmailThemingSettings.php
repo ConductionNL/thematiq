@@ -73,6 +73,27 @@ class EmailThemingSettings {
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
 	public function save(bool $enabled, array $footer): array {
+		$invalid = $this->footerRefusal(footer: $footer);
+		if ($invalid !== null) {
+			return $invalid;
+		}
+
+		$refused = $this->toggle(enabled: $enabled);
+		if ($refused !== null) {
+			return ['status' => 409, 'body' => $refused + ['footer' => $this->emailThemingService->getFooterConfig()]];
+		}
+
+		return $this->saved();
+	}//end save()
+
+	/**
+	 * Store the footer values, or answer why they are refused.
+	 *
+	 * @param array{orgName: string, accessibilityUrl: string, privacyUrl: string} $footer The footer values.
+	 *
+	 * @return array{status: 422, body: array<string, mixed>}|null The 422 answer, or null when they are stored.
+	 */
+	private function footerRefusal(array $footer): array|null {
 		try {
 			$this->emailThemingService->setFooterConfig($footer['orgName'], $footer['accessibilityUrl'], $footer['privacyUrl']);
 		} catch (FooterValidationException $e) {
@@ -82,11 +103,15 @@ class EmailThemingSettings {
 			];
 		}
 
-		$refused = $this->toggle(enabled: $enabled);
-		if ($refused !== null) {
-			return ['status' => 409, 'body' => $refused + ['footer' => $this->emailThemingService->getFooterConfig()]];
-		}
+		return null;
+	}//end footerRefusal()
 
+	/**
+	 * The answer after a save: the toggle state and the stored footer.
+	 *
+	 * @return array{status: 200, body: array<string, mixed>} The 200 answer.
+	 */
+	private function saved(): array {
 		return [
 			'status' => 200,
 			'body' => [
@@ -95,7 +120,7 @@ class EmailThemingSettings {
 				'footer' => $this->emailThemingService->getFooterConfig(),
 			],
 		];
-	}//end save()
+	}//end saved()
 
 	/**
 	 * Switch the template on or off.
@@ -108,13 +133,7 @@ class EmailThemingSettings {
 	 */
 	private function toggle(bool $enabled): ?array {
 		try {
-			if ($enabled === true) {
-				$this->emailThemingService->enable();
-			}
-
-			if ($enabled === false) {
-				$this->emailThemingService->disable();
-			}
+			$this->switchTemplate(enabled: $enabled);
 		} catch (ConfigReadOnlyException $e) {
 			return ['error' => 'config_read_only', 'occEnable' => $e->getOccEnableCommand(), 'occDisable' => $e->getOccDisableCommand()];
 		} catch (ForeignMailTemplateClassException $e) {
@@ -123,4 +142,24 @@ class EmailThemingSettings {
 
 		return null;
 	}//end toggle()
+
+	/**
+	 * Turn the branded template on or off.
+	 *
+	 * @param bool $enabled Whether it should be on.
+	 *
+	 * @return void
+	 *
+	 * @throws ConfigReadOnlyException When config.php cannot be written.
+	 * @throws ForeignMailTemplateClassException When another app's template is configured.
+	 */
+	private function switchTemplate(bool $enabled): void {
+		if ($enabled === true) {
+			$this->emailThemingService->enable();
+		}
+
+		if ($enabled === false) {
+			$this->emailThemingService->disable();
+		}
+	}//end switchTemplate()
 }//end class
