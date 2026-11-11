@@ -180,4 +180,45 @@ class RestrictedSetGateTest extends TestCase {
 		$this->assertSame(expected: [], actual: $gate->restrictedIds());
 		$this->assertNull(actual: $gate->licenceOf('owned'));
 	}//end testAMissingManifestRestrictsNothing()
+	/**
+	 * Golden: what each stored confirmation reads as, and whether the set may then be applied.
+	 *
+	 * @return void
+	 */
+	public function testEveryConfirmationShapeGolden(): void {
+		$cases = [
+			'{"owned": {"uid": "ruben", "at": "2026-10-12T20:15:00+00:00", "extra": 1}}' => [['uid' => 'ruben', 'at' => '2026-10-12T20:15:00+00:00'], true],
+			'{"owned": {"uid": "ruben", "at": ""}}' => [null, false],
+			'{"owned": {"uid": 7, "at": "x"}}' => [null, false],
+			'{"owned": {"uid": "ruben"}}' => [null, false],
+			'{"owned": {"at": "x"}}' => [null, false],
+			'{"owned": "ruben"}' => [null, false],
+			'{"other": {"uid": "ruben", "at": "x"}}' => [null, false],
+			'[]' => [null, false],
+			'' => [null, false],
+		];
+		foreach ($cases as $stored => [$confirmation, $mayApply]) {
+			$this->appValues[RestrictedSetGate::CONFIG_KEY] = $stored;
+			$this->assertSame(expected: [$confirmation, $mayApply], actual: [$this->gate->confirmation('owned'), $this->gate->mayApply('owned')], message: $stored);
+		}
+	}//end testEveryConfirmationShapeGolden()
+
+	/**
+	 * A manifest that is not a list, or entries without a string id, restrict nothing; a later entry wins.
+	 *
+	 * @return void
+	 */
+	public function testOddManifests(): void {
+		$dir = sys_get_temp_dir() . '/thematiq-odd-' . bin2hex(random_bytes(4));
+		mkdir($dir);
+		$restricted = ['licence' => ['id' => 'LicenseRef-X', 'restricted' => true]];
+		foreach (['"a string"' => [], 'not json' => [], (string)json_encode([['id' => 7] + $restricted, 'x', ['id' => 'b'] + $restricted, ['id' => 'b'], ['id' => 'c'] + $restricted]) => ['c']] as $json => $ids) {
+			file_put_contents($dir . '/token-sets.json', $json);
+			$gate = new RestrictedSetGate(config: $this->memoryConfig(), appPath: $dir);
+			$this->assertSame(expected: $ids, actual: $gate->restrictedIds(), message: $json);
+		}
+
+		unlink($dir . '/token-sets.json');
+		rmdir($dir);
+	}//end testOddManifests()
 }//end class
