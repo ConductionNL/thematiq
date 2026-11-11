@@ -154,4 +154,47 @@ class TokenReferenceCells {
 	public function esc(string $text): string {
 		return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 	}//end esc()
+
+	/**
+	 * One Markdown table row.
+	 *
+	 * @param array<string, mixed> $row The row.
+	 * @param string $cell The value formatter of TokenReferenceCells: `mdValue` or `mdPlainValue`.
+	 *
+	 * @return string The table row.
+	 *
+	 * @spec openspec/specs/token-reference/spec.md#requirement-the-reference-does-not-rely-on-colour-alone
+	 */
+	public function markdownRow(array $row, string $cell): string {
+		$cells = [
+			'`' . $row['name'] . '`',
+			$this->$cell(value: $row['value']),
+			$this->$cell(value: $row['dark']),
+			$row['source'],
+			$this->paints(list: $row['paints']),
+		];
+
+		return str_replace('|  |', '| |', '| ' . implode(' | ', $cells) . ' |');
+	}//end markdownRow()
+
+	/**
+	 * One HTML table.
+	 *
+	 * @param array<int, array<string, mixed>> $rows The rows.
+	 *
+	 * @return string HTML.
+	 *
+	 * @spec openspec/specs/token-reference/spec.md#requirement-the-reference-does-not-rely-on-colour-alone
+	 */
+	public function htmlTable(array $rows): string {
+		$out = '<table>' . "\n" . '<thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Dark mode</th>'
+			. '<th scope="col">Source</th><th scope="col">Paints</th></tr></thead>' . "\n" . '<tbody>' . "\n";
+		foreach ($rows as $row) {
+			$out .= '<tr><td><code>' . $this->esc(text: $row['name']) . '</code></td><td>' . $this->htmlValue(value: $row['value']) . '</td><td>'
+				. $this->htmlValue(value: $row['dark']) . '</td><td>' . $row['source'] . '</td><td>'
+				. $this->esc(text: str_replace('`', '', $this->paints(list: $row['paints']))) . '</td></tr>' . "\n";
+		}
+
+		return $out . '</tbody>' . "\n" . '</table>' . "\n";
+	}//end htmlTable()
 }//end class
