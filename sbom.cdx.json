@@ -2,10 +2,8 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:a17c145e-6421-484c-a433-647eceb8e84c",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-11T17:28:35Z",
     "tools": [
       {
         "name": "composer",
@@ -82,10 +80,10 @@
       }
     ],
     "component": {
-      "bom-ref": "conductionnl/thematiq-dev-development",
+      "bom-ref": "conductionnl/thematiq-0.1.0.0",
       "type": "application",
       "name": "thematiq",
-      "version": "dev-development",
+      "version": "0.1.0",
       "group": "conductionnl",
       "description": "Thematiq — NL Design System theming for Nextcloud",
       "author": "Conduction b.v.",
@@ -96,16 +94,8 @@
           }
         }
       ],
-      "purl": "pkg:composer/conductionnl/thematiq@dev-development",
+      "purl": "pkg:composer/conductionnl/thematiq@0.1.0",
       "properties": [
-        {
-          "name": "cdx:composer:package:distReference",
-          "value": "8c5d5783ad6f75685146f359f4a29e2fcd94d5e5"
-        },
-        {
-          "name": "cdx:composer:package:sourceReference",
-          "value": "8c5d5783ad6f75685146f359f4a29e2fcd94d5e5"
-        },
         {
           "name": "cdx:composer:package:type",
           "value": "library"
@@ -151,7 +141,7 @@
   ],
   "dependencies": [
     {
-      "ref": "conductionnl/thematiq-dev-development"
+      "ref": "conductionnl/thematiq-0.1.0.0"
     }
   ]
 }
