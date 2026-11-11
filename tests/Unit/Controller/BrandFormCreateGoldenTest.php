@@ -27,6 +27,7 @@ use OCA\Thematiq\Controller\BrandFormController;
 use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandFormService;
 use OCA\Thematiq\Service\BrandFormSources;
+use OCA\Thematiq\Service\BrandPalette;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCP\App\IAppManager;
@@ -130,8 +131,9 @@ class BrandFormCreateGoldenTest extends TestCase {
 		$throws = ($params['primary'] === 'red');
 		$brandForm = $this->createMock(originalClassName: BrandFormService::class);
 		$brandForm->method('derive')->willReturnCallback(
-			static function (...$arguments) use (&$calls, $throws): array {
-				$calls[] = ['derive', $arguments];
+			static function (string $appPath, BrandPalette $palette) use (&$calls, $throws): array {
+				// Recorded as the values the form posted, in the order the golden holds them.
+				$calls[] = ['derive', [$appPath, $palette->base->primary, $palette->base->background, $palette->action]];
 				if ($throws === true) {
 					throw new InvalidArgumentException('not a hex colour');
 				}

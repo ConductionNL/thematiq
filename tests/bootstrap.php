@@ -45,6 +45,8 @@ foreach (spl_autoload_functions() as $autoloadFunction) {
 
 	$loader = $autoloadFunction[0];
 	$loader->setPsr4('OCA\\Thematiq\\', [__DIR__ . '/../lib']);
+	// Test helpers such as Unit\Support\FileList live under tests/.
+	$loader->setPsr4('OCA\\Thematiq\\Tests\\', [__DIR__]);
 
 	$classMapProperty = (new \ReflectionClass($loader))->getProperty('classMap');
 	$classMapProperty->setAccessible(true);

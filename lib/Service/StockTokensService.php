@@ -172,8 +172,17 @@ class StockTokensService {
 			return $this->memo;
 		}
 
-		$key = $this->cacheKey();
+		return $this->resolveCss(key: $this->cacheKey());
+	}//end getCss()
 
+	/**
+	 * The block from the cross-request cache, else resolved and kept.
+	 *
+	 * @param string $key The cache key.
+	 *
+	 * @return string|null The stylesheet body, or null when it could not be resolved.
+	 */
+	private function resolveCss(string $key): string|null {
 		$cached = $this->cache->get($key);
 		if (is_string($cached) === true) {
 			$this->memo = $cached;
@@ -181,6 +190,17 @@ class StockTokensService {
 			return $cached;
 		}
 
+		return $this->buildAndKeep(key: $key);
+	}//end resolveCss()
+
+	/**
+	 * Resolve the block, cache a success and memoise the outcome.
+	 *
+	 * @param string $key The cache key.
+	 *
+	 * @return string|null The stylesheet body, or null when it could not be resolved.
+	 */
+	private function buildAndKeep(string $key): string|null {
 		$css = $this->build();
 
 		// Only a success is kept. A failure is the theming app being absent or
@@ -194,7 +214,7 @@ class StockTokensService {
 		$this->memo = ($css ?? false);
 
 		return $css;
-	}//end getCss()
+	}//end buildAndKeep()
 
 	/**
 	 * Everything that can change the resolved block, in one string.
@@ -269,6 +289,24 @@ class StockTokensService {
 		// --color-primary-light-text is #00293f. Taking whichever happened to
 		// come last gave the token the text colour, which is how the header
 		// ends up painted in a shade nothing asked for.
+		$declarations = [];
+		foreach ($this->candidates(stock: $stock) as $nldesignToken => $colorTokens) {
+			$declarations[$nldesignToken] = $stock[$this->canonical(token: $nldesignToken, candidates: $colorTokens)];
+		}
+
+		ksort($declarations);
+
+		return $declarations;
+	}//end getTokens()
+
+	/**
+	 * Per `--nldesign-*` token, the stock variables that read it and have a value.
+	 *
+	 * @param array<string, string> $stock The flattened stock variables.
+	 *
+	 * @return array<string, list<string>> Token name => variable names, in mapping order.
+	 */
+	private function candidates(array $stock): array {
 		$candidates = [];
 		foreach ($this->sources->getTokenSources() as $colorToken => $nldesignToken) {
 			if (isset($stock[$colorToken]) === false) {
@@ -278,15 +316,8 @@ class StockTokensService {
 			$candidates[$nldesignToken][] = $colorToken;
 		}
 
-		$declarations = [];
-		foreach ($candidates as $nldesignToken => $colorTokens) {
-			$declarations[$nldesignToken] = $stock[$this->canonical(token: $nldesignToken, candidates: $colorTokens)];
-		}
-
-		ksort($declarations);
-
-		return $declarations;
-	}//end getTokens()
+		return $candidates;
+	}//end candidates()
 
 	/**
 	 * Which of the variables reading this token holds its defining value.
@@ -426,20 +457,7 @@ class StockTokensService {
 		$flat = [];
 
 		foreach ($vars as $name => $value) {
-			$value = trim((string)$value);
-			$seen = 0;
-
-			// A chain longer than this is either pathological or a loop; either
-			// way the token is dropped rather than guessed at.
-			while (preg_match('/^var\(\s*(--[\w-]+)\s*\)$/', $value, $match) === 1 && $seen < 5) {
-				if (isset($vars[$match[1]]) === false) {
-					$value = '';
-					break;
-				}
-
-				$value = trim((string)$vars[$match[1]]);
-				$seen++;
-			}
+			$value = $this->resolved(vars: $vars, value: trim((string)$value));
 
 			// Anything still carrying a var() is a composite the cascade has to
 			// resolve in the browser (gradients, color-mix), and those cannot be
@@ -453,6 +471,31 @@ class StockTokensService {
 
 		return $flat;
 	}//end flatten()
+
+	/**
+	 * Follow a `var()` reference to what it names, up to five hops.
+	 *
+	 * @param array<string, string> $vars The raw stock variable map.
+	 * @param string $value The trimmed value.
+	 *
+	 * @return string The value behind the references, empty when one names nothing.
+	 */
+	private function resolved(array $vars, string $value): string {
+		$seen = 0;
+
+		// A chain longer than this is either pathological or a loop; either
+		// way the token is dropped rather than guessed at.
+		while (preg_match('/^var\(\s*(--[\w-]+)\s*\)$/', $value, $match) === 1 && $seen < 5) {
+			if (isset($vars[$match[1]]) === false) {
+				return '';
+			}
+
+			$value = trim((string)$vars[$match[1]]);
+			$seen++;
+		}
+
+		return $value;
+	}//end resolved()
 
 	/**
 	 * Nextcloud's stock variables, as the theming app computes them.

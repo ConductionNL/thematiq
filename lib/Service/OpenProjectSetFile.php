@@ -118,20 +118,11 @@ class OpenProjectSetFile {
 	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function toDocument(array $document, array &$skipped): array {
-		$cssOnly = $this->declarations(roles: (array)$document['tokens'], vocabulary: (array)($document['vocabulary'] ?? []), path: '', skipped: $skipped);
-
-		// The dark block: the roles under `tokens` (or the roles on their own, as the plugin also
-		// reads them) and the dark vocabulary. They become the uploaded set's dark values.
-		$dark = [];
-		if (is_array($document['dark'] ?? null) === true) {
-			$roles = $document['dark'];
-			if (is_array($roles['tokens'] ?? null) === true) {
-				$roles = $roles['tokens'];
-			}
-
-			unset($roles['vocabulary']);
-			$dark = $this->declarations(roles: $roles, vocabulary: (array)($document['dark']['vocabulary'] ?? []), path: 'dark.', skipped: $skipped);
-		}
+		$run = new SetFileReadRun(skipped: $skipped);
+		$light = new SetFileBlock(path: '', roles: (array)$document['tokens'], vocabulary: (array)($document['vocabulary'] ?? []));
+		$cssOnly = $this->declarations(run: $run, block: $light);
+		$dark = $this->darkDeclarations(run: $run, document: $document);
+		$skipped = $run->skipped;
 
 		$extension = ['setId' => 'openproject-set-file', 'cssOnly' => (object)$cssOnly];
 		if ($dark !== []) {
@@ -147,68 +138,114 @@ class OpenProjectSetFile {
 	}//end toDocument()
 
 	/**
-	 * The roles and vocabulary of one block as declarations, each under its CSS name.
+	 * The dark block's declarations, or none when the file has no dark block.
 	 *
-	 * @param array<int|string, mixed> $roles Role => value.
-	 * @param array<int|string, mixed> $vocabulary Key without the prefix => value.
-	 * @param string $path The block's place in the file, for the report.
-	 * @param array<int, array{path: string, reason: string}> $skipped Appended to.
+	 * The dark block: the roles under `tokens` (or the roles on their own, as the plugin also
+	 * reads them) and the dark vocabulary. They become the uploaded set's dark values.
+	 *
+	 * @param SetFileReadRun $run The read; what is left out is appended to it.
+	 * @param array<string, mixed> $document The set file.
 	 *
 	 * @return array<string, string> Name => value.
 	 */
-	private function declarations(array $roles, array $vocabulary, string $path, array &$skipped): array {
-		$out = [];
-		foreach ($roles as $role => $value) {
+	private function darkDeclarations(SetFileReadRun $run, array $document): array {
+		if (is_array($document['dark'] ?? null) === false) {
+			return [];
+		}
+
+		$roles = $document['dark'];
+		if (is_array($roles['tokens'] ?? null) === true) {
+			$roles = $roles['tokens'];
+		}
+
+		unset($roles['vocabulary']);
+		$block = new SetFileBlock(path: 'dark.', roles: $roles, vocabulary: (array)($document['dark']['vocabulary'] ?? []));
+
+		return $this->declarations(run: $run, block: $block);
+	}//end darkDeclarations()
+
+	/**
+	 * The roles and vocabulary of one block as declarations, each under its CSS name.
+	 *
+	 * @param SetFileReadRun $run The read; what is left out is appended to it.
+	 * @param SetFileBlock $block The block.
+	 *
+	 * @return array<string, string> Name => value.
+	 */
+	private function declarations(SetFileReadRun $run, SetFileBlock $block): array {
+		$run->declarations = [];
+		foreach ($block->roles as $role => $value) {
 			$name = (self::ROLE_TOKENS[(string)$role] ?? null);
-			$this->take(name: $name, value: $value, path: $path . 'tokens.' . $role, cssOnly: $out, skipped: $skipped);
+			$this->take(run: $run, entry: new SetFileEntry(name: $name, value: $value, path: $block->path . 'tokens.' . $role));
 		}
 
-		foreach ($vocabulary as $key => $value) {
-			$name = null;
-			if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', (string)$key) === 1) {
-				$name = ShellCatalogueVocabulary::PREFIX . $key;
-			}
-
-			// A role's own name in the vocabulary would compete with the role; the role wins.
-			if ($name !== null && isset($out[$name]) === true) {
-				continue;
-			}
-
-			$this->take(name: $name, value: $value, path: $path . 'vocabulary.' . $key, cssOnly: $out, skipped: $skipped);
+		foreach ($block->vocabulary as $key => $value) {
+			$entry = new SetFileEntry(name: $this->vocabularyName(key: (string)$key), value: $value, path: $block->path . 'vocabulary.' . $key);
+			$this->takeVocabulary(run: $run, entry: $entry);
 		}
 
-		return $out;
+		return $run->declarations;
 	}//end declarations()
+
+	/**
+	 * The CSS name of a vocabulary key, or null for a key that is no token name.
+	 *
+	 * @param string $key The key without the prefix.
+	 *
+	 * @return string|null The name.
+	 */
+	private function vocabularyName(string $key): ?string {
+		if (preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $key) === 1) {
+			return ShellCatalogueVocabulary::PREFIX . $key;
+		}
+
+		return null;
+	}//end vocabularyName()
+
+	/**
+	 * Keep a vocabulary value, unless a role of the block already took its name.
+	 *
+	 * A role's own name in the vocabulary would compete with the role; the role wins.
+	 *
+	 * @param SetFileReadRun $run The read.
+	 * @param SetFileEntry $entry The vocabulary value.
+	 *
+	 * @return void
+	 */
+	private function takeVocabulary(SetFileReadRun $run, SetFileEntry $entry): void {
+		if ($entry->name !== null && isset($run->declarations[$entry->name]) === true) {
+			return;
+		}
+
+		$this->take(run: $run, entry: $entry);
+	}//end takeVocabulary()
 
 	/**
 	 * Keep one value under its name, or report why not.
 	 *
-	 * @param string|null $name The CSS name, or null for a key the file should not have.
-	 * @param mixed $value The value.
-	 * @param string $path Where the value sits in the file.
-	 * @param array<string, string> $cssOnly The values kept, by name.
-	 * @param array<int, array{path: string, reason: string}> $skipped Appended to.
+	 * @param SetFileReadRun $run The read; gets the value, or the reason it was left out.
+	 * @param SetFileEntry $entry The value, its name and where it sits.
 	 *
 	 * @return void
 	 */
-	private function take(?string $name, mixed $value, string $path, array &$cssOnly, array &$skipped): void {
-		if ($name === null) {
-			$skipped[] = ['path' => $path, 'reason' => 'unmapped'];
+	private function take(SetFileReadRun $run, SetFileEntry $entry): void {
+		if ($entry->name === null) {
+			$run->skipped[] = ['path' => $entry->path, 'reason' => 'unmapped'];
 
 			return;
 		}
 
 		$text = '';
-		if (is_string($value) === true) {
-			$text = trim($value);
+		if (is_string($entry->value) === true) {
+			$text = trim($entry->value);
 		}
 
 		if ($text === '' || str_contains($text, '{') === true || str_contains($text, '}') === true) {
-			$skipped[] = ['path' => $path, 'reason' => 'value-not-a-css-value'];
+			$run->skipped[] = ['path' => $entry->path, 'reason' => 'value-not-a-css-value'];
 
 			return;
 		}
 
-		$cssOnly[$name] = $text;
+		$run->declarations[$entry->name] = $text;
 	}//end take()
 }//end class

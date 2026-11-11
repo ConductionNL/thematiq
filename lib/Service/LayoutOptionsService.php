@@ -173,21 +173,55 @@ class LayoutOptionsService {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
 	public function setDefaults(string $tokenSet): array {
+		$layout = $this->layoutOf(tokenSet: $tokenSet);
+
+		return [
+			'workplaceLayout' => $this->declaredWorkplaceLayout(layout: $layout),
+			'brandStripe' => (($layout['brand_stripe'] ?? false) === true),
+		] + $this->declaredOptions(layout: $layout);
+	}//end setDefaults()
+
+	/**
+	 * A set's `layout` block from its manifest entry, [] when it has none.
+	 *
+	 * @param string $tokenSet The token set id.
+	 *
+	 * @return array<string, mixed> The block.
+	 */
+	private function layoutOf(string $tokenSet): array {
 		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
 		$layout = ($meta['layout'] ?? null);
 		if (is_array($layout) === false) {
-			$layout = [];
+			return [];
 		}
 
-		$workplaceLayout = self::LAYOUT_DEFAULT;
+		return $layout;
+	}//end layoutOf()
+
+	/**
+	 * The workplace layout a set declares, the built-in one when it declares none it may.
+	 *
+	 * @param array<string, mixed> $layout The set's layout block.
+	 *
+	 * @return string The layout.
+	 */
+	private function declaredWorkplaceLayout(array $layout): string {
 		if (in_array(($layout['workplace_layout'] ?? null), self::LAYOUTS, true) === true) {
-			$workplaceLayout = (string)$layout['workplace_layout'];
+			return (string)$layout['workplace_layout'];
 		}
 
-		$defaults = [
-			'workplaceLayout' => $workplaceLayout,
-			'brandStripe' => (($layout['brand_stripe'] ?? false) === true),
-		];
+		return self::LAYOUT_DEFAULT;
+	}//end declaredWorkplaceLayout()
+
+	/**
+	 * Every other option as the set declares it, the built-in value where it declares none or follows the set.
+	 *
+	 * @param array<string, mixed> $layout The set's layout block.
+	 *
+	 * @return array<string, mixed> Camel-case name => value.
+	 */
+	private function declaredOptions(array $layout): array {
+		$defaults = [];
 		foreach (LayoutOptionValues::DEFAULTS as $key => $builtIn) {
 			$declared = LayoutOptionValues::accepted(key: $key, value: ($layout[$key] ?? null));
 			if ($declared === null || $declared === self::FOLLOW_SET) {
@@ -198,7 +232,7 @@ class LayoutOptionsService {
 		}
 
 		return $defaults;
-	}//end setDefaults()
+	}//end declaredOptions()
 
 	/**
 	 * The camel-case name an option goes by in a resolved array and a
@@ -392,36 +426,8 @@ class LayoutOptionsService {
 	 */
 	public function stylesheets(string $tokenSet): array {
 		$resolved = $this->resolved(tokenSet: $tokenSet);
-		$files = [];
-		if ($resolved['workplaceLayout'] === self::LAYOUT_LIGHT) {
-			$files[] = 'workplace-layout';
-			if ($resolved['loginWatermark'] === false) {
-				$files[] = 'login-watermark-off';
-			}
 
-			if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
-				$files[] = self::HEADER_WORKPLACE_STYLESHEET;
-			}
-		}
-
-		if ($resolved['brandStripe'] === true) {
-			$files[] = 'brand-stripe';
-			if ($resolved['brandStripePlacement'] === LayoutOptionValues::PLACEMENT_HEADER) {
-				$files[] = 'brand-stripe-header-only';
-			} elseif ($resolved['brandStripePlacement'] === LayoutOptionValues::PLACEMENT_LOGIN) {
-				$files[] = 'brand-stripe-login-only';
-			}
-		}
-
-		if ($resolved['navigationWidth'] !== null) {
-			$files[] = 'navigation-width';
-		}
-
-		if ($resolved['navigationActiveStyle'] === LayoutOptionValues::ACTIVE_STYLE_SOFT) {
-			$files[] = 'navigation-active-soft';
-		}
-
-		return $files;
+		return (new LayoutStylesheets())->forOptions(resolved: $resolved);
 	}//end stylesheets()
 
 	/**

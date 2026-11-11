@@ -77,12 +77,33 @@ class UserTokenSetResolver {
 			return $this->groupTheming->resolveTokenSetForRequest();
 		}
 
+		return $this->forOtherUser(uid: $uid);
+	}//end forUser()
+
+	/**
+	 * The set of a user who is not the signed-in one: the first mapped group they are in whose set exists.
+	 *
+	 * @param string $uid The user id.
+	 *
+	 * @return string The token set id, the instance default for an unknown user or no match.
+	 */
+	private function forOtherUser(string $uid): string {
 		$user = $this->userManager->get($uid);
 		if ($user === null) {
 			return $this->defaultSet();
 		}
 
-		$groups = $this->groupManager->getUserGroupIds($user);
+		return ($this->mappedSet(groups: $this->groupManager->getUserGroupIds($user)) ?? $this->defaultSet());
+	}//end forOtherUser()
+
+	/**
+	 * The first mapping entry whose group is one of these and whose set still exists.
+	 *
+	 * @param array<int, string> $groups The user's group ids.
+	 *
+	 * @return string|null The token set id, or null when none matches.
+	 */
+	private function mappedSet(array $groups): string|null {
 		foreach ($this->groupTheming->getMapping() as $entry) {
 			if (in_array($entry['group'], $groups, true) === true
 				&& $this->tokenSets->isValidTokenSet(tokenSetId: $entry['tokenSet']) === true
@@ -91,8 +112,8 @@ class UserTokenSetResolver {
 			}
 		}
 
-		return $this->defaultSet();
-	}//end forUser()
+		return null;
+	}//end mappedSet()
 
 	/**
 	 * The instance default set.

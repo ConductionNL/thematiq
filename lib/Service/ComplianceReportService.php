@@ -159,8 +159,8 @@ class ComplianceReportService {
 		$appPath = $this->instance->appManager->getAppPath('thematiq');
 
 		$activeTokenSetId = $this->instance->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$tokenSetMeta = $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId);
-		$designSystemId = ($tokenSetMeta['design_system'] ?? 'nldesign');
+		$set = new ReportedTokenSet(id: $activeTokenSetId, meta: $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId));
+		$designSystemId = $set->designSystem();
 
 		// The runtime (Application::injectThemeCSS()) only loads the
 		// --nldesign-* design-system layers when the design system is not
@@ -181,17 +181,12 @@ class ComplianceReportService {
 		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
 		foreach (self::PAIR_MATRIX as $pairDef) {
-			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $tokenSetMeta);
+			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $set->meta);
 		}
 
 		return [
 			'scope' => self::SCOPE_STATEMENT,
-			'metadata' => $this->buildMetadata(
-				tokenSetId: $activeTokenSetId,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId,
-				customOverrides: $customOverrides
-			),
+			'metadata' => $this->buildMetadata(set: $set, customOverrides: $customOverrides),
 			'pairs' => $pairs,
 			'summary' => $this->classifySummary(pairs: $pairs),
 		];
@@ -304,8 +299,8 @@ class ComplianceReportService {
 			$pair['background'],
 			($pair['foregroundValue'] ?? '—'),
 			($pair['backgroundValue'] ?? '—'),
-			$this->formatRatio(ratio: $pair['ratio']),
-			$this->formatThreshold(threshold: $pair['threshold']),
+			(new ContrastReportCells())->ratio(ratio: $pair['ratio']),
+			(new ContrastReportCells())->threshold(threshold: $pair['threshold']),
 			$pair['basis'],
 			$pair['verdict']
 		);
@@ -667,16 +662,16 @@ class ComplianceReportService {
 	/**
 	 * Assemble the report metadata block (identical shape for both formats).
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
+	 * @param ReportedTokenSet $set The active token set and its metadata.
 	 * @param array<string, string> $customOverrides The custom-overrides layer.
 	 *
 	 * @return array<string, mixed> The metadata block.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function buildMetadata(string $tokenSetId, array $tokenSetMeta, string $designSystemId, array $customOverrides): array {
+	private function buildMetadata(ReportedTokenSet $set, array $customOverrides): array {
+		$tokenSetId = $set->id;
+
 		return [
 			'instanceId' => $this->instance->config->getSystemValue('instanceid', ''),
 			'instanceUrl' => $this->instance->urlGenerator->getBaseUrl(),
@@ -684,10 +679,10 @@ class ComplianceReportService {
 			'nextcloudVersion' => $this->resolveNextcloudVersion(),
 			'tokenSet' => [
 				'id' => $tokenSetId,
-				'name' => ($tokenSetMeta['name'] ?? $tokenSetId),
-				'version' => ($tokenSetMeta['version'] ?? 'unversioned'),
+				'name' => ($set->meta['name'] ?? $tokenSetId),
+				'version' => ($set->meta['version'] ?? 'unversioned'),
 			],
-			'designSystem' => $designSystemId,
+			'designSystem' => $set->designSystem(),
 			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->instance->timeFactory->getTime()),
 			'overridesHash' => $this->computeOverridesHash(overrides: $customOverrides),
 		];
@@ -740,32 +735,6 @@ class ComplianceReportService {
 
 		return hash('sha256', implode("\n", $lines));
 	}//end computeOverridesHash()
-
-	/**
-	 * Format a ratio for Markdown (2 decimals, em dash when unevaluated).
-	 *
-	 * @param float|null $ratio The ratio.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatRatio(?float $ratio): string {
-		if ($ratio === null) {
-			return '—';
-		}
-
-		return number_format($ratio, 2, '.', '') . ':1';
-	}//end formatRatio()
-
-	/**
-	 * Format a threshold for Markdown.
-	 *
-	 * @param float $threshold The threshold.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatThreshold(float $threshold): string {
-		return number_format($threshold, 1, '.', '') . ':1';
-	}//end formatThreshold()
 
 	/**
 	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.

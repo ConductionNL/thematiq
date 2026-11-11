@@ -68,52 +68,96 @@ class ConfigRestore extends Command {
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$id = (string)$input->getArgument('id');
-		$dryRun = ($input->getOption('dry-run') === true);
-
-		$result = $this->previewOrRestore(id: $id, dryRun: $dryRun);
-
+		$request = $this->request(input: $input);
+		$result = $this->previewOrRestore(request: $request);
 		if ($result === null) {
-			$output->writeln('<error>Unknown version: ' . $id . '</error>');
+			$output->writeln('<error>Unknown version: ' . $request->id . '</error>');
 			return Command::FAILURE;
 		}
 
 		$this->printChanges(output: $output, result: $result);
 
-		if ($result['valid'] === false || ($dryRun === false && ($result['applied'] ?? false) !== true)) {
-			$output->writeln('<error>The version does not validate today; nothing was applied:</error>');
-			foreach ($result['errors'] as $error) {
-				$output->writeln('  - [' . ($error['section'] ?? 'unknown') . '] ' . ($error['message'] ?? json_encode($error)));
-			}
+		if ($this->isRefused(result: $result, request: $request) === true) {
+			$this->printErrors(output: $output, errors: $result['errors']);
 
 			return Command::FAILURE;
 		}
 
-		$done = '<info>Version ' . $id . ' restored.</info>';
-		if ($dryRun === true) {
-			$done = '<info>Dry run: nothing was written.</info>';
-		}
-
-		$output->writeln($done);
+		$output->writeln($this->doneLine(request: $request));
 
 		return Command::SUCCESS;
 	}//end execute()
 
 	/**
+	 * The version and the mode the console input asks for.
+	 *
+	 * @param InputInterface $input The input.
+	 *
+	 * @return RestoreRequest The request.
+	 */
+	private function request(InputInterface $input): RestoreRequest {
+		return new RestoreRequest(
+			id: (string)$input->getArgument('id'),
+			dryRun: ($input->getOption('dry-run') === true)
+		);
+	}//end request()
+
+	/**
 	 * Preview on a dry run, restore otherwise.
 	 *
-	 * @param string $id The version id.
-	 * @param bool $dryRun Whether to write nothing.
+	 * @param RestoreRequest $request The version id and whether to write nothing.
 	 *
 	 * @return array<string, mixed>|null The result, or null for an unknown id.
 	 */
-	private function previewOrRestore(string $id, bool $dryRun): ?array {
-		if ($dryRun === true) {
-			return $this->restorer->preview(id: $id);
+	private function previewOrRestore(RestoreRequest $request): ?array {
+		if ($request->dryRun === true) {
+			return $this->restorer->preview(id: $request->id);
 		}
 
-		return $this->restorer->restore(id: $id, actor: 'cli');
+		return $this->restorer->restore(id: $request->id, actor: 'cli');
 	}//end previewOrRestore()
+
+	/**
+	 * Whether the version is refused: invalid, or a real run that did not apply.
+	 *
+	 * @param array<string, mixed> $result The preview or restore result.
+	 * @param RestoreRequest $request The request.
+	 *
+	 * @return bool True when the run failed.
+	 */
+	private function isRefused(array $result, RestoreRequest $request): bool {
+		return $result['valid'] === false || ($request->dryRun === false && ($result['applied'] ?? false) !== true);
+	}//end isRefused()
+
+	/**
+	 * Print why the version was refused, one line per error.
+	 *
+	 * @param OutputInterface $output The output.
+	 * @param array<int, array<string, mixed>> $errors The per-section errors.
+	 *
+	 * @return void
+	 */
+	private function printErrors(OutputInterface $output, array $errors): void {
+		$output->writeln('<error>The version does not validate today; nothing was applied:</error>');
+		foreach ($errors as $error) {
+			$output->writeln('  - [' . ($error['section'] ?? 'unknown') . '] ' . ($error['message'] ?? json_encode($error)));
+		}
+	}//end printErrors()
+
+	/**
+	 * The closing line of a run that succeeded.
+	 *
+	 * @param RestoreRequest $request The request.
+	 *
+	 * @return string The line.
+	 */
+	private function doneLine(RestoreRequest $request): string {
+		if ($request->dryRun === true) {
+			return '<info>Dry run: nothing was written.</info>';
+		}
+
+		return '<info>Version ' . $request->id . ' restored.</info>';
+	}//end doneLine()
 
 	/**
 	 * Print the changes a restore makes.
@@ -124,22 +168,44 @@ class ConfigRestore extends Command {
 	 * @return void
 	 */
 	private function printChanges(OutputInterface $output, array $result): void {
-		foreach ($result['changes'] as $change) {
-			$from = json_encode($change['from'], JSON_UNESCAPED_SLASHES);
-			$to = json_encode($change['to'], JSON_UNESCAPED_SLASHES);
-			$output->writeln('  ' . $change['field'] . ': ' . $from . ' -> ' . $to);
-		}
-
-		foreach ($result['customTokenSets']['add'] as $setId) {
-			$output->writeln('  custom token set added: ' . $setId);
-		}
-
-		foreach ($result['customTokenSets']['remove'] as $setId) {
-			$output->writeln('  custom token set removed: ' . $setId);
-		}
-
+		$this->printFieldChanges(output: $output, changes: $result['changes']);
+		$this->printTokenSetChanges(output: $output, sets: $result['customTokenSets']);
 		foreach ($result['missingFonts'] as $font) {
 			$output->writeln('  ' . $font['role'] . ' font no longer uploaded, stays on the default: ' . $font['name']);
 		}
 	}//end printChanges()
+
+	/**
+	 * Print each changed field with its old and new value.
+	 *
+	 * @param OutputInterface $output The output.
+	 * @param array<int, array<string, mixed>> $changes The field changes.
+	 *
+	 * @return void
+	 */
+	private function printFieldChanges(OutputInterface $output, array $changes): void {
+		foreach ($changes as $change) {
+			$from = json_encode($change['from'], JSON_UNESCAPED_SLASHES);
+			$to = json_encode($change['to'], JSON_UNESCAPED_SLASHES);
+			$output->writeln('  ' . $change['field'] . ': ' . $from . ' -> ' . $to);
+		}
+	}//end printFieldChanges()
+
+	/**
+	 * Print the custom token sets a restore adds and removes.
+	 *
+	 * @param OutputInterface $output The output.
+	 * @param array{add: array<int, string>, remove: array<int, string>} $sets The added and removed set ids.
+	 *
+	 * @return void
+	 */
+	private function printTokenSetChanges(OutputInterface $output, array $sets): void {
+		foreach ($sets['add'] as $setId) {
+			$output->writeln('  custom token set added: ' . $setId);
+		}
+
+		foreach ($sets['remove'] as $setId) {
+			$output->writeln('  custom token set removed: ' . $setId);
+		}
+	}//end printTokenSetChanges()
 }//end class

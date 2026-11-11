@@ -581,4 +581,29 @@ class ThemingServiceTest extends TestCase {
 	public function testGetImageManagerReturnsTheInjectedInstance(): void {
 		$this->assertSame(expected: $this->imageManager, actual: $this->service->getImageManager());
 	}//end testGetImageManagerReturnsTheInjectedInstance()
+
+	/**
+	 * Every refusal of the colour and image checks, with its exact message; empty values are not checked.
+	 *
+	 * @return void
+	 */
+	public function testTheExactRefusals(): void {
+		$cases = [
+			[['primary_color' => '', 'background_color' => 'blue'], 'colors', 'Invalid hex color for background_color: blue'],
+			[['primary_color' => '#12'], 'colors', 'Invalid hex color for primary_color: #12'],
+			[['primary_color' => '#123456', 'background_color' => ''], 'colors', null],
+			[['logo' => '/etc/x.svg'], 'images', 'Invalid image path for logo: path traversal not allowed'],
+			[['favicon' => 'img/../x.ico'], 'images', 'Invalid image path for favicon: path traversal not allowed'],
+			[['logo_dark' => 'css/x.svg'], 'images', 'Invalid image path for logo_dark: must be in img/logos/ or img/backgrounds/'],
+			[['background' => 'img/backgrounds/absent.jpg'], 'images', 'Image file not found: img/backgrounds/absent.jpg'],
+			[['logo' => '', 'background_mode' => 'tiled'], 'images', 'Invalid background_mode: tiled'],
+			[['logo' => 'x/y.svg', 'background_mode' => 'tiled'], 'images', 'Invalid image path for logo: must be in img/logos/ or img/backgrounds/'],
+			[['background_mode' => 'image'], 'images', null],
+			[['background_mode' => ''], 'images', null],
+		];
+		foreach ($cases as [$params, $check, $expected]) {
+			$actual = ($check === 'colors') ? $this->service->validateColors(params: $params) : $this->service->validateImagePaths(params: $params);
+			$this->assertSame(expected: $expected, actual: $actual, message: json_encode($params));
+		}
+	}//end testTheExactRefusals()
 }//end class

@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,33 +40,7 @@ use Throwable;
  *
  * @spec openspec/specs/config-portability/spec.md
  */
-class ConfigExport extends Command {
-
-	/**
-	 * The configuration bundle service.
-	 *
-	 * @var ConfigBundleService
-	 */
-	private ConfigBundleService $service;
-
-	/**
-	 * The branding package service, for `--package`.
-	 *
-	 * @var BrandingPackageService
-	 */
-	private BrandingPackageService $packages;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param ConfigBundleService $service The configuration bundle service.
-	 * @param BrandingPackageService $packages The branding package service.
-	 */
-	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {
-		parent::__construct();
-		$this->service = $service;
-		$this->packages = $packages;
-	}//end __construct()
+class ConfigExport extends ConfigBundleCommand {
 
 	/**
 	 * Configure the command name, description and arguments.
@@ -107,35 +80,69 @@ class ConfigExport extends Command {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$packageDir = $input->getOption('package');
-		if (is_string($packageDir) === true && $packageDir !== '') {
+		$packageDir = (string)$input->getOption('package');
+		if ($packageDir !== '') {
 			return $this->writePackage(output: $output, dir: $packageDir);
 		}
 
+		$json = $this->encodedBundle(output: $output);
+		if ($json === null) {
+			return Command::FAILURE;
+		}
+
+		return $this->deliver(
+			output: $output,
+			bundle: new OutputFile(path: (string)$input->getArgument('file'), content: $json)
+		);
+	}//end execute()
+
+	/**
+	 * Export the bundle and encode it as pretty JSON, reporting a failure.
+	 *
+	 * @param OutputInterface $output The console output.
+	 *
+	 * @return string|null The bundle JSON, or null when the export or the encoding failed.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function encodedBundle(OutputInterface $output): ?string {
 		try {
 			$bundle = $this->service->export();
 		} catch (Throwable $e) {
 			$output->writeln('<error>Configuration export failed: ' . $e->getMessage() . '</error>');
 
-			return Command::FAILURE;
+			return null;
 		}
 
 		$json = json_encode($bundle, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 		if ($json === false) {
 			$output->writeln('<error>Configuration export failed: could not encode the bundle as JSON.</error>');
 
-			return Command::FAILURE;
+			return null;
 		}
 
-		$filePath = $input->getArgument('file');
-		if (is_string($filePath) === true && $filePath !== '') {
-			return $this->writeToFile(output: $output, path: $filePath, content: $json);
+		return $json;
+	}//end encodedBundle()
+
+	/**
+	 * Write the bundle JSON to its file, or to stdout when no file was given.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param OutputFile $bundle The destination and the bundle JSON.
+	 *
+	 * @return int The exit code.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function deliver(OutputInterface $output, OutputFile $bundle): int {
+		if ($bundle->toFile() === true) {
+			return $this->writeToFile(output: $output, file: $bundle);
 		}
 
-		$output->writeln($json);
+		$output->writeln($bundle->content);
 
 		return Command::SUCCESS;
-	}//end execute()
+	}//end deliver()
 
 	/**
 	 * Write a branding package directory, fonts included.
@@ -165,21 +172,20 @@ class ConfigExport extends Command {
 	 * Write the exported bundle to a file path, reporting success/failure.
 	 *
 	 * @param OutputInterface $output The console output.
-	 * @param string $path The destination file path.
-	 * @param string $content The bundle JSON.
+	 * @param OutputFile $file The destination file path and the bundle JSON.
 	 *
 	 * @return int The exit code.
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
-	private function writeToFile(OutputInterface $output, string $path, string $content): int {
-		if (file_put_contents($path, $content . PHP_EOL) === false) {
-			$output->writeln('<error>Could not write the bundle to ' . $path . '</error>');
+	private function writeToFile(OutputInterface $output, OutputFile $file): int {
+		if (file_put_contents($file->path, $file->content . PHP_EOL) === false) {
+			$output->writeln('<error>Could not write the bundle to ' . $file->path . '</error>');
 
 			return Command::FAILURE;
 		}
 
-		$output->writeln('<info>Configuration bundle written to ' . $path . '</info>');
+		$output->writeln('<info>Configuration bundle written to ' . $file->path . '</info>');
 
 		return Command::SUCCESS;
 	}//end writeToFile()

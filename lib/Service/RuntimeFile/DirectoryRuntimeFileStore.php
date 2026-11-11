@@ -59,17 +59,8 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 */
 	public function read(string $name): ?string {
 		$this->names->assertAllowed(name: $name);
-		$path = $this->path(name: $name);
-		if (is_file($path) === false) {
-			return null;
-		}
 
-		$content = file_get_contents($path);
-		if ($content === false) {
-			return null;
-		}
-
-		return $content;
+		return (new LocalFile())->contents(path: $this->path(name: $name));
 	}//end read()
 
 	/**
@@ -147,15 +138,12 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 		}
 
 		foreach ($paths as $path) {
-			$name = $directory . '/' . basename($path);
-			if (is_file($path) === true && $this->names->isAllowed(name: $name) === true) {
-				$names[] = $name;
+			if (is_file($path) === true) {
+				$names[] = $directory . '/' . basename($path);
 			}
 		}
 
-		sort($names);
-
-		return $names;
+		return $this->names->allowedSorted(names: $names);
 	}//end listDirectory()
 
 	/**
