@@ -71,6 +71,17 @@ class MultiBrandSource {
 			return $this->themes(document: $decoded);
 		}
 
+		return $this->atLeastTwo(brands: $this->cssBrands(content: $content));
+	}//end detectBrands()
+
+	/**
+	 * The brand classes of a stylesheet, one per block.
+	 *
+	 * @param string $content The stylesheet.
+	 *
+	 * @return array<int, array{key: string, name: string, tokenCount: int}>
+	 */
+	private function cssBrands(string $content): array {
 		$brands = [];
 		foreach ($this->reader->blocks(css: $content) as $block) {
 			if (preg_match(self::BRAND_SELECTOR, $block['selector'], $match) === 1) {
@@ -82,8 +93,8 @@ class MultiBrandSource {
 			}
 		}
 
-		return $this->atLeastTwo(brands: $brands);
-	}//end detectBrands()
+		return $brands;
+	}//end cssBrands()
 
 	/**
 	 * One brand as single-brand input: for CSS every shared block then the brand's own block;
@@ -130,20 +141,32 @@ class MultiBrandSource {
 				continue;
 			}
 
-			$brand = [
-				'key' => (string)$theme['id'],
-				'name' => (string)($theme['name'] ?? $theme['id']),
-				'tokenCount' => $this->countLeaves(node: $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled'])),
-			];
-			if (is_string($theme['group'] ?? null) === true) {
-				$brand['group'] = $theme['group'];
-			}
-
-			$brands[] = $brand;
+			$brands[] = $this->themeBrand(document: $document, theme: $theme);
 		}
 
 		return $this->atLeastTwo(brands: $brands);
 	}//end themes()
+
+	/**
+	 * One theme as a brand: its key, name, the tokens its enabled sets hold, and its group.
+	 *
+	 * @param array<string, mixed> $document The document.
+	 * @param array<string, mixed> $theme The theme, with a string id.
+	 *
+	 * @return array{key: string, name: string, tokenCount: int, group?: string}
+	 */
+	private function themeBrand(array $document, array $theme): array {
+		$brand = [
+			'key' => (string)$theme['id'],
+			'name' => (string)($theme['name'] ?? $theme['id']),
+			'tokenCount' => $this->countLeaves(node: $this->mergeSets(document: $document, sets: new ThemeSets(theme: $theme, statuses: ['enabled']))),
+		];
+		if (is_string($theme['group'] ?? null) === true) {
+			$brand['group'] = $theme['group'];
+		}
+
+		return $brand;
+	}//end themeBrand()
 
 	/**
 	 * The brands when there are two or more, else none: one brand is an ordinary upload.
@@ -173,8 +196,8 @@ class MultiBrandSource {
 	private function cutTheme(array $document, string $key): array {
 		foreach ((array)($document['$themes'] ?? []) as $theme) {
 			if (is_array($theme) === true && ($theme['id'] ?? null) === $key) {
-				$merged = $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled', 'source']);
-				$enabled = $this->leafPaths(node: $this->mergeSets(document: $document, theme: $theme, statuses: ['enabled']), prefix: '');
+				$merged = $this->mergeSets(document: $document, sets: new ThemeSets(theme: $theme, statuses: ['enabled', 'source']));
+				$enabled = $this->leafPaths(node: $this->mergeSets(document: $document, sets: new ThemeSets(theme: $theme, statuses: ['enabled'])), prefix: '');
 
 				return [
 					'content' => (string)json_encode((object)$merged, JSON_UNESCAPED_SLASHES),
@@ -192,25 +215,13 @@ class MultiBrandSource {
 	 * path, as Tokens Studio's `applyTokenSetOrder` and `mergeTokenGroups` do.
 	 *
 	 * @param array<string, mixed> $document The document.
-	 * @param array<string, mixed> $theme The theme.
-	 * @param array<int, string> $statuses The statuses to include.
+	 * @param ThemeSets $sets The theme and the statuses to include.
 	 *
 	 * @return array<string, mixed> The merged token tree.
 	 */
-	private function mergeSets(array $document, array $theme, array $statuses): array {
-		$selected = array_filter(
-			(array)($theme['selectedTokenSets'] ?? []),
-			static fn ($status): bool => in_array($status, $statuses, true)
-		);
-		$order = array_values(array_filter((array)($document['$metadata']['tokenSetOrder'] ?? []), 'is_string'));
-		$names = array_keys($selected);
-		usort(
-			$names,
-			static fn (string $first, string $second): int => self::compareInOrder(first: $first, second: $second, order: $order)
-		);
-
+	private function mergeSets(array $document, ThemeSets $sets): array {
 		$merged = [];
-		foreach ($names as $name) {
+		foreach ($this->orderedSetNames(document: $document, sets: $sets) as $name) {
 			if (is_array($document[$name] ?? null) === true) {
 				$merged = $this->replaceTree(base: $merged, over: $document[$name]);
 			}
@@ -220,27 +231,28 @@ class MultiBrandSource {
 	}//end mergeSets()
 
 	/**
-	 * Compare two set names by their place in the set order; names it does not list follow, by name.
+	 * The names of the theme's sets with the given statuses, in the document's set order.
 	 *
-	 * @param string $first The first name.
-	 * @param string $second The second name.
-	 * @param array<int, string> $order The set order.
+	 * @param array<string, mixed> $document The document.
+	 * @param ThemeSets $sets The theme and the statuses to include.
 	 *
-	 * @return int Below, at or above zero, as for usort().
+	 * @return array<int, string> The set names.
 	 */
-	private static function compareInOrder(string $first, string $second, array $order): int {
-		$firstAt = array_search($first, $order, true);
-		$secondAt = array_search($second, $order, true);
-		if ($firstAt === false && $secondAt === false) {
-			return strcmp($first, $second);
-		}
+	private function orderedSetNames(array $document, ThemeSets $sets): array {
+		$statuses = $sets->statuses;
+		$selected = array_filter(
+			(array)($sets->theme['selectedTokenSets'] ?? []),
+			static fn ($status): bool => in_array($status, $statuses, true)
+		);
+		$order = new SetOrder(order: array_values(array_filter((array)($document['$metadata']['tokenSetOrder'] ?? []), 'is_string')));
+		$names = array_keys($selected);
+		usort(
+			$names,
+			static fn (string $first, string $second): int => $order->compare(first: $first, second: $second)
+		);
 
-		if ($firstAt === false || $secondAt === false) {
-			return (int)($firstAt === false) - (int)($secondAt === false);
-		}
-
-		return $firstAt <=> $secondAt;
-	}//end compareInOrder()
+		return $names;
+	}//end orderedSetNames()
 
 	/**
 	 * Recursive replace: a token (a node with `$value` or `value`) replaces whatever sits at its path.
