@@ -381,6 +381,10 @@ describe('the reason codes and the table agree (task 2.4, a permanent gate)', ()
 				join(repoRoot, 'lib/Service/ThematiqExportLayers.php'),
 				'utf8',
 			),
+			readFileSync(
+				join(repoRoot, 'lib/Service/DtcgColourSerializer.php'),
+				'utf8',
+			),
 		].join('\n')
 		expect(
 			Object.keys(reasons).filter(
