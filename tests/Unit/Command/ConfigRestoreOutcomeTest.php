@@ -83,7 +83,14 @@ class ConfigRestoreOutcomeTest extends TestCase {
 	public function testAValidButUnappliedRestoreFails(): void {
 		$restorer = $this->createMock(originalClassName: ThemeVersionRestoreService::class);
 		$restorer->method('restore')->willReturn(
-			$this->restoreResult(extra: ['changes' => [], 'customTokenSets' => ['add' => [], 'remove' => []], 'missingFonts' => [], 'errors' => [['code' => 7]]])
+			$this->restoreResult(
+				extra: [
+					'changes' => [],
+					'customTokenSets' => ['add' => [], 'remove' => []],
+					'missingFonts' => [],
+					'errors' => [['code' => 7]],
+				]
+			)
 		);
 
 		$this->assertSame(

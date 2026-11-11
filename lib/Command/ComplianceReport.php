@@ -112,15 +112,31 @@ class ComplianceReport extends Command {
 			return Command::FAILURE;
 		}
 
-		$outputPath = $input->getOption('output');
-		if (is_string($outputPath) === true && $outputPath !== '') {
-			return $this->writeToFile(output: $output, path: $outputPath, content: $content);
+		return $this->deliver(
+			output: $output,
+			report: new OutputFile(path: (string)$input->getOption('output'), content: $content)
+		);
+	}//end execute()
+
+	/**
+	 * Write the report to its file, or to stdout when no file was given.
+	 *
+	 * @param OutputInterface $output The console output.
+	 * @param OutputFile $report The destination and the rendered report.
+	 *
+	 * @return int The exit code.
+	 *
+	 * @spec openspec/specs/compliance-evidence/spec.md
+	 */
+	private function deliver(OutputInterface $output, OutputFile $report): int {
+		if ($report->toFile() === true) {
+			return $this->writeToFile(output: $output, file: $report);
 		}
 
-		$output->write($content);
+		$output->write($report->content);
 
 		return Command::SUCCESS;
-	}//end execute()
+	}//end deliver()
 
 	/**
 	 * Render the report content for the requested format.
@@ -143,21 +159,20 @@ class ComplianceReport extends Command {
 	 * Write the rendered content to a file path, reporting success/failure.
 	 *
 	 * @param OutputInterface $output The console output.
-	 * @param string $path The destination file path.
-	 * @param string $content The content to write.
+	 * @param OutputFile $file The destination file path and the content to write.
 	 *
 	 * @return int The exit code.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function writeToFile(OutputInterface $output, string $path, string $content): int {
-		if (file_put_contents($path, $content) === false) {
-			$output->writeln('<error>Could not write report to ' . $path . '</error>');
+	private function writeToFile(OutputInterface $output, OutputFile $file): int {
+		if (file_put_contents($file->path, $file->content) === false) {
+			$output->writeln('<error>Could not write report to ' . $file->path . '</error>');
 
 			return Command::FAILURE;
 		}
 
-		$output->writeln('<info>Report written to ' . $path . '</info>');
+		$output->writeln('<info>Report written to ' . $file->path . '</info>');
 
 		return Command::SUCCESS;
 	}//end writeToFile()

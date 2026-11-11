@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\BrandingPackageService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,33 +43,7 @@ use Throwable;
  *
  * @spec openspec/specs/config-portability/spec.md
  */
-class ConfigImport extends Command {
-
-	/**
-	 * The configuration bundle service.
-	 *
-	 * @var ConfigBundleService
-	 */
-	private ConfigBundleService $service;
-
-	/**
-	 * The branding package service, for a package directory or ZIP.
-	 *
-	 * @var BrandingPackageService
-	 */
-	private BrandingPackageService $packages;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param ConfigBundleService $service The configuration bundle service.
-	 * @param BrandingPackageService $packages The branding package service.
-	 */
-	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {
-		parent::__construct();
-		$this->service = $service;
-		$this->packages = $packages;
-	}//end __construct()
+class ConfigImport extends ConfigBundleCommand {
 
 	/**
 	 * Configure the command name, description, arguments and options.
