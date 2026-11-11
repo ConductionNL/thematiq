@@ -625,4 +625,30 @@ class StockTokensServiceTest extends TestCase {
 
 		$this->assertNull(actual: $service->getCss());
 	}//end testAFailedResolveIsNotCached()
+	/**
+	 * A chain of five references resolves, a sixth hop or a loop is dropped, and values are trimmed.
+	 *
+	 * @return void
+	 */
+	public function testTheReferenceChainLimitAndTrimming(): void {
+		$stock = [
+			'--l0' => ' #010203 ',
+			'--l1' => 'var(--l0)', '--l2' => 'var(--l1)', '--l3' => 'var(--l2)', '--l4' => 'var(--l3)',
+			'--l5' => ' var( --l4 ) ', '--l6' => 'var(--l5)',
+			'--loop-a' => 'var(--loop-b)', '--loop-b' => 'var(--loop-a)',
+			'--empty' => '   ', '--to-empty' => 'var(--empty)',
+		];
+		$sources = [];
+		foreach (array_keys($stock) as $name) {
+			$sources[$name] = '--nldesign' . $name;
+		}
+
+		$this->assertSame(
+			expected: [
+				'--nldesign--l0' => '#010203', '--nldesign--l1' => '#010203', '--nldesign--l2' => '#010203',
+				'--nldesign--l3' => '#010203', '--nldesign--l4' => '#010203', '--nldesign--l5' => '#010203',
+			],
+			actual: $this->build(stock: $stock, sources: $sources)->getTokens()
+		);
+	}//end testTheReferenceChainLimitAndTrimming()
 }//end class
