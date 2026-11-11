@@ -159,8 +159,8 @@ class ThemeCommandOutcomeTest extends TestCase {
 	 */
 	public function testDarkVariantsSetOptionNarrowsTheRun(): void {
 		$palette = $this->createMock(originalClassName: DarkPaletteService::class);
-		$palette->expects($this->exactly(2))->method('discoverAllSetIds')->willReturn(['a', 'b']);
-		$palette->expects($this->exactly(3))->method('generateAndWrite')->willReturn(['written' => true, 'reason' => null, 'warnings' => []]);
+		$palette->expects($this->exactly(count: 2))->method('discoverAllSetIds')->willReturn(['a', 'b']);
+		$palette->expects($this->exactly(count: 3))->method('generateAndWrite')->willReturn(['written' => true, 'reason' => null, 'warnings' => []]);
 		$tester = new CommandTester(new GenerateDarkVariants(darkPalette: $palette));
 
 		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['--set' => 'z']));

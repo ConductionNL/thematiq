@@ -81,46 +81,98 @@ class ThemeSet extends Command {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$target = (string)$input->getArgument('token-set');
-		$syncCore = (bool)$input->getOption('sync-core');
-		if ($this->tokenSets->isValidTokenSet(tokenSetId: $target) === false) {
-			$output->writeln('<error>Unknown token set: ' . $target . '. Nothing was changed.</error>');
+		if ($this->reportUnknown(target: $target, output: $output) === true) {
 			return Command::FAILURE;
 		}
 
-		$current = $this->active->getActive();
+		$switch = new ThemeSwitch(from: $this->active->getActive(), to: $target);
 		if ((bool)$input->getOption('dry-run') === true) {
-			$output->writeln(sprintf('Dry run: would switch the active token set from %s to %s.', $current, $target));
-			return Command::SUCCESS;
+			return $this->preview(switch: $switch, output: $output);
 		}
 
-		if ($current === $target) {
-			$output->writeln($target . ' is already the active token set. Nothing was changed.');
+		if ($this->switchUnlessActive(switch: $switch, output: $output) === false) {
+			return Command::FAILURE;
 		}
 
-		if ($current !== $target) {
-			try {
-				$this->switchTo(target: $target, output: $output);
-			} catch (RestrictedSetNotConfirmedException $e) {
-				$output->writeln(
-					'<error>' . $target . ' is the house style of another organisation. An administrator first confirms in the '
-					. 'Thematiq admin settings that your organisation may use it. Nothing was changed.</error>'
-				);
-				return Command::FAILURE;
-			}
-		}
-
-		$this->reportCore(target: $target, syncCore: $syncCore, output: $output);
+		$this->reportCore(input: $input, output: $output);
 
 		return Command::SUCCESS;
 	}//end execute()
 
 	/**
-	 * Switch the active set, audited with actor `cli`.
+	 * Report a token set that does not exist.
 	 *
-	 * @param string $target The set id.
+	 * @param string $target The token set id asked for.
+	 * @param OutputInterface $output The output.
+	 *
+	 * @return bool True when the set is unknown and the run stops.
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
+	 */
+	private function reportUnknown(string $target, OutputInterface $output): bool {
+		if ($this->tokenSets->isValidTokenSet(tokenSetId: $target) === true) {
+			return false;
+		}
+
+		$output->writeln('<error>Unknown token set: ' . $target . '. Nothing was changed.</error>');
+
+		return true;
+	}//end reportUnknown()
+
+	/**
+	 * Print what a dry run would change.
+	 *
+	 * @param ThemeSwitch $switch The active and the asked-for set.
+	 * @param OutputInterface $output The output.
+	 *
+	 * @return int The exit code.
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
+	 */
+	private function preview(ThemeSwitch $switch, OutputInterface $output): int {
+		$output->writeln(sprintf('Dry run: would switch the active token set from %s to %s.', $switch->from, $switch->to));
+
+		return Command::SUCCESS;
+	}//end preview()
+
+	/**
+	 * Switch to the asked-for set unless it is already active.
+	 *
+	 * @param ThemeSwitch $switch The active and the asked-for set.
+	 * @param OutputInterface $output The output.
+	 *
+	 * @return bool False when a restricted set was refused.
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
+	 */
+	private function switchUnlessActive(ThemeSwitch $switch, OutputInterface $output): bool {
+		if ($switch->isNoOp() === true) {
+			$output->writeln($switch->to . ' is already the active token set. Nothing was changed.');
+			return true;
+		}
+
+		try {
+			$this->switchTo(target: $switch->to, output: $output);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			$output->writeln(
+				'<error>' . $switch->to . ' is the house style of another organisation. An administrator first confirms in the '
+				. 'Thematiq admin settings that your organisation may use it. Nothing was changed.</error>'
+			);
+			return false;
+		}
+
+		return true;
+	}//end switchUnlessActive()
+
+	/**
+	 * Switch the active token set and print the switch.
+	 *
+	 * @param string $target The token set id.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
 	 */
 	private function switchTo(string $target, OutputInterface $output): void {
 		$previous = $this->active->switchTo(tokenSet: $target, auditContext: ['actor' => 'cli']);
@@ -128,20 +180,35 @@ class ThemeSet extends Command {
 	}//end switchTo()
 
 	/**
-	 * Apply core theming when asked, and say which of the two happened.
+	 * Report Nextcloud theming: the hint without --sync-core, the sync otherwise.
 	 *
-	 * @param string $target The set id.
-	 * @param boolean $syncCore Whether --sync-core was given.
+	 * @param InputInterface $input The input.
 	 * @param OutputInterface $output The output.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
 	 */
-	private function reportCore(string $target, bool $syncCore, OutputInterface $output): void {
-		if ($syncCore === false) {
+	private function reportCore(InputInterface $input, OutputInterface $output): void {
+		if ((bool)$input->getOption('sync-core') === false) {
 			$output->writeln('Nextcloud theming is unchanged. Pass --sync-core to apply the set\'s colours and logo.');
 			return;
 		}
 
+		$this->syncCore(target: (string)$input->getArgument('token-set'), output: $output);
+	}//end reportCore()
+
+	/**
+	 * Apply the set's theming values to Nextcloud and print what was applied.
+	 *
+	 * @param string $target The token set id.
+	 * @param OutputInterface $output The output.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theme-cli/spec.md
+	 */
+	private function syncCore(string $target, OutputInterface $output): void {
 		$applied = $this->coreSync->sync(tokenSetId: $target);
 		if ($applied === [] && $this->coreSync->themingParams(tokenSetId: $target) !== []) {
 			$output->writeln('Nextcloud theming is unchanged: the theming values of ' . $target . ' did not validate, so none were applied.');
@@ -154,5 +221,5 @@ class ThemeSet extends Command {
 		}
 
 		$output->writeln('Applied to Nextcloud theming: ' . implode(', ', $applied) . '.');
-	}//end reportCore()
+	}//end syncCore()
 }//end class
