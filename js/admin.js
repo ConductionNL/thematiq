@@ -1531,257 +1531,6 @@
 				})
 		}
 
-		// Fetch current NC theming values and show dialog if they differ
-		/**
-		 * What syncing core theming to a set would do, computed once and used
-		 * by both surfaces: the section inside the apply dialog (the normal
-		 * path) and the standalone dialog (when the apply dialog has no token
-		 * changes to show). `mode` is `match` (POST the set's values), `reset`
-		 * (stock Nextcloud: DELETE, undo everything synced) or `none`.
-		 *
-		 * Stock is the ABSENCE of a synced theme, not a manifest to match:
-		 * matching would keep the previous set's logo (the manifest has none)
-		 * and pin a stale primary.
-		 */
-		/**
-		 * The note next to a colour core gets as the blend of a translucent one.
-		 *
-		 * @param {string|undefined} original The set's own value, when it was translucent.
-		 * @return {string} The note, or '' for an opaque colour.
-		 */
-		function opaqueNote(original) {
-			if (!original) {
-				return ''
-			}
-			return t(
-				'thematiq',
-				"The set says {original}. Nextcloud's own theming has no transparency. It gets this colour instead.",
-				{ original: original },
-			)
-		}
-
-		function computeThemingPlan(tokenSetData, currentTheming) {
-			var none = { mode: 'none', diffs: [], payload: null }
-			if (!tokenSetData || !currentTheming) {
-				return none
-			}
-
-			var defaultLabel = t('thematiq', 'Nextcloud default')
-
-			// A stock-based theme resets Nextcloud's branding to its defaults —
-			// unless it CAPTURED the branding it was saved with, in which case
-			// that is what it brings back, like any other theme.
-			var captured = Boolean(
-				tokenSetData.theming && tokenSetData.theming.captured === true,
-			)
-			if (
-				(tokenSetData.design_system || 'nldesign') === 'none'
-				&& captured === false
-			) {
-				var resetDiffs = []
-				if (currentTheming.primary_color) {
-					resetDiffs.push({
-						label: t('thematiq', 'Primary color'),
-						key: 'primary_color',
-						kind: 'color',
-						current: currentTheming.primary_color,
-						proposed: currentTheming.default_primary_color || '#00679e',
-						proposedNote: defaultLabel,
-					})
-				}
-				if (currentTheming.background_color) {
-					resetDiffs.push({
-						label: t('thematiq', 'Background color'),
-						key: 'background_color',
-						kind: 'color',
-						current: currentTheming.background_color,
-						proposed:
-							currentTheming.default_background_color || '#00679e',
-						proposedNote: defaultLabel,
-					})
-				}
-				if (currentTheming.has_custom_logo === true) {
-					resetDiffs.push({
-						label: t('thematiq', 'Logo'),
-						key: 'logo',
-						kind: 'text',
-						current: t('thematiq', '(custom logo)'),
-						proposed: t('thematiq', 'Nextcloud logo'),
-					})
-				}
-				if (currentTheming.has_custom_background === true) {
-					resetDiffs.push({
-						label: t('thematiq', 'Background image'),
-						key: 'background',
-						kind: 'text',
-						current: t('thematiq', '(custom)'),
-						proposed: defaultLabel,
-					})
-				}
-				if (resetDiffs.length === 0) {
-					return none
-				}
-				return { mode: 'reset', diffs: resetDiffs, payload: null }
-			}
-
-			var proposed = tokenSetData.theming
-			if (!proposed) {
-				return none
-			}
-			var diffs = []
-			var payload = {}
-
-			if (
-				proposed.primary_color
-				&& proposed.primary_color.toLowerCase()
-					!== (currentTheming.primary_color || '').toLowerCase()
-			) {
-				diffs.push({
-					label: t('thematiq', 'Primary color'),
-					key: 'primary_color',
-					kind: 'color',
-					current: currentTheming.primary_color,
-					proposed: proposed.primary_color,
-					proposedNote: opaqueNote(proposed.primary_color_original),
-				})
-				payload.primary_color = proposed.primary_color
-			}
-
-			if (
-				proposed.background_color
-				&& proposed.background_color.toLowerCase()
-					!== (currentTheming.background_color || '').toLowerCase()
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background color'),
-					key: 'background_color',
-					kind: 'color',
-					current: currentTheming.background_color,
-					proposed: proposed.background_color,
-					proposedNote: opaqueNote(proposed.background_color_original),
-				})
-				payload.background_color = proposed.background_color
-			}
-
-			// An image is only a difference when the slot does not ALREADY hold
-			// this set's file. Core records just that a custom image exists, not
-			// which one, so the comparison uses `synced_*` — the path Thematiq
-			// itself last applied. Without this the dialog offered the same
-			// unchanged logo on every apply and could never stop appearing.
-			// (An admin who uploads a logo through core's own panel after a sync
-			// leaves `synced_logo` behind; the row is then skipped once, until
-			// the next sync rewrites it.)
-			if (
-				proposed.logo
-				&& !(
-					currentTheming.has_custom_logo === true
-					&& currentTheming.synced_logo === proposed.logo
-				)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Logo'),
-					key: 'logo',
-					kind: 'text',
-					current: currentTheming.has_custom_logo
-						? t('thematiq', '(custom logo)')
-						: t('thematiq', '(default)'),
-					proposed: proposed.logo.split('/').pop(),
-				})
-				payload.logo = proposed.logo
-			}
-
-			// The navigation-bar logo and the favicon, compared the same way as
-			// the logo: by the file Thematiq last put in the slot.
-			;[
-				['logoheader', t('thematiq', 'Navigation bar logo')],
-				['favicon', t('thematiq', 'Favicon')],
-			].forEach(function (slot) {
-				var key = slot[0]
-				if (
-					proposed[key]
-					&& !(
-						currentTheming['has_custom_' + key] === true
-						&& currentTheming['synced_' + key] === proposed[key]
-					)
-				) {
-					diffs.push({
-						label: slot[1],
-						key: key,
-						kind: 'text',
-						current: currentTheming['has_custom_' + key]
-							? t('thematiq', '(custom)')
-							: t('thematiq', '(default)'),
-						proposed: proposed[key].split('/').pop(),
-					})
-					payload[key] = proposed[key]
-				}
-			})
-
-			if (
-				proposed.background
-				&& !(
-					currentTheming.has_custom_background === true
-					&& currentTheming.synced_background === proposed.background
-				)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background',
-					kind: 'text',
-					current: currentTheming.has_custom_background
-						? t('thematiq', '(custom)')
-						: t('thematiq', '(default)'),
-					proposed: proposed.background.split('/').pop(),
-				})
-				payload.background = proposed.background
-			}
-
-			// A captured theme also knows whether the background image had been
-			// removed ("color") or left as Nextcloud's own ("default"). Offered
-			// only when the page is in a different state; an image of the
-			// theme's own is the background row above.
-			var mode = proposed.background_mode
-			var removedNow = currentTheming.background_mime === 'backgroundColor'
-			var currentBackground = removedNow
-				? t('thematiq', 'Removed (plain color)')
-				: currentTheming.has_custom_background
-					? t('thematiq', '(custom)')
-					: t('thematiq', '(default)')
-			if (mode === 'color' && removedNow === false) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background_mode',
-					kind: 'text',
-					current: currentBackground,
-					proposed: t('thematiq', 'Removed (plain color)'),
-				})
-			} else if (
-				mode === 'default'
-				&& (removedNow === true
-					|| currentTheming.has_custom_background === true)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background_mode',
-					kind: 'text',
-					current: currentBackground,
-					proposed: t('thematiq', 'Nextcloud default'),
-				})
-			}
-
-			if (diffs.length === 0) {
-				return none
-			}
-
-			// Sent with anything that is applied, so a colour change on its own
-			// cannot drop the background image the theme was saved with.
-			if (mode === 'image' || mode === 'color' || mode === 'default') {
-				payload.background_mode = mode
-			}
-
-			return { mode: 'match', diffs: diffs, payload: payload }
-		}
-
 		/** Execute a plan from computeThemingPlan(); resolves after the page reflects it. */
 		function applyThemingPlan(plan) {
 			if (!plan || plan.mode === 'none') {
@@ -1869,7 +1618,11 @@
 		function checkAndShowThemingDialog(tokenSetData) {
 			fetchCurrentTheming()
 				.then(function (currentTheming) {
-					var plan = computeThemingPlan(tokenSetData, currentTheming)
+					var plan = window.NldesignThemingPlan.computeThemingPlan(
+						tokenSetData,
+						currentTheming,
+						t,
+					)
 					if (plan.mode === 'reset') {
 						showThemingResetDialog(tokenSetData, currentTheming)
 					} else if (plan.mode === 'match') {
@@ -5946,9 +5699,10 @@
 			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
-					var themingPlan = computeThemingPlan(
+					var themingPlan = window.NldesignThemingPlan.computeThemingPlan(
 						tokenSetsData[newTokenSetId],
 						results[1],
+						t,
 					)
 					if (data.error !== undefined) {
 						saveTokenSet(newTokenSetId, publishMode)

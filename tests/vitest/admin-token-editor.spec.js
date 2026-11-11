@@ -228,6 +228,7 @@ async function mount({
 
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
+	await import('../../js/lib/themingPlan.js')
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -487,6 +488,7 @@ describe('admin.js token editor', () => {
 			})
 			// mount() rebuilds the head, so load the script here directly.
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 
@@ -508,6 +510,7 @@ describe('admin.js token editor', () => {
 				tabs: {},
 			})
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 
@@ -647,6 +650,7 @@ describe('admin.js token editor', () => {
 				tabs: {},
 			})
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 			unlockBase()
@@ -1505,6 +1509,7 @@ describe('admin.js theming sync rows', () => {
 		answer('POST', '/settings/theming', 200, { status: 'error', error: ' no' })
 
 		vi.resetModules()
+		await import('../../js/lib/themingPlan.js')
 		await import('../../js/admin.js?t=' + Math.random())
 		await flush()
 
