@@ -38,6 +38,8 @@ use Random\Randomizer;
  * @covers \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
+ * @uses   \OCA\Thematiq\Service\ColourComponentScale
+ * @uses   \OCA\Thematiq\Service\ColourFunctionReading
  */
 class ColourParsersGoldenTest extends TestCase {
 

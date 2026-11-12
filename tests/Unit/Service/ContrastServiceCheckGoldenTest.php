@@ -35,6 +35,7 @@ use ReflectionClassConstant;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\ColourRgba
  */
 class ContrastServiceCheckGoldenTest extends TestCase {
 

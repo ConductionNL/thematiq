@@ -53,6 +53,9 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(TokenSetFontAuditService::class)]
 #[UsesClass(CssParserService::class)]
 #[UsesClass(CssDeclarationScanner::class)]
+#[UsesClass(\OCA\Thematiq\Service\IndexedJsonManifest::class)]
+#[UsesClass(\OCA\Thematiq\Service\ListedTokenSet::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\LocalFile::class)]
 class TokenSetLicenceServiceTest extends TestCase {
 
 	use RestrictedSetFixture;

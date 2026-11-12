@@ -39,6 +39,8 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\BrandCssCut
  * @uses   \OCA\Thematiq\Service\CssBlockReader
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
+ * @uses   \OCA\Thematiq\Service\SetOrder
+ * @uses   \OCA\Thematiq\Service\ThemeSets
  */
 class MultiBrandSourceGoldenTest extends TestCase {
 

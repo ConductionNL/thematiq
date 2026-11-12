@@ -71,6 +71,22 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ThematiqExportLayers
  * @uses   \OCA\Thematiq\Service\ToolTokenFileNormaliser
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
+ * @uses   \OCA\Thematiq\Service\AdaptedToken
+ * @uses   \OCA\Thematiq\Service\ColourComponentScale
+ * @uses   \OCA\Thematiq\Service\ColourFunctionReading
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\ComponentRepairRun
+ * @uses   \OCA\Thematiq\Service\ContrastRepairRun
+ * @uses   \OCA\Thematiq\Service\DtcgTokenLeaves
+ * @uses   \OCA\Thematiq\Service\DtcgWriteRun
+ * @uses   \OCA\Thematiq\Service\LeafMappingRun
+ * @uses   \OCA\Thematiq\Service\LeafScope
+ * @uses   \OCA\Thematiq\Service\MappedToken
+ * @uses   \OCA\Thematiq\Service\SetFileBlock
+ * @uses   \OCA\Thematiq\Service\SetFileEntry
+ * @uses   \OCA\Thematiq\Service\SetFileReadRun
+ * @uses   \OCA\Thematiq\Service\TokenSetDownload
+ * @uses   \OCA\Thematiq\Service\TypedValue
  */
 class TokenSetConverterGoldenTest extends TestCase {
 

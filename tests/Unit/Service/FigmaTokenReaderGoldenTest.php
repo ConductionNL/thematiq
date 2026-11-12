@@ -38,6 +38,7 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\FigmaCssValue
  * @uses   \OCA\Thematiq\Service\FileDarkValues
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
+ * @uses   \OCA\Thematiq\Service\DtcgTokenLeaves
  */
 class FigmaTokenReaderGoldenTest extends TestCase {
 

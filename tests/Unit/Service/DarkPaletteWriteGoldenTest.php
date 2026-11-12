@@ -48,6 +48,9 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\DarkPins
  * @uses   \OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore
  * @uses   \OCA\Thematiq\Service\RuntimeFile\RuntimeFileNames
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\LocalFile
+ * @uses   \OCA\Thematiq\Service\TokenSetManifestFile
  */
 class DarkPaletteWriteGoldenTest extends TestCase {
 

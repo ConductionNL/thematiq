@@ -37,6 +37,7 @@ use ReflectionClassConstant;
  *
  * @covers \OCA\Thematiq\Service\ShellRoleMapper
  * @uses   \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\ColourRgba
  */
 class ShellRoleMapperGoldenTest extends TestCase {
 

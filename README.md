@@ -6,6 +6,12 @@
 
 Apply Dutch government design tokens (NL Design System) to your Nextcloud instance with open-source fonts and components.
 
+## Test coverage
+
+<!-- coverage:start -->
+Measured test coverage: 96.1% of statements (PHP 96.1% of 13,818 statements), at commit `1f89f26c3` on 2026-11-12. The JavaScript frontend is not in this figure, because it has no coverage measurement yet. The figures come from [`coverage-summary.json`](coverage-summary.json); refresh them with `composer coverage:publish`.
+<!-- coverage:end -->
+
 ## Features
 
 - **63 token sets**: Choose from Dutch government design systems, including:

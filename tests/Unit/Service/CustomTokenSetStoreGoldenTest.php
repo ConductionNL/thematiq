@@ -54,6 +54,9 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\DarkPaletteService
  * @uses   \OCA\Thematiq\Service\DarkPins
  * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
+ * @uses   \OCA\Thematiq\Service\AppConfigManifest
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\TokenSetManifestFile
  */
 class CustomTokenSetStoreGoldenTest extends TestCase {
 
