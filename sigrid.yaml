@@ -75,18 +75,15 @@ exclude:
   - ".*/phpstan-bootstrap[.]php"
   - ".*/[.]php-cs-fixer[.]dist[.]php"
 
-# Open Source Health. These eight are the Nextcloud platform's own libraries,
-# which a Nextcloud app cannot avoid. Their AGPL and GPL licences are accepted, so
-# only the licence property is excluded: vulnerabilities, freshness, activity and
-# management are still scored. [:/] matches the scoped npm name in either form,
-# because the name Sigrid compares against is not documented.
+# Open Source Health. Every @nextcloud package is part of the Nextcloud
+# platform's own libraries, which a Nextcloud app cannot avoid. Their AGPL and GPL
+# licences are accepted, so only the licence property is excluded for them:
+# vulnerabilities, freshness, activity and management are still scored. [:/]
+# matches the scoped npm name in either form, because the name the analysis
+# compares against is not documented.
+#
+# package-lock.json holds no @nextcloud production packages today: they are all
+# development dependencies, so this entry covers any that become production ones.
 dependencychecker:
   exclude:
-    - license: "^@nextcloud[:/]vue$"
-    - license: "^@nextcloud[:/]dialogs$"
-    - license: "^@nextcloud[:/]auth$"
-    - license: "^@nextcloud[:/]axios$"
-    - license: "^@nextcloud[:/]l10n$"
-    - license: "^@nextcloud[:/]router$"
-    - license: "^@nextcloud[:/]initial-state$"
-    - license: "^@nextcloud[:/]capabilities$"
+    - license: "^@nextcloud[:/].*$"
