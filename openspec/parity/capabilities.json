@@ -1021,7 +1021,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/extended-token-sets",
-				"requirement": "Support All Available Token Sets"
+				"requirement": [
+					"openspec/specs/extended-token-sets :: Support All Available Token Sets",
+					"openspec/specs/token-sets :: Token Set Count and Coverage"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -1056,7 +1059,7 @@
 				"evidence": "token-sets.json id=vng name='VNG Vereniging Nederlandse Gemeenten'; openspec/specs/vng-token-set/ exists; reachable from the same dropdown",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "add-vng-token-set",
+				"change": "openspec/changes/archive/2026-02-15-add-vng-token-set",
 				"requirement": [
 					"openspec/specs/vng-token-set :: Token Set Manifest Entry",
 					"openspec/specs/vng-token-set :: VNG Semantic Color Mapping"
@@ -1094,7 +1097,7 @@
 				"evidence": "token-sets.json id=lasuite (design_system=lasuite) and id=frankendesk; design-systems.json id=lasuite 'La Suite numerique'; openspec/specs/lasuite-parity, lasuite-stack exist",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "lasuite-design-stack",
+				"change": "openspec/changes/archive/2026-07-23-lasuite-design-stack",
 				"requirement": "openspec/specs/lasuite-stack :: Visual Parity Verification"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
@@ -1246,7 +1249,7 @@
 				"evidence": "templates/settings/admin.php:84 '#nldesign-token-set-completeness-badge' (hidden by default); js/admin.js:813-824 incompleteWarningFor() reads ts.warnings (kind=='incomplete') from the initial-state tokenSets payload; js/admin.js:887-905 updateCompletenessBadge() shows 'Incomplete set' with a title tooltip listing missing tokens, called on every selection change (js/admin.js:979,588)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "2026-10-09-token-set-vocabulary-audit",
+				"change": "openspec/changes/archive/2026-10-09-token-set-vocabulary-audit",
 				"requirement": "openspec/specs/token-sets :: Incomplete Sets Are Surfaced In The Admin Dropdown"
 			},
 			"reachedOn": "Settings > Administration > Theming, badge next to the token set dropdown",
@@ -1316,7 +1319,7 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "templates/settings/admin.php:57-60 renders a single static link '<a href=\"https://nldesign.app\">Documentation</a>' in the section header; js/admin.js has no code that swaps this href when a different design system (lasuite, high-contrast, cunningham) is selected -- grep -F 'nldesign-doc-link' js/admin.js found no writer, only the static PHP-rendered anchor",
+				"evidence": "templates/settings/admin.php renders the Documentation link (#nldesign-doc-link) of the active set's design system; lib/Settings/Admin.php:326 provides designSystemDocs as initial state, and js/admin.js:1061 updateDocumentationLink(), called from the dropdown change at :1078, points the link at the docs of the design system the admin picks; a design system without docs of its own keeps the link it has",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/admin-settings",
@@ -1334,7 +1337,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "The link is real and reachable, but it always points at nldesign.app regardless of the design system actually selected (La Suite, high contrast, Cunningham all get the NL Design System link, not their own).",
+			"note": "The link follows the design system of the selected set, so a La Suite or Cunningham set links to its own documentation instead of nldesign.app (#662).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
@@ -1391,7 +1394,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/admin-settings",
-				"requirement": "openspec/specs/admin-settings :: Settings Hint Text"
+				"requirement": [
+					"openspec/specs/admin-settings :: Settings Hint Text",
+					"openspec/specs/custom-css-overrides :: Custom Overrides File"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming: pick a shipped set as a base, then the token editor below it",
 			"evidence": {
@@ -1429,7 +1435,7 @@
 				"evidence": "lib/Service/ThemeGalleryService.php reads an opt-in index (gallery_enabled off by default, gallery_index_url for a mirror, 10 s timeout, hourly cache with ETag) and drops entries without an SPDX licence; lib/Service/GalleryInstallService.php downloads, checks the SHA-256, then runs TokenSetConverterService, the CustomTokenSetValidator whitelist and CustomTokenSetService::store() with provenance; GalleryController GET/POST /settings/gallery and POST /settings/gallery/{id}/install (AuthorizedAdminSetting); js/admin.js Theme gallery block with install and update; gallery/index.json, index.schema.json, CONTRIBUTING.md",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "catalogue-theme-gallery",
+				"change": "openspec/changes/archive/2026-09-30-catalogue-theme-gallery",
 				"requirement": [
 					"openspec/specs/theme-gallery :: An administrator browses the gallery",
 					"openspec/specs/theme-gallery :: Installing is checked and goes through the upload path"
@@ -1504,7 +1510,7 @@
 				"evidence": "lib/Listener/ThemeInjectionListener.php:26-46 registers for both BeforeTemplateRenderedEvent (workspace + apps) and BeforeLoginTemplateRenderedEvent (login page), calling CssInjectionService::inject() for either; js/admin.js:2930-2996 openTokenSetApplyDialog -> js/admin.js:3121-3127 'Apply selected' button is the single confirm that both saves the token set and (checkbox-gated) syncs core theming (colours/logo used on login + emails)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": [
 					"openspec/specs/css-architecture :: Render-Context Discrimination",
 					"openspec/specs/theming-sync-dialog :: The Sync Rides On The Apply Confirm"
@@ -1581,7 +1587,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/token-set-apply-dialog",
-				"requirement": "Checkbox Selection"
+				"requirement": "openspec/specs/token-set-apply-dialog :: Checkbox Selection"
 			},
 			"reachedOn": "Settings > Administration > Theming, apply dialog: per-row checkboxes",
 			"evidence": {
@@ -1616,7 +1622,7 @@
 				"evidence": "js/lib/layerSwap.js:1-40 documents and implements swapping the injected <link>/<style> run for the page you are on, fetching the new manifest from GET /settings/tokenset-stylesheets/{id} (lib/Controller/LayerController.php) and inserting the new elements before removing the old ones (no flash of unstyled chrome); admin.php:25 loads lib/layerSwap before admin.js",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "apply-without-reload",
+				"change": "openspec/changes/archive/2026-10-09-apply-without-reload",
 				"requirement": [
 					"openspec/specs/token-set-apply-dialog :: Token Set Applied Together With Overrides",
 					"openspec/specs/css-architecture :: Client Swaps The Run, Never Rewrites Variables"
@@ -1672,7 +1678,8 @@
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
-			}
+			},
+			"note": "The navigation scenario of Live Preview Box is added in openspec/changes/closing-round-scenarios (12 Nov 2026 coverage audit)."
 		},
 		{
 			"id": "app-login-preview",
@@ -1725,7 +1732,7 @@
 				"evidence": "lib/Controller/PreviewController.php start()/discard()/publish() behind POST/DELETE /settings/preview and POST /settings/preview/publish; js/admin.js:1044-1078 'Preview in my session' button POSTs to start a session-only preview, applies the new stylesheet layer on this page only (applyLayersFor), and leaves the instance-wide token_set untouched",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-preview-workflow",
+				"change": "openspec/changes/archive/2026-07-23-theme-preview-workflow",
 				"requirement": [
 					"openspec/specs/theme-preview :: Per-User Preview State",
 					"openspec/specs/theme-preview :: Preview Isolation"
@@ -1763,7 +1770,7 @@
 				"evidence": "js/preview-banner.js:10-30 reads OCP.InitialState.loadState('thematiq','preview',null) and renders a persistent role=status banner with Publish/Discard controls; lib/Service/CssInjectionService.php:299 injects layer 'preview-banner' via ThemeInjectionListener on every BeforeTemplateRenderedEvent page, not only the settings page",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-preview-workflow",
+				"change": "openspec/changes/archive/2026-07-23-theme-preview-workflow",
 				"requirement": "openspec/specs/theme-preview :: Preview Banner"
 			},
 			"reachedOn": "Any page while a session preview is active (banner injected app-wide), and the active-preview panel on Settings > Administration > Theming (templates/settings/admin.php:142-153)",
@@ -1798,7 +1805,7 @@
 				"evidence": "js/admin.js:1123-1132 previewPublishBtn click -> openTokenSetApplyDialog(activePreview.tokenSet, currentTokenSetId, true); on confirm, commitTokenSetChange() POSTs /settings/preview/publish (js/admin.js:1142ish), which PreviewController::publish() promotes the session preview to the instance-wide token set in one step",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-preview-workflow",
+				"change": "openspec/changes/archive/2026-07-23-theme-preview-workflow",
 				"requirement": [
 					"openspec/specs/theme-preview :: Preview Lifecycle Endpoints",
 					"openspec/specs/theme-preview :: Publish Runs The Existing Instance-Wide Dialogs"
@@ -1839,7 +1846,7 @@
 				"evidence": "js/admin.js:1086-1110 previewDiscardBtn click -> DELETE /settings/preview (PreviewController::discard()), then applyLayersFor(currentTokenSetId) reverts the page's stylesheets to the instance-wide set and endPreviewOnPage() hides the active-preview panel",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-preview-workflow",
+				"change": "openspec/changes/archive/2026-07-23-theme-preview-workflow",
 				"requirement": [
 					"openspec/specs/theme-preview :: Start And Discard Apply On The Settings Page",
 					"openspec/specs/theme-preview :: Preview Banner"
@@ -1877,7 +1884,7 @@
 				"evidence": "js/playground/components.json tabs: login, content, status (buttons & status), typography; js/playground.js (loaded at admin.php:35-36, after admin.js, attaches to the token editor); component tokens are scoped per component (css/component-scopes.css, scripts/mapping/component-tokens.json) so a chip edits only that component per the file's own header comment",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "component-playground",
+				"change": "openspec/changes/archive/2026-10-09-component-playground",
 				"requirement": [
 					"openspec/specs/component-playground :: The Playground Is Part Of The Theming Panel",
 					"openspec/specs/component-playground :: A Component Names The Tokens It Reads"
@@ -1986,7 +1993,7 @@
 				"evidence": "lib/Service/ScheduledSwitchService.php plans, lists, cancels and applies timed token set switches (overlap, existence and time checks; revert at endAt; failed entries kept with reason); lib/BackgroundJob/ScheduledSwitchJob.php every 300 s, time sensitive; ActiveTokenSetService shares the dropdown's validation; ScheduledSwitchController GET/POST/DELETE /settings/scheduled-switches (AuthorizedAdminSetting); js/admin.js Planned switches block with cron warning; ConfigBundleService bundleVersion 2 carries config.scheduledSwitches; audit action scheduled_switch_applied",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "apply-scheduled-theme-switch",
+				"change": "openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch",
 				"requirement": [
 					"openspec/specs/scheduled-switch :: An administrator plans a switch",
 					"openspec/specs/scheduled-switch :: The app applies a due switch and switches back"
@@ -2024,7 +2031,7 @@
 				"evidence": "lib/Service/ThemeVersionService.php keeps the ConfigBundleService::export() bundle after every audited change (50 versions, 20 MB); ThemingAuditService::log() adds versionId; ThemeVersionRestoreService previews and restores through ConfigBundleService::import(); AuditController versions/previewVersion/restoreVersion; js/admin.js restore button per audit row; occ thematiq:config:versions and thematiq:config:restore",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "apply-restore-earlier-version",
+				"change": "openspec/changes/archive/2026-09-29-apply-restore-earlier-version",
 				"requirement": "openspec/specs/theme-versions :: An administrator restores a version from the audit log"
 			},
 			"reachedOn": "Settings > Administration > Theming, theming audit log, Restore button on a row; occ thematiq:config:restore",
@@ -2139,7 +2146,7 @@
 				"evidence": "lib/Controller/CustomTokenSetController.php:203 upload(); lib/Service/TokenSetConverterService.php:246 convert() detects input kind A (NL Design CSS); templates/settings/admin.php:176 file input accept=\".css,.json,.tokens.json\"; js/admin.js:4206 POST /settings/tokensets/upload",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": "openspec/specs/custom-token-sets :: Upload Custom Token Set (CSS format)"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets, 'Choose file and upload' (templates/settings/admin.php:179)",
@@ -2174,10 +2181,10 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json) Corrections round 8 (2026-09-28), thematiq#695: a DTCG colour object in srgb-linear is scaled to hex without the sRGB transfer function and its alpha is dropped, both without a report, lib/Service/DesignTokensMapper.php:57 and :644-652 at fd992ea.",
+				"evidence": "lib/Service/TokenSetConverterService.php:257 detectInput() classifies input kind B (W3C DTCG JSON, $value/$type, {a.b.c} aliases) and routes to DesignTokensMapper; same upload endpoint/UI as CSS (CustomTokenSetController.php:203; admin.php:176 accepts .json/.tokens.json) A DTCG colour object in srgb-linear or another RGB space is converted through lib/Service/ColorSpaceConverter.php (linear-light matrices to XYZ, then sRGB) and keeps its alpha (thematiq#695 fixed).",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": "openspec/specs/custom-token-sets :: W3C Design Tokens JSON Import"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets upload form (same control as CSS upload)",
@@ -2192,7 +2199,7 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): the import writes the wrong colour for srgb-linear colour objects and drops alpha, thematiq#695; rating kept because the upload and mapping still work for srgb hex and component colours and every other token type, the defect is on those two colour shapes only.",
+			"note": "Corrections round 8 (2026-09-28) found srgb-linear objects written without the transfer function and alpha dropped (thematiq#695); fixed since, ColorSpaceConverter handles every DTCG colour space and the alpha is kept.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
@@ -2216,7 +2223,7 @@
 				"evidence": "lib/Controller/CustomTokenSetController.php:242-289 returns 422 with imported/skipped/errors when zero tokens map; lib/Service/CustomTokenSetValidator.php:78 validateDeclarations() rejects unknown/forbidden declarations with a message; js/admin.js:4206-4269 renders 'X tokens imported, Y skipped' plus a diagnostics fragment (buildDiagnosticsFragment) in #nldesign-upload-result",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": [
 					"openspec/specs/custom-token-sets :: DTCG Import Diagnostics",
 					"openspec/specs/custom-token-sets :: The Conversion Report Is Returned And Rendered"
@@ -2254,7 +2261,7 @@
 				"evidence": "lib/Service/CustomTokenSetValidator.php:78-131 isForbiddenValue() rejects @import, expression(), javascript:, external url() and markup in every declaration value BEFORE the name split (comment at lines 100-118 explains why the value gate must run first); rejects on upload with a 422 (CustomTokenSetController.php:203)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "harden-custom-token-set-value-validation",
+				"change": "openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation",
 				"requirement": "openspec/specs/custom-token-sets :: CSS Validation Whitelist"
 			},
 			"reachedOn": "Server-side gate on the same upload path as aut-upload-css/aut-upload-dtcg; surfaced to the admin as an upload error",
@@ -2290,7 +2297,7 @@
 				"evidence": "lib/Controller/CustomTokenSetController.php:547 list(), :585 delete(); js/admin.js:4303 GET /settings/tokensets/custom (loadCustomTokenSets), :4396 DELETE .../custom/{id} (deleteCustomSet); activation is the existing token-set dropdown (#nldesign-token-set-select, admin.php:68) which lists custom sets alongside shipped ones via refreshTokenSetCatalogue()",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": [
 					"openspec/specs/custom-token-sets :: Manage Custom Token Sets",
 					"openspec/specs/custom-token-sets :: An Uploaded Set Is Selectable Without A Reload"
@@ -2328,7 +2335,7 @@
 				"evidence": "lib/Controller/CustomTokenSetController.php:561 export(); js/admin.js:4387 'Download' button per row builds GET /settings/tokensets/custom/{id}/export via window.location",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": "openspec/specs/custom-token-sets :: Manage Custom Token Sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets list, 'Download' button per row",
@@ -2368,7 +2375,8 @@
 				"requirement": [
 					"openspec/specs/openproject-set-file :: Any token set can be downloaded as the plugin's set file",
 					"openspec/specs/openproject-set-file :: The plugin's set file becomes a custom token set"
-				]
+				],
+				"plan": "openspec/changes/set-file-keeps-the-dark-block"
 			},
 			"reachedOn": "Settings > Administration > Theming, format list next to 'Download as design tokens'; Custom token sets upload",
 			"evidence": {
@@ -2382,7 +2390,7 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove.",
+			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove. Follow-up work in set-file-keeps-the-dark-block (linked 12 Nov 2026, decision 395).",
 			"screen": {
 				"board": "TqTheming",
 				"note": "board update pending: the OpenProject set file entry next to \"Downloaden als design tokens\" (coverage matrix list (b))"
@@ -2421,8 +2429,7 @@
 			"featureConfidence": "high",
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove.",
 			"screen": {
-				"board": "TqSetUploaden",
-				"note": "board update pending: the upload result sentence on kept dark values (coverage matrix list (b))"
+				"board": "TqSetUploaden"
 			}
 		},
 		{
@@ -2514,7 +2521,7 @@
 				"evidence": "lib/Service/TokenSetConverterService.php:73-400 convert() maps upstream NL Design tokens (utrecht/ams/denhaag/DTCG) onto the app's --nldesign-* vocabulary via the mapping table and DesignTokensMapper, emits a complete CSS file and a report of imported/skipped tokens; reached through the same upload form as aut-upload-css/aut-upload-dtcg (this IS the upload conversion step, not a separate control)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "nlds-theme-converter",
+				"change": "openspec/changes/archive/2026-10-09-nlds-theme-converter",
 				"requirement": [
 					"openspec/specs/token-set-converter :: Accepted Conversion Inputs",
 					"openspec/specs/token-set-converter :: Semantic Mapping Is Table-Driven And Shared"
@@ -2555,7 +2562,7 @@
 				"evidence": "js/admin.js:2371 mountTokenEditor()/2415 renderTokenEditor() builds a colour-picker + text input per token (buildTokenRow, ~2600); templates/settings/admin.php:291 #nldesign-token-editor is the mount point; save goes to POST /settings/overrides (js/admin.js:2823 saveOverrides)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "nextcloud-theme-editor",
+				"change": "openspec/changes/archive/2026-03-03-nextcloud-theme-editor",
 				"requirement": "openspec/specs/token-editor-ui :: Editable Token Input"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Custom token overrides' panel (#nldesign-token-editor, admin.php:291)",
@@ -2778,7 +2785,7 @@
 				"evidence": "templates/settings/admin.php:297-317 #nldesign-custom-css panel (enable checkbox, textarea, save button, feedback span); js/admin.js:5314 initCustomCss() loads/saves via GET/POST /apps/thematiq/settings/custom-css; lib/Controller/CustomCssController.php getCustomCss()/setCustomCss(); lib/Service/CustomCssService.php persists it and CssInjectionService emits it 'after every other theming layer'",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-css-freeform",
+				"change": "openspec/changes/archive/2026-10-02-custom-css-freeform",
 				"requirement": [
 					"openspec/specs/custom-css-freeform :: Custom CSS File Gated By Appconfig Flag",
 					"openspec/specs/custom-css-freeform :: Read/Write PHP Endpoint"
@@ -2816,7 +2823,7 @@
 				"evidence": "lib/Service/CustomCssValidator.php:87 validate() rejects @import/@charset, external url() schemes, expression()/behavior:/-moz-binding:, </style>/<script>, and the Nextcloud dark-mode reserved variables, returning every violation; js/admin.js:5345-5365 saveCustomCss handler renders a 422's errors array into the feedback span and writes nothing on failure",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-css-freeform",
+				"change": "openspec/changes/archive/2026-10-02-custom-css-freeform",
 				"requirement": "openspec/specs/custom-css-freeform :: Freeform CSS Is Sanitised Before Persisting"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom CSS save button (#nldesign-custom-css-save) surfaces validator errors in #nldesign-custom-css-feedback",
@@ -2852,7 +2859,7 @@
 				"evidence": "lib/Service/TokenRegistry.php:125-180 getComponentTokens() reads scripts/mapping/component-tokens.json and exposes each component's tokens grouped by component id/tab; these render as normal rows in the same token editor (js/admin.js:2415 renderTokenEditor groups by meta.tab, meta.group=componentId); a 'primary_drives_components' instance setting (admin.php:427 #nldesign-primary-drives-components) locks component rows to the primary colour when ON, and unlocking it lets an admin set e.g. button tokens independently of the global palette",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "component-scoped-tokens",
+				"change": "openspec/changes/archive/2026-10-09-component-scoped-tokens",
 				"requirement": "openspec/specs/component-tokens :: A Component Token Reaches Only Its Own Component"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor rows for component tokens (visible once 'Let the primary colour drive every component' is switched off)",
@@ -2884,10 +2891,10 @@
 			"tokens-studio": "partial",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants) Corrections round 8 (2026-09-28), thematiq#696: ContrastService::parseColor() reads only #rgb, #rrggbb and the rgb part of rgba(), so a translucent colour is derived as an opaque hex and an 8-digit hex is skipped, lib/Service/ContrastService.php:245-263 and lib/Service/DarkPaletteService.php:314-321 at fd992ea.",
+				"evidence": "lib/Service/DarkPaletteService.php derives a dark palette algorithmically (preserve hue, invert lightness) and verifies WCAG AA via ContrastService; lib/Service/CustomTokenSetService.php:89 generates css/tokens/dark/custom-{slug}.css automatically AT UPLOAD TIME for a custom set (not only via the occ command); the instance-wide dark-variants toggle is wired at admin.php:445 (#nldesign-dark-variants) to GET/POST /settings/dark-variants (settings#getDarkVariants/setDarkVariants) A translucent light value keeps its alpha on its dark value: lib/Service/ContrastService.php parseColorWithAlpha() reads #rgba, #rrggbbaa and rgba(), and lib/Service/DarkPaletteService.php:918-924 appends the alpha (thematiq#696 fixed).",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "dark-mode-token-variants",
+				"change": "openspec/changes/archive/2026-07-23-dark-mode-token-variants",
 				"requirement": [
 					"openspec/specs/dark-mode :: Dark Palette Derivation",
 					"openspec/specs/dark-mode :: Generated Dark Variant Files"
@@ -2905,7 +2912,7 @@
 			"providerHow": "read-from-code",
 			"feature": "dark-mode",
 			"featureConfidence": "high",
-			"note": "Corrections round 8 (2026-09-28): translucent colours lose their alpha in the derived dark palette and 8-digit hex tokens are not darkened, thematiq#696; rating kept because the dark variant is still derived automatically for every opaque colour token, the defect is on translucent tokens only.",
+			"note": "Corrections round 8 (2026-09-28) found translucent colours derived as opaque and 8-digit hex skipped (thematiq#696); fixed since, the dark palette keeps the alpha.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqDonker"
@@ -2922,12 +2929,16 @@
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "built",
-				"evidence": "lib/Service/DesignTokensAliasResolver.php resolves W3C DTCG {token.path} aliases transitively (max 10 hops, cycle/missing-target detection) but ONLY during DTCG import: DesignTokensMapper.php:300-301 calls resolve() and writes the RESOLVED concrete value into the emitted CSS. Once stored, the app's own token editor and custom-overrides layer are flat --nldesign-*/--color-* custom properties with no alias graph, so editing one token afterwards does not cascade to anything that referenced it in the source document.",
+				"state": "specified",
+				"evidence": "Not built: aliases live only during a DTCG import. lib/Service/DesignTokensAliasResolver.php resolves {token.path} aliases transitively (max 10 hops, cycle and missing-target detection) and lib/Service/DesignTokensMapper.php writes the resolved value into the stored set; the token editor and custom-overrides.css hold flat values (lib/Service/TokenValueValidator.php accepts no var() reference), so a later edit of a token reaches nothing that referred to it.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "dtcg-ingestion-hardening",
-				"requirement": "openspec/specs/custom-token-sets :: DTCG Alias Resolution"
+				"change": "openspec/changes/archive/2026-07-23-dtcg-ingestion-hardening",
+				"requirement": [
+					"openspec/changes/token-references-stay-live/specs/token-editor-ui :: A token can refer to another token",
+					"openspec/specs/custom-token-sets :: DTCG Alias Resolution"
+				],
+				"plan": "openspec/changes/token-references-stay-live"
 			},
 			"reachedOn": "Settings > Administration > Theming, DTCG upload only (aliases are read and flattened, not preserved as an editable semantic layer)",
 			"evidence": {
@@ -2941,7 +2952,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-authoring",
 			"featureConfidence": "medium",
-			"note": "Reads a semantic layer on import but does not keep it live afterward, so a later edit does not flow through anything.",
+			"note": "Set back to specified on 12 Nov 2026 (decision 389): the semantic layer is read on import but not kept live, so a later edit does not flow through.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqSetUploaden"
@@ -2992,7 +3003,7 @@
 				"evidence": "lib/Service/MultiBrandSource.php finds the brands of one source (Tokens Studio $themes, or built CSS with .{key}-theme blocks) and cuts one brand out (enabled and source sets merged in tokenSetOrder, source-only tokens reference-only); the upload lists the brands first and stores the chosen ones together as custom sets linked to their source (MultiBrandImportService, custom_token_sources); POST /settings/tokensets/sources/{id} updates every brand at once, or none; brand picker and Update source in the admin panel (js/admin.js); JS mirror js/lib/multiBrandSource.js held to PHP by one fixture",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-multi-brand-token-source",
+				"change": "openspec/changes/archive/2026-10-02-authoring-multi-brand-token-source",
 				"requirement": [
 					"openspec/specs/multi-brand-token-sources :: The administrator chooses which brands to import",
 					"openspec/specs/multi-brand-token-sources :: A new version of a source updates every brand together"
@@ -3064,7 +3075,7 @@
 				"evidence": "the token source can live in a Git repository as a branding package (lib/Service/BrandingPackageReader.php: bundle.json, fonts/, tokens/<id>.json DTCG sources converted on apply by TokenSetConverterService, REVISION); the deployment syncs the checkout to disk and lib/Service/ConfigSourceService.php applies it, auditing the revision; pull requests are the Git host's, the app itself never talks to Git (by design, openspec/specs/theme-as-code/spec.md)",
 				"origin": "competitor",
 				"owner": "ConductionNL/thematiq",
-				"change": "governance-theme-as-code",
+				"change": "openspec/changes/archive/2026-10-02-governance-theme-as-code",
 				"requirement": [
 					"openspec/specs/theme-as-code :: The server applies the package named in config.php",
 					"openspec/specs/theme-as-code :: A branding package holds the whole house style"
@@ -3132,8 +3143,9 @@
 				"evidence": "lib/Service/BrandFormService.php derives every REQUIRED_TOKENS entry from a primary and a background colour by scripts/mapping/brand-form.json (hover and tints from primary, black or white text by contrast, link only when legible, the rest from the defaults layer); js/lib/brandForm.js mirrors it, parity fixture tests/Unit/fixtures/brand-form-parity.json checked by PHPUnit and vitest; lib/Controller/BrandFormController.php POST /settings/tokensets/from-colours (AuthorizedAdminSetting) stores through CustomTokenSetService::store with theming colours and the logo; Start from your colours section in the Custom token sets block with live preview and contrast readout",
 				"origin": "competitor",
 				"owner": "ConductionNL/thematiq",
-				"change": "authoring-simple-brand-form",
-				"requirement": "openspec/specs/simple-brand-form :: An administrator creates a house style from a short form"
+				"change": "openspec/changes/archive/2026-09-30-authoring-simple-brand-form",
+				"requirement": "openspec/specs/simple-brand-form :: An administrator creates a house style from a short form",
+				"plan": "openspec/changes/brand-form-action-colour"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets, Start from your colours",
 			"evidence": {
@@ -3150,7 +3162,8 @@
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenSets"
-			}
+			},
+			"note": "Follow-up work in brand-form-action-colour (linked 12 Nov 2026, decision 395)."
 		},
 		{
 			"id": "typ-bundled-open-fonts",
@@ -3205,7 +3218,7 @@
 				"evidence": "lib/Service/FontService.php:40 storage is self-hosted, no external CDN, CSP-clean per its own docblock; lib/Controller/FontController.php:199 serve()/:234 css() are same-origin routes (#[PublicPage]); no ContentSecurityPolicy grep hits in lib/AppInfo/Application.php because none is needed: every font byte and stylesheet is served from the app's own /fonts/* routes under the default 'self' CSP",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-font-upload",
+				"change": "openspec/changes/archive/2026-07-23-custom-font-upload",
 				"requirement": [
 					"openspec/specs/custom-fonts :: Self-Hosted CSP-Clean Font Serving",
 					"openspec/specs/claim-accuracy :: Font Delivery Documented as Bundled and Self-Hosted"
@@ -3243,7 +3256,7 @@
 				"evidence": "lib/Controller/FontController.php:105 upload(); templates/settings/admin.php:361-386 #nldesign-custom-fonts form (name, role select body/heading, .woff2 file input, upload button); js/admin.js:4544 POST /settings/fonts/upload",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-font-upload",
+				"change": "openspec/changes/archive/2026-07-23-custom-font-upload",
 				"requirement": "openspec/specs/custom-fonts :: Font Upload (woff2 only, content-validated)"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts, 'Choose font and upload' (admin.php:382)",
@@ -3278,7 +3291,7 @@
 				"evidence": "lib/Service/FontValidator.php enforces WOFF2 format and a size cap; admin.php:366 states 'max 2 MB, 20 fonts max'; FontController.php:105 upload() returns validator errors as a JSON error rather than accepting a bad file",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-font-upload",
+				"change": "openspec/changes/archive/2026-07-23-custom-font-upload",
 				"requirement": "openspec/specs/custom-fonts :: Font Upload (woff2 only, content-validated)"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts upload result (#nldesign-font-upload-result, admin.php:386)",
@@ -3313,7 +3326,7 @@
 				"evidence": "lib/Controller/FontController.php:150 list(), :164 delete(); js/admin.js:4592 GET /settings/fonts, :4667 DELETE /settings/fonts/{id}; rendered into #nldesign-font-list (admin.php:387)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-font-upload",
+				"change": "openspec/changes/archive/2026-07-23-custom-font-upload",
 				"requirement": "openspec/specs/custom-fonts :: Font Management Lifecycle"
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom fonts list (#nldesign-font-list)",
@@ -3331,7 +3344,8 @@
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
-			}
+			},
+			"note": "The listing scenario of Font Management Lifecycle is added in openspec/changes/closing-round-scenarios (12 Nov 2026 coverage audit)."
 		},
 		{
 			"id": "typ-font-login",
@@ -3386,7 +3400,7 @@
 				"evidence": "lib/Controller/SettingsController.php:861 getMarianneEnabled(), :883 setMarianneEnabled(bool); templates/settings/admin.php:122-141 #nldesign-marianne-gate with a license notice (#nldesign-marianne-notice) and an off-by-default checkbox (#nldesign-marianne-enabled); js/admin.js:2149 GET/POST /settings/marianne; lib/Service/CssInjectionService.php:866 only emits the self-hosted Marianne @font-face layer while the flag is '1'",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "marianne-font-restricted",
+				"change": "openspec/changes/archive/2026-07-25-marianne-font-restricted",
 				"requirement": "openspec/specs/marianne-font :: Marianne Activation Requires an Admin Acknowledgement Gate"
 			},
 			"reachedOn": "Settings > Administration > Theming, Marianne licence gate (#nldesign-marianne-gate)",
@@ -3418,14 +3432,14 @@
 			"tokens-studio": "yes",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Service/TokenRegistry.php getTypographyTokens() exposes '--font-face' (font family) as an editable token in the 'typography' tab of the custom-overrides editor; the underlying house-style token sets carry font-size/font-weight tokens too (e.g. css/tokens/conduction.css has --tilburg-typography-font-size-* and --tilburg-typography-font-weight-* used by the utrecht component bridge), so family/size/weight are all token-driven per house style, though only family is exposed in the override editor UI",
+				"evidence": "lib/Service/TokenRegistry.php:451-453 getTypographyTokens() exposes --font-face (font family) and the three weights --font-weight-default, --font-weight-element and --font-weight-heading as editable tokens in the typography tab of the custom-overrides editor; css/systems/nldesign/overrides.css maps them onto the --nldesign-* tokens of the active set; sizes travel as per-set component tokens (for example css/tokens/rijkshuisstijl.css heading sizes), and the body size stays Nextcloud's",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/token-editor-ui",
 				"change": "openspec/changes/house-style-font-size-and-weight",
-				"requirement": "Font family, size and weight come from the house style"
+				"requirement": "openspec/changes/house-style-font-size-and-weight/specs/token-editor-ui :: Font family, size and weight come from the house style"
 			},
-			"reachedOn": "Settings > Administration > Theming, token editor 'Typography' tab (font family); size/weight are per-house-style tokens, not user-editable overrides",
+			"reachedOn": "Settings > Administration > Theming, token editor Typography tab (font family and the three weights); sizes are per-house-style tokens",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Themes/DefaultTheme.php:203-211 exposes --font-face, --default-font-size and --font-weight-default/-element/-heading as CSS variables, but their values are hard-coded; no admin setting or per-style value exists (apps/theming/lib/Controller/ThemingController.php:74-147)",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts ; https://learn.microsoft.com/en-us/sharepoint/dev/declarative-customization/site-theming/sharepoint-site-theming-overview : brand fonts are applied via font packages, but the SharePoint theme JSON schema documented is colour/accent focused (up to 16 accent-and-background pairs), not a unified family+size+weight token set",
@@ -3437,7 +3451,7 @@
 			"providerHow": "read-from-code",
 			"feature": "brand-typography",
 			"featureConfidence": "high",
-			"note": "Family is user-editable via the override editor; size/weight exist as house-style tokens but are not exposed there, so the fuller claim is partly a code-reading inference.",
+			"note": "Family and the three weights are editable in the override editor; sizes come from the house style's own tokens and are not editor overrides, as the requirement in house-style-font-size-and-weight says.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqComponenten"
@@ -3525,7 +3539,7 @@
 				"evidence": "lib/Service/ThemingService.php:233-247 applyImages() writes the token set's logo file into NC core's ImageManager+ThemingDefaults; js/admin.js:1223-1366 computeThemingPlan() reads the token set's manifest theming.logo and diffs it against the current NC logo; js/admin.js:1367-1402 applyThemingPlan() POSTs the diff to /apps/thematiq/settings/theming; lib/Controller/SettingsController.php:399-465 updateThemingValues() calls applyColors/applyImages.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "sync-theming-on-token-change",
+				"change": "openspec/changes/archive/2026-03-06-sync-theming-on-token-change",
 				"requirement": "openspec/specs/theming-sync :: Apply Images to Nextcloud Theming"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown (templates/settings/admin.php:68); picking a set opens an apply dialog (js/admin.js:965-982 change handler -> checkAndShowThemingDialog) that offers the sync",
@@ -3561,7 +3575,7 @@
 				"evidence": "lib/Service/ThemingService.php:189-247 applyColors()/applyImages() include background_color and background image; js/admin.js:1300-1358 computeThemingPlan() diffs background_color and background image the same way as logo.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "sync-theming-on-token-change",
+				"change": "openspec/changes/archive/2026-03-06-sync-theming-on-token-change",
 				"requirement": [
 					"openspec/specs/theming-sync :: Apply Images to Nextcloud Theming",
 					"openspec/specs/theming-sync :: Apply Colors to Nextcloud Theming"
@@ -3600,7 +3614,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "An uploaded core logo wins over the set's logo (REQ-TPLAT-001)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: An uploaded core logo wins over the set's logo (REQ-TPLAT-001)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
 			"evidence": {
@@ -3636,7 +3650,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "The login background is a core image slot (REQ-TPLAT-002)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The login background is a core image slot (REQ-TPLAT-002)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
 			"evidence": {
@@ -3672,7 +3686,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "The favicon is a core image slot the theming sync may fill (REQ-TPLAT-003)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The favicon is a core image slot the theming sync may fill (REQ-TPLAT-003)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
 			"evidence": {
@@ -3814,7 +3828,7 @@
 				"evidence": "templates/settings/admin.php:94-103 renders #nldesign-icon-pack-indicator/#nldesign-icon-pack-value/#nldesign-icon-pack-source; js/admin.js:909-937 updateIconPackIndicator() fills it in and updates it on token-set change; lib/Settings/Admin.php:360 getActiveIconPackIndicator()-equivalent (resolveActiveIconPacks call) supplies the initial-state value server-side.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-switchable-iconography",
+				"change": "openspec/changes/archive/2026-07-25-theme-switchable-iconography",
 				"requirement": "openspec/specs/icon-packs :: Read-Only Admin Indicator for the Active Icon Pack"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Active icon pack' block under the token-set dropdown (templates/settings/admin.php:94)",
@@ -3852,7 +3866,7 @@
 				"evidence": "css/icon-contrast.css forces 'fill:currentColor!important' on '[class*=_appIcon_] svg' (and its children), always injected: lib/Service/CssInjectionService.php:433-436 adds the 'icon-contrast' layer unconditionally for every design system (comment: 'loaded for every design system (not none)'). currentColor adapts to both light and dark surfaces automatically since it inherits the surrounding text colour.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": "openspec/specs/css-architecture :: Layer 7 -- Element-Level Overrides"
 			},
 			"reachedOn": "Every page (the fix is scoped to Nextcloud's own app-management/appstore icon list, class selector '[class*=_appIcon_]')",
@@ -3888,7 +3902,7 @@
 				"evidence": "token-sets.json epe theming.logo_dark img/logos/epe-dark.svg; DarkPaletteService::generateForSet() emits --nldesign-logo-url into css/tokens/dark/epe.css; tests/Unit/Service/ShippedDarkLogoTest.php walks every shipped logo_dark through that path and checks 3:1 on #141414. Partial: shipped sets only, a custom token set upload cannot carry a dark logo yet",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "accessibility-evidence-download-and-dark-logo",
+				"change": "openspec/changes/archive/2026-09-29-accessibility-evidence-download-and-dark-logo",
 				"requirement": "openspec/specs/dark-mode :: Shipped Dark Logo Variants"
 			},
 			"reachedOn": "the Epe token set with dark variants on: the header logo switches to the light-ink variant when the user is in dark mode",
@@ -3954,8 +3968,9 @@
 				"evidence": "lib/Listener/ThemeInjectionListener.php:100-146 handle() listens to BeforeTemplateRenderedEvent for every renderAs (user/guest/public/error) and BeforeLoginTemplateRenderedEvent, injecting CssInjectionService::inject() for the resolved context on every page render; the per-app exclusion guard (AppThemingService) is opt-out, not opt-in, so an app is themed unless explicitly excluded.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
-				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination"
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
+				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination",
+				"plan": "openspec/changes/action-menu-links-keep-text-colour"
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
@@ -3972,7 +3987,8 @@
 			"screen": {
 				"board": null,
 				"reason": "backend: CSS injected on every page render, no screen"
-			}
+			},
+			"note": "Follow-up work in action-menu-links-keep-text-colour (linked 12 Nov 2026, decision 395)."
 		},
 		{
 			"id": "sur-conduction-apps",
@@ -3989,7 +4005,7 @@
 				"evidence": "@conduction/nextcloud-vue src/composables/useScopedTheme.js (origin/development) calls GET /apps/{nldesign|thematiq}/api/token-sets and POST /api/contrast/evaluate (catalog#tokenSets, contrast#evaluate in appinfo/routes.php); CnAppRoot.vue:649,1568 (nextcloud-vue origin/development) imports and instantiates useScopedTheme() unconditionally in the shared app-root component every Conduction Vue app mounts, so the wiring is default, not opt-in per app.",
 				"owner": "ConductionNL/nextcloud-vue",
 				"origin": "own",
-				"change": "app-token-set-selection",
+				"change": "openspec/changes/archive/2026-07-25-app-token-set-selection",
 				"requirement": [
 					"openspec/specs/app-token-set-selection :: Non-Admin Token-Set Catalogue Endpoint",
 					"openspec/specs/app-token-set-selection :: Scoped Application Contract for Base Token CSS"
@@ -4028,7 +4044,7 @@
 				"evidence": "lib/Listener/ThemeInjectionListener.php:113-117 handles BeforeLoginTemplateRenderedEvent by calling cssInjectionService->inject(context: 'login') unconditionally (no per-app guard, since login is never an app page); templates/settings/admin.php:279 '.nl-login__logo' preview element shows the effect is authored for the login screen specifically.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination"
 			},
 			"reachedOn": "the Nextcloud login page, before any session exists",
@@ -4284,7 +4300,7 @@
 				"evidence": "lib/Listener/ThemeInjectionListener.php:166-171 resolveContext() maps TemplateResponse::RENDER_AS_PUBLIC to context 'public', one of CssInjectionService::VALID_CONTEXTS (CssInjectionService.php:74), and inject() runs for it the same as any other context.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination"
 			},
 			"reachedOn": "public share/link pages (RENDER_AS_PUBLIC responses)",
@@ -4319,7 +4335,7 @@
 				"evidence": "lib/Mail/NLDesignEMailTemplate.php implements Nextcloud's mail template contract and is wired via the system config key 'mail_template_class' (lib/Service/EmailThemingService.php:41-68, OCC_ENABLE_COMMAND); templates/settings/admin.php:457-517 renders the 'Email template' section with an enable checkbox (#nldesign-email-theming-enabled) posting to /settings/email-theming (settings#setEmailTheming, appinfo/routes.php:91); resolves the active token set's primary color/text color/logo for the email.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "email-template-theming",
+				"change": "openspec/changes/archive/2026-07-23-email-template-theming",
 				"requirement": [
 					"openspec/specs/email-theming :: NL Design Email Template Class",
 					"openspec/specs/email-theming :: Admin Toggle Writes Mail Template System Config"
@@ -4358,7 +4374,7 @@
 				"evidence": "lib/Service/EmailThemingService.php:79-100 FOOTER_ORG_NAME_KEY/FOOTER_ACCESSIBILITY_URL_KEY/FOOTER_PRIVACY_URL_KEY; lib/Mail/NLDesignEMailTemplate.php:107-139,303-329 addFooter() appends the configured org name + accessibility/privacy URLs to every sent email when at least one value is set; templates/settings/admin.php:496-513 org name/accessibility URL/privacy URL input fields.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "email-template-theming",
+				"change": "openspec/changes/archive/2026-07-23-email-template-theming",
 				"requirement": "openspec/specs/email-theming :: Configurable Compliance Footer"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Email template' section, footer fields (templates/settings/admin.php:496)",
@@ -4466,7 +4482,7 @@
 				"evidence": "css/error-contrast.css exists and is injected unconditionally for every design system (lib/Service/CssInjectionService.php:437-441, right after icon-contrast, same 'loaded for every design system' comment pattern).",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": "openspec/specs/dark-mode :: Error Labels Read on the Error Fill"
 			},
 			"reachedOn": "every themed page",
@@ -4600,7 +4616,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "The workspace domain is server configuration (REQ-TPLAT-004)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The workspace domain is server configuration (REQ-TPLAT-004)"
 			},
 			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
 			"evidence": {
@@ -4636,7 +4652,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "Legal links are core Theming fields (REQ-TPLAT-005)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Legal links are core Theming fields (REQ-TPLAT-005)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
 			"evidence": {
@@ -4672,7 +4688,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "Name, slogan and web address are core Theming fields (REQ-TPLAT-006)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Name, slogan and web address are core Theming fields (REQ-TPLAT-006)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
 			"evidence": {
@@ -4707,7 +4723,7 @@
 				"evidence": "lib/Service/AppThemingService.php:29-34 stores an exclusion list in appconfig 'disabled_apps' (nldesign/settings/theming protected from exclusion); lib/Listener/ThemeInjectionListener.php:175-195 isThemingDisabledForResponse() consults it on every render; templates/settings/admin.php:320-332 'Theming per app' section with #nldesign-app-theming-list checkboxes and #nldesign-app-theming-save, posting to /settings/app-theming (settings#setAppTheming, appinfo/routes.php:47).",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "per-app-theming-toggle",
+				"change": "openspec/changes/archive/2026-06-14-per-app-theming-toggle",
 				"requirement": [
 					"openspec/specs/per-app-theming :: Request-Scoped Boot Guard",
 					"openspec/specs/per-app-theming :: Per-App Toggle Admin UI"
@@ -4745,7 +4761,7 @@
 				"evidence": "lib/Service/GroupThemingService.php:30-50,306-345 stores an ordered '{group, tokenSet}' mapping in appconfig 'group_token_sets' and resolves it per logged-in user in resolveTokenSetForRequestUnsafe(); templates/settings/admin.php:339-357 'Group theming' section with #nldesign-group-theming-list/#nldesign-group-theming-add/#nldesign-group-theming-save, posting to /settings/group-theming (settings#setGroupTheming, appinfo/routes.php:112).",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "per-group-theming",
+				"change": "openspec/changes/archive/2026-07-23-per-group-theming",
 				"requirement": [
 					"openspec/specs/per-group-theming :: Deterministic Resolution Precedence",
 					"openspec/specs/per-group-theming :: Group-to-Token-Set Mapping Storage"
@@ -4784,7 +4800,7 @@
 				"evidence": "lib/Service/GroupThemingService.php:33-38 docblock: 'array order IS priority order (index 0 wins first), so there is no separate priority field that could drift out of sync'; matchFirstEntry() (called from resolveTokenSetForRequestUnsafe(), line ~335) returns the first mapping entry whose group contains the user.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "per-group-theming",
+				"change": "openspec/changes/archive/2026-07-23-per-group-theming",
 				"requirement": "openspec/specs/per-group-theming :: Deterministic Resolution Precedence"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Group theming' section (the list order set there is the priority order)",
@@ -4819,7 +4835,7 @@
 				"evidence": "lib/Service/GroupThemingService.php:316-322: explicit branch '2. No session (login/public/error pages, occ/cron): explicit branch to the instance default ... and it MUST NOT touch IGroupManager' when userSession->getUser() is null.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "per-group-theming",
+				"change": "openspec/changes/archive/2026-07-23-per-group-theming",
 				"requirement": "openspec/specs/per-group-theming :: Deterministic Resolution Precedence"
 			},
 			"reachedOn": "the login page and any unauthenticated request, which always render the instance-default token set regardless of any group mapping",
@@ -4855,7 +4871,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "Each user's theme choice comes from core (REQ-TPLAT-007)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Each user's theme choice comes from core (REQ-TPLAT-007)"
 			},
 			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
 			"evidence": {
@@ -4890,7 +4906,7 @@
 				"evidence": "css/tokens/dark/amsterdam.css:2 '@media (prefers-color-scheme: dark)' generated for every municipality/organisation token set with a dark variant, gated by an instance toggle (lib/Service/CssInjectionService.php:856-863 hasDarkVariantLayer(), appconfig 'dark_variants'); css/systems/high-contrast/theme.css:112-129 and element-overrides.css:69-70 add '@media (prefers-contrast: more)' and '@media (forced-colors: active)' cooperation for the dedicated high-contrast design system.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "dark-mode-token-variants",
+				"change": "openspec/changes/archive/2026-07-23-dark-mode-token-variants",
 				"requirement": [
 					"openspec/specs/dark-mode :: User Theme Choice Is Never Enforced",
 					"openspec/specs/high-contrast-token-set :: Operating-System High-Contrast Cooperation"
@@ -5020,7 +5036,7 @@
 				"evidence": "appinfo/routes.php:27 'catalog#tokenSets' -> GET /api/token-sets is #[NoAdminRequired] (per the route comment at routes.php:22-27); consumed by @conduction/nextcloud-vue's useScopedTheme.js listTokenSets() (origin/development, calls '/apps/{slug}/api/token-sets'), which CnAppRoot.vue mounts by default for every Conduction app.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "app-token-set-selection",
+				"change": "openspec/changes/archive/2026-07-25-app-token-set-selection",
 				"requirement": "openspec/specs/app-token-set-selection :: Non-Admin Token-Set Catalogue Endpoint"
 			},
 			"reachedOn": "machine: any Conduction app's own token-set picker, via useScopedTheme(), with only a logged-in (non-admin) session required",
@@ -5055,7 +5071,7 @@
 				"evidence": "lib/Controller/CustomTokenSetController.php:230-268 persist() calls CustomTokenSetService::store(); lib/Service/CustomTokenSetService.php:230 $warnings = $this->contrast->check(declarations: $declarations); js/admin.js:4015 buildContrastWarningHtml() renders it as a role=alert banner in the upload result block (#nldesign-upload-result, templates/settings/admin.php:183)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "custom-token-set-upload",
+				"change": "openspec/changes/archive/2026-06-14-custom-token-set-upload",
 				"requirement": "openspec/specs/custom-token-sets :: WCAG AA Contrast Warnings on Upload"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload panel (#nldesign-custom-token-sets), warning banner appears after upload",
@@ -5091,7 +5107,7 @@
 				"evidence": "appinfo/routes.php: POST /api/contrast/evaluate -> contrast#evaluate, NoAdminRequired; lib/Controller/ContrastController.php; consumed by @conduction/nextcloud-vue src/composables/useScopedTheme.js:315 evaluateContrast(), which is called from real call sites: apps-extra/bq-audit/src/dialogs/ThemePickerDialog.vue, apps-extra/bq-audit2/src/dialogs/ThemePickerDialog.vue and apps-extra/openbuild/src/dialogs/ThemePickerDialog.vue",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "app-token-set-selection",
+				"change": "openspec/changes/archive/2026-07-25-app-token-set-selection",
 				"requirement": "openspec/specs/app-token-set-selection :: Shared Contrast Evaluation Endpoint"
 			},
 			"reachedOn": "machine: other apps' theme-picker dialogs (bq-audit, bq-audit2, openbuild ThemePickerDialog.vue) via nextcloud-vue's useScopedTheme().evaluateContrast()",
@@ -5127,7 +5143,7 @@
 				"evidence": "lib/Service/ShippedTokenSetAuditService.php auditSet()/renderReport(); tests/Unit/TokenSetContrastAuditTest.php runs ContrastService over every manifest entry in token-sets.json (auditableManifest()) and asserts DOCUMENTED_AA_SETS actually meet AA; this is a normal PHPUnit test so it runs in CI (.github/workflows/code-quality.yml runs the PHPUnit suite) on every push",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "shipped-token-set-contrast-audit",
+				"change": "openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit",
 				"requirement": "openspec/specs/token-set-contrast-audit :: Automated Contrast Audit Over All Shipped Token Sets"
 			},
 			"reachedOn": "machine: CI (PHPUnit suite run by code-quality.yml on every push/PR)",
@@ -5163,7 +5179,7 @@
 				"evidence": "docs/reference/contrast-report.md generated by ShippedTokenSetAuditService::renderReport(), lists every shipped set's primary/text and primary/bg ratios and verdict; docs/ is a Docusaurus site published by .github/workflows/documentation.yml on push to development to https://thematiq.conduction.nl",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "shipped-token-set-contrast-audit",
+				"change": "openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit",
 				"requirement": "openspec/specs/token-set-contrast-audit :: Reproducible Contrast Report"
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/contrast-report (published docs site)",
@@ -5198,7 +5214,7 @@
 				"evidence": "templates/settings/admin.php section #nldesign-compliance-report with JSON and Markdown download links; js/admin.js initComplianceReport() points them at GET /settings/compliance-report?format=json|markdown (SettingsController::complianceReport, AuthorizedAdminSetting); tests/Unit/Templates/AdminComplianceReportTest.php, tests/vitest/admin-compliance-report.spec.js",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "accessibility-evidence-download-and-dark-logo",
+				"change": "openspec/changes/archive/2026-09-29-accessibility-evidence-download-and-dark-logo",
 				"requirement": [
 					"openspec/specs/compliance-evidence :: Download From the Admin Panel",
 					"openspec/specs/compliance-evidence :: Admin Export Endpoint"
@@ -5237,7 +5253,7 @@
 				"evidence": "lib/Command/ComplianceReport.php registered in appinfo/info.xml:235 as OCA\\Thematiq\\Command\\ComplianceReport; occ thematiq:compliance-report --format=json|markdown [--output=path]; reuses ComplianceReportService exclusively so output is byte-identical to the HTTP endpoint per the command's own docblock",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "compliance-evidence-report",
+				"change": "openspec/changes/archive/2026-07-23-compliance-evidence-report",
 				"requirement": "openspec/specs/compliance-evidence :: occ Export Command"
 			},
 			"reachedOn": "occ thematiq:compliance-report",
@@ -5272,7 +5288,7 @@
 				"evidence": "token-sets.json:403-412 'hoog-contrast' set, design_system 'high-contrast', description states WCAG 2.2 AAA (>=7:1); css/tokens/hoog-contrast.css; selectable via #nldesign-token-set-select (templates/settings/admin.php:68) -> POST /apps/thematiq/settings/tokenset (js/admin.js:1143), applied instance-wide through ThemeInjectionListener on every subsequent page",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "high-contrast-token-set",
+				"change": "openspec/changes/archive/2026-07-07-high-contrast-token-set",
 				"requirement": "openspec/specs/high-contrast-token-set :: High-Contrast Design System and Token Set"
 			},
 			"reachedOn": "Settings > Administration > Theming, house style dropdown, select 'Hoog contrast (WCAG AAA)'",
@@ -5307,7 +5323,7 @@
 				"evidence": "css/systems/high-contrast/theme.css:129 @media (forced-colors: active) and css/systems/high-contrast/element-overrides.css:70 same query, both loaded only when the 'hoog-contrast' design system is active; grep -n 'forced-colors' across css/systems/nldesign/*.css and css/admin.css returned nothing, so the default/other design systems carry no forced-colors cooperation",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "high-contrast-token-set",
+				"change": "openspec/changes/archive/2026-07-07-high-contrast-token-set",
 				"requirement": "openspec/specs/high-contrast-token-set :: Operating-System High-Contrast Cooperation"
 			},
 			"reachedOn": "any page, but only once the admin has selected the 'Hoog contrast' token set; not present for the default nldesign/rijkshuisstijl theme or any other set",
@@ -5343,7 +5359,7 @@
 				"evidence": "openspec/specs/dark-mode/spec.md; route GET/POST /settings/dark-variants -> settings#getDarkVariants/setDarkVariants; templates/settings/admin.php:441-449 #nldesign-dark-variants checkbox; js/admin.js:2097 saveDarkVariantsSetting() posts to /apps/thematiq/settings/dark-variants; css/tokens/dark/*.css are the generated variants DarkPaletteService/ThemeInjectionListener swap in",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "dark-mode-token-variants",
+				"change": "openspec/changes/archive/2026-07-23-dark-mode-token-variants",
 				"requirement": [
 					"openspec/specs/dark-mode :: Admin Dark Variants Toggle",
 					"openspec/specs/dark-mode :: Dark Variant Injection"
@@ -5385,7 +5401,7 @@
 				"evidence": "lib/Command/GenerateDarkVariants.php registered in appinfo/info.xml:236; occ thematiq:generate-dark-variants uses DarkPaletteService to write css/tokens/dark/{id}.css for eligible sets at build/install time (never per-request per the command's docblock)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "dark-mode-token-variants",
+				"change": "openspec/changes/archive/2026-07-23-dark-mode-token-variants",
 				"requirement": "openspec/specs/dark-mode :: Generated Dark Variant Files"
 			},
 			"reachedOn": "occ thematiq:generate-dark-variants",
@@ -5458,7 +5474,7 @@
 				"evidence": "css/systems/nldesign/theme.css:1139 @media (prefers-reduced-motion: reduce) removes button/login transitions; css/admin.css:1318 same for the settings page's own controls; css/playground.css:1875 same for the token-set preview widgets, all with transition:none!important; animation:none!important",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-value-types",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-value-types",
 				"requirement": "openspec/specs/token-editor-ui :: Motion tokens are typed and reach every transition"
 			},
 			"reachedOn": "any page (login and app pages) and the theming settings page itself, automatically when the OS/browser reports prefers-reduced-motion",
@@ -5494,7 +5510,7 @@
 				"evidence": "tests/vitest/admin-a11y.spec.js: dedicated keyboard-accessibility suite for the hand-rolled dialog (focus trap, Tab wrap, Escape-closes-and-returns-focus, WCAG 2.4.3/2.1.1 cited in comments at js/admin.js:1943-1945,3597,3842); the one other hand-rolled widget, the per-app theming dropdown (js/admin.js:3491-3600), has its own keydown handler with Escape support (comment at js/admin.js:3597); all other controls on the page are native <select>/<input>/<button>/<textarea> elements",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "admin-panel-keyboard-accessibility",
+				"change": "openspec/changes/archive/2026-10-02-admin-panel-keyboard-accessibility",
 				"requirement": [
 					"openspec/specs/admin-panel-accessibility :: Confirmation Dialogs Are Modal with Focus Management",
 					"openspec/specs/admin-panel-accessibility :: App-Theming Dropdown Exposes Combobox Semantics and Closes on Escape"
@@ -5533,11 +5549,12 @@
 				"evidence": "lib/Service/TokenSetVocabularyAuditService.php audits whether a set defines the full token vocabulary the design system reads; js/admin.js:3981 buildIncompleteWarningHtml() renders an 'Incomplete set' banner (kind==='incomplete') listing the tokens that fall back to Rijkshuisstijl defaults, shown alongside the contrast warnings in #nldesign-upload-result",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "2026-10-09-token-set-vocabulary-audit",
+				"change": "openspec/changes/archive/2026-10-09-token-set-vocabulary-audit",
 				"requirement": [
 					"openspec/specs/token-sets :: Incomplete Sets Are Surfaced In The Admin Dropdown",
 					"openspec/specs/token-sets :: Shipped Token Set Vocabulary Completeness"
-				]
+				],
+				"plan": "openspec/changes/token-set-coverage-next-waves"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {
@@ -5557,7 +5574,8 @@
 					"TqSetUploaden",
 					"TqTheming"
 				]
-			}
+			},
+			"note": "Follow-up work in token-set-coverage-next-waves (linked 12 Nov 2026, decision 395)."
 		},
 		{
 			"id": "acc-block-inaccessible",
@@ -5702,7 +5720,7 @@
 				"owner": "nextcloud/server",
 				"origin": "competitor",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "Theming can be delegated through core's admin delegation (REQ-TPLAT-008)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Theming can be delegated through core's admin delegation (REQ-TPLAT-008)"
 			},
 			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
 			"evidence": {
@@ -5737,7 +5755,7 @@
 				"evidence": "lib/Service/ThemingAuditService.php:189 log()/285 buildEntry() records {ts, actor, action, old, new, changed}; route GET /settings/audit -> audit#list (lib/Controller/AuditController.php); js/admin.js:4720 fetches it and renders into templates/settings/admin.php:553-573 #nldesign-audit-table with Timestamp/User/Action/From/To/Changed columns",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theming-audit-log",
+				"change": "openspec/changes/archive/2026-07-23-theming-audit-log",
 				"requirement": [
 					"openspec/specs/theming-audit :: Append-Only Audit Entries",
 					"openspec/specs/admin-settings :: Theming Audit Log Panel"
@@ -5775,7 +5793,7 @@
 				"evidence": "lib/Service/ThemingAuditService.php:266 exportAll(); route GET /settings/audit/export -> audit#export; templates/settings/admin.php:576 #nldesign-audit-download-btn 'Download full log'; js/admin.js:4740 wires the click to that route",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theming-audit-log",
+				"change": "openspec/changes/archive/2026-07-23-theming-audit-log",
 				"requirement": "openspec/specs/theming-audit :: Admin Audit Endpoints"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Download full log' button",
@@ -5810,7 +5828,7 @@
 				"evidence": "lib/Service/ThemingAuditService.php only exposes log() (append), getRecent() and exportAll() (both read-only); appendLine() (line 471) only ever concatenates onto the stored file ($current . $line) and rotates on size cap, it never truncates/edits an existing entry; grep -n 'function ' on the file shows no update/delete method; no route in appinfo/routes.php targets audit#update or audit#delete",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theming-audit-log",
+				"change": "openspec/changes/archive/2026-07-23-theming-audit-log",
 				"requirement": "openspec/changes/rows-without-a-requirement/specs/theming-audit :: An audit entry cannot be edited or deleted"
 			},
 			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
@@ -5846,7 +5864,7 @@
 				"evidence": "lib/Service/ConfigBundleService.php export()/import of the complete config; routes GET/POST /settings/config/export, /settings/config/import -> configBundle#export/import; templates/settings/admin.php:586-602 #nldesign-config-bundle-download-btn and #nldesign-config-bundle-upload-btn; js/admin.js:4840/4856 wire the download/upload",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-config-portability",
+				"change": "openspec/changes/archive/2026-07-23-theme-config-portability",
 				"requirement": [
 					"openspec/specs/config-portability :: Complete Configuration Bundle",
 					"openspec/specs/config-portability :: All-Or-Nothing Validated Import"
@@ -5884,7 +5902,7 @@
 				"evidence": "lib/Command/ConfigExport.php and lib/Command/ConfigImport.php registered in appinfo/info.xml:237-238; occ thematiq:config:export [file] / thematiq:config:import [file]; ConfigExport's docblock states it reuses ConfigBundleService::export() exclusively so output is byte-identical to the HTTP endpoint",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theme-config-portability",
+				"change": "openspec/changes/archive/2026-07-23-theme-config-portability",
 				"requirement": "openspec/specs/config-portability :: occ Commands For OTAP Automation"
 			},
 			"reachedOn": "occ thematiq:config:export / occ thematiq:config:import",
@@ -5961,7 +5979,7 @@
 				"evidence": "lib/Service/ConfigSourceService.php applies the branding package named in config.php key thematiq.config_source whenever its content hash changes: from lib/Repair/ApplyConfigSource.php (post-migration), lib/BackgroundJob/ConfigSourceJob.php (every 300 s) and occ thematiq:config:apply (lib/Command/ConfigApply.php, non-zero exit on failure); thematiq.config_source_lock makes lib/Middleware/ConfigSourceLockMiddleware.php answer 423 to configuration changes; docs/features/theme-as-code.md has a Helm values and an Argo CD example",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "governance-theme-as-code",
+				"change": "openspec/changes/archive/2026-10-02-governance-theme-as-code",
 				"requirement": "openspec/specs/theme-as-code :: The server applies the package named in config.php"
 			},
 			"reachedOn": "config.php thematiq.config_source, occ thematiq:config:apply, and the configuration bundle block on Settings > Administration > Theming",
@@ -6028,7 +6046,7 @@
 				"owner": "nextcloud/server",
 				"origin": "own",
 				"change": "openspec/changes/platform-properties",
-				"requirement": "thematiq installs and updates from the Nextcloud app store (REQ-TPLAT-009)"
+				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: thematiq installs and updates from the Nextcloud app store (REQ-TPLAT-009)"
 			},
 			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
 			"evidence": {
@@ -6105,7 +6123,8 @@
 				"requirement": [
 					"openspec/specs/shell-catalogue :: A font is redistributable only under a stated licence",
 					"openspec/specs/shell-catalogue :: A logo is redistributable only when the repository says so"
-				]
+				],
+				"plan": "openspec/changes/shipped-set-licences"
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
 			"evidence": {
@@ -6119,7 +6138,7 @@
 			"providerHow": "read-from-code",
 			"feature": "open-source-distribution",
 			"featureConfidence": "medium",
-			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product.",
+			"note": "the information is real and reasonably complete for the bundled fonts (Fira Sans, Inter, Marianne) and the two logo/icon families, but it is spread across three separate docs pages rather than a single consolidated 'licences' page in the product. Follow-up work in shipped-set-licences (linked 12 Nov 2026, decision 395).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
@@ -6215,7 +6234,7 @@
 				"evidence": "appinfo/info.xml registers OCA\\Thematiq\\BackgroundJob\\UpstreamFreshnessJob (daily); templates/settings/admin.php:524-544 checkbox id='nldesign-upstream-freshness-toggle' 'Check daily for upstream token updates (contacts api.github.com)'; js/admin.js:5257-5290 initUpstreamFreshness() POSTs {enabled} to /settings/upstream-freshness on toggle",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "upstream-token-freshness",
+				"change": "openspec/changes/archive/2026-07-23-upstream-token-freshness",
 				"requirement": [
 					"openspec/specs/upstream-freshness :: Daily Freshness Background Job",
 					"openspec/specs/upstream-freshness :: Opt-In Egress With Disclosure"
@@ -6253,7 +6272,7 @@
 				"evidence": "js/admin.js:5197-5218 renders one 'Dismiss' button per upstream notice; js/admin.js:5234-5255 dismissUpstreamNotice() POSTs {setId, version} to /settings/upstream-freshness/dismiss (SettingsController::dismissUpstreamNotice), then reloads the freshness panel",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "upstream-token-freshness",
+				"change": "openspec/changes/archive/2026-07-23-upstream-token-freshness",
 				"requirement": "openspec/specs/upstream-freshness :: Admin Notice Surface With Per-Version Dismissal"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Dismiss' button on an upstream-update notice",
@@ -6288,7 +6307,7 @@
 				"evidence": "templates/settings/admin.php:539 '<p ... id=\"nldesign-upstream-freshness-lastchecked\">'; js/admin.js:5221-5232 loadUpstreamFreshness() GETs /settings/upstream-freshness and renders it via renderUpstreamFreshness(), showing last-checked time and the notices list",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "upstream-token-freshness",
+				"change": "openspec/changes/archive/2026-07-23-upstream-token-freshness",
 				"requirement": "openspec/specs/upstream-freshness :: Admin Notice Surface With Per-Version Dismissal"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'last checked' text and notices list under the upstream-freshness toggle",
@@ -6324,7 +6343,7 @@
 				"evidence": "lib/Service/ThemingService.php:26-28 imports OCA\\Theming\\ImageManager, BackgroundService, ThemingDefaults; applies logo/background/logo_dark and primary_color/background_color (lib/Service/ThemingService.php:127-260) into Nextcloud's own theming app config when a token set is applied and the sync checkbox is on",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "sync-theming-on-token-change",
+				"change": "openspec/changes/archive/2026-03-06-sync-theming-on-token-change",
 				"requirement": [
 					"openspec/specs/theming-sync-dialog :: The Sync Rides On The Apply Confirm",
 					"openspec/specs/theming-sync :: Update Theming API Endpoint"
@@ -6402,7 +6421,7 @@
 				"evidence": "appinfo/info.xml <repair-steps>: MigrateAppConfigKeys, MigrateUserPreferences, MigrateStoredClassNames, MigrateSchemaApplicationId, GenerateDarkVariantsRepairStep, registered under BOTH <post-migration> and <install> (an app-id rename presents to Nextcloud as a fresh install, so <install> is what actually fires); lib/Repair/MigrateAppConfigKeys.php copies nldesign-keyed oc_appconfig rows to thematiq only when thematiq has no value yet, so a real admin's settings are not stranded under the old app id",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "rename-nldesign-to-themiq",
+				"change": "openspec/changes/archive/2026-10-02-rename-nldesign-to-themiq",
 				"requirement": "openspec/specs/app-identity :: Per-instance configuration MUST follow the rename"
 			},
 			"reachedOn": "machine: Nextcloud's own repair-step runner (occ upgrade / app enable), no admin UI action needed",
@@ -6437,7 +6456,7 @@
 				"evidence": "lib/Capabilities.php implements OCP\\Capabilities\\IPublicCapability, docblock states it contributes an 'nldesign' entry to /ocs/v2.php/cloud/capabilities describing active token set, resolved design system, icon pack, WCAG contrast level, logo variants and slogan/menu-label toggles; IPublicCapability (not ICapability) so unauthenticated clients can read it too",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "theming-capability-api",
+				"change": "openspec/changes/archive/2026-07-23-theming-capability-api",
 				"requirement": [
 					"openspec/specs/theming-capability :: Public Theming Capability Registration",
 					"openspec/specs/theming-capability :: Theming Capability Payload"
@@ -6475,7 +6494,7 @@
 				"evidence": "appinfo/routes.php GET /api/token-sets -> catalog#tokenSets, NoAdminRequired; @conduction/nextcloud-vue src/composables/useScopedTheme.js:297-311 listTokenSets() calls it; that composable is used by src/components/CnAppRoot/CnAppRoot.vue:1559 (const scopedTheme = useScopedTheme()), and CnAppRoot is imported by real apps, e.g. apps-extra/bq-audit/src/App.vue and others (grep -rln CnAppRoot */src across apps-extra returned bq-audit, bq-audit2, openbuild and more)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "app-token-set-selection",
+				"change": "openspec/changes/archive/2026-07-25-app-token-set-selection",
 				"requirement": "openspec/specs/app-token-set-selection :: Non-Admin Token-Set Catalogue Endpoint"
 			},
 			"reachedOn": "machine: sibling apps' theme-picker dialogs (e.g. bq-audit/bq-audit2/openbuild ThemePickerDialog.vue) mounted inside CnAppRoot",
@@ -6588,7 +6607,7 @@
 				"evidence": "route GET /api/health -> health#index; lib/AppInfo/Application.php:50-60 docblock: HealthController adopts the OpenRegister AppHost observability engine by composition (ADR-040), resolved by FQCN at dispatch time so OpenRegister stays optional; #[PublicPage]+#[NoCSRFRequired] per the route comment in appinfo/routes.php, contract is {status, app, version, checks}",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "adopt-apphost",
+				"change": "openspec/changes/archive/2026-06-16-adopt-apphost",
 				"requirement": "openspec/specs/prometheus-metrics :: Health Check Endpoint"
 			},
 			"reachedOn": "machine: any monitoring system hitting GET /api/health (public, no auth required)",
@@ -6658,7 +6677,7 @@
 				"evidence": "lib/Listener/ThemeInjectionListener.php injects CSS via OCP\\Util::addStyle()-style stylesheet links on the two render events, not by shipping a JS runtime; the docblock states any listener failure is caught so 'theming is presentation, never a hard dependency'; the only JS in this app (js/admin.js, js/playground.js, js/preview-banner.js) is scoped to the admin settings page and the session preview banner, never loaded on an ordinary page",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "render-event-injection",
+				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
 				"requirement": "openspec/changes/rows-without-a-requirement/specs/css-architecture :: The theme adds no script to an ordinary page"
 			},
 			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
@@ -6723,7 +6742,7 @@
 				"evidence": "lib/Command/ThemeList.php, ThemeGet.php and ThemeSet.php: occ thematiq:theme:list (id, shipped or custom, name), thematiq:theme:get (active set and group mappings in priority order), thematiq:theme:set <id> [--sync-core] [--dry-run] through ActiveTokenSetService::switchTo with audit actor cli, unknown id exits 1, same set writes no audit entry, --sync-core via ScheduledCoreThemingSync; tests/Unit/Command/ThemeCommandsTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "integration-occ-set-theme",
+				"change": "openspec/changes/archive/2026-09-30-integration-occ-set-theme",
 				"requirement": [
 					"openspec/specs/theme-cli :: Operators switch the active token set",
 					"openspec/specs/theme-cli :: Operators list and read token sets"
@@ -6762,7 +6781,7 @@
 				"evidence": "docs/ is a Docusaurus site (docusaurus.config.js url thematiq.conduction.nl) with feature pages under docs/features/*.md and reference pages under docs/reference/*.md (assets, compliance, contrast-report, tokens, mappings, icons, brand-identity, token-audit, development, app-token-scope-contract); .github/workflows/documentation.yml publishes it to a Cloudflare Worker on every push to development, with both thematiq.conduction.nl and the retired nldesign.conduction.nl hostname (301 to the canonical one)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "enhance-docs-website",
+				"change": "openspec/changes/archive/2026-03-02-enhance-docs-website",
 				"requirement": [
 					"openspec/specs/docs-content :: Features overview section",
 					"openspec/specs/docs-content :: Documentation landing page"
@@ -6800,7 +6819,7 @@
 				"evidence": "openspec/specs/lasuite-stack/spec.md:6-16 the app ships a 'lasuite' design system (5 stylesheets: fonts, defaults, brand-override, bridge, element-overrides) whose stated goal is 'a Nextcloud core inside a MijnBureau/EDIC sovereign-workplace bundle shows no visual seam against the surrounding La Suite apps'; token-sets.json has a 'lasuite' entry; openspec/specs/lasuite-parity/spec.md has a visual-regression e2e suite for it",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "lasuite-design-stack",
+				"change": "openspec/changes/archive/2026-07-23-lasuite-design-stack",
 				"requirement": [
 					"openspec/specs/lasuite-stack :: La Suite Design System Bundle",
 					"openspec/specs/lasuite-stack :: Visual Parity Verification"
@@ -7182,7 +7201,7 @@
 				"evidence": "lib/Service/EnvironmentMarkerService.php reads thematiq.environment from config.php (IConfig::getSystemValueString); lib/Listener/ThemeInjectionListener.php calls it before the per-app guard for the login and every template render; js/environment-marker.js + css/environment-marker.css render a role=note stripe with a text label and prefix the title; templates/settings/admin.php #nldesign-environment shows it read-only; ConfigBundleService never exports it",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "governance-environment-marker",
+				"change": "openspec/changes/archive/2026-09-29-governance-environment-marker",
 				"requirement": [
 					"openspec/specs/environment-marker :: Every non-production page is marked",
 					"openspec/specs/environment-marker :: The environment is declared per server"
@@ -7266,7 +7285,7 @@
 				"evidence": "lib/Service/TokenDeprecationService.php records severity (info, warning, critical), a replacement that must exist and a removal date not in the past, never changing a value; lib/Controller/TokenDeprecationController.php on /settings/tokens/deprecations (AuthorizedAdminSetting, token_deprecation_changed audit); GET /api/token-deprecations for signed-in users (CatalogController::deprecations) with due and state; a comment above each deprecated own token in the served stylesheet; badges and the Deprecated tokens list (js/ownTokens.js); Record as deprecations on an upload's notices",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-lifecycle",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-lifecycle",
 				"requirement": [
 					"openspec/specs/token-deprecations :: An administrator deprecates a token",
 					"openspec/specs/token-deprecations :: Consuming apps can read every deprecation"
@@ -7374,7 +7393,7 @@
 				"evidence": "lib/Service/TokenRegistry.php types --animation-quick and --animation-slow as duration and adds --nldesign-animation-easing (easing); lib/Service/TokenValueValidator.php checks 0-5000 ms / 0-5 s and a keyword or cubic-bezier with x in 0..1, 400 on save naming the token; saving a duration also writes the thematiq twin (CustomOverridesService::MOTION_TWINS); defaults.css declares --nldesign-animation-easing: ease and every theme.css transition reads it; editor number plus unit, easing select with a custom curve, and a motion preview that stays still under reduced motion (js/admin.js buildDurationInput, buildEasingInput, buildMotionPreview); repair step MigrateOverrideValueTypes adds the twin to existing overrides",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-value-types",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-value-types",
 				"requirement": "openspec/specs/token-editor-ui :: Motion tokens are typed and reach every transition"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor, Content tab: Animation quick, Animation slow, Animation easing",
@@ -7444,7 +7463,7 @@
 				"evidence": "lib/Service/DesignTokensWriter.php writes any token set as DTCG v2025.10 with colour objects (colorSpace, components, sRGB hex fallback, alpha), dimensions, durations, cubicBezier, fonts, aliases and a cssOnly map; GET /settings/tokensets/{id}/dtcg (DtcgExportController, AuthorizedAdminSetting); the importer converts every DTCG colour space to sRGB (ColorSpaceConverter, CSS Color 4 maths) and reports out-of-gamut colours as adapted; thematiq exports round-trip exactly for all shipped sets (DesignTokensRoundTripTest)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-dtcg-export",
+				"change": "openspec/changes/archive/2026-10-02-authoring-dtcg-export",
 				"requirement": [
 					"openspec/specs/token-set-dtcg-export :: Colours are written as colour objects with a colour space",
 					"openspec/specs/custom-token-sets :: W3C Design Tokens JSON Import"
@@ -7488,7 +7507,7 @@
 				"evidence": "lib/Service/DesignTokensAliasResolver.php:58-102 reports every alias-cycle and alias-target-missing on upload, and js/admin.js:4114 lists them to the admin before the set is accepted",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "dtcg-ingestion-hardening",
+				"change": "openspec/changes/archive/2026-07-23-dtcg-ingestion-hardening",
 				"requirement": [
 					"openspec/specs/custom-token-sets :: DTCG Import Diagnostics",
 					"openspec/specs/custom-token-sets :: DTCG Alias Resolution"
@@ -7529,7 +7548,7 @@
 				"evidence": "lib/Service/TokenReferenceService.php renders every token a set declares or inherits (value, dark-mode value, this set or defaults, what it paints via the bridge stylesheets and TokenRegistry labels, swatch plus value as text) as Markdown or HTML; docs/reference/token-sets/<id>.md for 47 shipped sets plus an index, generated by composer docs:token-reference and guarded by tests/Unit/TokenReferenceDocsTest.php; TokenReferenceController GET /api/token-sets/{id}/reference (NoAdminRequired, 404 unknown); reference and download links next to the dropdown and per custom set",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "catalogue-token-reference-pages",
+				"change": "openspec/changes/archive/2026-09-30-catalogue-token-reference-pages",
 				"requirement": [
 					"openspec/specs/token-reference :: The docs site has a reference page per shipped set",
 					"openspec/specs/token-reference :: Signed-in users read the reference of any available set"
@@ -7633,13 +7652,16 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "every group stays locked to the administrator's choice unless the administrator marks its mapping as delegated (lib/Service/GroupThemingService.php: delegated and allowedTokenSets on an entry, validated); a subadmin of a delegated group picks its set from the allowed list (lib/Service/DelegatedGroupThemingService.php, lib/Controller/MyGroupsController.php #[NoAdminRequired] with a per-group subadmin check through OCP\\Group\\ISubAdmin, audited token_set_changed with the group); lib/Settings/Personal.php shows the choice only to subadmins of a delegated group",
+				"evidence": "every group stays locked to the administrator's choice unless the administrator marks its mapping as delegated (lib/Service/GroupThemingService.php: delegated and allowedTokenSets on an entry, validated); a subadmin of a delegated group picks its set from the allowed list (lib/Service/DelegatedGroupThemingService.php, lib/Controller/MyGroupsController.php #[NoAdminRequired] with a per-group subadmin check through OCP\\Group\\ISubAdmin, audited token_set_changed with the group); lib/Settings/GroupHouseStyle.php (an IDelegatedSettings block in the Theming section of the administration settings) shows the choice only to subadmins of a delegated group, getSection() answers null for everyone else",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "scoping-delegated-group-house-style",
-				"requirement": "An administrator delegates a group mapping; Locking a group back keeps its current set"
+				"change": "openspec/changes/archive/2026-10-02-scoping-delegated-group-house-style",
+				"requirement": [
+					"openspec/specs/per-group-theming :: An administrator delegates a group mapping",
+					"openspec/specs/per-group-theming :: Locking a group back keeps its current set"
+				]
 			},
-			"reachedOn": "Settings > Administration > Theming, Group theming, Subadmins choose; Personal settings, Appearance and accessibility, House style of my groups",
+			"reachedOn": "Settings > Administration > Theming, Group theming, Subadmins choose; Settings > Administration > Theming, House style of my groups (shown only to a subadmin of a delegated group)",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/lib/Controller/ThemingController.php:132-136 disable-user-theming is one instance-wide boolean; grep of apps/theming/lib for group, folder or space scoped branding finds nothing, so there are no spaces with their own branding to lock or free",
 				"m365-branding": "https://www.microsoft.com/microsoft-365/roadmap?id=526794 (launched 2026-02): admins 'enforce consistent branding, apply enterprise themes to individual sites, disable custom branding on specific sites, and audit branding changes'; https://learn.microsoft.com/en-us/powershell/module/microsoft.online.sharepoint.powershell/set-sposite: -DisableSiteBranding",
@@ -7827,7 +7849,7 @@
 				"evidence": "lib/Service/AppBrandService.php maps an installed, themed, unprotected app to a token set and a large and a small logo (app data app-brands/); ThemeInjectionListener passes the app id to CssInjectionService::inject(), which resolves preview, app brand, group, default through GroupThemingService::resolveTokenSetForRequest(appBrandSet) and sets --nldesign-logo-url to the app's logo (small under 1024 px); Brand per app block (js/admin-app-brands.js, lib/Controller/AppBrandController.php, #[AuthorizedAdminSetting]); appBrands in the configuration bundle (version 3); the app name stays Nextcloud's",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "surfaces-per-app-brand",
+				"change": "openspec/changes/archive/2026-10-02-surfaces-per-app-brand",
 				"requirement": [
 					"openspec/specs/per-app-theming :: An administrator gives an app its own brand",
 					"openspec/specs/per-app-theming :: The small logo is used on narrow screens"
@@ -7868,7 +7890,7 @@
 				"evidence": "one house style is held centrally for the whole instance and every app follows it; departments get their own only by mapping a group to another centrally held set (lib/Service/GroupThemingService.php:66 group_token_sets); every setter is admin or delegated only (lib/Controller/SettingsController.php:225-226 #[AuthorizedAdminSetting(Admin::class)] on setTokenSet), so only the brand team edits it",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "per-group-theming",
+				"change": "openspec/changes/archive/2026-07-23-per-group-theming",
 				"requirement": [
 					"openspec/specs/per-group-theming :: Group-to-Token-Set Mapping Storage",
 					"openspec/specs/per-group-theming :: Group Theming Admin Endpoints"
@@ -7909,7 +7931,7 @@
 				"evidence": "lib/Service/BrandingPackageService.php imports and exports a package directory or ZIP holding bundle.json, the font binaries (fonts/<id>.woff2, checked by FontValidator and stored through FontService) and optional DTCG sources, validate-everything-first; occ thematiq:config:export --package and occ thematiq:config:import <dir-or-zip>; applied by itself from config.php by ConfigSourceService",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "governance-theme-as-code",
+				"change": "openspec/changes/archive/2026-10-02-governance-theme-as-code",
 				"requirement": [
 					"openspec/specs/theme-as-code :: A branding package holds the whole house style",
 					"openspec/specs/theme-as-code :: The server applies the package named in config.php"
@@ -7982,7 +8004,7 @@
 				"evidence": "Every brand-layer colour row has a Dark line (js/admin.js buildDarkInput); POST /settings/overrides takes darkOverrides, CustomOverridesService writes them in the two dark scopes (prefers-color-scheme dark and body[data-theme-dark]) and reads them back; an empty one is derived by DarkPaletteService::deriveDarkValue and shown as the placeholder (GET darkDerived); TokenValueTypesTest testOwnDarkValueIsWrittenAndReadBack, testEmptyDarkValueIsDerived",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-value-types",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-value-types",
 				"requirement": "openspec/specs/token-editor-ui :: Each colour token has an optional dark value"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor, the Dark line under each brand colour",
@@ -8023,7 +8045,7 @@
 				"evidence": "lib/Service/OwnTokenService.php stores own tokens under --nldesign-org- (slug rule, duplicate check, value checked by type via TokenValueValidator) in appconfig own_tokens; lib/Controller/OwnTokenController.php list/create/update/delete on /settings/tokens/own (AuthorizedAdminSetting, own_token_changed audit); CustomOverridesService renders them after the editor values without !important, light in :root and dark in both dark scopes, in every set's file; Your own tokens section with an Add a token dialog (js/ownTokens.js); travels in the configuration bundle (ownTokens)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-lifecycle",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-lifecycle",
 				"requirement": "openspec/specs/own-tokens :: An administrator adds an own token from the token editor"
 			},
 			"reachedOn": "Settings > Administration > Theming, under the token editor: Your own tokens",
@@ -8064,7 +8086,7 @@
 				"evidence": "TokenValueValidator accepts #rgba and #rrggbbaa; the colour row has an opacity range and number next to the picker over a checkerboard swatch, joined into 8-digit hex (js/lib/tokenTransforms.js splitAlpha and joinAlpha, parity fixture tests/Unit/fixtures/token-value-grammar.json); ContrastService blends a translucent colour before the ratio; dark variants keep alpha (DarkPaletteService v3); core theming gets the blend over the background, the sync dialog shows the original (CustomTokenSetService::deriveTheming, primary_color_original)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-token-value-types",
+				"change": "openspec/changes/archive/2026-10-02-authoring-token-value-types",
 				"requirement": "openspec/specs/token-editor-ui :: Colour fields accept transparency"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor, the opacity control on each colour row",
@@ -8102,7 +8124,7 @@
 				"evidence": "js/playground.js Your component chip in every tab: HTML and CSS fields drawn in an iframe with sandbox allow-same-origin and its own CSP (js/lib/ownComponentFrame.js), markup cleaned against an allowlist with a removal report (js/lib/markupSanitizer.js), token values copied from the preview container so unsaved edits repaint the frame, a dark switch with the set's dark values (playgroundDarkTokens), a token list filtered to the names the code reads, contrast of text pairs via ContrastService; saved by name in app data (OwnComponentService, /settings/playground/components, admin-only), reopened from #preview={tab}/own-{slug}",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "authoring-own-markup-preview",
+				"change": "openspec/changes/archive/2026-10-02-authoring-own-markup-preview",
 				"requirement": [
 					"openspec/specs/own-component-preview :: The playground previews a builder's own component",
 					"openspec/specs/own-component-preview :: The frame wears the house style, live"
@@ -8126,6 +8148,126 @@
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqEigenComponent"
+			}
+		},
+		{
+			"id": "aut-action-colour",
+			"area": "authoring",
+			"name": "Give the main button of a page its own action colour, apart from the brand primary.",
+			"thematiq": "yes",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "built",
+				"evidence": "css/systems/nldesign/overrides.css:31-44 fills Nextcloud's primary element colour from --nldesign-color-action (with -hover derived by color-mix) when a set declares it, else from the primary; lib/Service/ShellRoleMapper.php has the action and action-deep shell roles; lib/Service/ContrastService.php:145-147 checks the text on the action colour like the text on the primary",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "openspec/changes/action-colour-token",
+				"spec": "openspec/specs/action-colour",
+				"requirement": [
+					"openspec/specs/action-colour :: An imported theme may bring an action colour",
+					"openspec/specs/action-colour :: The action colour reaches the main button and nothing else"
+				],
+				"plan": "openspec/changes/action-colour-token"
+			},
+			"reachedOn": "Settings > Administration > Theming, a token set or uploaded theme that declares --nldesign-color-action",
+			"evidence": {
+				"nextcloud-theming": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"m365-branding": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"opendesk": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"liferay-dxp": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"tokens-studio": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "custom-token-sets",
+			"featureConfidence": "high",
+			"note": "Added on 12 Nov 2026 in the closing round (decision 395): change action-colour-token builds it, its code tasks are ticked and task 6.4, the check on a running instance, is left.",
+			"screen": {
+				"board": null
+			}
+		},
+		{
+			"id": "gov-restricted-set-licence",
+			"area": "governance",
+			"name": "Keep a house style whose licence limits its use off until an administrator confirms the organisation may use it.",
+			"thematiq": "yes",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "built",
+				"evidence": "lib/Service/TokenSetLicenceService.php reads a set's licence and its confirmation; lib/Service/RestrictedSetGate.php mayApply() and assertMayApply() refuse a restricted set until an administrator confirms it (lib/Controller/TokenSetLicenceController.php), and every path that applies a set asks it: ActiveTokenSetService, ThemePreviewService, ScheduledSwitchService, GroupMappingRules, DelegatedGroupThemingService, AppBrandService and RestrictedSetsInBundle in lib/Service/; lib/Repair/RecordRestrictedSetsAwaitingConfirmation.php records sets applied before they were restricted",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "openspec/changes/token-set-licence-gate",
+				"requirement": [
+					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: A restricted set is refused until an administrator confirms it",
+					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: An administrator confirms a restricted set",
+					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: Every path that applies a set asks the same gate"
+				],
+				"plan": "openspec/changes/token-set-licence-gate"
+			},
+			"reachedOn": "Settings > Administration > Theming, the token set picker: a restricted set shows its licence and asks for confirmation",
+			"evidence": {
+				"nextcloud-theming": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"m365-branding": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"opendesk": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"liferay-dxp": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"tokens-studio": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-sets",
+			"featureConfidence": "high",
+			"note": "Added on 12 Nov 2026 in the closing round (decision 395): change token-set-licence-gate builds it; the board (4.6) and the browser check (4.7) are left.",
+			"screen": {
+				"board": "TqTokenSet"
+			}
+		},
+		{
+			"id": "int-shell-tokens",
+			"area": "integration",
+			"name": "Let another product, such as the OpenProject plugin, read the active house style as shell tokens and a logo over HTTP.",
+			"thematiq": "yes",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "built",
+				"evidence": "appinfo/routes.php:46 shellToken#show GET /api/shell-tokens; lib/Service/ShellTokenService.php document() builds the eighteen shell roles and the logo of the active set; lib/Controller/ShellTokenController.php answers with an ETag and an empty 304 when the reader already holds that revision",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"change": "openspec/changes/shell-tokens-endpoint",
+				"requirement": [
+					"openspec/changes/shell-tokens-endpoint/specs/shell-tokens :: Another product reads the active shell tokens",
+					"openspec/changes/shell-tokens-endpoint/specs/shell-tokens :: An unchanged document is answered with 304"
+				],
+				"plan": "openspec/changes/shell-tokens-endpoint"
+			},
+			"reachedOn": "GET /apps/thematiq/api/shell-tokens",
+			"evidence": {
+				"nextcloud-theming": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"m365-branding": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"opendesk": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"liferay-dxp": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it",
+				"tokens-studio": "not checked: unknown: row added on 12 Nov 2026 in the closing round from an open change; this product was not read for it"
+			},
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "app-token-api",
+			"featureConfidence": "high",
+			"note": "Added on 12 Nov 2026 in the closing round (decision 395): change shell-tokens-endpoint builds it; task 5.3, one call against a running instance, is left.",
+			"screen": {
+				"board": null,
+				"reason": "backend: an HTTP document for another product, no thematiq screen"
 			}
 		}
 	],
