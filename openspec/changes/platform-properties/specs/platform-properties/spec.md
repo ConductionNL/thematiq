@@ -78,6 +78,12 @@ The product name, slogan and web address SHALL be set on core's Theming page. th
 - THEN the login page shows no slogan
 - AND core's Theming page still shows "Samen werken"
 
+#### Scenario: Applying a set leaves the name and web address alone
+- GIVEN core holds the name "Werkplek Voorbeeld" and the web address `https://werkplek.example.nl`
+- WHEN the administrator applies another token set and confirms the theming sync
+- THEN every page title still shows "Werkplek Voorbeeld"
+- AND core's Theming page still shows that name and that web address
+
 ### Requirement: Each user's theme choice comes from core (REQ-TPLAT-007)
 
 Each user SHALL choose light, dark or high contrast in core's personal Appearance settings. thematiq SHALL follow that choice: its dark values SHALL apply when the user chose a dark theme, or chose none and the operating system asks for dark. thematiq SHALL NOT add a personal theme picker of its own.

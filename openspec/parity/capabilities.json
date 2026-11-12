@@ -1411,7 +1411,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "medium",
-			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it.",
+			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it. The scenario for adapting a shipped set is added in openspec/changes/closing-round-scenarios (12 Nov 2026 verify round).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
@@ -1489,7 +1489,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue.",
+			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue. The gallery is the route for a province or water board set; the water board scenario is added in openspec/changes/closing-round-scenarios (12 Nov 2026 verify round).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
@@ -2392,8 +2392,7 @@
 			"featureConfidence": "high",
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map (docs/parity-with-thematiq.md): add, never remove. Follow-up work in set-file-keeps-the-dark-block (linked 12 Nov 2026, decision 395).",
 			"screen": {
-				"board": "TqTheming",
-				"note": "board update pending: the OpenProject set file entry next to \"Downloaden als design tokens\" (coverage matrix list (b))"
+				"board": "TqTheming"
 			}
 		},
 		{
@@ -2955,7 +2954,10 @@
 			"note": "Set back to specified on 12 Nov 2026 (decision 389): the semantic layer is read on import but not kept live, so a later edit does not flow through.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
-				"board": "TqSetUploaden"
+				"board": [
+					"TqComponenten",
+					"TqSetUploaden"
+				]
 			}
 		},
 		{
@@ -4080,7 +4082,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/css-architecture",
-				"requirement": "openspec/specs/css-architecture :: Layer 7 -- Element-Level Overrides"
+				"requirement": [
+					"openspec/specs/css-architecture :: Layer 5 -- Theme Element Mapping",
+					"openspec/specs/css-architecture :: Layer 7 -- Element-Level Overrides"
+				]
 			},
 			"reachedOn": "every logged-in page's header and app-navigation bar",
 			"evidence": {
@@ -4131,8 +4136,10 @@
 			"featureConfidence": "high",
 			"note": "Added 2026-10-14 for wave T of the OpenProject plugin parity map: add, never remove. Module paths not checked against a running OpenProject.",
 			"screen": {
-				"board": "openproject/OpGlobalMenu",
-				"note": "the apps list is drawn; the admin block \"OpenProject in the apps menu\" on TqTheming is a pending board update (coverage matrix list (b))"
+				"board": [
+					"openproject/OpGlobalMenu",
+					"TqTheming"
+				]
 			}
 		},
 		{
@@ -4702,7 +4709,7 @@
 			"providerHow": "read-from-code",
 			"feature": "brand-identity",
 			"featureConfidence": "high",
-			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url.",
+			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url. The scenario that applying a set leaves the product name and web address alone is added to REQ-TPLAT-006 in openspec/changes/platform-properties (12 Nov 2026 verify round).",
 			"screen": {
 				"board": null,
 				"reason": "Nextcloud core: name, slogan and URL are core Theming fields, no thematiq screen"
@@ -4927,7 +4934,10 @@
 			"note": "OS-driven dark mode works across every generated municipal/organisation token set; OS-driven high-contrast cooperation is scoped to the dedicated 'high-contrast' design system rather than layered onto every house style.",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
-				"board": "TqDonker"
+				"board": [
+					"TqDonker",
+					"TqTheming"
+				]
 			}
 		},
 		{
@@ -7182,8 +7192,7 @@
 			"originUrl": "https://gitlab.opencode.de/bmi/opendesk/deployment/opendesk/-/blob/v1.18.2/CHANGELOG.md",
 			"note": "Built 2026-10-14 (wave T of the OpenProject plugin parity map). Reopened 2026-10-12 (Ruben): add, never remove. An Android home screen keeps Nextcloud's manifest icon, which the theming app writes from the favicon. Before: decided no 2026-09-28.",
 			"screen": {
-				"board": "TqMerkPerApp",
-				"note": "board update pending: the block \"Mobiel logo en startschermpictogram\" above \"Merk per app\" (coverage matrix list (b))"
+				"board": "TqMerkPerApp"
 			}
 		},
 		{
@@ -7488,7 +7497,8 @@
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
 					"TqTheming",
-					"TqEigenSets"
+					"TqEigenSets",
+					"TqSetUploaden"
 				]
 			}
 		},
@@ -8187,7 +8197,10 @@
 			"featureConfidence": "high",
 			"note": "Added on 12 Nov 2026 in the closing round (decision 395): change action-colour-token builds it, its code tasks are ticked and task 6.4, the check on a running instance, is left.",
 			"screen": {
-				"board": null
+				"board": [
+					"TqComponenten",
+					"TqEigenSets"
+				]
 			}
 		},
 		{
