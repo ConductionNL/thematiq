@@ -2113,6 +2113,19 @@
 		}
 
 		/**
+		 * The selector for the element matching `base` whose data-token attribute is
+		 * `name`, for example `.nldesign-color-picker[data-token="--color-primary"]`.
+		 *
+		 * @param {string} base The class selector of the control.
+		 * @param {string} name The token name the control edits.
+		 * @return {string} The combined selector.
+		 */
+		function tokenSelector(base, name) {
+			var attribute = 'data-token'
+			return base + '[' + attribute + '="' + name + '"]'
+		}
+
+		/**
 		 * Escape a value for HTML text and for a quoted attribute value.
 		 *
 		 * Most call sites put the result inside value="..." or title="...", so
@@ -3651,7 +3664,7 @@
 		function paintSwatches(name, value) {
 			document
 				.querySelectorAll(
-					'.nldesign-color-swatch[data-token="' + name + '"]',
+					tokenSelector('.nldesign-color-swatch', name),
 				)
 				.forEach(function (swatch) {
 					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
@@ -3962,7 +3975,7 @@
 					field.value = String(parts.alpha)
 				})
 			var picker = container.querySelector(
-				'.nldesign-color-picker[data-token="' + name + '"]',
+				tokenSelector('.nldesign-color-picker', name),
 			)
 			if (picker !== null && picker.dataset.format !== 'rgb') {
 				picker.value = parts.hex
@@ -3997,10 +4010,10 @@
 					field.addEventListener('input', function () {
 						var name = field.dataset.token
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						var text = container.querySelector(
-							'.nldesign-color-text[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-text', name),
 						)
 						container
 							.querySelectorAll(
@@ -4037,10 +4050,10 @@
 
 			function durationOf(name) {
 				var number = container.querySelector(
-					'.nldesign-duration-number[data-token="' + name + '"]',
+					tokenSelector('.nldesign-duration-number', name),
 				)
 				var unit = container.querySelector(
-					'.nldesign-duration-unit[data-token="' + name + '"]',
+					tokenSelector('.nldesign-duration-unit', name),
 				)
 				if (number === null || unit === null || number.value.trim() === '') {
 					return
@@ -4062,7 +4075,7 @@
 
 			function easingOf(name) {
 				var select = container.querySelector(
-					'.nldesign-easing-select[data-token="' + name + '"]',
+					tokenSelector('.nldesign-easing-select', name),
 				)
 				if (select === null) {
 					return
@@ -4171,13 +4184,13 @@
 						var name = picker.dataset.token
 						var value = pickerValue(picker)
 						var alpha = container.querySelector(
-							'.nldesign-color-alpha[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-alpha', name),
 						)
 						if (alpha !== null && typeof TT.joinAlpha === 'function') {
 							value = TT.joinAlpha(picker.value, alpha.value)
 						}
 						var textField = container.querySelector(
-							'.nldesign-color-text[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-text', name),
 						)
 						if (textField !== null) {
 							textField.value = value
@@ -4194,7 +4207,7 @@
 						var name = field.dataset.token
 						var value = field.value.trim()
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						if (picker !== null) {
 							syncPicker(picker, value)
@@ -4239,7 +4252,7 @@
 								+ '"]',
 						)
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						if (textField !== null) {
 							textField.value = defaultVal
@@ -5909,7 +5922,7 @@
 			function updateApplyPreview() {
 				changes.forEach(function (change) {
 					var cb = overlay.querySelector(
-						'.nldesign-apply-check[data-token="' + change.name + '"]',
+						tokenSelector('.nldesign-apply-check', change.name),
 					)
 					if (cb !== null && cb.checked === true) {
 						document.documentElement.style.setProperty(

@@ -91,7 +91,14 @@ class TokenSetFontAuditService {
 	/**
 	 * The token a set names its typeface in.
 	 */
-	public const FAMILY_TOKEN = '--nldesign-font-family';
+	public const FAMILY_PROPERTY = '--nldesign-font-family';
+
+	/**
+	 * Former name of FAMILY_PROPERTY, kept for existing callers.
+	 *
+	 * @deprecated Use FAMILY_PROPERTY.
+	 */
+	public const FAMILY_TOKEN = self::FAMILY_PROPERTY;
 
 	/**
 	 * Build the service from its pure collaborator.
@@ -205,7 +212,7 @@ class TokenSetFontAuditService {
 		return [
 			'id' => $id,
 			'family' => $family,
-			'stack' => ($declarations[self::FAMILY_TOKEN] ?? null),
+			'stack' => ($declarations[self::FAMILY_PROPERTY] ?? null),
 			'kind' => $kind,
 			'selfHosted' => $selfHosted,
 			'declared' => $declared,
@@ -250,7 +257,7 @@ class TokenSetFontAuditService {
 	 * @return string|null The family, or null when the set names none.
 	 */
 	private function familyOf(array $declarations): ?string {
-		$stack = ($declarations[self::FAMILY_TOKEN] ?? null);
+		$stack = ($declarations[self::FAMILY_PROPERTY] ?? null);
 		if ($stack === null) {
 			return null;
 		}
