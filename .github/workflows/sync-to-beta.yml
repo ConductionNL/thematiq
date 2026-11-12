@@ -21,8 +21,14 @@ on:
     - cron: "0 6 * * 5"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sync-to-beta:
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ConductionNL/.github/.github/workflows/sync-to-beta.yml@main
     secrets: inherit
 
