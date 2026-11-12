@@ -11,6 +11,7 @@
 - [ ] 2.2 Extend `tests/Unit/Service/ThemingServiceTest.php`: `applyImages()` hands only `logo`, `logoheader`, `favicon` and `background` to core's `ImageManager`, and never `logo_dark` (REQ-TPLAT-002, REQ-TPLAT-003)
 - [ ] 2.3 Extend `tests/Unit/Settings/AdminDelegationTest.php`: `Admin` implements `IDelegatedSettings`, and `getAuthorizedAppConfig()` lists `token_set` and does not list a job-internal key such as an upstream freshness ETag (REQ-TPLAT-008)
 - [ ] 2.4 New `tests/Unit/AppInfo/InfoXmlTest.php`: `appinfo/info.xml` declares `<id>thematiq</id>`, `<licence>EUPL-1.2</licence>`, `<category>customization</category>` and `<nextcloud min-version="32" max-version="35"/>` (REQ-TPLAT-009)
+- [ ] 2.5 Extend `tests/Unit/Service/ThemingServiceTest.php`: `applyColors()` and `applyImages()` never write core's `name`, `url` or `slogan` (REQ-TPLAT-006)
 
 ## 3. Matrix
 - [ ] 3.1 When the tasks are done, archive this change and repoint the nine rows in `openspec/parity/capabilities.json` from `built.change` to `built.spec: openspec/specs/platform-properties`
