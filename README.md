@@ -79,6 +79,29 @@ If you're running in the provided Docker environment:
 docker exec -u 33 nextcloud php occ app:enable nldesign
 ```
 
+### Try it with Docker
+
+The repository builds an evaluation image: the official Nextcloud image with thematiq and OpenRegister installed and enabled. It is meant for trying the app out and for test environments. For production, install the app from the Nextcloud App Store.
+
+```bash
+docker compose -f docker-compose.yml up -d --build
+```
+
+Open http://localhost:8080/apps/thematiq/ and sign in as `admin` with password `admin`. The first start takes a minute or two. Set `NEXTCLOUD_ADMIN_PASSWORD` and `APP_PORT` to change the password and the port; `docker-compose.yml` lists every setting. `docker compose -f docker-compose.yml down -v` removes the stack and its data.
+
+Released versions are published as `ghcr.io/conductionnl/thematiq`, so leaving out `--build` uses the published image.
+
+### Run it on Kubernetes
+
+`charts/thematiq` wraps the official [Nextcloud Helm chart](https://github.com/nextcloud/helm) and runs the same image with PostgreSQL:
+
+```bash
+helm dependency build charts/thematiq
+helm install thematiq charts/thematiq --set nextcloud.nextcloud.host=thematiq.example.org
+```
+
+Change the passwords in `charts/thematiq/values.yaml` before you install it anywhere that matters.
+
 ## Configuration
 
 Navigate to **Settings → Administration → Theming** and find the "Thematiq" section.
