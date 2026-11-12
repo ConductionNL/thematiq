@@ -6,11 +6,17 @@ on:
     paths: ['openspec/**']
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   sync:
     # @main, not @feature/openspec-project-sync — that branch no longer exists
     # on ConductionNL/.github, so GitHub could not resolve the callee and the
     # run failed before any job was created.
+    permissions:
+      issues: write
+      contents: read
     uses: ConductionNL/.github/.github/workflows/openspec-sync.yml@main
     with:
       app-name: thematiq
