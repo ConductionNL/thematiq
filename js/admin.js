@@ -3,6 +3,19 @@
  */
 
 ;(function nldesignAdminInit() {
+	/**
+	 * Replace an element's content with markup built here from escaped values,
+	 * through the inert renderer in js/lib/markupRender.js.
+	 *
+	 * @param {Element} target The element whose children are replaced.
+	 * @param {string} html The markup.
+	 *
+	 * @spec exclude rendering helper; the panels it fills carry their own specs
+	 */
+	function renderMarkup(target, html) {
+		window.NldesignMarkupRender.render(target, html)
+	}
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', nldesignAdminMain)
 	} else {
@@ -2865,10 +2878,12 @@
 				})
 				.catch(function (err) {
 					console.error('Failed to load token editor:', err)
-					container.innerHTML =
+					renderMarkup(
+						container,
 						'<p class="settings-hint">'
 						+ escapeHtml(t('thematiq', 'Could not load token editor.'))
-						+ '</p>'
+						+ '</p>',
+					)
 				})
 		}
 
@@ -2926,7 +2941,8 @@
 				isFirst = false
 			})
 
-			container.innerHTML =
+			renderMarkup(
+				container,
 				''
 				+ '<div class="nldesign-token-editor">'
 				+ '<div class="nldesign-token-editor-header">'
@@ -3017,7 +3033,8 @@
 				+ '</label>'
 				+ '</div>'
 				+ '</div>'
-				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
+				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
+			)
 
 			container.querySelectorAll('.nldesign-tab-btn').forEach(function (btn) {
 				btn.addEventListener('click', function () {
@@ -3255,7 +3272,7 @@
 					state && state.custom !== undefined ? state.custom : null,
 				)
 			})
-			panel.innerHTML = html
+			renderMarkup(panel, html)
 			tokenGroupsBuilt[id] = true
 			wireTokenRows(panel)
 			refreshTokenEditorLocks()
@@ -6267,7 +6284,7 @@
 		// input[data-app-id] per app, checked === themed) is preserved inside the
 		// panel so saveAppTheming() keeps working unchanged.
 		function renderAppThemingList(listEl, apps) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (apps.length === 0) {
 				listEl.textContent = t('thematiq', 'No apps available.')
 				return
@@ -6555,7 +6572,7 @@
 				return
 			}
 
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 
 			if (groupThemingRows.length === 0) {
 				var empty = document.createElement('p')
@@ -7626,7 +7643,7 @@
 				.then(function (res) {
 					if (resultEl !== null) {
 						resultEl.style.display = 'block'
-						resultEl.innerHTML = ''
+						resultEl.replaceChildren()
 					}
 					if (res.status >= 400) {
 						if (resultEl !== null) {
@@ -7816,7 +7833,7 @@
 			cancel.className = 'button nldesign-brand-cancel'
 			cancel.textContent = t('thematiq', 'Cancel')
 			cancel.addEventListener('click', function () {
-				resultEl.innerHTML = ''
+				resultEl.replaceChildren()
 				resultEl.appendChild(
 					document.createTextNode(t('thematiq', 'Nothing was imported.')),
 				)
@@ -8177,7 +8194,7 @@
 		}
 
 		function renderCustomSetList(listEl, sets) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (sets.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8654,7 +8671,7 @@
 		}
 
 		function renderFontList(listEl, fonts) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8795,7 +8812,7 @@
 		}
 
 		function renderAuditMessage(tableBody, message) {
-			tableBody.innerHTML = ''
+			tableBody.replaceChildren()
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
 			cell.colSpan = 7
@@ -8827,7 +8844,7 @@
 		}
 
 		function renderAuditTable(tableBody, entries) {
-			tableBody.innerHTML = ''
+			tableBody.replaceChildren()
 
 			if (entries.length === 0) {
 				renderAuditMessage(
@@ -9298,7 +9315,7 @@
 			}
 
 			function renderList(switches) {
-				list.innerHTML = ''
+				list.replaceChildren()
 				if (!switches || switches.length === 0) {
 					var empty = document.createElement('li')
 					empty.className = 'settings-hint'
@@ -9801,7 +9818,7 @@
 					: t('thematiq', 'Not checked yet.')
 			}
 
-			noticesEl.innerHTML = ''
+			noticesEl.replaceChildren()
 			;(data.notices || []).forEach(function (notice) {
 				var row = document.createElement('div')
 				row.className = 'nldesign-upstream-notice'
@@ -10047,7 +10064,7 @@
 						{ host: data.host },
 					)
 				}
-				list.innerHTML = ''
+				list.replaceChildren()
 				if (data.enabled !== true) {
 					setStatus('')
 					return
