@@ -62,6 +62,8 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CustomTokenSetValidator
  * @uses   \OCA\Thematiq\Service\Exception\GalleryException
  * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
+ * @uses   \OCA\Thematiq\Service\GalleryFile
+ * @uses   \OCA\Thematiq\Service\GallerySetName
  */
 class GalleryInstallGoldenTest extends TestCase {
 

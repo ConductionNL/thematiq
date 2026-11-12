@@ -70,6 +70,8 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\LayoutOptionsService
  * @uses   \OCA\Thematiq\Service\RestrictedSetsInBundle
  * @uses   \OCA\Thematiq\Service\TokenRegistry
+ * @uses   \OCA\Thematiq\Service\BundleValidationRun
+ * @uses   \OCA\Thematiq\Service\ConfigBundleImportReport
  */
 class ConfigBundleImportGoldenTest extends TestCase {
 

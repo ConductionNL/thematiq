@@ -119,6 +119,18 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(LayoutOptionValues::class)]
 #[UsesClass(CssParserService::class)]
 #[UsesClass(CssDeclarationScanner::class)]
+#[UsesClass(\OCA\Thematiq\Command\ThemeSwitch::class)]
+#[UsesClass(\OCA\Thematiq\Service\BundleValidationRun::class)]
+#[UsesClass(\OCA\Thematiq\Service\GroupEntryRun::class)]
+#[UsesClass(\OCA\Thematiq\Service\GroupMappingRules::class)]
+#[UsesClass(\OCA\Thematiq\Service\IndexedJsonManifest::class)]
+#[UsesClass(\OCA\Thematiq\Service\ListedTokenSet::class)]
+#[UsesClass(\OCA\Thematiq\Service\PlannedSwitches::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\LocalFile::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchImportRun::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchImportValidation::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchPlan::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchWindow::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;

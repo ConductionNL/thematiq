@@ -49,6 +49,8 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\AuditAndTranslation
  * @uses   \OCA\Thematiq\Service\BrandFormSources
  * @uses   \OCA\Thematiq\Service\NewCustomTokenSet
+ * @uses   \OCA\Thematiq\Service\BrandColours
+ * @uses   \OCA\Thematiq\Service\BrandPalette
  */
 class BrandFormCreateGoldenTest extends TestCase {
 

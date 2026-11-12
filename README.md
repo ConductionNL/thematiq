@@ -6,6 +6,11 @@
 
 Apply Dutch government design tokens (NL Design System) to your Nextcloud instance with open-source fonts and components.
 
+## Test coverage
+
+<!-- coverage:start -->
+<!-- coverage:end -->
+
 ## Features
 
 - **63 token sets**: Choose from Dutch government design systems, including:

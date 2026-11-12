@@ -45,6 +45,8 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\DarkPins
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\TokenSetManifestFile
  */
 class DarkPaletteGenerateGoldenTest extends TestCase {
 
