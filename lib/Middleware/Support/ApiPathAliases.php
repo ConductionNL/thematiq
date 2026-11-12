@@ -121,9 +121,9 @@ final class ApiPathAliases {
 		}
 
 		$relative = StandardProtocolPaths::appRelative(path: $path);
-		$prefix   = substr($path, 0, (strlen($path) - strlen($relative)));
+		$prefix = substr($path, 0, (strlen($path) - strlen($relative)));
 
-		return $prefix.self::versioned(path: self::renamed(path: $relative));
+		return $prefix . self::versioned(path: self::renamed(path: $relative));
 	}//end successorOf()
 
 	/**
@@ -147,14 +147,14 @@ final class ApiPathAliases {
 		$insertAt = 0;
 		foreach (array_values($routes['routes'] ?? []) as $index => $route) {
 			$declared[self::key(route: $route)] = true;
-			if (str_starts_with('/'.ltrim((string) ($route['url'] ?? ''), '/'), self::VERSION_PREFIX.'/') === true) {
+			if (str_starts_with('/' . ltrim((string)($route['url'] ?? ''), '/'), self::VERSION_PREFIX . '/') === true) {
 				$insertAt = ($index + 1);
 			}
 		}
 
 		$aliases = [];
 		foreach (($routes['routes'] ?? []) as $route) {
-			$url = '/'.ltrim((string) ($route['url'] ?? ''), '/');
+			$url = '/' . ltrim((string)($route['url'] ?? ''), '/');
 			if (self::isDeprecated(path: $url) === false || self::isApiFallback(route: $route) === true) {
 				continue;
 			}
@@ -162,8 +162,8 @@ final class ApiPathAliases {
 			$alias = array_merge(
 				$route,
 				[
-					'url'     => self::versioned(path: self::renamed(path: $url)),
-					'postfix' => ($route['postfix'] ?? '').'v1',
+					'url' => self::versioned(path: self::renamed(path: $url)),
+					'postfix' => ($route['postfix'] ?? '') . 'v1',
 				]
 			);
 			if (isset($declared[self::key(route: $alias)]) === false) {
@@ -171,7 +171,7 @@ final class ApiPathAliases {
 			}
 		}
 
-		$original         = array_values($routes['routes'] ?? []);
+		$original = array_values($routes['routes'] ?? []);
 		$routes['routes'] = array_merge(array_slice($original, 0, $insertAt), $aliases, array_slice($original, $insertAt));
 
 		return $routes;
@@ -191,14 +191,14 @@ final class ApiPathAliases {
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
 	public static function isApiFallback(array $route): bool {
-		$url = '/'.ltrim((string) ($route['url'] ?? ''), '/');
+		$url = '/' . ltrim((string)($route['url'] ?? ''), '/');
 		if (preg_match('#^/api/\{(\w+)\}$#', $url, $match) !== 1) {
 			return false;
 		}
 
-		$requirement = (string) ($route['requirements'][$match[1]] ?? '[^/]+');
+		$requirement = (string)($route['requirements'][$match[1]] ?? '[^/]+');
 
-		return preg_match('#^(?:'.$requirement.')$#', 'a/b') === 1;
+		return preg_match('#^(?:' . $requirement . ')$#', 'a/b') === 1;
 	}//end isApiFallback()
 
 	/**
@@ -245,7 +245,7 @@ final class ApiPathAliases {
 	 * @return string The verb and the path with one leading slash.
 	 */
 	private static function key(array $route): string {
-		return strtoupper((string) ($route['verb'] ?? 'GET')).' /'.ltrim((string) ($route['url'] ?? ''), '/');
+		return strtoupper((string)($route['verb'] ?? 'GET')) . ' /' . ltrim((string)($route['url'] ?? ''), '/');
 	}//end key()
 
 	/**
@@ -256,6 +256,6 @@ final class ApiPathAliases {
 	 * @return string The versioned path.
 	 */
 	private static function versioned(string $path): string {
-		return self::VERSION_PREFIX.substr($path, strlen('/api'));
+		return self::VERSION_PREFIX . substr($path, strlen('/api'));
 	}//end versioned()
 }//end class

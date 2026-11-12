@@ -50,14 +50,14 @@ class OpenApiDocumentTest extends TestCase {
 	public function testTheDocumentMatchesTheRoutes(): void {
 		// Operations marked x-provided-by come from OpenRegister's AppHost route table, which tests may not load.
 		$documented = [];
-		$hosted     = [];
+		$hosted = [];
 		$protocol = [];
 		foreach (self::document()['paths'] as $path => $item) {
 			if (isset($item['servers']) === true) {
 				// A path that implements an external standard keeps its unversioned URL and names that base.
 				$this->assertStringEndsWith(suffix: '/apps/thematiq/api', string: $item['servers'][0]['url']);
-				$this->assertTrue(condition: StandardProtocolPaths::matches(path: '/api'.$path), message: $path.' is not a standard protocol path');
-				$protocol[] = '/api'.self::shape(path: $path);
+				$this->assertTrue(condition: StandardProtocolPaths::matches(path: '/api' . $path), message: $path . ' is not a standard protocol path');
+				$protocol[] = '/api' . self::shape(path: $path);
 				continue;
 			}
 
@@ -67,21 +67,21 @@ class OpenApiDocumentTest extends TestCase {
 				}
 
 				if (($operation['x-provided-by'] ?? null) === 'openregister') {
-					$hosted[] = strtoupper($verb).' '.self::shape(path: '/api/v1'.$path);
+					$hosted[] = strtoupper($verb) . ' ' . self::shape(path: '/api/v1' . $path);
 				} else {
-					$documented[] = strtoupper($verb).' '.self::shape(path: '/api/v1'.$path);
+					$documented[] = strtoupper($verb) . ' ' . self::shape(path: '/api/v1' . $path);
 				}
 			}
 		}
 
-		$routed   = [];
-		$declared = require dirname(__DIR__, 4).'/appinfo/routes.php';
-		$urls     = array_map(static fn (array $route): string => self::shape(path: '/'.ltrim((string) $route['url'], '/')), $declared['routes']);
+		$routed = [];
+		$declared = require dirname(__DIR__, 4) . '/appinfo/routes.php';
+		$urls = array_map(static fn (array $route): string => self::shape(path: '/' . ltrim((string)$route['url'], '/')), $declared['routes']);
 		$this->assertSame(expected: [], actual: array_values(array_diff($protocol, $urls)), message: 'documented protocol paths without a route');
 		foreach ($declared['routes'] as $route) {
-			$url = '/'.ltrim((string) $route['url'], '/');
+			$url = '/' . ltrim((string)$route['url'], '/');
 			if (str_starts_with($url, '/api/v1/') === true && StandardProtocolPaths::matches(path: $url) === false) {
-				$routed[] = strtoupper((string) ($route['verb'] ?? 'GET')).' '.self::shape(path: $url);
+				$routed[] = strtoupper((string)($route['verb'] ?? 'GET')) . ' ' . self::shape(path: $url);
 			}
 		}
 
@@ -98,7 +98,7 @@ class OpenApiDocumentTest extends TestCase {
 	 * @return array<string,mixed>
 	 */
 	private static function document(): array {
-		$document = json_decode((string) file_get_contents(dirname(__DIR__, 4).'/openapi.json'), true);
+		$document = json_decode((string)file_get_contents(dirname(__DIR__, 4) . '/openapi.json'), true);
 		self::assertIsArray(actual: $document);
 
 		return $document;
@@ -112,6 +112,6 @@ class OpenApiDocumentTest extends TestCase {
 	 * @return string The shape of the path.
 	 */
 	private static function shape(string $path): string {
-		return (string) preg_replace('#\{[^}]+\}#', '{}', $path);
+		return (string)preg_replace('#\{[^}]+\}#', '{}', $path);
 	}//end shape()
 }//end class

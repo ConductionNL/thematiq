@@ -39,15 +39,15 @@ class ApiContractMiddlewareTest extends TestCase {
 	/**
 	 * Run the middleware for a request on the given path.
 	 *
-	 * @param string|false $path     The request path info.
-	 * @param Response     $response The controller response.
+	 * @param string|false $path The request path info.
+	 * @param Response $response The controller response.
 	 *
 	 * @return Response The decorated response.
 	 */
 	private function decorate(string|false $path, Response $response): Response {
 		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getPathInfo')->willReturn($path);
-		$request->method('getRequestUri')->willReturn('/index.php'.(string) $path.'?q=1');
+		$request->method('getRequestUri')->willReturn('/index.php' . (string)$path . '?q=1');
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppVersion')->willReturn('1.2.3');
 
@@ -95,11 +95,11 @@ class ApiContractMiddlewareTest extends TestCase {
 		);
 
 		$expected = [
-			'type'   => 'about:blank',
-			'title'  => 'Not Found',
+			'type' => 'about:blank',
+			'title' => 'Not Found',
 			'status' => 404,
 			'detail' => 'Thing not found',
-			'error'  => 'Thing not found',
+			'error' => 'Thing not found',
 		];
 		$this->assertSame(expected: $expected, actual: $response->getData());
 		$this->assertSame(expected: ApiContractMiddleware::PROBLEM_CONTENT_TYPE, actual: $this->headersOf(response: $response)['Content-Type']);
@@ -147,7 +147,7 @@ class ApiContractMiddlewareTest extends TestCase {
 	 */
 	public function testExistingProblemAndEmptyBodies(): void {
 		$problem = ['type' => 'about:blank', 'title' => 'Forbidden', 'status' => 403, 'detail' => 'No access'];
-		$kept    = $this->decorate(path: '/apps/thematiq/api/things', response: new JSONResponse(data: $problem, statusCode: 403));
+		$kept = $this->decorate(path: '/apps/thematiq/api/things', response: new JSONResponse(data: $problem, statusCode: 403));
 		$this->assertSame(expected: $problem, actual: $kept->getData());
 
 		$empty = $this->decorate(path: '/apps/thematiq/api/things', response: new JSONResponse(data: [], statusCode: 500));
@@ -173,7 +173,7 @@ class ApiContractMiddlewareTest extends TestCase {
 	 */
 	public function testUnversionedPathAnnouncesItsSuccessor(): void {
 		$response = $this->decorate(path: '/apps/thematiq/api/things/7/parts', response: new JSONResponse(data: ['id' => 7]));
-		$headers  = $this->headersOf(response: $response);
+		$headers = $this->headersOf(response: $response);
 
 		$this->assertSame(expected: ['id' => 7], actual: $response->getData());
 		$this->assertSame(expected: '@1794441600', actual: $headers['Deprecation']);
@@ -200,7 +200,7 @@ class ApiContractMiddlewareTest extends TestCase {
 	 */
 	public function testStandardProtocolPathIsUntouched(): void {
 		$response = $this->decorate(path: '/apps/thematiq/api/health', response: new JSONResponse(data: ['error' => 'x'], statusCode: 400));
-		$headers  = $this->headersOf(response: $response);
+		$headers = $this->headersOf(response: $response);
 
 		$this->assertSame(expected: ['error' => 'x'], actual: $response->getData());
 		$this->assertArrayNotHasKey(key: 'API-Version', array: $headers);

@@ -50,7 +50,7 @@ class OpenApiController extends Controller {
 	/**
 	 * Constructor.
 	 *
-	 * @param IRequest    $request    The request.
+	 * @param IRequest $request The request.
 	 * @param IAppManager $appManager Resolves the app path and the installed version.
 	 *
 	 * @psalm-suppress PossiblyUnusedMethod Instantiated via Nextcloud dependency injection.
@@ -103,12 +103,12 @@ class OpenApiController extends Controller {
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
 	private function document(): ?stdClass {
-		$path = $this->appManager->getAppPath(appId: Application::APP_ID).'/openapi.json';
+		$path = $this->appManager->getAppPath(appId: Application::APP_ID) . '/openapi.json';
 		if (is_readable($path) === false) {
 			return null;
 		}
 
-		$document = json_decode((string) file_get_contents($path), false);
+		$document = json_decode((string)file_get_contents($path), false);
 		if ($document instanceof stdClass && ($document->info ?? null) instanceof stdClass) {
 			return $document;
 		}

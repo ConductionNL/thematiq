@@ -56,7 +56,7 @@ class OpenApiControllerTest extends TestCase {
 	 */
 	public function testServesTheShippedDocument(): void {
 		$response = $this->controller(appPath: dirname(__DIR__, 3))->show();
-		$document = json_decode((string) json_encode($response->getData()), true);
+		$document = json_decode((string)json_encode($response->getData()), true);
 
 		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(expected: '*', actual: $this->headersOf(response: $response)['Access-Control-Allow-Origin']);
@@ -70,15 +70,15 @@ class OpenApiControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testEmptyObjectsStayObjects(): void {
-		$dir = sys_get_temp_dir().'/openapi-'.uniqid();
+		$dir = sys_get_temp_dir() . '/openapi-' . uniqid();
 		mkdir($dir);
-		file_put_contents($dir.'/openapi.json', '{"openapi":"3.0.3","info":{"version":"0"},"paths":{"/x":{"get":{"security":[{}]}}}}');
+		file_put_contents($dir . '/openapi.json', '{"openapi":"3.0.3","info":{"version":"0"},"paths":{"/x":{"get":{"security":[{}]}}}}');
 
 		$response = $this->controller(appPath: $dir)->show();
-		unlink($dir.'/openapi.json');
+		unlink($dir . '/openapi.json');
 		rmdir($dir);
 
-		$this->assertStringContainsString(needle: '"security":[{}]', haystack: (string) json_encode($response->getData()));
+		$this->assertStringContainsString(needle: '"security":[{}]', haystack: (string)json_encode($response->getData()));
 	}//end testEmptyObjectsStayObjects()
 
 	/**
@@ -87,7 +87,7 @@ class OpenApiControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testMissingDocumentIsNotFound(): void {
-		$response = $this->controller(appPath: sys_get_temp_dir().'/no-such-app-'.uniqid())->show();
+		$response = $this->controller(appPath: sys_get_temp_dir() . '/no-such-app-' . uniqid())->show();
 
 		$this->assertSame(expected: 404, actual: $response->getStatus());
 		$this->assertSame(expected: '*', actual: $this->headersOf(response: $response)['Access-Control-Allow-Origin']);

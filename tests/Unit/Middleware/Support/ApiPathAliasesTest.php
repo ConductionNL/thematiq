@@ -37,19 +37,19 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	public static function successors(): array {
 		return [
-			'api path'         => ['/api/things/7/parts', '/api/v1/things/7/parts'],
-			'request path'     => ['/index.php/apps/thematiq/api/things/7/parts', '/index.php/apps/thematiq/api/v1/things/7/parts'],
-			'already v1'       => ['/api/v1/things/7/parts', null],
+			'api path' => ['/api/things/7/parts', '/api/v1/things/7/parts'],
+			'request path' => ['/index.php/apps/thematiq/api/things/7/parts', '/index.php/apps/thematiq/api/v1/things/7/parts'],
+			'already v1' => ['/api/v1/things/7/parts', null],
 			'versioned family' => ['/api/zgw/zaken/v1/zaken', null],
-			'protocol'         => ['/api/health', null],
-			'page'             => ['/apps/thematiq/things', null],
+			'protocol' => ['/api/health', null],
+			'page' => ['/apps/thematiq/things', null],
 		];
 	}//end successors()
 
 	/**
 	 * Each path has the expected successor.
 	 *
-	 * @param string      $path      The path.
+	 * @param string $path The path.
 	 * @param string|null $successor The expected successor.
 	 *
 	 * @return void
@@ -97,7 +97,7 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	public function testTheApiFallbackHasNoAlias(): void {
 		$fallback = ['name' => 'apiFallback#notFound', 'url' => '/api/{path}', 'verb' => 'GET', 'requirements' => ['path' => '.+']];
-		$slug     = ['name' => 'things#show', 'url' => '/api/{slug}', 'verb' => 'GET'];
+		$slug = ['name' => 'things#show', 'url' => '/api/{slug}', 'verb' => 'GET'];
 
 		$this->assertTrue(condition: ApiPathAliases::isApiFallback(route: $fallback));
 		$this->assertFalse(condition: ApiPathAliases::isApiFallback(route: $slug));
@@ -116,9 +116,9 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	public function testEveryDeprecatedRouteHasAReachableTwin(): void {
 		$routes = self::shippedRoutes();
-		$names  = [];
+		$names = [];
 		foreach ($routes as $route) {
-			$names[] = strtolower($route['name'].($route['postfix'] ?? ''));
+			$names[] = strtolower($route['name'] . ($route['postfix'] ?? ''));
 		}
 
 		$twins = 0;
@@ -128,17 +128,17 @@ class ApiPathAliasesTest extends TestCase {
 				continue;
 			}
 
-			$path   = (string) ApiPathAliases::successorOf(path: $url);
-			$twin   = self::find(routes: $routes, verb: $route['verb'], url: $path, name: $route['name']);
+			$path = (string)ApiPathAliases::successorOf(path: $url);
+			$twin = self::find(routes: $routes, verb: $route['verb'], url: $path, name: $route['name']);
 			$sample = self::sample(route: $route);
-			$this->assertNotNull(actual: $twin, message: $route['verb'].' '.$url.' has no /api/v1/ twin');
+			$this->assertNotNull(actual: $twin, message: $route['verb'] . ' ' . $url . ' has no /api/v1/ twin');
 			$this->assertSame(expected: ($route['requirements'] ?? null), actual: ($twin['requirements'] ?? null));
 			$this->assertSame(expected: ($route['defaults'] ?? null), actual: ($twin['defaults'] ?? null));
 			if ($sample !== null) {
-				$first = self::firstMatch(routes: $routes, verb: $route['verb'], path: (string) ApiPathAliases::successorOf(path: $sample));
+				$first = self::firstMatch(routes: $routes, verb: $route['verb'], path: (string)ApiPathAliases::successorOf(path: $sample));
 				$this->assertTrue(
 					condition: self::isAlias(route: $first),
-					message: $route['verb'].' '.$path.' is answered by '.($first['name'] ?? 'no route').', not by the twin of '.$route['name']
+					message: $route['verb'] . ' ' . $path . ' is answered by ' . ($first['name'] ?? 'no route') . ', not by the twin of ' . $route['name']
 				);
 			}
 
@@ -156,7 +156,7 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	public function testNoAliasTakesARequestMeantForADeclaredVersionedRoute(): void {
 		$routes = self::shippedRoutes();
-		$taken  = [];
+		$taken = [];
 		foreach ($routes as $route) {
 			$sample = self::sample(route: $route);
 			if (str_starts_with(self::url(route: $route), '/api/v1/') === false || self::isAlias(route: $route) === true || $sample === null) {
@@ -165,7 +165,7 @@ class ApiPathAliasesTest extends TestCase {
 
 			$first = self::firstMatch(routes: $routes, verb: $route['verb'], path: $sample);
 			if (self::isAlias(route: $first) === true) {
-				$taken[] = $route['verb'].' '.$sample.' is meant for '.$route['name'].' but the alias of '.$first['name'].' answers it';
+				$taken[] = $route['verb'] . ' ' . $sample . ' is meant for ' . $route['name'] . ' but the alias of ' . $first['name'] . ' answers it';
 			}
 		}
 
@@ -176,9 +176,9 @@ class ApiPathAliasesTest extends TestCase {
 	 * The route registered for a verb and url, preferring the one with the given name.
 	 *
 	 * @param array<int,array<string,mixed>> $routes The routes.
-	 * @param string                         $verb   The verb.
-	 * @param string                         $url    The url.
-	 * @param string                         $name   The preferred route name.
+	 * @param string $verb The verb.
+	 * @param string $url The url.
+	 * @param string $name The preferred route name.
 	 *
 	 * @return array<string,mixed>|null The route, or null when none is registered there.
 	 */
@@ -201,8 +201,8 @@ class ApiPathAliasesTest extends TestCase {
 	 * The first route, in declaration order, that answers a request.
 	 *
 	 * @param array<int,array<string,mixed>> $routes The routes.
-	 * @param string                         $verb   The verb.
-	 * @param string                         $path   The request path.
+	 * @param string $verb The verb.
+	 * @param string $path The request path.
 	 *
 	 * @return array<string,mixed> The route, or an empty array when none answers.
 	 */
@@ -222,7 +222,7 @@ class ApiPathAliasesTest extends TestCase {
 	 * @return array<int,array<string,mixed>>
 	 */
 	private static function shippedRoutes(): array {
-		$declared = require dirname(__DIR__, 4).'/appinfo/routes.php';
+		$declared = require dirname(__DIR__, 4) . '/appinfo/routes.php';
 
 		return $declared['routes'];
 	}//end shippedRoutes()
@@ -235,7 +235,7 @@ class ApiPathAliasesTest extends TestCase {
 	 * @return string The url.
 	 */
 	private static function url(array $route): string {
-		return '/'.ltrim((string) $route['url'], '/');
+		return '/' . ltrim((string)$route['url'], '/');
 	}//end url()
 
 	/**
@@ -247,7 +247,7 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	private static function isAlias(array $route): bool {
 		return $route !== []
-			&& str_ends_with((string) ($route['postfix'] ?? ''), 'v1') === true
+			&& str_ends_with((string)($route['postfix'] ?? ''), 'v1') === true
 			&& str_starts_with(self::url(route: $route), '/api/v1/') === true;
 	}//end isAlias()
 
@@ -260,21 +260,21 @@ class ApiPathAliasesTest extends TestCase {
 	 */
 	private static function pattern(array $route): string {
 		$requirements = ($route['requirements'] ?? []);
-		$defaults     = ($route['defaults'] ?? []);
-		$pattern      = '';
-		foreach ((array) preg_split('#(/?\{\w+\})#', self::url(route: $route), -1, PREG_SPLIT_DELIM_CAPTURE) as $part) {
-			if (preg_match('#^(/?)\{(\w+)\}$#', (string) $part, $match) !== 1) {
-				$pattern .= preg_quote((string) $part, '#');
+		$defaults = ($route['defaults'] ?? []);
+		$pattern = '';
+		foreach ((array)preg_split('#(/?\{\w+\})#', self::url(route: $route), -1, PREG_SPLIT_DELIM_CAPTURE) as $part) {
+			if (preg_match('#^(/?)\{(\w+)\}$#', (string)$part, $match) !== 1) {
+				$pattern .= preg_quote((string)$part, '#');
 				continue;
 			}
 
-			$pattern .= '(?:'.preg_quote($match[1], '#').'(?:'.($requirements[$match[2]] ?? '[^/]+').'))';
+			$pattern .= '(?:' . preg_quote($match[1], '#') . '(?:' . ($requirements[$match[2]] ?? '[^/]+') . '))';
 			if (array_key_exists($match[2], $defaults) === true) {
 				$pattern .= '?';
 			}
 		}
 
-		return '#^'.$pattern.'$#';
+		return '#^' . $pattern . '$#';
 	}//end pattern()
 
 	/**
@@ -288,14 +288,14 @@ class ApiPathAliasesTest extends TestCase {
 		$path = self::url(route: $route);
 		foreach (($route['requirements'] ?? []) as $name => $requirement) {
 			foreach (['sample', '1', 'a-b', 'a.b', 'a/b'] as $value) {
-				if (preg_match('#^(?:'.$requirement.')$#', $value) === 1) {
-					$path = str_replace('{'.$name.'}', $value, $path);
+				if (preg_match('#^(?:' . $requirement . ')$#', $value) === 1) {
+					$path = str_replace('{' . $name . '}', $value, $path);
 					break;
 				}
 			}
 		}
 
-		$path = (string) preg_replace('#\{\w+\}#', 'sample', $path);
+		$path = (string)preg_replace('#\{\w+\}#', 'sample', $path);
 
 		if (preg_match(self::pattern(route: $route), $path) !== 1) {
 			return null;

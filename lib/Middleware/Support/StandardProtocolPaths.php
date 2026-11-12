@@ -51,7 +51,7 @@ final class StandardProtocolPaths {
 	 * @var array<string,non-empty-string>
 	 */
 	public const PATTERNS = [
-		'Health check'       => '#^/api/health$#',
+		'Health check' => '#^/api/health$#',
 		'Prometheus metrics' => '#^/api/metrics$#',
 	];
 
@@ -85,8 +85,8 @@ final class StandardProtocolPaths {
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
 	public static function appRelative(string $path): string {
-		$candidate = '/'.ltrim($path, '/');
-		$rootAt    = strpos($candidate, self::APP_ROOT.'/');
+		$candidate = '/' . ltrim($path, '/');
+		$rootAt = strpos($candidate, self::APP_ROOT . '/');
 		if ($rootAt === false) {
 			return $candidate;
 		}

@@ -103,7 +103,7 @@ class ApiContractMiddleware extends Middleware {
 	/**
 	 * Constructor.
 	 *
-	 * @param IRequest    $request    The incoming request.
+	 * @param IRequest $request The incoming request.
 	 * @param IAppManager $appManager Resolves the installed app version.
 	 *
 	 * @psalm-suppress PossiblyUnusedMethod Instantiated via Nextcloud dependency injection.
@@ -117,9 +117,9 @@ class ApiContractMiddleware extends Middleware {
 	/**
 	 * Add the version header and, for a JSON error, the problem details shape.
 	 *
-	 * @param mixed    $controller The controller that ran.
-	 * @param string   $methodName The method that ran.
-	 * @param Response $response   The controller's response.
+	 * @param mixed $controller The controller that ran.
+	 * @param string $methodName The method that ran.
+	 * @param Response $response The controller's response.
 	 *
 	 * @return Response The same response, decorated.
 	 *
@@ -186,7 +186,7 @@ class ApiContractMiddleware extends Middleware {
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
 	private function announceSuccessor(Response $response): void {
-		$path      = (string) $this->request->getPathInfo();
+		$path = (string)$this->request->getPathInfo();
 		$successor = ApiPathAliases::successorOf(path: $path);
 		if ($successor === null) {
 			return;
@@ -195,7 +195,7 @@ class ApiContractMiddleware extends Middleware {
 		$response->addHeader(name: 'Deprecation', value: ApiPathAliases::DEPRECATED_SINCE);
 		$response->addHeader(
 			name: 'Link',
-			value: '<'.$this->scriptPrefix(pathInfo: $path).$successor.'>; rel="successor-version"'
+			value: '<' . $this->scriptPrefix(pathInfo: $path) . $successor . '>; rel="successor-version"'
 		);
 	}//end announceSuccessor()
 
@@ -207,7 +207,7 @@ class ApiContractMiddleware extends Middleware {
 	 * @return string The prefix, or '' when the URI carries none.
 	 */
 	private function scriptPrefix(string $pathInfo): string {
-		$uri      = $this->request->getRequestUri();
+		$uri = $this->request->getRequestUri();
 		$position = strpos($uri, $pathInfo);
 		if ($pathInfo === '' || $position === false) {
 			return '';
@@ -242,21 +242,21 @@ class ApiContractMiddleware extends Middleware {
 	/**
 	 * The problem details form of an error body, or null when it cannot take that form.
 	 *
-	 * @param mixed $data   The error body.
-	 * @param int   $status The response status.
+	 * @param mixed $data The error body.
+	 * @param int $status The response status.
 	 *
 	 * @return array<array-key,mixed>|null The body with the problem members first, or null.
 	 *
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
-	private function problemFor(mixed $data, int $status): array|null {
+	private function problemFor(mixed $data, int $status): ?array {
 		if (is_array($data) === false || $this->isListBody(data: $data) === true) {
 			return null;
 		}
 
 		$problem = [
-			'type'   => 'about:blank',
-			'title'  => $this->titleOf(status: $status),
+			'type' => 'about:blank',
+			'title' => $this->titleOf(status: $status),
 			'status' => $status,
 		];
 		if ($this->conflicts(problem: $problem, data: $data) === true) {
@@ -300,8 +300,8 @@ class ApiContractMiddleware extends Middleware {
 	/**
 	 * Whether the body already uses a problem member with another value.
 	 *
-	 * @param array<string,mixed>    $problem The problem members.
-	 * @param array<array-key,mixed> $data    The error body.
+	 * @param array<string,mixed> $problem The problem members.
+	 * @param array<array-key,mixed> $data The error body.
 	 *
 	 * @return bool True when rewriting the body would change one of its members.
 	 *
