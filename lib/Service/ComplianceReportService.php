@@ -72,7 +72,7 @@ class ComplianceReportService {
 	 *
 	 * @var string
 	 */
-	private const MAIN_BACKGROUND_TOKEN = '--color-main-background';
+	private const MAIN_BACKGROUND_PROPERTY = '--color-main-background';
 
 	/**
 	 * The honest-scope statement embedded verbatim in every rendered report
@@ -103,21 +103,21 @@ class ComplianceReportService {
 		['fg' => '--color-primary-element-text', 'bg' => '--color-primary-element', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-light-text', 'bg' => '--color-primary-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-element-light-text', 'bg' => '--color-primary-element-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
 		// Non-text / UI-component pairs — 3:1 threshold (SC 1.4.11 / large-text floor of SC 1.4.3).
-		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
 	];
 
 	/**
@@ -409,7 +409,7 @@ class ComplianceReportService {
 	 */
 	private function resolveBackground(string $token, array $context): array {
 		$resolved = $this->resolveColorToken(token: $token, layers: $context['layers']);
-		if ($token === self::MAIN_BACKGROUND_TOKEN) {
+		if ($token === self::MAIN_BACKGROUND_PROPERTY) {
 			$resolved = $this->resolveMainBackground(
 				customOverrides: $context['layers']['customOverrides'],
 				declarations: $context['layers']['declarations'],
@@ -522,8 +522,8 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveMainBackground(array $customOverrides, array $declarations, array $tokenSetMeta): array {
-		if (array_key_exists(self::MAIN_BACKGROUND_TOKEN, $customOverrides) === true) {
-			return ['value' => $customOverrides[self::MAIN_BACKGROUND_TOKEN], 'unresolved' => null];
+		if (array_key_exists(self::MAIN_BACKGROUND_PROPERTY, $customOverrides) === true) {
+			return ['value' => $customOverrides[self::MAIN_BACKGROUND_PROPERTY], 'unresolved' => null];
 		}
 
 		if (array_key_exists('--nldesign-color-background', $declarations) === true) {
