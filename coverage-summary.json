@@ -2,46 +2,46 @@
     "total": {
         "lines": {
             "total": 13818,
-            "covered": 13285,
+            "covered": 13287,
             "skipped": 0,
-            "pct": 96.14
+            "pct": 96.16
         },
         "statements": {
             "total": 13818,
-            "covered": 13285,
+            "covered": 13287,
             "skipped": 0,
-            "pct": 96.14
+            "pct": 96.16
         },
         "functions": {
             "total": 2415,
-            "covered": 2124,
+            "covered": 2125,
             "skipped": 0,
-            "pct": 87.95
+            "pct": 87.99
         }
     },
     "suites": {
         "phpunit": {
             "statements": {
                 "total": 13818,
-                "covered": 13285,
+                "covered": 13287,
                 "skipped": 0,
-                "pct": 96.14
+                "pct": 96.16
             },
             "functions": {
                 "total": 2415,
-                "covered": 2124,
+                "covered": 2125,
                 "skipped": 0,
-                "pct": 87.95
+                "pct": 87.99
             },
             "lines": {
                 "total": 13818,
-                "covered": 13285,
+                "covered": 13287,
                 "skipped": 0,
-                "pct": 96.14
+                "pct": 96.16
             }
         }
     },
-    "measuredAt": "2026-11-12",
-    "commit": "1f89f26c3",
+    "measuredAt": "2026-11-13",
+    "commit": "fcdec6632",
     "generator": "scripts/coverage-publish.php"
 }
