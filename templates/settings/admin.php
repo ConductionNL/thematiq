@@ -39,6 +39,9 @@ script('thematiq', 'lib/appTheming');
 // What syncing Nextcloud's own theming to a set would do
 // (window.NldesignThemingPlan); admin.js shows and applies the plan.
 script('thematiq', 'lib/themingPlan');
+// The inert markup renderer (window.NldesignMarkupRender) admin.js and the
+// playground put their built markup through instead of assigning innerHTML.
+script('thematiq', 'lib/markupRender');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');

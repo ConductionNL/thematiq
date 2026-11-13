@@ -22,6 +22,9 @@ module.exports = {
 		environment: 'node',
 		globals: false,
 		include: ['tests/vitest/**/*.spec.{js,ts}'],
+		// admin.js and playground.js render through window.NldesignMarkupRender,
+		// which the settings page loads before them.
+		setupFiles: ['tests/vitest/support/markupRender.setup.js'],
 		exclude: ['tests/e2e/**', 'tests/integration/**', 'node_modules/**'],
 		// The playground's code editor (src/codeEditor.js) imports
 		// @conduction/nextcloud-vue, whose components import their own .css

@@ -678,6 +678,19 @@
 	}
 
 	/**
+	 * Replace an element's content with specimen markup, through the inert
+	 * renderer in js/lib/markupRender.js.
+	 *
+	 * @param {Element} target The element whose children are replaced.
+	 * @param {string} html The markup.
+	 *
+	 * @spec exclude rendering helper; the panels it fills carry their own specs
+	 */
+	function renderMarkup(target, html) {
+		window.NldesignMarkupRender.render(target, html)
+	}
+
+	/**
 	 * Build an element.
 	 *
 	 * @param {string} tag The tag name.
@@ -1045,7 +1058,7 @@
 	 * @return {void}
 	 */
 	function renderChips(state) {
-		state.chips.innerHTML = ''
+		state.chips.replaceChildren()
 
 		var entries =
 			state.tab === OWN_TAB
@@ -1235,7 +1248,7 @@
 	 */
 	function enterOwn(state, id) {
 		exitComponent(state)
-		state.stage.innerHTML = ''
+		state.stage.replaceChildren()
 		state.stage.removeAttribute('data-thematiq-component')
 		try {
 			buildOwnStage(state, ownById(state, id))
@@ -1244,7 +1257,7 @@
 				'[thematiq] the own component stage could not be built:',
 				error,
 			)
-			state.stage.innerHTML = ''
+			state.stage.replaceChildren()
 			state.stage.appendChild(
 				el(
 					'p',
@@ -2955,7 +2968,7 @@
 	 * @return {void}
 	 */
 	function renderStage(state, component) {
-		state.stage.innerHTML = ''
+		state.stage.replaceChildren()
 
 		// Name the component this stage is drawing, so the theme can reach the
 		// specimen the way it reaches the real thing.
@@ -3030,10 +3043,12 @@
 			// rhythm of the whole thing — the rules between rows, the zebra
 			// against the hover, the spacing of the crumbs.
 			var wide = el('div', 'nldesign-pg-wide')
-			wide.innerHTML =
+			renderMarkup(
+				wide,
 				typeof build === 'function'
 					? build(null, component, versionOf(state, component))
-					: fallbackSample()
+					: fallbackSample(),
+			)
 			scopeSpecimen(wide)
 			ground.appendChild(wide)
 		} else {
@@ -3041,10 +3056,12 @@
 			drawnStates(component).forEach(function (stateDef) {
 				var cell = el('div', 'nldesign-pg-st')
 				var sample = el('div', 'nldesign-pg-sample')
-				sample.innerHTML =
+				renderMarkup(
+					sample,
 					typeof build === 'function'
 						? build(stateDef.id, component)
-						: fallbackSample()
+						: fallbackSample(),
+				)
 				scopeSpecimen(sample)
 				cell.appendChild(sample)
 				// The STATE under the specimen ("hover"), not the label — the
@@ -3761,7 +3778,7 @@
 		var icon = choice.querySelector('.checkbox-content__icon')
 		if (icon !== null) {
 			icon.classList.toggle('checkbox-content__icon--checked', checked)
-			icon.innerHTML = choiceIcon(kind, checked)
+			renderMarkup(icon, choiceIcon(kind, checked))
 			scopeSpecimen(icon)
 		}
 	}
