@@ -2729,6 +2729,44 @@
 			}
 		},
 		{
+			"id": "aut-save-as-new-theme",
+			"area": "authoring",
+			"name": "Save my edits as a new, named theme instead of changing the Nextcloud theme.",
+			"thematiq": "no",
+			"nextcloud-theming": "unknown",
+			"m365-branding": "unknown",
+			"opendesk": "unknown",
+			"liferay-dxp": "unknown",
+			"tokens-studio": "unknown",
+			"built": {
+				"state": "specified",
+				"evidence": "Not built: Save in the token editor always stores edits as overrides on the active base (POST /settings/overrides, lib/Service/CustomOverridesService.php); nothing turns edits into a new custom token set. TqNieuwThema draws the dialog \"Deze wijzigingen bewaren als nieuw thema?\" (decision 406).",
+				"owner": "ConductionNL/thematiq",
+				"origin": "own",
+				"spec": "openspec/specs/custom-token-sets",
+				"requirement": "openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets :: An admin SHALL be able to save edits as a new theme",
+				"plan": "openspec/changes/authoring-save-edits-as-a-new-theme"
+			},
+			"reachedOn": "",
+			"provider": "thematiq",
+			"providerHow": "read-from-code",
+			"feature": "token-editor-ui",
+			"origin": "own-code",
+			"source": "board-canon-2026-11-13",
+			"note": "Added for decision 406 (boards that draw a feature no spec has are canon). Competitor columns not read for this row.",
+			"evidence": {
+				"nextcloud-theming": "not checked: row added on 2026-11-13 from the TqNieuwThema board; this system was not read for it",
+				"m365-branding": "not checked: row added on 2026-11-13 from the TqNieuwThema board; this system was not read for it",
+				"opendesk": "not checked: row added on 2026-11-13 from the TqNieuwThema board; this system was not read for it",
+				"liferay-dxp": "not checked: row added on 2026-11-13 from the TqNieuwThema board; this system was not read for it",
+				"tokens-studio": "not checked: row added on 2026-11-13 from the TqNieuwThema board; this system was not read for it"
+			},
+			"screen": {
+				"canvas": "design-system",
+				"board": "TqNieuwThema"
+			}
+		},
+		{
 			"id": "aut-overrides-import-export",
 			"area": "authoring",
 			"name": "Export your token edits as a file and import them again on another instance.",
