@@ -166,6 +166,59 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	}//end testASetOnADesignSystemSharesTheFileAndStockDoesNotSeeIt()
 
 	/**
+	 * With the shipped `utrecht` set active and one override saved, the
+	 * override wins for that one token, every other token keeps the set's
+	 * value, and the set's own token file is not touched
+	 * (closing-round-scenarios task 1.3, cat-starter-templates).
+	 *
+	 * The cascade is CssInjectionService's: the overrides file loads after the
+	 * set (CssInjectionServiceTest::testCustomOverridesAlwaysLoadedLast), so
+	 * the effective tokens are the set's, replaced by the file's.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testAnOverrideOnUtrechtWinsAndLeavesTheSetAlone(): void {
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode(
+				[
+					['id' => 'nextcloud', 'name' => 'Nextcloud (Base)', 'design_system' => 'none'],
+					['id' => 'utrecht', 'name' => 'Gemeente Utrecht', 'design_system' => 'nldesign'],
+				]
+			)
+		);
+		$this->values['token_set'] = 'utrecht';
+		mkdir($this->appDir . '/css/tokens', 0777, true);
+		$setFile = $this->appDir . '/css/tokens/utrecht.css';
+		copy(__DIR__ . '/../../../css/tokens/utrecht.css', $setFile);
+		$before = hash_file('sha256', $setFile);
+		$setTokens = (new CssParserService())->parseRootBlock((string)file_get_contents($setFile));
+		$this->assertSame(expected: '#24578F', actual: $setTokens['--nldesign-color-primary']);
+
+		try {
+			$this->service->write(tokens: ['--color-primary' => '#7a1f3d']);
+
+			$this->assertSame(expected: ['--color-primary' => '#7a1f3d'], actual: $this->service->read(), message: 'Only the one override is saved.');
+
+			$overridesCss = (string)file_get_contents($this->appDir . '/css/custom-overrides.css');
+			$declared = (new CssParserService())->parseRootBlock($overridesCss);
+			$this->assertSame(expected: ['--color-primary'], actual: array_keys($declared), message: 'The overrides file declares the one token and nothing else.');
+			$this->assertStringContainsString(needle: '--color-primary: #7a1f3d !important;', haystack: $overridesCss, message: 'The override wins over the set.');
+			$this->assertSame(
+				expected: [],
+				actual: array_intersect_key($setTokens, array_diff_key($declared, ['--color-primary' => true])),
+				message: 'No other token of the set is redeclared, so every other token keeps the set value.'
+			);
+			$this->assertSame(expected: $before, actual: hash_file('sha256', $setFile), message: 'utrecht.css is unchanged.');
+		} finally {
+			unlink($setFile);
+			rmdir($this->appDir . '/css/tokens');
+		}
+	}//end testAnOverrideOnUtrechtWinsAndLeavesTheSetAlone()
+
+	/**
 	 * Without a set named, the instance's active set is meant.
 	 *
 	 * @return void
