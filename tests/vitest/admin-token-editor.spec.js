@@ -962,8 +962,9 @@ describe('admin.js token editor', () => {
 			})
 			window.ThematiqPlayground.exportCss.mockReturnValue({
 				css: ':root {\n  --nldesign-font-family: Fira Sans;\n}\n',
-				unexpressed: ['--color-header'],
+				unexpressed: [BUTTON],
 			})
+			answer('POST', '/settings/overrides', 200, { status: 'ok' })
 
 			saveAsNew(dialog, 'OpenWoo')
 			await flush()
@@ -991,7 +992,15 @@ describe('admin.js token editor', () => {
 				designSystem: 'none',
 				captureTheming: true,
 			})
-			expect(toasts()[0]).toContain('--color-header')
+			// The value no token set can hold stays, as an override of the new theme.
+			expect(lastBody('/settings/overrides')).toEqual({
+				overrides: { [BUTTON]: '#aa0000' },
+				tokenSet: 'custom-openwoo',
+			})
+			expect(toasts()).toContain(
+				'These values could not be written into a theme and are kept as overrides instead: '
+					+ BUTTON,
+			)
 
 			expect(saveDialog()).toBeNull()
 			const select = document.getElementById('nldesign-token-set-select')
@@ -1002,6 +1011,45 @@ describe('admin.js token editor', () => {
 			expect(lastBody(COMMIT)).toEqual({ tokenSet: 'custom-openwoo' })
 			expect(toasts()).toContain(
 				'Theme "OpenWoo" created and set as the active theme. Reload the page to see it.',
+			)
+		})
+
+		it('saves no leftovers and lists none when everything fits the set (authoring-save-edits-as-a-new-theme)', async () => {
+			answer('POST', '/settings/tokensets/upload', 200, {
+				id: 'custom-openwoo',
+			})
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			const dialog = await openStockDialog()
+
+			saveAsNew(dialog, 'OpenWoo')
+			await flush()
+
+			expect(sent('/settings/overrides', 'POST')).toHaveLength(0)
+			expect(toasts().join(' ')).not.toContain('kept as overrides')
+		})
+
+		it('says which leftovers were not kept when their save fails', async () => {
+			answer('POST', '/settings/tokensets/upload', 200, {
+				id: 'custom-openwoo',
+			})
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			answer('POST', '/settings/overrides', 400, { error: 'refused' })
+			const dialog = await openStockDialog()
+			window.ThematiqPlayground.exportCss.mockReturnValue({
+				css: ':root {}\n',
+				unexpressed: [FONT, '--never-edited'],
+			})
+
+			saveAsNew(dialog, 'OpenWoo')
+			await flush()
+
+			expect(lastBody('/settings/overrides')).toEqual({
+				overrides: { [FONT]: 'Fira Sans' },
+				tokenSet: 'custom-openwoo',
+			})
+			expect(toasts()).toContain(
+				'These values could not be written into the new theme and were not saved: '
+					+ FONT,
 			)
 		})
 
