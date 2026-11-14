@@ -1167,7 +1167,24 @@ OC.L10N.register(
         "Search by name": "Search by name",
         "{shown} of {total} sets match": "{shown} of {total} sets match",
         "{count} dark values from the file are kept for dark mode.": "{count} dark values from the file are kept for dark mode.",
-        "A dark value in the file is not allowed: %s": "A dark value in the file is not allowed: %s"
+        "A dark value in the file is not allowed: %s": "A dark value in the file is not allowed: %s",
+        "Projects": "Projects",
+        "My page": "My page",
+        "Work packages": "Work packages",
+        "Gantt charts": "Gantt charts",
+        "Boards": "Boards",
+        "Team planners": "Team planners",
+        "Calendars": "Calendars",
+        "Meetings": "Meetings",
+        "News": "News",
+        "OpenProject address": "OpenProject address",
+        "The apps menu lists OpenProject's modules in a section of their own. Leave empty for none.": "The apps menu lists OpenProject's modules in a section of their own. Leave empty for none.",
+        "Save address": "Save address",
+        "Address saved.": "Address saved.",
+        "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
+        "OpenProject in the apps menu": "OpenProject in the apps menu",
+        "Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.": "Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.",
+        "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}"
     },
     "nplurals=2; plural=(n != 1);"
 )
