@@ -2000,4 +2000,32 @@ class CssInjectionServiceTest extends TestCase {
 
 		$service->inject('user');
 	}//end testTheAppMenuLayerIsAskedWithThePagesSet()
+	/**
+	 * With a token set active and no opt-in page feature on, the theme reaches
+	 * the page as stylesheets and style headers only: every emission goes
+	 * through the three style seams, and the class has no call that adds a script.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/css-architecture/spec.md#requirement-the-theme-adds-no-script-to-an-ordinary-page
+	 */
+	public function testAnOrdinaryPageGetsStylesheetsAndHeadersOnly(): void {
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl']);
+		$this->designSystemService->method('getTokenSetMeta')->willReturn(['design_system' => 'nldesign']);
+		$this->designSystemService->method('getDesignSystem')->willReturn(
+			['id' => 'nldesign', 'name' => 'NL Design System', 'description' => '', 'stylesheets' => ['systems/nldesign/defaults', 'systems/nldesign/overrides']]
+		);
+
+		$styleLog = [];
+		$fontLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $fontLog)->inject('user');
+
+		$this->assertContains(needle: 'tokens/rijkshuisstijl', haystack: $styleLog);
+		$this->assertContains(needle: 'systems/nldesign/overrides', haystack: $styleLog);
+
+		$source = (string)file_get_contents((new \ReflectionClass(CssInjectionService::class))->getFileName());
+		foreach (['addScript(', 'addInitScript(', 'addTranslations(', "tag: 'script'", '<script'] as $script) {
+			$this->assertStringNotContainsString(needle: $script, haystack: $source, message: 'the theme layer must not add a script');
+		}
+	}//end testAnOrdinaryPageGetsStylesheetsAndHeadersOnly()
 }//end class

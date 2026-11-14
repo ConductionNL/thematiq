@@ -954,4 +954,34 @@ class ThemingAuditServiceTest extends TestCase {
 		$this->assertArrayNotHasKey(key: 'versionId', array: $entries[0]);
 		$this->assertSame(expected: '1', actual: $this->appConfig['audit_entries_total']);
 	}//end testTheWarningsOfADroppedOrDegradedEntry()
+
+	/**
+	 * An entry cannot be edited or deleted: a later log() leaves the earlier
+	 * line byte for byte as it was, and the class offers no public way to
+	 * change or remove an entry.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-an-audit-entry-cannot-be-edited-or-deleted
+	 */
+	public function testAnEntryCannotBeEditedOrDeleted(): void {
+		$service = $this->makeService(time: 1700000000);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'rijkshuisstijl', 'new' => 'amsterdam']);
+		$first = $this->root->auditFolder->getFile('audit.jsonl')->getContent();
+		$this->assertStringEndsWith(suffix: "\n", string: $first);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'amsterdam', 'new' => 'utrecht']);
+		$both = $this->root->auditFolder->getFile('audit.jsonl')->getContent();
+
+		$this->assertStringStartsWith(prefix: $first, string: $both);
+		$this->assertSame(expected: 2, actual: substr_count($both, "\n"));
+
+		$public = array_map(
+			static fn (\ReflectionMethod $method): string => $method->getName(),
+			(new \ReflectionClass(ThemingAuditService::class))->getMethods(\ReflectionMethod::IS_PUBLIC)
+		);
+		sort($public);
+		$this->assertSame(expected: ['__construct', 'exportAll', 'getRecent', 'log'], actual: $public);
+	}//end testAnEntryCannotBeEditedOrDeleted()
 }//end class
