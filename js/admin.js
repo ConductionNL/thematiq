@@ -5004,7 +5004,7 @@
 			// design system the page was wearing when it was serialised, not
 			// whatever the dropdown says by the time the response lands.
 			var designSystem = currentDesignSystemId()
-
+			var edits = collectSavedAndDirtyOverrides()
 			var result = playground.exportCss(
 				playground.liveTokens(
 					loadInitialState('playgroundExportTokens', {}),
@@ -5012,28 +5012,17 @@
 						return readVar(n, fallback)
 					},
 				),
-				collectSavedAndDirtyOverrides(),
+				edits,
 				loadInitialState('playgroundTokenSources', {}),
 				// Marked in the file too, so the stored theme, downloaded from
 				// the custom set list and uploaded again, comes back the same.
 				designSystem,
 			)
-
 			// An override the exporter could not express is a value the admin
 			// set, saw applied, and would not find in the theme they just saved.
-			// The download path has always said so; this one used to drop them
-			// without a word, which is how a header colour went missing between
-			// the editor and the file.
-			if (result.unexpressed.length > 0) {
-				notify(
-					t(
-						'thematiq',
-						'These values could not be written into a theme and are kept as overrides instead: {names}',
-						{ names: result.unexpressed.join(', ') },
-					),
-				)
-			}
-
+			// It is kept as an override of the new theme once that exists
+			// (authoring-save-edits-as-a-new-theme), and the admin is told which.
+			var leftovers = leftoverOverrides(result.unexpressed, edits)
 			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
 				method: 'POST',
 				headers: {
@@ -5099,10 +5088,89 @@
 					report.done()
 					applyCreatedTokenSet(result.data.id, name, designSystem)
 					rememberCapturedTheming(result.data.id, result.data.theming)
+					keepLeftoversOn(result.data.id, leftovers)
 				})
 				.catch(function (err) {
 					console.error('Error creating the token set:', err)
 					report.fail(t('thematiq', 'The new theme could not be created.'))
+				})
+		}
+
+		/**
+		 * The edits the exporter could not write into a token set, with their
+		 * values: the overrides a new theme keeps beside its set.
+		 *
+		 * @param {Array<string>} names The names the exporter left out.
+		 * @param {Object<string,string>} edits The saved and unsaved edits.
+		 * @return {Object<string,string>} Name => value, for the names that have one.
+		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 */
+		function leftoverOverrides(names, edits) {
+			var leftovers = {}
+			;(names || []).forEach(function (name) {
+				if (typeof edits[name] === 'string' && edits[name] !== '') {
+					leftovers[name] = edits[name]
+				}
+			})
+			return leftovers
+		}
+
+		/**
+		 * Save the values a token set cannot hold as overrides of the new
+		 * theme, and list them to the admin; when there is no theme to keep
+		 * them on, or the save fails, say which values were not kept.
+		 *
+		 * @param {string} id The new token set id.
+		 * @param {Object<string,string>} leftovers Name => value.
+		 * @return {void}
+		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 */
+		function keepLeftoversOn(id, leftovers) {
+			var names = Object.keys(leftovers).join(', ')
+			if (names === '') {
+				return
+			}
+			var notKept = function () {
+				notify(
+					t(
+						'thematiq',
+						'These values could not be written into the new theme and were not saved: {names}',
+						{ names: names },
+					),
+				)
+			}
+			if (typeof id !== 'string' || id === '') {
+				notKept()
+				return
+			}
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ overrides: leftovers, tokenSet: id }),
+			})
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (data) {
+					if (data.status !== 'ok') {
+						notKept()
+						return
+					}
+					notify(
+						t(
+							'thematiq',
+							'These values could not be written into a theme and are kept as overrides instead: {names}',
+							{ names: names },
+						),
+					)
+				})
+				.catch(function (err) {
+					console.error('Error keeping the leftover values:', err)
+					notKept()
 				})
 		}
 

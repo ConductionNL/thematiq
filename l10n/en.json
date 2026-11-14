@@ -1182,7 +1182,8 @@
         "Save address": "Save address",
         "Address saved.": "Address saved.",
         "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
-        "OpenProject in the apps menu": "OpenProject in the apps menu"
+        "OpenProject in the apps menu": "OpenProject in the apps menu",
+        "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}"
     },
     "plurals": {}
 }
