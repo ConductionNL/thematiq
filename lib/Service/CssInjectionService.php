@@ -180,6 +180,8 @@ class CssInjectionService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
 	 * @spec openspec/specs/per-app-theming/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md#requirement-the-theme-reaches-every-page-as-plain-css-variables
+	 * @spec openspec/specs/css-architecture/spec.md#requirement-the-theme-adds-no-script-to-an-ordinary-page
 	 */
 	public function inject(string $context, ?string $appId = null): void {
 		if ($this->isContextThemed(context: $context) === false) {

@@ -492,6 +492,8 @@ class ThemingAuditService {
 	 * @return void
 	 *
 	 * @throws \Throwable Any appdata failure — caught by the caller (log()).
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-an-audit-entry-cannot-be-edited-or-deleted
 	 */
 	private function appendLine(string $line): void {
 		$folder = $this->getAuditFolder();
