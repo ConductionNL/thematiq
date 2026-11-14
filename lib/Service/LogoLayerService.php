@@ -152,20 +152,30 @@ class LogoLayerService {
 	 *                                                                          nothing can be said about the logo (core's logo.svg unresolvable).
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-001
 	 */
 	public function layer(string $tokenSet): ?array {
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
 		// ImageManager accepts; a shipped set's is an .svg. First match wins.
 		$relative = $this->shippedLogo(name: $tokenSet);
-		if ($relative !== null) {
-			return $this->ownLogoLayer(tokenSet: $tokenSet, relative: $relative);
-		}
 
+		// A logo uploaded on core's Theming page wins over the set's own
+		// (REQ-TPLAT-001): core stays the place a logo is uploaded. The set's
+		// watermark and emblem are not a logo and still apply.
 		if ($this->hasUploadedLogo() === true) {
+			$extras = '';
+			if ($relative !== null) {
+				$extras = $this->watermarkDeclaration(tokenSet: $tokenSet) . $this->emblemDeclaration(tokenSet: $tokenSet);
+			}
+
 			return $this->inlineLayer(
 				css: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));'
-					. '--nldesign-logo-filter:none;' . self::HEADER_LOGO_VARIABLES . '}'
+					. '--nldesign-logo-filter:none;' . self::HEADER_LOGO_VARIABLES . $extras . '}'
 			);
+		}
+
+		if ($relative !== null) {
+			return $this->ownLogoLayer(tokenSet: $tokenSet, relative: $relative);
 		}
 
 		return $this->maskedCoreLogoLayer();

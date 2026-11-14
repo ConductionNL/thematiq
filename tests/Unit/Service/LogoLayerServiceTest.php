@@ -96,6 +96,32 @@ final class LogoLayerServiceTest extends TestCase {
 	}//end testASetsOwnLogoWithItsWatermarkAndEmblem()
 
 	/**
+	 * A logo uploaded on core's Theming page wins over the set's own logo; the
+	 * set's watermark and emblem still apply (REQ-TPLAT-001).
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-001
+	 *
+	 * @return void
+	 */
+	public function testAnUploadedCoreLogoWinsOverTheSetsOwnLogo(): void {
+		$files = ['img/logos/b.svg', 'img/logos/b-emblem-grey.svg', 'img/logos/b-emblem.png'];
+		foreach (['logoMime' => 'image/png', 'logoheaderMime' => 'image/svg+xml'] as $key => $mime) {
+			$css = (string)$this->service(files: $files, theming: [$key => $mime])->layer(tokenSet: 'b')['css'];
+
+			$this->assertStringStartsWith(prefix: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));--nldesign-logo-filter:none;', string: $css, message: $key);
+			$this->assertStringNotContainsString(needle: 'url(/u/img/logos/b.svg)', haystack: $css, message: $key);
+			$this->assertStringEndsWith(
+				suffix: ';--nldesign-login-watermark-image:url(/u/img/logos/b-emblem-grey.svg);--nldesign-emblem-url:url(/u/img/logos/b-emblem.png)}',
+				string: $css,
+				message: $key
+			);
+		}
+
+		// Without an upload the set's own logo shows, as before.
+		$this->assertStringContainsString(needle: 'url(/u/img/logos/b.svg)', haystack: (string)$this->service(files: $files)->layer(tokenSet: 'b')['css']);
+	}//end testAnUploadedCoreLogoWinsOverTheSetsOwnLogo()
+
+	/**
 	 * Without a set logo an uploaded logo is shown unfiltered; without either core's logo is masked; without that, nothing.
 	 *
 	 * @return void
