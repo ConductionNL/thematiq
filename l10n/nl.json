@@ -1183,7 +1183,21 @@
         "Address saved.": "Adres opgeslagen.",
         "Enter an http or https address, or leave the field empty.": "Vul een http- of https-adres in, of laat het veld leeg.",
         "OpenProject in the apps menu": "OpenProject in het appmenu",
-        "These values could not be written into the new theme and were not saved: {names}": "Deze waarden passen niet in het nieuwe thema en zijn niet bewaard: {names}"
+        "These values could not be written into the new theme and were not saved: {names}": "Deze waarden passen niet in het nieuwe thema en zijn niet bewaard: {names}",
+        "Font library": "Lettertypebibliotheek",
+        "Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.": "Lettertypen die met de app worden meegeleverd, met de licentie waaronder ze worden geleverd. Wijs er een toe aan broodtekst of koppen zonder een bestand te uploaden. Een lettertype uit de bibliotheek neemt de rol over van een geüpload lettertype.",
+        "Loading font library…": "Lettertypebibliotheek laden…",
+        "No library font is assigned to this role.": "Aan deze rol is geen lettertype uit de bibliotheek toegewezen.",
+        "Could not change the font:": "Kon het lettertype niet wijzigen:",
+        "Could not change the font.": "Kon het lettertype niet wijzigen.",
+        "Failed to load the font library.": "Laden van de lettertypebibliotheek mislukt.",
+        "Font assigned. Reload the page to apply it.": "Lettertype toegewezen. Herlaad de pagina om het toe te passen.",
+        "Font removed from the role. Reload the page to apply it.": "Lettertype van de rol verwijderd. Herlaad de pagina om dit toe te passen.",
+        "Licence": "Licentie",
+        "Stop using for {role}": "Niet meer gebruiken voor {role}",
+        "The app bundles no fonts.": "De app levert geen lettertypen mee.",
+        "Use for body text": "Gebruiken voor broodtekst",
+        "Use for headings": "Gebruiken voor koppen"
     },
     "plurals": {}
 }

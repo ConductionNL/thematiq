@@ -10,7 +10,7 @@
  * No Nextcloud runtime required: it reads token-sets.json and the nldesign
  * overrides stylesheet from the repository.
  *
- * @spec openspec/changes/rows-without-a-requirement/proposal.md
+ * @spec openspec/changes/archive/2026-11-14-rows-without-a-requirement/proposal.md
  */
 
 declare(strict_types=1);

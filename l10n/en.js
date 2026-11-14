@@ -1184,7 +1184,21 @@ OC.L10N.register(
         "Address saved.": "Address saved.",
         "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
         "OpenProject in the apps menu": "OpenProject in the apps menu",
-        "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}"
+        "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}",
+        "Font library": "Font library",
+        "Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.": "Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.",
+        "Loading font library…": "Loading font library…",
+        "No library font is assigned to this role.": "No library font is assigned to this role.",
+        "Could not change the font:": "Could not change the font:",
+        "Could not change the font.": "Could not change the font.",
+        "Failed to load the font library.": "Failed to load the font library.",
+        "Font assigned. Reload the page to apply it.": "Font assigned. Reload the page to apply it.",
+        "Font removed from the role. Reload the page to apply it.": "Font removed from the role. Reload the page to apply it.",
+        "Licence": "Licence",
+        "Stop using for {role}": "Stop using for {role}",
+        "The app bundles no fonts.": "The app bundles no fonts.",
+        "Use for body text": "Use for body text",
+        "Use for headings": "Use for headings"
     },
     "nplurals=2; plural=(n != 1);"
 )
