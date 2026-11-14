@@ -991,6 +991,16 @@
 .nldesign-token-label {
 	font-weight: 600;
 }
+.nldesign-token-resolved {
+	font-size: 11px;
+	color: var(--color-text-maxcontrast);
+	font-family: var(--font-face-monospace, monospace);
+}
+
+.nldesign-token-resolved:empty {
+	display: none;
+}
+
 .nldesign-token-name {
 	font-size: 11px;
 	color: var(--color-text-maxcontrast);

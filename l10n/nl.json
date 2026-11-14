@@ -1182,7 +1182,9 @@
         "Save address": "Adres opslaan",
         "Address saved.": "Adres opgeslagen.",
         "Enter an http or https address, or leave the field empty.": "Vul een http- of https-adres in, of laat het veld leeg.",
-        "OpenProject in the apps menu": "OpenProject in het appmenu"
+        "OpenProject in the apps menu": "OpenProject in het appmenu",
+        "refers to {token}": "verwijst naar {token}",
+        "refers to {token}: {value}": "verwijst naar {token}: {value}"
     },
     "plurals": {}
 }

@@ -463,4 +463,24 @@ describe('admin.js typed token values', () => {
 			).toContain('400ms')
 		})
 	})
+
+	// @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-edit-flows-through-a-reference
+	describe('references', () => {
+		it('shows the value a reference resolves to beside the row, and nothing for a plain value', async () => {
+			document.documentElement.style.setProperty(BUTTON, '#a00078')
+			await mount({ overrides: { [BASE]: 'var(' + BUTTON + ')' } })
+
+			const r = row(BASE)
+			const resolved = r.el.querySelector('[data-token-resolved]')
+			expect(r.text.value).toBe('var(' + BUTTON + ')')
+			expect(resolved.textContent).toBe('refers to ' + BUTTON + ': #a00078')
+
+			type(r.text, '#154273')
+			expect(resolved.textContent).toBe('')
+
+			type(r.text, 'var(' + EASING + ')')
+			expect(resolved.textContent).toBe('refers to ' + EASING)
+			document.documentElement.style.removeProperty(BUTTON)
+		})
+	})
 })
