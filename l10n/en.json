@@ -1182,7 +1182,9 @@
         "Save address": "Save address",
         "Address saved.": "Address saved.",
         "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
-        "OpenProject in the apps menu": "OpenProject in the apps menu"
+        "OpenProject in the apps menu": "OpenProject in the apps menu",
+        "refers to {token}": "refers to {token}",
+        "refers to {token}: {value}": "refers to {token}: {value}"
     },
     "plurals": {}
 }

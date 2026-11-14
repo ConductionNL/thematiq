@@ -202,6 +202,18 @@
 		)
 
 	/**
+	 * The token a value refers to, when it is a reference `var(--nldesign-...)`,
+	 * else null. Mirrors `TokenReference::targetOf()`.
+	 *
+	 * @param {string} value The token value.
+	 * @return {string|null} The referred token's name.
+	 */
+	function referenceTarget(value) {
+		var match = /^var\(\s*(--nldesign-[a-z0-9-]+)\s*\)$/i.exec(String(value).trim())
+		return match === null ? null : match[1].toLowerCase()
+	}
+
+	/**
 	 * Whether a value is valid for its token type. Mirrors `TokenValueValidator::isValid()`;
 	 * both run tests/Unit/fixtures/token-value-grammar.json.
 	 *
@@ -397,6 +409,7 @@
 		TEXT_CONTRAST_TOKENS: TEXT_CONTRAST_TOKENS,
 		textContrastShortfall: textContrastShortfall,
 		isValidTokenValue: isValidTokenValue,
+		referenceTarget: referenceTarget,
 		splitAlpha: splitAlpha,
 		joinAlpha: joinAlpha,
 		darkenHex: darkenHex,

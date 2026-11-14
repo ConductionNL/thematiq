@@ -32,10 +32,12 @@ final class LeafMappingRun {
 	 *
 	 * @param array<string, array<string, mixed>> $leaves The full leaf table (for alias resolution).
 	 * @param DesignTokensMapping $mapping The outcome of the run so far.
+	 * @param array<string, int> $referenceOnly The reference-only paths, as keys: never emitted, so never referred to.
 	 */
 	public function __construct(
 		public readonly array $leaves,
 		public readonly DesignTokensMapping $mapping,
+		public readonly array $referenceOnly = [],
 	) {
 	}//end __construct()
 }//end class
