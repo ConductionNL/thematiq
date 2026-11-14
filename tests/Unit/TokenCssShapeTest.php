@@ -135,4 +135,37 @@ class TokenCssShapeTest extends TestCase {
 			message: 'At least one dark variant is expected to use @media — confirming the exclusion is meaningful, not vacuous.'
 		);
 	}//end testDarkVariantsAreExcludedFromTheContract()
+	/**
+	 * The design system maps the house style's family and weights to Nextcloud's
+	 * variables, and leaves Nextcloud's body size alone (15px).
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-font-family-size-and-weight-come-from-the-house-style
+	 *
+	 * @return void
+	 */
+	public function testTheHouseStyleSetsFamilyAndWeightsButNotTheBodySize(): void {
+		$css = (string)file_get_contents($this->repoRoot() . '/css/systems/nldesign/overrides.css');
+		// Comments say what is left unmapped; only declarations count.
+		$declarations = (string)preg_replace('#/\*.*?\*/#s', '', $css);
+
+		$expected = [
+			'--font-face' => '--nldesign-font-family',
+			'--font-weight-default' => '--nldesign-font-weight-default',
+			'--font-weight-element' => '--nldesign-font-weight-element',
+			'--font-weight-heading' => '--nldesign-font-weight-heading',
+		];
+		foreach ($expected as $nextcloud => $houseStyle) {
+			$this->assertMatchesRegularExpression(
+				pattern: '/(^|[;{\s])' . preg_quote($nextcloud, '/') . '\s*:\s*var\(\s*' . preg_quote($houseStyle, '/') . '\s*[,)]/m',
+				string: $declarations,
+				message: $nextcloud . ' MUST take its value from ' . $houseStyle . '.'
+			);
+		}
+
+		$this->assertDoesNotMatchRegularExpression(
+			pattern: '/(^|[;{\s])--default-font-size\s*:/m',
+			string: $declarations,
+			message: '--default-font-size MUST stay unmapped so body text keeps Nextcloud\'s 15px.'
+		);
+	}//end testTheHouseStyleSetsFamilyAndWeightsButNotTheBodySize()
 }//end class
