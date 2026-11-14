@@ -1,7 +1,7 @@
 # openproject-set-file Specification
 
 ## Purpose
-The OpenProject plugin's set file, both ways. Created by change `openproject-set-file` (archived 2026-10-30 under `openspec/changes/archive/`). Requirements: Any token set can be downloaded as the plugin's set file; The plugin's set file becomes a custom token set.
+The OpenProject plugin's set file, both ways. Created by change `openproject-set-file` (archived 2026-10-30 under `openspec/changes/archive/`); the dark block is kept since change `set-file-keeps-the-dark-block` (archived 2026-11-14). Requirements: Any token set can be downloaded as the plugin's set file; The plugin's set file becomes a custom token set.
 
 ## Requirements
 
@@ -23,13 +23,13 @@ uploaded set MUST name no logo file.
 
 An upload that has an `id`, a `tokens` object and no key outside the set file's keys MUST be read as
 a set file. Each role MUST be stored under the name thematiq's role mapper reads it from, and each
-vocabulary key with `--nldesign-` in front. An unknown role or key, a value that is not text or
-holds a brace, and the dark block MUST be left out and named. Every value MUST still pass the token
-set validator.
+vocabulary key with `--nldesign-` in front. The `dark` block MUST be read as the set's dark values, as
+`dark-colours-from-a-file` says. An unknown role or key, and a value that is not text or holds a brace,
+MUST be left out and named. Every value MUST still pass the token set validator.
 
 #### Scenario: A file the plugin downloads
 @e2e exclude a comparison of parsed files with no page; proven by tests/Unit/Service/OpenProjectSetFileTest.php (testAPluginSetFileKeepsEveryRole, testWhatIsLeftOutIsNamed)
 - GIVEN the set files the plugin writes for `cunningham` and `zuiddrecht`
 - WHEN each is uploaded
 - THEN each role MUST have the plugin's value
-- AND the dark block MUST be named as left out
+- AND the dark block MUST be kept as the set's dark values, not named as left out
