@@ -2367,7 +2367,7 @@
 			"tokens-studio": "no",
 			"built": {
 				"state": "built",
-				"evidence": "lib/Controller/OpenProjectSetFileController.php export() at GET /settings/tokensets/{id}/set-file writes OpenProjectSetFileWriter::setFile(); lib/Service/OpenProjectSetFile.php reads an uploaded set file in TokenSetConverterService::convert(); tests/Unit/Service/OpenProjectSetFileTest.php",
+				"evidence": "lib/Controller/OpenProjectSetFileController.php export() at GET /settings/tokensets/{id}/set-file writes OpenProjectSetFileWriter::setFile(); lib/Service/OpenProjectSetFile.php reads an uploaded set file in TokenSetConverterService::convert(); tests/Unit/Service/OpenProjectSetFileTest.php (testWhatIsLeftOutIsNamed keeps the dark block, change archive/2026-11-14-set-file-keeps-the-dark-block)",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-10-30-openproject-set-file",
@@ -2375,8 +2375,7 @@
 				"requirement": [
 					"openspec/specs/openproject-set-file :: Any token set can be downloaded as the plugin's set file",
 					"openspec/specs/openproject-set-file :: The plugin's set file becomes a custom token set"
-				],
-				"plan": "openspec/changes/set-file-keeps-the-dark-block"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming, format list next to 'Download as design tokens'; Custom token sets upload",
 			"evidence": {
