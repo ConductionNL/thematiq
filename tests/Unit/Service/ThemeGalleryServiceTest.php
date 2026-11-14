@@ -267,6 +267,43 @@ class ThemeGalleryServiceTest extends TestCase {
 	}//end testInvalidEntriesAreNotListed()
 
 	/**
+	 * A water board's set is listed exactly like a province's: the index has no
+	 * kind of organisation, so nothing about a waterschap keeps it out
+	 * (closing-round-scenarios task 1.4, cat-provincial-sets).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testAWaterBoardEntryIsListedLikeAProvinceEntry(): void {
+		$this->appConfig['gallery_enabled'] = 'yes';
+		$waterBoard = self::entry(
+			overrides: [
+				'id' => 'waterschap-rivierenland',
+				'name' => 'Waterschap Rivierenland',
+				'organisation' => 'Waterschap Rivierenland',
+				'description' => 'The house style of the water board.',
+				'sourceUrl' => 'https://github.com/example/rivierenland-tokens',
+				'fileUrl' => 'https://gallery.example.nl/sets/waterschap-rivierenland.css',
+				'sha256' => str_repeat('b', 64),
+			]
+		);
+		$this->serve(entries: [self::entry(), $waterBoard]);
+
+		$entries = $this->service()->browse()['entries'];
+		$byId = array_column($entries, null, 'id');
+
+		$this->assertSame(expected: ['provincie-utrecht', 'waterschap-rivierenland'], actual: array_column($entries, 'id'));
+		$this->assertSame(
+			expected: array_keys($byId['provincie-utrecht']),
+			actual: array_keys($byId['waterschap-rivierenland']),
+			message: 'A water board entry carries the same fields as a province entry.'
+		);
+		$this->assertSame(expected: 'Waterschap Rivierenland', actual: $byId['waterschap-rivierenland']['organisation']);
+		$this->assertSame(expected: 'Waterschap Rivierenland', actual: $this->service()->findEntry(galleryId: 'waterschap-rivierenland')['name']);
+	}//end testAWaterBoardEntryIsListedLikeAProvinceEntry()
+
+	/**
 	 * An index larger than the cap is not read and not cached.
 	 *
 	 * @return void

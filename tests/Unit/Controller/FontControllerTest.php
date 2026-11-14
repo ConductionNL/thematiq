@@ -246,6 +246,55 @@ class FontControllerTest extends TestCase {
 	}//end testListReturnsFonts()
 
 	/**
+	 * list() hands back every stored font with its name, role and size, in the
+	 * service's order (closing-round-scenarios task 1.2, typ-font-list-delete).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testListReturnsEveryStoredFontWithNameRoleAndSize(): void {
+		$fonts = [
+			['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans', 'role' => 'body', 'size' => 48211],
+			['id' => 'custom-rijks-serif', 'name' => 'Rijks Serif', 'role' => 'heading', 'size' => 51200],
+		];
+		$this->service->expects($this->once())->method('list')->willReturn($fonts);
+
+		$data = $this->controller->list()->getData();
+
+		$this->assertSame(expected: $fonts, actual: $data['fonts']);
+		foreach ($data['fonts'] as $font) {
+			$this->assertSame(expected: ['id', 'name', 'role', 'size'], actual: array_keys($font));
+		}
+	}//end testListReturnsEveryStoredFontWithNameRoleAndSize()
+
+	/**
+	 * The admin page renders one row per listed font in `#nldesign-font-list`,
+	 * each with its name, role, size and its own delete action that names the
+	 * font it deletes (closing-round-scenarios task 1.2).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testTheAdminPageRendersADeleteActionPerFont(): void {
+		$script = (string)file_get_contents(__DIR__ . '/../../../js/admin.js');
+		$start = strpos($script, 'function renderFontList(listEl, fonts)');
+		$this->assertNotFalse(condition: $start, message: 'admin.js must render the font list.');
+		$end = strpos($script, 'function deleteFont(', $start);
+		$this->assertNotFalse(condition: $end);
+		$render = substr($script, $start, ($end - $start));
+
+		$this->assertStringContainsString(needle: "getElementById('nldesign-font-list')", haystack: $script);
+		$this->assertMatchesRegularExpression(
+			pattern: '/fonts\.forEach\(function \(font\) \{.*font\.name.*font\.role.*font\.size.*deleteBtn.*deleteFont\(font\.id, font\.name \|\| font\.id\).*row\.appendChild\(deleteBtn\).*listEl\.appendChild\(row\)/s',
+			string: $render,
+			message: 'Each font row shows its name, role and size, and carries its own delete action.'
+		);
+		$this->assertStringContainsString(needle: "method: 'DELETE'", haystack: substr($script, $end, 2000));
+	}//end testTheAdminPageRendersADeleteActionPerFont()
+
+	/**
 	 * delete() returns ok on success.
 	 *
 	 * @return void
