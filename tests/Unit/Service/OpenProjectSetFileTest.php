@@ -202,6 +202,8 @@ final class OpenProjectSetFileTest extends TestCase {
 	 * What a set file holds and cannot be used is named, and other documents are not set files.
 	 *
 	 * @return void
+	 *
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
 	 */
 	public function testWhatIsLeftOutIsNamed(): void {
 		$reader = new OpenProjectSetFile();
@@ -212,9 +214,14 @@ final class OpenProjectSetFileTest extends TestCase {
 				'name' => 'X',
 				'tokens' => ['primary' => '#123456', 'sparkle' => '#ffffff', 'ink' => 12, 'muted' => '{a}', 'menu' => '#eeeeee'],
 				'vocabulary' => ['color-focus' => '#0000ff', 'Bad_Key' => '1px', 'color-primary' => '#999999', 'brand-stripe-height' => ' '],
+				'dark' => ['tokens' => ['primary' => '#abcdef']],
 			],
 			skipped: $skipped
 		);
+
+		// The dark block is kept as the set's dark values, never named as left out.
+		$this->assertArrayHasKey(key: 'dark', array: (array)$document['$extensions']['nl.conduction.thematiq']);
+		$this->assertContains(needle: '#abcdef', haystack: (array)$document['$extensions']['nl.conduction.thematiq']['dark']);
 
 		$this->assertSame(
 			expected: ['--nldesign-color-primary' => '#123456', '--thematiq-shell-menu' => '#eeeeee', '--nldesign-color-focus' => '#0000ff'],
