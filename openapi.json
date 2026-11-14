@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "Thematiq",
-        "version": "1.2.28-unstable.20261014120000",
+        "version": "1.2.29-unstable.20261114023933",
         "description": "The JSON API of Thematiq, the theming app for Nextcloud: design token sets and their deprecations, app brands, document styles, workspace icons, contrast checks and the settings behind them.\n\nEvery path is served under `/api/v1/`, the version this document describes. The unversioned `/api/` paths keep working, are deprecated, and name their `/api/v1/` successor in a `Link` header next to a `Deprecation` header. Errors are RFC 9457 problem details (`application/problem+json`), and every response carries an `API-Version` header. Paths that implement an external standard keep the formats of that standard and are not described here.",
         "contact": {
             "name": "Conduction B.V.",
