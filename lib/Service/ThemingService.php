@@ -331,6 +331,8 @@ class ThemingService {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-003
 	 */
 	public function applyImages(array $params): array {
 		$updated = [];
@@ -360,6 +362,7 @@ class ThemingService {
 	 * logo and the favicon are among them because a theme can now bring them.
 	 *
 	 * @var string[]
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
 	 */
 	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'logoheader', 'favicon', 'background'];
 
