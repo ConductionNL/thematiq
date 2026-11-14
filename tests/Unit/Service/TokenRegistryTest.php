@@ -277,4 +277,41 @@ class TokenRegistryTest extends TestCase {
 		$this->assertSame(expected: 'login', actual: $tokens['--color-primary']['tab']);
 		$this->assertSame(expected: 'color', actual: $tokens['--color-primary']['type']);
 	}
+
+	/**
+	 * The Typography tokens are exactly the spec's Typography list: the text
+	 * colours, the family and the three weights.
+	 *
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-font-family-size-and-weight-come-from-the-house-style
+	 *
+	 * @return void
+	 */
+	public function testTheTypographyTokensAreExactlyTheTypographyTab(): void {
+		$expected = [
+			'--color-main-text',
+			'--color-text-maxcontrast',
+			'--color-text-light',
+			'--color-text-lighter',
+			'--color-text-error',
+			'--color-text-success',
+			'--color-text-warning',
+			'--font-face',
+			'--font-weight-default',
+			'--font-weight-element',
+			'--font-weight-heading',
+		];
+
+		$method = new \ReflectionMethod(TokenRegistry::class, 'getTypographyTokens');
+		$tokens = $method->invoke(null);
+		$this->assertSame($expected, array_keys($tokens));
+		foreach ($tokens as $name => $token) {
+			$this->assertSame('typography', $token['tab'], $name);
+		}
+
+		$registered = TokenRegistry::getTokens();
+		foreach ($expected as $name) {
+			$this->assertArrayHasKey($name, $registered, $name . ' MUST be editable');
+			$this->assertSame('typography', $registered[$name]['tab'], $name);
+		}
+	}
 }

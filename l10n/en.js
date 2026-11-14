@@ -1184,6 +1184,7 @@ OC.L10N.register(
         "Address saved.": "Address saved.",
         "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
         "OpenProject in the apps menu": "OpenProject in the apps menu",
+        "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}",
         "refers to {token}": "refers to {token}",
         "refers to {token}: {value}": "refers to {token}: {value}"
     },

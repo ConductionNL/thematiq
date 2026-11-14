@@ -437,6 +437,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @return array<string, array{tab: string, type: string, label: string}> Typography tokens.
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-45
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-font-family-size-and-weight-come-from-the-house-style
 	 */
 	private static function getTypographyTokens(): array {
 		return [

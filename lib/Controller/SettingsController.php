@@ -222,6 +222,7 @@ class SettingsController extends Controller {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-006
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setSloganSetting(bool $hideSlogan): JSONResponse {

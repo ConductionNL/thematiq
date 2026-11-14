@@ -1,13 +1,17 @@
-# token-sets Specification (delta)
+# Spec delta: token sets (rows-without-a-requirement)
+
+The capability row `cat-community-sets` names a requirement this spec did not state.
 
 ## ADDED Requirements
 
-### Requirement: Organisations that are not a municipality have ready-made sets
+### Requirement: Community brand sets sit beside the government ones
 
-The shipped catalogue in `token-sets.json` SHALL include sets for organisations that are not a municipality, a province or VNG, such as a public agency, a supplier or a community project. Each SHALL be selectable in the token set dropdown in the same way as a municipal set.
+The shipped catalogue MUST include brand sets for organisations that are not a municipality, a
+province or VNG, maintained in the same way and selectable in the same list. Each MUST ship its token
+file.
 
-#### Scenario: An administrator picks a non-municipal set
-- GIVEN the catalogue ships the `opencatalogi` set
-- WHEN the administrator opens the token set dropdown on the Theming page
-- THEN `opencatalogi` is listed beside the municipal sets
-- AND selecting it applies its tokens to every page
+#### Scenario: An open-source community picks its own brand
+@e2e exclude Catalogue content; covered by PHPUnit (CapabilityRowsTest::testTheCatalogueHoldsCommunitySetsBesideTheGovernmentOnes)
+- GIVEN an administrator opens the token set list
+- WHEN they look for `OpenCatalogi` or `Demodam`
+- THEN both MUST be listed and selectable

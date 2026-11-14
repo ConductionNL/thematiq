@@ -1,13 +1,18 @@
-# nextcloud-variable-mapping Specification (delta)
+# Spec delta: Nextcloud variable mapping (rows-without-a-requirement)
+
+The capability row `sur-selection-colour` names a requirement this spec did not state.
 
 ## ADDED Requirements
 
-### Requirement: The selection wash follows the brand primary
+### Requirement: Selected text takes the brand colour in a readable, translucent form
 
-The overrides SHALL map `--color-primary-element` to the set's primary and SHALL leave `--color-background-selection` and `--color-text-selection` to Nextcloud, which derives the selection wash from the primary element colour. Selected and highlighted text SHALL therefore show a translucent tint of the brand primary, and its text SHALL stay readable on it.
+The nldesign overrides MUST map `--color-primary-element` to the set's primary and MUST NOT set
+`--color-background-selection`, so Nextcloud derives the selection and highlight colour from the
+brand as a translucent tint that keeps the selected text readable.
 
-#### Scenario: A user selects text
-- GIVEN a token set with a blue primary is active
+#### Scenario: Selecting text under a dark brand
+@e2e exclude Stylesheet contract; covered by PHPUnit (CapabilityRowsTest::testTheSelectionColourIsLeftToNextcloud)
+- GIVEN the `rijkshuisstijl` set is active
 - WHEN a user selects a paragraph
-- THEN the selection background is a translucent tint of that blue
-- AND the selected text meets the contrast the set's audit checks for the selection pair
+- THEN the selection MUST be a translucent tint of the set's primary
+- AND the selected text MUST stay readable
