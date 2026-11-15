@@ -1,2 +1,0 @@
-- [x] exclude a.cn-week-strip__item from the link rules (nldesign theme, element overrides, high contrast)
-- [x] vitest

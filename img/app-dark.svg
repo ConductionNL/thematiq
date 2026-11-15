@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-  <!-- MDI palette-swatch: design token / theme icon (dark variant — no fill, inherits currentColor) -->
-  <path d="M2 2h9v9H2V2zm11 0h9v9h-9V2zM2 13h9v9H2v-9zm13 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
-</svg>

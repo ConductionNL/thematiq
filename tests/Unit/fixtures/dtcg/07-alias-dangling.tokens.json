@@ -1,5 +1,0 @@
-{
-  "color": {
-    "primary": { "$type": "color", "$value": "{does.not.exist}" }
-  }
-}

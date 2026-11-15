@@ -1,1 +1,0 @@
-- No screen: a stylesheet nothing linked is removed; no page draws differently.

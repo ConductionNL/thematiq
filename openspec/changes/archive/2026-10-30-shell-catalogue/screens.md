@@ -1,1 +1,0 @@
-- No screen: the catalogue is a data file for another product; no page draws differently.

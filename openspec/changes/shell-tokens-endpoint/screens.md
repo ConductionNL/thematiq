@@ -1,1 +1,0 @@
-- No screen: the route answers JSON to another server; no page draws differently.
