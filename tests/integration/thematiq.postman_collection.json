@@ -3121,7 +3121,7 @@
           }
         },
         {
-          "name": "GET shell-tokens: anonymous -> 200, eighteen roles",
+          "name": "GET shell-tokens: anonymous -> 200, nineteen roles",
           "event": [
             {
               "listen": "test",
@@ -3130,7 +3130,7 @@
                 "exec": [
                   "pm.test('a reader without a session gets 200', () => pm.response.to.have.status(200));",
                   "const body = pm.response.json();",
-                  "const roles = [\"primary\", \"primary-deep\", \"primary-light\", \"action\", \"action-deep\", \"link\", \"accent\", \"ink\", \"text\", \"muted\", \"line\", \"soft\", \"ground\", \"chip\", \"field\", \"radius\", \"radius-lg\", \"font-family\"];",
+                  "const roles = [\"primary\", \"primary-deep\", \"primary-light\", \"action\", \"action-deep\", \"link\", \"accent\", \"ink\", \"text\", \"muted\", \"line\", \"soft\", \"ground\", \"chip\", \"field\", \"radius\", \"radius-lg\", \"font-family\", \"menu\"];",
                   "pm.test('the document has the contract fields', () => {",
                   "  pm.expect(Object.keys(body)).to.eql(['version', 'id', 'name', 'revision', 'tokens', 'logo']);",
                   "  pm.expect(body.version).to.eql(1);",
@@ -3138,7 +3138,7 @@
                   "  pm.expect(body.name).to.be.a('string').and.not.empty;",
                   "  pm.expect(body.revision).to.be.a('string').and.not.empty;",
                   "});",
-                  "pm.test('every one of the eighteen roles has a value', () => {",
+                  "pm.test('every one of the nineteen roles has a value', () => {",
                   "  pm.expect(Object.keys(body.tokens)).to.eql(roles);",
                   "  roles.forEach((role) => pm.expect(body.tokens[role], role).to.be.a('string').and.not.empty);",
                   "});",

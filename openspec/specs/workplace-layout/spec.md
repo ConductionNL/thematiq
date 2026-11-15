@@ -194,14 +194,15 @@ Design link rule `a:not(#header a)…` (one id and three classes at least).
 While the layout is `light`, the top bar MUST be 68px high through `--header-height` on the body, the
 app grid button MUST be a 40px square on the workspace colour with the controls' radius, said through
 `--button-size`, and the search field MUST be a 44px pill on the workspace colour with a 1px border in
-the scheme's border colour and a regular-weight muted label. The dashboard's panel row MUST stay
+the scheme's control border colour (`--color-border-maxcontrast`, 3:1 like every other field edge) and a
+regular-weight muted label. The dashboard's panel row MUST stay
 transparent.
 
 #### Scenario: The bar, the grid button and the search field
 @e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the rules
 - GIVEN `css/workplace-layout.css`
 - WHEN the top bar rules are read
-- THEN the body MUST set `--header-height` to 68px, the grid button MUST be 40px square and the search field MUST be a 44px pill with a muted regular label
+- THEN the body MUST set `--header-height` to 68px, the grid button MUST be 40px square and the search field MUST be a 44px pill with a control border and a muted regular label
 
 ### Requirement: The Navigation Width Is An Admin Option
 The app MUST store four further layout choices in the app config: `navigation_width` (a whole
@@ -455,3 +456,41 @@ that tile's address, which then hides. Without groups no heading MUST be drawn.
 - GIVEN a page without the workplace header style
 - WHEN it renders
 - THEN no apps menu state and no script MUST be emitted
+
+### Requirement: The workplace header lays the bar out as DqKop
+
+While the header style resolves to `workplace`, the bar MUST be padded 14px at the start and 20px at
+the end with no gap between its parts. The search field MUST be 560px wide and centred in the bar's
+content box; below 1240px it MUST follow the grid button and shrink. The bell and the contacts menu
+MUST be 44px round buttons with 22px icons, 6px apart, and a 1px by 28px divider in the border
+colour MUST stand before the person. A brand block an app draws at the start of the bar MUST show its
+caption in the muted text colour and its divider in the border colour. Every colour MUST read a
+token.
+
+#### Scenario: The bar of DqZaken
+@e2e exclude Static file check: tests/vitest/headerWorkplace.spec.js; the live check is the top-bar pixel diff against dossiq/DqZaken
+- GIVEN the workplace header style and a 1440px window
+- WHEN a dossiq page renders
+- THEN the search field MUST start at 437px, and the bell, the contacts menu, the divider and the person MUST follow at the end of the bar
+
+#### Scenario: A narrow window
+@e2e exclude Static file check: tests/vitest/headerWorkplace.spec.js
+- GIVEN a window of 1200px
+- WHEN the bar renders
+- THEN the search field MUST follow the grid button instead of being centred
+
+### Requirement: An app or the theme words the search field
+
+Thematiq SHALL show, in the unified search field of a page of an app, the theme's text for that app, else the app's own
+`search_placeholder`, else the theme's default, each translated through the owning catalogue; and SHALL leave
+Nextcloud's words when none is set or a failure occurs.
+
+#### Scenario: DqKop
+
+- **WHEN** dossiq declares `search_placeholder` "Search cases, documents or contacts" and a Dutch user opens a dossiq page
+- **THEN** the search field reads "Zoek zaken, documenten of contacten"
+
+#### Scenario: The theme overrides an app
+
+- **WHEN** `search_placeholders` holds an entry for dossiq
+- **THEN** that entry is shown instead of dossiq's own text

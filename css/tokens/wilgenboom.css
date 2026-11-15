@@ -89,9 +89,10 @@
 
 	/* Border colours. The hairline is for cards and dividers. The design's
 	 * field border #C4C7CB is 1.7:1 against white, under the 3:1 a control
-	 * border needs, so controls take zuiddrecht's #8A929E (3.14). */
+	 * border needs, so controls take zuiddrecht's #828A95 (3:1 on every
+	 * ground a control sits on, white included). */
 	--nldesign-color-border: #E4E6EA;
-	--nldesign-color-border-dark: #8A929E;
+	--nldesign-color-border-dark: #828A95;
 
 	/* Focus colour */
 	--nldesign-color-focus: rgba(47, 107, 74, 0.5);
@@ -174,6 +175,28 @@
 	--nldesign-component-status-badge-error-background-color: #FCEDEC;
 	--nldesign-component-status-badge-error-color: #A30000;
 
+	/* The NL Design System hue tints a status colour is painted on (dossiq's
+	 * status pills and board columns): received is the primary's own tint, as on the status pills above. A badge's text is its
+	 * hue mixed 65% into the ink, and reaches AA on each tint: blue 7.18,
+	 * purple 9.03, green 6.41, orange 5.27, red 7.23, teal 8.83, grey 7.36. */
+	--nl-color-blue-light: #E8F1EB;
+	--nl-color-purple-light: #E8E6F6;
+	--nl-color-green-light: #E7F3EA;
+	--nl-color-orange-light: #FFF4DE;
+	--nl-color-red-light: #FCEDEC;
+	--nl-color-teal-light: #E3F1F3;
+	--nl-color-grey-light: #F0F1F3;
+
+	/* The text a status pill sets on its tint: the boards' pill text, blue
+	 * the set's received text, as on its status pills above. On its tint: blue 8.73, purple 7.12, green 5.77, orange 6.53, red 7.22, teal 6.38, grey 9.19. */
+	--nl-color-blue-text: #1F4A33;
+	--nl-color-purple-text: #4A3F8F;
+	--nl-color-green-text: #1E6B2A;
+	--nl-color-orange-text: #7A4F00;
+	--nl-color-red-text: #A30000;
+	--nl-color-teal-text: #1D5E66;
+	--nl-color-grey-text: #3D4047;
+
 	/* The login watermark: the emblem in grey, large and faint, in the bottom
 	 * corner of the login page while the workplace layout is light. */
 	--nldesign-login-watermark-image: url('../../img/logos/wilgenboom-emblem-grey.svg');
@@ -218,4 +241,9 @@
 	--nldesign-hero-action-color: #ffffff;
 	/* The portal names the set's emblem in --nldesign-emblem-url. */
 	--nldesign-hero-decoration-image: var(--nldesign-emblem-url);
+
+	/* The set follows Cunningham's cards: a dashboard card carries its title and
+	 * body on one surface, with no rule between them (as the lasuite and
+	 * cunningham systems draw it). */
+	--nldesign-component-dashboard-card-header-border-style: none;
 }

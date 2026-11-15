@@ -21,6 +21,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetAudits;
+use OCA\Thematiq\Service\TokenSetFiles;
+use OCA\Thematiq\Service\TokenSetRuntime;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
 use OCP\App\IAppManager;
@@ -67,12 +70,12 @@ class WcagCachePrefixPairingTest extends TestCase {
 	 * @return ICacheFactory
 	 */
 	private function recordingFactory(): ICacheFactory {
-		$factory = $this->createMock(ICacheFactory::class);
+		$factory = $this->createMock(originalClassName: ICacheFactory::class);
 		$factory->method('createDistributed')
 			->willReturnCallback(
 				function (string $prefix): ICache {
 					$this->prefixes[] = $prefix;
-					return $this->createMock(ICache::class);
+					return $this->createMock(originalClassName: ICache::class);
 				}
 			);
 		return $factory;
@@ -84,35 +87,41 @@ class WcagCachePrefixPairingTest extends TestCase {
 	 * @return void
 	 */
 	public function testBothClassesShareOneWcagCachePrefix(): void {
-		$audit = $this->createMock(ShippedTokenSetAuditService::class);
+		$audit = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
 
 		new TokenSetService(
-			$this->createMock(IAppManager::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(LoggerInterface::class),
-			$audit,
-			$this->recordingFactory(),
-			$this->createMock(TokenSetVocabularyAuditService::class)
+			setFiles: new TokenSetFiles(
+				appManager: $this->createMock(originalClassName: IAppManager::class)
+			),
+			runtime: new TokenSetRuntime(
+				config: $this->createMock(originalClassName: IConfig::class),
+				cacheFactory: $this->recordingFactory(),
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $audit,
+				vocabularyAudit: $this->createMock(originalClassName: TokenSetVocabularyAuditService::class)
+			)
 		);
-		$this->assertCount(1, $this->prefixes, 'TokenSetService must create exactly one distributed cache');
+		$this->assertCount(expectedCount: 1, haystack: $this->prefixes, message: 'TokenSetService must create exactly one distributed cache');
 		$tokenSetPrefix = $this->prefixes[0];
 
 		$this->prefixes = [];
 		new Capabilities(
-			$this->createMock(IConfig::class),
-			$this->createMock(IAppManager::class),
-			$this->createMock(IURLGenerator::class),
-			$this->createMock(DesignSystemService::class),
-			$audit,
-			$this->recordingFactory()
+			config: $this->createMock(originalClassName: IConfig::class),
+			appManager: $this->createMock(originalClassName: IAppManager::class),
+			urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+			designSystemService: $this->createMock(originalClassName: DesignSystemService::class),
+			auditService: $audit,
+			cacheFactory: $this->recordingFactory()
 		);
-		$this->assertCount(1, $this->prefixes, 'Capabilities must create exactly one distributed cache');
+		$this->assertCount(expectedCount: 1, haystack: $this->prefixes, message: 'Capabilities must create exactly one distributed cache');
 		$capabilitiesPrefix = $this->prefixes[0];
 
 		$this->assertSame(
-			$tokenSetPrefix,
-			$capabilitiesPrefix,
-			'Capabilities and TokenSetService must share one WCAG cache prefix. '
+			expected: $tokenSetPrefix,
+			actual: $capabilitiesPrefix,
+			message: 'Capabilities and TokenSetService must share one WCAG cache prefix. '
 			. 'They are answering the same question for the same set id, and a split '
 			. 'prefix computes it twice while looking exactly like a cold cache. '
 			. 'If you renamed one, rename the other.'
@@ -130,18 +139,24 @@ class WcagCachePrefixPairingTest extends TestCase {
 	 */
 	public function testTheSharedPrefixCarriesTheCurrentAppId(): void {
 		new TokenSetService(
-			$this->createMock(IAppManager::class),
-			$this->createMock(IConfig::class),
-			$this->createMock(LoggerInterface::class),
-			$this->createMock(ShippedTokenSetAuditService::class),
-			$this->recordingFactory(),
-			$this->createMock(TokenSetVocabularyAuditService::class)
+			setFiles: new TokenSetFiles(
+				appManager: $this->createMock(originalClassName: IAppManager::class)
+			),
+			runtime: new TokenSetRuntime(
+				config: $this->createMock(originalClassName: IConfig::class),
+				cacheFactory: $this->recordingFactory(),
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			),
+			audits: new TokenSetAudits(
+				audit: $this->createMock(originalClassName: ShippedTokenSetAuditService::class),
+				vocabularyAudit: $this->createMock(originalClassName: TokenSetVocabularyAuditService::class)
+			)
 		);
 
 		$this->assertStringStartsWith(
-			'thematiq',
-			$this->prefixes[0],
-			'The WCAG cache prefix must carry the current app id'
+			prefix: 'thematiq',
+			string: $this->prefixes[0],
+			message: 'The WCAG cache prefix must carry the current app id'
 		);
 	}//end testTheSharedPrefixCarriesTheCurrentAppId()
 }//end class

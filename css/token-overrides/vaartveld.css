@@ -27,6 +27,11 @@
 		body:not([data-theme-light]):not([data-theme-dark]):not(
 			[data-theme-light-highcontrast]
 		):not([data-theme-dark-highcontrast]) {
+		/* The status tints: a badge's text is its hue mixed 65% into the light
+		 * ink, and the generated dark purple and teal tints left it under AA
+		 * (4.43, 3.85); these reach 4.62 and 4.63. */
+		--nl-color-purple-light: #141028;
+		--nl-color-teal-light: #101f22;
 		--color-background-plain: #121315;
 		--color-background-plain-text: var(--color-main-text);
 		--nldesign-component-content-surface-background-color: #121315;
@@ -37,6 +42,11 @@
 
 :root body[data-theme-dark],
 :root body[data-themes*='dark'] {
+	/* The status tints: a badge's text is its hue mixed 65% into the light
+	 * ink, and the generated dark purple and teal tints left it under AA
+	 * (4.43, 3.85); these reach 4.62 and 4.63. */
+	--nl-color-purple-light: #141028;
+	--nl-color-teal-light: #101f22;
 	--color-background-plain: #121315;
 	--color-background-plain-text: var(--color-main-text);
 	--nldesign-component-content-surface-background-color: #121315;

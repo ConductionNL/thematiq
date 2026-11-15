@@ -56,50 +56,84 @@ class DtcgValueChecker {
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
 	public function findInvalidColours(array $document): array {
-		$invalid = [];
-		$this->collect(node: $document, type: null, path: '', invalid: $invalid);
-
-		return $invalid;
+		return $this->collect(node: $document, parent: new DtcgPlace(type: null, path: ''));
 	}//end findInvalidColours()
 
 	/**
 	 * Walk one DTCG node.
 	 *
 	 * @param array<array-key, mixed> $node The group or token.
-	 * @param string|null $type The type inherited from the enclosing groups.
-	 * @param string $path The dotted path of the node.
-	 * @param array<string, string> $invalid Accumulator, path => value.
+	 * @param DtcgPlace $parent The place of the enclosing group, with the type it carries.
 	 *
-	 * @return void
+	 * @return array<string, string> The node's refused colours, path => value, in document order.
 	 */
-	private function collect(array $node, ?string $type, string $path, array &$invalid): void {
-		$ownType = ($node['$type'] ?? ($node['type'] ?? null));
-		if (is_string($ownType) === true) {
-			$type = $ownType;
-		}
-
+	private function collect(array $node, DtcgPlace $parent): array {
+		$place = $this->typedPlace(node: $node, parent: $parent);
 		$token = $this->tokenValue(node: $node);
 		if ($token !== null) {
-			if ($type === 'color' && $this->isRefusedColour(value: $token['value']) === true) {
-				$invalid[$path] = (string)$token['value'];
-			}
-
-			return;
+			return $this->refusedAt(value: $token['value'], place: $place);
 		}
 
+		$invalid = [];
 		foreach ($node as $key => $child) {
 			if (is_array($child) === false || str_starts_with((string)$key, '$') === true) {
 				continue;
 			}
 
-			$childPath = (string)$key;
-			if ($path !== '') {
-				$childPath = $path . '.' . $key;
-			}
-
-			$this->collect(node: $child, type: $type, path: $childPath, invalid: $invalid);
+			$invalid = array_replace($invalid, $this->collect(node: $child, parent: $this->childPlace(place: $place, key: (string)$key)));
 		}
+
+		return $invalid;
 	}//end collect()
+
+	/**
+	 * The node's place with its own type, when it declares one.
+	 *
+	 * @param array<array-key, mixed> $node The group or token.
+	 * @param DtcgPlace $parent The place as the enclosing group leaves it.
+	 *
+	 * @return DtcgPlace The place, typed by the node or as inherited.
+	 */
+	private function typedPlace(array $node, DtcgPlace $parent): DtcgPlace {
+		$ownType = ($node['$type'] ?? ($node['type'] ?? null));
+		if (is_string($ownType) === false) {
+			return $parent;
+		}
+
+		return new DtcgPlace(type: $ownType, path: $parent->path);
+	}//end typedPlace()
+
+	/**
+	 * The place of a child node.
+	 *
+	 * @param DtcgPlace $place The group's place.
+	 * @param string $key The child's key.
+	 *
+	 * @return DtcgPlace The child's place, inheriting the group's type.
+	 */
+	private function childPlace(DtcgPlace $place, string $key): DtcgPlace {
+		if ($place->path === '') {
+			return new DtcgPlace(type: $place->type, path: $key);
+		}
+
+		return new DtcgPlace(type: $place->type, path: $place->path . '.' . $key);
+	}//end childPlace()
+
+	/**
+	 * The token's value when it is a refused colour.
+	 *
+	 * @param mixed $value The token value.
+	 * @param DtcgPlace $place The token's place.
+	 *
+	 * @return array<string, string> Path => value, or empty.
+	 */
+	private function refusedAt(mixed $value, DtcgPlace $place): array {
+		if ($place->type === 'color' && $this->isRefusedColour(value: $value) === true) {
+			return [$place->path => (string)$value];
+		}
+
+		return [];
+	}//end refusedAt()
 
 	/**
 	 * The value of a DTCG token node, or null when the node is a group.

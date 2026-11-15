@@ -316,6 +316,15 @@ describe('the website type scale, controls and marks are vocabulary', () => {
 		)
 	})
 
+	it('heads a boxed table with the surface, and leaves a set without one transparent', () => {
+		expect(token('zuiddrecht', '--utrecht-table-header-background-color')).toBe(
+			'#F4F6F9',
+		)
+		expect(token('amsterdam', '--utrecht-table-header-background-color')).toBe(
+			'transparent',
+		)
+	})
+
 	it('zuiddrecht: semibold buttons, the menu mark in the red line, its columns, its own grey and the photo ground', () => {
 		for (const role of [
 			'--utrecht-button-font-weight',
@@ -620,5 +629,38 @@ describe('the school sets follow their boards (school-sets-follow-their-boards)'
 		expect(token('esdoornveen', '--nldesign-hero-image-clip-path')).toMatch(
 			/^polygon\(/,
 		)
+	})
+})
+
+describe('the Zuiddrecht controls follow the Mijn Zuiddrecht boards', () => {
+	it('draws buttons and text boxes 48px high in the running text size', () => {
+		expect(token('zuiddrecht', '--utrecht-button-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-textbox-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-select-font-size')).toBe('17px')
+		expect(token('zuiddrecht', '--utrecht-button-padding-inline-start')).toBe(
+			'20px',
+		)
+		expect(token('zuiddrecht', '--utrecht-button-padding-block-start')).toBe(
+			'9px',
+		)
+		expect(token('zuiddrecht', '--utrecht-pointer-target-min-size')).toBe('48px')
+		expect(token('zuiddrecht', '--utrecht-textbox-border-color')).toBe('#5C6470')
+		expect(token('zuiddrecht', '--utrecht-select-border-color')).toBe('#5C6470')
+		expect(token('zuiddrecht', '--utrecht-select-border-width')).toBe('2px')
+	})
+
+	it('draws a status tag 28px high in 15px text, padded 12px', () => {
+		expect(token('zuiddrecht', '--nl-data-badge-font-size')).toBe('15px')
+		expect(token('zuiddrecht', '--nl-data-badge-line-height')).toBe('22px')
+		expect(token('zuiddrecht', '--nl-data-badge-padding-inline')).toBe('12px')
+		expect(token('wilgenboom', '--nl-data-badge-font-size')).toBeNull()
+	})
+
+	it('leaves every other set on the values it had', () => {
+		for (const set of ['wilgenboom', 'vaartveld', 'esdoornveen']) {
+			expect(token(set, '--utrecht-button-padding-inline-start')).toBe('16px')
+			expect(token(set, '--utrecht-button-padding-block-start')).toBe('12px')
+			expect(token(set, '--utrecht-pointer-target-min-size')).toBe('44px')
+		}
 	})
 })

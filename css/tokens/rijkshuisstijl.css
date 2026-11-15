@@ -3,10 +3,26 @@
  *
  * Based on the official Dutch national government design system.
  * Source: https://github.com/nl-design-system/rijkshuisstijl-community
+ * Package: @rijkshuisstijl-community/design-tokens 18.0.1, theme `lintblauw`
+ * (dist/lintblauw/root.css). The package publishes its colours as oklch();
+ * the hex values here are those colours converted to sRGB.
  *
  * Color mapping follows rhc.color.* tokens from the official design system.
- * Lintblauw (#154273) is the primary brand color (header, buttons).
- * Donkerblauw (#01689b) is the link/interactive color.
+ * Lintblauw (#154273, rhc.color.lintblauw.500) is the primary brand color
+ * (header, buttons). Donkerblauw (#01689b, rhc.color.donkerblauw.500) is the
+ * link/interactive color. Greys are rhc.color.cool-grey.*.
+ *
+ * Colours, type and spacing only. The logo, the beeldmerk and the fonts
+ * RijksoverheidSans and RijksoverheidSerif are restricted to the central
+ * government (LICENSE.md of the package); the font stack therefore falls
+ * through to the bundled Fira Sans, the package's own fallback.
+ *
+ * Text pairs measured, not estimated: white on #154273 10.20, #01689b on
+ * white 6.08, #0F172A on white 17.85, #475569 on white 7.58, white on
+ * #39870c 4.52, white on #d52b1e 5.01, #01496c on #d9e8f0 7.72, #2c5d12 on
+ * #e1eddb 6.47, #673327 on #fff4db 9.24, #9e1b16 on #f9dfdd 6.34. Oranje
+ * #e17000 is 3.22 on white: a fill or a stripe, never text (the warning pill
+ * below uses donkergeel.50 with donkerbruin.500 for that reason).
  */
 
 :root {
@@ -47,9 +63,9 @@
 	/* Navigation */
 	--nldesign-color-nav-background: #ffffff;
 
-	/* Text colors (rhc.color.foreground.*) */
+	/* Text colors (rhc.color.foreground.default = cool-grey.900, subtle = cool-grey.700) */
 	--nldesign-color-text: #0F172A;
-	--nldesign-color-text-muted: #696969;
+	--nldesign-color-text-muted: #334155;
 	--nldesign-color-text-light: #ffffff;
 
 	/* Status colors (Rijkshuisstijl) */
@@ -63,9 +79,10 @@
 	--nldesign-color-info: #007bc7;
 	--nldesign-color-info-rgb: 0, 123, 199;
 
-	/* Border colors */
-	--nldesign-color-border: #b4b4b4;
-	--nldesign-color-border-dark: #696969;
+	/* Border colors (rhc.color.border.subtle = cool-grey.300 as the hairline,
+	 * rhc.color.border.default = cool-grey.500 for a control's edge, 4.76:1) */
+	--nldesign-color-border: #cbd5e1;
+	--nldesign-color-border-dark: #64748b;
 
 	/* Focus color (Rijksoverheid uses hemelblauw) */
 	--nldesign-color-focus: rgba(0, 123, 199, 0.5);
@@ -129,4 +146,53 @@
 	--nldesign-border-radius-large: 4px;
 	--nldesign-border-radius-rounded: 0;
 	--nldesign-border-radius-pill: 100px;
+
+	/* The selected navigation entry and its count badge: the lintblauw,
+	 * where Nextcloud uses the primary colour (white on it 10.20:1). */
+	--nldesign-component-navigation-active-background-color: #154273;
+	--nldesign-component-navigation-active-color: #162f50;
+	--nldesign-component-navigation-badge-background-color: #154273;
+	--nldesign-component-navigation-badge-color: #ffffff;
+
+	/* The workspace: rhc.color.bg-document is white; cards sit on
+	 * cool-grey.50 with a 4% ink shadow. */
+	--nldesign-component-content-surface-background-color: #f8fafc;
+	--nldesign-component-content-card-shadow-color: rgba(15, 23, 42, 0.04);
+
+	/* Status pills: the 50 step of each hue with its 600 step as text
+	 * (rhc.color.info/positive/negative); warning takes donkergeel.50 with
+	 * donkerbruin.500, because every yellow and the oranje fail as text.
+	 * info 7.72:1, success 6.47:1, warning 9.24:1, error 6.34:1. */
+	--nldesign-component-status-badge-info-background-color: #d9e8f0;
+	--nldesign-component-status-badge-info-color: #01496c;
+	--nldesign-component-status-badge-success-background-color: #e1eddb;
+	--nldesign-component-status-badge-success-color: #2c5d12;
+	--nldesign-component-status-badge-warning-background-color: #fff4db;
+	--nldesign-component-status-badge-warning-color: #673327;
+	--nldesign-component-status-badge-error-background-color: #f9dfdd;
+	--nldesign-component-status-badge-error-color: #9e1b16;
+
+	/* THE WEBSITE. Read only by css/public-bridge.css, which a portal links
+	 * and an instance page never does.
+	 * The accent, where you are on the page: hemelblauw (rhc.color.info),
+	 * white on it 4.51:1; its text form is donkerblauw.600 on
+	 * donkerblauw.50 (7.72:1). Never a button or a link colour. */
+	--nldesign-color-accent: #007bc7;
+	--nldesign-color-accent-light: #d9e8f0;
+	--nldesign-color-accent-text: #01496c;
+	/* The footer band: rhc.page-footer is the core colour, white on it. */
+	--nldesign-color-footer-background: #154273;
+	--nldesign-color-footer-text: #ffffff;
+	/* The site's surface: cool-grey.100. Ink on it 16.30:1, muted 6.92:1,
+	 * the link 5.55:1. */
+	--nldesign-color-surface: #f1f5f9;
+	/* The hero: lintblauw.50 with ink (13.79:1). */
+	--nldesign-hero-background-color: #dce3ea;
+	--nldesign-hero-title-color: #0f172a;
+	--nldesign-hero-body-color: #0f172a;
+	/* The website's corners: rhc.border-radius sm and md. */
+	--nldesign-website-border-radius: 2px;
+	--nldesign-website-border-radius-large: 4px;
+	/* A status tag is a pill (rhc.border-radius.round). */
+	--nldesign-website-badge-border-radius: 999px;
 }

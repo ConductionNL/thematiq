@@ -6,6 +6,10 @@ sidebar_position: 1
 
 Thematiq includes **39 token sets** — pre-configured themes for Dutch government organizations. Each token set defines colors, typography, border radius, and other design tokens specific to that organization.
 
+## Find a set
+
+The list holds over sixty sets. Type part of a name or id in the search field above **Design token set**. The list then shows only the sets that match, and the line beside the field says how many. Case and accents do not count: `fryslan` finds Fryslân. The set that is selected stays in the list, and searching changes nothing until you choose another set. Press Escape to see every set again.
+
 ## Available Token Sets
 
 | Organization | Primary Color | Logo |
@@ -74,6 +78,16 @@ You can run the same sync locally:
 git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
 node scripts/sync-upstream-tokens.mjs /tmp/themes "$(git -C /tmp/themes rev-parse HEAD)" --report report.md
 ```
+
+To convert one published theme by hand, run the converter on its built CSS:
+
+```bash
+npm run convert:theme -- path/to/theme.css --slug zwolle --name "Gemeente Zwolle" --write
+```
+
+- Colours written as `oklch()` or `oklab()` become hex, the way Rijkshuisstijl 18 needs it. The report keeps the original value.
+- A theme with no primary-action colour, such as Zwolle's, takes the primary colour of the set's entry in `token-sets.json`, as the nightly sync does for buren and venray. Pass `--primary <hex>` to use another one.
+- The command line does not repair contrast. A failing pair shows up in the gate, not as a changed colour.
 
 After editing a set by hand, run `bash scripts/token-set-gate.sh`. It regenerates the dark variants, the contrast report, the token reference and the set counts in `css/public-bridge.css`. Then it runs the token-set tests.
 

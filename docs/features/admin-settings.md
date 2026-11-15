@@ -60,3 +60,22 @@ See the dedicated pages for full details:
 The admin settings panel is built with vanilla JavaScript and PHP templates (no Vue.js or webpack build step). This keeps the admin UI lightweight and avoids frontend build dependencies.
 
 Settings are stored in Nextcloud's `IConfig` system and take effect immediately without requiring a page reload for the CSS changes.
+
+## Mobile logo and home screen icon
+
+Under **Mobile logo and home screen icon** you set two images for the whole workspace:
+
+- **Mobile logo.** The header shows it on screens narrower than 1024 pixels, where Nextcloud's header goes narrow. PNG, JPEG, WebP or SVG, up to 1 MB. A brand per app keeps its own small logo.
+- **Home screen icon.** A phone shows it when someone adds the workspace to its home screen. A square PNG of at least 120 by 120 pixels; 180 by 180 is best.
+
+Without them Nextcloud uses its logo and its favicon. The favicon in the browser tab does not change. An Android home screen keeps Nextcloud's icon: Nextcloud writes that from its favicon, and thematiq cannot change it.
+
+## OpenProject in the apps menu
+
+Run OpenProject next to Nextcloud? Under **OpenProject in the apps menu**, enter OpenProject's address, such as `https://openproject.example.org`, and click **Save address**. The apps menu of the workplace top bar then lists OpenProject's modules in a section of their own, after Nextcloud's apps: Work packages, Gantt charts, Boards and Meetings. Leave the field empty to remove the section.
+
+The OpenProject plugin `openproject-thematiq` does the same the other way: it lists Nextcloud's apps in its app switcher when you give it Nextcloud's address.
+
+The list is fixed. It does not ask OpenProject which modules exist or which ones a person may open; OpenProject decides that when the link is followed. To list other modules, set them with the command line, by key, in your order: `occ config:app:set thematiq openproject_modules --value="work_packages,boards,meetings,projects"`. The keys are `projects`, `my_page`, `work_packages`, `gantt`, `boards`, `team_planners`, `calendar_view`, `meetings` and `news`, at most nine.
+
+The section shows in the workplace top bar's apps menu, the one thematiq arranges. With Nextcloud's own top bar the menu stays as Nextcloud draws it.
