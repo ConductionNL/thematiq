@@ -7,9 +7,9 @@
  * A `.tile-widget` keeps the text and link colour its app paints
  * (thematiq#939, css-architecture "App-specific exclusions").
  *
- * The nldesign layer forces the body text colour onto every span, div and
- * link (element-overrides.css, TEXT COLOR FIXES) and the link colour onto
- * every `a` (theme.css, LINKS), both `!important`. The spec says a tile and
+ * The nldesign layer forces the link colour onto every `a` (element-overrides.css
+ * and theme.css, LINKS) with `!important`; the body text colour is inherited from
+ * `body` and forced onto nothing. The spec says a tile and
  * everything inside it is excluded from both. The live run found two holes:
  * the tile's own root element matched `div:not(.tile-widget div)`, which only
  * excludes descendants, and theme.css's `a` rule had no exclusion at all.
@@ -121,12 +121,17 @@ describe('the nldesign layer leaves a .tile-widget its own colours', () => {
 		expect(matching($(id))).toEqual([])
 	})
 
+	it('still forces the colour onto a link outside a tile', () => {
+		expect(matching($('plain-link')).length).toBeGreaterThan(0)
+	})
+
+	// The body text colour is set on `body` alone and inherited, so no rule
+	// forces it onto a div or span anywhere (body-ink-zero-specificity).
 	it.each([
 		['a div', 'plain-div'],
 		['a span', 'plain-span'],
-		['a link', 'plain-link'],
-	])('still forces the colour onto %s outside a tile', (name, id) => {
-		expect(matching($(id)).length).toBeGreaterThan(0)
+	])('forces no colour onto %s outside a tile either', (name, id) => {
+		expect(matching($(id))).toEqual([])
 	})
 
 	it('still forces the link colour from theme.css onto a link outside a tile', () => {

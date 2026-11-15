@@ -36,7 +36,7 @@ use OCP\IRequest;
 /**
  * The two workspace images.
  *
- * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+ * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
  */
 class WorkspaceIconController extends Controller {
 
@@ -62,7 +62,7 @@ class WorkspaceIconController extends Controller {
 	 *
 	 * @return JSONResponse Kind to address, or null.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function index(): JSONResponse {
@@ -76,7 +76,7 @@ class WorkspaceIconController extends Controller {
 	 *
 	 * @return JSONResponse What was stored, or 400, 404, 413 or 422 with the reason.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function upload(string $kind): JSONResponse {
@@ -99,7 +99,7 @@ class WorkspaceIconController extends Controller {
 	 *
 	 * @return JSONResponse `{removed: kind}`, or 404.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-an-administrator-sets-a-mobile-logo-and-a-touch-icon
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function remove(string $kind): JSONResponse {
@@ -122,7 +122,7 @@ class WorkspaceIconController extends Controller {
 	 *
 	 * @no-admin-idor-exempt an instance-wide brand image, the same for every visitor; no per-user object
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]

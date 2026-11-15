@@ -26,6 +26,7 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IUser;
 use OCP\IUserSession;
 
 /**
@@ -135,17 +136,10 @@ class GroupThemingService {
 
 		$result = [];
 		foreach ($decoded as $entry) {
-			if (is_array($entry) === false) {
-				continue;
+			$read = $this->rules()->read(entry: $entry);
+			if ($read !== null) {
+				$result[] = $read;
 			}
-
-			$group = ($entry['group'] ?? null);
-			$tokenSet = ($entry['tokenSet'] ?? null);
-			if (is_string($group) === false || is_string($tokenSet) === false) {
-				continue;
-			}
-
-			$result[] = (new GroupDelegationRules())->read(entry: $entry, clean: ['group' => $group, 'tokenSet' => $tokenSet]);
 		}
 
 		return $result;
@@ -173,10 +167,10 @@ class GroupThemingService {
 	 */
 	public function setMapping(array $entries): array {
 		$clean = [];
-		$seenGroups = [];
+		$run = new GroupEntryRun(storedSetOf: $this->storedSetOf(...));
 
 		foreach ($entries as $entry) {
-			$clean[] = $this->validateEntry(entry: $entry, seenGroups: $seenGroups);
+			$clean[] = $this->rules()->validate(entry: $entry, run: $run);
 		}
 
 		// Nothing above persisted anything — only reached once every entry
@@ -205,13 +199,12 @@ class GroupThemingService {
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
 	public function replaceEntry(array $entry): array {
-		$seenGroups = [];
-		$clean = $this->validateEntry(entry: $entry, seenGroups: $seenGroups);
+		$clean = $this->rules()->validate(entry: $entry, run: new GroupEntryRun(storedSetOf: $this->storedSetOf(...)));
 
 		$mapping = $this->getMapping();
 		$index = array_search($clean['group'], array_column($mapping, 'group'), true);
 		if ($index === false) {
-			throw new GroupThemingValidationException(entry: $entry, reason: 'The group has no mapping entry.');
+			throw $this->rules()->unmapped(entry: $entry);
 		}
 
 		$mapping[$index] = $clean;
@@ -222,62 +215,13 @@ class GroupThemingService {
 	}//end replaceEntry()
 
 	/**
-	 * Validate one raw mapping entry against the group/token-set/duplicate
-	 * rules, tracking groups already seen in this batch by reference so a
-	 * duplicate anywhere in the payload is caught.
+	 * The rules a mapping entry obeys, stored or submitted.
 	 *
-	 * @param mixed $entry The raw entry (may be malformed).
-	 * @param array<string, bool> $seenGroups Groups already validated in this batch (mutated by reference).
-	 *
-	 * @return array{group: string, tokenSet: string, delegated?: true, allowedTokenSets?: list<string>} The cleaned entry.
-	 *
-	 * @throws GroupThemingValidationException When the entry fails any validation rule.
-	 *
-	 * @spec openspec/specs/per-group-theming/spec.md
+	 * @return GroupMappingRules The rules, over this service's group manager and token sets.
 	 */
-	private function validateEntry(mixed $entry, array &$seenGroups): array {
-		$group = $this->extractField(entry: $entry, field: 'group');
-		$tokenSet = $this->extractField(entry: $entry, field: 'tokenSet');
-
-		if (is_string($group) === false || $group === '') {
-			throw new GroupThemingValidationException(entry: $entry, reason: 'Missing or invalid group id.');
-		}
-
-		if (is_string($tokenSet) === false || $tokenSet === '') {
-			throw new GroupThemingValidationException(entry: $entry, reason: 'Missing or invalid token set id.');
-		}
-
-		if (isset($seenGroups[$group]) === true) {
-			throw new GroupThemingValidationException(
-				entry: $entry,
-				reason: sprintf('Only one mapping entry is allowed per group ("%s" appears more than once).', $group)
-			);
-		}
-
-		if ($this->groupManager->groupExists($group) === false) {
-			throw new GroupThemingValidationException(entry: $entry, reason: sprintf('Group "%s" does not exist.', $group));
-		}
-
-		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSet) === false) {
-			throw new GroupThemingValidationException(entry: $entry, reason: sprintf('Token set "%s" is not available.', $tokenSet));
-		}
-
-		if ($this->tokenSetService->licenceGate()->refuses(tokenSetId: $tokenSet, alreadyApplied: $this->storedSetOf(group: $group)) === true) {
-			throw new GroupThemingValidationException(
-				entry: $entry,
-				reason: sprintf('Token set "%s" is restricted to its owner and has not been confirmed.', $tokenSet),
-				restrictedSet: $tokenSet
-			);
-		}
-
-		$seenGroups[$group] = true;
-
-		return (new GroupDelegationRules())->validate(
-			entry: $entry,
-			clean: ['group' => $group, 'tokenSet' => $tokenSet],
-			isAvailable: fn (string $setId): bool => $this->tokenSetService->isValidTokenSet(tokenSetId: $setId)
-		);
-	}//end validateEntry()
+	private function rules(): GroupMappingRules {
+		return new GroupMappingRules(groups: $this->groupManager, tokenSets: $this->tokenSetService);
+	}//end rules()
 
 	/**
 	 * The set a group's stored entry names. A group that keeps its set is not
@@ -296,24 +240,6 @@ class GroupThemingService {
 
 		return null;
 	}//end storedSetOf()
-
-	/**
-	 * Extract a string field from a raw, possibly malformed mapping entry.
-	 *
-	 * @param mixed $entry The raw entry.
-	 * @param string $field The field name (`group` or `tokenSet`).
-	 *
-	 * @return mixed The field value, or null when the entry is not an array or lacks the field.
-	 *
-	 * @spec openspec/specs/per-group-theming/spec.md
-	 */
-	private function extractField(mixed $entry, string $field): mixed {
-		if (is_array($entry) === false) {
-			return null;
-		}
-
-		return ($entry[$field] ?? null);
-	}//end extractField()
 
 	/**
 	 * List all Nextcloud groups for the admin UI's group picker.
@@ -401,6 +327,19 @@ class GroupThemingService {
 			return $appBrandSet;
 		}
 
+		return $this->resolveForUser(user: $user);
+	}//end resolveTokenSetForRequestUnsafe()
+
+	/**
+	 * The set the mapping gives a logged-in user, cached per user and mapping generation.
+	 *
+	 * @param IUser $user The requesting user.
+	 *
+	 * @return string The resolved token set id.
+	 *
+	 * @spec openspec/specs/per-group-theming/spec.md
+	 */
+	private function resolveForUser($user): string {
 		// 3. Empty mapping fast path: no cache access, no group lookup —
 		// reproduces today's zero-lookup behavior exactly for non-adopters.
 		$mapping = $this->getMapping();
@@ -417,15 +356,11 @@ class GroupThemingService {
 		}
 
 		$userGroupIds = $this->groupManager->getUserGroupIds(user: $user);
-		$resolved = $this->matchFirstEntry(mapping: $mapping, userGroupIds: $userGroupIds);
-		if ($resolved === null) {
-			$resolved = $this->getDefaultTokenSet();
-		}
-
+		$resolved = ($this->matchFirstEntry(mapping: $mapping, userGroupIds: $userGroupIds) ?? $this->getDefaultTokenSet());
 		$this->cache->set(key: $cacheKey, value: $resolved, ttl: self::CACHE_TTL);
 
 		return $resolved;
-	}//end resolveTokenSetForRequestUnsafe()
+	}//end resolveForUser()
 
 	/**
 	 * Find the first mapping entry (in stored/priority order) matching one

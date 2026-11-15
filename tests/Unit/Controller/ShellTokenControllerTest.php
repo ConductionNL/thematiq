@@ -68,7 +68,7 @@ class ShellTokenControllerTest extends TestCase {
 	 * @return ShellTokenController The controller.
 	 */
 	private function controller(string $ifNoneMatch = ''): ShellTokenController {
-		$request = $this->createMock(IRequest::class);
+		$request = $this->createMock(originalClassName: IRequest::class);
 		$request->method('getHeader')->willReturnCallback(
 			static function (string $name) use ($ifNoneMatch): string {
 				if ($name === 'If-None-Match') {
@@ -79,7 +79,7 @@ class ShellTokenControllerTest extends TestCase {
 			}
 		);
 
-		$service = $this->createMock(ShellTokenService::class);
+		$service = $this->createMock(originalClassName: ShellTokenService::class);
 		$service->method('document')->willReturn($this->document());
 
 		return new ShellTokenController(request: $request, shellTokens: $service);
@@ -133,8 +133,8 @@ class ShellTokenControllerTest extends TestCase {
 	public function testTheRouteIsRegistered(): void {
 		$routes = require __DIR__ . '/../../../appinfo/routes.php';
 
-		$this->assertContains(['name' => 'shellToken#show', 'url' => '/api/shell-tokens', 'verb' => 'GET'], $routes['routes']);
-		$this->assertTrue(method_exists(ShellTokenController::class, 'show'));
+		$this->assertContains(needle: ['name' => 'shellToken#show', 'url' => '/api/shell-tokens', 'verb' => 'GET'], haystack: $routes['routes']);
+		$this->assertTrue(condition: method_exists(ShellTokenController::class, 'show'));
 	}//end testTheRouteIsRegistered()
 
 	/**
@@ -145,13 +145,17 @@ class ShellTokenControllerTest extends TestCase {
 	public function testTheRouteIsPublicAndRateLimited(): void {
 		$method = new ReflectionMethod(ShellTokenController::class, 'show');
 
-		$this->assertCount(1, $method->getAttributes(PublicPage::class), 'a reader without a session must not be refused');
-		$this->assertCount(1, $method->getAttributes(NoCSRFRequired::class), 'a server sends no CSRF token');
-		$this->assertCount(0, $method->getAttributes(NoAdminRequired::class), 'one posture, not two');
+		$this->assertCount(
+			expectedCount: 1,
+			haystack: $method->getAttributes(PublicPage::class),
+			message: 'a reader without a session must not be refused'
+		);
+		$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(NoCSRFRequired::class), message: 'a server sends no CSRF token');
+		$this->assertCount(expectedCount: 0, haystack: $method->getAttributes(NoAdminRequired::class), message: 'one posture, not two');
 
 		$limits = $method->getAttributes(AnonRateLimit::class);
-		$this->assertCount(1, $limits, 'a public route carries a ceiling');
-		$this->assertSame(['limit' => 120, 'period' => 60], $limits[0]->getArguments());
+		$this->assertCount(expectedCount: 1, haystack: $limits, message: 'a public route carries a ceiling');
+		$this->assertSame(expected: ['limit' => 120, 'period' => 60], actual: $limits[0]->getArguments());
 	}//end testTheRouteIsPublicAndRateLimited()
 
 	/**
@@ -162,13 +166,13 @@ class ShellTokenControllerTest extends TestCase {
 	public function testTheDocumentIsAnsweredWithItsRevisionAsETag(): void {
 		$response = $this->controller()->show();
 
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame($this->document(), $response->getData());
-		$this->assertSame(['version', 'id', 'name', 'revision', 'tokens', 'logo'], array_keys($response->getData()));
-		$this->assertSame(ShellRoleMapper::ROLES, array_keys($response->getData()['tokens']));
-		$this->assertSame('0123456789abcdef', $response->getETag());
-		$this->assertSame('no-cache', $this->headers(response: $response)['Cache-Control']);
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: $this->document(), actual: $response->getData());
+		$this->assertSame(expected: ['version', 'id', 'name', 'revision', 'tokens', 'logo'], actual: array_keys($response->getData()));
+		$this->assertSame(expected: ShellRoleMapper::ROLES, actual: array_keys($response->getData()['tokens']));
+		$this->assertSame(expected: '0123456789abcdef', actual: $response->getETag());
+		$this->assertSame(expected: 'no-cache', actual: $this->headers(response: $response)['Cache-Control']);
 	}//end testTheDocumentIsAnsweredWithItsRevisionAsETag()
 
 	/**
@@ -182,11 +186,11 @@ class ShellTokenControllerTest extends TestCase {
 	public function testAnUnchangedDocumentIsAnsweredWith304(string $ifNoneMatch): void {
 		$response = $this->controller(ifNoneMatch: $ifNoneMatch)->show();
 
-		$this->assertSame(304, $response->getStatus());
-		$this->assertNotInstanceOf(JSONResponse::class, $response);
-		$this->assertSame('', (string)$response->render());
-		$this->assertSame('0123456789abcdef', $response->getETag());
-		$this->assertSame('no-cache', $this->headers(response: $response)['Cache-Control']);
+		$this->assertSame(expected: 304, actual: $response->getStatus());
+		$this->assertNotInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: '', actual: (string)$response->render());
+		$this->assertSame(expected: '0123456789abcdef', actual: $response->getETag());
+		$this->assertSame(expected: 'no-cache', actual: $this->headers(response: $response)['Cache-Control']);
 	}//end testAnUnchangedDocumentIsAnsweredWith304()
 
 	/**
@@ -200,8 +204,8 @@ class ShellTokenControllerTest extends TestCase {
 	public function testAChangedDocumentIsAnsweredInFull(string $ifNoneMatch): void {
 		$response = $this->controller(ifNoneMatch: $ifNoneMatch)->show();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertInstanceOf(JSONResponse::class, $response);
-		$this->assertSame('zuiddrecht', $response->getData()['id']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertInstanceOf(expected: JSONResponse::class, actual: $response);
+		$this->assertSame(expected: 'zuiddrecht', actual: $response->getData()['id']);
 	}//end testAChangedDocumentIsAnsweredInFull()
 }//end class

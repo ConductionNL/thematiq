@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Puts the workspace's mobile logo and touch icon on every page.
+ * Puts the workspace's mobile logo, touch icon and the set's favicon on every page.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -18,11 +18,15 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Listener;
 
+use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\WorkspaceIconService;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
+use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -31,9 +35,13 @@ use Throwable;
  * and a `<style>` that draws the mobile logo below 1024 px when one is set. Nothing when neither
  * is. Fails open: an image that cannot be read never breaks a page.
  *
+ * When the active token set declares `theming.favicon`, a `<link rel="icon">` to that image follows
+ * core's own. Nextcloud before 35 builds the core favicon from the instance logo even when a favicon
+ * is uploaded, so a set whose logo carries a wordmark would otherwise show the wordmark in the tab.
+ *
  * @template-implements IEventListener<Event>
  *
- * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+ * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
  */
 class WorkspaceIconListener implements IEventListener {
 
@@ -49,10 +57,16 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @param WorkspaceIconService $icons The stored images.
 	 * @param LoggerInterface $logger Logs an image that could not be read.
+	 * @param IConfig $config Reads the active token set.
+	 * @param DesignSystemService $designSystems Reads the active set's manifest entry.
+	 * @param IURLGenerator $urls Builds the favicon's address.
 	 */
 	public function __construct(
 		private readonly WorkspaceIconService $icons,
 		private readonly LoggerInterface $logger,
+		private readonly IConfig $config,
+		private readonly DesignSystemService $designSystems,
+		private readonly IURLGenerator $urls,
 	) {
 	}//end __construct()
 
@@ -63,12 +77,14 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	public function handle(Event $event): void {
 		if (($event instanceof BeforeTemplateRenderedEvent) === false && ($event instanceof BeforeLoginTemplateRenderedEvent) === false) {
 			return;
 		}
+
+		$this->emitSetFavicon();
 
 		try {
 			$status = $this->icons->status();
@@ -78,6 +94,29 @@ class WorkspaceIconListener implements IEventListener {
 			return;
 		}
 
+		$this->emitImages(status: $status);
+	}//end handle()
+
+	/**
+	 * Link the active set's favicon, when it declares a usable one.
+	 *
+	 * @return void
+	 */
+	private function emitSetFavicon(): void {
+		$favicon = $this->setFavicon();
+		if ($favicon !== null) {
+			$this->emit(tag: 'link', attributes: ['rel' => 'icon', 'type' => 'image/svg+xml', 'href' => $favicon], text: '');
+		}
+	}//end emitSetFavicon()
+
+	/**
+	 * Add a tag per stored image: the touch icon link, then the mobile logo style.
+	 *
+	 * @param array<string, string|null> $status The image addresses by kind, null when unset.
+	 *
+	 * @return void
+	 */
+	private function emitImages(array $status): void {
 		if ($status['touch-icon'] !== null) {
 			$this->emit(tag: 'link', attributes: ['rel' => 'apple-touch-icon', 'sizes' => '180x180', 'href' => $status['touch-icon']], text: '');
 		}
@@ -85,7 +124,44 @@ class WorkspaceIconListener implements IEventListener {
 		if ($status['mobile-logo'] !== null) {
 			$this->emit(tag: 'style', attributes: ['id' => self::STYLE_ID], text: $this->icons->mobileLogoCss(url: $status['mobile-logo']));
 		}
-	}//end handle()
+	}//end emitImages()
+
+	/**
+	 * The address of the active set's favicon, when it declares an SVG one.
+	 *
+	 * @return string|null The address, or null when the set declares none.
+	 */
+	private function setFavicon(): ?string {
+		try {
+			$setId = $this->config->getAppValue(appName: Application::APP_ID, key: 'token_set', default: 'nextcloud');
+			$path = ($this->designSystems->getTokenSetMeta(tokenSetId: $setId)['theming']['favicon'] ?? null);
+		} catch (Throwable $e) {
+			$this->logger->warning('Thematiq: the set favicon could not be read.', ['exception' => $e]);
+
+			return null;
+		}
+
+		if ($this->isSetFaviconPath(path: $path) === false) {
+			return null;
+		}
+
+		// IURLGenerator::imagePath() prepends "img/" itself.
+		return $this->urls->imagePath(appName: Application::APP_ID, file: substr($path, 4));
+	}//end setFavicon()
+
+	/**
+	 * Whether a declared favicon is an SVG under `img/logos/` that does not climb out of it.
+	 *
+	 * @param mixed $path The declared path.
+	 *
+	 * @return bool True when it may be linked.
+	 */
+	private function isSetFaviconPath(mixed $path): bool {
+		return is_string($path) === true
+			&& str_starts_with(haystack: $path, needle: 'img/logos/') === true
+			&& str_ends_with(haystack: $path, needle: '.svg') === true
+			&& str_contains(haystack: $path, needle: '..') === false;
+	}//end isSetFaviconPath()
 
 	/**
 	 * Add one tag to the page head. Overridable, so a test can capture it.
@@ -98,7 +174,7 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) \OCP\Util::addHeader() is the Nextcloud API for header injection.
 	 *
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	protected function emit(string $tag, array $attributes, string $text): void {
 		\OCP\Util::addHeader(tag: $tag, attributes: $attributes, text: $text);

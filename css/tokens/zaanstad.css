@@ -1428,7 +1428,7 @@
 	--utrecht-textarea-read-only-color: #333333;
 	--utrecht-textbox-background-color: #ffffff;
 	--utrecht-textbox-border-block-end-width: 0.0625rem;
-	--utrecht-textbox-border-color: #bfbfbf;
+	--utrecht-textbox-border-color: #949494;
 	--utrecht-textbox-border-radius: 0px;
 	--utrecht-textbox-border-width: 0.0625rem;
 	--utrecht-textbox-color: #333333;
@@ -2188,6 +2188,7 @@
 	--nldesign-color-primary-hover: #0097bd;
 	--nldesign-color-primary-light: #e6f1f4;
 	--nldesign-color-primary-light-hover: #cce4ea;
+	--nldesign-color-primary-light-text: #006c87;
 	--nldesign-color-primary-text: #FFFFFF;
 	--nldesign-color-success: #39870c;
 	--nldesign-color-success-rgb: 57, 135, 12;

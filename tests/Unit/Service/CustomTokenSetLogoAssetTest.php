@@ -19,6 +19,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -72,6 +73,8 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 
 	/**
 	 * Build the service over a temp app directory.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -79,10 +82,10 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/thematiq-logo-asset-test-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -93,24 +96,26 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(
-				new ContrastService(),
-				new CssParserService(),
-				$appManager,
-				$this->createMock(LoggerInterface::class)
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app directory.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -133,7 +138,7 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -152,10 +157,14 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 */
 	private function store(?array $logoAsset, string $name = 'Gemeente Voorbeeld'): array {
 		return $this->service->store(
-			displayName: $name,
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#154273'],
-			logoAsset: $logoAsset
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => $name,
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#154273'],
+					'logoAsset' => $logoAsset,
+				]
+			)
 		);
 	}//end store()
 
@@ -179,17 +188,19 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * actually on disk.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLogoIsWrittenUnderTheSetIdAndNamedInTheManifest(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg"/>';
 
-		$result = $this->store(['path' => 'img/logos/custom-gemeente-voorbeeld.svg', 'contents' => $svg]);
+		$result = $this->store(logoAsset: ['path' => 'img/logos/custom-gemeente-voorbeeld.svg', 'contents' => $svg]);
 
 		$expected = 'img/logos/custom-gemeente-voorbeeld.svg';
-		$this->assertSame('custom-gemeente-voorbeeld', $result['id']);
-		$this->assertFileExists($this->appDir . '/' . $expected);
-		$this->assertSame($svg, file_get_contents($this->appDir . '/' . $expected));
-		$this->assertSame($expected, $this->manifestEntry($result['id'])['theming']['logo']);
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $result['id']);
+		$this->assertFileExists(filename: $this->appDir . '/' . $expected);
+		$this->assertSame(expected: $svg, actual: file_get_contents($this->appDir . '/' . $expected));
+		$this->assertSame(expected: $expected, actual: $this->manifestEntry(id: $result['id'])['theming']['logo']);
 	}//end testTheLogoIsWrittenUnderTheSetIdAndNamedInTheManifest()
 
 	/**
@@ -198,13 +209,15 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * into a failure.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheLogoDirectoryIsCreatedOnDemand(): void {
-		$this->assertDirectoryDoesNotExist($this->appDir . '/img/logos');
+		$this->assertDirectoryDoesNotExist(directory: $this->appDir . '/img/logos');
 
-		$this->store(['path' => 'img/logos/custom-gemeente-voorbeeld.svg', 'contents' => '<svg/>']);
+		$this->store(logoAsset: ['path' => 'img/logos/custom-gemeente-voorbeeld.svg', 'contents' => '<svg/>']);
 
-		$this->assertDirectoryExists($this->appDir . '/img/logos');
+		$this->assertDirectoryExists(directory: $this->appDir . '/img/logos');
 	}//end testTheLogoDirectoryIsCreatedOnDemand()
 
 	/**
@@ -218,15 +231,17 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * @dataProvider acceptedExtensionProvider
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAcceptedExtensionsAreWrittenUnderTheirOwnName(string $path, string $extension): void {
-		$result = $this->store(['path' => $path, 'contents' => 'bytes']);
+		$result = $this->store(logoAsset: ['path' => $path, 'contents' => 'bytes']);
 
 		$this->assertSame(
-			'img/logos/custom-gemeente-voorbeeld.' . $extension,
-			$this->manifestEntry($result['id'])['theming']['logo']
+			expected: 'img/logos/custom-gemeente-voorbeeld.' . $extension,
+			actual: $this->manifestEntry(id: $result['id'])['theming']['logo']
 		);
-		$this->assertFileExists($this->appDir . '/img/logos/custom-gemeente-voorbeeld.' . $extension);
+		$this->assertFileExists(filename: $this->appDir . '/img/logos/custom-gemeente-voorbeeld.' . $extension);
 	}//end testAcceptedExtensionsAreWrittenUnderTheirOwnName()
 
 	/**
@@ -256,12 +271,14 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * @dataProvider rejectedExtensionProvider
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARejectedExtensionLeavesNoLogoAtAll(string $path): void {
-		$result = $this->store(['path' => $path, 'contents' => 'bytes']);
+		$result = $this->store(logoAsset: ['path' => $path, 'contents' => 'bytes']);
 
-		$this->assertArrayNotHasKey('logo', $this->manifestEntry($result['id'])['theming']);
-		$this->assertDirectoryDoesNotExist($this->appDir . '/img/logos');
+		$this->assertArrayNotHasKey(key: 'logo', array: $this->manifestEntry(id: $result['id'])['theming']);
+		$this->assertDirectoryDoesNotExist(directory: $this->appDir . '/img/logos');
 	}//end testARejectedExtensionLeavesNoLogoAtAll()
 
 	/**
@@ -283,11 +300,13 @@ class CustomTokenSetLogoAssetTest extends TestCase {
 	 * step is skipped entirely rather than writing an empty file.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
 	 */
 	public function testASetWithoutALogoWritesNothingExtra(): void {
-		$result = $this->store(null);
+		$result = $this->store(logoAsset: null);
 
-		$this->assertArrayNotHasKey('logo', $this->manifestEntry($result['id'])['theming']);
-		$this->assertDirectoryDoesNotExist($this->appDir . '/img/logos');
+		$this->assertArrayNotHasKey(key: 'logo', array: $this->manifestEntry(id: $result['id'])['theming']);
+		$this->assertDirectoryDoesNotExist(directory: $this->appDir . '/img/logos');
 	}//end testASetWithoutALogoWritesNothingExtra()
 }//end class

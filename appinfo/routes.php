@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-return [
+// Every unversioned API route is also served under /api/v1/; see ApiPathAliases.
+return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 	'routes' => [
+		// The OpenAPI document of thematiq's own API, public, served under /api/v1/ too.
+		['name' => 'openApi#show', 'url' => '/api/openapi.json', 'verb' => 'GET'],
 		// Metrics — served by nldesign's own MetricsController (domain theme
 		// metrics: token sets, custom overrides, theming syncs). Admin-only:
 		// no #[PublicPage]/#[NoAdminRequired], so the SecurityMiddleware
@@ -73,6 +76,9 @@ return [
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
+		// OpenProject's address and modules for the apps menu (openproject-in-the-app-menu), admin-only.
+		['name' => 'openProjectLink#show', 'url' => '/settings/openproject', 'verb' => 'GET'],
+		['name' => 'openProjectLink#save', 'url' => '/settings/openproject', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],
@@ -196,4 +202,4 @@ return [
 		['name' => 'documentStyle#upload', 'url' => '/settings/document-style/{kind}', 'verb' => 'POST'],
 		['name' => 'documentStyle#remove', 'url' => '/settings/document-style/{kind}', 'verb' => 'DELETE'],
 	],
-];
+]);

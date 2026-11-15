@@ -36,6 +36,12 @@ script('thematiq', 'lib/brandForm');
 // The per-app theming list's search, count and exclusion list
 // (window.NldesignAppTheming); admin.js builds the dropdown from it.
 script('thematiq', 'lib/appTheming');
+// What syncing Nextcloud's own theming to a set would do
+// (window.NldesignThemingPlan); admin.js shows and applies the plan.
+script('thematiq', 'lib/themingPlan');
+// The inert markup renderer (window.NldesignMarkupRender) admin.js and the
+// playground put their built markup through instead of assigning innerHTML.
+script('thematiq', 'lib/markupRender');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
@@ -43,6 +49,7 @@ script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
 script('thematiq', 'admin-workspace-icons');
+script('thematiq', 'admin-openproject-link');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -733,6 +740,22 @@ if ($_['mockUi'] === true) {
 		</p>
 		<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
 		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
+	</div>
+
+	<!-- OpenProject's modules in the apps menu (openproject-in-the-app-menu).
+	     Filled by js/admin-openproject-link.js. -->
+	<div class="nldesign-openproject-link" id="nldesign-openproject-link" style="margin-top:2em">
+		<h3><?php p($l->t('OpenProject in the apps menu')); ?></h3>
+		<p class="settings-hint" id="nldesign-openproject-link-hint">
+			<?php p($l->t('The apps menu lists OpenProject\'s modules in a section of their own. Leave empty for none.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-openproject-url"><?php p($l->t('OpenProject address')); ?></label>
+			<input type="url" id="nldesign-openproject-url" placeholder="https://openproject.example.org"
+				   aria-describedby="nldesign-openproject-link-hint" autocomplete="off">
+			<button type="button" class="button" id="nldesign-openproject-save"><?php p($l->t('Save address')); ?></button>
+		</p>
+		<span id="nldesign-openproject-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos

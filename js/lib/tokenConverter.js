@@ -665,7 +665,7 @@
 	 * @param {Array<string>} parts The three or four arguments.
 	 * @return {Array<number>|null} Unrounded channels in [0, 255], or null.
 	 *
-	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	function oklabChannels(space, parts) {
 		var values = parts.slice(0, 3).map(function (part, index) {
@@ -721,7 +721,7 @@
 	 * @param {Array<number>} vector The vector.
 	 * @return {Array<number>} The product.
 	 *
-	 * @spec openspec/changes/converter-oklch-and-manifest-primary/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	function multiply(matrix, vector) {
 		return matrix.map(function (row) {
@@ -988,6 +988,11 @@
 		var foregroundName = String(pair.foreground)
 		var backgroundName = String(pair.background)
 		var value = semantic[foregroundName]
+		// A step the set does not declare is measured as the token it falls
+		// back to (`from`), and written only when it needs a repair.
+		if (value === undefined && pair.from !== undefined) {
+			value = semantic[String(pair.from)]
+		}
 		var backgroundValue = semantic[backgroundName]
 		if (backgroundValue === undefined) {
 			backgroundValue = fallbackValue(backgroundName, semantic, defaults)
@@ -1165,7 +1170,10 @@
 				}
 
 				if (originals[repaired.name] === undefined) {
-					originals[repaired.name] = semantic[repaired.name]
+					originals[repaired.name] =
+						semantic[repaired.name] !== undefined
+							? semantic[repaired.name]
+							: semantic[String(pair.from)]
 				}
 
 				semantic[repaired.name] = toHex(repaired.rgb)

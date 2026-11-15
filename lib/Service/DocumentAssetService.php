@@ -282,25 +282,7 @@ class DocumentAssetService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function detectType(string $bytes): ?string {
-		$signatures = [
-			"\x89PNG\r\n\x1a\n" => 'image/png',
-			"\xFF\xD8\xFF" => 'image/jpeg',
-		];
-		foreach ($signatures as $magic => $mime) {
-			if (str_starts_with($bytes, $magic) === true) {
-				return $mime;
-			}
-		}
-
-		if (substr($bytes, 0, 4) === 'RIFF' && substr($bytes, 8, 4) === 'WEBP') {
-			return 'image/webp';
-		}
-
-		if (preg_match('/^\s*(<\?xml[^>]*>\s*)?(<!--.*?-->\s*)*(<!DOCTYPE[^>]*>\s*)?<svg[\s>]/is', $bytes) === 1) {
-			return 'image/svg+xml';
-		}
-
-		return null;
+		return (new ImageSniffer())->type(bytes: $bytes);
 	}//end detectType()
 
 	/**
@@ -373,10 +355,6 @@ class DocumentAssetService {
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
 	private function folder(): ISimpleFolder {
-		try {
-			return $this->appData->getFolder(self::FOLDER);
-		} catch (NotFoundException $e) {
-			return $this->appData->newFolder(self::FOLDER);
-		}
+		return (new AppDataFolder())->open(appData: $this->appData, name: self::FOLDER);
 	}//end folder()
 }//end class
