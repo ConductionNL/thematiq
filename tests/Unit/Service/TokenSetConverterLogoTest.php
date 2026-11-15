@@ -60,20 +60,22 @@ class TokenSetConverterLogoTest extends TestCase {
 	/**
 	 * Build the converter against the repository root, which is where its
 	 * mapping table and the two vocabulary stylesheets live.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 
 		$this->converter = new TokenSetConverterService(
-			$appManager,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $appManager,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -96,8 +98,7 @@ class TokenSetConverterLogoTest extends TestCase {
 			content: $css,
 			slug: 'voorbeeld',
 			displayName: 'Voorbeeld',
-			sourceName: 'theme.css',
-			assetName: 'custom-voorbeeld'
+			options: ['sourceName' => 'theme.css', 'assetName' => 'custom-voorbeeld']
 		);
 	}//end convert()
 
@@ -124,33 +125,35 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * theme called "Amsterdam" cannot overwrite the shipped logo.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testBase64SvgLogoIsDecodedAndNamedAfterTheSet(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
 		$uri = 'data:image/svg+xml;base64,' . base64_encode($svg);
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => 'url("' . $uri . '")',
 			]
 		);
 
-		$this->assertIsArray($result['logoAsset']);
-		$this->assertSame('img/logos/custom-voorbeeld.svg', $result['logoAsset']['path']);
-		$this->assertSame($svg, $result['logoAsset']['contents']);
+		$this->assertIsArray(actual: $result['logoAsset']);
+		$this->assertSame(expected: 'img/logos/custom-voorbeeld.svg', actual: $result['logoAsset']['path']);
+		$this->assertSame(expected: $svg, actual: $result['logoAsset']['contents']);
 		$this->assertStringContainsString(
-			"--nldesign-logo-url: url('../../img/logos/custom-voorbeeld.svg')",
-			$result['css']
+			needle: "--nldesign-logo-url: url('../../img/logos/custom-voorbeeld.svg')",
+			haystack: $result['css']
 		);
 
-		$entries = $this->logoEntries($result);
-		$this->assertCount(1, $entries);
-		$this->assertSame('applied', $entries[0]['action']);
-		$this->assertSame('logo-extracted', $entries[0]['reason']);
+		$entries = $this->logoEntries(result: $result);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
+		$this->assertSame(expected: 'applied', actual: $entries[0]['action']);
+		$this->assertSame(expected: 'logo-extracted', actual: $entries[0]['reason']);
 
 		// The payload never reaches the emitted stylesheet.
-		$this->assertStringNotContainsString('data:image/svg+xml', $result['css']);
+		$this->assertStringNotContainsString(needle: 'data:image/svg+xml', haystack: $result['css']);
 	}//end testBase64SvgLogoIsDecodedAndNamedAfterTheSet()
 
 	/**
@@ -160,21 +163,23 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * bytes that are not the image.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testPercentEncodedLogoIsDecodedWithoutBase64(): void {
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg"/>';
 		$uri = 'data:image/svg+xml,' . rawurlencode($svg);
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => "url('" . $uri . "')",
 			]
 		);
 
-		$this->assertIsArray($result['logoAsset']);
-		$this->assertSame($svg, $result['logoAsset']['contents']);
-		$this->assertSame('img/logos/custom-voorbeeld.svg', $result['logoAsset']['path']);
+		$this->assertIsArray(actual: $result['logoAsset']);
+		$this->assertSame(expected: $svg, actual: $result['logoAsset']['contents']);
+		$this->assertSame(expected: 'img/logos/custom-voorbeeld.svg', actual: $result['logoAsset']['path']);
 	}//end testPercentEncodedLogoIsDecodedWithoutBase64()
 
 	/**
@@ -182,19 +187,21 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * under the mime's own spelling — the file has to be servable by name.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testJpegLogoLandsUnderTheMappedExtension(): void {
 		$uri = 'data:image/jpeg;base64,' . base64_encode('not-really-a-jpeg-but-bytes');
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => 'url(' . $uri . ')',
 			]
 		);
 
-		$this->assertIsArray($result['logoAsset']);
-		$this->assertSame('img/logos/custom-voorbeeld.jpg', $result['logoAsset']['path']);
+		$this->assertIsArray(actual: $result['logoAsset']);
+		$this->assertSame(expected: 'img/logos/custom-voorbeeld.jpg', actual: $result['logoAsset']['path']);
 	}//end testJpegLogoLandsUnderTheMappedExtension()
 
 	/**
@@ -203,23 +210,25 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * still a usable theme.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testUnsupportedImageTypeIsRefusedAndReported(): void {
 		$uri = 'data:image/tiff;base64,' . base64_encode('II*');
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => 'url("' . $uri . '")',
 			]
 		);
 
-		$this->assertNull(($result['logoAsset'] ?? null));
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
 
-		$entries = $this->logoEntries($result);
-		$this->assertCount(1, $entries);
-		$this->assertSame('skipped', $entries[0]['action']);
-		$this->assertSame('logo-format-unsupported', $entries[0]['reason']);
+		$entries = $this->logoEntries(result: $result);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
+		$this->assertSame(expected: 'skipped', actual: $entries[0]['action']);
+		$this->assertSame(expected: 'logo-format-unsupported', actual: $entries[0]['reason']);
 	}//end testUnsupportedImageTypeIsRefusedAndReported()
 
 	/**
@@ -228,25 +237,27 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * the admin panel and written to the audit log.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testOversizedLogoIsRefusedAndNotEchoedIntoTheReport(): void {
 		$oversized = str_repeat('A', (262144 + 16));
 		$uri = 'data:image/png;base64,' . base64_encode($oversized);
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => 'url("' . $uri . '")',
 			]
 		);
 
-		$this->assertNull(($result['logoAsset'] ?? null));
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
 
-		$entries = $this->logoEntries($result);
-		$this->assertCount(1, $entries);
-		$this->assertSame('logo-format-unsupported', $entries[0]['reason']);
-		$this->assertLessThanOrEqual(120, strlen((string)$entries[0]['value']));
-		$this->assertStringEndsWith('…', (string)$entries[0]['value']);
+		$entries = $this->logoEntries(result: $result);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
+		$this->assertSame(expected: 'logo-format-unsupported', actual: $entries[0]['reason']);
+		$this->assertLessThanOrEqual(expected: 120, actual: strlen((string)$entries[0]['value']));
+		$this->assertStringEndsWith(suffix: '…', string: (string)$entries[0]['value']);
 	}//end testOversizedLogoIsRefusedAndNotEchoedIntoTheReport()
 
 	/**
@@ -254,10 +265,12 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * as-is: the theme resolved it itself, so there are no bytes to write.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnExistingLocalLogoPathIsKeptWithoutWritingBytes(): void {
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => "url('../../img/logos/amsterdam.svg')",
 			]
@@ -265,11 +278,11 @@ class TokenSetConverterLogoTest extends TestCase {
 
 		// No bytes to write, so no asset — but core theming still gets the
 		// path, and the emitted set still points at the same file.
-		$this->assertNull(($result['logoAsset'] ?? null));
-		$this->assertSame('img/logos/amsterdam.svg', $result['manifestEntry']['theming']['logo']);
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
+		$this->assertSame(expected: 'img/logos/amsterdam.svg', actual: $result['manifestEntry']['theming']['logo']);
 		$this->assertStringContainsString(
-			"--nldesign-logo-url: url('../../img/logos/amsterdam.svg')",
-			$result['css']
+			needle: "--nldesign-logo-url: url('../../img/logos/amsterdam.svg')",
+			haystack: $result['css']
 		);
 	}//end testAnExistingLocalLogoPathIsKeptWithoutWritingBytes()
 
@@ -284,17 +297,19 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * @dataProvider rejectedLocalTargetProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testALocalTargetOutsideTheLogoDirectoryIsRefused(string $target): void {
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => "url('" . $target . "')",
 			]
 		);
 
-		$this->assertNull(($result['logoAsset'] ?? null));
-		$this->assertSame('logo-format-unsupported', $this->logoEntries($result)[0]['reason']);
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
+		$this->assertSame(expected: 'logo-format-unsupported', actual: $this->logoEntries(result: $result)[0]['reason']);
 	}//end testALocalTargetOutsideTheLogoDirectoryIsRefused()
 
 	/**
@@ -325,18 +340,20 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * @dataProvider remoteTargetProvider
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testARemoteLogoIsBlockedBeforeTheLogoStep(string $target): void {
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => "url('" . $target . "')",
 			]
 		);
 
-		$this->assertNull(($result['logoAsset'] ?? null));
-		$this->assertSame([], $this->logoEntries($result));
-		$this->assertStringNotContainsString($target, $result['css']);
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
+		$this->assertSame(expected: [], actual: $this->logoEntries(result: $result));
+		$this->assertStringNotContainsString(needle: $target, haystack: $result['css']);
 
 		$blocked = array_values(
 			array_filter(
@@ -344,8 +361,8 @@ class TokenSetConverterLogoTest extends TestCase {
 				static fn (array $entry): bool => ($entry['reason'] ?? '') === 'external-url-blocked'
 			)
 		);
-		$this->assertCount(1, $blocked);
-		$this->assertSame('--conduction-logo-header-background-image', $blocked[0]['source']);
+		$this->assertCount(expectedCount: 1, haystack: $blocked);
+		$this->assertSame(expected: '--conduction-logo-header-background-image', actual: $blocked[0]['source']);
 	}//end testARemoteLogoIsBlockedBeforeTheLogoStep()
 
 	/**
@@ -366,17 +383,19 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * it must not be reported as an unsupported format.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testAnExplicitlyDisabledLogoIsNotAFailure(): void {
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => 'none',
 			]
 		);
 
-		$this->assertNull(($result['logoAsset'] ?? null));
-		$this->assertSame([], $this->logoEntries($result));
+		$this->assertNull(actual: ($result['logoAsset'] ?? null));
+		$this->assertSame(expected: [], actual: $this->logoEntries(result: $result));
 	}//end testAnExplicitlyDisabledLogoIsNotAFailure()
 
 	/**
@@ -386,13 +405,15 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * the payload.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 *
+	 * @return void
 	 */
 	public function testIdenticalArtworkInOtherSlotsIsRecordedAsAnAlias(): void {
 		$uri = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg"/>');
 		$value = 'url("' . $uri . '")';
 
 		$result = $this->convert(
-			[
+			declarations: [
 				'--nldesign-color-primary' => '#154273',
 				'--conduction-logo-header-background-image' => $value,
 				'--conduction-logo-navbar-background-image' => $value,
@@ -400,21 +421,21 @@ class TokenSetConverterLogoTest extends TestCase {
 			]
 		);
 
-		$this->assertIsArray($result['logoAsset']);
+		$this->assertIsArray(actual: $result['logoAsset']);
 
 		// The other two slots survive — Conduction's apps read them — but as a
 		// reference, so the payload is carried once instead of three times.
 		$this->assertStringContainsString(
-			'--conduction-logo-navbar-background-image: var(--nldesign-logo-url);',
-			$result['css']
+			needle: '--conduction-logo-navbar-background-image: var(--nldesign-logo-url);',
+			haystack: $result['css']
 		);
 		$this->assertStringContainsString(
-			'--conduction-logo-footer-background-image: var(--nldesign-logo-url);',
-			$result['css']
+			needle: '--conduction-logo-footer-background-image: var(--nldesign-logo-url);',
+			haystack: $result['css']
 		);
 
 		// The chosen source is not re-emitted at all: it became the logo url.
-		$this->assertStringNotContainsString('--conduction-logo-header-background-image', $result['css']);
-		$this->assertStringNotContainsString('data:image/svg+xml', $result['css']);
+		$this->assertStringNotContainsString(needle: '--conduction-logo-header-background-image', haystack: $result['css']);
+		$this->assertStringNotContainsString(needle: 'data:image/svg+xml', haystack: $result['css']);
 	}//end testIdenticalArtworkInOtherSlotsIsRecordedAsAnAlias()
 }//end class

@@ -15,6 +15,13 @@
         <testsuite name="Unit Tests">
             <directory>tests/Unit</directory>
         </testsuite>
+        <!-- Tests that need a booted Nextcloud server (the real Dispatcher and
+             middleware chain, the real private classes the app extends). The
+             CI PHPUnit job runs this file with every suite; a standalone run
+             uses phpunit-unit.xml, which holds the Unit suite only. -->
+        <testsuite name="Server Tests">
+            <directory>tests/Server</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

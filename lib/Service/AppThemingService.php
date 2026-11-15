@@ -125,19 +125,9 @@ class AppThemingService {
 			// Coerce defensively — callers may pass a loosely-typed payload
 			// (e.g. decoded JSON) even though the signature promises string[].
 			$appId = (string)$appId;
-			if ($appId === '') {
-				continue;
+			if ($this->isExcludable(appId: $appId) === true) {
+				$clean[$appId] = true;
 			}
-
-			if (in_array($appId, self::PROTECTED_IDS, true) === true) {
-				continue;
-			}
-
-			if ($this->appManager->isInstalled($appId) === false) {
-				continue;
-			}
-
-			$clean[$appId] = true;
 		}
 
 		$this->config->setAppValue(
@@ -146,6 +136,19 @@ class AppThemingService {
 			json_encode(array_keys($clean))
 		);
 	}//end setDisabledApps()
+
+	/**
+	 * Whether an id may be stored as excluded: not empty, not protected, and installed.
+	 *
+	 * @param string $appId The app id.
+	 *
+	 * @return bool True when it may be stored.
+	 */
+	private function isExcludable(string $appId): bool {
+		return $appId !== ''
+			&& in_array($appId, self::PROTECTED_IDS, true) === false
+			&& $this->appManager->isInstalled($appId) === true;
+	}//end isExcludable()
 
 	/**
 	 * Whether theming injection must be skipped for the given app id.
@@ -217,6 +220,21 @@ class AppThemingService {
 		// "Error loading app theming: SyntaxError: Unexpected token '<'".
 		$enabled = $this->appManager->getInstalledApps();
 
+		$apps = $this->panelEntries(enabled: $enabled, disabled: $disabled);
+		usort($apps, fn (array $a, array $b) => strcasecmp($a['name'], $b['name']));
+
+		return $apps;
+	}//end getThemableApps()
+
+	/**
+	 * One panel entry per enabled app that is not protected, in the given order.
+	 *
+	 * @param array<int, string> $enabled The enabled app ids.
+	 * @param array<int, string> $disabled The excluded app ids.
+	 *
+	 * @return array<int, array{id: string, name: string, themed: bool}> The entries.
+	 */
+	private function panelEntries(array $enabled, array $disabled): array {
 		$apps = [];
 		foreach ($enabled as $appId) {
 			if (in_array($appId, self::PROTECTED_IDS, true) === true) {
@@ -230,10 +248,8 @@ class AppThemingService {
 			];
 		}
 
-		usort($apps, fn (array $a, array $b) => strcasecmp($a['name'], $b['name']));
-
 		return $apps;
-	}//end getThemableApps()
+	}//end panelEntries()
 
 	/**
 	 * Resolve a human display name for an app id, falling back to the id.
@@ -245,19 +261,32 @@ class AppThemingService {
 	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
 	 */
 	private function resolveDisplayName(string $appId): string {
-		$info = $this->appManager->getAppInfo($appId);
-		if (is_array($info) === true && isset($info['name']) === true) {
-			$name = $info['name'];
-			if (is_array($name) === true) {
-				// Localized info.xml names may parse to an array keyed by language.
-				$name = reset($name);
-			}
-
-			if (is_string($name) === true && $name !== '') {
-				return $name;
-			}
+		$name = $this->infoName(info: $this->appManager->getAppInfo($appId));
+		if (is_string($name) === true && $name !== '') {
+			return $name;
 		}
 
 		return $appId;
 	}//end resolveDisplayName()
+
+	/**
+	 * The `name` of an app's info, the first one when it is localised.
+	 *
+	 * @param mixed $info The app info.
+	 *
+	 * @return mixed The name, or null when the info has none.
+	 */
+	private function infoName(mixed $info): mixed {
+		if (is_array($info) === false || isset($info['name']) === false) {
+			return null;
+		}
+
+		$name = $info['name'];
+		if (is_array($name) === true) {
+			// Localized info.xml names may parse to an array keyed by language.
+			$name = reset($name);
+		}
+
+		return $name;
+	}//end infoName()
 }//end class

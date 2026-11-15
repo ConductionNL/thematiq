@@ -33,28 +33,20 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\ActiveTokenSetService;
-use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
-use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
-use OCA\Thematiq\Service\Exception\FooterValidationException;
-use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\CoreThemingState;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
-use OCA\Thematiq\Service\GroupThemingService;
-use OCA\Thematiq\Service\ThemingAuditService;
-use OCA\Thematiq\Service\ThemingService;
-use OCA\Thematiq\Service\TokenSetPreviewService;
+use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
-use OCA\Thematiq\Service\TokenSetService;
-use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
-use OCP\IConfig;
 use OCP\IRequest;
 
 /**
@@ -96,132 +88,22 @@ class SettingsController extends Controller {
 	public const SYNCED_IMAGE_PREFIX = 'synced_';
 
 	/**
-	 * The application configuration service.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The token set service.
-	 *
-	 * @var TokenSetService
-	 */
-	private TokenSetService $tokenSetService;
-
-	/**
-	 * The theming service.
-	 *
-	 * @var ThemingService
-	 */
-	private ThemingService $themingService;
-
-	/**
-	 * The token set preview service.
-	 *
-	 * @var TokenSetPreviewService
-	 */
-	private TokenSetPreviewService $previewService;
-
-	/**
-	 * The per-app theming service.
-	 *
-	 * @var AppThemingService
-	 */
-	private AppThemingService $appThemingService;
-
-	/**
-	 * The compliance evidence report service.
-	 *
-	 * @var ComplianceReportService
-	 */
-	private ComplianceReportService $complianceService;
-
-	/**
-	 * The theming audit trail service.
-	 *
-	 * @var ThemingAuditService
-	 */
-	private ThemingAuditService $auditService;
-
-	/**
-	 * The email theming service.
-	 *
-	 * @var EmailThemingService
-	 */
-	private EmailThemingService $emailThemingService;
-
-	/**
-	 * The upstream token freshness service.
-	 *
-	 * @var UpstreamFreshnessService
-	 */
-	private UpstreamFreshnessService $freshnessService;
-
-	/**
-	 * The group theming mapping/resolution service.
-	 *
-	 * @var GroupThemingService
-	 */
-	private GroupThemingService $groupThemingService;
-
-	/**
-	 * The one token set write path, shared with the scheduled switch job.
-	 *
-	 * @var ActiveTokenSetService
-	 */
-	private ActiveTokenSetService $activeTokenSet;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param IConfig $config The config service.
-	 * @param TokenSetService $tokenSetService The token set service.
-	 * @param ThemingService $themingService The theming service.
-	 * @param TokenSetPreviewService $previewService The token set preview service.
-	 * @param AppThemingService $appThemingService The per-app theming service.
-	 * @param ComplianceReportService $complianceService The compliance evidence report service.
-	 * @param ThemingAuditService $auditService The theming audit trail service.
-	 * @param EmailThemingService $emailThemingService The email theming service.
-	 * @param UpstreamFreshnessService $freshnessService The upstream token freshness service.
-	 * @param GroupThemingService $groupThemingService The group theming mapping/resolution service.
-	 * @param ActiveTokenSetService $activeTokenSet The token set write path.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - This is the app's aggregating settings
-	 * controller; each dependency backs one settings endpoint family (token set, theming sync,
-	 * per-app theming, compliance report, audit trail, email theming, upstream freshness, group
-	 * theming). NC's DI container supplies them; a synthetic parameter-object split would not
-	 * reduce the real coupling.
+	 * @param SettingsConfigServices $settings The config, the audit trail, per-app theming and group theming.
+	 * @param SettingsTokenSetServices $tokenSets The token sets, the preview, the active set and core theming.
+	 * @param SettingsReportServices $reports The compliance report, the e-mail theming settings and the freshness check.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IConfig $config,
-		TokenSetService $tokenSetService,
-		ThemingService $themingService,
-		TokenSetPreviewService $previewService,
-		AppThemingService $appThemingService,
-		ComplianceReportService $complianceService,
-		ThemingAuditService $auditService,
-		EmailThemingService $emailThemingService,
-		UpstreamFreshnessService $freshnessService,
-		GroupThemingService $groupThemingService,
-		ActiveTokenSetService $activeTokenSet,
+		private readonly SettingsConfigServices $settings,
+		private readonly SettingsTokenSetServices $tokenSets,
+		private readonly SettingsReportServices $reports,
 	) {
 		parent::__construct(appName: $appName, request: $request);
-		$this->config = $config;
-		$this->tokenSetService = $tokenSetService;
-		$this->themingService = $themingService;
-		$this->previewService = $previewService;
-		$this->appThemingService = $appThemingService;
-		$this->complianceService = $complianceService;
-		$this->auditService = $auditService;
-		$this->emailThemingService = $emailThemingService;
-		$this->freshnessService = $freshnessService;
-		$this->groupThemingService = $groupThemingService;
-		$this->activeTokenSet = $activeTokenSet;
 	}//end __construct()
 
 	/**
@@ -238,7 +120,9 @@ class SettingsController extends Controller {
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setTokenSet(string $tokenSet): JSONResponse {
 		try {
-			$this->activeTokenSet->switchTo(tokenSet: $tokenSet);
+			$this->tokenSets->activeTokenSet->switchTo(tokenSet: $tokenSet);
+		} catch (RestrictedSetNotConfirmedException $e) {
+			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
 		} catch (\InvalidArgumentException $e) {
 			return new JSONResponse(['error' => 'Invalid token set'], 400);
 		}
@@ -261,9 +145,9 @@ class SettingsController extends Controller {
 		// catalogue (CatalogController) still answers with everything shipped,
 		// including the shared role layer that has no manifest entry.
 		$tokenSets = (new TokenSetSelectionPolicy())->selectable(
-			tokenSets: $this->tokenSetService,
-			config: $this->config,
-			appPath: $this->tokenSetService->getAppPath()
+			tokenSets: $this->tokenSets->tokenSetService,
+			config: $this->settings->config,
+			appPath: $this->tokenSets->tokenSetService->getAppPath()
 		);
 
 		return new JSONResponse(['tokenSets' => $tokenSets]);
@@ -285,8 +169,49 @@ class SettingsController extends Controller {
 			$stored = '1';
 		}
 
-		$this->config->setAppValue(Application::APP_ID, $key, $stored);
+		$this->settings->config->setAppValue(Application::APP_ID, $key, $stored);
 	}//end saveBooleanSetting()
+
+	/**
+	 * Audit a changed toggle as a `toggle_changed` entry.
+	 *
+	 * @param string $key The app config key of the toggle.
+	 * @param array{0: mixed, 1: mixed} $change The value before and after.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function auditToggle(string $key, array $change): void {
+		$this->settings->auditService->log(
+			action: 'toggle_changed',
+			context: [
+				'key' => $key,
+				'old' => $change[0],
+				'new' => $change[1],
+			]
+		);
+	}//end auditToggle()
+
+	/**
+	 * Audit a change as an entry with the state before and after.
+	 *
+	 * @param string $action The audit action.
+	 * @param array{0: mixed, 1: mixed} $change The state before and after.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function auditChange(string $action, array $change): void {
+		$this->settings->auditService->log(
+			action: $action,
+			context: [
+				'old' => $change[0],
+				'new' => $change[1],
+			]
+		);
+	}//end auditChange()
 
 	/**
 	 * Set the hide slogan setting.
@@ -297,20 +222,14 @@ class SettingsController extends Controller {
 	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-006
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setSloganSetting(bool $hideSlogan): JSONResponse {
-		$previous = ($this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1');
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1');
 		$this->saveBooleanSetting(key: 'hide_slogan', value: $hideSlogan);
 
-		$this->auditService->log(
-			action: 'toggle_changed',
-			context: [
-				'key' => 'hide_slogan',
-				'old' => $previous,
-				'new' => $hideSlogan,
-			]
-		);
+		$this->auditToggle(key: 'hide_slogan', change: [$previous, $hideSlogan]);
 
 		return new JSONResponse(['status' => 'ok', 'hideSlogan' => $hideSlogan]);
 	}//end setSloganSetting()
@@ -335,17 +254,10 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setPrimaryDrivesComponentsSetting(bool $primaryDrivesComponents): JSONResponse {
-		$previous = ($this->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1');
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1');
 		$this->saveBooleanSetting(key: 'primary_drives_components', value: $primaryDrivesComponents);
 
-		$this->auditService->log(
-			action: 'toggle_changed',
-			context: [
-				'key' => 'primary_drives_components',
-				'old' => $previous,
-				'new' => $primaryDrivesComponents,
-			]
-		);
+		$this->auditToggle(key: 'primary_drives_components', change: [$previous, $primaryDrivesComponents]);
 
 		return new JSONResponse(
 			['status' => 'ok', 'primaryDrivesComponents' => $primaryDrivesComponents]
@@ -374,27 +286,8 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setSaveConfirmSettings(bool $confirmSaveStock, bool $confirmSaveTheme): JSONResponse {
-		foreach (
-			[
-				'confirm_save_stock' => $confirmSaveStock,
-				'confirm_save_theme' => $confirmSaveTheme,
-			] as $key => $value
-		) {
-			$previous = ($this->config->getAppValue(Application::APP_ID, $key, '1') === '1');
-			if ($previous === $value) {
-				continue;
-			}
-
-			$this->saveBooleanSetting(key: $key, value: $value);
-			$this->auditService->log(
-				action: 'toggle_changed',
-				context: [
-					'key' => $key,
-					'old' => $previous,
-					'new' => $value,
-				]
-			);
-		}
+		$this->saveConfirmation(key: 'confirm_save_stock', value: $confirmSaveStock);
+		$this->saveConfirmation(key: 'confirm_save_theme', value: $confirmSaveTheme);
 
 		return new JSONResponse(
 			[
@@ -404,6 +297,26 @@ class SettingsController extends Controller {
 			]
 		);
 	}//end setSaveConfirmSettings()
+
+	/**
+	 * Store one save confirmation flag (default on) and audit it, when it changed.
+	 *
+	 * @param string $key The app config key of the flag.
+	 * @param bool $value Whether to ask.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function saveConfirmation(string $key, bool $value): void {
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, $key, '1') === '1');
+		if ($previous === $value) {
+			return;
+		}
+
+		$this->saveBooleanSetting(key: $key, value: $value);
+		$this->auditToggle(key: $key, change: [$previous, $value]);
+	}//end saveConfirmation()
 
 	/**
 	 * Set the show menu labels setting.
@@ -417,17 +330,10 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setMenuLabelsSetting(bool $showMenuLabels): JSONResponse {
-		$previous = ($this->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1');
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1');
 		$this->saveBooleanSetting(key: 'show_menu_labels', value: $showMenuLabels);
 
-		$this->auditService->log(
-			action: 'toggle_changed',
-			context: [
-				'key' => 'show_menu_labels',
-				'old' => $previous,
-				'new' => $showMenuLabels,
-			]
-		);
+		$this->auditToggle(key: 'show_menu_labels', change: [$previous, $showMenuLabels]);
 
 		return new JSONResponse(['status' => 'ok', 'showMenuLabels' => $showMenuLabels]);
 	}//end setMenuLabelsSetting()
@@ -452,40 +358,15 @@ class SettingsController extends Controller {
 			return $this->resetThemingValues();
 		}
 
-		$colorError = $this->themingService->validateColors(params: $params);
-		if ($colorError !== null) {
-			return new JSONResponse(['error' => $colorError], 400);
+		$refusal = $this->themingInputRefusal(params: $params);
+		if ($refusal !== null) {
+			return $refusal;
 		}
 
-		$imageError = $this->themingService->validateImagePaths(params: $params);
-		if ($imageError !== null) {
-			return new JSONResponse(['error' => $imageError], 400);
-		}
+		$state = $this->coreThemingState();
+		$before = $state->snapshot();
 
-		$before = $this->buildThemingSnapshot();
-
-		$updatedColors = $this->themingService->applyColors(params: $params);
-		$updatedImages = $this->themingService->applyImages(params: $params);
-		$updated = array_merge($updatedColors, $updatedImages);
-
-		// Remember WHICH image was synced. Core stores only that a custom
-		// image exists (`{key}Mime`), never which file it came from, so
-		// without this the sync dialog cannot tell "this set's logo is
-		// already the one in place" from "this set has a logo" — and it
-		// offered the same unchanged logo on every single apply.
-		foreach ($updatedImages as $imageKey) {
-			$this->config->setAppValue(
-				Application::APP_ID,
-				self::SYNCED_IMAGE_PREFIX . $imageKey,
-				(string)$params[$imageKey]
-			);
-		}
-
-		// Increment the theming sync counter exposed by MetricsController as
-		// nldesign_theming_syncs_total. Only counted on success (after both
-		// apply* calls completed without throwing).
-		$current = (int)$this->config->getAppValue(Application::APP_ID, 'theming_syncs_total', '0');
-		$this->config->setAppValue(Application::APP_ID, 'theming_syncs_total', (string)($current + 1));
+		$updated = $this->applyTheming(params: $params, state: $state);
 
 		// A SECOND SNAPSHOT, not $updated. The audit service diffs `old`
 		// against `new` to fill the entry's `changed` list, and that only
@@ -496,18 +377,56 @@ class SettingsController extends Controller {
 		// the integers 0, 1, 2 — so the one field a reader relies on to see
 		// what a sync actually did was noise. $updated is still what the
 		// response carries; the audit entry gets before-and-after.
-		$after = $this->buildThemingSnapshot();
+		$after = $state->snapshot();
 
-		$this->auditService->log(
-			action: 'theming_sync_applied',
-			context: [
-				'old' => $before,
-				'new' => $after,
-			]
-		);
+		$this->auditChange(action: 'theming_sync_applied', change: [$before, $after]);
 
 		return new JSONResponse(['status' => 'ok', 'updated' => $updated]);
 	}//end updateThemingValues()
+
+	/**
+	 * Apply the colours and images, remember which images were synced and count the sync.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 * @param CoreThemingState $state Core theming's state, which records the synced images and the count.
+	 *
+	 * @return array<int, string> The fields that were written, colours first.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md
+	 */
+	private function applyTheming(array $params, CoreThemingState $state): array {
+		$updatedColors = $this->tokenSets->themingService->applyColors(params: $params);
+		$updatedImages = $this->tokenSets->themingService->applyImages(params: $params);
+		$updated = array_merge($updatedColors, $updatedImages);
+
+		$state->rememberSyncedImages(imageKeys: $updatedImages, params: $params);
+		$state->countSync();
+
+		return $updated;
+	}//end applyTheming()
+
+	/**
+	 * The 400 answer to an invalid colour or image path, checked before anything is applied.
+	 *
+	 * @param array<string, mixed> $params The request parameters.
+	 *
+	 * @return JSONResponse|null The refusal, or null when both are valid.
+	 *
+	 * @spec openspec/specs/theming-sync/spec.md
+	 */
+	private function themingInputRefusal(array $params): ?JSONResponse {
+		$colorError = $this->tokenSets->themingService->validateColors(params: $params);
+		if ($colorError !== null) {
+			return new JSONResponse(['error' => $colorError], 400);
+		}
+
+		$imageError = $this->tokenSets->themingService->validateImagePaths(params: $params);
+		if ($imageError !== null) {
+			return new JSONResponse(['error' => $imageError], 400);
+		}
+
+		return null;
+	}//end themingInputRefusal()
 
 	/**
 	 * Reset Nextcloud theming to its defaults — what selecting the stock
@@ -529,21 +448,14 @@ class SettingsController extends Controller {
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function resetThemingValues(): JSONResponse {
-		$before = $this->buildThemingSnapshot();
-		$reset = $this->themingService->resetToDefaults();
+		$state = $this->coreThemingState();
+		$before = $state->snapshot();
+		$reset = $this->tokenSets->themingService->resetToDefaults();
 
 		// Nothing is synced any more, so nothing is remembered as synced.
-		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {
-			$this->config->deleteAppValue(Application::APP_ID, self::SYNCED_IMAGE_PREFIX . $imageKey);
-		}
+		$state->forgetSyncedImages();
 
-		$this->auditService->log(
-			action: 'theming_sync_reset',
-			context: [
-				'old' => $before,
-				'new' => $reset,
-			]
-		);
+		$this->auditChange(action: 'theming_sync_reset', change: [$before, $reset]);
 
 		return new JSONResponse(['status' => 'ok', 'reset' => $reset]);
 	}//end resetThemingValues()
@@ -557,63 +469,19 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getThemingValues(): JSONResponse {
-		$values = $this->buildThemingSnapshot();
+		$values = $this->coreThemingState()->snapshot();
 
 		return new JSONResponse($values);
 	}//end getThemingValues()
 
 	/**
-	 * Build a snapshot of the current theming state.
+	 * Core theming's current state and the images the sync put in place.
 	 *
-	 * @return array<string, mixed> The theming snapshot.
-	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
+	 * @return CoreThemingState The state, read through this controller's config and theming service.
 	 */
-	private function buildThemingSnapshot(): array {
-		$imgManager = $this->themingService->getImageManager();
-
-		$defaults = $this->themingService->getDefaultColors();
-
-		return [
-			'primary_color' => $this->config->getAppValue('theming', 'primary_color', ''),
-			'background_color' => $this->config->getAppValue('theming', 'background_color', ''),
-			'logo_url' => $imgManager->getImageUrl('logo'),
-			'background_url' => $imgManager->getImageUrl('background'),
-			'has_custom_logo' => $imgManager->hasImage('logo'),
-			'has_custom_logoheader' => $imgManager->hasImage('logoheader'),
-			'has_custom_favicon' => $imgManager->hasImage('favicon'),
-			'has_custom_background' => $imgManager->hasImage('background'),
-			// 'backgroundColor' when "Remove background image" is on — the
-			// state a theme that captured the panel may need to put back.
-			'background_mime' => $this->config->getAppValue('theming', 'backgroundMime', ''),
-			// What a reset lands on, so the stock set's dialog can show it
-			// before it is applied rather than guess.
-			'default_primary_color' => $defaults['primary_color'],
-			'default_background_color' => $defaults['background_color'],
-			// Which file the sync last put in each image slot, so the dialog
-			// can leave out a logo that is already the one in place.
-			'synced_logo' => $this->config->getAppValue(
-				Application::APP_ID,
-				self::SYNCED_IMAGE_PREFIX . 'logo',
-				''
-			),
-			'synced_background' => $this->config->getAppValue(
-				Application::APP_ID,
-				self::SYNCED_IMAGE_PREFIX . 'background',
-				''
-			),
-			'synced_logoheader' => $this->config->getAppValue(
-				Application::APP_ID,
-				self::SYNCED_IMAGE_PREFIX . 'logoheader',
-				''
-			),
-			'synced_favicon' => $this->config->getAppValue(
-				Application::APP_ID,
-				self::SYNCED_IMAGE_PREFIX . 'favicon',
-				''
-			),
-		];
-	}//end buildThemingSnapshot()
+	private function coreThemingState(): CoreThemingState {
+		return new CoreThemingState(config: $this->settings->config, theming: $this->tokenSets->themingService);
+	}//end coreThemingState()
 
 	/**
 	 * Get resolved --color-* values for a given token set.
@@ -629,11 +497,11 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getTokenSetPreview(string $tokenSetId): JSONResponse {
-		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSetId) === false) {
+		if ($this->tokenSets->tokenSetService->isValidTokenSet(tokenSetId: $tokenSetId) === false) {
 			return new JSONResponse(['error' => 'Token set not found'], 404);
 		}
 
-		$resolved = $this->previewService->getResolvedColors(tokenSetId: $tokenSetId);
+		$resolved = $this->tokenSets->previewService->getResolvedColors(tokenSetId: $tokenSetId);
 
 		return new JSONResponse(['tokenSetId' => $tokenSetId, 'resolved' => $resolved]);
 	}//end getTokenSetPreview()
@@ -647,7 +515,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAppTheming(): JSONResponse {
-		return new JSONResponse(['apps' => $this->appThemingService->getThemableApps()]);
+		return new JSONResponse(['apps' => $this->settings->appThemingService->getThemableApps()]);
 	}//end getAppTheming()
 
 	/**
@@ -665,17 +533,11 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setAppTheming(array $disabledApps = []): JSONResponse {
-		$before = $this->appThemingService->getDisabledApps();
-		$this->appThemingService->setDisabledApps(appIds: $disabledApps);
-		$after = $this->appThemingService->getDisabledApps();
+		$before = $this->settings->appThemingService->getDisabledApps();
+		$this->settings->appThemingService->setDisabledApps(appIds: $disabledApps);
+		$after = $this->settings->appThemingService->getDisabledApps();
 
-		$this->auditService->log(
-			action: 'app_exclusions_changed',
-			context: [
-				'old' => $before,
-				'new' => $after,
-			]
-		);
+		$this->auditChange(action: 'app_exclusions_changed', change: [$before, $after]);
 
 		return new JSONResponse(
 			[
@@ -696,7 +558,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getUpstreamFreshness(): JSONResponse {
-		return new JSONResponse($this->freshnessService->getStatus());
+		return new JSONResponse($this->reports->freshnessService->getStatus());
 	}//end getUpstreamFreshness()
 
 	/**
@@ -712,7 +574,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setUpstreamFreshness(bool $enabled): JSONResponse {
-		$this->freshnessService->setEnabled(enabled: $enabled);
+		$this->reports->freshnessService->setEnabled(enabled: $enabled);
 
 		return new JSONResponse(['status' => 'ok', 'enabled' => $enabled]);
 	}//end setUpstreamFreshness()
@@ -731,7 +593,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function dismissUpstreamNotice(string $setId, string $version): JSONResponse {
-		$this->freshnessService->dismiss(setId: $setId, versionOrSha: $version);
+		$this->reports->freshnessService->dismiss(setId: $setId, versionOrSha: $version);
 
 		return new JSONResponse(['status' => 'ok']);
 	}//end dismissUpstreamNotice()
@@ -756,17 +618,17 @@ class SettingsController extends Controller {
 			return new JSONResponse(['error' => 'Unknown format. Use "json" or "markdown".'], 400);
 		}
 
-		$tokenSetId = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$instanceId = $this->config->getSystemValue('instanceid', 'unknown');
+		$tokenSetId = $this->settings->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$instanceId = $this->settings->config->getSystemValue('instanceid', 'unknown');
 		$date = gmdate('Ymd');
 
 		$extension = 'json';
 		$contentType = 'application/json';
-		$content = $this->complianceService->renderJson();
+		$content = $this->reports->complianceService->renderJson();
 		if ($format === 'markdown') {
 			$extension = 'md';
 			$contentType = 'text/markdown';
-			$content = $this->complianceService->renderMarkdown();
+			$content = $this->reports->complianceService->renderMarkdown();
 		}
 
 		$filename = sprintf('nldesign-compliance-%s-%s-%s.%s', $instanceId, $tokenSetId, $date, $extension);
@@ -783,14 +645,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getEmailTheming(): JSONResponse {
-		return new JSONResponse(
-			[
-				'state' => $this->emailThemingService->getState(),
-				'footer' => $this->emailThemingService->getFooterConfig(),
-				'occEnable' => EmailThemingService::OCC_ENABLE_COMMAND,
-				'occDisable' => EmailThemingService::OCC_DISABLE_COMMAND,
-			]
-		);
+		return new JSONResponse($this->reports->emailTheming->read());
 	}//end getEmailTheming()
 
 	/**
@@ -817,55 +672,12 @@ class SettingsController extends Controller {
 		string $accessibilityUrl = '',
 		string $privacyUrl = '',
 	): JSONResponse {
-		try {
-			$this->emailThemingService->setFooterConfig($orgName, $accessibilityUrl, $privacyUrl);
-		} catch (FooterValidationException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'invalid_footer',
-					'field' => $e->getField(),
-					'message' => $e->getMessage(),
-				],
-				422
-			);
-		}
-
-		try {
-			if ($enabled === true) {
-				$this->emailThemingService->enable();
-			}
-
-			if ($enabled === false) {
-				$this->emailThemingService->disable();
-			}
-		} catch (ConfigReadOnlyException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'config_read_only',
-					'occEnable' => $e->getOccEnableCommand(),
-					'occDisable' => $e->getOccDisableCommand(),
-					'footer' => $this->emailThemingService->getFooterConfig(),
-				],
-				409
-			);
-		} catch (ForeignMailTemplateClassException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'foreign_mail_template_class',
-					'class' => $e->getForeignClass(),
-					'footer' => $this->emailThemingService->getFooterConfig(),
-				],
-				409
-			);
-		}//end try
-
-		return new JSONResponse(
-			[
-				'status' => 'ok',
-				'state' => $this->emailThemingService->getState(),
-				'footer' => $this->emailThemingService->getFooterConfig(),
-			]
+		$answer = $this->reports->emailTheming->save(
+			enabled: $enabled,
+			footer: ['orgName' => $orgName, 'accessibilityUrl' => $accessibilityUrl, 'privacyUrl' => $privacyUrl]
 		);
+
+		return new JSONResponse($answer['body'], $answer['status']);
 	}//end setEmailTheming()
 
 	/**
@@ -877,7 +689,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getDarkVariants(): JSONResponse {
-		$enabled = ($this->config->getAppValue(Application::APP_ID, 'dark_variants', '1') === '1');
+		$enabled = ($this->settings->config->getAppValue(Application::APP_ID, 'dark_variants', '1') === '1');
 
 		return new JSONResponse(['enabled' => $enabled]);
 	}//end getDarkVariants()
@@ -895,17 +707,10 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setDarkVariants(bool $enabled): JSONResponse {
-		$previous = ($this->config->getAppValue(Application::APP_ID, 'dark_variants', '1') === '1');
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'dark_variants', '1') === '1');
 		$this->saveBooleanSetting(key: 'dark_variants', value: $enabled);
 
-		$this->auditService->log(
-			action: 'toggle_changed',
-			context: [
-				'key' => 'dark_variants',
-				'old' => $previous,
-				'new' => $enabled,
-			]
-		);
+		$this->auditToggle(key: 'dark_variants', change: [$previous, $enabled]);
 
 		return new JSONResponse(['status' => 'ok', 'enabled' => $enabled]);
 	}//end setDarkVariants()
@@ -919,7 +724,7 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getMarianneEnabled(): JSONResponse {
-		$enabled = ($this->config->getAppValue(Application::APP_ID, 'marianne_enabled', '0') === '1');
+		$enabled = ($this->settings->config->getAppValue(Application::APP_ID, 'marianne_enabled', '0') === '1');
 
 		return new JSONResponse(['enabled' => $enabled]);
 	}//end getMarianneEnabled()
@@ -941,17 +746,10 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setMarianneEnabled(bool $enabled): JSONResponse {
-		$previous = ($this->config->getAppValue(Application::APP_ID, 'marianne_enabled', '0') === '1');
+		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'marianne_enabled', '0') === '1');
 		$this->saveBooleanSetting(key: 'marianne_enabled', value: $enabled);
 
-		$this->auditService->log(
-			action: 'toggle_changed',
-			context: [
-				'key' => 'marianne_enabled',
-				'old' => $previous,
-				'new' => $enabled,
-			]
-		);
+		$this->auditToggle(key: 'marianne_enabled', change: [$previous, $enabled]);
 
 		return new JSONResponse(['status' => 'ok', 'enabled' => $enabled]);
 	}//end setMarianneEnabled()
@@ -967,15 +765,15 @@ class SettingsController extends Controller {
 	public function getGroupTheming(): JSONResponse {
 		return new JSONResponse(
 			[
-				'mapping' => $this->groupThemingService->getMapping(),
-				'groups' => $this->groupThemingService->getAvailableGroups(),
+				'mapping' => $this->settings->groupThemingService->getMapping(),
+				'groups' => $this->settings->groupThemingService->getAvailableGroups(),
 				// Also a picker. The policy keeps any set an
 				// existing mapping already points at, so narrowing this list
 				// can never hide a group's current theme.
 				'tokenSets' => (new TokenSetSelectionPolicy())->selectable(
-					tokenSets: $this->tokenSetService,
-					config: $this->config,
-					appPath: $this->tokenSetService->getAppPath()
+					tokenSets: $this->tokenSets->tokenSetService,
+					config: $this->settings->config,
+					appPath: $this->tokenSets->tokenSetService->getAppPath()
 				),
 			]
 		);
@@ -996,28 +794,15 @@ class SettingsController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setGroupTheming(array $mapping = []): JSONResponse {
-		$before = $this->groupThemingService->getMapping();
+		$before = $this->settings->groupThemingService->getMapping();
 
 		try {
-			$after = $this->groupThemingService->setMapping(entries: $mapping);
+			$after = $this->settings->groupThemingService->setMapping(entries: $mapping);
 		} catch (GroupThemingValidationException $e) {
-			return new JSONResponse(
-				[
-					'error' => 'invalid_mapping',
-					'entry' => $e->getEntry(),
-					'reason' => $e->getReason(),
-				],
-				422
-			);
+			return $this->mappingRefusal(e: $e);
 		}
 
-		$this->auditService->log(
-			action: 'group_theming_changed',
-			context: [
-				'old' => $before,
-				'new' => $after,
-			]
-		);
+		$this->auditChange(action: 'group_theming_changed', change: [$before, $after]);
 
 		return new JSONResponse(
 			[
@@ -1026,4 +811,36 @@ class SettingsController extends Controller {
 			]
 		);
 	}//end setGroupTheming()
+
+	/**
+	 * The answer to a refused group mapping: 403 for a restricted set nobody
+	 * confirmed, 422 naming the entry and the reason for anything else.
+	 *
+	 * @param GroupThemingValidationException $e The refusal.
+	 *
+	 * @return JSONResponse The error.
+	 *
+	 * @spec openspec/specs/per-group-theming/spec.md
+	 */
+	private function mappingRefusal(GroupThemingValidationException $e): JSONResponse {
+		if ($e->getRestrictedSet() !== null) {
+			return new JSONResponse(
+				[
+					'error' => RestrictedSetNotConfirmedException::ERROR,
+					'tokenSet' => $e->getRestrictedSet(),
+					'entry' => $e->getEntry(),
+				],
+				403
+			);
+		}
+
+		return new JSONResponse(
+			[
+				'error' => 'invalid_mapping',
+				'entry' => $e->getEntry(),
+				'reason' => $e->getReason(),
+			],
+			422
+		);
+	}//end mappingRefusal()
 }//end class

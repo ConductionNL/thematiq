@@ -50,3 +50,13 @@ dev-container native. Therefore, before a GitHub-side visual step could gate:
 3. Make the step gating (drop `continue-on-error`).
 
 Until such a job exists on GitHub Actions, nothing surfaces these diffs in CI.
+
+## The shell pixel check
+
+`shell.visual.spec.ts` compares the top bar and the navigation of Files (1440 x 1000, Zuiddrecht set) with `shell-top-bar` and `shell-navigation` in its snapshots folder: 0.5% and 1% of their pixels may differ. It mirrors the OpenProject plugin's pixel check, so both shells are guarded the same way. The references were made on 14 October 2026 on Nextcloud 35.0.1. Run it after a Nextcloud upgrade:
+
+```bash
+PW_VISUAL=1 npx playwright test tests/e2e/visual/shell.visual.spec.ts --project=visual
+```
+
+Make the references again only when the shell changed on purpose, and say which change in the commit.

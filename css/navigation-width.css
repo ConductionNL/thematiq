@@ -21,6 +21,11 @@
  * component rule then sizes it again from a literal, so the width is said
  * outright on the panel as well, with the weight the component rule carries
  * (measured 6 October 2026: a variable alone left the panel at 300px).
+ *
+ * Nextcloud 34 puts the `app-navigation-vue` id on the panel's inner list
+ * (`.app-navigation__content`), not on the panel. Sized to the full width,
+ * that list overflows the panel's border box and paints over its 1px end
+ * border, so only an id-carrying element that is the panel itself is sized.
  */
 :root {
 	--nldesign-nc-navigation-width: var(--thematiq-navigation-width);
@@ -28,7 +33,7 @@
 	--navigation-width: var(--thematiq-navigation-width);
 }
 
-#app-navigation-vue,
+#app-navigation-vue:not(.app-navigation__content),
 .app-navigation {
 	--navigation-width: var(--thematiq-navigation-width);
 

@@ -69,10 +69,10 @@ class GalleryControllerTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->gallery = $this->createMock(ThemeGalleryService::class);
-		$this->installer = $this->createMock(GalleryInstallService::class);
-		$this->request = $this->createMock(IRequest::class);
-		$this->controller = new GalleryController('thematiq', $this->request, $this->gallery, $this->installer);
+		$this->gallery = $this->createMock(originalClassName: ThemeGalleryService::class);
+		$this->installer = $this->createMock(originalClassName: GalleryInstallService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->controller = new GalleryController(appName: 'thematiq', request: $this->request, gallery: $this->gallery, installer: $this->installer);
 	}//end setUp()
 
 	/**
@@ -85,8 +85,8 @@ class GalleryControllerTest extends TestCase {
 
 		$response = $this->controller->index();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('raw.githubusercontent.com', $response->getData()['host']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'raw.githubusercontent.com', actual: $response->getData()['host']);
 	}//end testIndexReturnsTheBrowseResult()
 
 	/**
@@ -99,7 +99,7 @@ class GalleryControllerTest extends TestCase {
 		$this->gallery->expects($this->once())->method('setEnabled')->with(true);
 		$this->gallery->method('browse')->willReturn(['enabled' => true, 'host' => 'h', 'reachable' => true, 'entries' => []]);
 
-		$this->assertTrue($this->controller->setEnabled()->getData()['enabled']);
+		$this->assertTrue(condition: $this->controller->setEnabled()->getData()['enabled']);
 	}//end testSetEnabledStoresTheToggle()
 
 	/**
@@ -112,8 +112,8 @@ class GalleryControllerTest extends TestCase {
 
 		$response = $this->controller->install(id: 'provincie-utrecht');
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('custom-provincie-utrecht', $response->getData()['id']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'custom-provincie-utrecht', actual: $response->getData()['id']);
 	}//end testInstallAnswersWithTheStoredSet()
 
 	/**
@@ -122,12 +122,15 @@ class GalleryControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testARefusedInstallAnswersWithTheReason(): void {
-		$this->installer->method('install')->willThrowException(new GalleryException(message: 'The downloaded file does not match the gallery index.', code: 422));
+		$this->installer->method('install')->willThrowException(new GalleryException(
+			message: 'The downloaded file does not match the gallery index.',
+			code: 422
+		));
 
 		$response = $this->controller->install(id: 'provincie-utrecht');
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertSame('The downloaded file does not match the gallery index.', $response->getData()['error']);
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertSame(expected: 'The downloaded file does not match the gallery index.', actual: $response->getData()['error']);
 	}//end testARefusedInstallAnswersWithTheReason()
 
 	/**
@@ -138,8 +141,8 @@ class GalleryControllerTest extends TestCase {
 	public function testEveryEndpointIsAdminOnly(): void {
 		foreach (['index', 'setEnabled', 'install'] as $method) {
 			$attributes = (new \ReflectionMethod(GalleryController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "GalleryController::{$method}() must carry #[AuthorizedAdminSetting]");
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertNotEmpty(actual: $attributes, message: "GalleryController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 	}//end testEveryEndpointIsAdminOnly()
 
@@ -158,12 +161,12 @@ class GalleryControllerTest extends TestCase {
 		}
 
 		$this->assertSame(
-			[
+			expected: [
 				'gallery#index' => 'GET /settings/gallery',
 				'gallery#setEnabled' => 'POST /settings/gallery',
 				'gallery#install' => 'POST /settings/gallery/{id}/install',
 			],
-			$found
+			actual: $found
 		);
 	}//end testTheRoutesAreRegistered()
 }//end class

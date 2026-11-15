@@ -110,7 +110,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		which quoted the grep command in order to WARN about the problem —
 		made it read ")[^". The warning reproduced the bug it described.
 	-->
-	<version>1.2.21-unstable.20261005051052</version>
+	<version>1.2.28-unstable.20261014120000</version>
 	<licence>EUPL-1.2</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>Thematiq</namespace>
@@ -276,6 +276,11 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     branding package named in thematiq.config_source when it
 			     changed. Last, after the configuration rescue above. -->
 			<step>OCA\Thematiq\Repair\ApplyConfigSource</step>
+			<!-- Licences of shipped sets (openspec/specs/token-set-licences/spec.md):
+			     a set marked restricted that is already applied stays applied;
+			     this records that it needs a confirmation, which the admin
+			     settings then ask for. After ApplyConfigSource, which may apply a set. -->
+			<step>OCA\Thematiq\Repair\RecordRestrictedSetsAwaitingConfirmation</step>
 		</post-migration>
 		<install>
 			<step>OCA\Thematiq\Repair\MigrateAppConfigKeys</step>
