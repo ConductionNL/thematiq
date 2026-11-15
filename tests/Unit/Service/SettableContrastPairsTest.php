@@ -62,4 +62,20 @@ class SettableContrastPairsTest extends TestCase {
 	public function testASetThatDeclaresNeitherSideIsNotReported(): void {
 		$this->assertSame(expected: [], actual: (new SettableContrastPairs())->pairs(['--nldesign-color-primary' => '#154273']));
 	}
+	/**
+	 * Golden: the reported pairs for each combination of the two settable colours, recorded before the split.
+	 *
+	 * @return void
+	 */
+	public function testEveryCombinationGolden(): void {
+		$pairs = new SettableContrastPairs();
+		$base = ['--nldesign-color-background' => '#fafafa', '--nldesign-color-text' => '#111111', '--nldesign-color-primary' => '#e17000'];
+		$out = [];
+		foreach ([[], ['--nldesign-nc-color-text-selection' => '#000000'], ['--nldesign-nc-color-mark' => '#ffef00'], ['--nldesign-nc-color-text-selection' => '#ffffff', '--nldesign-nc-color-mark' => 'not a colour']] as $settable) {
+			$out[] = $pairs->pairs($settable + $base);
+			$out[] = $pairs->pairs($settable);
+		}
+
+		$this->assertSame(expected: '5add7be148ad186d', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16), message: (string)json_encode($out));
+	}
 }

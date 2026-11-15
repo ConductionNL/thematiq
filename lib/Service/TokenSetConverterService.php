@@ -107,6 +107,27 @@ class TokenSetConverterService {
 	public const COMPONENT_PREFIXES = ['--utrecht-', '--ams-', '--denhaag-', '--conduction-'];
 
 	/**
+	 * The three declaration sections of a converted file, in order, each with its comment.
+	 *
+	 * @var array<string, array<int, string>>
+	 */
+	private const CSS_SECTIONS = [
+		'palette' => [
+			"\t/* 1. Brand palette — the theme's own steps, under the set's own prefix so",
+			"\t *    they can never masquerade as app vocabulary. */",
+		],
+		'component' => [
+			"\t/* 2. Component layer — emitted verbatim. css/systems/nldesign/utrecht-bridge.css",
+			"\t *    reads these into --nldesign-component-*, and Conduction's apps read them",
+			"\t *    directly, which is why components Nextcloud lacks are kept rather than dropped. */",
+		],
+		'semantic' => [
+			"\t/* 3. Semantic layer — what Nextcloud's chrome actually reads, via",
+			"\t *    css/systems/nldesign/theme.css and overrides.css. */",
+		],
+	];
+
+	/**
 	 * The options convert() takes, at their defaults, in the order callers have always given them.
 	 */
 	public const CONVERT_OPTIONS = ['sourceName' => null, 'assetName' => null, 'referenceOnlyPaths' => [], 'repairContrast' => false];
@@ -342,7 +363,7 @@ class TokenSetConverterService {
 	 * @return array<string, string>
 	 */
 	private function jsonDeclarations(string $content, ConversionRun $run): array {
-		$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), kind: $run->inputKind, slug: $run->slug, report: $run->report);
+		$parsed = $this->declarationsFromJson(decoded: json_decode($content, true), run: $run);
 		$run->sourceVersion = $parsed['version'];
 
 		// Thematiq's own export comes back as it went out, without the conversion rules.
@@ -367,11 +388,7 @@ class TokenSetConverterService {
 	 */
 	private function earlyResult(array $declarations, ConversionRun $run): ?array {
 		if ($run->exportDark !== null) {
-			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(
-				declarations: $declarations,
-				source: $run->source(),
-				report: $run->report
-			);
+			return ['darkDeclarations' => $run->exportDark] + $this->thematiqExportResult(declarations: $declarations, run: $run);
 		}
 
 		if ($declarations !== []) {
@@ -388,13 +405,22 @@ class TokenSetConverterService {
 			return $this->zeroYieldResult(report: $run->report, inputKind: $run->inputKind);
 		}
 
-		throw new RuntimeException(
+		throw $this->noPropertiesFound();
+	}//end earlyResult()
+
+	/**
+	 * The refusal for content that holds no custom property at all.
+	 *
+	 * @return RuntimeException The exception, with status 422.
+	 */
+	private function noPropertiesFound(): RuntimeException {
+		return new RuntimeException(
 			'No custom properties were found. Paste a built theme CSS (a class-scoped block of'
 			. ' --custom-properties), a W3C Design Tokens JSON document, a Style Dictionary'
 			. ' tokens.json, or an existing :root token set.',
 			422
 		);
-	}//end earlyResult()
+	}//end noPropertiesFound()
 
 	/**
 	 * Make the declarations stand on their own: no remote url(), no var() chains, measurable
@@ -462,26 +488,46 @@ class TokenSetConverterService {
 			input: ['declarations' => $declarations, 'byRole' => $this->indexByRole(declarations: $declarations), 'slug' => $run->slug],
 			run: $run
 		);
+		$layers = ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
 
 		// Bring the converted brand and text pairs to WCAG AA, smallest change first (thematiq#993).
 		// Only on request: an admin's own upload keeps its colours and gets contrast warnings instead.
 		if ($run->repairContrast === true) {
-			$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
-			$semantic = $colourRepair->repairContrast(semantic: $semantic, table: $this->table(), manifest: $run->manifest, report: $run->report);
-			$sections['component'] = $colourRepair->repairComponents(
-				component: $sections['component'],
-				semantic: $semantic,
-				table: $this->table(),
-				report: $run->report
-			);
+			$layers = $this->contrastRepaired(layers: $layers, run: $run);
 		}
 
 		if ($run->logo !== null) {
-			$semantic['--nldesign-logo-url'] = $run->logo['css'];
+			$layers['semantic']['--nldesign-logo-url'] = $run->logo['css'];
 		}
 
-		return ['palette' => $sections['palette'], 'component' => $sections['component'], 'semantic' => $semantic];
+		return $layers;
 	}//end emittedLayers()
+
+	/**
+	 * The layers with the semantic pairs and the theme's own component pairs brought to their thresholds.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The emitted layers.
+	 * @param ConversionRun $run The conversion; its manifest values and report are updated.
+	 *
+	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} The repaired layers.
+	 */
+	private function contrastRepaired(array $layers, ConversionRun $run): array {
+		$colourRepair = new ConverterColourRepair(contrast: $this->contrast);
+		$layers['semantic'] = $colourRepair->repairContrast(
+			semantic: $layers['semantic'],
+			table: $this->table(),
+			manifest: $run->manifest,
+			report: $run->report
+		);
+		$layers['component'] = $colourRepair->repairComponents(
+			component: $layers['component'],
+			semantic: $layers['semantic'],
+			table: $this->table(),
+			report: $run->report
+		);
+
+		return $layers;
+	}//end contrastRepaired()
 
 	/**
 	 * The converted set: the stylesheet, its manifest entry, the report and the logo file.
@@ -500,7 +546,7 @@ class TokenSetConverterService {
 		return [
 			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: $run->inputKind, counts: $counts),
 			'imported' => $run->imported,
-			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: $layers['semantic'], manifest: $run->manifest, logo: $run->logo),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, theming: $this->runTheming(semantic: $layers['semantic'], run: $run)),
 			'report' => $run->report,
 			'inputKind' => $run->inputKind,
 			'counts' => $counts,
@@ -574,35 +620,24 @@ class TokenSetConverterService {
 	 * the brand palette moved to the new prefix, no conversion rules.
 	 *
 	 * @param array<string, string> $declarations The mapped declarations.
-	 * @param SetSource $source The new set's slug and name, the file name and the document's package version.
-	 * @param array<int, array<string, mixed>> $report The report so far.
+	 * @param ConversionRun $run The conversion: the new set's slug and name, the file name, the document's package version and the report so far.
 	 *
 	 * @return array<string, mixed> The same shape as convert().
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-a-thematiq-round-trip-is-exact
 	 */
-	private function thematiqExportResult(array $declarations, array $source, array $report): array {
-		$declarations = $this->stripExternalUrls(declarations: $declarations, report: $report);
-
-		// The OpenProject plugin's menu colour is the navigation column here. It is copied to the
-		// set's navigation colour, which the bundles paint and the dark variant follows; the
-		// plugin's own name stays, so the next download carries it back.
-		if (isset($declarations['--thematiq-shell-menu']) === true && isset($declarations['--nldesign-color-nav-background']) === false) {
-			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
-		}
-
-		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $source['slug'], report: $report);
+	private function thematiqExportResult(array $declarations, ConversionRun $run): array {
+		$report = $run->report;
+		$declarations = $this->withNavigationColour(declarations: $this->stripExternalUrls(declarations: $declarations, report: $report));
+		$layers = (new ThematiqExportLayers())->split(declarations: $declarations, slug: $run->slug, report: $report);
+		$source = $run->source();
 		$counts = $this->countActions(report: $report);
-		$manifest = [];
-		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
-		if ($primary !== null) {
-			$manifest['theming.primary_color'] = $primary;
-		}
+		$theming = $this->colourTheming(semantic: [], manifest: $this->exportManifest(layers: $layers));
 
 		return [
 			'css' => $this->buildCss(layers: $layers, source: $source, inputKind: 'B', counts: $counts),
 			'imported' => count($declarations),
-			'manifestEntry' => $this->buildManifestEntry(source: $source, semantic: [], manifest: $manifest),
+			'manifestEntry' => $this->buildManifestEntry(source: $source, theming: $theming),
 			'report' => $report,
 			'inputKind' => 'B',
 			'counts' => $counts,
@@ -611,6 +646,42 @@ class TokenSetConverterService {
 			'errors' => $this->mapperErrors,
 		];
 	}//end thematiqExportResult()
+
+	/**
+	 * The declarations with the OpenProject plugin's menu colour as the navigation colour.
+	 *
+	 * The OpenProject plugin's menu colour is the navigation column here. It is copied to the
+	 * set's navigation colour, which the bundles paint and the dark variant follows; the
+	 * plugin's own name stays, so the next download carries it back.
+	 *
+	 * @param array<string, string> $declarations The declarations.
+	 *
+	 * @return array<string, string> The declarations.
+	 */
+	private function withNavigationColour(array $declarations): array {
+		if (isset($declarations['--thematiq-shell-menu']) === true && isset($declarations['--nldesign-color-nav-background']) === false) {
+			$declarations['--nldesign-color-nav-background'] = $declarations['--thematiq-shell-menu'];
+		}
+
+		return $declarations;
+	}//end withNavigationColour()
+
+	/**
+	 * The manifest values of a thematiq export: its primary, when the layers state it as a literal colour.
+	 *
+	 * @param array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>} $layers The split layers.
+	 *
+	 * @return array<string, string> The manifest values.
+	 */
+	private function exportManifest(array $layers): array {
+		$manifest = [];
+		$primary = $this->literalColour(name: '--nldesign-color-primary', declarations: $layers['palette'] + $layers['component'] + $layers['semantic']);
+		if ($primary !== null) {
+			$manifest['theming.primary_color'] = $primary;
+		}
+
+		return $manifest;
+	}//end exportManifest()
 
 	/**
 	 * A token's value with its var() chain followed inside the set, when it ends in a hex colour.
@@ -782,12 +853,7 @@ class TokenSetConverterService {
 
 		$stripped = (string)preg_replace('#/\*.*?\*/#s', '', $content);
 		if (preg_match('/--[\w-]+\s*:/', $stripped) !== 1) {
-			throw new RuntimeException(
-				'The content is not a theme this app can convert. Accepted: built theme CSS with a'
-				. ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
-				. ' Style Dictionary tokens.json, or an existing :root token set.',
-				422
-			);
+			throw $this->notConvertible();
 		}
 
 		if (preg_match('/:root\s*\{/i', $stripped) === 1 && preg_match('/--nldesign-/', $stripped) === 1) {
@@ -796,6 +862,20 @@ class TokenSetConverterService {
 
 		return 'A';
 	}//end detectInput()
+
+	/**
+	 * The refusal for content that is neither JSON this app reads nor CSS with custom properties.
+	 *
+	 * @return RuntimeException The exception, with status 422.
+	 */
+	private function notConvertible(): RuntimeException {
+		return new RuntimeException(
+			'The content is not a theme this app can convert. Accepted: built theme CSS with a'
+			. ' class-scoped block of --custom-properties, a W3C Design Tokens JSON document, a'
+			. ' Style Dictionary tokens.json, or an existing :root token set.',
+			422
+		);
+	}//end notConvertible()
 
 	/**
 	 * Which JSON shape the content is: a DTCG document (it has a `$value` leaf, or thematiq
@@ -960,47 +1040,79 @@ class TokenSetConverterService {
 	 * whose dotted path becomes the token name.
 	 *
 	 * @param array<mixed> $decoded The decoded JSON.
-	 * @param string $kind `B` or `C`.
-	 * @param string $slug The brand prefix for input C names.
-	 * @param array<int, ReportEntry> $report The report, appended to by reference.
+	 * @param ConversionRun $run The conversion: the input kind (`B` or `C`), the brand prefix for input C names, and the report it appends to.
 	 *
 	 * @return array{declarations: array<string, string>, version: string|null} The declarations, and the input's package version.
 	 */
-	private function declarationsFromJson(array $decoded, string $kind, string $slug, array &$report): array {
-		if ($kind === 'B') {
-			$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
-			$this->importWarnings = $mapped['warnings'];
-			$this->mapperErrors = $mapped['errors'];
-
-			foreach ($mapped['skipped'] as $skip) {
-				$report[] = [
-					'source' => (string)($skip['path'] ?? ''),
-					'target' => '',
-					'action' => 'skipped',
-					'reason' => 'unmapped',
-					'value' => null,
-				];
-			}
-
-			// A colour moved into the sRGB gamut: what it became, and the original.
-			foreach (($mapped['adapted'] ?? []) as $entry) {
-				$report[] = [
-					'source' => (string)$entry['path'],
-					'target' => (string)$entry['target'],
-					'action' => 'adapted',
-					'reason' => (string)$entry['reason'],
-					'value' => (string)$entry['value'],
-					'original' => (string)json_encode($entry['original']),
-				];
-			}
-
-			return ['declarations' => $mapped['declarations'], 'version' => $mapped['packageVersion']];
+	private function declarationsFromJson(array $decoded, ConversionRun $run): array {
+		if ($run->inputKind === 'B') {
+			return $this->dtcgDeclarations(decoded: $decoded, run: $run);
 		}
 
-		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $slug);
+		$declarations = $this->collectStyleDictionaryLeaves(node: $decoded, path: [], slug: $run->slug);
 
-		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $slug), 'version' => null];
+		return ['declarations' => $this->resolveStyleDictionaryAliases(declarations: $declarations, slug: $run->slug), 'version' => null];
 	}//end declarationsFromJson()
+
+	/**
+	 * The declarations of a W3C Design Tokens document (input B), as `DesignTokensMapper` maps them.
+	 *
+	 * @param array<mixed> $decoded The decoded JSON.
+	 * @param ConversionRun $run The conversion; its report gets the skipped and the gamut-mapped tokens.
+	 *
+	 * @return array{declarations: array<string, string>, version: string|null} The declarations, and the document's package version.
+	 */
+	private function dtcgDeclarations(array $decoded, ConversionRun $run): array {
+		$mapped = $this->dtcgMapper->map(document: $decoded, referenceOnlyPaths: $this->referenceOnlyPaths);
+		$this->importWarnings = $mapped['warnings'];
+		$this->mapperErrors = $mapped['errors'];
+
+		foreach ($mapped['skipped'] as $skip) {
+			$run->report[] = $this->unmappedEntry(skip: $skip);
+		}
+
+		// A colour moved into the sRGB gamut: what it became, and the original.
+		foreach (($mapped['adapted'] ?? []) as $entry) {
+			$run->report[] = $this->gamutEntry(entry: $entry);
+		}
+
+		return ['declarations' => $mapped['declarations'], 'version' => $mapped['packageVersion']];
+	}//end dtcgDeclarations()
+
+	/**
+	 * The report entry for a document token the mapper skipped.
+	 *
+	 * @param array<string, mixed> $skip The mapper's skip record.
+	 *
+	 * @return array{source: string, target: string, action: string, reason: string, value: null} The entry.
+	 */
+	private function unmappedEntry(array $skip): array {
+		return [
+			'source' => (string)($skip['path'] ?? ''),
+			'target' => '',
+			'action' => 'skipped',
+			'reason' => 'unmapped',
+			'value' => null,
+		];
+	}//end unmappedEntry()
+
+	/**
+	 * The report entry for a colour the mapper moved into the sRGB gamut.
+	 *
+	 * @param array<string, mixed> $entry The mapper's adapted record.
+	 *
+	 * @return array{source: string, target: string, action: string, reason: string, value: string, original: string} The entry.
+	 */
+	private function gamutEntry(array $entry): array {
+		return [
+			'source' => (string)$entry['path'],
+			'target' => (string)$entry['target'],
+			'action' => 'adapted',
+			'reason' => (string)$entry['reason'],
+			'value' => (string)$entry['value'],
+			'original' => (string)json_encode($entry['original']),
+		];
+	}//end gamutEntry()
 
 	/**
 	 * The custom property a Style Dictionary leaf path becomes.
@@ -3234,44 +3346,49 @@ class TokenSetConverterService {
 	 * @return string The complete CSS file.
 	 */
 	private function buildCss(array $layers, array $source, string $inputKind, array $counts): string {
-		$palette = $layers['palette'];
-		$component = $layers['component'];
-		$semantic = $layers['semantic'];
-		ksort($palette);
-		ksort($component);
-		ksort($semantic);
+		$lines = [
+			'/* GENERATED by Thematiq TokenSetConverterService — do not edit by hand.',
+			' * Re-run the conversion instead; hand edits are lost on the next run. */',
+			':root {',
+		];
+		foreach (self::CSS_SECTIONS as $layer => $comment) {
+			$lines = [...$lines, ...$this->sectionLines(comment: $comment, declarations: $layers[$layer]), ''];
+		}
 
+		$lines = [...$lines, ...$this->provenanceLines(source: $source, inputKind: $inputKind), ...$this->tallyLines(counts: $counts), "\t */", '}', ''];
+
+		return implode("\n", $lines);
+	}//end buildCss()
+
+	/**
+	 * One section of the token set file: its comment, then its declarations sorted by name.
+	 *
+	 * @param array<int, string> $comment The section's comment lines.
+	 * @param array<string, string> $declarations Name => value.
+	 *
+	 * @return array<int, string> The lines.
+	 */
+	private function sectionLines(array $comment, array $declarations): array {
+		ksort($declarations);
+		$lines = $comment;
+		foreach ($declarations as $name => $value) {
+			$lines[] = "\t" . $name . ': ' . $value . ';';
+		}
+
+		return $lines;
+	}//end sectionLines()
+
+	/**
+	 * The provenance comment up to the action tally.
+	 *
+	 * @param SetSource $source The brand slug, the source label and the source package version.
+	 * @param string $inputKind The detected input kind.
+	 *
+	 * @return array<int, string> The lines.
+	 */
+	private function provenanceLines(array $source, string $inputKind): array {
 		$table = $this->table();
-		$lines = [];
 
-		$lines[] = '/* GENERATED by Thematiq TokenSetConverterService — do not edit by hand.';
-		$lines[] = ' * Re-run the conversion instead; hand edits are lost on the next run. */';
-		$lines[] = ':root {';
-
-		$lines[] = "\t/* 1. Brand palette — the theme's own steps, under the set's own prefix so";
-		$lines[] = "\t *    they can never masquerade as app vocabulary. */";
-		foreach ($palette as $name => $value) {
-			$lines[] = "\t" . $name . ': ' . $value . ';';
-		}
-
-		$lines[] = '';
-		$lines[] = "\t/* 2. Component layer — emitted verbatim. css/systems/nldesign/utrecht-bridge.css";
-		$lines[] = "\t *    reads these into --nldesign-component-*, and Conduction's apps read them";
-		$lines[] = "\t *    directly, which is why components Nextcloud lacks are kept rather than dropped. */";
-		foreach ($component as $name => $value) {
-			$lines[] = "\t" . $name . ': ' . $value . ';';
-		}
-
-		$lines[] = '';
-		$lines[] = "\t/* 3. Semantic layer — what Nextcloud's chrome actually reads, via";
-		$lines[] = "\t *    css/systems/nldesign/theme.css and overrides.css. */";
-		foreach ($semantic as $name => $value) {
-			$lines[] = "\t" . $name . ': ' . $value . ';';
-		}
-
-		$lines[] = '';
-		$lines[] = "\t/* 4. Provenance — enough to tell two runs apart without running anything.";
-		$lines[] = "\t *    input kind:      " . $inputKind . ' (' . $this->inputKindLabel(kind: $inputKind) . ')';
 		// The only two values in this block that come from OUTSIDE the app, and
 		// therefore the only two that have to be made comment-safe. The rest is
 		// the app's own: the input kind is one of four letters this class
@@ -3279,21 +3396,32 @@ class TokenSetConverterService {
 		// `[a-z0-9-]` by `CustomTokenSetService::slugify()`, the converter and
 		// table versions come from the repository's own mapping table, and the
 		// counts are integers.
-		$lines[] = "\t *    source:          " . $this->commentSafe(value: ($source['sourceName'] ?? '(pasted)'));
-		$lines[] = "\t *    source version:  " . $this->commentSafe(value: ($source['sourceVersion'] ?? '(not declared)'));
-		$lines[] = "\t *    slug:            " . $source['slug'];
-		$lines[] = "\t *    converter:       " . (string)($table['converterVersion'] ?? '0');
-		$lines[] = "\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16);
-		$lines[] = "\t *    applied:         " . $counts['applied'];
-		$lines[] = "\t *    adapted:         " . $counts['adapted'];
-		$lines[] = "\t *    kept:            " . $counts['kept'];
-		$lines[] = "\t *    skipped:         " . $counts['skipped'];
-		$lines[] = "\t */";
-		$lines[] = '}';
-		$lines[] = '';
+		return [
+			"\t/* 4. Provenance — enough to tell two runs apart without running anything.",
+			"\t *    input kind:      " . $inputKind . ' (' . $this->inputKindLabel(kind: $inputKind) . ')',
+			"\t *    source:          " . $this->commentSafe(value: ($source['sourceName'] ?? '(pasted)')),
+			"\t *    source version:  " . $this->commentSafe(value: ($source['sourceVersion'] ?? '(not declared)')),
+			"\t *    slug:            " . $source['slug'],
+			"\t *    converter:       " . (string)($table['converterVersion'] ?? '0'),
+			"\t *    mapping table:   v" . (string)($table['version'] ?? '0') . ' sha256:' . substr((string)$this->tableHash, 0, 16),
+		];
+	}//end provenanceLines()
 
-		return implode("\n", $lines);
-	}//end buildCss()
+	/**
+	 * The action tally lines of the provenance comment.
+	 *
+	 * @param array<string, int> $counts The action tally.
+	 *
+	 * @return array<int, string> The lines.
+	 */
+	private function tallyLines(array $counts): array {
+		return [
+			"\t *    applied:         " . $counts['applied'],
+			"\t *    adapted:         " . $counts['adapted'],
+			"\t *    kept:            " . $counts['kept'],
+			"\t *    skipped:         " . $counts['skipped'],
+		];
+	}//end tallyLines()
 
 	/**
 	 * Make an externally-supplied string safe to sit inside the provenance
@@ -3387,20 +3515,11 @@ class TokenSetConverterService {
 	 * working.
 	 *
 	 * @param SetSource $source The set slug and display name, the source label and the source version.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, string> $manifest Manifest values produced by the rules.
-	 * @param array<string, mixed>|null $logo The extracted logo, from {@see self::extractLogo()}.
+	 * @param array<string, string> $theming The entry's theming values, from {@see self::colourTheming()}.
 	 *
 	 * @return array<string, mixed> The manifest entry.
 	 */
-	private function buildManifestEntry(array $source, array $semantic, array $manifest, ?array $logo = null): array {
-		$theming = $this->colourTheming(semantic: $semantic, manifest: $manifest);
-
-		// The path the theming-sync dialog offers to Nextcloud's own logo slot.
-		if ($logo !== null) {
-			$theming['logo'] = $logo['path'];
-		}
-
+	private function buildManifestEntry(array $source, array $theming): array {
 		$entry = [
 			'id' => $source['slug'],
 			'name' => $source['displayName'],
@@ -3414,6 +3533,25 @@ class TokenSetConverterService {
 
 		return $this->withUpstream(entry: $entry, source: $source);
 	}//end buildManifestEntry()
+
+	/**
+	 * The theming values of a conversion's manifest entry: the colours, and the logo it extracted.
+	 *
+	 * @param array<string, string> $semantic The semantic layer.
+	 * @param ConversionRun $run The finished conversion; its manifest values and logo.
+	 *
+	 * @return array<string, string> The theming values.
+	 */
+	private function runTheming(array $semantic, ConversionRun $run): array {
+		$theming = $this->colourTheming(semantic: $semantic, manifest: $run->manifest);
+
+		// The path the theming-sync dialog offers to Nextcloud's own logo slot.
+		if ($run->logo !== null) {
+			$theming['logo'] = $run->logo['path'];
+		}
+
+		return $theming;
+	}//end runTheming()
 
 	/**
 	 * The manifest entry's theming colours: the primary and the page background, when known.

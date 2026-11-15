@@ -776,7 +776,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function resolveLightDeclarations(string $appPath, string $setId, array $theming = []): array {
-		$declarations = $this->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
+		$declarations = $this->parser->parseFile(filePath: $appPath . '/css/systems/nldesign/defaults.css');
 
 		$tokenCss = $this->readTokenCss(setId: $setId);
 		if ($tokenCss !== null) {
@@ -1693,7 +1693,7 @@ class DarkPaletteService {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
 	private function loadSetMeta(string $appPath, string $setId): array {
-		foreach ($this->manifestEntries(appPath: $appPath) as $entry) {
+		foreach ((new TokenSetManifestFile())->entries(appPath: $appPath) as $entry) {
 			if (is_array($entry) === true && ($entry['id'] ?? null) === $setId) {
 				return $this->setMeta(entry: $entry);
 			}
@@ -1701,27 +1701,6 @@ class DarkPaletteService {
 
 		return ['design_system' => 'nldesign', 'theming' => []];
 	}//end loadSetMeta()
-
-	/**
-	 * The entries of the app's `token-sets.json`, or none when it is unreadable or not a list.
-	 *
-	 * @param string $appPath The app's install path.
-	 *
-	 * @return array<mixed> The entries.
-	 */
-	private function manifestEntries(string $appPath): array {
-		$manifestPath = $appPath . '/token-sets.json';
-		if (is_readable($manifestPath) === false) {
-			return [];
-		}
-
-		$manifest = json_decode((string)file_get_contents($manifestPath), true);
-		if (is_array($manifest) === false) {
-			return [];
-		}
-
-		return $manifest;
-	}//end manifestEntries()
 
 	/**
 	 * A manifest entry's design system and theming block.
@@ -2125,28 +2104,6 @@ class DarkPaletteService {
 	}//end isFresh()
 
 	/**
-	 * Parse a CSS file's `:root`-scoped declarations into a map (empty when absent/unreadable).
-	 *
-	 * @param string $filePath The absolute file path.
-	 *
-	 * @return array<string, string> The parsed declarations.
-	 *
-	 * @spec openspec/specs/dark-mode/spec.md
-	 */
-	private function parseFile(string $filePath): array {
-		if (is_file($filePath) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($filePath);
-		if ($content === false) {
-			return [];
-		}
-
-		return ($this->parser->parseDeclarations(content: $content) ?? []);
-	}//end parseFile()
-
-	/**
 	 * Convert an RGB triple to [hue, saturation, lightness] (hue in degrees
 	 * 0-360, saturation/lightness in [0, 1]).
 	 *
@@ -2176,7 +2133,7 @@ class DarkPaletteService {
 			$s = ($delta / (2 - $max - $min));
 		}
 
-		$h = $this->hueSector(r: $r, g: $g, b: $b, max: $max, delta: $delta);
+		$h = $this->hueSector(channels: [$r, $g, $b], delta: $delta);
 
 		// Use fmod(), not `%` — the hue is a float, and PHP's `%` silently
 		// truncates both operands to int, which would corrupt sub-degree hue
@@ -2195,17 +2152,18 @@ class DarkPaletteService {
 	 * returns instead of an if/else-if/else chain, one sector per channel
 	 * being the maximum.
 	 *
-	 * @param float $r The red channel, normalised to [0, 1].
-	 * @param float $g The green channel, normalised to [0, 1].
-	 * @param float $b The blue channel, normalised to [0, 1].
-	 * @param float $max The maximum of r/g/b.
-	 * @param float $delta The max-min spread.
+	 * @param array{0: float, 1: float, 2: float} $channels The red, green and blue channels, normalised to [0, 1].
+	 * @param float $delta The spread between the largest and the smallest channel (non-zero).
 	 *
 	 * @return float The pre-normalisation hue sector value.
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
-	private function hueSector(float $r, float $g, float $b, float $max, float $delta): float {
+	private function hueSector(array $channels, float $delta): float {
+		$r = (float)$channels[0];
+		$g = (float)$channels[1];
+		$b = (float)$channels[2];
+		$max = max($r, $g, $b);
 		if ($max === $g) {
 			return ((($b - $r) / $delta) + 2);
 		}

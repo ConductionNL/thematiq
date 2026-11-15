@@ -148,27 +148,47 @@ class ConfigBundleService {
 				'id' => Application::APP_ID,
 				'version' => $this->appSettings->appManager->getAppVersion(Application::APP_ID),
 			],
-			'config' => [
-				'tokenSet' => $this->appSettings->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
-				'hideSlogan' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
-				'showMenuLabels' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
-				'primaryDrivesComponents' => ($this->appSettings->config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
-				'layoutOptions' => $this->exportLayoutOptions(),
-				'disabledApps' => $this->appSettings->appThemingService->getDisabledApps(),
-				'upstreamFreshnessEnabled' => $this->appSettings->freshnessService->isEnabled(),
-				'scheduledSwitches' => $this->tokenSources->scheduledSwitches->exportable(),
-			],
+			'config' => $this->exportedConfig(),
 			'emailFooter' => $this->branding->emailThemingService->getFooterConfig(),
 			'customOverridesCss' => $this->tokenSources->overridesService->getRawContent(),
 			'customTokenSets' => $this->sections->customTokenSets->export(),
-			'customFonts' => [
-				'binariesIncluded' => false,
-				'note' => 'Font binaries are not embedded in the bundle (see config-portability spec). '
-					. 'Metadata only — re-upload font files by hand on the target environment.',
-				'manifest' => $this->branding->fontService->getManifest(),
-			],
+			'customFonts' => $this->exportedFonts(),
 		] + $this->sections->extraSections->export() + ($this->sections->lifecycle?->export() ?? []);
 	}//end export()
+
+	/**
+	 * The bundle's `config` section: the active set, the toggles, the exclusions and the schedule.
+	 *
+	 * @return array<string, mixed> The section.
+	 */
+	private function exportedConfig(): array {
+		$config = $this->appSettings->config;
+
+		return [
+			'tokenSet' => $config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
+			'hideSlogan' => ($config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
+			'showMenuLabels' => ($config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
+			'primaryDrivesComponents' => ($config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
+			'layoutOptions' => $this->exportLayoutOptions(),
+			'disabledApps' => $this->appSettings->appThemingService->getDisabledApps(),
+			'upstreamFreshnessEnabled' => $this->appSettings->freshnessService->isEnabled(),
+			'scheduledSwitches' => $this->tokenSources->scheduledSwitches->exportable(),
+		];
+	}//end exportedConfig()
+
+	/**
+	 * The bundle's `customFonts` section: the font metadata only.
+	 *
+	 * @return array<string, mixed> The section.
+	 */
+	private function exportedFonts(): array {
+		return [
+			'binariesIncluded' => false,
+			'note' => 'Font binaries are not embedded in the bundle (see config-portability spec). '
+				. 'Metadata only — re-upload font files by hand on the target environment.',
+			'manifest' => $this->branding->fontService->getManifest(),
+		];
+	}//end exportedFonts()
 
 	/**
 	 * The stored layout choices, each as the administrator stored it: the
@@ -207,40 +227,43 @@ class ConfigBundleService {
 		$validation = $this->validate(bundle: $bundle);
 
 		if ($validation['valid'] === false) {
-			$this->branding->logger->warning(
-				'NL Design configuration bundle import rejected: ' . count($validation['errors']) . ' section error(s).'
-			);
-
-			return [
-				'valid' => false,
-				'dryRun' => $dryRun,
-				'applied' => false,
-				'errors' => $validation['errors'],
-			];
+			return $this->rejected(errors: $validation['errors'], dryRun: $dryRun);
 		}
 
-		$sections = $this->buildSectionSummary(resolved: $validation['resolved']);
+		$report = new ConfigBundleImportReport(sections: $this->sections);
+		$sections = $report->summary(resolved: $validation['resolved']);
 
 		if ($dryRun === true) {
-			return [
-				'valid' => true,
-				'dryRun' => true,
-				'applied' => false,
-				'sections' => $sections,
-			];
+			return $report->accepted(dryRun: true, sections: $sections);
 		}
 
 		$this->apply(resolved: $validation['resolved']);
 
 		$this->branding->logger->info('NL Design configuration bundle imported successfully.');
 
-		return [
-			'valid' => true,
-			'dryRun' => false,
-			'applied' => true,
-			'sections' => $sections,
-		];
+		return $report->accepted(dryRun: false, sections: $sections);
 	}//end import()
+
+	/**
+	 * The result of an import refused in phase 1, which is logged.
+	 *
+	 * @param array<int, array<string, mixed>> $errors The section errors.
+	 * @param bool $dryRun Whether the import was a dry run.
+	 *
+	 * @return array<string, mixed> The result.
+	 */
+	private function rejected(array $errors, bool $dryRun): array {
+		$this->branding->logger->warning(
+			'NL Design configuration bundle import rejected: ' . count($errors) . ' section error(s).'
+		);
+
+		return [
+			'valid' => false,
+			'dryRun' => $dryRun,
+			'applied' => false,
+			'errors' => $errors,
+		];
+	}//end rejected()
 
 	/**
 	 * Phase 1: validate every section of a bundle.
@@ -255,44 +278,81 @@ class ConfigBundleService {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function validate(array $bundle): array {
-		$errors = [];
-		$resolved = [];
+		$run = new BundleValidationRun(bundle: $bundle);
+		$this->validateSections(run: $run);
+		$this->validateAcrossSections(run: $run);
+
+		return [
+			'valid' => empty($run->errors),
+			'errors' => $run->errors,
+			'resolved' => $run->resolved,
+		];
+	}//end validate()
+
+	/**
+	 * Validate the envelope and each section on its own.
+	 *
+	 * @param BundleValidationRun $run The validation; gets each section's data and errors.
+	 *
+	 * @return void
+	 */
+	private function validateSections(BundleValidationRun $run): void {
+		$bundle = $run->bundle;
+		$errors = $run->errors;
 
 		$this->validateEnvelope(bundle: $bundle, errors: $errors);
 
-		$resolved['config'] = $this->validateConfigSection(bundle: $bundle, errors: $errors);
-		$resolved['emailFooter'] = $this->validateEmailFooterSection(bundle: $bundle, errors: $errors);
-		$resolved['customOverrides'] = $this->validateOverridesSection(bundle: $bundle, errors: $errors);
-		$resolved['customTokenSets'] = $this->sections->customTokenSets->validate(bundle: $bundle, errors: $errors);
-		$resolved['customFonts'] = $this->validateFontsSection(bundle: $bundle, errors: $errors);
+		$run->resolved['config'] = $this->validateConfigSection(bundle: $bundle, errors: $errors);
+		$run->resolved['emailFooter'] = $this->validateEmailFooterSection(bundle: $bundle, errors: $errors);
+		$run->resolved['customOverrides'] = $this->validateOverridesSection(bundle: $bundle, errors: $errors);
+		$run->resolved['customTokenSets'] = $this->sections->customTokenSets->validate(bundle: $bundle, errors: $errors);
+		$run->resolved['customFonts'] = $this->validateFontsSection(bundle: $bundle, errors: $errors);
+		$run->errors = $errors;
+	}//end validateSections()
 
+	/**
+	 * Validate what depends on more than one section: the active set, restricted sets, the schedule and the extra sections.
+	 *
+	 * @param BundleValidationRun $run The validation; gets the cross-section data and errors.
+	 *
+	 * @return void
+	 */
+	private function validateAcrossSections(BundleValidationRun $run): void {
+		$errors = $run->errors;
 		// The active token set must resolve against either the filesystem
 		// (shipped or already-installed custom) OR one of THIS bundle's own
 		// custom sets — only meaningful once customTokenSets parsed cleanly.
-		$this->validateTokenSetResolution(resolved: $resolved, errors: $errors);
+		$this->validateTokenSetResolution(resolved: $run->resolved, errors: $errors);
 		$errors = array_merge(
 			$errors,
-			(new RestrictedSetsInBundle())->errors(bundle: $bundle, tokenSets: $this->tokenSources->tokenSetService, config: $this->appSettings->config)
+			(new RestrictedSetsInBundle())->errors(bundle: $run->bundle, tokenSets: $this->tokenSources->tokenSetService, config: $this->appSettings->config)
 		);
 
-		$resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $bundle, resolved: $resolved, errors: $errors);
-		$resolved['lifecycle'] = $this->sections->lifecycle?->validate(bundle: $bundle, errors: $errors);
+		$run->resolved['scheduledSwitches'] = $this->validateScheduledSwitches(bundle: $run->bundle, resolved: $run->resolved, errors: $errors);
+		$run->resolved['lifecycle'] = $this->sections->lifecycle?->validate(bundle: $run->bundle, errors: $errors);
+		$run->resolved['extra'] = $this->validateExtraSections(run: $run, errors: $errors);
+		$run->errors = $errors;
+	}//end validateAcrossSections()
 
-		$bundledIds = array_column($resolved['customTokenSets'], 'id');
-		$resolved['extra'] = $this->sections->extraSections->validate(
-			bundle: $bundle,
+	/**
+	 * Validate the extra sections; a set they name exists when the bundle carries it or the instance has it.
+	 *
+	 * @param BundleValidationRun $run The validation so far.
+	 * @param array<int, array<string, mixed>> $errors Accumulator, appended to on failure.
+	 *
+	 * @return mixed The extra sections' resolved data.
+	 */
+	private function validateExtraSections(BundleValidationRun $run, array &$errors): mixed {
+		$bundledIds = array_column($run->resolved['customTokenSets'], 'id');
+
+		return $this->sections->extraSections->validate(
+			bundle: $run->bundle,
 			setExists: fn (string $id): bool => (
 				in_array($id, $bundledIds, true) === true || $this->tokenSources->tokenSetService->isValidTokenSet(tokenSetId: $id) === true
 			),
 			errors: $errors
 		);
-
-		return [
-			'valid' => empty($errors),
-			'errors' => $errors,
-			'resolved' => $resolved,
-		];
-	}//end validate()
+	}//end validateExtraSections()
 
 	/**
 	 * Validate the bundle envelope (`format`, `bundleVersion`).
@@ -622,50 +682,6 @@ class ConfigBundleService {
 
 		return $result['entries'];
 	}//end validateScheduledSwitches()
-
-	/**
-	 * Build the per-section result summary (used for both the dry-run
-	 * report and the post-apply report — identical shape either way).
-	 *
-	 * @param array<string, mixed> $resolved The validated, resolved bundle data.
-	 *
-	 * @return array<string, mixed> The per-section summary.
-	 *
-	 * @spec openspec/specs/config-portability/spec.md
-	 */
-	private function buildSectionSummary(array $resolved): array {
-		return [
-			'config' => [
-				'tokenSet' => $resolved['config']['tokenSet'],
-				'hideSlogan' => $resolved['config']['hideSlogan'],
-				'showMenuLabels' => $resolved['config']['showMenuLabels'],
-				'primaryDrivesComponents' => $resolved['config']['primaryDrivesComponents'],
-				'disabledAppsCount' => count($resolved['config']['disabledApps']),
-				'upstreamFreshnessEnabled' => $resolved['config']['upstreamFreshnessEnabled'],
-			],
-			'scheduledSwitches' => [
-				'count' => count(($resolved['scheduledSwitches'] ?? [])),
-				'applied' => ($resolved['scheduledSwitches'] !== null),
-			],
-			'emailFooter' => ['applied' => true],
-			'customOverridesCss' => [
-				'written' => count($resolved['customOverrides']['tokens']),
-				'skipped' => count($resolved['customOverrides']['skipped']),
-			],
-			'customTokenSets' => [
-				'count' => count($resolved['customTokenSets']),
-				'ids' => array_column($resolved['customTokenSets'], 'id'),
-			],
-			'customFonts' => [
-				'applied' => false,
-				'binariesIncluded' => false,
-				'recorded' => count($resolved['customFonts']),
-				'note' => 'Font metadata recorded for information only — binaries are not part of the '
-					. 'bundle and must be re-uploaded by hand on the target environment.',
-			],
-		] + $this->sections->extraSections->summary(resolved: $resolved['extra'])
-			+ ($this->sections->lifecycle?->summary(resolved: ($resolved['lifecycle'] ?? null)) ?? []);
-	}//end buildSectionSummary()
 
 	/**
 	 * Write the validated `config` section: the token set, the toggles, the

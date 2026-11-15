@@ -63,32 +63,56 @@ class SettableContrastPairs {
 	public function pairs(array $declarations): array {
 		$pairs = [];
 		$page = ($declarations['--nldesign-color-background'] ?? '#ffffff');
-		$text = ($declarations['--nldesign-color-text'] ?? '#222222');
-
 		if (isset($declarations['--nldesign-nc-color-text-selection']) === true) {
-			$pairs[] = $this->pair(
-				name: 'selection',
-				foreground: '--nldesign-nc-color-text-selection',
-				background: 'selection wash (20% primary over the background)',
-				ratio: $this->contrast->measure(
-					foreground: $declarations['--nldesign-nc-color-text-selection'],
-					background: $this->wash(primary: ($declarations['--nldesign-color-primary'] ?? '#154273')),
-					page: $page
-				)
-			);
+			$pairs[] = $this->selectionPair(declarations: $declarations, page: $page);
 		}
 
 		if (isset($declarations['--nldesign-nc-color-mark']) === true) {
-			$pairs[] = $this->pair(
-				name: 'highlight',
-				foreground: '--nldesign-color-text',
-				background: '--nldesign-nc-color-mark',
-				ratio: $this->contrast->measure(foreground: $text, background: $declarations['--nldesign-nc-color-mark'], page: $page)
-			);
+			$pairs[] = $this->highlightPair(declarations: $declarations, page: $page);
 		}
 
 		return $pairs;
 	}//end pairs()
+
+	/**
+	 * The selected text against the selection wash: 20% of the primary over the background.
+	 *
+	 * @param array<string, string> $declarations The set's declarations, with a selection text colour.
+	 * @param string $page The background colour.
+	 *
+	 * @return array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, passes: bool} The pair.
+	 */
+	private function selectionPair(array $declarations, string $page): array {
+		return $this->pair(
+			name: 'selection',
+			foreground: '--nldesign-nc-color-text-selection',
+			background: 'selection wash (20% primary over the background)',
+			ratio: $this->contrast->measure(
+				foreground: $declarations['--nldesign-nc-color-text-selection'],
+				background: $this->wash(primary: ($declarations['--nldesign-color-primary'] ?? '#154273')),
+				page: $page
+			)
+		);
+	}//end selectionPair()
+
+	/**
+	 * The text colour against the highlight colour.
+	 *
+	 * @param array<string, string> $declarations The set's declarations, with a highlight colour.
+	 * @param string $page The background colour.
+	 *
+	 * @return array{pair: string, foreground: string, background: string, ratio: float|null, threshold: float, passes: bool} The pair.
+	 */
+	private function highlightPair(array $declarations, string $page): array {
+		$text = ($declarations['--nldesign-color-text'] ?? '#222222');
+
+		return $this->pair(
+			name: 'highlight',
+			foreground: '--nldesign-color-text',
+			background: '--nldesign-nc-color-mark',
+			ratio: $this->contrast->measure(foreground: $text, background: $declarations['--nldesign-nc-color-mark'], page: $page)
+		);
+	}//end highlightPair()
 
 	/**
 	 * Nextcloud's selection wash for a primary colour: 20% of it, as a translucent colour.

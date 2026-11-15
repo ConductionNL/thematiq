@@ -209,4 +209,43 @@ class CustomCssControllerAuditTest extends TestCase {
 		$this->assertStringContainsString(needle: 'Could not write', haystack: $response->getData()['error']);
 
 	}//end testUnwritableFileIsAServerError()
+
+	/**
+	 * The exact audit contexts and responses of a write, with and without the enable flag, and of a rejection.
+	 *
+	 * @return void
+	 */
+	public function testTheAuditContextsAndResponses(): void {
+		$calls = [];
+		$this->auditService->method('log')->willReturnCallback(
+			function (string $action, array $context = []) use (&$calls): void {
+				$calls[] = [$action, $context];
+			}
+		);
+		$this->customCssService->method('read')->willReturn('.old {}');
+		$this->customCssService->method('write')->willReturnOnConsecutiveCalls([], [], ['bad one', 'bad two']);
+		$this->customCssService->method('isEnabled')->willReturnOnConsecutiveCalls(true, true, false, false);
+		$this->customCssService->expects($this->once())->method('setEnabled')->with(false);
+		$this->request->method('getParams')->willReturnOnConsecutiveCalls(
+			['css' => '.a { color: red; }', 'enabled' => 0],
+			['css' => '.b {}'],
+			['css' => '@import url(x);', 'enabled' => true]
+		);
+
+		$first = $this->buildController()->setCustomCss();
+		$second = $this->buildController()->setCustomCss();
+		$third = $this->buildController()->setCustomCss();
+
+		$this->assertSame(expected: ['status' => 'ok', 'bytes' => 18, 'enabled' => true], actual: $first->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'bytes' => 5, 'enabled' => false], actual: $second->getData());
+		$this->assertSame(expected: [422, ['errors' => ['bad one', 'bad two']]], actual: [$third->getStatus(), $third->getData()]);
+		$this->assertSame(
+			expected: [
+				['custom_css_written', ['oldBytes' => 7, 'newBytes' => 18, 'enabled' => true]],
+				['custom_css_written', ['oldBytes' => 7, 'newBytes' => 5, 'enabled' => false]],
+				['custom_css_rejected', ['errors' => ['bad one', 'bad two']]],
+			],
+			actual: $calls
+		);
+	}//end testTheAuditContextsAndResponses()
 }//end class

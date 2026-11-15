@@ -29,7 +29,6 @@ namespace OCA\Thematiq\Service;
 use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\Files\AppData\IAppDataFactory;
-use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 
 /**
@@ -201,12 +200,6 @@ class OwnComponentService {
 	 * @return ISimpleFolder
 	 */
 	private function folder(): ISimpleFolder {
-		$root = $this->appDataFactory->get(Application::APP_ID);
-
-		try {
-			return $root->getFolder(self::FOLDER);
-		} catch (NotFoundException $e) {
-			return $root->newFolder(self::FOLDER);
-		}
+		return (new AppDataFolder())->open(appData: $this->appDataFactory->get(Application::APP_ID), name: self::FOLDER);
 	}//end folder()
 }//end class

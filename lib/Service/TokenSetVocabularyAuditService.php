@@ -141,15 +141,6 @@ class TokenSetVocabularyAuditService {
 	];
 
 	/**
-	 * Runtime-generated CSS files under `css/` that are admin data, not app
-	 * source. Excluded from the vocabulary scan so a value an admin typed into
-	 * the theme editor can never widen the accepted vocabulary.
-	 *
-	 * @var array<int, string>
-	 */
-	private const RUNTIME_CSS_FILES = ['custom-overrides.css', 'custom-css.css'];
-
-	/**
 	 * The CSS custom-property parser (shared with the contrast audit and the
 	 * token editor, so "what counts as a declaration" has one definition).
 	 *
@@ -203,15 +194,15 @@ class TokenSetVocabularyAuditService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 */
 	public function auditSet(string $appPath, string $id, array $meta): array {
-		$designSystem = $this->designSystemOf(meta: $meta);
-		if (isset(self::OWN_VOCABULARIES[$designSystem]) === true) {
-			return $this->auditOwnVocabulary(appPath: $appPath, id: $id, designSystem: $designSystem, meta: $meta);
+		$set = new VocabularySet(id: $id, meta: $meta);
+		if (isset(self::OWN_VOCABULARIES[$set->designSystem()]) === true) {
+			return $this->auditOwnVocabulary(appPath: $appPath, set: $set);
 		}
 
-		$auditable = in_array($designSystem, $this->nldesignConsumingSystems(appPath: $appPath), true);
+		$auditable = in_array($set->designSystem(), $this->nldesignConsumingSystems(appPath: $appPath), true);
 		$declarations = $this->declarationsOf(filePath: $appPath . '/css/tokens/' . $id . '.css');
 		$verdict = $this->vocabularyFindings(appPath: $appPath, declarations: $declarations)
-			+ $this->primaryFindings(meta: $meta, declarations: $declarations);
+			+ $this->primaryFindings(meta: $meta, cssValue: ($declarations['--nldesign-color-primary'] ?? null));
 
 		// A set whose design system never reads the --nldesign-* vocabulary has
 		// no findings to report, only an absent verdict. Leaving the computed
@@ -222,25 +213,21 @@ class TokenSetVocabularyAuditService {
 			$verdict = array_merge($verdict, ['missingRequired' => [], 'foreignNldesignNames' => [], 'primaryMismatch' => false]);
 		}
 
-		return ['id' => $id, 'designSystem' => $designSystem, 'auditable' => $auditable] + $verdict
-			+ ['complete' => ($verdict['missingRequired'] === [] && $verdict['foreignNldesignNames'] === [] && $verdict['primaryMismatch'] === false)];
+		return $this->verdictOf(head: ['id' => $id, 'designSystem' => $set->designSystem(), 'auditable' => $auditable], verdict: $verdict);
 	}//end auditSet()
 
 	/**
-	 * The design system a manifest entry names, `nldesign` when it names none or no string.
+	 * A set's verdict: who it is, its findings, and whether it is complete.
 	 *
-	 * @param array<string, mixed> $meta The set's manifest entry.
+	 * @param array{id: string, designSystem: string, auditable: bool} $head The set id, its design system and whether it is audited.
+	 * @param array<string, mixed> $verdict The findings.
 	 *
-	 * @return string
+	 * @return VocabularyAuditResult
 	 */
-	private function designSystemOf(array $meta): string {
-		$designSystem = ($meta['design_system'] ?? 'nldesign');
-		if (is_string($designSystem) === false) {
-			return 'nldesign';
-		}
-
-		return $designSystem;
-	}//end designSystemOf()
+	private function verdictOf(array $head, array $verdict): array {
+		return $head + $verdict
+			+ ['complete' => ($verdict['missingRequired'] === [] && $verdict['foreignNldesignNames'] === [] && $verdict['primaryMismatch'] === false)];
+	}//end verdictOf()
 
 	/**
 	 * The required tokens a set file leaves out, and the names it declares outside the vocabulary.
@@ -276,13 +263,13 @@ class TokenSetVocabularyAuditService {
 	 * findings never double-count the same defect.
 	 *
 	 * @param array<string, mixed> $meta The set's manifest entry.
-	 * @param array<string, string> $declarations The set file's --nldesign-* declarations.
+	 * @param mixed $cssValue The value the set file gives its primary token, null when absent.
 	 *
 	 * @return array{primaryMismatch: bool, declaredPrimary: string|null, cssPrimary: string|null}
 	 */
-	private function primaryFindings(array $meta, array $declarations): array {
+	private function primaryFindings(array $meta, mixed $cssValue): array {
 		$declaredPrimary = $this->normaliseHex(value: ($meta['theming']['primary_color'] ?? null));
-		$cssPrimary = $this->normaliseHex(value: ($declarations['--nldesign-color-primary'] ?? null));
+		$cssPrimary = $this->normaliseHex(value: $cssValue);
 
 		return [
 			'primaryMismatch' => ($declaredPrimary !== null && $cssPrimary !== null && $declaredPrimary !== $cssPrimary),
@@ -306,9 +293,7 @@ class TokenSetVocabularyAuditService {
 	 *    set's `token-sets.json` `theming.primary_color`.
 	 *
 	 * @param string $appPath The app root path.
-	 * @param string $id The token set id.
-	 * @param string $designSystem The design-system id (a key of OWN_VOCABULARIES).
-	 * @param array<string, mixed> $meta The set's manifest entry.
+	 * @param VocabularySet $set The set; its design system is a key of OWN_VOCABULARIES.
 	 *
 	 * The per-set vocabulary verdict.
 	 *
@@ -316,14 +301,27 @@ class TokenSetVocabularyAuditService {
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
 	 */
-	private function auditOwnVocabulary(string $appPath, string $id, string $designSystem, array $meta): array {
-		$prefix = self::OWN_VOCABULARIES[$designSystem]['prefix'];
-		$primaryToken = self::OWN_VOCABULARIES[$designSystem]['primary'];
+	private function auditOwnVocabulary(string $appPath, VocabularySet $set): array {
+		$vocabulary = self::OWN_VOCABULARIES[$set->designSystem()];
 
-		$declarations = $this->declarationsOf(filePath: $appPath . '/css/tokens/' . $id . '.css', prefix: $prefix);
-		$declaredNames = array_keys($declarations);
-		$layers = $this->ownVocabulary(appPath: $appPath, prefix: $prefix);
+		$declarations = $this->declarationsOf(filePath: $appPath . '/css/tokens/' . $set->id . '.css', prefix: $vocabulary['prefix']);
+		$layers = $this->ownVocabulary(appPath: $appPath, prefix: $vocabulary['prefix']);
+		$verdict = $this->ownVocabularyFindings(declaredNames: array_keys($declarations), layers: $layers)
+			+ $this->primaryFindings(meta: $set->meta, cssValue: ($declarations[$vocabulary['primary']] ?? null));
 
+		return $this->verdictOf(head: ['id' => $set->id, 'designSystem' => $set->designSystem(), 'auditable' => true], verdict: $verdict);
+	}//end auditOwnVocabulary()
+
+	/**
+	 * The names the layers read and nobody declares that the set leaves out,
+	 * and the names the set declares that no layer knows.
+	 *
+	 * @param array<int, string> $declaredNames The own-prefix names the set file declares.
+	 * @param array{read: array<int, string>, declared: array<int, string>} $layers The names the layers read and declare.
+	 *
+	 * @return array{missingRequired: array<int, string>, foreignNldesignNames: array<int, string>}
+	 */
+	private function ownVocabularyFindings(array $declaredNames, array $layers): array {
 		$required = array_values(array_diff($layers['read'], $layers['declared']));
 		$missingRequired = array_values(array_diff($required, $declaredNames));
 		sort($missingRequired);
@@ -332,22 +330,8 @@ class TokenSetVocabularyAuditService {
 		$foreign = array_values(array_diff($declaredNames, $known));
 		sort($foreign);
 
-		$declaredPrimary = $this->normaliseHex(value: ($meta['theming']['primary_color'] ?? null));
-		$cssPrimary = $this->normaliseHex(value: ($declarations[$primaryToken] ?? null));
-		$primaryMismatch = ($declaredPrimary !== null && $cssPrimary !== null && $declaredPrimary !== $cssPrimary);
-
-		return [
-			'id' => $id,
-			'designSystem' => $designSystem,
-			'auditable' => true,
-			'missingRequired' => $missingRequired,
-			'foreignNldesignNames' => $foreign,
-			'primaryMismatch' => $primaryMismatch,
-			'declaredPrimary' => $declaredPrimary,
-			'cssPrimary' => $cssPrimary,
-			'complete' => ($missingRequired === [] && $foreign === [] && $primaryMismatch === false),
-		];
-	}//end auditOwnVocabulary()
+		return ['missingRequired' => $missingRequired, 'foreignNldesignNames' => $foreign];
+	}//end ownVocabularyFindings()
 
 	/**
 	 * The own-prefix names the non-token CSS layers read through `var()`, and
@@ -369,33 +353,61 @@ class TokenSetVocabularyAuditService {
 			return $this->ownVocabularyCache[$key];
 		}
 
-		$quoted = preg_quote($prefix, '/');
-		$read = [];
-		$declared = [];
-		foreach ($this->collectCssFiles(directory: $appPath . '/css') as $file) {
-			$css = $this->stripComments(css: $this->readFile(filePath: $file));
-			if (preg_match_all('/var\(\s*(' . $quoted . '[A-Za-z0-9_-]+)/', $css, $matches) > 0) {
-				foreach ($matches[1] as $name) {
-					$read[$name] = true;
-				}
-			}
-
-			if (preg_match_all('/(' . $quoted . '[A-Za-z0-9_-]+)\s*:/', $css, $matches) > 0) {
-				foreach ($matches[1] as $name) {
-					$declared[$name] = true;
-				}
-			}
-		}
-
-		$read = array_keys($read);
-		$declared = array_keys($declared);
-		sort($read);
-		sort($declared);
-
-		$this->ownVocabularyCache[$key] = ['read' => $read, 'declared' => $declared];
+		$this->ownVocabularyCache[$key] = $this->scanOwnVocabulary(appPath: $appPath, prefix: $prefix);
 
 		return $this->ownVocabularyCache[$key];
 	}//end ownVocabulary()
+
+	/**
+	 * Read every non-token CSS layer for the own-prefix names it reads and declares.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param string $prefix The token prefix, e.g. `--summer-`.
+	 *
+	 * @return array{read: array<int, string>, declared: array<int, string>} The names, each sorted.
+	 */
+	private function scanOwnVocabulary(string $appPath, string $prefix): array {
+		$quoted = preg_quote($prefix, '/');
+		$read = [];
+		$declared = [];
+		foreach ((new LayerCssFiles())->under(directory: $appPath . '/css') as $file) {
+			$css = $this->stripComments(css: $this->readFile(filePath: $file));
+			$read += $this->matchedNames(css: $css, pattern: '/var\(\s*(' . $quoted . '[A-Za-z0-9_-]+)/');
+			$declared += $this->matchedNames(css: $css, pattern: '/(' . $quoted . '[A-Za-z0-9_-]+)\s*:/');
+		}
+
+		return ['read' => $this->sortedNames(names: $read), 'declared' => $this->sortedNames(names: $declared)];
+	}//end scanOwnVocabulary()
+
+	/**
+	 * The names a pattern's first group captures in some CSS, as a set.
+	 *
+	 * @param string $css The CSS, comments stripped.
+	 * @param string $pattern The pattern; its first group is the name.
+	 *
+	 * @return array<string, true> The names, in the order first found.
+	 */
+	private function matchedNames(string $css, string $pattern): array {
+		if (preg_match_all($pattern, $css, $matches) > 0) {
+			return array_fill_keys($matches[1], true);
+		}
+
+		return [];
+	}//end matchedNames()
+
+	/**
+	 * The names of a set, sorted.
+	 *
+	 * @param array<string, true> $names The names.
+	 *
+	 * @return array<int, string> The names, sorted.
+	 */
+	private function sortedNames(array $names): array {
+		$sorted = array_keys($names);
+		sort($sorted);
+
+		return $sorted;
+	}//end sortedNames()
 
 	/**
 	 * Audit every shipped token set in `css/tokens/`, ordered by id.
@@ -495,7 +507,7 @@ class TokenSetVocabularyAuditService {
 		}
 
 		$names = [];
-		foreach ($this->collectCssFiles(directory: $appPath . '/css') as $file) {
+		foreach ((new LayerCssFiles())->under(directory: $appPath . '/css') as $file) {
 			foreach ($this->nldesignNames(css: $this->readFile(filePath: $file)) as $name) {
 				$names[$name] = true;
 			}
@@ -526,9 +538,6 @@ class TokenSetVocabularyAuditService {
 	 * @return array<int, string> The consuming design-system ids.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - deciding whether a design system reads the vocabulary walks several stylesheet kinds,
-	 *   each with its own accept rule.
 	 */
 	public function nldesignConsumingSystems(string $appPath): array {
 		if (isset($this->consumingCache[$appPath]) === true) {
@@ -537,31 +546,10 @@ class TokenSetVocabularyAuditService {
 
 		$systems = [];
 		foreach ($this->readDesignSystems(appPath: $appPath) as $system) {
-			if (is_array($system) === false || is_string($system['id'] ?? null) === false) {
-				continue;
+			if ($this->readsNldesign(appPath: $appPath, system: $system) === true) {
+				$systems[] = $system['id'];
 			}
-
-			$stylesheets = ($system['stylesheets'] ?? []);
-			if (is_array($stylesheets) === false) {
-				continue;
-			}
-
-			foreach ($stylesheets as $stylesheet) {
-				if (is_string($stylesheet) === false) {
-					continue;
-				}
-
-				$path = $appPath . '/css/' . $stylesheet . '.css';
-				if (is_file($path) === false) {
-					continue;
-				}
-
-				if ($this->nldesignNames(css: $this->readFile(filePath: $path)) !== []) {
-					$systems[] = $system['id'];
-					break;
-				}
-			}
-		}//end foreach
+		}
 
 		sort($systems);
 		$this->consumingCache[$appPath] = $systems;
@@ -570,53 +558,59 @@ class TokenSetVocabularyAuditService {
 	}//end nldesignConsumingSystems()
 
 	/**
-	 * Recursively collect every `.css` file under a directory, skipping the
-	 * `tokens/` directory (the audited input) and the runtime-generated
-	 * admin-data files.
+	 * Whether a design system's stylesheets read the --nldesign-* vocabulary.
 	 *
-	 * @param string $directory The directory to walk.
+	 * @param string $appPath The app root path.
+	 * @param mixed $system The design-system entry from design-systems.json.
 	 *
-	 * @return array<int, string> Absolute file paths, sorted for determinism.
-	 *
-	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - directory walking with several exclusion rules (runtime files, token sets, dark variants).
+	 * @return bool True when one of its stylesheets names a --nldesign-* token.
 	 */
-	private function collectCssFiles(string $directory): array {
-		if (is_dir($directory) === false) {
-			return [];
+	private function readsNldesign(string $appPath, mixed $system): bool {
+		if ($this->isDesignSystem(system: $system) === false) {
+			return false;
 		}
 
-		$files = [];
-		$entries = scandir($directory);
-		if (is_array($entries) === false) {
-			return [];
+		$stylesheets = ($system['stylesheets'] ?? []);
+		if (is_array($stylesheets) === false) {
+			return false;
 		}
 
-		foreach ($entries as $entry) {
-			if ($entry === '.' || $entry === '..') {
+		return $this->anyStylesheetReadsNldesign(appPath: $appPath, stylesheets: $stylesheets);
+	}//end readsNldesign()
+
+	/**
+	 * Whether a design-system entry is a map with a string id.
+	 *
+	 * @param mixed $system The entry.
+	 *
+	 * @return bool True when it is.
+	 */
+	private function isDesignSystem(mixed $system): bool {
+		return is_array($system) === true && is_string($system['id'] ?? null) === true;
+	}//end isDesignSystem()
+
+	/**
+	 * Whether any of the stylesheets, in order, exists and names a --nldesign-* token.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param array<mixed> $stylesheets The stylesheet names, relative to `css/` without `.css`.
+	 *
+	 * @return bool True at the first one that does.
+	 */
+	private function anyStylesheetReadsNldesign(string $appPath, array $stylesheets): bool {
+		foreach ($stylesheets as $stylesheet) {
+			if (is_string($stylesheet) === false) {
 				continue;
 			}
 
-			$path = $directory . '/' . $entry;
-			if (is_dir($path) === true) {
-				if ($entry === 'tokens') {
-					continue;
-				}
-
-				$files = array_merge($files, $this->collectCssFiles(directory: $path));
-				continue;
+			$path = $appPath . '/css/' . $stylesheet . '.css';
+			if (is_file($path) === true && $this->nldesignNames(css: $this->readFile(filePath: $path)) !== []) {
+				return true;
 			}
+		}
 
-			if (str_ends_with($entry, '.css') === false || in_array($entry, self::RUNTIME_CSS_FILES, true) === true) {
-				continue;
-			}
-
-			$files[] = $path;
-		}//end foreach
-
-		sort($files);
-
-		return $files;
-	}//end collectCssFiles()
+		return false;
+	}//end anyStylesheetReadsNldesign()
 
 	/**
 	 * Every `--nldesign-*` name appearing anywhere in the given CSS —

@@ -46,6 +46,14 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
+ * @uses   \OCA\Thematiq\Service\ColourComponentScale
+ * @uses   \OCA\Thematiq\Service\ColourFunctionReading
+ * @uses   \OCA\Thematiq\Service\DtcgWriteRun
+ * @uses   \OCA\Thematiq\Service\LeafMappingRun
+ * @uses   \OCA\Thematiq\Service\LeafScope
+ * @uses   \OCA\Thematiq\Service\MappedToken
+ * @uses   \OCA\Thematiq\Service\TokenSetDownload
+ * @uses   \OCA\Thematiq\Service\TypedValue
  */
 class DesignTokensMapperGoldenTest extends TestCase {
 

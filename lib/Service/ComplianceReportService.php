@@ -72,7 +72,7 @@ class ComplianceReportService {
 	 *
 	 * @var string
 	 */
-	private const MAIN_BACKGROUND_TOKEN = '--color-main-background';
+	private const MAIN_BACKGROUND_PROPERTY = '--color-main-background';
 
 	/**
 	 * The honest-scope statement embedded verbatim in every rendered report
@@ -103,21 +103,21 @@ class ComplianceReportService {
 		['fg' => '--color-primary-element-text', 'bg' => '--color-primary-element', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-light-text', 'bg' => '--color-primary-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-element-light-text', 'bg' => '--color-primary-element-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
 		// Non-text / UI-component pairs — 3:1 threshold (SC 1.4.11 / large-text floor of SC 1.4.3).
-		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
 	];
 
 	/**
@@ -159,8 +159,8 @@ class ComplianceReportService {
 		$appPath = $this->instance->appManager->getAppPath('thematiq');
 
 		$activeTokenSetId = $this->instance->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$tokenSetMeta = $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId);
-		$designSystemId = ($tokenSetMeta['design_system'] ?? 'nldesign');
+		$set = new ReportedTokenSet(id: $activeTokenSetId, meta: $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId));
+		$designSystemId = $set->designSystem();
 
 		// The runtime (Application::injectThemeCSS()) only loads the
 		// --nldesign-* design-system layers when the design system is not
@@ -181,17 +181,12 @@ class ComplianceReportService {
 		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
 		foreach (self::PAIR_MATRIX as $pairDef) {
-			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $tokenSetMeta);
+			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $set->meta);
 		}
 
 		return [
 			'scope' => self::SCOPE_STATEMENT,
-			'metadata' => $this->buildMetadata(
-				tokenSetId: $activeTokenSetId,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId,
-				customOverrides: $customOverrides
-			),
+			'metadata' => $this->buildMetadata(set: $set, customOverrides: $customOverrides),
 			'pairs' => $pairs,
 			'summary' => $this->classifySummary(pairs: $pairs),
 		];
@@ -304,8 +299,8 @@ class ComplianceReportService {
 			$pair['background'],
 			($pair['foregroundValue'] ?? '—'),
 			($pair['backgroundValue'] ?? '—'),
-			$this->formatRatio(ratio: $pair['ratio']),
-			$this->formatThreshold(threshold: $pair['threshold']),
+			(new ContrastReportCells())->ratio(ratio: $pair['ratio']),
+			(new ContrastReportCells())->threshold(threshold: $pair['threshold']),
 			$pair['basis'],
 			$pair['verdict']
 		);
@@ -414,7 +409,7 @@ class ComplianceReportService {
 	 */
 	private function resolveBackground(string $token, array $context): array {
 		$resolved = $this->resolveColorToken(token: $token, layers: $context['layers']);
-		if ($token === self::MAIN_BACKGROUND_TOKEN) {
+		if ($token === self::MAIN_BACKGROUND_PROPERTY) {
 			$resolved = $this->resolveMainBackground(
 				customOverrides: $context['layers']['customOverrides'],
 				declarations: $context['layers']['declarations'],
@@ -527,8 +522,8 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveMainBackground(array $customOverrides, array $declarations, array $tokenSetMeta): array {
-		if (array_key_exists(self::MAIN_BACKGROUND_TOKEN, $customOverrides) === true) {
-			return ['value' => $customOverrides[self::MAIN_BACKGROUND_TOKEN], 'unresolved' => null];
+		if (array_key_exists(self::MAIN_BACKGROUND_PROPERTY, $customOverrides) === true) {
+			return ['value' => $customOverrides[self::MAIN_BACKGROUND_PROPERTY], 'unresolved' => null];
 		}
 
 		if (array_key_exists('--nldesign-color-background', $declarations) === true) {
@@ -667,16 +662,16 @@ class ComplianceReportService {
 	/**
 	 * Assemble the report metadata block (identical shape for both formats).
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
+	 * @param ReportedTokenSet $set The active token set and its metadata.
 	 * @param array<string, string> $customOverrides The custom-overrides layer.
 	 *
 	 * @return array<string, mixed> The metadata block.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function buildMetadata(string $tokenSetId, array $tokenSetMeta, string $designSystemId, array $customOverrides): array {
+	private function buildMetadata(ReportedTokenSet $set, array $customOverrides): array {
+		$tokenSetId = $set->id;
+
 		return [
 			'instanceId' => $this->instance->config->getSystemValue('instanceid', ''),
 			'instanceUrl' => $this->instance->urlGenerator->getBaseUrl(),
@@ -684,10 +679,10 @@ class ComplianceReportService {
 			'nextcloudVersion' => $this->resolveNextcloudVersion(),
 			'tokenSet' => [
 				'id' => $tokenSetId,
-				'name' => ($tokenSetMeta['name'] ?? $tokenSetId),
-				'version' => ($tokenSetMeta['version'] ?? 'unversioned'),
+				'name' => ($set->meta['name'] ?? $tokenSetId),
+				'version' => ($set->meta['version'] ?? 'unversioned'),
 			],
-			'designSystem' => $designSystemId,
+			'designSystem' => $set->designSystem(),
 			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->instance->timeFactory->getTime()),
 			'overridesHash' => $this->computeOverridesHash(overrides: $customOverrides),
 		];
@@ -740,32 +735,6 @@ class ComplianceReportService {
 
 		return hash('sha256', implode("\n", $lines));
 	}//end computeOverridesHash()
-
-	/**
-	 * Format a ratio for Markdown (2 decimals, em dash when unevaluated).
-	 *
-	 * @param float|null $ratio The ratio.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatRatio(?float $ratio): string {
-		if ($ratio === null) {
-			return '—';
-		}
-
-		return number_format($ratio, 2, '.', '') . ':1';
-	}//end formatRatio()
-
-	/**
-	 * Format a threshold for Markdown.
-	 *
-	 * @param float $threshold The threshold.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatThreshold(float $threshold): string {
-		return number_format($threshold, 1, '.', '') . ':1';
-	}//end formatThreshold()
 
 	/**
 	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.

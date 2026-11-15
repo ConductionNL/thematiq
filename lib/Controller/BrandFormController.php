@@ -22,7 +22,9 @@ namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
 use OCA\Thematiq\Service\AuditAndTranslation;
+use OCA\Thematiq\Service\BrandColours;
 use OCA\Thematiq\Service\BrandFormSources;
+use OCA\Thematiq\Service\BrandPalette;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\NewCustomTokenSet;
@@ -134,14 +136,27 @@ class BrandFormController extends Controller {
 		try {
 			return $this->sources->brandForm->derive(
 				appPath: $this->sources->apps->getAppPath('thematiq'),
-				primary: (string)$this->request->getParam('primary', ''),
-				background: (string)$this->request->getParam('background', ''),
-				action: (string)$this->request->getParam('action', '')
+				palette: $this->postedPalette()
 			);
 		} catch (InvalidArgumentException $e) {
 			return new JSONResponse(['error' => $this->answers->l->t('Enter both colors as a hex color, for example #c8102e.')], 400);
 		}
 	}//end deriveFromRequest()
+
+	/**
+	 * The colours the form posted: primary, background and the optional action colour.
+	 *
+	 * @return BrandPalette The colours, as posted.
+	 */
+	private function postedPalette(): BrandPalette {
+		return new BrandPalette(
+			base: new BrandColours(
+				primary: (string)$this->request->getParam('primary', ''),
+				background: (string)$this->request->getParam('background', '')
+			),
+			action: (string)$this->request->getParam('action', '')
+		);
+	}//end postedPalette()
 
 	/**
 	 * Store the derived set, audit it and answer with its contrast figures.

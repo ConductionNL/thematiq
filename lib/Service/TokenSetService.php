@@ -295,13 +295,14 @@ class TokenSetService {
 			$tokenSet['theming'] = $theming;
 		}
 
-		return $this->applyWarnings(
-			tokenSet: $this->applyProvenance(tokenSet: $tokenSet, meta: ($meta ?? [])),
-			meta: ($meta ?? []),
-			appPath: $sources['appPath'],
+		$listed = new ListedTokenSet(
 			id: $id,
-			isCustom: (str_starts_with($id, 'custom-') === true && $shippedMeta === null)
+			appPath: $sources['appPath'],
+			meta: ($meta ?? []),
+			entry: $this->applyProvenance(tokenSet: $tokenSet, meta: ($meta ?? []))
 		);
+
+		return $this->applyWarnings(set: $listed, isCustom: (str_starts_with($id, 'custom-') === true && $shippedMeta === null));
 	}//end catalogueEntry()
 
 	/**
@@ -375,10 +376,7 @@ class TokenSetService {
 	 * against the shared ContrastService for a shipped set (or a custom id
 	 * shadowed by a shipped manifest entry).
 	 *
-	 * @param array<string, mixed> $tokenSet The token set entry being built.
-	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
-	 * @param string $appPath The app directory path.
-	 * @param string $id The token set id.
+	 * @param ListedTokenSet $set The set: its id, app path, merged manifest metadata and entry so far.
 	 * @param bool $isCustom Whether this is a genuine (unshadowed) custom upload.
 	 *
 	 * @return array<string, mixed> The token set entry with warnings applied, if any.
@@ -386,17 +384,18 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
-	private function applyWarnings(array $tokenSet, array $meta, string $appPath, string $id, bool $isCustom): array {
+	private function applyWarnings(ListedTokenSet $set, bool $isCustom): array {
+		$tokenSet = $set->entry;
 		if ($isCustom === true) {
 			$tokenSet['custom'] = true;
-			if (isset($meta['warnings']) === true && is_array($meta['warnings']) === true) {
-				$tokenSet['warnings'] = $meta['warnings'];
+			if (isset($set->meta['warnings']) === true && is_array($set->meta['warnings']) === true) {
+				$tokenSet['warnings'] = $set->meta['warnings'];
 			}
 
 			return $tokenSet;
 		}
 
-		$warnings = $this->cachedShippedWarnings(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id);
+		$warnings = $this->cachedShippedWarnings(set: $set);
 		if (empty($warnings) === false) {
 			$tokenSet['warnings'] = $warnings;
 		}
@@ -418,25 +417,22 @@ class TokenSetService {
 	 * Without a `memcache.local` Nextcloud hands out a NullCache, and the
 	 * audits then run on every read, as they did before this cache.
 	 *
-	 * @param array<string, mixed> $tokenSet The token set entry being built.
-	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
-	 * @param string $appPath The app directory path.
-	 * @param string $id The token set id.
+	 * @param ListedTokenSet $set The set: its id, app path, merged manifest metadata and entry so far.
 	 *
 	 * @return array<int, mixed> The set's warnings, contrast first.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
-	private function cachedShippedWarnings(array $tokenSet, array $meta, string $appPath, string $id): array {
-		$css = $this->setFiles->files->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->setFiles->store);
-		$key = $id . '-' . md5(
+	private function cachedShippedWarnings(ListedTokenSet $set): array {
+		$css = $this->setFiles->files->read(appPath: $set->appPath, name: 'css/tokens/' . $set->id . '.css', store: $this->setFiles->store);
+		$key = $set->id . '-' . md5(
 			(string)json_encode(
 				[
 					$this->setFiles->appManager->getAppVersion('thematiq'),
 					md5((string)$css),
-					$tokenSet['design_system'],
-					($tokenSet['theming'] ?? []),
-					$meta,
+					$set->entry['design_system'],
+					($set->entry['theming'] ?? []),
+					$set->meta,
 				]
 			)
 		);
@@ -446,7 +442,7 @@ class TokenSetService {
 			return $cached;
 		}
 
-		$warnings = $this->auditShippedSet(tokenSet: $tokenSet, meta: $meta, appPath: $appPath, id: $id);
+		$warnings = $this->auditShippedSet(set: $set);
 		$this->warningsCache->set(key: $key, value: $warnings, ttl: self::WARNINGS_CACHE_TTL);
 
 		return $warnings;
@@ -455,25 +451,22 @@ class TokenSetService {
 	/**
 	 * Run the contrast, vocabulary and typeface audits for a shipped set.
 	 *
-	 * @param array<string, mixed> $tokenSet The token set entry being built.
-	 * @param array<string, mixed> $meta The merged manifest metadata for this id.
-	 * @param string $appPath The app directory path.
-	 * @param string $id The token set id.
+	 * @param ListedTokenSet $set The set: its id, app path, merged manifest metadata and entry so far.
 	 *
 	 * @return array<int, mixed> The set's warnings, contrast first.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-set-says-when-its-typeface-cannot-be-served
 	 */
-	private function auditShippedSet(array $tokenSet, array $meta, string $appPath, string $id): array {
+	private function auditShippedSet(ListedTokenSet $set): array {
 		// Shipped set: surface the same non-blocking WCAG contrast warning
 		// the apply dialog raises for a custom upload, so a sub-AA or
 		// unevaluated shipped set is not silently applied.
 		$warnings = $this->audits->audit->warningsFor(
-			appPath: $appPath,
-			id: $id,
-			designSystem: $tokenSet['design_system'],
-			theming: ($tokenSet['theming'] ?? [])
+			appPath: $set->appPath,
+			id: $set->id,
+			designSystem: $set->entry['design_system'],
+			theming: ($set->entry['theming'] ?? [])
 		);
 
 		// ...and the vocabulary verdict on the same channel: a set that never
@@ -483,7 +476,7 @@ class TokenSetService {
 		// the existing ones keep their position in the list.
 		$warnings = array_merge(
 			$warnings,
-			$this->audits->vocabularyAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+			$this->audits->vocabularyAudit->warningsFor(appPath: $set->appPath, id: $set->id, meta: $set->meta)
 		);
 
 		// ...and the typeface verdict, on the same channel. A set that names a
@@ -495,7 +488,7 @@ class TokenSetService {
 		// than left to notice.
 		$warnings = array_merge(
 			$warnings,
-			$this->audits->fontAudit->warningsFor(appPath: $appPath, id: $id, meta: $meta)
+			$this->audits->fontAudit->warningsFor(appPath: $set->appPath, id: $set->id, meta: $set->meta)
 		);
 
 		return $warnings;
@@ -529,28 +522,7 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md
 	 */
 	private function readManifest(string $manifestPath): array {
-		if (file_exists($manifestPath) === false) {
-			return [];
-		}
-
-		$content = file_get_contents($manifestPath);
-		if ($content === false) {
-			return [];
-		}
-
-		$data = json_decode($content, true);
-		if (is_array($data) === false) {
-			return [];
-		}
-
-		$indexed = [];
-		foreach ($data as $entry) {
-			if (isset($entry['id']) === true) {
-				$indexed[$entry['id']] = $entry;
-			}
-		}
-
-		return $indexed;
+		return (new IndexedJsonManifest())->read(path: $manifestPath);
 	}//end readManifest()
 
 	/**

@@ -465,4 +465,83 @@ class ThemeInjectionListenerTest extends TestCase {
 			'an app template named 404' => ['files', '404', true, 0],
 		];
 	}//end notFoundProvider()
+	/**
+	 * The calls of each render, in order: the marker first, then the injection, then the page copy; a failure is logged.
+	 *
+	 * @return void
+	 */
+	public function testTheCallOrderPerRender(): void {
+		$calls = [];
+		$this->environmentMarker->method('inject')->willReturnCallback(
+			function () use (&$calls): void {
+				$calls[] = 'marker';
+			}
+		);
+		$this->cssInjectionService->method('inject')->willReturnCallback(
+			function (string $context, ?string $appId = null) use (&$calls): void {
+				$calls[] = 'inject ' . $context . ' ' . var_export($appId, true);
+			}
+		);
+		$this->cssInjectionService->method('isContextThemed')->willReturnCallback(
+			function (string $context) use (&$calls): bool {
+				$calls[] = 'themed? ' . $context;
+
+				return $context !== 'public';
+			}
+		);
+		$this->appThemingService->method('isThemingDisabledFor')->willReturnCallback(static fn (string $appId): bool => $appId === 'excluded');
+		$login = $this->createMock(originalClassName: LoginCopyService::class);
+		$login->method('injectForLogin')->willReturnCallback(
+			function () use (&$calls): void {
+				$calls[] = 'login copy';
+			}
+		);
+		$notFound = $this->createMock(originalClassName: NotFoundCopyService::class);
+		$notFound->method('inject')->willReturnCallback(
+			function () use (&$calls): void {
+				$calls[] = 'not-found copy';
+				throw new \RuntimeException('copy broke');
+			}
+		);
+		$this->logger->method('warning')->willReturnCallback(
+			function (string $message, array $context) use (&$calls): void {
+				$calls[] = 'warning ' . $message . ' ' . $context['app'] . ' ' . $context['exception']->getMessage();
+			}
+		);
+		$listener = new ThemeInjectionListener(
+			styles: new ThemeInjectionStyles(
+				cssInjectionService: $this->cssInjectionService,
+				appThemingService: $this->appThemingService,
+				environmentMarker: $this->environmentMarker
+			),
+			request: $this->request,
+			logger: $this->logger,
+			pageCopy: new PageCopyServices(loginCopy: $login, notFoundCopy: $notFound)
+		);
+
+		$renders = [
+			'login' => $this->createMock(originalClassName: BeforeLoginTemplateRenderedEvent::class),
+			'core 404' => new BeforeTemplateRenderedEvent(false, new TemplateResponse('core', '404', [], TemplateResponse::RENDER_AS_GUEST)),
+			'public files' => new BeforeTemplateRenderedEvent(false, new TemplateResponse('files', 'index', [], TemplateResponse::RENDER_AS_PUBLIC)),
+			'excluded app' => new BeforeTemplateRenderedEvent(false, new TemplateResponse('excluded', 'main', [], TemplateResponse::RENDER_AS_USER)),
+			'another event' => new Event(),
+		];
+		$trail = [];
+		foreach ($renders as $name => $event) {
+			$calls = [];
+			$listener->handle($event);
+			$trail[$name] = $calls;
+		}
+
+		$this->assertSame(
+			expected: [
+				'login' => ['marker', 'inject login NULL', 'themed? login', 'login copy'],
+				'core 404' => ['marker', 'inject guest NULL', 'themed? guest', 'not-found copy', 'warning nldesign: theme injection failed for this render; the page was served unthemed. thematiq copy broke'],
+				'public files' => ['marker', "inject public 'files'"],
+				'excluded app' => ['marker'],
+				'another event' => [],
+			],
+			actual: $trail
+		);
+	}//end testTheCallOrderPerRender()
 }//end class

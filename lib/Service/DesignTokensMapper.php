@@ -170,21 +170,7 @@ class DesignTokensMapper {
 	 */
 	public function map(array $document, array $referenceOnlyPaths = []): array {
 		$this->adapted = [];
-		$leaves = [];
-		$this->collectLeaves(node: $document, prefix: '', inheritedType: null, leaves: $leaves);
-		$referenceOnly = array_flip($referenceOnlyPaths);
-
-		$mapping = new DesignTokensMapping();
-
-		foreach ($leaves as $path => $leaf) {
-			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
-			// above and is never assigned to a target.
-			if (isset($referenceOnly[$path]) === true) {
-				continue;
-			}
-
-			$this->processLeaf(path: $path, leaf: $leaf, leaves: $leaves, mapping: $mapping);
-		}
+		$mapping = $this->mappedLeaves(document: $document, referenceOnlyPaths: $referenceOnlyPaths);
 
 		// The root cssOnly map: values DTCG has no type for, written by thematiq's own export.
 		// Tokens win over it; every entry passes the validator downstream like any declaration.
@@ -204,6 +190,30 @@ class DesignTokensMapper {
 	}//end map()
 
 	/**
+	 * Flatten the document and map every leaf that is not reference-only.
+	 *
+	 * @param array<string, mixed> $document The decoded DTCG JSON document.
+	 * @param array<int, string> $referenceOnlyPaths Dotted paths that resolve aliases but are not emitted.
+	 *
+	 * @return DesignTokensMapping The outcome.
+	 */
+	private function mappedLeaves(array $document, array $referenceOnlyPaths): DesignTokensMapping {
+		$leaves = $this->collectLeaves(node: $document, scope: new LeafScope(prefix: '', inheritedType: null));
+		$referenceOnly = array_flip($referenceOnlyPaths);
+		$run = new LeafMappingRun(leaves: $leaves, mapping: new DesignTokensMapping());
+
+		foreach (array_keys($leaves) as $path) {
+			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
+			// above and is never assigned to a target.
+			if (isset($referenceOnly[$path]) === false) {
+				$this->processLeaf(path: $path, run: $run);
+			}
+		}
+
+		return $run->mapping;
+	}//end mappedLeaves()
+
+	/**
 	 * Recursively flatten a DTCG node into dotted-path => leaf-data entries.
 	 *
 	 * A node is a leaf when it carries a `$value` key. Group keys build the
@@ -218,32 +228,32 @@ class DesignTokensMapper {
 	 * inheritance rule.
 	 *
 	 * @param mixed $node The current node (array or scalar).
-	 * @param string $prefix The accumulated dotted path.
-	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
-	 * @param array<string, array<string, mixed>> $leaves Collected path => {value, type, deprecated} (by reference).
+	 * @param LeafScope $scope The accumulated dotted path and the nearest ancestor's declared `$type`, if any.
 	 *
-	 * @return void
+	 * @return array<string, array<string, mixed>> Collected path => {value, type, deprecated}.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function collectLeaves($node, string $prefix, ?string $inheritedType, array &$leaves): void {
+	private function collectLeaves(mixed $node, LeafScope $scope): array {
 		if (is_array($node) === false) {
-			return;
+			return [];
 		}
 
 		$ownType = $this->stringMember(map: $node, key: '$type');
 
 		if (array_key_exists('$value', $node) === true) {
-			$leaves[$prefix] = $this->buildLeafEntry(node: $node, ownType: $ownType, inheritedType: $inheritedType);
-
-			return;
+			return [$scope->prefix => $this->buildLeafEntry(node: $node, type: ($ownType ?? $scope->inheritedType))];
 		}
 
-		$effectiveInherited = ($ownType ?? $inheritedType);
+		$effectiveInherited = ($ownType ?? $scope->inheritedType);
 
+		$leaves = [];
 		foreach ($this->groupChildren(node: $node) as $key => $child) {
-			$this->collectLeaves(node: $child, prefix: $this->childPath(prefix: $prefix, key: $key), inheritedType: $effectiveInherited, leaves: $leaves);
+			$childScope = new LeafScope(prefix: $this->childPath(prefix: $scope->prefix, key: $key), inheritedType: $effectiveInherited);
+			$leaves = array_replace($leaves, $this->collectLeaves(node: $child, scope: $childScope));
 		}
+
+		return $leaves;
 	}//end collectLeaves()
 
 	/**
@@ -297,14 +307,13 @@ class DesignTokensMapper {
 	 * Build a single leaf-table entry from a `$value`-bearing DTCG node.
 	 *
 	 * @param array<string, mixed> $node The `$value`-bearing node.
-	 * @param string|null $ownType The node's own declared `$type`, if any.
-	 * @param string|null $inheritedType The nearest ancestor's declared `$type`, if any.
+	 * @param string|null $type The node's own declared `$type`, else the nearest ancestor's, if any.
 	 *
 	 * @return array{value: mixed, type: string|null, deprecated: mixed, cssVariable: string|null, css: mixed} The leaf entry.
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function buildLeafEntry(array $node, ?string $ownType, ?string $inheritedType): array {
+	private function buildLeafEntry(array $node, ?string $type): array {
 		$deprecated = null;
 		if (array_key_exists('$deprecated', $node) === true) {
 			$deprecated = $node['$deprecated'];
@@ -312,7 +321,7 @@ class DesignTokensMapper {
 
 		return [
 			'value' => $node['$value'],
-			'type' => ($ownType ?? $inheritedType),
+			'type' => $type,
 			'deprecated' => $deprecated,
 			'cssVariable' => $this->extensionName(value: ($node['$extensions'][self::EXTENSION]['cssVariable'] ?? null)),
 			'css' => ($node['$extensions'][self::EXTENSION]['css'] ?? $node['$extensions'][self::PLUGIN_EXTENSION]['css'] ?? null),
@@ -362,124 +371,157 @@ class DesignTokensMapper {
 	 * entry for that leaf — it never aborts the loop.
 	 *
 	 * @param string $path The leaf's dotted path.
-	 * @param array<string, mixed> $leaf The leaf data ({value, type, deprecated}).
-	 * @param array<string, array<string, mixed>> $leaves The full leaf table (for alias resolution).
-	 * @param DesignTokensMapping $mapping The outcome of the run so far.
+	 * @param LeafMappingRun $run The full leaf table (for alias resolution) and the outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processLeaf(string $path, array $leaf, array $leaves, DesignTokensMapping $mapping): void {
-		$rawValue = $leaf['value'];
-		$ownType = $leaf['type'];
-		$deprecated = $leaf['deprecated'];
+	private function processLeaf(string $path, LeafMappingRun $run): void {
+		$leaf = $run->leaves[$path];
 		$this->extensionTarget = ($leaf['cssVariable'] ?? null);
 
-		$value = $rawValue;
-		$type = $ownType;
+		$resolved = $this->resolvedLeaf(path: $path, run: $run);
+		if ($resolved === null) {
+			return;
+		}
 
-		if (is_string($rawValue) === true && $this->aliasResolver->isAlias(value: $rawValue) === true) {
-			$resolved = $this->aliasResolver->resolve(startPath: $path, leaves: $leaves);
-			if ($resolved['ok'] !== true) {
-				$mapping->errors[] = [
-					'path' => $path,
-					'reason' => $resolved['reason'],
-					'detail' => ($resolved['detail'] ?? ''),
-				];
-
-				return;
-			}
-
-			$value = $resolved['value'];
-			// Own declared/inherited type wins; otherwise defer to the
-			// terminal alias target's resolved type (a semantic-layer alias
-			// commonly declares no $type of its own, relying on its target).
-			$type = ($ownType ?? $resolved['type']);
-		}//end if
-
-		if ($type === null) {
-			$mapping->errors[] = ['path' => $path, 'reason' => 'missing-type'];
+		if ($resolved['type'] === null) {
+			$run->mapping->errors[] = ['path' => $path, 'reason' => 'missing-type'];
 
 			return;
 		}
 
-		$this->dispatchByType(
-			type: $type,
-			token: new DesignTokenRef(path: $path, deprecated: $deprecated),
-			value: $this->colours->originalText(leaf: $leaf, value: $value, type: $type),
-			mapping: $mapping
-		);
+		$token = new MappedToken(ref: new DesignTokenRef(path: $path, deprecated: $leaf['deprecated']), mapping: $run->mapping);
+		$value = $this->colours->originalText(leaf: $leaf, value: $resolved['value'], type: $resolved['type']);
+		$this->dispatchByType(token: $token, typed: new TypedValue(type: $resolved['type'], value: $value));
 	}//end processLeaf()
+
+	/**
+	 * A leaf's value and type, its alias resolved. Own declared/inherited type
+	 * wins; otherwise the terminal alias target's resolved type (a
+	 * semantic-layer alias commonly declares no $type of its own, relying on
+	 * its target).
+	 *
+	 * @param string $path The leaf's dotted path.
+	 * @param LeafMappingRun $run The leaf table and the outcome, which gets an unresolvable alias's error.
+	 *
+	 * @return array{value: mixed, type: string|null}|null The value and type, or null when the alias does not resolve.
+	 */
+	private function resolvedLeaf(string $path, LeafMappingRun $run): array|null {
+		$leaf = $run->leaves[$path];
+		if (is_string($leaf['value']) === false || $this->aliasResolver->isAlias(value: $leaf['value']) === false) {
+			return ['value' => $leaf['value'], 'type' => $leaf['type']];
+		}
+
+		$resolved = $this->aliasResolver->resolve(startPath: $path, leaves: $run->leaves);
+		if ($resolved['ok'] !== true) {
+			$run->mapping->errors[] = $this->aliasError(path: $path, resolved: $resolved);
+
+			return null;
+		}
+
+		return ['value' => $resolved['value'], 'type' => ($leaf['type'] ?? $resolved['type'])];
+	}//end resolvedLeaf()
+
+	/**
+	 * The error entry for an alias that does not resolve.
+	 *
+	 * @param string $path The leaf's dotted path.
+	 * @param array<string, mixed> $resolved The resolver's refusal.
+	 *
+	 * @return array{path: string, reason: mixed, detail: mixed} The error entry.
+	 */
+	private function aliasError(string $path, array $resolved): array {
+		return [
+			'path' => $path,
+			'reason' => $resolved['reason'],
+			'detail' => ($resolved['detail'] ?? ''),
+		];
+	}//end aliasError()
 
 	/**
 	 * Dispatch a leaf's resolved type to its serializer and record the
 	 * outcome. Extracted from {@see self::processLeaf()} to keep each
 	 * method's own cyclomatic complexity and length in check.
 	 *
-	 * @param string $type The resolved `$type`.
-	 * @param DesignTokenRef $token The leaf's path and `$deprecated` value.
-	 * @param mixed $value The resolved `$value`.
-	 * @param DesignTokensMapping $mapping The outcome of the run so far.
+	 * @param MappedToken $token The leaf's path and `$deprecated` value, and the outcome of the run so far.
+	 * @param TypedValue $typed The resolved `$type` and `$value`.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function dispatchByType(string $type, DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
-		if ($type === 'typography') {
-			$this->processTypographyComposite(token: $token, value: $value, mapping: $mapping);
+	private function dispatchByType(MappedToken $token, TypedValue $typed): void {
+		if ($typed->type === 'typography') {
+			$this->processTypographyComposite(token: $token, value: $typed->value);
 
 			return;
 		}
 
-		$result = $this->values->serialize(type: $type, value: $value);
+		$result = $this->values->serialize(type: $typed->type, value: $typed->value);
 
-		$this->assignSingleTarget(token: $token, result: $result, mapping: $mapping);
+		$this->assignSingleTarget(token: $token, result: $result);
 	}//end dispatchByType()
 
 	/**
 	 * Assign a serialized single-target result to its `--nldesign-*` target.
 	 *
-	 * @param DesignTokenRef $token The token's path and `$deprecated` value.
+	 * @param MappedToken $token The token's path and `$deprecated` value, and the outcome of the run so far.
 	 * @param array{ok: bool, value?: string, reason?: string, detail?: string, adapted?: array<string, mixed>} $result The serializer result.
-	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function assignSingleTarget(DesignTokenRef $token, array $result, DesignTokensMapping $mapping): void {
-		$path = $token->path;
+	private function assignSingleTarget(MappedToken $token, array $result): void {
+		$path = $token->ref->path;
 		if ($result['ok'] !== true) {
-			$mapping->errors[] = $this->errorEntry(path: $path, result: $result);
+			$token->mapping->errors[] = $this->errorEntry(path: $path, result: $result);
 
 			return;
 		}
 
-		// The thematiq extension names the target before the suffix table is tried.
-		$target = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
+		$target = $this->freeTarget(token: $token);
 		if ($target === null) {
-			$mapping->skipped[] = ['path' => $path, 'reason' => 'unmapped-path'];
-
 			return;
 		}
 
-		// First match wins for a given target; later collisions are skipped
-		// so a more specific path earlier in the document is preserved.
-		if (isset($mapping->declarations[$target]) === true) {
-			$mapping->skipped[] = ['path' => $path, 'reason' => 'duplicate-target', 'detail' => $target];
-
-			return;
-		}
-
-		$mapping->declarations[$target] = $result['value'];
+		$token->mapping->declarations[$target] = $result['value'];
 		if (isset($result['adapted']) === true) {
 			$this->adapted[] = ['path' => $path, 'target' => $target, 'value' => $result['value']] + $result['adapted'];
 		}
 
-		$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings, token: $target);
+		$this->maybeWarnDeprecated(token: $token, target: $target);
 	}//end assignSingleTarget()
+
+	/**
+	 * The `--nldesign-*` target a token takes, when it has one no earlier token took.
+	 *
+	 * @param MappedToken $token The token and the outcome so far, which gets the skip when there is none.
+	 *
+	 * @return string|null The target, or null when the path is unmapped or the target taken.
+	 */
+	private function freeTarget(MappedToken $token): string|null {
+		$path = $token->ref->path;
+		// The thematiq extension names the target before the suffix table is tried.
+		$target = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
+		if ($target === null) {
+			$token->mapping->skipped[] = ['path' => $path, 'reason' => 'unmapped-path'];
+
+			return null;
+		}
+
+		// First match wins for a given target; later collisions are skipped
+		// so a more specific path earlier in the document is preserved.
+		if (isset($token->mapping->declarations[$target]) === true) {
+			$token->mapping->skipped[] = ['path' => $path, 'reason' => 'duplicate-target', 'detail' => $target];
+
+			return null;
+		}
+
+		return $target;
+	}//end freeTarget()
 
 	/**
 	 * The error entry for a token whose value could not be serialized.
@@ -506,18 +548,17 @@ class DesignTokensMapper {
 	 * exists; sub-properties without a target are counted as skipped with
 	 * their sub-path (`<path>.<subKey>`), never guessed or dropped silently.
 	 *
-	 * @param DesignTokenRef $token The composite token's path and `$deprecated` value.
+	 * @param MappedToken $token The composite token's path and `$deprecated` value, and the outcome of the run so far.
 	 * @param mixed $value The resolved `$value` (expected object/array).
-	 * @param DesignTokensMapping $mapping The outcome of the run so far.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function processTypographyComposite(DesignTokenRef $token, $value, DesignTokensMapping $mapping): void {
-		$path = $token->path;
+	private function processTypographyComposite(MappedToken $token, mixed $value): void {
+		$path = $token->ref->path;
 		if (is_array($value) === false) {
-			$mapping->errors[] = ['path' => $path, 'reason' => 'unsupported-value-shape'];
+			$token->mapping->errors[] = ['path' => $path, 'reason' => 'unsupported-value-shape'];
 
 			return;
 		}
@@ -526,11 +567,11 @@ class DesignTokensMapper {
 		$members = array_filter($value, static fn ($key): bool => is_string($key), ARRAY_FILTER_USE_KEY);
 		foreach ($members as $subKey => $subValue) {
 			$member = new TypographyMember(path: $path . '.' . $subKey, key: $subKey, value: $subValue);
-			$mapped += (int)$this->mapTypographyMember(mapping: $mapping, member: $member);
+			$mapped += (int)$this->mapTypographyMember(mapping: $token->mapping, member: $member);
 		}
 
 		if ($mapped > 0) {
-			$this->maybeWarnDeprecated(path: $path, deprecated: $token->deprecated, warnings: $mapping->warnings);
+			$this->maybeWarnDeprecated(token: $token, target: null);
 		}
 	}//end processTypographyComposite()
 
@@ -589,27 +630,26 @@ class DesignTokensMapper {
 	 * A single-target token also names the CSS variable it became, so the
 	 * notice can be recorded as a deprecation of that name.
 	 *
-	 * @param string $path The token's dotted path.
-	 * @param mixed $deprecated The raw `$deprecated` value.
-	 * @param array<int, array<string, mixed>> $warnings Accumulated warnings (by reference).
-	 * @param string|null $token The CSS variable the token became, when it became one.
+	 * @param MappedToken $token The token's path and raw `$deprecated` value, and the outcome, which gets the warning.
+	 * @param string|null $target The CSS variable the token became, when it became one.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
-	private function maybeWarnDeprecated(string $path, $deprecated, array &$warnings, ?string $token = null): void {
+	private function maybeWarnDeprecated(MappedToken $token, string|null $target): void {
+		$deprecated = $token->ref->deprecated;
 		if ($deprecated === null || $deprecated === false) {
 			return;
 		}
 
-		$warning = $this->deprecationWarning(path: $path, deprecated: $deprecated);
+		$warning = $this->deprecationWarning(path: $token->ref->path, deprecated: $deprecated);
 
-		if ($token !== null) {
-			$warning['token'] = $token;
+		if ($target !== null) {
+			$warning['token'] = $target;
 		}
 
-		$warnings[] = $warning;
+		$token->mapping->warnings[] = $warning;
 	}//end maybeWarnDeprecated()
 
 	/**

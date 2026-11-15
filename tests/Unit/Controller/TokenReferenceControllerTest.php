@@ -165,4 +165,24 @@ class TokenReferenceControllerTest extends TestCase {
 
 		$this->assertSame(expected: ['tokenReference#show' => 'GET /api/token-sets/{id}/reference'], actual: $found);
 	}//end testTheRouteIsRegistered()
+	/**
+	 * Golden: status, body, headers and download name for each id, format and download switch.
+	 *
+	 * @return void
+	 */
+	public function testEveryAnswerGolden(): void {
+		$out = [];
+		foreach (['amsterdam', 'custom-gemeente-x', 'ghost'] as $id) {
+			foreach ([null, 'md', 'html', 'MD', 'pdf'] as $format) {
+				foreach ([null, '1', 1, '0', true] as $download) {
+					$this->params = array_filter(['format' => $format, 'download' => $download], static fn ($v): bool => $v !== null);
+					$response = $this->controller()->show(id: $id);
+					$out[] = [$id, $format, $download, $response->getStatus(), $response->render(), $this->headers(response: $response)];
+				}
+			}
+		}
+
+		// Recorded on the code before the split; the message shows the first answers when it fails.
+		$this->assertSame(expected: 'ed879a046c96111e', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16), message: (string)json_encode(array_slice($out, 0, 3)));
+	}//end testEveryAnswerGolden()
 }//end class

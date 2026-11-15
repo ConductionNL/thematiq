@@ -514,4 +514,35 @@ class PlaygroundStateServiceTest extends TestCase {
 		$this->assertSame(expected: ['--nldesign-color-primary' => '#a90061'], actual: $state['playgroundTokens']);
 		$this->assertSame(expected: ['--color-primary' => '--nldesign-color-primary'], actual: $state['playgroundTokenSources']);
 	}//end testItResolvesTheSetItWasAskedFor()
+	/**
+	 * The dark values come from the first dark block only, nldesign tokens only, with `!important` dropped.
+	 *
+	 * @return void
+	 */
+	public function testTheDarkBlockIsReadExactly(): void {
+		$cases = [
+			"body[data-theme-dark] {\n  --nldesign-a: #111 !important;\n  --other: #222;\n  --nldesign-b:  rgb(1, 2, 3) ;\n}\nbody[data-theme-dark] { --nldesign-c: #333; }" => ['--nldesign-a' => '#111', '--nldesign-b' => 'rgb(1, 2, 3)'],
+			"body[data-theme-dark], body[data-themes*=dark] { --nldesign-a: #444; }" => ['--nldesign-a' => '#444'],
+			":root { --nldesign-a: #555; }" => [],
+			'' => [],
+		];
+		foreach ($cases as $css => $expected) {
+			$store = $this->createMock(originalClassName: RuntimeFileStore::class);
+			$store->method('read')->willReturnMap(valueMap: [['css/tokens/dark/custom-proef.css', $css]]);
+			$state = $this->service(setFiles: new PlaygroundSetFiles(store: $store))->getInitialState(tokenSetId: 'custom-proef');
+			$this->assertSame(expected: $expected, actual: $state['playgroundDarkTokens'], message: $css);
+		}
+	}//end testTheDarkBlockIsReadExactly()
+
+	/**
+	 * Golden: the whole translated inventory, recorded on the code before the split as a hash.
+	 *
+	 * @return void
+	 */
+	public function testTheTranslatedInventoryGolden(): void {
+		$asked = [];
+		$inventory = $this->build(l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud')['playgroundInventory'];
+
+		$this->assertSame(expected: '8475606d9e9dfaea 294', actual: substr(hash('sha256', (string)json_encode($inventory)), 0, 16) . ' ' . count($asked));
+	}//end testTheTranslatedInventoryGolden()
 }//end class

@@ -29,6 +29,7 @@ namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssInjectionService;
+use OCA\Thematiq\Service\CssUploadCheck;
 use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\OverridesThemingSync;
 use OCA\Thematiq\Service\OverridesWrites;
@@ -121,7 +122,6 @@ class OverridesController extends Controller {
 	public function getOverrides(): JSONResponse {
 		$overrides = $this->writes->overridesService->read(tokenSet: $this->requestedTokenSet());
 		$registry = TokenRegistry::getTokens();
-		$tabs = TokenRegistry::getTabLabels();
 
 		return new JSONResponse(
 			[
@@ -129,22 +129,32 @@ class OverridesController extends Controller {
 				'darkOverrides' => $this->writes->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
 				'darkDerived' => $this->writes->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
 				'registry' => $registry,
-				// Listed per component group, below the tabs. Only what a row shows:
-				// the selectors the server writes rules for would triple the payload.
-				'internal' => array_map(
-					static fn (array $token): array => [
-						'variable' => $token['variable'],
-						'group' => $token['group'],
-						'type' => $token['type'],
-						'stock' => $token['stock'],
-					],
-					TokenRegistry::getInternalTokens()
-				),
+				'internal' => $this->internalRows(),
 				'count' => TokenRegistry::countEditable(),
-				'tabs' => $tabs,
+				'tabs' => TokenRegistry::getTabLabels(),
 			]
 		);
 	}//end getOverrides()
+
+	/**
+	 * The internal tokens, listed per component group below the tabs. Only what a row shows:
+	 * the selectors the server writes rules for would triple the payload.
+	 *
+	 * @return array<string, array{variable: string, group: string, type: string, stock: mixed}> Token name => row.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 */
+	private function internalRows(): array {
+		return array_map(
+			static fn (array $token): array => [
+				'variable' => $token['variable'],
+				'group' => $token['group'],
+				'type' => $token['type'],
+				'stock' => $token['stock'],
+			],
+			TokenRegistry::getInternalTokens()
+		);
+	}//end internalRows()
 
 	/**
 	 * Write new custom token overrides to custom-overrides.css.
@@ -407,7 +417,17 @@ class OverridesController extends Controller {
 			return new JSONResponse(['error' => 'Could not read uploaded file'], 400);
 		}
 
-		// The light values only; an exported file also carries the dark blocks.
+		return $this->importContent(content: $content);
+	}//end importOverrides()
+
+	/**
+	 * Import the light values of an uploaded stylesheet; an exported file also carries the dark blocks.
+	 *
+	 * @param string $content The uploaded CSS.
+	 *
+	 * @return JSONResponse Import result, or 400 when the file declares no custom property.
+	 */
+	private function importContent(string $content): JSONResponse {
 		$parsed = $this->writes->cssParser->parseOverridesFile(css: $content);
 		if ($parsed === null) {
 			return new JSONResponse(
@@ -417,7 +437,7 @@ class OverridesController extends Controller {
 		}
 
 		return $this->writeImportedTokens(parsed: $parsed, rawContent: $content);
-	}//end importOverrides()
+	}//end importContent()
 
 	/**
 	 * Validate the uploaded file for the import endpoint.
@@ -427,35 +447,12 @@ class OverridesController extends Controller {
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
 	 */
 	private function validateUploadedFile(): ?JSONResponse {
-		$file = $this->request->getUploadedFile(key: 'file');
-
-		if (empty($file) === true || isset($file['tmp_name']) === false) {
-			return new JSONResponse(['error' => 'No file uploaded'], 400);
+		$refusal = (new CssUploadCheck())->refusal(file: $this->request->getUploadedFile(key: 'file'));
+		if ($refusal === null) {
+			return null;
 		}
 
-		$maxSize = (256 * 1024);
-		if ($file['size'] > $maxSize) {
-			return new JSONResponse(['error' => 'File exceeds the 256 KB size limit'], 413);
-		}
-
-		// Validate file extension.
-		$originalName = $file['name'] ?? '';
-		$extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-		if ($extension !== 'css') {
-			return new JSONResponse(['error' => 'Only .css files are accepted'], 415);
-		}
-
-		// Validate MIME type via server-side detection (ignore client-provided type).
-		$tmpName = $file['tmp_name'];
-		$mimeType = mime_content_type($tmpName);
-		// Accept text/css, text/plain (editors often send this for .css), and
-		// application/octet-stream (generic fallback from some browsers).
-		$allowedMimes = ['text/css', 'text/plain', 'application/octet-stream'];
-		if (in_array($mimeType, $allowedMimes, true) === false) {
-			return new JSONResponse(['error' => 'File does not appear to be a CSS file'], 415);
-		}
-
-		return null;
+		return new JSONResponse(['error' => $refusal->error], $refusal->status);
 	}//end validateUploadedFile()
 
 	/**

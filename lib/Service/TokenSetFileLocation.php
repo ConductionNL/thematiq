@@ -45,4 +45,37 @@ final class TokenSetFileLocation {
 		public readonly ?RuntimeFileStore $store = null,
 	) {
 	}//end __construct()
+
+	/**
+	 * Whether an id names a token set the list has, in the shape a set id takes.
+	 *
+	 * @param string $id The token set id, as the route gives it.
+	 *
+	 * @return bool True for a known set.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	public function knows(string $id): bool {
+		return preg_match('/^[a-z0-9][a-z0-9-]*$/', $id) === 1 && $this->tokenSets->isValidTokenSet(tokenSetId: $id) === true;
+	}//end knows()
+
+	/**
+	 * A set's display name, as the token set list gives it; its id when the list has no name.
+	 *
+	 * @param string $id The token set id.
+	 *
+	 * @return string The name.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md
+	 */
+	public function nameOf(string $id): string {
+		$name = $id;
+		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
+			if (($set['id'] ?? null) === $id) {
+				$name = (string)($set['name'] ?? $id);
+			}
+		}
+
+		return $name;
+	}//end nameOf()
 }//end class

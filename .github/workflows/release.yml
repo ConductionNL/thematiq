@@ -49,33 +49,9 @@ on:
     branches: [main, beta, development]
   workflow_dispatch:
 
-# LEAST PRIVILEGE, DECLARED HERE RATHER THAN INHERITED.
-#
-# Without this block the caller inherits the repository default, which is
-# `write` on every scope — far more than a release needs, and CodeQL flags it
-# as "Actions job or workflow does not limit the permissions of the
-# GITHUB_TOKEN".
-#
-# A reusable workflow cannot grant itself more than its caller holds, so these
-# two are the ceiling for everything the shared workflow does. They are exactly
-# what its `release` job declares:
-#
-#   contents: write        — create the tag and the GitHub release
-#   pull-requests: write   — open the version-bump PR, because the bump is
-#                            routed through a pull request rather than pushed
-#                            at a protected branch
-#
-# Every other scope (packages, actions, deployments, id-token, …) drops to
-# none, which is the point.
-#
-# Note for the fleet: no sibling caller declares this yet — portaliq,
-# opencatalogi, openregister and docudesk all inherit the default. The finding
-# applies to them equally; it only BLOCKS here because thematiq's beta ruleset
-# is the one with `required_review_thread_resolution: true`, so an unresolved
-# CodeQL thread stops the merge instead of merely being noted.
+# Read-only by default; the write grants sit on the job that needs them.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 # Releases publish artifacts. A cancelled release is neither a success nor a
 # rollback — it is a half-published version — so queued runs wait rather than
@@ -93,6 +69,33 @@ concurrency:
 jobs:
   unstable:
     if: github.ref == 'refs/heads/development'
+    # LEAST PRIVILEGE, DECLARED HERE RATHER THAN INHERITED.
+    #
+    # Without this block the caller inherits the repository default, which is
+    # `write` on every scope, far more than a release needs, and CodeQL flags it
+    # as "Actions job or workflow does not limit the permissions of the
+    # GITHUB_TOKEN".
+    #
+    # A reusable workflow cannot grant itself more than its caller holds, so these
+    # two are the ceiling for everything the shared workflow does. They are exactly
+    # what its `release` job declares:
+    #
+    #   contents: write       , create the tag and the GitHub release
+    #   pull-requests: write  , open the version-bump PR, because the bump is
+    #                            routed through a pull request rather than pushed
+    #                            at a protected branch
+    #
+    # Every other scope (packages, actions, deployments, id-token, …) drops to
+    # none, which is the point.
+    #
+    # Note for the fleet: no sibling caller declares this yet, portaliq,
+    # opencatalogi, openregister and docudesk all inherit the default. The finding
+    # applies to them equally; it only BLOCKS here because thematiq's beta ruleset
+    # is the one with `required_review_thread_resolution: true`, so an unresolved
+    # CodeQL thread stops the merge instead of merely being noted.
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ConductionNL/.github/.github/workflows/release.yml@main
     with:
       release-type: unstable
@@ -102,6 +105,10 @@ jobs:
 
   beta:
     if: github.ref == 'refs/heads/beta'
+    # Same ceiling as the `unstable` job.
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ConductionNL/.github/.github/workflows/release.yml@main
     with:
       release-type: beta
@@ -111,6 +118,10 @@ jobs:
 
   stable:
     if: github.ref == 'refs/heads/main'
+    # Same ceiling as the `unstable` job.
+    permissions:
+      contents: write
+      pull-requests: write
     uses: ConductionNL/.github/.github/workflows/release.yml@main
     with:
       release-type: stable

@@ -919,4 +919,69 @@ class ThemingAuditServiceTest extends TestCase {
 		$this->assertSame(expected: 'koningsdag-oranje', actual: $entry['new']);
 		$this->assertSame(expected: 'abc123', actual: $entry['switchId']);
 	}//end testScheduledSwitchAppliedIsAcceptedWithSystemActor()
+
+	/**
+	 * Each dropped or degraded entry logs its own warning; a smuggled versionId never reaches the entry.
+	 *
+	 * @return void
+	 */
+	public function testTheWarningsOfADroppedOrDegradedEntry(): void {
+		$warnings = [];
+		$this->logger->method('warning')->willReturnCallback(
+			function (string $message, array $context = []) use (&$warnings): void {
+				$warnings[] = [$message, $context];
+			}
+		);
+		$throwing = $this->createMock(originalClassName: ThemeVersionService::class);
+		$throwing->method('capture')->willThrowException(new \RuntimeException('boom'));
+
+		$this->makeService()->log(action: 'not_an_action', context: []);
+		$this->makeService(versions: $throwing)->log(action: 'overrides_written', context: ['versionId' => 'forged']);
+		$quiet = $this->createMock(originalClassName: ThemeVersionService::class);
+		$quiet->method('capture')->willReturn(null);
+		$this->makeService(versions: $quiet)->log(action: 'overrides_written', context: ['note' => "\xB1"]);
+
+		$this->assertSame(
+			expected: [
+				['nldesign audit: rejected unknown action "{action}" — entry dropped', ['action' => 'not_an_action']],
+				['nldesign audit: no version was kept for action "{action}": {message}', ['action' => 'overrides_written', 'message' => 'boom']],
+				['nldesign audit: could not encode entry for action "{action}"', ['action' => 'overrides_written']],
+			],
+			actual: $warnings
+		);
+		$entries = $this->makeService(versions: $quiet)->getRecent(limit: 5);
+		$this->assertCount(expectedCount: 1, haystack: $entries);
+		$this->assertArrayNotHasKey(key: 'versionId', array: $entries[0]);
+		$this->assertSame(expected: '1', actual: $this->appConfig['audit_entries_total']);
+	}//end testTheWarningsOfADroppedOrDegradedEntry()
+
+	/**
+	 * An entry cannot be edited or deleted: a later log() leaves the earlier
+	 * line byte for byte as it was, and the class offers no public way to
+	 * change or remove an entry.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-an-audit-entry-cannot-be-edited-or-deleted
+	 */
+	public function testAnEntryCannotBeEditedOrDeleted(): void {
+		$service = $this->makeService(time: 1700000000);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'rijkshuisstijl', 'new' => 'amsterdam']);
+		$first = $this->root->auditFolder->getFile('audit.jsonl')->getContent();
+		$this->assertStringEndsWith(suffix: "\n", string: $first);
+
+		$service->log(action: 'token_set_changed', context: ['old' => 'amsterdam', 'new' => 'utrecht']);
+		$both = $this->root->auditFolder->getFile('audit.jsonl')->getContent();
+
+		$this->assertStringStartsWith(prefix: $first, string: $both);
+		$this->assertSame(expected: 2, actual: substr_count($both, "\n"));
+
+		$public = array_map(
+			static fn (\ReflectionMethod $method): string => $method->getName(),
+			(new \ReflectionClass(ThemingAuditService::class))->getMethods(\ReflectionMethod::IS_PUBLIC)
+		);
+		sort($public);
+		$this->assertSame(expected: ['__construct', 'exportAll', 'getRecent', 'log'], actual: $public);
+	}//end testAnEntryCannotBeEditedOrDeleted()
 }//end class

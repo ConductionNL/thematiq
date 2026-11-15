@@ -222,4 +222,55 @@ class AppThemingServiceTest extends TestCase {
 		$this->assertFalse(condition: $byId['calendar']);
 		$this->assertTrue(condition: $byId['files']);
 	}//end testGetThemableAppsListsEnabledAppsWithState()
+	/**
+	 * Golden: the stored list keeps installed, unprotected, non-empty ids once in submitted order, and the
+	 * panel lists each enabled app by its display name, sorted case-insensitively.
+	 *
+	 * @return void
+	 */
+	public function testTheStoredListAndThePanelGolden(): void {
+		$stored = [];
+		$this->config->method('setAppValue')->willReturnCallback(
+			static function (string $app, string $key, string $value) use (&$stored): void {
+				$stored[$key] = $value;
+			}
+		);
+		$asked = [];
+		$this->appManager->method('isInstalled')->willReturnCallback(
+			static function (string $appId) use (&$asked): bool {
+				$asked[] = $appId;
+
+				return $appId !== 'gone';
+			}
+		);
+		$this->service->setDisabledApps(appIds: ['files', '', 'theming', 'gone', 7, 'files', 'deck', null]);
+		$this->assertSame(expected: ['files', 'gone', '7', 'files', 'deck'], actual: $asked);
+		$this->assertSame(expected: '["files",7,"deck"]', actual: array_values($stored)[0]);
+
+		$this->config->method('getAppValue')->willReturn('["deck"]');
+		$this->appManager->method('getInstalledApps')->willReturn(['zeta', 'settings', 'deck', 'alpha', 'nameless', 'empty', 'Beta', 'listed']);
+		$this->appManager->method('getAppInfo')->willReturnCallback(
+			static fn (string $appId): mixed => match ($appId) {
+				'zeta' => ['name' => 'zeta app'],
+				'deck' => ['name' => ['en' => 'Deck', 'nl' => 'Deck NL']],
+				'alpha' => ['name' => 'Alpha'],
+				'nameless' => ['id' => 'nameless'],
+				'empty' => ['name' => ''],
+				'listed' => ['name' => [7]],
+				default => null,
+			}
+		);
+		$this->assertSame(
+			expected: [
+				['id' => 'alpha', 'name' => 'Alpha', 'themed' => true],
+				['id' => 'Beta', 'name' => 'Beta', 'themed' => true],
+				['id' => 'deck', 'name' => 'Deck', 'themed' => false],
+				['id' => 'empty', 'name' => 'empty', 'themed' => true],
+				['id' => 'listed', 'name' => 'listed', 'themed' => true],
+				['id' => 'nameless', 'name' => 'nameless', 'themed' => true],
+				['id' => 'zeta', 'name' => 'zeta app', 'themed' => true],
+			],
+			actual: $this->service->getThemableApps()
+		);
+	}//end testTheStoredListAndThePanelGolden()
 }//end class

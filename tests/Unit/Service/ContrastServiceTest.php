@@ -250,4 +250,31 @@ class ContrastServiceTest extends TestCase {
 
 		$this->assertSame(expected: [], actual: $warnings);
 	}//end testPartialPairIsSkipped()
+
+	/**
+	 * evaluate() answers every candidate in order: text at 4.5, anything else at 3, and an unmeasurable one unevaluated.
+	 *
+	 * @return void
+	 */
+	public function testEvaluateAnswersEveryCandidateExactly(): void {
+		$results = $this->contrast->evaluate(
+			candidates: [
+				['name' => 'a', 'role' => 'text', 'value' => '#000000'],
+				['name' => 'b', 'role' => 'ui', 'value' => '#777777'],
+				['name' => 'c', 'role' => 'text', 'value' => 'var(--x)'],
+				['name' => 'd', 'role' => 'text', 'value' => '#fff'],
+			],
+			background: '#ffffff'
+		);
+
+		$this->assertSame(
+			expected: [
+				['name' => 'a', 'ratio' => 21.0, 'threshold' => 4.5, 'level' => 'AA', 'pass' => true],
+				['name' => 'b', 'ratio' => 4.48, 'threshold' => 3.0, 'level' => 'AA', 'pass' => true],
+				['name' => 'c', 'ratio' => null, 'threshold' => 4.5, 'level' => 'AA', 'pass' => false, 'unevaluated' => true],
+				['name' => 'd', 'ratio' => 1.0, 'threshold' => 4.5, 'level' => 'AA', 'pass' => false],
+			],
+			actual: $results
+		);
+	}//end testEvaluateAnswersEveryCandidateExactly()
 }//end class

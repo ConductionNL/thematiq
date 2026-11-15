@@ -1,4 +1,4 @@
 # Screens
 
-- From change `figma-token-files`: Administration settings, Thematiq, next to **Download as design tokens**: a list with four formats. No board draws it; it is a standard select beside an existing button.
-- From change `figma-token-files`: Custom token sets, above **Choose file and upload**: one line of help about files from Figma.
+- TqTheming the format list next to **Downloaden als design tokens**: W3C design tokens, Figma with colours as text, Tokens Studio for Figma, Tokens Studio in the old spelling, and the plugin set file https://identity.conduction.nl/screens/board?id=thematiq/TqTheming
+- TqSetUploaden the Figma help line above **Bestand kiezen en uploaden**: a Tokens Studio file becomes a custom token set, what is left out is named https://identity.conduction.nl/screens/board?id=thematiq/TqSetUploaden

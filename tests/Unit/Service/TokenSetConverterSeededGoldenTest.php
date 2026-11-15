@@ -73,6 +73,8 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ThematiqExportLayers
  * @uses   \OCA\Thematiq\Service\ToolTokenFileNormaliser
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
+ * @uses   \OCA\Thematiq\Service\AdaptedToken
+ * @uses   \OCA\Thematiq\Service\ColourRgba
  */
 class TokenSetConverterSeededGoldenTest extends TestCase {
 

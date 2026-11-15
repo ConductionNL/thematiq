@@ -550,4 +550,95 @@ class CapabilitiesTest extends TestCase {
 		$encoded = (string)json_encode($payload);
 		$this->assertStringNotContainsString(needle: 'secret', haystack: $encoded, message: 'No exception detail must leak into the payload.');
 	}//end testThrowingDependencyDegradesGracefully()
+
+	/**
+	 * A set that declares AAA is audited at AA then AAA; failing AAA but passing AA reports AA; a plain set is audited at AA only.
+	 *
+	 * @return void
+	 */
+	public function testTheAuditLevelsAskedAndTheLevelReported(): void {
+		$cases = [
+			[['id' => 's', 'design_system' => 'nldesign', 'contrast_level' => 'AAA', 'theming' => ['primary_color' => '#000']], ['AA' => 'pass', 'AAA' => 'fail'], ['AA', 'AAA'], 'AA'],
+			[['id' => 's', 'design_system' => 'high-contrast'], ['AA' => 'fail', 'AAA' => 'fail'], ['AA', 'AAA'], 'fail'],
+			[['id' => 's', 'design_system' => 'nldesign'], ['AA' => 'pass', 'AAA' => 'pass'], ['AA'], 'AA'],
+			[['id' => 's', 'design_system' => 'none'], [], [], null],
+		];
+		foreach ($cases as [$meta, $verdicts, $levels, $expected]) {
+			$appManager = $this->createMock(originalClassName: IAppManager::class);
+			$appManager->method('getAppVersion')->willReturn('3.4.0');
+			$appManager->method('getAppPath')->willReturn('/app');
+			$designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+			$designSystemService->method('getTokenSetMeta')->willReturn($meta);
+			$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
+			$asked = [];
+			$auditService = $this->createMock(originalClassName: ShippedTokenSetAuditService::class);
+			$auditService->method('auditSet')->willReturnCallback(
+				function (string $appPath, string $id, array $theming, string $level) use (&$asked, $verdicts, $meta): array {
+					$asked[] = $level;
+					$this->assertSame(['/app', 's', ($meta['theming'] ?? [])], [$appPath, $id, $theming]);
+					return ['verdict' => $verdicts[$level]];
+				}
+			);
+
+			$nldesign = $this->buildCapabilities(
+				config: $this->configWith(values: ['token_set' => 's']),
+				appManager: $appManager,
+				urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+				designSystemService: $designSystemService,
+				auditService: $auditService
+			)->getCapabilities()['nldesign'];
+
+			$this->assertSame($expected, $nldesign['wcagLevel']);
+			$this->assertSame($levels, $asked);
+		}
+	}//end testTheAuditLevelsAskedAndTheLevelReported()
+
+	/**
+	 * A logo path without the `img/` prefix is passed as it is; the minimal payload survives a failing version lookup.
+	 *
+	 * @return void
+	 */
+	public function testALogoPathWithoutPrefixAndAFullyDegradedPayload(): void {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppVersion')->willReturn('3.4.0');
+		$appManager->method('getAppPath')->willReturn('/nowhere');
+		$urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
+		$urlGenerator->method('imagePath')->willReturnCallback(static fn (string $app, string $file): string => '/' . $app . '/img/' . $file);
+		$designSystemService = $this->createMock(originalClassName: DesignSystemService::class);
+		$designSystemService->method('getTokenSetMeta')->willReturn(['id' => 's', 'design_system' => 'none', 'theming' => ['logo' => 'logos/s.svg']]);
+		$designSystemService->method('resolveActiveIconPacks')->willReturn([]);
+
+		$nldesign = $this->buildCapabilities(
+			config: $this->configWith(values: ['token_set' => 's', 'hide_slogan' => '1']),
+			appManager: $appManager,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $this->createMock(originalClassName: ShippedTokenSetAuditService::class)
+		)->getCapabilities()['nldesign'];
+
+		$this->assertSame(['default' => '/thematiq/img/logos/s.svg'], $nldesign['logos']);
+		$this->assertSame(['version', 'tokenSet', 'designSystem', 'iconPacks', 'wcagLevel', 'logos', 'hideSlogan', 'showMenuLabels'], array_keys($nldesign));
+		$this->assertTrue($nldesign['hideSlogan']);
+		$this->assertFalse($nldesign['showMenuLabels']);
+
+		$broken = $this->createMock(originalClassName: IAppManager::class);
+		$broken->method('getAppVersion')->willThrowException(new \RuntimeException('no version'));
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willThrowException(new \RuntimeException('no config'));
+		$minimal = $this->buildCapabilities(
+			config: $config,
+			appManager: $broken,
+			urlGenerator: $urlGenerator,
+			designSystemService: $designSystemService,
+			auditService: $this->createMock(originalClassName: ShippedTokenSetAuditService::class)
+		)->getCapabilities()['nldesign'];
+
+		$this->assertSame('unknown', $minimal['version']);
+		$this->assertSame(['id' => 'nextcloud', 'name' => 'nextcloud', 'version' => null], $minimal['tokenSet']);
+		$this->assertSame(
+			[null, [], null, false, false],
+			[$minimal['designSystem'], $minimal['iconPacks'], $minimal['wcagLevel'], $minimal['hideSlogan'], $minimal['showMenuLabels']]
+		);
+		$this->assertEquals(new \stdClass(), $minimal['logos']);
+	}//end testALogoPathWithoutPrefixAndAFullyDegradedPayload()
 }//end class

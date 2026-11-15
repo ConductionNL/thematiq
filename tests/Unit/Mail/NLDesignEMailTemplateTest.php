@@ -493,4 +493,58 @@ class NLDesignEMailTemplateTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '"onclick="x"', haystack: $html);
 		$this->assertStringNotContainsString(needle: '"onmouseover="y"', haystack: $html);
 	}//end testFooterValuesAreOutputEncoded()
+	/**
+	 * Golden: the exact HTML and plain text of branded mails with every kind of button, and of the stock fallback.
+	 *
+	 * Recorded on the code before the split as hashes of both parts, so any changed byte fails.
+	 *
+	 * @return void
+	 */
+	public function testTheBrandedMailGolden(): void {
+		$compose = function (?array $theme, array $footer): string {
+			$service = $this->createMock(originalClassName: EmailThemingService::class);
+			$service->method('getActiveEmailTheme')->willReturn($theme);
+			$service->method('getFooterConfig')->willReturn($footer);
+			$template = ($theme === null && $footer === []) ? $this->makeStockTemplate() : $this->makeTemplate(service: $service);
+			$template->setSubject('Golden');
+			$template->addHeader();
+			$template->addHeader();
+			$template->addHeading('Heading <b>');
+			$template->addBodyListItem('Item');
+			$template->addBodyButton('Click & go', 'https://example.org/a');
+			$template->addBodyButton('<i>raw</i>', 'https://example.org/b', 'Raw plain');
+			$template->addBodyButton('No plain', 'https://example.org/c', false);
+			$template->addBodyListItem('Second list');
+			$template->addBodyButtonGroup('Left & 1', 'https://example.org/l', 'Right < 2', 'https://example.org/r');
+			$template->addBodyButtonGroup('<b>L</b>', 'https://example.org/l2', '<b>R</b>', 'https://example.org/r2', 'L plain', 'R plain');
+			$template->addFooter();
+			$template->addFooter('again');
+			$template->addBodyButton('After footer', 'https://example.org/z');
+			$template->addBodyButtonGroup('After', 'https://example.org/z1', 'Footer', 'https://example.org/z2');
+
+			return substr(hash('sha256', $template->renderHtml()), 0, 12) . ' ' . substr(hash('sha256', $template->renderText()), 0, 12);
+		};
+
+		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#fefefe', 'logoUrl' => 'https://cloud.example.com/apps/thematiq/img/logos/test.svg'];
+		$footer = ['orgName' => 'Gemeente & Co', 'accessibilityUrl' => 'https://voorbeeld.nl/a11y', 'privacyUrl' => ''];
+		$empty = ['orgName' => '', 'accessibilityUrl' => '', 'privacyUrl' => ''];
+		$actual = [
+			'branded with footer' => $compose($theme, $footer),
+			'branded without a logo' => $compose(['logoUrl' => null] + $theme, $empty),
+			'footer only' => $compose(null, $footer),
+			'stock' => $compose(null, []),
+			'unbranded through the service' => $compose(null, $empty),
+		];
+
+		$this->assertSame(
+			expected: [
+				'branded with footer' => '05e4e2563407 41c0c7bf51c7',
+				'branded without a logo' => '84c3a10e6ec8 4b430318f965',
+				'footer only' => '0428bc85a8b5 41c0c7bf51c7',
+				'stock' => 'a427846da8bc 4b430318f965',
+				'unbranded through the service' => 'a427846da8bc 4b430318f965',
+			],
+			actual: $actual
+		);
+	}//end testTheBrandedMailGolden()
 }//end class

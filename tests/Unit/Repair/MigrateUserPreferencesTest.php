@@ -418,4 +418,55 @@ final class MigrateUserPreferencesTest extends TestCase {
 
 	}//end testGetNameNamesBothAppIds()
 
+	/**
+	 * Golden: the counts, the store and every message of a walk over users that migrate, skip, collide and fail.
+	 *
+	 * @return void
+	 */
+	public function testAMixedWalkGolden(): void {
+		$this->store = [
+			'ann' => [self::OLD => ['token_set' => 'utrecht', 'empty' => '', 'mode' => 'dark']],
+			'bob' => [self::OLD => ['token_set' => 'leiden'], self::NEW => ['token_set' => 'kept']],
+			'cat' => [self::OLD => ['token_set' => 'x']],
+			'dan' => [self::OLD => ['a' => '1']],
+		];
+		$this->writeThrowsFor = ['cat'];
+		$this->keysThrowFor = ['dan'];
+		$messages = [];
+		$output = $this->createMock(originalClassName: IOutput::class);
+		foreach (['info', 'warning'] as $level) {
+			$output->method($level)->willReturnCallback(
+				static function (string $message) use (&$messages, $level): void {
+					$messages[] = 'output ' . $level . ': ' . $message;
+				}
+			);
+		}
+
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->method('warning')->willReturnCallback(
+			static function (string $message, array $context) use (&$messages): void {
+				$messages[] = 'log: ' . $message . ' ' . json_encode($context);
+			}
+		);
+
+		$this->step(logger: $logger)->run($output);
+
+		$this->assertSame(
+			expected: [
+				'ann' => [self::OLD => ['token_set' => 'utrecht', 'empty' => '', 'mode' => 'dark'], self::NEW => ['token_set' => 'utrecht', 'mode' => 'dark']],
+				'bob' => [self::OLD => ['token_set' => 'leiden'], self::NEW => ['token_set' => 'kept']],
+				'cat' => [self::OLD => ['token_set' => 'x']],
+				'dan' => [self::OLD => ['a' => '1']],
+			],
+			actual: $this->store
+		);
+		$this->assertSame(
+			expected: [
+				'log: Thematiq: could not migrate one user preference; leaving it under the old app id {"key":"token_set","exception":"read-only"}',
+				'log: Thematiq: could not enumerate nldesign preference keys for a user; skipping that user {"exception":"unreadable"}',
+				'output info: MigrateUserPreferences: migrated 2 preference(s); 1 already set under thematiq; 1 failed.',
+			],
+			actual: $messages
+		);
+	}//end testAMixedWalkGolden()
 }//end class
