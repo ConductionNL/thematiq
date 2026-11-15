@@ -47,7 +47,7 @@ class DenhaagContrastPairsTest extends TestCase {
 	 * @return ShippedTokenSetAuditService
 	 */
 	private function audit(): ShippedTokenSetAuditService {
-		return new ShippedTokenSetAuditService(new ContrastService(), new CssParserService());
+		return new ShippedTokenSetAuditService(contrast: new ContrastService(), parser: new CssParserService());
 	}
 
 	/**
@@ -64,10 +64,10 @@ class DenhaagContrastPairsTest extends TestCase {
 			'--d' => 'var(--e, #123456)',
 		];
 
-		$this->assertSame('rgba(0, 0, 0, 0.5)', $pairs->resolve(declarations: $declarations, name: '--a'));
-		$this->assertSame('rgba(57, 135, 12, 0.12)', $pairs->resolve(declarations: $declarations, name: '--b'));
-		$this->assertSame('#123456', $pairs->resolve(declarations: $declarations, name: '--c'));
-		$this->assertNull($pairs->resolve(declarations: ['--x' => 'var(--nowhere)'], name: '--x'));
+		$this->assertSame(expected: 'rgba(0, 0, 0, 0.5)', actual: $pairs->resolve(declarations: $declarations, name: '--a'));
+		$this->assertSame(expected: 'rgba(57, 135, 12, 0.12)', actual: $pairs->resolve(declarations: $declarations, name: '--b'));
+		$this->assertSame(expected: '#123456', actual: $pairs->resolve(declarations: $declarations, name: '--c'));
+		$this->assertNull(actual: $pairs->resolve(declarations: ['--x' => 'var(--nowhere)'], name: '--x'));
 	}
 
 	/**
@@ -82,9 +82,9 @@ class DenhaagContrastPairsTest extends TestCase {
 			'--denhaag-step-marker-current-background-color' => 'var(--brand, #ffd23f)',
 		]);
 
-		$this->assertSame('fail', $result['step-current']['verdict']);
-		$this->assertLessThan(4.5, $result['step-current']['ratio']);
-		$this->assertSame('unevaluated', $result['case-title']['verdict'], 'A pair with no value never passes.');
+		$this->assertSame(expected: 'fail', actual: $result['step-current']['verdict']);
+		$this->assertLessThan(expected: 4.5, actual: $result['step-current']['ratio']);
+		$this->assertSame(expected: 'unevaluated', actual: $result['case-title']['verdict'], message: 'A pair with no value never passes.');
 	}
 
 	/**
@@ -95,9 +95,9 @@ class DenhaagContrastPairsTest extends TestCase {
 	public function testTheAuditCarriesTheDenhaagPairs(): void {
 		$result = $this->audit()->auditSet(appPath: $this->repoRoot(), id: 'example-gemeente', theming: []);
 
-		$this->assertSame(array_keys(DenhaagContrastPairs::PAIRS), array_keys($result['denhaag']));
+		$this->assertSame(expected: array_keys(DenhaagContrastPairs::PAIRS), actual: array_keys($result['denhaag']));
 		foreach ($result['denhaag'] as $pair => $measured) {
-			$this->assertSame('pass', $measured['verdict'], "example-gemeente {$pair}");
+			$this->assertSame(expected: 'pass', actual: $measured['verdict'], message: "example-gemeente {$pair}");
 		}
 	}
 
@@ -113,12 +113,12 @@ class DenhaagContrastPairsTest extends TestCase {
 		$cascade = $audit->portalCascade(appPath: $this->repoRoot(), id: 'tilburg');
 		$pairs = new DenhaagContrastPairs();
 
-		$this->assertSame('pass', $result['denhaag']['action-date-warning']['verdict']);
-		$this->assertStringContainsString('--thematiq-status-warning-text', $cascade['--denhaag-action-date-warning-color']);
+		$this->assertSame(expected: 'pass', actual: $result['denhaag']['action-date-warning']['verdict']);
+		$this->assertStringContainsString(needle: '--thematiq-status-warning-text', haystack: $cascade['--denhaag-action-date-warning-color']);
 		$this->assertNotSame(
-			$pairs->resolve(declarations: $cascade, name: '--nldesign-color-warning'),
-			$pairs->resolve(declarations: $cascade, name: '--denhaag-action-date-warning-color'),
-			'The text is derived from the warning colour, not the warning colour itself.'
+			expected: $pairs->resolve(declarations: $cascade, name: '--nldesign-color-warning'),
+			actual: $pairs->resolve(declarations: $cascade, name: '--denhaag-action-date-warning-color'),
+			message: 'The text is derived from the warning colour, not the warning colour itself.'
 		);
 	}
 
@@ -130,8 +130,8 @@ class DenhaagContrastPairsTest extends TestCase {
 	public function testThePortalPageIsNotTheLoginBackground(): void {
 		$cascade = $this->audit()->portalCascade(appPath: $this->repoRoot(), id: 'vng');
 
-		$this->assertSame('#ffffff', $cascade['--nldesign-color-background']);
-		$this->assertStringContainsString('--nldesign-color-text', $cascade['--denhaag-case-card-title-color']);
+		$this->assertSame(expected: '#ffffff', actual: $cascade['--nldesign-color-background']);
+		$this->assertStringContainsString(needle: '--nldesign-color-text', haystack: $cascade['--denhaag-case-card-title-color']);
 	}
 
 	/**
@@ -142,8 +142,8 @@ class DenhaagContrastPairsTest extends TestCase {
 	public function testTheReportListsTheDenhaagPairs(): void {
 		$report = $this->audit()->renderReport(appPath: $this->repoRoot());
 
-		$this->assertStringContainsString('## Den Haag component pairs', $report);
-		$this->assertMatchesRegularExpression('/^\| example-gemeente \| 15 \| 0 \| 0 \|/m', $report);
+		$this->assertStringContainsString(needle: '## Den Haag component pairs', haystack: $report);
+		$this->assertMatchesRegularExpression(pattern: '/^\| example-gemeente \| 15 \| 0 \| 0 \|/m', string: $report);
 	}
 
 	/**
@@ -154,11 +154,18 @@ class DenhaagContrastPairsTest extends TestCase {
 	public function testABrokenChainResolvesToNothing(): void {
 		$pairs = new DenhaagContrastPairs();
 
-		$this->assertNull($pairs->resolve(declarations: ['--a' => 'var(--b'], name: '--a'), 'An unclosed var() is malformed.');
-		$this->assertNull($pairs->resolve(declarations: ['--a' => 'var(--a)'], name: '--a'), 'A self-reference ends at the depth limit.');
-		$this->assertNull($pairs->resolve(declarations: [], name: '--a'), 'An undeclared property has no value.');
-		$this->assertSame('#927739', $pairs->resolve(declarations: ['--a' => 'var(--gone, #927739)'], name: '--a'));
-		$this->assertSame('#917036', $pairs->resolve(declarations: ['--a' => 'hsl(38deg 46% 39%)'], name: '--a'), 'An hsl() colour is measured, not left unevaluated.');
+		$this->assertNull(actual: $pairs->resolve(declarations: ['--a' => 'var(--b'], name: '--a'), message: 'An unclosed var() is malformed.');
+		$this->assertNull(
+			actual: $pairs->resolve(declarations: ['--a' => 'var(--a)'], name: '--a'),
+			message: 'A self-reference ends at the depth limit.'
+		);
+		$this->assertNull(actual: $pairs->resolve(declarations: [], name: '--a'), message: 'An undeclared property has no value.');
+		$this->assertSame(expected: '#927739', actual: $pairs->resolve(declarations: ['--a' => 'var(--gone, #927739)'], name: '--a'));
+		$this->assertSame(
+			expected: '#917036',
+			actual: $pairs->resolve(declarations: ['--a' => 'hsl(38deg 46% 39%)'], name: '--a'),
+			message: 'An hsl() colour is measured, not left unevaluated.'
+		);
 	}
 
 	/**
@@ -176,12 +183,12 @@ class DenhaagContrastPairsTest extends TestCase {
 
 		$lines = $pairs->reportLines(rows: [['id' => 'fixture', 'denhaag' => $measured]]);
 		$rows = array_values(array_filter($lines, static fn (string $line): bool => str_starts_with($line, '| fixture ')));
-		$this->assertCount(1, $rows);
+		$this->assertCount(expectedCount: 1, haystack: $rows);
 		$row = $rows[0];
 
-		$this->assertStringStartsWith('| fixture | 0 | 1 | 14 |', $row);
-		$this->assertStringContainsString('step-current 1.', $row);
-		$this->assertStringContainsString('case-title —', $row);
+		$this->assertStringStartsWith(prefix: '| fixture | 0 | 1 | 14 |', string: $row);
+		$this->assertStringContainsString(needle: 'step-current 1.', haystack: $row);
+		$this->assertStringContainsString(needle: 'case-title —', haystack: $row);
 	}
 
 	/**
@@ -194,7 +201,7 @@ class DenhaagContrastPairsTest extends TestCase {
 			'--denhaag-file-link-color' => '#767676',
 		]);
 
-		$this->assertSame('pass', $result['file-link']['verdict'], '#767676 on white is 4.54:1.');
+		$this->assertSame(expected: 'pass', actual: $result['file-link']['verdict'], message: '#767676 on white is 4.54:1.');
 	}
 
 	/**
@@ -216,7 +223,7 @@ class DenhaagContrastPairsTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $failing);
+		$this->assertSame(expected: [], actual: $failing);
 	}
 
 	/**
@@ -227,8 +234,8 @@ class DenhaagContrastPairsTest extends TestCase {
 	public function testAnUnknownSetGetsTheBridgeAndAWhitePage(): void {
 		$cascade = $this->audit()->portalCascade(appPath: $this->repoRoot(), id: 'no-such-set');
 
-		$this->assertSame('#ffffff', $cascade['--nldesign-color-background']);
-		$this->assertArrayHasKey('--thematiq-status-warning-text', $cascade);
+		$this->assertSame(expected: '#ffffff', actual: $cascade['--nldesign-color-background']);
+		$this->assertArrayHasKey(key: '--thematiq-status-warning-text', array: $cascade);
 	}
 
 	/**
@@ -245,14 +252,14 @@ class DenhaagContrastPairsTest extends TestCase {
 		$pairs = new DenhaagContrastPairs();
 
 		$this->assertSame(
-			$pairs->resolve(declarations: $cascade, name: '--tilburg-logo-color'),
-			$pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')
+			expected: $pairs->resolve(declarations: $cascade, name: '--tilburg-logo-color'),
+			actual: $pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')
 		);
 		$this->assertNotSame(
-			strtolower((string)$pairs->resolve(declarations: $cascade, name: '--nldesign-color-header-text')),
-			strtolower((string)$pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')),
-			'The title must not take the Nextcloud header text, which is white here.'
+			expected: strtolower((string)$pairs->resolve(declarations: $cascade, name: '--nldesign-color-header-text')),
+			actual: strtolower((string)$pairs->resolve(declarations: $cascade, name: '--tilburg-header-logo-text-color')),
+			message: 'The title must not take the Nextcloud header text, which is white here.'
 		);
-		$this->assertSame('pass', $pairs->pairs(declarations: $cascade)['header-title']['verdict']);
+		$this->assertSame(expected: 'pass', actual: $pairs->pairs(declarations: $cascade)['header-title']['verdict']);
 	}
 }

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\BrandDocument;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\MultiBrandImportService;
 use OCA\Thematiq\Settings\Admin;
@@ -86,7 +87,7 @@ class TokenSourceController extends Controller {
 		}
 
 		try {
-			$report = $this->imports->update(sourceId: $sourceId, content: $read['content'], fileName: $read['name']);
+			$report = $this->imports->update(sourceId: $sourceId, document: new BrandDocument(content: $read['content'], fileName: $read['name']));
 		} catch (RuntimeException $e) {
 			$code = match ($e->getCode()) {
 				404 => 404,

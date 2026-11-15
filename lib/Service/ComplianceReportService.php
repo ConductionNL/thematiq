@@ -21,10 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
-use OCP\IURLGenerator;
 use OCP\ServerVersion;
 
 /**
@@ -51,6 +47,15 @@ use OCP\ServerVersion;
  * {@see self::SCOPE_STATEMENT} — never a WCAG-EM audit or a full WCAG
  * evaluation (claim-accuracy discipline, `openspec/specs/claim-accuracy/spec.md`).
  *
+ * @phpstan-type CssMap array<string, string>
+ * @phpstan-type Resolution array{value: string|null, unresolved: string|null}
+ * @phpstan-type ColourLayers array{customOverrides: CssMap, mapping: CssMap, declarations: CssMap, designSystemId: string}
+ * @phpstan-type PairSide array{token: string, resolved: Resolution, color: array{0: int, 1: int, 2: int}|null}
+ * @psalm-type   CssMap array<string, string>
+ * @psalm-type   Resolution array{value: string|null, unresolved: string|null}
+ * @psalm-type   ColourLayers array{customOverrides: CssMap, mapping: CssMap, declarations: CssMap, designSystemId: string}
+ * @psalm-type   PairSide array{token: string, resolved: Resolution, color: array{0: int, 1: int, 2: int}|null}
+ *
  * @spec openspec/specs/compliance-evidence/spec.md
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - The complexity is the 18-pair WCAG
@@ -67,7 +72,7 @@ class ComplianceReportService {
 	 *
 	 * @var string
 	 */
-	private const MAIN_BACKGROUND_TOKEN = '--color-main-background';
+	private const MAIN_BACKGROUND_PROPERTY = '--color-main-background';
 
 	/**
 	 * The honest-scope statement embedded verbatim in every rendered report
@@ -98,85 +103,22 @@ class ComplianceReportService {
 		['fg' => '--color-primary-element-text', 'bg' => '--color-primary-element', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-light-text', 'bg' => '--color-primary-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
 		['fg' => '--color-primary-element-light-text', 'bg' => '--color-primary-element-light', 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
-		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-main-text', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
+		['fg' => '--color-text-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 4.5, 'basis' => 'normal-text'],
 		// Non-text / UI-component pairs — 3:1 threshold (SC 1.4.11 / large-text floor of SC 1.4.3).
-		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
-		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_TOKEN, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-primary-element', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-warning', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-info', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-maxcontrast', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-error', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
+		['fg' => '--color-border-success', 'bg' => self::MAIN_BACKGROUND_PROPERTY, 'threshold' => 3.0, 'basis' => 'ui-component'],
 	];
-
-	/**
-	 * The WCAG contrast math service (relative luminance, colour parsing).
-	 *
-	 * @var ContrastService
-	 */
-	private ContrastService $contrast;
-
-	/**
-	 * The shared CSS custom-property parser.
-	 *
-	 * @var CssParserService
-	 */
-	private CssParserService $cssParser;
-
-	/**
-	 * The custom-overrides read service (top cascade layer).
-	 *
-	 * @var CustomOverridesService
-	 */
-	private CustomOverridesService $overridesService;
-
-	/**
-	 * The design-system / shipped token-set metadata service.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystemService;
-
-	/**
-	 * The custom (admin-uploaded) token-set manifest service.
-	 *
-	 * @var CustomTokenSetService
-	 */
-	private CustomTokenSetService $customSetService;
-
-	/**
-	 * The app manager for resolving the app's on-disk CSS files.
-	 *
-	 * @var IAppManager
-	 */
-	private IAppManager $appManager;
-
-	/**
-	 * The config service for the active token-set setting and instance id.
-	 *
-	 * @var IConfig
-	 */
-	private IConfig $config;
-
-	/**
-	 * The URL generator for the instance base URL.
-	 *
-	 * @var IURLGenerator
-	 */
-	private IURLGenerator $urlGenerator;
-
-	/**
-	 * The injectable clock for the deterministic generation timestamp.
-	 *
-	 * @var ITimeFactory
-	 */
-	private ITimeFactory $timeFactory;
 
 	/**
 	 * The running server's version (public since NC 31, below this app's floor of 32).
@@ -190,40 +132,17 @@ class ComplianceReportService {
 	/**
 	 * Constructor.
 	 *
-	 * @param ContrastService $contrast The WCAG contrast math service.
-	 * @param CssParserService $cssParser The shared CSS custom-property parser.
-	 * @param CustomOverridesService $overridesService The custom-overrides read service.
-	 * @param DesignSystemService $designSystemService The shipped token-set metadata service.
-	 * @param CustomTokenSetService $customSetService The custom token-set manifest service.
-	 * @param IAppManager $appManager The app manager.
-	 * @param IConfig $config The config service.
-	 * @param IURLGenerator $urlGenerator The URL generator.
-	 * @param ITimeFactory $timeFactory The injectable clock.
+	 * @param ContrastTools $measuring The contrast maths and the custom property parser.
+	 * @param ThemeSelectionSources $theme The custom overrides, the shipped design systems and the custom token sets.
+	 * @param InstanceReportContext $instance The app manager, the config, the URL generator and the clock.
 	 * @param ServerVersion|null $serverVersion The running server's version.
-	 *
-	 * @SuppressWarnings(PHPMD.ExcessiveParameterList) - each collaborator backs one part of the report.
 	 */
 	public function __construct(
-		ContrastService $contrast,
-		CssParserService $cssParser,
-		CustomOverridesService $overridesService,
-		DesignSystemService $designSystemService,
-		CustomTokenSetService $customSetService,
-		IAppManager $appManager,
-		IConfig $config,
-		IURLGenerator $urlGenerator,
-		ITimeFactory $timeFactory,
+		private readonly ContrastTools $measuring,
+		private readonly ThemeSelectionSources $theme,
+		private readonly InstanceReportContext $instance,
 		?ServerVersion $serverVersion = null,
 	) {
-		$this->contrast = $contrast;
-		$this->cssParser = $cssParser;
-		$this->overridesService = $overridesService;
-		$this->designSystemService = $designSystemService;
-		$this->customSetService = $customSetService;
-		$this->appManager = $appManager;
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-		$this->timeFactory = $timeFactory;
 		$this->serverVersion = $serverVersion;
 	}//end __construct()
 
@@ -237,11 +156,11 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	public function generate(): array {
-		$appPath = $this->appManager->getAppPath('thematiq');
+		$appPath = $this->instance->appManager->getAppPath('thematiq');
 
-		$activeTokenSetId = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
-		$tokenSetMeta = $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId);
-		$designSystemId = ($tokenSetMeta['design_system'] ?? 'nldesign');
+		$activeTokenSetId = $this->instance->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$set = new ReportedTokenSet(id: $activeTokenSetId, meta: $this->resolveTokenSetMeta(tokenSetId: $activeTokenSetId));
+		$designSystemId = $set->designSystem();
 
 		// The runtime (Application::injectThemeCSS()) only loads the
 		// --nldesign-* design-system layers when the design system is not
@@ -249,35 +168,25 @@ class ComplianceReportService {
 		// is never scored against values the browser never received.
 		$declarations = [];
 		if ($designSystemId !== 'none') {
+			$setCss = (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css');
 			$declarations = array_merge(
 				$this->parseCssFile(path: $appPath . '/css/systems/' . $designSystemId . '/defaults.css'),
-				($this->cssParser->parseDeclarations(content: (string)$this->setCss(appPath: $appPath, name: 'css/tokens/' . $activeTokenSetId . '.css')) ?? [])
+				($this->measuring->cssParser->parseDeclarations(content: $setCss) ?? [])
 			);
 		}
 
 		$mapping = $this->parseCssFile(path: $appPath . '/css/systems/nldesign/overrides.css');
-		$customOverrides = $this->overridesService->read();
+		$customOverrides = $this->theme->overrides->read();
 
+		$layers = ['customOverrides' => $customOverrides, 'mapping' => $mapping, 'declarations' => $declarations, 'designSystemId' => $designSystemId];
 		$pairs = [];
 		foreach (self::PAIR_MATRIX as $pairDef) {
-			$pairs[] = $this->evaluatePair(
-				pairDef: $pairDef,
-				customOverrides: $customOverrides,
-				mapping: $mapping,
-				declarations: $declarations,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId
-			);
+			$pairs[] = $this->evaluatePair(pairDef: $pairDef, layers: $layers, tokenSetMeta: $set->meta);
 		}
 
 		return [
 			'scope' => self::SCOPE_STATEMENT,
-			'metadata' => $this->buildMetadata(
-				tokenSetId: $activeTokenSetId,
-				tokenSetMeta: $tokenSetMeta,
-				designSystemId: $designSystemId,
-				customOverrides: $customOverrides
-			),
+			'metadata' => $this->buildMetadata(set: $set, customOverrides: $customOverrides),
 			'pairs' => $pairs,
 			'summary' => $this->classifySummary(pairs: $pairs),
 		];
@@ -305,73 +214,116 @@ class ComplianceReportService {
 	 */
 	public function renderMarkdown(): string {
 		$data = $this->generate();
-		$meta = $data['metadata'];
+		$lines = [
+			'<!-- GENERATED by ComplianceReportService::renderMarkdown() — do not edit by hand. -->',
+			'',
+			'# NL Design Compliance Evidence Report',
+			'',
+			self::SCOPE_STATEMENT,
+			'',
+		];
+		array_push($lines, ...$this->metadataLines(meta: $data['metadata']));
+		array_push($lines, ...$this->pairLines(pairs: $data['pairs']));
+		array_push($lines, ...$this->summaryLines(summary: $data['summary']));
 
-		$lines = [];
-		$lines[] = '<!-- GENERATED by ComplianceReportService::renderMarkdown() — do not edit by hand. -->';
-		$lines[] = '';
-		$lines[] = '# NL Design Compliance Evidence Report';
-		$lines[] = '';
-		$lines[] = self::SCOPE_STATEMENT;
-		$lines[] = '';
-		$lines[] = '## Metadata';
-		$lines[] = '';
-		$lines[] = '- Instance id: ' . $meta['instanceId'];
-		$lines[] = '- Instance URL: ' . $meta['instanceUrl'];
-		$lines[] = '- nldesign app version: ' . $meta['appVersion'];
-		$lines[] = '- Nextcloud version: ' . $meta['nextcloudVersion'];
-		$lines[] = '- Active token set: ' . $meta['tokenSet']['id']
-			. ' ("' . $meta['tokenSet']['name'] . '", version '
-			. $meta['tokenSet']['version'] . ')';
-		$lines[] = '- Design system: ' . $meta['designSystem'];
-		$lines[] = '- Generated at: ' . $meta['generatedAt'];
-		$lines[] = '- Custom overrides SHA-256: ' . $meta['overridesHash'];
-		$lines[] = '';
-		$lines[] = '## Pair matrix (' . count($data['pairs']) . ' pairs)';
-		$lines[] = '';
-		$lines[] = '| # | Foreground | Background | FG value | BG value | Ratio | Threshold | Basis | Verdict |';
-		$lines[] = '|---|------------|------------|----------|----------|------:|----------:|-------|:-------:|';
+		return implode("\n", $lines) . "\n";
+	}//end renderMarkdown()
 
+	/**
+	 * The Markdown metadata section.
+	 *
+	 * @param array<string, mixed> $meta The report metadata.
+	 *
+	 * @return array<int, string>
+	 */
+	private function metadataLines(array $meta): array {
+		return [
+			'## Metadata',
+			'',
+			'- Instance id: ' . $meta['instanceId'],
+			'- Instance URL: ' . $meta['instanceUrl'],
+			'- nldesign app version: ' . $meta['appVersion'],
+			'- Nextcloud version: ' . $meta['nextcloudVersion'],
+			'- Active token set: ' . $meta['tokenSet']['id'] . ' ("' . $meta['tokenSet']['name'] . '", version ' . $meta['tokenSet']['version'] . ')',
+			'- Design system: ' . $meta['designSystem'],
+			'- Generated at: ' . $meta['generatedAt'],
+			'- Custom overrides SHA-256: ' . $meta['overridesHash'],
+			'',
+		];
+	}//end metadataLines()
+
+	/**
+	 * The Markdown pair matrix, followed by the notes of the pairs that carry one.
+	 *
+	 * @param array<int, array<string, mixed>> $pairs The evaluated pairs.
+	 *
+	 * @return array<int, string>
+	 */
+	private function pairLines(array $pairs): array {
+		$lines = [
+			'## Pair matrix (' . count($pairs) . ' pairs)',
+			'',
+			'| # | Foreground | Background | FG value | BG value | Ratio | Threshold | Basis | Verdict |',
+			'|---|------------|------------|----------|----------|------:|----------:|-------|:-------:|',
+		];
 		$notes = [];
-		foreach ($data['pairs'] as $index => $pair) {
-			$lines[] = sprintf(
-				'| %d | `%s` | `%s` | %s | %s | %s | %s | %s | %s |',
-				($index + 1),
-				$pair['foreground'],
-				$pair['background'],
-				($pair['foregroundValue'] ?? '—'),
-				($pair['backgroundValue'] ?? '—'),
-				$this->formatRatio(ratio: $pair['ratio']),
-				$this->formatThreshold(threshold: $pair['threshold']),
-				$pair['basis'],
-				$pair['verdict']
-			);
-
+		foreach ($pairs as $index => $pair) {
+			$lines[] = $this->pairRow(number: ($index + 1), pair: $pair);
 			if ($pair['note'] !== null) {
 				$notes[] = '- Pair ' . ($index + 1) . ': ' . $pair['note'];
 			}
 		}
 
 		$lines[] = '';
-
-		if (empty($notes) === false) {
-			$lines[] = '### Notes';
-			$lines[] = '';
-			array_push($lines, ...$notes);
+		if ($notes !== []) {
+			array_push($lines, '### Notes', '', ...$notes);
 			$lines[] = '';
 		}
 
-		$summary = $data['summary'];
-		$lines[] = '## Summary';
-		$lines[] = '';
-		$lines[] = '- Passed: ' . $summary['passed'];
-		$lines[] = '- Failed: ' . $summary['failed'];
-		$lines[] = '- Unevaluated: ' . $summary['unevaluated'];
-		$lines[] = '- Overall verdict: ' . $summary['verdict'];
-		$lines[] = '';
+		return $lines;
+	}//end pairLines()
 
-		return implode("\n", $lines) . "\n";
-	}//end renderMarkdown()
+	/**
+	 * One row of the Markdown pair matrix.
+	 *
+	 * @param int $number The pair's number, from 1.
+	 * @param array<string, mixed> $pair The evaluated pair.
+	 *
+	 * @return string
+	 */
+	private function pairRow(int $number, array $pair): string {
+		return sprintf(
+			'| %d | `%s` | `%s` | %s | %s | %s | %s | %s | %s |',
+			$number,
+			$pair['foreground'],
+			$pair['background'],
+			($pair['foregroundValue'] ?? '—'),
+			($pair['backgroundValue'] ?? '—'),
+			(new ContrastReportCells())->ratio(ratio: $pair['ratio']),
+			(new ContrastReportCells())->threshold(threshold: $pair['threshold']),
+			$pair['basis'],
+			$pair['verdict']
+		);
+	}//end pairRow()
+
+	/**
+	 * The Markdown summary section.
+	 *
+	 * @param array<string, mixed> $summary The report summary.
+	 *
+	 * @return array<int, string>
+	 */
+	private function summaryLines(array $summary): array {
+		return [
+			'## Summary',
+			'',
+			'- Passed: ' . $summary['passed'],
+			'- Failed: ' . $summary['failed'],
+			'- Unevaluated: ' . $summary['unevaluated'],
+			'- Overall verdict: ' . $summary['verdict'],
+			'',
+		];
+	}//end summaryLines()
 
 	/**
 	 * Resolve a token set's metadata: shipped (token-sets.json) first, falling
@@ -384,12 +336,12 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveTokenSetMeta(string $tokenSetId): array {
-		$shipped = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSetId);
+		$shipped = $this->theme->designSystems->getTokenSetMeta(tokenSetId: $tokenSetId);
 		if (empty($shipped) === false) {
 			return $shipped;
 		}
 
-		$custom = $this->customSetService->getManifest();
+		$custom = $this->theme->customSets->getManifest();
 
 		return ($custom[$tokenSetId] ?? []);
 	}//end resolveTokenSetMeta()
@@ -413,101 +365,119 @@ class ComplianceReportService {
 			return [];
 		}
 
-		return ($this->cssParser->parseDeclarations(content: $content) ?? []);
+		return ($this->measuring->cssParser->parseDeclarations(content: $content) ?? []);
 	}//end parseCssFile()
 
 	/**
 	 * Evaluate a single pair-matrix entry into its full report row.
 	 *
 	 * @param array{fg: string, bg: string, threshold: float, basis: string} $pairDef The matrix entry.
-	 * @param array<string, string> $customOverrides The custom-overrides layer.
-	 * @param array<string, string> $mapping The --color-* => --nldesign-* mapping.
-	 * @param array<string, string> $declarations The layered --nldesign-* declarations.
+	 * @param ColourLayers $layers The custom-overrides layer, the --color-* => --nldesign-* mapping, the layered
+	 *                             --nldesign-* declarations and the active design system id.
 	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
 	 *
 	 * @return array<string, mixed> The evaluated pair row.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function evaluatePair(
-		array $pairDef,
-		array $customOverrides,
-		array $mapping,
-		array $declarations,
-		array $tokenSetMeta,
-		string $designSystemId,
-	): array {
-		$fgResolved = $this->resolveColorToken(
-			token: $pairDef['fg'],
-			customOverrides: $customOverrides,
-			mapping: $mapping,
-			declarations: $declarations,
-			designSystemId: $designSystemId
-		);
+	private function evaluatePair(array $pairDef, array $layers, array $tokenSetMeta): array {
+		$fgResolved = $this->resolveColorToken(token: $pairDef['fg'], layers: $layers);
+		$bgResolved = $this->resolveBackground(token: $pairDef['bg'], context: ['layers' => $layers, 'tokenSetMeta' => $tokenSetMeta]);
+		$fgColor = $this->parsedColor(resolved: $fgResolved);
+		$bgColor = $this->parsedColor(resolved: $bgResolved);
+		$entry = $this->pairEntry(pairDef: $pairDef, values: ['fg' => $fgResolved['value'], 'bg' => $bgResolved['value']]);
 
-		$bgResolved = $this->resolveColorToken(
-			token: $pairDef['bg'],
-			customOverrides: $customOverrides,
-			mapping: $mapping,
-			declarations: $declarations,
-			designSystemId: $designSystemId
-		);
-		if ($pairDef['bg'] === self::MAIN_BACKGROUND_TOKEN) {
-			$bgResolved = $this->resolveMainBackground(
-				customOverrides: $customOverrides,
-				declarations: $declarations,
-				tokenSetMeta: $tokenSetMeta
+		if ($fgColor === null || $bgColor === null) {
+			$entry['note'] = $this->describeUnresolvedPair(
+				foreground: ['token' => $pairDef['fg'], 'resolved' => $fgResolved, 'color' => $fgColor],
+				background: ['token' => $pairDef['bg'], 'resolved' => $bgResolved, 'color' => $bgColor]
+			);
+
+			return $entry;
+		}
+
+		return $this->withRatio(entry: $entry);
+	}//end evaluatePair()
+
+	/**
+	 * Resolve a pair's background token; the main background has a resolution of its own.
+	 *
+	 * @param string $token The background token.
+	 * @param array{layers: ColourLayers, tokenSetMeta: array<string, mixed>} $context The colour layers and the active token set's metadata.
+	 *
+	 * @return array<string, mixed> The resolution, as resolveColorToken() answers it.
+	 */
+	private function resolveBackground(string $token, array $context): array {
+		$resolved = $this->resolveColorToken(token: $token, layers: $context['layers']);
+		if ($token === self::MAIN_BACKGROUND_PROPERTY) {
+			$resolved = $this->resolveMainBackground(
+				customOverrides: $context['layers']['customOverrides'],
+				declarations: $context['layers']['declarations'],
+				tokenSetMeta: $context['tokenSetMeta']
 			);
 		}
 
-		$fgColor = null;
-		if ($fgResolved['value'] !== null) {
-			$fgColor = $this->contrast->parseColor(value: $fgResolved['value']);
+		return $resolved;
+	}//end resolveBackground()
+
+	/**
+	 * The parsed colour of a resolved token, or null when it resolved to nothing or does not parse.
+	 *
+	 * @param array<string, mixed> $resolved The resolution.
+	 *
+	 * @return array{0: int, 1: int, 2: int}|null
+	 */
+	private function parsedColor(array $resolved): ?array {
+		if ($resolved['value'] === null) {
+			return null;
 		}
 
-		$bgColor = null;
-		if ($bgResolved['value'] !== null) {
-			$bgColor = $this->contrast->parseColor(value: $bgResolved['value']);
-		}
+		return $this->measuring->contrast->parseColor(value: $resolved['value']);
+	}//end parsedColor()
 
-		$entry = [
+	/**
+	 * A pair's report row before it is measured.
+	 *
+	 * @param array{fg: string, bg: string, threshold: float, basis: string} $pairDef The matrix entry.
+	 * @param array{fg: string|null, bg: string|null} $values The resolved foreground and background values.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function pairEntry(array $pairDef, array $values): array {
+		return [
 			'foreground' => $pairDef['fg'],
 			'background' => $pairDef['bg'],
-			'foregroundValue' => $fgResolved['value'],
-			'backgroundValue' => $bgResolved['value'],
+			'foregroundValue' => $values['fg'],
+			'backgroundValue' => $values['bg'],
 			'ratio' => null,
 			'threshold' => $pairDef['threshold'],
 			'basis' => $pairDef['basis'],
 			'verdict' => 'unevaluated',
 			'note' => null,
 		];
+	}//end pairEntry()
 
-		if ($fgColor === null || $bgColor === null) {
-			$entry['note'] = $this->describeUnresolvedPair(
-				fgToken: $pairDef['fg'],
-				fgResolved: $fgResolved,
-				fgColor: $fgColor,
-				bgToken: $pairDef['bg'],
-				bgResolved: $bgResolved,
-				bgColor: $bgColor
-			);
-
-			return $entry;
-		}
-
-		// Measured as it renders, so a translucent colour is blended first. Both
-		// values parsed above, so measure() cannot answer null here.
-		$ratio = round(($this->contrast->measure(foreground: (string)$fgResolved['value'], background: (string)$bgResolved['value']) ?? 0.0), 2);
-
+	/**
+	 * Measure a row whose two colours both parse, and give it its verdict.
+	 *
+	 * Measured as it renders, so a translucent colour is blended first. Both
+	 * values parse, so measure() cannot answer null here.
+	 *
+	 * @param array<string, mixed> $entry The row from pairEntry().
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function withRatio(array $entry): array {
+		$measured = $this->measuring->contrast->measure(foreground: (string)$entry['foregroundValue'], background: (string)$entry['backgroundValue']);
+		$ratio = round(($measured ?? 0.0), 2);
 		$entry['ratio'] = $ratio;
 		$entry['verdict'] = 'fail';
-		if ($ratio >= $pairDef['threshold']) {
+		if ($ratio >= $entry['threshold']) {
 			$entry['verdict'] = 'pass';
 		}
 
 		return $entry;
-	}//end evaluatePair()
+	}//end withRatio()
 
 	/**
 	 * Resolve a --color-* pair token: custom override first, else the mapped
@@ -515,34 +485,26 @@ class ComplianceReportService {
 	 * resolved transitively against the layered declarations.
 	 *
 	 * @param string $token The --color-* token name.
-	 * @param array<string, string> $customOverrides The custom-overrides layer.
-	 * @param array<string, string> $mapping The --color-* => --nldesign-* mapping.
-	 * @param array<string, string> $declarations The layered --nldesign-* declarations.
-	 * @param string $designSystemId The active design system id (for the diagnostic note).
+	 * @param ColourLayers $layers The custom-overrides layer, the --color-* => --nldesign-* mapping, the layered
+	 *                             --nldesign-* declarations and the active design system id (for the diagnostic note).
 	 *
 	 * @return array{value: string|null, unresolved: string|null} The resolution result.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function resolveColorToken(
-		string $token,
-		array $customOverrides,
-		array $mapping,
-		array $declarations,
-		string $designSystemId,
-	): array {
-		if (array_key_exists($token, $customOverrides) === true) {
-			return ['value' => $customOverrides[$token], 'unresolved' => null];
+	private function resolveColorToken(string $token, array $layers): array {
+		if (array_key_exists($token, $layers['customOverrides']) === true) {
+			return ['value' => $layers['customOverrides'][$token], 'unresolved' => null];
 		}
 
-		if (array_key_exists($token, $mapping) === false) {
+		if (array_key_exists($token, $layers['mapping']) === false) {
 			return [
 				'value' => null,
-				'unresolved' => $token . ' (no nldesign token mapping for design system "' . $designSystemId . '")',
+				'unresolved' => $token . ' (no nldesign token mapping for design system "' . $layers['designSystemId'] . '")',
 			];
 		}
 
-		return $this->resolveVarChain(value: $mapping[$token], declarations: $declarations);
+		return $this->resolveVarChain(value: $layers['mapping'][$token], declarations: $layers['declarations']);
 	}//end resolveColorToken()
 
 	/**
@@ -560,8 +522,8 @@ class ComplianceReportService {
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
 	private function resolveMainBackground(array $customOverrides, array $declarations, array $tokenSetMeta): array {
-		if (array_key_exists(self::MAIN_BACKGROUND_TOKEN, $customOverrides) === true) {
-			return ['value' => $customOverrides[self::MAIN_BACKGROUND_TOKEN], 'unresolved' => null];
+		if (array_key_exists(self::MAIN_BACKGROUND_PROPERTY, $customOverrides) === true) {
+			return ['value' => $customOverrides[self::MAIN_BACKGROUND_PROPERTY], 'unresolved' => null];
 		}
 
 		if (array_key_exists('--nldesign-color-background', $declarations) === true) {
@@ -609,33 +571,22 @@ class ComplianceReportService {
 	/**
 	 * Build the diagnostic note for a pair with an unresolved side.
 	 *
-	 * @param string $fgToken The foreground token name.
-	 * @param array{value: string|null, unresolved: string|null} $fgResolved The foreground resolution result.
-	 * @param array{0: int, 1: int, 2: int}|null $fgColor The parsed foreground colour, or null.
-	 * @param string $bgToken The background token name.
-	 * @param array{value: string|null, unresolved: string|null} $bgResolved The background resolution result.
-	 * @param array{0: int, 1: int, 2: int}|null $bgColor The parsed background colour, or null.
+	 * @param PairSide $foreground The foreground token name, its resolution result and its parsed colour (null when unparsed).
+	 * @param PairSide $background The background token name, its resolution result and its parsed colour (null when unparsed).
 	 *
 	 * @return string The human-readable diagnostic note.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function describeUnresolvedPair(
-		string $fgToken,
-		array $fgResolved,
-		?array $fgColor,
-		string $bgToken,
-		array $bgResolved,
-		?array $bgColor,
-	): string {
+	private function describeUnresolvedPair(array $foreground, array $background): string {
 		$problems = [];
 
-		if ($fgColor === null) {
-			$problems[] = $this->describeUnresolvedSide(token: $fgToken, resolved: $fgResolved);
+		if ($foreground['color'] === null) {
+			$problems[] = $this->describeUnresolvedSide(token: $foreground['token'], resolved: $foreground['resolved']);
 		}
 
-		if ($bgColor === null) {
-			$problems[] = $this->describeUnresolvedSide(token: $bgToken, resolved: $bgResolved);
+		if ($background['color'] === null) {
+			$problems[] = $this->describeUnresolvedSide(token: $background['token'], resolved: $background['resolved']);
 		}
 
 		return implode('; ', $problems);
@@ -711,28 +662,28 @@ class ComplianceReportService {
 	/**
 	 * Assemble the report metadata block (identical shape for both formats).
 	 *
-	 * @param string $tokenSetId The active token set id.
-	 * @param array<string, mixed> $tokenSetMeta The active token set's metadata.
-	 * @param string $designSystemId The active design system id.
+	 * @param ReportedTokenSet $set The active token set and its metadata.
 	 * @param array<string, string> $customOverrides The custom-overrides layer.
 	 *
 	 * @return array<string, mixed> The metadata block.
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	private function buildMetadata(string $tokenSetId, array $tokenSetMeta, string $designSystemId, array $customOverrides): array {
+	private function buildMetadata(ReportedTokenSet $set, array $customOverrides): array {
+		$tokenSetId = $set->id;
+
 		return [
-			'instanceId' => $this->config->getSystemValue('instanceid', ''),
-			'instanceUrl' => $this->urlGenerator->getBaseUrl(),
-			'appVersion' => $this->appManager->getAppVersion('thematiq'),
+			'instanceId' => $this->instance->config->getSystemValue('instanceid', ''),
+			'instanceUrl' => $this->instance->urlGenerator->getBaseUrl(),
+			'appVersion' => $this->instance->appManager->getAppVersion('thematiq'),
 			'nextcloudVersion' => $this->resolveNextcloudVersion(),
 			'tokenSet' => [
 				'id' => $tokenSetId,
-				'name' => ($tokenSetMeta['name'] ?? $tokenSetId),
-				'version' => ($tokenSetMeta['version'] ?? 'unversioned'),
+				'name' => ($set->meta['name'] ?? $tokenSetId),
+				'version' => ($set->meta['version'] ?? 'unversioned'),
 			],
-			'designSystem' => $designSystemId,
-			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->timeFactory->getTime()),
+			'designSystem' => $set->designSystem(),
+			'generatedAt' => gmdate('Y-m-d\TH:i:s\Z', $this->instance->timeFactory->getTime()),
 			'overridesHash' => $this->computeOverridesHash(overrides: $customOverrides),
 		];
 	}//end buildMetadata()
@@ -786,32 +737,6 @@ class ComplianceReportService {
 	}//end computeOverridesHash()
 
 	/**
-	 * Format a ratio for Markdown (2 decimals, em dash when unevaluated).
-	 *
-	 * @param float|null $ratio The ratio.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatRatio(?float $ratio): string {
-		if ($ratio === null) {
-			return '—';
-		}
-
-		return number_format($ratio, 2, '.', '') . ':1';
-	}//end formatRatio()
-
-	/**
-	 * Format a threshold for Markdown.
-	 *
-	 * @param float $threshold The threshold.
-	 *
-	 * @return string The formatted cell value.
-	 */
-	private function formatThreshold(float $threshold): string {
-		return number_format($threshold, 1, '.', '') . ':1';
-	}//end formatThreshold()
-
-	/**
 	 * A set file's CSS: an uploaded (`custom-`) set's from its service, a shipped one's from the release.
 	 *
 	 * @param string $appPath The app directory.
@@ -824,7 +749,7 @@ class ComplianceReportService {
 	private function setCss(string $appPath, string $name): ?string {
 		// An uploaded set lives in app data; its own service reads it.
 		if (preg_match('#^css/tokens/(custom-[a-z0-9-]+)\.css$#', $name, $match) === 1) {
-			return $this->customSetService->getRawContent(id: $match[1]);
+			return $this->theme->customSets->getRawContent(id: $match[1]);
 		}
 
 		$path = $appPath . '/' . $name;

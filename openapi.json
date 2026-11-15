@@ -1,0 +1,700 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Thematiq",
+        "version": "1.2.28-unstable.20261014120000",
+        "description": "The JSON API of Thematiq, the theming app for Nextcloud: design token sets and their deprecations, app brands, document styles, workspace icons, contrast checks and the settings behind them.\n\nEvery path is served under `/api/v1/`, the version this document describes. The unversioned `/api/` paths keep working, are deprecated, and name their `/api/v1/` successor in a `Link` header next to a `Deprecation` header. Errors are RFC 9457 problem details (`application/problem+json`), and every response carries an `API-Version` header. Paths that implement an external standard keep the formats of that standard and are not described here.",
+        "contact": {
+            "name": "Conduction B.V.",
+            "email": "info@conduction.nl",
+            "url": "https://conduction.nl"
+        },
+        "license": {
+            "name": "EUPL-1.2",
+            "url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://{host}/index.php/apps/thematiq/api/v1",
+            "description": "The Thematiq API, version 1, on a Nextcloud instance.",
+            "variables": {
+                "host": {
+                    "default": "localhost",
+                    "description": "The host name of the Nextcloud instance."
+                }
+            }
+        }
+    ],
+    "security": [
+        {
+            "basic_auth": []
+        },
+        {
+            "bearer_auth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "app-brand",
+            "description": "The Brand per app block (`/settings/app-brands`, admin) and the logos (`/api/app-brands/{appId}/logo/{size}`, signed-in users, since branded pages are signed-in pages)."
+        },
+        {
+            "name": "assistant-mark",
+            "description": "`GET /api/assistant-mark` for signed-in users (the contract with the assistant panel in nextcloud-vue), `GET` and `POST /settings/assistant-mark` for administrators."
+        },
+        {
+            "name": "catalog",
+            "description": "Non-admin, read-only token-set catalogue endpoint for a leaf app's own picker (e.g. a builder tool inside another Conduction app)."
+        },
+        {
+            "name": "contrast",
+            "description": "Shared WCAG contrast-evaluation endpoint for a leaf app's own picker or free-hand color authoring feature."
+        },
+        {
+            "name": "document-style",
+            "description": "Signed-in users read the profile (`GET /api/document-style`) and its assets; administrators manage the Documents block under `/settings/document-style`."
+        },
+        {
+            "name": "my-groups",
+            "description": "`GET /api/my-groups/house-style` lists the delegated groups the signed-in user is subadmin of; `POST /api/my-groups/{group}/house-style` sets one. Both need the delegated setting {@see GroupHouseStyle} (an administrator, or a member of a group the administrator granted it to); the write also checks, on every call, that the user is subadmin of the named group and that the set is on its allowed list, answering 403 otherwise."
+        },
+        {
+            "name": "open-api",
+            "description": "The OpenAPI document that describes this API."
+        },
+        {
+            "name": "shell-token",
+            "description": "GET /api/shell-tokens: the active token set as eighteen shell roles and a logo, for a product that wears the same shell as this Nextcloud (the OpenProject plugin is the first)."
+        },
+        {
+            "name": "token-reference",
+            "description": "The token reference of any available token set, custom sets included, for any signed-in user. `#[NoAdminRequired]`, never `#[PublicPage]`: a custom set is the organisation's own and may not be published yet. A controller of its own next to CatalogController, whose constructor other code and tests pin."
+        },
+        {
+            "name": "workspace-icon",
+            "description": "The two workspace images."
+        }
+    ],
+    "paths": {
+        "/app-brands/{appId}/logo/{size}": {
+            "get": {
+                "operationId": "app-brand-logo",
+                "summary": "A brand logo, for signed-in users",
+                "description": "A brand logo, for signed-in users. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "app-brand"
+                ],
+                "parameters": [
+                    {
+                        "name": "appId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The app id.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "path",
+                        "required": true,
+                        "description": "`large` or `small`.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/assistant-mark": {
+            "get": {
+                "operationId": "assistant-mark-show",
+                "summary": "The mark for the signed-in user's assistant panel. No session, no answer: the route has no public-page attribute, so Nextcloud refuses anonymous calls",
+                "description": "The mark for the signed-in user's assistant panel. No session, no answer: the route has no public-page attribute, so Nextcloud refuses anonymous calls. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "assistant-mark"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    }
+                }
+            }
+        },
+        "/contrast/evaluate": {
+            "post": {
+                "operationId": "contrast-evaluate",
+                "summary": "POST /api/contrast/evaluate — evaluate arbitrary candidate colors against a caller-supplied background",
+                "description": "POST /api/contrast/evaluate — evaluate arbitrary candidate colors against a caller-supplied background. Accepts `{ candidates: [{ name, value, role: \"text\"|\"ui\" }], background: string }` and returns `{ results: [{ name, ratio, threshold, level, pass, unevaluated? }] }`. A malformed request (missing/invalid `candidates` or `background`) returns 400, never a silent 200 with fabricated results. Public: it needs no login.",
+                "tags": [
+                    "contrast"
+                ],
+                "security": [],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Problem400"
+                    }
+                }
+            }
+        },
+        "/document-style": {
+            "get": {
+                "operationId": "document-style-show",
+                "summary": "The profile for the signed-in user. Without a session Nextcloud refuses the request",
+                "description": "The profile for the signed-in user. Without a session Nextcloud refuses the request. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "document-style"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    }
+                }
+            }
+        },
+        "/document-style/{kind}": {
+            "get": {
+                "operationId": "document-style-asset",
+                "summary": "A document asset, for signed-in users",
+                "description": "A document asset, for signed-in users. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "document-style"
+                ],
+                "parameters": [
+                    {
+                        "name": "kind",
+                        "in": "path",
+                        "required": true,
+                        "description": "`logo` or `cover`.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/my-groups/house-style": {
+            "get": {
+                "operationId": "my-groups-index",
+                "summary": "The delegated groups of the signed-in user",
+                "description": "The delegated groups of the signed-in user. Needs an administrator, or a user the matching admin setting is delegated to.",
+                "tags": [
+                    "my-groups"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Problem403"
+                    }
+                }
+            }
+        },
+        "/my-groups/{group}/house-style": {
+            "post": {
+                "operationId": "my-groups-update",
+                "summary": "Set the house style of a delegated group",
+                "description": "Set the house style of a delegated group. Needs an administrator, or a user the matching admin setting is delegated to.",
+                "tags": [
+                    "my-groups"
+                ],
+                "parameters": [
+                    {
+                        "name": "group",
+                        "in": "path",
+                        "required": true,
+                        "description": "The group id.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tokenSet": {
+                                        "type": "string",
+                                        "description": "The chosen set."
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Problem403"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/Problem422"
+                    }
+                }
+            }
+        },
+        "/openapi.json": {
+            "get": {
+                "operationId": "open-api-show",
+                "summary": "The OpenAPI document of this API",
+                "description": "Returns this document, with `info.version` set to the installed version. It needs no login and can be read from any origin.",
+                "tags": [
+                    "open-api"
+                ],
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "The OpenAPI document.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            },
+                            "access-control-allow-origin": {
+                                "description": "Always `*`.",
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "*"
+                                    ]
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/shell-tokens": {
+            "get": {
+                "operationId": "shell-token-show",
+                "summary": "The shell tokens document, or 304 when the reader already holds this revision",
+                "description": "The shell tokens document, or 304 when the reader already holds this revision. `Cache-Control: no-cache` lets a reader keep the answer and ask again with `If-None-Match`, where Nextcloud's default forbids storing it. Public: it needs no login.",
+                "tags": [
+                    "shell-token"
+                ],
+                "security": [],
+                "responses": {
+                    "304": {
+                        "description": "A redirect to the result.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            },
+                            "Location": {
+                                "description": "Where the result is.",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/token-deprecations": {
+            "get": {
+                "operationId": "catalog-deprecations",
+                "summary": "GET /api/token-deprecations — every token deprecation, for consuming apps",
+                "description": "GET /api/token-deprecations — every token deprecation, for consuming apps. Token names and dates only, the same for every user, so there is no per-object check to make; a request without a session is refused by the absence of `#[PublicPage]`. Public: it needs no login.",
+                "tags": [
+                    "catalog"
+                ],
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/token-sets": {
+            "get": {
+                "operationId": "catalog-token-sets",
+                "summary": "GET /api/token-sets — the closed, non-admin catalogue projection",
+                "description": "GET /api/token-sets — the closed, non-admin catalogue projection. Reuses `TokenSetService::getAvailableTokenSets()` for discovery via `getPublicCatalogue()` (zero duplication of the scan/manifest-merge logic) and returns exactly the 5-field shape: `id`, `name`, `design_system`, `theming` (`primary_color`, `background_color`, `logo?`), `wcagLevel`. No `description`, `custom`, `warnings`, `upstreamVersion`, or `upstreamRef` — those are admin-only fields on the existing `GET /settings/tokensets` response. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "catalog"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    }
+                }
+            }
+        },
+        "/token-sets/{id}/reference": {
+            "get": {
+                "operationId": "token-reference-show",
+                "summary": "GET /api/token-sets/{id}/reference?format=md|html[&download=1]",
+                "description": "GET /api/token-sets/{id}/reference?format=md|html[&download=1]. Needs a signed-in Nextcloud user.",
+                "tags": [
+                    "token-reference"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "The token set id.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "download",
+                        "in": "query",
+                        "required": false,
+                        "description": "The download.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/workspace-icons/{kind}": {
+            "get": {
+                "operationId": "workspace-icon-show",
+                "summary": "Serve an image to anyone: a phone fetches the touch icon without a session, and the login page draws the header too. Instance-wide brand images,...",
+                "description": "Serve an image to anyone: a phone fetches the touch icon without a session, and the login page draws the header too. Instance-wide brand images, the same for every visitor. Public: it needs no login.",
+                "tags": [
+                    "workspace-icon"
+                ],
+                "security": [],
+                "parameters": [
+                    {
+                        "name": "kind",
+                        "in": "path",
+                        "required": true,
+                        "description": "`mobile-logo` or `touch-icon`.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic",
+                "description": "A Nextcloud user name with an app password."
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "A Nextcloud OAuth2 access token."
+            }
+        },
+        "headers": {
+            "API-Version": {
+                "description": "The version of the API that answered, which is the installed app version.",
+                "schema": {
+                    "type": "string",
+                    "example": "1.0.0"
+                }
+            }
+        },
+        "schemas": {
+            "Problem": {
+                "type": "object",
+                "description": "An RFC 9457 problem details document. The members the error already had are kept next to these.",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "A URI reference that identifies the problem type.",
+                        "example": "about:blank"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "A short summary of the problem type.",
+                        "example": "Not Found"
+                    },
+                    "status": {
+                        "type": "integer",
+                        "description": "The HTTP status code.",
+                        "example": 404
+                    },
+                    "detail": {
+                        "type": "string",
+                        "description": "An explanation of this occurrence of the problem."
+                    },
+                    "instance": {
+                        "type": "string",
+                        "description": "A URI reference that identifies this occurrence."
+                    }
+                },
+                "required": [
+                    "type",
+                    "title",
+                    "status"
+                ],
+                "additionalProperties": true
+            }
+        },
+        "responses": {
+            "Problem400": {
+                "description": "Bad request",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Problem"
+                        }
+                    }
+                }
+            },
+            "Problem401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Problem"
+                        }
+                    }
+                }
+            },
+            "Problem403": {
+                "description": "Forbidden",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Problem"
+                        }
+                    }
+                }
+            },
+            "Problem404": {
+                "description": "Not found",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Problem"
+                        }
+                    }
+                }
+            },
+            "Problem422": {
+                "description": "Unprocessable content",
+                "content": {
+                    "application/problem+json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Problem"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

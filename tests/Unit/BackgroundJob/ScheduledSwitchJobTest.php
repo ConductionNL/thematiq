@@ -42,47 +42,63 @@ class ScheduledSwitchJobTest extends TestCase {
 
 	/**
 	 * Five minutes, time sensitive.
+	 *
+	 * @return void
 	 */
 	public function testRunsEveryFiveMinutesAndIsTimeSensitive(): void {
 		$job = new ScheduledSwitchJob(
-			$this->createMock(ITimeFactory::class),
-			$this->createMock(ScheduledSwitchService::class),
-			$this->createMock(LoggerInterface::class)
+			time: $this->createMock(originalClassName: ITimeFactory::class),
+			service: $this->createMock(originalClassName: ScheduledSwitchService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 
-		$this->assertSame(300, $job->getInterval());
+		$this->assertSame(expected: 300, actual: $job->getInterval());
 		$property = new \ReflectionProperty(TimedJob::class, 'timeSensitivity');
 		$property->setAccessible(true);
-		$this->assertSame(TimedJob::TIME_SENSITIVE, $property->getValue($job));
+		$this->assertSame(expected: TimedJob::TIME_SENSITIVE, actual: $property->getValue($job));
 	}//end testRunsEveryFiveMinutesAndIsTimeSensitive()
 
 	/**
 	 * run() delegates to runDue().
+	 *
+	 * @return void
 	 */
 	public function testRunDelegatesToTheService(): void {
-		$service = $this->createMock(ScheduledSwitchService::class);
+		$service = $this->createMock(originalClassName: ScheduledSwitchService::class);
 		$service->expects($this->once())->method('runDue');
 
-		$this->invokeRun(new ScheduledSwitchJob($this->createMock(ITimeFactory::class), $service, $this->createMock(LoggerInterface::class)));
+		$this->invokeRun(job: new ScheduledSwitchJob(
+			time: $this->createMock(originalClassName: ITimeFactory::class),
+			service: $service,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		));
 	}//end testRunDelegatesToTheService()
 
 	/**
 	 * A throw is logged, not rethrown.
+	 *
+	 * @return void
 	 */
 	public function testAThrowIsContained(): void {
-		$service = $this->createMock(ScheduledSwitchService::class);
+		$service = $this->createMock(originalClassName: ScheduledSwitchService::class);
 		$service->method('runDue')->willThrowException(new \RuntimeException('boom'));
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('error');
 
-		$this->invokeRun(new ScheduledSwitchJob($this->createMock(ITimeFactory::class), $service, $logger));
+		$this->invokeRun(job: new ScheduledSwitchJob(
+			time: $this->createMock(originalClassName: ITimeFactory::class),
+			service: $service,
+			logger: $logger
+		));
 	}//end testAThrowIsContained()
 
 	/**
 	 * The job is registered next to the freshness job.
+	 *
+	 * @return void
 	 */
 	public function testTheJobIsRegisteredInInfoXml(): void {
 		$xml = (string)file_get_contents(__DIR__ . '/../../../appinfo/info.xml');
-		$this->assertStringContainsString('<job>OCA\Thematiq\BackgroundJob\ScheduledSwitchJob</job>', $xml);
+		$this->assertStringContainsString(needle: '<job>OCA\Thematiq\BackgroundJob\ScheduledSwitchJob</job>', haystack: $xml);
 	}//end testTheJobIsRegisteredInInfoXml()
 }//end class

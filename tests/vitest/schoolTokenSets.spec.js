@@ -50,7 +50,7 @@ const SETS = {
 		legacyLabel: '#1A1A1A',
 	},
 	vaartveld: {
-		name: 'Vaartveld College',
+		name: 'Zuiddrecht College',
 		primary: '#1F4FD8',
 		hover: '#14338F',
 		light: '#E8EEFC',

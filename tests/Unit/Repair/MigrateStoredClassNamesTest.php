@@ -125,7 +125,7 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	 * @return IConfig
 	 */
 	private function config(): IConfig {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 
 		$config->method('getSystemValue')
 			->willReturnCallback(
@@ -172,8 +172,8 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	 */
 	private function step(?LoggerInterface $logger = null): MigrateStoredClassNames {
 		return new MigrateStoredClassNames(
-			$this->config(),
-			($logger ?? $this->createMock(LoggerInterface::class))
+			config: $this->config(),
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 
 	}//end step()
@@ -189,9 +189,9 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testRewritesTheStaleMailTemplateClass(): void {
 		$this->system = [self::KEY => self::OLD_CLASS];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame(self::NEW_CLASS, $this->system[self::KEY]);
+		$this->assertSame(expected: self::NEW_CLASS, actual: $this->system[self::KEY]);
 
 	}//end testRewritesTheStaleMailTemplateClass()
 
@@ -208,7 +208,7 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testTheRewrittenValueIsTheOneTheServiceCallsEnabled(): void {
 		$this->system = [self::KEY => self::OLD_CLASS];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
 		$configured = $this->system[self::KEY];
 		$state = 'disabled';
@@ -218,7 +218,7 @@ final class MigrateStoredClassNamesTest extends TestCase {
 			$state = 'foreign';
 		}
 
-		$this->assertSame('enabled', $state);
+		$this->assertSame(expected: 'enabled', actual: $state);
 
 	}//end testTheRewrittenValueIsTheOneTheServiceCallsEnabled()
 
@@ -233,9 +233,9 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testLeavesAForeignMailTemplateUntouched(): void {
 		$this->system = [self::KEY => 'OCA\\SomeVendor\\Mail\\CorporateTemplate'];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame('OCA\\SomeVendor\\Mail\\CorporateTemplate', $this->system[self::KEY]);
+		$this->assertSame(expected: 'OCA\\SomeVendor\\Mail\\CorporateTemplate', actual: $this->system[self::KEY]);
 
 	}//end testLeavesAForeignMailTemplateUntouched()
 
@@ -251,9 +251,9 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testDoesNotEnableEmailThemingWhereItWasNeverConfigured(): void {
 		$this->system = [];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertArrayNotHasKey(self::KEY, $this->system);
+		$this->assertArrayNotHasKey(key: self::KEY, array: $this->system);
 
 	}//end testDoesNotEnableEmailThemingWhereItWasNeverConfigured()
 
@@ -265,9 +265,9 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testLeavesAnAlreadyMigratedValueAlone(): void {
 		$this->system = [self::KEY => self::NEW_CLASS];
 
-		$this->step()->run($this->createMock(IOutput::class));
+		$this->step()->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame(self::NEW_CLASS, $this->system[self::KEY]);
+		$this->assertSame(expected: self::NEW_CLASS, actual: $this->system[self::KEY]);
 
 	}//end testLeavesAnAlreadyMigratedValueAlone()
 
@@ -280,10 +280,10 @@ final class MigrateStoredClassNamesTest extends TestCase {
 		$this->system = [self::KEY => self::OLD_CLASS];
 
 		$step = $this->step();
-		$step->run($this->createMock(IOutput::class));
-		$step->run($this->createMock(IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
+		$step->run($this->createMock(originalClassName: IOutput::class));
 
-		$this->assertSame(self::NEW_CLASS, $this->system[self::KEY]);
+		$this->assertSame(expected: self::NEW_CLASS, actual: $this->system[self::KEY]);
 
 	}//end testIsIdempotent()
 
@@ -299,14 +299,14 @@ final class MigrateStoredClassNamesTest extends TestCase {
 		$this->system = [self::KEY => self::OLD_CLASS];
 		$this->readOnly = true;
 
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())
 			->method('warning')
-			->with($this->stringContains('read-only'));
+			->with($this->stringContains(string: 'read-only'));
 
 		$this->step()->run($output);
 
-		$this->assertSame(self::OLD_CLASS, $this->system[self::KEY]);
+		$this->assertSame(expected: self::OLD_CLASS, actual: $this->system[self::KEY]);
 
 	}//end testReadOnlyConfigWarnsInsteadOfThrowing()
 
@@ -327,15 +327,15 @@ final class MigrateStoredClassNamesTest extends TestCase {
 		$this->system = [self::KEY => self::OLD_CLASS];
 		$this->readOnly = true;
 
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())
 			->method('warning')
-			->with($this->stringContains(self::NEW_CLASS));
+			->with($this->stringContains(string: self::NEW_CLASS));
 
 		$this->step()->run($output);
 
-		$this->assertStringContainsString(self::NEW_CLASS, EmailThemingService::OCC_ENABLE_COMMAND);
-		$this->assertStringNotContainsString(self::OLD_CLASS, EmailThemingService::OCC_ENABLE_COMMAND);
+		$this->assertStringContainsString(needle: self::NEW_CLASS, haystack: EmailThemingService::OCC_ENABLE_COMMAND);
+		$this->assertStringNotContainsString(needle: self::OLD_CLASS, haystack: EmailThemingService::OCC_ENABLE_COMMAND);
 
 	}//end testTheOccCommandItPrintsNamesTheCurrentClass()
 
@@ -351,20 +351,20 @@ final class MigrateStoredClassNamesTest extends TestCase {
 		$this->system = [self::KEY => self::OLD_CLASS];
 		$this->writeThrows = true;
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
 			->with(
-				$this->stringContains('could not rewrite mail_template_class'),
-				$this->arrayHasKey('exception')
+				$this->stringContains(string: 'could not rewrite mail_template_class'),
+				$this->arrayHasKey(key: 'exception')
 			);
 
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 
-		$this->step($logger)->run($output);
+		$this->step(logger: $logger)->run($output);
 
-		$this->assertSame(self::OLD_CLASS, $this->system[self::KEY]);
+		$this->assertSame(expected: self::OLD_CLASS, actual: $this->system[self::KEY]);
 
 	}//end testAFailingWriteIsLoggedAndDoesNotThrow()
 
@@ -376,17 +376,17 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testAnUnreadableConfigIsLoggedAndSkipped(): void {
 		$this->readThrows = true;
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())
 			->method('warning')
-			->with($this->stringContains('could not read mail_template_class'));
+			->with($this->stringContains(string: 'could not read mail_template_class'));
 
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 
-		$this->step($logger)->run($output);
+		$this->step(logger: $logger)->run($output);
 
-		$this->assertSame([], $this->system);
+		$this->assertSame(expected: [], actual: $this->system);
 
 	}//end testAnUnreadableConfigIsLoggedAndSkipped()
 
@@ -398,8 +398,8 @@ final class MigrateStoredClassNamesTest extends TestCase {
 	public function testGetNameNamesBothNamespaces(): void {
 		$name = $this->step()->getName();
 
-		$this->assertStringContainsString('NLDesign', $name);
-		$this->assertStringContainsString('Thematiq', $name);
+		$this->assertStringContainsString(needle: 'NLDesign', haystack: $name);
+		$this->assertStringContainsString(needle: 'Thematiq', haystack: $name);
 
 	}//end testGetNameNamesBothNamespaces()
 

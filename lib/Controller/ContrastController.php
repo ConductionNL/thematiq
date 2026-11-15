@@ -103,23 +103,53 @@ class ContrastController extends Controller {
 		$params = $this->request->getParams();
 		$background = ($params['background'] ?? null);
 		$candidates = ($params['candidates'] ?? null);
+		$error = $this->inputError(background: $background, candidates: $candidates);
+		if ($error !== null) {
+			return new JSONResponse(['error' => $error], 400);
+		}
 
+		$normalised = $this->normalisedCandidates(candidates: $candidates);
+		if ($normalised === null) {
+			return new JSONResponse(['error' => 'each candidate must have name, value, and role ("text"|"ui")'], 400);
+		}
+
+		$results = $this->contrastService->evaluate(candidates: $normalised, background: $background);
+
+		return new JSONResponse(['results' => $results]);
+	}//end evaluate()
+
+	/**
+	 * What is wrong with the request's background or candidates list, if anything.
+	 *
+	 * @param mixed $background The submitted background.
+	 * @param mixed $candidates The submitted candidates.
+	 *
+	 * @return string|null The message, or null when both have the right shape.
+	 */
+	private function inputError(mixed $background, mixed $candidates): string|null {
 		if (is_string($background) === false || $background === '') {
-			return new JSONResponse(['error' => 'background must be a non-empty string'], 400);
+			return 'background must be a non-empty string';
 		}
 
 		if (is_array($candidates) === false) {
-			return new JSONResponse(['error' => 'candidates must be an array'], 400);
+			return 'candidates must be an array';
 		}
 
+		return null;
+	}//end inputError()
+
+	/**
+	 * The candidates with only their name, value and role, in submitted order.
+	 *
+	 * @param array<array-key, mixed> $candidates The submitted candidates.
+	 *
+	 * @return list<array{name: string, value: string, role: string}>|null The candidates, or null when one is malformed.
+	 */
+	private function normalisedCandidates(array $candidates): array|null {
 		$normalised = [];
 		foreach ($candidates as $candidate) {
-			if (is_array($candidate) === false
-				|| is_string($candidate['name'] ?? null) === false
-				|| is_string($candidate['value'] ?? null) === false
-				|| in_array($candidate['role'] ?? null, ['text', 'ui'], true) === false
-			) {
-				return new JSONResponse(['error' => 'each candidate must have name, value, and role ("text"|"ui")'], 400);
+			if ($this->isCandidate(candidate: $candidate) === false) {
+				return null;
 			}
 
 			$normalised[] = [
@@ -127,10 +157,22 @@ class ContrastController extends Controller {
 				'value' => $candidate['value'],
 				'role' => $candidate['role'],
 			];
-		}//end foreach
+		}
 
-		$results = $this->contrastService->evaluate(candidates: $normalised, background: $background);
+		return $normalised;
+	}//end normalisedCandidates()
 
-		return new JSONResponse(['results' => $results]);
-	}//end evaluate()
+	/**
+	 * Whether a candidate has a string name and value and a role of `text` or `ui`.
+	 *
+	 * @param mixed $candidate The submitted candidate.
+	 *
+	 * @return bool True when it is well-formed.
+	 */
+	private function isCandidate(mixed $candidate): bool {
+		return is_array($candidate) === true
+			&& is_string($candidate['name'] ?? null) === true
+			&& is_string($candidate['value'] ?? null) === true
+			&& in_array($candidate['role'] ?? null, ['text', 'ui'], true) === true;
+	}//end isCandidate()
 }//end class

@@ -134,6 +134,19 @@ class ConfigBundleController extends Controller {
 			return $bundle;
 		}
 
+		return $this->importBundle(bundle: $bundle);
+	}//end import()
+
+	/**
+	 * Import a read bundle: 500 when the service throws, 400 with every error when it is refused.
+	 *
+	 * @param array<string, mixed> $bundle The decoded bundle.
+	 *
+	 * @return JSONResponse The answer.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function importBundle(array $bundle): JSONResponse {
 		try {
 			$result = $this->service->import(bundle: $bundle, dryRun: false);
 		} catch (Throwable $e) {
@@ -141,27 +154,53 @@ class ConfigBundleController extends Controller {
 		}
 
 		if ($result['valid'] === false) {
-			return new JSONResponse(
-				[
-					'applied' => false,
-					'errors' => $result['errors'],
-				],
-				400
-			);
+			return $this->refusedImport(errors: $result['errors']);
 		}
 
+		return $this->appliedImport(sections: $result['sections']);
+	}//end importBundle()
+
+	/**
+	 * The answer to a refused import: nothing was applied, every error is listed.
+	 *
+	 * @param array<int, array<string, mixed>> $errors The per-section errors.
+	 *
+	 * @return JSONResponse The 400 answer.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function refusedImport(array $errors): JSONResponse {
+		return new JSONResponse(
+			[
+				'applied' => false,
+				'errors' => $errors,
+			],
+			400
+		);
+	}//end refusedImport()
+
+	/**
+	 * Audit an applied import once and answer with the per-section applied counts.
+	 *
+	 * @param array<string, mixed> $sections The per-section summary.
+	 *
+	 * @return JSONResponse The answer.
+	 *
+	 * @spec openspec/specs/config-portability/spec.md
+	 */
+	private function appliedImport(array $sections): JSONResponse {
 		$this->auditService->log(
 			action: 'config_bundle_imported',
-			context: ['sections' => $result['sections']]
+			context: ['sections' => $sections]
 		);
 
 		return new JSONResponse(
 			[
 				'applied' => true,
-				'sections' => $result['sections'],
+				'sections' => $sections,
 			]
 		);
-	}//end import()
+	}//end appliedImport()
 
 	/**
 	 * Validate the uploaded file envelope for the import endpoint.

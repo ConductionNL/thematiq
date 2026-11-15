@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ namespace OCA\Thematiq\Service;
  * come from ({@see self::ROLE_NAMES}), pictures, addresses and shapes ({@see self::NOT_A_VALUE_PATTERN}), and
  * values that are empty, still point at another variable or hold an address.
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
  */
 class ShellCatalogueVocabulary {
 
@@ -71,7 +71,7 @@ class ShellCatalogueVocabulary {
 	 *
 	 * @return array<string, string> Key => value, sorted by key.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
 	 */
 	public function ofSet(string $css, array $resolved): array {
 		$css = (string)preg_replace('#/\\*.*?\\*/#s', '', $css);
@@ -99,7 +99,7 @@ class ShellCatalogueVocabulary {
 	 *
 	 * @return array<string, string> Key => value, sorted by key.
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-set-with-a-dark-variant-has-dark-roles
 	 */
 	public function ofDeclarations(array $declarations): array {
 		$css = implode('', array_map(static fn (string $name): string => $name . ': x;', array_keys($declarations)));

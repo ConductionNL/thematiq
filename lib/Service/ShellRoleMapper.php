@@ -30,14 +30,15 @@ namespace OCA\Thematiq\Service;
  * No role is ever empty.
  *
  * Pure: no file, no config and no request is read here, so the same input
- * always gives the same eighteen values.
+ * always gives the same values.
  *
  * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 class ShellRoleMapper {
 
 	/**
-	 * The eighteen roles, in the order the response lists them.
+	 * The roles, in the order the response lists them: the eighteen of version 1 and `menu`,
+	 * added on 14 Oct 2026 for the OpenProject plugin's main menu (add, never remove).
 	 *
 	 * @var string[]
 	 */
@@ -60,6 +61,7 @@ class ShellRoleMapper {
 		'radius',
 		'radius-lg',
 		'font-family',
+		'menu',
 	];
 
 	/**
@@ -87,6 +89,7 @@ class ShellRoleMapper {
 		'radius' => '8px',
 		'radius-lg' => '8px',
 		'font-family' => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+		'menu' => '#ffffff',
 	];
 
 	/**
@@ -107,6 +110,10 @@ class ShellRoleMapper {
 	 * administrator moves the main button with its own tokens
 	 * ({@see self::BUTTON_OVERRIDES}). `action-deep` lists its own hover step
 	 * only; {@see self::map()} says what stands in.
+	 *
+	 * `menu` is the background of the main menu: in Nextcloud the app navigation column. It reads the
+	 * OpenProject plugin's own name first, then the column's token and the set's navigation colour,
+	 * which is what the nldesign bundle paints the column with.
 	 *
 	 * @var array<string, string[]>
 	 */
@@ -133,6 +140,7 @@ class ShellRoleMapper {
 		'radius' => ['--border-radius', '--summer-radius', '--nldesign-border-radius'],
 		'radius-lg' => ['--border-radius-large', '--summer-radius-large', '--nldesign-border-radius-large'],
 		'font-family' => ['--font-face', '--summer-font-family', '--nldesign-font-family'],
+		'menu' => ['--thematiq-shell-menu', '--nldesign-component-navigation-background-color', '--nldesign-color-nav-background'],
 	];
 
 	/**
@@ -202,29 +210,40 @@ class ShellRoleMapper {
 	 */
 	public function map(array $tokens, array $overrides = []): array {
 		$declared = array_merge($tokens, $overrides);
+		$run = ['read' => $this->readRoles(declared: $declared), 'declared' => $declared, 'overrides' => $overrides];
+		$run['primary'] = ($run['read']['primary'] ?? self::DEFAULTS['primary']);
+		$run['ownButton'] = $this->usable(value: ($overrides[self::BUTTON_OVERRIDES['action']] ?? null));
+		$run['action'] = ($run['ownButton'] ?? $run['read']['action'] ?? $run['primary']);
 
+		return $this->brandRoles(run: $run) + $this->inkRoles(read: $run['read']) + $this->surfaceRoles(read: $run['read']);
+	}//end map()
+
+	/**
+	 * The first usable value of each role's source tokens.
+	 *
+	 * @param array<string, string> $declared The set's declarations with the administrator's values over them.
+	 *
+	 * @return array<string, string|null> Role => value, null when no source is usable.
+	 */
+	private function readRoles(array $declared): array {
 		$read = [];
 		foreach (self::SOURCES as $role => $names) {
 			$read[$role] = $this->firstUsable(names: $names, declared: $declared);
 		}
 
-		$primary = ($read['primary'] ?? self::DEFAULTS['primary']);
-		$ownButton = $this->usable(value: ($overrides[self::BUTTON_OVERRIDES['action']] ?? null));
-		$action = ($ownButton ?? $read['action'] ?? $primary);
-		$ink = ($read['ink'] ?? self::DEFAULTS['ink']);
-		$muted = ($read['muted'] ?? self::DEFAULTS['muted']);
+		return $read;
+	}//end readRoles()
 
-		// The step the main button hovers to: its own; else, for a button with
-		// a colour of its own, that colour a little darker, as the page draws
-		// it; else the primary's hover step, which is what the action then is.
-		$actionDeep = ($this->usable(value: ($overrides[self::BUTTON_OVERRIDES['action-deep']] ?? null)) ?? $read['action-deep']);
-		if ($actionDeep === null && ($ownButton !== null || $this->usable(value: ($declared['--nldesign-color-action'] ?? null)) !== null)) {
-			$actionDeep = $this->mix(first: $action, second: '#000000', weight: self::ACTION_HOVER);
-		}
-
-		if ($actionDeep === null) {
-			$actionDeep = $this->firstUsable(names: self::PRIMARY_HOVER, declared: $declared);
-		}
+	/**
+	 * The primary and action roles with their deeper and lighter steps, the link and the accent.
+	 *
+	 * @param array<string, mixed> $run The read roles, the declarations, the overrides, the primary and the action.
+	 *
+	 * @return array<string, string>
+	 */
+	private function brandRoles(array $run): array {
+		$read = $run['read'];
+		$primary = $run['primary'];
 
 		return [
 			'primary' => $primary,
@@ -232,13 +251,72 @@ class ShellRoleMapper {
 			'primary-light' => ($read['primary-light']
 				?? $this->mix(first: $primary, second: '#ffffff', weight: self::LIGHTEN)
 				?? self::DEFAULTS['primary-light']),
-			'action' => $action,
-			'action-deep' => $this->deeper(candidate: $actionDeep, base: $action),
+			'action' => $run['action'],
+			'action-deep' => $this->deeper(candidate: $this->actionHover(run: $run), base: $run['action']),
 			'link' => ($read['link'] ?? $primary),
 			'accent' => ($read['accent'] ?? self::DEFAULTS['accent']),
+		];
+	}//end brandRoles()
+
+	/**
+	 * The step the main button hovers to.
+	 *
+	 * Its own; else, for a button with a colour of its own, that colour a little darker, as the page
+	 * draws it; else the primary's hover step, which is what the action then is.
+	 *
+	 * @param array<string, mixed> $run The read roles, the declarations, the overrides, the primary and the action.
+	 *
+	 * @return string|null
+	 */
+	private function actionHover(array $run): ?string {
+		return ($this->usable(value: ($run['overrides'][self::BUTTON_OVERRIDES['action-deep']] ?? null))
+			?? $run['read']['action-deep']
+			?? $this->darkenedAction(run: $run)
+			?? $this->firstUsable(names: self::PRIMARY_HOVER, declared: $run['declared']));
+	}//end actionHover()
+
+	/**
+	 * A button colour of its own, a little darker, as the page draws its hover step.
+	 *
+	 * @param array<string, mixed> $run The read roles, the declarations, the overrides, the primary and the action.
+	 *
+	 * @return string|null Null when the action is the primary, or not a colour that can be mixed.
+	 */
+	private function darkenedAction(array $run): ?string {
+		if ($run['ownButton'] === null && $this->usable(value: ($run['declared']['--nldesign-color-action'] ?? null)) === null) {
+			return null;
+		}
+
+		return $this->mix(first: $run['action'], second: '#000000', weight: self::ACTION_HOVER);
+	}//end darkenedAction()
+
+	/**
+	 * The ink, the body text (between ink and muted) and the muted roles.
+	 *
+	 * @param array<string, string|null> $read The read roles.
+	 *
+	 * @return array<string, string>
+	 */
+	private function inkRoles(array $read): array {
+		$ink = ($read['ink'] ?? self::DEFAULTS['ink']);
+		$muted = ($read['muted'] ?? self::DEFAULTS['muted']);
+
+		return [
 			'ink' => $ink,
 			'text' => ($read['text'] ?? $this->mix(first: $ink, second: $muted, weight: 0.5) ?? $ink),
 			'muted' => $muted,
+		];
+	}//end inkRoles()
+
+	/**
+	 * The surface, shape, font and menu roles.
+	 *
+	 * @param array<string, string|null> $read The read roles.
+	 *
+	 * @return array<string, string>
+	 */
+	private function surfaceRoles(array $read): array {
+		return [
 			'line' => ($read['line'] ?? self::DEFAULTS['line']),
 			'soft' => ($read['soft'] ?? self::DEFAULTS['soft']),
 			'ground' => ($read['ground'] ?? self::DEFAULTS['ground']),
@@ -247,8 +325,9 @@ class ShellRoleMapper {
 			'radius' => $this->length(value: ($read['radius'] ?? self::DEFAULTS['radius'])),
 			'radius-lg' => $this->length(value: ($read['radius-lg'] ?? $read['radius'] ?? self::DEFAULTS['radius-lg'])),
 			'font-family' => ($read['font-family'] ?? self::DEFAULTS['font-family']),
+			'menu' => ($read['menu'] ?? self::DEFAULTS['menu']),
 		];
-	}//end map()
+	}//end surfaceRoles()
 
 	/**
 	 * The eighteen roles of one token set on a dark page.
@@ -266,7 +345,7 @@ class ShellRoleMapper {
 	 *
 	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
 	 *
-	 * @spec openspec/changes/shell-catalogue-dark-roles/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-the-dark-roles-read-on-each-other
 	 */
 	public function mapDark(array $tokens): array {
 		$roles = $this->map(tokens: $tokens);
@@ -359,6 +438,8 @@ class ShellRoleMapper {
 	 * @param float $weight The share of the second colour, 0 to 1.
 	 *
 	 * @return string|null `#rrggbb`, or null when either colour is not a hex or rgb() literal.
+	 *
+	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
 	 */
 	private function mix(string $first, string $second, float $weight): ?string {
 		$one = $this->colours->parseColor(value: $first);
@@ -367,9 +448,13 @@ class ShellRoleMapper {
 			return null;
 		}
 
+		// PHP 8.4 stopped pre-rounding in round(), so a share that lands a hair
+		// under .5 (165 * 0.7 = 115.49999999999999) rounded up on 8.3 and down on
+		// 8.4. Settling the float at six decimals first gives one answer on both.
 		$hex = '#';
 		foreach ([0, 1, 2] as $channel) {
-			$hex .= sprintf('%02x', (int)round(($one[$channel] * (1 - $weight)) + ($two[$channel] * $weight)));
+			$share = round(num: ($one[$channel] * (1 - $weight)) + ($two[$channel] * $weight), precision: 6);
+			$hex .= sprintf('%02x', (int)round(num: $share));
 		}
 
 		return $hex;

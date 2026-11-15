@@ -26,15 +26,13 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
-use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\AuditAndTranslation;
+use OCA\Thematiq\Service\DeprecationSources;
 use OCA\Thematiq\Service\OwnTokenService;
-use OCA\Thematiq\Service\ThemingAuditService;
-use OCA\Thematiq\Service\TokenDeprecationService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IL10N;
 use OCP\IRequest;
 use RuntimeException;
 
@@ -50,18 +48,14 @@ class TokenDeprecationController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param TokenDeprecationService $deprecations The records.
-	 * @param CustomOverridesService $overrides Rewrites the overrides files after a change.
-	 * @param ThemingAuditService $audit The audit trail.
-	 * @param IL10N $l Translations for the error texts.
+	 * @param DeprecationSources $sources The deprecation records and the custom overrides.
+	 * @param AuditAndTranslation $answers The audit trail and the translator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private TokenDeprecationService $deprecations,
-		private CustomOverridesService $overrides,
-		private ThemingAuditService $audit,
-		private IL10N $l,
+		private readonly DeprecationSources $sources,
+		private readonly AuditAndTranslation $answers,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -78,7 +72,7 @@ class TokenDeprecationController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
 		$rows = [];
-		foreach ($this->deprecations->publicList() as $row) {
+		foreach ($this->sources->deprecations->publicList() as $row) {
 			$row['own'] = OwnTokenService::isOwnName(name: $row['token']);
 			$rows[] = $row;
 		}
@@ -96,9 +90,9 @@ class TokenDeprecationController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function save(): JSONResponse {
 		$token = trim((string)$this->request->getParam('token', ''));
-		$old = ($this->deprecations->list()[$token] ?? null);
+		$old = ($this->sources->deprecations->list()[$token] ?? null);
 		try {
-			$record = $this->deprecations->deprecate(
+			$record = $this->sources->deprecations->deprecate(
 				token: $token,
 				input: [
 					'severity' => $this->request->getParam('severity', ''),
@@ -126,7 +120,7 @@ class TokenDeprecationController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function delete(string $token): JSONResponse {
 		try {
-			$old = $this->deprecations->withdraw(token: $token);
+			$old = $this->sources->deprecations->withdraw(token: $token);
 		} catch (InvalidArgumentException $e) {
 			return $this->refused(exception: $e);
 		}
@@ -145,14 +139,14 @@ class TokenDeprecationController extends Controller {
 	public function adopt(): JSONResponse {
 		$notices = $this->request->getParam('notices', []);
 		if (is_array($notices) === false) {
-			return new JSONResponse(['error' => $this->l->t('The notices were not recorded.')], 400);
+			return new JSONResponse(['error' => $this->answers->l->t('The notices were not recorded.')], 400);
 		}
 
-		$recorded = $this->deprecations->adoptImportNotices(notices: array_values(array_filter($notices, 'is_array')));
+		$recorded = $this->sources->deprecations->adoptImportNotices(notices: array_values(array_filter($notices, 'is_array')));
 		foreach ($recorded as $token) {
-			$this->audit->log(
+			$this->answers->audit->log(
 				action: 'token_deprecation_changed',
-				context: ['token' => $token, 'old' => null, 'new' => ($this->deprecations->list()[$token] ?? null)]
+				context: ['token' => $token, 'old' => null, 'new' => ($this->sources->deprecations->list()[$token] ?? null)]
 			);
 		}
 
@@ -171,7 +165,7 @@ class TokenDeprecationController extends Controller {
 	 * @return JSONResponse
 	 */
 	private function changed(string $token, ?array $old, ?array $new): JSONResponse {
-		$this->audit->log(action: 'token_deprecation_changed', context: ['token' => $token, 'old' => $old, 'new' => $new]);
+		$this->answers->audit->log(action: 'token_deprecation_changed', context: ['token' => $token, 'old' => $old, 'new' => $new]);
 		$this->rewrite();
 
 		return new JSONResponse(['status' => 'ok', 'deprecation' => $new]);
@@ -185,8 +179,8 @@ class TokenDeprecationController extends Controller {
 	 */
 	private function rewrite(): void {
 		try {
-			$this->overrides->ensureExists();
-			$this->overrides->rewriteAll();
+			$this->sources->overrides->ensureExists();
+			$this->sources->overrides->rewriteAll();
 		} catch (RuntimeException) {
 			// The record is the source of truth; the comment follows on the next write.
 			return;
@@ -202,19 +196,19 @@ class TokenDeprecationController extends Controller {
 	 */
 	private function refused(InvalidArgumentException $exception): JSONResponse {
 		$texts = [
-			'token' => $this->l->t('Only a thematiq token, starting with --nldesign-, can be deprecated.'),
-			'severity' => $this->l->t('Choose a severity: info, warning or critical.'),
-			'replacement' => $this->l->t('The replacement must be an existing token, other than the deprecated one.'),
-			'removalDate' => $this->l->t('The removal date must be a date, today or later.'),
-			'message' => $this->l->t('Keep the message under 500 characters, without braces or semicolons.'),
-			'unknown' => $this->l->t('This token has no deprecation.'),
+			'token' => $this->answers->l->t('Only a thematiq token, starting with --nldesign-, can be deprecated.'),
+			'severity' => $this->answers->l->t('Choose a severity: info, warning or critical.'),
+			'replacement' => $this->answers->l->t('The replacement must be an existing token, other than the deprecated one.'),
+			'removalDate' => $this->answers->l->t('The removal date must be a date, today or later.'),
+			'message' => $this->answers->l->t('Keep the message under 500 characters, without braces or semicolons.'),
+			'unknown' => $this->answers->l->t('This token has no deprecation.'),
 		];
 		$status = 400;
 		if ($exception->getCode() === 404) {
 			$status = 404;
 		}
 
-		$error = ($texts[$exception->getMessage()] ?? $this->l->t('The deprecation was not saved.'));
+		$error = ($texts[$exception->getMessage()] ?? $this->answers->l->t('The deprecation was not saved.'));
 
 		return new JSONResponse(['error' => $error, 'field' => $exception->getMessage()], $status);
 	}//end refused()

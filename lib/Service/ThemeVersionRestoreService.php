@@ -137,6 +137,28 @@ class ThemeVersionRestoreService {
 	 * @return array<int, array{field: string, from: mixed, to: mixed}> The changes.
 	 */
 	private function configChanges(array $current, array $target): array {
+		$others = [
+			$this->disabledAppsChange(current: $current, target: $target),
+			$this->overridesChange(current: $current, target: $target),
+			$this->scheduledSwitchesChange(current: $current, target: $target),
+			$this->emailFooterChange(current: $current, target: $target),
+		];
+
+		return array_merge(
+			$this->fieldChanges(current: $current, target: $target),
+			array_values(array_filter($others, static fn (?array $change): bool => $change !== null))
+		);
+	}//end configChanges()
+
+	/**
+	 * The scalar config fields that differ, in field order.
+	 *
+	 * @param array<string, mixed> $current The current bundle.
+	 * @param array<string, mixed> $target The version's bundle.
+	 *
+	 * @return array<int, array{field: string, from: mixed, to: mixed}> The changes.
+	 */
+	private function fieldChanges(array $current, array $target): array {
 		$changes = [];
 		foreach (self::CONFIG_FIELDS as $field) {
 			$from = ($current['config'][$field] ?? null);
@@ -146,34 +168,81 @@ class ThemeVersionRestoreService {
 			}
 		}
 
+		return $changes;
+	}//end fieldChanges()
+
+	/**
+	 * The change of the app exclusion list, if it differs.
+	 *
+	 * @param array<string, mixed> $current The current bundle.
+	 * @param array<string, mixed> $target The version's bundle.
+	 *
+	 * @return array{field: string, from: mixed, to: mixed}|null The change.
+	 */
+	private function disabledAppsChange(array $current, array $target): array|null {
 		$fromApps = ($current['config']['disabledApps'] ?? []);
 		$toApps = ($target['config']['disabledApps'] ?? []);
-		if ($fromApps !== $toApps) {
-			$changes[] = ['field' => 'disabledApps', 'from' => $fromApps, 'to' => $toApps];
+		if ($fromApps === $toApps) {
+			return null;
 		}
 
-		if (($current['customOverridesCss'] ?? '') !== ($target['customOverridesCss'] ?? '')) {
-			$changes[] = ['field' => 'customOverridesCss', 'from' => 'current', 'to' => 'version'];
+		return ['field' => 'disabledApps', 'from' => $fromApps, 'to' => $toApps];
+	}//end disabledAppsChange()
+
+	/**
+	 * The change of the overrides stylesheet, named but not shown, if it differs.
+	 *
+	 * @param array<string, mixed> $current The current bundle.
+	 * @param array<string, mixed> $target The version's bundle.
+	 *
+	 * @return array{field: string, from: string, to: string}|null The change.
+	 */
+	private function overridesChange(array $current, array $target): array|null {
+		if (($current['customOverridesCss'] ?? '') === ($target['customOverridesCss'] ?? '')) {
+			return null;
 		}
 
-		// Planned switches are named as a count; a version 1 bundle has none
-		// and leaves them alone on import (config-portability).
-		if (array_key_exists('scheduledSwitches', ($target['config'] ?? [])) === true
-			&& ($current['config']['scheduledSwitches'] ?? []) !== $target['config']['scheduledSwitches']
+		return ['field' => 'customOverridesCss', 'from' => 'current', 'to' => 'version'];
+	}//end overridesChange()
+
+	/**
+	 * The change of the planned switches, named as a count. A version 1
+	 * bundle has none and leaves them alone on import (config-portability).
+	 *
+	 * @param array<string, mixed> $current The current bundle.
+	 * @param array<string, mixed> $target The version's bundle.
+	 *
+	 * @return array{field: string, from: int, to: int}|null The change.
+	 */
+	private function scheduledSwitchesChange(array $current, array $target): array|null {
+		if (array_key_exists('scheduledSwitches', ($target['config'] ?? [])) === false
+			|| ($current['config']['scheduledSwitches'] ?? []) === $target['config']['scheduledSwitches']
 		) {
-			$changes[] = [
-				'field' => 'scheduledSwitches',
-				'from' => count(($current['config']['scheduledSwitches'] ?? [])),
-				'to' => count((array)$target['config']['scheduledSwitches']),
-			];
+			return null;
 		}
 
-		if (($current['emailFooter'] ?? []) !== ($target['emailFooter'] ?? [])) {
-			$changes[] = ['field' => 'emailFooter', 'from' => ($current['emailFooter'] ?? []), 'to' => ($target['emailFooter'] ?? [])];
+		return [
+			'field' => 'scheduledSwitches',
+			'from' => count(($current['config']['scheduledSwitches'] ?? [])),
+			'to' => count((array)$target['config']['scheduledSwitches']),
+		];
+	}//end scheduledSwitchesChange()
+
+	/**
+	 * The change of the email footer, if it differs.
+	 *
+	 * @param array<string, mixed> $current The current bundle.
+	 * @param array<string, mixed> $target The version's bundle.
+	 *
+	 * @return array{field: string, from: mixed, to: mixed}|null The change.
+	 */
+	private function emailFooterChange(array $current, array $target): array|null {
+		if (($current['emailFooter'] ?? []) === ($target['emailFooter'] ?? [])) {
+			return null;
 		}
 
-		return $changes;
-	}//end configChanges()
+		return ['field' => 'emailFooter', 'from' => ($current['emailFooter'] ?? []), 'to' => ($target['emailFooter'] ?? [])];
+	}//end emailFooterChange()
 
 	/**
 	 * The custom token sets a restore adds and removes.
