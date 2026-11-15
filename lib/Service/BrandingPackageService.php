@@ -113,7 +113,7 @@ class BrandingPackageService {
 		$bundle['customFonts']['binariesIncluded'] = true;
 		$bundle['customFonts']['note'] = 'Font files are in the fonts/ directory of this package.';
 
-		return $this->reader->write(dir: $dir, bundle: $bundle, fonts: $fonts);
+		return $this->reader->write(dir: $dir, content: new PackageContent(bundle: $bundle, fonts: $fonts));
 	}//end export()
 
 	/**

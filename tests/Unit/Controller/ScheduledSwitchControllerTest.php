@@ -17,6 +17,8 @@ use OCA\Thematiq\Controller\ScheduledSwitchController;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCA\Thematiq\Service\ScheduledSwitchService;
+use OCA\Thematiq\Service\SwitchPlan;
+use OCA\Thematiq\Service\SwitchWindow;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\IRequest;
@@ -88,9 +90,7 @@ class ScheduledSwitchControllerTest extends TestCase {
 	 */
 	public function testCreatePlansTheSwitchAsTheCurrentUser(): void {
 		$this->service->expects($this->once())->method('create')->with(
-			'koningsdag-oranje',
-			'2027-04-26T16:00:00Z',
-			'2027-04-28T06:00:00Z',
+			new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-26T16:00:00Z', endAt: '2027-04-28T06:00:00Z')),
 			'admin'
 		)->willReturn(['id' => 'a1']);
 
@@ -111,9 +111,7 @@ class ScheduledSwitchControllerTest extends TestCase {
 	 */
 	public function testAnEmptyEndMeansNoEnd(): void {
 		$this->service->expects($this->once())->method('create')->with(
-			'koningsdag-oranje',
-			'2027-04-26T16:00:00Z',
-			null,
+			new SwitchPlan(tokenSet: 'koningsdag-oranje', window: new SwitchWindow(startAt: '2027-04-26T16:00:00Z', endAt: null)),
 			'admin'
 		)->willReturn(['id' => 'a1']);
 

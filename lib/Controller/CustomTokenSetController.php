@@ -25,6 +25,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\BrandDocument;
+use OCA\Thematiq\Service\BrandSelection;
 use OCA\Thematiq\Service\CustomSetRecords;
 use OCA\Thematiq\Service\CustomSetSources;
 use OCA\Thematiq\Service\CustomSetUploadPipeline;
@@ -179,8 +181,9 @@ class CustomTokenSetController extends Controller {
 			return new JSONResponse(['multiBrand' => true, 'stored' => false, 'brands' => $brands]);
 		}
 
+		$selection = new BrandSelection(document: new BrandDocument(content: $read['content'], fileName: $read['sourceName']), keys: (array)$chosen);
 		try {
-			$result = $this->sources->multiBrand->import(sourceName: $name, content: $read['content'], keys: (array)$chosen, fileName: $read['sourceName']);
+			$result = $this->sources->multiBrand->import(sourceName: $name, selection: $selection);
 		} catch (RuntimeException $e) {
 			$code = match ($e->getCode()) {
 				404 => 404,

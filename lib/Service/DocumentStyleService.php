@@ -54,6 +54,13 @@ class DocumentStyleService {
 	private const PAPER = '#ffffff';
 
 	/**
+	 * The token whose family a font role falls back to.
+	 *
+	 * @var array<string, string>
+	 */
+	private const FONT_TOKENS = ['heading' => '--nldesign-typography-heading-font-family', 'body' => '--nldesign-font-family'];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DocumentSetSources $setSources The set resolver, the set list, the token preview and the design systems.
@@ -79,31 +86,53 @@ class DocumentStyleService {
 	public function forUser(?string $uid): array {
 		$setId = $this->setSources->resolver->forUser(uid: $uid);
 		$tokens = $this->setSources->preview->getResolvedTokens(tokenSetId: $setId);
+
+		return $this->styleFor(set: new DocumentSet(id: $setId, tokens: $tokens));
+	}//end forUser()
+
+	/**
+	 * The house style of one resolved set.
+	 *
+	 * @param DocumentSet $set The set and its resolved tokens.
+	 *
+	 * @return array<string, mixed> The profile.
+	 */
+	private function styleFor(DocumentSet $set): array {
 		$footer = $this->brandAssets->emailTheming->getFooterConfig();
-		$colours = $this->colours(tokens: $tokens);
+		$colours = $this->colours(tokens: $set->tokens);
+		$footerBlock = $this->footerBlock(footer: $footer);
+
+		return [
+			'tokenSet' => ['id' => $set->id, 'name' => $this->setName(setId: $set->id)],
+			'organisation' => (string)($footer['orgName'] ?? ''),
+			'logo' => ($this->asset(kind: 'logo') ?? $this->setLogo(setId: $set->id)),
+			'cover' => $this->asset(kind: 'cover'),
+			'colours' => $colours,
+			'fonts' => ['heading' => $this->font(role: 'heading', tokens: $set->tokens), 'body' => $this->font(role: 'body', tokens: $set->tokens)],
+			'footer' => $footerBlock,
+			'warnings' => $this->warnings(colours: $colours),
+		];
+	}//end styleFor()
+
+	/**
+	 * The footer: the organisation and the document footer line that are set, and the two statement links.
+	 *
+	 * @param array<string, mixed> $footer The email footer configuration.
+	 *
+	 * @return array{lines: list<string>, accessibilityUrl: string, privacyUrl: string} The footer.
+	 */
+	private function footerBlock(array $footer): array {
 		$lines = array_filter(
 			[(string)($footer['orgName'] ?? ''), $this->brandAssets->assets->getFooterLine()],
 			static fn (string $line): bool => $line !== ''
 		);
 
 		return [
-			'tokenSet' => ['id' => $setId, 'name' => $this->setName(setId: $setId)],
-			'organisation' => (string)($footer['orgName'] ?? ''),
-			'logo' => ($this->asset(kind: 'logo') ?? $this->setLogo(setId: $setId)),
-			'cover' => $this->asset(kind: 'cover'),
-			'colours' => $colours,
-			'fonts' => [
-				'heading' => $this->font(role: 'heading', fallback: ($tokens['--nldesign-typography-heading-font-family'] ?? null), tokens: $tokens),
-				'body' => $this->font(role: 'body', fallback: ($tokens['--nldesign-font-family'] ?? null), tokens: $tokens),
-			],
-			'footer' => [
-				'lines' => array_values($lines),
-				'accessibilityUrl' => (string)($footer['accessibilityUrl'] ?? ''),
-				'privacyUrl' => (string)($footer['privacyUrl'] ?? ''),
-			],
-			'warnings' => $this->warnings(colours: $colours),
+			'lines' => array_values($lines),
+			'accessibilityUrl' => (string)($footer['accessibilityUrl'] ?? ''),
+			'privacyUrl' => (string)($footer['privacyUrl'] ?? ''),
 		];
-	}//end forUser()
+	}//end footerBlock()
 
 	/**
 	 * The five colours of the profile.
@@ -164,14 +193,13 @@ class DocumentStyleService {
 	 * A font role: the uploaded font assigned to it, else the family the set declares.
 	 *
 	 * @param string $role `heading` or `body`.
-	 * @param string|null $fallback The declared family token value.
-	 * @param array<string, string> $tokens The resolved tokens, for var() references.
+	 * @param array<string, string> $tokens The resolved tokens: the role's family token, and var() references.
 	 *
 	 * @return array{family: string|null, url: string|null} The family and, for an uploaded font, its file URL.
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	private function font(string $role, ?string $fallback, array $tokens): array {
+	private function font(string $role, array $tokens): array {
 		foreach ($this->brandAssets->fonts->getManifest() as $id => $entry) {
 			if (is_array($entry) === true && ($entry['role'] ?? 'body') === $role) {
 				return [
@@ -181,7 +209,7 @@ class DocumentStyleService {
 			}
 		}
 
-		return ['family' => $this->resolveValue(value: $fallback, tokens: $tokens), 'url' => null];
+		return ['family' => $this->resolveValue(value: ($tokens[self::FONT_TOKENS[$role]] ?? null), tokens: $tokens), 'url' => null];
 	}//end font()
 
 	/**
@@ -225,14 +253,25 @@ class DocumentStyleService {
 			$relative = substr($relative, 4);
 		}
 
-		$mimes = ['svg' => 'image/svg+xml', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'webp' => 'image/webp'];
-		$extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
-
 		return [
 			'url' => $this->brandAssets->urls->imagePath(Application::APP_ID, $relative),
-			'mime' => ($mimes[$extension] ?? 'application/octet-stream'),
+			'mime' => $this->imageMime(path: $relative),
 		];
 	}//end setLogo()
+
+	/**
+	 * The media type of an image by its extension.
+	 *
+	 * @param string $path The image path.
+	 *
+	 * @return string The type, `application/octet-stream` for an unknown extension.
+	 */
+	private function imageMime(string $path): string {
+		$mimes = ['svg' => 'image/svg+xml', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'webp' => 'image/webp'];
+		$extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+		return ($mimes[$extension] ?? 'application/octet-stream');
+	}//end imageMime()
 
 	/**
 	 * The display name of a set.

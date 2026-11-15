@@ -137,6 +137,18 @@ class PlaygroundStateService {
 			name: 'css/tokens/dark/' . $tokenSetId . '.css',
 			store: $this->setFiles->store
 		);
+
+		return $this->darkBlockTokens(css: $css);
+	}//end getDarkTokens()
+
+	/**
+	 * The `--nldesign-*` declarations of a stylesheet's first dark block, without `!important`.
+	 *
+	 * @param string $css The set's dark stylesheet.
+	 *
+	 * @return array<string, string> Token => value; empty when there is no dark block.
+	 */
+	private function darkBlockTokens(string $css): array {
 		if (preg_match('/body\[data-theme-dark\][^{]*\{([^}]*)\}/', $css, $block) !== 1) {
 			return [];
 		}
@@ -148,7 +160,7 @@ class PlaygroundStateService {
 		}
 
 		return $tokens;
-	}//end getDarkTokens()
+	}//end darkBlockTokens()
 
 	/**
 	 * The major Nextcloud version this instance is running.
@@ -243,24 +255,47 @@ class PlaygroundStateService {
 				continue;
 			}
 
-			$component = $this->translateFields(entry: $component, fields: ['title', 'subtitle']);
-			foreach (['tokens' => ['paints'], 'fixed' => ['what', 'why'], 'versionNotes' => ['text']] as $list => $fields) {
-				if (is_array($component[$list] ?? null) === false) {
-					continue;
-				}
-
-				foreach ($component[$list] as $at => $entry) {
-					if (is_array($entry) === true) {
-						$component[$list][$at] = $this->translateFields(entry: $entry, fields: $fields);
-					}
-				}
-			}
-
-			$inventory['components'][$index] = $component;
+			$inventory['components'][$index] = $this->translateComponent(component: $component);
 		}
 
 		return $inventory;
 	}//end translateInventory()
+
+	/**
+	 * One component's chrome translated: its title and subtitle, and the words of its lists.
+	 *
+	 * @param array<string, mixed> $component The component.
+	 *
+	 * @return array<string, mixed> The component, translated.
+	 */
+	private function translateComponent(array $component): array {
+		$component = $this->translateFields(entry: $component, fields: ['title', 'subtitle']);
+		foreach (['tokens' => ['paints'], 'fixed' => ['what', 'why'], 'versionNotes' => ['text']] as $list => $fields) {
+			if (is_array($component[$list] ?? null) === true) {
+				$component[$list] = $this->translateList(entries: $component[$list], fields: $fields);
+			}
+		}
+
+		return $component;
+	}//end translateComponent()
+
+	/**
+	 * The given fields of every entry of a list translated; an entry that is not an object stays.
+	 *
+	 * @param array<array-key, mixed> $entries The list.
+	 * @param array<int, string> $fields The fields to translate.
+	 *
+	 * @return array<array-key, mixed> The list, translated.
+	 */
+	private function translateList(array $entries, array $fields): array {
+		foreach ($entries as $at => $entry) {
+			if (is_array($entry) === true) {
+				$entries[$at] = $this->translateFields(entry: $entry, fields: $fields);
+			}
+		}
+
+		return $entries;
+	}//end translateList()
 
 	/**
 	 * Translate the named string fields of one entry, leaving the rest alone.

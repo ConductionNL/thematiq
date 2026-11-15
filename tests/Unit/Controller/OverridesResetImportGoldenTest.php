@@ -47,6 +47,8 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\OverridesThemingSync
  * @uses   \OCA\Thematiq\Service\OverridesWrites
  * @uses   \OCA\Thematiq\Service\TokenRegistry
+ * @uses   \OCA\Thematiq\Service\CssUploadCheck
+ * @uses   \OCA\Thematiq\Service\UploadRefusal
  */
 class OverridesResetImportGoldenTest extends TestCase {
 

@@ -509,6 +509,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function getAuthorizedAppConfig(): array {
 		return [

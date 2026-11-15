@@ -103,6 +103,13 @@ class AppBrandServiceTest extends TestCase {
 	private bool $signedIn = true;
 
 	/**
+	 * Every route URL asked for: [route, params].
+	 *
+	 * @var array<int, array{0: string, 1: array<string, mixed>}>
+	 */
+	private array $routes = [];
+
+	/**
 	 * The in-memory config.
 	 *
 	 * @return IConfig The config.
@@ -171,7 +178,12 @@ class AppBrandServiceTest extends TestCase {
 		$appData = $this->createMock(originalClassName: IAppData::class);
 		$appData->method('getFolder')->willReturn($folder);
 		$urls = $this->createMock(originalClassName: IURLGenerator::class);
-		$urls->method('linkToRoute')->willReturnCallback(fn (string $route, array $params): string => '/brand/' . $params['appId'] . '/' . $params['size']);
+		$urls->method('linkToRoute')->willReturnCallback(
+			function (string $route, array $params): string {
+				$this->routes[] = [$route, $params];
+				return '/brand/' . $params['appId'] . '/' . $params['size'];
+			}
+		);
 
 		return new AppBrandService(
 			config: $this->config(),
@@ -488,4 +500,97 @@ class AppBrandServiceTest extends TestCase {
 		$this->assertSame(expected: [['id' => 'files', 'themed' => true]], actual: $data['apps']);
 		$this->assertSame(expected: [['id' => 'kennisbank']], actual: $data['tokenSets']);
 	}//end testIndexAnswersBrandsAppsAndSets()
+
+	/**
+	 * The brand of a page names its set and its logo URLs, versioned by upload time; re-branding keeps the logos.
+	 *
+	 * @return void
+	 */
+	public function testABrandNamesItsSetAndLogosAndKeepsThemWhenRebranded(): void {
+		$this->assertNull(actual: $this->brands()->brandFor(appId: null));
+		$this->assertNull(actual: $this->brands()->brandFor(appId: ''));
+		$this->assertNull(actual: $this->brands()->brandFor(appId: 'collectives'));
+
+		$this->brands()->setBrand(appId: 'collectives', tokenSet: 'kennisbank');
+		$this->assertSame(expected: ['tokenSet' => 'kennisbank', 'large' => null, 'small' => null], actual: $this->brands()->brandFor(appId: 'collectives'));
+		$this->assertSame(expected: [], actual: $this->routes);
+
+		$this->brands()->storeLogo(appId: 'collectives', size: 'small', bytes: '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>');
+		$brand = $this->brands()->setBrand(appId: 'collectives', tokenSet: 'amsterdam');
+		$this->assertSame(expected: ['tokenSet', 'logoLarge', 'logoSmall'], actual: array_keys($brand));
+		$this->assertNull(actual: $brand['logoLarge']);
+		$this->assertIsArray(actual: $brand['logoSmall']);
+
+		$this->assertSame(
+			expected: ['tokenSet' => 'amsterdam', 'large' => null, 'small' => '/brand/collectives/small'],
+			actual: $this->brands()->brandFor(appId: 'collectives')
+		);
+		$this->assertSame(
+			expected: [['thematiq.appBrand.logo', ['appId' => 'collectives', 'size' => 'small', 'v' => (int)($brand['logoSmall']['uploadedAt'] ?? 0)]]],
+			actual: $this->routes
+		);
+	}//end testABrandNamesItsSetAndLogosAndKeepsThemWhenRebranded()
+
+	/**
+	 * The bundle section: absent leaves the brands alone, `{}` is empty, anything else must name an available set per app.
+	 *
+	 * @return void
+	 */
+	public function testTheBundleSectionIsValidatedAndApplied(): void {
+		$exists = fn (string $id): bool => in_array($id, ['kennisbank', 'amsterdam'], true);
+		$brands = $this->brands();
+
+		$this->assertSame(expected: ['errors' => [], 'value' => null], actual: $brands->validateBundle(section: null, setExists: $exists));
+		$this->assertSame(expected: ['errors' => [], 'value' => []], actual: $brands->validateBundle(section: new \stdClass(), setExists: $exists));
+		$this->assertSame(
+			expected: ['errors' => ['"appBrands" must be an object keyed by app id.'], 'value' => null],
+			actual: $brands->validateBundle(section: 'nope', setExists: $exists)
+		);
+		$this->assertSame(
+			expected: ['errors' => ['"appBrands.files" names no available token set.'], 'value' => null],
+			actual: $brands->validateBundle(section: ['collectives' => ['tokenSet' => 'kennisbank'], 'files' => ['tokenSet' => 'missing']], setExists: $exists)
+		);
+		$this->assertSame(
+			expected: ['errors' => ['"appBrands.files" names no available token set.'], 'value' => null],
+			actual: $brands->validateBundle(section: ['files' => 'not a map'], setExists: $exists)
+		);
+		$this->assertSame(
+			expected: ['errors' => [], 'value' => ['collectives' => 'kennisbank', 'files' => 'amsterdam']],
+			actual: $brands->validateBundle(section: ['collectives' => ['tokenSet' => 'kennisbank'], 'files' => ['tokenSet' => 'amsterdam']], setExists: $exists)
+		);
+
+		$this->brandCollectives();
+		$logos = $this->brands()->exportBundle()['collectives'];
+		$this->brands()->applyBundle(value: ['collectives' => 'amsterdam', 'files' => 'kennisbank']);
+		$this->assertSame(
+			expected: [
+				'collectives' => ['tokenSet' => 'amsterdam', 'logoLarge' => $logos['logoLarge'], 'logoSmall' => $logos['logoSmall']],
+				'files' => ['tokenSet' => 'kennisbank', 'logoLarge' => null, 'logoSmall' => null],
+			],
+			actual: $this->brands()->exportBundle()
+		);
+	}//end testTheBundleSectionIsValidatedAndApplied()
+
+	/**
+	 * Stored brands without a string set are dropped when read; logos that are not maps read as none.
+	 *
+	 * @return void
+	 */
+	public function testMalformedStoredBrandsAreCleaned(): void {
+		$this->app['app_brands'] = json_encode(
+			[
+				'a' => 'x',
+				'b' => ['tokenSet' => 7],
+				'c' => ['tokenSet' => 'kennisbank', 'logoLarge' => 'x', 'logoSmall' => ['mime' => 'image/png']],
+			]
+		);
+
+		$this->assertSame(
+			expected: ['c' => ['tokenSet' => 'kennisbank', 'logoLarge' => null, 'logoSmall' => ['mime' => 'image/png']]],
+			actual: $this->brands()->exportBundle()
+		);
+
+		$this->app['app_brands'] = 'not json';
+		$this->assertSame(expected: [], actual: $this->brands()->exportBundle());
+	}//end testMalformedStoredBrandsAreCleaned()
 }//end class

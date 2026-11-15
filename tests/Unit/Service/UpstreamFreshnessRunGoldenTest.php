@@ -42,6 +42,8 @@ use RuntimeException;
  * the clock readings masked. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\UpstreamFreshnessService
+ * @uses   \OCA\Thematiq\Service\AppConfigToggle
+ * @uses   \OCA\Thematiq\Service\FreshnessRun
  */
 class UpstreamFreshnessRunGoldenTest extends TestCase {
 

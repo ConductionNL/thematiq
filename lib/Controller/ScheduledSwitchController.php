@@ -24,6 +24,8 @@ use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchException;
 use OCA\Thematiq\Service\Exception\ScheduledSwitchNotFoundException;
 use OCA\Thematiq\Service\ScheduledSwitchService;
+use OCA\Thematiq\Service\SwitchPlan;
+use OCA\Thematiq\Service\SwitchWindow;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -88,14 +90,9 @@ class ScheduledSwitchController extends Controller {
 			$endAt = null;
 		}
 
-		$createdBy = '';
-		$user = $this->userSession->getUser();
-		if ($user !== null) {
-			$createdBy = $user->getUID();
-		}
-
+		$plan = new SwitchPlan(tokenSet: $tokenSet, window: new SwitchWindow(startAt: $startAt, endAt: $endAt));
 		try {
-			$entry = $this->service->create(tokenSet: $tokenSet, startAt: $startAt, endAt: $endAt, createdBy: $createdBy);
+			$entry = $this->service->create(plan: $plan, createdBy: $this->currentUid());
 		} catch (RestrictedSetNotConfirmedException $e) {
 			// The same answer as every other path that applies a set.
 			return new JSONResponse(['error' => RestrictedSetNotConfirmedException::ERROR, 'tokenSet' => $e->getTokenSetId()], 403);
@@ -105,6 +102,20 @@ class ScheduledSwitchController extends Controller {
 
 		return new JSONResponse(['switch' => $entry], 201);
 	}//end create()
+
+	/**
+	 * The uid of the administrator making the request, '' when nobody is logged in.
+	 *
+	 * @return string The uid.
+	 */
+	private function currentUid(): string {
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			return '';
+		}
+
+		return $user->getUID();
+	}//end currentUid()
 
 	/**
 	 * Cancel a switch; a running one switches back at once.

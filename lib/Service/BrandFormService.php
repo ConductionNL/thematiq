@@ -101,9 +101,7 @@ class BrandFormService {
 	 * (two decimals).
 	 *
 	 * @param string $appPath The app root.
-	 * @param string $primary The primary colour, `#rgb` or `#rrggbb`.
-	 * @param string $background The background colour, `#rgb` or `#rrggbb`.
-	 * @param string|null $action The main button's own colour, or null (or '') to leave it with the primary.
+	 * @param BrandPalette $palette The primary and background colours, and the main button's own colour or none.
 	 *
 	 * The declarations, the text on primary and its two ratios, and the text on the action colour with its ratio (null without one).
 	 *
@@ -122,16 +120,44 @@ class BrandFormService {
 	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-text-on-primary-is-chosen-for-contrast
 	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
-	public function derive(string $appPath, string $primary, string $background, ?string $action = null): array {
+	public function derive(string $appPath, BrandPalette $palette): array {
 		$inputs = $this->inputs(appPath: $appPath);
-		$base = ['primary' => $this->hex(value: $primary), 'background' => $this->hex(value: $background)];
-		if ($action !== null && $action !== '') {
-			$base[self::OPTIONAL_INPUT] = $this->hex(value: $action);
+		$base = $this->baseColours(palette: $palette);
+
+		return ['declarations' => $this->declarationsFor(inputs: $inputs, base: $base)] + $this->contrastOf(base: $base);
+	}//end derive()
+
+	/**
+	 * The form's colours, validated: primary, background and, when one was given, the action colour.
+	 *
+	 * @param BrandPalette $palette The colours as entered.
+	 *
+	 * @return array<string, string> Input name => lower-case six-digit hex colour.
+	 *
+	 * @throws InvalidArgumentException When a colour is not a hex colour.
+	 */
+	private function baseColours(BrandPalette $palette): array {
+		$base = ['primary' => $this->hex(value: $palette->base->primary), 'background' => $this->hex(value: $palette->base->background)];
+		if ($palette->action !== null && $palette->action !== '') {
+			$base[self::OPTIONAL_INPUT] = $this->hex(value: $palette->action);
 		}
 
+		return $base;
+	}//end baseColours()
+
+	/**
+	 * Apply every rule in order; a rule that reads the action colour is left out when the form gave none.
+	 *
+	 * @param array{rules: array<string, mixed>, defaults: array<string, string>} $inputs The rules and the defaults layer.
+	 * @param array<string, string> $base The validated colours.
+	 *
+	 * @return array<string, string> The declarations, in rule order.
+	 *
+	 * @throws InvalidArgumentException When a rule resolves to nothing.
+	 */
+	private function declarationsFor(array $inputs, array $base): array {
 		$declarations = [];
 		foreach ($inputs['rules'] as $token => $rule) {
-			// A rule that reads the action colour is left out when the form gave none.
 			if (($rule[1] ?? null) === self::OPTIONAL_INPUT && isset($base[self::OPTIONAL_INPUT]) === false) {
 				continue;
 			}
@@ -144,23 +170,42 @@ class BrandFormService {
 			$declarations[$token] = $value;
 		}
 
+		return $declarations;
+	}//end declarationsFor()
+
+	/**
+	 * The text on primary and its two ratios, and the text on the action colour with its ratio (null without one).
+	 *
+	 * @param array<string, string> $base The validated colours.
+	 *
+	 * @return array{textOnPrimary: string, textRatio: float, uiRatio: float, textOnAction: string|null, actionTextRatio: float|null}
+	 */
+	private function contrastOf(array $base): array {
 		$onPrimary = $this->onColor(background: $base['primary']);
-		$onAction = null;
-		$actionRatio = null;
-		if (isset($base[self::OPTIONAL_INPUT]) === true) {
-			$onAction = $this->onColor(background: $base[self::OPTIONAL_INPUT]);
-			$actionRatio = $this->ratio(first: $base[self::OPTIONAL_INPUT], second: $onAction);
-		}
 
 		return [
-			'declarations' => $declarations,
 			'textOnPrimary' => $onPrimary,
 			'textRatio' => $this->ratio(first: $base['primary'], second: $onPrimary),
 			'uiRatio' => $this->ratio(first: $base['primary'], second: $base['background']),
-			'textOnAction' => $onAction,
-			'actionTextRatio' => $actionRatio,
-		];
-	}//end derive()
+		] + $this->actionContrast(base: $base);
+	}//end contrastOf()
+
+	/**
+	 * The text on the action colour and its ratio, both null without an action colour.
+	 *
+	 * @param array<string, string> $base The validated colours.
+	 *
+	 * @return array{textOnAction: string|null, actionTextRatio: float|null}
+	 */
+	private function actionContrast(array $base): array {
+		if (isset($base[self::OPTIONAL_INPUT]) === false) {
+			return ['textOnAction' => null, 'actionTextRatio' => null];
+		}
+
+		$onAction = $this->onColor(background: $base[self::OPTIONAL_INPUT]);
+
+		return ['textOnAction' => $onAction, 'actionTextRatio' => $this->ratio(first: $base[self::OPTIONAL_INPUT], second: $onAction)];
+	}//end actionContrast()
 
 	/**
 	 * Apply one rule.

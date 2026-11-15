@@ -312,4 +312,77 @@ class RuntimeFileStorageTest extends TestCase {
 		$this->assertSame(expected: '', actual: $store->revision('css/custom-css.css'));
 		$this->assertSame(expected: [], actual: $store->listDirectory('css/tokens'));
 	}//end testAMissingAppDataFileReadsAsAbsent()
+
+	/**
+	 * A shipped file's local path is its own; a listing without a suffix keeps every name once, sorted.
+	 *
+	 * @return void
+	 */
+	public function testAShippedLocalPathAndAnUnfilteredListing(): void {
+		$locator = $this->locator();
+		file_put_contents($this->appDir . '/css/tokens/nextcloud.css', ':root {}');
+		file_put_contents($this->appDir . '/css/tokens/gemeente-a.css', 'stale');
+		$locator->store()->write('css/tokens/gemeente-a.css', ':root {}');
+		$locator->store()->write('css/tokens/gemeente-b.css', ':root {}');
+		$locator->store()->write('css/tokens/nextcloud.css', 'shadow');
+
+		$this->assertSame(expected: $this->appDir . '/css/tokens/utrecht.css', actual: $locator->localPath('/css/tokens/utrecht.css'));
+		$this->assertSame(
+			expected: ['css/tokens/gemeente-a.css', 'css/tokens/gemeente-b.css', 'css/tokens/nextcloud.css', 'css/tokens/utrecht.css'],
+			actual: $locator->listDirectory('/css/tokens/')
+		);
+		$this->assertSame(expected: [], actual: $locator->listDirectory('css/nowhere', '.css'));
+	}//end testAShippedLocalPathAndAnUnfilteredListing()
+
+	/**
+	 * A manifest that is not a list protects nothing; an entry without an id is skipped.
+	 *
+	 * @return void
+	 */
+	public function testAnUnusableManifestProtectsNothing(): void {
+		file_put_contents($this->appDir . '/token-sets.json', '"nope"');
+		$this->assertFalse(condition: $this->locator()->isProtected('css/tokens/utrecht.css'));
+
+		file_put_contents($this->appDir . '/token-sets.json', json_encode(['x', ['name' => 'no id'], ['id' => 7]]));
+		$locator = $this->locator();
+		$this->assertTrue(condition: $locator->isProtected('img/logos/7.png'));
+		$this->assertFalse(condition: $locator->isProtected('img/logos/utrecht.svg'));
+
+		unlink($this->appDir . '/token-sets.json');
+		$this->assertFalse(condition: $this->locator()->isProtected('css/tokens/utrecht.css'));
+	}//end testAnUnusableManifestProtectsNothing()
+
+	/**
+	 * A temporary copy keeps the extension, and one that cannot be made throws.
+	 *
+	 * @return void
+	 */
+	public function testATemporaryCopyThatCannotBeMadeThrows(): void {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($this->appDir);
+		$postfixes = [];
+		$temp = $this->createMock(originalClassName: ITempManager::class);
+		$temp->method('getTemporaryFile')->willReturnCallback(
+			function (string $postfix) use (&$postfixes) {
+				$postfixes[] = $postfix;
+				return false;
+			}
+		);
+		$locator = new RuntimeFileLocator(
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $this->storeDir),
+			urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+			tempManager: $temp
+		);
+		$locator->store()->write('img/backgrounds/utrecht-captured-background.jpg', 'JPEGDATA');
+
+		try {
+			$locator->localPath('img/backgrounds/utrecht-captured-background.jpg');
+			$this->fail(message: 'a failed temporary copy was not refused');
+		} catch (\RuntimeException $e) {
+			$this->assertSame(expected: 'Could not make a temporary copy of img/backgrounds/utrecht-captured-background.jpg', actual: $e->getMessage());
+		}
+
+		$this->assertSame(expected: ['.jpg'], actual: $postfixes);
+	}//end testATemporaryCopyThatCannotBeMadeThrows()
 }//end class

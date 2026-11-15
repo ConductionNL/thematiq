@@ -177,13 +177,18 @@ class NLDesignEMailTemplate extends EMailTemplate {
 		}
 
 		$this->headerAdded = true;
+		$this->appendBrandedHeader(theme: $theme);
+	}//end addHeader()
 
-		$logoUrl = (string)($theme['logoUrl'] ?? '');
-		$this->headerLogoIsOwn = ($logoUrl !== '');
-		if ($logoUrl === '') {
-			$logoUrl = $this->urlGenerator->getAbsoluteURL($this->themingDefaults->getLogo(false));
-		}
-
+	/**
+	 * Write the branded header: the set's primary colour and its logo, else the instance logo.
+	 *
+	 * @param array<string, mixed> $theme The active email theme.
+	 *
+	 * @return void
+	 */
+	private function appendBrandedHeader(array $theme): void {
+		$logoUrl = $this->brandedLogoUrl(theme: $theme);
 		$this->headerLogoUrl = $logoUrl;
 		$this->htmlBody .= vsprintf(
 			$this->header,
@@ -194,7 +199,24 @@ class NLDesignEMailTemplate extends EMailTemplate {
 				$this->logoSizeAttributes(),
 			]
 		);
-	}//end addHeader()
+	}//end appendBrandedHeader()
+
+	/**
+	 * The header logo's URL: the set's own, else the instance logo; remembers which it is.
+	 *
+	 * @param array<string, mixed> $theme The active email theme.
+	 *
+	 * @return string The absolute URL.
+	 */
+	private function brandedLogoUrl(array $theme): string {
+		$logoUrl = (string)($theme['logoUrl'] ?? '');
+		$this->headerLogoIsOwn = ($logoUrl !== '');
+		if ($logoUrl === '') {
+			$logoUrl = $this->urlGenerator->getAbsoluteURL($this->themingDefaults->getLogo(false));
+		}
+
+		return $logoUrl;
+	}//end brandedLogoUrl()
 
 	/**
 	 * Whether the server attaches what getInlineImages() holds without asking for
@@ -319,24 +341,22 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			return;
 		}
 
+		$this->openBodyForButtons();
+		$buttons = new BrandedMailButtons(theme: $theme);
+		[$text, $plainText] = $buttons->texts(text: $text, plainText: $plainText);
+		$this->htmlBody .= $buttons->button(template: $this->button, button: new MailButton(text: $text, url: $url));
+		$this->plainBody .= $buttons->plainLine(plainText: $plainText, url: $url);
+	}//end addBodyButton()
+
+	/**
+	 * Open the body and close a running list, as the parent does before a button.
+	 *
+	 * @return void
+	 */
+	private function openBodyForButtons(): void {
 		$this->ensureBodyIsOpened();
 		$this->ensureBodyListClosed();
-
-		if ($plainText === '') {
-			$plainText = $text;
-			$text = htmlspecialchars($text);
-		}
-
-		$color = $theme['primaryColor'];
-		$textColor = $theme['primaryTextColor'];
-		$this->htmlBody .= vsprintf($this->button, [$color, $color, $url, $color, $textColor, $textColor, $text]);
-
-		if ($plainText !== false) {
-			$this->plainBody .= $plainText . ': ';
-		}
-
-		$this->plainBody .= $url . PHP_EOL;
-	}//end addBodyButton()
+	}//end openBodyForButtons()
 
 	/**
 	 * Adds a button group of two buttons to the body of the email.
@@ -381,28 +401,12 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			return;
 		}
 
-		if ($plainTextLeft === '') {
-			$plainTextLeft = $textLeft;
-			$textLeft = htmlspecialchars($textLeft);
-		}
-
-		if ($plainTextRight === '') {
-			$plainTextRight = $textRight;
-			$textRight = htmlspecialchars($textRight);
-		}
-
-		$this->ensureBodyIsOpened();
-		$this->ensureBodyListClosed();
-
-		$color = $theme['primaryColor'];
-		$textColor = $theme['primaryTextColor'];
-
-		$this->htmlBody .= vsprintf(
-			$this->buttonGroup,
-			[$color, $color, $urlLeft, $color, $textColor, $textColor, $textLeft, $urlRight, $textRight]
-		);
-		$this->plainBody .= PHP_EOL . $plainTextLeft . ': ' . $urlLeft . PHP_EOL;
-		$this->plainBody .= $plainTextRight . ': ' . $urlRight . PHP_EOL . PHP_EOL;
+		$buttons = new BrandedMailButtons(theme: $theme);
+		[$htmlLeft, $plainLeft] = $buttons->parts(button: new MailButton(text: $textLeft, url: $urlLeft), plainText: $plainTextLeft);
+		[$htmlRight, $plainRight] = $buttons->parts(button: new MailButton(text: $textRight, url: $urlRight), plainText: $plainTextRight);
+		$this->openBodyForButtons();
+		$this->htmlBody .= $buttons->group(template: $this->buttonGroup, buttons: new MailButtonPair(left: $htmlLeft, right: $htmlRight));
+		$this->plainBody .= $buttons->groupPlain(buttons: new MailButtonPair(left: $plainLeft, right: $plainRight));
 	}//end addBodyButtonGroup()
 
 	/**
@@ -436,7 +440,32 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			return;
 		}
 
+		$this->appendCompliance(footerConfig: $footerConfig, lang: $lang);
+	}//end addFooter()
+
+	/**
+	 * Write the compliance block into both parts, in the HTML before the parent's closing tail.
+	 *
+	 * @param array<string, string> $footerConfig The configured footer values.
+	 * @param string|null $lang The language override.
+	 *
+	 * @return void
+	 */
+	private function appendCompliance(array $footerConfig, string|null $lang): void {
 		$complianceHtml = (new ComplianceMailFooter())->html(footerConfig: $footerConfig, l10n: $this->l10nFactory->get('thematiq', $lang));
+		$this->spliceBeforeTail(html: $complianceHtml);
+		$this->plainBody .= (new ComplianceMailFooter())->plain(footerConfig: $footerConfig, l10n: $this->l10nFactory->get('thematiq', $lang));
+	}//end appendCompliance()
+
+	/**
+	 * Put HTML before the parent's closing tail, or after everything when the tail is not there.
+	 *
+	 * @param string $html The HTML.
+	 *
+	 * @return void
+	 */
+	private function spliceBeforeTail(string $html): void {
+		$complianceHtml = $html;
 		$tailFound = str_ends_with($this->htmlBody, $this->tail);
 		if ($tailFound === true) {
 			$this->htmlBody = substr($this->htmlBody, 0, -strlen($this->tail)) . $complianceHtml . $this->tail;
@@ -448,8 +477,6 @@ class NLDesignEMailTemplate extends EMailTemplate {
 			// rather than silently drop the compliance block.
 			$this->htmlBody .= $complianceHtml;
 		}
-
-		$this->plainBody .= (new ComplianceMailFooter())->plain(footerConfig: $footerConfig, l10n: $this->l10nFactory->get('thematiq', $lang));
-	}//end addFooter()
+	}//end spliceBeforeTail()
 
 }//end class

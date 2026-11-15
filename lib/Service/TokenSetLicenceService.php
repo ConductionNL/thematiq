@@ -106,20 +106,34 @@ class TokenSetLicenceService {
 		$sets = [];
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
 			$id = (string)$set['id'];
-			if ($gate->isRestricted(tokenSetId: $id) === false) {
-				continue;
+			if ($gate->isRestricted(tokenSetId: $id) === true) {
+				$sets[] = $this->restrictedEntry(gate: $gate, set: $set);
 			}
-
-			$sets[] = [
-				'id' => $id,
-				'name' => (string)$set['name'],
-				'licence' => (array)$gate->licenceOf(tokenSetId: $id),
-				'confirmation' => $gate->confirmation(tokenSetId: $id),
-			];
 		}
 
 		return $sets;
 	}//end restrictedSets()
+
+	/**
+	 * The settings page's entry for one restricted set.
+	 *
+	 * The gate is typed in this docblock only, which keeps the class under the mess detector's coupling limit.
+	 *
+	 * @param RestrictedSetGate $gate The licence gate.
+	 * @param array<string, mixed> $set The catalogue entry.
+	 *
+	 * @return array{id: string, name: string, licence: array<string, mixed>, confirmation: array{uid: string, at: string}|null} The entry.
+	 */
+	private function restrictedEntry($gate, array $set): array {
+		$id = (string)$set['id'];
+
+		return [
+			'id' => $id,
+			'name' => (string)$set['name'],
+			'licence' => (array)$gate->licenceOf(tokenSetId: $id),
+			'confirmation' => $gate->confirmation(tokenSetId: $id),
+		];
+	}//end restrictedEntry()
 
 	/**
 	 * Record that this organisation is the owner of a restricted set, or has its permission.
@@ -135,12 +149,7 @@ class TokenSetLicenceService {
 	 */
 	public function confirm(string $tokenSetId, string $uid): array {
 		$gate = $this->tokenSets->licenceGate();
-		if ($uid === ''
-			|| $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSetId) === false
-			|| $gate->isRestricted(tokenSetId: $tokenSetId) === false
-		) {
-			throw new InvalidArgumentException('Not a restricted token set: ' . $tokenSetId);
-		}
+		$this->assertConfirmable(tokenSetId: $tokenSetId, uid: $uid);
 
 		$existing = $gate->confirmation(tokenSetId: $tokenSetId);
 		if ($existing !== null) {
@@ -150,8 +159,40 @@ class TokenSetLicenceService {
 		$confirmedAt = $this->time->getDateTime()->format(DateTimeInterface::ATOM);
 		$gate->storeConfirmation(tokenSetId: $tokenSetId, uid: $uid, confirmedAt: $confirmedAt);
 		$this->forgetAwaiting(tokenSetId: $tokenSetId);
+		$this->announceConfirmed(tokenSetId: $tokenSetId, uid: $uid);
 
-		$licence = $gate->licenceOf(tokenSetId: $tokenSetId);
+		return ['uid' => $uid, 'at' => $confirmedAt];
+	}//end confirm()
+
+	/**
+	 * Refuse a confirmation by nobody, or of a set that does not exist or is not restricted.
+	 *
+	 * @param string $tokenSetId The set.
+	 * @param string $uid The confirming administrator.
+	 *
+	 * @return void
+	 *
+	 * @throws InvalidArgumentException When the confirmation is refused.
+	 */
+	private function assertConfirmable(string $tokenSetId, string $uid): void {
+		if ($uid === ''
+			|| $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSetId) === false
+			|| $this->tokenSets->licenceGate()->isRestricted(tokenSetId: $tokenSetId) === false
+		) {
+			throw new InvalidArgumentException('Not a restricted token set: ' . $tokenSetId);
+		}
+	}//end assertConfirmable()
+
+	/**
+	 * Audit and log a confirmation with the set's licence.
+	 *
+	 * @param string $tokenSetId The confirmed set.
+	 * @param string $uid The confirming administrator.
+	 *
+	 * @return void
+	 */
+	private function announceConfirmed(string $tokenSetId, string $uid): void {
+		$licence = $this->tokenSets->licenceGate()->licenceOf(tokenSetId: $tokenSetId);
 		$this->audit->log(
 			action: 'restricted_set_confirmed',
 			context: ['old' => null, 'new' => $tokenSetId, 'actor' => $uid, 'licence' => ($licence['id'] ?? ''), 'holder' => ($licence['holder'] ?? '')]
@@ -160,9 +201,7 @@ class TokenSetLicenceService {
 			'thematiq: {uid} confirmed that this organisation may use the restricted token set {set}',
 			['uid' => $uid, 'set' => $tokenSetId, 'app' => Application::APP_ID]
 		);
-
-		return ['uid' => $uid, 'at' => $confirmedAt];
-	}//end confirm()
+	}//end announceConfirmed()
 
 	/**
 	 * Take a confirmation back. Refused while the set is applied anywhere:
@@ -185,21 +224,45 @@ class TokenSetLicenceService {
 			return;
 		}
 
-		$appliedIn = $this->appliedIn(tokenSetId: $tokenSetId);
-		if ($appliedIn !== []) {
-			throw new RestrictedSetInUseException(tokenSetId: $tokenSetId, appliedIn: $appliedIn);
-		}
-
+		$this->assertAppliedNowhere(tokenSetId: $tokenSetId);
 		$gate->dropConfirmation(tokenSetId: $tokenSetId);
 		$this->audit->log(
 			action: 'restricted_set_confirmation_withdrawn',
 			context: ['old' => $tokenSetId, 'new' => null, 'actor' => $uid, 'confirmedBy' => $existing['uid'], 'confirmedAt' => $existing['at']]
 		);
+		$this->logWithdrawal(tokenSetId: $tokenSetId, uid: $uid);
+	}//end withdraw()
+
+	/**
+	 * Refuse while a set is applied anywhere.
+	 *
+	 * @param string $tokenSetId The set.
+	 *
+	 * @return void
+	 *
+	 * @throws RestrictedSetInUseException When the set is still applied; it names where.
+	 */
+	private function assertAppliedNowhere(string $tokenSetId): void {
+		$appliedIn = $this->appliedIn(tokenSetId: $tokenSetId);
+		if ($appliedIn !== []) {
+			throw new RestrictedSetInUseException(tokenSetId: $tokenSetId, appliedIn: $appliedIn);
+		}
+	}//end assertAppliedNowhere()
+
+	/**
+	 * Log a withdrawal.
+	 *
+	 * @param string $tokenSetId The set.
+	 * @param string $uid The withdrawing administrator.
+	 *
+	 * @return void
+	 */
+	private function logWithdrawal(string $tokenSetId, string $uid): void {
 		$this->logger->warning(
 			'thematiq: {uid} withdrew the confirmation for the restricted token set {set}',
 			['uid' => $uid, 'set' => $tokenSetId, 'app' => Application::APP_ID]
 		);
-	}//end withdraw()
+	}//end logWithdrawal()
 
 	/**
 	 * Every place a set is applied: as the instance's set, for a group, as an
@@ -221,6 +284,18 @@ class TokenSetLicenceService {
 			$places = array_merge($places, $this->placesIn(kind: $kind, entries: $this->stored(key: $key), tokenSetId: $tokenSetId));
 		}
 
+		return array_merge($places, $this->switchPlaces(tokenSetId: $tokenSetId));
+	}//end appliedIn()
+
+	/**
+	 * The planned or running switches that go to a set or return to it.
+	 *
+	 * @param string $tokenSetId The set id.
+	 *
+	 * @return list<array{kind: string, id: string}> One entry per switch.
+	 */
+	private function switchPlaces(string $tokenSetId): array {
+		$places = [];
 		foreach ($this->switches->all() as $switch) {
 			$open = in_array(($switch['status'] ?? ''), ['planned', 'running'], true);
 			if ($open === true && in_array($tokenSetId, [($switch['tokenSet'] ?? ''), ($switch['revertTo'] ?? '')], true) === true) {
@@ -229,7 +304,7 @@ class TokenSetLicenceService {
 		}
 
 		return $places;
-	}//end appliedIn()
+	}//end switchPlaces()
 
 	/**
 	 * The entries of a stored mapping that name a set: a group mapping is a

@@ -446,4 +446,46 @@ class UpstreamFreshnessServiceTest extends TestCase {
 		$notices = $service->getStatus()['notices'];
 		$this->assertCount(expectedCount: 3, haystack: $notices);
 	}//end testNeverMoreThanTwoRequestsPerRun()
+
+	/**
+	 * The compare request names the base and head; a compare that matches no set, or answers other than 200, stores the generic notice.
+	 *
+	 * @return void
+	 */
+	public function testACompareThatMatchesNothingOrFailsStoresTheGenericNotice(): void {
+		$oldSha = str_repeat('a', 40);
+		$newSha = str_repeat('d', 40);
+		foreach ([[200, json_encode(['files' => [['filename' => 'proprietary/other-design-tokens/x.json'], ['nope' => 1]]])], [404, '{}'], [200, '{"files":"x"}']] as [$status, $body]) {
+			$freshResponse = $this->createMock(originalClassName: IResponse::class);
+			$freshResponse->method('getStatusCode')->willReturn(200);
+			$freshResponse->method('getBody')->willReturn($newSha);
+			$freshResponse->method('getHeader')->willReturn('"etag"');
+			$compareResponse = $this->createMock(originalClassName: IResponse::class);
+			$compareResponse->method('getStatusCode')->willReturn($status);
+			$compareResponse->method('getBody')->willReturn($body);
+			$urls = [];
+			$client = $this->createMock(originalClassName: IClient::class);
+			$client->method('get')->willReturnCallback(
+				function (string $url) use (&$urls, $freshResponse, $compareResponse) {
+					$urls[] = $url;
+					return (count($urls) === 1 ? $freshResponse : $compareResponse);
+				}
+			);
+			$clientService = $this->createMock(originalClassName: IClientService::class);
+			$clientService->method('newClient')->willReturn($client);
+			$this->configStore = [];
+
+			$service = $this->makeService(
+				tokenSets: [['id' => 'utrecht', 'name' => 'Utrecht', 'upstreamRef' => $oldSha, 'upstreamVersion' => '1.0.0']],
+				clientService: $clientService
+			);
+			$service->setEnabled(enabled: true);
+			$service->runCheck();
+
+			$this->assertStringEndsWith(suffix: '/compare/' . $oldSha . '...' . $newSha, string: $urls[1]);
+			$this->assertStringNotContainsString(needle: '/commits/', haystack: $urls[1]);
+			$notices = $service->getStatus()['notices'];
+			$this->assertSame(expected: ['__generic__'], actual: array_column($notices, 'setId'), message: 'status ' . $status);
+		}
+	}//end testACompareThatMatchesNothingOrFailsStoresTheGenericNotice()
 }//end class

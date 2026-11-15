@@ -527,6 +527,58 @@ class ThemingServiceTest extends TestCase {
 	}//end testApplyImagesIgnoresTheDarkLogo()
 
 	/**
+	 * The sync hands core's ImageManager only the four slots core owns, never
+	 * the dark logo (REQ-TPLAT-002, REQ-TPLAT-003).
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-003
+	 *
+	 * @return void
+	 */
+	public function testApplyImagesHandsOnlyCoresFourSlotsToTheImageManager(): void {
+		$keys = [];
+		$this->imageManager->method('updateImage')->willReturnCallback(
+			function (string $key, string $tmpFile) use (&$keys): string {
+				$keys[] = $key;
+				return 'image/svg+xml';
+			}
+		);
+		$image = 'img/logos/present.svg';
+
+		$updated = $this->service->applyImages(
+			params: ['logo_dark' => $image, 'logo' => $image, 'logoheader' => $image, 'favicon' => $image, 'background' => $image, 'icon' => $image]
+		);
+
+		$this->assertSame(expected: ['logo', 'logoheader', 'favicon', 'background'], actual: $keys);
+		$this->assertSame(expected: $keys, actual: $updated);
+	}//end testApplyImagesHandsOnlyCoresFourSlotsToTheImageManager()
+
+	/**
+	 * Name, slogan and web address stay core's fields: the sync never writes
+	 * them, whatever the request carries (REQ-TPLAT-006).
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-006
+	 *
+	 * @return void
+	 */
+	public function testTheSyncNeverWritesNameUrlOrSlogan(): void {
+		$this->imageManager->method('updateImage')->willReturn('image/svg+xml');
+		$written = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$written): void {
+				$written[] = $setting;
+			}
+		);
+		$params = ['primary_color' => '#112233', 'background_color' => '#445566', 'logo' => 'img/logos/present.svg', 'name' => 'Gemeente X', 'url' => 'https://x.example', 'slogan' => 'Samen'];
+
+		$this->service->applyColors(params: $params);
+		$this->service->applyImages(params: $params);
+
+		$this->assertNotEmpty($written);
+		$this->assertSame(expected: [], actual: array_values(array_intersect($written, ['name', 'url', 'slogan'])));
+	}//end testTheSyncNeverWritesNameUrlOrSlogan()
+
+	/**
 	 * A reset undoes every setting the sync can write, through the same
 	 * `ThemingDefaults::undo()` core's own panel uses — not by writing the
 	 * stock set's manifest values, which is what left the previous set's logo
@@ -581,4 +633,29 @@ class ThemingServiceTest extends TestCase {
 	public function testGetImageManagerReturnsTheInjectedInstance(): void {
 		$this->assertSame(expected: $this->imageManager, actual: $this->service->getImageManager());
 	}//end testGetImageManagerReturnsTheInjectedInstance()
+
+	/**
+	 * Every refusal of the colour and image checks, with its exact message; empty values are not checked.
+	 *
+	 * @return void
+	 */
+	public function testTheExactRefusals(): void {
+		$cases = [
+			[['primary_color' => '', 'background_color' => 'blue'], 'colors', 'Invalid hex color for background_color: blue'],
+			[['primary_color' => '#12'], 'colors', 'Invalid hex color for primary_color: #12'],
+			[['primary_color' => '#123456', 'background_color' => ''], 'colors', null],
+			[['logo' => '/etc/x.svg'], 'images', 'Invalid image path for logo: path traversal not allowed'],
+			[['favicon' => 'img/../x.ico'], 'images', 'Invalid image path for favicon: path traversal not allowed'],
+			[['logo_dark' => 'css/x.svg'], 'images', 'Invalid image path for logo_dark: must be in img/logos/ or img/backgrounds/'],
+			[['background' => 'img/backgrounds/absent.jpg'], 'images', 'Image file not found: img/backgrounds/absent.jpg'],
+			[['logo' => '', 'background_mode' => 'tiled'], 'images', 'Invalid background_mode: tiled'],
+			[['logo' => 'x/y.svg', 'background_mode' => 'tiled'], 'images', 'Invalid image path for logo: must be in img/logos/ or img/backgrounds/'],
+			[['background_mode' => 'image'], 'images', null],
+			[['background_mode' => ''], 'images', null],
+		];
+		foreach ($cases as [$params, $check, $expected]) {
+			$actual = ($check === 'colors') ? $this->service->validateColors(params: $params) : $this->service->validateImagePaths(params: $params);
+			$this->assertSame(expected: $expected, actual: $actual, message: json_encode($params));
+		}
+	}//end testTheExactRefusals()
 }//end class

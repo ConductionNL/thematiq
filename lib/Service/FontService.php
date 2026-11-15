@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
-use OCA\Thematiq\AppInfo\Application;
 use OCP\Files\GenericFileException;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -151,11 +150,7 @@ class FontService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
 	public function slugify(string $name): string {
-		$slug = strtolower(trim($name));
-		$slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-		$slug = trim($slug, '-');
-
-		return substr($slug, 0, 64);
+		return $this->manifestStore()->slugify(name: $name);
 	}//end slugify()
 
 	/**
@@ -226,18 +221,10 @@ class FontService {
 	public function list(): array {
 		$result = [];
 		foreach ($this->getManifest() as $id => $meta) {
-			$entry = [];
-			if (is_array($meta) === true) {
-				$entry = $meta;
-			}
-
-			$entry['id'] = $id;
-			$result[] = $entry;
+			$result[] = $this->manifestStore()->listed(id: $id, meta: $meta);
 		}
 
-		usort($result, fn ($a, $b) => strcasecmp(($a['name'] ?? $a['id']), ($b['name'] ?? $b['id'])));
-
-		return $result;
+		return $this->manifestStore()->byName(entries: $result);
 	}//end list()
 
 	/**
@@ -486,14 +473,7 @@ class FontService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
 	public function getManifest(): array {
-		$raw = $this->config->getAppValue(Application::APP_ID, self::MANIFEST_KEY, '{}');
-		$decoded = json_decode($raw, true);
-
-		if (is_array($decoded) === false) {
-			return [];
-		}
-
-		return $decoded;
+		return $this->manifestStore()->read();
 	}//end getManifest()
 
 	/**
@@ -505,7 +485,7 @@ class FontService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
 	public function getRevision(): int {
-		return (int)$this->config->getAppValue(Application::APP_ID, self::REVISION_KEY, '0');
+		return (int)(new AppConfigManifest(config: $this->config, key: self::REVISION_KEY))->value(default: '0');
 	}//end getRevision()
 
 	/**
@@ -533,7 +513,7 @@ class FontService {
 	 */
 	private function bumpRevision(): int {
 		$rev = ($this->getRevision() + 1);
-		$this->config->setAppValue(Application::APP_ID, self::REVISION_KEY, (string)$rev);
+		(new AppConfigManifest(config: $this->config, key: self::REVISION_KEY))->setValue(value: (string)$rev);
 
 		return $rev;
 	}//end bumpRevision()
@@ -548,12 +528,17 @@ class FontService {
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
 	private function saveManifest(array $manifest): void {
-		$this->config->setAppValue(
-			Application::APP_ID,
-			self::MANIFEST_KEY,
-			json_encode($manifest, JSON_UNESCAPED_SLASHES)
-		);
+		$this->manifestStore()->save(manifest: $manifest);
 	}//end saveManifest()
+
+	/**
+	 * The manifest's app config key.
+	 *
+	 * @return AppConfigManifest The manifest store.
+	 */
+	private function manifestStore(): AppConfigManifest {
+		return new AppConfigManifest(config: $this->config, key: self::MANIFEST_KEY);
+	}//end manifestStore()
 
 	/**
 	 * Resolve (creating if necessary) the `fonts/` IAppData folder.

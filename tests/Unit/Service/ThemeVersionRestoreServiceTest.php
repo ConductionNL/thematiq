@@ -201,4 +201,40 @@ class ThemeVersionRestoreServiceTest extends TestCase {
 		$this->assertNull(actual: $this->service()->preview(id: '20200101000000-0001'));
 		$this->assertNull(actual: $this->service()->restore(id: '20200101000000-0001'));
 	}//end testAnUnknownIdIsNull()
+
+	/**
+	 * Every kind of change, in order: the config fields, the app exclusions, the overrides, the planned switches, the email footer.
+	 *
+	 * @return void
+	 */
+	public function testEveryKindOfChangeInOrder(): void {
+		$this->bundles = $this->createMock(originalClassName: ConfigBundleService::class);
+		$this->bundles->method('export')->willReturn(
+			[
+				'config' => ['tokenSet' => 'a', 'hideSlogan' => true, 'disabledApps' => ['files'], 'scheduledSwitches' => [['id' => 'x'], ['id' => 'y']]],
+				'customOverridesCss' => ':root{}',
+				'emailFooter' => ['organizationName' => 'Oud'],
+			]
+		);
+		$this->bundles->method('import')->willReturn(['valid' => true, 'dryRun' => true, 'applied' => false]);
+		$this->version['bundle'] = [
+			'config' => ['tokenSet' => 'b', 'hideSlogan' => true, 'showMenuLabels' => true, 'scheduledSwitches' => 'not a list'],
+			'customOverridesCss' => ':root{--a:1}',
+		];
+
+		$changes = $this->service()->preview(id: $this->version['id'])['changes'];
+
+		$this->assertSame(expected: ['field' => 'tokenSet', 'from' => 'a', 'to' => 'b'], actual: $changes[0]);
+		$this->assertSame(expected: ['field' => 'showMenuLabels', 'from' => null, 'to' => true], actual: $changes[1]);
+		$this->assertSame(
+			expected: [
+				['field' => 'disabledApps', 'from' => ['files'], 'to' => []],
+				['field' => 'customOverridesCss', 'from' => 'current', 'to' => 'version'],
+				['field' => 'scheduledSwitches', 'from' => 2, 'to' => 1],
+				['field' => 'emailFooter', 'from' => ['organizationName' => 'Oud'], 'to' => []],
+			],
+			actual: array_slice($changes, -4)
+		);
+		$this->assertSame(expected: ['tokenSet', 'showMenuLabels', 'disabledApps', 'customOverridesCss', 'scheduledSwitches', 'emailFooter'], actual: array_column($changes, 'field'));
+	}//end testEveryKindOfChangeInOrder()
 }//end class

@@ -431,4 +431,20 @@ class DocumentStyleServiceTest extends TestCase {
 			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 	}//end testEndpointAttributes()
+	/**
+	 * Golden: the whole profile for each user and set, recorded on the code before the split as a hash.
+	 *
+	 * @return void
+	 */
+	public function testTheWholeProfileGolden(): void {
+		$out = [];
+		foreach ([null, 'bea', 'kees', 'nobody'] as $uid) {
+			$out[] = $this->service()->forUser(uid: $uid);
+		}
+
+		$this->app['token_set'] = 'westervoort';
+		$out[] = $this->service()->forUser(uid: null);
+
+		$this->assertSame(expected: 'b5a35be6b57f31b0', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16), message: (string)json_encode($out[0]));
+	}//end testTheWholeProfileGolden()
 }//end class

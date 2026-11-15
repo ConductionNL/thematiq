@@ -38,6 +38,8 @@ use Random\Randomizer;
  * @covers \OCA\Thematiq\Service\TokenSetVocabularyAuditService
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
+ * @uses   \OCA\Thematiq\Service\LayerCssFiles
+ * @uses   \OCA\Thematiq\Service\VocabularySet
  */
 class TokenSetVocabularyAuditGoldenTest extends TestCase {
 

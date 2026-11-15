@@ -59,4 +59,61 @@ class TokenValueValidatorTest extends TestCase {
 	public function testGrammar(string $type, string $value, bool $accepted): void {
 		$this->assertSame(expected: $accepted, actual: (new TokenValueValidator())->isValid(type: $type, value: $value));
 	}//end testGrammar()
+	/**
+	 * Every light and dark rejection, with its reason, in order, a dark one replacing the light one of its name.
+	 *
+	 * @return void
+	 */
+	public function testEveryRejectionInOrder(): void {
+		$validator = new TokenValueValidator();
+		$rejected = $validator->findRejected(
+			tokens: [
+				'--color-primary' => 'not a colour',
+				'--not-a-token' => '#fff',
+				'--border-radius' => '4px',
+				'--nldesign-animation-easing' => 'cubic-bezier(1.5, 0, 0, 1)',
+				'--color-main-text' => ['array'],
+				'--color-main-background' => '#fff; }',
+				'--color-error' => '#c00',
+			],
+			darkTokens: [
+				'--color-error' => 'dark? no',
+				'--border-radius' => '#000',
+				'--color-primary' => '#000',
+				'--color-not-sent' => '#000',
+				'--color-main-background' => 7,
+			]
+		);
+
+		$this->assertSame(
+			expected: [
+				'--color-primary' => 'not a valid color value',
+				'--not-a-token' => 'not an editable token',
+				'--nldesign-animation-easing' => 'not a valid easing value',
+				'--color-main-text' => 'not an allowed value',
+				'--color-main-background' => 'dark value: not an allowed value',
+				'--color-error' => 'dark value: not a valid color value',
+				'--border-radius' => 'no dark value for this token',
+				'--color-not-sent' => 'no dark value for this token',
+			],
+			actual: $rejected
+		);
+	}//end testEveryRejectionInOrder()
+
+	/**
+	 * Easing values: the keywords and a curve whose x values lie in 0..1.
+	 *
+	 * @return void
+	 */
+	public function testEasingValues(): void {
+		$validator = new TokenValueValidator();
+		$cases = [
+			'ease' => true, 'ease-in-out' => true, 'steps(4)' => false, 'cubic-bezier(0, 0, 1, 1)' => true,
+			'cubic-bezier( .25 , -3 , .75 , 9 )' => true, 'cubic-bezier(-0.1, 0, 1, 1)' => false, 'cubic-bezier(0, 0, 1.01, 1)' => false,
+			'cubic-bezier(0, 0, 1)' => false, 'Ease' => false,
+		];
+		foreach ($cases as $value => $accepted) {
+			$this->assertSame(expected: $accepted, actual: $validator->isValid(type: 'easing', value: $value), message: $value);
+		}
+	}//end testEasingValues()
 }//end class

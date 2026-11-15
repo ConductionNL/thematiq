@@ -104,9 +104,7 @@ class ScheduledSwitchService {
 	/**
 	 * Plan a switch.
 	 *
-	 * @param string $tokenSet The set to switch to.
-	 * @param string $startAt The start, ISO 8601 with an offset.
-	 * @param string|null $endAt The optional end, ISO 8601 with an offset.
+	 * @param SwitchPlan $plan The set to switch to, and the start and optional end, ISO 8601 with an offset.
 	 * @param string $createdBy The administrator's uid.
 	 *
 	 * @return array<string, mixed> The planned entry.
@@ -117,75 +115,66 @@ class ScheduledSwitchService {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
 	 */
-	public function create(string $tokenSet, string $startAt, ?string $endAt, string $createdBy): array {
+	public function create(SwitchPlan $plan, string $createdBy): array {
+		$this->assertMayPlan(tokenSet: $plan->tokenSet);
+
+		$planned = $this->plannedSwitches();
+		$window = $planned->window(window: $plan->window, now: $this->runtime->time->getTime());
+		$entry = $this->plannedEntry(plan: new SwitchPlan(tokenSet: $plan->tokenSet, window: $window), createdBy: $createdBy);
+		$planned->add(entry: $entry);
+
+		return $entry;
+	}//end create()
+
+	/**
+	 * Refuse a set that does not exist, or that is restricted and nobody confirmed.
+	 *
+	 * @param string $tokenSet The set to switch to.
+	 *
+	 * @return void
+	 *
+	 * @throws ScheduledSwitchException When the set does not exist.
+	 * @throws RestrictedSetNotConfirmedException When the set is restricted and nobody confirmed it.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
+	 */
+	private function assertMayPlan(string $tokenSet): void {
 		if ($this->targets->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
 			throw new ScheduledSwitchException(message: $this->l10n->t('The token set {set} does not exist.', ['set' => $tokenSet]));
 		}
 
 		// A restricted set nobody confirmed is refused here too; the controller answers 403.
 		$this->targets->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet);
+	}//end assertMayPlan()
 
-		[$start, $end] = $this->parseWindow(startAt: $startAt, endAt: $endAt);
+	/**
+	 * The planned switches with their checks and translated refusals.
+	 *
+	 * @return PlannedSwitches The list.
+	 */
+	private function plannedSwitches(): PlannedSwitches {
+		return new PlannedSwitches(store: $this->store, l10n: $this->l10n);
+	}//end plannedSwitches()
 
-		$entry = [
+	/**
+	 * The stored entry of a new plan.
+	 *
+	 * @param SwitchPlan $plan The set and its window in UTC.
+	 * @param string $createdBy The administrator's uid.
+	 *
+	 * @return array<string, mixed> The planned entry.
+	 */
+	private function plannedEntry(SwitchPlan $plan, string $createdBy): array {
+		return [
 			'id' => bin2hex(random_bytes(8)),
-			'tokenSet' => $tokenSet,
-			'startAt' => $start,
-			'endAt' => $end,
+			'tokenSet' => $plan->tokenSet,
+			'startAt' => $plan->window->startAt,
+			'endAt' => $plan->window->endAt,
 			'createdBy' => $createdBy,
 			'createdAt' => $this->nowIso(),
 			'status' => 'planned',
 		];
-
-		$entries = $this->store->all();
-		$overlap = $this->store->findOverlap(candidate: $entry, entries: $entries);
-		if ($overlap !== null) {
-			throw new ScheduledSwitchException(
-				message: $this->l10n->t(
-					'This window overlaps the planned switch to {set}. Change the times or cancel that switch first.',
-					['set' => (string)$overlap['tokenSet']]
-				)
-			);
-		}
-
-		$entries[] = $entry;
-		$this->store->save(entries: $entries);
-
-		return $entry;
-	}//end create()
-
-	/**
-	 * Parse a planned window to UTC and check it.
-	 *
-	 * @param string $startAt The start, ISO 8601 with an offset.
-	 * @param string|null $endAt The optional end, ISO 8601 with an offset.
-	 *
-	 * @return array{0: string, 1: string|null} The start and end in UTC.
-	 *
-	 * @throws ScheduledSwitchException When a time does not parse, or the end is not after the start or not in the future.
-	 *
-	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-plans-a-switch
-	 */
-	private function parseWindow(string $startAt, ?string $endAt): array {
-		$start = $this->store->toUtc(value: $startAt);
-		$end = $this->store->toUtc(value: $endAt);
-		if ($start === null || ($endAt !== null && $end === null)) {
-			throw new ScheduledSwitchException(message: $this->l10n->t('Enter the start and end as a date and a time.'));
-		}
-
-		if ($end !== null && strtotime($end) <= strtotime($start)) {
-			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be after the start.'));
-		}
-
-		// A window that is already over would be applied and reverted on the
-		// next run: a core theming reset, two audit entries and two versions
-		// for a switch nobody sees.
-		if ($this->store->hasEnded(end: $end, now: $this->runtime->time->getTime()) === true) {
-			throw new ScheduledSwitchException(message: $this->l10n->t('The end must be in the future.'));
-		}
-
-		return [$start, $end];
-	}//end parseWindow()
+	}//end plannedEntry()
 
 	/**
 	 * Cancel a switch. A running one switches back at once.
@@ -206,15 +195,7 @@ class ScheduledSwitchService {
 				continue;
 			}
 
-			if (($entry['status'] ?? 'planned') === 'running' && $this->switchBack(entry: $entry) === false) {
-				throw new ScheduledSwitchException(
-					message: $this->l10n->t(
-						'The token set {set} no longer exists, so the switch cannot go back to it. Choose a token set by hand.',
-						['set' => (string)($entry['revertTo'] ?? '')]
-					)
-				);
-			}
-
+			$this->switchBackIfRunning(entry: $entry);
 			unset($entries[$index]);
 			$this->store->save(entries: $entries);
 			return;
@@ -222,6 +203,28 @@ class ScheduledSwitchService {
 
 		throw new ScheduledSwitchNotFoundException(message: $this->l10n->t('This planned switch does not exist any more.'));
 	}//end cancel()
+
+	/**
+	 * Switch a running switch back before it is cancelled.
+	 *
+	 * @param array<string, mixed> $entry The entry being cancelled.
+	 *
+	 * @return void
+	 *
+	 * @throws ScheduledSwitchException When the set it replaced no longer exists.
+	 *
+	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-an-administrator-cancels-a-planned-switch
+	 */
+	private function switchBackIfRunning(array $entry): void {
+		if (($entry['status'] ?? 'planned') === 'running' && $this->switchBack(entry: $entry) === false) {
+			throw new ScheduledSwitchException(
+				message: $this->l10n->t(
+					'The token set {set} no longer exists, so the switch cannot go back to it. Choose a token set by hand.',
+					['set' => (string)($entry['revertTo'] ?? '')]
+				)
+			);
+		}
+	}//end switchBackIfRunning()
 
 	/**
 	 * Apply every due start and end. Called by the background job.
@@ -257,34 +260,34 @@ class ScheduledSwitchService {
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-the-page-warns-when-switches-may-run-late
 	 */
 	public function getStatus(): array {
-		$activeUntil = null;
-		$revertTo = null;
-		$runningTokenSet = null;
-		foreach ($this->store->all() as $entry) {
-			if (($entry['status'] ?? null) === 'running') {
-				$activeUntil = $entry['endAt'];
-				$revertTo = $entry['revertTo'];
-				$runningTokenSet = $entry['tokenSet'];
-			}
-		}
-
-		$lastRun = $this->runtime->config->getAppValue(Application::APP_ID, self::LAST_RUN_KEY, '');
-		if ($lastRun === '') {
-			$lastRun = null;
-		}
-
+		$running = $this->plannedSwitches()->running();
+		$lastRun = $this->lastRun();
 		$cronMode = $this->runtime->config->getAppValue('core', 'backgroundjobs_mode', 'ajax');
 
 		return [
 			'activeTokenSet' => $this->targets->activeTokenSet->getActive(),
-			'runningTokenSet' => $runningTokenSet,
-			'activeUntil' => $activeUntil,
-			'revertTo' => $revertTo,
+			'runningTokenSet' => $running['tokenSet'],
+			'activeUntil' => $running['endAt'],
+			'revertTo' => $running['revertTo'],
 			'lastRun' => $lastRun,
 			'cronMode' => $cronMode,
 			'cronWarning' => ($cronMode === 'ajax'),
 		];
 	}//end getStatus()
+
+	/**
+	 * When the background job last ran.
+	 *
+	 * @return string|null The time, or null when it never ran.
+	 */
+	private function lastRun(): ?string {
+		$lastRun = $this->runtime->config->getAppValue(Application::APP_ID, self::LAST_RUN_KEY, '');
+		if ($lastRun === '') {
+			return null;
+		}
+
+		return $lastRun;
+	}//end lastRun()
 
 	/**
 	 * Move one entry forward in time.
@@ -295,12 +298,8 @@ class ScheduledSwitchService {
 	 * @return array<string, mixed>|null The entry to keep, or null when it is done.
 	 */
 	private function advance(array $entry, int $now): ?array {
+		$entry = $this->startWhenDue(entry: $entry, now: $now);
 		$status = ($entry['status'] ?? 'planned');
-		if ($status === 'planned' && strtotime((string)$entry['startAt']) <= $now) {
-			$entry = $this->start(entry: $entry);
-			$status = $entry['status'];
-		}
-
 		if ($status === 'done') {
 			return null;
 		}
@@ -309,6 +308,34 @@ class ScheduledSwitchService {
 			return $entry;
 		}
 
+		return $this->keepOrEnd(entry: $entry, now: $now);
+	}//end advance()
+
+	/**
+	 * Apply a planned entry whose start has passed.
+	 *
+	 * @param array<string, mixed> $entry The entry.
+	 * @param int $now The current time.
+	 *
+	 * @return array<string, mixed> The entry, started when it was due.
+	 */
+	private function startWhenDue(array $entry, int $now): array {
+		if (($entry['status'] ?? 'planned') === 'planned' && strtotime((string)$entry['startAt']) <= $now) {
+			return $this->start(entry: $entry);
+		}
+
+		return $entry;
+	}//end startWhenDue()
+
+	/**
+	 * Keep a running switch applied until its end, then switch back.
+	 *
+	 * @param array<string, mixed> $entry The running entry.
+	 * @param int $now The current time.
+	 *
+	 * @return array<string, mixed>|null The entry to keep, or null when it switched back.
+	 */
+	private function keepOrEnd(array $entry, int $now): ?array {
 		if ($entry['endAt'] === null || strtotime((string)$entry['endAt']) > $now) {
 			return $this->keepApplied(entry: $entry);
 		}
@@ -324,7 +351,7 @@ class ScheduledSwitchService {
 		);
 
 		return $entry;
-	}//end advance()
+	}//end keepOrEnd()
 
 	/**
 	 * Keep a running switch's token set active until its end.
@@ -349,7 +376,7 @@ class ScheduledSwitchService {
 		}
 
 		try {
-			$this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true]);
+			$this->applySet(entry: $entry, context: ['actor' => 'system', 'switchId' => $entry['id'], 'reapplied' => true]);
 		} catch (\InvalidArgumentException $e) {
 			$this->runtime->logger->warning(
 				'thematiq: running switch {id} could not keep {set} active: the set does not exist',
@@ -363,46 +390,17 @@ class ScheduledSwitchService {
 	/**
 	 * Apply a due start.
 	 *
-	 * A switch with an end first takes a snapshot of core theming, which its end
-	 * puts back: the logo and colours it replaces may be an administrator's own,
-	 * which no token set carries.
-	 *
 	 * @param array<string, mixed> $entry The planned entry.
 	 *
 	 * @return array<string, mixed> The entry, now `running`, `done` or `failed`.
 	 */
 	private function start(array $entry): array {
-		$tokenSet = (string)$entry['tokenSet'];
-		if ($entry['endAt'] !== null
-			&& $this->changesCoreTheming(entry: $entry) === true
-			&& $this->targets->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === true
-		) {
-			$this->targets->coreSync->snapshot(switchId: (string)$entry['id']);
-			$entry['coreSnapshot'] = true;
-		}
+		$entry = $this->snapshotBeforeStart(entry: $entry);
 
 		try {
-			$entry['revertTo'] = $this->applySet(entry: $entry, tokenSet: $tokenSet, context: ['actor' => 'system', 'switchId' => $entry['id']]);
+			$entry['revertTo'] = $this->applySet(entry: $entry, context: ['actor' => 'system', 'switchId' => $entry['id']]);
 		} catch (\InvalidArgumentException $e) {
-			$reason = $this->l10n->t(self::START_REFUSALS[(int)($e instanceof RestrictedSetNotConfirmedException)], ['set' => $tokenSet]);
-
-			$this->runtime->logger->warning(
-				'thematiq: planned switch {id} to {set} failed: {why}',
-				['id' => $entry['id'], 'set' => $tokenSet, 'why' => $e->getMessage()]
-			);
-			$this->runtime->auditService->log(
-				action: self::AUDIT_ACTION,
-				context: [
-					'old' => $this->targets->activeTokenSet->getActive(),
-					'new' => null,
-					'actor' => 'system',
-					'switchId' => $entry['id'],
-					'reason' => $reason,
-				]
-			);
-			$entry['status'] = 'failed';
-			$entry['failureReason'] = $reason;
-			return $entry;
+			return $this->failedStart(entry: $entry, e: $e);
 		}
 
 		$entry['status'] = 'done';
@@ -412,6 +410,70 @@ class ScheduledSwitchService {
 
 		return $entry;
 	}//end start()
+
+	/**
+	 * Take a snapshot of core theming before a switch with an end starts; its
+	 * end puts it back: the logo and colours it replaces may be an
+	 * administrator's own, which no token set carries.
+	 *
+	 * @param array<string, mixed> $entry The planned entry.
+	 *
+	 * @return array<string, mixed> The entry, marked `coreSnapshot` when a snapshot was taken.
+	 */
+	private function snapshotBeforeStart(array $entry): array {
+		if ($entry['endAt'] !== null
+			&& $this->changesCoreTheming(entry: $entry) === true
+			&& $this->targets->tokenSets->isValidTokenSet(tokenSetId: (string)$entry['tokenSet']) === true
+		) {
+			$this->targets->coreSync->snapshot(switchId: (string)$entry['id']);
+			$entry['coreSnapshot'] = true;
+		}
+
+		return $entry;
+	}//end snapshotBeforeStart()
+
+	/**
+	 * Mark a start that could not be applied as failed, with a warning and an audit entry naming why.
+	 *
+	 * @param array<string, mixed> $entry The planned entry.
+	 * @param \InvalidArgumentException $e Why the set could not be applied.
+	 *
+	 * @return array<string, mixed> The entry, now `failed`.
+	 */
+	private function failedStart(array $entry, \InvalidArgumentException $e): array {
+		$tokenSet = (string)$entry['tokenSet'];
+		$reason = $this->l10n->t(self::START_REFUSALS[(int)($e instanceof RestrictedSetNotConfirmedException)], ['set' => $tokenSet]);
+
+		$this->runtime->logger->warning(
+			'thematiq: planned switch {id} to {set} failed: {why}',
+			['id' => $entry['id'], 'set' => $tokenSet, 'why' => $e->getMessage()]
+		);
+		$this->auditFailedStart(entry: $entry, reason: $reason);
+		$entry['status'] = 'failed';
+		$entry['failureReason'] = $reason;
+		return $entry;
+	}//end failedStart()
+
+	/**
+	 * The audit entry of a start that could not be applied.
+	 *
+	 * @param array<string, mixed> $entry The planned entry.
+	 * @param string $reason Why it was not applied.
+	 *
+	 * @return void
+	 */
+	private function auditFailedStart(array $entry, string $reason): void {
+		$this->runtime->auditService->log(
+			action: self::AUDIT_ACTION,
+			context: [
+				'old' => $this->targets->activeTokenSet->getActive(),
+				'new' => null,
+				'actor' => 'system',
+				'switchId' => $entry['id'],
+				'reason' => $reason,
+			]
+		);
+	}//end auditFailedStart()
 
 	/**
 	 * Switch back to the set a running switch replaced.
@@ -455,8 +517,7 @@ class ScheduledSwitchService {
 	 * could see. For the stock set the sync resets Nextcloud's theming to its
 	 * defaults, as the dialog does.
 	 *
-	 * @param array<string, mixed> $entry The switch.
-	 * @param string $tokenSet The set to apply.
+	 * @param array<string, mixed> $entry The switch; its `tokenSet` is the set to apply.
 	 * @param array<string, mixed> $context The audit context.
 	 *
 	 * @return string The set that was active before.
@@ -465,7 +526,8 @@ class ScheduledSwitchService {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md#requirement-a-planned-switch-applies-a-set-like-the-apply-dialog
 	 */
-	private function applySet(array $entry, string $tokenSet, array $context): string {
+	private function applySet(array $entry, array $context): string {
+		$tokenSet = (string)$entry['tokenSet'];
 		if ($this->changesCoreTheming(entry: $entry) === true) {
 			// A set that no longer exists has no theming block, so this writes
 			// nothing, and switchTo() below refuses it.

@@ -249,4 +249,45 @@ class OverridesControllerValidationTest extends TestCase {
 		$this->assertStringNotContainsString(needle: '/var/www', haystack: json_encode($response->getData()));
 		$this->assertStringNotContainsString(needle: 'custom-overrides.css', haystack: json_encode($response->getData()));
 	}//end testWriteFailureHidesPath()
+	/**
+	 * Every refusal of an upload, with its status and message, and what passes on to the parser.
+	 *
+	 * @return void
+	 */
+	public function testEachUploadRefusal(): void {
+		$css = (string)tempnam(sys_get_temp_dir(), 'thematiq-upload-');
+		file_put_contents($css, ":root {\n  --nldesign-color-primary: #154273;\n}\n");
+		$png = (string)tempnam(sys_get_temp_dir(), 'thematiq-upload-');
+		file_put_contents($png, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
+		$empty = (string)tempnam(sys_get_temp_dir(), 'thematiq-upload-');
+		file_put_contents($empty, '/* nothing */');
+
+		$cases = [
+			'no file' => [null, 400, 'No file uploaded'],
+			'no temp name' => [['name' => 'a.css', 'size' => 1], 400, 'No file uploaded'],
+			'one byte too large' => [['tmp_name' => $css, 'name' => 'a.css', 'size' => (256 * 1024 + 1)], 413, 'File exceeds the 256 KB size limit'],
+			'no name' => [['tmp_name' => $css, 'size' => 1], 415, 'Only .css files are accepted'],
+			'not css by its name' => [['tmp_name' => $css, 'name' => 'a.css.txt', 'size' => 1], 415, 'Only .css files are accepted'],
+			'an image named css' => [['tmp_name' => $png, 'name' => 'a.css', 'size' => 1], 415, 'File does not appear to be a CSS file'],
+			'no declarations' => [['tmp_name' => $empty, 'name' => 'A.CSS', 'size' => (256 * 1024)], 400, 'No CSS custom property declarations found in the uploaded file'],
+		];
+		$answers = [];
+		foreach ($cases as $name => [$file, $status, $error]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getUploadedFile')->willReturn($file);
+			$this->request = $request;
+			$response = $this->controller(service: $this->overridesService)->importOverrides();
+			$answers[$name] = [$response->getStatus(), ($response->getData()['error'] ?? null)];
+			$this->assertSame(expected: [$status, $error], actual: $answers[$name], message: $name);
+		}
+
+		$request = $this->createMock(originalClassName: IRequest::class);
+		$request->method('getUploadedFile')->willReturn(['tmp_name' => $css, 'name' => 'a.Css', 'size' => 10]);
+		$this->request = $request;
+		$this->assertSame(expected: 200, actual: $this->controller(service: $this->overridesService)->importOverrides()->getStatus());
+
+		unlink($css);
+		unlink($png);
+		unlink($empty);
+	}//end testEachUploadRefusal()
 }//end class

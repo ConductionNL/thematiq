@@ -109,15 +109,9 @@ class SearchPlaceholderService {
 		$map = $this->themeMap();
 		$app = ($appId ?? '');
 
-		if ($app !== '' && isset($map[$app]) === true) {
-			return $this->translate(appId: $app, text: $map[$app]);
-		}
-
-		if ($app !== '') {
-			$own = trim($this->appConfig->getValueString($app, self::APP_KEY, ''));
-			if ($own !== '') {
-				return $this->translate(appId: $app, text: $own);
-			}
+		$words = $this->appWords(app: $app, map: $map);
+		if ($words !== null) {
+			return $words;
 		}
 
 		if (isset($map['*']) === true) {
@@ -126,6 +120,31 @@ class SearchPlaceholderService {
 
 		return null;
 	}//end placeholderFor()
+
+	/**
+	 * The words for one app: the theme's entry for it, else the app's own text, through the app's catalogue.
+	 *
+	 * @param string $app The app id, empty on a page of no app.
+	 * @param array<string, string> $map The theme's map.
+	 *
+	 * @return string|null The words, or null when neither names any.
+	 */
+	private function appWords(string $app, array $map): string|null {
+		if ($app === '') {
+			return null;
+		}
+
+		if (isset($map[$app]) === true) {
+			return $this->translate(appId: $app, text: $map[$app]);
+		}
+
+		$own = trim($this->appConfig->getValueString($app, self::APP_KEY, ''));
+		if ($own !== '') {
+			return $this->translate(appId: $app, text: $own);
+		}
+
+		return null;
+	}//end appWords()
 
 	/**
 	 * Provide the words and load the script for a page of this app. Fails open.
@@ -161,6 +180,22 @@ class SearchPlaceholderService {
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-an-app-or-the-theme-words-the-search-field
 	 */
 	private function themeMap(): array {
+		$map = [];
+		foreach ($this->storedMap() as $key => $text) {
+			if (is_string($key) === true && is_string($text) === true && trim($text) !== '') {
+				$map[$key] = trim($text);
+			}
+		}
+
+		return $map;
+	}//end themeMap()
+
+	/**
+	 * The theme's map as stored, decoded.
+	 *
+	 * @return array<array-key, mixed> The decoded map, or empty when unset or not a JSON object or list.
+	 */
+	private function storedMap(): array {
 		$raw = $this->appConfig->getValueString(Application::APP_ID, self::CONFIG_KEY, '');
 		if ($raw === '') {
 			return [];
@@ -171,15 +206,8 @@ class SearchPlaceholderService {
 			return [];
 		}
 
-		$map = [];
-		foreach ($decoded as $key => $text) {
-			if (is_string($key) === true && is_string($text) === true && trim($text) !== '') {
-				$map[$key] = trim($text);
-			}
-		}
-
-		return $map;
-	}//end themeMap()
+		return $decoded;
+	}//end storedMap()
 
 	/**
 	 * Translate a source string through an app's catalogue.

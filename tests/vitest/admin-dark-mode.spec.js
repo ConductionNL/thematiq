@@ -117,6 +117,7 @@ async function flush(rounds = 8) {
 /** (Re-)import js/admin.js as a fresh module instance, running its IIFE against the current DOM. */
 async function loadAdminScript() {
 	vi.resetModules()
+	await import('../../js/lib/themingPlan.js')
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
