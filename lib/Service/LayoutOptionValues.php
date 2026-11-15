@@ -205,16 +205,29 @@ final class LayoutOptionValues {
 			return self::acceptedWidth(value: $value);
 		}
 
-		if (is_bool($value) === true && in_array('1', (self::VALUES[$key] ?? []), true) === true) {
+		return self::acceptedChoice(key: $key, value: $value);
+	}//end accepted()
+
+	/**
+	 * A value of a listed option: a boolean for a flag, or one of its listed strings.
+	 *
+	 * @param string $key The app config key.
+	 * @param mixed $value The declared or stored value.
+	 *
+	 * @return string|null The accepted string form, or null.
+	 */
+	private static function acceptedChoice(string $key, mixed $value): string|null {
+		$choices = (self::VALUES[$key] ?? []);
+		if (is_bool($value) === true && in_array('1', $choices, true) === true) {
 			return self::flag(value: $value);
 		}
 
-		if (is_string($value) === true && in_array($value, (self::VALUES[$key] ?? []), true) === true) {
+		if (is_string($value) === true && in_array($value, $choices, true) === true) {
 			return $value;
 		}
 
 		return null;
-	}//end accepted()
+	}//end acceptedChoice()
 
 	/**
 	 * A width as its string form, when it is a whole number of pixels in range.
@@ -224,7 +237,7 @@ final class LayoutOptionValues {
 	 * @return string|null The width, or null.
 	 */
 	private static function acceptedWidth(mixed $value): ?string {
-		if (is_int($value) === false && (is_string($value) === false || preg_match('/^[0-9]+$/', $value) !== 1)) {
+		if (self::isWholeNumber(value: $value) === false) {
 			return null;
 		}
 
@@ -235,6 +248,17 @@ final class LayoutOptionValues {
 
 		return (string)$width;
 	}//end acceptedWidth()
+
+	/**
+	 * Whether a value is an integer or a string of digits only.
+	 *
+	 * @param mixed $value The value.
+	 *
+	 * @return bool True for a whole number.
+	 */
+	private static function isWholeNumber(mixed $value): bool {
+		return is_int($value) === true || (is_string($value) === true && preg_match('/^[0-9]+$/', $value) === 1);
+	}//end isWholeNumber()
 
 	/**
 	 * A boolean as the stored flag.
@@ -265,14 +289,7 @@ final class LayoutOptionValues {
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 */
 	public static function fromBundle(mixed $options, array &$errors): array {
-		if (is_array($options) === false) {
-			if ($options !== null) {
-				$errors[] = ['section' => 'config', 'message' => '"config.layoutOptions" must be an object.'];
-			}
-
-			$options = [];
-		}
-
+		$options = self::bundleOptions(options: $options, errors: $errors);
 		$resolved = [];
 		foreach (self::BUNDLE_KEYS as $name => $key) {
 			$value = ($options[$name] ?? '');
@@ -286,4 +303,24 @@ final class LayoutOptionValues {
 
 		return $resolved;
 	}//end fromBundle()
+
+	/**
+	 * The bundle's `config.layoutOptions` as an object; absent is none, anything else is reported and read as none.
+	 *
+	 * @param mixed $options The section.
+	 * @param array<int, array{section: string, message: string}> $errors Appended to.
+	 *
+	 * @return array<array-key, mixed> The options.
+	 */
+	private static function bundleOptions(mixed $options, array &$errors): array {
+		if (is_array($options) === true) {
+			return $options;
+		}
+
+		if ($options !== null) {
+			$errors[] = ['section' => 'config', 'message' => '"config.layoutOptions" must be an object.'];
+		}
+
+		return [];
+	}//end bundleOptions()
 }//end class

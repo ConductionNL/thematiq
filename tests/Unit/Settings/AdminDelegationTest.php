@@ -21,6 +21,8 @@ use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
+use OCA\Thematiq\Settings\AdminFormServices;
+use OCA\Thematiq\Settings\AdminPageState;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -63,15 +65,19 @@ class AdminDelegationTest extends TestCase {
 	 */
 	private function admin(): Admin {
 		return new Admin(
-			$this->createMock(IConfig::class),
-			$this->createMock(TokenSetService::class),
-			$this->createMock(EmailThemingService::class),
-			$this->createMock(ThemePreviewService::class),
-			$this->createMock(IUserSession::class),
-			$this->createMock(DesignSystemService::class),
-			$this->createMock(IInitialState::class),
-			$this->createMock(IRequest::class),
-			$this->createMock(PlaygroundStateService::class)
+			config: $this->createMock(originalClassName: IConfig::class),
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			services: new AdminFormServices(
+				tokenSets: $this->createMock(originalClassName: TokenSetService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingService::class),
+				previews: $this->createMock(originalClassName: ThemePreviewService::class),
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			),
+			page: new AdminPageState(
+				initialState: $this->createMock(originalClassName: IInitialState::class),
+				request: $this->createMock(originalClassName: IRequest::class),
+				playground: $this->createMock(originalClassName: PlaygroundStateService::class)
+			)
 		);
 	}//end admin()
 
@@ -80,9 +86,12 @@ class AdminDelegationTest extends TestCase {
 	 * the "grant this section to a group" flow offer it.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testThePanelIsADelegatedSetting(): void {
-		$this->assertInstanceOf(IDelegatedSettings::class, $this->admin());
+		$this->assertInstanceOf(expected: IDelegatedSettings::class, actual: $this->admin());
 	}//end testThePanelIsADelegatedSetting()
 
 	/**
@@ -90,15 +99,17 @@ class AdminDelegationTest extends TestCase {
 	 * claiming one of its own, and sorts after core's entries.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testThePanelSitsInTheThemingSection(): void {
 		$admin = $this->admin();
 
-		$this->assertSame('theming', $admin->getSection());
-		$this->assertSame(50, $admin->getPriority());
+		$this->assertSame(expected: 'theming', actual: $admin->getSection());
+		$this->assertSame(expected: 50, actual: $admin->getPriority());
 		// Null, not '': a name would render a second heading under the
 		// section's own, which is what an empty string does NOT do.
-		$this->assertNull($admin->getName());
+		$this->assertNull(actual: $admin->getName());
 	}//end testThePanelSitsInTheThemingSection()
 
 	/**
@@ -106,12 +117,14 @@ class AdminDelegationTest extends TestCase {
 	 * here would hand a delegated admin another app's configuration.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
 	 */
 	public function testTheAllowlistCoversThisAppOnly(): void {
 		$authorized = $this->admin()->getAuthorizedAppConfig();
 
-		$this->assertSame([Application::APP_ID], array_keys($authorized));
-		$this->assertNotEmpty($authorized[Application::APP_ID]);
+		$this->assertSame(expected: [Application::APP_ID], actual: array_keys($authorized));
+		$this->assertNotEmpty(actual: $authorized[Application::APP_ID]);
 	}//end testTheAllowlistCoversThisAppOnly()
 
 	/**
@@ -124,11 +137,14 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider writableKeyProvider
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 *
+	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testEveryKeyThePanelWritesIsAuthorized(string $key): void {
 		$this->assertContains(
-			'/' . $key . '/',
-			$this->admin()->getAuthorizedAppConfig()[Application::APP_ID]
+			needle: '/' . $key . '/',
+			haystack: $this->admin()->getAuthorizedAppConfig()[Application::APP_ID]
 		);
 	}//end testEveryKeyThePanelWritesIsAuthorized()
 
@@ -166,11 +182,14 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider jobOwnedKeyProvider
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
+	 *
+	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testJobOwnedKeysAreNotDelegable(string $key): void {
 		$this->assertNotContains(
-			'/' . $key . '/',
-			$this->admin()->getAuthorizedAppConfig()[Application::APP_ID]
+			needle: '/' . $key . '/',
+			haystack: $this->admin()->getAuthorizedAppConfig()[Application::APP_ID]
 		);
 	}//end testJobOwnedKeysAreNotDelegable()
 

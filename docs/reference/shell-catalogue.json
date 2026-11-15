@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:cfc95a95461cc4e7",
+    "generated_from": "sets:dc58f40580d90997",
     "sets": [
         {
             "id": "amsterdam",
@@ -23,7 +23,8 @@
                 "field": "#767676",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/amsterdam.svg",
@@ -81,7 +82,8 @@
                     "field": "#878787",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3f3f3f",
@@ -105,6 +107,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#172d41",
+                    "color-primary-light-text": "#66acff",
                     "color-primary-text": "#111111",
                     "color-success": "#6bf7a8",
                     "color-success-rgb": "107, 247, 168",
@@ -135,7 +138,7 @@
                     "component-button-secondary-action-hover-background-color": "#112131",
                     "component-form-field-label-color": "#dfdfdf",
                     "component-form-fieldset-border-color": "#3b3b3b",
-                    "component-form-select-border-color": "#3b3b3b",
+                    "component-form-select-border-color": "#878787",
                     "component-form-select-focus-border-color": "#21b0f3",
                     "component-heading-1-color": "#dfdfdf",
                     "component-heading-2-color": "#dfdfdf",
@@ -155,7 +158,7 @@
                     "component-table-header-color": "#dfdfdf",
                     "component-table-row-hover-background-color": "#1d1d1d",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7b7b7b",
+                    "component-textbox-border-color": "#878787",
                     "component-textbox-color": "#dfdfdf",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -187,7 +190,8 @@
                 "field": "#0066cc",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Open Sans, sans-serif"
+                "font-family": "Open Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -217,6 +221,7 @@
                 "color-placeholder-dark": "#ffffff",
                 "color-placeholder-light": "#ffffff",
                 "color-primary-light-hover": "#cce0f5",
+                "color-primary-light-text": "#0060bf",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -247,7 +252,8 @@
                     "field": "#3595f4",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Open Sans, sans-serif"
+                    "font-family": "Open Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -271,6 +277,7 @@
                     "color-placeholder-dark": "#141414",
                     "color-placeholder-light": "#141414",
                     "color-primary-light-hover": "#122d4a",
+                    "color-primary-light-text": "#40a0ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -349,10 +356,11 @@
                 "soft": "#e6e6e6",
                 "ground": "#ffffff",
                 "chip": "#ffffff",
-                "field": "#ffffff",
+                "field": "#949494",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+                "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -409,10 +417,11 @@
                     "soft": "#292929",
                     "ground": "#141414",
                     "chip": "#141414",
-                    "field": "#141414",
+                    "field": "#6e6e6e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\""
+                    "font-family": "\"Droid Sans W01\",-apple-system,\"BlinkMacSystemFont\",\"Segoe UI\",\"Roboto\",\"Helvetica Neue\",\"Arial\",\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -436,6 +445,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#292929",
                     "color-primary-light-hover": "#2f3b42",
+                    "color-primary-light-text": "#ade0ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -466,7 +476,7 @@
                     "component-button-secondary-action-hover-background-color": "#20282d",
                     "component-form-field-label-color": "#addbff",
                     "component-form-fieldset-border-color": "#292929",
-                    "component-form-select-border-color": "#292929",
+                    "component-form-select-border-color": "#6e6e6e",
                     "component-form-select-focus-border-color": "#97d4fa",
                     "component-heading-1-color": "#addbff",
                     "component-heading-2-color": "#addbff",
@@ -485,12 +495,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#696969",
+                    "component-textbox-border-color": "#6e6e6e",
                     "component-textbox-color": "#addbff",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#97d4fa",
-                    "component-textbox-hover-border-color": "#141414",
+                    "component-textbox-hover-border-color": "#6e6e6e",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#addbff"
                 }
@@ -514,10 +524,11 @@
                 "soft": "#f2f2f2",
                 "ground": "#ffffff",
                 "chip": "#f2f2f2",
-                "field": "#ced4da",
+                "field": "#8796a4",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Roboto, sans-serif"
+                "font-family": "Roboto, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -547,6 +558,7 @@
                 "color-placeholder-dark": "#e9ecef",
                 "color-placeholder-light": "#f2f2f2",
                 "color-primary-light-hover": "#f6d0d3",
+                "color-primary-light-text": "#bd121e",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -574,10 +586,11 @@
                     "soft": "#1f1f1f",
                     "ground": "#141414",
                     "chip": "#1f1f1f",
-                    "field": "#313940",
+                    "field": "#606d7b",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Roboto, sans-serif"
+                    "font-family": "Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1f242a",
@@ -601,6 +614,7 @@
                     "color-placeholder-dark": "#1f242a",
                     "color-placeholder-light": "#1f1f1f",
                     "color-primary-light-hover": "#471115",
+                    "color-primary-light-text": "#f9c2c6",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -631,7 +645,7 @@
                     "component-button-secondary-action-hover-background-color": "#340c0e",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#313940",
-                    "component-form-select-border-color": "#313940",
+                    "component-form-select-border-color": "#606d7b",
                     "component-form-select-focus-border-color": "#e1313e",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -650,12 +664,12 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1f1f1f",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#687988",
+                    "component-textbox-border-color": "#606d7b",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#e1313e",
-                    "component-textbox-hover-border-color": "#313940",
+                    "component-textbox-hover-border-color": "#606d7b",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#cccccc"
                 }
@@ -682,7 +696,8 @@
                 "field": "#8095BD",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -745,7 +760,8 @@
                     "field": "#495c82",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1a2538",
@@ -769,6 +785,7 @@
                     "color-placeholder-dark": "#1a2538",
                     "color-placeholder-light": "#131c2a",
                     "color-primary-light-hover": "#2c3957",
+                    "color-primary-light-text": "#dbe5f6",
                     "color-primary-text": "#111111",
                     "color-success": "#7cf7db",
                     "color-success-rgb": "124, 247, 219",
@@ -799,7 +816,7 @@
                     "component-button-secondary-action-hover-background-color": "#131c2a",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#1a2538",
-                    "component-form-select-border-color": "#1a2538",
+                    "component-form-select-border-color": "#495c82",
                     "component-form-select-focus-border-color": "#495c82",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -819,7 +836,7 @@
                     "component-table-header-color": "#cccccc",
                     "component-table-row-hover-background-color": "#0f1723",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d7db4",
+                    "component-textbox-border-color": "#8c9dbe",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -851,7 +868,8 @@
                 "field": "#21468B",
                 "radius": "6px",
                 "radius-lg": "10px",
-                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                "menu": "#FFFFFF"
             },
             "logo": {
                 "file": null,
@@ -905,7 +923,8 @@
                     "field": "#6f93d6",
                     "radius": "6px",
                     "radius-lg": "10px",
-                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+                    "font-family": "'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -930,6 +949,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#1a2538",
+                    "color-primary-light-text": "#7499de",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -960,7 +980,7 @@
                     "component-button-secondary-action-hover-background-color": "#131c2a",
                     "component-form-field-label-color": "#7499de",
                     "component-form-fieldset-border-color": "#2c3957",
-                    "component-form-select-border-color": "#2c3957",
+                    "component-form-select-border-color": "#6f93d6",
                     "component-form-select-focus-border-color": "#39adf5",
                     "component-heading-1-color": "#7499de",
                     "component-heading-2-color": "#7499de",
@@ -980,7 +1000,7 @@
                     "component-table-header-color": "#7499de",
                     "component-table-row-hover-background-color": "#131c2a",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5871ab",
+                    "component-textbox-border-color": "#6f93d6",
                     "component-textbox-color": "#7499de",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -1016,7 +1036,8 @@
                 "field": "#74777c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Marianne, Inter, sans-serif"
+                "font-family": "Marianne, Inter, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1069,7 +1090,8 @@
                     "field": "#828589",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Marianne, Inter, sans-serif"
+                    "font-family": "Marianne, Inter, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-action-text": "#ffffff",
@@ -1094,6 +1116,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#102643",
+                    "color-primary-light-text": "#6096e5",
                     "color-primary-text": "#111111",
                     "color-success": "#aae17d",
                     "color-success-rgb": "170, 225, 125",
@@ -1123,7 +1146,7 @@
                     "component-button-secondary-action-hover-background-color": "#0c1c32",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#3f4247",
-                    "component-form-select-border-color": "#3f4247",
+                    "component-form-select-border-color": "#828589",
                     "component-form-select-focus-border-color": "#3180e4",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -1142,7 +1165,7 @@
                     "component-table-header-color": "#9a9da2",
                     "component-table-row-hover-background-color": "#1e2022",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7b818a",
+                    "component-textbox-border-color": "#828589",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -1174,7 +1197,8 @@
                 "field": "#17252A",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", sans-serif"
+                "font-family": "\"Lato\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1204,6 +1228,7 @@
                 "color-placeholder-dark": "#dddddd",
                 "color-placeholder-light": "#ffffff",
                 "color-primary-light-hover": "#cdeefd",
+                "color-primary-light-text": "#026fa1",
                 "color-primary-text": "#000000",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -1233,7 +1258,8 @@
                     "field": "#c3d5dc",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", sans-serif"
+                    "font-family": "\"Lato\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#313131",
@@ -1257,6 +1283,7 @@
                     "color-placeholder-dark": "#313131",
                     "color-placeholder-light": "#141414",
                     "color-primary-light-hover": "#07374d",
+                    "color-primary-light-text": "#5ecbfd",
                     "color-primary-text": "#000000",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -1287,7 +1314,7 @@
                     "component-button-secondary-action-hover-background-color": "#052839",
                     "component-form-field-label-color": "#dedede",
                     "component-form-fieldset-border-color": "#313131",
-                    "component-form-select-border-color": "#313131",
+                    "component-form-select-border-color": "#c3d5dc",
                     "component-form-select-focus-border-color": "#16acf0",
                     "component-heading-1-color": "#dedede",
                     "component-heading-2-color": "#dedede",
@@ -1306,7 +1333,7 @@
                     "component-table-header-color": "#dedede",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#717171",
+                    "component-textbox-border-color": "#c3d5dc",
                     "component-textbox-color": "#dedede",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -1338,7 +1365,8 @@
                 "field": "#7a7a7a",
                 "radius": "3px",
                 "radius-lg": "3px",
-                "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+                "font-family": "\"TheSans\", \"Fira Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/denhaag.svg",
@@ -1370,6 +1398,7 @@
                 "color-placeholder-dark": "#d1d1d1",
                 "color-placeholder-light": "#f2f2f2",
                 "color-primary-light-hover": "#d5e7d5",
+                "color-primary-light-text": "#1e7338",
                 "color-primary-text": "#ffffff",
                 "color-success": "#1e6c35",
                 "color-success-rgb": "30, 108, 53",
@@ -1396,7 +1425,8 @@
                     "field": "#848484",
                     "radius": "3px",
                     "radius-lg": "3px",
-                    "font-family": "\"TheSans\", \"Fira Sans\", sans-serif"
+                    "font-family": "\"TheSans\", \"Fira Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3b3b3b",
@@ -1420,6 +1450,7 @@
                     "color-placeholder-dark": "#3b3b3b",
                     "color-placeholder-light": "#1f1f1f",
                     "color-primary-light-hover": "#243c24",
+                    "color-primary-light-text": "#8ce1a6",
                     "color-primary-text": "#111111",
                     "color-success": "#89d9a0",
                     "color-success-rgb": "137, 217, 160",
@@ -1450,7 +1481,7 @@
                     "component-button-secondary-action-hover-background-color": "#243c24",
                     "component-form-field-label-color": "#d1d1d1",
                     "component-form-fieldset-border-color": "#3b3b3b",
-                    "component-form-select-border-color": "#3b3b3b",
+                    "component-form-select-border-color": "#848484",
                     "component-form-select-focus-border-color": "#73b7ee",
                     "component-heading-1-color": "#d1d1d1",
                     "component-heading-2-color": "#d1d1d1",
@@ -1470,7 +1501,7 @@
                     "component-table-header-color": "#d1d1d1",
                     "component-table-row-hover-background-color": "#201c16",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7b7b7b",
+                    "component-textbox-border-color": "#848484",
                     "component-textbox-color": "#d1d1d1",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -1502,7 +1533,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", Arial, sans-serif"
+                "font-family": "\"Lato\", Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/dinkelland.svg",
@@ -1562,7 +1594,8 @@
                     "field": "#878787",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", Arial, sans-serif"
+                    "font-family": "\"Lato\", Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2b2b2b",
@@ -1586,6 +1619,7 @@
                     "color-placeholder-dark": "#2b2b2b",
                     "color-placeholder-light": "#171c23",
                     "color-primary-light-hover": "#0c1b24",
+                    "color-primary-light-text": "#46b2ff",
                     "color-primary-text": "#111111",
                     "color-success": "#58cf73",
                     "color-success-rgb": "88, 207, 115",
@@ -1664,10 +1698,11 @@
                 "soft": "#1e7da7",
                 "ground": "#ffffff",
                 "chip": "#fafafa",
-                "field": "#e0e0e0",
+                "field": "#939393",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/drechterland.svg",
@@ -1697,6 +1732,7 @@
                 "color-placeholder-dark": "#e6e6e6",
                 "color-placeholder-light": "#f0f0f0",
                 "color-primary-light-hover": "#d1e2e8",
+                "color-primary-light-text": "#1a6986",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -1724,10 +1760,11 @@
                     "soft": "#57b1d8",
                     "ground": "#141414",
                     "chip": "#191919",
-                    "field": "#2e2e2e",
+                    "field": "#6f6f6f",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -1751,6 +1788,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#212121",
                     "color-primary-light-hover": "#233840",
+                    "color-primary-light-text": "#79c8e5",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -1781,7 +1819,7 @@
                     "component-button-secondary-action-hover-background-color": "#18282e",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#2e2e2e",
-                    "component-form-select-border-color": "#2e2e2e",
+                    "component-form-select-border-color": "#6f6f6f",
                     "component-form-select-focus-border-color": "#6dbedc",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -1800,12 +1838,12 @@
                     "component-table-header-color": "#d9dddd",
                     "component-table-row-hover-background-color": "#191919",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#6e6e6e",
+                    "component-textbox-border-color": "#6f6f6f",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#6dbedc",
-                    "component-textbox-hover-border-color": "#2e2e2e",
+                    "component-textbox-hover-border-color": "#6f6f6f",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -1829,10 +1867,11 @@
                 "soft": "#f9f0ec",
                 "ground": "#ffffff",
                 "chip": "#ffffff",
-                "field": "#a6abb0",
+                "field": "#8f959c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -1889,10 +1928,11 @@
                     "soft": "#2d1910",
                     "ground": "#141414",
                     "chip": "#141414",
-                    "field": "#565b60",
+                    "field": "#676d73",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -1916,6 +1956,7 @@
                     "color-placeholder-dark": "#141414",
                     "color-placeholder-light": "#141414",
                     "color-primary-light-hover": "#223140",
+                    "color-primary-light-text": "#70aee2",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -1946,7 +1987,7 @@
                     "component-button-secondary-action-hover-background-color": "#18252e",
                     "component-form-field-label-color": "#9eceff",
                     "component-form-fieldset-border-color": "#4c9dd9",
-                    "component-form-select-border-color": "#4c9dd9",
+                    "component-form-select-border-color": "#676d73",
                     "component-form-select-focus-border-color": "#6ba7da",
                     "component-heading-1-color": "#9eceff",
                     "component-heading-2-color": "#9eceff",
@@ -1965,12 +2006,12 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#4c9dd9",
+                    "component-textbox-border-color": "#676d73",
                     "component-textbox-color": "#9eceff",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#6ba7da",
-                    "component-textbox-hover-border-color": "#565b60",
+                    "component-textbox-hover-border-color": "#676d73",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#9eceff"
                 }
@@ -1997,7 +2038,8 @@
                 "field": "#2b2b2b",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+                "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2057,7 +2099,8 @@
                     "field": "#c6c6c6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif"
+                    "font-family": "RijksoverheidSans, Helvetica, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2081,6 +2124,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#292929",
                     "color-primary-light-hover": "#1c3147",
+                    "color-primary-light-text": "#5cabff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -2111,7 +2155,7 @@
                     "component-button-secondary-action-hover-background-color": "#142131",
                     "component-form-field-label-color": "#d4d4d4",
                     "component-form-fieldset-border-color": "#292929",
-                    "component-form-select-border-color": "#292929",
+                    "component-form-select-border-color": "#c6c6c6",
                     "component-form-select-focus-border-color": "#56a4f6",
                     "component-heading-1-color": "#d4d4d4",
                     "component-heading-2-color": "#d4d4d4",
@@ -2130,7 +2174,7 @@
                     "component-table-header-color": "#d4d4d4",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#696969",
+                    "component-textbox-border-color": "#c6c6c6",
                     "component-textbox-color": "#d4d4d4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -2159,10 +2203,11 @@
                 "soft": "#0076d1",
                 "ground": "#ffffff",
                 "chip": "#f0f0f0",
-                "field": "#e0e0e0",
+                "field": "#939393",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2219,10 +2264,11 @@
                     "soft": "#319ff4",
                     "ground": "#141414",
                     "chip": "#212121",
-                    "field": "#2e2e2e",
+                    "field": "#6f6f6f",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol"
+                    "font-family": "Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Source Sans Pro,Helvetica Neue,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2246,6 +2292,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#212121",
                     "color-primary-light-hover": "#1a3047",
+                    "color-primary-light-text": "#52a7ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -2276,7 +2323,7 @@
                     "component-button-secondary-action-hover-background-color": "#122132",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#2e2e2e",
-                    "component-form-select-border-color": "#2e2e2e",
+                    "component-form-select-border-color": "#6f6f6f",
                     "component-form-select-focus-border-color": "#4ea0f6",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -2295,12 +2342,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#212121",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#6e6e6e",
+                    "component-textbox-border-color": "#6f6f6f",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#4ea0f6",
-                    "component-textbox-hover-border-color": "#2e2e2e",
+                    "component-textbox-hover-border-color": "#6f6f6f",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -2327,7 +2374,8 @@
                 "field": "#7C7C7C",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "IBM Plex Sans, sans-serif"
+                "font-family": "IBM Plex Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -2357,6 +2405,7 @@
                 "color-placeholder-dark": "#dfdfdf",
                 "color-placeholder-light": "#ecf1f7",
                 "color-primary-light-hover": "#f9cfd1",
+                "color-primary-light-text": "#c00b15",
                 "color-primary-text": "#FFFFFF",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -2386,7 +2435,8 @@
                     "field": "#828282",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "IBM Plex Sans, sans-serif"
+                    "font-family": "IBM Plex Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -2410,6 +2460,7 @@
                     "color-placeholder-dark": "#2f2f2f",
                     "color-placeholder-light": "#141f2b",
                     "color-primary-light-hover": "#490d10",
+                    "color-primary-light-text": "#fbc0c3",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -2440,7 +2491,7 @@
                     "component-button-secondary-action-hover-background-color": "#360a0c",
                     "component-form-field-label-color": "#e4e4e4",
                     "component-form-fieldset-border-color": "#7a7a7a",
-                    "component-form-select-border-color": "#7a7a7a",
+                    "component-form-select-border-color": "#828282",
                     "component-form-select-focus-border-color": "#e7252f",
                     "component-heading-1-color": "#e4e4e4",
                     "component-heading-2-color": "#e4e4e4",
@@ -2459,7 +2510,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#121b24",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7a7a7a",
+                    "component-textbox-border-color": "#828282",
                     "component-textbox-color": "#e4e4e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -2491,7 +2542,8 @@
                 "field": "#757575",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/epe.svg",
@@ -2551,7 +2603,8 @@
                     "field": "#888888",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -2575,6 +2628,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#1d1d1d",
                     "color-primary-light-hover": "#1d3346",
+                    "color-primary-light-text": "#61b5ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -2605,7 +2659,7 @@
                     "component-button-secondary-action-hover-background-color": "#162431",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#3b3b3b",
-                    "component-form-select-border-color": "#3b3b3b",
+                    "component-form-select-border-color": "#888888",
                     "component-form-select-focus-border-color": "#5aadf6",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -2624,7 +2678,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1b1b1b",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7b7b7b",
+                    "component-textbox-border-color": "#888888",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -2653,10 +2707,11 @@
                 "soft": "#EDEFF2",
                 "ground": "#F5F6F8",
                 "chip": "#F0F1F3",
-                "field": "#8A929E",
+                "field": "#828A95",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/esdoornveen.svg",
@@ -2705,6 +2760,7 @@
                 "color-warning-rgb": "122, 79, 0",
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
+                "component-dashboard-card-header-border-style": "none",
                 "component-navigation-active-background-color": "#C2255C",
                 "component-navigation-active-color": "#9C1C49",
                 "component-navigation-badge-background-color": "#C2255C",
@@ -2758,10 +2814,11 @@
                     "soft": "#1d2026",
                     "ground": "#171a20",
                     "chip": "#1d1f23",
-                    "field": "#656c78",
+                    "field": "#6d747e",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#966bc9",
@@ -2790,6 +2847,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#281b37",
+                    "color-primary-light-text": "#decff0",
                     "color-primary-text": "#111111",
                     "color-success": "#8ad896",
                     "color-success-rgb": "138, 216, 150",
@@ -2822,7 +2880,7 @@
                     "component-content-surface-background-color": "#171a20",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#24272d",
-                    "component-form-select-border-color": "#24272d",
+                    "component-form-select-border-color": "#6d747e",
                     "component-form-select-focus-border-color": "#966bc9",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -2854,12 +2912,12 @@
                     "component-table-header-color": "#e2e3e4",
                     "component-table-row-hover-background-color": "#1d1f23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d6474",
+                    "component-textbox-border-color": "#6d747e",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#966bc9",
-                    "component-textbox-hover-border-color": "#656c78",
+                    "component-textbox-hover-border-color": "#6d747e",
                     "component-textbox-invalid-border-color": "#f54949",
                     "component-unordered-list-color": "#e2e3e4",
                     "hero-action-background-color": "#966bc9",
@@ -2894,7 +2952,8 @@
                 "field": "#8F8173",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-basisschool.svg",
@@ -2927,6 +2986,7 @@
                 "color-placeholder-dark": "#D8CCBE",
                 "color-placeholder-light": "#F5F0EA",
                 "color-primary-light-hover": "#F9C9A8",
+                "color-primary-light-text": "#a23511",
                 "color-primary-text": "#ffffff",
                 "color-success": "#287430",
                 "color-success-rgb": "40, 116, 48",
@@ -2954,7 +3014,8 @@
                     "field": "#8b7e72",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a2f21",
@@ -2978,6 +3039,7 @@
                     "color-placeholder-dark": "#4e4132",
                     "color-placeholder-light": "#2c2217",
                     "color-primary-light-hover": "#6a330d",
+                    "color-primary-light-text": "#fadbd0",
                     "color-primary-text": "#111111",
                     "color-success": "#83cf8b",
                     "color-success-rgb": "131, 207, 139",
@@ -3008,7 +3070,7 @@
                     "component-button-secondary-action-hover-background-color": "#3b1c03",
                     "component-form-field-label-color": "#dfd9d4",
                     "component-form-fieldset-border-color": "#4e4132",
-                    "component-form-select-border-color": "#4e4132",
+                    "component-form-select-border-color": "#8b7e72",
                     "component-form-select-focus-border-color": "#54b0eb",
                     "component-heading-1-color": "#dfd9d4",
                     "component-heading-2-color": "#dfd9d4",
@@ -3028,7 +3090,7 @@
                     "component-table-header-color": "#dfd9d4",
                     "component-table-row-hover-background-color": "#261c0f",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#9c8264",
+                    "component-textbox-border-color": "#8b7e72",
                     "component-textbox-color": "#dfd9d4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3060,7 +3122,8 @@
                 "field": "#8E858B",
                 "radius": "4px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-college.svg",
@@ -3120,7 +3183,8 @@
                     "field": "#7b7378",
                     "radius": "4px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f292d",
@@ -3144,6 +3208,7 @@
                     "color-placeholder-dark": "#423b40",
                     "color-placeholder-light": "#221e22",
                     "color-primary-light-hover": "#5a274e",
+                    "color-primary-light-text": "#e085d4",
                     "color-primary-text": "#111111",
                     "color-success": "#83cf8b",
                     "color-success-rgb": "131, 207, 139",
@@ -3174,7 +3239,7 @@
                     "component-button-secondary-action-hover-background-color": "#2f1329",
                     "component-form-field-label-color": "#ded9dc",
                     "component-form-fieldset-border-color": "#423b40",
-                    "component-form-select-border-color": "#423b40",
+                    "component-form-select-border-color": "#7b7378",
                     "component-form-select-focus-border-color": "#54b0eb",
                     "component-heading-1-color": "#ded9dc",
                     "component-heading-2-color": "#ded9dc",
@@ -3194,7 +3259,7 @@
                     "component-table-header-color": "#ded9dc",
                     "component-table-row-hover-background-color": "#1c181c",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#857781",
+                    "component-textbox-border-color": "#7b7378",
                     "component-textbox-color": "#ded9dc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3226,7 +3291,8 @@
                 "field": "#8A8580",
                 "radius": "10px",
                 "radius-lg": "14px",
-                "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+                "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-gemeente.svg",
@@ -3285,7 +3351,8 @@
                     "field": "#7f7b76",
                     "radius": "10px",
                     "radius-lg": "14px",
-                    "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif"
+                    "font-family": "'Source Sans 3', 'Source Sans Pro', Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#242c30",
@@ -3309,6 +3376,7 @@
                     "color-placeholder-dark": "#3f3a32",
                     "color-placeholder-light": "#1c2226",
                     "color-primary-light-hover": "#2a4855",
+                    "color-primary-light-text": "#94d2ed",
                     "color-primary-text": "#111111",
                     "color-success": "#92dfb7",
                     "color-success-rgb": "146, 223, 183",
@@ -3339,7 +3407,7 @@
                     "component-button-secondary-action-hover-background-color": "#162830",
                     "component-form-field-label-color": "#e7e6e4",
                     "component-form-fieldset-border-color": "#3f3a32",
-                    "component-form-select-border-color": "#3f3a32",
+                    "component-form-select-border-color": "#7f7b76",
                     "component-form-select-focus-border-color": "#699ada",
                     "component-heading-1-color": "#e7e6e4",
                     "component-heading-2-color": "#e7e6e4",
@@ -3359,7 +3427,7 @@
                     "component-table-header-color": "#e7e6e4",
                     "component-table-row-hover-background-color": "#171d20",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#867b6a",
+                    "component-textbox-border-color": "#7f7b76",
                     "component-textbox-color": "#e7e6e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3391,7 +3459,8 @@
                 "field": "#84909A",
                 "radius": "2px",
                 "radius-lg": "4px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-opleider.svg",
@@ -3450,7 +3519,8 @@
                     "field": "#68737d",
                     "radius": "2px",
                     "radius-lg": "4px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#262d30",
@@ -3474,6 +3544,7 @@
                     "color-placeholder-dark": "#374043",
                     "color-placeholder-light": "#1b2124",
                     "color-primary-light-hover": "#335961",
+                    "color-primary-light-text": "#a3e2f1",
                     "color-primary-text": "#111111",
                     "color-success": "#83cf8b",
                     "color-success-rgb": "131, 207, 139",
@@ -3504,7 +3575,7 @@
                     "component-button-secondary-action-hover-background-color": "#192c2f",
                     "component-form-field-label-color": "#d4dce0",
                     "component-form-fieldset-border-color": "#374043",
-                    "component-form-select-border-color": "#374043",
+                    "component-form-select-border-color": "#68737d",
                     "component-form-select-focus-border-color": "#54b0eb",
                     "component-heading-1-color": "#d4dce0",
                     "component-heading-2-color": "#d4dce0",
@@ -3524,7 +3595,7 @@
                     "component-table-header-color": "#d4dce0",
                     "component-table-row-hover-background-color": "#161d1d",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#708389",
+                    "component-textbox-border-color": "#68737d",
                     "component-textbox-color": "#d4dce0",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3556,7 +3627,8 @@
                 "field": "#8790A3",
                 "radius": "6px",
                 "radius-lg": "12px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/example-voortgezet.svg",
@@ -3616,7 +3688,8 @@
                     "field": "#60697a",
                     "radius": "6px",
                     "radius-lg": "12px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1e2531",
@@ -3640,6 +3713,7 @@
                     "color-placeholder-dark": "#2d3543",
                     "color-placeholder-light": "#161b25",
                     "color-primary-light-hover": "#1e3057",
+                    "color-primary-light-text": "#cbd6f0",
                     "color-primary-text": "#111111",
                     "color-success": "#83cf8b",
                     "color-success-rgb": "131, 207, 139",
@@ -3670,7 +3744,7 @@
                     "component-button-secondary-action-hover-background-color": "#0c1932",
                     "component-form-field-label-color": "#d0d4dc",
                     "component-form-fieldset-border-color": "#2d3543",
-                    "component-form-select-border-color": "#2d3543",
+                    "component-form-select-border-color": "#60697a",
                     "component-form-select-focus-border-color": "#54b0eb",
                     "component-heading-1-color": "#d0d4dc",
                     "component-heading-2-color": "#d0d4dc",
@@ -3690,7 +3764,7 @@
                     "component-table-header-color": "#d0d4dc",
                     "component-table-row-hover-background-color": "#13171f",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#60718f",
+                    "component-textbox-border-color": "#60697a",
                     "component-textbox-color": "#d0d4dc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3722,7 +3796,8 @@
                 "field": "#75758a",
                 "radius": "4px",
                 "radius-lg": "4px",
-                "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+                "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/frankendesk.svg",
@@ -3777,7 +3852,8 @@
                     "field": "#767689",
                     "radius": "4px",
                     "radius-lg": "4px",
-                    "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif"
+                    "font-family": "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#353747",
@@ -3801,6 +3877,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#141c3a",
+                    "color-primary-light-text": "#d0cfec",
                     "color-primary-text": "#111111",
                     "color-success": "#aae17d",
                     "color-success-rgb": "170, 225, 125",
@@ -3830,7 +3907,7 @@
                     "component-button-secondary-action-hover-background-color": "#0f162c",
                     "component-form-field-label-color": "#dcdce4",
                     "component-form-fieldset-border-color": "#353747",
-                    "component-form-select-border-color": "#353747",
+                    "component-form-select-border-color": "#767689",
                     "component-form-select-focus-border-color": "#3180e4",
                     "component-heading-1-color": "#dcdce4",
                     "component-heading-2-color": "#dcdce4",
@@ -3849,7 +3926,7 @@
                     "component-table-header-color": "#dcdce4",
                     "component-table-row-hover-background-color": "#1d1d23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#6b7090",
+                    "component-textbox-border-color": "#767689",
                     "component-textbox-color": "#dcdce4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -3884,7 +3961,8 @@
                 "field": "#696969",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -3944,7 +4022,8 @@
                     "field": "#929292",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -3968,6 +4047,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#283340",
+                    "color-primary-light-text": "#8cb9ea",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -3998,7 +4078,7 @@
                     "component-button-secondary-action-hover-background-color": "#1c232c",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#535353",
-                    "component-form-select-border-color": "#535353",
+                    "component-form-select-border-color": "#929292",
                     "component-form-select-focus-border-color": "#81afe2",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -4017,7 +4097,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#252728",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#939393",
+                    "component-textbox-border-color": "#929292",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -4049,7 +4129,8 @@
                 "field": "#626266",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+                "font-family": "Sofia Pro, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4109,7 +4190,8 @@
                     "field": "#959598",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Sofia Pro, Arial, Helvetica, sans-serif"
+                    "font-family": "Sofia Pro, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1c262d",
@@ -4133,6 +4215,7 @@
                     "color-placeholder-dark": "#1c262d",
                     "color-placeholder-light": "#1e1e1e",
                     "color-primary-light-hover": "#1d2e43",
+                    "color-primary-light-text": "#5c9feb",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -4163,7 +4246,7 @@
                     "component-button-secondary-action-hover-background-color": "#15202f",
                     "component-form-field-label-color": "#ccccd1",
                     "component-form-fieldset-border-color": "#bfbfc5",
-                    "component-form-select-border-color": "#bfbfc5",
+                    "component-form-select-border-color": "#959598",
                     "component-form-select-focus-border-color": "#5999e2",
                     "component-heading-1-color": "#ccccd1",
                     "component-heading-2-color": "#ccccd1",
@@ -4182,7 +4265,7 @@
                     "component-table-header-color": "#ccccd1",
                     "component-table-row-hover-background-color": "#1e1e1e",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#bfbfc5",
+                    "component-textbox-border-color": "#959598",
                     "component-textbox-color": "#ccccd1",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -4214,7 +4297,8 @@
                 "field": "#07828d",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Calibri,Verdana,sans-serif"
+                "font-family": "Calibri,Verdana,sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4244,6 +4328,7 @@
                 "color-placeholder-dark": "#f2f2f2",
                 "color-placeholder-light": "#f2f2f2",
                 "color-primary-light-hover": "#cde8e8",
+                "color-primary-light-text": "#06706e",
                 "color-primary-text": "#000000",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -4274,7 +4359,8 @@
                     "field": "#69e5f0",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Calibri,Verdana,sans-serif"
+                    "font-family": "Calibri,Verdana,sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1f1f1f",
@@ -4298,6 +4384,7 @@
                     "color-placeholder-dark": "#1f1f1f",
                     "color-placeholder-light": "#1f1f1f",
                     "color-primary-light-hover": "#224444",
+                    "color-primary-light-text": "#8ff9f7",
                     "color-primary-text": "#000000",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -4328,7 +4415,7 @@
                     "component-button-secondary-action-hover-background-color": "#173030",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#ebebeb",
-                    "component-form-select-border-color": "#ebebeb",
+                    "component-form-select-border-color": "#69e5f0",
                     "component-form-select-focus-border-color": "#68f1ef",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -4347,7 +4434,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1f1f1f",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#ebebeb",
+                    "component-textbox-border-color": "#69e5f0",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -4379,7 +4466,8 @@
                 "field": "#7A8AA0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4409,6 +4497,7 @@
                 "color-placeholder-dark": "#e4e7ec",
                 "color-placeholder-light": "#f2f4f6",
                 "color-primary-light-hover": "#d8eed4",
+                "color-primary-light-text": "#28771d",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -4438,7 +4527,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#22262e",
@@ -4462,6 +4552,7 @@
                     "color-placeholder-dark": "#22262e",
                     "color-placeholder-light": "#191e22",
                     "color-primary-light-hover": "#213f1c",
+                    "color-primary-light-text": "#93e288",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -4543,7 +4634,8 @@
                 "field": "#000000",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "'Fira Sans', sans-serif"
+                "font-family": "'Fira Sans', sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4594,7 +4686,8 @@
                     "field": "#ffffff",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "'Fira Sans', sans-serif"
+                    "font-family": "'Fira Sans', sans-serif",
+                    "menu": "#000000"
                 },
                 "vocabulary": {
                     "color-background-darker": "#4d4d4d",
@@ -4640,7 +4733,8 @@
                 "field": "#515148",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Clear Sans\", sans-serif"
+                "font-family": "\"Clear Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/hoorn.svg",
@@ -4700,7 +4794,8 @@
                     "field": "#afafa6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Clear Sans\", sans-serif"
+                    "font-family": "\"Clear Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#262829",
@@ -4724,6 +4819,7 @@
                     "color-placeholder-dark": "#262829",
                     "color-placeholder-light": "#262829",
                     "color-primary-light-hover": "#293441",
+                    "color-primary-light-text": "#93c0f6",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -4754,7 +4850,7 @@
                     "component-button-secondary-action-hover-background-color": "#1d252e",
                     "component-form-field-label-color": "#bfc5ca",
                     "component-form-fieldset-border-color": "#3b3b3b",
-                    "component-form-select-border-color": "#3b3b3b",
+                    "component-form-select-border-color": "#afafa6",
                     "component-form-select-focus-border-color": "#85b5ee",
                     "component-heading-1-color": "#bfc5ca",
                     "component-heading-2-color": "#bfc5ca",
@@ -4773,7 +4869,7 @@
                     "component-table-header-color": "#9c9fa0",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7b7b7b",
+                    "component-textbox-border-color": "#afafa6",
                     "component-textbox-color": "#bfc5ca",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -4805,7 +4901,8 @@
                 "field": "#302c27",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -4865,7 +4962,8 @@
                     "field": "#cbc7c1",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -4889,6 +4987,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#292929",
                     "color-primary-light-hover": "#1d3043",
+                    "color-primary-light-text": "#5ba7ed",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -4970,7 +5069,8 @@
                 "field": "#75758a",
                 "radius": "4px",
                 "radius-lg": "4px",
-                "font-family": "Marianne, Inter, sans-serif"
+                "font-family": "Marianne, Inter, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5019,7 +5119,8 @@
                     "field": "#767689",
                     "radius": "4px",
                     "radius-lg": "4px",
-                    "font-family": "Marianne, Inter, sans-serif"
+                    "font-family": "Marianne, Inter, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#353747",
@@ -5043,6 +5144,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#141c3a",
+                    "color-primary-light-text": "#d0cfec",
                     "color-primary-text": "#111111",
                     "color-success": "#aae17d",
                     "color-success-rgb": "170, 225, 125",
@@ -5072,7 +5174,7 @@
                     "component-button-secondary-action-hover-background-color": "#0f162c",
                     "component-form-field-label-color": "#dcdce4",
                     "component-form-fieldset-border-color": "#353747",
-                    "component-form-select-border-color": "#353747",
+                    "component-form-select-border-color": "#767689",
                     "component-form-select-focus-border-color": "#3180e4",
                     "component-heading-1-color": "#dcdce4",
                     "component-heading-2-color": "#dcdce4",
@@ -5091,7 +5193,7 @@
                     "component-table-header-color": "#dcdce4",
                     "component-table-row-hover-background-color": "#1d1d23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#6b7090",
+                    "component-textbox-border-color": "#767689",
                     "component-textbox-color": "#dcdce4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -5123,7 +5225,8 @@
                 "field": "#5A6268",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Open Sans\", sans-serif"
+                "font-family": "\"Open Sans\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/leiden.svg",
@@ -5153,6 +5256,7 @@
                 "color-placeholder-dark": "#dfdfdf",
                 "color-placeholder-light": "#ecf1f7",
                 "color-primary-light-hover": "#f7d3cf",
+                "color-primary-light-text": "#bc1f0e",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -5183,7 +5287,8 @@
                     "field": "#939aa0",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Open Sans\", sans-serif"
+                    "font-family": "\"Open Sans\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -5207,6 +5312,7 @@
                     "color-placeholder-dark": "#2f2f2f",
                     "color-placeholder-light": "#141f2b",
                     "color-primary-light-hover": "#481510",
+                    "color-primary-light-text": "#f25b4b",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -5237,7 +5343,7 @@
                     "component-button-secondary-action-hover-background-color": "#35100b",
                     "component-form-field-label-color": "#deeaf2",
                     "component-form-fieldset-border-color": "#757b7f",
-                    "component-form-select-border-color": "#757b7f",
+                    "component-form-select-border-color": "#939aa0",
                     "component-form-select-focus-border-color": "#e5422f",
                     "component-heading-1-color": "#deeaf2",
                     "component-heading-2-color": "#deeaf2",
@@ -5256,7 +5362,7 @@
                     "component-table-header-color": "#979fa5",
                     "component-table-row-hover-background-color": "#121b24",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#757b7f",
+                    "component-textbox-border-color": "#939aa0",
                     "component-textbox-color": "#deeaf2",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -5285,10 +5391,11 @@
                 "soft": "#6b69ce",
                 "ground": "#ffffff",
                 "chip": "#ffffff",
-                "field": "#dddde4",
+                "field": "#9393a9",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Open Sans, sans-serif"
+                "font-family": "Open Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5345,10 +5452,11 @@
                     "soft": "#3a3897",
                     "ground": "#141414",
                     "chip": "#141414",
-                    "field": "#292933",
+                    "field": "#5b5b70",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Open Sans, sans-serif"
+                    "font-family": "Open Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -5372,6 +5480,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#292929",
                     "color-primary-light-hover": "#302f3d",
+                    "color-primary-light-text": "#aeabe4",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -5402,7 +5511,7 @@
                     "component-button-secondary-action-hover-background-color": "#22202a",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#292933",
-                    "component-form-select-border-color": "#292933",
+                    "component-form-select-border-color": "#5b5b70",
                     "component-form-select-focus-border-color": "#a09ddb",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -5421,12 +5530,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#62627a",
+                    "component-textbox-border-color": "#9c9caf",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#a09ddb",
-                    "component-textbox-hover-border-color": "#292933",
+                    "component-textbox-hover-border-color": "#5b5b70",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -5453,7 +5562,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "IBM Plex Sans, sans-serif"
+                "font-family": "IBM Plex Sans, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5512,7 +5622,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "IBM Plex Sans, sans-serif"
+                    "font-family": "IBM Plex Sans, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -5536,6 +5647,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#141f2b",
                     "color-primary-light-hover": "#1d3041",
+                    "color-primary-light-text": "#5da1df",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -5566,7 +5678,7 @@
                     "component-button-secondary-action-hover-background-color": "#15222e",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#8c8c8c",
-                    "component-form-select-border-color": "#8c8c8c",
+                    "component-form-select-border-color": "#959595",
                     "component-form-select-focus-border-color": "#5a9bd7",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -5585,7 +5697,7 @@
                     "component-table-header-color": "#b1b1b1",
                     "component-table-row-hover-background-color": "#121b24",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#8c8c8c",
+                    "component-textbox-border-color": "#959595",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -5617,7 +5729,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -5688,7 +5801,8 @@
                 "field": "#7a8aa0",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/nijmegen.svg",
@@ -5718,6 +5832,7 @@
                 "color-placeholder-dark": "#ebeef1",
                 "color-placeholder-light": "#efefef",
                 "color-primary-light-hover": "#ddd0ff",
+                "color-primary-light-text": "#116957",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -5748,7 +5863,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif"
+                    "font-family": "Fira Sans, Tahoma, Verdana, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1d2328",
@@ -5772,6 +5888,7 @@
                     "color-placeholder-dark": "#1d2328",
                     "color-placeholder-light": "#222222",
                     "color-primary-light-hover": "#18044c",
+                    "color-primary-light-text": "#96eedc",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -5853,7 +5970,8 @@
                 "field": "#003790",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+                "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\"",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/noaberkracht.svg",
@@ -5884,6 +6002,7 @@
                 "color-placeholder-dark": "#f5f5f5",
                 "color-placeholder-light": "#f5f5f5",
                 "color-primary-light-hover": "#fcf1cc",
+                "color-primary-light-text": "#896a00",
                 "color-primary-text": "#ffffff",
                 "color-success": "#28a745",
                 "color-success-rgb": "40, 167, 69",
@@ -5914,7 +6033,8 @@
                     "field": "#659df7",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\""
+                    "font-family": "greycliff-cf,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",Segoe UI Symbol,\"Noto Color Emoji\"",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#1d1d1d",
@@ -5939,6 +6059,7 @@
                     "color-placeholder-dark": "#1d1d1d",
                     "color-placeholder-light": "#1d1d1d",
                     "color-primary-light-hover": "#4e3e09",
+                    "color-primary-light-text": "#ffe076",
                     "color-primary-text": "#111111",
                     "color-success": "#58cf73",
                     "color-success-rgb": "88, 207, 115",
@@ -6017,10 +6138,11 @@
                 "soft": "#7fdd06",
                 "ground": "#ffffff",
                 "chip": "#ffffff",
-                "field": "#b3b3b3",
+                "field": "#949494",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Roboto\", \"Arial\", sans-serif"
+                "font-family": "\"Roboto\", \"Arial\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6050,6 +6172,7 @@
                 "color-placeholder-dark": "#ebebeb",
                 "color-placeholder-light": "#ebebeb",
                 "color-primary-light-hover": "#d7e9cd",
+                "color-primary-light-text": "#2c7203",
                 "color-primary-text": "#000000",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -6077,10 +6200,11 @@
                     "soft": "#98ee29",
                     "ground": "#141414",
                     "chip": "#141414",
-                    "field": "#545454",
+                    "field": "#6e6e6e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Roboto\", \"Arial\", sans-serif"
+                    "font-family": "\"Roboto\", \"Arial\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#252525",
@@ -6104,6 +6228,7 @@
                     "color-placeholder-dark": "#252525",
                     "color-placeholder-light": "#252525",
                     "color-primary-light-hover": "#2e4421",
+                    "color-primary-light-text": "#b6fc8d",
                     "color-primary-text": "#000000",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -6134,7 +6259,7 @@
                     "component-button-secondary-action-hover-background-color": "#203017",
                     "component-form-field-label-color": "#aeadad",
                     "component-form-fieldset-border-color": "#a7a6a6",
-                    "component-form-select-border-color": "#a7a6a6",
+                    "component-form-select-border-color": "#6e6e6e",
                     "component-form-select-focus-border-color": "#9bf466",
                     "component-heading-1-color": "#aeadad",
                     "component-heading-2-color": "#aeadad",
@@ -6153,12 +6278,12 @@
                     "component-table-header-color": "#aeadad",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#a7a6a6",
+                    "component-textbox-border-color": "#6e6e6e",
                     "component-textbox-color": "#aeadad",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#9bf466",
-                    "component-textbox-hover-border-color": "#545454",
+                    "component-textbox-hover-border-color": "#6e6e6e",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#aeadad"
                 }
@@ -6185,7 +6310,8 @@
                 "field": "#8c8c8c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+                "font-family": "\"Roboto\", Monospace, Arial, sans-serif",
+                "menu": "#f2f7fa"
             },
             "logo": {
                 "file": "img/logos/noordwijk.svg",
@@ -6244,7 +6370,8 @@
                     "field": "#757575",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Roboto\", Monospace, Arial, sans-serif"
+                    "font-family": "\"Roboto\", Monospace, Arial, sans-serif",
+                    "menu": "#111f27"
                 },
                 "vocabulary": {
                     "color-background-darker": "#252525",
@@ -6268,6 +6395,7 @@
                     "color-placeholder-dark": "#252525",
                     "color-placeholder-light": "#1f1f1f",
                     "color-primary-light-hover": "#2a273d",
+                    "color-primary-light-text": "#9389dd",
                     "color-primary-text": "#111111",
                     "color-success": "#58cf73",
                     "color-success-rgb": "88, 207, 115",
@@ -6349,7 +6477,8 @@
                 "field": "#8e9193",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans 3\", sans-serif"
+                "font-family": "\"Source Sans 3\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6409,7 +6538,8 @@
                     "field": "#6f7274",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans 3\", sans-serif"
+                    "font-family": "\"Source Sans 3\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2a2a2a",
@@ -6433,6 +6563,7 @@
                     "color-placeholder-dark": "#2a2a2a",
                     "color-placeholder-light": "#1f1f21",
                     "color-primary-light-hover": "#372c3f",
+                    "color-primary-light-text": "#cd9fea",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -6463,7 +6594,7 @@
                     "component-button-secondary-action-hover-background-color": "#261f2b",
                     "component-form-field-label-color": "#c5e9ff",
                     "component-form-fieldset-border-color": "#373a3a",
-                    "component-form-select-border-color": "#373a3a",
+                    "component-form-select-border-color": "#6f7274",
                     "component-form-select-focus-border-color": "#48b4f5",
                     "component-heading-1-color": "#c5e9ff",
                     "component-heading-2-color": "#c5e9ff",
@@ -6482,7 +6613,7 @@
                     "component-table-header-color": "#9c9fa1",
                     "component-table-row-hover-background-color": "#1b1b1b",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#757b7b",
+                    "component-textbox-border-color": "#6f7274",
                     "component-textbox-color": "#c5e9ff",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -6514,7 +6645,8 @@
                 "field": "#7c8b90",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/opencatalogi.svg",
@@ -6547,6 +6679,7 @@
                 "color-placeholder-dark": "#cad6da",
                 "color-placeholder-light": "#e4eef1",
                 "color-primary-light-hover": "#99cca0",
+                "color-primary-light-text": "#005b16",
                 "color-primary-text": "#ffffff",
                 "color-success": "#00811f",
                 "color-success-rgb": "0, 129, 31",
@@ -6573,7 +6706,8 @@
                     "field": "#717f83",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#223337",
@@ -6597,6 +6731,7 @@
                     "color-placeholder-dark": "#313f44",
                     "color-placeholder-light": "#1b2b30",
                     "color-primary-light-hover": "#3b6e42",
+                    "color-primary-light-text": "#a4ffba",
                     "color-primary-text": "#111111",
                     "color-success": "#71f892",
                     "color-success-rgb": "113, 248, 146",
@@ -6627,7 +6762,7 @@
                     "component-button-secondary-action-hover-background-color": "#1d331e",
                     "component-form-field-label-color": "#b0bbbf",
                     "component-form-fieldset-border-color": "#313f44",
-                    "component-form-select-border-color": "#313f44",
+                    "component-form-select-border-color": "#717f83",
                     "component-form-select-focus-border-color": "#45b9f5",
                     "component-heading-1-color": "#b0bbbf",
                     "component-heading-2-color": "#b0bbbf",
@@ -6647,7 +6782,7 @@
                     "component-table-header-color": "#b0bbbf",
                     "component-table-row-hover-background-color": "#172227",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#66848e",
+                    "component-textbox-border-color": "#717f83",
                     "component-textbox-color": "#b0bbbf",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -6679,7 +6814,8 @@
                 "field": "#89869c",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/provincie-zuid-holland.svg",
@@ -6709,6 +6845,7 @@
                 "color-placeholder-dark": "#e7e6ea",
                 "color-placeholder-light": "#f5f5f5",
                 "color-primary-light-hover": "#d4d2e1",
+                "color-primary-light-text": "#b21d30",
                 "color-primary-text": "#FFFFFF",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -6739,7 +6876,8 @@
                     "field": "#69677b",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Karbon\", \"Test Karbon\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#26252b",
@@ -6763,6 +6901,7 @@
                     "color-placeholder-dark": "#26252b",
                     "color-placeholder-light": "#1d1d1d",
                     "color-primary-light-hover": "#2d2b3d",
+                    "color-primary-light-text": "#f6c6cc",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -6793,7 +6932,7 @@
                     "component-button-secondary-action-hover-background-color": "#201e2a",
                     "component-form-field-label-color": "#c9c4ee",
                     "component-form-fieldset-border-color": "#4a4a4a",
-                    "component-form-select-border-color": "#4a4a4a",
+                    "component-form-select-border-color": "#69677b",
                     "component-form-select-focus-border-color": "#938ad7",
                     "component-heading-1-color": "#c9c4ee",
                     "component-heading-2-color": "#c9c4ee",
@@ -6812,7 +6951,7 @@
                     "component-table-header-color": "#a3a3a3",
                     "component-table-row-hover-background-color": "#1d1d1d",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#8a8a8a",
+                    "component-textbox-border-color": "#69677b",
                     "component-textbox-color": "#c9c4ee",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -6844,7 +6983,8 @@
                 "field": "#929292",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -6874,6 +7014,7 @@
                 "color-placeholder-dark": "#e6e6e6",
                 "color-placeholder-light": "#f1f1f1",
                 "color-primary-light-hover": "#cce7e1",
+                "color-primary-light-text": "#00715a",
                 "color-primary-text": "#fff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -6904,7 +7045,8 @@
                     "field": "#707070",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -6928,6 +7070,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#202020",
                     "color-primary-light-hover": "#23453d",
+                    "color-primary-light-text": "#8effe8",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -6958,7 +7101,7 @@
                     "component-button-secondary-action-hover-background-color": "#192f2a",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#ebebeb",
-                    "component-form-select-border-color": "#ebebeb",
+                    "component-form-select-border-color": "#707070",
                     "component-form-select-focus-border-color": "#6ef7dc",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -6977,7 +7120,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1b1b1b",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#ebebeb",
+                    "component-textbox-border-color": "#707070",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -7009,7 +7152,8 @@
                 "field": "#696969",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7069,7 +7213,8 @@
                     "field": "#929292",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -7093,6 +7238,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#283340",
+                    "color-primary-light-text": "#8cb9ea",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -7123,7 +7269,7 @@
                     "component-button-secondary-action-hover-background-color": "#1c232c",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#535353",
-                    "component-form-select-border-color": "#535353",
+                    "component-form-select-border-color": "#929292",
                     "component-form-select-focus-border-color": "#81afe2",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -7142,7 +7288,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#252728",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#939393",
+                    "component-textbox-border-color": "#929292",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -7174,7 +7320,8 @@
                 "field": "#2b2b2b",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+                "font-family": "Lato, Helvetica Neue, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7204,6 +7351,7 @@
                 "color-placeholder-dark": "#f3f5f9",
                 "color-placeholder-light": "#f3f5f9",
                 "color-primary-light-hover": "#cce7d7",
+                "color-primary-light-text": "#00722e",
                 "color-primary-text": "#000000",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -7234,7 +7382,8 @@
                     "field": "#c6c6c6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Lato, Helvetica Neue, Arial, sans-serif"
+                    "font-family": "Lato, Helvetica Neue, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141924",
@@ -7258,6 +7407,7 @@
                     "color-placeholder-dark": "#141924",
                     "color-placeholder-light": "#141924",
                     "color-primary-light-hover": "#234531",
+                    "color-primary-light-text": "#8dffbb",
                     "color-primary-text": "#000000",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -7288,7 +7438,7 @@
                     "component-button-secondary-action-hover-background-color": "#192f21",
                     "component-form-field-label-color": "#d4d4d4",
                     "component-form-fieldset-border-color": "#141924",
-                    "component-form-select-border-color": "#141924",
+                    "component-form-select-border-color": "#c6c6c6",
                     "component-form-select-focus-border-color": "#6bf7a3",
                     "component-heading-1-color": "#d4d4d4",
                     "component-heading-2-color": "#d4d4d4",
@@ -7307,7 +7457,7 @@
                     "component-table-header-color": "#d4d4d4",
                     "component-table-row-hover-background-color": "#141924",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#586e9f",
+                    "component-textbox-border-color": "#c6c6c6",
                     "component-textbox-color": "#d4d4d4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -7328,18 +7478,19 @@
                 "action": "#154273",
                 "action-deep": "#162f50",
                 "link": "#01689b",
-                "accent": "#d52b1e",
+                "accent": "#007bc7",
                 "ink": "#0F172A",
-                "text": "#3c404a",
-                "muted": "#696969",
-                "line": "#b4b4b4",
+                "text": "#212c40",
+                "muted": "#334155",
+                "line": "#cbd5e1",
                 "soft": "#e0e1e2",
-                "ground": "#ffffff",
+                "ground": "#f8fafc",
                 "chip": "#e8e9ea",
-                "field": "#696969",
+                "field": "#64748b",
                 "radius": "0px",
                 "radius-lg": "4px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/rijkshuisstijl.svg",
@@ -7352,6 +7503,8 @@
                 "border-radius-pill": "100px",
                 "border-radius-rounded": "0",
                 "border-radius-small": "0",
+                "color-accent-light": "#d9e8f0",
+                "color-accent-text": "#01496c",
                 "color-background-darker": "#d0d1d2",
                 "color-button-primary-background": "#154273",
                 "color-button-primary-border": "#154273",
@@ -7362,6 +7515,8 @@
                 "color-error-rgb": "213, 43, 30",
                 "color-focus": "rgba(0, 123, 199, 0.5)",
                 "color-focus-rgb": "0, 123, 199",
+                "color-footer-background": "#154273",
+                "color-footer-text": "#ffffff",
                 "color-header-background": "#ffffff",
                 "color-header-text": "#333333",
                 "color-info": "#007bc7",
@@ -7374,16 +7529,34 @@
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
+                "color-surface": "#f1f5f9",
                 "color-text-light": "#ffffff",
                 "color-warning": "#e17000",
                 "color-warning-rgb": "225, 112, 0",
+                "component-content-card-shadow-color": "rgba(15, 23, 42, 0.04)",
+                "component-content-surface-background-color": "#f8fafc",
                 "component-heading-1-font-size": "1.75rem",
                 "component-heading-2-font-size": "1.35rem",
                 "component-heading-3-font-size": "1.15rem",
                 "component-heading-4-font-size": "1rem",
                 "component-heading-5-font-size": "0.95rem",
                 "component-heading-6-font-size": "0.875rem",
+                "component-navigation-active-background-color": "#154273",
+                "component-navigation-active-color": "#162f50",
+                "component-navigation-badge-background-color": "#154273",
+                "component-navigation-badge-color": "#ffffff",
+                "component-status-badge-error-background-color": "#f9dfdd",
+                "component-status-badge-error-color": "#9e1b16",
+                "component-status-badge-info-background-color": "#d9e8f0",
+                "component-status-badge-info-color": "#01496c",
+                "component-status-badge-success-background-color": "#e1eddb",
+                "component-status-badge-success-color": "#2c5d12",
+                "component-status-badge-warning-background-color": "#fff4db",
+                "component-status-badge-warning-color": "#673327",
                 "header-border-bottom": "0",
+                "hero-background-color": "#dce3ea",
+                "hero-body-color": "#0f172a",
+                "hero-title-color": "#0f172a",
                 "logo-bottom": "auto",
                 "logo-center": "32px",
                 "logo-filter": "brightness(0) invert(1)",
@@ -7391,7 +7564,10 @@
                 "logo-inset": "12px",
                 "logo-width": "40px",
                 "size-lint": "48px",
-                "size-lint-height": "96px"
+                "size-lint-height": "96px",
+                "website-badge-border-radius": "999px",
+                "website-border-radius": "2px",
+                "website-border-radius-large": "4px"
             },
             "dark": {
                 "tokens": {
@@ -7401,20 +7577,23 @@
                     "action": "#9bc2ed",
                     "action-deep": "#162f50",
                     "link": "#5dc3f5",
-                    "accent": "#d83d32",
+                    "accent": "#39adf5",
                     "ink": "#d5ddf0",
-                    "text": "#babec7",
-                    "muted": "#9e9e9e",
-                    "line": "#535353",
+                    "text": "#c0cbde",
+                    "muted": "#aab8cc",
+                    "line": "#2a3644",
                     "soft": "#2c2e2f",
-                    "ground": "#191c1f",
+                    "ground": "#101921",
                     "chip": "#252728",
-                    "field": "#929292",
+                    "field": "#748398",
                     "radius": "0px",
                     "radius-lg": "4px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
+                    "color-accent-light": "#1a303b",
+                    "color-accent-text": "#93dbfe",
                     "color-background-darker": "#3a3b3c",
                     "color-button-primary-background": "#81afe2",
                     "color-button-primary-border": "#81afe2",
@@ -7426,6 +7605,8 @@
                     "color-favorite": "#f48c25",
                     "color-focus": "#39adf580",
                     "color-focus-rgb": "57, 173, 245",
+                    "color-footer-background": "#81afe2",
+                    "color-footer-text": "#3e3e3e",
                     "color-header-background": "#141414",
                     "color-header-text": "#cccccc",
                     "color-info": "#39adf5",
@@ -7437,9 +7618,11 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#172d41",
+                    "color-primary-light-text": "#8cb9ea",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
+                    "color-surface": "#121d27",
                     "color-text-light": "#9e9e9e",
                     "color-warning": "#f48c25",
                     "color-warning-rgb": "244, 140, 37",
@@ -7465,9 +7648,11 @@
                     "component-button-secondary-action-border-color": "#81afe2",
                     "component-button-secondary-action-color": "#8cb9ea",
                     "component-button-secondary-action-hover-background-color": "#112131",
+                    "component-content-card-shadow-color": "#c0cbe60a",
+                    "component-content-surface-background-color": "#101921",
                     "component-form-field-label-color": "#d5ddf0",
-                    "component-form-fieldset-border-color": "#535353",
-                    "component-form-select-border-color": "#535353",
+                    "component-form-fieldset-border-color": "#2a3644",
+                    "component-form-select-border-color": "#748398",
                     "component-form-select-focus-border-color": "#39adf5",
                     "component-heading-1-color": "#d5ddf0",
                     "component-heading-2-color": "#d5ddf0",
@@ -7479,22 +7664,37 @@
                     "component-link-color": "#64cbfe",
                     "component-link-hover-color": "#3db5ff",
                     "component-link-visited-color": "#cea0eb",
+                    "component-navigation-active-background-color": "#81afe2",
+                    "component-navigation-active-color": "#afc8e9",
+                    "component-navigation-badge-background-color": "#81afe2",
+                    "component-navigation-badge-color": "#3e3e3e",
                     "component-ordered-list-color": "#d5ddf0",
                     "component-paragraph-color": "#d5ddf0",
-                    "component-separator-border-color": "#535353",
-                    "component-table-border-color": "#535353",
+                    "component-separator-border-color": "#2a3644",
+                    "component-status-badge-error-background-color": "#3d110e",
+                    "component-status-badge-error-color": "#e96661",
+                    "component-status-badge-info-background-color": "#1a303b",
+                    "component-status-badge-info-color": "#93dbfe",
+                    "component-status-badge-success-background-color": "#27381e",
+                    "component-status-badge-success-color": "#bceda2",
+                    "component-status-badge-warning-background-color": "#433004",
+                    "component-status-badge-warning-color": "#d8a498",
+                    "component-table-border-color": "#2a3644",
                     "component-table-header-background-color": "#2c2e2f",
                     "component-table-header-color": "#d5ddf0",
                     "component-table-row-hover-background-color": "#252728",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#939393",
+                    "component-textbox-border-color": "#748398",
                     "component-textbox-color": "#d5ddf0",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#39adf5",
-                    "component-textbox-hover-border-color": "#929292",
+                    "component-textbox-hover-border-color": "#748398",
                     "component-textbox-invalid-border-color": "#d83d32",
-                    "component-unordered-list-color": "#d5ddf0"
+                    "component-unordered-list-color": "#d5ddf0",
+                    "hero-background-color": "#222c36",
+                    "hero-body-color": "#111111",
+                    "hero-title-color": "#111111"
                 }
             }
         },
@@ -7519,7 +7719,8 @@
                 "field": "#7C8B90",
                 "radius": "0px",
                 "radius-lg": "0px",
-                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/rotterdam.svg",
@@ -7552,6 +7753,7 @@
                 "color-placeholder-dark": "#CAD6DA",
                 "color-placeholder-light": "#E4EEF1",
                 "color-primary-light-hover": "#ACD6B7",
+                "color-primary-light-text": "#006518",
                 "color-primary-text": "#ffffff",
                 "color-success": "#00811F",
                 "color-success-rgb": "0, 129, 31",
@@ -7579,7 +7781,8 @@
                     "field": "#717f83",
                     "radius": "0px",
                     "radius-lg": "0px",
-                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif"
+                    "font-family": "Bolder, ArialforRotterdam, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#223337",
@@ -7603,6 +7806,7 @@
                     "color-placeholder-dark": "#313f44",
                     "color-placeholder-light": "#1b2b30",
                     "color-primary-light-hover": "#325f3e",
+                    "color-primary-light-text": "#9affb2",
                     "color-primary-text": "#111111",
                     "color-success": "#71f892",
                     "color-success-rgb": "113, 248, 146",
@@ -7633,7 +7837,7 @@
                     "component-button-secondary-action-hover-background-color": "#192f1e",
                     "component-form-field-label-color": "#b0bbbf",
                     "component-form-fieldset-border-color": "#313f44",
-                    "component-form-select-border-color": "#313f44",
+                    "component-form-select-border-color": "#717f83",
                     "component-form-select-focus-border-color": "#5ac1f6",
                     "component-heading-1-color": "#b0bbbf",
                     "component-heading-2-color": "#b0bbbf",
@@ -7653,7 +7857,7 @@
                     "component-table-header-color": "#b0bbbf",
                     "component-table-row-hover-background-color": "#172227",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#66848e",
+                    "component-textbox-border-color": "#717f83",
                     "component-textbox-color": "#b0bbbf",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -7682,10 +7886,11 @@
                 "soft": "#29a847",
                 "ground": "#ffffff",
                 "chip": "#fafafa",
-                "field": "#e8e8e8",
+                "field": "#949494",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+                "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7742,10 +7947,11 @@
                     "soft": "#58ce74",
                     "ground": "#141414",
                     "chip": "#191919",
-                    "field": "#282828",
+                    "field": "#6e6e6e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol"
+                    "font-family": "Arial, -apple-system, BlinkMacSystemFont, Segoe UI, Source Sans Pro, Helvetica Neue, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -7769,6 +7975,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#191919",
                     "color-primary-light-hover": "#2d4139",
+                    "color-primary-light-text": "#a6fcd8",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -7799,7 +8006,7 @@
                     "component-button-secondary-action-hover-background-color": "#202d28",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#282828",
-                    "component-form-select-border-color": "#282828",
+                    "component-form-select-border-color": "#6e6e6e",
                     "component-form-select-focus-border-color": "#92f6cc",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -7818,12 +8025,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#191919",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#686868",
+                    "component-textbox-border-color": "#6e6e6e",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#92f6cc",
-                    "component-textbox-hover-border-color": "#282828",
+                    "component-textbox-hover-border-color": "#6e6e6e",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -7850,7 +8057,8 @@
                 "field": "#7a8b9f",
                 "radius": "12px",
                 "radius-lg": "16px",
-                "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -7878,7 +8086,8 @@
                     "field": "#647386",
                     "radius": "12px",
                     "radius-lg": "16px",
-                    "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#3a3b3c",
@@ -7902,6 +8111,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#172d41",
+                    "color-primary-light-text": "#8cb9ea",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -7932,7 +8142,7 @@
                     "component-button-secondary-action-hover-background-color": "#112131",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#535353",
-                    "component-form-select-border-color": "#535353",
+                    "component-form-select-border-color": "#929292",
                     "component-form-select-focus-border-color": "#39adf5",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -7952,7 +8162,7 @@
                     "component-table-header-color": "#cccccc",
                     "component-table-row-hover-background-color": "#252728",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#939393",
+                    "component-textbox-border-color": "#929292",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -7984,7 +8194,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "Arial, Helvetica, sans-serif"
+                "font-family": "Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/tilburg.svg",
@@ -8044,7 +8255,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "Arial, Helvetica, sans-serif"
+                    "font-family": "Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -8068,6 +8280,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#292929",
                     "color-primary-light-hover": "#4d2709",
+                    "color-primary-light-text": "#99ccff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -8098,7 +8311,7 @@
                     "component-button-secondary-action-hover-background-color": "#391d05",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#464646",
-                    "component-form-select-border-color": "#464646",
+                    "component-form-select-border-color": "#959595",
                     "component-form-select-focus-border-color": "#ee7919",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -8117,7 +8330,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#868686",
+                    "component-textbox-border-color": "#959595",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -8149,7 +8362,8 @@
                 "field": "#767676",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Lato\", Arial, sans-serif"
+                "font-family": "\"Lato\", Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/tubbergen.svg",
@@ -8209,7 +8423,8 @@
                     "field": "#878787",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Lato\", Arial, sans-serif"
+                    "font-family": "\"Lato\", Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2b2b2b",
@@ -8233,6 +8448,7 @@
                     "color-placeholder-dark": "#2b2b2b",
                     "color-placeholder-light": "#171c23",
                     "color-primary-light-hover": "#17271e",
+                    "color-primary-light-text": "#8bf9b7",
                     "color-primary-text": "#111111",
                     "color-success": "#58cf73",
                     "color-success-rgb": "88, 207, 115",
@@ -8311,10 +8527,11 @@
                 "soft": "#e8e8e8",
                 "ground": "#ffffff",
                 "chip": "#f5f5f5",
-                "field": "#999999",
+                "field": "#949494",
                 "radius": "4px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/utrecht.svg",
@@ -8368,10 +8585,11 @@
                     "soft": "#282828",
                     "ground": "#141414",
                     "chip": "#1d1d1d",
-                    "field": "#6a6a6a",
+                    "field": "#6e6e6e",
                     "radius": "4px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#393939",
@@ -8395,6 +8613,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#192a40",
+                    "color-primary-light-text": "#70a3db",
                     "color-primary-text": "#111111",
                     "color-success": "#b7e79a",
                     "color-success-rgb": "183, 231, 154",
@@ -8425,7 +8644,7 @@
                     "component-button-secondary-action-hover-background-color": "#16212e",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#3f3f3f",
-                    "component-form-select-border-color": "#3f3f3f",
+                    "component-form-select-border-color": "#6e6e6e",
                     "component-form-select-focus-border-color": "#39adf5",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -8445,12 +8664,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#1d1d1d",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#7f7f7f",
+                    "component-textbox-border-color": "#6e6e6e",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#39adf5",
-                    "component-textbox-hover-border-color": "#6a6a6a",
+                    "component-textbox-hover-border-color": "#6e6e6e",
                     "component-textbox-invalid-border-color": "#f43535",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -8458,7 +8677,7 @@
         },
         {
             "id": "vaartveld",
-            "name": "Vaartveld College",
+            "name": "Zuiddrecht College",
             "tokens": {
                 "primary": "#1F4FD8",
                 "primary-deep": "#14338F",
@@ -8474,10 +8693,11 @@
                 "soft": "#EDEFF2",
                 "ground": "#F5F6F8",
                 "chip": "#F0F1F3",
-                "field": "#8A929E",
+                "field": "#828A95",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/vaartveld.svg",
@@ -8526,6 +8746,7 @@
                 "color-warning-rgb": "122, 79, 0",
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
+                "component-dashboard-card-header-border-style": "none",
                 "component-heading-font-family": "'Red Hat Display', 'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
                 "component-navigation-active-background-color": "#1FB5A8",
                 "component-navigation-active-color": "#0B6259",
@@ -8578,10 +8799,11 @@
                     "soft": "#1d2026",
                     "ground": "#171a20",
                     "chip": "#1d1f23",
-                    "field": "#656c78",
+                    "field": "#6d747e",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Red Hat Text', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#2f5bd7",
@@ -8610,6 +8832,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#0e1c3f",
+                    "color-primary-light-text": "#c6d2f7",
                     "color-primary-text": "#111111",
                     "color-success": "#8ad896",
                     "color-success-rgb": "138, 216, 150",
@@ -8642,7 +8865,7 @@
                     "component-content-surface-background-color": "#171a20",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#24272d",
-                    "component-form-select-border-color": "#24272d",
+                    "component-form-select-border-color": "#6d747e",
                     "component-form-select-focus-border-color": "#2f5bd7",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -8674,12 +8897,12 @@
                     "component-table-header-color": "#e2e3e4",
                     "component-table-row-hover-background-color": "#1d1f23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d6474",
+                    "component-textbox-border-color": "#6d747e",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#2f5bd7",
-                    "component-textbox-hover-border-color": "#656c78",
+                    "component-textbox-hover-border-color": "#6d747e",
                     "component-textbox-invalid-border-color": "#f54949",
                     "component-unordered-list-color": "#e2e3e4",
                     "hero-action-background-color": "#2f5bd7",
@@ -8714,7 +8937,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -8744,6 +8968,7 @@
                 "color-placeholder-dark": "#e6e6e6",
                 "color-placeholder-light": "#ebebeb",
                 "color-primary-light-hover": "#d4e6d0",
+                "color-primary-light-text": "#257210",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -8774,7 +8999,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -8798,6 +9024,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#252525",
                     "color-primary-light-hover": "#2a4125",
+                    "color-primary-light-text": "#a2ef8d",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -8879,7 +9106,8 @@
                 "field": "#7a8aa0",
                 "radius": "8px",
                 "radius-lg": "16px",
-                "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/vng.svg",
@@ -8942,7 +9170,8 @@
                     "field": "#637186",
                     "radius": "8px",
                     "radius-lg": "16px",
-                    "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2e363f",
@@ -8966,6 +9195,7 @@
                     "color-placeholder-dark": "#2e363f",
                     "color-placeholder-light": "#22262e",
                     "color-primary-light-hover": "#093f5d",
+                    "color-primary-light-text": "#9ad2ff",
                     "color-primary-text": "#111111",
                     "color-success": "#7cf7db",
                     "color-success-rgb": "124, 247, 219",
@@ -8996,7 +9226,7 @@
                     "component-button-secondary-action-hover-background-color": "#03273b",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#2e363f",
-                    "component-form-select-border-color": "#2e363f",
+                    "component-form-select-border-color": "#637186",
                     "component-form-select-focus-border-color": "#2abbf4",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -9016,7 +9246,7 @@
                     "component-table-header-color": "#cccccc",
                     "component-table-row-hover-background-color": "#191e22",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#647589",
+                    "component-textbox-border-color": "#637186",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -9048,7 +9278,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -9078,6 +9309,7 @@
                 "color-placeholder-dark": "#e6e6e6",
                 "color-placeholder-light": "#ebebeb",
                 "color-primary-light-hover": "#cce7ef",
+                "color-primary-light-text": "#006e8c",
                 "color-primary-text": "#000000",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -9108,7 +9340,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#292929",
@@ -9132,6 +9365,7 @@
                     "color-placeholder-dark": "#292929",
                     "color-placeholder-light": "#252525",
                     "color-primary-light-hover": "#1a3d47",
+                    "color-primary-light-text": "#73e1ff",
                     "color-primary-text": "#000000",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -9210,10 +9444,11 @@
                 "soft": "#EDEFF2",
                 "ground": "#F5F6F8",
                 "chip": "#F0F1F3",
-                "field": "#8A929E",
+                "field": "#828A95",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/warmtepompacademie.svg",
@@ -9262,6 +9497,7 @@
                 "color-warning-rgb": "122, 79, 0",
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
+                "component-dashboard-card-header-border-style": "none",
                 "component-heading-font-family": "'Barlow Semi Condensed', 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
                 "component-navigation-active-background-color": "#C2410C",
                 "component-navigation-active-color": "#9A3412",
@@ -9313,10 +9549,11 @@
                     "soft": "#1d2026",
                     "ground": "#171a20",
                     "chip": "#1d1f23",
-                    "field": "#656c78",
+                    "field": "#6d747e",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#79e0ec",
@@ -9347,6 +9584,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#1f3a3e",
+                    "color-primary-light-text": "#85e8f4",
                     "color-primary-text": "#111111",
                     "color-success": "#8ad896",
                     "color-success-rgb": "138, 216, 150",
@@ -9379,7 +9617,7 @@
                     "component-content-surface-background-color": "#171a20",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#24272d",
-                    "component-form-select-border-color": "#24272d",
+                    "component-form-select-border-color": "#6d747e",
                     "component-form-select-focus-border-color": "#79e0ec",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -9411,12 +9649,12 @@
                     "component-table-header-color": "#e2e3e4",
                     "component-table-row-hover-background-color": "#1d1f23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d6474",
+                    "component-textbox-border-color": "#6d747e",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#79e0ec",
-                    "component-textbox-hover-border-color": "#656c78",
+                    "component-textbox-hover-border-color": "#6d747e",
                     "component-textbox-invalid-border-color": "#f54949",
                     "component-unordered-list-color": "#e2e3e4",
                     "hero-action-background-color": "#79e0ec",
@@ -9445,10 +9683,11 @@
                 "soft": "#ffffff",
                 "ground": "#ffffff",
                 "chip": "#f6faf5",
-                "field": "#33a6cc",
+                "field": "#319fc4",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -9504,10 +9743,11 @@
                     "soft": "#141414",
                     "ground": "#141414",
                     "chip": "#162313",
-                    "field": "#3ba2c4",
+                    "field": "#41a5c6",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#162313",
@@ -9531,6 +9771,7 @@
                     "color-placeholder-dark": "#162313",
                     "color-placeholder-light": "#162313",
                     "color-primary-light-hover": "#2a3843",
+                    "color-primary-light-text": "#94d0ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -9561,7 +9802,7 @@
                     "component-button-secondary-action-hover-background-color": "#1d272e",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#75b259",
-                    "component-form-select-border-color": "#75b259",
+                    "component-form-select-border-color": "#41a5c6",
                     "component-form-select-focus-border-color": "#83c5f8",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -9580,12 +9821,12 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#162313",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#75b259",
+                    "component-textbox-border-color": "#41a5c6",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#83c5f8",
-                    "component-textbox-hover-border-color": "#3ba2c4",
+                    "component-textbox-hover-border-color": "#41a5c6",
                     "component-textbox-invalid-border-color": "#e72e2e",
                     "component-unordered-list-color": "#ebebeb"
                 }
@@ -9609,10 +9850,11 @@
                 "soft": "#EDEFF2",
                 "ground": "#F5F6F8",
                 "chip": "#F0F1F3",
-                "field": "#8A929E",
+                "field": "#828A95",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/wilgenboom.svg",
@@ -9661,6 +9903,7 @@
                 "color-warning-rgb": "122, 79, 0",
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
+                "component-dashboard-card-header-border-style": "none",
                 "component-navigation-active-background-color": "#F5B82E",
                 "component-navigation-active-color": "#6B4A00",
                 "component-navigation-badge-background-color": "#F5B82E",
@@ -9711,10 +9954,11 @@
                     "soft": "#1d2026",
                     "ground": "#171a20",
                     "chip": "#1d1f23",
-                    "field": "#656c78",
+                    "field": "#6d747e",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+                    "font-family": "'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#8cc8a7",
@@ -9745,6 +9989,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#24362b",
+                    "color-primary-light-text": "#94d0af",
                     "color-primary-text": "#111111",
                     "color-success": "#8ad896",
                     "color-success-rgb": "138, 216, 150",
@@ -9777,7 +10022,7 @@
                     "component-content-surface-background-color": "#171a20",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#24272d",
-                    "component-form-select-border-color": "#24272d",
+                    "component-form-select-border-color": "#6d747e",
                     "component-form-select-focus-border-color": "#8cc8a7",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -9809,12 +10054,12 @@
                     "component-table-header-color": "#e2e3e4",
                     "component-table-row-hover-background-color": "#1d1f23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d6474",
+                    "component-textbox-border-color": "#6d747e",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#8cc8a7",
-                    "component-textbox-hover-border-color": "#656c78",
+                    "component-textbox-hover-border-color": "#6d747e",
                     "component-textbox-invalid-border-color": "#f54949",
                     "component-unordered-list-color": "#e2e3e4",
                     "hero-action-background-color": "#8cc8a7",
@@ -9846,10 +10091,11 @@
                 "soft": "#f1f1f1",
                 "ground": "#ffffff",
                 "chip": "#f7f7f7",
-                "field": "rgba(0, 0, 0, 0.22)",
+                "field": "#949494",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "neue-haas-grotesk-text, sans-serif"
+                "font-family": "neue-haas-grotesk-text, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/xxllnc.svg",
@@ -9905,10 +10151,11 @@
                     "soft": "#202020",
                     "ground": "#141414",
                     "chip": "#1b1b1b",
-                    "field": "#ebebeb38",
+                    "field": "#6e6e6e",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "neue-haas-grotesk-text, sans-serif"
+                    "font-family": "neue-haas-grotesk-text, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2a2a2a",
@@ -9932,6 +10179,7 @@
                     "color-placeholder-dark": "#2a2a2a",
                     "color-placeholder-light": "#202020",
                     "color-primary-light-hover": "#383838",
+                    "color-primary-light-text": "#d4d4d4",
                     "color-primary-text": "#111111",
                     "color-success": "#58cf73",
                     "color-success-rgb": "88, 207, 115",
@@ -9962,7 +10210,7 @@
                     "component-button-secondary-action-hover-background-color": "#262626",
                     "component-form-field-label-color": "#d3d3d7",
                     "component-form-fieldset-border-color": "#ebebeb38",
-                    "component-form-select-border-color": "#ebebeb38",
+                    "component-form-select-border-color": "#6e6e6e",
                     "component-form-select-focus-border-color": "#ebebebad",
                     "component-heading-1-color": "#d3d3d7",
                     "component-heading-2-color": "#d3d3d7",
@@ -9981,12 +10229,12 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1b1b1b",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#ffffff",
+                    "component-textbox-border-color": "#6e6e6e",
                     "component-textbox-color": "#d3d3d7",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#ebebebad",
-                    "component-textbox-hover-border-color": "#ebebeb38",
+                    "component-textbox-hover-border-color": "#6e6e6e",
                     "component-textbox-invalid-border-color": "#c42c3a",
                     "component-unordered-list-color": "#d3d3d7"
                 }
@@ -10013,7 +10261,8 @@
                 "field": "#666666",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10043,6 +10292,7 @@
                 "color-placeholder-dark": "#dfdfdf",
                 "color-placeholder-light": "#f2f2f2",
                 "color-primary-light-hover": "#cce4ea",
+                "color-primary-light-text": "#006c87",
                 "color-primary-text": "#FFFFFF",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -10073,7 +10323,8 @@
                     "field": "#959595",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#2f2f2f",
@@ -10097,6 +10348,7 @@
                     "color-placeholder-dark": "#2f2f2f",
                     "color-placeholder-light": "#1f1f1f",
                     "color-primary-light-hover": "#203e46",
+                    "color-primary-light-text": "#78e4ff",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -10127,7 +10379,7 @@
                     "component-button-secondary-action-hover-background-color": "#172b30",
                     "component-form-field-label-color": "#cccccc",
                     "component-form-fieldset-border-color": "#4a4a4a",
-                    "component-form-select-border-color": "#4a4a4a",
+                    "component-form-select-border-color": "#959595",
                     "component-form-select-focus-border-color": "#62d9f7",
                     "component-heading-1-color": "#cccccc",
                     "component-heading-2-color": "#cccccc",
@@ -10146,7 +10398,7 @@
                     "component-table-header-color": "#9e9e9e",
                     "component-table-row-hover-background-color": "#1f1f1f",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#8a8a8a",
+                    "component-textbox-border-color": "#959595",
                     "component-textbox-color": "#cccccc",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -10178,7 +10430,8 @@
                 "field": "#000000",
                 "radius": "8px",
                 "radius-lg": "8px",
-                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10208,6 +10461,7 @@
                 "color-placeholder-dark": "#ffffff",
                 "color-placeholder-light": "#ffffff",
                 "color-primary-light-hover": "#dee2d4",
+                "color-primary-light-text": "#566a27",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -10238,7 +10492,8 @@
                     "field": "#ebebeb",
                     "radius": "8px",
                     "radius-lg": "8px",
-                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif"
+                    "font-family": "\"Source Sans Pro\", \"Arial\", \"Helvetica\", \"Verdana\", sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#141414",
@@ -10262,6 +10517,7 @@
                     "color-placeholder-dark": "#141414",
                     "color-placeholder-light": "#141414",
                     "color-primary-light-hover": "#363c2a",
+                    "color-primary-light-text": "#c4d895",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -10292,7 +10548,7 @@
                     "component-button-secondary-action-hover-background-color": "#24291d",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#bac466",
-                    "component-form-select-border-color": "#bac466",
+                    "component-form-select-border-color": "#ebebeb",
                     "component-form-select-focus-border-color": "#bacf89",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -10311,7 +10567,7 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#141414",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#bac466",
+                    "component-textbox-border-color": "#ebebeb",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
@@ -10340,10 +10596,11 @@
                 "soft": "#EDEFF2",
                 "ground": "#F5F6F8",
                 "chip": "#F0F1F3",
-                "field": "#8A929E",
+                "field": "#828A95",
                 "radius": "8px",
                 "radius-lg": "12px",
-                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": "img/logos/zuiddrecht.svg",
@@ -10373,6 +10630,7 @@
                 "color-error": "#CC0000",
                 "color-error-hover": "#A30000",
                 "color-error-rgb": "204, 0, 0",
+                "color-error-text": "#A30000",
                 "color-focus": "rgba(54, 105, 165, 0.5)",
                 "color-focus-rgb": "54, 105, 165",
                 "color-footer-background": "#234A78",
@@ -10384,6 +10642,7 @@
                 "color-link-hover": "#234A78",
                 "color-nav-background": "#ffffff",
                 "color-primary-light-hover": "#DCE6F2",
+                "color-primary-light-text": "#234A78",
                 "color-primary-text": "#ffffff",
                 "color-success": "#1E6B2A",
                 "color-success-rgb": "30, 107, 42",
@@ -10393,6 +10652,7 @@
                 "color-warning-rgb": "122, 79, 0",
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
+                "component-dashboard-card-header-border-style": "none",
                 "component-navigation-active-background-color": "#CC0000",
                 "component-navigation-active-color": "#A30000",
                 "component-navigation-badge-background-color": "#CC0000",
@@ -10410,19 +10670,28 @@
                 "hero-body-color": "#1B1C1D",
                 "hero-title-color": "#1B1C1D",
                 "login-card-shadow-color": "rgba(27, 28, 29, 0.06)",
-                "login-secondary-border-color": "#c4c7cb",
                 "logo-width": "150px",
+                "nc-color-warning-text": "#7A4F00",
                 "website-attention-background-color": "#FFF4DE",
                 "website-attention-border-color": "#E8C77D",
                 "website-attention-color": "#1A1A1A",
                 "website-badge-border-radius": "14px",
+                "website-badge-font-size": "15px",
+                "website-badge-line-height": "22px",
+                "website-badge-padding-inline": "12px",
                 "website-band-max-width": "1280px",
                 "website-border-radius": "4px",
                 "website-border-radius-large": "6px",
                 "website-button-font-weight": "600",
+                "website-button-padding-block": "9px",
+                "website-button-padding-inline": "20px",
+                "website-card-border-color": "#D3D8DF",
                 "website-color-text-muted": "#4A4A4A",
                 "website-content-font-size": "17px",
+                "website-control-border-color": "#5C6470",
                 "website-control-border-width": "2px",
+                "website-control-font-size": "17px",
+                "website-control-min-block-size": "48px",
                 "website-header-gutter": "0px",
                 "website-header-max-width": "1280px",
                 "website-heading-1-font-size": "44px",
@@ -10467,10 +10736,11 @@
                     "soft": "#1d2026",
                     "ground": "#171a20",
                     "chip": "#1d1f23",
-                    "field": "#656c78",
+                    "field": "#6d747e",
                     "radius": "8px",
                     "radius-lg": "12px",
-                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif"
+                    "font-family": "'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "brand-stripe-color-1": "#f43535",
@@ -10486,6 +10756,7 @@
                     "color-error": "#f43535",
                     "color-error-hover": "#f65656",
                     "color-error-rgb": "244, 53, 53",
+                    "color-error-text": "#ff5c5c",
                     "color-favorite": "#f48c25",
                     "color-focus": "#5b8ac280",
                     "color-focus-rgb": "91, 138, 194",
@@ -10501,6 +10772,7 @@
                     "color-placeholder-dark": "#3f3f3f",
                     "color-placeholder-light": "#2a2a2a",
                     "color-primary-light-hover": "#182739",
+                    "color-primary-light-text": "#87aedc",
                     "color-primary-text": "#111111",
                     "color-success": "#8ad896",
                     "color-success-rgb": "138, 216, 150",
@@ -10534,7 +10806,7 @@
                     "component-content-surface-background-color": "#171a20",
                     "component-form-field-label-color": "#e2e3e4",
                     "component-form-fieldset-border-color": "#24272d",
-                    "component-form-select-border-color": "#24272d",
+                    "component-form-select-border-color": "#6d747e",
                     "component-form-select-focus-border-color": "#5b8ac2",
                     "component-heading-1-color": "#e2e3e4",
                     "component-heading-2-color": "#e2e3e4",
@@ -10566,23 +10838,25 @@
                     "component-table-header-color": "#e2e3e4",
                     "component-table-row-hover-background-color": "#1d1f23",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#5d6474",
+                    "component-textbox-border-color": "#6d747e",
                     "component-textbox-color": "#e2e3e4",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",
                     "component-textbox-focus-border-color": "#5b8ac2",
-                    "component-textbox-hover-border-color": "#656c78",
+                    "component-textbox-hover-border-color": "#6d747e",
                     "component-textbox-invalid-border-color": "#f43535",
                     "component-unordered-list-color": "#e2e3e4",
                     "hero-background-color": "#13202e",
                     "hero-body-color": "#111111",
                     "hero-title-color": "#111111",
                     "login-card-shadow-color": "#d2d3d40f",
-                    "login-secondary-border-color": "#3f4247",
+                    "nc-color-warning-text": "#ffd485",
                     "website-attention-background-color": "#412d03",
                     "website-attention-border-color": "#8a691f",
                     "website-attention-color": "#e5e5e5",
+                    "website-card-border-color": "#2d333c",
                     "website-color-text-muted": "#b5b5b5",
+                    "website-control-border-color": "#8c939e",
                     "website-nav-current-color": "#6d9acf",
                     "website-notice-background-color": "#13202e",
                     "website-notice-border-color": "#273b55",
@@ -10618,7 +10892,8 @@
                 "field": "#767676",
                 "radius": "2px",
                 "radius-lg": "10px",
-                "font-family": "DIN, Arial, Helvetica, sans-serif"
+                "font-family": "DIN, Arial, Helvetica, sans-serif",
+                "menu": "#ffffff"
             },
             "logo": {
                 "file": null,
@@ -10654,6 +10929,7 @@
                 "color-placeholder-dark": "#d6d6d6",
                 "color-placeholder-light": "#ebebeb",
                 "color-primary-light-hover": "#c7d3eb",
+                "color-primary-light-text": "#3a5997",
                 "color-primary-text": "#ffffff",
                 "color-success": "#39870c",
                 "color-success-rgb": "57, 135, 12",
@@ -10681,7 +10957,8 @@
                     "field": "#878787",
                     "radius": "2px",
                     "radius-lg": "10px",
-                    "font-family": "DIN, Arial, Helvetica, sans-serif"
+                    "font-family": "DIN, Arial, Helvetica, sans-serif",
+                    "menu": "#141414"
                 },
                 "vocabulary": {
                     "color-background-darker": "#373737",
@@ -10705,6 +10982,7 @@
                     "color-placeholder-dark": "#373737",
                     "color-placeholder-light": "#252525",
                     "color-primary-light-hover": "#1e2d4b",
+                    "color-primary-light-text": "#cfd9ec",
                     "color-primary-text": "#111111",
                     "color-success": "#9ceb6f",
                     "color-success-rgb": "156, 235, 111",
@@ -10735,7 +11013,7 @@
                     "component-button-secondary-action-hover-background-color": "#151f34",
                     "component-form-field-label-color": "#ebebeb",
                     "component-form-fieldset-border-color": "#252525",
-                    "component-form-select-border-color": "#252525",
+                    "component-form-select-border-color": "#878787",
                     "component-form-select-focus-border-color": "#4c8cc4",
                     "component-heading-1-color": "#ebebeb",
                     "component-heading-2-color": "#ebebeb",
@@ -10755,7 +11033,7 @@
                     "component-table-header-color": "#ebebeb",
                     "component-table-row-hover-background-color": "#1d1d1d",
                     "component-textbox-background-color": "#141414",
-                    "component-textbox-border-color": "#656565",
+                    "component-textbox-border-color": "#878787",
                     "component-textbox-color": "#ebebeb",
                     "component-textbox-disabled-background-color": "#2a2a2a",
                     "component-textbox-disabled-color": "#9e9e9e",

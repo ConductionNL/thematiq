@@ -52,6 +52,7 @@ Other Conduction apps describe their scope with the TEC feature framework, for e
 | Theme gallery | Install a house style another organisation built | | [Theme gallery](./theme-gallery.md) |
 | Theme preview | Try a set in your own session before anyone else sees it | | [Theme preview](./theme-preview.md) |
 | Planned switches | Switch the set on a date, and back again | | [Plan a theme switch](./plan-a-theme-switch.md) |
+| Licence per token set | Read a set's licence, and confirm that you may use another organisation's house style | | [House styles of other organisations](./token-set-licences.md) |
 | Command line | List, read and switch the set with `occ` | | [Command line](./command-line.md) |
 | La Suite stack | Match the French La Suite numérique apps, with Marianne behind a gate | | [La Suite](./la-suite.md) |
 | Summer Breeze | Use a soft, airy theme | | [Summer Breeze](./summer-breeze.md) |

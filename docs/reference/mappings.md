@@ -21,7 +21,7 @@ This page lists every CSS custom property that Nextcloud 34.0.0.12 and `@conduct
 | icon | 484 | 0 | 0 | 484 |
 | runtime | 36 | 0 | 0 | 36 |
 | slot | 83 | 0 | 56 | 27 |
-| theme | 111 | 66 | 45 | 0 |
+| theme | 111 | 67 | 44 | 0 |
 | unread | 10 | 0 | 0 | 10 |
 
 ## Theme variables
@@ -121,7 +121,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-background-plain` | mapped |  | `#00679e` | `#00679e` | Admin/user configured background; should respect user settings |
 | `--color-background-plain-text` | settable | `--nldesign-nc-color-background-plain-text` | `#ffffff` | `#ffffff` | Text on plain background; auto-calculated by Nextcloud |
 | `--color-main-background` | settable | `--nldesign-nc-color-main-background` | `#ffffff` | `#171717` | Core page background; overriding breaks dark mode and accessibility themes |
-| `--color-main-background-blur` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Blur variant; depends on --color-main-background-rgb |
+| `--color-main-background-blur` | mapped | `--color-main-background` | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | The solid main background outside the login page: nldesign has no frosted app shell |
 | `--color-main-background-rgb` | mapped |  | `255,255,255` | `23,23,23` | RGB variant for rgba() usage; depends on --color-main-background |
 | `--color-main-background-translucent` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Translucent variant; depends on --color-main-background-rgb |
 
@@ -141,13 +141,13 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-primary-element-hover` | mapped | `--nldesign-color-primary-hover` | `#00507a` | `#17a2ff` | Interactive element hover |
 | `--color-primary-element-light` | mapped | `--nldesign-color-primary-light` | `var(--color-primary-light)` | `var(--color-primary-light)` | Deprecated alias for primary-light |
 | `--color-primary-element-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `var(--color-primary-light-hover)` | `var(--color-primary-light-hover)` | Deprecated alias |
-| `--color-primary-element-light-text` | mapped | `--nldesign-color-primary` | `var(--color-primary-light-text)` | `var(--color-primary-light-text)` | Deprecated alias |
+| `--color-primary-element-light-text` | mapped | `--nldesign-color-primary-light-text` | `var(--color-primary-light-text)` | `var(--color-primary-light-text)` | Deprecated alias |
 | `--color-primary-element-text` | mapped | `--nldesign-color-primary-text` | `#ffffff` | `#000000` | Text on primary element |
 | `--color-primary-element-text-dark` | mapped |  | `#ededed` | `#121212` | Dark variant of primary element text; no NL Design equivalent |
 | `--color-primary-hover` | mapped | `--nldesign-color-primary-hover` | `#3285b1` | `#045783` | Primary hover state |
 | `--color-primary-light` | mapped | `--nldesign-color-primary-light` | `#e5eff5` | `#14232c` | Light variant of primary |
 | `--color-primary-light-hover` | mapped | `--nldesign-color-primary-light-hover` | `#d9e3e8` | `#1f2e36` | Light primary hover |
-| `--color-primary-light-text` | mapped | `--nldesign-color-primary` | `#00293f` | `#99c2d8` | Text on light primary; uses brand color |
+| `--color-primary-light-text` | mapped | `--nldesign-color-primary-light-text` | `#00293f` | `#99c2d8` | Text on light primary; uses brand color |
 | `--color-primary-text` | mapped | `--nldesign-color-primary-text` | `#ffffff` | `#ffffff` | Text on primary background |
 
 ### Shadows
@@ -196,7 +196,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-element-info` | mapped | `--nldesign-color-info` | `#0077C7` | `#0099E0` | Info element accent |
 | `--color-info` | mapped | `--nldesign-color-info` | `#D5F1FA` | `#003553` | Info background/accent |
 | `--color-info-hover` | settable | `--nldesign-nc-color-info-hover` | `#b5e6f6` | `#005686` | Info hover; no NL Design equivalent |
-| `--color-info-rgb` | settable | `--nldesign-nc-color-info-rgb` | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
+| `--color-info-rgb` | mapped | `--nldesign-color-info-rgb` | `213,241,250` | `0,53,83` | Deprecated; RGB for rgba() |
 | `--color-info-text` | settable | `--nldesign-nc-color-info-text` | `#0066AC` | `#00AEFF` | Info text; NC auto-calculates for contrast |
 
 ### Status: Success
@@ -225,7 +225,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-main-text` | mapped | `--nldesign-color-text` | `#222222` | `#EBEBEB` | Main body text color |
-| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text |
+| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text; a set's --nldesign-color-error-text ink when it has one |
 | `--color-text-maxcontrast` | mapped | `--nldesign-color-text-muted` | `#6b6b6b` | `#999999` | Muted/secondary text |
 | `--color-text-maxcontrast-background-blur` | mapped |  | `#595959` | `#a8a8a8` | Blur-adjusted maxcontrast; Nextcloud calculates per background |
 | `--color-text-maxcontrast-default` | settable | `--nldesign-nc-color-text-maxcontrast-default` | `#6b6b6b` | `#999999` | Default maxcontrast; auto-calculated by Nextcloud per theme |

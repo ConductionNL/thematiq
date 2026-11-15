@@ -20,7 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\FontLabel;
 use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\FontUpload;
 use OCA\Thematiq\Service\FontValidator;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -104,10 +106,30 @@ class FontController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
-		$name = trim((string)$this->request->getParam('name', ''));
-		$role = trim((string)$this->request->getParam('role', 'body'));
+		$label = new FontLabel(name: trim((string)$this->request->getParam('name', '')), role: trim((string)$this->request->getParam('role', 'body')));
 
 		$file = $this->request->getUploadedFile(key: 'font');
+		$refusal = $this->uploadRefusal(file: $file);
+		if ($refusal !== null) {
+			return $refusal;
+		}
+
+		$bytes = file_get_contents($file['tmp_name']);
+		if ($bytes === false) {
+			return new JSONResponse(['error' => $this->l->t('Could not read the uploaded file.')], 400);
+		}
+
+		return $this->storeFont(label: $label, upload: new FontUpload(bytes: $bytes, reportedSize: (int)($file['size'] ?? strlen($bytes))));
+	}//end upload()
+
+	/**
+	 * Refuse an upload without a file, or one over the size limit.
+	 *
+	 * @param mixed $file The uploaded file's entry.
+	 *
+	 * @return JSONResponse|null The 400 or 413 response, or null when the file may be read.
+	 */
+	private function uploadRefusal(mixed $file): JSONResponse|null {
 		if (empty($file) === true || isset($file['tmp_name']) === false) {
 			return new JSONResponse(['error' => $this->l->t('No font file uploaded.')], 400);
 		}
@@ -116,24 +138,31 @@ class FontController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('Font file exceeds the 2 MB size limit.')], 413);
 		}
 
-		$bytes = file_get_contents($file['tmp_name']);
-		if ($bytes === false) {
-			return new JSONResponse(['error' => $this->l->t('Could not read the uploaded file.')], 400);
-		}
+		return null;
+	}//end uploadRefusal()
 
+	/**
+	 * Store the uploaded font and answer with its id, or with the service's refusal.
+	 *
+	 * @param FontLabel $label The display name and role.
+	 * @param FontUpload $upload The bytes and the reported size.
+	 *
+	 * @return JSONResponse The id, or the error with the service's status.
+	 */
+	private function storeFont(FontLabel $label, FontUpload $upload): JSONResponse {
 		try {
 			$result = $this->service->store(
-				displayName: $name,
-				role: $role,
-				bytes: $bytes,
-				reportedSize: (int)($file['size'] ?? strlen($bytes))
+				displayName: $label->name,
+				role: $label->role,
+				bytes: $upload->bytes,
+				reportedSize: $upload->reportedSize
 			);
 		} catch (RuntimeException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
 		}
 
 		return new JSONResponse(['id' => $result['id']]);
-	}//end upload()
+	}//end storeFont()
 
 	/**
 	 * List stored fonts with their metadata.

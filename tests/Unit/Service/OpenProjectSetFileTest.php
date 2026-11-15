@@ -1,0 +1,298 @@
+<?php
+
+/**
+ * Tests for the OpenProject plugin's set file, both ways.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ *
+ * @category  Tests
+ * @package   OCA\Thematiq
+ * @author    Conduction <info@conduction.nl>
+ * @copyright 2026 Conduction B.V.
+ * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ * @link      https://github.com/ConductionNL/thematiq
+ *
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+ */
+
+declare(strict_types=1);
+
+namespace OCA\Thematiq\Tests\Unit\Service;
+
+use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\DesignTokensMapper;
+use OCA\Thematiq\Service\FontService;
+use OCA\Thematiq\Service\OpenProjectSetFile;
+use OCA\Thematiq\Service\OpenProjectSetFileWriter;
+use OCA\Thematiq\Service\ShellCatalogueService;
+use OCA\Thematiq\Service\ShellRoleMapper;
+use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\TokenSetConverterService;
+use OCP\App\IAppManager;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Download a set file, upload it, compare the roles; and upload the plugin's own files.
+ *
+ * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+ */
+final class OpenProjectSetFileTest extends TestCase {
+
+	/**
+	 * The app directory.
+	 *
+	 * @return string
+	 */
+	private static function appPath(): string {
+		return \dirname(__DIR__, 3);
+	}//end appPath()
+
+	/**
+	 * The set file writer over the repository.
+	 *
+	 * @return OpenProjectSetFileWriter
+	 */
+	private function writer(): OpenProjectSetFileWriter {
+		$contrast = new ContrastService();
+
+		return new OpenProjectSetFileWriter(catalogue: new ShellCatalogueService(
+			declarations: new ShippedTokenSetAuditService(contrast: $contrast, parser: new CssParserService()),
+			mapper: new ShellRoleMapper(colours: $contrast)
+		));
+	}//end writer()
+
+	/**
+	 * Upload a document the way the admin upload does.
+	 *
+	 * @param string $json The file.
+	 *
+	 * @return array{declarations: array<string, string>, skipped: array<int, string>, dark: array<string, string>}
+	 */
+	private function upload(string $json): array {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn(self::appPath());
+		$parser = new CssParserService();
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
+		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
+
+		$skipped = [];
+		foreach ($result['report'] as $entry) {
+			if (($entry['action'] ?? '') === 'skipped') {
+				$skipped[] = $entry['source'] . ': ' . $entry['reason'];
+			}
+		}
+
+		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'skipped' => $skipped, 'dark' => ($result['darkDeclarations'] ?? [])];
+	}//end upload()
+
+	/**
+	 * The roles of uploaded declarations.
+	 *
+	 * @param array<string, string> $declarations The declarations.
+	 *
+	 * @return array<string, string>
+	 */
+	private function roles(array $declarations): array {
+		return (new ShellRoleMapper(colours: new ContrastService()))->map(tokens: $declarations);
+	}//end roles()
+
+	/**
+	 * Every shipped set.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function shippedSets(): array {
+		$out = [];
+		foreach ((array)json_decode((string)file_get_contents(self::appPath() . '/token-sets.json'), true) as $set) {
+			$id = (string)($set['id'] ?? '');
+			if ($id !== '' && is_file(self::appPath() . '/css/tokens/' . $id . '.css') === true) {
+				$out[$id] = [$id];
+			}
+		}
+
+		return $out;
+	}//end shippedSets()
+
+	/**
+	 * Scenario: every shipped set, downloaded as a set file and uploaded again, has the same roles.
+	 *
+	 * @param string $id The set id.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-any-token-set-can-be-downloaded-as-the-plugins-set-file
+	 */
+	#[DataProvider('shippedSets')]
+	public function testASetFileComesBackWithTheSameRoles(string $id): void {
+		$file = $this->writer()->setFile(appPath: self::appPath(), id: $id, name: 'Naam', store: null);
+
+		$this->assertSame(expected: ['id', 'name', 'tokens', 'logo'], actual: array_slice(array_keys($file), 0, 4));
+		$this->assertSame(expected: [], actual: array_diff(array_keys($file), ['id', 'name', 'tokens', 'logo', 'dark', 'vocabulary']));
+		$this->assertSame(expected: ['file', 'inverse_file', 'licence', 'redistributable', 'basis'], actual: array_keys($file['logo']));
+
+		$back = $this->upload(json: (string)json_encode($file));
+		$roles = $this->roles(declarations: $back['declarations']);
+		foreach ($file['tokens'] as $role => $value) {
+			$this->assertSame(expected: strtolower((string)$value), actual: strtolower((string)$roles[$role]), message: $id . ' ' . $role);
+		}
+
+		foreach (($file['vocabulary'] ?? []) as $key => $value) {
+			$this->assertSame(
+				expected: trim((string)$value),
+				actual: ($back['declarations']['--nldesign-' . $key] ?? null),
+				message: $id . ' vocabulary ' . $key
+			);
+		}
+	}//end testASetFileComesBackWithTheSameRoles()
+
+	/**
+	 * The plugin's own files, as its code wrote them.
+	 *
+	 * Built on 14 October 2026 with `OpenProject::Thematiq::Transfer.export` from
+	 * `ConductionNL/openproject-thematiq` development at `e550f1b8`, in a throwaway Ruby container.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function pluginFiles(): array {
+		return ['cunningham' => ['cunningham'], 'zuiddrecht' => ['zuiddrecht']];
+	}//end pluginFiles()
+
+	/**
+	 * Scenario: a set file the plugin downloads uploads into thematiq with every role at its value.
+	 *
+	 * @param string $id The plugin's design system.
+	 *
+	 * @return void
+	 */
+	#[DataProvider('pluginFiles')]
+	public function testAPluginSetFileKeepsEveryRole(string $id): void {
+		$json = (string)file_get_contents(self::appPath() . '/tests/fixtures/openproject/' . $id . '.json');
+		$file = json_decode($json, true);
+		$back = $this->upload(json: $json);
+		$roles = $this->roles(declarations: $back['declarations']);
+
+		foreach ($file['tokens'] as $role => $value) {
+			$this->assertSame(expected: strtolower((string)$value), actual: strtolower((string)$roles[$role]), message: $role);
+		}
+
+		$this->assertSame(expected: [], actual: $back['skipped']);
+
+		// The dark block: every dark role under its name, and the dark vocabulary with the prefix.
+		foreach ($file['dark']['tokens'] as $role => $value) {
+			$this->assertSame(expected: $value, actual: $back['dark'][OpenProjectSetFile::ROLE_TOKENS[$role]], message: 'dark ' . $role);
+		}
+
+		foreach (($file['dark']['vocabulary'] ?? []) as $key => $value) {
+			$this->assertSame(expected: $value, actual: $back['dark']['--nldesign-' . $key], message: 'dark vocabulary ' . $key);
+		}
+	}//end testAPluginSetFileKeepsEveryRole()
+
+	/**
+	 * What a set file holds and cannot be used is named, and other documents are not set files.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/openproject-set-file/spec.md#requirement-the-plugins-set-file-becomes-a-custom-token-set
+	 */
+	public function testWhatIsLeftOutIsNamed(): void {
+		$reader = new OpenProjectSetFile();
+		$skipped = [];
+		$document = $reader->toDocument(
+			document: [
+				'id' => 'x',
+				'name' => 'X',
+				'tokens' => ['primary' => '#123456', 'sparkle' => '#ffffff', 'ink' => 12, 'muted' => '{a}', 'menu' => '#eeeeee'],
+				'vocabulary' => ['color-focus' => '#0000ff', 'Bad_Key' => '1px', 'color-primary' => '#999999', 'brand-stripe-height' => ' '],
+				'dark' => ['tokens' => ['primary' => '#abcdef']],
+			],
+			skipped: $skipped
+		);
+
+		// The dark block is kept as the set's dark values, never named as left out.
+		$this->assertArrayHasKey(key: 'dark', array: (array)$document['$extensions']['nl.conduction.thematiq']);
+		$this->assertContains(needle: '#abcdef', haystack: (array)$document['$extensions']['nl.conduction.thematiq']['dark']);
+
+		$this->assertSame(
+			expected: ['--nldesign-color-primary' => '#123456', '--thematiq-shell-menu' => '#eeeeee', '--nldesign-color-focus' => '#0000ff'],
+			actual: (array)$document['$extensions']['nl.conduction.thematiq']['cssOnly']
+		);
+		$this->assertSame(expected: 'X', actual: $document['$description']);
+		$this->assertSame(
+			expected: [
+				['path' => 'tokens.sparkle', 'reason' => 'unmapped'],
+				['path' => 'tokens.ink', 'reason' => 'value-not-a-css-value'],
+				['path' => 'tokens.muted', 'reason' => 'value-not-a-css-value'],
+				['path' => 'vocabulary.Bad_Key', 'reason' => 'unmapped'],
+				['path' => 'vocabulary.brand-stripe-height', 'reason' => 'value-not-a-css-value'],
+			],
+			actual: $skipped
+		);
+
+		$this->assertTrue(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => []]));
+		$this->assertFalse(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => [], 'extra' => 1]), message: 'an unknown key');
+		$this->assertFalse(condition: $reader->isSetFile(document: ['tokens' => []]), message: 'no id');
+		$this->assertFalse(condition: $reader->isSetFile(document: ['id' => 'x', 'tokens' => '#fff']), message: 'tokens not an object');
+	}//end testWhatIsLeftOutIsNamed()
+
+	/**
+	 * Scenario: the plugin's menu colour paints the navigation column, and a set's own colour for it wins.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/menu-role/spec.md#requirement-the-main-menu-colour-is-a-shell-role
+	 */
+	public function testTheMenuColourBecomesTheNavigationColour(): void {
+		$file = ['id' => 'x', 'name' => 'X', 'tokens' => ['primary' => '#123456', 'menu' => '#20242a']];
+		$back = $this->upload(json: (string)json_encode($file));
+
+		$this->assertSame(expected: '#20242a', actual: $back['declarations']['--nldesign-color-nav-background']);
+		$this->assertSame(expected: '#20242a', actual: $back['declarations']['--thematiq-shell-menu']);
+		$this->assertSame(expected: '#20242a', actual: $this->roles(declarations: $back['declarations'])['menu']);
+
+		$file['vocabulary'] = ['color-nav-background' => '#ffffff'];
+		$this->assertSame(
+			expected: '#ffffff',
+			actual: $this->upload(json: (string)json_encode($file))['declarations']['--nldesign-color-nav-background']
+		);
+	}//end testTheMenuColourBecomesTheNavigationColour()
+
+	/**
+	 * Any content that is not a set file reaches the converter as it was.
+	 *
+	 * @return void
+	 */
+	public function testOtherContentIsNotTouched(): void {
+		$skipped = [];
+		$reader = new OpenProjectSetFile();
+
+		foreach ([':root { --nldesign-color-primary: #123456; }', '{"color": {"primary": {"$value": "#123456"}}}', '{not json', ''] as $content) {
+			$this->assertSame(expected: $content, actual: $reader->normalise(content: $content, skipped: $skipped));
+		}
+
+		$this->assertSame(expected: [], actual: $skipped);
+	}//end testOtherContentIsNotTouched()
+
+	/**
+	 * An uploaded set's file names no logo, and reads its own files from the store.
+	 *
+	 * @return void
+	 */
+	public function testAnUploadedSetNamesNoLogo(): void {
+		$file = $this->writer()->setFile(appPath: self::appPath(), id: 'custom-does-not-ship', name: 'Eigen', store: null);
+
+		$this->assertSame(expected: OpenProjectSetFileWriter::NO_LOGO, actual: $file['logo']);
+		$this->assertSame(expected: 'Eigen', actual: $file['name']);
+		$this->assertArrayNotHasKey(key: 'dark', array: $file);
+	}//end testAnUploadedSetNamesNoLogo()
+}//end class

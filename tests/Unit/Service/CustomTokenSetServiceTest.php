@@ -18,6 +18,7 @@ use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCP\App\IAppManager;
 use OCP\IConfig;
@@ -57,6 +58,8 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Set up a temp app dir + mocked config before each test.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -64,10 +67,10 @@ class CustomTokenSetServiceTest extends TestCase {
 		$this->appDir = sys_get_temp_dir() . '/nldesign-test-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -78,24 +81,26 @@ class CustomTokenSetServiceTest extends TestCase {
 		);
 
 		$this->service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(
-				new ContrastService(),
-				new CssParserService(),
-				$appManager,
-				$this->createMock(LoggerInterface::class)
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
 			)
 		);
 	}//end setUp()
 
 	/**
 	 * Remove the temp app dir after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -118,7 +123,7 @@ class CustomTokenSetServiceTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -129,191 +134,285 @@ class CustomTokenSetServiceTest extends TestCase {
 
 	/**
 	 * Slug derivation lowercases, hyphenates and caps at 64 chars.
+	 *
+	 * @return void
 	 */
 	public function testSlugify(): void {
-		$this->assertSame('gemeente-voorbeeld', $this->service->slugify(name: 'Gemeente Voorbeeld'));
-		$this->assertSame('gemeente-amsterdam', $this->service->slugify(name: '  Gemeente   Amsterdam!!  '));
-		$this->assertSame('', $this->service->slugify(name: '!!!'));
-		$this->assertLessThanOrEqual(64, strlen($this->service->slugify(name: str_repeat('a', 200))));
+		$this->assertSame(expected: 'gemeente-voorbeeld', actual: $this->service->slugify(name: 'Gemeente Voorbeeld'));
+		$this->assertSame(expected: 'gemeente-amsterdam', actual: $this->service->slugify(name: '  Gemeente   Amsterdam!!  '));
+		$this->assertSame(expected: '', actual: $this->service->slugify(name: '!!!'));
+		$this->assertLessThanOrEqual(expected: 64, actual: strlen($this->service->slugify(name: str_repeat('a', 200))));
 	}//end testSlugify()
 
 	/**
 	 * Storing writes the canonical CSS file and persists a manifest entry.
+	 *
+	 * @return void
 	 */
 	public function testStoreWritesFileAndManifest(): void {
 		$result = $this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: [
-				'--nldesign-color-primary' => '#007bc7',
-				'--nldesign-color-primary-text' => '#ffffff',
-			]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => [
+						'--nldesign-color-primary' => '#007bc7',
+						'--nldesign-color-primary-text' => '#ffffff',
+					],
+				]
+			)
 		);
 
-		$this->assertSame('custom-gemeente-voorbeeld', $result['id']);
+		$this->assertSame(expected: 'custom-gemeente-voorbeeld', actual: $result['id']);
 
 		$path = $this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css';
-		$this->assertFileExists($path);
-		$this->assertStringContainsString('--nldesign-color-primary: #007bc7;', file_get_contents($path));
+		$this->assertFileExists(filename: $path);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #007bc7;', haystack: file_get_contents($path));
 
 		$manifest = $this->service->getManifest();
-		$this->assertArrayHasKey('custom-gemeente-voorbeeld', $manifest);
-		$this->assertSame('Gemeente Voorbeeld', $manifest['custom-gemeente-voorbeeld']['name']);
+		$this->assertArrayHasKey(key: 'custom-gemeente-voorbeeld', array: $manifest);
+		$this->assertSame(expected: 'Gemeente Voorbeeld', actual: $manifest['custom-gemeente-voorbeeld']['name']);
 		// Derived theming.
-		$this->assertSame('#007bc7', $manifest['custom-gemeente-voorbeeld']['theming']['primary_color']);
+		$this->assertSame(expected: '#007bc7', actual: $manifest['custom-gemeente-voorbeeld']['theming']['primary_color']);
 	}//end testStoreWritesFileAndManifest()
 
 	/**
 	 * A DTCG import's declared package version is persisted verbatim in the
 	 * manifest and returned by list().
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsDeclaredVersion(): void {
 		$this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7'],
-			version: '2.3.1'
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+					'version' => '2.3.1',
+				]
+			)
 		);
 
 		$manifest = $this->service->getManifest();
-		$this->assertSame('2.3.1', $manifest['custom-gemeente-voorbeeld']['version']);
+		$this->assertSame(expected: '2.3.1', actual: $manifest['custom-gemeente-voorbeeld']['version']);
 
 		$listed = $this->service->list();
-		$this->assertSame('2.3.1', $listed[0]['version']);
+		$this->assertSame(expected: '2.3.1', actual: $listed[0]['version']);
 	}//end testStorePersistsDeclaredVersion()
 
 	/**
 	 * Absent a declared version, the manifest entry never fabricates one.
+	 *
+	 * @return void
 	 */
 	public function testStoreWithoutVersionOmitsVersionKey(): void {
 		$this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7']
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
 		);
 
 		$manifest = $this->service->getManifest();
-		$this->assertArrayNotHasKey('version', $manifest['custom-gemeente-voorbeeld']);
+		$this->assertArrayNotHasKey(key: 'version', array: $manifest['custom-gemeente-voorbeeld']);
 	}//end testStoreWithoutVersionOmitsVersionKey()
 
 	/**
 	 * DTCG `$deprecated` import warnings are persisted apart from the
 	 * pre-existing WCAG contrast `warnings` key and exposed via list().
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsImportWarningsSeparatelyFromContrastWarnings(): void {
 		$result = $this->service->store(
-			displayName: 'Gemeente Voorbeeld',
-			description: '',
-			declarations: ['--nldesign-color-primary' => '#007bc7'],
-			importWarnings: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+					'importWarnings' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+				]
+			)
 		);
 
 		// The store() result's `warnings` key remains the contrast warnings.
-		$this->assertSame([], $result['warnings']);
+		$this->assertSame(expected: [], actual: $result['warnings']);
 
 		$manifest = $this->service->getManifest();
 		$this->assertSame(
-			[['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
-			$manifest['custom-gemeente-voorbeeld']['importWarnings']
+			expected: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+			actual: $manifest['custom-gemeente-voorbeeld']['importWarnings']
 		);
-		$this->assertSame([], $manifest['custom-gemeente-voorbeeld']['warnings']);
+		$this->assertSame(expected: [], actual: $manifest['custom-gemeente-voorbeeld']['warnings']);
 
 		$listed = $this->service->list();
 		$this->assertSame(
-			[['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
-			$listed[0]['importWarnings']
+			expected: [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead']],
+			actual: $listed[0]['importWarnings']
 		);
 	}//end testStorePersistsImportWarningsSeparatelyFromContrastWarnings()
 
 	/**
 	 * Storing the same display name twice is a 409 collision.
+	 *
+	 * @return void
 	 */
 	public function testStoreCollisionThrows409(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(409);
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#000000']);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 409);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#000000'],
+				]
+			)
+		);
 	}//end testStoreCollisionThrows409()
 
 	/**
 	 * An all-symbol name (empty slug) is a 422.
+	 *
+	 * @return void
 	 */
 	public function testStoreEmptySlugThrows422(): void {
-		$this->expectException(RuntimeException::class);
-		$this->expectExceptionCode(422);
-		$this->service->store('!!!', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->expectException(exception: RuntimeException::class);
+		$this->expectExceptionCode(code: 422);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => '!!!',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 	}//end testStoreEmptySlugThrows422()
 
 	/**
 	 * A low-contrast upload persists a contrast warning in the manifest.
+	 *
+	 * @return void
 	 */
 	public function testStorePersistsContrastWarning(): void {
 		$result = $this->service->store(
-			displayName: 'Low Contrast',
-			description: '',
-			declarations: [
-				'--nldesign-color-primary' => '#ffffff',
-				'--nldesign-color-primary-text' => '#cccccc',
-			]
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Low Contrast',
+					'description' => '',
+					'declarations' => [
+						'--nldesign-color-primary' => '#ffffff',
+						'--nldesign-color-primary-text' => '#cccccc',
+					],
+				]
+			)
 		);
 
-		$this->assertNotEmpty($result['warnings']);
+		$this->assertNotEmpty(actual: $result['warnings']);
 		$manifest = $this->service->getManifest();
-		$this->assertNotEmpty($manifest['custom-low-contrast']['warnings']);
+		$this->assertNotEmpty(actual: $manifest['custom-low-contrast']['warnings']);
 	}//end testStorePersistsContrastWarning()
 
 	/**
 	 * Deleting a set removes the file and the manifest entry.
+	 *
+	 * @return void
 	 */
 	public function testDeleteRemovesFileAndManifest(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		$path = $this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css';
-		$this->assertFileExists($path);
+		$this->assertFileExists(filename: $path);
 
-		$this->assertTrue($this->service->delete(id: 'custom-gemeente-voorbeeld'));
-		$this->assertFileDoesNotExist($path);
-		$this->assertArrayNotHasKey('custom-gemeente-voorbeeld', $this->service->getManifest());
+		$this->assertTrue(condition: $this->service->delete(id: 'custom-gemeente-voorbeeld'));
+		$this->assertFileDoesNotExist(filename: $path);
+		$this->assertArrayNotHasKey(key: 'custom-gemeente-voorbeeld', array: $this->service->getManifest());
 	}//end testDeleteRemovesFileAndManifest()
 
 	/**
 	 * Deleting the active set resets the active token_set to nextcloud.
+	 *
+	 * @return void
 	 */
 	public function testDeleteActiveSetFallsBackToNextcloud(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		$this->appConfig['token_set'] = 'custom-gemeente-voorbeeld';
 
 		$this->service->delete(id: 'custom-gemeente-voorbeeld');
 
-		$this->assertSame('nextcloud', $this->appConfig['token_set']);
+		$this->assertSame(expected: 'nextcloud', actual: $this->appConfig['token_set']);
 	}//end testDeleteActiveSetFallsBackToNextcloud()
 
 	/**
 	 * A non-custom id is never deletable (path-traversal guard).
+	 *
+	 * @return void
 	 */
 	public function testDeleteRejectsNonCustomId(): void {
-		$this->assertFalse($this->service->delete(id: 'utrecht'));
-		$this->assertFalse($this->service->delete(id: '../../../etc/passwd'));
+		$this->assertFalse(condition: $this->service->delete(id: 'utrecht'));
+		$this->assertFalse(condition: $this->service->delete(id: '../../../etc/passwd'));
 	}//end testDeleteRejectsNonCustomId()
 
 	/**
 	 * list() drops manifest entries whose CSS file no longer exists.
+	 *
+	 * @return void
 	 */
 	public function testListDropsManifestEntryWithoutFile(): void {
-		$this->service->store('Gemeente Voorbeeld', '', ['--nldesign-color-primary' => '#007bc7']);
+		$this->service->store(
+			set: new NewCustomTokenSet(
+				fields: [
+					'displayName' => 'Gemeente Voorbeeld',
+					'description' => '',
+					'declarations' => ['--nldesign-color-primary' => '#007bc7'],
+				]
+			)
+		);
 		// Delete the file behind the service's back, leaving a stale manifest entry.
 		unlink($this->appDir . '/css/tokens/custom-gemeente-voorbeeld.css');
 
-		$this->assertSame([], $this->service->list());
+		$this->assertSame(expected: [], actual: $this->service->list());
 	}//end testListDropsManifestEntryWithoutFile()
 
 	/**
 	 * isCustomId only accepts the prefixed slug charset.
+	 *
+	 * @return void
 	 */
 	public function testIsCustomId(): void {
-		$this->assertTrue($this->service->isCustomId(id: 'custom-gemeente-voorbeeld'));
-		$this->assertFalse($this->service->isCustomId(id: 'utrecht'));
-		$this->assertFalse($this->service->isCustomId(id: 'custom-../x'));
-		$this->assertFalse($this->service->isCustomId(id: 'custom-UPPER'));
+		$this->assertTrue(condition: $this->service->isCustomId(id: 'custom-gemeente-voorbeeld'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'utrecht'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'custom-../x'));
+		$this->assertFalse(condition: $this->service->isCustomId(id: 'custom-UPPER'));
 	}//end testIsCustomId()
 }//end class

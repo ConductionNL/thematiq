@@ -81,9 +81,12 @@ class ActiveTokenSetService {
 	 *
 	 * @return string The set that was active before.
 	 *
-	 * @throws \InvalidArgumentException When the set does not exist; nothing is written then.
+	 * @throws \InvalidArgumentException When the set does not exist, or (as a
+	 *                                   RestrictedSetNotConfirmedException) is restricted and not confirmed;
+	 *                                   nothing is written then.
 	 *
 	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function switchTo(string $tokenSet, string $auditAction = 'token_set_changed', array $auditContext = []): string {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {
@@ -91,6 +94,7 @@ class ActiveTokenSetService {
 		}
 
 		$previous = $this->getActive();
+		$this->tokenSets->licenceGate()->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: $previous);
 		$this->config->setAppValue(Application::APP_ID, self::CONFIG_KEY, $tokenSet);
 
 		$this->auditService->log(

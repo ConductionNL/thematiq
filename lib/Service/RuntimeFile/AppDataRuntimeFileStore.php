@@ -158,15 +158,10 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 
 		$names = [];
 		foreach ($files as $file) {
-			$name = $directory . '/' . $file->getName();
-			if ($this->names->isAllowed(name: $name) === true) {
-				$names[] = $name;
-			}
+			$names[] = $directory . '/' . $file->getName();
 		}
 
-		sort($names);
-
-		return $names;
+		return $this->names->allowedSorted(names: $names);
 	}//end listDirectory()
 
 	/**

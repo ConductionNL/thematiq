@@ -59,7 +59,7 @@ class ErrorForegroundContrastTest extends TestCase {
 		$white = $service->parseColor(self::ON_FILL_FOREGROUND);
 
 		$tokenFiles = glob(__DIR__ . '/../../css/tokens/*.css');
-		$this->assertNotEmpty($tokenFiles, 'No token sets found to audit.');
+		$this->assertNotEmpty(actual: $tokenFiles, message: 'No token sets found to audit.');
 
 		$audited = 0;
 
@@ -82,17 +82,17 @@ class ErrorForegroundContrastTest extends TestCase {
 			foreach ($matches[1] as $errorColor) {
 				$parsed = $service->parseColor($errorColor);
 				$this->assertNotNull(
-					$parsed,
-					sprintf('Could not parse error colour "%s" in %s.', $errorColor, basename($file))
+					actual: $parsed,
+					message: sprintf('Could not parse error colour "%s" in %s.', $errorColor, basename($file))
 				);
 
 				$ratio = $service->ratio($white, $parsed);
 				$audited++;
 
 				$this->assertGreaterThanOrEqual(
-					self::AA_NORMAL_TEXT,
-					$ratio,
-					sprintf(
+					expected: self::AA_NORMAL_TEXT,
+					actual: $ratio,
+					message: sprintf(
 						'Token set "%s" declares error fill %s, which only reaches %.2f:1 against the white '
 						. 'foreground that css/error-contrast.css paints on it (WCAG AA needs %.1f:1). Darken '
 						. 'the error colour, or the Delete button becomes unreadable again.',
@@ -105,7 +105,7 @@ class ErrorForegroundContrastTest extends TestCase {
 			}//end foreach
 		}//end foreach
 
-		$this->assertGreaterThan(0, $audited, 'No error tokens were audited — the regex stopped matching.');
+		$this->assertGreaterThan(expected: 0, actual: $audited, message: 'No error tokens were audited — the regex stopped matching.');
 
 	}//end testEveryErrorFillCarriesWhiteTextAtAaContrast()
 

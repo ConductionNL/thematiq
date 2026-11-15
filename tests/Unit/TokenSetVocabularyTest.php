@@ -35,6 +35,7 @@ namespace OCA\Thematiq\Tests\Unit;
 
 use OCA\Thematiq\Service\CssParserService;
 use OCA\Thematiq\Service\TokenSetVocabularyAuditService;
+use OCA\Thematiq\Tests\Unit\Support\FileList;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,6 +45,8 @@ class TokenSetVocabularyTest extends TestCase {
 
 	/**
 	 * Repository root, derived from this test file's location.
+	 *
+	 * @return string
 	 */
 	private function repoRoot(): string {
 		return \dirname(__DIR__, 2);
@@ -51,9 +54,11 @@ class TokenSetVocabularyTest extends TestCase {
 
 	/**
 	 * Build the audit service from its real (pure) collaborator.
+	 *
+	 * @return TokenSetVocabularyAuditService
 	 */
 	private function service(): TokenSetVocabularyAuditService {
-		return new TokenSetVocabularyAuditService(new CssParserService());
+		return new TokenSetVocabularyAuditService(parser: new CssParserService());
 	}//end service()
 
 	/**
@@ -63,12 +68,12 @@ class TokenSetVocabularyTest extends TestCase {
 	 */
 	private function allowlist(): array {
 		$path = $this->repoRoot() . '/tests/Unit/fixtures/token-set-vocabulary-allowlist.json';
-		$this->assertFileExists($path, 'The known-incomplete allow-list fixture must exist.');
+		$this->assertFileExists(filename: $path, message: 'The known-incomplete allow-list fixture must exist.');
 
 		$decoded = json_decode((string)file_get_contents($path), true);
-		$this->assertIsArray($decoded, 'The allow-list fixture must be a JSON object.');
-		$this->assertArrayHasKey('sets', $decoded, 'The allow-list fixture must carry a "sets" array.');
-		$this->assertIsArray($decoded['sets'], 'The allow-list "sets" key must be an array.');
+		$this->assertIsArray(actual: $decoded, message: 'The allow-list fixture must be a JSON object.');
+		$this->assertArrayHasKey(key: 'sets', array: $decoded, message: 'The allow-list fixture must carry a "sets" array.');
+		$this->assertIsArray(actual: $decoded['sets'], message: 'The allow-list "sets" key must be an array.');
 
 		return $decoded['sets'];
 	}//end allowlist()
@@ -78,12 +83,14 @@ class TokenSetVocabularyTest extends TestCase {
 	 * allow-listed as known-incomplete.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testEveryShippedSetIsCompleteOrAllowListed(): void {
 		$allowlist = $this->allowlist();
 		$results = $this->service()->auditAll($this->repoRoot());
 
-		$this->assertNotEmpty($results, 'css/tokens/ must contain at least one shipped set.');
+		$this->assertNotEmpty(actual: $results, message: 'css/tokens/ must contain at least one shipped set.');
 
 		$offenders = [];
 		foreach ($results as $result) {
@@ -115,9 +122,9 @@ class TokenSetVocabularyTest extends TestCase {
 		}//end foreach
 
 		$this->assertSame(
-			[],
-			$offenders,
-			"These shipped token sets are vocabulary-incomplete and NOT allow-listed.\n"
+			expected: [],
+			actual: $offenders,
+			message: "These shipped token sets are vocabulary-incomplete and NOT allow-listed.\n"
 			. "Fix the set, or (only for a set the converter has yet to regenerate)\n"
 			. "add its id to tests/Unit/fixtures/token-set-vocabulary-allowlist.json:\n  - "
 			. implode("\n  - ", $offenders)
@@ -129,12 +136,14 @@ class TokenSetVocabularyTest extends TestCase {
 	 * new incomplete set to the list cannot silence the gate.
 	 *
 	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-the-known-incomplete-allow-list-is-empty
+	 *
+	 * @return void
 	 */
 	public function testAllowlistIsEmpty(): void {
 		$this->assertSame(
-			[],
-			$this->allowlist(),
-			'tests/Unit/fixtures/token-set-vocabulary-allowlist.json must stay empty: fix the set instead of listing it.'
+			expected: [],
+			actual: $this->allowlist(),
+			message: 'tests/Unit/fixtures/token-set-vocabulary-allowlist.json must stay empty: fix the set instead of listing it.'
 		);
 	}//end testAllowlistIsEmpty()
 
@@ -143,6 +152,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * deleted from it, so progress is recorded rather than hidden.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testAllowlistHasNoStaleEntries(): void {
 		$results = $this->service()->auditAll($this->repoRoot());
@@ -157,9 +168,9 @@ class TokenSetVocabularyTest extends TestCase {
 		$stale = array_values(array_diff($this->allowlist(), $stillFailing));
 
 		$this->assertSame(
-			[],
-			$stale,
-			'These allow-list entries now pass the vocabulary audit and MUST be deleted from '
+			expected: [],
+			actual: $stale,
+			message: 'These allow-list entries now pass the vocabulary audit and MUST be deleted from '
 			. "tests/Unit/fixtures/token-set-vocabulary-allowlist.json:\n  - " . implode("\n  - ", $stale)
 		);
 	}//end testAllowlistHasNoStaleEntries()
@@ -170,6 +181,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * passes) everything would otherwise look green forever.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testAuditDistinguishesCompleteFromIncompleteSets(): void {
 		$results = $this->service()->auditAll($this->repoRoot());
@@ -190,8 +203,8 @@ class TokenSetVocabularyTest extends TestCase {
 		}
 
 		$this->assertNotEmpty(
-			$complete,
-			'No shipped set passes the vocabulary audit — the required-token list or the '
+			actual: $complete,
+			message: 'No shipped set passes the vocabulary audit — the required-token list or the '
 			. 'vocabulary scan is broken, not all 48 sets.'
 		);
 		// Every shipped set passes since thematiq#1006 emptied the allow-list, so the
@@ -200,13 +213,13 @@ class TokenSetVocabularyTest extends TestCase {
 		// audit that has stopped auditing would pass the probe too.
 		$probe = $this->probeAppWithAnIncompleteSet();
 		$result = $this->service()->auditSet($probe, 'probe', ['design_system' => 'nldesign']);
-		$this->assertTrue($result['auditable'], 'The probe set must be audited.');
-		$this->assertFalse($result['complete'], 'An nldesign set that declares only a primary must be incomplete.');
-		$this->assertContains('--nldesign-color-text', $result['missingRequired']);
+		$this->assertTrue(condition: $result['auditable'], message: 'The probe set must be audited.');
+		$this->assertFalse(condition: $result['complete'], message: 'An nldesign set that declares only a primary must be incomplete.');
+		$this->assertContains(needle: '--nldesign-color-text', haystack: $result['missingRequired']);
 		$this->assertContains(
-			'rijkshuisstijl',
-			array_merge($complete, $incomplete),
-			'The default token set must always be audited.'
+			needle: 'rijkshuisstijl',
+			haystack: array_merge($complete, $incomplete),
+			message: 'The default token set must always be audited.'
 		);
 	}//end testAuditDistinguishesCompleteFromIncompleteSets()
 
@@ -221,7 +234,7 @@ class TokenSetVocabularyTest extends TestCase {
 		@mkdir($probe . '/css/tokens', 0777, true);
 		@mkdir($probe . '/css/systems/nldesign', 0777, true);
 		copy($this->repoRoot() . '/design-systems.json', $probe . '/design-systems.json');
-		foreach (glob($this->repoRoot() . '/css/systems/nldesign/*.css') ?: [] as $file) {
+		foreach (FileList::glob(pattern: $this->repoRoot() . '/css/systems/nldesign/*.css') as $file) {
 			copy($file, $probe . '/css/systems/nldesign/' . basename($file));
 		}
 
@@ -237,13 +250,15 @@ class TokenSetVocabularyTest extends TestCase {
 	 * failing: `none` (stock Nextcloud).
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testSetsOfNonConsumingDesignSystemsAreNotAudited(): void {
 		$service = $this->service();
 		$consuming = $service->nldesignConsumingSystems($this->repoRoot());
 
-		$this->assertNotContains('none', $consuming, 'The "none" design system loads no stylesheet at all.');
-		$this->assertContains('nldesign', $consuming, 'The nldesign stack reads the --nldesign-* vocabulary.');
+		$this->assertNotContains(needle: 'none', haystack: $consuming, message: 'The "none" design system loads no stylesheet at all.');
+		$this->assertContains(needle: 'nldesign', haystack: $consuming, message: 'The nldesign stack reads the --nldesign-* vocabulary.');
 
 		foreach ($service->auditAll($this->repoRoot()) as $result) {
 			if (\in_array($result['designSystem'], $consuming, true) === true
@@ -252,9 +267,16 @@ class TokenSetVocabularyTest extends TestCase {
 				continue;
 			}
 
-			$this->assertFalse($result['auditable'], $result['id'] . ' must not be audited against a vocabulary its design system never reads.');
-			$this->assertTrue($result['complete'], $result['id'] . ' must not be reported as incomplete when it is not audited.');
-			$this->assertSame([], $result['missingRequired'], $result['id'] . ' must report no missing tokens when it is not audited.');
+			$this->assertFalse(
+				condition: $result['auditable'],
+				message: $result['id'] . ' must not be audited against a vocabulary its design system never reads.'
+			);
+			$this->assertTrue(condition: $result['complete'], message: $result['id'] . ' must not be reported as incomplete when it is not audited.');
+			$this->assertSame(
+				expected: [],
+				actual: $result['missingRequired'],
+				message: $result['id'] . ' must report no missing tokens when it is not audited.'
+			);
 		}
 	}//end testSetsOfNonConsumingDesignSystemsAreNotAudited()
 
@@ -265,6 +287,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * with `token-sets.json`.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testSummerBreezeIsCompleteForItsOwnVocabulary(): void {
 		$service = $this->service();
@@ -273,23 +297,31 @@ class TokenSetVocabularyTest extends TestCase {
 			$byId[$result['id']] = $result;
 		}
 
-		$this->assertArrayHasKey('summer-breeze', $byId);
+		$this->assertArrayHasKey(key: 'summer-breeze', array: $byId);
 		$result = $byId['summer-breeze'];
 
-		$this->assertTrue($result['auditable'], 'summer-breeze must be audited, not skipped.');
-		$this->assertSame([], $result['missingRequired'], 'Names the summer-breeze stylesheets read that its token file does not declare.');
-		$this->assertSame([], $result['foreignNldesignNames'], 'Names the summer-breeze token file declares that nothing reads.');
-		$this->assertFalse(
-			$result['primaryMismatch'],
-			'--summer-color-primary ' . (string)$result['cssPrimary'] . ' disagrees with token-sets.json ' . (string)$result['declaredPrimary']
+		$this->assertTrue(condition: $result['auditable'], message: 'summer-breeze must be audited, not skipped.');
+		$this->assertSame(
+			expected: [],
+			actual: $result['missingRequired'],
+			message: 'Names the summer-breeze stylesheets read that its token file does not declare.'
 		);
-		$this->assertTrue($result['complete']);
+		$this->assertSame(
+			expected: [],
+			actual: $result['foreignNldesignNames'],
+			message: 'Names the summer-breeze token file declares that nothing reads.'
+		);
+		$this->assertFalse(
+			condition: $result['primaryMismatch'],
+			message: '--summer-color-primary ' . (string)$result['cssPrimary'] . ' disagrees with token-sets.json ' . (string)$result['declaredPrimary']
+		);
+		$this->assertTrue(condition: $result['complete']);
 
 		// The audit reads the real stylesheets: the names it requires include
 		// what theme.css maps onto Nextcloud's primary and main background.
 		$layers = $service->ownVocabulary($this->repoRoot(), '--summer-');
-		$this->assertContains('--summer-color-primary', $layers['read']);
-		$this->assertContains('--summer-color-surface', $layers['read']);
+		$this->assertContains(needle: '--summer-color-primary', haystack: $layers['read']);
+		$this->assertContains(needle: '--summer-color-surface', haystack: $layers['read']);
 	}//end testSummerBreezeIsCompleteForItsOwnVocabulary()
 
 	/**
@@ -298,14 +330,16 @@ class TokenSetVocabularyTest extends TestCase {
 	 * prefix and primary token.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-a-design-system-with-its-own-vocabulary-is-audited-against-it
+	 *
+	 * @return void
 	 */
 	public function testNodeMirrorKnowsTheSameOwnVocabularies(): void {
 		$script = (string)file_get_contents($this->repoRoot() . '/scripts/audit-token-sets.mjs');
 
 		$this->assertSame(
-			1,
-			preg_match('/const OWN_VOCABULARIES = \{(.*?)\n\}/s', $script, $block),
-			'scripts/audit-token-sets.mjs must declare an OWN_VOCABULARIES object.'
+			expected: 1,
+			actual: preg_match('/const OWN_VOCABULARIES = \{(.*?)\n\}/s', $script, $block),
+			message: 'scripts/audit-token-sets.mjs must declare an OWN_VOCABULARIES object.'
 		);
 
 		preg_match_all("/'([a-z0-9-]+)': \{ prefix: '([^']+)', primary: '([^']+)' \}/", $block[1], $matches, PREG_SET_ORDER);
@@ -314,7 +348,11 @@ class TokenSetVocabularyTest extends TestCase {
 			$mirror[$match[1]] = ['prefix' => $match[2], 'primary' => $match[3]];
 		}
 
-		$this->assertSame(TokenSetVocabularyAuditService::OWN_VOCABULARIES, $mirror, 'OWN_VOCABULARIES has drifted between PHP and Node: update both.');
+		$this->assertSame(
+			expected: TokenSetVocabularyAuditService::OWN_VOCABULARIES,
+			actual: $mirror,
+			message: 'OWN_VOCABULARIES has drifted between PHP and Node: update both.'
+		);
 	}//end testNodeMirrorKnowsTheSameOwnVocabularies()
 
 	/**
@@ -324,23 +362,25 @@ class TokenSetVocabularyTest extends TestCase {
 	 * than trusted.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testNodeMirrorRequiresTheSameTokens(): void {
 		$script = (string)file_get_contents($this->repoRoot() . '/scripts/audit-token-sets.mjs');
-		$this->assertNotSame('', $script, 'scripts/audit-token-sets.mjs must be readable.');
+		$this->assertNotSame(expected: '', actual: $script, message: 'scripts/audit-token-sets.mjs must be readable.');
 
 		$this->assertSame(
-			1,
-			preg_match('/const REQUIRED_TOKENS = \[(.*?)\]/s', $script, $block),
-			'scripts/audit-token-sets.mjs must declare a REQUIRED_TOKENS array.'
+			expected: 1,
+			actual: preg_match('/const REQUIRED_TOKENS = \[(.*?)\]/s', $script, $block),
+			message: 'scripts/audit-token-sets.mjs must declare a REQUIRED_TOKENS array.'
 		);
 
 		preg_match_all("/'(--nldesign-[a-z0-9-]+)'/", $block[1], $matches);
 
 		$this->assertSame(
-			TokenSetVocabularyAuditService::REQUIRED_TOKENS,
-			$matches[1],
-			'scripts/audit-token-sets.mjs REQUIRED_TOKENS has drifted from '
+			expected: TokenSetVocabularyAuditService::REQUIRED_TOKENS,
+			actual: $matches[1],
+			message: 'scripts/audit-token-sets.mjs REQUIRED_TOKENS has drifted from '
 			. 'TokenSetVocabularyAuditService::REQUIRED_TOKENS — update both.'
 		);
 	}//end testNodeMirrorRequiresTheSameTokens()
@@ -351,6 +391,8 @@ class TokenSetVocabularyTest extends TestCase {
 	 * the audit can never demand a token nothing reads.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
+	 *
+	 * @return void
 	 */
 	public function testRequiredTokensAreThemselvesInTheVocabulary(): void {
 		$vocabulary = $this->service()->declaredVocabulary($this->repoRoot());
@@ -358,9 +400,9 @@ class TokenSetVocabularyTest extends TestCase {
 		$orphans = array_values(array_diff(TokenSetVocabularyAuditService::REQUIRED_TOKENS, $vocabulary));
 
 		$this->assertSame(
-			[],
-			$orphans,
-			'These required tokens are not declared or read by any CSS layer, so requiring '
+			expected: [],
+			actual: $orphans,
+			message: 'These required tokens are not declared or read by any CSS layer, so requiring '
 			. "them would be meaningless:\n  - " . implode("\n  - ", $orphans)
 		);
 	}//end testRequiredTokensAreThemselvesInTheVocabulary()

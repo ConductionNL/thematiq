@@ -85,7 +85,7 @@ class ThemeCommandsTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		$this->store = ['token_set' => 'rijkshuisstijl'];
-		$this->config = $this->createMock(IConfig::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
 		$this->config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, string $default = '') => ($this->store[$key] ?? $default)
 		);
@@ -94,7 +94,7 @@ class ThemeCommandsTest extends TestCase {
 				$this->store[$key] = $value;
 			}
 		);
-		$this->tokenSets = $this->createMock(TokenSetService::class);
+		$this->tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$this->tokenSets->method('isValidTokenSet')->willReturnCallback(
 			fn (string $tokenSetId) => in_array($tokenSetId, ['rijkshuisstijl', 'amsterdam', 'custom-gemeente-x'], true)
 		);
@@ -105,8 +105,8 @@ class ThemeCommandsTest extends TestCase {
 				['id' => 'rijkshuisstijl', 'name' => 'Rijkshuisstijl'],
 			]
 		);
-		$this->audit = $this->createMock(ThemingAuditService::class);
-		$this->coreSync = $this->createMock(ScheduledCoreThemingSync::class);
+		$this->audit = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->coreSync = $this->createMock(originalClassName: ScheduledCoreThemingSync::class);
 	}//end setUp()
 
 	/**
@@ -129,9 +129,9 @@ class ThemeCommandsTest extends TestCase {
 	 * @return CommandTester The tester.
 	 */
 	private function setCommand(): CommandTester {
-		$active = new ActiveTokenSetService($this->config, $this->tokenSets, $this->audit);
+		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->audit);
 
-		return $this->tester(new ThemeSet($active, $this->tokenSets, $this->coreSync));
+		return $this->tester(command: new ThemeSet(active: $active, tokenSets: $this->tokenSets, coreSync: $this->coreSync));
 	}//end setCommand()
 
 	/**
@@ -140,11 +140,11 @@ class ThemeCommandsTest extends TestCase {
 	 * @return void
 	 */
 	public function testListMarksCustomSets(): void {
-		$tester = $this->tester(new ThemeList($this->tokenSets));
+		$tester = $this->tester(command: new ThemeList(tokenSets: $this->tokenSets));
 
-		$this->assertSame(Command::SUCCESS, $tester->execute([]));
-		$this->assertStringContainsString('custom-gemeente-x  custom  Gemeente X', $tester->getDisplay());
-		$this->assertStringContainsString('amsterdam  shipped  Amsterdam', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute([]));
+		$this->assertStringContainsString(needle: 'custom-gemeente-x  custom  Gemeente X', haystack: $tester->getDisplay());
+		$this->assertStringContainsString(needle: 'amsterdam  shipped  Amsterdam', haystack: $tester->getDisplay());
 	}//end testListMarksCustomSets()
 
 	/**
@@ -153,17 +153,17 @@ class ThemeCommandsTest extends TestCase {
 	 * @return void
 	 */
 	public function testGetPrintsActiveSetAndMappingsInOrder(): void {
-		$groups = $this->createMock(GroupThemingService::class);
+		$groups = $this->createMock(originalClassName: GroupThemingService::class);
 		$groups->method('getMapping')->willReturn(
 			[['group' => 'noord', 'tokenSet' => 'amsterdam'], ['group' => 'admin', 'tokenSet' => 'custom-gemeente-x']]
 		);
-		$active = new ActiveTokenSetService($this->config, $this->tokenSets, $this->audit);
-		$tester = $this->tester(new ThemeGet($active, $groups));
+		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->audit);
+		$tester = $this->tester(command: new ThemeGet(active: $active, groups: $groups));
 
-		$this->assertSame(Command::SUCCESS, $tester->execute([]));
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute([]));
 		$display = $tester->getDisplay();
-		$this->assertStringContainsString('Active token set: rijkshuisstijl', $display);
-		$this->assertStringContainsString("1. noord  amsterdam\n2. admin  custom-gemeente-x", $display);
+		$this->assertStringContainsString(needle: 'Active token set: rijkshuisstijl', haystack: $display);
+		$this->assertStringContainsString(needle: "1. noord  amsterdam\n2. admin  custom-gemeente-x", haystack: $display);
 	}//end testGetPrintsActiveSetAndMappingsInOrder()
 
 	/**
@@ -180,9 +180,9 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'amsterdam']));
-		$this->assertSame('amsterdam', $this->store['token_set']);
-		$this->assertStringContainsString('Nextcloud theming is unchanged', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam']));
+		$this->assertSame(expected: 'amsterdam', actual: $this->store['token_set']);
+		$this->assertStringContainsString(needle: 'Nextcloud theming is unchanged', haystack: $tester->getDisplay());
 	}//end testSetSwitchesAndAuditsAsCli()
 
 	/**
@@ -195,9 +195,9 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(Command::FAILURE, $tester->execute(['token-set' => 'amsterdm']));
-		$this->assertStringContainsString('amsterdm', $tester->getDisplay());
-		$this->assertSame('rijkshuisstijl', $this->store['token_set']);
+		$this->assertSame(expected: Command::FAILURE, actual: $tester->execute(['token-set' => 'amsterdm']));
+		$this->assertStringContainsString(needle: 'amsterdm', haystack: $tester->getDisplay());
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store['token_set']);
 	}//end testUnknownIdFailsAndChangesNothing()
 
 	/**
@@ -210,8 +210,8 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'rijkshuisstijl']));
-		$this->assertStringContainsString('already the active token set', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'rijkshuisstijl']));
+		$this->assertStringContainsString(needle: 'already the active token set', haystack: $tester->getDisplay());
 	}//end testSameSetIsANoOp()
 
 	/**
@@ -225,9 +225,15 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'amsterdam', '--dry-run' => true, '--sync-core' => true]));
-		$this->assertStringContainsString('would switch the active token set from rijkshuisstijl to amsterdam', $tester->getDisplay());
-		$this->assertSame('rijkshuisstijl', $this->store['token_set']);
+		$this->assertSame(
+			expected: Command::SUCCESS,
+			actual: $tester->execute(['token-set' => 'amsterdam', '--dry-run' => true, '--sync-core' => true])
+		);
+		$this->assertStringContainsString(
+			needle: 'would switch the active token set from rijkshuisstijl to amsterdam',
+			haystack: $tester->getDisplay()
+		);
+		$this->assertSame(expected: 'rijkshuisstijl', actual: $this->store['token_set']);
 	}//end testDryRunWritesNothing()
 
 	/**
@@ -240,8 +246,11 @@ class ThemeCommandsTest extends TestCase {
 
 		$tester = $this->setCommand();
 
-		$this->assertSame(Command::SUCCESS, $tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]));
-		$this->assertStringContainsString('Applied to Nextcloud theming: primary_color, background_color, logo.', $tester->getDisplay());
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]));
+		$this->assertStringContainsString(
+			needle: 'Applied to Nextcloud theming: primary_color, background_color, logo.',
+			haystack: $tester->getDisplay()
+		);
 	}//end testSyncCoreAppliesAndListsTheValues()
 
 	/**
@@ -252,14 +261,16 @@ class ThemeCommandsTest extends TestCase {
 	public function testSyncCoreSaysWhenTheValuesDidNotValidate(): void {
 		$this->coreSync->method('sync')->willReturn([]);
 		$this->coreSync->method('themingParams')->willReturnCallback(
-			fn (string $tokenSetId): array => ($tokenSetId === 'amsterdam' ? ['primary_color' => 'not a colour'] : [])
+			fn (string $tokenSetId): array => (match ($tokenSetId === 'amsterdam') {
+				true => ['primary_color' => 'not a colour'], default => []
+			})
 		);
 
 		$tester = $this->setCommand();
 		$tester->execute(['token-set' => 'amsterdam', '--sync-core' => true]);
-		$this->assertStringContainsString('the theming values of amsterdam did not validate', $tester->getDisplay());
+		$this->assertStringContainsString(needle: 'the theming values of amsterdam did not validate', haystack: $tester->getDisplay());
 
 		$tester->execute(['token-set' => 'rijkshuisstijl', '--sync-core' => true]);
-		$this->assertStringContainsString('rijkshuisstijl has no theming values to apply', $tester->getDisplay());
+		$this->assertStringContainsString(needle: 'rijkshuisstijl has no theming values to apply', haystack: $tester->getDisplay());
 	}//end testSyncCoreSaysWhenTheValuesDidNotValidate()
 }//end class
