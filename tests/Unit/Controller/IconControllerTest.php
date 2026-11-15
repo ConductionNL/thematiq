@@ -106,26 +106,26 @@ class IconControllerTest extends TestCase {
 	 * @return IconController The controller.
 	 */
 	private function controller(string $tokenSet): IconController {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => $default
 		);
 
-		$groupTheming = $this->createMock(GroupThemingService::class);
+		$groupTheming = $this->createMock(originalClassName: GroupThemingService::class);
 		$groupTheming->method('resolveTokenSetForRequest')->willReturn($tokenSet);
 
-		$urls = $this->createMock(IURLGenerator::class);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('imagePath')->willReturnCallback(
 			static fn (string $appName, string $file) => '/apps/' . $appName . '/img/' . $file
 		);
 
 		return new IconController(
-			$this->createMock(IRequest::class),
-			new DesignSystemService($appManager, $config),
-			$groupTheming,
-			$urls
+			request: $this->createMock(originalClassName: IRequest::class),
+			designSystemService: new DesignSystemService(appManager: $appManager, config: $config),
+			groupTheming: $groupTheming,
+			urlGenerator: $urls
 		);
 	}//end controller()
 
@@ -136,12 +136,12 @@ class IconControllerTest extends TestCase {
 	 */
 	public function testTheIconFollowsTheDesignSystem(): void {
 		$nl = $this->controller(tokenSet: 'rijkshuisstijl')->show(name: 'home');
-		$this->assertInstanceOf(RedirectResponse::class, $nl);
-		$this->assertSame('/apps/thematiq/img/icons/rvo/home.svg', $nl->getRedirectURL());
+		$this->assertInstanceOf(expected: RedirectResponse::class, actual: $nl);
+		$this->assertSame(expected: '/apps/thematiq/img/icons/rvo/home.svg', actual: $nl->getRedirectURL());
 
 		$fr = $this->controller(tokenSet: 'lasuite-violet')->show(name: 'home');
-		$this->assertInstanceOf(RedirectResponse::class, $fr);
-		$this->assertSame('/apps/thematiq/img/icons/dsfr/home.svg', $fr->getRedirectURL());
+		$this->assertInstanceOf(expected: RedirectResponse::class, actual: $fr);
+		$this->assertSame(expected: '/apps/thematiq/img/icons/dsfr/home.svg', actual: $fr->getRedirectURL());
 	}//end testTheIconFollowsTheDesignSystem()
 
 	/**
@@ -150,9 +150,9 @@ class IconControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testNoIconAnswers404(): void {
-		$this->assertInstanceOf(NotFoundResponse::class, $this->controller(tokenSet: 'rijkshuisstijl')->show(name: 'missing'));
-		$this->assertInstanceOf(NotFoundResponse::class, $this->controller(tokenSet: 'nextcloud')->show(name: 'home'));
-		$this->assertInstanceOf(NotFoundResponse::class, $this->controller(tokenSet: 'rijkshuisstijl')->show(name: '..'));
+		$this->assertInstanceOf(expected: NotFoundResponse::class, actual: $this->controller(tokenSet: 'rijkshuisstijl')->show(name: 'missing'));
+		$this->assertInstanceOf(expected: NotFoundResponse::class, actual: $this->controller(tokenSet: 'nextcloud')->show(name: 'home'));
+		$this->assertInstanceOf(expected: NotFoundResponse::class, actual: $this->controller(tokenSet: 'rijkshuisstijl')->show(name: '..'));
 	}//end testNoIconAnswers404()
 
 	/**
@@ -163,9 +163,9 @@ class IconControllerTest extends TestCase {
 	public function testTheRouteIsRegistered(): void {
 		$routes = require __DIR__ . '/../../../appinfo/routes.php';
 		$this->assertContains(
-			['name' => 'icon#show', 'url' => '/icons/{name}', 'verb' => 'GET'],
-			$routes['routes']
+			needle: ['name' => 'icon#show', 'url' => '/icons/{name}', 'verb' => 'GET'],
+			haystack: $routes['routes']
 		);
-		$this->assertTrue(method_exists(IconController::class, 'show'));
+		$this->assertTrue(condition: method_exists(IconController::class, 'show'));
 	}//end testTheRouteIsRegistered()
 }//end class

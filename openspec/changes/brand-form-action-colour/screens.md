@@ -1,0 +1,1 @@
+- Screen: Settings, Administration, Theming, "Start from your colors". One box and one colour field are added under "Background color". No board draws this form; it follows the fields above it.

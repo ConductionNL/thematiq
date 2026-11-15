@@ -178,13 +178,21 @@ describe('a mapping is only claimed where the CSS makes it', () => {
 	})
 
 	it('a token named for a mapping is the one the stylesheet uses', () => {
+		// A value uses a token when it names it, or when it reads an internal
+		// step (`--thematiq-*`) that names it: the hover of the action colour
+		// is read through `--thematiq-action-hover`.
+		const reads = (value, token) =>
+			value.includes(token)
+			|| (value.match(/--thematiq-[\w-]+/g) || []).some((step) =>
+				(allCss.get(step) || []).some((v) => v.includes(token)),
+			)
 		const wrong = Object.entries(st)
 			.filter(
 				([, s]) =>
 					s.status === 'mapped' && s.via === 'stylesheet' && s.token,
 			)
 			.filter(
-				([n, s]) => !(allCss.get(n) || []).some((v) => v.includes(s.token)),
+				([n, s]) => !(allCss.get(n) || []).some((v) => reads(v, s.token)),
 			)
 			.map(([n]) => n)
 		expect(wrong).toEqual([])

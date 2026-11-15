@@ -1,0 +1,1 @@
+- Screen: every Nextcloud page on the Cunningham set that shows a filled primary button: the main button of a page, the confirm button of a dialog, the login button. Nothing else on the page changes. The green is the one the OpenProject boards on identity.conduction.nl/screens draw (`--sc-action`).

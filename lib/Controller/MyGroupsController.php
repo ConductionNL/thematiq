@@ -14,18 +14,21 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/per-group-theming/spec.md
+ * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
  */
 
 declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\DelegatedChoice;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
+use OCA\Thematiq\Settings\GroupHouseStyle;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -34,11 +37,13 @@ use OCP\IUserSession;
 /**
  * `GET /api/my-groups/house-style` lists the delegated groups the signed-in
  * user is subadmin of; `POST /api/my-groups/{group}/house-style` sets one.
- * Both are `#[NoAdminRequired]`; the write checks, on every call, that the
- * user is subadmin of the named group and that the set is on its allowed
- * list, answering 403 otherwise.
+ * Both need the delegated setting {@see GroupHouseStyle} (an administrator,
+ * or a member of a group the administrator granted it to); the write also
+ * checks, on every call, that the user is subadmin of the named group and
+ * that the set is on its allowed list, answering 403 otherwise.
  *
  * @spec openspec/specs/per-group-theming/spec.md
+ * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
  */
 class MyGroupsController extends Controller {
 
@@ -67,8 +72,9 @@ class MyGroupsController extends Controller {
 	 * @return JSONResponse `{groups: [...]}`.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
+	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
 	 */
-	#[NoAdminRequired]
+	#[AuthorizedAdminSetting(settings: GroupHouseStyle::class)]
 	public function index(): JSONResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 
@@ -84,14 +90,16 @@ class MyGroupsController extends Controller {
 	 * @return JSONResponse The updated entry, 403 when not allowed, 422 when the mapping refuses it.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
+	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
 	 */
-	#[NoAdminRequired]
+	#[AuthorizedAdminSetting(settings: GroupHouseStyle::class)]
 	public function update(string $group, string $tokenSet = ''): JSONResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 
 		try {
-			$this->delegation->requireDelegatedChoice(uid: $uid, group: $group, tokenSet: $tokenSet);
-			$entry = $this->delegation->setDelegatedTokenSet(uid: $uid, group: $group, tokenSet: $tokenSet);
+			$choice = new DelegatedChoice(group: $group, tokenSet: $tokenSet);
+			$this->delegation->requireDelegatedChoice(uid: $uid, choice: $choice);
+			$entry = $this->delegation->setDelegatedTokenSet(uid: $uid, choice: $choice);
 		} catch (DelegationRefusedException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		} catch (GroupThemingValidationException $e) {

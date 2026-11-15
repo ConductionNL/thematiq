@@ -446,3 +446,134 @@ covers recording and display.
 - WHEN the import succeeds
 - THEN the manifest entry MUST NOT contain a `version` key
 - AND the list response MUST return `version: null` (or omit the field) for that set
+
+### Requirement: An Uploaded Set Is Selectable Without A Reload
+After a successful upload the admin panel MUST bring the token-set dropdown and its in-memory
+catalogue in line with the server's selectable list, so the new set can be chosen at once.
+
+#### Scenario: Option appears after upload
+- GIVEN the admin uploads a theme named "Midden-Delfland"
+- WHEN the upload response is `200`
+- THEN the client MUST re-read `GET /settings/tokensets`
+- AND the dropdown MUST gain `<option value="custom-midden-delfland">Midden-Delfland</option>` in
+  alphabetical position, carrying `data-design-system`
+- AND `tokenSetsData['custom-midden-delfland']` MUST hold the catalogue entry (name, theming,
+  warnings), so the apply and theming-sync dialogs can read it
+- AND the page MUST NOT reload
+
+#### Scenario: Upload does not select or apply
+- GIVEN the option was added
+- WHEN the upload flow completes
+- THEN the dropdown's selection MUST be unchanged and no apply dialog MUST open
+- AND the notification MUST tell the admin the set is in the dropdown and to select it to apply it
+- AND the dropdown MUST receive focus
+
+#### Scenario: Catalogue refresh fails
+- GIVEN `GET /settings/tokensets` fails after a successful upload
+- WHEN the client handles it
+- THEN the notification MUST fall back to asking for a reload, and the upload MUST still count as
+  stored
+
+### Requirement: A Deleted Set Leaves The Dropdown Without A Reload
+After a successful delete the admin panel MUST remove the set's option and catalogue entry, and MUST
+mirror the server's reset to `nextcloud` on the page when the deleted set was the one on it.
+
+#### Scenario: Deleting the active set
+- GIVEN `custom-openwoo` is the active set and is on the page
+- WHEN the admin confirms its deletion and the server answers `{status: "ok"}`
+- THEN its `<option>` and `tokenSetsData` entry MUST be removed
+- AND the page's stylesheet run MUST be swapped to `nextcloud`'s (empty)
+- AND the dropdown MUST show `nextcloud`
+- AND the page MUST NOT reload
+
+#### Scenario: Deleting an inactive set
+- GIVEN `custom-x` exists but is neither selected nor on the page
+- WHEN it is deleted
+- THEN only its option and entry MUST be removed; the page's stylesheets MUST be untouched
+
+### Requirement: Theme Sources Are Accepted, Not Only Token Sets
+The upload MUST accept the four input shapes defined by `token-set-converter` and MUST convert them
+to a token set before validation and storage. It MUST NOT require the admin to pre-bake
+`--nldesign-*` CSS.
+
+#### Scenario: A design system's built CSS becomes a selectable token set
+- GIVEN an admin picks a `design-tokens.css` whose declarations sit in a `.{prefix}-theme` block
+- AND enters the name "OpenWOO"
+- WHEN the upload is submitted
+- THEN the content MUST be converted before validation
+- AND the stored `css/tokens/custom-openwoo.css` MUST declare the required semantic tokens
+- AND the response MUST confirm the set was added and is selectable
+
+#### Scenario: A file whose content contradicts its extension is handled by content
+@e2e exclude Server-side detection by content: PHPUnit CustomTokenSetUploadWritesTest and TokenSetConverterServiceTest
+- GIVEN a file named `tokens.json` whose content is CSS
+- WHEN the upload is submitted
+- THEN the input MUST be detected as CSS from the content
+- AND the file name MUST be used only as a provenance hint
+
+### Requirement: Pasted Content Is A First-Class Input
+The "Custom token sets" section MUST offer a textarea beside the file picker, and
+`CustomTokenSetController::upload()` MUST accept a `content` parameter as an alternative to `file`,
+with an optional `sourceName` for the provenance block. Everything after reading the input MUST be
+identical for both paths.
+
+#### Scenario: Pasting the contents of a theme file creates the same set as uploading it
+- GIVEN an admin pastes the full text of a `design-tokens.css` into the textarea
+- AND enters a token set name
+- WHEN Convert is submitted
+- THEN the resulting stored CSS MUST be identical to uploading the same bytes as a file
+- AND the validator MUST have run on the emitted CSS
+
+#### Scenario: An empty paste and an empty file picker are the same error
+- GIVEN neither a file nor pasted content is supplied
+- WHEN the form is submitted
+- THEN the response MUST be a 400 naming that a file or pasted content is required
+- AND no set MUST be created
+
+#### Scenario: Pasted content over the size limit is refused
+@e2e exclude Size limit enforced server-side: PHPUnit CustomTokenSetControllerTest
+- GIVEN pasted content larger than `CustomTokenSetValidator::MAX_SIZE`
+- WHEN Convert is submitted
+- THEN the response MUST refuse it with the same 512 KB limit the file path enforces
+
+### Requirement: The Conversion Report Is Returned And Rendered
+The upload response MUST carry the conversion `report` and its `counts`, and the admin panel MUST
+render it grouped by reason using the existing diagnostics grouping, so an admin can see what a theme
+asked for that Nextcloud will not do.
+
+#### Scenario: The report groups skipped tokens by reason
+- GIVEN a converted theme that declared page width, font sizes and button paddings
+- WHEN the upload response is rendered
+- THEN the panel MUST show a grouped block per reason code
+- AND each group MUST show the human sentence for that code
+- AND the applied / adapted / skipped counts MUST be shown
+
+#### Scenario: The new set appears in the dropdown without a page reload
+- GIVEN a successful conversion
+- WHEN the response is handled
+- THEN the new set MUST be appended to the token-set dropdown client-side
+- AND selecting it MUST NOT require reloading the settings page
+
+### Requirement: Component-Prefix Tokens Are Accepted In Stored Sets
+`CustomTokenSetValidator` MUST accept `--utrecht-*`, `--ams-*` and `--denhaag-*` names beside
+`--nldesign-*` and `--{slug}-*`, because the converted file carries a component layer that
+`utrecht-bridge.css` and Conduction's own apps read. The value rules MUST NOT be relaxed.
+
+#### Scenario: A component-prefix declaration is stored
+@e2e exclude Validator rule: PHPUnit CustomTokenSetValidatorTest::testTheConvertersComponentPrefixesAreAccepted
+- GIVEN a converted set declaring `--utrecht-button-border-radius: 3px`
+- WHEN it is validated
+- THEN the declaration MUST be accepted and stored
+
+#### Scenario: The value gate is unchanged for the widened vocabulary
+@e2e exclude Validator rule: PHPUnit CustomTokenSetValidatorTest::testAComponentPrefixDoesNotLoosenTheValueGate
+- GIVEN a declaration `--utrecht-button-border-radius: 3px; background: url(x)`
+- WHEN it is validated
+- THEN it MUST be rejected by `isForbiddenValue()` exactly as a `--nldesign-*` declaration would be
+
+#### Scenario: An external url() never reaches the validator
+@e2e exclude Security path: PHPUnit TokenSetConverterServiceTest::testAnExternalUrlIsDroppedBeforeTheValidator
+- GIVEN a theme declaring a logo token pointing at a remote host
+- WHEN it is converted and validated
+- THEN the converter MUST have dropped the declaration with reason `external-url-blocked`
+- AND the stored file MUST contain no remote URL

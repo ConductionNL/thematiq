@@ -331,6 +331,14 @@ describe('zuiddrecht: the palette', () => {
 		).toBe('#CC0000')
 	})
 
+	it("draws a site card's line in the boards' grey, and a dark one in both dark scopes", () => {
+		expect(LIGHT['--nldesign-website-card-border-color']).toBe('#D3D8DF')
+		for (const scope of [GENERATED.media, GENERATED.explicit]) {
+			expect(scope['--nldesign-website-card-border-color']).toBeDefined()
+			expect(scope['--nldesign-website-card-border-color']).not.toBe('#D3D8DF')
+		}
+	})
+
 	it("carries Nextcloud's radius scale: 8px controls, 12px containers", () => {
 		expect(LIGHT['--nldesign-border-radius']).toBe('8px')
 		expect(LIGHT['--nldesign-border-radius-small']).toBe('4px')
@@ -403,9 +411,13 @@ describe('zuiddrecht: the dark workspace', () => {
 		expect(literals).toEqual([])
 
 		for (const scope of [OVERRIDES.media, OVERRIDES.explicit]) {
+			// The page and surface, and the two status tints the generated dark
+			// file leaves under AA for badge text (statusHueTints.spec.js).
 			expect(Object.keys(scope).sort()).toEqual([
 				'--color-background-plain',
 				'--color-background-plain-text',
+				'--nl-color-purple-light',
+				'--nl-color-teal-light',
 				SURFACE,
 			])
 			expect(scope['--color-background-plain']).toBe(scope[SURFACE])

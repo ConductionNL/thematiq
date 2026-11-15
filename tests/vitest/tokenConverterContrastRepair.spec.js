@@ -19,15 +19,13 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'fs'
 import { join, resolve } from 'path'
 import converter from '../../js/lib/tokenConverter.js'
+import { vocabularyStylesheets } from '../../scripts/lib/converter-context.mjs'
 
 const ROOT = resolve(__dirname, '../..')
 const table = JSON.parse(
 	readFileSync(join(ROOT, 'scripts/mapping/nlds-to-nextcloud.json'), 'utf8'),
 )
-const vocabulary = converter.vocabularyFrom([
-	readFileSync(join(ROOT, 'css/systems/nldesign/defaults.css'), 'utf8'),
-	readFileSync(join(ROOT, 'css/systems/nldesign/utrecht-bridge.css'), 'utf8'),
-])
+const vocabulary = converter.vocabularyFrom(vocabularyStylesheets())
 
 /**
  * Convert one built theme block and return the declarations by name.

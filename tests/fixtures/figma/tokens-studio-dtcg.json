@@ -1,0 +1,98 @@
+{
+  "basis": {
+    "nldesign": {
+      "color": {
+        "primary": {
+          "$value": "#0b5fff",
+          "$type": "color"
+        },
+        "link": {
+          "$value": "{nldesign.color.primary}",
+          "$type": "color"
+        },
+        "action": {
+          "$value": "#000000",
+          "$type": "color"
+        }
+      },
+      "border": {
+        "radius": {
+          "$value": "4px",
+          "$type": "borderRadius"
+        },
+        "radius-large": {
+          "$value": "{nldesign.border.radius}",
+          "$type": "borderRadius"
+        }
+      },
+      "font": {
+        "family": {
+          "$value": "'Fira Sans', sans-serif",
+          "$type": "fontFamilies"
+        },
+        "weight-bold": {
+          "$value": "700",
+          "$type": "fontWeights"
+        }
+      },
+      "spacing": {
+        "loop-a": {
+          "$value": "{nldesign.spacing.loop-b}",
+          "$type": "spacing"
+        },
+        "loop-b": {
+          "$value": "{nldesign.spacing.loop-a}",
+          "$type": "spacing"
+        },
+        "double": {
+          "$value": "{nldesign.border.radius} * 2",
+          "$type": "spacing"
+        }
+      }
+    }
+  },
+  "merk": {
+    "nldesign": {
+      "color": {
+        "action": {
+          "$value": "#1f883d",
+          "$type": "color"
+        }
+      },
+      "border": {
+        "radius": {
+          "$value": "6px",
+          "$type": "borderRadius"
+        }
+      }
+    }
+  },
+  "concept": {
+    "nldesign": {
+      "color": {
+        "concept": {
+          "$value": "#ff00ff",
+          "$type": "color"
+        }
+      }
+    }
+  },
+  "$themes": [
+    {
+      "id": "merk-licht",
+      "name": "Merk licht",
+      "selectedTokenSets": {
+        "basis": "source",
+        "merk": "enabled",
+        "concept": "disabled"
+      }
+    }
+  ],
+  "$metadata": {
+    "tokenSetOrder": [
+      "basis",
+      "merk",
+      "concept"
+    ]
+  }
+}

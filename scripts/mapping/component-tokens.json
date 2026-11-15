@@ -236,6 +236,14 @@
 					"primary": true,
 					"paints": "The selected entry's wash and its marker stripe",
 					"callout": 2
+				},
+				"--nldesign-component-navigation-background-color": {
+					"global": "--color-main-background-blur",
+					"label": "Navigation background",
+					"type": "color",
+					"primary": false,
+					"paints": "The navigation column's own surface",
+					"callout": 1
 				}
 			}
 		},
@@ -357,10 +365,11 @@
 			"tokens": {
 				"--nldesign-component-table-header-color": {
 					"global": "--color-text-maxcontrast",
+					"paint": { "property": "color", "selectors": ["th"], "fallback": "inherit" },
 					"label": "Table header label",
 					"type": "color",
 					"primary": false,
-					"paints": "Header row labels and secondary cells",
+					"paints": "Header row labels",
 					"callout": 1
 				},
 				"--nldesign-component-table-header-background-color": {
@@ -579,6 +588,14 @@
 					"primary": false,
 					"paints": "The online status dot",
 					"callout": 1
+				},
+				"--nldesign-component-avatar-initials-color": {
+					"global": "--color-text-light",
+					"label": "Avatar initials",
+					"type": "color",
+					"primary": false,
+					"paints": "The initials of an avatar without a picture",
+					"callout": 1
 				}
 			}
 		},
@@ -701,6 +718,14 @@
 					"primary": false,
 					"paints": "Invalid border",
 					"callout": 3
+				},
+				"--nldesign-component-textbox-color": {
+					"global": "--color-main-text",
+					"label": "Text input text",
+					"type": "color",
+					"primary": false,
+					"paints": "The typed text",
+					"callout": 1
 				}
 			}
 		},
@@ -868,7 +893,8 @@
 				"--nldesign-component-textbox-border-color": "--nldesign-component-textarea-border-color",
 				"--nldesign-component-textbox-border-radius": "--nldesign-component-textarea-border-radius",
 				"--nldesign-component-textbox-background-color": "--nldesign-component-textarea-background-color",
-				"--nldesign-component-textbox-focus-border-color": "--nldesign-component-textarea-focus-border-color"
+				"--nldesign-component-textbox-focus-border-color": "--nldesign-component-textarea-focus-border-color",
+				"--nldesign-component-textbox-color": "--nldesign-component-textarea-color"
 			}
 		},
 		"dialog": {
@@ -957,7 +983,9 @@
 				".button-vue--primary",
 				".button-vue--vue-primary",
 				"button.primary",
-				"input[type='submit']"
+				"input[type='submit']",
+				"input.primary",
+				"a.primary"
 			],
 			"tokens": {
 				"--nldesign-component-button-primary-action-background-color": {
@@ -984,8 +1012,18 @@
 					"paints": "Background on hover",
 					"callout": 2
 				},
+				"--nldesign-component-button-primary-action-border-color": {
+					"global": "--color-primary-element-hover",
+					"paint": { "property": "border-color", "selectors": [".button-vue--primary", ".button-vue--vue-primary"], "fallback": "var(--color-primary-element-hover)", "important": true },
+					"label": "Primary button border",
+					"type": "color",
+					"primary": true,
+					"paints": "Border",
+					"callout": 1
+				},
 				"--nldesign-component-button-focus-border-color": {
 					"global": "--color-main-text",
+					"state": ":focus-visible",
 					"label": "Button focus ring",
 					"type": "color",
 					"primary": false,

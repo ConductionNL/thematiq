@@ -542,6 +542,119 @@ The app MUST emit the internal scopes as an inline `<style id="thematiq-internal
 - WHEN a page is rendered
 - THEN the page MUST carry no internal scopes layer
 
+### Requirement: The Set-Dependent Cascade Has One Owner
+`CssInjectionService` MUST build the set-dependent layers — the design-system stylesheets, the
+Marianne layer, the set's token file, the logo `<style>`, the set's element overrides, the dark
+variant, the contrast fixes — as one ordered list, and MUST emit the page render from that list.
+The set-independent layers (`custom-overrides.css`, `custom-css.css`, the hide-slogan and
+show-menu-labels stylesheets, the preview banner) MUST stay outside the list and MUST be emitted
+after it.
+
+#### Scenario: The page render is the list, verbatim
+@e2e exclude Pure service logic — PHPUnit on CssInjectionService with the emit seams stubbed
+- GIVEN the active set is `rijkshuisstijl` on the `nldesign` design system
+- WHEN `inject('user')` runs
+- THEN the emitted files MUST be, in order, the six design-system stylesheets,
+  `tokens/rijkshuisstijl`, `icon-contrast`, `error-contrast`, then `custom-overrides`
+- AND the emitted order MUST be unchanged from before this change
+
+### Requirement: Stylesheet Manifest Endpoint
+The app MUST expose `GET /settings/tokenset-stylesheets/{tokenSetId}` (admin-only, read-only,
+no side effects) answering `{tokenSet, designSystem, layers}` where `layers` is the set-dependent
+list for that set resolved to `{layer, kind: "file", href}` or `{layer, kind: "inline", id, css}`
+entries, in cascade order, plus the custom-font link when the design system reads token variables
+and fonts exist.
+
+#### Scenario: Manifest equals the injected set layers
+@e2e exclude Pure service logic — PHPUnit on CssInjectionService
+- GIVEN the same configuration as the page render
+- WHEN `getStylesheetManifest('rijkshuisstijl')` is called
+- THEN its `file` layers, reduced to their path under `css/`, MUST equal the files `inject()` emitted
+  minus the set-independent ones, in the same order
+- AND every `file` href MUST carry `?v=<installed app version>`
+- AND the inline layer MUST carry `id` `nldesign-logo-url`
+
+#### Scenario: Stock Nextcloud has an empty manifest
+@e2e exclude Pure service logic — PHPUnit on CssInjectionService
+- GIVEN the set `nextcloud` (design system `none`)
+- WHEN its manifest is requested
+- THEN `layers` MUST be `[]`, so a client switching to stock removes every Thematiq layer
+
+#### Scenario: Unknown set
+- GIVEN an id `TokenSetService::isValidTokenSet()` rejects
+- WHEN the endpoint is called
+- THEN the response MUST be HTTP 404 and nothing MUST be computed for it
+
+### Requirement: The Logo Style Is Addressable
+The inline `<style>` that re-declares `--nldesign-logo-url` MUST carry `id="nldesign-logo-url"` so
+a client can replace it when the set changes; a `<link>` is found again by its pathname, an inline
+style has nothing else to be found by. The logo layer MUST accept `img/logos/<set>.<ext>` for
+`svg`, `png`, `jpg`, `gif` and `webp`, first match wins, so a converter-extracted raster logo is
+served the same way as a shipped SVG.
+
+#### Scenario: The logo style is found by its id, and a raster logo is served like an SVG
+@e2e exclude Asserted on the injected manifest, not in a browser: tests/Unit/Service/CssInjectionServiceTest.php asserts the inline logo layer carries CssInjectionService::LOGO_STYLE_ID, tests/vitest/layerSwap.spec.js keys it as inline:nldesign-logo-url, and tests/Unit/Service/CustomTokenSetLogoAssetTest.php::testAcceptedExtensionsAreWrittenUnderTheirOwnName covers the five extensions. Seen live on 9 Oct 2026: the swap kept the header logo across a set change.
+- GIVEN a set whose logo is `img/logos/<set>.png`
+- WHEN the stylesheet manifest for that set is built
+- THEN the inline layer that declares `--nldesign-logo-url` MUST carry `id="nldesign-logo-url"`
+- AND it MUST point at the `.png` file, exactly as it would at an `.svg`
+
+### Requirement: Client Swaps The Run, Never Rewrites Variables
+The admin panel MUST apply a set to the current page by inserting the new manifest's elements at
+the place the current set's run occupies, waiting for each `<link>` to load, and then removing the
+current run; it MUST match existing elements to manifest layers by pathname (never by the
+cache-busting query) and inline styles by id. It MUST NOT apply a set by writing resolved variables
+inline on `<html>`.
+
+#### Scenario: No flash, no gap
+@e2e exclude Timing — covered by the workflow spec's outcome assertions
+- GIVEN a set is on the page
+- WHEN another set is applied
+- THEN at no moment MUST the page carry neither set's stylesheets
+- AND when both are present the new run MUST be later in the document, so it wins
+
+#### Scenario: Leaving and returning to stock
+- GIVEN `nextcloud` is on the page (no Thematiq set layers)
+- WHEN `amsterdam` is applied and then `nextcloud` again, without navigation
+- THEN after the first swap the design-system files and `tokens/amsterdam.css` MUST be on the page,
+  inserted before `custom-overrides.css`
+- AND after the second swap no Thematiq set layer MUST remain
+
+### Requirement: The solid background reaches only Nextcloud's own panels and widgets
+
+The nldesign solid-background rule SHALL paint Nextcloud's panels, its dashboard widget and its reference widget cards with `var(--color-main-background)`, and SHALL NOT select an element by a substring of its class name "widget". A widget drawn by an app or by nextcloud-vue keeps the ground it draws.
+
+#### Scenario: A nextcloud-vue widget area keeps its own ground
+@e2e exclude a cascade defect over the shipped stylesheet; tests/vitest/widgetPartsKeepTheirColour.spec.js matches every background selector against Nextcloud, nextcloud-vue and app fixtures, and the live check was made on :8080 with computed styles
+- **GIVEN** the nldesign design system is active
+- **WHEN** a page renders `.cn-reports-page__widgets`, a borderless `.cn-widget-wrapper`, a `.cn-stages-widget` or an app's `.dq-case-widget`
+- **THEN** the solid-background rule SHALL NOT match them
+- **AND** a `.dashboard-widget`, `.widget-default`, `.widget-custom`, `.widget-access` and `.panel` outside the header SHALL still get `var(--color-main-background)`
+
+### Requirement: A link drawn as a button reads as a button
+
+An anchor drawn as a button (`a.button-vue`, `a.button`, `a[role="button"]`,
+`a.cn-banner-widget__action`, `a.cn-link-button-widget__button`) SHALL keep its
+button's own text colour for every variant and SHALL NOT be underlined, in any
+state (rest, hover, focus, visited), under every nldesign set and the
+high-contrast system. A link in prose SHALL keep the link colour and the set's
+link decoration.
+
+#### Scenario: the Vandaag eerst card on Mijn werk
+- GIVEN dossiq's Mijn werk card "Vandaag eerst" with the link actions "Open deze zaken", "Naar het werkbord", "Zaak openen" and the button "Termijn opschorten"
+- WHEN it renders under the Zuiddrecht set
+- THEN no action text is underlined
+- AND the outlined actions read in the main ink, like "Termijn opschorten"
+- AND the primary action "Zaak openen" reads white on the primary fill
+
+### Requirement: a week strip item card keeps its own ink
+
+A CnWeekStripWidget item (`a.cn-week-strip__item`) MUST NOT be painted by a forced link colour rule and MUST NOT be underlined, in any state; its frame marks it as a control.
+
+#### Scenario: DqMijnWerk Termijnen deze week
+- GIVEN the case "Parkeervergunningen binnenstad" in Wednesday's column
+- THEN its title reads in the body ink, not underlined
+
 ## Current Implementation Status
 
 **Fully implemented:**

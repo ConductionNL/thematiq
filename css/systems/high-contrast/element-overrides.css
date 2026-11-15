@@ -56,6 +56,18 @@ body .button-vue.button-vue:focus-visible {
 /* Placeholders — no low-contrast grey. */
 ::placeholder {
 	color: var(--nldesign-color-placeholder-dark) !important;
+}
+
+/*
+ * Every placeholder is drawn fully opaque, except where Nextcloud hides it:
+ * a text field or text area with its label inside the field shows the label
+ * at rest and the placeholder only on focus, so the two are never drawn over
+ * each other.
+ */
+:not(
+	.input-field:not(.input-field--label-outside) .input-field__input:not(:focus),
+	.textarea__input:not(:focus, .textarea__input--label-outside)
+)::placeholder {
 	opacity: 1 !important;
 }
 

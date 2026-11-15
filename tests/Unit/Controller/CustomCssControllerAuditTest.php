@@ -63,9 +63,9 @@ class CustomCssControllerAuditTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->request = $this->createMock(IRequest::class);
-		$this->customCssService = $this->createMock(CustomCssService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->customCssService = $this->createMock(originalClassName: CustomCssService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
 
 	}//end setUp()
 
@@ -76,10 +76,10 @@ class CustomCssControllerAuditTest extends TestCase {
 	 */
 	private function buildController(): CustomCssController {
 		return new CustomCssController(
-			'nldesign',
-			$this->request,
-			$this->customCssService,
-			$this->auditService
+			appName: 'nldesign',
+			request: $this->request,
+			customCssService: $this->customCssService,
+			auditService: $this->auditService
 		);
 
 	}//end buildController()
@@ -97,11 +97,11 @@ class CustomCssControllerAuditTest extends TestCase {
 
 		$this->auditService->expects($this->once())
 			->method('log')
-			->with($this->equalTo('custom_css_written'), $this->anything());
+			->with($this->equalTo(value: 'custom_css_written'), $this->anything());
 
 		$response = $this->buildController()->setCustomCss();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 
 	}//end testSuccessfulWriteIsAudited()
 
@@ -117,12 +117,12 @@ class CustomCssControllerAuditTest extends TestCase {
 
 		$this->auditService->expects($this->once())
 			->method('log')
-			->with($this->equalTo('custom_css_rejected'), $this->anything());
+			->with($this->equalTo(value: 'custom_css_rejected'), $this->anything());
 
 		$response = $this->buildController()->setCustomCss();
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertArrayHasKey('errors', $response->getData());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'errors', array: $response->getData());
 
 	}//end testRejectedSubmissionIsAudited()
 
@@ -154,7 +154,7 @@ class CustomCssControllerAuditTest extends TestCase {
 
 		$response = $this->buildController()->setCustomCss();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 
 	}//end testNonStringPayloadIsRefused()
 
@@ -168,8 +168,8 @@ class CustomCssControllerAuditTest extends TestCase {
 		foreach (['getCustomCss', 'setCustomCss'] as $method) {
 			$attributes = (new \ReflectionMethod(CustomCssController::class, $method))
 				->getAttributes(\OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "CustomCssController::{$method}() must carry #[AuthorizedAdminSetting]");
-			$this->assertSame(\OCA\Thematiq\Settings\Admin::class, $attributes[0]->getArguments()[0]);
+			$this->assertNotEmpty(actual: $attributes, message: "CustomCssController::{$method}() must carry #[AuthorizedAdminSetting]");
+			$this->assertSame(expected: \OCA\Thematiq\Settings\Admin::class, actual: $attributes[0]->getArguments()[0]);
 		}
 
 	}//end testEveryEndpointIsAdminOnly()
@@ -185,8 +185,8 @@ class CustomCssControllerAuditTest extends TestCase {
 
 		$data = $this->buildController()->getCustomCss()->getData();
 
-		$this->assertSame('.a { color: red; }', $data['css']);
-		$this->assertTrue($data['enabled']);
+		$this->assertSame(expected: '.a { color: red; }', actual: $data['css']);
+		$this->assertTrue(condition: $data['enabled']);
 
 	}//end testReadReturnsTheStoredCssAndState()
 
@@ -205,8 +205,47 @@ class CustomCssControllerAuditTest extends TestCase {
 
 		$response = $this->buildController()->setCustomCss();
 
-		$this->assertSame(500, $response->getStatus());
-		$this->assertStringContainsString('Could not write', $response->getData()['error']);
+		$this->assertSame(expected: 500, actual: $response->getStatus());
+		$this->assertStringContainsString(needle: 'Could not write', haystack: $response->getData()['error']);
 
 	}//end testUnwritableFileIsAServerError()
+
+	/**
+	 * The exact audit contexts and responses of a write, with and without the enable flag, and of a rejection.
+	 *
+	 * @return void
+	 */
+	public function testTheAuditContextsAndResponses(): void {
+		$calls = [];
+		$this->auditService->method('log')->willReturnCallback(
+			function (string $action, array $context = []) use (&$calls): void {
+				$calls[] = [$action, $context];
+			}
+		);
+		$this->customCssService->method('read')->willReturn('.old {}');
+		$this->customCssService->method('write')->willReturnOnConsecutiveCalls([], [], ['bad one', 'bad two']);
+		$this->customCssService->method('isEnabled')->willReturnOnConsecutiveCalls(true, true, false, false);
+		$this->customCssService->expects($this->once())->method('setEnabled')->with(false);
+		$this->request->method('getParams')->willReturnOnConsecutiveCalls(
+			['css' => '.a { color: red; }', 'enabled' => 0],
+			['css' => '.b {}'],
+			['css' => '@import url(x);', 'enabled' => true]
+		);
+
+		$first = $this->buildController()->setCustomCss();
+		$second = $this->buildController()->setCustomCss();
+		$third = $this->buildController()->setCustomCss();
+
+		$this->assertSame(expected: ['status' => 'ok', 'bytes' => 18, 'enabled' => true], actual: $first->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'bytes' => 5, 'enabled' => false], actual: $second->getData());
+		$this->assertSame(expected: [422, ['errors' => ['bad one', 'bad two']]], actual: [$third->getStatus(), $third->getData()]);
+		$this->assertSame(
+			expected: [
+				['custom_css_written', ['oldBytes' => 7, 'newBytes' => 18, 'enabled' => true]],
+				['custom_css_written', ['oldBytes' => 7, 'newBytes' => 5, 'enabled' => false]],
+				['custom_css_rejected', ['errors' => ['bad one', 'bad two']]],
+			],
+			actual: $calls
+		);
+	}//end testTheAuditContextsAndResponses()
 }//end class

@@ -64,21 +64,9 @@ const BY_DESIGN = new Set(['--nldesign-color-on-surface'])
  * cannot reach, and it must not grow silently.
  */
 const NO_ROW_YET = new Set([
-	// The navigation panel's own surface. Its Nextcloud variable is
-	// `--color-main-background`, which overrides.css deliberately leaves alone
-	// because overriding it breaks dark mode — so a row here needs a token the
-	// nav rule reads directly, not a re-scope.
-	'app-navigation: background-color <- --nldesign-color-nav-background',
-	// Text colour inside a field. The chips offer border, placeholder, corner,
-	// focus and invalid, but not the typed text itself.
-	'text-input: color <- --nldesign-component-textbox-color',
-	'textarea: color <- --nldesign-component-textbox-color',
-	// The primary button's border. It tracks the background in every shipped
-	// set, so it reads as one edge — but it is a separate token with no row.
-	'primary-button: border-color <- --nldesign-component-button-primary-action-border-color',
-	// The initials on the avatar plate (#769 took them from #ffffff to the
-	// light-text token). The avatar chip has a row for the status badge only.
-	'avatar: color <- --nldesign-color-text-light',
+	// Empty since component-scoped-tokens 8.7 (decision 126): the navigation
+	// background, the typed text of a text input and a textarea, the primary
+	// button's border and the avatar initials each got a row.
 ])
 
 /**
@@ -89,8 +77,7 @@ const NO_ROW_YET = new Set([
 const NESTED = new Set([
 	'header-bar: background-color <- --nldesign-color-primary',
 	'avatar: color <- --nldesign-component-header-color',
-	'header-bar: color <- --nldesign-color-text-light',
-	'content-card: color <- --nldesign-component-button-primary-action-color',
+	'header-bar: color <- --nldesign-component-avatar-initials-color',
 	'link: color <- --nldesign-component-header-color',
 	'link: color <- --nldesign-color-primary',
 	// The header's app MENU entry (`.app-menu-main .app-menu-entry.active a` in
@@ -428,5 +415,134 @@ describe('component tokens: header-bar leaves the login page alone', () => {
 
 		expect(bare).toEqual([])
 		expect(css).toContain(LOGGED_IN + ' {')
+	})
+})
+
+/**
+ * The navigation column's own background (component-scoped-tokens 8.7,
+ * decision 126). Its Nextcloud variable is `--color-main-background`, which
+ * nothing in this layer may redeclare: dark mode depends on it. So the row
+ * re-scopes the blur variable the legacy column reads, and the nldesign rule
+ * reads the token directly.
+ */
+describe('component tokens: the navigation background leaves the main background alone', () => {
+	const NAV = '--nldesign-component-navigation-background-color'
+	const scopes = fs.readFileSync(
+		path.join(ROOT, 'css/component-scopes.css'),
+		'utf8',
+	)
+
+	it('maps the row onto a variable other than --color-main-background', () => {
+		const entry = mapping.components['app-navigation'].tokens[NAV]
+
+		expect(entry).toBeDefined()
+		expect(entry.global).not.toBe('--color-main-background')
+		expect(entry.alsoGlobals).toBeUndefined()
+	})
+
+	it('redeclares no --color-main-background in the navigation scope', () => {
+		const open = scopes.indexOf("[data-thematiq-component='app-navigation'] {")
+		expect(open).toBeGreaterThan(-1)
+		const body = scopes.slice(open, scopes.indexOf('}', open))
+
+		expect(body).toContain(NAV)
+		expect(body).not.toMatch(/--color-main-background\s*:/)
+	})
+
+	it("reads the row first in the nldesign column rule, the set's nav colour second", () => {
+		const theme = fs
+			.readFileSync(path.join(ROOT, 'css/systems/nldesign/theme.css'), 'utf8')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+		const rule = theme.match(/#app-navigation,\s*\.app-navigation\s*\{([^}]*)\}/)
+
+		expect(rule).not.toBeNull()
+		expect(rule[1].replace(/\s+/g, ' ')).toContain(
+			'background-color: var( '
+				+ NAV
+				+ ', var(--nldesign-color-nav-background) ) !important',
+		)
+	})
+})
+
+/**
+ * Live check 2026-10-09 (component-scoped-tokens 8.7): a stored navigation
+ * background painted nothing, in the Files app or on the playground's column.
+ * The test above read theme.css's rule, but element-overrides.css loads after
+ * it and forces the same column to `--color-main-background` with
+ * `!important`, and on Nextcloud's `#app-navigation-vue` its id selector
+ * outranks theme.css anyway. Every rule that paints the column opaque must
+ * read the row first, or the row is a control that does nothing.
+ */
+describe('component tokens: every rule that paints the navigation column reads its row', () => {
+	const NAV = '--nldesign-component-navigation-background-color'
+	const DIR = path.join(ROOT, 'css/systems/nldesign')
+
+	const columnRules = fs
+		.readdirSync(DIR)
+		.filter((file) => file.endsWith('.css'))
+		.flatMap((file) => {
+			const css = fs
+				.readFileSync(path.join(DIR, file), 'utf8')
+				.replace(/\/\*[\s\S]*?\*\//g, '')
+			return [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+				.filter((m) =>
+					m[1]
+						.split(',')
+						.map((s) => s.trim())
+						.some((s) =>
+							[
+								'#app-navigation',
+								'.app-navigation',
+								'#app-navigation-vue',
+							].includes(s),
+						),
+				)
+				.flatMap((m) =>
+					[
+						...m[2].matchAll(
+							/(background(?:-color)?)\s*:\s*([^;]+!important)/g,
+						),
+					].map((d) => ({
+						file,
+						property: d[1],
+						value: d[2].replace(/\s+/g, ' '),
+					})),
+				)
+		})
+
+	it('finds the column rules', () => {
+		expect(columnRules.length).toBeGreaterThan(0)
+	})
+
+	it.each(columnRules.map((r) => [r.file + ' ' + r.property, r]))(
+		'%s reads the row first',
+		(_label, rule) => {
+			expect(rule.value).toMatch(new RegExp('^var\\( ?' + NAV + ','))
+		},
+	)
+})
+
+/**
+ * The same live check: the playground drew the avatar on a header ground but
+ * outside `#header`, so the initials row moved nothing on its own stage.
+ */
+describe('component tokens: the avatar specimen reads the initials row', () => {
+	it('colours the header avatar specimen from the row', () => {
+		const css = fs
+			.readFileSync(path.join(ROOT, 'css/playground.css'), 'utf8')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.replace(/\s+/g, ' ')
+		const rule = css.match(
+			/#body-settings #nldesign-settings #nldesign-preview \.nldesign-pg-ground--header \.nldesign-pg-avatar\s*\{([^}]*)\}/,
+		)
+
+		expect(rule).not.toBeNull()
+		const body = rule[1].replace(/\s+/g, ' ')
+		expect(body).toContain(
+			'color: var( --nldesign-component-avatar-initials-color,',
+		)
+		// element-overrides.css paints every span outside #header with two ids, six classes
+		// and !important; anything less loses to it.
+		expect(body).toContain('!important')
 	})
 })

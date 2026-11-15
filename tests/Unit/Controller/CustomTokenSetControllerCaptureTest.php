@@ -15,6 +15,9 @@ use OCA\Thematiq\Controller\CustomTokenSetController;
 use OCA\Thematiq\Service\BrandingCaptureService;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\CssParserService;
+use OCA\Thematiq\Service\CustomSetRecords;
+use OCA\Thematiq\Service\CustomSetSources;
+use OCA\Thematiq\Service\CustomSetUploadPipeline;
 use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\DarkPaletteService;
@@ -88,16 +91,21 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 */
 	private CustomTokenSetController $controller;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->appDir = sys_get_temp_dir() . '/thematiq-capture-controller-' . uniqid();
 		mkdir($this->appDir . '/css/tokens', 0777, true);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->appDir);
 
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($this->appConfig[$key] ?? $default)
 		);
@@ -108,45 +116,61 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		);
 
 		$service = new CustomTokenSetService(
-			new DirectoryRuntimeFileStore($appManager->getAppPath('thematiq')),
-			$config,
-			new CustomTokenSetValidator(),
-			new ContrastService(),
-			new DarkPaletteService(new ContrastService(), new CssParserService(), $appManager, $this->createMock(LoggerInterface::class))
+			store: new DirectoryRuntimeFileStore(root: $appManager->getAppPath('thematiq')),
+			config: $config,
+			validator: new CustomTokenSetValidator(),
+			contrast: new ContrastService(),
+			darkPalette: new DarkPaletteService(
+				contrast: new ContrastService(),
+				parser: new CssParserService(),
+				appManager: $appManager,
+				logger: $this->createMock(originalClassName: LoggerInterface::class)
+			)
 		);
 
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		$this->request = $this->createMock(IRequest::class);
-		$this->capture = $this->createMock(BrandingCaptureService::class);
-		$this->designSystems = $this->createMock(DesignSystemService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
+		$this->capture = $this->createMock(originalClassName: BrandingCaptureService::class);
+		$this->designSystems = $this->createMock(originalClassName: DesignSystemService::class);
 		$this->designSystems->method('getDesignSystems')->willReturn(
 			[
 				'none' => ['id' => 'none'],
 				'nldesign' => ['id' => 'nldesign'],
 			]
 		);
-		$this->converter = $this->createMock(TokenSetConverterService::class);
+		$this->converter = $this->createMock(originalClassName: TokenSetConverterService::class);
 
 		$this->controller = new CustomTokenSetController(
-			'thematiq',
-			$this->request,
-			$service,
-			new CustomTokenSetValidator(),
-			new CssParserService(),
-			$l,
-			$this->createMock(ThemingAuditService::class),
-			$config,
-			$this->converter,
-			$this->createMock(ThemingService::class),
-			$this->designSystems,
-			$this->capture
+			appName: 'thematiq',
+			request: $this->request,
+			pipeline: new CustomSetUploadPipeline(
+				service: $service,
+				validator: new CustomTokenSetValidator(),
+				cssParser: new CssParserService(),
+				converter: $this->converter
+			),
+			records: new CustomSetRecords(
+				l: $l,
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				config: $config,
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			sources: new CustomSetSources(
+				designSystems: $this->designSystems,
+				brandingCapture: $this->capture
+			)
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
-		$this->rrmdir($this->appDir);
+		$this->rrmdir(dir: $this->appDir);
 		parent::tearDown();
 	}//end tearDown()
 
@@ -169,7 +193,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 			$path = $dir . '/' . $entry;
 			if (is_dir($path) === true) {
-				$this->rrmdir($path);
+				$this->rrmdir(dir: $path);
 			} else {
 				unlink($path);
 			}
@@ -204,6 +228,8 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 	/**
 	 * The new theme gets the branding, and the editor gets it back.
+	 *
+	 * @return void
 	 */
 	public function testASavedThemeCapturesTheBranding(): void {
 		$this->savingFromTheEditor(capture: true);
@@ -214,13 +240,15 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertSame('custom-openwoo', $response->getData()['id']);
-		$this->assertSame(['captured' => true, 'primary_color' => '#23845c'], $response->getData()['theming']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'custom-openwoo', actual: $response->getData()['id']);
+		$this->assertSame(expected: ['captured' => true, 'primary_color' => '#23845c'], actual: $response->getData()['theming']);
 	}//end testASavedThemeCapturesTheBranding()
 
 	/**
 	 * Without the flag nothing is captured.
+	 *
+	 * @return void
 	 */
 	public function testNoCaptureWithoutTheFlag(): void {
 		$this->savingFromTheEditor(capture: false);
@@ -228,11 +256,13 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertArrayNotHasKey('theming', $response->getData());
+		$this->assertArrayNotHasKey(key: 'theming', array: $response->getData());
 	}//end testNoCaptureWithoutTheFlag()
 
 	/**
 	 * Deleting a custom theme forgets the branding it captured.
+	 *
+	 * @return void
 	 */
 	public function testDeletingAThemeForgetsItsBranding(): void {
 		$this->savingFromTheEditor(capture: false);
@@ -242,12 +272,14 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->delete(id: 'custom-openwoo');
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 	}//end testDeletingAThemeForgetsItsBranding()
 
 	/**
 	 * A refused save captures nothing: the branding is only copied once the
 	 * set is safely stored, so a rejected one leaves no images behind.
+	 *
+	 * @return void
 	 */
 	public function testARefusedSaveCapturesNothing(): void {
 		$this->savingFromTheEditor(capture: true, extra: ['content' => ".header {\n  color: red;\n}\n"]);
@@ -255,14 +287,16 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(422, $response->getStatus());
-		$this->assertArrayHasKey('error', $response->getData());
-		$this->assertArrayNotHasKey(CustomTokenSetService::MANIFEST_KEY, $this->appConfig);
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertArrayHasKey(key: 'error', array: $response->getData());
+		$this->assertArrayNotHasKey(key: CustomTokenSetService::MANIFEST_KEY, array: $this->appConfig);
 	}//end testARefusedSaveCapturesNothing()
 
 	/**
 	 * The design system the editor was looking at is recorded with the set,
 	 * so the theme comes back with the layers it was saved on.
+	 *
+	 * @return void
 	 */
 	public function testAShippedDesignSystemIsRecordedWithTheSet(): void {
 		$this->savingFromTheEditor(capture: false, extra: ['designSystem' => ' nldesign ']);
@@ -270,12 +304,14 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->controller->upload();
 
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
-		$this->assertSame('nldesign', $manifest['custom-openwoo']['design_system']);
+		$this->assertSame(expected: 'nldesign', actual: $manifest['custom-openwoo']['design_system']);
 	}//end testAShippedDesignSystemIsRecordedWithTheSet()
 
 	/**
 	 * A claimed design system the manifest does not ship is ignored rather
 	 * than trusted: it decides which stylesheet layers every page emits.
+	 *
+	 * @return void
 	 */
 	public function testAnUnknownDesignSystemClaimIsIgnored(): void {
 		$this->savingFromTheEditor(capture: false, extra: ['designSystem' => 'evil']);
@@ -283,7 +319,7 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->controller->upload();
 
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
-		$this->assertArrayNotHasKey('design_system', $manifest['custom-openwoo']);
+		$this->assertArrayNotHasKey(key: 'design_system', array: $manifest['custom-openwoo']);
 	}//end testAnUnknownDesignSystemClaimIsIgnored()
 
 	/**
@@ -308,6 +344,8 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * A file "Export as token set" wrote is stored with its own tokens, on the
 	 * design system it names — not converted, which filled every token the set
 	 * left out with nldesign fallbacks.
+	 *
+	 * @return void
 	 */
 	public function testAnExportedFileIsStoredWithItsOwnTokens(): void {
 		$content = '/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
@@ -323,12 +361,12 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
-		$this->assertSame('none', $manifest['custom-round-trip']['design_system']);
+		$this->assertSame(expected: 'none', actual: $manifest['custom-round-trip']['design_system']);
 		$stored = file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css');
-		$this->assertStringContainsString('--nldesign-color-primary: #00679e;', $stored);
-		$this->assertStringNotContainsString('thematiq-token-set:', $stored);
+		$this->assertStringContainsString(needle: '--nldesign-color-primary: #00679e;', haystack: $stored);
+		$this->assertStringNotContainsString(needle: 'thematiq-token-set:', haystack: $stored);
 	}//end testAnExportedFileIsStoredWithItsOwnTokens()
 
 	/**
@@ -337,6 +375,8 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 	 * The guard and the parser read `/*` inside `url('…')` as a comment and a
 	 * browser does not, so storing the upload as sent let this file hide every
 	 * page body for every user. Only the parsed declarations are written.
+	 *
+	 * @return void
 	 */
 	public function testARuleHiddenInsideUrlValuesIsNotStored(): void {
 		$this->uploadingAFile(
@@ -349,16 +389,18 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(200, $response->getStatus());
+		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$stored = file_get_contents($this->appDir . '/css/tokens/custom-round-trip.css');
-		$this->assertStringNotContainsString('body', $stored);
-		$this->assertStringNotContainsString('display', $stored);
-		$this->assertSame(1, substr_count($stored, '{'));
+		$this->assertStringNotContainsString(needle: 'body', haystack: $stored);
+		$this->assertStringNotContainsString(needle: 'display', haystack: $stored);
+		$this->assertSame(expected: 1, actual: substr_count($stored, '{'));
 	}//end testARuleHiddenInsideUrlValuesIsNotStored()
 
 	/**
 	 * A design system the marker names but the manifest does not ship is not
 	 * recorded, the same as a claim in the request.
+	 *
+	 * @return void
 	 */
 	public function testAnExportedFileNamingAnUnknownDesignSystemRecordsNone(): void {
 		$this->uploadingAFile(
@@ -373,11 +415,13 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 		$this->controller->upload();
 
 		$manifest = json_decode($this->appConfig[CustomTokenSetService::MANIFEST_KEY], true);
-		$this->assertArrayNotHasKey('design_system', $manifest['custom-round-trip']);
+		$this->assertArrayNotHasKey(key: 'design_system', array: $manifest['custom-round-trip']);
 	}//end testAnExportedFileNamingAnUnknownDesignSystemRecordsNone()
 
 	/**
 	 * A file without the marker is an unknown document and is converted.
+	 *
+	 * @return void
 	 */
 	public function testAFileWithoutTheMarkerIsConverted(): void {
 		$this->uploadingAFile(content: ':root {
@@ -390,6 +434,6 @@ class CustomTokenSetControllerCaptureTest extends TestCase {
 
 		$response = $this->controller->upload();
 
-		$this->assertSame(422, $response->getStatus());
+		$this->assertSame(expected: 422, actual: $response->getStatus());
 	}//end testAFileWithoutTheMarkerIsConverted()
 }//end class

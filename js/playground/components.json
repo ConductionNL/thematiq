@@ -420,6 +420,11 @@
 					"name": "--nldesign-component-navigation-badge-color",
 					"paints": "Its number",
 					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-navigation-background-color",
+					"paints": "The navigation column's own surface",
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -437,8 +442,8 @@
 				},
 				{
 					"callout": 1,
-					"what": "Navigation and page surface",
-					"why": "The column takes Nextcloud's own main background and sits on its plain page background; Nextcloud theming owns both, so dark mode keeps working.",
+					"what": "Page surface",
+					"why": "The column sits on Nextcloud's own plain page background. Nextcloud theming owns it, so dark mode keeps working.",
 					"code": "routed-to-core-theming"
 				}
 			]
@@ -839,13 +844,18 @@
 					"name": "--nldesign-component-avatar-online-status-color",
 					"paints": "The online status dot",
 					"callout": 1
+				},
+				{
+					"name": "--nldesign-component-avatar-initials-color",
+					"paints": "The initials of an avatar without a picture",
+					"callout": 1
 				}
 			],
 			"fixed": [
 				{
 					"callout": 1,
-					"what": "The disc and its initials",
-					"why": "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints it. An opaque image covers whatever colour the cascade puts behind it.",
+					"what": "The disc",
+					"why": "Nextcloud renders an avatar as an image, uploaded or generated from the account name, so no token paints the disc. An opaque image covers whatever colour the cascade puts behind it.",
 					"code": "logo-extracted"
 				}
 			]
@@ -989,6 +999,11 @@
 					"name": "--nldesign-component-textbox-invalid-border-color",
 					"paints": "Invalid border",
 					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-textbox-color",
+					"paints": "The typed text",
+					"callout": 1
 				}
 			],
 			"fixed": [
@@ -1381,6 +1396,11 @@
 					"name": "--nldesign-component-button-primary-action-hover-background-color",
 					"paints": "Background on hover",
 					"callout": 2
+				},
+				{
+					"name": "--nldesign-component-button-primary-action-border-color",
+					"paints": "Border",
+					"callout": 1
 				},
 				{
 					"name": "--nldesign-component-button-focus-border-color",

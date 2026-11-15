@@ -18,10 +18,14 @@ use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\Exception\ConfigReadOnlyException;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 use OCA\Thematiq\Service\Exception\ForeignMailTemplateClassException;
+use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
+use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\TokenSetPreviewService;
 use OCA\Thematiq\Service\TokenSetService;
+use OCP\App\IAppManager;
 use OCP\HintException;
 use OCP\IConfig;
+use OCP\ITempManager;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -72,18 +76,199 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		$this->config = $this->createMock(IConfig::class);
-		$this->tokenSetService = $this->createMock(TokenSetService::class);
-		$this->previewService = $this->createMock(TokenSetPreviewService::class);
-		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->config = $this->createMock(originalClassName: IConfig::class);
+		$this->tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
+		$this->previewService = $this->createMock(originalClassName: TokenSetPreviewService::class);
+		$this->urlGenerator = $this->createMock(originalClassName: IURLGenerator::class);
 
 		$this->service = new EmailThemingService(
-			$this->config,
-			$this->tokenSetService,
-			$this->previewService,
-			$this->urlGenerator
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator
 		);
 	}//end setUp()
+
+	/**
+	 * The service with the given stored logo path on the active set, over a file locator that has the given files.
+	 *
+	 * @param mixed $logo The stored `theming.logo`.
+	 * @param array<string, string> $files File name => bytes.
+	 *
+	 * @return EmailThemingService
+	 */
+	private function serviceWithLogo(mixed $logo, array $files): EmailThemingService {
+		$this->config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, string $default = ''): string => (['token_set' => 'custom-a'][$key] ?? $default)
+		);
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => $logo]]]);
+		$locator = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$locator->method('read')->willReturnCallback(static fn (string $name): ?string => ($files[$name] ?? null));
+		$locator->method('contentType')->willReturn('image/svg+xml');
+
+		return new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+	}//end serviceWithLogo()
+
+	/**
+	 * The active set's logo is read as bytes and a type.
+	 *
+	 * @return void
+	 */
+	public function testActiveLogoIsReadForEmbedding(): void {
+		$service = $this->serviceWithLogo(logo: 'img/logos/custom-a.svg', files: ['img/logos/custom-a.svg' => '<svg/>']);
+
+		$this->assertSame(expected: ['content' => '<svg/>', 'mimeType' => 'image/svg+xml'], actual: $service->getActiveEmailLogoImage());
+	}//end testActiveLogoIsReadForEmbedding()
+
+	/**
+	 * Only an image under img/ is read, whatever the stored path says.
+	 *
+	 * @param mixed $logo The stored path.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider refusedLogoPaths
+	 */
+	public function testAStoredPathOutsideTheImagesIsNotRead(mixed $logo): void {
+		$files = [
+			'config/img/a.svg' => 'secret',
+			'config/config.php' => 'secret',
+			'img/../config/config.svg' => 'secret',
+			'img/a.php' => 'x',
+			'/etc/passwd.svg' => 'secret',
+		];
+		$service = $this->serviceWithLogo(logo: $logo, files: $files);
+
+		$this->assertNull(actual: $service->getActiveEmailLogoImage());
+	}//end testAStoredPathOutsideTheImagesIsNotRead()
+
+	/**
+	 * Stored paths that must not be read.
+	 *
+	 * @return array<string, array{0: mixed}>
+	 */
+	public static function refusedLogoPaths(): array {
+		return [
+			'outside img' => ['config/config.php'],
+			'img further down' => ['config/img/a.svg'],
+			'traversal' => ['img/../config/config.svg'],
+			'not an image' => ['img/a.php'],
+			'absolute' => ['/etc/passwd.svg'],
+			'not a string' => [['img/a.svg']],
+			'missing file' => ['img/logos/none.svg'],
+			'no logo' => [null],
+		];
+	}//end refusedLogoPaths()
+
+	/**
+	 * On the real file locator a stored path cannot climb out of img/, though the file is there to read.
+	 *
+	 * @param string $logo The stored path.
+	 *
+	 * @return void
+	 *
+	 * @dataProvider climbingLogoPaths
+	 */
+	public function testAStoredPathCannotClimbOutOfTheImages(string $logo): void {
+		$appPath = sys_get_temp_dir() . '/thematiq-mail-logo-' . bin2hex(random_bytes(4));
+		mkdir($appPath . '/img/logos', 0777, true);
+		mkdir($appPath . '/config');
+		file_put_contents($appPath . '/config/config.svg', 'secret');
+		file_put_contents($appPath . '/img/logos/own.svg', '<svg/>');
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($appPath);
+		$locator = new RuntimeFileLocator(
+			appManager: $appManager,
+			store: new DirectoryRuntimeFileStore(root: $appPath . '/store'),
+			urlGenerator: $this->urlGenerator,
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
+		);
+		$this->config->method('getAppValue')->willReturn('custom-a');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => $logo]]]);
+		$service = new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+
+		try {
+			$this->assertSame(expected: 'secret', actual: $locator->read(name: 'img/../config/config.svg'));
+			$image = $service->getActiveEmailLogoImage();
+			if ($logo === 'img/logos/own.svg') {
+				$this->assertSame(expected: '<svg/>', actual: $image['content']);
+				return;
+			}
+
+			$this->assertNull(actual: $image);
+		} finally {
+			unlink($appPath . '/config/config.svg');
+			unlink($appPath . '/img/logos/own.svg');
+			rmdir($appPath . '/config');
+			rmdir($appPath . '/img/logos');
+			rmdir($appPath . '/img');
+			@rmdir($appPath . '/store');
+			rmdir($appPath);
+		}
+	}//end testAStoredPathCannotClimbOutOfTheImages()
+
+	/**
+	 * Stored paths that climb, and one own logo as the control.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public static function climbingLogoPaths(): array {
+		return [
+			'own logo' => ['img/logos/own.svg'],
+			'up one' => ['img/../config/config.svg'],
+			'deeper first' => ['img/logos/../../config/config.svg'],
+			'dot segment in the name' => ['img/logos/..svg/../../../config/config.svg'],
+			'encoded' => ['img/%2e%2e/config/config.svg'],
+			'backslash' => ['img\\..\\config\\config.svg'],
+			'trailing newline' => ["img/logos/own.svg\n"],
+			'null byte' => ["img/logos/own.svg\0.png"],
+		];
+	}//end climbingLogoPaths()
+
+	/**
+	 * The stock theme embeds no set's logo, even when a set carries its id.
+	 *
+	 * @return void
+	 */
+	public function testTheStockThemeHasNoEmbeddedLogo(): void {
+		$locator = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$locator->expects($this->never())->method('read');
+		$this->config->method('getAppValue')->willReturn('nextcloud');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'nextcloud', 'theming' => ['logo' => 'img/a.svg']]]);
+		$service = new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $locator
+		);
+
+		$this->assertNull(actual: $service->getActiveEmailLogoImage());
+	}//end testTheStockThemeHasNoEmbeddedLogo()
+
+	/**
+	 * Without a file locator nothing is read.
+	 *
+	 * @return void
+	 */
+	public function testNoLocatorMeansNoEmbeddedLogo(): void {
+		$this->config->method('getAppValue')->willReturn('custom-a');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a', 'theming' => ['logo' => 'img/logos/custom-a.svg']]]);
+
+		$this->assertNull(actual: $this->service->getActiveEmailLogoImage());
+	}//end testNoLocatorMeansNoEmbeddedLogo()
 
 	/**
 	 * Enabling with a writable config.php and nothing configured writes the
@@ -124,7 +309,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(false);
 		$this->config->expects($this->never())->method('setSystemValue');
 
-		$this->expectException(ForeignMailTemplateClassException::class);
+		$this->expectException(exception: ForeignMailTemplateClassException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnForeignClass()
 
@@ -139,7 +324,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(true);
 		$this->config->expects($this->never())->method('setSystemValue');
 
-		$this->expectException(ConfigReadOnlyException::class);
+		$this->expectException(exception: ConfigReadOnlyException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnReadOnlyFlag()
 
@@ -154,7 +339,7 @@ class EmailThemingServiceTest extends TestCase {
 		$this->config->method('getSystemValueBool')->willReturn(false);
 		$this->config->method('setSystemValue')->willThrowException(new HintException('read-only', 'hint'));
 
-		$this->expectException(ConfigReadOnlyException::class);
+		$this->expectException(exception: ConfigReadOnlyException::class);
 		$this->service->enable();
 	}//end testEnableThrowsOnReadOnlyHintExceptionFromWrite()
 
@@ -179,7 +364,7 @@ class EmailThemingServiceTest extends TestCase {
 	public function testFooterUrlValidationRejectsJavascriptScheme(): void {
 		$this->config->expects($this->never())->method('setAppValue');
 
-		$this->expectException(FooterValidationException::class);
+		$this->expectException(exception: FooterValidationException::class);
 		$this->service->setFooterConfig('Org', 'javascript:alert(1)', '');
 	}//end testFooterUrlValidationRejectsJavascriptScheme()
 
@@ -189,7 +374,7 @@ class EmailThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterUrlValidationRejectsJunk(): void {
-		$this->expectException(FooterValidationException::class);
+		$this->expectException(exception: FooterValidationException::class);
 		$this->service->setFooterConfig('Org', 'not a url', '');
 	}//end testFooterUrlValidationRejectsJunk()
 
@@ -199,7 +384,7 @@ class EmailThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testFooterUrlValidationAcceptsHttpsAndPersists(): void {
-		$this->config->expects($this->exactly(3))->method('setAppValue');
+		$this->config->expects($this->exactly(count: 3))->method('setAppValue');
 		$this->config->method('getAppValue')->willReturnCallback(
 			fn ($app, $key, $default) => match ($key) {
 				'email_footer_org_name' => 'Org',
@@ -211,9 +396,9 @@ class EmailThemingServiceTest extends TestCase {
 
 		$result = $this->service->setFooterConfig('Org', 'https://example.org/a11y', 'https://example.org/privacy');
 
-		$this->assertSame('Org', $result['orgName']);
-		$this->assertSame('https://example.org/a11y', $result['accessibilityUrl']);
-		$this->assertSame('https://example.org/privacy', $result['privacyUrl']);
+		$this->assertSame(expected: 'Org', actual: $result['orgName']);
+		$this->assertSame(expected: 'https://example.org/a11y', actual: $result['accessibilityUrl']);
+		$this->assertSame(expected: 'https://example.org/privacy', actual: $result['privacyUrl']);
 	}//end testFooterUrlValidationAcceptsHttpsAndPersists()
 
 	/**
@@ -224,7 +409,7 @@ class EmailThemingServiceTest extends TestCase {
 	public function testFooterUrlValidationAllowsEmptyValues(): void {
 		$this->config->method('getAppValue')->willReturn('');
 		$result = $this->service->setFooterConfig('', '', '');
-		$this->assertSame('', $result['accessibilityUrl']);
+		$this->assertSame(expected: '', actual: $result['accessibilityUrl']);
 	}//end testFooterUrlValidationAllowsEmptyValues()
 
 	/**
@@ -235,7 +420,9 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeReturnsManifestTheming(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'amsterdam' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'amsterdam', default => $default
+			}
 		);
 		$this->tokenSetService->method('getAvailableTokenSets')->willReturn(
 			[
@@ -253,10 +440,10 @@ class EmailThemingServiceTest extends TestCase {
 
 		$theme = $this->service->getActiveEmailTheme();
 
-		$this->assertNotNull($theme);
-		$this->assertSame('#004699', $theme['primaryColor']);
-		$this->assertSame('#ffffff', $theme['primaryTextColor']);
-		$this->assertSame('https://cloud.example.com/apps/thematiq/img/logos/amsterdam.svg', $theme['logoUrl']);
+		$this->assertNotNull(actual: $theme);
+		$this->assertSame(expected: '#004699', actual: $theme['primaryColor']);
+		$this->assertSame(expected: '#ffffff', actual: $theme['primaryTextColor']);
+		$this->assertSame(expected: 'https://cloud.example.com/apps/thematiq/img/logos/amsterdam.svg', actual: $theme['logoUrl']);
 	}//end testGetActiveEmailThemeReturnsManifestTheming()
 
 	/**
@@ -267,7 +454,9 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeFallsBackToResolvedColorsWithoutTheming(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'utrecht-custom' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'utrecht-custom', default => $default
+			}
 		);
 		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'utrecht-custom']]);
 		$this->previewService->method('getResolvedColors')->willReturn(
@@ -279,10 +468,10 @@ class EmailThemingServiceTest extends TestCase {
 
 		$theme = $this->service->getActiveEmailTheme();
 
-		$this->assertNotNull($theme);
-		$this->assertSame('#24578F', $theme['primaryColor']);
-		$this->assertSame('#ffffff', $theme['primaryTextColor']);
-		$this->assertNull($theme['logoUrl']);
+		$this->assertNotNull(actual: $theme);
+		$this->assertSame(expected: '#24578F', actual: $theme['primaryColor']);
+		$this->assertSame(expected: '#ffffff', actual: $theme['primaryTextColor']);
+		$this->assertNull(actual: $theme['logoUrl']);
 	}//end testGetActiveEmailThemeFallsBackToResolvedColorsWithoutTheming()
 
 	/**
@@ -292,9 +481,123 @@ class EmailThemingServiceTest extends TestCase {
 	 */
 	public function testGetActiveEmailThemeReturnsNullForNextcloud(): void {
 		$this->config->method('getAppValue')->willReturnCallback(
-			fn ($app, $key, $default) => ($key === 'token_set') ? 'nextcloud' : $default
+			fn ($app, $key, $default) => match ($key === 'token_set') {
+				true => 'nextcloud', default => $default
+			}
 		);
 
-		$this->assertNull($this->service->getActiveEmailTheme());
+		$this->assertNull(actual: $this->service->getActiveEmailTheme());
 	}//end testGetActiveEmailThemeReturnsNullForNextcloud()
+	/**
+	 * The service over an active set `custom-a` with this theming block, and optionally a runtime file locator.
+	 *
+	 * @param array<string, mixed> $theming The set's `theming` block.
+	 * @param RuntimeFileLocator|null $files The locator, or null for none.
+	 *
+	 * @return EmailThemingService
+	 */
+	private function serviceWithTheming(array $theming, ?RuntimeFileLocator $files = null): EmailThemingService {
+		$this->config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, string $default = ''): string => (['token_set' => 'custom-a'][$key] ?? $default)
+		);
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'other'], ['id' => 'custom-a', 'theming' => $theming]]);
+		$this->urlGenerator->method('getAbsoluteURL')->willReturnCallback(static fn (string $url): string => 'https://cloud.example' . $url);
+
+		return new EmailThemingService(
+			config: $this->config,
+			tokenSetService: $this->tokenSetService,
+			previewService: $this->previewService,
+			urlGenerator: $this->urlGenerator,
+			files: $files
+		);
+	}//end serviceWithTheming()
+
+	/**
+	 * An uploaded logo links to its runtime route, a shipped one to the app's images; an unresolvable one to nothing.
+	 *
+	 * @return void
+	 */
+	public function testTheLogoAddressPerKind(): void {
+		$files = $this->createMock(originalClassName: RuntimeFileLocator::class);
+		$files->method('isShipped')->willReturnCallback(static fn (string $name): bool => str_starts_with($name, 'img/'));
+		$files->method('url')->willReturnCallback(static fn (string $name): ?string => ($name === 'custom/logo.svg' ? '/apps/thematiq/runtime/logo.svg' : null));
+		$cases = [
+			'custom/logo.svg' => 'https://cloud.example/apps/thematiq/runtime/logo.svg',
+			'custom/gone.svg' => null,
+			'img/logos/a.svg' => 'https://cloud.example/custom_apps/thematiq/img/logos/a.svg',
+			'' => null,
+		];
+		foreach ($cases as $logo => $expected) {
+			$this->setUp();
+			$this->urlGenerator->method('imagePath')->willReturnCallback(static fn (string $app, string $file): string => '/custom_apps/' . $app . '/img/' . $file);
+			$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+			$theme = $this->serviceWithTheming(theming: ['logo' => $logo], files: $files)->getActiveEmailTheme();
+			$this->assertSame(expected: ['primaryColor' => '#123456', 'primaryTextColor' => '#ffffff', 'logoUrl' => $expected], actual: $theme, message: (string)$logo);
+		}
+
+		$this->setUp();
+		$this->urlGenerator->method('imagePath')->willReturnCallback(
+			static fn (string $app, string $file): string => ($file === 'logos/a.svg' ? '/custom_apps/' . $app . '/img/' . $file : throw new \RuntimeException('no such image'))
+		);
+		$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+		$this->assertSame(
+			expected: 'https://cloud.example/custom_apps/thematiq/img/logos/a.svg',
+			actual: $this->serviceWithTheming(theming: ['logo' => 'logos/a.svg'])->getActiveEmailTheme()['logoUrl'],
+			message: 'without a locator every logo is shipped, and a path without img/ is passed as it is'
+		);
+		$this->setUp();
+		$this->urlGenerator->method('imagePath')->willThrowException(new \RuntimeException('no such image'));
+		$this->previewService->method('getResolvedColors')->willReturn(['--color-primary' => '#123456']);
+		$this->assertNull(actual: $this->serviceWithTheming(theming: ['logo' => 'img/broken.svg'])->getActiveEmailTheme()['logoUrl']);
+	}//end testTheLogoAddressPerKind()
+
+	/**
+	 * The manifest colours win; the resolved colours fill only what is missing, and only when something is.
+	 *
+	 * @return void
+	 */
+	public function testTheColoursAndTheirFallback(): void {
+		$this->previewService->expects($this->never())->method('getResolvedColors');
+		$this->assertSame(
+			expected: ['primaryColor' => '#111111', 'primaryTextColor' => '#222222', 'logoUrl' => null],
+			actual: $this->serviceWithTheming(theming: ['primary_color' => '#111111', 'primary_text_color' => '#222222'])->getActiveEmailTheme()
+		);
+
+		$cases = [
+			[['primary_text_color' => '#222222'], ['--color-primary' => '#333333', '--color-primary-text' => '#444444'], ['primaryColor' => '#333333', 'primaryTextColor' => '#222222', 'logoUrl' => null]],
+			[['primary_color' => '#111111'], ['--color-primary' => '#333333', '--color-primary-text' => '#444444'], ['primaryColor' => '#111111', 'primaryTextColor' => '#444444', 'logoUrl' => null]],
+			[[], ['--color-primary-text' => '#444444'], null],
+			[[], [], null],
+		];
+		foreach ($cases as [$theming, $resolved, $expected]) {
+			$this->setUp();
+			$this->previewService->expects($this->once())->method('getResolvedColors')->with('custom-a')->willReturn($resolved);
+			$this->assertSame(expected: $expected, actual: $this->serviceWithTheming(theming: $theming)->getActiveEmailTheme(), message: (string)json_encode($theming));
+		}
+
+		$this->setUp();
+		$this->config->method('getAppValue')->willReturn('unknown-set');
+		$this->tokenSetService->method('getAvailableTokenSets')->willReturn([['id' => 'custom-a']]);
+		$this->assertNull(actual: $this->service->getActiveEmailTheme());
+		$this->assertNull(actual: $this->service->getActiveEmailLogoImage());
+	}//end testTheColoursAndTheirFallback()
+
+	/**
+	 * The toggle state per configured template class.
+	 *
+	 * @return void
+	 */
+	public function testTheToggleState(): void {
+		$cases = [
+			['', false, ['state' => 'disabled', 'configReadOnly' => false, 'foreignClass' => null]],
+			[NLDesignEMailTemplate::class, true, ['state' => 'enabled', 'configReadOnly' => true, 'foreignClass' => null]],
+			['OCA\\Other\\Template', false, ['state' => 'foreign', 'configReadOnly' => false, 'foreignClass' => 'OCA\\Other\\Template']],
+		];
+		foreach ($cases as [$class, $readOnly, $expected]) {
+			$this->setUp();
+			$this->config->method('getSystemValue')->willReturn($class);
+			$this->config->method('getSystemValueBool')->willReturn($readOnly);
+			$this->assertSame(expected: $expected, actual: $this->service->getState());
+		}
+	}//end testTheToggleState()
 }//end class

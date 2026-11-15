@@ -25,18 +25,15 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\CssParserService;
-use OCA\Thematiq\Service\DeprecationRecords;
-use OCA\Thematiq\Service\DesignTokensWriter;
-use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
+use OCA\Thematiq\Service\DtcgExportTools;
+use OCA\Thematiq\Service\FigmaTokenWriter;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
-use OCA\Thematiq\Service\TokenSetService;
+use OCA\Thematiq\Service\TokenSetDownload;
+use OCA\Thematiq\Service\TokenSetFileLocation;
 use OCA\Thematiq\Settings\Admin;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IL10N;
 use OCP\IRequest;
 
 /**
@@ -51,24 +48,14 @@ class DtcgExportController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param TokenSetService $tokenSets Says which ids exist, and their names.
-	 * @param IAppManager $appManager The app path and version.
-	 * @param CssParserService $cssParser Reads the set's declarations.
-	 * @param DesignTokensWriter $writer Writes the document.
-	 * @param DeprecationRecords $deprecations Written as `$deprecated` on deprecated tokens.
-	 * @param IL10N $l The error text.
-	 * @param RuntimeFileStore|null $store Where uploaded sets live; shipped sets come from the release.
+	 * @param TokenSetFileLocation $location The token set list, the app manager and the optional runtime store.
+	 * @param DtcgExportTools $tools The CSS parser, the DTCG writer, the deprecation records and the translator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private TokenSetService $tokenSets,
-		private IAppManager $appManager,
-		private CssParserService $cssParser,
-		private DesignTokensWriter $writer,
-		private DeprecationRecords $deprecations,
-		private IL10N $l,
-		private ?RuntimeFileStore $store = null,
+		private readonly TokenSetFileLocation $location,
+		private readonly DtcgExportTools $tools,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -78,36 +65,66 @@ class DtcgExportController extends Controller {
 	 *
 	 * @param string $id The token set id.
 	 *
-	 * @return JSONResponse The document with an attachment name, or 404.
+	 * @return JSONResponse The document with an attachment name, 404 for an unknown set, or 400 for an unknown `format`.
+	 *
+	 * @spec openspec/specs/figma-token-files/spec.md#requirement-any-token-set-can-be-downloaded-for-figma
 	 *
 	 * @spec openspec/specs/token-set-dtcg-export/spec.md#requirement-any-token-set-can-be-downloaded-as-a-dtcg-document
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function export(string $id): JSONResponse {
-		if (preg_match('/^[a-z0-9][a-z0-9-]*$/', $id) !== 1 || $this->tokenSets->isValidTokenSet(tokenSetId: $id) === false) {
-			return new JSONResponse(['error' => $this->l->t('Token set not found.')], 404);
+		if ($this->location->knows(id: $id) === false) {
+			return new JSONResponse(['error' => $this->tools->l->t('Token set not found.')], 404);
 		}
 
-		$appPath = $this->appManager->getAppPath(Application::APP_ID);
-		$css = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->store);
-		$name = $id;
-		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
-			if (($set['id'] ?? null) === $id) {
-				$name = (string)($set['name'] ?? $id);
-			}
+		$format = $this->requestedFormat();
+		if (in_array($format, FigmaTokenWriter::FORMATS, true) === false) {
+			return new JSONResponse(['error' => $this->tools->l->t('Unknown file format.')], 400);
 		}
 
-		$document = $this->writer->write(
-			declarations: $this->cssParser->parseRootBlock(css: $css),
-			setId: $id,
-			setName: $name,
-			appVersion: $this->appManager->getAppVersion(Application::APP_ID),
-			deprecations: $this->deprecations->all()
-		);
+		$download = $this->download(id: $id, format: $format);
+		$figma = new FigmaTokenWriter();
+		$document = $figma->inFormat(document: $this->tools->writer->document(download: $download), download: $download);
 
 		$response = new JSONResponse($document);
-		$response->addHeader('Content-Disposition', 'attachment; filename="' . $id . '.tokens.json"');
+		$response->addHeader('Content-Disposition', 'attachment; filename="' . $figma->fileName(setId: $id, format: $format) . '"');
 
 		return $response;
 	}//end export()
+
+	/**
+	 * The file format the request asks for; `dtcg` when it names none.
+	 *
+	 * @return string The format, not yet checked.
+	 */
+	private function requestedFormat(): string {
+		$format = (string)$this->request->getParam('format', 'dtcg');
+		if ($format === '') {
+			$format = 'dtcg';
+		}
+
+		return $format;
+	}//end requestedFormat()
+
+	/**
+	 * A set's download: its own declarations, its name, the app version and the deprecation records.
+	 *
+	 * @param string $id The token set id, already checked.
+	 * @param string $format The file format, already checked.
+	 *
+	 * @return TokenSetDownload The download.
+	 */
+	private function download(string $id, string $format): TokenSetDownload {
+		$appPath = $this->location->appManager->getAppPath(Application::APP_ID);
+		$css = (string)(new SetFileReader())->read(appPath: $appPath, name: 'css/tokens/' . $id . '.css', store: $this->location->store);
+
+		return new TokenSetDownload(
+			setId: $id,
+			setName: $this->location->nameOf(id: $id),
+			declarations: $this->tools->cssParser->parseRootBlock(css: $css),
+			format: $format,
+			appVersion: $this->location->appManager->getAppVersion(Application::APP_ID),
+			deprecations: $this->tools->deprecations->all()
+		);
+	}//end download()
 }//end class

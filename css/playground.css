@@ -1257,6 +1257,24 @@
 	font-weight: 700;
 }
 
+/* On the header ground the specimen is the account button, so it takes the
+   initials row the way `#header .avatardiv` does in element-overrides.css. It
+   is drawn outside `#header`, so that rule cannot reach it here, and the
+   blanket text rule in element-overrides.css (two ids and six classes,
+   `!important`) paints every span outside `#header` instead; three ids and
+   `!important` are what it takes to outrank that (live check, 9 Oct 2026). Unset, it keeps
+   the plate's own dark initials. */
+#body-settings
+	#nldesign-settings
+	#nldesign-preview
+	.nldesign-pg-ground--header
+	.nldesign-pg-avatar {
+	color: var(
+		--nldesign-component-avatar-initials-color,
+		var(--color-main-text)
+	) !important;
+}
+
 /* `--avatar-size: 32px` is what the real account button sets. */
 #nldesign-preview .nldesign-pg-avatar--lg {
 	width: 32px;
@@ -2140,7 +2158,20 @@
 /* --- the header's version switch --- */
 
 /* Above the stage rather than on it: it chooses what is drawn, so it is not
-   part of the drawing. */
+   part of the drawing. It sits inside the stage element, though, and the
+   stage carries `data-thematiq-component`, so every component scope
+   re-scopes the Nextcloud variables under it: with Text input open, the text
+   row recoloured these pills. The values are therefore pinned on the preview,
+   which no scope names, and the switch reads only those (live check,
+   9 Oct 2026). */
+#nldesign-preview {
+	--thematiq-pg-chrome-border: var(--color-border-dark);
+	--thematiq-pg-chrome-background: var(--color-main-background);
+	--thematiq-pg-chrome-text: var(--color-main-text);
+	--thematiq-pg-chrome-on-background: var(--color-primary-element);
+	--thematiq-pg-chrome-on-text: var(--color-primary-element-text);
+}
+
 .nldesign-pg-versions {
 	display: flex;
 	align-items: center;
@@ -2153,10 +2184,10 @@
 	min-height: 26px;
 	margin: 0;
 	padding: 0 10px;
-	border: 1px solid var(--color-border-dark);
+	border: 1px solid var(--thematiq-pg-chrome-border);
 	border-radius: var(--border-radius-pill);
-	background: var(--color-main-background);
-	color: var(--color-main-text);
+	background: var(--thematiq-pg-chrome-background);
+	color: var(--thematiq-pg-chrome-text);
 	font-size: 13px;
 	font-weight: 400;
 	box-shadow: none;
@@ -2165,8 +2196,8 @@
 
 #nldesign-settings .nldesign-pg-version.on {
 	border-color: transparent;
-	background: var(--color-primary-element);
-	color: var(--color-primary-element-text);
+	background: var(--thematiq-pg-chrome-on-background);
+	color: var(--thematiq-pg-chrome-on-text);
 	font-weight: 700;
 }
 

@@ -63,7 +63,7 @@ final class OrgTokenPrefixReservedTest extends TestCase {
 	 * @return void
 	 */
 	public function testNoShippedStylesheetUsesThePrefix(): void {
-		$this->assertSame([], $this->offenders(dir: \dirname(__DIR__, 2) . '/css'));
+		$this->assertSame(expected: [], actual: $this->offenders(dir: \dirname(__DIR__, 2) . '/css'));
 	}//end testNoShippedStylesheetUsesThePrefix()
 
 	/**
@@ -82,6 +82,6 @@ final class OrgTokenPrefixReservedTest extends TestCase {
 		sort($found);
 		exec('rm -rf ' . escapeshellarg($dir));
 
-		$this->assertSame(['theme.css', 'tokens/x.css'], $found);
+		$this->assertSame(expected: ['theme.css', 'tokens/x.css'], actual: $found);
 	}//end testTheScanFindsOne()
 }//end class

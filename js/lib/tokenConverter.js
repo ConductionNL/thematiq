@@ -60,6 +60,23 @@
 	]
 
 	var MAX_VAR_DEPTH = 10
+
+	// OKLab to sRGB, CSS Color 4 sample code; the constants of ColorSpaceConverter.
+	var OKLAB_TO_LMS = [
+		[1.0, 0.3963377773761749, 0.2158037573099136],
+		[1.0, -0.1055613458156586, -0.0638541728258133],
+		[1.0, -0.0894841775298119, -1.2914855480194092],
+	]
+	var LMS_TO_XYZ = [
+		[1.2268798758459243, -0.5578149944602171, 0.2813910456659647],
+		[-0.0405757452148008, 1.112286803280317, -0.0717110580655164],
+		[-0.0763729366746601, -0.4214933324022432, 1.5869240198367816],
+	]
+	var XYZ_TO_LINEAR_SRGB = [
+		[3.2409699419045226, -1.537383177570094, -0.4986107602930034],
+		[-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
+		[0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
+	]
 	var MAX_CONTRAST_STEPS = 10
 
 	/**
@@ -571,7 +588,7 @@
 			}
 		}
 
-		var fn = /^(rgba?|hsla?)\(\s*([^)]*)\)$/.exec(trimmed)
+		var fn = /^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/.exec(trimmed)
 		if (fn === null) {
 			return null
 		}
@@ -596,7 +613,12 @@
 		}
 
 		var rgb
-		if (fn[1].indexOf('rgb') === 0) {
+		if (fn[1].indexOf('ok') === 0) {
+			rgb = oklabChannels(fn[1], parts)
+			if (rgb === null) {
+				return null
+			}
+		} else if (fn[1].indexOf('rgb') === 0) {
 			rgb = parts.slice(0, 3).map(function (part) {
 				return /%$/.test(part)
 					? (parseFloat(part) * 255) / 100
@@ -631,6 +653,80 @@
 			}),
 			a: Math.max(0, Math.min(1, alphaValue)),
 		}
+	}
+
+	/**
+	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut
+	 * per channel. Rijkshuisstijl 18 writes every colour as oklch(); the app reads
+	 * hex and rgb() only. Same maths and constants as `ColorSpaceConverter`
+	 * (CSS Color 4 sample code), so both runtimes write the same hex.
+	 *
+	 * @param {string} space `oklch` or `oklab`.
+	 * @param {Array<string>} parts The three or four arguments.
+	 * @return {Array<number>|null} Unrounded channels in [0, 255], or null.
+	 *
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 */
+	function oklabChannels(space, parts) {
+		var values = parts.slice(0, 3).map(function (part, index) {
+			if (part === 'none') {
+				return 0
+			}
+
+			var number = parseFloat(part)
+			if (
+				/^-?[\d.]+(e-?\d+)?(%|deg)?$/.test(part) === false
+				|| isNaN(number)
+			) {
+				return NaN
+			}
+
+			if (/%$/.test(part)) {
+				// L: 100% = 1. Chroma, a and b: 100% = 0.4.
+				return index === 0 ? number / 100 : (number / 100) * 0.4
+			}
+
+			return number
+		})
+		if (values.some(isNaN)) {
+			return null
+		}
+
+		var lab = values
+		if (space === 'oklch') {
+			var hue = (values[2] * Math.PI) / 180
+			lab = [values[0], values[1] * Math.cos(hue), values[1] * Math.sin(hue)]
+		}
+
+		var lms = multiply(OKLAB_TO_LMS, lab).map(function (value) {
+			return value * value * value
+		})
+		var linear = multiply(XYZ_TO_LINEAR_SRGB, multiply(LMS_TO_XYZ, lms))
+
+		return linear.map(function (value) {
+			var abs = Math.abs(value)
+			var gamma =
+				abs <= 0.0031308
+					? 12.92 * value
+					: Math.sign(value) * (1.055 * Math.pow(abs, 1 / 2.4) - 0.055)
+
+			return Math.max(0, Math.min(1, gamma)) * 255
+		})
+	}
+
+	/**
+	 * A 3x3 matrix times a vector.
+	 *
+	 * @param {Array<Array<number>>} matrix The matrix.
+	 * @param {Array<number>} vector The vector.
+	 * @return {Array<number>} The product.
+	 *
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
+	 */
+	function multiply(matrix, vector) {
+		return matrix.map(function (row) {
+			return row[0] * vector[0] + row[1] * vector[1] + row[2] * vector[2]
+		})
 	}
 
 	/**
@@ -892,6 +988,11 @@
 		var foregroundName = String(pair.foreground)
 		var backgroundName = String(pair.background)
 		var value = semantic[foregroundName]
+		// A step the set does not declare is measured as the token it falls
+		// back to (`from`), and written only when it needs a repair.
+		if (value === undefined && pair.from !== undefined) {
+			value = semantic[String(pair.from)]
+		}
 		var backgroundValue = semantic[backgroundName]
 		if (backgroundValue === undefined) {
 			backgroundValue = fallbackValue(backgroundName, semantic, defaults)
@@ -1069,7 +1170,10 @@
 				}
 
 				if (originals[repaired.name] === undefined) {
-					originals[repaired.name] = semantic[repaired.name]
+					originals[repaired.name] =
+						semantic[repaired.name] !== undefined
+							? semantic[repaired.name]
+							: semantic[String(pair.from)]
 				}
 
 				semantic[repaired.name] = toHex(repaired.rgb)
@@ -1293,10 +1397,30 @@
 
 		var criterion = String(spec.criterion || 'darkest')
 
+		// The page background the picked grey has to stand apart from. A ramp
+		// of one grey still has a "darkest" and a "nearest" member, and when
+		// that grey is the background itself every role came out white on
+		// white (#933). No readable candidate means no pick: the role then
+		// falls back to the defaults, like a set that declares no greys.
+		var backgroundValue =
+			semantic[String(spec.background || '--nldesign-color-nav-background')]
+		var background = parseColor(
+			backgroundValue === undefined ? '#ffffff' : backgroundValue,
+		)
+		if (background === null) {
+			background = [255, 255, 255]
+		}
+
+		var backgroundSum = background[0] + background[1] + background[2]
+
 		if (criterion === 'darkest') {
-			return ramp.slice().sort(function (a, b) {
+			var darkest = ramp.slice().sort(function (a, b) {
 				return a.sum - b.sum
-			})[0].hex
+			})[0]
+
+			return ratio(darkest.rgb, background) < numberOr(spec.min, 4.5)
+				? null
+				: darkest.hex
 		}
 
 		if (criterion === 'nearestLuminance') {
@@ -1310,6 +1434,13 @@
 			var bestDistance = null
 			ramp.forEach(function (step) {
 				var distance = Math.abs(step.sum - targetSum)
+
+				// A grey nearer the background than the target reads as the
+				// background: a border or hover in that colour is invisible.
+				if (distance >= Math.abs(step.sum - backgroundSum)) {
+					return
+				}
+
 				if (bestDistance === null || distance < bestDistance) {
 					bestDistance = distance
 					best = step.hex
@@ -1755,28 +1886,9 @@
 			Object.prototype.hasOwnProperty.call(node, 'value')
 			&& (node.value === null || typeof node.value !== 'object')
 		) {
-			var segments = path
-				.map(function (segment) {
-					return String(segment)
-						.replace(/[^A-Za-z0-9]+/g, '-')
-						.toLowerCase()
-				})
-				.filter(function (segment) {
-					return segment !== ''
-				})
-
-			var joined = segments.join('-').replace(/^-+|-+$/g, '')
-			if (joined === '') {
+			var prefixed = styleDictionaryName(path, slug)
+			if (prefixed === null) {
 				return
-			}
-
-			var prefixed = '--' + slug + '-' + joined
-			for (var i = 0; i < COMPONENT_PREFIXES.length; i++) {
-				var bare = COMPONENT_PREFIXES[i].replace(/^-+|-+$/g, '')
-				if (joined.indexOf(bare + '-') === 0) {
-					prefixed = '--' + joined
-					break
-				}
 			}
 
 			declarations[prefixed] = String(node.value).trim()
@@ -1797,6 +1909,70 @@
 				depth + 1,
 			)
 		})
+	}
+
+	/**
+	 * The custom property a Style Dictionary leaf path becomes: the path joined
+	 * with hyphens under the brand prefix, or bare when it already starts with
+	 * a component vocabulary. Mirrors `TokenSetConverterService::styleDictionaryName()`.
+	 *
+	 * @param {Array<string>} path The leaf's key path.
+	 * @param {string} slug The brand prefix.
+	 * @return {string|null} The property name, or null for an empty path.
+	 */
+	function styleDictionaryName(path, slug) {
+		var joined = path
+			.map(function (segment) {
+				return String(segment)
+					.replace(/[^A-Za-z0-9]+/g, '-')
+					.toLowerCase()
+			})
+			.filter(function (segment) {
+				return segment !== ''
+			})
+			.join('-')
+			.replace(/^-+|-+$/g, '')
+
+		if (joined === '') {
+			return null
+		}
+
+		for (var i = 0; i < COMPONENT_PREFIXES.length; i++) {
+			var bare = COMPONENT_PREFIXES[i].replace(/^-+|-+$/g, '')
+			if (joined.indexOf(bare + '-') === 0) {
+				return '--' + joined
+			}
+		}
+
+		return '--' + slug + '-' + joined
+	}
+
+	/**
+	 * Turn every Style Dictionary alias (`{color.brand.500}`) into the `var()`
+	 * of the leaf it names, so the ordinary chain resolution resolves it and
+	 * an alias to a leaf the document lacks is reported `unresolved-var`
+	 * instead of being emitted as literal braces. Mirrors
+	 * `TokenSetConverterService::resolveStyleDictionaryAliases()`.
+	 *
+	 * @param {Object<string,string>} declarations The collected leaves.
+	 * @param {string} slug The brand prefix.
+	 * @return {Object<string,string>} The leaves with aliases rewritten.
+	 */
+	function resolveStyleDictionaryAliases(declarations, slug) {
+		var out = {}
+
+		Object.keys(declarations).forEach(function (name) {
+			out[name] = declarations[name].replace(
+				/\{([^{}]+)\}/g,
+				function (match, alias) {
+					var target = styleDictionaryName(alias.trim().split('.'), slug)
+
+					return target === null ? match : 'var(' + target + ')'
+				},
+			)
+		})
+
+		return out
 	}
 
 	/**
@@ -2202,6 +2378,25 @@
 				return
 			}
 
+			// A real semantic token: input D's hand-authored value. Checked before
+			// the role, because an app name such as `--nldesign-animation-quick`
+			// has a component-shaped role too. Mirrors classify() in PHP.
+			if (
+				name.indexOf('--nldesign-') === 0
+				&& (vocabulary[name] === true || lookup.targets[name] === true)
+			) {
+				semantic[name] = value
+				report.push({
+					source: name,
+					target: name,
+					action: 'kept',
+					reason: 'kept-existing-value',
+					value: value,
+				})
+
+				return
+			}
+
 			var role = roleOf(name)
 			var isComponent = role !== '' && isPaletteRole(role) === false
 
@@ -2236,19 +2431,6 @@
 			}
 
 			if (name.indexOf('--nldesign-') === 0) {
-				if (vocabulary[name] === true || lookup.targets[name] === true) {
-					semantic[name] = value
-					report.push({
-						source: name,
-						target: name,
-						action: 'kept',
-						reason: 'kept-existing-value',
-						value: value,
-					})
-
-					return
-				}
-
 				var reprefixed = '--' + slug + '-' + name.slice('--nldesign-'.length)
 				palette[reprefixed] = value
 				report.push({
@@ -2295,6 +2477,78 @@
 	}
 
 	/**
+	 * The first of a rule's sources the input declares, by name or by role.
+	 * Mirrors `TokenSetConverterService::firstDeclaredSource()`.
+	 *
+	 * @param {Object} rule The table rule.
+	 * @param {Object<string,string>} declarations The resolved input.
+	 * @param {Object<string,string>} byRole The input indexed by role.
+	 * @param {string} slug The brand slug.
+	 * @return {Object|null} `{value, source}` or null.
+	 */
+	function firstDeclaredSource(rule, declarations, byRole, slug) {
+		var sources = rule.sources || []
+
+		for (var i = 0; i < sources.length; i++) {
+			var concrete = withSlug(String(sources[i]), slug)
+
+			if (Object.prototype.hasOwnProperty.call(declarations, concrete)) {
+				return { value: declarations[concrete], source: concrete }
+			}
+
+			var role = roleOf(concrete)
+			if (role !== '' && Object.prototype.hasOwnProperty.call(byRole, role)) {
+				return { value: byRole[role], source: role + ' (by role)' }
+			}
+		}
+
+		return null
+	}
+
+	/**
+	 * The semantic layer a contrast guard measures against: when the guard's
+	 * partner has no value yet but the theme declares it, that declared value.
+	 * Mirrors `TokenSetConverterService::guardSemantic()`.
+	 *
+	 * @param {Object} guard The rule's guard.
+	 * @param {Object<string,string>} semantic The semantic layer so far.
+	 * @param {Object<string,string>} declarations The resolved input.
+	 * @param {Object<string,string>} byRole The input indexed by role.
+	 * @param {string} slug The brand slug.
+	 * @param {Object} table The mapping table.
+	 * @return {Object<string,string>} The semantic layer to measure against.
+	 */
+	function guardSemantic(guard, semantic, declarations, byRole, slug, table) {
+		var against = String(guard.against || '')
+		if (
+			guard.kind !== 'contrast'
+			|| against === ''
+			|| Object.prototype.hasOwnProperty.call(semantic, against)
+		) {
+			return semantic
+		}
+
+		var rules = table.rules || []
+		for (var i = 0; i < rules.length; i++) {
+			if (rules[i].target !== against) {
+				continue
+			}
+
+			var declared = firstDeclaredSource(rules[i], declarations, byRole, slug)
+			if (declared === null) {
+				return semantic
+			}
+
+			var widened = Object.assign({}, semantic)
+			widened[against] = declared.value
+
+			return widened
+		}
+
+		return semantic
+	}
+
+	/**
 	 * Produce the semantic layer from the table. Mirrors `runRules()`.
 	 *
 	 * @param {Object<string,string>} declarations Resolved input.
@@ -2336,26 +2590,10 @@
 			var action = 'applied'
 			var reason = rule.reason === undefined ? null : rule.reason
 			var sourceName = ''
-			var sources = rule.sources || []
-
-			for (var i = 0; i < sources.length; i++) {
-				var concrete = withSlug(String(sources[i]), slug)
-
-				if (Object.prototype.hasOwnProperty.call(declarations, concrete)) {
-					value = declarations[concrete]
-					sourceName = concrete
-					break
-				}
-
-				var role = roleOf(concrete)
-				if (
-					role !== ''
-					&& Object.prototype.hasOwnProperty.call(byRole, role)
-				) {
-					value = byRole[role]
-					sourceName = role + ' (by role)'
-					break
-				}
+			var declared = firstDeclaredSource(rule, declarations, byRole, slug)
+			if (declared !== null) {
+				value = declared.value
+				sourceName = declared.source
 			}
 
 			if (value === null) {
@@ -2394,7 +2632,19 @@
 			}
 
 			if (rule.guard !== undefined) {
-				var guarded = applyGuard(rule.guard, value, semantic, fonts)
+				var guarded = applyGuard(
+					rule.guard,
+					value,
+					guardSemantic(
+						rule.guard,
+						semantic,
+						declarations,
+						byRole,
+						slug,
+						table,
+					),
+					fonts,
+				)
 				if (guarded.value !== value) {
 					entry.original = value
 					entry.action = 'adapted'
@@ -2673,6 +2923,7 @@
 				declarations,
 				0,
 			)
+			declarations = resolveStyleDictionaryAliases(declarations, slug)
 		} else if (inputKind === 'B') {
 			// DTCG belongs to DesignTokensMapper on the PHP side; this runtime
 			// has no equivalent, so the caller must pre-map a DTCG document.
@@ -2813,8 +3064,8 @@
 	}
 
 	/**
-	 * Extract the app's `--nldesign-*` vocabulary from the two stylesheets that
-	 * declare it, so the caller can hand it to `convert()`. Mirrors
+	 * Extract the app's `--nldesign-*` vocabulary from the stylesheets that
+	 * declare or read it (comments stripped), so the caller can hand it to `convert()`. Mirrors
 	 * `TokenSetConverterService::vocabulary()`.
 	 *
 	 * @param {Array<string>} stylesheets Contents of defaults.css and utrecht-bridge.css.
@@ -2824,7 +3075,9 @@
 		var names = {}
 
 		;(stylesheets || []).forEach(function (css) {
-			var matches = String(css).match(/--nldesign-[\w-]+/g)
+			var matches = String(css)
+				.replace(/\/\*[\s\S]*?\*\//g, '')
+				.match(/--nldesign-[\w-]+/g)
 			if (matches === null) {
 				return
 			}

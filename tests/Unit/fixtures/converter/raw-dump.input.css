@@ -1,0 +1,18 @@
+/*
+ * Converter parity fixture, input D: a raw upstream dump the way the incomplete
+ * shipped sets looked before the regeneration (thematiq nijmegen and friends):
+ * the brand palette under --nldesign-* names nothing reads, no semantic layer.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ */
+:root {
+	--nldesign-color-blue-10: #e8eef7;
+	--nldesign-color-blue-40: #1b3d6b;
+	--nldesign-color-blue-60: #10284a;
+	--nldesign-color-grey-10: #f3f3f3;
+	--nldesign-color-grey-50: #767676;
+	--nldesign-color-grey-90: #1f1f1f;
+	--nldesign-color-primary: #1b3d6b;
+	--nldesign-color-primary-text: #ffffff;
+}

@@ -65,6 +65,9 @@ skipped and reported (`imported` / `skipped` counts).
 | `color.primary-text` / `color.on-primary` | `--nldesign-color-primary-text` |
 | `color.primary-hover` | `--nldesign-color-primary-hover` |
 | `color.primary-light` | `--nldesign-color-primary-light` |
+| `color.action` | `--nldesign-color-action` (optional: the main button apart from the primary) |
+| `color.action-hover` | `--nldesign-color-action-hover` |
+| `color.action-text` / `color.on-action` | `--nldesign-color-action-text` |
 | `color.background` | `--nldesign-color-background` |
 | `color.text` | `--nldesign-color-text` |
 | `fontFamily.base` / `typography.font-family` | `--nldesign-font-family` |
@@ -73,6 +76,10 @@ skipped and reported (`imported` / `skipped` counts).
 The longest matching suffix wins, so `color.primary-text` is preferred over
 `color.primary`. The mapping is deliberately tolerant: format drift degrades to
 a higher `skipped` count, never an error.
+
+### 3. A file from Figma
+
+A Tokens Studio single file, in either spelling, and a file that thematiq wrote and Figma changed. See [Token sets and Figma](figma-tokens.md).
 
 ## Validation rules
 
@@ -106,6 +113,8 @@ Thematiq fills in every token a complete set needs:
 - status colours, greys, fonts and corner radii keep the default values.
 
 While you pick colours, the preview shows a primary button and its hover shade, exactly as they will be stored. Below it you see two contrast ratios: text on primary against 4.5:1, and primary on background against 3:1. A ratio below its threshold is a warning. You can still save.
+
+Want the main button in another colour than your primary, such as a green button on a blue house style? Tick **Give the main button its own colour** and pick it. Only the main button takes that colour. Checked boxes, switches, the header and the links keep your primary. The preview then shows the main button, and a third ratio: the text on it against 4.5:1.
 
 The logo may be SVG, PNG, JPG, GIF or WebP, up to 512 KB. It becomes the set's logo for the theming-sync dialog, together with your primary colour.
 

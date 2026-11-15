@@ -77,6 +77,10 @@
 !/js/preview-banner.js
 !/js/environment-marker.js
 !/js/header-user.js
+!/js/app-menu.js
+!/js/search-placeholder.js
+!/js/login-copy.js
+!/js/not-found.js
 !/js/playground.js
 !/js/playground/
 !/js/ownTokens.js
@@ -115,8 +119,7 @@ phpcs-output.json
 .DS_Store
 Thumbs.db
 
-# SBOM is published as release asset (see SECURITY.md), not stored in repo
-sbom.cdx.json
+# Intermediate SBOM files. The merged sbom.cdx.json at the root is committed.
 bom-php.cdx.json
 bom-npm.cdx.json
 
@@ -142,3 +145,9 @@ tests/e2e/.auth/
 # regenerated them"), or cite the openspec change the plan produced.
 /MAKEOVER-PLAN.md
 /.inventory-sources/
+
+# Conversion reports of admin-uploaded sets; the reports of shipped sets are committed.
+/css/tokens/custom-*.report.json
+
+# Playwright writes its last-run record here when a spec is run from the repository root.
+/test-results/

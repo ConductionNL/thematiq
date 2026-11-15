@@ -33,6 +33,10 @@
 	--nldesign-color-primary-text: #ffffff;
 	--nldesign-color-primary-hover: #1d5499;
 	--nldesign-color-primary-light: #e8f0f8;
+	/* Text on the light primary and its hover: the primary where it reaches
+	 * 4.5:1 there, otherwise a set declares a deeper shade of the same hue (the
+	 * converter's contrast repair writes it). */
+	--nldesign-color-primary-light-text: var(--nldesign-color-primary);
 	--nldesign-color-primary-light-hover: #d4e4f2;
 
 	/* ===================================================================
@@ -247,21 +251,29 @@
 		--nldesign-color-focus
 	); /* reserved */
 
-	/* Button — primary-action */
+	/* Button — primary-action. --nldesign-color-action, -hover and -text are
+	 * optional: a set that wants its main button apart from its primary
+	 * declares them. They are deliberately NOT declared here. Undeclared, each
+	 * value below falls back to the primary, as before. */
 	--nldesign-component-button-primary-action-background-color: var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	);
 	--nldesign-component-button-primary-action-color: var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	);
 	--nldesign-component-button-primary-action-border-color: var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	);
 	--nldesign-component-button-primary-action-hover-background-color: var(
-		--nldesign-color-primary-hover
+		--nldesign-color-action-hover,
+		var(--nldesign-color-primary-hover)
 	);
 	--nldesign-component-button-primary-action-hover-color: var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	); /* reserved */
 
 	/* Button — secondary-action */
@@ -282,7 +294,9 @@
 
 	--nldesign-component-textbox-background-color: #ffffff;
 	--nldesign-component-textbox-color: var(--nldesign-color-text);
-	--nldesign-component-textbox-border-color: var(--nldesign-color-border);
+	/* The field's edge is the control step, 3:1 against its ground (WCAG
+	 * 1.4.11); the hairline border is for cards and dividers. */
+	--nldesign-component-textbox-border-color: var(--nldesign-color-border-dark);
 	--nldesign-component-textbox-border-width: 1px;
 	--nldesign-component-textbox-border-radius: var(--nldesign-border-radius);
 	--nldesign-component-textbox-font-family: var(--nldesign-font-family);
@@ -306,7 +320,7 @@
 	--nldesign-component-form-field-label-color: var(--nldesign-color-text);
 	--nldesign-component-form-field-label-font-weight: 700;
 
-	--nldesign-component-form-select-border-color: var(--nldesign-color-border);
+	--nldesign-component-form-select-border-color: var(--nldesign-color-border-dark);
 	--nldesign-component-form-select-border-radius: var(--nldesign-border-radius);
 	--nldesign-component-form-select-focus-border-color: var(--nldesign-color-info);
 

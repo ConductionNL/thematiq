@@ -17,6 +17,7 @@ use ErrorException;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
+use OCA\Thematiq\Listener\WorkspaceIconListener;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
@@ -68,7 +69,7 @@ class ApplicationTest extends TestCase {
 	 */
 	public function testRegisterWithoutVendorRaisesNoWarning(): void {
 		$listeners = [];
-		$context = $this->createMock(IRegistrationContext::class);
+		$context = $this->createMock(originalClassName: IRegistrationContext::class);
 		$context->expects($this->once())->method('registerCapability')->with(Capabilities::class);
 		$context->method('registerEventListener')->willReturnCallback(
 			static function (string $event, string $listener) use (&$listeners): void {
@@ -88,8 +89,11 @@ class ApplicationTest extends TestCase {
 			restore_error_handler();
 		}
 
-		$this->assertContains([BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class], $listeners);
-		$this->assertContains([BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class], $listeners);
+		$this->assertContains(needle: [BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class], haystack: $listeners);
+		$this->assertContains(needle: [BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class], haystack: $listeners);
+		// The workspace's mobile logo and touch icon, on every page and the login page.
+		$this->assertContains(needle: [BeforeTemplateRenderedEvent::class, WorkspaceIconListener::class], haystack: $listeners);
+		$this->assertContains(needle: [BeforeLoginTemplateRenderedEvent::class, WorkspaceIconListener::class], haystack: $listeners);
 	}//end testRegisterWithoutVendorRaisesNoWarning()
 
 	/**
@@ -113,6 +117,6 @@ class ApplicationTest extends TestCase {
 			}
 		};
 
-		$this->assertSame(dirname(__DIR__, 3) . '/vendor/autoload.php', $application->path());
+		$this->assertSame(expected: dirname(__DIR__, 3) . '/vendor/autoload.php', actual: $application->path());
 	}//end testTheAutoloaderIsTheAppsOwn()
 }//end class

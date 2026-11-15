@@ -52,8 +52,8 @@ class GalleryIndexSchemaTest extends TestCase {
 	 */
 	public function testTheShippedIndexIsValid(): void {
 		$index = json_decode((string)file_get_contents(\dirname(__DIR__, 3) . '/gallery/index.json'));
-		$this->assertNotNull($index, 'gallery/index.json is not JSON');
-		$this->assertTrue($this->valid($index));
+		$this->assertNotNull(actual: $index, message: 'gallery/index.json is not JSON');
+		$this->assertTrue(condition: $this->valid(document: $index));
 	}//end testTheShippedIndexIsValid()
 
 	/**
@@ -76,8 +76,12 @@ class GalleryIndexSchemaTest extends TestCase {
 
 		foreach ($cases as $label => [$entry, $expected]) {
 			$document = json_decode((string)json_encode(['entries' => [$entry]]));
-			$this->assertSame($expected, $this->valid($document), "schema on: {$label}");
-			$this->assertSame($expected, (new GalleryEntryValidator())->validate(raw: $entry) !== null, "runtime on: {$label}");
+			$this->assertSame(expected: $expected, actual: $this->valid(document: $document), message: "schema on: {$label}");
+			$this->assertSame(
+				expected: $expected,
+				actual: (new GalleryEntryValidator())->validate(raw: $entry) !== null,
+				message: "runtime on: {$label}"
+			);
 		}
 	}//end testTheSchemaAndTheRuntimeAgree()
 }//end class

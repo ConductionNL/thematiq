@@ -27,14 +27,36 @@
 	--color-primary-element: var(--nldesign-color-primary) !important;
 	--color-primary-element-hover: var(--nldesign-color-primary-hover) !important;
 	--color-primary-element-text: var(--nldesign-color-primary-text) !important;
+	/* The action colour is NOT read here. A token set may give the one main
+	 * button of a page its own colour (--nldesign-color-action, with -hover
+	 * and -text beside it), and only that button wears it: its component
+	 * tokens read it in utrecht-bridge.css. Checked boxes, switches, folder
+	 * icons and everything else Nextcloud draws in --color-primary-element
+	 * stay with the primary, so the three lines above are what they always
+	 * were.
+	 *
+	 * --thematiq-action-hover is the main button's hover step. With only the
+	 * action colour declared it is that colour, 15% darker. With neither
+	 * declared its own var() has nothing to read, so the property is invalid
+	 * and the button token that reads it takes its fallback. */
+	--thematiq-action-hover: var(
+		--nldesign-color-action-hover,
+		color-mix(in srgb, var(--nldesign-color-action) 85%, black)
+	);
 	/* --color-primary-element-text-dark: intentionally not overridden — dark variant auto-calculated by Nextcloud */
 	--color-primary-light: var(--nldesign-color-primary-light) !important;
 	--color-primary-light-hover: var(
 		--nldesign-color-primary-light-hover
 	) !important;
-	--color-primary-light-text: var(--nldesign-color-primary) !important;
+	--color-primary-light-text: var(
+		--nldesign-color-primary-light-text,
+		var(--nldesign-color-primary)
+	) !important;
 	--color-primary-element-light: var(--nldesign-color-primary-light) !important;
-	--color-primary-element-light-text: var(--nldesign-color-primary) !important;
+	--color-primary-element-light-text: var(
+		--nldesign-color-primary-light-text,
+		var(--nldesign-color-primary)
+	) !important;
 	--color-primary-element-light-hover: var(
 		--nldesign-color-primary-light-hover
 	) !important;
@@ -48,7 +70,7 @@
 	/* --color-main-background: intentionally not overridden — overriding breaks dark mode */
 	/* --color-main-background-rgb: intentionally not overridden — depends on main-background */
 	/* --color-main-background-translucent: intentionally not overridden — depends on main-background-rgb */
-	/* --color-main-background-blur: intentionally not overridden — depends on main-background-rgb */
+	/* --color-main-background-blur: set in theme.css to the solid main background outside the login page */
 	/* --color-background-plain: intentionally not overridden — admin/user configured */
 	/* --color-background-plain-text: intentionally not overridden — auto-calculated by Nextcloud */
 
@@ -77,7 +99,12 @@
 	/* --color-text-maxcontrast-background-blur: unmapped — blur-adjusted maxcontrast, auto-calculated */
 	--color-text-light: var(--nldesign-color-text-light) !important;
 	--color-text-lighter: var(--nldesign-color-text-muted) !important;
-	--color-text-error: var(--nldesign-color-error) !important;
+	/* Error text on the page: a set's error ink when it has one (darker than
+	 * the fill behind buttons and badges), else its error colour. */
+	--color-text-error: var(
+		--nldesign-color-error-text,
+		var(--nldesign-color-error)
+	) !important;
 	--color-text-success: var(--nldesign-color-success) !important;
 	--color-text-warning: var(--nldesign-color-warning) !important;
 
@@ -120,7 +147,7 @@
 	--color-info: var(--nldesign-color-info) !important;
 	/* --color-info-hover: unmapped — no NL Design equivalent */
 	/* --color-info-text: unmapped — auto-calculated for contrast by Nextcloud */
-	/* --color-info-rgb: unmapped — deprecated, RGB for rgba() */
+	--color-info-rgb: var(--nldesign-color-info-rgb) !important;
 	--color-element-info: var(--nldesign-color-info) !important;
 
 	/* ===================================================================

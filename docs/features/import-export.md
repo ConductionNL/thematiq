@@ -75,7 +75,7 @@ The import accepts standard CSS files with a `:root {}` block:
 
 ## Editable vs. Excluded Tokens
 
-Import and export cover every token the token editor shows, <!-- editable-count -->709<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
+Import and export cover every token the token editor shows, <!-- editable-count -->712<!-- /editable-count --> on this release, and the dark value you gave each colour. A file exported before these tokens existed still imports as before. A few Nextcloud variables stay out of reach:
 
 - image variables such as `--image-logo`, which carry a picture, not a design value;
 - variables Nextcloud's own JavaScript writes on every render, which a stylesheet value cannot hold.
@@ -85,6 +85,8 @@ The [variable inventory](../reference/variable-inventory.md) lists each one with
 Attempting to import an excluded token via the API returns an HTTP 400 error. During file upload, excluded tokens are counted as skipped.
 
 ## Download as design tokens
+
+For Figma, choose the format in the list next to the button. [Token sets and Figma](figma-tokens.md) has the formats, the path of every token and what a round trip loses.
 
 Take a token set to Tokens Studio, Figma or any other tool that reads W3C Design Tokens (DTCG, version 2025.10). Choose the set in the **Design token set** list and click **Download as design tokens**, next to **Reset theme to Nextcloud**. Every custom set has the same button in its row under **Custom token sets**. You get `{set}.tokens.json`.
 
@@ -124,3 +126,18 @@ curl -u admin:password -X POST \
   -d '{"overrides": {"--color-primary": "#005A9C"}}' \
   http://nextcloud.example.com/apps/thematiq/api/settings/overrides
 ```
+
+## The OpenProject plugin's set file
+
+The OpenProject plugin `openproject-thematiq` keeps one design system as a small JSON file: its eighteen roles, an optional `menu`, the rest of the set's tokens as its `vocabulary`, its dark roles and a logo verdict. Thematiq writes and reads that file, so a set moves between the two products without a link between them.
+
+**Download.** Choose **OpenProject plugin set file** in the format list next to **Download as design tokens**. You get `thematiq-{set}.json`. The address is `GET /apps/thematiq/settings/tokensets/{id}/set-file`. The file is the set's entry in the [shell catalogue](shell-catalogue.md): the same roles, vocabulary and dark block. A shipped set carries its logo verdict. An uploaded set names no logo.
+
+**Upload.** Upload the file under **Custom token sets**, like any other. Each role is stored under the name thematiq reads it from: `primary` as `--nldesign-color-primary`, `text` as `--thematiq-shell-text`, `menu` as `--thematiq-shell-menu`, and so on, as listed in [Token sets and Figma](figma-tokens.md). Each vocabulary key is stored with `--nldesign-` in front. The upload result names what was left out:
+
+| Reason | Meaning |
+|---|---|
+| `unmapped` | A role thematiq does not know, or a vocabulary key that is not a token name. |
+| `value-not-a-css-value` | Not a text value, empty, or holding a brace. |
+
+The dark block is read as well: its roles and its vocabulary become the set's dark values, which win over the dark colours thematiq would derive. Every value still passes the token set validator, a dark one too, and the 512 KB limit holds.

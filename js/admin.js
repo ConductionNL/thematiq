@@ -3,6 +3,19 @@
  */
 
 ;(function nldesignAdminInit() {
+	/**
+	 * Replace an element's content with markup built here from escaped values,
+	 * through the inert renderer in js/lib/markupRender.js.
+	 *
+	 * @param {Element} target The element whose children are replaced.
+	 * @param {string} html The markup.
+	 *
+	 * @spec exclude rendering helper; the panels it fills carry their own specs
+	 */
+	function renderMarkup(target, html) {
+		window.NldesignMarkupRender.render(target, html)
+	}
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', nldesignAdminMain)
 	} else {
@@ -1359,6 +1372,16 @@
 						return response.json()
 					})
 					.then(function (data) {
+						if (data.error === 'restricted_set_not_confirmed') {
+							previewBtn.disabled = false
+							notify(
+								t(
+									'thematiq',
+									'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+								),
+							)
+							return
+						}
 						if (data.status !== 'ok') {
 							previewBtn.disabled = false
 							notify(t('thematiq', 'Failed to start theme preview.'))
@@ -1462,6 +1485,17 @@
 		function saveTokenSet(tokenSet, publishMode) {
 			commitTokenSetChange(tokenSet, publishMode === true)
 				.then(function (data) {
+					if (data.error === 'restricted_set_not_confirmed') {
+						// Another organisation's house style, not confirmed
+						// (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+						notify(
+							t(
+								'thematiq',
+								'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+							),
+						)
+						return
+					}
 					if (data.status !== 'ok') {
 						notify(t('thematiq', 'Failed to update theme.'))
 						return
@@ -1508,257 +1542,6 @@
 					console.error('Error saving token set:', error)
 					notify(t('thematiq', 'Failed to update theme.'))
 				})
-		}
-
-		// Fetch current NC theming values and show dialog if they differ
-		/**
-		 * What syncing core theming to a set would do, computed once and used
-		 * by both surfaces: the section inside the apply dialog (the normal
-		 * path) and the standalone dialog (when the apply dialog has no token
-		 * changes to show). `mode` is `match` (POST the set's values), `reset`
-		 * (stock Nextcloud: DELETE, undo everything synced) or `none`.
-		 *
-		 * Stock is the ABSENCE of a synced theme, not a manifest to match:
-		 * matching would keep the previous set's logo (the manifest has none)
-		 * and pin a stale primary.
-		 */
-		/**
-		 * The note next to a colour core gets as the blend of a translucent one.
-		 *
-		 * @param {string|undefined} original The set's own value, when it was translucent.
-		 * @return {string} The note, or '' for an opaque colour.
-		 */
-		function opaqueNote(original) {
-			if (!original) {
-				return ''
-			}
-			return t(
-				'thematiq',
-				"The set says {original}. Nextcloud's own theming has no transparency. It gets this colour instead.",
-				{ original: original },
-			)
-		}
-
-		function computeThemingPlan(tokenSetData, currentTheming) {
-			var none = { mode: 'none', diffs: [], payload: null }
-			if (!tokenSetData || !currentTheming) {
-				return none
-			}
-
-			var defaultLabel = t('thematiq', 'Nextcloud default')
-
-			// A stock-based theme resets Nextcloud's branding to its defaults —
-			// unless it CAPTURED the branding it was saved with, in which case
-			// that is what it brings back, like any other theme.
-			var captured = Boolean(
-				tokenSetData.theming && tokenSetData.theming.captured === true,
-			)
-			if (
-				(tokenSetData.design_system || 'nldesign') === 'none'
-				&& captured === false
-			) {
-				var resetDiffs = []
-				if (currentTheming.primary_color) {
-					resetDiffs.push({
-						label: t('thematiq', 'Primary color'),
-						key: 'primary_color',
-						kind: 'color',
-						current: currentTheming.primary_color,
-						proposed: currentTheming.default_primary_color || '#00679e',
-						proposedNote: defaultLabel,
-					})
-				}
-				if (currentTheming.background_color) {
-					resetDiffs.push({
-						label: t('thematiq', 'Background color'),
-						key: 'background_color',
-						kind: 'color',
-						current: currentTheming.background_color,
-						proposed:
-							currentTheming.default_background_color || '#00679e',
-						proposedNote: defaultLabel,
-					})
-				}
-				if (currentTheming.has_custom_logo === true) {
-					resetDiffs.push({
-						label: t('thematiq', 'Logo'),
-						key: 'logo',
-						kind: 'text',
-						current: t('thematiq', '(custom logo)'),
-						proposed: t('thematiq', 'Nextcloud logo'),
-					})
-				}
-				if (currentTheming.has_custom_background === true) {
-					resetDiffs.push({
-						label: t('thematiq', 'Background image'),
-						key: 'background',
-						kind: 'text',
-						current: t('thematiq', '(custom)'),
-						proposed: defaultLabel,
-					})
-				}
-				if (resetDiffs.length === 0) {
-					return none
-				}
-				return { mode: 'reset', diffs: resetDiffs, payload: null }
-			}
-
-			var proposed = tokenSetData.theming
-			if (!proposed) {
-				return none
-			}
-			var diffs = []
-			var payload = {}
-
-			if (
-				proposed.primary_color
-				&& proposed.primary_color.toLowerCase()
-					!== (currentTheming.primary_color || '').toLowerCase()
-			) {
-				diffs.push({
-					label: t('thematiq', 'Primary color'),
-					key: 'primary_color',
-					kind: 'color',
-					current: currentTheming.primary_color,
-					proposed: proposed.primary_color,
-					proposedNote: opaqueNote(proposed.primary_color_original),
-				})
-				payload.primary_color = proposed.primary_color
-			}
-
-			if (
-				proposed.background_color
-				&& proposed.background_color.toLowerCase()
-					!== (currentTheming.background_color || '').toLowerCase()
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background color'),
-					key: 'background_color',
-					kind: 'color',
-					current: currentTheming.background_color,
-					proposed: proposed.background_color,
-					proposedNote: opaqueNote(proposed.background_color_original),
-				})
-				payload.background_color = proposed.background_color
-			}
-
-			// An image is only a difference when the slot does not ALREADY hold
-			// this set's file. Core records just that a custom image exists, not
-			// which one, so the comparison uses `synced_*` — the path Thematiq
-			// itself last applied. Without this the dialog offered the same
-			// unchanged logo on every apply and could never stop appearing.
-			// (An admin who uploads a logo through core's own panel after a sync
-			// leaves `synced_logo` behind; the row is then skipped once, until
-			// the next sync rewrites it.)
-			if (
-				proposed.logo
-				&& !(
-					currentTheming.has_custom_logo === true
-					&& currentTheming.synced_logo === proposed.logo
-				)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Logo'),
-					key: 'logo',
-					kind: 'text',
-					current: currentTheming.has_custom_logo
-						? t('thematiq', '(custom logo)')
-						: t('thematiq', '(default)'),
-					proposed: proposed.logo.split('/').pop(),
-				})
-				payload.logo = proposed.logo
-			}
-
-			// The navigation-bar logo and the favicon, compared the same way as
-			// the logo: by the file Thematiq last put in the slot.
-			;[
-				['logoheader', t('thematiq', 'Navigation bar logo')],
-				['favicon', t('thematiq', 'Favicon')],
-			].forEach(function (slot) {
-				var key = slot[0]
-				if (
-					proposed[key]
-					&& !(
-						currentTheming['has_custom_' + key] === true
-						&& currentTheming['synced_' + key] === proposed[key]
-					)
-				) {
-					diffs.push({
-						label: slot[1],
-						key: key,
-						kind: 'text',
-						current: currentTheming['has_custom_' + key]
-							? t('thematiq', '(custom)')
-							: t('thematiq', '(default)'),
-						proposed: proposed[key].split('/').pop(),
-					})
-					payload[key] = proposed[key]
-				}
-			})
-
-			if (
-				proposed.background
-				&& !(
-					currentTheming.has_custom_background === true
-					&& currentTheming.synced_background === proposed.background
-				)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background',
-					kind: 'text',
-					current: currentTheming.has_custom_background
-						? t('thematiq', '(custom)')
-						: t('thematiq', '(default)'),
-					proposed: proposed.background.split('/').pop(),
-				})
-				payload.background = proposed.background
-			}
-
-			// A captured theme also knows whether the background image had been
-			// removed ("color") or left as Nextcloud's own ("default"). Offered
-			// only when the page is in a different state; an image of the
-			// theme's own is the background row above.
-			var mode = proposed.background_mode
-			var removedNow = currentTheming.background_mime === 'backgroundColor'
-			var currentBackground = removedNow
-				? t('thematiq', 'Removed (plain color)')
-				: currentTheming.has_custom_background
-					? t('thematiq', '(custom)')
-					: t('thematiq', '(default)')
-			if (mode === 'color' && removedNow === false) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background_mode',
-					kind: 'text',
-					current: currentBackground,
-					proposed: t('thematiq', 'Removed (plain color)'),
-				})
-			} else if (
-				mode === 'default'
-				&& (removedNow === true
-					|| currentTheming.has_custom_background === true)
-			) {
-				diffs.push({
-					label: t('thematiq', 'Background image'),
-					key: 'background_mode',
-					kind: 'text',
-					current: currentBackground,
-					proposed: t('thematiq', 'Nextcloud default'),
-				})
-			}
-
-			if (diffs.length === 0) {
-				return none
-			}
-
-			// Sent with anything that is applied, so a colour change on its own
-			// cannot drop the background image the theme was saved with.
-			if (mode === 'image' || mode === 'color' || mode === 'default') {
-				payload.background_mode = mode
-			}
-
-			return { mode: 'match', diffs: diffs, payload: payload }
 		}
 
 		/** Execute a plan from computeThemingPlan(); resolves after the page reflects it. */
@@ -1848,7 +1631,11 @@
 		function checkAndShowThemingDialog(tokenSetData) {
 			fetchCurrentTheming()
 				.then(function (currentTheming) {
-					var plan = computeThemingPlan(tokenSetData, currentTheming)
+					var plan = window.NldesignThemingPlan.computeThemingPlan(
+						tokenSetData,
+						currentTheming,
+						t,
+					)
 					if (plan.mode === 'reset') {
 						showThemingResetDialog(tokenSetData, currentTheming)
 					} else if (plan.mode === 'match') {
@@ -2339,6 +2126,19 @@
 		}
 
 		/**
+		 * The selector for the element matching `base` whose data-token attribute is
+		 * `name`, for example `.nldesign-color-picker[data-token="--color-primary"]`.
+		 *
+		 * @param {string} base The class selector of the control.
+		 * @param {string} name The token name the control edits.
+		 * @return {string} The combined selector.
+		 */
+		function tokenSelector(base, name) {
+			var attribute = 'data-token'
+			return base + '[' + attribute + '="' + name + '"]'
+		}
+
+		/**
 		 * Escape a value for HTML text and for a quoted attribute value.
 		 *
 		 * Most call sites put the result inside value="..." or title="...", so
@@ -2736,8 +2536,16 @@
 			container
 				.querySelectorAll('.nldesign-token-row')
 				.forEach(function (row) {
-					var locked = isTokenLocked(row.dataset.tokenRow)
-					var reason = lockReason(row.dataset.tokenRow)
+					// A playground clone names its token in `data-pg-token`. A
+					// row naming no token (a fact with no token, a missing
+					// one) is left as it is: asking for `undefined` answered
+					// "not locked" and unlocked the clones (live check, 9 Oct).
+					var name = row.dataset.tokenRow || row.dataset.pgToken
+					if (name === undefined) {
+						return
+					}
+					var locked = isTokenLocked(name)
+					var reason = lockReason(name)
 					row.classList.toggle('nldesign-token-row--locked', locked)
 					// Every control, not only inputs: easing and duration units are selects (#936).
 					row.querySelectorAll('input, select').forEach(function (input) {
@@ -3083,10 +2891,12 @@
 				})
 				.catch(function (err) {
 					console.error('Failed to load token editor:', err)
-					container.innerHTML =
+					renderMarkup(
+						container,
 						'<p class="settings-hint">'
 						+ escapeHtml(t('thematiq', 'Could not load token editor.'))
-						+ '</p>'
+						+ '</p>',
+					)
 				})
 		}
 
@@ -3144,7 +2954,8 @@
 				isFirst = false
 			})
 
-			container.innerHTML =
+			renderMarkup(
+				container,
 				''
 				+ '<div class="nldesign-token-editor">'
 				+ '<div class="nldesign-token-editor-header">'
@@ -3235,7 +3046,8 @@
 				+ '</label>'
 				+ '</div>'
 				+ '</div>'
-				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>'
+				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
+			)
 
 			container.querySelectorAll('.nldesign-tab-btn').forEach(function (btn) {
 				btn.addEventListener('click', function () {
@@ -3261,6 +3073,7 @@
 			})
 
 			wireTokenRows(container)
+			paintContrastWarnings(container)
 
 			wireTokenGroups(container)
 
@@ -3472,7 +3285,7 @@
 					state && state.custom !== undefined ? state.custom : null,
 				)
 			})
-			panel.innerHTML = html
+			renderMarkup(panel, html)
 			tokenGroupsBuilt[id] = true
 			wireTokenRows(panel)
 			refreshTokenEditorLocks()
@@ -3868,7 +3681,7 @@
 		function paintSwatches(name, value) {
 			document
 				.querySelectorAll(
-					'.nldesign-color-swatch[data-token="' + name + '"]',
+					tokenSelector('.nldesign-color-swatch', name),
 				)
 				.forEach(function (swatch) {
 					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
@@ -4179,7 +3992,7 @@
 					field.value = String(parts.alpha)
 				})
 			var picker = container.querySelector(
-				'.nldesign-color-picker[data-token="' + name + '"]',
+				tokenSelector('.nldesign-color-picker', name),
 			)
 			if (picker !== null && picker.dataset.format !== 'rgb') {
 				picker.value = parts.hex
@@ -4214,10 +4027,10 @@
 					field.addEventListener('input', function () {
 						var name = field.dataset.token
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						var text = container.querySelector(
-							'.nldesign-color-text[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-text', name),
 						)
 						container
 							.querySelectorAll(
@@ -4254,10 +4067,10 @@
 
 			function durationOf(name) {
 				var number = container.querySelector(
-					'.nldesign-duration-number[data-token="' + name + '"]',
+					tokenSelector('.nldesign-duration-number', name),
 				)
 				var unit = container.querySelector(
-					'.nldesign-duration-unit[data-token="' + name + '"]',
+					tokenSelector('.nldesign-duration-unit', name),
 				)
 				if (number === null || unit === null || number.value.trim() === '') {
 					return
@@ -4279,7 +4092,7 @@
 
 			function easingOf(name) {
 				var select = container.querySelector(
-					'.nldesign-easing-select[data-token="' + name + '"]',
+					tokenSelector('.nldesign-easing-select', name),
 				)
 				if (select === null) {
 					return
@@ -4388,13 +4201,13 @@
 						var name = picker.dataset.token
 						var value = pickerValue(picker)
 						var alpha = container.querySelector(
-							'.nldesign-color-alpha[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-alpha', name),
 						)
 						if (alpha !== null && typeof TT.joinAlpha === 'function') {
 							value = TT.joinAlpha(picker.value, alpha.value)
 						}
 						var textField = container.querySelector(
-							'.nldesign-color-text[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-text', name),
 						)
 						if (textField !== null) {
 							textField.value = value
@@ -4411,7 +4224,7 @@
 						var name = field.dataset.token
 						var value = field.value.trim()
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						if (picker !== null) {
 							syncPicker(picker, value)
@@ -4456,7 +4269,7 @@
 								+ '"]',
 						)
 						var picker = container.querySelector(
-							'.nldesign-color-picker[data-token="' + name + '"]',
+							tokenSelector('.nldesign-color-picker', name),
 						)
 						if (textField !== null) {
 							textField.value = defaultVal
@@ -4620,6 +4433,75 @@
 			schedulePreviewRepaint()
 		}
 
+		/**
+		 * Say beside each page text colour when it falls under 4.5:1 on the
+		 * page background (WCAG 1.4.3), and that the saved file steps it to
+		 * 4.5:1 (OverridesCssBuilder::withReadableText). The note is tied to
+		 * the colour field with aria-describedby.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @return {void}
+		 */
+		function paintContrastWarnings(container) {
+			if (typeof TT.textContrastShortfall !== 'function') {
+				return
+			}
+			var valueOf = function (token) {
+				var state = tokenEditorState[token]
+				return state ? state.current || state.resolved || '' : ''
+			}
+			var background = valueOf('--color-main-background')
+			TT.TEXT_CONTRAST_TOKENS.forEach(function (name) {
+				var row = container.querySelector('[data-token-row="' + name + '"]')
+				if (row === null) {
+					return
+				}
+				var id = 'nldesign-contrast-' + name.replace(/^-+/, '')
+				var note = row.querySelector('#' + id)
+				var field = row.querySelector('.nldesign-color-text')
+				var ratio = TT.textContrastShortfall(name, valueOf(name), background)
+				if (ratio === null) {
+					if (note !== null) {
+						note.remove()
+					}
+					if (field !== null) {
+						var rest = (field.getAttribute('aria-describedby') || '')
+							.split(' ')
+							.filter(function (ref) {
+								return ref !== '' && ref !== id
+							})
+						if (rest.length > 0) {
+							field.setAttribute('aria-describedby', rest.join(' '))
+						} else {
+							field.removeAttribute('aria-describedby')
+						}
+					}
+					return
+				}
+				if (note === null) {
+					note = document.createElement('p')
+					note.id = id
+					note.className = 'nldesign-token-contrast-warning'
+					note.setAttribute('role', 'status')
+					row.appendChild(note)
+				}
+				note.textContent = t(
+					'thematiq',
+					'Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.',
+					{ ratio: ratio.toFixed(2) },
+				)
+				if (field !== null) {
+					var refs = (field.getAttribute('aria-describedby') || '')
+						.split(' ')
+						.filter(Boolean)
+					if (refs.indexOf(id) === -1) {
+						refs.push(id)
+						field.setAttribute('aria-describedby', refs.join(' '))
+					}
+				}
+			})
+		}
+
 		function markDirty(name, value, container) {
 			if (tokenEditorState[name] === undefined) {
 				tokenEditorState[name] = {
@@ -4632,6 +4514,7 @@
 			tokenEditorState[name].current = value
 			tokenEditorState[name].isDirty = true
 			paintSwatches(name, value)
+			paintContrastWarnings(container)
 
 			var row = container.querySelector('[data-token-row="' + name + '"]')
 			var label =
@@ -5121,7 +5004,7 @@
 			// design system the page was wearing when it was serialised, not
 			// whatever the dropdown says by the time the response lands.
 			var designSystem = currentDesignSystemId()
-
+			var edits = collectSavedAndDirtyOverrides()
 			var result = playground.exportCss(
 				playground.liveTokens(
 					loadInitialState('playgroundExportTokens', {}),
@@ -5129,28 +5012,17 @@
 						return readVar(n, fallback)
 					},
 				),
-				collectSavedAndDirtyOverrides(),
+				edits,
 				loadInitialState('playgroundTokenSources', {}),
 				// Marked in the file too, so the stored theme, downloaded from
 				// the custom set list and uploaded again, comes back the same.
 				designSystem,
 			)
-
 			// An override the exporter could not express is a value the admin
 			// set, saw applied, and would not find in the theme they just saved.
-			// The download path has always said so; this one used to drop them
-			// without a word, which is how a header colour went missing between
-			// the editor and the file.
-			if (result.unexpressed.length > 0) {
-				notify(
-					t(
-						'thematiq',
-						'These values could not be written into a theme and are kept as overrides instead: {names}',
-						{ names: result.unexpressed.join(', ') },
-					),
-				)
-			}
-
+			// It is kept as an override of the new theme once that exists
+			// (authoring-save-edits-as-a-new-theme), and the admin is told which.
+			var leftovers = leftoverOverrides(result.unexpressed, edits)
 			fetch(OC.generateUrl('/apps/thematiq/settings/tokensets/upload'), {
 				method: 'POST',
 				headers: {
@@ -5216,10 +5088,89 @@
 					report.done()
 					applyCreatedTokenSet(result.data.id, name, designSystem)
 					rememberCapturedTheming(result.data.id, result.data.theming)
+					keepLeftoversOn(result.data.id, leftovers)
 				})
 				.catch(function (err) {
 					console.error('Error creating the token set:', err)
 					report.fail(t('thematiq', 'The new theme could not be created.'))
+				})
+		}
+
+		/**
+		 * The edits the exporter could not write into a token set, with their
+		 * values: the overrides a new theme keeps beside its set.
+		 *
+		 * @param {Array<string>} names The names the exporter left out.
+		 * @param {Object<string,string>} edits The saved and unsaved edits.
+		 * @return {Object<string,string>} Name => value, for the names that have one.
+		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 */
+		function leftoverOverrides(names, edits) {
+			var leftovers = {}
+			;(names || []).forEach(function (name) {
+				if (typeof edits[name] === 'string' && edits[name] !== '') {
+					leftovers[name] = edits[name]
+				}
+			})
+			return leftovers
+		}
+
+		/**
+		 * Save the values a token set cannot hold as overrides of the new
+		 * theme, and list them to the admin; when there is no theme to keep
+		 * them on, or the save fails, say which values were not kept.
+		 *
+		 * @param {string} id The new token set id.
+		 * @param {Object<string,string>} leftovers Name => value.
+		 * @return {void}
+		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 */
+		function keepLeftoversOn(id, leftovers) {
+			var names = Object.keys(leftovers).join(', ')
+			if (names === '') {
+				return
+			}
+			var notKept = function () {
+				notify(
+					t(
+						'thematiq',
+						'These values could not be written into the new theme and were not saved: {names}',
+						{ names: names },
+					),
+				)
+			}
+			if (typeof id !== 'string' || id === '') {
+				notKept()
+				return
+			}
+
+			fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({ overrides: leftovers, tokenSet: id }),
+			})
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (data) {
+					if (data.status !== 'ok') {
+						notKept()
+						return
+					}
+					notify(
+						t(
+							'thematiq',
+							'These values could not be written into a theme and are kept as overrides instead: {names}',
+							{ names: names },
+						),
+					)
+				})
+				.catch(function (err) {
+					console.error('Error keeping the leftover values:', err)
+					notKept()
 				})
 		}
 
@@ -5846,9 +5797,10 @@
 			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
-					var themingPlan = computeThemingPlan(
+					var themingPlan = window.NldesignThemingPlan.computeThemingPlan(
 						tokenSetsData[newTokenSetId],
 						results[1],
+						t,
 					)
 					if (data.error !== undefined) {
 						saveTokenSet(newTokenSetId, publishMode)
@@ -6055,7 +6007,7 @@
 			function updateApplyPreview() {
 				changes.forEach(function (change) {
 					var cb = overlay.querySelector(
-						'.nldesign-apply-check[data-token="' + change.name + '"]',
+						tokenSelector('.nldesign-apply-check', change.name),
 					)
 					if (cb !== null && cb.checked === true) {
 						document.documentElement.style.setProperty(
@@ -6413,7 +6365,7 @@
 		// input[data-app-id] per app, checked === themed) is preserved inside the
 		// panel so saveAppTheming() keeps working unchanged.
 		function renderAppThemingList(listEl, apps) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (apps.length === 0) {
 				listEl.textContent = t('thematiq', 'No apps available.')
 				return
@@ -6701,7 +6653,7 @@
 				return
 			}
 
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 
 			if (groupThemingRows.length === 0) {
 				var empty = document.createElement('p')
@@ -7228,7 +7180,99 @@
 				fileInput.value = ''
 			})
 
+			// A pasted theme goes up as `content`; the server converts it the
+			// same way as a file (nlds-theme-converter 6.1).
+			var convertBtn = document.getElementById('nldesign-convert-btn')
+			var contentInput = document.getElementById('nldesign-upload-content')
+			if (convertBtn !== null && contentInput !== null) {
+				convertBtn.addEventListener('click', function () {
+					if (nameInput.value.trim() === '') {
+						notify(t('thematiq', 'Enter a token set name first.'))
+						nameInput.focus()
+						return
+					}
+					if (contentInput.value.trim() === '') {
+						notify(
+							t(
+								'thematiq',
+								'Paste the contents of a theme file first.',
+							),
+						)
+						contentInput.focus()
+						return
+					}
+					uploadCustomTokenSet(nameInput.value.trim(), {
+						content: contentInput.value,
+					})
+				})
+			}
+
 			loadCustomTokenSets()
+		}
+
+		/**
+		 * The conversion report of an upload: everything the converter did not
+		 * take over as-is, grouped by reason under the table's own sentence, and
+		 * the counts (nlds-theme-converter 6.3). Empty when the response has no
+		 * report, so a plain token-set upload shows nothing extra.
+		 *
+		 * @param {object} data The upload response.
+		 * @return {DocumentFragment} The report.
+		 */
+		function buildConversionReportFragment(data) {
+			var fragment = document.createDocumentFragment()
+			var reasons = data.reasons || {}
+			var entries = (data.report || []).filter(function (entry) {
+				// Colours moved into sRGB are listed by the diagnostics block.
+				return (
+					entry.action !== 'applied'
+					&& entry.reason
+					&& !/^out-of-gamut-/.test(entry.reason)
+				)
+			})
+			var groups =
+				typeof TT.groupDiagnosticsByReason === 'function'
+					? TT.groupDiagnosticsByReason(entries)
+					: groupDiagnosticsByReasonFallback(entries)
+
+			if (data.counts) {
+				var counts = document.createElement('p')
+				counts.className = 'nldesign-conversion-counts'
+				counts.textContent = t(
+					'thematiq',
+					'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
+					{
+						applied: data.counts.applied || 0,
+						adapted: data.counts.adapted || 0,
+						kept: data.counts.kept || 0,
+						skipped: data.counts.skipped || 0,
+					},
+				)
+				fragment.appendChild(counts)
+			}
+
+			if (groups.length > 0) {
+				var list = document.createElement('ul')
+				list.className = 'nldesign-conversion-report'
+				groups.forEach(function (group) {
+					var item = document.createElement('li')
+					var sources = group.items
+						.map(function (entry) {
+							return entry.source
+						})
+						.join(', ')
+					item.textContent =
+						(reasons[group.reason] || group.reason)
+						+ ' ('
+						+ group.items.length
+						+ '): '
+						+ sources
+					list.appendChild(item)
+				})
+				fragment.appendChild(list)
+			}
+
+			return fragment
 		}
 
 		// Localised label for a DTCG import diagnostic `reason` code. Falls back to
@@ -7429,6 +7473,18 @@
 			var backgroundInput = document.getElementById(
 				'nldesign-brand-background',
 			)
+			var actionToggle = document.getElementById(
+				'nldesign-brand-action-enabled',
+			)
+			var actionInput = document.getElementById('nldesign-brand-action')
+			// The main button's own colour, or '' while the box is not ticked.
+			function actionColour() {
+				return actionToggle !== null
+					&& actionToggle.checked === true
+					&& actionInput !== null
+					? actionInput.value
+					: ''
+			}
 			var logoInput = document.getElementById('nldesign-brand-logo')
 			var sample = document.getElementById('nldesign-brand-sample')
 			var sampleHover = document.getElementById('nldesign-brand-sample-hover')
@@ -7461,15 +7517,25 @@
 					inputs,
 					primaryInput.value,
 					backgroundInput.value,
+					actionColour(),
 				)
 				if (result === null) {
 					return
 				}
 				var d = result.declarations
-				sample.style.background = d['--nldesign-color-primary']
-				sample.style.color = d['--nldesign-color-primary-text']
-				sampleHover.style.background = d['--nldesign-color-primary-hover']
-				sampleHover.style.color = d['--nldesign-color-primary-text']
+				// The samples are the main button: its own colour when the form
+				// gives one, else the primary.
+				var fill =
+					d['--nldesign-color-action'] || d['--nldesign-color-primary']
+				var label =
+					d['--nldesign-color-action-text']
+					|| d['--nldesign-color-primary-text']
+				sample.style.background = fill
+				sample.style.color = label
+				sampleHover.style.background =
+					d['--nldesign-color-action-hover']
+					|| d['--nldesign-color-primary-hover']
+				sampleHover.style.color = label
 				form.style.setProperty(
 					'--brand-form-background',
 					d['--nldesign-color-nav-background'],
@@ -7486,6 +7552,15 @@
 						result.uiRatio,
 						brandForm.UI_MIN,
 					)
+				if (result.actionTextRatio !== null) {
+					readout.textContent +=
+						' '
+						+ ratioLine(
+							t('thematiq', 'Text on the main button'),
+							result.actionTextRatio,
+							brandForm.TEXT_MIN,
+						)
+				}
 			}
 
 			function showResult(text) {
@@ -7523,6 +7598,13 @@
 
 			primaryInput.addEventListener('input', pick)
 			backgroundInput.addEventListener('input', pick)
+			if (actionToggle !== null && actionInput !== null) {
+				actionToggle.addEventListener('change', function () {
+					actionInput.disabled = actionToggle.checked !== true
+					repaint()
+				})
+				actionInput.addEventListener('input', repaint)
+			}
 			document.addEventListener('thematiq:theme-applied', followTheme)
 			var coloursTab = document.getElementById('nldesign-create-tab-colours')
 			if (coloursTab !== null) {
@@ -7571,6 +7653,9 @@
 				formData.append('name', name)
 				formData.append('primary', primaryInput.value)
 				formData.append('background', backgroundInput.value)
+				if (actionColour() !== '') {
+					formData.append('action', actionColour())
+				}
 				if (logoInput !== null && logoInput.files && logoInput.files[0]) {
 					formData.append('logo', logoInput.files[0])
 				}
@@ -7616,7 +7701,12 @@
 			var resultEl = document.getElementById('nldesign-upload-result')
 			var formData = new FormData()
 			formData.append('name', name)
-			formData.append('file', file)
+			// `file` is a File from the picker, or `{content}` from the paste box.
+			if (file instanceof Blob) {
+				formData.append('file', file)
+			} else {
+				formData.append('content', file.content)
+			}
 			;(brands || []).forEach(function (key) {
 				formData.append('brands[]', key)
 			})
@@ -7634,7 +7724,7 @@
 				.then(function (res) {
 					if (resultEl !== null) {
 						resultEl.style.display = 'block'
-						resultEl.innerHTML = ''
+						resultEl.replaceChildren()
 					}
 					if (res.status >= 400) {
 						if (resultEl !== null) {
@@ -7690,6 +7780,15 @@
 					)
 						.replace('{imported}', res.data.imported)
 						.replace('{skipped}', (res.data.skipped || []).length)
+					// Dark values the file brought (dark-colours-from-a-file).
+					if (res.data.darkValues > 0) {
+						msg +=
+							' '
+							+ t(
+								'thematiq',
+								'{count} dark values from the file are kept for dark mode.',
+							).replace('{count}', res.data.darkValues)
+					}
 					if (res.data.version) {
 						msg +=
 							' '
@@ -7709,6 +7808,7 @@
 					if (resultEl !== null) {
 						resultEl.appendChild(document.createTextNode(msg))
 						resultEl.appendChild(buildDiagnosticsFragment(res.data))
+						resultEl.appendChild(buildConversionReportFragment(res.data))
 					}
 					loadCustomTokenSets()
 					// The dropdown and tokenSetsData were built from initial state
@@ -7814,7 +7914,7 @@
 			cancel.className = 'button nldesign-brand-cancel'
 			cancel.textContent = t('thematiq', 'Cancel')
 			cancel.addEventListener('click', function () {
-				resultEl.innerHTML = ''
+				resultEl.replaceChildren()
 				resultEl.appendChild(
 					document.createTextNode(t('thematiq', 'Nothing was imported.')),
 				)
@@ -8017,13 +8117,24 @@
 		 * @return {void}
 		 */
 		function downloadDtcg(id) {
+			// The format chosen for Figma and other design tools
+			// (openspec/changes/figma-token-files). Without the list: the W3C document.
+			var formatSelect = document.getElementById('nldesign-figma-format')
+			var format = formatSelect === null ? 'dtcg' : formatSelect.value
+			var studio =
+				format === 'tokens-studio' || format === 'tokens-studio-legacy'
 			downloadWithToken(
 				OC.generateUrl(
 					'/apps/thematiq/settings/tokensets/'
 						+ encodeURIComponent(id)
-						+ '/dtcg',
-				),
-				id + '.tokens.json',
+						+ (format === 'openproject' ? '/set-file' : '/dtcg'),
+				)
+					+ (format === 'dtcg' || format === 'openproject'
+						? ''
+						: '?format=' + encodeURIComponent(format)),
+				format === 'openproject'
+					? 'thematiq-' + id + '.json'
+					: id + (studio ? '.tokens-studio.json' : '.tokens.json'),
 				t('thematiq', 'The design tokens could not be downloaded.'),
 			)
 		}
@@ -8042,6 +8153,64 @@
 		}
 
 		initDtcgDownload()
+
+		/**
+		 * Search the token set list by name or id (openspec/changes/token-set-picker-search).
+		 *
+		 * Hides every option that does not match and says how many are left. The selected
+		 * set stays visible, so the list never shows a value it does not hold. Escape empties
+		 * the field. Accents and case do not count: "fryslan" finds "Fryslân".
+		 */
+		function initTokenSetSearch() {
+			var input = document.getElementById('nldesign-token-set-search')
+			var status = document.getElementById('nldesign-token-set-search-status')
+			if (input === null || tokenSetSelect === null) {
+				return
+			}
+			var fold = function (text) {
+				return String(text)
+					.normalize('NFD')
+					.replace(/[\u0300-\u036f]/g, '')
+					.toLowerCase()
+					.trim()
+			}
+			var apply = function () {
+				var query = fold(input.value)
+				var options = tokenSetSelect.options
+				var shown = 0
+				for (var i = 0; i < options.length; i++) {
+					var option = options[i]
+					var match =
+						query === ''
+						|| fold(option.textContent).indexOf(query) !== -1
+						|| fold(option.value).indexOf(query) !== -1
+					option.hidden = !match && !option.selected
+					if (match) {
+						shown++
+					}
+				}
+				if (status !== null) {
+					status.textContent =
+						query === ''
+							? ''
+							: t('thematiq', '{shown} of {total} sets match', {
+									shown: shown,
+									total: options.length,
+								})
+				}
+			}
+			input.addEventListener('input', apply)
+			input.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape' && input.value !== '') {
+					event.preventDefault()
+					input.value = ''
+					apply()
+				}
+			})
+			tokenSetSelect.addEventListener('change', apply)
+		}
+
+		initTokenSetSearch()
 
 		function loadCustomTokenSets() {
 			var listEl = document.getElementById('nldesign-custom-set-list')
@@ -8106,7 +8275,7 @@
 		}
 
 		function renderCustomSetList(listEl, sets) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (sets.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8583,7 +8752,7 @@
 		}
 
 		function renderFontList(listEl, fonts) {
-			listEl.innerHTML = ''
+			listEl.replaceChildren()
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8724,7 +8893,7 @@
 		}
 
 		function renderAuditMessage(tableBody, message) {
-			tableBody.innerHTML = ''
+			tableBody.replaceChildren()
 			var row = document.createElement('tr')
 			var cell = document.createElement('td')
 			cell.colSpan = 7
@@ -8756,7 +8925,7 @@
 		}
 
 		function renderAuditTable(tableBody, entries) {
-			tableBody.innerHTML = ''
+			tableBody.replaceChildren()
 
 			if (entries.length === 0) {
 				renderAuditMessage(
@@ -9227,7 +9396,7 @@
 			}
 
 			function renderList(switches) {
-				list.innerHTML = ''
+				list.replaceChildren()
 				if (!switches || switches.length === 0) {
 					var empty = document.createElement('li')
 					empty.className = 'settings-hint'
@@ -9730,7 +9899,7 @@
 					: t('thematiq', 'Not checked yet.')
 			}
 
-			noticesEl.innerHTML = ''
+			noticesEl.replaceChildren()
 			;(data.notices || []).forEach(function (notice) {
 				var row = document.createElement('div')
 				row.className = 'nldesign-upstream-notice'
@@ -9976,7 +10145,7 @@
 						{ host: data.host },
 					)
 				}
-				list.innerHTML = ''
+				list.replaceChildren()
 				if (data.enabled !== true) {
 					setStatus('')
 					return

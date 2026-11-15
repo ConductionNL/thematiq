@@ -334,4 +334,47 @@ class CustomTokenSetValidatorTest extends TestCase {
 	public function testMaxSizeIs512Kb(): void {
 		$this->assertSame(expected: (512 * 1024), actual: CustomTokenSetValidator::MAX_SIZE);
 	}//end testMaxSizeIs512Kb()
+	/**
+	 * The component prefixes the converter emits are accepted beside `--nldesign-*` and the slug.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
+	 */
+	public function testTheConvertersComponentPrefixesAreAccepted(): void {
+		$split = $this->validator->validateDeclarations(
+			declarations: [
+				'--nldesign-color-primary' => '#007bc7',
+				'--utrecht-button-primary-action-background-color' => '#007bc7',
+				'--ams-link-color' => '#004699',
+				'--denhaag-card-background-color' => '#ffffff',
+				'--gemeente-color-blue-40' => '#1b3d6b',
+			],
+			slug: 'gemeente'
+		);
+
+		$this->assertNotNull(actual: $split);
+		foreach (['--utrecht-button-primary-action-background-color', '--ams-link-color', '--denhaag-card-background-color', '--gemeente-color-blue-40'] as $name) {
+			$this->assertArrayHasKey(key: $name, array: $split['accepted']);
+		}
+	}//end testTheConvertersComponentPrefixesAreAccepted()
+
+	/**
+	 * Widening the names did not widen the values: a component token smuggling a declaration or
+	 * a comment marker is still a hard failure.
+	 *
+	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 *
+	 * @return void
+	 */
+	public function testAComponentPrefixDoesNotLoosenTheValueGate(): void {
+		foreach (['#fff; background: url(https://evil.example)', '#fff /* x', 'red */ body { }'] as $value) {
+			$split = $this->validator->validateDeclarations(
+				declarations: ['--nldesign-color-primary' => '#007bc7', '--utrecht-link-color' => $value],
+				slug: 'gemeente'
+			);
+
+			$this->assertNull(actual: $split, message: $value);
+		}
+	}//end testAComponentPrefixDoesNotLoosenTheValueGate()
 }//end class

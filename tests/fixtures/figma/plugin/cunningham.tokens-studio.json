@@ -1,0 +1,381 @@
+{
+  "thematiq/light": {
+    "nldesign": {
+      "color": {
+        "primary": {
+          "$value": "#1a509f",
+          "$type": "color",
+          "$description": "thematiq role primary",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary"
+            }
+          }
+        },
+        "primary-hover": {
+          "$value": "#203c63",
+          "$type": "color",
+          "$description": "thematiq role primary-deep",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary-hover"
+            }
+          }
+        },
+        "primary-light": {
+          "$value": "#eaf1fb",
+          "$type": "color",
+          "$description": "thematiq role primary-light",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary-light"
+            }
+          }
+        },
+        "action": {
+          "$value": "#1f883d",
+          "$type": "color",
+          "$description": "thematiq role action",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-action"
+            }
+          }
+        },
+        "action-hover": {
+          "$value": "#197032",
+          "$type": "color",
+          "$description": "thematiq role action-deep",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-action-hover"
+            }
+          }
+        },
+        "link": {
+          "$value": "#1a509f",
+          "$type": "color",
+          "$description": "thematiq role link",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-link"
+            }
+          }
+        },
+        "accent": {
+          "$value": "#d80000",
+          "$type": "color",
+          "$description": "thematiq role accent",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-accent"
+            }
+          }
+        },
+        "text": {
+          "$value": "#1b1c1d",
+          "$type": "color",
+          "$description": "thematiq role ink",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-text"
+            }
+          }
+        },
+        "text-muted": {
+          "$value": "#74777c",
+          "$type": "color",
+          "$description": "thematiq role muted",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-text-muted"
+            }
+          }
+        },
+        "border": {
+          "$value": "#c4c7cb",
+          "$type": "color",
+          "$description": "thematiq role line",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-border"
+            }
+          }
+        },
+        "background-dark": {
+          "$value": "#e1e2e5",
+          "$type": "color",
+          "$description": "thematiq role soft",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background-dark"
+            }
+          }
+        },
+        "background": {
+          "$value": "#ffffff",
+          "$type": "color",
+          "$description": "thematiq role ground",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background"
+            }
+          }
+        },
+        "background-hover": {
+          "$value": "#f0f1f2",
+          "$type": "color",
+          "$description": "thematiq role chip",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background-hover"
+            }
+          }
+        },
+        "border-dark": {
+          "$value": "#74777c",
+          "$type": "color",
+          "$description": "thematiq role field",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-border-dark"
+            }
+          }
+        }
+      },
+      "border": {
+        "radius": {
+          "$value": "8px",
+          "$type": "borderRadius",
+          "$description": "thematiq role radius",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-border-radius"
+            }
+          }
+        },
+        "radius-large": {
+          "$value": "8px",
+          "$type": "borderRadius",
+          "$description": "thematiq role radius-lg",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-border-radius-large"
+            }
+          }
+        }
+      },
+      "font": {
+        "family": {
+          "$value": "Marianne, Inter, sans-serif",
+          "$type": "fontFamilies",
+          "$description": "thematiq role font-family",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-font-family"
+            }
+          }
+        }
+      }
+    },
+    "thematiq": {
+      "shell": {
+        "text": {
+          "$value": "#484a4d",
+          "$type": "color",
+          "$description": "thematiq role text",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--thematiq-shell-text"
+            }
+          }
+        }
+      }
+    }
+  },
+  "thematiq/dark": {
+    "nldesign": {
+      "color": {
+        "primary": {
+          "$value": "#558fe3",
+          "$type": "color",
+          "$description": "thematiq role primary",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary"
+            }
+          }
+        },
+        "primary-hover": {
+          "$value": "#558fe3",
+          "$type": "color",
+          "$description": "thematiq role primary-deep",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary-hover"
+            }
+          }
+        },
+        "primary-light": {
+          "$value": "#0c1c32",
+          "$type": "color",
+          "$description": "thematiq role primary-light",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-primary-light"
+            }
+          }
+        },
+        "action": {
+          "$value": "#1f883d",
+          "$type": "color",
+          "$description": "thematiq role action",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-action"
+            }
+          }
+        },
+        "action-hover": {
+          "$value": "#197032",
+          "$type": "color",
+          "$description": "thematiq role action-deep",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-action-hover"
+            }
+          }
+        },
+        "link": {
+          "$value": "#c6d8f3",
+          "$type": "color",
+          "$description": "thematiq role link",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-link"
+            }
+          }
+        },
+        "accent": {
+          "$value": "#f42c2c",
+          "$type": "color",
+          "$description": "thematiq role accent",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-accent"
+            }
+          }
+        },
+        "text": {
+          "$value": "#e2e3e4",
+          "$type": "color",
+          "$description": "thematiq role ink",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-text"
+            }
+          }
+        },
+        "text-muted": {
+          "$value": "#9b9da1",
+          "$type": "color",
+          "$description": "thematiq role muted",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-text-muted"
+            }
+          }
+        },
+        "border": {
+          "$value": "#3f4247",
+          "$type": "color",
+          "$description": "thematiq role line",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-border"
+            }
+          }
+        },
+        "background-dark": {
+          "$value": "#292b2f",
+          "$type": "color",
+          "$description": "thematiq role soft",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background-dark"
+            }
+          }
+        },
+        "background": {
+          "$value": "#292b2f",
+          "$type": "color",
+          "$description": "thematiq role ground",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background"
+            }
+          }
+        },
+        "background-hover": {
+          "$value": "#1e2022",
+          "$type": "color",
+          "$description": "thematiq role chip",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-background-hover"
+            }
+          }
+        },
+        "border-dark": {
+          "$value": "#828589",
+          "$type": "color",
+          "$description": "thematiq role field",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--nldesign-color-border-dark"
+            }
+          }
+        }
+      }
+    },
+    "thematiq": {
+      "shell": {
+        "text": {
+          "$value": "#bfc0c3",
+          "$type": "color",
+          "$description": "thematiq role text",
+          "$extensions": {
+            "nl.conduction.thematiq": {
+              "cssVariable": "--thematiq-shell-text"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$themes": [
+    {
+      "id": "light",
+      "name": "Light",
+      "group": "Cunningham (blue base)",
+      "selectedTokenSets": {
+        "thematiq/light": "enabled"
+      }
+    },
+    {
+      "id": "dark",
+      "name": "Dark",
+      "group": "Cunningham (blue base)",
+      "selectedTokenSets": {
+        "thematiq/light": "enabled",
+        "thematiq/dark": "enabled"
+      }
+    }
+  ],
+  "$metadata": {
+    "tokenSetOrder": [
+      "thematiq/light",
+      "thematiq/dark"
+    ]
+  }
+}

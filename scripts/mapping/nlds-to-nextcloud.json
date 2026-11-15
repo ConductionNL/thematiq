@@ -64,6 +64,50 @@
 		},
 		{
 			"$comment": [
+				"THE ACTION COLOUR IS OPTIONAL, so these three rules have no fallback from the primary.",
+				"A theme that gives its main button a colour apart from its brand declares",
+				"--{p}-color-action (with -hover and -text beside it), and only then does the set get",
+				"--nldesign-color-action, which only the main button wears. Without the source nothing",
+				"is written and the button keeps the primary, as every existing conversion relies on.",
+				"",
+				"--utrecht-button-primary-action-background-color is deliberately NOT a source here: it",
+				"is the first source of --nldesign-color-primary above, so naming it again would hand",
+				"every converted theme an action colour equal to its primary."
+			],
+			"target": "--nldesign-color-action",
+			"nextcloud": ["primary button background"],
+			"sources": ["--{p}-color-action"],
+			"transform": "copy"
+		},
+		{
+			"$comment": [
+				"No fallback: a set with an action colour and no hover gets that colour 15% darker from",
+				"the stylesheet itself (--thematiq-action-hover)."
+			],
+			"target": "--nldesign-color-action-hover",
+			"nextcloud": ["primary button background on hover"],
+			"sources": ["--{p}-color-action-hover"],
+			"transform": "copy"
+		},
+		{
+			"$comment": [
+				"Derived from the action colour when the theme names none, as the text on the primary",
+				"is. The derivation reads --nldesign-color-action, so a set without an action colour",
+				"gets no action text either."
+			],
+			"target": "--nldesign-color-action-text",
+			"nextcloud": ["primary button label"],
+			"sources": ["--{p}-color-action-text"],
+			"fallback": {
+				"kind": "derive",
+				"from": "--nldesign-color-action",
+				"transform": "onColor",
+				"args": { "light": "#ffffff", "dark": "#000000" }
+			},
+			"transform": "copy"
+		},
+		{
+			"$comment": [
 				"ALWAYS derived from the primary, never taken from a token. These are Nextcloud's",
 				"light TINTS of the element colour (hover backgrounds for primary-ish controls), so",
 				"they only make sense as a wash of the brand colour.",
@@ -520,7 +564,8 @@
 			"(the badge), and a mid-tone fill makes that impossible for any text colour.",
 			"`replaceInvalid` tokens whose value is not a visible colour (an upstream reference",
 			"written as text, `transparent` for a fill) get their default before anything is measured.",
-			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures. They",
+			"A pair with `from` measures that token when the set does not declare its foreground, and writes the foreground only when it is repaired (the light-text step: the primary where it passes on the light primary, a deeper shade where not).",
+			"`componentPairs` are the Den Haag and Tilburg pairs DenhaagContrastPairs measures, and the field borders at 3:1 (WCAG 1.4.11). They",
 			"apply only to a foreground the theme declares in its own component layer (thematiq#1006)."
 		],
 		"page": "#ffffff",
@@ -531,7 +576,8 @@
 			"--nldesign-color-primary-light-hover": "#d4e4f2",
 			"--nldesign-color-text": "#333333",
 			"--nldesign-color-text-muted": "#696969",
-			"--nldesign-color-header-background": ["--nldesign-color-primary", "#ffffff"]
+			"--nldesign-color-header-background": ["--nldesign-color-primary", "#ffffff"],
+			"--utrecht-textbox-background-color": ["--nldesign-color-background", "#ffffff"]
 		},
 		"replaceInvalid": [
 			"--nldesign-color-background-dark",
@@ -547,7 +593,10 @@
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--nldesign-color-text", "background": "--nldesign-color-background-dark", "min": 4.5, "adjust": "lightness", "repair": "background" },
 			{ "foreground": "--nldesign-color-text-muted", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
-			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" }
+			{ "foreground": "--nldesign-color-header-text", "background": "--nldesign-color-header-background", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--nldesign-color-border-dark", "background": "--nldesign-color-background", "min": 3, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary-light-text", "from": "--nldesign-color-primary", "background": "--nldesign-color-primary-light", "min": 4.5, "adjust": "lightness" },
+			{ "foreground": "--nldesign-color-primary-light-text", "from": "--nldesign-color-primary", "background": "--nldesign-color-primary-light-hover", "min": 4.5, "adjust": "lightness" }
 		],
 		"componentPairs": [
 			{ "foreground": "--denhaag-step-marker-current-color", "background": "--denhaag-step-marker-current-background-color", "min": 4.5, "adjust": "flip" },
@@ -564,7 +613,9 @@
 			{ "foreground": "--denhaag-side-navigation-link-active-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--denhaag-file-link-color", "background": "--nldesign-color-background", "min": 4.5, "adjust": "lightness" },
 			{ "foreground": "--tilburg-header-logo-text-color", "background": "--tilburg-header-background-color", "min": 4.5, "adjust": "flip" },
-			{ "foreground": "--tilburg-footer-color", "background": "--tilburg-footer-background-color", "min": 4.5, "adjust": "flip" }
+			{ "foreground": "--tilburg-footer-color", "background": "--tilburg-footer-background-color", "min": 4.5, "adjust": "flip" },
+			{ "foreground": "--utrecht-textbox-border-color", "background": "--utrecht-textbox-background-color", "min": 3, "adjust": "lightness" },
+			{ "foreground": "--utrecht-form-input-border-color", "background": "--utrecht-textbox-background-color", "min": 3, "adjust": "lightness" }
 		]
 	},
 	"never": [
@@ -664,7 +715,6 @@
 		"spacing-not-consumed": "Spacing tokens were kept in the file for NL Design System components but Nextcloud's own components do not read them.",
 		"routed-to-core-theming": "The page background was applied through Nextcloud's theming settings (login page and plain background), not as the content background, so dark mode keeps working.",
 		"derived-by-nextcloud": "This value is calculated by Nextcloud from the primary colour (element colour, light tints, contrast text) and cannot be set directly.",
-		"radius-scale-derived": "Corner radii were derived from the theme's button and textbox radius; pill and round shapes are fixed.",
 		"geometry-kept-nextcloud": "Shapes and sizes stay Nextcloud's: a token set is a reskin, so it carries the design system's COLOURS and leaves corner radii, border widths and table-header styling to Nextcloud. The theme's own values are kept in the file for NL Design System components.",
 		"font-not-bundled": "The theme's font is referenced but not installed. Upload it under Custom fonts or the next font in the stack is used.",
 		"contrast-separator-added": "A 1px header border was added because the theme's header and content are both the same colour.",

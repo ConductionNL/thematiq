@@ -75,52 +75,165 @@ class ContrastService {
 	 *                                                                                                            The non-blocking contrast warnings.
 	 *
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	public function check(array $declarations): array {
 		$warnings = [];
 
 		foreach (self::PAIRS as $pair) {
-			$fgValue = $declarations[$pair['fg']] ?? null;
-			$bgValue = $declarations[$pair['bg']] ?? null;
-
-			// A pair can only be evaluated when both tokens are present.
-			if ($fgValue === null || $bgValue === null) {
-				continue;
+			$warning = $this->pairWarning(pair: $pair, declarations: $declarations);
+			if ($warning !== null) {
+				$warnings[] = $warning;
 			}
+		}
 
-			// Translucent colours are measured as they render: the background
-			// over the page background, the foreground over that.
-			$ratio = $this->measure(
-				foreground: $fgValue,
-				background: $bgValue,
-				page: ($declarations['--nldesign-color-background'] ?? null)
-			);
-
-			$pairLabel = $pair['fg'] . ' vs ' . $pair['bg'];
-
-			if ($ratio === null) {
-				$warnings[] = [
-					'pair' => $pairLabel,
-					'ratio' => null,
-					'threshold' => $pair['threshold'],
-					'level' => 'AA',
-					'unevaluated' => true,
-				];
-				continue;
-			}
-
-			if ($ratio < $pair['threshold']) {
-				$warnings[] = [
-					'pair' => $pairLabel,
-					'ratio' => round($ratio, 2),
-					'threshold' => $pair['threshold'],
-					'level' => 'AA',
-				];
-			}
-		}//end foreach
-
-		return $warnings;
+		return array_merge($warnings, $this->checkAction(declarations: $declarations));
 	}//end check()
+
+	/**
+	 * The warning for one pair, when both its tokens are present and it falls short.
+	 *
+	 * @param array{fg: string, bg: string, threshold: float} $pair The pair.
+	 * @param array<string, string> $declarations The set's declarations.
+	 *
+	 * @return array<string, mixed>|null The warning, or null.
+	 */
+	private function pairWarning(array $pair, array $declarations): array|null {
+		$fgValue = $declarations[$pair['fg']] ?? null;
+		$bgValue = $declarations[$pair['bg']] ?? null;
+
+		// A pair can only be evaluated when both tokens are present.
+		if ($fgValue === null || $bgValue === null) {
+			return null;
+		}
+
+		// Translucent colours are measured as they render: the background
+		// over the page background, the foreground over that.
+		$ratio = $this->measure(
+			foreground: $fgValue,
+			background: $bgValue,
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+
+		return $this->ratioWarning(pair: $pair, ratio: $ratio);
+	}//end pairWarning()
+
+	/**
+	 * The warning for a measured pair: unevaluated when there is no ratio, failing below the threshold.
+	 *
+	 * @param array{fg: string, bg: string, threshold: float} $pair The pair.
+	 * @param float|null $ratio The measured ratio, or null when it could not be measured.
+	 *
+	 * @return array<string, mixed>|null The warning (pair, ratio, threshold, level, unevaluated), or null when the pair passes.
+	 *
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
+	 */
+	public function ratioWarning(array $pair, ?float $ratio): ?array {
+		$label = $pair['fg'] . ' vs ' . $pair['bg'];
+		if ($ratio === null) {
+			return ['pair' => $label, 'ratio' => null, 'threshold' => $pair['threshold'], 'level' => 'AA', 'unevaluated' => true];
+		}
+
+		if ($ratio < $pair['threshold']) {
+			return ['pair' => $label, 'ratio' => round($ratio, 2), 'threshold' => $pair['threshold'], 'level' => 'AA'];
+		}
+
+		return null;
+	}//end ratioWarning()
+
+	/**
+	 * The text on the action colour, checked like the text on the primary.
+	 *
+	 * The action colour is optional: a set declares `--nldesign-color-action`
+	 * (and `--nldesign-color-action-text`) to give the main button a colour of
+	 * its own, and each falls back to its primary counterpart. So the pair is
+	 * only measured when a set moved a side of it. A set that declares neither,
+	 * or declares them equal to the primary pair, gets no entry here: that is
+	 * the pair {@see self::PAIRS} already measured, and reporting it twice
+	 * would change what every existing set is told.
+	 *
+	 * @param array<string, string> $declarations Map of token name => value.
+	 *
+	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> Zero or one warning.
+	 *
+	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 */
+	private function checkAction(array $declarations): array {
+		$colours = $this->actionColours(declarations: $declarations);
+		if ($colours === null) {
+			return [];
+		}
+
+		$ratio = $this->measure(
+			foreground: $colours['text'],
+			background: $colours['action'],
+			page: ($declarations['--nldesign-color-background'] ?? null)
+		);
+
+		$warning = $this->ratioWarning(
+			pair: ['fg' => '--nldesign-color-action-text', 'bg' => '--nldesign-color-action', 'threshold' => self::ROLE_TEXT_THRESHOLD],
+			ratio: $ratio
+		);
+		if ($warning === null) {
+			return [];
+		}
+
+		return [$warning];
+	}//end checkAction()
+
+	/**
+	 * The action colour and its text, each falling back to the primary's, when
+	 * both are set and they are not simply the primary pair again.
+	 *
+	 * @param array<string, string> $declarations The set's declarations.
+	 *
+	 * @return array{action: string, text: string}|null The colours, or null when there is nothing of its own to check.
+	 */
+	private function actionColours(array $declarations): array|null {
+		$action = $this->firstOf(declarations: $declarations, names: ['--nldesign-color-action', '--nldesign-color-primary']);
+		$actionText = $this->firstOf(declarations: $declarations, names: ['--nldesign-color-action-text', '--nldesign-color-primary-text']);
+
+		if ($action === null || $actionText === null
+			|| $this->isPrimaryPair(declarations: $declarations, action: $action, actionText: $actionText) === true
+		) {
+			return null;
+		}
+
+		return ['action' => $action, 'text' => $actionText];
+	}//end actionColours()
+
+	/**
+	 * The value of the first token the set declares.
+	 *
+	 * @param array<string, string> $declarations The set's declarations.
+	 * @param array<int, string> $names The tokens, in order of preference.
+	 *
+	 * @return string|null The value, or null when it declares none of them.
+	 */
+	private function firstOf(array $declarations, array $names): string|null {
+		foreach ($names as $name) {
+			$value = ($declarations[$name] ?? null);
+			if ($value !== null) {
+				return $value;
+			}
+		}
+
+		return null;
+	}//end firstOf()
+
+	/**
+	 * Whether the action pair is the primary pair itself, so {@see self::PAIRS} already measured it.
+	 *
+	 * @param array<string, string> $declarations Map of token name => value.
+	 * @param string $action The action colour.
+	 * @param string $actionText The text on it.
+	 *
+	 * @return bool True when both sides equal their primary counterparts.
+	 */
+	private function isPrimaryPair(array $declarations, string $action, string $actionText): bool {
+		return $action === ($declarations['--nldesign-color-primary'] ?? null)
+			&& $actionText === ($declarations['--nldesign-color-primary-text'] ?? null);
+	}//end isPrimaryPair()
 
 	/**
 	 * Evaluate an arbitrary list of candidate colors against one background,
@@ -148,39 +261,62 @@ class ContrastService {
 	public function evaluate(array $candidates, string $background): array {
 		$results = [];
 		foreach ($candidates as $candidate) {
-			$threshold = self::ROLE_UI_THRESHOLD;
-			if ($candidate['role'] === 'text') {
-				$threshold = self::ROLE_TEXT_THRESHOLD;
-			}
-
-			// A translucent candidate is measured blended over the background.
-			$measured = $this->measure(foreground: (string)$candidate['value'], background: $background);
-
-			if ($measured === null) {
-				$results[] = [
-					'name' => $candidate['name'],
-					'ratio' => null,
-					'threshold' => $threshold,
-					'level' => 'AA',
-					'pass' => false,
-					'unevaluated' => true,
-				];
-				continue;
-			}
-
-			$ratio = round($measured, 2);
-
-			$results[] = [
-				'name' => $candidate['name'],
-				'ratio' => $ratio,
-				'threshold' => $threshold,
-				'level' => 'AA',
-				'pass' => ($ratio >= $threshold),
-			];
-		}//end foreach
+			$results[] = $this->evaluateCandidate(candidate: $candidate, background: $background);
+		}
 
 		return $results;
 	}//end evaluate()
+
+	/**
+	 * One candidate's verdict: text at 4.5:1, anything else at 3:1; an
+	 * unmeasurable value is unevaluated, never passing. A translucent candidate
+	 * is measured blended over the background.
+	 *
+	 * @param array{name: string, role: string, value: string} $candidate The candidate.
+	 * @param string $background The background colour.
+	 *
+	 * @return array<string, mixed> The verdict.
+	 */
+	private function evaluateCandidate(array $candidate, string $background): array {
+		$threshold = self::ROLE_UI_THRESHOLD;
+		if ($candidate['role'] === 'text') {
+			$threshold = self::ROLE_TEXT_THRESHOLD;
+		}
+
+		$measured = $this->measure(foreground: (string)$candidate['value'], background: $background);
+		if ($measured === null) {
+			return $this->unevaluated(name: $candidate['name'], threshold: $threshold);
+		}
+
+		$ratio = round($measured, 2);
+
+		return [
+			'name' => $candidate['name'],
+			'ratio' => $ratio,
+			'threshold' => $threshold,
+			'level' => 'AA',
+			'pass' => ($ratio >= $threshold),
+		];
+	}//end evaluateCandidate()
+
+	/**
+	 * The verdict of a candidate whose value cannot be measured.
+	 *
+	 * @param string $name The candidate's name.
+	 * @param float $threshold The ratio it had to reach.
+	 *
+	 * @return array<string, mixed> The verdict.
+	 */
+	private function unevaluated(string $name, float $threshold): array {
+		return [
+			'name' => $name,
+			'ratio' => null,
+			'threshold' => $threshold,
+			'level' => 'AA',
+			'pass' => false,
+			'unevaluated' => true,
+		];
+	}//end unevaluated()
 
 	/**
 	 * Compute the WCAG 2.1 contrast ratio between two RGB colours.
@@ -267,61 +403,8 @@ class ContrastService {
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-translucent-colours-are-measured-as-they-render
 	 */
 	public function parseColorWithAlpha(string $value): ?array {
-		$value = trim($value);
-
-		if (preg_match('/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/', $value, $match) === 1) {
-			return $this->parseHex(hex: $match[1]);
-		}
-
-		if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)(%?)\s*)?\)$/', $value, $match) === 1) {
-			$alpha = 1.0;
-			if (isset($match[4]) === true && $match[4] !== '') {
-				$alpha = (float)$match[4];
-				if (($match[5] ?? '') === '%') {
-					$alpha = ($alpha / 100);
-				}
-			}
-
-			return [
-				min(255, (int)$match[1]),
-				min(255, (int)$match[2]),
-				min(255, (int)$match[3]),
-				round(max(0.0, min(1.0, $alpha)), 3),
-			];
-		}
-
-		return null;
+		return (new ColourRgba())->parse(value: $value);
 	}//end parseColorWithAlpha()
-
-	/**
-	 * Expand and parse the digits of a 3, 4, 6 or 8 digit hex colour.
-	 *
-	 * @param string $hex The hex digits without the leading '#'.
-	 *
-	 * @return array{0: int, 1: int, 2: int, 3: float} The parsed colour.
-	 */
-	private function parseHex(string $hex): array {
-		if (strlen($hex) <= 4) {
-			$expanded = '';
-			foreach (str_split($hex) as $digit) {
-				$expanded .= $digit . $digit;
-			}
-
-			$hex = $expanded;
-		}
-
-		$alpha = 1.0;
-		if (strlen($hex) === 8) {
-			$alpha = round(hexdec(substr($hex, 6, 2)) / 255, 3);
-		}
-
-		return [
-			(int)hexdec(substr($hex, 0, 2)),
-			(int)hexdec(substr($hex, 2, 2)),
-			(int)hexdec(substr($hex, 4, 2)),
-			$alpha,
-		];
-	}//end parseHex()
 
 	/**
 	 * Composite a colour with alpha over an opaque colour ("source over").
@@ -387,20 +470,31 @@ class ContrastService {
 			return null;
 		}
 
-		$white = [255, 255, 255];
-		$pageRgb = $white;
-		$pageRgba = null;
-		if ($page !== null) {
-			$pageRgba = $this->parseColorWithAlpha(value: $page);
-		}
-
-		if ($pageRgba !== null) {
-			$pageRgb = $this->blend(top: $pageRgba, under: $white);
-		}
-
+		$pageRgb = $this->pageBackground(page: $page);
 		$bgRgb = $this->blend(top: $bgRgba, under: $pageRgb);
 		$fgRgb = $this->blend(top: $fgRgba, under: $bgRgb);
 
 		return $this->ratio(first: $fgRgb, second: $bgRgb);
 	}//end measure()
+
+	/**
+	 * The page background as it renders: over white, and white when there is none or it does not parse.
+	 *
+	 * @param string|null $page The page background.
+	 *
+	 * @return array{0: int, 1: int, 2: int} The page background's RGB.
+	 */
+	private function pageBackground(?string $page): array {
+		$white = [255, 255, 255];
+		if ($page === null) {
+			return $white;
+		}
+
+		$pageRgba = $this->parseColorWithAlpha(value: $page);
+		if ($pageRgba === null) {
+			return $white;
+		}
+
+		return $this->blend(top: $pageRgba, under: $white);
+	}//end pageBackground()
 }//end class

@@ -76,7 +76,9 @@ class ThematiqExportLayers {
 	 * @return string palette, component or semantic.
 	 */
 	private function layerOf(string $name): string {
-		if (str_starts_with($name, '--nldesign-') === true) {
+		// The shell values with no token of their own in a set (`--thematiq-shell-text`, written by
+		// the OpenProject plugin) keep their name, like the rest of the vocabulary.
+		if (str_starts_with($name, '--nldesign-') === true || str_starts_with($name, '--thematiq-shell-') === true) {
 			return 'semantic';
 		}
 

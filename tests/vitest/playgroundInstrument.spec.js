@@ -73,7 +73,13 @@ async function flush(rounds = 10) {
  */
 async function boot(
 	version,
-	{ state: extra = {}, overrides = {}, internal = {} } = {},
+	{
+		state: extra = {},
+		overrides = {},
+		internal = {},
+		registry = REGISTRY,
+		primaryDrives = null,
+	} = {},
 ) {
 	const state = {
 		tokenSets: [],
@@ -115,13 +121,16 @@ async function boot(
 			json: () =>
 				Promise.resolve(
 					url.indexOf('/settings/overrides') !== -1
-						? { overrides, registry: REGISTRY, tabs: {}, internal }
-						: {},
+						? { overrides, registry, tabs: {}, internal }
+						: url.indexOf('/settings/primary-drives-components') !== -1
+							? { status: 'ok' }
+							: {},
 				),
 		})
 	})
 
 	document.body.innerHTML = `
+		${primaryDrives === null ? '' : `<input type="checkbox" id="nldesign-primary-drives-components"${primaryDrives ? ' checked' : ''}>`}
 		<div class="nldesign-preview" id="nldesign-preview">
 			<div class="nldesign-preview-head"><h3>Preview</h3></div>
 			<div class="nldesign-preview-stage" data-view="app">
@@ -204,6 +213,52 @@ describe('the component instrument in the browser', { timeout: 20000 }, () => {
 		document.body.innerHTML = ''
 		delete window.ThematiqPlayground
 		vi.restoreAllMocks()
+	})
+
+	// Live check 2026-10-09 (component-scoped-tokens 8.8): with Primary button
+	// open, switching "Let the primary color drive every component" left the
+	// rows on screen editable, because the lock refresh asked the clones, which
+	// carry no `data-token-row`, for a token name and unlocked them.
+	it('locks and unlocks the open component rows when the primary setting is switched', async () => {
+		const registry = {
+			...registryFor(['primary-button']),
+		}
+		Object.keys(registry).forEach((name) => {
+			registry[name].primary = /primary-action/.test(name)
+		})
+		await boot(35, { registry, primaryDrives: false })
+
+		openTab('status')
+		openComponent('Primary button')
+		const background = () =>
+			document.querySelector(
+				'.nldesign-pg-panel .nldesign-pg-row input[data-token="--nldesign-component-button-primary-action-background-color"]',
+			)
+		const corner = () =>
+			document.querySelector(
+				'.nldesign-pg-panel .nldesign-pg-row input[data-token="--nldesign-component-button-border-radius"]',
+			)
+		expect(background().disabled).toBe(false)
+
+		const box = document.getElementById('nldesign-primary-drives-components')
+		box.checked = true
+		box.dispatchEvent(new window.Event('change', { bubbles: true }))
+		await flush()
+
+		expect(background().disabled).toBe(true)
+		expect(
+			background()
+				.closest('.nldesign-token-row')
+				.classList.contains('nldesign-token-row--locked'),
+		).toBe(true)
+		// The corner is not the primary's to drive.
+		expect(corner().disabled).toBe(false)
+
+		box.checked = false
+		box.dispatchEvent(new window.Event('change', { bubbles: true }))
+		await flush()
+
+		expect(background().disabled).toBe(false)
 	})
 
 	it('marks the preview with the open tab, so the full view shows that tab', async () => {

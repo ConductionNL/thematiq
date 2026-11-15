@@ -87,6 +87,11 @@ When a brand-group colour token is set, the file MUST also carry its dark value,
 ### Requirement: Read/Write PHP Endpoint
 The backend MUST expose a PHP service that reads the current `custom-overrides.css` and writes a new version atomically. Direct file manipulation from Vue components MUST NOT be used.
 
+The overrides endpoint remains the only way the client writes `custom-overrides.css`, and the
+token editor remains its only caller. The component playground MUST reach it through that
+editor's own rows and its own Save rather than through a path of its own, so there is one
+implementation of "what an edit is" and it cannot disagree with itself.
+
 #### Scenario: Read current overrides
 - GIVEN `custom-overrides.css` exists with some overrides
 - WHEN the admin settings panel loads
@@ -101,12 +106,23 @@ The backend MUST expose a PHP service that reads the current `custom-overrides.c
 - AND it MUST return HTTP 200 with the final set of written tokens
 
 #### Scenario: Write fails due to filesystem permissions
-@e2e exclude a browser cannot make the app's css directory unwritable; PHPUnit tests/Unit/Controller/OverridesControllerValidationTest.php::testWriteFailureHidesPath asserts the 500 and its message
 - GIVEN the CSS directory is not writable by the web server process
 - WHEN the save endpoint is called
 - THEN the server MUST return HTTP 500
 - AND the error response MUST include a message indicating the file could not be written
 - AND the existing `custom-overrides.css` MUST remain unchanged
+
+#### Scenario: The playground saves through the editor, not beside it
+- GIVEN an edit made under a component in the playground
+- WHEN the admin saves
+- THEN the request MUST be the one the token editor would have sent for the same edit
+- AND the playground MUST NOT issue a write of its own
+
+#### Scenario: An edit under a component is an edit in the editor
+- GIVEN a component open in the playground
+- WHEN one of its tokens is edited
+- THEN the token editor MUST report an unsaved change, exactly as if the value had been typed
+  in the full list
 
 ### Requirement: No Database Storage
 Token overrides MUST NOT be stored in Nextcloud's `appconfig` table or any database table. The CSS file is the sole persistence mechanism.

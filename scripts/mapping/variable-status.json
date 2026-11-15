@@ -990,14 +990,11 @@
 			"category": "Status: Info"
 		},
 		"--color-info-rgb": {
-			"status": "settable",
-			"token": "--nldesign-nc-color-info-rgb",
-			"tab": "status",
-			"type": "text",
-			"label": "Info RGB",
-			"perScheme": true,
-			"note": "Deprecated; RGB for rgba()",
-			"category": "Status: Info"
+			"status": "mapped",
+			"via": "stylesheet",
+			"token": "--nldesign-color-info-rgb",
+			"category": "Status: Info",
+			"note": "Deprecated; RGB for rgba()"
 		},
 		"--color-info-text": {
 			"status": "settable",
@@ -1041,10 +1038,10 @@
 		},
 		"--color-main-background-blur": {
 			"status": "mapped",
-			"via": "nextcloud-theming",
-			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
+			"via": "stylesheet",
+			"token": "--color-main-background",
 			"category": "Main Background",
-			"note": "Blur variant; depends on --color-main-background-rgb"
+			"note": "The solid main background outside the login page: nldesign has no frosted app shell"
 		},
 		"--color-main-background-rgb": {
 			"status": "mapped",
@@ -1107,7 +1104,7 @@
 			"via": "stylesheet",
 			"token": "--nldesign-color-primary",
 			"category": "Primary Colors",
-			"note": "Interactive element primary color"
+			"note": "Interactive element colour: checked boxes, switches, icons. Not the main button, which a set's action colour may move"
 		},
 		"--color-primary-element-extra-light": {
 			"status": "settable",
@@ -1141,7 +1138,7 @@
 		"--color-primary-element-light-text": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-primary",
+			"token": "--nldesign-color-primary-light-text",
 			"category": "Primary Colors",
 			"note": "Deprecated alias"
 		},
@@ -1183,7 +1180,7 @@
 		"--color-primary-light-text": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-primary",
+			"token": "--nldesign-color-primary-light-text",
 			"category": "Primary Colors",
 			"note": "Text on light primary; uses brand color"
 		},
@@ -1246,7 +1243,7 @@
 			"via": "stylesheet",
 			"token": "--nldesign-color-error",
 			"category": "Text Colors",
-			"note": "Error message text"
+			"note": "Error message text; a set's --nldesign-color-error-text ink when it has one"
 		},
 		"--color-text-light": {
 			"status": "mapped",

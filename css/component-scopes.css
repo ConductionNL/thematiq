@@ -54,6 +54,7 @@ body,
 	--thematiq-global-color-primary-text: var(--color-primary-text);
 	--thematiq-global-font-face: var(--font-face);
 	--thematiq-global-color-main-text: var(--color-main-text);
+	--thematiq-global-color-main-background-blur: var(--color-main-background-blur);
 	--thematiq-global-color-primary-element-light: var(--color-primary-element-light);
 	--thematiq-global-color-primary-element-light-text: var(--color-primary-element-light-text);
 	--thematiq-global-body-container-radius: var(--nldesign-nc-body-container-radius, var(--body-container-radius));
@@ -70,6 +71,7 @@ body,
 	--thematiq-global-color-primary-light-text: var(--color-primary-light-text);
 	--thematiq-global-color-primary-light-hover: var(--color-primary-light-hover);
 	--thematiq-global-color-success: var(--color-success);
+	--thematiq-global-color-text-light: var(--color-text-light);
 	--thematiq-global-color-primary: var(--color-primary);
 	--thematiq-global-color-border-maxcontrast: var(--color-border-maxcontrast);
 	--thematiq-global-color-placeholder-dark: var(--color-placeholder-dark);
@@ -95,7 +97,7 @@ body,
 	--thematiq-global-color-success-hover: var(--nldesign-nc-color-success-hover, var(--color-success-hover));
 	--thematiq-global-color-info: var(--color-info);
 	--thematiq-global-color-info-text: var(--nldesign-nc-color-info-text, var(--color-info-text));
-	--thematiq-global-color-info-rgb: var(--nldesign-nc-color-info-rgb, var(--color-info-rgb));
+	--thematiq-global-color-info-rgb: var(--color-info-rgb);
 	--thematiq-global-border-radius: var(--border-radius);
 	--thematiq-global-color-warning: var(--color-warning);
 	--thematiq-global-color-warning-text: var(--nldesign-nc-color-warning-text, var(--color-warning-text));
@@ -108,7 +110,6 @@ body,
 	--thematiq-global-color-error-light: var(--color-error-light);
 	--thematiq-global-font-weight-heading: var(--font-weight-heading);
 	--thematiq-global-color-primary-hover: var(--color-primary-hover);
-	--thematiq-global-color-text-light: var(--color-text-light);
 	--thematiq-global-color-text-lighter: var(--color-text-lighter);
 	--thematiq-global-color-text-error: var(--color-text-error);
 	--thematiq-global-color-text-warning: var(--color-text-warning);
@@ -158,6 +159,7 @@ body,
 	--thematiq-alias-nldesign-component-textbox-border-radius: var(--nldesign-component-textbox-border-radius);
 	--thematiq-alias-nldesign-component-textbox-background-color: var(--nldesign-component-textbox-background-color);
 	--thematiq-alias-nldesign-component-textbox-focus-border-color: var(--nldesign-component-textbox-focus-border-color);
+	--thematiq-alias-nldesign-component-textbox-color: var(--nldesign-component-textbox-color);
 	--thematiq-alias-nldesign-component-button-primary-action-font-weight: var(--nldesign-component-button-primary-action-font-weight);
 }
 
@@ -268,6 +270,10 @@ body,
 		--nldesign-component-navigation-active-background-color,
 		var(--thematiq-global-color-primary-element)
 	);
+	--color-main-background-blur: var(
+		--nldesign-component-navigation-background-color,
+		var(--thematiq-global-color-main-background-blur)
+	);
 }
 
 /* navigation-active-entry */
@@ -346,10 +352,6 @@ body,
 /* table */
 table,
 [data-thematiq-component='table'] {
-	--color-text-maxcontrast: var(
-		--nldesign-component-table-header-color,
-		var(--thematiq-global-color-text-maxcontrast)
-	);
 	--color-border: var(
 		--nldesign-component-table-border-color,
 		var(--thematiq-global-color-border)
@@ -365,6 +367,7 @@ table,
 }
 
 th {
+	color: var(--nldesign-component-table-header-color, inherit);
 	background-color: var(--nldesign-component-table-header-background-color, transparent);
 	font-weight: var(--nldesign-component-table-header-font-weight, normal);
 }
@@ -464,6 +467,15 @@ th {
 }
 
 /* avatar */
+.avatardiv,
+.user-status-icon,
+[data-thematiq-component='avatar'] {
+	--color-text-light: var(
+		--nldesign-component-avatar-initials-color,
+		var(--thematiq-global-color-text-light)
+	);
+}
+
 .user-status-icon {
 	--user-status-color-online: var(--nldesign-component-avatar-online-status-color, #2D7B41) !important;
 }
@@ -527,6 +539,10 @@ input[type='search'],
 	--color-border-error: var(
 		--nldesign-component-textbox-invalid-border-color,
 		var(--thematiq-global-color-border-error)
+	);
+	--color-main-text: var(
+		--nldesign-component-textbox-color,
+		var(--thematiq-global-color-main-text)
 	);
 }
 
@@ -634,6 +650,10 @@ textarea,
 		--nldesign-component-textarea-focus-border-color,
 		var(--thematiq-alias-nldesign-component-textbox-focus-border-color)
 	);
+	--nldesign-component-textbox-color: var(
+		--nldesign-component-textarea-color,
+		var(--thematiq-alias-nldesign-component-textbox-color)
+	);
 }
 
 .textarea__input::placeholder {
@@ -704,6 +724,8 @@ progress,
 .button-vue--vue-primary,
 button.primary,
 input[type='submit'],
+input.primary,
+a.primary,
 [data-thematiq-component='primary-button'] {
 	--color-primary-element: var(
 		--nldesign-component-button-primary-action-background-color,
@@ -717,10 +739,6 @@ input[type='submit'],
 		--nldesign-component-button-primary-action-hover-background-color,
 		var(--thematiq-global-color-primary-element-hover)
 	);
-	--color-main-text: var(
-		--nldesign-component-button-focus-border-color,
-		var(--thematiq-global-color-main-text)
-	);
 	--border-radius-element: var(
 		--nldesign-component-button-border-radius,
 		var(--thematiq-global-border-radius-element)
@@ -733,6 +751,28 @@ input[type='submit'],
 		--nldesign-component-button-font-weight,
 		var(--thematiq-alias-nldesign-component-button-primary-action-font-weight)
 	);
+}
+
+.button-vue--primary:focus-visible,
+.button-vue--vue-primary:focus-visible,
+button.primary:focus-visible,
+input[type='submit']:focus-visible,
+input.primary:focus-visible,
+a.primary:focus-visible,
+[data-thematiq-component='primary-button']:focus-visible {
+	--color-main-text: var(
+		--nldesign-component-button-focus-border-color,
+		var(--thematiq-global-color-main-text)
+	);
+}
+
+:where(.button-vue--primary:focus-visible, .button-vue--vue-primary:focus-visible, button.primary:focus-visible, input[type='submit']:focus-visible, input.primary:focus-visible, a.primary:focus-visible, [data-thematiq-component='primary-button']:focus-visible) > * {
+	--color-main-text: var(--thematiq-global-color-main-text);
+}
+
+.button-vue--primary,
+.button-vue--vue-primary {
+	border-color: var(--nldesign-component-button-primary-action-border-color, var(--color-primary-element-hover)) !important;
 }
 
 /* secondary-button */

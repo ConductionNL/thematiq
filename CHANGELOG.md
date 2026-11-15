@@ -4,7 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Upgrade notes: house styles of other organisations
+
+44 shipped token sets copy the house style of a real organisation, and their licence allows use
+only by that organisation, or with its permission. From this version these sets are off until an
+administrator confirms, per set, that your organisation is that owner or has its permission. The
+list is in `docs/reference/token-set-licences.md`.
+
+- **Nothing changes for your users on upgrade.** A set you already applied stays applied: for the
+  whole instance, for a group, as an app's brand, or in a running planned switch.
+- **The upgrade log names each such set.** The admin settings show a notice under the token set
+  dropdown, with the confirm action.
+- **Until you confirm, the set cannot be applied anywhere new.** That covers another group, a
+  preview, a planned switch, an app's brand, an imported configuration bundle and
+  `occ thematiq:theme:set`. The server answers 403.
+- **Your name and the time go into the audit log** when you confirm.
+
 ### Added
+- **Paste a theme instead of uploading a file.** The Custom token sets panel has a paste box
+  beside the file picker. Paste a `design-tokens.css`, a W3C Design Tokens JSON or a Style
+  Dictionary `tokens.json`, convert it, and the result lists the counts and every token that was
+  not taken over as-is, grouped under the reason in the mapping table's own words.
+- **`npm run convert:theme` and `npm run convert:theme:check`.** The first runs the converter
+  from the command line; with `--write` it also writes the set's `<slug>.report.json` and
+  regenerates only that set's dark variant. The second converts the parity fixtures under
+  `tests/Unit/fixtures/converter/` and fails when the output moved without the fixtures.
+- **Five more playground rows.** You can now set the typed text of a text input, the primary
+  button's border, the navigation column's background and the initials of an avatar without a
+  picture. The textarea's text row now reaches the textarea. The navigation row leaves
+  Nextcloud's main background alone, so dark mode keeps working.
+
 - **Zuiddrecht's website measures and type.** The site's columns (1328px page with a 24px gutter,
   1280px header row and opening band), 17px running text, a 21px lead (Contentpagina; it was 18),
   semibold buttons (`--nldesign-website-button-font-weight`, read by the public bridge's four
@@ -12,6 +41,25 @@ All notable changes to this project will be documented in this file.
   the workplace's `#5E6168`, and a light blue ground for a missing picture (`#D9E3EF`).
 
 ### Fixed
+- **The navigation background row paints the navigation.** A stored value showed nowhere, in
+  Files or in the playground, because a later rule forced the column back to the main
+  background. Unset, the column is the main background as before, so dark mode is unchanged.
+- **The playground follows "Let the primary color drive every component".** Switching it while a
+  component was open left that component's colour rows editable, or unlocked them.
+- **The playground's avatar takes the initials row**, and the 32 to 35 version switch above a
+  component no longer takes that component's colours.
+- **No stray text above "Let the primary color drive every component".** A note meant for
+  developers showed on the admin page.
+- **A theme converts to the same token set on the server and in the command line.** The PHP
+  service and `js/lib/tokenConverter.js` had drifted; `TokenSetConverterParityTest` now holds them
+  byte-equal. Style Dictionary aliases are resolved instead of written out as `{a.b.c}`, numeric
+  palette steps (`500`) survive on the server, the contrast guard measures the primary against the
+  text colour the theme declares, and re-converting a set keeps every app token it names
+  (`--nldesign-color-background` was moved to the brand palette).
+- **The hero search label and photo corner of the school sets count as read.** Only the portal
+  reads them, so the vocabulary test called them unread; they now have a role in
+  `css/public-bridge.css`.
+- **The school sets' dark variants carry their notice colours.**
 - **The blue mark under the menu item on screen is back on the Zuiddrecht site.** #1105 removed
   `--nldesign-website-nav-current-in-line` and `--nldesign-website-nav-current-color` as unread,
   because only the portal read them. Every `--nldesign-*` name the portal reads now has a role in

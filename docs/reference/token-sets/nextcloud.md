@@ -2,7 +2,7 @@
 
 # Nextcloud (Base)
 
-Token set `nextcloud`: 52 declared by this set, 119 from the defaults layer.
+Token set `nextcloud`: 52 declared by this set, 120 from the defaults layer.
 
 Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 
@@ -13,8 +13,8 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-background-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ededed%22%2F%3E%3C%2Fsvg%3E) `#ededed` | | this set | Background dark, Table header background |
 | `--nldesign-color-background-darker` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbdbdb%22%2F%3E%3C%2Fsvg%3E) `#dbdbdb` | | this set | Background darker |
 | `--nldesign-color-background-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | | this set | Main background color |
-| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d9d9d9%22%2F%3E%3C%2Fsvg%3E) `#d9d9d9` | | this set | Border color, Select border, Table row rule, Text input border, `--nldesign-component-separator-border-color` |
-| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | | this set | Border dark, Border max contrast |
+| `--nldesign-color-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d9d9d9%22%2F%3E%3C%2Fsvg%3E) `#d9d9d9` | | this set | Border color, Table row rule, `--nldesign-component-separator-border-color` |
+| `--nldesign-color-border-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | | this set | Border dark, Border max contrast, Select border, Text input border |
 | `--nldesign-color-button-primary-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | |
 | `--nldesign-color-button-primary-border` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | |
 | `--nldesign-color-button-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300507a%22%2F%3E%3C%2Fsvg%3E) `#00507a` | | this set | |
@@ -27,8 +27,8 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-focus-rgb` | `0, 130, 201` | | this set | |
 | `--nldesign-color-header-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | |
 | `--nldesign-color-header-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
-| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300598a%22%2F%3E%3C%2Fsvg%3E) `#00598a` | | this set | Info color, Info hover color, Text input focus |
-| `--nldesign-color-info-rgb` | `0, 89, 138` | | this set | |
+| `--nldesign-color-info` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300598a%22%2F%3E%3C%2Fsvg%3E) `#00598a` | | this set | Element info, Info color, Text input focus |
+| `--nldesign-color-info-rgb` | `0, 89, 138` | | this set | Info hover color |
 | `--nldesign-color-link` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | Link colour |
 | `--nldesign-color-link-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300507a%22%2F%3E%3C%2Fsvg%3E) `#00507a` | | this set | Link hover colour |
 | `--nldesign-color-link-visited` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | `--nldesign-component-link-visited-color` |
@@ -36,14 +36,15 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-color-nav-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | |
 | `--nldesign-color-placeholder-dark` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23b3b3b3%22%2F%3E%3C%2Fsvg%3E) `#b3b3b3` | | this set | Placeholder dark |
 | `--nldesign-color-placeholder-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | | this set | Placeholder light |
-| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | Badge background, Primary button background, Primary color, Primary element color, Primary element light text and 7 more |
+| `--nldesign-color-primary` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2300679e%22%2F%3E%3C%2Fsvg%3E) `#00679e` | | this set | Badge background, Primary button background, Primary button border, Primary color, Primary element color and 7 more |
 | `--nldesign-color-primary-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233285b1%22%2F%3E%3C%2Fsvg%3E) `#3285b1` | | this set | Primary button hover, Primary element hover, Primary hover color |
 | `--nldesign-color-primary-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5eff5%22%2F%3E%3C%2Fsvg%3E) `#e5eff5` | | this set | Primary element light, Tertiary button hover, `--color-primary-element-text-dark` |
 | `--nldesign-color-primary-light-hover` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cfe0ec%22%2F%3E%3C%2Fsvg%3E) `#cfe0ec` | | this set | Primary element light hover, Primary light hover, Tertiary button pressed |
+| `--nldesign-color-primary-light-text` | `var(--nldesign-color-primary)` | | defaults | Primary element light text, Primary light text |
 | `--nldesign-color-primary-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Badge number, Primary button label, Primary element text, Primary text color |
 | `--nldesign-color-success` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2346ba61%22%2F%3E%3C%2Fsvg%3E) `#46ba61` | | this set | Border success, Element success, Success color, Text success |
 | `--nldesign-color-success-rgb` | `70, 186, 97` | | this set | Success hover color |
-| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23222222%22%2F%3E%3C%2Fsvg%3E) `#222222` | | this set | Body text colour, Main text color, Table header label, `--nldesign-component-form-field-label-color`, `--nldesign-component-heading-1-color` and 8 more |
+| `--nldesign-color-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23222222%22%2F%3E%3C%2Fsvg%3E) `#222222` | | this set | Body text colour, Main text color, Table header label, Text input text, `--nldesign-component-form-field-label-color` and 8 more |
 | `--nldesign-color-text-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | this set | Muted text default color |
 | `--nldesign-color-text-muted` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | | this set | Text lighter, Text max contrast |
 | `--nldesign-color-warning` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eca700%22%2F%3E%3C%2Fsvg%3E) `#eca700` | | this set | Element warning, Text warning, Warning color |
@@ -81,19 +82,24 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 		--nldesign-color-primary
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-background-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-border-color` | `var(
-		--nldesign-color-primary
+		--nldesign-color-action,
+		var(--nldesign-color-primary)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-hover-background-color` | `var(
-		--nldesign-color-primary-hover
+		--nldesign-color-action-hover,
+		var(--nldesign-color-primary-hover)
 	)` | | defaults | |
 | `--nldesign-component-button-primary-action-hover-color` | `var(
-		--nldesign-color-primary-text
+		--nldesign-color-action-text,
+		var(--nldesign-color-primary-text)
 	)` | | defaults | |
 | `--nldesign-component-button-secondary-action-background-color` | `transparent` | | defaults | |
 | `--nldesign-component-button-secondary-action-border-color` | `var(
@@ -109,7 +115,7 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 | `--nldesign-component-form-fieldset-border-color` | `var(
 		--nldesign-color-border
 	)` | | defaults | |
-| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-form-select-border-color` | `var(--nldesign-color-border-dark)` | | defaults | |
 | `--nldesign-component-form-select-focus-border-color` | `var(--nldesign-color-info)` | | defaults | |
 | `--nldesign-component-heading-1-color` | `var(--nldesign-component-heading-color)` | | defaults | |
 | `--nldesign-component-heading-2-color` | `var(--nldesign-component-heading-color)` | | defaults | |
@@ -135,7 +141,7 @@ Contrast: primary text on primary 6.12:1, primary on background 6.12:1 (pass).
 		--nldesign-color-background-hover
 	)` | | defaults | |
 | `--nldesign-component-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | | defaults | |
-| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border)` | | defaults | |
+| `--nldesign-component-textbox-border-color` | `var(--nldesign-color-border-dark)` | | defaults | |
 | `--nldesign-component-textbox-color` | `var(--nldesign-color-text)` | | defaults | |
 | `--nldesign-component-textbox-disabled-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | | defaults | |
 | `--nldesign-component-textbox-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23696969%22%2F%3E%3C%2Fsvg%3E) `#696969` | | defaults | |

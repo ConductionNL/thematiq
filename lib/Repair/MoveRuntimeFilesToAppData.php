@@ -156,26 +156,56 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 */
 	private function moveOne(string $appPath, string $name): bool {
 		$path = $appPath . '/' . $name;
-		$copied = false;
-		try {
-			if ($this->store->exists(name: $name) === false) {
-				$content = file_get_contents($path);
-				if ($content === false) {
-					$this->logger->warning('thematiq: could not read ' . $name . ' to move it into app data.', ['app' => Application::APP_ID]);
-					return false;
-				}
+		$copied = $this->copyIntoStore(path: $path, name: $name);
+		if ($copied === null) {
+			return false;
+		}
 
-				$this->store->write(name: $name, content: $content);
-				$copied = true;
+		$this->removeFromAppDirectory(path: $path, name: $name);
+
+		return $copied;
+	}//end moveOne()
+
+	/**
+	 * Copy one file into the store, unless the store already holds a copy.
+	 *
+	 * @param string $path The file's absolute path in the app directory.
+	 * @param string $name The file's app-relative name.
+	 *
+	 * @return bool|null True when copied, false when the store already held it, null when it could not be read or stored.
+	 */
+	private function copyIntoStore(string $path, string $name): ?bool {
+		try {
+			if ($this->store->exists(name: $name) === true) {
+				return false;
 			}
+
+			$content = file_get_contents($path);
+			if ($content === false) {
+				$this->logger->warning('thematiq: could not read ' . $name . ' to move it into app data.', ['app' => Application::APP_ID]);
+				return null;
+			}
+
+			$this->store->write(name: $name, content: $content);
+			return true;
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: could not move ' . $name . ' into app data; it stays in the app directory.',
 				['app' => Application::APP_ID, 'exception' => $e]
 			);
-			return false;
-		}
+			return null;
+		}//end try
+	}//end copyIntoStore()
 
+	/**
+	 * Remove the app directory's copy of a file the store now holds, or say it must be removed by hand.
+	 *
+	 * @param string $path The file's absolute path in the app directory.
+	 * @param string $name The file's app-relative name.
+	 *
+	 * @return void
+	 */
+	private function removeFromAppDirectory(string $path, string $name): void {
 		if (is_writable($path) === false || unlink($path) === false) {
 			$this->logger->warning(
 				'thematiq: ' . $name . ' is now in app data, but the copy in the app directory could not be removed. '
@@ -183,7 +213,5 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 				['app' => Application::APP_ID]
 			);
 		}
-
-		return $copied;
-	}//end moveOne()
+	}//end removeFromAppDirectory()
 }//end class

@@ -23,11 +23,23 @@ use OCA\Thematiq\Service\CssParserService;
 $root = dirname(__DIR__);
 $service = new BrandFormService(new ContrastService(), new CssParserService());
 $cases = [];
-foreach ([['#c8102e', '#ffffff'], ['#ffd200', '#ffffff'], ['#808080', '#ffffff'], ['#154273', '#f5f5f5'], ['#0a0', '#FFF']] as [$primary, $background]) {
+// The third colour is the main button's own; null is the form with its box not ticked.
+$inputs = [
+	['#c8102e', '#ffffff', null],
+	['#ffd200', '#ffffff', null],
+	['#808080', '#ffffff', null],
+	['#154273', '#f5f5f5', null],
+	['#0a0', '#FFF', null],
+	['#1a67a3', '#ffffff', '#1f883d'],
+	['#154273', '#ffffff', '#ffd200'],
+	['#c8102e', '#f5f5f5', '#0A0'],
+];
+foreach ($inputs as [$primary, $background, $action]) {
 	$cases[] = [
 		'primary' => $primary,
 		'background' => $background,
-		'expected' => $service->derive(appPath: $root, primary: $primary, background: $background),
+		'action' => $action,
+		'expected' => $service->derive(appPath: $root, primary: $primary, background: $background, action: $action),
 	];
 }
 

@@ -1,8 +1,10 @@
 # per-group-theming Specification
 
 ## Purpose
-TBD - created by archiving change per-group-theming. Update Purpose after archive.
+Per-group theming lets one Nextcloud instance show a different house style to different groups of people. This capability covers the ordered mapping of groups to token sets and how a person's set is resolved from it, what stays the same for the whole instance, how the mapping sits beside per-app exclusions and app brands, and delegation: an administrator hands a group's choice to its subadmins, who set it under the delegated administration settings, with every change audited.
+
 ## Requirements
+
 ### Requirement: Group-to-Token-Set Mapping Storage
 
 The app MUST store the group theming mapping in the `nldesign` appconfig key
@@ -202,24 +204,31 @@ A group mapping entry MUST be able to carry `delegated` and `allowedTokenSets`. 
 
 #### Scenario: Undelegated groups stay locked
 
-@e2e exclude needs a subadmin account on the shared CI instance; proven by tests/Unit/Service/DelegatedGroupThemingServiceTest.php::testRefusedChoicesChangeNothing and ::testPersonalSectionOnlyForSubadminsOfDelegatedGroups
+@e2e exclude needs a subadmin account on the shared CI instance; proven by tests/Unit/Service/DelegatedGroupThemingServiceTest.php::testRefusedChoicesChangeNothing and ::testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups
 
 - GIVEN a mapping for group `concern` that is not delegated
-- WHEN a subadmin of `concern` opens their personal settings
+- WHEN a subadmin of `concern` opens Settings > Administration > Theming
 - THEN they MUST NOT see a house style choice for `concern`
 
 ### Requirement: A group subadmin chooses the house style of a delegated group
 
-A subadmin of a delegated group MUST be able to choose that group's token set from its allowed list in the personal settings section "House style of my groups". The section MUST appear only for users who are subadmin of at least one delegated group. The endpoints MUST be `#[NoAdminRequired]` and MUST check, on every call, that the user is subadmin of the named group and that the set is on its allowed list, answering 403 otherwise. A choice MUST bump the mapping generation so the group sees it on its next page load.
+A subadmin of a delegated group MUST be able to choose that group's token set from its allowed list in the block "House style of my groups" in the Theming section of the administration settings. The block MUST be a delegated setting (`IDelegatedSettings`), named "House style of my groups" under Administration privileges, so an administrator can grant it to a group. It MUST appear only for users who are subadmin of at least one delegated group. The personal settings MUST NOT carry a thematiq block. The endpoints MUST require that delegated setting (`#[AuthorizedAdminSetting]`, which administrators always pass) and MUST check, on every call, that the user is subadmin of the named group and that the set is on its allowed list, answering 403 otherwise. A choice MUST bump the mapping generation so the group sees it on its next page load.
 
 #### Scenario: A subadmin picks the house style of their municipality
 
-@e2e exclude needs a subadmin account on the shared CI instance; proven by tests/Unit/Service/DelegatedGroupThemingServiceTest.php::testSubadminOfTheGroupChoosesAnAllowedSet and tests/vitest/personal-group-house-style.spec.js
+@e2e exclude needs a subadmin account and a privilege grant on the shared CI instance; proven by tests/Unit/Service/DelegatedGroupThemingServiceTest.php::testSubadminOfTheGroupChoosesAnAllowedSet and tests/vitest/admin-group-house-style.spec.js
 
 - GIVEN group `gemeente-a` delegated with allowed sets `rijkshuisstijl` and `gemeente-a-huisstijl`
-- AND a user who is subadmin of `gemeente-a`
-- WHEN the subadmin opens Settings > Personal > House style of my groups and chooses `gemeente-a-huisstijl`
+- AND a user who is subadmin of `gemeente-a` and in a group granted "House style of my groups"
+- WHEN the subadmin opens Settings > Administration > Theming and chooses `gemeente-a-huisstijl`
 - THEN a member of `gemeente-a` who opens the dashboard next MUST see the `gemeente-a-huisstijl` colours
+
+#### Scenario: The endpoints need the grant
+
+@e2e exclude API authorisation; proven by tests/Unit/Service/DelegatedGroupThemingServiceTest.php::testSubadminEndpoints
+- GIVEN the my-groups endpoints
+- WHEN their authorisation is read
+- THEN both MUST carry `#[AuthorizedAdminSetting(settings: GroupHouseStyle::class)]` and not `#[NoAdminRequired]`
 
 #### Scenario: A subadmin cannot change another group
 
@@ -252,7 +261,7 @@ Every delegated choice MUST write a `token_set_changed` audit entry with the sub
 
 ### Requirement: Locking a group back keeps its current set
 
-Turning delegation off MUST keep the entry's current token set and MUST remove the group from the subadmin's section.
+Turning delegation off MUST keep the entry's current token set and MUST remove the group from the subadmin's block.
 
 #### Scenario: An administrator locks a group again
 
@@ -261,7 +270,8 @@ Turning delegation off MUST keep the entry's current token set and MUST remove t
 - GIVEN delegated group `gemeente-a` currently on `gemeente-a-huisstijl`
 - WHEN an administrator turns delegation off for it
 - THEN members of `gemeente-a` MUST keep seeing `gemeente-a-huisstijl`
-- AND the subadmin's personal section MUST no longer offer `gemeente-a`
+- AND the subadmin's "House style of my groups" block MUST no longer offer `gemeente-a`
+
 ### Requirement: An app brand wins over the group mapping on that app's pages
 
 On a page of an app that has a brand mapping, the effective token set MUST be the app's set, unless an admin theme preview is active for the session, which MUST still win. On every other page, resolution MUST follow the existing order (preview, group, instance default). Sessionless pages MUST keep resolving to the instance default.

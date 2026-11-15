@@ -33,6 +33,17 @@
 	--nldesign-color-primary-light: #eaf1fb;
 	--nldesign-color-primary-light-hover: #d5e4f7;
 
+	/* The main button: green, apart from the blue brand. The value is the
+	 * action colour of the OpenProject boards on identity.conduction.nl/screens
+	 * (--sc-action #1f883d, --sc-action-deep #197032). White on it is 4.52:1;
+	 * the bundle's own button label, brand-050 #eaf1fb, would be 3.98:1, so the
+	 * text is named here. Only the filled primary button wears this colour.
+	 * Checked boxes, switches, folder icons and everything else Nextcloud
+	 * draws in its primary element colour stay blue. */
+	--nldesign-color-action: #1f883d;
+	--nldesign-color-action-hover: #197032;
+	--nldesign-color-action-text: #ffffff;
+
 	/* Background tones — Cunningham greyscale (gray-000/025/050). */
 	--nldesign-color-background-hover: #f0f1f2;
 	--nldesign-color-background-dark: #e1e2e5;
@@ -45,7 +56,12 @@
 
 	/* Text */
 	--nldesign-color-text: #1b1c1d;
-	--nldesign-color-text-muted: #74777c;
+	/* Muted text: darker than the system's gray-500 (#74777c, 4.49:1 on white,
+	 * just under AA). #62656a keeps gray-500's hue and is the lightest step of it
+	 * that reaches 4.5:1 on every surface of this set: 5.85:1 on white, 5.17:1 on
+	 * gray-050 #f0f1f2 and 4.52:1 on gray-100 #e1e2e5. Nextcloud's own muted role
+	 * (--color-text-maxcontrast) already reads gray-600 through the bridge. */
+	--nldesign-color-text-muted: #62656a;
 	--nldesign-color-text-light: #ffffff;
 
 	/* Links and status (thematiq#1006): the system's own values, the same ones
@@ -94,9 +110,8 @@
 	--nldesign-component-table-header-background-color: transparent;
 	--nldesign-component-table-header-color: var(--nldesign-color-text-muted);
 	--nldesign-component-table-header-font-weight: 400;
-	/* Den Haag component text (denhaag-component-tokens, task 3.2). The set's
-	   muted text #74777c is unchanged; on white it is 4.49:1, just under AA.
-	   The Den Haag muted text uses it at 90% over black, #686b70, 5.35:1. */
+	/* Den Haag component text (denhaag-component-tokens, task 3.2): the system's
+	   gray-500 #74777c at 90% over black, #686b70, 5.35:1 on white. */
 	--denhaag-step-marker-not-checked-color: #686b70;
 	--denhaag-case-card-subtitle-color: #686b70;
 }

@@ -199,165 +199,158 @@ export function rampStepsWithoutSource(brand) {
 		.map(([key]) => key)
 }
 
-function main() {
-	const [brandId, upstreamPath, upstreamVersion] = process.argv.slice(2)
+/**
+ * Print a message and stop the run with exit code 1.
+ *
+ * @param {string} message What went wrong.
+ */
+function fail(message) {
+	console.error(message)
+	process.exit(1)
+}
 
+/**
+ * Read a brand file and refuse one that cannot be generated.
+ *
+ * @param {string|undefined} brandId The brand id from the command line.
+ * @returns {object} The parsed brand file.
+ */
+function loadBrand(brandId) {
 	// The upstream path is required only by brands that declare one; a brand
 	// with an inline palette is generated with the id alone.
 	if (!brandId) {
-		console.error(
+		fail(
 			'Usage: node scripts/generate-brand-set.mjs <brandId> [pathToUpstreamPackage] [upstreamVersion]',
 		)
-		process.exit(1)
 	}
 
 	const brandPath = join(BRANDS_DIR, `${brandId}.json`)
 	if (existsSync(brandPath) === false) {
-		console.error(`No brand definition at ${brandPath}`)
-		process.exit(1)
+		fail(`No brand definition at ${brandPath}`)
 	}
 
 	const brand = JSON.parse(readFileSync(brandPath, 'utf8'))
 
 	const unsourced = rampStepsWithoutSource(brand)
 	if (unsourced.length > 0) {
-		console.error(
+		fail(
 			`Brand '${brandId}': ramp step(s) without a \`from\`: ${unsourced.join(', ')}. Say where each value came from.`,
 		)
-		process.exit(1)
 	}
 
-	// ---- A + B. the brand's own palette and component mapping ------------
-	//
-	// TWO WAYS IN, because not every design system publishes an npm package.
-	//
-	//   `upstream`  — read the brand's palette and its own NL Design System
-	//                 mapping out of a published package (RODS does this).
-	//   `palette`   — the brand states its palette inline, and contributes NO
-	//                 component mapping of its own; section C then fills the
-	//                 whole component vocabulary from the shared role layer.
-	//
-	// The inline form exists for a set whose tokens were READ OFF A RUNNING
-	// SITE rather than installed. Those values are transcribed here in full
-	// rather than aliased to whichever other set they happen to match today —
-	// two design systems agreeing on a colour is a fact about now, not a
-	// dependency, and expressing it as one makes the wrong set move when the
-	// other one changes.
+	return brand
+}
+
+/**
+ * Sections A + B from a published package: the brand's palette and its own
+ * NL Design System mapping (RODS does this).
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} upstreamPath Where the package was unpacked.
+ * @returns {{palette: Map<string, string>, brandComponents: Map<string, string>}} A and B.
+ */
+function readUpstreamSources(brand, upstreamPath) {
 	const palette = new Map()
-	let brandComponents = new Map()
+	const palettePath = join(upstreamPath, brand.upstream.paletteFile)
+	const themePath = join(upstreamPath, brand.upstream.themeFile)
 
-	if (brand.upstream !== undefined) {
-		const palettePath = join(upstreamPath, brand.upstream.paletteFile)
-		const themePath = join(upstreamPath, brand.upstream.themeFile)
-
-		for (const required of [palettePath, themePath]) {
-			if (existsSync(required) === false) {
-				console.error(`Upstream file missing: ${required}`)
-				process.exit(1)
-			}
-		}
-
-		const prefix = brand.upstream.palettePrefix
-		for (const [name, value] of effective(
-			readDeclarations(readFileSync(palettePath, 'utf8')).filter((d) =>
-				d.name.startsWith(prefix),
-			),
-		)) {
-			palette.set(name, value)
-		}
-
-		// Everything that is NOT the brand's private palette prefix: these are
-		// the NL Design System component tokens the brand itself decided on.
-		brandComponents = effective(
-			readDeclarations(readFileSync(themePath, 'utf8')).filter(
-				(d) => d.name.startsWith(prefix) === false,
-			),
-		)
-
-		// The theme file also restates palette entries; fold them in so every
-		// var() reference in B resolves without reaching outside this file.
-		for (const { name, value } of readDeclarations(
-			readFileSync(themePath, 'utf8'),
-		)) {
-			if (name.startsWith(prefix) === true) {
-				palette.set(name, value)
-			}
-		}
-	} else {
-		for (const [name, value] of Object.entries(brand.palette ?? {})) {
-			if (name.startsWith('_') === true) {
-				continue
-			}
-			palette.set(name, value)
-		}
-
-		if (palette.size === 0) {
-			console.error(
-				`Brand '${brandId}' declares neither an \`upstream\` package nor an inline \`palette\`.`,
-			)
-			process.exit(1)
-		}
-
-		// A brand whose component mapping was CAPTURED rather than installed.
-		// Same role as `upstream.themeFile`: these are the brand's own
-		// decisions about NL Design System components, and section C fills only
-		// what they leave out.
-		//
-		// Held in a separate file because it is machine-captured and roughly
-		// 900 entries; mixing it into the hand-authored brand file would bury
-		// the decisions a reader needs in a wall of measurements.
-		if (brand.componentsFile !== undefined) {
-			const componentsPath = join(BRANDS_DIR, brand.componentsFile)
-			if (existsSync(componentsPath) === false) {
-				console.error(`Captured components file missing: ${componentsPath}`)
-				process.exit(1)
-			}
-
-			const captured = JSON.parse(readFileSync(componentsPath, 'utf8'))
-			for (const [name, value] of Object.entries(captured.tokens ?? {})) {
-				brandComponents.set(name, value)
-			}
+	for (const required of [palettePath, themePath]) {
+		if (existsSync(required) === false) {
+			fail(`Upstream file missing: ${required}`)
 		}
 	}
 
-	// ---- Deliberate overrides of the brand's own upstream mapping --------
-	//
-	// Applied IN PLACE rather than appended. Appending wins by cascade order
-	// and leaves two declarations of the same custom property in one block —
-	// which stylelint rejects, and rightly: a reader looking up the token
-	// finds the upstream value first and has no reason to keep scrolling.
-	//
-	// Each entry states a reason and the run prints it, because an override
-	// of the brand's OWN decision that nobody can see is how a set quietly
-	// stops being that brand's.
-	const upstreamOverrides = Object.entries(brand.upstreamOverrides ?? {}).filter(
-		([name]) => name.startsWith('_') === false,
+	const prefix = brand.upstream.palettePrefix
+	for (const [name, value] of effective(
+		readDeclarations(readFileSync(palettePath, 'utf8')).filter((d) =>
+			d.name.startsWith(prefix),
+		),
+	)) {
+		palette.set(name, value)
+	}
+
+	// Everything that is NOT the brand's private palette prefix: these are
+	// the NL Design System component tokens the brand itself decided on.
+	const brandComponents = effective(
+		readDeclarations(readFileSync(themePath, 'utf8')).filter(
+			(d) => d.name.startsWith(prefix) === false,
+		),
 	)
 
-	// Applied to A and B here; section C is built below and takes its pass
-	// there, because it does not exist yet at this point. An override that
-	// matches nothing in ANY of the three is reported after C is assembled.
-	const overrideTargets = new Set(upstreamOverrides.map(([name]) => name))
-	const overrideApplied = new Set()
-
-	for (const [name, entry] of upstreamOverrides) {
-		if (brandComponents.has(name) === true) {
-			brandComponents.set(name, entry.value)
-			overrideApplied.add(name)
-		} else if (palette.has(name) === true) {
-			palette.set(name, entry.value)
-			overrideApplied.add(name)
+	// The theme file also restates palette entries; fold them in so every
+	// var() reference in B resolves without reaching outside this file.
+	for (const { name, value } of readDeclarations(
+		readFileSync(themePath, 'utf8'),
+	)) {
+		if (name.startsWith(prefix) === true) {
+			palette.set(name, value)
 		}
 	}
 
-	// ---- C. the shared role layer, ramp re-pointed ----------------------
-	const roleLayer = readDeclarations(readFileSync(ROLE_LAYER_PATH, 'utf8'))
-	const roleEffective = effective(roleLayer)
+	return { palette, brandComponents }
+}
 
-	// Name-keyed ramp substitution: --vng-color-<key> / --tilburg-color-<key>.
-	// Build the old-value → new-value table at the same time, so the literal
-	// colours scattered through the role layer's own component declarations
-	// travel with the ramp instead of staying VNG blue.
+/**
+ * Sections A + B from the brand file itself: an inline palette, plus the
+ * component mapping captured off a running site when the brand has one.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} brandId The brand id, for the error message.
+ * @returns {{palette: Map<string, string>, brandComponents: Map<string, string>}} A and B.
+ */
+function readInlineSources(brand, brandId) {
+	const palette = new Map()
+	const brandComponents = new Map()
+
+	for (const [name, value] of Object.entries(brand.palette ?? {})) {
+		if (name.startsWith('_') === true) {
+			continue
+		}
+		palette.set(name, value)
+	}
+
+	if (palette.size === 0) {
+		fail(
+			`Brand '${brandId}' declares neither an \`upstream\` package nor an inline \`palette\`.`,
+		)
+	}
+
+	// A brand whose component mapping was CAPTURED rather than installed.
+	// Same role as `upstream.themeFile`: these are the brand's own
+	// decisions about NL Design System components, and section C fills only
+	// what they leave out.
+	//
+	// Held in a separate file because it is machine-captured and roughly
+	// 900 entries; mixing it into the hand-authored brand file would bury
+	// the decisions a reader needs in a wall of measurements.
+	if (brand.componentsFile !== undefined) {
+		const componentsPath = join(BRANDS_DIR, brand.componentsFile)
+		if (existsSync(componentsPath) === false) {
+			fail(`Captured components file missing: ${componentsPath}`)
+		}
+
+		const captured = JSON.parse(readFileSync(componentsPath, 'utf8'))
+		for (const [name, value] of Object.entries(captured.tokens ?? {})) {
+			brandComponents.set(name, value)
+		}
+	}
+
+	return { palette, brandComponents }
+}
+
+/**
+ * The name-keyed and value-keyed ramp substitution tables for section C.
+ *
+ * Name-keyed: --vng-color-<key> / --tilburg-color-<key>. The old-value →
+ * new-value table is built at the same time, so the literal colours scattered
+ * through the role layer's own component declarations travel with the ramp
+ * instead of staying VNG blue.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {Map<string, string>} roleEffective The role layer, last-wins.
+ * @returns {{rampByName: Map<string, string>, rampByValue: Map<string, string>}} The tables.
+ */
+function buildRampTables(brand, roleEffective) {
 	const rampByName = new Map()
 	const rampByValue = new Map()
 
@@ -382,6 +375,48 @@ function main() {
 		}
 	}
 
+	return { rampByName, rampByValue }
+}
+
+/**
+ * Swap every hex literal in a value for its ramp replacement, counting the
+ * literals the ramp has no replacement for.
+ *
+ * @param {string} value A role-layer value.
+ * @param {Map<string, string>} rampByValue Old hex → new value.
+ * @param {Map<string, number>} unsubstituted Collects literals left unchanged, with their count.
+ * @returns {string} The value with the ramp re-pointed.
+ */
+function substituteLiterals(value, rampByValue, unsubstituted) {
+	return value.replace(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g, (hex) => {
+		const swapped = rampByValue.get(normaliseHex(hex))
+		if (swapped !== undefined) {
+			return swapped
+		}
+		unsubstituted.set(
+			normaliseHex(hex),
+			(unsubstituted.get(normaliseHex(hex)) ?? 0) + 1,
+		)
+		return hex
+	})
+}
+
+/**
+ * Section C: the shared role layer filling only what B leaves undefined, with
+ * the colour ramp re-pointed at the brand.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {Map<string, string>} brandComponents Section B; its names are skipped.
+ * @param {Set<string>} overrideTargets Names the brand overrides deliberately.
+ * @param {Set<string>} overrideApplied Collects the overrides that matched.
+ * @returns {{roleFill: Array<{name: string, value: string}>, fromRoleLayer: number, unsubstituted: Map<string, number>}} The fill and its counts.
+ */
+function fillFromRoleLayer(brand, brandComponents, overrideTargets, overrideApplied) {
+	const roleEffective = effective(
+		readDeclarations(readFileSync(ROLE_LAYER_PATH, 'utf8')),
+	)
+	const { rampByName, rampByValue } = buildRampTables(brand, roleEffective)
+
 	const unsubstituted = new Map()
 	const roleFill = []
 	let fromRoleLayer = 0
@@ -392,24 +427,10 @@ function main() {
 			continue
 		}
 
-		let value = rawValue
-
-		if (rampByName.has(name) === true) {
-			value = rampByName.get(name)
-		} else {
-			// Value-keyed substitution for the literals the ramp does not name.
-			value = value.replace(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g, (hex) => {
-				const swapped = rampByValue.get(normaliseHex(hex))
-				if (swapped !== undefined) {
-					return swapped
-				}
-				unsubstituted.set(
-					normaliseHex(hex),
-					(unsubstituted.get(normaliseHex(hex)) ?? 0) + 1,
-				)
-				return hex
-			})
-		}
+		let value =
+			rampByName.has(name) === true
+				? rampByName.get(name)
+				: substituteLiterals(rawValue, rampByValue, unsubstituted)
 
 		if (name.startsWith('--nldesign-') === true) {
 			// D authors these; never let the role layer's copy through.
@@ -421,8 +442,7 @@ function main() {
 		// mark into them — so without this an override of one matches nothing
 		// and is reported as stale while the wrong logo still ships.
 		if (overrideTargets.has(name) === true) {
-			const entry = brand.upstreamOverrides[name]
-			value = entry.value
+			value = brand.upstreamOverrides[name].value
 			overrideApplied.add(name)
 		}
 
@@ -435,29 +455,93 @@ function main() {
 		}
 	}
 
-	// ---- D. the --nldesign-* semantic layer -----------------------------
-	const semantic = []
-	for (const [key, value] of Object.entries(brand.semantic)) {
+	return { roleFill, fromRoleLayer, unsubstituted }
+}
+
+/**
+ * The `--nldesign-color-*` entries and the `r, g, b` triples derived from the
+ * status colours.
+ *
+ * @param {object} semanticColours The brand file's `semantic` block.
+ * @returns {Array<{name: string, value: string}>} The colour declarations.
+ */
+function semanticColourTokens(semanticColours) {
+	const tokens = []
+	for (const [key, value] of Object.entries(semanticColours)) {
 		// `_`-prefixed keys are prose for the reader of the brand file, not tokens.
 		if (key.startsWith('_') === true) {
 			continue
 		}
-		semantic.push({ name: `--nldesign-color-${key}`, value })
+		tokens.push({ name: `--nldesign-color-${key}`, value })
 	}
 	// Nextcloud reads the status colours twice: as a colour and as the bare
 	// `r, g, b` triple its translucent fills are mixed from. A brand file names
 	// the colour once; the triple follows from it (thematiq#1006).
 	for (const key of ['error', 'warning', 'success', 'info']) {
-		const hex = brand.semantic[key]
-		if (typeof hex !== 'string' || brand.semantic[`${key}-rgb`] !== undefined) {
+		const hex = semanticColours[key]
+		if (typeof hex !== 'string' || semanticColours[`${key}-rgb`] !== undefined) {
 			continue
 		}
 		const digits = normaliseHex(hex).slice(1)
-		semantic.push({
+		tokens.push({
 			name: `--nldesign-color-${key}-rgb`,
 			value: [0, 2, 4].map((offset) => parseInt(digits.slice(offset, offset + 2), 16)).join(', '),
 		})
 	}
+	return tokens
+}
+
+/**
+ * The optional weight, size and space steps.
+ *
+ * No layer in the app reads them under the --nldesign- prefix, so they are
+ * written under the brand's own prefix, where the vocabulary audit leaves them
+ * alone (thematiq#1006; they used to be foreign --nldesign-* names).
+ *
+ * @param {object} brand The parsed brand file.
+ * @returns {Array<{name: string, value: string}>} The declarations.
+ */
+function brandScaleTokens(brand) {
+	const tokens = []
+	if (brand.typography.weightNormal !== undefined) {
+		tokens.push({
+			name: `--${brand.id}-font-weight-normal`,
+			value: brand.typography.weightNormal,
+		})
+	}
+	if (brand.typography.weightBold !== undefined) {
+		tokens.push({
+			name: `--${brand.id}-font-weight-bold`,
+			value: brand.typography.weightBold,
+		})
+	}
+
+	for (const [step, sizes] of Object.entries(brand.typography.scale ?? {})) {
+		tokens.push({
+			name: `--${brand.id}-font-size-${step}`,
+			value: sizes.fontSize,
+		})
+		tokens.push({
+			name: `--${brand.id}-line-height-${step}`,
+			value: sizes.lineHeight,
+		})
+	}
+
+	for (const [step, size] of Object.entries(brand.space ?? {})) {
+		tokens.push({ name: `--${brand.id}-space-${step}`, value: size })
+	}
+	return tokens
+}
+
+/**
+ * Section D: the --nldesign-* layer Nextcloud chrome and the Portaliq site
+ * renderer read, authored in the brand file.
+ *
+ * @param {object} brand The parsed brand file.
+ * @returns {Array<{name: string, value: string}>} The declarations, in emit order.
+ */
+function buildSemanticLayer(brand) {
+	const semantic = semanticColourTokens(brand.semantic)
 	semantic.push({
 		name: '--nldesign-logo-url',
 		value: `url('../../${brand.logo}')`,
@@ -476,37 +560,7 @@ function main() {
 		})
 	}
 
-	// The weight, size and space steps below are OPTIONAL. No layer in the app
-	// reads them under the --nldesign- prefix, so they are written under the
-	// brand's own prefix, where the vocabulary audit leaves them alone
-	// (thematiq#1006; they used to be foreign --nldesign-* names).
-	if (brand.typography.weightNormal !== undefined) {
-		semantic.push({
-			name: `--${brand.id}-font-weight-normal`,
-			value: brand.typography.weightNormal,
-		})
-	}
-	if (brand.typography.weightBold !== undefined) {
-		semantic.push({
-			name: `--${brand.id}-font-weight-bold`,
-			value: brand.typography.weightBold,
-		})
-	}
-
-	for (const [step, sizes] of Object.entries(brand.typography.scale ?? {})) {
-		semantic.push({
-			name: `--${brand.id}-font-size-${step}`,
-			value: sizes.fontSize,
-		})
-		semantic.push({
-			name: `--${brand.id}-line-height-${step}`,
-			value: sizes.lineHeight,
-		})
-	}
-
-	for (const [step, size] of Object.entries(brand.space ?? {})) {
-		semantic.push({ name: `--${brand.id}-space-${step}`, value: size })
-	}
+	semantic.push(...brandScaleTokens(brand))
 
 	for (const [key, size] of Object.entries(brand.borderRadius)) {
 		if (key.startsWith('_') === true) {
@@ -519,14 +573,66 @@ function main() {
 		semantic.push({ name, value: size })
 	}
 
-	// ---- emit -----------------------------------------------------------
-	let provenance = brand.provenance ?? 'an inline palette'
-	if (brand.upstream !== undefined) {
-		provenance = upstreamVersion
-			? `${brand.upstream.package}@${upstreamVersion}`
-			: brand.upstream.package
-	}
+	return semantic
+}
 
+/**
+ * Section E: gaps neither upstream nor the role layer fills.
+ *
+ * Filtered against A/B/C rather than trusted: this section exists to fill
+ * holes, and an entry that shadows a token one of those already defines is
+ * an override wearing a gap-filler's name. Those are reported, not emitted.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {object} sections The sections already built: `palette`, `brandComponents`, `roleFill`.
+ * @returns {{overrides: Array<[string, string]>, shadowing: string[]}} The entries kept and the names dropped.
+ */
+function selectGapFillers(brand, { palette, brandComponents, roleFill }) {
+	const shadowing = []
+	const overrides = Object.entries(brand.componentOverrides ?? {})
+		.filter(([name]) => name.startsWith('_') === false)
+		.filter(([name]) => {
+			const alreadyDefined =
+				brandComponents.has(name) === true
+				|| palette.has(name) === true
+				|| roleFill.some((d) => d.name === name)
+			if (alreadyDefined === true) {
+				shadowing.push(name)
+				return false
+			}
+			return true
+		})
+	return { overrides, shadowing }
+}
+
+/**
+ * Where section A came from, for the file header and section A's comment.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string|undefined} upstreamVersion The package version, when given.
+ * @returns {string} The provenance line.
+ */
+function describeProvenance(brand, upstreamVersion) {
+	if (brand.upstream === undefined) {
+		return brand.provenance ?? 'an inline palette'
+	}
+	return upstreamVersion
+		? `${brand.upstream.package}@${upstreamVersion}`
+		: brand.upstream.package
+}
+
+/**
+ * The generated stylesheet: one flat `:root` block holding sections A, B, C,
+ * E (when non-empty) and D, in that order.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} brandId The brand id.
+ * @param {string} provenance Where section A came from.
+ * @param {object} sections `palette`, `brandComponents`, `roleFill`, `overrides`, `semantic`.
+ * @returns {string} The stylesheet source.
+ */
+function renderSet(brand, brandId, provenance, sections) {
+	const { palette, brandComponents, roleFill, overrides, semantic } = sections
 	const lines = []
 	lines.push('/**')
 	lines.push(` * ${brand.name} Design Tokens`)
@@ -586,25 +692,6 @@ function main() {
 		lines.push(declaration(name, value))
 	}
 
-	// ---- E. gaps neither upstream nor the role layer fills ---------------
-	// Filtered against A/B/C rather than trusted: this section exists to fill
-	// holes, and an entry that shadows a token one of those already defines is
-	// an override wearing a gap-filler's name. Those are reported, not emitted.
-	const shadowing = []
-	const overrides = Object.entries(brand.componentOverrides ?? {})
-		.filter(([name]) => name.startsWith('_') === false)
-		.filter(([name]) => {
-			const alreadyDefined =
-				brandComponents.has(name) === true
-				|| palette.has(name) === true
-				|| roleFill.some((d) => d.name === name)
-			if (alreadyDefined === true) {
-				shadowing.push(name)
-				return false
-			}
-			return true
-		})
-
 	if (overrides.length > 0) {
 		lines.push('')
 		lines.push('\t/* --- E. component tokens neither A/B nor C defines --- */')
@@ -621,60 +708,70 @@ function main() {
 
 	lines.push('}')
 	lines.push('')
+	return lines.join('\n')
+}
 
-	const outputPath = join(TOKENS_DIR, `${brandId}.css`)
-	writeFileSync(outputPath, lines.join('\n'), 'utf8')
-
-	// ---- record provenance in the catalogue -----------------------------
-	if (existsSync(TOKEN_SETS_PATH) === true) {
-		const sets = JSON.parse(readFileSync(TOKEN_SETS_PATH, 'utf8'))
-		const entry = sets.find((s) => s.id === brandId)
-		if (entry !== undefined) {
-			entry.name = brand.name
-			entry.description = brand.description
-			if (brand.upstream !== undefined) {
-				entry.upstreamPackage = brand.upstream.package
-				if (upstreamVersion) {
-					entry.upstreamVersion = upstreamVersion
-				}
-			}
-			entry.theming = {
-				primary_color: brand.semantic.primary,
-				background_color: '#FFFFFF',
-				logo: brand.logo,
-			}
-			// TAB-indented, matching the file as committed. Writing spaces here
-			// reformats all 46 entries and buries a two-line change in a
-			// 440-line diff — the change becomes unreviewable, which is a worse
-			// outcome than not recording provenance at all.
-			writeFileSync(
-				TOKEN_SETS_PATH,
-				JSON.stringify(sets, null, '\t') + '\n',
-				'utf8',
-			)
-			console.log(`✓ token-sets.json entry '${brandId}' updated`)
-		} else {
-			console.log(
-				`⚠ token-sets.json has no entry '${brandId}' — catalogue NOT updated, and`,
-			)
-			console.log(
-				'  PortalThemeResolver resolves against that catalogue, so the set will',
-			)
-			console.log('  not be selectable until an entry exists.')
-		}
+/**
+ * Record the brand's name, provenance and core theming in token-sets.json.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} brandId The brand id.
+ * @param {string|undefined} upstreamVersion The package version, when given.
+ */
+function recordInCatalogue(brand, brandId, upstreamVersion) {
+	if (existsSync(TOKEN_SETS_PATH) === false) {
+		return
+	}
+	const sets = JSON.parse(readFileSync(TOKEN_SETS_PATH, 'utf8'))
+	const entry = sets.find((s) => s.id === brandId)
+	if (entry === undefined) {
+		console.log(
+			`⚠ token-sets.json has no entry '${brandId}' — catalogue NOT updated, and`,
+		)
+		console.log(
+			'  PortalThemeResolver resolves against that catalogue, so the set will',
+		)
+		console.log('  not be selectable until an entry exists.')
+		return
 	}
 
-	// ---- report coverage ------------------------------------------------
-	console.log(`\n✓ ${outputPath}`)
-	console.log(`  A. brand palette         ${palette.size} tokens`)
-	console.log(
-		`  B. brand components      ${brandComponents.size} tokens (authoritative)`,
+	entry.name = brand.name
+	entry.description = brand.description
+	if (brand.upstream !== undefined) {
+		entry.upstreamPackage = brand.upstream.package
+		if (upstreamVersion) {
+			entry.upstreamVersion = upstreamVersion
+		}
+	}
+	entry.theming = {
+		primary_color: brand.semantic.primary,
+		background_color: '#FFFFFF',
+		logo: brand.logo,
+	}
+	// TAB-indented, matching the file as committed. Writing spaces here
+	// reformats all 46 entries and buries a two-line change in a
+	// 440-line diff — the change becomes unreviewable, which is a worse
+	// outcome than not recording provenance at all.
+	writeFileSync(
+		TOKEN_SETS_PATH,
+		JSON.stringify(sets, null, '\t') + '\n',
+		'utf8',
 	)
-	console.log(
-		`  C. role-layer fill       ${fromRoleLayer} component tokens + ${roleFill.length - fromRoleLayer} ramp entries`,
-	)
-	console.log(`  E. gap fillers           ${overrides.length} tokens`)
+	console.log(`✓ token-sets.json entry '${brandId}' updated`)
+}
 
+/**
+ * Report the deliberate overrides of the brand's own mapping, and the ones
+ * that matched nothing.
+ *
+ * Each entry states a reason and the run prints it, because an override of
+ * the brand's OWN decision that nobody can see is how a set quietly stops
+ * being that brand's.
+ *
+ * @param {Array<[string, {value: string, reason: string}]>} upstreamOverrides The overrides.
+ * @param {Set<string>} overrideApplied The names that matched A, B or C.
+ */
+function reportUpstreamOverrides(upstreamOverrides, overrideApplied) {
 	if (upstreamOverrides.length > 0) {
 		console.log(`\n  Upstream values REPLACED (${upstreamOverrides.length}):`)
 		for (const [name, entry] of upstreamOverrides) {
@@ -695,25 +792,41 @@ function main() {
 			console.log(`      ${name}`)
 		}
 	}
+}
 
-	console.log(`  D. semantic layer        ${semantic.length} tokens`)
-
-	if (shadowing.length > 0) {
-		console.log(
-			`\n  ⚠ ${shadowing.length} componentOverrides entries were DROPPED because A, B or C`,
-		)
-		console.log(
-			'    already defines them — that section fills gaps and must not shadow:',
-		)
-		for (const name of shadowing) {
-			console.log(`      ${name}`)
-		}
+/**
+ * Report the componentOverrides entries dropped for shadowing A, B or C.
+ *
+ * @param {string[]} shadowing The dropped names.
+ */
+function reportShadowing(shadowing) {
+	if (shadowing.length === 0) {
+		return
 	}
+	console.log(
+		`\n  ⚠ ${shadowing.length} componentOverrides entries were DROPPED because A, B or C`,
+	)
+	console.log(
+		'    already defines them — that section fills gaps and must not shadow:',
+	)
+	for (const name of shadowing) {
+		console.log(`      ${name}`)
+	}
+}
 
-	// Literals the brand KEEPS on purpose. Separated from the warning below so
-	// that warning keeps meaning something: a list that always prints ten
-	// entries on a correct set is one nobody reads, and the eleventh — the real
-	// drift — arrives into an audience that has learned to skip it.
+/**
+ * Report the role-layer literals kept on purpose, then the ones the ramp
+ * could not account for.
+ *
+ * The kept ones are separated from the warning so that warning keeps meaning
+ * something: a list that always prints ten entries on a correct set is one
+ * nobody reads, and the eleventh — the real drift — arrives into an audience
+ * that has learned to skip it.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {Map<string, number>} unsubstituted Literals left unchanged, with their count.
+ */
+function reportLiterals(brand, unsubstituted) {
 	const keptLiterals = Object.entries(brand.keepLiterals ?? {}).filter(
 		([hex]) => hex.startsWith('_') === false,
 	)
@@ -733,23 +846,130 @@ function main() {
 		console.log(
 			'\n  Ramp coverage: complete — every remaining role-layer literal is accounted for.',
 		)
-	} else {
-		const total = [...unsubstituted.values()].reduce((a, b) => a + b, 0)
-		console.log(
-			`\n  ⚠ ${unsubstituted.size} literal colours (${total} occurrences) had no ramp entry`,
-		)
-		console.log(
-			"    and were emitted UNCHANGED — these are still the role layer's own",
-		)
-		console.log(
-			"    colours wearing this brand's name. Add them to the brand ramp:",
-		)
-		for (const [hex, count] of [...unsubstituted.entries()].sort(
-			(a, b) => b[1] - a[1],
-		)) {
-			console.log(`      ${hex}  ×${count}`)
+		return
+	}
+
+	const total = [...unsubstituted.values()].reduce((a, b) => a + b, 0)
+	console.log(
+		`\n  ⚠ ${unsubstituted.size} literal colours (${total} occurrences) had no ramp entry`,
+	)
+	console.log(
+		"    and were emitted UNCHANGED — these are still the role layer's own",
+	)
+	console.log(
+		"    colours wearing this brand's name. Add them to the brand ramp:",
+	)
+	for (const [hex, count] of [...unsubstituted.entries()].sort(
+		(a, b) => b[1] - a[1],
+	)) {
+		console.log(`      ${hex}  ×${count}`)
+	}
+}
+
+function main() {
+	const [brandId, upstreamPath, upstreamVersion] = process.argv.slice(2)
+	const brand = loadBrand(brandId)
+
+	// ---- A + B. the brand's own palette and component mapping ------------
+	//
+	// TWO WAYS IN, because not every design system publishes an npm package.
+	//
+	//   `upstream`  — read the brand's palette and its own NL Design System
+	//                 mapping out of a published package (RODS does this).
+	//   `palette`   — the brand states its palette inline, and contributes NO
+	//                 component mapping of its own; section C then fills the
+	//                 whole component vocabulary from the shared role layer.
+	//
+	// The inline form exists for a set whose tokens were READ OFF A RUNNING
+	// SITE rather than installed. Those values are transcribed here in full
+	// rather than aliased to whichever other set they happen to match today —
+	// two design systems agreeing on a colour is a fact about now, not a
+	// dependency, and expressing it as one makes the wrong set move when the
+	// other one changes.
+	const { palette, brandComponents } =
+		brand.upstream !== undefined
+			? readUpstreamSources(brand, upstreamPath)
+			: readInlineSources(brand, brandId)
+
+	// ---- Deliberate overrides of the brand's own upstream mapping --------
+	//
+	// Applied IN PLACE rather than appended. Appending wins by cascade order
+	// and leaves two declarations of the same custom property in one block —
+	// which stylelint rejects, and rightly: a reader looking up the token
+	// finds the upstream value first and has no reason to keep scrolling.
+	const upstreamOverrides = Object.entries(brand.upstreamOverrides ?? {}).filter(
+		([name]) => name.startsWith('_') === false,
+	)
+
+	// Applied to A and B here; section C is built below and takes its pass
+	// there, because it does not exist yet at this point. An override that
+	// matches nothing in ANY of the three is reported after C is assembled.
+	const overrideTargets = new Set(upstreamOverrides.map(([name]) => name))
+	const overrideApplied = new Set()
+
+	for (const [name, entry] of upstreamOverrides) {
+		if (brandComponents.has(name) === true) {
+			brandComponents.set(name, entry.value)
+			overrideApplied.add(name)
+		} else if (palette.has(name) === true) {
+			palette.set(name, entry.value)
+			overrideApplied.add(name)
 		}
 	}
+
+	// ---- C. the shared role layer, ramp re-pointed ----------------------
+	const { roleFill, fromRoleLayer, unsubstituted } = fillFromRoleLayer(
+		brand,
+		brandComponents,
+		overrideTargets,
+		overrideApplied,
+	)
+
+	// ---- D. the --nldesign-* semantic layer -----------------------------
+	const semantic = buildSemanticLayer(brand)
+
+	// ---- E. gaps neither upstream nor the role layer fills ---------------
+	const { overrides, shadowing } = selectGapFillers(brand, {
+		palette,
+		brandComponents,
+		roleFill,
+	})
+
+	// ---- emit -----------------------------------------------------------
+	const provenance = describeProvenance(brand, upstreamVersion)
+	const outputPath = join(TOKENS_DIR, `${brandId}.css`)
+	writeFileSync(
+		outputPath,
+		renderSet(brand, brandId, provenance, {
+			palette,
+			brandComponents,
+			roleFill,
+			overrides,
+			semantic,
+		}),
+		'utf8',
+	)
+
+	// ---- record provenance in the catalogue -----------------------------
+	recordInCatalogue(brand, brandId, upstreamVersion)
+
+	// ---- report coverage ------------------------------------------------
+	console.log(`\n✓ ${outputPath}`)
+	console.log(`  A. brand palette         ${palette.size} tokens`)
+	console.log(
+		`  B. brand components      ${brandComponents.size} tokens (authoritative)`,
+	)
+	console.log(
+		`  C. role-layer fill       ${fromRoleLayer} component tokens + ${roleFill.length - fromRoleLayer} ramp entries`,
+	)
+	console.log(`  E. gap fillers           ${overrides.length} tokens`)
+
+	reportUpstreamOverrides(upstreamOverrides, overrideApplied)
+
+	console.log(`  D. semantic layer        ${semantic.length} tokens`)
+
+	reportShadowing(shadowing)
+	reportLiterals(brand, unsubstituted)
 }
 
 // Run only when executed as a script, so a test can import the pure helpers.

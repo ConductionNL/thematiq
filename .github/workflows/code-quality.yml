@@ -134,17 +134,9 @@ concurrency:
   # superseding really is correct.
   cancel-in-progress: ${{ github.event_name != 'push' }}
 
-# Permission CEILING for the called quality pipeline. GitHub statically
-# validates the called workflow's declared job permissions against this
-# grant — even for jobs that are disabled — so it must cover the maximum
-# any nested job declares: journeydoc-capture (contents+actions write),
-# update-baseline / features-extract (contents write), and the Quality
-# Report PR comment (issues / pull-requests write).
+# Read-only by default; the write grants sit on the job that needs them.
 permissions:
-  contents: write
-  actions: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 jobs:
   quality:
@@ -157,6 +149,17 @@ jobs:
     # every `development -> beta` PR (#1080) reported E2E as skipped, while a
     # hotfix branch into `beta` (#1102) ran all eight shards.
     if: (github.event_name != 'pull_request' || github.head_ref != 'development' || github.base_ref == 'beta')
+    # Permission CEILING for the called quality pipeline. GitHub statically
+    # validates the called workflow's declared job permissions against this
+    # grant, even for jobs that are disabled, so it must cover the maximum
+    # any nested job declares: journeydoc-capture (contents+actions write),
+    # update-baseline / features-extract (contents write), and the Quality
+    # Report PR comment (issues / pull-requests write).
+    permissions:
+      contents: write
+      actions: write
+      issues: write
+      pull-requests: write
     uses: ConductionNL/.github/.github/workflows/quality.yml@main
     with:
       app-name: thematiq
@@ -416,6 +419,15 @@ jobs:
       # fix. Scope it to the rules where core is clean rather than dropping
       # routes.
       enable-hydra-gates: true
+      # Gate 122 (SIG unit ratchet) blocks: a unit this change adds or makes
+      # worse must stay at NLOC 60, McCabe 10 and at most 4 parameters, and a
+      # new duplicated fragment of 6+ lines fails. Units the change does not
+      # touch, or touches without making worse, are inherited and do not count.
+      hydra-gates-sig-blocking: true
+      # Maintainability floor: no rating in .maintainability-floor.json may drop
+      # more than 0.01 against the merge base (pull request) or below the
+      # committed floor (push). The floor is raised after improving merges.
+      enable-maintainability-floor: true
       # No `hydra-gates-ref` here on purpose. The shared workflow defaults it
       # to @main, and this workflow is itself consumed at @main, so the two
       # sides move together and a gate fix reaches this repo without a commit
@@ -451,6 +463,13 @@ jobs:
       # a branch creation or a dispatch all run everything, and a filtered
       # skip is a declared state in the Quality Report, not a missing one.
       enable-path-filtering: true
+      # The suite reads more than code: stylesheets, the generated reference
+      # pages under docs, images, fonts, translations and the token-set data
+      # files. A push that touched only those used to skip PHPUnit, and a stale
+      # generated page stayed red behind a green run (measured 2026-10-12).
+      # These globs replace the shared default, so the default's entries are
+      # repeated first.
+      path-filter-code-globs: "lib/** src/** tests/** appinfo/** composer.json composer.lock package.json package-lock.json .github/workflows/** css/** docs/** img/** fonts/** l10n/** scripts/** templates/** README.md token-sets.json design-systems.json"
       # PR-time PHPUnit runs the primary PHP against the newest declared
       # Nextcloud; the full matrix still runs on every push to a default
       # branch and on the release PR into beta. Breadth moves from

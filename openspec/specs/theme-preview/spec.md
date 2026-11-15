@@ -2,7 +2,9 @@
 
 ## Purpose
 TBD - created by archiving change theme-preview-workflow. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Per-User Preview State
 
 The app MUST store theme preview state exclusively as IConfig **user** values for the previewing
@@ -143,17 +145,12 @@ never from request input. Publish MUST promote the caller's previewed id to the 
 - THEN the response MUST be HTTP 400 and the app value `token_set` MUST be unchanged
 
 ### Requirement: Publish Runs The Existing Instance-Wide Dialogs
-
-Publishing a preview from the UI MUST run the same guarded flow as a direct instance-wide token
-set change: the banner's Publish control MUST navigate to the nldesign admin settings panel,
-where the existing apply dialog (`token-set-apply-dialog` spec) and, when the set carries
-theming metadata, the theming-sync dialog (`theming-sync-dialog` spec) run for the previewed
-set; only their confirmation MUST call `POST /settings/preview/publish`. Cancelling either
-dialog MUST leave both the preview and the active set untouched. Those two dialog specs are
-unchanged by this spec.
+Publishing a preview from the UI MUST run the same guarded flow as a direct instance-wide token set
+change; only confirmation MUST call `POST /settings/preview/publish`. The settings page's Publish
+control MUST work for a preview started on that page without a reload, so it MUST be bound whenever
+the control exists and read the current preview at click time, not at page load.
 
 #### Scenario: Publish flows through apply and theming-sync dialogs
-
 - GIVEN an active preview of a set with theming metadata
 - WHEN the admin activates Publish on the banner
 - THEN the browser MUST navigate to the nldesign settings panel with the preview detected
@@ -161,10 +158,55 @@ unchanged by this spec.
   confirm
 - AND only after confirmation MUST the publish endpoint be called
 
-#### Scenario: Cancelling the publish dialogs keeps the preview
+#### Scenario: Publish from a preview started on the settings page
+- GIVEN the admin started a preview on the settings page and did not reload
+- WHEN they activate the page's Publish control
+- THEN the apply dialog MUST open for the previewed set, exactly as after a navigation
+- AND on confirm the page MUST end its preview state (panel hidden, `activePreview` cleared) and
+  carry the published set
 
+#### Scenario: Cancelling the publish dialogs keeps the preview
 - GIVEN the apply dialog is open from a banner-initiated publish
 - WHEN the admin cancels
 - THEN no endpoint MUST be called, the preview user values MUST remain, and the banner MUST
   still show on subsequent pages
 
+### Requirement: The Instrument Describes The Previewed Set
+When a session preview is active, the component playground MUST describe the previewed set:
+the token values it exports and the values its specimens are drawn with MUST be the
+previewed set's, not the instance-wide one.
+
+#### Scenario: The instrument follows the preview
+- GIVEN an active session preview of a set other than the instance-wide one
+- WHEN the admin opens the theming panel
+- THEN the specimens MUST be drawn with the previewed set's values
+- AND an export MUST serialise the previewed set
+
+#### Scenario: A preview does not leak to other sessions
+- GIVEN an admin previewing a set
+- WHEN another user loads any page
+- THEN that user MUST see the instance-wide set, exactly as before this change
+
+### Requirement: Start And Discard Apply On The Settings Page
+On the settings page, starting a preview MUST apply the previewed set's stylesheets to the page
+and show the preview panel; discarding MUST apply the instance-wide set's stylesheets and hide the
+panel. Neither MUST reload. Other pages keep the server-rendered banner, which reads the session
+state on their next load.
+
+#### Scenario: Start
+- GIVEN `zwolle` is selected and `rijkshuisstijl` is active
+- WHEN the admin clicks "Preview in my session" and `POST /settings/preview` answers `ok`
+- THEN the page MUST swap to `zwolle`'s stylesheet run
+- AND the preview panel MUST become visible, naming `zwolle`
+- AND `token_set` MUST still be `rijkshuisstijl`
+
+#### Scenario: Discard
+- GIVEN a preview is active on the page
+- WHEN the admin clicks Discard and `DELETE /settings/preview` returns
+- THEN the page MUST swap back to the instance-wide set's run
+- AND the panel MUST hide and the dropdown MUST show the instance-wide set
+
+#### Scenario: Module absent
+- GIVEN `js/lib/layerSwap.js` did not load
+- WHEN a preview is started or discarded
+- THEN the page MUST fall back to reloading, as before

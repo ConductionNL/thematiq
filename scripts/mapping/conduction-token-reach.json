@@ -1,0 +1,156 @@
+{
+	"$comment": [
+		"What a token set can do for each of the 33 Conduction component tokens, measured on the inventory (scripts/mapping/internal-tokens.json) and proved by tests/vitest/conductionTokenReach.spec.js.",
+		"follows: the library's own value reads a Nextcloud variable that css/systems/nldesign/theme.css maps from the set token named as driver, so the component already wears the set and a declaration would change nothing. variants: the library declares the variable on more than one selector (success, warning, error), and one set-level value would replace all of them, so no shipped stylesheet may declare it.",
+		"literal: the library's own value is a size, a weight or a ratio. The --nldesign-* vocabulary holds no spacing or type scale, so a set has no value of its own to give; an administrator can still set the token.",
+		"use-site: the library declares the variable nowhere and reads it with a fallback where it is used. The note says what that fallback is."
+	],
+	"conductionNextcloudVue": "2.57.1",
+	"counts": {
+		"follows": 6,
+		"literal": 19,
+		"use-site": 8
+	},
+	"tokens": {
+		"--nldesign-cn-ai-pointer-offset": {
+			"reach": "literal",
+			"stock": "19px"
+		},
+		"--nldesign-cn-color-picker-checker": {
+			"reach": "follows",
+			"through": "--color-background-dark",
+			"driver": "--nldesign-color-background-dark"
+		},
+		"--nldesign-cn-color-swatch-checker": {
+			"reach": "follows",
+			"through": "--color-background-dark",
+			"driver": "--nldesign-color-background-dark"
+		},
+		"--nldesign-cn-email-accent": {
+			"reach": "use-site",
+			"note": "The unread dot of the email tab. Read as var(--cn-email-accent, var(--color-primary-element)), so unset it wears the primary colour of the set."
+		},
+		"--nldesign-cn-forms-accent": {
+			"reach": "use-site",
+			"note": "The row icon of the Forms tab. Read with the fixed green #0d7000 of the Forms app as its fallback, which follows no set and measures 2.85:1 on a #171717 dark background."
+		},
+		"--nldesign-cn-forms-status": {
+			"reach": "follows",
+			"through": "--color-success",
+			"driver": "--nldesign-color-success",
+			"variants": true
+		},
+		"--nldesign-cn-kpi-accent": {
+			"reach": "follows",
+			"through": "--color-primary-element",
+			"driver": "--nldesign-color-primary",
+			"variants": true
+		},
+		"--nldesign-cn-kpi-gap": {
+			"reach": "literal",
+			"stock": "8px"
+		},
+		"--nldesign-cn-kpi-gap-horizontal": {
+			"reach": "literal",
+			"stock": "16px"
+		},
+		"--nldesign-cn-kpi-grid-gap": {
+			"reach": "literal",
+			"stock": "16px"
+		},
+		"--nldesign-cn-kpi-icon-size": {
+			"reach": "literal",
+			"stock": "44px"
+		},
+		"--nldesign-cn-kpi-icon-size-sm": {
+			"reach": "literal",
+			"stock": "36px"
+		},
+		"--nldesign-cn-kpi-icon-tint": {
+			"reach": "literal",
+			"stock": "12%"
+		},
+		"--nldesign-cn-kpi-label-color": {
+			"reach": "follows",
+			"through": "--color-text-maxcontrast",
+			"driver": "--nldesign-color-text-muted"
+		},
+		"--nldesign-cn-kpi-label-size": {
+			"reach": "literal",
+			"stock": "13px"
+		},
+		"--nldesign-cn-kpi-padding": {
+			"reach": "literal",
+			"stock": "16px"
+		},
+		"--nldesign-cn-kpi-padding-flat": {
+			"reach": "literal",
+			"stock": "8px"
+		},
+		"--nldesign-cn-kpi-radius": {
+			"reach": "follows",
+			"through": "--border-radius-large",
+			"driver": "--nldesign-border-radius-large"
+		},
+		"--nldesign-cn-kpi-section-title-size": {
+			"reach": "literal",
+			"stock": "14px"
+		},
+		"--nldesign-cn-kpi-stack-gap": {
+			"reach": "literal",
+			"stock": "12px"
+		},
+		"--nldesign-cn-kpi-title-size": {
+			"reach": "literal",
+			"stock": "14px"
+		},
+		"--nldesign-cn-kpi-title-weight": {
+			"reach": "literal",
+			"stock": "600"
+		},
+		"--nldesign-cn-kpi-value-line": {
+			"reach": "literal",
+			"stock": "1.1"
+		},
+		"--nldesign-cn-kpi-value-size": {
+			"reach": "literal",
+			"stock": "1.75rem"
+		},
+		"--nldesign-cn-kpi-value-size-compact": {
+			"reach": "literal",
+			"stock": "1.25rem"
+		},
+		"--nldesign-cn-kpi-value-size-stacked": {
+			"reach": "literal",
+			"stock": "2rem"
+		},
+		"--nldesign-cn-kpi-value-text-size": {
+			"reach": "use-site",
+			"note": "A KPI value shown as text instead of a number. Read with 1.25rem as its fallback."
+		},
+		"--nldesign-cn-kpi-value-weight": {
+			"reach": "literal",
+			"stock": "700"
+		},
+		"--nldesign-cn-sidebar-tab-min-width": {
+			"reach": "use-site",
+			"note": "The narrowest a sidebar tab may be. Read with 7rem as its fallback."
+		},
+		"--nldesign-cn-spacing-m": {
+			"reach": "use-site",
+			"note": "The padding of an object list widget. Read with 12px as its fallback."
+		},
+		"--nldesign-cn-table-cell-max-width": {
+			"reach": "use-site",
+			"note": "The widest a table cell may grow. Read with 22rem as its fallback."
+		},
+		"--nldesign-cn-xwiki-accent": {
+			"reach": "use-site",
+			"note": "The row icon of the XWiki tab. Read with the fixed green #3CA22F of XWiki as its fallback, which follows no set and measures 3.28:1 on white."
+		},
+		"--nldesign-cn-xwiki-accent-soft": {
+			"reach": "use-site",
+			"note": "The tint behind the XWiki row icon. Read with rgba(60, 162, 47, 0.12) as its fallback, which follows no set."
+		}
+	}
+}

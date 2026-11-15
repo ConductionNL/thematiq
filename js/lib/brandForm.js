@@ -107,17 +107,29 @@
 	 * @param {{rules: Object<string,Array>, defaults: Object<string,string>}} inputs Rules and defaults.
 	 * @param {string} primary The primary colour.
 	 * @param {string} background The background colour.
-	 * @return {{declarations: Object<string,string>, textOnPrimary: string, textRatio: number, uiRatio: number}|null}
+	 * @param {string} [action] The main button's own colour; left out or empty keeps it with the primary.
+	 * @return {{declarations: Object<string,string>, textOnPrimary: string, textRatio: number, uiRatio: number, textOnAction: string|null, actionTextRatio: number|null}|null}
 	 *   The result, or null when a colour is not a hex colour.
 	 */
-	function derive(inputs, primary, background) {
+	function derive(inputs, primary, background, action) {
 		var base = { primary: hex(primary), background: hex(background) }
 		if (base.primary === null || base.background === null) {
 			return null
 		}
+		var hasAction = action !== undefined && action !== null && action !== ''
+		if (hasAction) {
+			base.action = hex(action)
+			if (base.action === null) {
+				return null
+			}
+		}
 
 		var declarations = {}
 		Object.keys(inputs.rules).forEach(function (token) {
+			// A rule that reads the action colour is left out when the form gave none.
+			if (inputs.rules[token][1] === 'action' && !hasAction) {
+				return
+			}
 			declarations[token] = apply(
 				inputs.rules[token],
 				Object.assign({}, base, declarations),
@@ -127,12 +139,15 @@
 		})
 
 		var onPrimary = onColor(base.primary)
+		var onAction = hasAction ? onColor(base.action) : null
 
 		return {
 			declarations: declarations,
 			textOnPrimary: onPrimary,
 			textRatio: ratio(base.primary, onPrimary),
 			uiRatio: ratio(base.primary, base.background),
+			textOnAction: onAction,
+			actionTextRatio: hasAction ? ratio(base.action, onAction) : null,
 		}
 	}
 

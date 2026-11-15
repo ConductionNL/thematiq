@@ -274,6 +274,10 @@
 		"#e7f9f4": "role-layer success surface"
 	},
 	"upstreamOverrides": {
+		"--tilburg-interaction-color": {
+			"value": "#12506B",
+			"reason": "the role layer's link blue maps to brand-400, the hover step, so buttons and links wore #0B3648; the mockups draw them in --brand #12506B (example-gemeente-theme 4.2, seen live 10 Oct). Hover and active keep #0B3648"
+		},
 		"--tilburg-typography-font-family-primary": {
 			"value": "var(--nldesign-font-family)",
 			"reason": "the role layer names Avenir, which this app does not ship; the set font is bundled; follows --nldesign-font-family so a font swap is one value"

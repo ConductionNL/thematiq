@@ -13,6 +13,7 @@ import {
 	localOverrides,
 	withOverrides,
 	declarations,
+	mergeEntry,
 	OVERRIDES_HEADING,
 } from '../../scripts/sync-upstream-tokens.mjs'
 
@@ -398,5 +399,58 @@ describe('withOverrides', () => {
 		expect(css.indexOf('--nldesign-color-primary')).toBeGreaterThan(
 			css.indexOf('5. Local overrides'),
 		)
+	})
+})
+
+describe('mergeEntry', () => {
+	const epe = () => ({
+		id: 'epe',
+		name: 'Gemeente Epe',
+		theming: { primary_color: '#00549e' },
+		upstreamVersion: '1.0.3',
+		licence: {
+			id: 'LicenseRef-epe-house-style',
+			package: '@nl-design-system-unstable/epe-design-tokens',
+			version: '1.0.3',
+			holder: 'Gemeente Epe',
+			restricted: true,
+		},
+	})
+
+	it('records the converted version in the licence as well as in the provenance', () => {
+		const manifest = [epe()]
+		mergeEntry(
+			manifest,
+			{ theming: {} },
+			{ slug: 'epe', version: '1.1.0' },
+			'abc123',
+		)
+		expect(manifest[0].upstreamVersion).toBe('1.1.0')
+		expect(manifest[0].licence.version).toBe('1.1.0')
+		expect(manifest[0].licence.restricted).toBe(true)
+		expect(manifest[0].licence.holder).toBe('Gemeente Epe')
+	})
+
+	it('leaves the licence alone when the run knows no version', () => {
+		const manifest = [epe()]
+		mergeEntry(
+			manifest,
+			{ theming: {} },
+			{ slug: 'epe', version: null },
+			'abc123',
+		)
+		expect(manifest[0].licence.version).toBe('1.0.3')
+	})
+
+	it('adds no licence to a set that declares none', () => {
+		const manifest = [{ id: 'borne', name: 'Gemeente Borne', theming: {} }]
+		mergeEntry(
+			manifest,
+			{ theming: {} },
+			{ slug: 'borne', version: '2.0.0' },
+			'abc123',
+		)
+		expect(manifest[0].licence).toBeUndefined()
+		expect(manifest[0].upstreamVersion).toBe('2.0.0')
 	})
 })

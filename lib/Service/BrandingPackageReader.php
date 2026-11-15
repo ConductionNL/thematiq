@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use RuntimeException;
-use ZipArchive;
 
 /**
  * Reads a branding package from disk, and writes one.
@@ -55,6 +54,13 @@ class BrandingPackageReader {
 	 * @var int
 	 */
 	public const MAX_TOTAL_BYTES = (64 * 1024 * 1024);
+
+	/**
+	 * The extension of each kind of package part, cut off to give its id.
+	 *
+	 * @var array<string, string>
+	 */
+	private const PART_EXTENSIONS = ['fonts' => '.woff2', 'tokens' => '.json'];
 
 	/**
 	 * Read a package directory or ZIP.
@@ -96,8 +102,7 @@ class BrandingPackageReader {
 	 * Write a package directory.
 	 *
 	 * @param string $dir The target directory; created when missing.
-	 * @param array<string, mixed> $bundle The bundle to write as bundle.json.
-	 * @param array<string, string> $fonts Font bytes keyed by font id.
+	 * @param PackageContent $content The bundle to write as bundle.json, and the font bytes keyed by font id.
 	 *
 	 * @return array<int, string> The relative paths written.
 	 *
@@ -105,17 +110,30 @@ class BrandingPackageReader {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	public function write(string $dir, array $bundle, array $fonts): array {
+	public function write(string $dir, PackageContent $content): array {
 		$dir = rtrim($dir, '/');
 		if (is_dir($dir . '/fonts') === false && mkdir($dir . '/fonts', 0770, true) === false) {
 			throw new RuntimeException('Cannot create the package directory ' . $dir . '.');
 		}
 
-		$json = json_encode($bundle, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-		$written = [];
+		$json = json_encode($content->bundle, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 		$this->writeFile(path: $dir . '/bundle.json', content: ((string)$json) . "\n");
-		$written[] = 'bundle.json';
 
+		return array_merge(['bundle.json'], $this->writeFonts(dir: $dir, fonts: $content->fonts));
+	}//end write()
+
+	/**
+	 * Write each font with a safe id into the package's fonts directory.
+	 *
+	 * @param string $dir The package directory.
+	 * @param array<string, string> $fonts Font bytes keyed by font id.
+	 *
+	 * @return array<int, string> The relative paths written.
+	 *
+	 * @throws RuntimeException When a file cannot be written.
+	 */
+	private function writeFonts(string $dir, array $fonts): array {
+		$written = [];
 		foreach ($fonts as $id => $bytes) {
 			if (preg_match('/^[a-z0-9-]+$/', (string)$id) !== 1) {
 				continue;
@@ -126,7 +144,7 @@ class BrandingPackageReader {
 		}
 
 		return $written;
-	}//end write()
+	}//end writeFonts()
 
 	/**
 	 * Read every file of a package into memory, keyed by relative path.
@@ -145,7 +163,7 @@ class BrandingPackageReader {
 		}
 
 		if (is_file($path) === true && is_readable($path) === true) {
-			return $this->readZip(path: $path);
+			return (new PackageZip())->read(path: $path);
 		}
 
 		throw new RuntimeException('The branding package ' . $path . ' does not exist or cannot be read.');
@@ -163,6 +181,30 @@ class BrandingPackageReader {
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
 	private function readDirectory(string $dir): array {
+		$files = [];
+		$budget = new PackageSizeBudget();
+		foreach ($this->directoryCandidates(dir: $dir) as $relative) {
+			$file = $dir . '/' . $relative;
+			if (is_file($file) === false) {
+				continue;
+			}
+
+			$budget->admit(name: $relative, size: (int)filesize($file));
+			$files[$relative] = (string)file_get_contents($file);
+		}
+
+		return $files;
+	}//end readDirectory()
+
+	/**
+	 * The files a package directory may carry: bundle.json, REVISION, and the
+	 * fonts and token sources it holds.
+	 *
+	 * @param string $dir The package directory.
+	 *
+	 * @return array<int, string> Paths relative to the directory.
+	 */
+	private function directoryCandidates(string $dir): array {
 		$candidates = ['bundle.json', 'REVISION'];
 		foreach (['fonts' => '*.woff2', 'tokens' => '*.json'] as $sub => $pattern) {
 			$found = glob($dir . '/' . $sub . '/' . $pattern);
@@ -175,128 +217,8 @@ class BrandingPackageReader {
 			}
 		}
 
-		$files = [];
-		$total = 0;
-		foreach ($candidates as $relative) {
-			$file = $dir . '/' . $relative;
-			if (is_file($file) === false) {
-				continue;
-			}
-
-			$size = (int)filesize($file);
-			$total += $size;
-			$this->assertSize(name: $relative, size: $size, total: $total);
-			$files[$relative] = (string)file_get_contents($file);
-		}
-
-		return $files;
-	}//end readDirectory()
-
-	/**
-	 * Read the package files of a ZIP, at its root or under one top-level directory.
-	 *
-	 * @param string $path The ZIP path.
-	 *
-	 * @return array<string, string> Relative path => content.
-	 *
-	 * @throws RuntimeException When the file is not a ZIP, or a file is too large.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function readZip(string $path): array {
-		$zip = new ZipArchive();
-		if ($zip->open($path, ZipArchive::RDONLY) !== true) {
-			throw new RuntimeException('The branding package ' . $path . ' is neither a directory nor a ZIP file.');
-		}
-
-		$prefix = $this->zipPrefix(zip: $zip);
-		$files = [];
-		$total = 0;
-		for ($index = 0; $index < $zip->numFiles; $index++) {
-			$stat = $zip->statIndex($index);
-			$name = (string)($stat['name'] ?? '');
-			if ($name === '' || str_starts_with($name, $prefix) === false) {
-				continue;
-			}
-
-			$relative = substr($name, strlen($prefix));
-			if ($this->isPackageFile(relative: $relative) === false) {
-				continue;
-			}
-
-			$total += (int)($stat['size'] ?? 0);
-			$this->assertSize(name: $relative, size: (int)($stat['size'] ?? 0), total: $total);
-			$files[$relative] = (string)$zip->getFromIndex($index);
-		}
-
-		$zip->close();
-
-		return $files;
-	}//end readZip()
-
-	/**
-	 * The directory prefix of bundle.json inside a ZIP: empty at the root, `top/` one level down.
-	 *
-	 * @param ZipArchive $zip The open archive.
-	 *
-	 * @return string The prefix, with a trailing slash when not empty.
-	 *
-	 * @throws RuntimeException When the archive holds no bundle.json at either place.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function zipPrefix(ZipArchive $zip): string {
-		if ($zip->locateName('bundle.json') !== false) {
-			return '';
-		}
-
-		for ($index = 0; $index < $zip->numFiles; $index++) {
-			$name = (string)$zip->getNameIndex($index);
-			if (preg_match('#^([^/]+/)bundle\.json$#', $name, $match) === 1) {
-				return $match[1];
-			}
-		}
-
-		throw new RuntimeException('The branding package holds no bundle.json.');
-	}//end zipPrefix()
-
-	/**
-	 * Whether a relative path is one of the files a package carries.
-	 *
-	 * @param string $relative The path relative to the package root.
-	 *
-	 * @return bool True for bundle.json, REVISION, fonts/<id>.woff2 and tokens/<id>.json.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function isPackageFile(string $relative): bool {
-		return ($relative === 'bundle.json' || $relative === 'REVISION'
-			|| preg_match('#^fonts/[^/]+\.woff2$#', $relative) === 1
-			|| preg_match('#^tokens/[^/]+\.json$#', $relative) === 1);
-	}//end isPackageFile()
-
-	/**
-	 * Refuse a file or a package over the size limits.
-	 *
-	 * @param string $name The relative path, for the message.
-	 * @param int $size The file size.
-	 * @param int $total The running package size.
-	 *
-	 * @return void
-	 *
-	 * @throws RuntimeException When a limit is exceeded.
-	 *
-	 * @spec openspec/specs/theme-as-code/spec.md
-	 */
-	private function assertSize(string $name, int $size, int $total): void {
-		if ($size > self::MAX_FILE_BYTES) {
-			throw new RuntimeException('The package file ' . $name . ' is larger than 4 MB.');
-		}
-
-		if ($total > self::MAX_TOTAL_BYTES) {
-			throw new RuntimeException('The branding package is larger than 64 MB.');
-		}
-	}//end assertSize()
+		return $candidates;
+	}//end directoryCandidates()
 
 	/**
 	 * Turn the raw files into the package parts.
@@ -316,6 +238,25 @@ class BrandingPackageReader {
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
 	private function parse(array $files): array {
+		return [
+			'bundle' => $this->decodedBundle(files: $files),
+			'fonts' => $this->partsUnder(files: $files, sub: 'fonts'),
+			'tokens' => $this->partsUnder(files: $files, sub: 'tokens'),
+			'revision' => $this->revisionOf(files: $files),
+			'hash' => $this->hashFiles(files: $files),
+		];
+	}//end parse()
+
+	/**
+	 * The package's bundle.json as an array.
+	 *
+	 * @param array<string, string> $files Relative path => content.
+	 *
+	 * @return array<string, mixed> The bundle.
+	 *
+	 * @throws RuntimeException When bundle.json is missing or is not a JSON object.
+	 */
+	private function decodedBundle(array $files): array {
 		if (isset($files['bundle.json']) === false) {
 			throw new RuntimeException('The branding package holds no bundle.json.');
 		}
@@ -325,31 +266,42 @@ class BrandingPackageReader {
 			throw new RuntimeException('The bundle.json of the branding package is not valid JSON.');
 		}
 
-		$fonts = [];
-		$tokens = [];
+		return $bundle;
+	}//end decodedBundle()
+
+	/**
+	 * The files under `fonts/` or `tokens/`, keyed by their id.
+	 *
+	 * @param array<string, string> $files Relative path => content.
+	 * @param string $sub `fonts` or `tokens`.
+	 *
+	 * @return array<string, string> Id => content.
+	 */
+	private function partsUnder(array $files, string $sub): array {
+		$parts = [];
 		foreach ($files as $relative => $content) {
-			if (str_starts_with($relative, 'fonts/') === true) {
-				$fonts[basename($relative, '.woff2')] = $content;
-			}
-
-			if (str_starts_with($relative, 'tokens/') === true) {
-				$tokens[basename($relative, '.json')] = $content;
+			if (str_starts_with($relative, $sub . '/') === true) {
+				$parts[basename($relative, self::PART_EXTENSIONS[$sub])] = $content;
 			}
 		}
 
-		$revision = null;
-		if (isset($files['REVISION']) === true && trim($files['REVISION']) !== '') {
-			$revision = substr(trim($files['REVISION']), 0, 80);
+		return $parts;
+	}//end partsUnder()
+
+	/**
+	 * The package's REVISION, trimmed and cut to 80 characters, null when absent or empty.
+	 *
+	 * @param array<string, string> $files Relative path => content.
+	 *
+	 * @return string|null The revision.
+	 */
+	private function revisionOf(array $files): string|null {
+		if (isset($files['REVISION']) === false || trim($files['REVISION']) === '') {
+			return null;
 		}
 
-		return [
-			'bundle' => $bundle,
-			'fonts' => $fonts,
-			'tokens' => $tokens,
-			'revision' => $revision,
-			'hash' => $this->hashFiles(files: $files),
-		];
-	}//end parse()
+		return substr(trim($files['REVISION']), 0, 80);
+	}//end revisionOf()
 
 	/**
 	 * Hash the package files independent of their order on disk.
