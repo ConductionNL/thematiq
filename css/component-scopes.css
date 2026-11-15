@@ -739,10 +739,6 @@ a.primary,
 		--nldesign-component-button-primary-action-hover-background-color,
 		var(--thematiq-global-color-primary-element-hover)
 	);
-	--color-main-text: var(
-		--nldesign-component-button-focus-border-color,
-		var(--thematiq-global-color-main-text)
-	);
 	--border-radius-element: var(
 		--nldesign-component-button-border-radius,
 		var(--thematiq-global-border-radius-element)
@@ -755,6 +751,23 @@ a.primary,
 		--nldesign-component-button-font-weight,
 		var(--thematiq-alias-nldesign-component-button-primary-action-font-weight)
 	);
+}
+
+.button-vue--primary:focus-visible,
+.button-vue--vue-primary:focus-visible,
+button.primary:focus-visible,
+input[type='submit']:focus-visible,
+input.primary:focus-visible,
+a.primary:focus-visible,
+[data-thematiq-component='primary-button']:focus-visible {
+	--color-main-text: var(
+		--nldesign-component-button-focus-border-color,
+		var(--thematiq-global-color-main-text)
+	);
+}
+
+:where(.button-vue--primary:focus-visible, .button-vue--vue-primary:focus-visible, button.primary:focus-visible, input[type='submit']:focus-visible, input.primary:focus-visible, a.primary:focus-visible, [data-thematiq-component='primary-button']:focus-visible) > * {
+	--color-main-text: var(--thematiq-global-color-main-text);
 }
 
 .button-vue--primary,

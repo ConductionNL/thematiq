@@ -33,6 +33,7 @@ use OCA\Thematiq\Service\DesignTokensMapper;
 use OCA\Thematiq\Service\DtcgValueChecker;
 use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\FontValidator;
+use OCA\Thematiq\Service\PackageTokenSourceConverter;
 use OCA\Thematiq\Service\TokenSetConverterService;
 use OCA\Thematiq\Service\TokenValueValidator;
 use OCP\App\IAppManager;
@@ -103,7 +104,7 @@ class BrandingPackageServiceTest extends TestCase {
 			'custom-body-text' => ['name' => 'Body Text', 'role' => 'body', 'size' => 8],
 		];
 
-		$this->bundleService = $this->createMock(ConfigBundleService::class);
+		$this->bundleService = $this->createMock(originalClassName: ConfigBundleService::class);
 		$this->bundleService->method('export')->willReturnCallback(fn (): array => $this->bundle());
 		$this->bundleService->method('import')->willReturnCallback(
 			function (array $bundle, bool $dryRun = false): array {
@@ -113,9 +114,9 @@ class BrandingPackageServiceTest extends TestCase {
 			}
 		);
 
-		$this->fontService = $this->createMock(FontService::class);
+		$this->fontService = $this->createMock(originalClassName: FontService::class);
 		$this->fontService->method('getManifest')->willReturnCallback(fn (): array => $this->manifest);
-		$this->fontService->method('readFontBytes')->willReturnCallback(fn (string $id): string => $this->fontBytes($id));
+		$this->fontService->method('readFontBytes')->willReturnCallback(fn (string $id): string => $this->fontBytes(id: $id));
 		$this->fontService->method('slugify')->willReturnCallback(
 			fn (string $name): string => trim((string)preg_replace('/[^a-z0-9]+/', '-', strtolower($name)), '-')
 		);
@@ -172,29 +173,31 @@ class BrandingPackageServiceTest extends TestCase {
 	 * @return BrandingPackageService The service.
 	 */
 	private function service(): BrandingPackageService {
-		$repoApp = $this->createMock(IAppManager::class);
+		$repoApp = $this->createMock(originalClassName: IAppManager::class);
 		$repoApp->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$converter = new TokenSetConverterService(
-			$repoApp,
-			new CssParserService(),
-			new ContrastService(),
-			new DesignTokensMapper(),
-			$this->createMock(FontService::class),
-			$this->createMock(LoggerInterface::class)
+			appManager: $repoApp,
+			cssParser: new CssParserService(),
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
-		$customSets = $this->createMock(CustomTokenSetService::class);
+		$customSets = $this->createMock(originalClassName: CustomTokenSetService::class);
 		$customSets->method('isCustomId')->willReturnCallback(
 			fn (string $id): bool => preg_match('/^custom-[a-z0-9][a-z0-9-]*$/', $id) === 1
 		);
 
 		return new BrandingPackageService(
-			new BrandingPackageReader(),
-			$this->bundleService,
-			$this->fontService,
-			new FontValidator(),
-			$converter,
-			$customSets,
-			new DtcgValueChecker(new TokenValueValidator())
+			reader: new BrandingPackageReader(),
+			bundleService: $this->bundleService,
+			fontService: $this->fontService,
+			fontValidator: new FontValidator(),
+			tokenSources: new PackageTokenSourceConverter(
+				converter: $converter,
+				customSets: $customSets,
+				values: new DtcgValueChecker(values: new TokenValueValidator())
+			)
 		);
 	}//end service()
 
@@ -208,11 +211,11 @@ class BrandingPackageServiceTest extends TestCase {
 		$package = $this->dir . '/branding';
 		$written = $this->service()->export(dir: $package);
 
-		$this->assertContains('bundle.json', $written);
-		$this->assertFileExists($package . '/fonts/custom-corporate.woff2');
-		$this->assertFileExists($package . '/fonts/custom-body-text.woff2');
+		$this->assertContains(needle: 'bundle.json', haystack: $written);
+		$this->assertFileExists(filename: $package . '/fonts/custom-corporate.woff2');
+		$this->assertFileExists(filename: $package . '/fonts/custom-body-text.woff2');
 		$exported = json_decode((string)file_get_contents($package . '/bundle.json'), true);
-		$this->assertTrue($exported['customFonts']['binariesIncluded']);
+		$this->assertTrue(condition: $exported['customFonts']['binariesIncluded']);
 
 		mkdir($package . '/tokens');
 		copy(\dirname(__DIR__) . '/fixtures/dtcg/14-utrecht-real-excerpt.tokens.json', $package . '/tokens/custom-gemeente.json');
@@ -230,23 +233,23 @@ class BrandingPackageServiceTest extends TestCase {
 		foreach ([$package, $zipPath] as $source) {
 			$this->imported = [];
 			$this->stored = [];
-			$this->assertTrue($this->service()->isPackage(path: $source));
+			$this->assertTrue(condition: $this->service()->isPackage(path: $source));
 
 			$result = $this->service()->import(path: $source);
 
-			$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
-			$this->assertSame('3f2a9c1', $result['revision']);
-			$this->assertSame(2, $result['sections']['customFonts']['count']);
-			$this->assertCount(2, $this->stored);
-			$this->assertSame(['Corporate', 'heading', $this->fontBytes('custom-corporate')], $this->stored[0]);
+			$this->assertTrue(condition: $result['valid'], message: json_encode($result['errors'] ?? []));
+			$this->assertSame(expected: '3f2a9c1', actual: $result['revision']);
+			$this->assertSame(expected: 2, actual: $result['sections']['customFonts']['count']);
+			$this->assertCount(expectedCount: 2, haystack: $this->stored);
+			$this->assertSame(expected: ['Corporate', 'heading', $this->fontBytes(id: 'custom-corporate')], actual: $this->stored[0]);
 
 			$applied = end($this->imported);
-			$this->assertFalse($applied[1], 'The last bundle import applies.');
+			$this->assertFalse(condition: $applied[1], message: 'The last bundle import applies.');
 			$set = $applied[0]['customTokenSets'][0];
-			$this->assertSame('custom-gemeente', $set['id']);
-			$this->assertSame('Gemeente', $set['name']);
-			$this->assertStringNotContainsString('#123456', $set['css'], 'The DTCG source replaced the bundle CSS.');
-			$this->assertStringContainsString('--nldesign-', $set['css']);
+			$this->assertSame(expected: 'custom-gemeente', actual: $set['id']);
+			$this->assertSame(expected: 'Gemeente', actual: $set['name']);
+			$this->assertStringNotContainsString(needle: '#123456', haystack: $set['css'], message: 'The DTCG source replaced the bundle CSS.');
+			$this->assertStringContainsString(needle: '--nldesign-', haystack: $set['css']);
 		}
 	}//end testPackageRoundTripsWithTwoFontsAndOneDtcgSource()
 
@@ -262,11 +265,11 @@ class BrandingPackageServiceTest extends TestCase {
 
 		$result = $this->service()->import(path: $package);
 
-		$this->assertFalse($result['valid']);
-		$this->assertStringContainsString('fonts/custom-corporate.woff2', json_encode($result['errors'], JSON_UNESCAPED_SLASHES));
-		$this->assertSame([], $this->stored);
+		$this->assertFalse(condition: $result['valid']);
+		$this->assertStringContainsString(needle: 'fonts/custom-corporate.woff2', haystack: json_encode($result['errors'], JSON_UNESCAPED_SLASHES));
+		$this->assertSame(expected: [], actual: $this->stored);
 		foreach ($this->imported as $call) {
-			$this->assertTrue($call[1], 'Only dry runs may reach the bundle service.');
+			$this->assertTrue(condition: $call[1], message: 'Only dry runs may reach the bundle service.');
 		}
 	}//end testMissingFontFileRefusesThePackageWhole()
 
@@ -282,9 +285,9 @@ class BrandingPackageServiceTest extends TestCase {
 
 		$result = $this->service()->import(path: $package);
 
-		$this->assertFalse($result['valid']);
-		$this->assertSame('customFonts', $result['errors'][0]['section']);
-		$this->assertSame([], $this->stored);
+		$this->assertFalse(condition: $result['valid']);
+		$this->assertSame(expected: 'customFonts', actual: $result['errors'][0]['section']);
+		$this->assertSame(expected: [], actual: $this->stored);
 	}//end testFontFileThatIsNotWoff2IsRefused()
 
 	/**
@@ -300,9 +303,9 @@ class BrandingPackageServiceTest extends TestCase {
 
 		$result = $this->service()->import(path: $package);
 
-		$this->assertFalse($result['valid']);
-		$this->assertSame('tokens', $result['errors'][0]['section']);
-		$this->assertSame([], $this->stored);
+		$this->assertFalse(condition: $result['valid']);
+		$this->assertSame(expected: 'tokens', actual: $result['errors'][0]['section']);
+		$this->assertSame(expected: [], actual: $this->stored);
 	}//end testUnconvertibleTokenSourceRefusesThePackage()
 
 	/**
@@ -333,14 +336,14 @@ class BrandingPackageServiceTest extends TestCase {
 		$this->imported = [];
 		$result = $this->service()->import(path: $package);
 
-		$this->assertFalse($result['valid']);
+		$this->assertFalse(condition: $result['valid']);
 		$messages = implode("\n", array_map(fn (array $error): string => (string)$error['message'], $result['errors']));
-		$this->assertStringContainsString('nldesign.color.primary', $messages);
-		$this->assertStringContainsString('not-a-colour', $messages);
-		$this->assertStringNotContainsString('primary-text', $messages);
-		$this->assertSame('tokens', $result['errors'][0]['section']);
+		$this->assertStringContainsString(needle: 'nldesign.color.primary', haystack: $messages);
+		$this->assertStringContainsString(needle: 'not-a-colour', haystack: $messages);
+		$this->assertStringNotContainsString(needle: 'primary-text', haystack: $messages);
+		$this->assertSame(expected: 'tokens', actual: $result['errors'][0]['section']);
 		foreach ($this->imported as [$bundle, $dryRun]) {
-			$this->assertTrue($dryRun, 'nothing is applied');
+			$this->assertTrue(condition: $dryRun, message: 'nothing is applied');
 		}
 	}//end testInvalidDtcgColourRefusesThePackageNamingTheToken()
 
@@ -372,7 +375,7 @@ class BrandingPackageServiceTest extends TestCase {
 
 		$result = $this->service()->import(path: $package);
 
-		$this->assertTrue($result['valid'], json_encode($result['errors'] ?? []));
+		$this->assertTrue(condition: $result['valid'], message: json_encode($result['errors'] ?? []));
 	}//end testValidDtcgColoursStillApply()
 
 	/**
@@ -386,11 +389,11 @@ class BrandingPackageServiceTest extends TestCase {
 
 		$result = $this->service()->import(path: $package, dryRun: true);
 
-		$this->assertTrue($result['valid']);
-		$this->assertFalse($result['applied']);
-		$this->assertSame([], $this->stored);
-		$this->assertCount(1, $this->imported);
-		$this->assertTrue($this->imported[0][1]);
+		$this->assertTrue(condition: $result['valid']);
+		$this->assertFalse(condition: $result['applied']);
+		$this->assertSame(expected: [], actual: $this->stored);
+		$this->assertCount(expectedCount: 1, haystack: $this->imported);
+		$this->assertTrue(condition: $this->imported[0][1]);
 	}//end testDryRunStoresNothing()
 
 	/**
@@ -402,8 +405,8 @@ class BrandingPackageServiceTest extends TestCase {
 		$file = $this->dir . '/bundle.json';
 		file_put_contents($file, json_encode($this->bundle()));
 
-		$this->assertFalse($this->service()->isPackage(path: $file));
-		$this->assertFalse($this->service()->isPackage(path: $this->dir . '/missing'));
+		$this->assertFalse(condition: $this->service()->isPackage(path: $file));
+		$this->assertFalse(condition: $this->service()->isPackage(path: $this->dir . '/missing'));
 	}//end testBareBundleFileIsNotAPackage()
 
 	/**
@@ -417,9 +420,9 @@ class BrandingPackageServiceTest extends TestCase {
 		$reader = new BrandingPackageReader();
 
 		$first = $reader->hash(path: $package);
-		$this->assertSame($first, $reader->hash(path: $package));
+		$this->assertSame(expected: $first, actual: $reader->hash(path: $package));
 
 		file_put_contents($package . '/REVISION', 'abc');
-		$this->assertNotSame($first, $reader->hash(path: $package));
+		$this->assertNotSame(expected: $first, actual: $reader->hash(path: $package));
 	}//end testHashChangesWithContentOnly()
 }//end class

@@ -18,6 +18,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import postcss from 'postcss'
+import { compact } from './support/cssText.js'
 import { describe, expect, it } from 'vitest'
 
 const ROOT = path.resolve(__dirname, '../..')
@@ -104,6 +105,21 @@ function reachesBody(selector, env) {
 	return false
 }
 
+const PARSED = new Map()
+
+/**
+ * A stylesheet parsed once per run: the cascades read the same files for every set and environment.
+ *
+ * @param {string} file The stylesheet, relative to the app.
+ * @return {import('postcss').Root} The parsed stylesheet.
+ */
+function parsed(file) {
+	if (!PARSED.has(file)) {
+		PARSED.set(file, postcss.parse(read(file)))
+	}
+	return PARSED.get(file)
+}
+
 /**
  * The winning declarations for the rules a predicate selects: `!important`
  * beats normal, then source order.
@@ -116,7 +132,7 @@ function reachesBody(selector, env) {
 function cascade(files, env, matches) {
 	const won = {}
 	for (const file of files) {
-		postcss.parse(read(file)).walkRules((rule) => {
+		parsed(file).walkRules((rule) => {
 			if (!conditionsHold(rule, env) || !rule.selectors.some(matches)) {
 				return
 			}
@@ -128,7 +144,7 @@ function cascade(files, env, matches) {
 				if (prior && prior.important && !d.important) {
 					return
 				}
-				won[d.prop] = { value: d.value.trim(), important: d.important }
+				won[d.prop] = { value: compact(d.value), important: d.important }
 			})
 		})
 	}

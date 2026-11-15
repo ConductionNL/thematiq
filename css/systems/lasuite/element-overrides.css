@@ -1389,6 +1389,10 @@ footer.guest-box {
    rule of their own and are left alone.
    ============================================ */
 
-.cn-dashboard-page .cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(.cn-widget-wrapper--chromeless) > .cn-widget-wrapper__header {
+.cn-dashboard-page
+	.cn-widget-wrapper:not(.cn-widget-wrapper--nc-dashboard):not(
+		.cn-widget-wrapper--chromeless
+	)
+	> .cn-widget-wrapper__header {
 	border-bottom: none;
 }

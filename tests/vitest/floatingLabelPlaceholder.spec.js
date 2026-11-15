@@ -10,7 +10,7 @@
  * `opacity: 0 !important`. Reads the shipped CSS and asks a real DOM which
  * fields the opaque rule reaches.
  *
- * @spec openspec/changes/floating-label-hides-placeholder/specs/floating-label-hides-placeholder/spec.md#requirement-a-resting-floating-label-hides-the-placeholder
+ * @spec openspec/specs/floating-label-hides-placeholder/spec.md#requirement-a-resting-floating-label-hides-the-placeholder
  */
 
 import { describe, it, expect } from 'vitest'

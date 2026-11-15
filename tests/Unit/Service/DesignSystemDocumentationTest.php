@@ -41,10 +41,10 @@ class DesignSystemDocumentationTest extends TestCase {
 	 * @return DesignSystemService The service.
 	 */
 	private function service(string $appDir): DesignSystemService {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($appDir);
 
-		return new DesignSystemService($appManager, $this->createMock(IConfig::class));
+		return new DesignSystemService(appManager: $appManager, config: $this->createMock(originalClassName: IConfig::class));
 	}//end service()
 
 	/**
@@ -56,16 +56,16 @@ class DesignSystemDocumentationTest extends TestCase {
 		$systems = $this->service(appDir: dirname(__DIR__, 3))->getDesignSystems();
 		$urls = array_map(static fn (array $ds) => ($ds['documentation_url'] ?? null), $systems);
 
-		$this->assertSame('https://nldesignsystem.nl', $urls['nldesign']);
-		$this->assertSame('https://github.com/suitenumerique/cunningham', $urls['lasuite']);
-		$this->assertSame('https://github.com/suitenumerique/cunningham', $urls['cunningham']);
+		$this->assertSame(expected: 'https://nldesignsystem.nl', actual: $urls['nldesign']);
+		$this->assertSame(expected: 'https://github.com/suitenumerique/cunningham', actual: $urls['lasuite']);
+		$this->assertSame(expected: 'https://github.com/suitenumerique/cunningham', actual: $urls['cunningham']);
 		foreach (['none', 'summer-breeze', 'high-contrast'] as $id) {
-			$this->assertNull($urls[$id], $id . ' has no docs of its own, so Admin falls back to the app docs');
+			$this->assertNull(actual: $urls[$id], message: $id . ' has no docs of its own, so Admin falls back to the app docs');
 		}
 
 		foreach (array_filter($urls) as $id => $url) {
-			$this->assertStringStartsWith('https://', $url, $id);
-			$this->assertStringNotContainsString('nldesign.app', $url, $id . ': nldesign.app no longer resolves');
+			$this->assertStringStartsWith(prefix: 'https://', string: $url, message: $id);
+			$this->assertStringNotContainsString(needle: 'nldesign.app', haystack: $url, message: $id . ': nldesign.app no longer resolves');
 		}
 	}//end testShippedDesignSystemsNameTheirOwnDocumentation()
 }//end class

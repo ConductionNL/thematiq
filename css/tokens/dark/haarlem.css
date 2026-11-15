@@ -97,7 +97,7 @@
 		--nldesign-component-button-secondary-action-hover-background-color: #15202f;
 		--nldesign-component-form-field-label-color: #ccccd1;
 		--nldesign-component-form-fieldset-border-color: #bfbfc5;
-		--nldesign-component-form-select-border-color: #bfbfc5;
+		--nldesign-component-form-select-border-color: #959598;
 		--nldesign-component-form-select-focus-border-color: #5999e2;
 		--nldesign-component-heading-1-color: #ccccd1;
 		--nldesign-component-heading-2-color: #ccccd1;
@@ -284,7 +284,7 @@ body[data-themes*=dark] {
 	--nldesign-component-button-secondary-action-hover-background-color: #15202f;
 	--nldesign-component-form-field-label-color: #ccccd1;
 	--nldesign-component-form-fieldset-border-color: #bfbfc5;
-	--nldesign-component-form-select-border-color: #bfbfc5;
+	--nldesign-component-form-select-border-color: #959598;
 	--nldesign-component-form-select-focus-border-color: #5999e2;
 	--nldesign-component-heading-1-color: #ccccd1;
 	--nldesign-component-heading-2-color: #ccccd1;

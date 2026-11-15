@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/shell-canon-check/specs/shell-canon-check/spec.md
+ * @e2e openspec/specs/shell-canon-check/spec.md
  *
  * The shell against the canon the OpenProject plugin is built to, on the
  * Zuiddrecht set, the set the boards draw. The measurement lives in

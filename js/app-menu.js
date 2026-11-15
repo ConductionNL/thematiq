@@ -128,13 +128,23 @@
 	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md
 	 */
 	function external(grid, section) {
-		if (!section || !Array.isArray(section.modules) || text(section, 'title') === '') {
+		if (
+			!section
+			|| !Array.isArray(section.modules)
+			|| text(section, 'title') === ''
+		) {
 			return
 		}
 		var modules = section.modules.filter(function (module) {
-			return text(module, 'label') !== '' && /^https?:\/\//i.test(module.url || '')
+			return (
+				text(module, 'label') !== ''
+				&& /^https?:\/\//i.test(module.url || '')
+			)
 		})
-		if (modules.length === 0 || grid.querySelector(':scope > [data-thematiq-external]') !== null) {
+		if (
+			modules.length === 0
+			|| grid.querySelector(':scope > [data-thematiq-external]') !== null
+		) {
 			return
 		}
 		heading(grid, 'openproject', EXTERNAL, section.title)
@@ -192,7 +202,9 @@
 		})
 
 		var tiles = Array.prototype.slice.call(
-			grid.querySelectorAll(':scope > a.app-item:not([data-thematiq-external])'),
+			grid.querySelectorAll(
+				':scope > a.app-item:not([data-thematiq-external])',
+			),
 		)
 		var used = {}
 		var others = 0

@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-return [
+// Every unversioned API route is also served under /api/v1/; see ApiPathAliases.
+return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 	'routes' => [
+		// The OpenAPI document of thematiq's own API, public, served under /api/v1/ too.
+		['name' => 'openApi#show', 'url' => '/api/openapi.json', 'verb' => 'GET'],
 		// Metrics — served by nldesign's own MetricsController (domain theme
 		// metrics: token sets, custom overrides, theming syncs). Admin-only:
 		// no #[PublicPage]/#[NoAdminRequired], so the SecurityMiddleware
@@ -199,4 +202,4 @@ return [
 		['name' => 'documentStyle#upload', 'url' => '/settings/document-style/{kind}', 'verb' => 'POST'],
 		['name' => 'documentStyle#remove', 'url' => '/settings/document-style/{kind}', 'verb' => 'DELETE'],
 	],
-];
+]);

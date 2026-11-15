@@ -25,6 +25,7 @@ namespace OCA\Thematiq\AppInfo;
 use OCA\Thematiq\Capabilities;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Listener\WorkspaceIconListener;
+use OCA\Thematiq\Middleware\ApiContractMiddleware;
 use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
 use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
@@ -106,9 +107,13 @@ class Application extends App implements IBootstrap {
 	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
 	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
 	 * @spec openspec/specs/theming-capability/spec.md
-	 * @spec openspec/changes/mobile-logo-and-touch-icon/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
 	public function register(IRegistrationContext $context): void {
+		// The API contract (version header, deprecation of unversioned paths,
+		// problem details). Registered first: Nextcloud runs afterController in
+		// reverse order, so it sees the final response of every other middleware.
+		$context->registerMiddleware(class: ApiContractMiddleware::class);
 		// Load the app's composer autoloader so this app's classes are resolvable
 		// process-wide, not only inside this app's own container — required so a
 		// cross-app event listener (e.g. the OpenRegister federated-config type)

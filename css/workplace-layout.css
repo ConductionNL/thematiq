@@ -511,42 +511,14 @@ body#body-login .thematiq-login-divider::after {
 	background: var(--color-border);
 }
 
-/* With an SSO button the password form is the second way in: its button is
- * outlined on the card, as the board draws "Inloggen". */
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	.login-form
-	button[type='submit'] {
-	--nldesign-color-on-surface: var(--color-main-text);
-
-	border: 1px solid
-		var(--nldesign-login-secondary-border-color, var(--color-border-dark)) !important;
-	background-color: var(--color-main-background) !important;
-	color: var(--color-main-text) !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	.login-form
-	button[type='submit']
-	.button-vue__text {
-	color: var(--color-main-text) !important;
-}
-
-/* The board's "Inloggen" carries no arrow. */
+/* The password form's button is a primary button like the SSO button above
+ * it, without the arrow. */
 body#body-login
 	.guest-box.login-box[data-thematiq-sso]:not(#header)
 	.login-form
 	button[type='submit']
 	.button-vue__icon {
 	display: none !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	.login-form
-	button[type='submit']:hover {
-	background-color: var(--color-background-hover) !important;
 }
 
 /* The footer hint, a second line under the footer. */
@@ -741,7 +713,7 @@ body:not(#body-login) {
 	height: 44px !important;
 	min-height: 44px !important;
 	max-width: 560px !important;
-	border: 1px solid var(--color-border) !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
 	border-radius: 22px !important;
 	background-color: var(
 		--nldesign-component-content-surface-background-color,

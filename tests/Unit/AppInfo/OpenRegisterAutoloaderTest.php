@@ -40,6 +40,11 @@ class OpenRegisterAutoloaderTest extends TestCase {
 	 */
 	private string $appPath;
 
+	/**
+	 * Set up each test.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appPath = sys_get_temp_dir() . '/thematiq-or-' . bin2hex(random_bytes(4));
@@ -50,6 +55,11 @@ class OpenRegisterAutoloaderTest extends TestCase {
 		);
 	}//end setUp()
 
+	/**
+	 * Clean up after each test.
+	 *
+	 * @return void
+	 */
 	protected function tearDown(): void {
 		OpenRegisterAutoloader::unregister();
 		@unlink($this->appPath . '/lib/Fake/Probe.php');
@@ -63,48 +73,56 @@ class OpenRegisterAutoloaderTest extends TestCase {
 	 * Nextcloud 35 removed `OC_App::registerAutoloading()`, which this prelude
 	 * used to call inside its catch-all — so on 35 it silently returned false.
 	 * Only public API and plain PHP may be used.
+	 *
+	 * @return void
 	 */
 	public function testSourceUsesNoPrivateOcAppApi(): void {
 		$source = (string) file_get_contents(__DIR__ . '/../../../lib/AppInfo/OpenRegisterAutoloader.php');
 		$code   = (string) preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $source);
-		$this->assertStringNotContainsString('OC_App', $code);
+		$this->assertStringNotContainsString(needle: 'OC_App', haystack: $code);
 	}//end testSourceUsesNoPrivateOcAppApi()
 
 	/**
 	 * Enabled OpenRegister: the PSR-4 prefix is registered, idempotently, and
 	 * an OpenRegister class actually becomes loadable.
+	 *
+	 * @return void
 	 */
 	public function testRegistersPsr4PrefixWhenEnabled(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isEnabledForAnyone')->with('openregister')->willReturn(true);
 		$appManager->method('getAppPath')->with('openregister')->willReturn($this->appPath . '/');
 
-		$this->assertTrue((new OpenRegisterAutoloader())->ensure($appManager));
-		$this->assertTrue((new OpenRegisterAutoloader())->ensure($appManager));
-		$this->assertTrue(class_exists('OCA\\OpenRegister\\Fake\\Probe'));
+		$this->assertTrue(condition: (new OpenRegisterAutoloader())->ensure($appManager));
+		$this->assertTrue(condition: (new OpenRegisterAutoloader())->ensure($appManager));
+		$this->assertTrue(condition: class_exists('OCA\\OpenRegister\\Fake\\Probe'));
 	}//end testRegistersPsr4PrefixWhenEnabled()
 
 	/**
 	 * Disabled OpenRegister: false, and its path is never asked for.
+	 *
+	 * @return void
 	 */
 	public function testDisabledOpenRegisterDegradesToFalse(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isEnabledForAnyone')->willReturn(false);
 		$appManager->expects($this->never())->method('getAppPath');
 
-		$this->assertFalse((new OpenRegisterAutoloader())->ensure($appManager));
+		$this->assertFalse(condition: (new OpenRegisterAutoloader())->ensure($appManager));
 	}//end testDisabledOpenRegisterDegradesToFalse()
 
 	/**
 	 * The loader only ever answers for OpenRegister's namespace.
+	 *
+	 * @return void
 	 */
 	public function testClassFileOnlyAnswersForOpenRegister(): void {
 		$this->assertSame(
-			'/x/lib/Db/Schema.php',
-			OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\OpenRegister\\Db\\Schema')
+			expected: '/x/lib/Db/Schema.php',
+			actual: OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\OpenRegister\\Db\\Schema')
 		);
-		$this->assertNull(OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\Thematiq\\Foo'));
-		$this->assertNull(OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\OpenRegister\\'));
+		$this->assertNull(actual: OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\Thematiq\\Foo'));
+		$this->assertNull(actual: OpenRegisterAutoloader::classFile(appPath: '/x', class: 'OCA\\OpenRegister\\'));
 	}//end testClassFileOnlyAnswersForOpenRegister()
 
 	/**
@@ -112,31 +130,37 @@ class OpenRegisterAutoloaderTest extends TestCase {
 	 * for an unknown id, which this class swallows — so a typo here would
 	 * degrade silently and forever, which is the exact failure mode the class
 	 * exists to prevent.
+	 *
+	 * @return void
 	 */
 	public function testAppIdIsOpenregister(): void {
-		$this->assertSame('openregister', OpenRegisterAutoloader::OPENREGISTER_APP_ID);
+		$this->assertSame(expected: 'openregister', actual: OpenRegisterAutoloader::OPENREGISTER_APP_ID);
 	}//end testAppIdIsOpenregister()
 
 	/**
 	 * An absent or disabled OpenRegister must produce `false`, not an
 	 * exception. `getAppPath()` throwing is the normal, supported signal that
 	 * the app is not installed.
+	 *
+	 * @return void
 	 */
 	public function testAbsentOpenRegisterDegradesToFalseWithoutThrowing(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isEnabledForAnyone')->willReturn(true);
 		$appManager->method('getAppPath')
 			->willThrowException(new RuntimeException('App openregister not found'));
 
-		$this->assertFalse((new OpenRegisterAutoloader())->ensure($appManager));
+		$this->assertFalse(condition: (new OpenRegisterAutoloader())->ensure($appManager));
 	}//end testAbsentOpenRegisterDegradesToFalseWithoutThrowing()
 
 	/**
 	 * The prelude asks for the path of `openregister` specifically — the whole
 	 * point is which app's autoloader gets pulled in.
+	 *
+	 * @return void
 	 */
 	public function testAsksTheAppManagerForOpenregistersPath(): void {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isEnabledForAnyone')->with('openregister')->willReturn(true);
 		$appManager->expects($this->once())
 			->method('getAppPath')
@@ -152,8 +176,10 @@ class OpenRegisterAutoloaderTest extends TestCase {
 	 * same swallow-and-degrade path a real absent OpenRegister takes — and
 	 * proves the no-argument call used by `Application::register()` cannot
 	 * throw either.
+	 *
+	 * @return void
 	 */
 	public function testNoArgumentCallNeverThrows(): void {
-		$this->assertIsBool((new OpenRegisterAutoloader())->ensure());
+		$this->assertIsBool(actual: (new OpenRegisterAutoloader())->ensure());
 	}//end testNoArgumentCallNeverThrows()
 }//end class

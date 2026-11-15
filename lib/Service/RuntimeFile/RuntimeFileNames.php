@@ -97,6 +97,28 @@ final class RuntimeFileNames {
 	}//end isAllowed()
 
 	/**
+	 * The names of a listing that thematiq writes at runtime, sorted.
+	 *
+	 * @param array<int, string> $names App-relative names.
+	 *
+	 * @return array<int, string> The allowed names, sorted.
+	 *
+	 * @spec openspec/specs/runtime-file-storage/spec.md
+	 */
+	public function allowedSorted(array $names): array {
+		$allowed = [];
+		foreach ($names as $name) {
+			if ($this->isAllowed(name: $name) === true) {
+				$allowed[] = $name;
+			}
+		}
+
+		sort($allowed);
+
+		return $allowed;
+	}//end allowedSorted()
+
+	/**
 	 * Refuse a name outside the set.
 	 *
 	 * @param string $name The app-relative name.

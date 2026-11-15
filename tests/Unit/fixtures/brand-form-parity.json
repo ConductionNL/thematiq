@@ -216,7 +216,7 @@
             "--nldesign-component-textbox-invalid-border-color": "var(--nldesign-color-error)",
             "--nldesign-component-form-field-label-color": "var(--nldesign-color-text)",
             "--nldesign-component-form-field-label-font-weight": "700",
-            "--nldesign-component-form-select-border-color": "var(--nldesign-color-border)",
+            "--nldesign-component-form-select-border-color": "var(--nldesign-color-border-dark)",
             "--nldesign-component-form-select-border-radius": "var(--nldesign-border-radius)",
             "--nldesign-component-form-select-focus-border-color": "var(--nldesign-color-info)",
             "--nldesign-component-form-fieldset-border-color": "var(\n\t\t--nldesign-color-border\n\t)",

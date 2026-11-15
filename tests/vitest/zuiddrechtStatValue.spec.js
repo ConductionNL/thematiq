@@ -14,13 +14,19 @@ import path from 'node:path'
 import postcss from 'postcss'
 import { describe, expect, it } from 'vitest'
 
-const css = fs.readFileSync(path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'), 'utf8')
+const css = fs.readFileSync(
+	path.resolve(__dirname, '../../css/token-overrides/zuiddrecht.css'),
+	'utf8',
+)
 
 describe('zuiddrecht stat tile number', () => {
-	it('leaves the number\'s size to the library', () => {
+	it("leaves the number's size to the library", () => {
 		const sizes = []
 		postcss.parse(css).walkRules((rule) => {
-			if (rule.selector.includes('.cn-stat-widget__value') || rule.selector.includes('.cn-kpi-card__value')) {
+			if (
+				rule.selector.includes('.cn-stat-widget__value')
+				|| rule.selector.includes('.cn-kpi-card__value')
+			) {
 				rule.walkDecls(/^font(-size)?$/, (d) => sizes.push(d.value))
 			}
 		})

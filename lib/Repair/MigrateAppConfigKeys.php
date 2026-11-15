@@ -199,52 +199,67 @@ class MigrateAppConfigKeys implements IRepairStep {
 			return;
 		}
 
-		$migrated = 0;
-		$alreadyPresent = 0;
-		$emptySource = 0;
-		$skippedReserved = 0;
-		$failed = 0;
-
+		$tally = ['migrated' => 0, 'present' => 0, 'empty' => 0, 'reserved' => 0, 'failed' => 0];
 		foreach ($keys as $key) {
-			if (in_array($key, self::RESERVED_KEYS, strict: true) === true) {
-				$skippedReserved++;
-				continue;
-			}
-
-			// The READS live inside the try alongside the write, deliberately.
-			// A throwing getValueString() outside it would escape run() and
-			// abort the install — see the class docblock.
-			try {
-				$old = $this->appConfig->getValueString(self::OLD_APP_ID, $key, '');
-				if ($old === '') {
-					$emptySource++;
-					continue;
-				}
-
-				$existing = $this->appConfig->getValueString(Application::APP_ID, $key, '');
-				if ($existing !== '') {
-					$alreadyPresent++;
-					continue;
-				}
-
-				$this->appConfig->setValueString(Application::APP_ID, $key, $old);
-				$migrated++;
-			} catch (Throwable $e) {
-				$failed++;
-				$this->logger->warning(
-					'Thematiq: could not migrate one app config key; leaving it under the old namespace',
-					['key' => $key, 'exception' => $e->getMessage()]
-				);
-			}//end try
-		}//end foreach
+			$tally[$this->migrateKey(key: $key)]++;
+		}
 
 		$output->info(
-			'MigrateAppConfigKeys: ' . $migrated . ' key(s) migrated, ' . $alreadyPresent
-			. ' already present, ' . $emptySource . ' had no value to migrate, '
-			. $skippedReserved . ' skipped as Nextcloud-reserved, ' . $failed . ' failed.'
+			'MigrateAppConfigKeys: ' . $tally['migrated'] . ' key(s) migrated, ' . $tally['present']
+			. ' already present, ' . $tally['empty'] . ' had no value to migrate, '
+			. $tally['reserved'] . ' skipped as Nextcloud-reserved, ' . $tally['failed'] . ' failed.'
 		);
-
 	}//end run()
+
+	/**
+	 * Migrate one key, and say what became of it.
+	 *
+	 * @param string $key The key under the old namespace.
+	 *
+	 * @return string One of `reserved`, `empty`, `present`, `migrated` or `failed`.
+	 */
+	private function migrateKey(string $key): string {
+		if (in_array($key, self::RESERVED_KEYS, strict: true) === true) {
+			return 'reserved';
+		}
+
+		// The READS live inside the try alongside the write, deliberately.
+		// A throwing getValueString() outside it would escape run() and
+		// abort the install — see the class docblock.
+		try {
+			return $this->copyValue(key: $key);
+		} catch (Throwable $e) {
+			$this->logger->warning(
+				'Thematiq: could not migrate one app config key; leaving it under the old namespace',
+				['key' => $key, 'exception' => $e->getMessage()]
+			);
+
+			return 'failed';
+		}
+	}//end migrateKey()
+
+	/**
+	 * Copy one key's value to the new namespace, unless it has none or the new namespace already has one.
+	 *
+	 * @param string $key The key.
+	 *
+	 * @return string One of `empty`, `present` or `migrated`.
+	 */
+	private function copyValue(string $key): string {
+		$old = $this->appConfig->getValueString(self::OLD_APP_ID, $key, '');
+		if ($old === '') {
+			return 'empty';
+		}
+
+		$existing = $this->appConfig->getValueString(Application::APP_ID, $key, '');
+		if ($existing !== '') {
+			return 'present';
+		}
+
+		$this->appConfig->setValueString(Application::APP_ID, $key, $old);
+
+		return 'migrated';
+	}//end copyValue()
 
 	/**
 	 * Every key currently stored under the old app-config namespace.

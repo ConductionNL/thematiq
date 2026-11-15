@@ -121,7 +121,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | `--color-background-plain` | mapped |  | `#00679e` | `#00679e` | Admin/user configured background; should respect user settings |
 | `--color-background-plain-text` | settable | `--nldesign-nc-color-background-plain-text` | `#ffffff` | `#ffffff` | Text on plain background; auto-calculated by Nextcloud |
 | `--color-main-background` | settable | `--nldesign-nc-color-main-background` | `#ffffff` | `#171717` | Core page background; overriding breaks dark mode and accessibility themes |
-| `--color-main-background-blur` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Blur variant; depends on --color-main-background-rgb |
+| `--color-main-background-blur` | mapped | `--color-main-background` | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | The solid main background outside the login page: nldesign has no frosted app shell |
 | `--color-main-background-rgb` | mapped |  | `255,255,255` | `23,23,23` | RGB variant for rgba() usage; depends on --color-main-background |
 | `--color-main-background-translucent` | mapped |  | `rgba(var(--color-main-backgroun…` | `rgba(var(--color-main-backgroun…` | Translucent variant; depends on --color-main-background-rgb |
 
@@ -225,7 +225,7 @@ Declared by Nextcloud's theming app. Stock values are Nextcloud's own, for the d
 | Variable | Status | Token | Default | Dark | Note |
 |---|---|---|---|---|---|
 | `--color-main-text` | mapped | `--nldesign-color-text` | `#222222` | `#EBEBEB` | Main body text color |
-| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text |
+| `--color-text-error` | mapped | `--nldesign-color-error` | `#bf0000` | `#ff6f6f` | Error message text; a set's --nldesign-color-error-text ink when it has one |
 | `--color-text-maxcontrast` | mapped | `--nldesign-color-text-muted` | `#6b6b6b` | `#999999` | Muted/secondary text |
 | `--color-text-maxcontrast-background-blur` | mapped |  | `#595959` | `#a8a8a8` | Blur-adjusted maxcontrast; Nextcloud calculates per background |
 | `--color-text-maxcontrast-default` | settable | `--nldesign-nc-color-text-maxcontrast-default` | `#6b6b6b` | `#999999` | Default maxcontrast; auto-calculated by Nextcloud per theme |

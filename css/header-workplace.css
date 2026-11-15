@@ -660,5 +660,8 @@ body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid
 	> a.app-item.thematiq-app-menu__external:focus-visible {
-	background: var(--nldesign-color-background-hover, var(--color-background-hover));
+	background: var(
+		--nldesign-color-background-hover,
+		var(--color-background-hover)
+	);
 }

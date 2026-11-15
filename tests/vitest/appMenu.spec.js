@@ -160,21 +160,38 @@ describe('the apps menu of the board', () => {
 		).toBe(false)
 	})
 
-	it('adds OpenProject\'s modules as a section of links, once, and drops what may not be linked', async () => {
+	it("adds OpenProject's modules as a section of links, once, and drops what may not be linked", async () => {
 		openMenu()
 		installState({
 			openproject: {
 				title: 'OpenProject',
 				url: 'https://op.example.org',
 				modules: [
-					{ key: 'work_packages', label: 'Werkpakketten', url: 'https://op.example.org/work_packages', icon: 'M3 6h18M3 12h18M3 18h18' },
-					{ key: 'boards', label: 'Borden', url: 'https://op.example.org/boards', icon: '<script>' },
-					{ key: 'bad', label: 'Fout', url: 'javascript:alert(1)', icon: 'M0 0' },
+					{
+						key: 'work_packages',
+						label: 'Werkpakketten',
+						url: 'https://op.example.org/work_packages',
+						icon: 'M3 6h18M3 12h18M3 18h18',
+					},
+					{
+						key: 'boards',
+						label: 'Borden',
+						url: 'https://op.example.org/boards',
+						icon: '<script>',
+					},
+					{
+						key: 'bad',
+						label: 'Fout',
+						url: 'javascript:alert(1)',
+						icon: 'M0 0',
+					},
 				],
 			},
 		})
 		await loadScript()
-		document.querySelector('.app-menu__grid').appendChild(document.createElement('span'))
+		document
+			.querySelector('.app-menu__grid')
+			.appendChild(document.createElement('span'))
 		await new Promise((resolve) => setTimeout(resolve, 0))
 
 		const grid = document.querySelector('.app-menu__grid')
@@ -184,14 +201,25 @@ describe('the apps menu of the board', () => {
 			'https://op.example.org/boards',
 		])
 		expect(links[0].textContent).toBe('Werkpakketten')
-		expect(links[0].querySelector('path').getAttribute('d')).toBe('M3 6h18M3 12h18M3 18h18')
-		expect(links[1].querySelector('path'), 'an icon that is not path data is left out').toBeNull()
+		expect(links[0].querySelector('path').getAttribute('d')).toBe(
+			'M3 6h18M3 12h18M3 18h18',
+		)
+		expect(
+			links[1].querySelector('path'),
+			'an icon that is not path data is left out',
+		).toBeNull()
 		const heading = grid.querySelector('[data-thematiq-row="openproject"]')
 		expect(heading.querySelector('h2').textContent).toBe('OpenProject')
-		expect(Number(heading.style.order)).toBeLessThan(Number(links[0].style.order))
+		expect(Number(heading.style.order)).toBeLessThan(
+			Number(links[0].style.order),
+		)
 		// After Nextcloud's own apps, and they keep their own order: the links are not counted as tiles.
-		const files = Array.from(grid.querySelectorAll('a.app-item:not([data-thematiq-external])')).map((a) => Number(a.style.order))
-		expect(Math.max(...files.filter((o) => o < 90000))).toBeLessThan(Number(heading.style.order))
+		const files = Array.from(
+			grid.querySelectorAll('a.app-item:not([data-thematiq-external])'),
+		).map((a) => Number(a.style.order))
+		expect(Math.max(...files.filter((o) => o < 90000))).toBeLessThan(
+			Number(heading.style.order),
+		)
 		expect(links[0].style.order).toBe('90001')
 	})
 })

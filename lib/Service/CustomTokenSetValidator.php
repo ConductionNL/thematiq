@@ -78,70 +78,40 @@ class CustomTokenSetValidator {
 	public function validateDeclarations(array $declarations, string $slug): ?array {
 		$this->lastError = null;
 
-		$accepted = [];
-		$skipped = [];
+		// THE VALUE GATE RUNS BEFORE THE NAME SPLIT, ON PURPOSE.
+		//
+		// It used to sit after the `continue` below, and that was correct
+		// for exactly as long as `store()` wrote `serialize($accepted)`:
+		// the accepted set WAS the file, so a skipped declaration could not
+		// reach disk and its value did not have to be judged.
+		//
+		// That stopped being true when the converter landed. `store()` now
+		// writes the converter's emitted CSS verbatim, and the converter
+		// keeps a name it does not recognise ("treated as a component and
+		// kept verbatim"): it parses `--[\w-]+` where this validator
+		// accepts only `[a-z0-9-]+`. So `--utrecht-colorPrimary` is
+		// emitted, skipped here, and written — and with the check below the
+		// split, its value was never looked at. `expression(...)` and
+		// `javascript:` both reached disk that way; the converter's own
+		// `stripExternalUrls()` catches neither, since it matches only
+		// `url(http…)`.
+		//
+		// Judging every declaration keeps the promise the split has always
+		// been read as making, and is the reason this loop can be fed the
+		// converter's output rather than the admin's upload.
+		$forbidden = $this->firstForbiddenName(declarations: $declarations);
+		if ($forbidden !== null) {
+			$this->lastError = [
+				'status' => 422,
+				'message' => 'Property ' . $forbidden . ' contains a forbidden value (external resource, @import, expression, or markup).',
+				'property' => $forbidden,
+			];
 
-		// The app's own vocabulary, the set's brand prefix, and the component
-		// layer. The component prefixes are accepted because converter output
-		// NEEDS them: `css/systems/nldesign/utrecht-bridge.css` maps
-		// `--utrecht-*` / `--ams-*` / `--denhaag-*` onto `--nldesign-component-*`,
-		// and Conduction's apps read them directly, so a converted set that
-		// dropped them would lose its component layer at the last gate.
-		// Values are still checked by isForbiddenValue() ABOVE the split —
-		// widening WHICH names may be declared does not widen what may be in
-		// them. See the loop for why the check cannot sit after the split.
-		$componentPrefixes = [];
-		foreach (TokenSetConverterService::COMPONENT_PREFIXES as $prefix) {
-			$componentPrefixes[] = preg_quote(trim($prefix, '-'), '/');
+			return null;
 		}
 
-		$namePattern = '/^--(nldesign|thematiq-shell|' . preg_quote($slug, '/') . '|'
-			. implode('|', $componentPrefixes) . ')-[a-z0-9-]+$/';
-
-		foreach ($declarations as $name => $value) {
-			// THE VALUE GATE RUNS BEFORE THE NAME SPLIT, ON PURPOSE.
-			//
-			// It used to sit after the `continue` below, and that was correct
-			// for exactly as long as `store()` wrote `serialize($accepted)`:
-			// the accepted set WAS the file, so a skipped declaration could not
-			// reach disk and its value did not have to be judged.
-			//
-			// That stopped being true when the converter landed. `store()` now
-			// writes the converter's emitted CSS verbatim, and the converter
-			// keeps a name it does not recognise ("treated as a component and
-			// kept verbatim"): it parses `--[\w-]+` where this validator
-			// accepts only `[a-z0-9-]+`. So `--utrecht-colorPrimary` is
-			// emitted, skipped here, and written — and with the check below the
-			// split, its value was never looked at. `expression(...)` and
-			// `javascript:` both reached disk that way; the converter's own
-			// `stripExternalUrls()` catches neither, since it matches only
-			// `url(http…)`.
-			//
-			// Judging every declaration keeps the promise the split has always
-			// been read as making, and is the reason this loop can be fed the
-			// converter's output rather than the admin's upload.
-			if ($this->isForbiddenValue(value: $value) === true) {
-				$this->lastError = [
-					'status' => 422,
-					'message' => 'Property ' . $name . ' contains a forbidden value (external resource, @import, expression, or markup).',
-					'property' => $name,
-				];
-
-				return null;
-			}
-
-			if (preg_match($namePattern, $name) !== 1) {
-				// Not part of the supported vocabulary — counted, not written
-				// under this name, but its value has been judged above because
-				// the emitted file may still carry it.
-				$skipped[] = $name;
-				continue;
-			}
-
-			$accepted[$name] = trim($value);
-		}//end foreach
-
-		if (empty($accepted) === true) {
+		$split = $this->splitByName(declarations: $declarations, namePattern: $this->namePattern(slug: $slug));
+		if (empty($split['accepted']) === true) {
 			$this->lastError = [
 				'status' => 422,
 				'message' => 'No --nldesign-* declarations found in the uploaded token set.',
@@ -150,11 +120,82 @@ class CustomTokenSetValidator {
 			return null;
 		}
 
+		return $split;
+	}//end validateDeclarations()
+
+	/**
+	 * The first declaration whose value holds a forbidden construct, in order.
+	 *
+	 * @param array<string, string> $declarations Parsed token name => value map.
+	 *
+	 * @return string|null Its name, or null when every value is allowed.
+	 */
+	private function firstForbiddenName(array $declarations): ?string {
+		foreach ($declarations as $name => $value) {
+			if ($this->isForbiddenValue(value: $value) === true) {
+				return $name;
+			}
+		}
+
+		return null;
+	}//end firstForbiddenName()
+
+	/**
+	 * The names a set may declare.
+	 *
+	 * The app's own vocabulary, the set's brand prefix, and the component
+	 * layer. The component prefixes are accepted because converter output
+	 * NEEDS them: `css/systems/nldesign/utrecht-bridge.css` maps
+	 * `--utrecht-*` / `--ams-*` / `--denhaag-*` onto `--nldesign-component-*`,
+	 * and Conduction's apps read them directly, so a converted set that
+	 * dropped them would lose its component layer at the last gate.
+	 * Values are still checked by isForbiddenValue() ABOVE the split —
+	 * widening WHICH names may be declared does not widen what may be in
+	 * them. See the loop for why the check cannot sit after the split.
+	 *
+	 * @param string $slug The set slug for `--{slug}-*` extras.
+	 *
+	 * @return string The pattern.
+	 */
+	private function namePattern(string $slug): string {
+		$componentPrefixes = [];
+		foreach (TokenSetConverterService::COMPONENT_PREFIXES as $prefix) {
+			$componentPrefixes[] = preg_quote(trim($prefix, '-'), '/');
+		}
+
+		return '/^--(nldesign|thematiq-shell|' . preg_quote($slug, '/') . '|'
+			. implode('|', $componentPrefixes) . ')-[a-z0-9-]+$/';
+	}//end namePattern()
+
+	/**
+	 * The declarations split into the accepted ones and the names of the skipped ones.
+	 *
+	 * A name outside the supported vocabulary is counted, not written under this
+	 * name; its value has been judged already, because the emitted file may
+	 * still carry it.
+	 *
+	 * @param array<string, string> $declarations Parsed token name => value map; every value allowed.
+	 * @param string $namePattern The names a set may declare.
+	 *
+	 * @return array{accepted: array<string, string>, skipped: string[]} The split.
+	 */
+	private function splitByName(array $declarations, string $namePattern): array {
+		$accepted = [];
+		$skipped = [];
+		foreach ($declarations as $name => $value) {
+			if (preg_match($namePattern, $name) !== 1) {
+				$skipped[] = $name;
+				continue;
+			}
+
+			$accepted[$name] = trim($value);
+		}
+
 		return [
 			'accepted' => $accepted,
 			'skipped' => $skipped,
 		];
-	}//end validateDeclarations()
+	}//end splitByName()
 
 	/**
 	 * Determine whether a CSS string contains a selector other than `:root`.

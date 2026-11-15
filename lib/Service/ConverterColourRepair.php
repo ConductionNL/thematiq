@@ -41,7 +41,7 @@ class ConverterColourRepair {
 	/**
 	 * How many times the pair list is walked before giving up on a fixed point.
 	 */
-	private const MAX_PASSES = 4;
+	private const int MAX_PASSES = 4;
 
 	/**
 	 * The colour parser.
@@ -58,6 +58,13 @@ class ConverterColourRepair {
 	private readonly ColourContrastAdjuster $adjuster;
 
 	/**
+	 * Measures and repairs one pair.
+	 *
+	 * @var ConverterPairRepair
+	 */
+	private readonly ConverterPairRepair $pairs;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContrastService $contrast WCAG luminance and ratio.
@@ -67,6 +74,7 @@ class ConverterColourRepair {
 	) {
 		$this->parser = new ColourLiteralParser();
 		$this->adjuster = new ColourContrastAdjuster(contrast: $this->contrast, parser: $this->parser);
+		$this->pairs = new ConverterPairRepair(contrast: $this->contrast, adjuster: $this->adjuster);
 	}//end __construct()
 
 	/**
@@ -89,14 +97,7 @@ class ConverterColourRepair {
 			}
 
 			$out[$name] = $normalised;
-			$report[] = [
-				'source' => $name,
-				'target' => '',
-				'action' => 'kept',
-				'reason' => 'colour-normalised',
-				'value' => $normalised,
-				'original' => $value,
-			];
+			$report[] = (new AdaptedToken(name: $name, value: $normalised, original: $value))->colourNormalised();
 		}
 
 		return $out;
@@ -120,34 +121,15 @@ class ConverterColourRepair {
 			return $semantic;
 		}
 
-		$context = [
-			'page' => ($this->plainRgb(value: (string)($spec['page'] ?? '#ffffff')) ?? [255, 255, 255]),
-			'defaults' => (array)($spec['defaults'] ?? []),
-		];
-		$originals = [];
-		$oldPrimary = ($semantic['--nldesign-color-primary'] ?? null);
-		$semantic = $this->replaceInvalid(semantic: $semantic, spec: $spec, report: $report);
+		$run = new ContrastRepairRun(spec: $spec, page: ($this->plainRgb(value: (string)($spec['page'] ?? '#ffffff')) ?? [255, 255, 255]));
+		$run->semantic = $semantic;
+		$run->manifest = $manifest;
+		$run->report = $report;
+		$this->repairRun(run: $run);
+		$manifest = $run->manifest;
+		$report = $run->report;
 
-		for ($pass = 0; $pass < self::MAX_PASSES; $pass++) {
-			if ($this->repairPass(semantic: $semantic, pairs: $spec['pairs'], context: $context, originals: $originals) === false) {
-				break;
-			}
-		}
-
-		foreach ($originals as $name => $original) {
-			$report[] = [
-				'source' => $name,
-				'target' => $name,
-				'action' => 'adapted',
-				'reason' => 'contrast-repaired',
-				'value' => $semantic[$name],
-				'original' => $original,
-			];
-		}
-
-		$this->followPrimary(semantic: $semantic, manifest: $manifest, oldPrimary: $oldPrimary);
-
-		return $semantic;
+		return $run->semantic;
 	}//end repairContrast()
 
 	/**
@@ -168,180 +150,165 @@ class ConverterColourRepair {
 			return $component;
 		}
 
-		return (new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster))->repair(
-			component: $component,
-			semantic: $semantic,
-			spec: $spec,
-			report: $report
-		);
+		$run = new ComponentRepairRun(semantic: $semantic, spec: $spec);
+		$run->component = $component;
+		$run->report = $report;
+		(new ConverterComponentRepair(contrast: $this->contrast, adjuster: $this->adjuster, pairs: $this->pairs))->repair(run: $run);
+		$report = $run->report;
+
+		return $run->component;
 	}//end repairComponents()
+
+	/**
+	 * The repair in order: invalid colours first, then the pair list until nothing changes, then the report.
+	 *
+	 * @param ContrastRepairRun $run The run.
+	 *
+	 * @return void
+	 */
+	private function repairRun(ContrastRepairRun $run): void {
+		$oldPrimary = ($run->semantic['--nldesign-color-primary'] ?? null);
+		$this->replaceInvalid(run: $run);
+
+		for ($pass = 0; $pass < self::MAX_PASSES; $pass++) {
+			if ($this->repairPass(run: $run) === false) {
+				break;
+			}
+		}
+
+		foreach ($run->originals as $name => $original) {
+			$run->report[] = (new AdaptedToken(name: $name, value: $run->semantic[$name], original: $original))->contrastRepaired();
+		}
+
+		$this->followPrimary(run: $run, oldPrimary: $oldPrimary);
+	}//end repairRun()
 
 	/**
 	 * Walk the pair list once.
 	 *
-	 * @param array<string, string> $semantic The semantic layer (updated).
-	 * @param array<int, mixed> $pairs The table's pairs.
-	 * @param array{page: array{0: int, 1: int, 2: int}, defaults: array<string, mixed>} $context Page colour and defaults.
-	 * @param array<string, string> $originals The first value of every repaired token (updated).
+	 * @param ContrastRepairRun $run The run; its semantic layer and first values are updated.
 	 *
 	 * @return bool Whether anything changed.
 	 */
-	private function repairPass(array &$semantic, array $pairs, array $context, array &$originals): bool {
+	private function repairPass(ContrastRepairRun $run): bool {
 		$changed = false;
-		foreach ($pairs as $pair) {
-			$result = $this->repairPair(pair: (array)$pair, semantic: $semantic, context: $context);
-			if ($result === null) {
-				continue;
+		foreach ($run->spec['pairs'] as $pair) {
+			if ($this->repairPair(run: $run, pair: (array)$pair) === true) {
+				$changed = true;
 			}
-
-			[$name, $repaired] = $result;
-
-			if (isset($originals[$name]) === false) {
-				$originals[$name] = ($semantic[$name] ?? $semantic[(string)(((array)$pair)['from'] ?? '')] ?? '');
-			}
-
-			$semantic[$name] = $this->parser->toHex(rgb: $repaired);
-			if (isset($semantic[$name . '-rgb']) === true) {
-				$semantic[$name . '-rgb'] = $repaired[0] . ', ' . $repaired[1] . ', ' . $repaired[2];
-			}
-
-			$changed = true;
 		}
 
 		return $changed;
 	}//end repairPass()
 
 	/**
-	 * Repair one pair: the token it changes and that token's new colour, or null when it passes.
+	 * Repair one pair of the list.
 	 *
-	 * @param array<string, mixed> $pair The pair spec.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array{page: array{0: int, 1: int, 2: int}, defaults: array<string, mixed>} $context Page colour and defaults.
+	 * @param ContrastRepairRun $run The run; its semantic layer and first values are updated.
+	 * @param array<string, mixed> $pair The table's pair.
 	 *
-	 * @return array{0: string, 1: array{0: int, 1: int, 2: int}}|null The token and its new colour.
+	 * @return bool Whether the pair changed a token.
 	 */
-	private function repairPair(array $pair, array $semantic, array $context): ?array {
-		$foregroundName = (string)($pair['foreground'] ?? '');
-		$backgroundName = (string)($pair['background'] ?? '');
-		$value = ($semantic[$foregroundName] ?? null);
-		// A step the set does not declare is measured as the token it falls
-		// back to (`from`), and written only when it needs a repair.
-		if ($value === null && isset($pair['from']) === true) {
-			$value = ($semantic[(string)$pair['from']] ?? null);
+	private function repairPair(ContrastRepairRun $run, array $pair): bool {
+		$result = $this->pairs->repair(pair: $pair, semantic: $run->semantic, context: $run->context());
+		if ($result === null) {
+			return false;
 		}
 
-		$backgroundValue = ($semantic[$backgroundName] ?? $this->fallbackValue(name: $backgroundName, semantic: $semantic, defaults: $context['defaults']));
-		if ($value === null || $backgroundValue === null) {
-			return null;
+		[$name, $repaired] = $result;
+		if (isset($run->originals[$name]) === false) {
+			$run->originals[$name] = ($run->semantic[$name] ?? $run->semantic[(string)($pair['from'] ?? '')] ?? '');
 		}
 
-		$foreground = $this->adjuster->opaque(value: $value, page: $context['page']);
-		$background = $this->adjuster->opaque(value: $backgroundValue, page: $context['page']);
-		$min = (float)($pair['min'] ?? 4.5);
-		if ($foreground === null || $background === null || $this->contrast->ratio(first: $foreground, second: $background) >= $min) {
-			return null;
+		$run->semantic[$name] = $this->parser->toHex(rgb: $repaired);
+		if (isset($run->semantic[$name . '-rgb']) === true) {
+			$run->semantic[$name . '-rgb'] = $repaired[0] . ', ' . $repaired[1] . ', ' . $repaired[2];
 		}
 
-		// The fill gives way, not the text: only a background the set declares.
-		if (($pair['repair'] ?? '') === 'background') {
-			if (isset($semantic[$backgroundName]) === false) {
-				return null;
-			}
-
-			return [$backgroundName, $this->adjuster->repairLightness(foreground: $background, background: $foreground, min: $min)];
-		}
-
-		if (($pair['adjust'] ?? '') === 'flip') {
-			return [$foregroundName, $this->adjuster->blackOrWhite(background: $background, preferWhite: true)];
-		}
-
-		return [$foregroundName, $this->adjuster->repairLightness(foreground: $foreground, background: $background, min: $min)];
+		return true;
 	}//end repairPair()
 
 	/**
-	 * The value a token falls back to: a literal or a chain of tokens ending in a literal.
+	 * Give each listed colour token whose value is not a visible colour its default.
 	 *
-	 * @param string $name The token.
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, mixed> $defaults The table's defaults.
+	 * @param ContrastRepairRun $run The run; its semantic layer and report are updated.
 	 *
-	 * @return string|null The value, or null when there is none.
+	 * @return void
 	 */
-	private function fallbackValue(string $name, array $semantic, array $defaults): ?string {
-		if (isset($defaults[$name]) === false) {
-			return null;
+	private function replaceInvalid(ContrastRepairRun $run): void {
+		foreach ((array)($run->spec['replaceInvalid'] ?? []) as $name) {
+			$this->replaceIfInvalid(run: $run, name: (string)$name);
 		}
-
-		foreach ((array)$defaults[$name] as $step) {
-			$step = (string)$step;
-			if (str_starts_with($step, '--') === false) {
-				return $step;
-			}
-
-			if (isset($semantic[$step]) === true) {
-				return $semantic[$step];
-			}
-		}
-
-		return null;
-	}//end fallbackValue()
+	}//end replaceInvalid()
 
 	/**
-	 * Give a listed colour token whose value is not a visible colour its default.
+	 * Give one colour token its default when its value is not a visible colour.
 	 *
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, mixed> $spec The table's contrastRepair section.
-	 * @param array<int, ReportEntry> $report The conversion report (appended to).
+	 * @param ContrastRepairRun $run The run; its semantic layer and report are updated.
+	 * @param string $name The token.
 	 *
-	 * @return array<string, string> The semantic layer.
+	 * @return void
 	 */
-	private function replaceInvalid(array $semantic, array $spec, array &$report): array {
-		foreach ((array)($spec['replaceInvalid'] ?? []) as $name) {
-			$name = (string)$name;
-			$value = ($semantic[$name] ?? null);
-			$parsed = null;
-			if ($value !== null) {
-				$parsed = $this->parser->parse(value: $value);
-			}
-			$replacement = $this->fallbackValue(name: $name, semantic: [], defaults: (array)($spec['defaults'] ?? []));
-			if ($value === null || ($parsed !== null && $parsed[3] > 0) || $replacement === null) {
-				continue;
-			}
-
-			$semantic[$name] = $replacement;
-			$report[] = [
-				'source' => $name,
-				'target' => $name,
-				'action' => 'adapted',
-				'reason' => 'not-a-colour',
-				'value' => $replacement,
-				'original' => $value,
-			];
+	private function replaceIfInvalid(ContrastRepairRun $run, string $name): void {
+		$value = ($run->semantic[$name] ?? null);
+		$invisible = $this->isInvisible(value: $value);
+		$replacement = $this->pairs->fallbackValue(name: $name, semantic: [], defaults: $run->defaults());
+		if ($value === null || $invisible === false || $replacement === null) {
+			return;
 		}
 
-		return $semantic;
-	}//end replaceInvalid()
+		$run->semantic[$name] = $replacement;
+		$run->report[] = (new AdaptedToken(name: $name, value: $replacement, original: $value))->notAColour();
+	}//end replaceIfInvalid()
+
+	/**
+	 * Whether a declared value is no visible colour: not a colour at all, or a fully transparent one.
+	 *
+	 * @param string|null $value The value, or null when the token is not declared.
+	 *
+	 * @return bool True when it shows nothing.
+	 */
+	private function isInvisible(?string $value): bool {
+		if ($value === null) {
+			return false;
+		}
+
+		$parsed = $this->parser->parse(value: $value);
+
+		return ($parsed !== null && $parsed[3] > 0) === false;
+	}//end isInvisible()
 
 	/**
 	 * Keep the manifest's primary the same colour as the set's after a repair.
 	 *
-	 * @param array<string, string> $semantic The semantic layer.
-	 * @param array<string, string> $manifest Manifest values (updated).
+	 * @param ContrastRepairRun $run The run; its manifest values are updated.
 	 * @param string|null $oldPrimary The primary before the repair.
 	 *
 	 * @return void
 	 */
-	private function followPrimary(array $semantic, array &$manifest, ?string $oldPrimary): void {
-		$primary = ($semantic['--nldesign-color-primary'] ?? null);
-		$declared = ($manifest['theming.primary_color'] ?? null);
+	private function followPrimary(ContrastRepairRun $run, ?string $oldPrimary): void {
+		$primary = ($run->semantic['--nldesign-color-primary'] ?? null);
+		$declared = ($run->manifest['theming.primary_color'] ?? null);
 		if ($primary === null || $primary === $oldPrimary) {
 			return;
 		}
 
-		if ($declared === null || strtolower($declared) === strtolower((string)$oldPrimary)) {
-			$manifest['theming.primary_color'] = $primary;
+		if ($this->stillTheOldPrimary(declared: $declared, oldPrimary: $oldPrimary) === true) {
+			$run->manifest['theming.primary_color'] = $primary;
 		}
 	}//end followPrimary()
+
+	/**
+	 * Whether the manifest's primary is unset or still the set's primary from before the repair.
+	 *
+	 * @param string|null $declared The manifest's primary.
+	 * @param string|null $oldPrimary The set's primary before the repair.
+	 *
+	 * @return bool True when the manifest should follow the repaired primary.
+	 */
+	private function stillTheOldPrimary(?string $declared, ?string $oldPrimary): bool {
+		return $declared === null || strtolower($declared) === strtolower((string)$oldPrimary);
+	}//end stillTheOldPrimary()
 
 	/**
 	 * Parse #rgb, #rrggbb or comma rgb()/rgba() the way the JavaScript `parseColor()` does.

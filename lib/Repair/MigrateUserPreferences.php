@@ -190,28 +190,49 @@ class MigrateUserPreferences implements IRepairStep {
 		$this->failed = 0;
 
 		try {
-			// The callback returns null rather than void: IUserManager treats a
-			// `false` return as "stop iterating", so the contract is
-			// Closure(IUser): (bool|null) and null means "keep going".
-			$this->userManager->callForSeenUsers(
-				function (IUser $user): ?bool {
-					$this->migrateUser(userId: $user->getUID());
-					return null;
-				}
-			);
+			$this->migrateSeenUsers();
 		} catch (Throwable $e) {
-			$this->logger->warning(
-				'Thematiq: could not enumerate users; per-user preferences were not migrated',
-				['exception' => $e->getMessage()]
-			);
-			$output->warning(
-				'MigrateUserPreferences: user enumeration failed; preferences left under the nldesign app id.'
-			);
+			$this->reportEnumerationFailure(error: $e, output: $output);
 			return;
-		}//end try
+		}
 
 		$this->reportCounts(output: $output);
 	}//end run()
+
+	/**
+	 * Migrate the preferences of every user the instance has seen.
+	 *
+	 * @return void
+	 */
+	private function migrateSeenUsers(): void {
+		// The callback returns null rather than void: IUserManager treats a
+		// `false` return as "stop iterating", so the contract is
+		// Closure(IUser): (bool|null) and null means "keep going".
+		$this->userManager->callForSeenUsers(
+			function (IUser $user): ?bool {
+				$this->migrateUser(userId: $user->getUID());
+				return null;
+			}
+		);
+	}//end migrateSeenUsers()
+
+	/**
+	 * Log and report that the users could not be walked.
+	 *
+	 * @param Throwable $error What went wrong.
+	 * @param IOutput $output The repair output.
+	 *
+	 * @return void
+	 */
+	private function reportEnumerationFailure(Throwable $error, IOutput $output): void {
+		$this->logger->warning(
+			'Thematiq: could not enumerate users; per-user preferences were not migrated',
+			['exception' => $error->getMessage()]
+		);
+		$output->warning(
+			'MigrateUserPreferences: user enumeration failed; preferences left under the nldesign app id.'
+		);
+	}//end reportEnumerationFailure()
 
 	/**
 	 * Report what the user walk did.
@@ -247,31 +268,55 @@ class MigrateUserPreferences implements IRepairStep {
 	 */
 	private function migrateUser(string $userId): void {
 		foreach ($this->oldKeysFor(userId: $userId) as $key) {
-			// Read and write both inside the try — see the class docblock.
-			try {
-				$old = $this->config->getUserValue($userId, self::OLD_APP_ID, $key, '');
-				if ($old === '') {
-					continue;
-				}
-
-				$existing = $this->config->getUserValue($userId, Application::APP_ID, $key, '');
-				if ($existing !== '') {
-					$this->alreadyPresent++;
-					continue;
-				}
-
-				$this->config->setUserValue($userId, Application::APP_ID, $key, $old);
-				$this->migrated++;
-			} catch (Throwable $e) {
-				$this->failed++;
-				$this->logger->warning(
-					'Thematiq: could not migrate one user preference; leaving it under the old app id',
-					['key' => $key, 'exception' => $e->getMessage()]
-				);
-			}//end try
-		}//end foreach
-
+			$this->migrateKey(userId: $userId, key: $key);
+		}
 	}//end migrateUser()
+
+	/**
+	 * Migrate one preference; a failure is counted and logged, and leaves it under the old app id.
+	 *
+	 * Read and write both inside the try — see the class docblock.
+	 *
+	 * @param string $userId The user id.
+	 * @param string $key The preference key.
+	 *
+	 * @return void
+	 */
+	private function migrateKey(string $userId, string $key): void {
+		try {
+			$this->copyKey(userId: $userId, key: $key);
+		} catch (Throwable $e) {
+			$this->failed++;
+			$this->logger->warning(
+				'Thematiq: could not migrate one user preference; leaving it under the old app id',
+				['key' => $key, 'exception' => $e->getMessage()]
+			);
+		}
+	}//end migrateKey()
+
+	/**
+	 * Copy one stored preference to the new app id, unless it is empty or already set there.
+	 *
+	 * @param string $userId The user id.
+	 * @param string $key The preference key.
+	 *
+	 * @return void
+	 */
+	private function copyKey(string $userId, string $key): void {
+		$old = $this->config->getUserValue($userId, self::OLD_APP_ID, $key, '');
+		if ($old === '') {
+			return;
+		}
+
+		$existing = $this->config->getUserValue($userId, Application::APP_ID, $key, '');
+		if ($existing !== '') {
+			$this->alreadyPresent++;
+			return;
+		}
+
+		$this->config->setUserValue($userId, Application::APP_ID, $key, $old);
+		$this->migrated++;
+	}//end copyKey()
 
 	/**
 	 * Every preference key this user has stored under the old app id.

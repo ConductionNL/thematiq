@@ -73,7 +73,7 @@ class DelegatedGroupThemingService {
 	 */
 	public function hasDelegatedGroups(string $uid): bool {
 		foreach ($this->groupTheming->getMapping() as $entry) {
-			if (($entry['delegated'] ?? false) === true && $this->isSubAdmin(uid: $uid, group: $entry['group']) === true) {
+			if ($this->isDelegatedTo(entry: $entry, uid: $uid) === true) {
 				return true;
 			}
 		}
@@ -94,7 +94,7 @@ class DelegatedGroupThemingService {
 		$catalogue = [];
 		$result = [];
 		foreach ($this->groupTheming->getMapping() as $entry) {
-			if (($entry['delegated'] ?? false) !== true || $this->isSubAdmin(uid: $uid, group: $entry['group']) === false) {
+			if ($this->isDelegatedTo(entry: $entry, uid: $uid) === false) {
 				continue;
 			}
 
@@ -102,31 +102,55 @@ class DelegatedGroupThemingService {
 				$catalogue = $this->catalogueById();
 			}
 
-			$allowed = [];
-			foreach ($entry['allowedTokenSets'] as $setId) {
-				if (isset($catalogue[$setId]) === true) {
-					$allowed[] = $catalogue[$setId];
-				}
-			}
-
-			$group = $this->groupManager->get($entry['group']);
-			$result[] = [
-				'group' => $entry['group'],
-				'displayName' => ($group?->getDisplayName() ?? $entry['group']),
-				'tokenSet' => $entry['tokenSet'],
-				'allowedTokenSets' => $allowed,
-			];
+			$result[] = $this->listedGroup(entry: $entry, catalogue: $catalogue);
 		}
 
 		return $result;
 	}//end listForUser()
 
 	/**
+	 * Whether a mapping entry is delegated and the user is subadmin of its group.
+	 *
+	 * @param array<string, mixed> $entry The mapping entry.
+	 * @param string $uid The user id.
+	 *
+	 * @return bool True when the user may choose its set.
+	 */
+	private function isDelegatedTo(array $entry, string $uid): bool {
+		return ($entry['delegated'] ?? false) === true && $this->isSubAdmin(uid: $uid, group: $entry['group']) === true;
+	}//end isDelegatedTo()
+
+	/**
+	 * One delegated group as the subadmin's page lists it, with the allowed sets the catalogue holds.
+	 *
+	 * @param array<string, mixed> $entry The mapping entry.
+	 * @param array<string, array<string, mixed>> $catalogue The public catalogue by set id.
+	 *
+	 * @return array<string, mixed> `{group, displayName, tokenSet, allowedTokenSets}`.
+	 */
+	private function listedGroup(array $entry, array $catalogue): array {
+		$allowed = [];
+		foreach ($entry['allowedTokenSets'] as $setId) {
+			if (isset($catalogue[$setId]) === true) {
+				$allowed[] = $catalogue[$setId];
+			}
+		}
+
+		$group = $this->groupManager->get($entry['group']);
+
+		return [
+			'group' => $entry['group'],
+			'displayName' => ($group?->getDisplayName() ?? $entry['group']),
+			'tokenSet' => $entry['tokenSet'],
+			'allowedTokenSets' => $allowed,
+		];
+	}//end listedGroup()
+
+	/**
 	 * Check that a user may set a group's token set, and return the group's entry.
 	 *
 	 * @param string $uid The user id.
-	 * @param string $group The group id.
-	 * @param string $tokenSet The requested set.
+	 * @param DelegatedChoice $choice The group and the requested set.
 	 *
 	 * @return array<string, mixed> The group's mapping entry.
 	 *
@@ -134,38 +158,61 @@ class DelegatedGroupThemingService {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function requireDelegatedChoice(string $uid, string $group, string $tokenSet): array {
-		if ($this->isSubAdmin(uid: $uid, group: $group) === false) {
+	public function requireDelegatedChoice(string $uid, DelegatedChoice $choice): array {
+		if ($this->isSubAdmin(uid: $uid, group: $choice->group) === false) {
 			throw new DelegationRefusedException(message: 'You are not a subadmin of this group.');
 		}
 
-		foreach ($this->groupTheming->getMapping() as $entry) {
-			if ($entry['group'] !== $group) {
-				continue;
-			}
-
-			if (($entry['delegated'] ?? false) !== true) {
-				throw new DelegationRefusedException(message: 'The house style of this group is not delegated.');
-			}
-
-			if (in_array($tokenSet, $entry['allowedTokenSets'], true) === false
-				|| $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false
-			) {
-				throw new DelegationRefusedException(message: 'This token set is not allowed for this group.');
-			}
-
-			return $entry;
+		$entry = $this->mappedEntry(group: $choice->group);
+		if ($entry === null || ($entry['delegated'] ?? false) !== true) {
+			throw new DelegationRefusedException(message: 'The house style of this group is not delegated.');
 		}
 
-		throw new DelegationRefusedException(message: 'The house style of this group is not delegated.');
+		$this->assertAllowed(entry: $entry, tokenSet: $choice->tokenSet);
+
+		return $entry;
 	}//end requireDelegatedChoice()
+
+	/**
+	 * Refuse a set the delegated entry does not allow, or that no longer exists.
+	 *
+	 * @param array<string, mixed> $entry The group's delegated entry.
+	 * @param string $tokenSet The requested set.
+	 *
+	 * @return void
+	 *
+	 * @throws DelegationRefusedException When the set is not allowed.
+	 */
+	private function assertAllowed(array $entry, string $tokenSet): void {
+		if (in_array($tokenSet, $entry['allowedTokenSets'], true) === false
+			|| $this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false
+		) {
+			throw new DelegationRefusedException(message: 'This token set is not allowed for this group.');
+		}
+	}//end assertAllowed()
+
+	/**
+	 * The first mapping entry of a group.
+	 *
+	 * @param string $group The group id.
+	 *
+	 * @return array<string, mixed>|null The entry, or null when the group has none.
+	 */
+	private function mappedEntry(string $group): array|null {
+		foreach ($this->groupTheming->getMapping() as $entry) {
+			if ($entry['group'] === $group) {
+				return $entry;
+			}
+		}
+
+		return null;
+	}//end mappedEntry()
 
 	/**
 	 * Set a delegated group's token set, as its subadmin.
 	 *
 	 * @param string $uid The subadmin's user id.
-	 * @param string $group The group id.
-	 * @param string $tokenSet The chosen set.
+	 * @param DelegatedChoice $choice The group and the chosen set.
 	 *
 	 * @return array<string, mixed> The updated entry.
 	 *
@@ -174,29 +221,34 @@ class DelegatedGroupThemingService {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
-	public function setDelegatedTokenSet(string $uid, string $group, string $tokenSet): array {
-		$current = $this->requireDelegatedChoice(uid: $uid, group: $group, tokenSet: $tokenSet);
-		if ($current['tokenSet'] === $tokenSet) {
+	public function setDelegatedTokenSet(string $uid, DelegatedChoice $choice): array {
+		$current = $this->requireDelegatedChoice(uid: $uid, choice: $choice);
+		if ($current['tokenSet'] === $choice->tokenSet) {
 			return $current;
 		}
 
-		$this->groupTheming->replaceEntry(entry: array_merge($current, ['tokenSet' => $tokenSet]));
+		$this->groupTheming->replaceEntry(entry: array_merge($current, ['tokenSet' => $choice->tokenSet]));
+		$this->auditChoice(uid: $uid, change: ['old' => $current['tokenSet'], 'new' => $choice->tokenSet, 'group' => $choice->group]);
 
-		$this->audit->log(
-			action: 'token_set_changed',
-			context: [
-				'actor' => $uid,
-				'old' => $current['tokenSet'],
-				'new' => $tokenSet,
-				'group' => $group,
-				'delegated' => true,
-			]
-		);
-
-		$current['tokenSet'] = $tokenSet;
+		$current['tokenSet'] = $choice->tokenSet;
 
 		return $current;
 	}//end setDelegatedTokenSet()
+
+	/**
+	 * Audit a subadmin's change of a delegated group's set.
+	 *
+	 * @param string $uid The subadmin's user id.
+	 * @param array{old: string, new: string, group: string} $change The set before and after, and the group.
+	 *
+	 * @return void
+	 */
+	private function auditChoice(string $uid, array $change): void {
+		$this->audit->log(
+			action: 'token_set_changed',
+			context: ['actor' => $uid] + $change + ['delegated' => true]
+		);
+	}//end auditChoice()
 
 	/**
 	 * Whether a user is subadmin of a group.

@@ -44,46 +44,102 @@ class FakeVersionFile implements ISimpleFile {
 	) {
 	}
 
+	/**
+	 * ISimpleFile::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return $this->name;
 	}
 
+	/**
+	 * ISimpleFile::getSize(), as this test double answers it.
+	 *
+	 * @return int|float
+	 */
 	public function getSize(): int|float {
 		return strlen($this->content);
 	}
 
+	/**
+	 * ISimpleFile::getETag(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getETag(): string {
 		return 'etag';
 	}
 
+	/**
+	 * ISimpleFile::getMTime(), as this test double answers it.
+	 *
+	 * @return int
+	 */
 	public function getMTime(): int {
 		return 0;
 	}
 
+	/**
+	 * ISimpleFile::getContent(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getContent(): string {
 		return $this->content;
 	}
 
+	/**
+	 * ISimpleFile::putContent(), as this test double answers it.
+	 *
+	 * @param mixed $data The data.
+	 * @return void
+	 */
 	public function putContent($data): void {
 		$this->content = (string)$data;
 	}
 
+	/**
+	 * ISimpleFile::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 		unset($this->folder->files[$this->name]);
 	}
 
+	/**
+	 * ISimpleFile::getMimeType(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getMimeType(): string {
 		return 'application/json';
 	}
 
+	/**
+	 * ISimpleFile::getExtension(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getExtension(): string {
 		return 'json';
 	}
 
+	/**
+	 * ISimpleFile::read(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function read() {
 		return false;
 	}
 
+	/**
+	 * ISimpleFile::write(), as this test double answers it.
+	 *
+	 * @return mixed
+	 */
 	public function write() {
 		return false;
 	}
@@ -101,14 +157,31 @@ class FakeVersionFolder implements ISimpleFolder {
 	 */
 	public array $files = [];
 
+	/**
+	 * ISimpleFolder::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
 		return array_values($this->files);
 	}
 
+	/**
+	 * ISimpleFolder::fileExists(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return bool
+	 */
 	public function fileExists(string $name): bool {
 		return isset($this->files[$name]);
 	}
 
+	/**
+	 * ISimpleFolder::getFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFile
+	 */
 	public function getFile(string $name): ISimpleFile {
 		if (isset($this->files[$name]) === false) {
 			throw new NotFoundException();
@@ -117,26 +190,62 @@ class FakeVersionFolder implements ISimpleFolder {
 		return $this->files[$name];
 	}
 
+	/**
+	 * ISimpleFolder::newFile(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @param mixed $content The content.
+	 * @return ISimpleFile
+	 */
 	public function newFile(string $name, $content = null): ISimpleFile {
-		$this->files[$name] = new FakeVersionFile($this, $name, (string)$content);
+		$this->files[$name] = new FakeVersionFile(folder: $this, name: $name, content: (string)$content);
 		return $this->files[$name];
 	}
 
+	/**
+	 * ISimpleFolder::delete(), as this test double answers it.
+	 *
+	 * @return void
+	 */
 	public function delete(): void {
 	}
 
+	/**
+	 * ISimpleFolder::getName(), as this test double answers it.
+	 *
+	 * @return string
+	 */
 	public function getName(): string {
 		return 'versions';
 	}
 
+	/**
+	 * ISimpleFolder::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		throw new NotFoundException();
 	}
 
+	/**
+	 * ISimpleFolder::newFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $path): ISimpleFolder {
 		throw new RuntimeException('flat fake');
 	}
 
+	/**
+	 * ISimpleFolder::getOrCreateFolder(), as this test double answers it.
+	 *
+	 * @param string $path The path.
+	 * @param int $maxRetries The max retries.
+	 * @return ISimpleFolder
+	 */
 	public function getOrCreateFolder(string $path, int $maxRetries = 5): ISimpleFolder {
 		throw new RuntimeException('flat fake');
 	}
@@ -147,14 +256,33 @@ class FakeVersionFolder implements ISimpleFolder {
  */
 class FakeVersionRoot implements IAppData {
 
+	/**
+	 * The folder.
+	 *
+	 * @var FakeVersionFolder
+	 */
 	public FakeVersionFolder $folder;
 
+	/**
+	 * The exists.
+	 *
+	 * @var bool
+	 */
 	public bool $exists = false;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->folder = new FakeVersionFolder();
 	}
 
+	/**
+	 * IAppData::getFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function getFolder(string $name): ISimpleFolder {
 		if ($this->exists === false || $name !== 'versions') {
 			throw new NotFoundException();
@@ -163,10 +291,23 @@ class FakeVersionRoot implements IAppData {
 		return $this->folder;
 	}
 
+	/**
+	 * IAppData::getDirectoryListing(), as this test double answers it.
+	 *
+	 * @return array
+	 */
 	public function getDirectoryListing(): array {
-		return $this->exists === true ? [$this->folder] : [];
+		return match ($this->exists === true) {
+			true => [$this->folder], default => []
+		};
 	}
 
+	/**
+	 * IAppData::newFolder(), as this test double answers it.
+	 *
+	 * @param string $name The name.
+	 * @return ISimpleFolder
+	 */
 	public function newFolder(string $name): ISimpleFolder {
 		$this->exists = true;
 		return $this->folder;
@@ -201,6 +342,8 @@ class ThemeVersionServiceTest extends TestCase {
 
 	/**
 	 * Set up.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -216,44 +359,48 @@ class ThemeVersionServiceTest extends TestCase {
 	 * @return ThemeVersionService The service under test.
 	 */
 	private function service(?LoggerInterface $logger = null, ?IAppDataFactory $appFactory = null): ThemeVersionService {
-		$bundleService = $this->createMock(ConfigBundleService::class);
+		$bundleService = $this->createMock(originalClassName: ConfigBundleService::class);
 		$bundleService->method('export')->willReturnCallback(fn (): array => $this->bundle);
 
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getTime')->willReturnCallback(fn (): int => $this->time);
 
 		if ($appFactory === null) {
-			$appFactory = $this->createMock(IAppDataFactory::class);
+			$appFactory = $this->createMock(originalClassName: IAppDataFactory::class);
 			$appFactory->method('get')->willReturn($this->root);
 		}
 
 		return new ThemeVersionService(
-			$appFactory,
-			$bundleService,
-			$time,
-			($logger ?? $this->createMock(LoggerInterface::class))
+			appDataFactory: $appFactory,
+			bundleService: $bundleService,
+			timeFactory: $time,
+			logger: ($logger ?? $this->createMock(originalClassName: LoggerInterface::class))
 		);
 	}//end service()
 
 	/**
 	 * A capture stores the bundle and lists it with its metadata.
+	 *
+	 * @return void
 	 */
 	public function testCaptureStoresTheBundleAndListsIt(): void {
 		$service = $this->service();
 
 		$id = $service->capture(auditAction: 'token_set_changed', actor: 'admin');
 
-		$this->assertNotNull($id);
-		$this->assertMatchesRegularExpression('/^\d{14}-\d{4}$/', $id);
-		$this->assertSame('amsterdam', $service->get(id: $id)['bundle']['config']['tokenSet']);
+		$this->assertNotNull(actual: $id);
+		$this->assertMatchesRegularExpression(pattern: '/^\d{14}-\d{4}$/', string: $id);
+		$this->assertSame(expected: 'amsterdam', actual: $service->get(id: $id)['bundle']['config']['tokenSet']);
 		$this->assertSame(
-			[['id' => $id, 'ts' => '2026-09-29T16:40:00Z', 'actor' => 'admin', 'action' => 'token_set_changed']],
-			$service->list()
+			expected: [['id' => $id, 'ts' => '2026-09-29T16:40:00Z', 'actor' => 'admin', 'action' => 'token_set_changed']],
+			actual: $service->list()
 		);
 	}//end testCaptureStoresTheBundleAndListsIt()
 
 	/**
 	 * Versions list newest first, also within one second.
+	 *
+	 * @return void
 	 */
 	public function testListIsNewestFirst(): void {
 		$service = $this->service();
@@ -262,11 +409,13 @@ class ThemeVersionServiceTest extends TestCase {
 		$this->time += 60;
 		$third = $service->capture(auditAction: 'config_imported', actor: 'cli');
 
-		$this->assertSame([$third, $second, $first], array_column($service->list(), 'id'));
+		$this->assertSame(expected: [$third, $second, $first], actual: array_column($service->list(), 'id'));
 	}//end testListIsNewestFirst()
 
 	/**
 	 * At most 50 versions are kept, oldest removed first.
+	 *
+	 * @return void
 	 */
 	public function testTheCountCapRemovesTheOldest(): void {
 		$service = $this->service();
@@ -277,14 +426,16 @@ class ThemeVersionServiceTest extends TestCase {
 		}
 
 		$kept = array_column($service->list(), 'id');
-		$this->assertCount(50, $kept);
-		$this->assertNotContains($ids[0], $kept);
-		$this->assertNotContains($ids[1], $kept);
-		$this->assertContains($ids[51], $kept);
+		$this->assertCount(expectedCount: 50, haystack: $kept);
+		$this->assertNotContains(needle: $ids[0], haystack: $kept);
+		$this->assertNotContains(needle: $ids[1], haystack: $kept);
+		$this->assertContains(needle: $ids[51], haystack: $kept);
 	}//end testTheCountCapRemovesTheOldest()
 
 	/**
 	 * At most 20 MB of versions are kept, oldest removed first.
+	 *
+	 * @return void
 	 */
 	public function testTheSizeCapRemovesTheOldest(): void {
 		$this->bundle['pad'] = str_repeat('x', (6 * 1024 * 1024));
@@ -296,29 +447,33 @@ class ThemeVersionServiceTest extends TestCase {
 		}
 
 		$kept = array_column($service->list(), 'id');
-		$this->assertSame([$ids[3], $ids[2], $ids[1]], $kept);
+		$this->assertSame(expected: [$ids[3], $ids[2], $ids[1]], actual: $kept);
 	}//end testTheSizeCapRemovesTheOldest()
 
 	/**
 	 * A failing app data folder is logged and never thrown.
+	 *
+	 * @return void
 	 */
 	public function testAFailingAppDataFolderReturnsNullAndWarns(): void {
-		$logger = $this->createMock(LoggerInterface::class);
-		$logger->expects($this->once())->method('warning')->with($this->stringContains('no version was kept'));
-		$factory = $this->createMock(IAppDataFactory::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
+		$logger->expects($this->once())->method('warning')->with($this->stringContains(string: 'no version was kept'));
+		$factory = $this->createMock(originalClassName: IAppDataFactory::class);
 		$factory->method('get')->willThrowException(new RuntimeException('read-only'));
 
-		$this->assertNull($this->service(logger: $logger, appFactory: $factory)->capture(auditAction: 'toggle_changed', actor: 'admin'));
+		$this->assertNull(actual: $this->service(logger: $logger, appFactory: $factory)->capture(auditAction: 'toggle_changed', actor: 'admin'));
 	}//end testAFailingAppDataFolderReturnsNullAndWarns()
 
 	/**
 	 * An unknown or malformed id reads as null, never as a path.
+	 *
+	 * @return void
 	 */
 	public function testUnknownAndMalformedIdsReadAsNull(): void {
 		$service = $this->service();
 		$service->capture(auditAction: 'toggle_changed', actor: 'admin');
 
-		$this->assertNull($service->get(id: '20260101000000-0001'));
-		$this->assertNull($service->get(id: '../audit/audit.jsonl'));
+		$this->assertNull(actual: $service->get(id: '20260101000000-0001'));
+		$this->assertNull(actual: $service->get(id: '../audit/audit.jsonl'));
 	}//end testUnknownAndMalformedIdsReadAsNull()
 }//end class

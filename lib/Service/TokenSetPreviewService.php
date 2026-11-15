@@ -193,13 +193,29 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --color-* token name => resolved hex/color value.
 	 *
-	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
-	 *
 	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
 	 */
 	public function getResolvedColors(string $tokenSetId): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
+		$nldesignVars = $this->setVars(appPath: $appPath, tokenSetId: $tokenSetId);
 
+		// Step 3: parse overrides.css → mapping --color-X: var(--nldesign-Y).
+		$mappings = $this->parseMappings(
+			filePath: $appPath . '/css/systems/nldesign/overrides.css'
+		);
+
+		return $this->resolveMapped(mappings: $mappings, nldesignVars: $nldesignVars);
+	}//end getResolvedColors()
+
+	/**
+	 * The `--nldesign-*` values a set wears: `defaults.css`, with the set's own file over it.
+	 *
+	 * @param string $appPath The app root.
+	 * @param string $tokenSetId The token set.
+	 *
+	 * @return array<string, string> Token => value.
+	 */
+	private function setVars(string $appPath, string $tokenSetId): array {
 		// Step 1: parse defaults.css → --nldesign-* defaults.
 		$nldesignVars = $this->parseCssVars(
 			filePath: $appPath . '/css/systems/nldesign/defaults.css'
@@ -211,12 +227,20 @@ class TokenSetPreviewService {
 			$nldesignVars = array_merge($nldesignVars, $this->parseCssVarsFrom(content: $tokenSetCss));
 		}
 
-		// Step 3: parse overrides.css → mapping --color-X: var(--nldesign-Y).
-		$mappings = $this->parseMappings(
-			filePath: $appPath . '/css/systems/nldesign/overrides.css'
-		);
+		return $nldesignVars;
+	}//end setVars()
 
-		// Step 4: resolve --color-* values using the nldesign map.
+	/**
+	 * Step 4: the editable `--color-*` values through their `overrides.css` mapping.
+	 *
+	 * @param array<string, string> $mappings Variable => the `--nldesign-*` token it reads.
+	 * @param array<string, string> $nldesignVars Token => value.
+	 *
+	 * @return array<string, string> Variable => resolved value.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 */
+	private function resolveMapped(array $mappings, array $nldesignVars): array {
 		$resolved = [];
 		$editableTokens = TokenRegistry::getTokens();
 
@@ -236,7 +260,7 @@ class TokenSetPreviewService {
 		}
 
 		return $resolved;
-	}//end getResolvedColors()
+	}//end resolveMapped()
 
 	/**
 	 * Parse all CSS custom property declarations from a file.
@@ -303,6 +327,17 @@ class TokenSetPreviewService {
 			return [];
 		}
 
+		return $this->mappingsIn(content: $content);
+	}//end parseMappings()
+
+	/**
+	 * The plain `--x: var(--y)` declarations of a stylesheet.
+	 *
+	 * @param string $content The stylesheet.
+	 *
+	 * @return array<string, string> Variable => the token it reads.
+	 */
+	private function mappingsIn(string $content): array {
 		$mappings = [];
 		// Match lines like: --color-X: var(--nldesign-Y) !important;
 		// Ignore commented-out lines (those starting with //).
@@ -320,7 +355,7 @@ class TokenSetPreviewService {
 		}
 
 		return $mappings;
-	}//end parseMappings()
+	}//end mappingsIn()
 
 	/**
 	 * Resolve a var() reference using a variable map.

@@ -45,7 +45,8 @@ function forcingSelectors() {
 			return
 		}
 		const forces = rule.nodes.some(
-			(node) => node.type === 'decl' && node.prop === 'color' && node.important,
+			(node) =>
+				node.type === 'decl' && node.prop === 'color' && node.important,
 		)
 		if (forces) {
 			out.push(...rule.selectors.map((s) => s.trim()))

@@ -50,7 +50,7 @@ final class OpenProjectLinkControllerTest extends TestCase {
 	 * @return OpenProjectLinkController
 	 */
 	private function controller(): OpenProjectLinkController {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(fn (string $app, string $key, $default = '') => ($this->stored[$key] ?? $default));
 		$config->method('setAppValue')->willReturnCallback(function (string $app, string $key, $value): void {
 			$this->stored[$key] = (string)$value;
@@ -58,10 +58,15 @@ final class OpenProjectLinkControllerTest extends TestCase {
 		$config->method('deleteAppValue')->willReturnCallback(function (string $app, string $key): void {
 			unset($this->stored[$key]);
 		});
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createMock(originalClassName: IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 
-		return new OpenProjectLinkController('thematiq', $this->createMock(IRequest::class), new OpenProjectModules($config), $l);
+		return new OpenProjectLinkController(
+			appName: 'thematiq',
+			request: $this->createMock(originalClassName: IRequest::class),
+			modules: new OpenProjectModules(config: $config),
+			l: $l
+		);
 	}//end controller()
 
 	/**
@@ -70,20 +75,27 @@ final class OpenProjectLinkControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheAddressIsSavedReadAndCleared(): void {
-		$this->assertSame(['url' => '', 'modules' => OpenProjectModules::DEFAULT, 'available' => array_keys(OpenProjectModules::MODULES)], $this->controller()->show()->getData());
+		$this->assertSame(
+			expected: ['url' => '', 'modules' => OpenProjectModules::DEFAULT, 'available' => array_keys(OpenProjectModules::MODULES)],
+			actual: $this->controller()->show()->getData()
+		);
 
 		$saved = $this->controller()->save(url: 'https://op.example.org/', modules: 'boards,meetings,nope')->getData();
-		$this->assertSame('https://op.example.org', $saved['url']);
-		$this->assertSame(['boards', 'meetings'], $saved['modules']);
+		$this->assertSame(expected: 'https://op.example.org', actual: $saved['url']);
+		$this->assertSame(expected: ['boards', 'meetings'], actual: $saved['modules']);
 
-		$this->assertSame(['boards', 'meetings'], $this->controller()->save(url: 'https://op.example.org')->getData()['modules'], 'modules left out stay');
+		$this->assertSame(
+			expected: ['boards', 'meetings'],
+			actual: $this->controller()->save(url: 'https://op.example.org')->getData()['modules'],
+			message: 'modules left out stay'
+		);
 
 		$refused = $this->controller()->save(url: 'javascript:alert(1)');
-		$this->assertSame(400, $refused->getStatus());
-		$this->assertSame('https://op.example.org', $this->stored['openproject_url'], 'a refused address changes nothing');
+		$this->assertSame(expected: 400, actual: $refused->getStatus());
+		$this->assertSame(expected: 'https://op.example.org', actual: $this->stored['openproject_url'], message: 'a refused address changes nothing');
 
-		$this->assertSame('', $this->controller()->save(url: '')->getData()['url']);
-		$this->assertArrayNotHasKey('openproject_url', $this->stored);
+		$this->assertSame(expected: '', actual: $this->controller()->save(url: '')->getData()['url']);
+		$this->assertArrayNotHasKey(key: 'openproject_url', array: $this->stored);
 	}//end testTheAddressIsSavedReadAndCleared()
 
 	/**
@@ -94,8 +106,8 @@ final class OpenProjectLinkControllerTest extends TestCase {
 	public function testAdminOnly(): void {
 		foreach (['show', 'save'] as $method) {
 			$attributes = (new ReflectionMethod(OpenProjectLinkController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertCount(1, $attributes, $method);
-			$this->assertSame(Admin::class, $attributes[0]->getArguments()['settings']);
+			$this->assertCount(expectedCount: 1, haystack: $attributes, message: $method);
+			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings']);
 		}
 	}//end testAdminOnly()
 }//end class
