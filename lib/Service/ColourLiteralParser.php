@@ -30,6 +30,16 @@ namespace OCA\Thematiq\Service;
 class ColourLiteralParser {
 
 	/**
+	 * A parser over the given argument reader.
+	 *
+	 * @param ColourArgument $arguments The argument reader.
+	 */
+	public function __construct(
+		private readonly ColourArgument $arguments = new ColourArgument(),
+	) {
+	}//end __construct()
+
+	/**
 	 * The CSS basic named colours a theme may write (buren: `white`); `transparent` is not one.
 	 */
 	private const NAMED_COLOURS = [
@@ -69,6 +79,74 @@ class ColourLiteralParser {
 			return $this->parseHex(digits: $hex[1]);
 		}
 
+		return $this->functionColour(trimmed: $trimmed);
+	}//end parse()
+
+	/**
+	 * A colour function literal: rgb(), hsl(), oklch() or oklab(), with or without alpha.
+	 *
+	 * @param string $trimmed The lower-cased, trimmed value.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: float}|null The channels and alpha, or null when it is not one.
+	 */
+	private function functionColour(string $trimmed): ?array {
+		$function = $this->functionParts(trimmed: $trimmed);
+		if ($function === null) {
+			return null;
+		}
+
+		[$name, $parts] = $function;
+		$alpha = $this->parseAlpha(part: ($parts[3] ?? '1'));
+		$channels = $this->channels(name: $name, parts: $parts);
+
+		if ($channels === null || $alpha === null) {
+			return null;
+		}
+
+		return $this->clamped(channels: $channels, alpha: $alpha);
+	}//end functionColour()
+
+	/**
+	 * Channels rounded into 0..255 and an alpha into 0..1.
+	 *
+	 * @param array{0: float, 1: float, 2: float} $channels The unrounded channels.
+	 * @param float $alpha The alpha.
+	 *
+	 * @return array{0: int, 1: int, 2: int, 3: float} The channels and alpha.
+	 */
+	private function clamped(array $channels, float $alpha): array {
+		return [
+			(int)max(0, min(255, round($channels[0]))),
+			(int)max(0, min(255, round($channels[1]))),
+			(int)max(0, min(255, round($channels[2]))),
+			max(0.0, min(1.0, $alpha)),
+		];
+	}//end clamped()
+
+	/**
+	 * The sRGB channels of a colour function's arguments.
+	 *
+	 * @param string $name The function name.
+	 * @param array<int, string> $parts The arguments.
+	 *
+	 * @return array{0: float, 1: float, 2: float}|null The channels, or null when malformed.
+	 */
+	private function channels(string $name, array $parts): ?array {
+		return match (true) {
+			str_starts_with($name, 'ok') => $this->oklabChannels(space: $name, parts: $parts),
+			str_starts_with($name, 'rgb') => $this->rgbChannels(parts: $parts),
+			default => $this->hslChannels(parts: $parts),
+		};
+	}//end channels()
+
+	/**
+	 * The name and the arguments of a colour function literal.
+	 *
+	 * @param string $trimmed The lower-cased, trimmed value.
+	 *
+	 * @return array{0: string, 1: array<int, string>}|null The function name and its arguments, or null when malformed.
+	 */
+	private function functionParts(string $trimmed): ?array {
 		if (preg_match('/^(rgba?|hsla?|oklch|oklab)\(\s*([^)]*)\)$/', $trimmed, $function) !== 1) {
 			return null;
 		}
@@ -78,24 +156,8 @@ class ColourLiteralParser {
 			return null;
 		}
 
-		$alpha = $this->parseAlpha(part: ($parts[3] ?? '1'));
-		$channels = match (true) {
-			str_starts_with($function[1], 'ok') => $this->oklabChannels(space: $function[1], parts: $parts),
-			str_starts_with($function[1], 'rgb') => $this->rgbChannels(parts: $parts),
-			default => $this->hslChannels(parts: $parts),
-		};
-
-		if ($channels === null || $alpha === null) {
-			return null;
-		}
-
-		return [
-			(int)max(0, min(255, round($channels[0]))),
-			(int)max(0, min(255, round($channels[1]))),
-			(int)max(0, min(255, round($channels[2]))),
-			max(0.0, min(1.0, $alpha)),
-		];
-	}//end parse()
+		return [$function[1], $parts];
+	}//end functionParts()
 
 	/**
 	 * Write a colour literal as `#rrggbb`, or `rgba(r, g, b, a)` when it is translucent.
@@ -135,6 +197,21 @@ class ColourLiteralParser {
 	public function hslToRgb(float $hue, float $saturation, float $lightness): array {
 		$sextant = (fmod(fmod($hue, 360) + 360, 360) / 60);
 		$chroma = ((1 - abs(2 * $lightness - 1)) * $saturation);
+		$sector = $this->sector(sextant: $sextant, chroma: $chroma);
+		$offset = ($lightness - $chroma / 2);
+
+		return [($sector[0] + $offset) * 255, ($sector[1] + $offset) * 255, ($sector[2] + $offset) * 255];
+	}//end hslToRgb()
+
+	/**
+	 * The chroma and second-largest component in the order of the hue's sextant.
+	 *
+	 * @param float $sextant The hue in sixths of the circle, 0..6.
+	 * @param float $chroma The chroma.
+	 *
+	 * @return array{0: float, 1: float, 2: float} The components before the lightness offset.
+	 */
+	private function sector(float $sextant, float $chroma): array {
 		$second = ($chroma * (1 - abs(fmod($sextant, 2) - 1)));
 		$sectors = [
 			[$chroma, $second, 0.0],
@@ -144,11 +221,9 @@ class ColourLiteralParser {
 			[$second, 0.0, $chroma],
 			[$chroma, 0.0, $second],
 		];
-		$sector = $sectors[max(0, min(5, (int)floor($sextant)))];
-		$offset = ($lightness - $chroma / 2);
 
-		return [($sector[0] + $offset) * 255, ($sector[1] + $offset) * 255, ($sector[2] + $offset) * 255];
-	}//end hslToRgb()
+		return $sectors[max(0, min(5, (int)floor($sextant)))];
+	}//end sector()
 
 	/**
 	 * Channels to `[hue, saturation, lightness]` (degrees, [0, 1], [0, 1]).
@@ -172,6 +247,21 @@ class ColourLiteralParser {
 		}
 
 		$saturation = ($delta / (1 - abs(2 * $lightness - 1)));
+
+		return [$this->hueOf(fractions: [$red, $green, $blue], delta: $delta), $saturation, $lightness];
+	}//end rgbToHsl()
+
+	/**
+	 * The hue of a colour in degrees, 0..360.
+	 *
+	 * @param array{0: float, 1: float, 2: float} $fractions The channels in 0..1.
+	 * @param float $delta The largest channel minus the smallest, not zero.
+	 *
+	 * @return float The hue.
+	 */
+	private function hueOf(array $fractions, float $delta): float {
+		[$red, $green, $blue] = $fractions;
+		$max = max($red, $green, $blue);
 		$hue = (60 * (($red - $green) / $delta + 4));
 		if ($max === $red) {
 			$hue = (60 * fmod(($green - $blue) / $delta, 6));
@@ -181,8 +271,8 @@ class ColourLiteralParser {
 			$hue = (60 * (($blue - $red) / $delta + 2));
 		}
 
-		return [fmod($hue + 360, 360), $saturation, $lightness];
-	}//end rgbToHsl()
+		return fmod($hue + 360, 360);
+	}//end hueOf()
 
 	/**
 	 * Render channels as lower-case `#rrggbb`.
@@ -248,7 +338,7 @@ class ColourLiteralParser {
 	 * @return float|null The alpha, or null when malformed.
 	 */
 	private function parseAlpha(string $part): ?float {
-		$number = $this->number(part: $part);
+		$number = $this->arguments->number(part: $part);
 		if ($number === null) {
 			return null;
 		}
@@ -270,7 +360,7 @@ class ColourLiteralParser {
 	private function rgbChannels(array $parts): ?array {
 		$channels = [];
 		foreach (array_slice($parts, 0, 3) as $part) {
-			$channel = $this->number(part: $part);
+			$channel = $this->arguments->number(part: $part);
 			if ($channel === null) {
 				return null;
 			}
@@ -293,41 +383,15 @@ class ColourLiteralParser {
 	 * @return array{0: float, 1: float, 2: float}|null The channels, or null when malformed.
 	 */
 	private function hslChannels(array $parts): ?array {
-		$hue = $this->hueDegrees(part: $parts[0]);
-		$saturation = $this->number(part: $parts[1]);
-		$lightness = $this->number(part: $parts[2]);
-		if ($hue === null || $saturation === null || $lightness === null
-			|| str_ends_with($parts[1], '%') === false || str_ends_with($parts[2], '%') === false
-		) {
+		$hue = $this->arguments->hueDegrees(part: $parts[0]);
+		$saturation = $this->arguments->percentage(part: $parts[1]);
+		$lightness = $this->arguments->percentage(part: $parts[2]);
+		if ($hue === null || $saturation === null || $lightness === null) {
 			return null;
 		}
 
 		return $this->hslToRgb(hue: $hue, saturation: ($saturation / 100), lightness: ($lightness / 100));
 	}//end hslChannels()
-
-	/**
-	 * An hsl() hue in degrees, from degrees, turns or radians.
-	 *
-	 * @param string $part The hue as written.
-	 *
-	 * @return float|null Null when it is no number.
-	 */
-	private function hueDegrees(string $part): ?float {
-		$hue = $this->number(part: (string)preg_replace('/(deg|turn|rad)$/', '', $part));
-		if ($hue === null) {
-			return null;
-		}
-
-		if (str_ends_with($part, 'turn') === true) {
-			return ($hue * 360);
-		}
-
-		if (str_ends_with($part, 'rad') === true) {
-			return ($hue * 180 / M_PI);
-		}
-
-		return $hue;
-	}//end hueDegrees()
 
 	/**
 	 * The sRGB channels of oklch() or oklab() arguments, clipped to the sRGB gamut per channel.
@@ -343,26 +407,9 @@ class ColourLiteralParser {
 	 * @spec openspec/specs/token-set-converter/spec.md#requirement-an-oklch-or-oklab-colour-becomes-hex
 	 */
 	private function oklabChannels(string $space, array $parts): ?array {
-		$values = [];
-		foreach (array_slice($parts, 0, 3) as $index => $part) {
-			if ($part === 'none') {
-				$values[] = 0.0;
-				continue;
-			}
-
-			$number = $this->number(part: (string)preg_replace('/deg$/', '', $part));
-			if ($number === null) {
-				return null;
-			}
-
-			if (str_ends_with($part, '%') === true) {
-				$number = ($number / 100);
-				if ($index > 0) {
-					$number = ($number * 0.4);
-				}
-			}
-
-			$values[] = $number;
+		$values = $this->oklabValues(parts: $parts);
+		if ($values === null) {
+			return null;
 		}
 
 		$srgb = (new ColorSpaceConverter())->toSrgb(space: $space, components: $values);
@@ -376,18 +423,24 @@ class ColourLiteralParser {
 	}//end oklabChannels()
 
 	/**
-	 * A numeric argument, without a trailing `%`.
+	 * The first three arguments as OKLab or OKLCH components.
 	 *
-	 * @param string $part The argument.
+	 * @param array<int, string> $parts The arguments.
 	 *
-	 * @return float|null The number, or null when it is not one.
+	 * @return list<float>|null The components, or null when one is malformed.
 	 */
-	private function number(string $part): ?float {
-		$bare = rtrim($part, '%');
-		if (is_numeric($bare) === false) {
-			return null;
+	private function oklabValues(array $parts): array|null {
+		$values = [];
+		foreach (array_slice($parts, 0, 3) as $index => $part) {
+			$number = $this->arguments->oklabComponent(part: $part, index: $index);
+			if ($number === null) {
+				return null;
+			}
+
+			$values[] = $number;
 		}
 
-		return (float)$bare;
-	}//end number()
+		return $values;
+	}//end oklabValues()
+
 }//end class

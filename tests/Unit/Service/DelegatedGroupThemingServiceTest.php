@@ -28,6 +28,7 @@ use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
+use OCA\Thematiq\Service\DelegatedChoice;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
@@ -316,7 +317,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	public function testSubadminOfTheGroupChoosesAnAllowedSet(): void {
 		$generation = (int)($this->app['group_token_sets_generation'] ?? 0);
 
-		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
+		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', choice: new DelegatedChoice(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl'));
 
 		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $entry['tokenSet']);
 		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $this->entry(group: 'gemeente-a')['tokenSet']);
@@ -340,7 +341,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		$mapping[1]['allowedTokenSets'] = ['rijkshuisstijl', 'removed-set'];
 		$this->app['group_token_sets'] = json_encode($mapping);
 
-		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
+		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', choice: new DelegatedChoice(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl'));
 
 		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $entry['tokenSet']);
 		$this->assertSame(expected: 'gemeente-a-huisstijl', actual: $this->entry(group: 'gemeente-a')['tokenSet']);
@@ -390,7 +391,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 		];
 		foreach ($cases as [$group, $set]) {
 			try {
-				$this->service()->setDelegatedTokenSet(uid: 'anna', group: $group, tokenSet: $set);
+				$this->service()->setDelegatedTokenSet(uid: 'anna', choice: new DelegatedChoice(group: $group, tokenSet: $set));
 				$this->fail(message: 'Refused: ' . $group . ' ' . $set);
 			} catch (DelegationRefusedException $e) {
 				$this->addToAssertionCount(count: 1);
@@ -407,7 +408,7 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testLockingBackKeepsTheSetAndHidesTheGroup(): void {
-		$this->service()->setDelegatedTokenSet(uid: 'anna', group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl');
+		$this->service()->setDelegatedTokenSet(uid: 'anna', choice: new DelegatedChoice(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl'));
 		$this->assertSame(expected: 'gemeente-a', actual: $this->service()->listForUser(uid: 'anna')[0]['group']);
 
 		$mapping = $this->groupTheming()->getMapping();
@@ -537,4 +538,62 @@ class DelegatedGroupThemingServiceTest extends TestCase {
 			l10n: $this->l10n()
 		))->getSection());
 	}//end testGroupHouseStyleBlockOnlyForSubadminsOfDelegatedGroups()
+
+	/**
+	 * Each refusal names its reason, checked in order: subadmin first, then delegated, then allowed.
+	 *
+	 * @return void
+	 */
+	public function testEachRefusalNamesItsReason(): void {
+		$this->subAdmins[] = 'anna:concern';
+		$this->subAdmins[] = 'anna:ghost';
+		$cases = [
+			['gemeente-b', 'amsterdam', 'You are not a subadmin of this group.'],
+			['concern', 'concern', 'The house style of this group is not delegated.'],
+			['ghost', 'rijkshuisstijl', 'The house style of this group is not delegated.'],
+			['gemeente-a', 'amsterdam', 'This token set is not allowed for this group.'],
+		];
+		foreach ($cases as [$group, $set, $message]) {
+			try {
+				$this->service()->requireDelegatedChoice(uid: 'anna', choice: new DelegatedChoice(group: $group, tokenSet: $set));
+				$this->fail(message: 'Refused: ' . $group);
+			} catch (DelegationRefusedException $e) {
+				$this->assertSame(expected: $message, actual: $e->getMessage());
+			}
+		}
+
+		$this->assertSame(expected: 'gemeente-a', actual: $this->service()->requireDelegatedChoice(uid: 'anna', choice: new DelegatedChoice(group: 'gemeente-a', tokenSet: 'gemeente-a-huisstijl'))['group']);
+	}//end testEachRefusalNamesItsReason()
+
+	/**
+	 * Choosing the set the group already has changes and audits nothing, and returns the entry.
+	 *
+	 * @return void
+	 */
+	public function testChoosingTheCurrentSetChangesNothing(): void {
+		$before = $this->app['group_token_sets'];
+
+		$entry = $this->service()->setDelegatedTokenSet(uid: 'anna', choice: new DelegatedChoice(group: 'gemeente-a', tokenSet: 'rijkshuisstijl'));
+
+		$this->assertSame(expected: ['group' => 'gemeente-a', 'tokenSet' => 'rijkshuisstijl'], actual: array_intersect_key($entry, ['group' => 1, 'tokenSet' => 1]));
+		$this->assertSame(expected: $before, actual: $this->app['group_token_sets']);
+		$this->assertSame(expected: [], actual: $this->audited);
+	}//end testChoosingTheCurrentSetChangesNothing()
+
+	/**
+	 * The list holds only the subadmin's delegated groups, in mapping order, each with the fields the page reads.
+	 *
+	 * @return void
+	 */
+	public function testTheListHoldsOnlyTheSubadminsDelegatedGroups(): void {
+		$this->subAdmins[] = 'anna:gemeente-b';
+		$this->subAdmins[] = 'anna:concern';
+
+		$list = $this->service()->listForUser(uid: 'anna');
+
+		$this->assertSame(expected: ['gemeente-a', 'gemeente-b'], actual: array_column($list, 'group'));
+		$this->assertSame(expected: ['group', 'displayName', 'tokenSet', 'allowedTokenSets'], actual: array_keys($list[1]));
+		$this->assertSame(expected: ['rijkshuisstijl', 'amsterdam'], actual: array_column($list[1]['allowedTokenSets'], 'id'));
+		$this->assertSame(expected: [], actual: $this->service()->listForUser(uid: 'bert'));
+	}//end testTheListHoldsOnlyTheSubadminsDelegatedGroups()
 }//end class

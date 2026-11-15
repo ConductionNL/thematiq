@@ -244,6 +244,169 @@ async function measure(page, sheets, scheme) {
 	return rest
 }
 
+/** Keys that belong to the action colour itself, so they may move when it is declared. */
+const ACTION_KEYS =
+	/nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/
+
+/**
+ * Measure a page with the stylesheets as they are and with the readers unwrapped.
+ *
+ * @param {import('playwright-core').Page} page The page.
+ * @param {string[]} files The stylesheets, in link order.
+ * @param {(file: string) => {now: string, before: string}} sheet The stylesheet texts by file.
+ * @param {string} scheme `light` or `dark`.
+ * @return {Promise<{now: Record<string, string>, before: Record<string, string>}>} Both measurements.
+ */
+async function measurePair(page, files, sheet, scheme) {
+	const now = await measure(
+		page,
+		files.map((f) => sheet(f).now),
+		scheme,
+	)
+	const before = await measure(
+		page,
+		files.map((f) => sheet(f).before),
+		scheme,
+	)
+	return { now, before }
+}
+
+/**
+ * Every key either measurement has.
+ *
+ * @param {Record<string, string>} left One measurement.
+ * @param {Record<string, string>} right The other.
+ * @return {Set<string>} The keys.
+ */
+function keysOf(left, right) {
+	return new Set([...Object.keys(left), ...Object.keys(right)])
+}
+
+/**
+ * A set that declares an action colour is meant to render differently, so it
+ * is not part of the first proof. It gets the second one on its own colour
+ * instead: its page with the readers unwrapped is the page without an action
+ * colour, and against that only its buttons may differ.
+ *
+ * @param {import('playwright-core').Page} page The page.
+ * @param {{set: object, scheme: string}} job The set and scheme.
+ * @param {string[]} files The set's stylesheets.
+ * @param {Function} sheet The stylesheet texts by file.
+ * @param {object} findings Collects what the check finds.
+ * @return {Promise<void>}
+ */
+async function checkOwnActionColour(page, { set, scheme }, files, sheet, findings) {
+	findings.withActionColour.add(set.id)
+	const { now: own, before: without } = await measurePair(page, files, sheet, scheme)
+	for (const key of keysOf(own, without)) {
+		const id = key.split(' ')[0]
+		if (id in BUTTONS || id in NLDESIGN_BUTTONS || ACTION_KEYS.test(key)) {
+			continue
+		}
+		if (own[key] !== without[key]) {
+			findings.leaked.push(
+				`${set.id} ${scheme} (its own action colour): ${OTHERS[id] ?? key} changed: ${key} was "${without[key]}", is "${own[key]}"`,
+			)
+		}
+		findings.unmoved++
+	}
+	if (own['b1 background'] === without['b1 background']) {
+		findings.notReached.push(
+			`${set.id} ${scheme}: the main button does not wear the set's own action colour`,
+		)
+	}
+}
+
+/**
+ * The first proof: with the readers unwrapped, a set without an action colour
+ * computes exactly what it computes now.
+ *
+ * @param {import('playwright-core').Page} page The page.
+ * @param {{set: object, scheme: string}} job The set and scheme.
+ * @param {string[]} files The set's stylesheets.
+ * @param {Function} sheet The stylesheet texts by file.
+ * @param {object} findings Collects what the check finds.
+ * @return {Promise<Record<string, string>>} The page as it is now, for the second proof.
+ */
+async function checkUnset(page, { set, scheme }, files, sheet, findings) {
+	for (const file of files) {
+		if (/nldesign-color-action|thematiq-action-hover/.test(sheet(file).before)) {
+			findings.leftovers.add(`css/${file}.css`)
+		}
+	}
+	const { now, before } = await measurePair(page, files, sheet, scheme)
+
+	for (const key of keysOf(now, before)) {
+		if (key.endsWith(' ' + STEP)) {
+			if (now[key] !== '') {
+				findings.differences.push(
+					`${set.id} ${scheme}: ${key} is "${now[key]}", expected empty`,
+				)
+			}
+			continue
+		}
+		findings.values++
+		if (now[key] !== before[key]) {
+			findings.differences.push(
+				`${set.id} ${scheme}: ${key} was "${before[key]}", is "${now[key]}"`,
+			)
+		}
+	}
+	return now
+}
+
+/**
+ * The second proof: a declared action colour reaches the buttons and nothing else.
+ *
+ * @param {import('playwright-core').Page} page The page.
+ * @param {{set: object, scheme: string}} job The set and scheme.
+ * @param {string[]} files The set's stylesheets.
+ * @param {Function} sheet The stylesheet texts by file.
+ * @param {Record<string, string>} now The page without a declared action colour.
+ * @param {object} findings Collects what the check finds.
+ * @return {Promise<void>}
+ */
+async function checkDeclaredActionColour(page, { set, scheme }, files, sheet, now, findings) {
+	const system = set.design_system ?? 'nldesign'
+	const reads = READING_SYSTEMS.includes(system)
+	const declared = `:root{--nldesign-color-action:${ACTION};--nldesign-color-action-text:#fefefe}`
+	const withAction = await measure(
+		page,
+		[...files.map((f) => sheet(f).now), declared],
+		scheme,
+	)
+	const where = `${set.id} ${scheme}`
+	// A generated dark variant restates the main button's colours as
+	// literals, derived from the set's own file. A token declared for
+	// this check alone cannot reach them, so in dark the buttons are
+	// only expected to follow where the bundle reads the token direct.
+	const buttons = {
+		...BUTTONS,
+		...(system === 'nldesign' ? NLDESIGN_BUTTONS : {}),
+	}
+	const followsHere = reads && (scheme === 'light' || system !== 'nldesign')
+	for (const [id, name] of Object.entries(buttons)) {
+		if (followsHere && withAction[id + ' background'] !== ACTION_RGB) {
+			findings.notReached.push(
+				`${where}: ${name} is ${withAction[id + ' background']}, not the action colour`,
+			)
+		}
+		if (followsHere) findings.reached.add(`${system}: ${name}`)
+	}
+	for (const [key, value] of Object.entries(withAction)) {
+		const id = key.split(' ')[0]
+		if ((id in buttons && reads) || ACTION_KEYS.test(key)) {
+			continue
+		}
+		if (value !== now[key]) {
+			findings.leaked.push(
+				`${where}: ${OTHERS[id] ?? key} changed: ${key} was "${now[key]}", is "${value}"`,
+			)
+		}
+		findings.unmoved++
+	}
+}
+
 /**
  * Compare every shipped set with and without its action readers.
  *
@@ -274,14 +437,16 @@ export async function compare(browser, options = {}) {
 		}
 	}
 
-	const differences = []
-	const withActionColour = new Set()
-	const notReached = []
-	const leaked = []
-	const reached = new Set()
-	let unmoved = 0
-	const leftovers = new Set()
-	let values = 0
+	const findings = {
+		differences: [],
+		withActionColour: new Set(),
+		notReached: [],
+		leaked: [],
+		reached: new Set(),
+		unmoved: 0,
+		leftovers: new Set(),
+		values: 0,
+	}
 
 	const work = async () => {
 		const page = await browser.newPage()
@@ -290,142 +455,17 @@ export async function compare(browser, options = {}) {
 			if (job === undefined) {
 				break
 			}
-			const { set, scheme } = job
-			const files = stylesheetsOf(set, systems)
-			// A set that declares an action colour is meant to render
-			// differently, so it is not part of the first proof. It gets the
-			// second one on its own colour instead: its page with the readers
-			// unwrapped is the page without an action colour, and against that
-			// only its buttons may differ.
+			const files = stylesheetsOf(job.set, systems)
 			if (
 				/--nldesign-color-action[\w-]*\s*:/.test(
-					read(`css/tokens/${set.id}.css`),
+					read(`css/tokens/${job.set.id}.css`),
 				)
 			) {
-				withActionColour.add(set.id)
-				const own = await measure(
-					page,
-					files.map((f) => sheet(f).now),
-					scheme,
-				)
-				const without = await measure(
-					page,
-					files.map((f) => sheet(f).before),
-					scheme,
-				)
-				for (const key of new Set([
-					...Object.keys(own),
-					...Object.keys(without),
-				])) {
-					const id = key.split(' ')[0]
-					if (
-						id in BUTTONS
-						|| id in NLDESIGN_BUTTONS
-						|| /nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/.test(
-							key,
-						)
-					) {
-						continue
-					}
-					if (own[key] !== without[key]) {
-						leaked.push(
-							`${set.id} ${scheme} (its own action colour): ${OTHERS[id] ?? key} changed: ${key} was "${without[key]}", is "${own[key]}"`,
-						)
-					}
-					unmoved++
-				}
-				if (own['b1 background'] === without['b1 background']) {
-					notReached.push(
-						`${set.id} ${scheme}: the main button does not wear the set's own action colour`,
-					)
-				}
+				await checkOwnActionColour(page, job, files, sheet, findings)
 				continue
 			}
-			for (const file of files) {
-				if (
-					/nldesign-color-action|thematiq-action-hover/.test(
-						sheet(file).before,
-					)
-				) {
-					leftovers.add(`css/${file}.css`)
-				}
-			}
-			const now = await measure(
-				page,
-				files.map((f) => sheet(f).now),
-				scheme,
-			)
-			const before = await measure(
-				page,
-				files.map((f) => sheet(f).before),
-				scheme,
-			)
-
-			for (const key of new Set([
-				...Object.keys(now),
-				...Object.keys(before),
-			])) {
-				if (key.endsWith(' ' + STEP)) {
-					if (now[key] !== '') {
-						differences.push(
-							`${set.id} ${scheme}: ${key} is "${now[key]}", expected empty`,
-						)
-					}
-					continue
-				}
-				values++
-				if (now[key] !== before[key]) {
-					differences.push(
-						`${set.id} ${scheme}: ${key} was "${before[key]}", is "${now[key]}"`,
-					)
-				}
-			}
-
-			// The second proof: a declared action colour reaches the buttons and nothing else.
-			const system = set.design_system ?? 'nldesign'
-			const reads = READING_SYSTEMS.includes(system)
-			const declared = `:root{--nldesign-color-action:${ACTION};--nldesign-color-action-text:#fefefe}`
-			const withAction = await measure(
-				page,
-				[...files.map((f) => sheet(f).now), declared],
-				scheme,
-			)
-			const where = `${set.id} ${scheme}`
-			// A generated dark variant restates the main button's colours as
-			// literals, derived from the set's own file. A token declared for
-			// this check alone cannot reach them, so in dark the buttons are
-			// only expected to follow where the bundle reads the token direct.
-			const buttons = {
-				...BUTTONS,
-				...(system === 'nldesign' ? NLDESIGN_BUTTONS : {}),
-			}
-			const followsHere =
-				reads && (scheme === 'light' || system !== 'nldesign')
-			for (const [id, name] of Object.entries(buttons)) {
-				if (followsHere && withAction[id + ' background'] !== ACTION_RGB) {
-					notReached.push(
-						`${where}: ${name} is ${withAction[id + ' background']}, not the action colour`,
-					)
-				}
-				if (followsHere) reached.add(`${system}: ${name}`)
-			}
-			for (const [key, value] of Object.entries(withAction)) {
-				const id = key.split(' ')[0]
-				const isButton = id in buttons
-				const isAction =
-					/nldesign-color-action|thematiq-action-hover|button-primary-action|login-button|dialog-confirm/.test(
-						key,
-					)
-				if ((isButton && reads) || isAction) {
-					continue
-				}
-				if (value !== now[key]) {
-					leaked.push(
-						`${where}: ${OTHERS[id] ?? key} changed: ${key} was "${now[key]}", is "${value}"`,
-					)
-				}
-				unmoved++
-			}
+			const now = await checkUnset(page, job, files, sheet, findings)
+			await checkDeclaredActionColour(page, job, files, sheet, now, findings)
 		}
 		await page.close()
 	}
@@ -433,15 +473,15 @@ export async function compare(browser, options = {}) {
 	await Promise.all(Array.from({ length: workers }, work))
 
 	return {
-		sets: sets.length - withActionColour.size,
-		withActionColour: [...withActionColour].sort(),
-		values,
-		differences,
-		notReached,
-		leaked,
-		reached: [...reached].sort(),
-		unmoved,
-		leftovers: [...leftovers].sort(),
+		sets: sets.length - findings.withActionColour.size,
+		withActionColour: [...findings.withActionColour].sort(),
+		values: findings.values,
+		differences: findings.differences,
+		notReached: findings.notReached,
+		leaked: findings.leaked,
+		reached: [...findings.reached].sort(),
+		unmoved: findings.unmoved,
+		leftovers: [...findings.leftovers].sort(),
 	}
 }
 

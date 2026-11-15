@@ -133,13 +133,24 @@ class TokenValueValidator {
 			return true;
 		}
 
+		return $this->isBezierEasing(value: $value);
+	}//end isEasing()
+
+	/**
+	 * A cubic-bezier() curve whose two x values lie in 0..1.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return boolean True for such a curve.
+	 */
+	private function isBezierEasing(string $value): bool {
 		$number = '\\s*(-?[0-9]*\\.?[0-9]+)\\s*';
 		if (preg_match('/^cubic-bezier\\(' . $number . ',' . $number . ',' . $number . ',' . $number . '\\)$/', $value, $match) !== 1) {
 			return false;
 		}
 
 		return (float)$match[1] >= 0 && (float)$match[1] <= 1 && (float)$match[3] >= 0 && (float)$match[3] <= 1;
-	}//end isEasing()
+	}//end isBezierEasing()
 
 	/**
 	 * A bare `r, g, b` triplet, each 0 to 255 (the note cards' Nextcloud 32 fills).
@@ -169,21 +180,46 @@ class TokenValueValidator {
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-the-server-checks-each-value-against-its-token-type
 	 */
 	public function findRejected(array $tokens, array $darkTokens = []): array {
+		return array_replace($this->lightRejected(tokens: $tokens), $this->darkRejected(tokens: $tokens, darkTokens: $darkTokens));
+	}//end findRejected()
+
+	/**
+	 * The light values refused: a name that is not editable, or a value its type refuses.
+	 *
+	 * @param array<array-key, mixed> $tokens The submitted light values.
+	 *
+	 * @return array<string, string> Token name => reason, in submitted order.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
+	 */
+	private function lightRejected(array $tokens): array {
 		$registry = array_merge(TokenRegistry::getInternalTokens(), TokenRegistry::getTokens());
 		$rejected = [];
 		foreach ($tokens as $name => $value) {
 			$name = (string)$name;
-			if (TokenRegistry::isEditable(tokenName: $name) === false) {
-				$rejected[$name] = 'not an editable token';
-				continue;
+			$reason = 'not an editable token';
+			if (TokenRegistry::isEditable(tokenName: $name) === true) {
+				$reason = $this->valueProblem(value: $value, type: (string)($registry[$name]['type'] ?? 'text'));
 			}
 
-			$reason = $this->valueProblem(value: $value, type: (string)($registry[$name]['type'] ?? 'text'));
 			if ($reason !== null) {
 				$rejected[$name] = $reason;
 			}
 		}
 
+		return $rejected;
+	}//end lightRejected()
+
+	/**
+	 * The dark values refused: one without a light value or for a token that takes none, or one that is no colour.
+	 *
+	 * @param array<array-key, mixed> $tokens The submitted light values.
+	 * @param array<array-key, mixed> $darkTokens The submitted dark values.
+	 *
+	 * @return array<string, string> Token name => reason, in submitted order.
+	 */
+	private function darkRejected(array $tokens, array $darkTokens): array {
+		$rejected = [];
 		foreach ($darkTokens as $name => $value) {
 			$name = (string)$name;
 			if (isset($tokens[$name]) === false || $this->hasDarkValueFor(name: $name) === false) {
@@ -198,7 +234,7 @@ class TokenValueValidator {
 		}
 
 		return $rejected;
-	}//end findRejected()
+	}//end darkRejected()
 
 	/**
 	 * Why a value is refused for its type, or null when it passes.

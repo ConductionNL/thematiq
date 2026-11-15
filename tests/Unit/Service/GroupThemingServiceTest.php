@@ -706,4 +706,117 @@ class GroupThemingServiceTest extends TestCase {
 			actual: $service->getAvailableGroups()
 		);
 	}//end testGetAvailableGroupsListsAndSorts()
+
+	/**
+	 * Each malformed entry is refused with its own reason, checked in order, before any group lookup it does not need.
+	 *
+	 * @return void
+	 */
+	public function testEachInvalidEntryIsRefusedWithItsReason(): void {
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
+		$groupManager->method('groupExists')->willReturnCallback(static fn (string $gid): bool => $gid === 'staff');
+		[$service] = $this->buildService(
+			config: $this->fakeConfig(initial: ['group_token_sets' => '[]']),
+			groupManager: $groupManager,
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
+
+		$cases = [
+			['not an entry', 'Missing or invalid group id.'],
+			[['group' => '', 'tokenSet' => 'amsterdam'], 'Missing or invalid group id.'],
+			[['group' => 7, 'tokenSet' => 'amsterdam'], 'Missing or invalid group id.'],
+			[['group' => 'staff'], 'Missing or invalid token set id.'],
+			[['group' => 'staff', 'tokenSet' => ''], 'Missing or invalid token set id.'],
+			[['group' => 'ghosts', 'tokenSet' => 'amsterdam'], 'Group "ghosts" does not exist.'],
+			[['group' => 'staff', 'tokenSet' => 'gone'], 'Token set "gone" is not available.'],
+		];
+		foreach ($cases as [$entry, $reason]) {
+			try {
+				$service->setMapping([$entry]);
+				$this->fail(message: 'accepted: ' . json_encode($entry));
+			} catch (GroupThemingValidationException $e) {
+				$this->assertSame(expected: $reason, actual: $e->getReason());
+				$this->assertSame(expected: $entry, actual: $e->getEntry());
+				$this->assertNull(actual: $e->getRestrictedSet());
+			}
+		}
+
+		try {
+			$service->setMapping([['group' => 'staff', 'tokenSet' => 'amsterdam'], ['group' => 'staff', 'tokenSet' => 'amsterdam']]);
+			$this->fail(message: 'a duplicate group was accepted');
+		} catch (GroupThemingValidationException $e) {
+			$this->assertSame(
+				expected: 'Only one mapping entry is allowed per group ("staff" appears more than once).',
+				actual: $e->getReason()
+			);
+		}
+
+		$this->assertSame(expected: [], actual: $service->getMapping());
+	}//end testEachInvalidEntryIsRefusedWithItsReason()
+
+	/**
+	 * Stored entries without a string group and token set are skipped when read.
+	 *
+	 * @return void
+	 */
+	public function testStoredEntriesWithoutAStringGroupAndSetAreSkipped(): void {
+		$stored = [
+			'not an entry',
+			['group' => 'staff', 'tokenSet' => 'amsterdam'],
+			['group' => 'staff'],
+			['group' => 7, 'tokenSet' => 'utrecht'],
+			['group' => 'admin', 'tokenSet' => 'utrecht', 'extra' => 'dropped'],
+		];
+		[$service] = $this->buildService(
+			config: $this->fakeConfig(initial: ['group_token_sets' => json_encode($stored)]),
+			groupManager: $this->createMock(originalClassName: IGroupManager::class),
+			userSession: $this->createMock(originalClassName: IUserSession::class),
+			tokenSetService: $this->fakeTokenSetService(available: [])
+		);
+
+		$this->assertSame(
+			expected: [['group' => 'staff', 'tokenSet' => 'amsterdam'], ['group' => 'admin', 'tokenSet' => 'utrecht']],
+			actual: $service->getMapping()
+		);
+	}//end testStoredEntriesWithoutAStringGroupAndSetAreSkipped()
+
+	/**
+	 * An admin preview wins over everything; an app brand wins over the mapping only with a session.
+	 *
+	 * @return void
+	 */
+	public function testAPreviewAndAnAppBrandWinInTheirOrder(): void {
+		$config = $this->fakeConfig(
+			initial: ['group_token_sets' => json_encode([['group' => 'staff', 'tokenSet' => 'amsterdam']]), 'token_set' => 'nextcloud']
+		);
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
+		$groupManager->expects($this->never())->method('getUserGroupIds');
+		$withUser = $this->createMock(originalClassName: IUserSession::class);
+		$withUser->method('getUser')->willReturn($this->fakeUser(uid: 'alice'));
+		$noUser = $this->createMock(originalClassName: IUserSession::class);
+		$noUser->method('getUser')->willReturn(null);
+		$tokenSets = $this->fakeTokenSetService(available: ['amsterdam']);
+
+		[$branded] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $withUser, tokenSetService: $tokenSets);
+		[$sessionless] = $this->buildService(config: $config, groupManager: $groupManager, userSession: $noUser, tokenSetService: $tokenSets);
+
+		$this->assertSame(expected: 'brand', actual: $branded->resolveTokenSetForRequest(appBrandSet: 'brand'));
+		$this->assertSame(expected: 'nextcloud', actual: $sessionless->resolveTokenSetForRequest(appBrandSet: 'brand'));
+
+		$preview = $this->createMock(originalClassName: ThemePreviewService::class);
+		$preview->method('resolveEffectiveTokenSet')->willReturn(['tokenSet' => 'previewed', 'previewActive' => true, 'expiresAt' => null]);
+		$cacheFactory = $this->createMock(originalClassName: ICacheFactory::class);
+		$cacheFactory->method('createDistributed')->willReturn($this->createMock(originalClassName: ICache::class));
+		$previewing = new GroupThemingService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $noUser,
+			tokenSetService: $tokenSets,
+			previewService: $preview,
+			cacheFactory: $cacheFactory
+		);
+
+		$this->assertSame(expected: 'previewed', actual: $previewing->resolveTokenSetForRequest(appBrandSet: 'brand'));
+	}//end testAPreviewAndAnAppBrandWinInTheirOrder()
 }//end class

@@ -289,32 +289,16 @@ class OwnTokenService {
 	 * @throws InvalidArgumentException 400 naming the field that fails.
 	 */
 	private function checked(array $input): array {
-		$label = trim((string)($input['label'] ?? ''));
-		if ($label === '' || mb_strlen($label) > self::MAX_LENGTH['label']) {
-			throw new InvalidArgumentException('label', 400);
-		}
-
-		$type = (string)($input['type'] ?? '');
-		if (in_array($type, self::TYPES, true) === false) {
-			throw new InvalidArgumentException('type', 400);
-		}
-
-		$token = ['label' => $label, 'type' => $type, 'value' => $this->checkedValue(value: $input['value'] ?? null, type: $type, field: 'value')];
+		$label = $this->checkedLabel(input: $input);
+		$type = $this->checkedType(input: $input);
+		$token = ['label' => $label, 'type' => $type, 'value' => $this->checkedMainValue(value: ($input['value'] ?? null), type: $type)];
 
 		$dark = trim((string)($input['darkValue'] ?? ''));
 		if ($dark !== '') {
-			// Only a colour has a dark value.
-			$token['darkValue'] = $this->checkedValue(value: $dark, type: 'color', field: 'darkValue');
-			if ($type !== 'color') {
-				throw new InvalidArgumentException('darkValue', 400);
-			}
+			$token['darkValue'] = $this->checkedDarkValue(dark: $dark, type: $type);
 		}
 
-		$description = trim((string)($input['description'] ?? ''));
-		if (mb_strlen($description) > self::MAX_LENGTH['description']) {
-			throw new InvalidArgumentException('description', 400);
-		}
-
+		$description = $this->checkedDescription(input: $input);
 		if ($description !== '') {
 			$token['description'] = $description;
 		}
@@ -323,29 +307,118 @@ class OwnTokenService {
 	}//end checked()
 
 	/**
+	 * The trimmed label, which must be there and at most 80 characters.
+	 *
+	 * @param array<string, mixed> $input The submitted fields.
+	 *
+	 * @return string The label.
+	 *
+	 * @throws InvalidArgumentException 400 naming `label`.
+	 */
+	private function checkedLabel(array $input): string {
+		$label = trim((string)($input['label'] ?? ''));
+		if ($label === '' || mb_strlen($label) > self::MAX_LENGTH['label']) {
+			throw new InvalidArgumentException('label', 400);
+		}
+
+		return $label;
+	}//end checkedLabel()
+
+	/**
+	 * The type, which must be one of the own-token types.
+	 *
+	 * @param array<string, mixed> $input The submitted fields.
+	 *
+	 * @return string The type.
+	 *
+	 * @throws InvalidArgumentException 400 naming `type`.
+	 */
+	private function checkedType(array $input): string {
+		$type = (string)($input['type'] ?? '');
+		if (in_array($type, self::TYPES, true) === false) {
+			throw new InvalidArgumentException('type', 400);
+		}
+
+		return $type;
+	}//end checkedType()
+
+	/**
+	 * The value, checked against its type.
+	 *
+	 * @param mixed $value The submitted value.
+	 * @param string $type The token type.
+	 *
+	 * @return string The trimmed value.
+	 *
+	 * @throws InvalidArgumentException 400 naming `value`.
+	 */
+	private function checkedMainValue(mixed $value, string $type): string {
+		$checked = $this->allowedValue(value: $value, type: $type);
+		if ($checked === null) {
+			throw new InvalidArgumentException('value', 400);
+		}
+
+		return $checked;
+	}//end checkedMainValue()
+
+	/**
+	 * The dark value: a colour, and only on a colour token.
+	 *
+	 * @param string $dark The trimmed submitted dark value.
+	 * @param string $type The token type.
+	 *
+	 * @return string The dark value.
+	 *
+	 * @throws InvalidArgumentException 400 naming `darkValue`.
+	 */
+	private function checkedDarkValue(string $dark, string $type): string {
+		$checked = $this->allowedValue(value: $dark, type: 'color');
+		if ($checked === null || $type !== 'color') {
+			throw new InvalidArgumentException('darkValue', 400);
+		}
+
+		return $checked;
+	}//end checkedDarkValue()
+
+	/**
+	 * The trimmed description, at most 500 characters.
+	 *
+	 * @param array<string, mixed> $input The submitted fields.
+	 *
+	 * @return string The description, empty when there is none.
+	 *
+	 * @throws InvalidArgumentException 400 naming `description`.
+	 */
+	private function checkedDescription(array $input): string {
+		$description = trim((string)($input['description'] ?? ''));
+		if (mb_strlen($description) > self::MAX_LENGTH['description']) {
+			throw new InvalidArgumentException('description', 400);
+		}
+
+		return $description;
+	}//end checkedDescription()
+
+	/**
 	 * A value that passes the injection filter and its type.
 	 *
 	 * @param mixed $value The submitted value.
 	 * @param string $type The type to check against.
-	 * @param string $field The field name, for the error.
 	 *
-	 * @return string The trimmed value.
-	 *
-	 * @throws InvalidArgumentException 400 naming the field.
+	 * @return string|null The trimmed value, or null when it is refused.
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - the injection filter is a pure function shared with the CSS writer
 	 */
-	private function checkedValue(mixed $value, string $type, string $field): string {
+	private function allowedValue(mixed $value, string $type): string|null {
 		if (is_string($value) === false || OverridesCssBuilder::isUnsafeValue(value: $value) === true || str_contains($value, "\n") === true) {
-			throw new InvalidArgumentException($field, 400);
+			return null;
 		}
 
 		if ($this->values->isValid(type: $type, value: $value) === false) {
-			throw new InvalidArgumentException($field, 400);
+			return null;
 		}
 
 		return trim($value);
-	}//end checkedValue()
+	}//end allowedValue()
 
 	/**
 	 * Store the tokens.

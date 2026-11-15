@@ -126,7 +126,7 @@ class TokenSetLayerEntries {
 	 */
 	public function internalScopes(string $tokenSet, array $cascade): array {
 		try {
-			$css = $this->internalScopes->forSet(tokenSet: $tokenSet, designSystemId: $cascade['designSystemId'], withDark: $cascade['withDark']);
+			$css = $this->internalScopes->forSet(tokenSet: $tokenSet, wear: $this->wearOf(cascade: $cascade));
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: the internal scopes layer was skipped; the rest of the cascade still ran.',
@@ -141,4 +141,15 @@ class TokenSetLayerEntries {
 
 		return [['layer' => 'internal-scopes', 'kind' => 'inline', 'css' => $css, 'id' => self::INTERNAL_SCOPES_STYLE_ID]];
 	}//end internalScopes()
+
+	/**
+	 * The cascade's design system and dark switch, as the internal scopes read them.
+	 *
+	 * @param array{designSystemId: string, withDark: bool} $cascade The design system the set wears, and whether its dark variant is injected.
+	 *
+	 * @return TokenSetWear The wear.
+	 */
+	private function wearOf(array $cascade): TokenSetWear {
+		return new TokenSetWear(designSystemId: $cascade['designSystemId'], withDark: $cascade['withDark']);
+	}//end wearOf()
 }//end class

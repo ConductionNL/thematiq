@@ -28,6 +28,8 @@ use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
+use OCA\Thematiq\Settings\AdminFormServices;
+use OCA\Thematiq\Settings\AdminPageState;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -46,6 +48,8 @@ use Random\Randomizer;
  * Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Settings\Admin
+ * @uses   \OCA\Thematiq\Settings\AdminFormServices
+ * @uses   \OCA\Thematiq\Settings\AdminPageState
  * @uses   \OCA\Thematiq\Service\TokenSetSelectionPolicy
  */
 class AdminFormGoldenTest extends TestCase {
@@ -58,7 +62,9 @@ class AdminFormGoldenTest extends TestCase {
 		['id' => 'summer-breeze', 'name' => 'Summer Breeze', 'design_system' => 'summer-breeze'],
 	];
 
-	private const FLAGS = ['hide_slogan', 'show_menu_labels', 'primary_drives_components', 'confirm_save_stock', 'confirm_save_theme', 'dark_variants', 'marianne_enabled'];
+	private const FLAGS = [
+		'hide_slogan', 'show_menu_labels', 'primary_drives_components', 'confirm_save_stock', 'confirm_save_theme', 'dark_variants', 'marianne_enabled',
+	];
 
 	/**
 	 * Every seeded instance renders as recorded.
@@ -173,14 +179,18 @@ class AdminFormGoldenTest extends TestCase {
 
 		$admin = new Admin(
 			config: $config,
-			tokenSetService: $tokenSetService,
-			emailThemingService: $email,
-			previewService: $previewService,
 			userSession: $userSession,
-			designSystemService: $designSystems,
-			initialState: $initialState,
-			request: $request,
-			playgroundState: $playground
+			services: new AdminFormServices(
+				tokenSets: $tokenSetService,
+				emailTheming: $email,
+				previews: $previewService,
+				designSystems: $designSystems
+			),
+			page: new AdminPageState(
+				initialState: $initialState,
+				request: $request,
+				playground: $playground
+			)
 		);
 		$response = $admin->getForm();
 

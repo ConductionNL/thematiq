@@ -130,11 +130,7 @@ class CustomTokenSetService {
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.1
 	 */
 	public function slugify(string $name): string {
-		$slug = strtolower(trim($name));
-		$slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-		$slug = trim($slug, '-');
-
-		return substr($slug, 0, 64);
+		return $this->manifestStore()->slugify(name: $name);
 	}//end slugify()
 
 	/**
@@ -441,18 +437,10 @@ class CustomTokenSetService {
 				continue;
 			}
 
-			$entry = [];
-			if (is_array($meta) === true) {
-				$entry = $meta;
-			}
-
-			$entry['id'] = $id;
-			$result[] = $entry;
+			$result[] = $this->manifestStore()->listed(id: $id, meta: $meta);
 		}
 
-		usort($result, fn ($a, $b) => strcasecmp(($a['name'] ?? $a['id']), ($b['name'] ?? $b['id'])));
-
-		return $result;
+		return $this->manifestStore()->byName(entries: $result);
 	}//end list()
 
 	/**
@@ -480,14 +468,7 @@ class CustomTokenSetService {
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	public function getManifest(): array {
-		$raw = $this->config->getAppValue(Application::APP_ID, self::MANIFEST_KEY, '{}');
-		$decoded = json_decode($raw, true);
-
-		if (is_array($decoded) === false) {
-			return [];
-		}
-
-		return $decoded;
+		return $this->manifestStore()->read();
 	}//end getManifest()
 
 	/**
@@ -500,12 +481,17 @@ class CustomTokenSetService {
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-2.2
 	 */
 	private function saveManifest(array $manifest): void {
-		$this->config->setAppValue(
-			Application::APP_ID,
-			self::MANIFEST_KEY,
-			json_encode($manifest, JSON_UNESCAPED_SLASHES)
-		);
+		$this->manifestStore()->save(manifest: $manifest);
 	}//end saveManifest()
+
+	/**
+	 * The manifest's app config key.
+	 *
+	 * @return AppConfigManifest The manifest store.
+	 */
+	private function manifestStore(): AppConfigManifest {
+		return new AppConfigManifest(config: $this->config, key: self::MANIFEST_KEY);
+	}//end manifestStore()
 
 	/**
 	 * Derive the theming metadata from the uploaded declarations.

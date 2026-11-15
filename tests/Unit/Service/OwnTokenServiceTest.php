@@ -184,4 +184,32 @@ final class OwnTokenServiceTest extends TestCase {
 			$this->assertArrayHasKey(key: '--nldesign-org-keep', array: $this->service->list());
 		}
 	}//end testReplaceAllChecksEveryToken()
+	/**
+	 * Every field's refusal, in the order the fields are checked, and the stored shape of an accepted token.
+	 *
+	 * @return void
+	 */
+	public function testEachFieldRefusedInOrder(): void {
+		$ok = ['slug' => 'brand-a', 'label' => 'A', 'type' => 'color', 'value' => '#e17000'];
+		$cases = [
+			'label' => [['label' => '   '] + $ok, ['label' => str_repeat('a', 81)] + $ok, ['label' => str_repeat('a', 81), 'type' => 'size', 'value' => 'x'] + $ok],
+			'type' => [['type' => 'size'] + $ok, ['type' => 7, 'value' => '#fff'] + $ok],
+			'value' => [['value' => 'red; }'] + $ok, ['value' => "#fff\n"] + $ok, ['value' => 12] + $ok, ['value' => 'not a colour'] + $ok, ['type' => 'duration', 'darkValue' => 'x'] + $ok],
+			'darkValue' => [['darkValue' => 'nope'] + $ok, ['type' => 'text', 'value' => 'x', 'darkValue' => '#000'] + $ok, ['darkValue' => 'nope', 'description' => str_repeat('d', 501)] + $ok],
+			'description' => [['description' => str_repeat('d', 501)] + $ok],
+		];
+		foreach ($cases as $field => $inputs) {
+			foreach ($inputs as $input) {
+				$this->assertRefused(input: $input, field: $field);
+			}
+		}
+
+		$token = $this->service->create(input: ['label' => '  Label  ', 'description' => '  Text  ', 'darkValue' => '  #000000  ', 'value' => ' #e17000 '] + $ok);
+		$stored = $this->service->list()[$token['name']];
+		$this->assertSame(
+			expected: ['label' => 'Label', 'type' => 'color', 'value' => '#e17000', 'darkValue' => '#000000', 'description' => 'Text'],
+			actual: array_intersect_key($stored, array_flip(['label', 'type', 'value', 'darkValue', 'description']))
+		);
+		$this->assertSame(expected: ['label', 'type', 'value', 'darkValue', 'description'], actual: array_slice(array_keys($stored), 0, 5));
+	}//end testEachFieldRefusedInOrder()
 }//end class

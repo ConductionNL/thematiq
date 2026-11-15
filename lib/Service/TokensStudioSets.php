@@ -80,41 +80,82 @@ class TokensStudioSets {
 	public function darkSets(array $document): ?array {
 		$themes = array_values(array_filter((array)($document['$themes'] ?? []), 'is_array'));
 		if ($themes === []) {
-			$named = static fn (string $name): bool => strtolower($name) === 'dark';
-			$dark = array_values(array_filter($this->names(document: $document), $named));
-			if ($dark === []) {
-				return null;
-			}
-
-			return $dark;
+			return $this->darkByName(document: $document);
 		}
 
 		if (count($themes) !== 2) {
 			return null;
 		}
 
-		$isDark = static fn (array $theme): bool => in_array(
-			'dark',
-			[strtolower((string)($theme['id'] ?? '')), strtolower((string)($theme['name'] ?? ''))],
-			true
-		);
-		if ($isDark($themes[0]) === $isDark($themes[1])) {
+		return $this->darkByThemes(themes: $themes);
+	}//end darkSets()
+
+	/**
+	 * The sets named `dark`, in a file without themes.
+	 *
+	 * @param array<string, mixed> $document The file.
+	 *
+	 * @return array<int, string>|null The names, or null when no set is named so.
+	 */
+	private function darkByName(array $document): ?array {
+		$named = static fn (string $name): bool => strtolower($name) === 'dark';
+		$dark = array_values(array_filter($this->names(document: $document), $named));
+		if ($dark === []) {
+			return null;
+		}
+
+		return $dark;
+	}//end darkByName()
+
+	/**
+	 * The sets a dark theme switches on that its light theme does not.
+	 *
+	 * @param array<int, array<string, mixed>> $themes The file's two themes.
+	 *
+	 * @return array<int, string>|null The names, or null unless exactly one of the themes is dark.
+	 */
+	private function darkByThemes(array $themes): ?array {
+		if ($this->isDarkTheme(theme: $themes[0]) === $this->isDarkTheme(theme: $themes[1])) {
 			return null;
 		}
 
 		$darkTheme = $themes[1];
 		$lightTheme = $themes[0];
-		if ($isDark($themes[0]) === true) {
+		if ($this->isDarkTheme(theme: $themes[0]) === true) {
 			$darkTheme = $themes[0];
 			$lightTheme = $themes[1];
 		}
 
-		$switchedOn = static fn (array $theme): array => array_keys(
+		return array_values(array_map('strval', array_diff($this->switchedOn(theme: $darkTheme), $this->switchedOn(theme: $lightTheme))));
+	}//end darkByThemes()
+
+	/**
+	 * Whether a theme's id or name is `dark`.
+	 *
+	 * @param array<string, mixed> $theme The theme.
+	 *
+	 * @return bool True for the dark theme.
+	 */
+	private function isDarkTheme(array $theme): bool {
+		return in_array(
+			'dark',
+			[strtolower((string)($theme['id'] ?? '')), strtolower((string)($theme['name'] ?? ''))],
+			true
+		);
+	}//end isDarkTheme()
+
+	/**
+	 * The sets a theme has switched on, as enabled or as source.
+	 *
+	 * @param array<string, mixed> $theme The theme.
+	 *
+	 * @return array<int|string, int|string> The set names.
+	 */
+	private function switchedOn(array $theme): array {
+		return array_keys(
 			array_filter((array)($theme['selectedTokenSets'] ?? []), static fn ($status): bool => $status === 'enabled' || $status === 'source')
 		);
-
-		return array_values(array_map('strval', array_diff($switchedOn($darkTheme), $switchedOn($lightTheme))));
-	}//end darkSets()
+	}//end switchedOn()
 
 	/**
 	 * The names of the token sets: first in `tokenSetOrder`, then the ones it does not list.
@@ -180,13 +221,9 @@ class TokensStudioSets {
 				continue;
 			}
 
-			$status = 'enabled';
-			if ($selected !== null) {
-				$status = ($selected[$name] ?? 'disabled');
-			}
-
+			$status = $this->setStatus(selected: $selected, name: $name);
 			if ($status !== 'enabled' && $status !== 'source') {
-				$skipped[] = ['path' => (string)$name, 'reason' => 'token-set-disabled'];
+				$skipped[] = ['path' => $name, 'reason' => 'token-set-disabled'];
 				continue;
 			}
 
@@ -194,7 +231,23 @@ class TokensStudioSets {
 		}
 
 		return $merged;
-	}//end mergedSets()
+	}//end merged()
+
+	/**
+	 * A set's status in the file's only theme; every set is enabled in a file without one.
+	 *
+	 * @param array<string, mixed>|null $selected The theme's set statuses, or null.
+	 * @param string $name The set name.
+	 *
+	 * @return mixed The status, `disabled` for a set the theme does not list.
+	 */
+	private function setStatus(?array $selected, string $name): mixed {
+		if ($selected === null) {
+			return 'enabled';
+		}
+
+		return ($selected[$name] ?? 'disabled');
+	}//end setStatus()
 
 	/**
 	 * The dark token sets of a light and dark file as one tree, in their order; empty for any other file.
@@ -228,8 +281,7 @@ class TokensStudioSets {
 	 */
 	private function replaced(array $base, array $over, int $depth): array {
 		foreach ($over as $key => $child) {
-			$isGroup = (is_array($child) === true && $this->isToken(node: $child) === false && str_starts_with((string)$key, '$') === false);
-			if ($isGroup === true && $depth < self::MAX_DEPTH && is_array($base[$key] ?? null) === true && $this->isToken(node: $base[$key]) === false) {
+			if ($this->isGroup(key: $key, node: $child) === true && $depth < self::MAX_DEPTH && $this->isGroupAt(tree: $base, key: $key) === true) {
 				$base[$key] = $this->replaced(base: $base[$key], over: $child, depth: ($depth + 1));
 				continue;
 			}
@@ -239,6 +291,30 @@ class TokensStudioSets {
 
 		return $base;
 	}//end replaced()
+
+	/**
+	 * Whether a member of a tree is a group: an array that is not a token, under a key without `$`.
+	 *
+	 * @param int|string $key The member's key.
+	 * @param mixed $node The member.
+	 *
+	 * @return bool True for a group.
+	 */
+	private function isGroup(int|string $key, mixed $node): bool {
+		return is_array($node) === true && $this->isToken(node: $node) === false && str_starts_with((string)$key, '$') === false;
+	}//end isGroup()
+
+	/**
+	 * Whether a tree holds a group (an array that is not a token) at a key.
+	 *
+	 * @param array<string, mixed> $tree The tree.
+	 * @param int|string $key The key.
+	 *
+	 * @return bool True when a group is there.
+	 */
+	private function isGroupAt(array $tree, int|string $key): bool {
+		return is_array($tree[$key] ?? null) === true && $this->isToken(node: $tree[$key]) === false;
+	}//end isGroupAt()
 
 	/**
 	 * Whether a node is a token, in either spelling.

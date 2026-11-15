@@ -45,6 +45,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\ColourContrastAdjuster
  * @uses   \OCA\Thematiq\Service\ColourLiteralParser
+ * @uses   \OCA\Thematiq\Service\ColourArgument
  * @uses   \OCA\Thematiq\Service\ContrastService
  * @uses   \OCA\Thematiq\Service\ConversionRun
  * @uses   \OCA\Thematiq\Service\ConverterColourRepair
@@ -55,16 +56,37 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\AliasWalk
  * @uses   \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\TypographyMember
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
  * @uses   \OCA\Thematiq\Service\FigmaTokenReader
+ * @uses   \OCA\Thematiq\Service\FigmaCssValue
  * @uses   \OCA\Thematiq\Service\FileDarkValues
  * @uses   \OCA\Thematiq\Service\OpenProjectSetFile
  * @uses   \OCA\Thematiq\Service\ThematiqExportLayers
  * @uses   \OCA\Thematiq\Service\ToolTokenFileNormaliser
  * @uses   \OCA\Thematiq\Service\TokensStudioSets
+ * @uses   \OCA\Thematiq\Service\AdaptedToken
+ * @uses   \OCA\Thematiq\Service\ColourComponentScale
+ * @uses   \OCA\Thematiq\Service\ColourFunctionReading
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\ComponentRepairRun
+ * @uses   \OCA\Thematiq\Service\ContrastRepairRun
+ * @uses   \OCA\Thematiq\Service\DtcgTokenLeaves
+ * @uses   \OCA\Thematiq\Service\DtcgWriteRun
+ * @uses   \OCA\Thematiq\Service\LeafMappingRun
+ * @uses   \OCA\Thematiq\Service\LeafScope
+ * @uses   \OCA\Thematiq\Service\MappedToken
+ * @uses   \OCA\Thematiq\Service\SetFileBlock
+ * @uses   \OCA\Thematiq\Service\SetFileEntry
+ * @uses   \OCA\Thematiq\Service\SetFileReadRun
+ * @uses   \OCA\Thematiq\Service\TokenSetDownload
+ * @uses   \OCA\Thematiq\Service\TypedValue
  */
 class TokenSetConverterGoldenTest extends TestCase {
 

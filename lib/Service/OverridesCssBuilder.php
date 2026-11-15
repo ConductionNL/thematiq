@@ -145,44 +145,96 @@ class OverridesCssBuilder {
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
 		$own = ($own ?? new OwnTokenCss());
 		$tokens = $this->withReadableText(tokens: $tokens);
-		$lines = array_merge(
-			$this->declarationLines(tokens: $this->withMotionTwins(tokens: $tokens), important: true),
-			$own->lightLines()
-		);
+		$lines = array_merge($this->lightLines(tokens: $tokens), $own->lightLines());
 		if ($lines === []) {
 			return self::CSS_HEADER . PHP_EOL . ':root {}' . PHP_EOL;
 		}
 
-		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
+		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL
+			. $this->motionBlock(tokens: $tokens);
 
-		// A user who chose a theme, dark or light, gets Nextcloud's durations
-		// declared on body (`[data-theme-dark] { --animation-quick: 100ms }`),
-		// which a :root value never reaches (#937).
-		$motionLines = $this->declarationLines(tokens: array_intersect_key($tokens, self::MOTION_TWINS), important: true);
-		if ($motionLines !== []) {
-			$css .= self::MOTION_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $motionLines) . PHP_EOL . '}' . PHP_EOL;
-		}
-
-		// The administrator's own dark value replaces a derived one, and is the
-		// only dark value of a settable or internal colour, which derive none.
-		$ownDark = array_filter(
-			$darkTokens,
-			fn (string $name): bool => isset($tokens[$name]) === true && $this->values->hasDarkValueFor(name: $name) === true,
-			ARRAY_FILTER_USE_KEY
-		);
-		$darkLines = array_merge(
-			$this->declarationLines(tokens: array_merge($this->darkValues(tokens: $tokens), $ownDark), important: true),
-			$own->darkLines()
-		);
+		$darkLines = array_merge($this->darkLines(tokens: $tokens, darkTokens: $darkTokens), $own->darkLines());
 		if ($darkLines === []) {
 			return $css;
 		}
 
-		// The same two scopes the generated dark stylesheets use. A user who
-		// chose the dark theme gets Nextcloud's dark colours declared on body,
-		// which a :root value never reaches; a body-level declaration wins for
-		// both kinds of dark user.
-		return $css . '@media (prefers-color-scheme: dark) {' . PHP_EOL
+		return $css . $this->darkBlocks(darkLines: $darkLines);
+	}//end build()
+
+	/**
+	 * The editor's `:root` lines, each motion token with its thematiq twin.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens, page text repaired.
+	 *
+	 * @return array<int, string> The declaration lines.
+	 */
+	private function lightLines(array $tokens): array {
+		return $this->declarationLines(tokens: $this->withMotionTwins(tokens: $tokens), important: true);
+	}//end lightLines()
+
+	/**
+	 * The editor's dark lines: the derived dark values, the administrator's own dark values over them.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens, page text repaired.
+	 * @param array<string, string> $darkTokens Editor token => the administrator's own dark value.
+	 *
+	 * @return array<int, string> The declaration lines.
+	 */
+	private function darkLines(array $tokens, array $darkTokens): array {
+		$ownDark = $this->ownDarkValues(tokens: $tokens, darkTokens: $darkTokens);
+
+		return $this->declarationLines(tokens: array_merge($this->darkValues(tokens: $tokens), $ownDark), important: true);
+	}//end darkLines()
+
+	/**
+	 * The motion tokens again on body: a user who chose a theme, dark or
+	 * light, gets Nextcloud's durations declared on body
+	 * (`[data-theme-dark] { --animation-quick: 100ms }`), which a :root value
+	 * never reaches (#937).
+	 *
+	 * @param array<string, string> $tokens The editor's tokens.
+	 *
+	 * @return string The block, or '' when no motion token is set.
+	 */
+	private function motionBlock(array $tokens): string {
+		$motionLines = $this->declarationLines(tokens: array_intersect_key($tokens, self::MOTION_TWINS), important: true);
+		if ($motionLines === []) {
+			return '';
+		}
+
+		return self::MOTION_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $motionLines) . PHP_EOL . '}' . PHP_EOL;
+	}//end motionBlock()
+
+	/**
+	 * The administrator's own dark values that apply: the administrator's own
+	 * dark value replaces a derived one, and is the only dark value of a
+	 * settable or internal colour, which derive none.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens.
+	 * @param array<string, string> $darkTokens Editor token => the administrator's own dark value.
+	 *
+	 * @return array<string, string> The own dark values of set tokens that take one.
+	 */
+	private function ownDarkValues(array $tokens, array $darkTokens): array {
+		return array_filter(
+			$darkTokens,
+			fn (string $name): bool => isset($tokens[$name]) === true && $this->values->hasDarkValueFor(name: $name) === true,
+			ARRAY_FILTER_USE_KEY
+		);
+	}//end ownDarkValues()
+
+	/**
+	 * The dark declarations in the same two scopes the generated dark
+	 * stylesheets use. A user who chose the dark theme gets Nextcloud's dark
+	 * colours declared on body, which a :root value never reaches; a
+	 * body-level declaration wins for both kinds of dark user.
+	 *
+	 * @param array<int, string> $darkLines The dark declaration lines.
+	 *
+	 * @return string The two blocks.
+	 */
+	private function darkBlocks(array $darkLines): string {
+		return '@media (prefers-color-scheme: dark) {' . PHP_EOL
 			. '	' . self::SYSTEM_DARK_SELECTOR . ' {' . PHP_EOL
 			. '	' . implode(PHP_EOL . '	', $darkLines) . PHP_EOL
 			. '	}' . PHP_EOL
@@ -190,7 +242,7 @@ class OverridesCssBuilder {
 			. self::CHOSEN_DARK_SELECTOR . ' {' . PHP_EOL
 			. implode(PHP_EOL, $darkLines) . PHP_EOL
 			. '}' . PHP_EOL;
-	}//end build()
+	}//end darkBlocks()
 
 	/**
 	 * The dark value of every brand-layer colour override: derived as the

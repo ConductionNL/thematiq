@@ -21,6 +21,8 @@ use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
+use OCA\Thematiq\Settings\AdminFormServices;
+use OCA\Thematiq\Settings\AdminPageState;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -64,14 +66,18 @@ class AdminDelegationTest extends TestCase {
 	private function admin(): Admin {
 		return new Admin(
 			config: $this->createMock(originalClassName: IConfig::class),
-			tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
-			emailThemingService: $this->createMock(originalClassName: EmailThemingService::class),
-			previewService: $this->createMock(originalClassName: ThemePreviewService::class),
 			userSession: $this->createMock(originalClassName: IUserSession::class),
-			designSystemService: $this->createMock(originalClassName: DesignSystemService::class),
-			initialState: $this->createMock(originalClassName: IInitialState::class),
-			request: $this->createMock(originalClassName: IRequest::class),
-			playgroundState: $this->createMock(originalClassName: PlaygroundStateService::class)
+			services: new AdminFormServices(
+				tokenSets: $this->createMock(originalClassName: TokenSetService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingService::class),
+				previews: $this->createMock(originalClassName: ThemePreviewService::class),
+				designSystems: $this->createMock(originalClassName: DesignSystemService::class)
+			),
+			page: new AdminPageState(
+				initialState: $this->createMock(originalClassName: IInitialState::class),
+				request: $this->createMock(originalClassName: IRequest::class),
+				playground: $this->createMock(originalClassName: PlaygroundStateService::class)
+			)
 		);
 	}//end admin()
 
@@ -82,6 +88,7 @@ class AdminDelegationTest extends TestCase {
 	 * @spec openspec/specs/admin-settings/spec.md
 	 *
 	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testThePanelIsADelegatedSetting(): void {
 		$this->assertInstanceOf(expected: IDelegatedSettings::class, actual: $this->admin());
@@ -132,6 +139,7 @@ class AdminDelegationTest extends TestCase {
 	 * @spec openspec/specs/admin-settings/spec.md
 	 *
 	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testEveryKeyThePanelWritesIsAuthorized(string $key): void {
 		$this->assertContains(
@@ -176,6 +184,7 @@ class AdminDelegationTest extends TestCase {
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 *
 	 * @return void
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testJobOwnedKeysAreNotDelegable(string $key): void {
 		$this->assertNotContains(

@@ -20,6 +20,8 @@ use OCA\Thematiq\Service\PlaygroundStateService;
 use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetService;
 use OCA\Thematiq\Settings\Admin;
+use OCA\Thematiq\Settings\AdminFormServices;
+use OCA\Thematiq\Settings\AdminPageState;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
@@ -102,7 +104,7 @@ class AdminInitialStateTest extends TestCase {
 		);
 
 		$tokenSetService = $this->createMock(originalClassName: TokenSetService::class);
-		// getForm() publishes the SELECTABLE list, which TokenSetSelectionPolicy
+		// The form publishes the SELECTABLE list, which TokenSetSelectionPolicy
 		// now derives from this catalogue rather than from a second method on the
 		// service — so the real decision runs here instead of being stubbed out.
 		// getAppPath() points at the repository so the policy reads the real
@@ -121,7 +123,8 @@ class AdminInitialStateTest extends TestCase {
 		);
 
 		$previewService = $this->createMock(originalClassName: ThemePreviewService::class);
-		$previewService->method('getActivePreview')->willReturn($activePreview);
+		// Only the session user has a preview, so a lookup for anyone else publishes none.
+		$previewService->method('getActivePreview')->willReturnMap([['admin', $activePreview]]);
 
 		$user = $this->createMock(originalClassName: IUser::class);
 		$user->method('getUID')->willReturn('admin');
@@ -167,14 +170,18 @@ class AdminInitialStateTest extends TestCase {
 
 		return new Admin(
 			config: $config,
-			tokenSetService: $tokenSetService,
-			emailThemingService: $emailThemingService,
-			previewService: $previewService,
 			userSession: $userSession,
-			designSystemService: $designSystemService,
-			initialState: $initialState,
-			request: $this->createMock(originalClassName: IRequest::class),
-			playgroundState: $playgroundState
+			services: new AdminFormServices(
+				tokenSets: $tokenSetService,
+				emailTheming: $emailThemingService,
+				previews: $previewService,
+				designSystems: $designSystemService
+			),
+			page: new AdminPageState(
+				initialState: $initialState,
+				request: $this->createMock(originalClassName: IRequest::class),
+				playground: $playgroundState
+			)
 		);
 	}//end buildAdmin()
 

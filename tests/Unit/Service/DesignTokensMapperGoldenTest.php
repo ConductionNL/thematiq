@@ -35,13 +35,25 @@ use Random\Randomizer;
  * and compares each result with the recording. Set THEMATIQ_GOLDEN_RECORD=1 to rewrite it.
  *
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\TypographyMember
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
  * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\AliasWalk
  * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
  * @uses   \OCA\Thematiq\Service\CssColorParser
  * @uses   \OCA\Thematiq\Service\DesignTokenRef
  * @uses   \OCA\Thematiq\Service\DesignTokensMapping
  * @uses   \OCA\Thematiq\Service\DesignTokensWriter
  * @uses   \OCA\Thematiq\Service\DtcgValueTyper
+ * @uses   \OCA\Thematiq\Service\ColourComponentScale
+ * @uses   \OCA\Thematiq\Service\ColourFunctionReading
+ * @uses   \OCA\Thematiq\Service\DtcgWriteRun
+ * @uses   \OCA\Thematiq\Service\LeafMappingRun
+ * @uses   \OCA\Thematiq\Service\LeafScope
+ * @uses   \OCA\Thematiq\Service\MappedToken
+ * @uses   \OCA\Thematiq\Service\TokenSetDownload
+ * @uses   \OCA\Thematiq\Service\TypedValue
  */
 class DesignTokensMapperGoldenTest extends TestCase {
 

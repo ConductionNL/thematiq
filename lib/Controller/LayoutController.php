@@ -48,6 +48,21 @@ use OCP\IRequest;
 class LayoutController extends Controller {
 
 	/**
+	 * The request parameter each layout option is read from, and its app config key, in the order they are stored.
+	 *
+	 * @var array<string, string>
+	 */
+	private const FIELDS = [
+		'workplaceLayout' => LayoutOptionsService::WORKPLACE_LAYOUT_KEY,
+		'brandStripe' => LayoutOptionsService::BRAND_STRIPE_KEY,
+		'navigationWidth' => LayoutOptionValues::NAVIGATION_WIDTH_KEY,
+		'navigationActiveStyle' => LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY,
+		'brandStripePlacement' => LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY,
+		'loginWatermark' => LayoutOptionValues::LOGIN_WATERMARK_KEY,
+		'headerStyle' => LayoutOptionValues::HEADER_STYLE_KEY,
+	];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app id.
@@ -71,18 +86,17 @@ class LayoutController extends Controller {
 	 * its placement, the navigation width, the selected navigation entry's
 	 * style and the login watermark.
 	 *
+	 * Each option is read from the request parameter named in FIELDS:
+	 * `workplaceLayout` (`default`, `light`), `brandStripe` (`1`, `0`),
+	 * `navigationWidth` (a whole number of pixels, 200 to 480),
+	 * `navigationActiveStyle` (`default`, `soft`), `brandStripePlacement`
+	 * (`header-and-login`, `header`, `login`), `loginWatermark` (`1`, `0`) and
+	 * `headerStyle` (`default`, `workplace`); empty or absent follows the theme.
+	 *
 	 * Every value is validated before any is written, so a request with one
 	 * bad value changes nothing. The answer carries the stored choices and
 	 * what the instance-wide token set now resolves to, which is what the
 	 * admin panel needs to add or drop the stylesheets on the open page.
-	 *
-	 * @param string $workplaceLayout `default`, `light`, or empty to follow the theme.
-	 * @param string $brandStripe `1`, `0`, or empty to follow the theme.
-	 * @param string $navigationWidth A whole number of pixels, 200 to 480, or empty to follow the theme.
-	 * @param string $navigationActiveStyle `default`, `soft`, or empty to follow the theme.
-	 * @param string $brandStripePlacement `header-and-login`, `header`, `login`, or empty to follow the theme.
-	 * @param string $loginWatermark `1`, `0`, or empty to follow the theme.
-	 * @param string $headerStyle `default`, `workplace`, or empty to follow the theme.
 	 *
 	 * @return JSONResponse The stored and the resolved state, or HTTP 400 on an unknown value.
 	 *
@@ -90,33 +104,12 @@ class LayoutController extends Controller {
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
-	 *
-	 * @SuppressWarnings(PHPMD.LongVariable) - the parameter names ARE the wire contract: Nextcloud binds each from the JSON body
-	 *   key the admin page sends, the app config key in camel case.
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
-	public function save(
-		string $workplaceLayout = '',
-		string $brandStripe = '',
-		string $navigationWidth = '',
-		string $navigationActiveStyle = '',
-		string $brandStripePlacement = '',
-		string $loginWatermark = '',
-		string $headerStyle = '',
-	): JSONResponse {
-		$values = [
-			LayoutOptionsService::WORKPLACE_LAYOUT_KEY => $workplaceLayout,
-			LayoutOptionsService::BRAND_STRIPE_KEY => $brandStripe,
-			LayoutOptionValues::NAVIGATION_WIDTH_KEY => $navigationWidth,
-			LayoutOptionValues::NAVIGATION_ACTIVE_STYLE_KEY => $navigationActiveStyle,
-			LayoutOptionValues::BRAND_STRIPE_PLACEMENT_KEY => $brandStripePlacement,
-			LayoutOptionValues::LOGIN_WATERMARK_KEY => $loginWatermark,
-			LayoutOptionValues::HEADER_STYLE_KEY => $headerStyle,
-		];
-		foreach ($values as $key => $value) {
-			if ($this->layoutOptions->accepts(key: $key, value: $value) === false) {
-				return new JSONResponse(['error' => 'Unknown layout option'], 400);
-			}
+	public function save(): JSONResponse {
+		$values = $this->requestedValues();
+		if ($values === null || $this->acceptsAll(values: $values) === false) {
+			return new JSONResponse(['error' => 'Unknown layout option'], 400);
 		}
 
 		foreach ($values as $key => $value) {
@@ -124,22 +117,51 @@ class LayoutController extends Controller {
 			$this->logChange(key: $key, old: $previous, new: $value);
 		}
 
-		$tokenSet = $this->activeTokenSet->getActive();
+		$answer = ['status' => 'ok'];
+		foreach (self::FIELDS as $param => $key) {
+			$answer[$param] = $values[$key];
+		}
 
-		return new JSONResponse(
-			[
-				'status' => 'ok',
-				'workplaceLayout' => $workplaceLayout,
-				'brandStripe' => $brandStripe,
-				'navigationWidth' => $navigationWidth,
-				'navigationActiveStyle' => $navigationActiveStyle,
-				'brandStripePlacement' => $brandStripePlacement,
-				'loginWatermark' => $loginWatermark,
-				'headerStyle' => $headerStyle,
-				'resolved' => $this->layoutOptions->resolved(tokenSet: $tokenSet),
-			]
-		);
+		$answer['resolved'] = $this->layoutOptions->resolved(tokenSet: $this->activeTokenSet->getActive());
+
+		return new JSONResponse($answer);
 	}//end save()
+
+	/**
+	 * The option values the request carries, by app config key; absent ones are empty.
+	 *
+	 * @return array<string, string>|null The values, or null when one is not a string.
+	 */
+	private function requestedValues(): ?array {
+		$values = [];
+		foreach (self::FIELDS as $param => $key) {
+			$value = $this->request->getParam($param, '');
+			if (is_string($value) === false) {
+				return null;
+			}
+
+			$values[$key] = $value;
+		}
+
+		return $values;
+	}//end requestedValues()
+
+	/**
+	 * Whether every value is one its option accepts.
+	 *
+	 * @param array<string, string> $values The values, by app config key.
+	 *
+	 * @return bool
+	 */
+	private function acceptsAll(array $values): bool {
+		foreach ($values as $key => $value) {
+			if ($this->layoutOptions->accepts(key: $key, value: $value) === false) {
+				return false;
+			}
+		}
+
+		return true;
+	}//end acceptsAll()
 
 	/**
 	 * Write one audit entry for an option that changed.

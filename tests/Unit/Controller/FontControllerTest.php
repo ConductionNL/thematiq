@@ -246,6 +246,55 @@ class FontControllerTest extends TestCase {
 	}//end testListReturnsFonts()
 
 	/**
+	 * list() hands back every stored font with its name, role and size, in the
+	 * service's order (closing-round-scenarios task 1.2, typ-font-list-delete).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testListReturnsEveryStoredFontWithNameRoleAndSize(): void {
+		$fonts = [
+			['id' => 'custom-rijks-sans', 'name' => 'Rijks Sans', 'role' => 'body', 'size' => 48211],
+			['id' => 'custom-rijks-serif', 'name' => 'Rijks Serif', 'role' => 'heading', 'size' => 51200],
+		];
+		$this->service->expects($this->once())->method('list')->willReturn($fonts);
+
+		$data = $this->controller->list()->getData();
+
+		$this->assertSame(expected: $fonts, actual: $data['fonts']);
+		foreach ($data['fonts'] as $font) {
+			$this->assertSame(expected: ['id', 'name', 'role', 'size'], actual: array_keys($font));
+		}
+	}//end testListReturnsEveryStoredFontWithNameRoleAndSize()
+
+	/**
+	 * The admin page renders one row per listed font in `#nldesign-font-list`,
+	 * each with its name, role, size and its own delete action that names the
+	 * font it deletes (closing-round-scenarios task 1.2).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 */
+	public function testTheAdminPageRendersADeleteActionPerFont(): void {
+		$script = (string)file_get_contents(__DIR__ . '/../../../js/admin.js');
+		$start = strpos($script, 'function renderFontList(listEl, fonts)');
+		$this->assertNotFalse(condition: $start, message: 'admin.js must render the font list.');
+		$end = strpos($script, 'function deleteFont(', $start);
+		$this->assertNotFalse(condition: $end);
+		$render = substr($script, $start, ($end - $start));
+
+		$this->assertStringContainsString(needle: "getElementById('nldesign-font-list')", haystack: $script);
+		$this->assertMatchesRegularExpression(
+			pattern: '/fonts\.forEach\(function \(font\) \{.*font\.name.*font\.role.*font\.size.*deleteBtn.*deleteFont\(font\.id, font\.name \|\| font\.id\).*row\.appendChild\(deleteBtn\).*listEl\.appendChild\(row\)/s',
+			string: $render,
+			message: 'Each font row shows its name, role and size, and carries its own delete action.'
+		);
+		$this->assertStringContainsString(needle: "method: 'DELETE'", haystack: substr($script, $end, 2000));
+	}//end testTheAdminPageRendersADeleteActionPerFont()
+
+	/**
 	 * delete() returns ok on success.
 	 *
 	 * @return void
@@ -369,4 +418,39 @@ class FontControllerTest extends TestCase {
 			);
 		}
 	}//end testServeAndCssCarryPublicPage()
+	/**
+	 * Every upload refusal with its exact answer, and the arguments a stored upload passes on.
+	 *
+	 * @return void
+	 */
+	public function testEveryUploadAnswerExactly(): void {
+		$cases = [
+			[[], [400, 'No font file uploaded.']],
+			[['size' => 1], [400, 'No font file uploaded.']],
+			[['tmp_name' => $this->tmpUploadPath, 'size' => (2 * 1024 * 1024 + 1)], [413, 'Font file exceeds the 2 MB size limit.']],
+			[['tmp_name' => $this->tmpUploadPath . '-missing', 'size' => 1], [400, 'Could not read the uploaded file.']],
+		];
+		foreach ($cases as [$file, $answer]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getParam')->willReturnMap([['name', '', ' Rijks Sans '], ['role', 'body', ' heading ']]);
+			$request->method('getUploadedFile')->willReturn($file);
+			$service = $this->createMock(originalClassName: FontService::class);
+			$service->expects($this->never())->method('store');
+			$l = $this->createMock(originalClassName: IL10N::class);
+			$l->method('t')->willReturnCallback(fn (string $text) => $text);
+			$response = @(new FontController(appName: 'thematiq', request: $request, service: $service, l: $l))->upload();
+			$this->assertSame(expected: $answer, actual: [$response->getStatus(), $response->getData()['error']], message: (string)json_encode($file));
+		}
+
+		foreach ([[['tmp_name' => $this->tmpUploadPath, 'size' => 7], 7], [['tmp_name' => $this->tmpUploadPath], 13]] as [$file, $size]) {
+			$request = $this->createMock(originalClassName: IRequest::class);
+			$request->method('getParam')->willReturnMap([['name', '', ' Rijks Sans '], ['role', 'body', ' heading ']]);
+			$request->method('getUploadedFile')->willReturn($file);
+			$service = $this->createMock(originalClassName: FontService::class);
+			$service->expects($this->once())->method('store')->with('Rijks Sans', 'heading', "wOF2\x00\x01payload", $size)->willReturn(['id' => 'custom-x', 'other' => 1]);
+			$l = $this->createMock(originalClassName: IL10N::class);
+			$response = (new FontController(appName: 'thematiq', request: $request, service: $service, l: $l))->upload();
+			$this->assertSame(expected: [200, ['id' => 'custom-x']], actual: [$response->getStatus(), $response->getData()]);
+		}
+	}//end testEveryUploadAnswerExactly()
 }//end class
