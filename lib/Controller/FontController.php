@@ -52,6 +52,10 @@ use RuntimeException;
  * data leak (route-auth + semantic-auth gate rationale, documented again at
  * each method below).
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - PHPMD 3 counts the route attributes
+ *   (PublicPage, NoCSRFRequired, AnonRateLimit, AuthorizedAdminSetting and Admin) as
+ *   dependencies; the controller's own collaborators are its services and the response types.
+ *
  * @spec openspec/specs/custom-fonts/spec.md
  */
 class FontController extends Controller {
