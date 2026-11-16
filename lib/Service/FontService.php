@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
-use OCA\Thematiq\Kernel\Contracts\FontServiceInterface;
 use OCP\Files\GenericFileException;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -46,7 +45,7 @@ use RuntimeException;
  *
  * @spec openspec/specs/custom-fonts/spec.md
  */
-class FontService implements FontServiceInterface {
+class FontService {
 
 	/**
 	 * The appconfig key holding the font metadata manifest (JSON object).

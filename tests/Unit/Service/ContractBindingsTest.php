@@ -26,7 +26,6 @@ use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
-use OCA\Thematiq\Kernel\Contracts\FontServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
@@ -36,7 +35,6 @@ use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ContractBindings;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\DarkPaletteService;
-use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenReferenceService;
@@ -85,7 +83,6 @@ final class ContractBindingsTest extends TestCase {
 				ConfigBundleServiceInterface::class         => ConfigBundleService::class,
 				ContrastServiceInterface::class             => ContrastService::class,
 				DarkPaletteServiceInterface::class          => DarkPaletteService::class,
-				FontServiceInterface::class                 => FontService::class,
 				ShippedTokenSetAuditServiceInterface::class => ShippedTokenSetAuditService::class,
 				ThemingAuditServiceInterface::class         => ThemingAuditService::class,
 				TokenReferenceServiceInterface::class       => TokenReferenceService::class,

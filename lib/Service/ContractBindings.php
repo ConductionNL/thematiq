@@ -24,7 +24,6 @@ use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
-use OCA\Thematiq\Kernel\Contracts\FontServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
@@ -57,7 +56,6 @@ final class ContractBindings {
 		$context->registerServiceAlias(ConfigBundleServiceInterface::class, ConfigBundleService::class);
 		$context->registerServiceAlias(ContrastServiceInterface::class, ContrastService::class);
 		$context->registerServiceAlias(DarkPaletteServiceInterface::class, DarkPaletteService::class);
-		$context->registerServiceAlias(FontServiceInterface::class, FontService::class);
 		$context->registerServiceAlias(ShippedTokenSetAuditServiceInterface::class, ShippedTokenSetAuditService::class);
 		$context->registerServiceAlias(ThemingAuditServiceInterface::class, ThemingAuditService::class);
 		$context->registerServiceAlias(TokenReferenceServiceInterface::class, TokenReferenceService::class);
