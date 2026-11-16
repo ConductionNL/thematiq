@@ -34,6 +34,11 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 /**
  * The aliases from each contract in lib/Kernel/Contracts to its implementation.
  *
+ * Its coupling is the point of the class: it names every contract and every
+ * implementation so that nothing else has to.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @spec exclude Composition root wiring, no functional requirement.
  */
 final class ContractBindings {
