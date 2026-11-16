@@ -20,9 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Service\ThemeVersionRestoreService;
 use OCA\Thematiq\Service\ThemeVersionService;
-use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -53,23 +53,23 @@ class AuditController extends Controller {
 	/**
 	 * The theming audit trail service.
 	 *
-	 * @var ThemingAuditService
+	 * @var ThemingAuditServiceInterface
 	 */
-	private ThemingAuditService $auditService;
+	private ThemingAuditServiceInterface $auditService;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param ThemingAuditService $auditService The theming audit trail service.
+	 * @param ThemingAuditServiceInterface $auditService The theming audit trail service.
 	 * @param ThemeVersionService $versionService The kept configuration versions.
 	 * @param ThemeVersionRestoreService $restoreService Previews and restores a version.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		ThemingAuditService $auditService,
+		ThemingAuditServiceInterface $auditService,
 		private readonly ThemeVersionService $versionService,
 		private readonly ThemeVersionRestoreService $restoreService,
 	) {

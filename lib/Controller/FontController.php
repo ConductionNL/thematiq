@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\FontServiceInterface;
 use OCA\Thematiq\Service\FontLabel;
-use OCA\Thematiq\Service\FontService;
 use OCA\Thematiq\Service\FontUpload;
 use OCA\Thematiq\Service\FontValidator;
 use OCA\Thematiq\Settings\Admin;
@@ -60,9 +60,9 @@ class FontController extends Controller {
 	/**
 	 * The font storage/lifecycle service.
 	 *
-	 * @var FontService
+	 * @var FontServiceInterface
 	 */
-	private FontService $service;
+	private FontServiceInterface $service;
 
 	/**
 	 * The localization service.
@@ -76,13 +76,13 @@ class FontController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param FontService $service The font storage/lifecycle service.
+	 * @param FontServiceInterface $service The font storage/lifecycle service.
 	 * @param IL10N $l The localization service.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		FontService $service,
+		FontServiceInterface $service,
 		IL10N $l,
 	) {
 		parent::__construct(appName: $appName, request: $request);

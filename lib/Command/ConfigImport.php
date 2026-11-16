@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +33,7 @@ use Throwable;
  * `thematiq:config:export` or the settings-panel download, for OTAP
  * (dev/test/acceptatie/productie) promotion pipelines.
  *
- * Reuses {@see ConfigBundleService::import()} exclusively — no second
+ * Reuses {@see \OCA\Thematiq\Service\ConfigBundleService::import()} exclusively — no second
  * validation path — so the result is identical to the `configBundle#import`
  * HTTP endpoint for the same bundle. Import is all-or-nothing: ANY hard
  * validation failure prints the full per-section error listing and exits

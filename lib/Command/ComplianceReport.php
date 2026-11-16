@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\ComplianceReportService;
+use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,16 +44,16 @@ class ComplianceReport extends Command {
 	/**
 	 * The compliance report service.
 	 *
-	 * @var ComplianceReportService
+	 * @var ComplianceReportServiceInterface
 	 */
-	private ComplianceReportService $service;
+	private ComplianceReportServiceInterface $service;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param ComplianceReportService $service The compliance report service.
+	 * @param ComplianceReportServiceInterface $service The compliance report service.
 	 */
-	public function __construct(ComplianceReportService $service) {
+	public function __construct(ComplianceReportServiceInterface $service) {
 		parent::__construct();
 		$this->service = $service;
 	}//end __construct()

@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Migration;
 
-use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use Psr\Log\LoggerInterface;
@@ -41,9 +41,9 @@ class GenerateDarkVariantsRepairStep implements IRepairStep {
 	/**
 	 * The dark palette derivation/generation service.
 	 *
-	 * @var DarkPaletteService
+	 * @var DarkPaletteServiceInterface
 	 */
-	private DarkPaletteService $darkPalette;
+	private DarkPaletteServiceInterface $darkPalette;
 
 	/**
 	 * The logger.
@@ -55,10 +55,10 @@ class GenerateDarkVariantsRepairStep implements IRepairStep {
 	/**
 	 * Constructor.
 	 *
-	 * @param DarkPaletteService $darkPalette The dark palette service.
+	 * @param DarkPaletteServiceInterface $darkPalette The dark palette service.
 	 * @param LoggerInterface $logger The logger.
 	 */
-	public function __construct(DarkPaletteService $darkPalette, LoggerInterface $logger) {
+	public function __construct(DarkPaletteServiceInterface $darkPalette, LoggerInterface $logger) {
 		$this->darkPalette = $darkPalette;
 		$this->logger = $logger;
 	}//end __construct()
