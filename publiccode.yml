@@ -24,6 +24,7 @@ description:
       stijlt de rest: knoppen, tabellen, statuskleuren, lettertypes en
       afgeronde hoeken. Je ziet elke wijziging live voordat je opslaat, en
       daarna volgt elke app. Kant-en-klare thema's volgen NL Design System.
+      Conduction onderhoudt dit component binnen het Nextcloud ISV-programma.
     features:
       - Thema live bewerken en per groep instellen
       - Eigen webfonts uploaden
@@ -39,6 +40,7 @@ description:
       fonts and corner radius. You see each change live before you save it, and
       after saving every app follows. Ready-made government themes follow NL
       Design System.
+      Conduction maintains this component within the Nextcloud ISV programme.
     features:
       - Live theme editing and themes per group
       - Self-hosted web fonts
@@ -56,7 +58,12 @@ localisation:
     - en
 
 maintenance:
-  type: internal
+  type: contract
+  contractors:
+    - name: Conduction B.V.
+      until: "2028-12-31"
+      email: info@conduction.nl
+      website: https://conduction.nl
   contacts:
     - name: Conduction Development Team
       email: info@conduction.nl
