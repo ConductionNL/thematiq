@@ -24,9 +24,15 @@ use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\DocumentAssetServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\GalleryInstallServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\GroupThemingServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemeGalleryServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemeVersionRestoreServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\UpstreamFreshnessServiceInterface;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 
@@ -56,9 +62,15 @@ final class ContractBindings {
 		$context->registerServiceAlias(ConfigBundleServiceInterface::class, ConfigBundleService::class);
 		$context->registerServiceAlias(ContrastServiceInterface::class, ContrastService::class);
 		$context->registerServiceAlias(DarkPaletteServiceInterface::class, DarkPaletteService::class);
+		$context->registerServiceAlias(DocumentAssetServiceInterface::class, DocumentAssetService::class);
+		$context->registerServiceAlias(GalleryInstallServiceInterface::class, GalleryInstallService::class);
+		$context->registerServiceAlias(GroupThemingServiceInterface::class, GroupThemingService::class);
 		$context->registerServiceAlias(ShippedTokenSetAuditServiceInterface::class, ShippedTokenSetAuditService::class);
+		$context->registerServiceAlias(ThemeGalleryServiceInterface::class, ThemeGalleryService::class);
+		$context->registerServiceAlias(ThemeVersionRestoreServiceInterface::class, ThemeVersionRestoreService::class);
 		$context->registerServiceAlias(ThemingAuditServiceInterface::class, ThemingAuditService::class);
 		$context->registerServiceAlias(TokenReferenceServiceInterface::class, TokenReferenceService::class);
+		$context->registerServiceAlias(TokenSetLicenceServiceInterface::class, TokenSetLicenceService::class);
 		$context->registerServiceAlias(UpstreamFreshnessServiceInterface::class, UpstreamFreshnessService::class);
 	}//end register()
 }//end class

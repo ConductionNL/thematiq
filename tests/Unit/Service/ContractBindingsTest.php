@@ -26,18 +26,30 @@ use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\DocumentAssetServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\GalleryInstallServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\GroupThemingServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemeGalleryServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemeVersionRestoreServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Kernel\Contracts\UpstreamFreshnessServiceInterface;
 use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\ConfigBundleService;
 use OCA\Thematiq\Service\ContractBindings;
 use OCA\Thematiq\Service\ContrastService;
 use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Service\GalleryInstallService;
+use OCA\Thematiq\Service\GroupThemingService;
 use OCA\Thematiq\Service\ShippedTokenSetAuditService;
+use OCA\Thematiq\Service\ThemeGalleryService;
+use OCA\Thematiq\Service\ThemeVersionRestoreService;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenReferenceService;
+use OCA\Thematiq\Service\TokenSetLicenceService;
 use OCA\Thematiq\Service\UpstreamFreshnessService;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -83,9 +95,15 @@ final class ContractBindingsTest extends TestCase {
 				ConfigBundleServiceInterface::class         => ConfigBundleService::class,
 				ContrastServiceInterface::class             => ContrastService::class,
 				DarkPaletteServiceInterface::class          => DarkPaletteService::class,
+				DocumentAssetServiceInterface::class        => DocumentAssetService::class,
+				GalleryInstallServiceInterface::class       => GalleryInstallService::class,
+				GroupThemingServiceInterface::class         => GroupThemingService::class,
 				ShippedTokenSetAuditServiceInterface::class => ShippedTokenSetAuditService::class,
+				ThemeGalleryServiceInterface::class         => ThemeGalleryService::class,
+				ThemeVersionRestoreServiceInterface::class  => ThemeVersionRestoreService::class,
 				ThemingAuditServiceInterface::class         => ThemingAuditService::class,
 				TokenReferenceServiceInterface::class       => TokenReferenceService::class,
+				TokenSetLicenceServiceInterface::class      => TokenSetLicenceService::class,
 				UpstreamFreshnessServiceInterface::class    => UpstreamFreshnessService::class,
 			],
 			actual: $this->registeredAliases()
