@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 use OCP\ICache;
@@ -39,7 +40,7 @@ use OCP\ICache;
  *
  * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
  */
-class ShippedTokenSetAuditService {
+class ShippedTokenSetAuditService implements ShippedTokenSetAuditServiceInterface {
 
 	/**
 	 * The token pair `textRatio` compares, foreground first.

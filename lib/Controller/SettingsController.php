@@ -33,7 +33,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\ComplianceReportService;
 use OCA\Thematiq\Service\CoreThemingState;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;

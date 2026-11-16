@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 /**
  * Computes WCAG 2.1 relative-luminance contrast ratios for token pairs.
  *
@@ -30,7 +31,7 @@ namespace OCA\Thematiq\Service;
  *
  * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
  */
-class ContrastService {
+class ContrastService implements ContrastServiceInterface {
 
 	/**
 	 * The fixed token pairs that are contrast-checked on upload.

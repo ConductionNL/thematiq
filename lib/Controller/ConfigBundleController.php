@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use OCA\Thematiq\Service\ConfigBundleService;
-use OCA\Thematiq\Service\ThemingAuditService;
+use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -58,30 +58,30 @@ class ConfigBundleController extends Controller {
 	/**
 	 * The configuration bundle service.
 	 *
-	 * @var ConfigBundleService
+	 * @var ConfigBundleServiceInterface
 	 */
-	private ConfigBundleService $service;
+	private ConfigBundleServiceInterface $service;
 
 	/**
 	 * The theming audit trail service.
 	 *
-	 * @var ThemingAuditService
+	 * @var ThemingAuditServiceInterface
 	 */
-	private ThemingAuditService $auditService;
+	private ThemingAuditServiceInterface $auditService;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param ConfigBundleService $service The configuration bundle service.
-	 * @param ThemingAuditService $auditService The theming audit trail service.
+	 * @param ConfigBundleServiceInterface $service The configuration bundle service.
+	 * @param ThemingAuditServiceInterface $auditService The theming audit trail service.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		ConfigBundleService $service,
-		ThemingAuditService $auditService,
+		ConfigBundleServiceInterface $service,
+		ThemingAuditServiceInterface $auditService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->service = $service;

@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use OCA\Thematiq\Service\ContrastService;
+use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
@@ -50,21 +50,21 @@ class ContrastController extends Controller {
 	/**
 	 * The WCAG contrast math service.
 	 *
-	 * @var ContrastService
+	 * @var ContrastServiceInterface
 	 */
-	private ContrastService $contrastService;
+	private ContrastServiceInterface $contrastService;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request object.
-	 * @param ContrastService $contrastService The WCAG contrast math service.
+	 * @param ContrastServiceInterface $contrastService The WCAG contrast math service.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		ContrastService $contrastService,
+		ContrastServiceInterface $contrastService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->contrastService = $contrastService;

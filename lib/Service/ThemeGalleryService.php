@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\ThemeGalleryServiceInterface;
 use OCP\IConfig;
 use Throwable;
 
@@ -34,7 +35,7 @@ use Throwable;
  *
  * @spec openspec/specs/theme-gallery/spec.md
  */
-class ThemeGalleryService {
+class ThemeGalleryService implements ThemeGalleryServiceInterface {
 
 	/**
 	 * App config key: 'yes' when the gallery is on.
