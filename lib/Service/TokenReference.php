@@ -59,6 +59,8 @@ final class TokenReference {
 	 * @param string $tokenName The referred token's name.
 	 *
 	 * @return string `var(<tokenName>)`.
+	 *
+	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	public static function to(string $tokenName): string {
 		return 'var(' . $tokenName . ')';
