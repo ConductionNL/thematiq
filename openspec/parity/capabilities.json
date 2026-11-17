@@ -1359,7 +1359,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/extended-token-sets",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
+				"requirement": "openspec/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -1697,7 +1697,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/admin-settings",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/component-playground :: The playground previews the login page before it is published"
+				"requirement": "openspec/specs/component-playground :: The playground previews the login page before it is published"
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground, 'Login page & Branding' tab",
 			"evidence": {
@@ -3530,22 +3530,22 @@
 			"id": "typ-org-font-library",
 			"area": "typography",
 			"name": "Offer site owners a central library of approved organisation fonts to choose from.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "planned",
-				"evidence": "lib/Controller/FontController.php:150 list() and lib/Service/FontService.php maintain a per-instance manifest of up to 20 uploaded fonts, each assignable to a role (body/heading) via the font-role select (admin.php:375); this gives a single instance's admins a shared, central list of self-hosted fonts to assign roles from. It is not a curated catalogue of pre-approved fonts to pick without uploading, and 'site owners' (plural, e.g. multiple tenants) has no meaning here: thematiq themes one Nextcloud instance, admin-only. Not built (12 Nov 2026): the font list holds uploads only; there is no library of approved fonts to assign without uploading. Planned in openspec/changes/rows-without-a-requirement, tasks 3.1 to 3.3.",
+				"state": "built",
+				"evidence": "lib/Service/BundledFontLibrary.php families() lists every family css/systems/nldesign/fonts.css declares whose files REUSE.toml names under one licence; lib/Service/FontService.php library() lists them with their licence and assigned roles, assignLibraryFont() assigns one to the body or heading role without an upload and buildCss() serves its faces from the app's own files and writes the same role token an upload would; lib/Controller/FontController.php library()/assignLibrary()/unassignLibrary() at GET/POST /settings/fonts/library and DELETE /settings/fonts/library/{role} (admin only); the Font library list on the Theming page (templates/settings/admin.php #nldesign-font-library, js/admin.js renderFontLibrary()). tests/Unit/Service/FontServiceLibraryTest.php, tests/Unit/Service/BundledFontLibraryTest.php, tests/Unit/Controller/FontControllerLibraryTest.php. Instance-wide and admin-only: thematiq themes one Nextcloud instance.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/custom-fonts",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/custom-fonts :: An administrator picks a font from an approved library",
-				"change": "rows-without-a-requirement"
+				"requirement": "openspec/specs/custom-fonts :: An administrator picks a font from an approved library",
+				"change": "openspec/changes/archive/2026-11-14-rows-without-a-requirement"
 			},
-			"reachedOn": "Settings > Administration > Theming, Custom fonts list + role select (#nldesign-font-list, #nldesign-font-role)",
+			"reachedOn": "Settings > Administration > Theming, Custom fonts: the uploaded fonts list with its role select (#nldesign-font-list, #nldesign-font-role) and the Font library list (#nldesign-font-library)",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/fonts holds only OpenDyslexic; no font library for site owners exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : the SharePoint brand center's Brand Fonts library is exactly 'a central library of approved organisation fonts' for site owners, also reaching Viva Connections and PowerPoint for the web",
@@ -5876,7 +5876,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-theming-audit-log",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/theming-audit :: An audit entry cannot be edited or deleted"
+				"requirement": "openspec/specs/theming-audit :: An audit entry cannot be edited or deleted"
 			},
 			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
 			"evidence": {
@@ -6690,7 +6690,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/css-architecture",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/css-architecture :: The theme reaches every page as plain CSS variables"
+				"requirement": "openspec/specs/css-architecture :: The theme reaches every page as plain CSS variables"
 			},
 			"reachedOn": "any page in the instance, automatically, for any app that writes plain CSS against the --nldesign-* variables",
 			"evidence": {
@@ -6725,7 +6725,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/css-architecture :: The theme adds no script to an ordinary page"
+				"requirement": "openspec/specs/css-architecture :: The theme adds no script to an ordinary page"
 			},
 			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
 			"evidence": {
@@ -7104,7 +7104,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/token-editor-ui",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
+				"requirement": "openspec/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
 			},
 			"reachedOn": "any page: selected text takes the brand primary at 20 percent",
 			"evidence": {
