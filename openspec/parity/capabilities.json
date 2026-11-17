@@ -6169,9 +6169,9 @@
 				"spec": "openspec/specs/claim-accuracy",
 				"requirement": [
 					"openspec/specs/shell-catalogue :: A font is redistributable only under a stated licence",
-					"openspec/specs/shell-catalogue :: A logo is redistributable only when the repository says so"
-				],
-				"plan": "openspec/changes/shipped-set-licences"
+					"openspec/specs/shell-catalogue :: A logo is redistributable only when the repository says so",
+					"openspec/specs/token-set-licences :: Every shipped organisation theme declares its licence"
+				]
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
 			"evidence": {
