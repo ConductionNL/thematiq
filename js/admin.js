@@ -6334,6 +6334,15 @@
 								cancelBtn.disabled = false
 							}
 							console.error('Error applying token set:', err)
+							if (err && err.message === 'restricted_set_not_confirmed') {
+								notify(
+									t(
+										'thematiq',
+										'Confirm first that your organisation may use this house style. You do that under House styles of other organisations.',
+									),
+								)
+								return
+							}
 							notify(t('thematiq', 'Failed to apply token set.'))
 						})
 				})

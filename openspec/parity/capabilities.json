@@ -3182,8 +3182,10 @@
 				"origin": "competitor",
 				"owner": "ConductionNL/thematiq",
 				"change": "openspec/changes/archive/2026-09-30-authoring-simple-brand-form",
-				"requirement": "openspec/specs/simple-brand-form :: An administrator creates a house style from a short form",
-				"plan": "openspec/changes/brand-form-action-colour"
+				"requirement": [
+					"openspec/specs/simple-brand-form :: An administrator creates a house style from a short form",
+					"openspec/specs/simple-brand-form :: The form may give the main button its own colour"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming, Custom token sets, Start from your colours",
 			"evidence": {
@@ -4006,8 +4008,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
-				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination",
-				"plan": "openspec/changes/action-menu-links-keep-text-colour"
+				"requirement": [
+					"openspec/specs/css-architecture :: Render-Context Discrimination",
+					"openspec/specs/css-architecture :: Action menu link items read as menu entries"
+				]
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
@@ -4154,8 +4158,8 @@
 				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openproject-in-the-app-menu",
-				"requirement": "openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
+				"spec": "openspec/specs/openproject-in-the-app-menu",
+				"requirement": "openspec/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
 			},
 			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
 			"evidence": {
@@ -6167,9 +6171,9 @@
 				"spec": "openspec/specs/claim-accuracy",
 				"requirement": [
 					"openspec/specs/shell-catalogue :: A font is redistributable only under a stated licence",
-					"openspec/specs/shell-catalogue :: A logo is redistributable only when the repository says so"
-				],
-				"plan": "openspec/changes/shipped-set-licences"
+					"openspec/specs/shell-catalogue :: A logo is redistributable only when the repository says so",
+					"openspec/specs/token-set-licences :: Every shipped organisation theme declares its licence"
+				]
 			},
 			"reachedOn": "https://thematiq.conduction.nl/reference/assets and /reference/compliance (published docs site)",
 			"evidence": {
@@ -8207,16 +8211,15 @@
 			"tokens-studio": "unknown",
 			"built": {
 				"state": "built",
-				"evidence": "css/systems/nldesign/overrides.css:31-44 fills Nextcloud's primary element colour from --nldesign-color-action (with -hover derived by color-mix) when a set declares it, else from the primary; lib/Service/ShellRoleMapper.php has the action and action-deep shell roles; lib/Service/ContrastService.php:145-147 checks the text on the action colour like the text on the primary",
+				"evidence": "css/systems/nldesign/defaults.css:254-275 paints the primary-action button's tokens from --nldesign-color-action, -hover and -text when a set declares them, and css/systems/nldesign/overrides.css:30-44 keeps Nextcloud's primary element colour on the primary and derives the button's hover step (--thematiq-action-hover) by color-mix; lib/Service/ShellRoleMapper.php has the action and action-deep shell roles; lib/Service/ContrastService.php:145-147 checks the text on the action colour like the text on the primary",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openspec/changes/action-colour-token",
+				"change": "openspec/changes/archive/2026-11-17-action-colour-token",
 				"spec": "openspec/specs/action-colour",
 				"requirement": [
 					"openspec/specs/action-colour :: An imported theme may bring an action colour",
 					"openspec/specs/action-colour :: The action colour reaches the main button and nothing else"
-				],
-				"plan": "openspec/changes/action-colour-token"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming, a token set or uploaded theme that declares --nldesign-color-action",
 			"evidence": {
@@ -8230,7 +8233,7 @@
 			"providerHow": "read-from-code",
 			"feature": "custom-token-sets",
 			"featureConfidence": "high",
-			"note": "Added on 12 Nov 2026 in the closing round (decision 395): change action-colour-token builds it, its code tasks are ticked and task 6.4, the check on a running instance, is left.",
+			"note": "Added on 12 Nov 2026 in the closing round (decision 395); change action-colour-token archived 17 Nov 2026 after the live check on NC 34 (main button in the action colour, checkbox and progress bar in the primary).",
 			"screen": {
 				"board": [
 					"TqComponenten",
@@ -8293,12 +8296,11 @@
 				"evidence": "appinfo/routes.php:46 shellToken#show GET /api/shell-tokens; lib/Service/ShellTokenService.php document() builds the eighteen shell roles and the logo of the active set; lib/Controller/ShellTokenController.php answers with an ETag and an empty 304 when the reader already holds that revision",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openspec/changes/shell-tokens-endpoint",
 				"requirement": [
-					"openspec/changes/shell-tokens-endpoint/specs/shell-tokens :: Another product reads the active shell tokens",
-					"openspec/changes/shell-tokens-endpoint/specs/shell-tokens :: An unchanged document is answered with 304"
+					"openspec/specs/shell-tokens :: Another product reads the active shell tokens",
+					"openspec/specs/shell-tokens :: An unchanged document is answered with 304"
 				],
-				"plan": "openspec/changes/shell-tokens-endpoint"
+				"spec": "openspec/specs/shell-tokens"
 			},
 			"reachedOn": "GET /apps/thematiq/api/shell-tokens",
 			"evidence": {

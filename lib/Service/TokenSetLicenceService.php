@@ -366,7 +366,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @return list<string> The sets recorded by this call (new ones only).
 	 *
-	 * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
 	public function recordAwaitingConfirmation(): array {
 		$before = $this->stored(key: self::AWAITING_KEY);

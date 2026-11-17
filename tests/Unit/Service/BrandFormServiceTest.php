@@ -173,7 +173,7 @@ class BrandFormServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
+	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
 	public function testWithoutAnActionColourTheSetHoldsNoActionToken(): void {
 		$plain = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff')));
@@ -192,7 +192,7 @@ class BrandFormServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
+	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
 	public function testAnActionColourBringsItsHoverAndText(): void {
 		$plain = $this->service->derive(appPath: $this->root, palette: new BrandPalette(base: new BrandColours(primary: '#1a67a3', background: '#ffffff')));

@@ -666,7 +666,7 @@ function convertOrg(org, context) {
  * @param {Object} org The organisation.
  * @param {string|null} sha The themes commit.
  * @return {void}
- * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
  */
 export function mergeEntry(manifest, entry, org, sha) {
 	const provenance = {}

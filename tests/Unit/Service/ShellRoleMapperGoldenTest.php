@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 
 declare(strict_types=1);
