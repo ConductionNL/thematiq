@@ -76,6 +76,13 @@ class FontService {
 	public const APPDATA_FOLDER = 'fonts';
 
 	/**
+	 * Appconfig key for the bundled fonts assigned to a role: role => family.
+	 *
+	 * @var string
+	 */
+	public const LIBRARY_ROLES_KEY = 'library_font_roles';
+
+	/**
 	 * The bundled Fira Sans fallback chain, verbatim from
 	 * css/systems/nldesign/defaults.css `--nldesign-font-family`. A generated
 	 * font override always places the uploaded family first and preserves
@@ -117,24 +124,140 @@ class FontService {
 	private FontValidator $validator;
 
 	/**
+	 * The approved fonts the app bundles.
+	 *
+	 * @var BundledFontLibrary
+	 */
+	private BundledFontLibrary $library;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppData $appData The app's IAppData storage.
 	 * @param IConfig $config The config service.
 	 * @param IURLGenerator $urlGenerator The URL generator.
 	 * @param FontValidator $validator The upload validator.
+	 * @param BundledFontLibrary|null $library The bundled font library; null reads this app's own.
 	 */
 	public function __construct(
 		IAppData $appData,
 		IConfig $config,
 		IURLGenerator $urlGenerator,
 		FontValidator $validator,
+		?BundledFontLibrary $library = null,
 	) {
 		$this->appData = $appData;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;
 		$this->validator = $validator;
+		$this->library = ($library ?? new BundledFontLibrary());
 	}//end __construct()
+
+	/**
+	 * The approved font library: every font the app bundles, with its licence
+	 * and the roles it is assigned to.
+	 *
+	 * @return list<array{name: string, licence: string, roles: list<string>}> The fonts, by name.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	public function library(): array {
+		$assigned = $this->libraryRoles();
+		$fonts = [];
+		foreach ($this->library->families() as $name => $family) {
+			$fonts[] = [
+				'name' => $name,
+				'licence' => $family['licence'],
+				'roles' => array_keys(array_filter($assigned, static fn (string $chosen): bool => $chosen === $name)),
+			];
+		}
+
+		return $fonts;
+	}//end library()
+
+	/**
+	 * Assign a bundled font to the body or heading role, without an upload.
+	 *
+	 * The assignment takes the role over from an uploaded font with that role,
+	 * and writes the same font token an upload would.
+	 *
+	 * @param string $name The family name, as the library lists it.
+	 * @param string $role `body` or `heading`.
+	 *
+	 * @return void
+	 *
+	 * @throws RuntimeException 422 for an unknown role, 404 for a font the library does not hold.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	public function assignLibraryFont(string $name, string $role): void {
+		$this->validator->validateRole(role: $role);
+		if ($this->library->family(name: $name) === null) {
+			throw new RuntimeException('The font library has no font named "' . $name . '".', 404);
+		}
+
+		$roles = $this->libraryRoles();
+		$roles[$role] = $name;
+		$this->libraryRolesStore()->save(manifest: $roles);
+		$this->bumpRevision();
+	}//end assignLibraryFont()
+
+	/**
+	 * Stop using a bundled font for a role; the role falls back to an uploaded
+	 * font with that role, or to the design system's own font.
+	 *
+	 * @param string $role `body` or `heading`.
+	 *
+	 * @return bool True when a bundled font was assigned to the role.
+	 *
+	 * @throws RuntimeException 422 for an unknown role.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	public function unassignLibraryFont(string $role): bool {
+		$this->validator->validateRole(role: $role);
+		$roles = $this->libraryRoles();
+		if (isset($roles[$role]) === false) {
+			return false;
+		}
+
+		unset($roles[$role]);
+		$this->libraryRolesStore()->save(manifest: $roles);
+		$this->bumpRevision();
+
+		return true;
+	}//end unassignLibraryFont()
+
+	/**
+	 * The bundled fonts assigned to a role, still in the library.
+	 *
+	 * A stored family the library no longer holds is ignored, so a removed
+	 * bundle can never emit a rule for files that are gone.
+	 *
+	 * @return array<string, string> Role => family.
+	 */
+	private function libraryRoles(): array {
+		$roles = [];
+		foreach ($this->libraryRolesStore()->read() as $role => $name) {
+			if (in_array($role, ['body', 'heading'], true) === true
+				&& is_string($name) === true
+				&& $this->library->family(name: $name) !== null
+			) {
+				$roles[$role] = $name;
+			}
+		}
+
+		return $roles;
+	}//end libraryRoles()
+
+	/**
+	 * The store of the bundled-font role assignments.
+	 *
+	 * @return AppConfigManifest
+	 */
+	private function libraryRolesStore(): AppConfigManifest {
+		return new AppConfigManifest(config: $this->config, key: self::LIBRARY_ROLES_KEY);
+	}//end libraryRolesStore()
 
 	/**
 	 * Derive a slug from an admin-supplied display name.
@@ -347,12 +470,14 @@ class FontService {
 	/**
 	 * Whether at least one font is currently configured.
 	 *
-	 * @return bool True when the manifest has at least one entry.
+	 * @return bool True when the manifest has at least one entry, or a
+	 *              bundled font is assigned to a role.
 	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
 	 */
 	public function hasFonts(): bool {
-		return empty($this->getManifest()) === false;
+		return empty($this->getManifest()) === false || empty($this->libraryRoles()) === false;
 	}//end hasFonts()
 
 	/**
@@ -371,11 +496,16 @@ class FontService {
 	 * @return string The generated stylesheet (empty string when no fonts
 	 *                are configured).
 	 *
+	 * A bundled font assigned to a role from the library takes that role, and
+	 * its faces are declared from the app's own files.
+	 *
 	 * @spec openspec/specs/custom-fonts/spec.md
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
 	 */
 	public function buildCss(): string {
 		$manifest = $this->getManifest();
-		if (empty($manifest) === true) {
+		$libraryRoles = $this->libraryRoles();
+		if (empty($manifest) === true && empty($libraryRoles) === true) {
 			return '';
 		}
 
@@ -384,6 +514,15 @@ class FontService {
 			'body' => null,
 			'heading' => null,
 		];
+
+		foreach (array_unique($libraryRoles) as $name) {
+			$escaped = $this->escapeCssString(value: $name);
+			$faces[] = $this->buildLibraryFaceRules(name: $name, escapedName: $escaped);
+		}
+
+		foreach ($libraryRoles as $role => $name) {
+			$roleMap[$role] = $this->escapeCssString(value: $name);
+		}
 
 		foreach ($manifest as $id => $entry) {
 			[$name, $role] = $this->resolveEntryNameAndRole(entry: $entry, id: (string)$id);
@@ -420,6 +559,33 @@ class FontService {
 
 		return [(string)($entry['name'] ?? $id), (string)($entry['role'] ?? 'body')];
 	}//end resolveEntryNameAndRole()
+
+	/**
+	 * Build the `@font-face` rules of a bundled family, one per face, from
+	 * the app's own font files.
+	 *
+	 * @param string $name The family name, as the library lists it.
+	 * @param string $escapedName The CSS-escaped family name.
+	 *
+	 * @return string The `@font-face` rules.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	private function buildLibraryFaceRules(string $name, string $escapedName): string {
+		$rules = [];
+		foreach (($this->library->family(name: $name)['faces'] ?? []) as $face) {
+			$url = $this->urlGenerator->linkTo('thematiq', $face['file']);
+			$rules[] = '@font-face {' . PHP_EOL
+				. '	font-family: "' . $escapedName . '";' . PHP_EOL
+				. '	src: url(\'' . $url . '\') format(\'woff2\');' . PHP_EOL
+				. '	font-weight: ' . $face['weight'] . ';' . PHP_EOL
+				. '	font-style: ' . $face['style'] . ';' . PHP_EOL
+				. '	font-display: swap;' . PHP_EOL
+				. '}';
+		}
+
+		return implode(PHP_EOL, $rules);
+	}//end buildLibraryFaceRules()
 
 	/**
 	 * Build a single `@font-face` rule for a stored font.

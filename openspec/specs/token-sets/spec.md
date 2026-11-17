@@ -1006,6 +1006,18 @@ licence recorded in `REUSE.toml`. The family stack MUST end in a generic fallbac
 - **THEN** the computed font family MUST resolve to Source Sans 3 from the app's own `css/fonts/` files
 - **AND** no request MUST go to a third-party font host
 
+### Requirement: Community brand sets sit beside the government ones
+
+The shipped catalogue MUST include brand sets for organisations that are not a municipality, a
+province or VNG, maintained in the same way and selectable in the same list. Each MUST ship its token
+file.
+
+#### Scenario: An open-source community picks its own brand
+@e2e exclude Catalogue content; covered by PHPUnit (CapabilityRowsTest::testTheCatalogueHoldsCommunitySetsBesideTheGovernmentOnes)
+- GIVEN an administrator opens the token set list
+- WHEN they look for `OpenCatalogi` or `Demodam`
+- THEN both MUST be listed and selectable
+
 ## Current Implementation Status
 
 **Fully implemented:**

@@ -144,6 +144,10 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		// Custom font upload lifecycle (admin-only).
 		['name' => 'font#upload', 'url' => '/settings/fonts/upload', 'verb' => 'POST'],
 		['name' => 'font#list', 'url' => '/settings/fonts', 'verb' => 'GET'],
+		// Assign a bundled font from the approved library to a role (no upload).
+		['name' => 'font#library', 'url' => '/settings/fonts/library', 'verb' => 'GET'],
+		['name' => 'font#assignLibrary', 'url' => '/settings/fonts/library', 'verb' => 'POST'],
+		['name' => 'font#unassignLibrary', 'url' => '/settings/fonts/library/{role}', 'verb' => 'DELETE'],
 		['name' => 'font#delete', 'url' => '/settings/fonts/{id}', 'verb' => 'DELETE'],
 		// Font serving — deliberately public (#[PublicPage] + #[NoCSRFRequired]
 		// on FontController::serve()/css()): CSS `url()` font loads carry no
