@@ -4006,8 +4006,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
-				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination",
-				"plan": "openspec/changes/action-menu-links-keep-text-colour"
+				"requirement": [
+					"openspec/specs/css-architecture :: Render-Context Discrimination",
+					"openspec/specs/css-architecture :: Action menu link items read as menu entries"
+				]
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
