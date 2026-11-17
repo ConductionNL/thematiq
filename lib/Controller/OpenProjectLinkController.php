@@ -29,7 +29,7 @@ use OCP\IRequest;
 /**
  * Read and save `openproject_url` and `openproject_modules`.
  *
- * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+ * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
  */
 class OpenProjectLinkController extends Controller {
 
@@ -55,7 +55,7 @@ class OpenProjectLinkController extends Controller {
 	 *
 	 * @return JSONResponse `{url, modules, available}`.
 	 *
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function show(): JSONResponse {
@@ -70,7 +70,7 @@ class OpenProjectLinkController extends Controller {
 	 *
 	 * @return JSONResponse The stored values, or 400 for an address that is not http or https.
 	 *
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function save(string $url = '', ?string $modules = null): JSONResponse {

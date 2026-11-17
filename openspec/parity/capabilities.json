@@ -4158,8 +4158,8 @@
 				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openproject-in-the-app-menu",
-				"requirement": "openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
+				"spec": "openspec/specs/openproject-in-the-app-menu",
+				"requirement": "openspec/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
 			},
 			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
 			"evidence": {
