@@ -250,7 +250,7 @@ class AppMenuService {
 	 * @return void
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {

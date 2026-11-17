@@ -46,5 +46,10 @@
       `npm run test:action-colour-unset` (`tests/css/check-action-colour-unset.mjs`), and
       `tests/e2e/spec-coverage/action-colour-unset.spec.ts` runs it in the Playwright job.
 - [x] 6.3 `composer check:strict`, once, before the push. `npm run lint`.
-- [ ] 6.4 A set that declares the token, on a running instance: the main button, a checkbox and
+- [x] 6.4 A set that declares the token, on a running instance: the main button, a checkbox and
       the progress bar in the action colour, light and dark.
+      Live pass 17 Nov 2026 (NC 34.0.6, set made by the brand form: primary #154273, action
+      #1f883d): the main buttons (Files "New", Users "New account") are #1f883d with black text in
+      light and #71d88f with dark text in dark; the header stays #154273. A checked checkbox and the
+      quota progress bar stay in the primary (#154273 light, #64a1e3 dark), as
+      `action-colour-main-button-only` decided on 13 Oct; the delta spec now says so.

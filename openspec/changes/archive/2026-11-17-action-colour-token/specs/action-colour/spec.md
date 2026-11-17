@@ -7,21 +7,20 @@ A token set may give the main button a colour of its own, apart from its primary
 ### Requirement: A token set may declare an action colour
 
 A token set MAY declare `--nldesign-color-action`, `--nldesign-color-action-hover` and
-`--nldesign-color-action-text` in its own file. In the NL Design System and La Suite bundles,
-`--color-primary-element` MUST read `--nldesign-color-action`, `--color-primary-element-text` MUST
-read `--nldesign-color-action-text`, and `--color-primary-element-hover` MUST read
-`--nldesign-color-action-hover`, each before the value it read until now. The main button MUST be
-painted in the same three values. A set that declares the action colour and no hover MUST get that
-colour 15% darker as its hover, never the hover of its primary. `--color-primary`, the header,
-links and the light tints MUST NOT follow the action colour. In a dark variant the action colour
-MUST get a dark value, and the main button's dark colour MUST be derived from it.
+`--nldesign-color-action-text` in its own file. In the NL Design System and La Suite bundles the
+main button MUST be painted in these three values: its fill, its hover and its label. A set that
+declares the action colour and no hover MUST get that colour 15% darker as its hover, never the
+hover of its primary. `--color-primary`, `--color-primary-element`, the header, links and the light
+tints MUST NOT follow the action colour (see `The action colour reaches the main button and nothing
+else`). In a dark variant the action colour MUST get a dark value, and the main button's dark colour
+MUST be derived from it.
 
 #### Scenario: A set with a green main button
 @e2e exclude Stylesheet cascade of a token no shipped set declares; covered by PHPUnit (ActionColourTokenTest) and the browser comparison in design.md
 - GIVEN a token set with primary `#1a67a3` that declares `--nldesign-color-action: #1f883d`
 - WHEN a page with a main button is drawn
 - THEN the main button MUST be `#1f883d`
-- AND a checked checkbox MUST be `#1f883d`
+- AND a checked checkbox MUST keep the colour of the primary
 - AND the header and the links MUST stay `#1a67a3`
 
 #### Scenario: The set declares no hover step
@@ -72,19 +71,3 @@ additional warning.
 - GIVEN any shipped token set
 - WHEN the set is checked
 - THEN no warning MUST name the action colour
-
-### Requirement: The shell tokens answer the action colour
-
-In `GET /apps/thematiq/api/shell-tokens`, `action` MUST be the administrator's own value of
-`--color-primary-element`, else the active set's `--nldesign-color-action`, else its primary.
-`action-deep` MUST be the administrator's own hover value, else the set's
-`--nldesign-color-action-hover`, else, for a set with an action colour, that colour 15% darker,
-else the hover of the primary. `primary`, `primary-deep` and `link` MUST NOT follow the action
-colour. For a set without an action colour both roles MUST be what they were.
-
-#### Scenario: The active set has an action colour
-@e2e exclude Mapping rule, covered by PHPUnit (ShellRoleMapperTest)
-- GIVEN the active set has primary `#1a67a3`, action `#1f883d` and action hover `#197032`
-- WHEN a request is made to `GET /apps/thematiq/api/shell-tokens`
-- THEN `tokens.action` MUST be `#1f883d` and `tokens.action-deep` MUST be `#197032`
-- AND `tokens.primary` MUST be `#1a67a3`

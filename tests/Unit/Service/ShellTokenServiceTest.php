@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 
 declare(strict_types=1);
@@ -47,7 +47,7 @@ use RuntimeException;
  * Nextcloud is replaced: which set is active, the administrator's own values,
  * the stock theme, and the URLs.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 class ShellTokenServiceTest extends TestCase {
 

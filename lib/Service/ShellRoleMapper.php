@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 
 declare(strict_types=1);
@@ -32,7 +32,7 @@ namespace OCA\Thematiq\Service;
  * Pure: no file, no config and no request is read here, so the same input
  * always gives the same values.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 class ShellRoleMapper {
 
@@ -205,8 +205,8 @@ class ShellRoleMapper {
 	 *
 	 * @return array<string, string> Role => CSS value, every role of {@see self::ROLES} present and non-empty.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-action-colour
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-main-button-not-the-element-colour
 	 */
 	public function map(array $tokens, array $overrides = []): array {
 		$declared = array_merge($tokens, $overrides);
@@ -439,7 +439,7 @@ class ShellRoleMapper {
 	 *
 	 * @return string|null `#rrggbb`, or null when either colour is not a hex or rgb() literal.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
 	 */
 	private function mix(string $first, string $second, float $weight): ?string {
 		$one = $this->colours->parseColor(value: $first);

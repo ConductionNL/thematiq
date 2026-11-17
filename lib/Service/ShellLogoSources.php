@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ use OCP\IURLGenerator;
 /**
  * The set's logo files, the runtime file URLs, the uploaded theming logo and absolute URLs.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 final class ShellLogoSources {
 
@@ -39,7 +39,7 @@ final class ShellLogoSources {
 	 * @param IConfig $config Reads whether Nextcloud theming holds an uploaded logo.
 	 * @param IURLGenerator $urlGenerator Makes URLs absolute.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
 	 */
 	public function __construct(
 		public readonly LogoLayerService $logos,

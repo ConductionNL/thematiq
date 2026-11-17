@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
 /**
  * The active set, whether it still exists, its name and the administrator's own values.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 final class ShellSetSources {
 
@@ -35,7 +35,7 @@ final class ShellSetSources {
 	 * @param DesignSystemService $designSystems The set's name.
 	 * @param CustomOverridesService $overrides The administrator's own values.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
 	 */
 	public function __construct(
 		public readonly ActiveTokenSetService $activeSet,

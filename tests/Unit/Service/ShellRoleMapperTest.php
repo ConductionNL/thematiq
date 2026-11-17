@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  * endpoint uses, so the mapping is checked against real declarations and not
  * only against the names this test happens to spell.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-every-shell-role-always-has-a-value
  */
 class ShellRoleMapperTest extends TestCase {
 
@@ -325,7 +325,7 @@ class ShellRoleMapperTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-action-colour
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-shell-tokens-answer-the-main-button-not-the-element-colour
 	 */
 	public function testASetsActionColourIsTheActionRole(): void {
 		$set = [
