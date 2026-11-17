@@ -31,7 +31,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '22'
+          # The themes workspace requires Node ^24.22.3 to build its generated
+          # themes; thematiq's own engines allow ^24 as well.
+          node-version: '24'
 
       - name: Setup PHP
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
@@ -51,6 +53,39 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
           echo "sha=$(git -C /tmp/themes rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build the generated upstream themes
+        # Some themes (sittard-geleen, vidar) have no token files: upstream
+        # generates them in TypeScript. Install only what those builds need,
+        # without lifecycle scripts, and write each theme's
+        # tmp/generated.tokens.json for the converter. A build that fails
+        # leaves its theme skipped, as it was before, and the others go on.
+        working-directory: /tmp/themes
+        run: |
+          themes=()
+          for build in proprietary/*/src/build-theme.mts; do
+            [ -f "$build" ] && themes+=("${build%/src/build-theme.mts}")
+          done
+          if [ "${#themes[@]}" -eq 0 ]; then
+            echo "No generated themes upstream."
+            exit 0
+          fi
+          filters=()
+          for theme in "${themes[@]}"; do
+            filters+=(--filter "./${theme}...")
+          done
+          corepack enable
+          if ! pnpm install --frozen-lockfile --ignore-scripts "${filters[@]}"; then
+            echo "::warning::could not install the generated themes' dependencies; the sync skips them"
+            exit 0
+          fi
+          for theme in "${themes[@]}"; do
+            if (cd "$theme" && node src/build-theme.mts); then
+              echo "built ${theme}"
+            else
+              echo "::warning::could not build ${theme}; the sync skips it"
+            fi
+          done
 
       - name: Convert upstream themes onto the nldesign vocabulary
         # scripts/sync-upstream-tokens.mjs converts every upstream-managed set
