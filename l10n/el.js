@@ -1200,7 +1200,8 @@ OC.L10N.register(
         "Use for body text": "Use for body text",
         "Use for headings": "Use for headings",
         "refers to {token}": "refers to {token}",
-        "refers to {token}: {value}": "refers to {token}: {value}"
+        "refers to {token}: {value}": "refers to {token}: {value}",
+        "The fill of a pill without a status colour": "The fill of a pill without a status colour"
     },
     "nplurals=2; plural=(n != 1);"
 )

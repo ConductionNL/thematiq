@@ -1886,6 +1886,16 @@
 					"name": "--nldesign-component-status-badge-error-color",
 					"paints": "Its label",
 					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-neutral-background-color",
+					"paints": "The fill of a pill without a status colour",
+					"callout": 3
+				},
+				{
+					"name": "--nldesign-component-status-badge-neutral-color",
+					"paints": "Its label",
+					"callout": 3
 				}
 			],
 			"fixed": []

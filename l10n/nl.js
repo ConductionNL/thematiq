@@ -1200,7 +1200,8 @@ OC.L10N.register(
         "Use for body text": "Gebruiken voor broodtekst",
         "Use for headings": "Gebruiken voor koppen",
         "refers to {token}": "verwijst naar {token}",
-        "refers to {token}: {value}": "verwijst naar {token}: {value}"
+        "refers to {token}: {value}": "verwijst naar {token}: {value}",
+        "The fill of a pill without a status colour": "De vulling van een label zonder statuskleur"
     },
     "nplurals=2; plural=(n != 1);"
 )
