@@ -414,7 +414,7 @@ class DesignTokensMapper {
 	 *
 	 * @return string|null The referred token.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	private function referenceTarget(string $path, LeafMappingRun $run): ?string {
 		$value = $run->leaves[$path]['value'];
@@ -446,7 +446,7 @@ class DesignTokensMapper {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	private function assignReference(MappedToken $token, TypedValue $typed, string $reference): void {
 		$result = $this->values->serialize(type: $typed->type, value: $typed->value);

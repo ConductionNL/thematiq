@@ -27,6 +27,13 @@ The system MUST maintain a `custom-overrides.css` file in the nldesign app's CSS
 - THEN the overrides MUST apply on top of all other CSS layers
 - AND they MUST take effect without a page reload (only on next load)
 
+#### Scenario: An administrator adapts a shipped set
+- GIVEN `utrecht` is the active token set and no token is overridden
+- WHEN the administrator sets "Primary color" to `#a00078` in the token editor and saves
+- THEN every page MUST use `#a00078` as the primary colour
+- AND every token the administrator did not change MUST keep the value `utrecht` gives it
+- AND the shipped `utrecht` set MUST stay unchanged
+
 ### Requirement: CSS Stack Load Order
 `custom-overrides.css` MUST be registered as the final CSS file in the nldesign app's CSS load order, after `element-overrides.css`.
 

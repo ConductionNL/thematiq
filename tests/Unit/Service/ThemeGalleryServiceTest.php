@@ -273,7 +273,7 @@ class ThemeGalleryServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 * @spec openspec/specs/theme-gallery/spec.md#requirement-an-administrator-browses-the-gallery
 	 */
 	public function testAWaterBoardEntryIsListedLikeAProvinceEntry(): void {
 		$this->appConfig['gallery_enabled'] = 'yes';

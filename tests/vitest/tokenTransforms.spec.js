@@ -161,7 +161,7 @@ describe('groupDiagnosticsByReason', () => {
 	})
 })
 
-// @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+// @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
 describe('referenceTarget', () => {
 	it('names the token a reference refers to, like TokenReference::targetOf()', () => {
 		expect(tokenTransforms.referenceTarget(' var( --nldesign-Color-Primary ) ')).toBe('--nldesign-color-primary')
