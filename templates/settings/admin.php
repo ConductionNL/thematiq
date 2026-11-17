@@ -390,7 +390,7 @@ if ($_['mockUi'] === true) {
 						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
-					<!-- The main button's own colour (openspec/changes/brand-form-action-colour). Off by
+					<!-- The main button's own colour (openspec/specs/simple-brand-form). Off by
 					     default: without it the main button wears the primary, as every set did. -->
 					<div class="nldesign-field">
 						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use Throwable;
  *
  * The document holds theme values only: no user, no group, no setting.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 class ShellTokenService {
 
@@ -71,7 +71,7 @@ class ShellTokenService {
 	 *
 	 * @return array{version: int, id: string, name: string, revision: string, tokens: array<string, string>, logo: array<string, string|null>}
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
 	 */
 	public function document(): array {
 		$id = $this->setSources->activeSet->getActive();

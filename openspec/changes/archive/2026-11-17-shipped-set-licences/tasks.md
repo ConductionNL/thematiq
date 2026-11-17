@@ -18,4 +18,10 @@
 - [x] 2.3 `tests/Unit/Repair/RecordRestrictedSetsAwaitingConfirmationTest.php`, started from info.xml.
 - [x] 2.4 Version 1.2.28; upgrade notes in `CHANGELOG.md`.
 - [x] 2.5 Checked on a Nextcloud 34 instance: `occ upgrade` with `epe` applied kept `epe` and recorded it.
-- [ ] 2.6 Browser check of the notice and the confirmation (live pass, decision 139).
+- [x] 2.6 Browser check of the notice and the confirmation (live pass, decision 139).
+      Live pass 17 Nov 2026 (NC 34.0.6): with `epe` applied unconfirmed, `occ maintenance:repair`
+      logged "applied without a confirmation, kept applied: epe" and recorded it; the admin page showed
+      "Gemeente Epe is in use, and nobody has confirmed that your organisation may use it. It stays
+      applied. Confirm it now"; the Confirm button stayed disabled until the statement was ticked;
+      after it the set read "Confirmed by admin on ...", the notice was gone, the record was empty and
+      `epe` was still active.

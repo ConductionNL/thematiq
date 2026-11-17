@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/action-colour-token/specs/action-colour/spec.md
+ * @e2e openspec/specs/action-colour/spec.md
  *
  * A token set without an action colour renders as it did before the action
  * colour existed, and a declared action colour reaches the filled primary
