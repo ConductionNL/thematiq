@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
+use OCA\Thematiq\Kernel\Contracts\GroupThemingServiceInterface;
 use OCA\Thematiq\Service\ActiveTokenSetService;
-use OCA\Thematiq\Service\GroupThemingService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,11 +37,11 @@ class ThemeGet extends Command {
 	 * Constructor.
 	 *
 	 * @param ActiveTokenSetService $active The active set.
-	 * @param GroupThemingService $groups The group mappings.
+	 * @param GroupThemingServiceInterface $groups The group mappings.
 	 */
 	public function __construct(
 		private readonly ActiveTokenSetService $active,
-		private readonly GroupThemingService $groups,
+		private readonly GroupThemingServiceInterface $groups,
 	) {
 		parent::__construct();
 	}//end __construct()

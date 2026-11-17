@@ -1198,7 +1198,9 @@ OC.L10N.register(
         "Stop using for {role}": "Niet meer gebruiken voor {role}",
         "The app bundles no fonts.": "De app levert geen lettertypen mee.",
         "Use for body text": "Gebruiken voor broodtekst",
-        "Use for headings": "Gebruiken voor koppen"
+        "Use for headings": "Gebruiken voor koppen",
+        "refers to {token}": "verwijst naar {token}",
+        "refers to {token}: {value}": "verwijst naar {token}: {value}"
     },
     "nplurals=2; plural=(n != 1);"
 )

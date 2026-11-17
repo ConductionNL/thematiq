@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\BackgroundJob;
 
-use OCA\Thematiq\Service\UpstreamFreshnessService;
+use OCA\Thematiq\Kernel\Contracts\UpstreamFreshnessServiceInterface;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use Psr\Log\LoggerInterface;
@@ -47,9 +47,9 @@ class UpstreamFreshnessJob extends TimedJob {
 	/**
 	 * The freshness service the job delegates to.
 	 *
-	 * @var UpstreamFreshnessService
+	 * @var UpstreamFreshnessServiceInterface
 	 */
-	private UpstreamFreshnessService $service;
+	private UpstreamFreshnessServiceInterface $service;
 
 	/**
 	 * The logger for the belt-and-braces catch.
@@ -62,10 +62,10 @@ class UpstreamFreshnessJob extends TimedJob {
 	 * Constructor.
 	 *
 	 * @param ITimeFactory $time The time factory required by the parent Job class.
-	 * @param UpstreamFreshnessService $service The freshness service.
+	 * @param UpstreamFreshnessServiceInterface $service The freshness service.
 	 * @param LoggerInterface $logger The logger.
 	 */
-	public function __construct(ITimeFactory $time, UpstreamFreshnessService $service, LoggerInterface $logger) {
+	public function __construct(ITimeFactory $time, UpstreamFreshnessServiceInterface $service, LoggerInterface $logger) {
 		parent::__construct(time: $time);
 		$this->setInterval(seconds: self::INTERVAL_SECONDS);
 		$this->setTimeSensitivity(sensitivity: self::TIME_INSENSITIVE);

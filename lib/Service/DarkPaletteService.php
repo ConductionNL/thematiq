@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
@@ -57,7 +58,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)           - see the ExcessiveClassLength rationale above.
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - see the ExcessiveClassLength rationale above.
  */
-class DarkPaletteService {
+class DarkPaletteService implements DarkPaletteServiceInterface {
 
 	/**
 	 * The generated-file format/algorithm version, embedded in the header

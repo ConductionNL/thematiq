@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use OCA\Thematiq\Service\TokenReferenceService;
+use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
@@ -60,14 +60,14 @@ class TokenReferenceController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
 	 * @param TokenSetService $tokenSets Available token sets, custom sets included.
-	 * @param TokenReferenceService $reference The renderer.
+	 * @param TokenReferenceServiceInterface $reference The renderer.
 	 * @param IAppManager $apps For the app root.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private TokenSetService $tokenSets,
-		private TokenReferenceService $reference,
+		private TokenReferenceServiceInterface $reference,
 		private IAppManager $apps,
 	) {
 		parent::__construct(appName: $appName, request: $request);

@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Service\Exception\FooterValidationException;
 
 /**
@@ -78,7 +79,7 @@ use OCA\Thematiq\Service\Exception\FooterValidationException;
  * name used for this bundle field throughout the rest of the codebase; shortening it here would
  * reduce cross-file consistency for a purely cosmetic 20-character sniff threshold.
  */
-class ConfigBundleService {
+class ConfigBundleService implements ConfigBundleServiceInterface {
 
 	/**
 	 * The bundle envelope `format` value.

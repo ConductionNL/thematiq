@@ -1197,7 +1197,9 @@
         "Stop using for {role}": "Stop using for {role}",
         "The app bundles no fonts.": "The app bundles no fonts.",
         "Use for body text": "Use for body text",
-        "Use for headings": "Use for headings"
+        "Use for headings": "Use for headings",
+        "refers to {token}": "refers to {token}",
+        "refers to {token}: {value}": "refers to {token}: {value}"
     },
     "plurals": {}
 }

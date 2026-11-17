@@ -22,6 +22,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\AppData\IAppDataFactory;
 use OCP\Files\SimpleFS\ISimpleFolder;
@@ -59,7 +60,7 @@ use Psr\Log\LoggerInterface;
  * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
  * @spec openspec/specs/theming-audit/spec.md#requirement-jsonl-appdata-storage-with-capped-rotation
  */
-class ThemingAuditService {
+class ThemingAuditService implements ThemingAuditServiceInterface {
 
 	/**
 	 * The appdata folder name holding the audit trail.

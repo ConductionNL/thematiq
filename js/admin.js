@@ -3641,6 +3641,11 @@
 							/<input /g,
 							'<input aria-describedby="' + facts.ids + '" ',
 						))
+				+ '<span class="nldesign-token-resolved" aria-live="polite" data-token-resolved="'
+				+ escapeHtml(name)
+				+ '">'
+				+ escapeHtml(resolvedReferenceText(displayVal))
+				+ '</span>'
 				+ '<button class="nldesign-btn nldesign-btn--small nldesign-reset-btn" data-token="'
 				+ escapeHtml(name)
 				+ '" title="'
@@ -3794,6 +3799,54 @@
 		 * @param {string} lockedAttr The disabled attributes of a locked row.
 		 * @return {string} HTML.
 		 */
+		/**
+		 * What a reference resolves to, for the row that holds it: the value the
+		 * page currently gives the referred token, or '' when the value is no
+		 * reference. The reference itself stays the stored value, so a later edit
+		 * of the target reaches this token too.
+		 *
+		 * @param {string} value The token value.
+		 * @return {string} The text shown beside the row's input.
+		 */
+		function resolvedReferenceText(value) {
+			var target =
+				typeof TT.referenceTarget === 'function'
+					? TT.referenceTarget(value)
+					: null
+			if (target === null) {
+				return ''
+			}
+			var resolved =
+				typeof window !== 'undefined' && typeof window.getComputedStyle === 'function'
+					? window
+							.getComputedStyle(document.documentElement)
+							.getPropertyValue(target)
+							.trim()
+					: ''
+			return resolved === ''
+				? t('thematiq', 'refers to {token}', { token: target })
+				: t('thematiq', 'refers to {token}: {value}', {
+						token: target,
+						value: resolved,
+					})
+		}
+
+		/**
+		 * Refresh the resolved value shown beside a row after its value changed.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The new value.
+		 */
+		function updateResolvedReference(container, name, value) {
+			var holder = container.querySelector(
+				'[data-token-resolved="' + name + '"]',
+			)
+			if (holder !== null) {
+				holder.textContent = resolvedReferenceText(value)
+			}
+		}
+
 		function buildDurationInput(name, meta, value, lockedAttr) {
 			var match = /^\s*([0-9.]+)\s*(ms|s)\s*$/.exec(value || '')
 			var amount = match !== null ? match[1] : ''
@@ -4232,6 +4285,7 @@
 						syncAlpha(container, name, value)
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
+						updateResolvedReference(container, name, value)
 					})
 				})
 
@@ -4245,6 +4299,7 @@
 						var value = field.value.trim()
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
+						updateResolvedReference(container, name, value)
 					})
 				})
 

@@ -200,7 +200,7 @@ class DesignTokensMapper {
 	private function mappedLeaves(array $document, array $referenceOnlyPaths): DesignTokensMapping {
 		$leaves = $this->collectLeaves(node: $document, scope: new LeafScope(prefix: '', inheritedType: null));
 		$referenceOnly = array_flip($referenceOnlyPaths);
-		$run = new LeafMappingRun(leaves: $leaves, mapping: new DesignTokensMapping());
+		$run = new LeafMappingRun(leaves: $leaves, mapping: new DesignTokensMapping(), referenceOnly: $referenceOnly);
 
 		foreach (array_keys($leaves) as $path) {
 			// A reference-only leaf (a Tokens Studio `source` set) stays in the alias table
@@ -394,8 +394,68 @@ class DesignTokensMapper {
 
 		$token = new MappedToken(ref: new DesignTokenRef(path: $path, deprecated: $leaf['deprecated']), mapping: $run->mapping);
 		$value = $this->colours->originalText(leaf: $leaf, value: $resolved['value'], type: $resolved['type']);
+		$reference = $this->referenceTarget(path: $path, run: $run);
+		if ($reference !== null && $resolved['type'] !== 'typography') {
+			$this->assignReference(token: $token, typed: new TypedValue(type: $resolved['type'], value: $value), reference: $reference);
+
+			return;
+		}
+
 		$this->dispatchByType(token: $token, typed: new TypedValue(type: $resolved['type'], value: $value));
 	}//end processLeaf()
+
+	/**
+	 * The `--nldesign-*` token an alias leaf keeps referring to: the target of
+	 * its own alias, when that target is emitted by this import and maps onto a
+	 * `--nldesign-*` token other than the leaf's own. Null keeps the resolved value.
+	 *
+	 * @param string $path The leaf's dotted path.
+	 * @param LeafMappingRun $run The leaf table and the reference-only paths.
+	 *
+	 * @return string|null The referred token.
+	 *
+	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 */
+	private function referenceTarget(string $path, LeafMappingRun $run): ?string {
+		$value = $run->leaves[$path]['value'];
+		if (is_string($value) === false || preg_match('/^\{(.+)\}$/', trim($value), $matches) !== 1) {
+			return null;
+		}
+
+		$targetPath = trim($matches[1]);
+		if (isset($run->leaves[$targetPath]) === false || isset($run->referenceOnly[$targetPath]) === true) {
+			return null;
+		}
+
+		$target = ($run->leaves[$targetPath]['cssVariable'] ?? null) ?? $this->resolveTarget(path: $targetPath);
+		$own = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
+		if ($target === null || $target === $own || str_starts_with($target, '--nldesign-') === false) {
+			return null;
+		}
+
+		return $target;
+	}//end referenceTarget()
+
+	/**
+	 * Declare an alias as a reference to its target, once its resolved value
+	 * has passed its type, so a value the import would refuse is still refused.
+	 *
+	 * @param MappedToken $token The leaf and the outcome so far.
+	 * @param TypedValue $typed The resolved type and value.
+	 * @param string $reference The referred `--nldesign-*` token.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 */
+	private function assignReference(MappedToken $token, TypedValue $typed, string $reference): void {
+		$result = $this->values->serialize(type: $typed->type, value: $typed->value);
+		if ($result['ok'] === true) {
+			$result = ['ok' => true, 'value' => TokenReference::to(tokenName: $reference)];
+		}
+
+		$this->assignSingleTarget(token: $token, result: $result);
+	}//end assignReference()
 
 	/**
 	 * A leaf's value and type, its alias resolved. Own declared/inherited type
