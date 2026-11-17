@@ -5158,7 +5158,7 @@
 		 * @param {Array<string>} names The names the exporter left out.
 		 * @param {Object<string,string>} edits The saved and unsaved edits.
 		 * @return {Object<string,string>} Name => value, for the names that have one.
-		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 * @spec openspec/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
 		 */
 		function leftoverOverrides(names, edits) {
 			var leftovers = {}
@@ -5178,7 +5178,7 @@
 		 * @param {string} id The new token set id.
 		 * @param {Object<string,string>} leftovers Name => value.
 		 * @return {void}
-		 * @spec openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
+		 * @spec openspec/specs/custom-token-sets/spec.md#requirement-an-admin-shall-be-able-to-save-edits-as-a-new-theme
 		 */
 		function keepLeftoversOn(id, leftovers) {
 			var names = Object.keys(leftovers).join(', ')

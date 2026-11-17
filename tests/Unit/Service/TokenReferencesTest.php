@@ -12,7 +12,7 @@
  * @license  EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link     https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
  */
 
 declare(strict_types=1);
@@ -84,7 +84,7 @@ class TokenReferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
 	 */
 	public function testAReferenceIsAValueOfAnyTypeAndItsTargetMustExist(): void {
 		$validator = new TokenValueValidator();
@@ -100,7 +100,7 @@ class TokenReferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
 	 */
 	public function testACycleIsRefusedNamingBothTokens(): void {
 		$header = '--nldesign-component-header-color';
@@ -125,7 +125,7 @@ class TokenReferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-edit-flows-through-a-reference
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-edit-flows-through-a-reference
 	 */
 	public function testAReferenceIsWrittenUnresolved(): void {
 		$css = $this->builder->build(
@@ -146,7 +146,7 @@ class TokenReferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	public function testAnImportedAliasStaysAReference(): void {
 		$document = [

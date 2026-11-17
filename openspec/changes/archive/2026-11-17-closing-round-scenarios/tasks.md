@@ -7,4 +7,4 @@
 - [x] 1.4 Extend `tests/Unit/Service/ThemeGalleryServiceTest.php`: an index entry for a water board is listed like a province entry (cat-provincial-sets)
 
 ## 2. Matrix
-- [ ] 2.1 When the tasks are done, archive this change; the four rows keep their refs to the main spec headings
+- [x] 2.1 When the tasks are done, archive this change; the four rows keep their refs to the main spec headings

@@ -464,7 +464,7 @@ describe('admin.js typed token values', () => {
 		})
 	})
 
-	// @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-edit-flows-through-a-reference
+	// @spec openspec/specs/token-editor-ui/spec.md#scenario-an-edit-flows-through-a-reference
 	describe('references', () => {
 		it('shows the value a reference resolves to beside the row, and nothing for a plain value', async () => {
 			document.documentElement.style.setProperty(BUTTON, '#a00078')
