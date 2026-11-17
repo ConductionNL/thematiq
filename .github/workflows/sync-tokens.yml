@@ -10,44 +10,23 @@ permissions:
   contents: read
 
 jobs:
-  sync-tokens:
+  build-themes:
+    # Runs upstream's theme builds (third-party code) with a read-only token
+    # and no checkout of this repository, and hands only the generated token
+    # files to the sync job as an artifact.
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     runs-on: ubuntu-latest
-    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate takes
-    # about 3.5 min here. When its first pass fails, each of the ~40 converted
-    # sets is retried with only the failing tests (about 20 s each), then the
-    # full gate runs once more: about 15 min measured locally in total.
-    timeout-minutes: 60
+    timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.clone_themes.outputs.sha }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-        with:
-          # Generate against development, where token work lands; main is the
-          # release branch and lags by a release, so a sync built on it went
-          # stale and conflicted (#526).
-          ref: development
-
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           # The themes workspace requires Node ^24.22.3 to build its generated
-          # themes; thematiq's own engines allow ^24 as well.
+          # themes.
           node-version: '24'
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
-        with:
-          php-version: "8.3"
-          tools: composer
-
-      - name: Install PHP dependencies
-        run: composer install --no-progress --no-interaction
-
-      - name: Install Node dependencies
-        # The gate runs the vitest specs that read the shipped sets.
-        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Clone NL Design System themes
         id: clone_themes
@@ -87,6 +66,92 @@ jobs:
               echo "::warning::could not build ${theme}; the sync skips it"
             fi
           done
+
+      - name: Collect the generated tokens
+        # Staged under their path in the themes checkout, with a file at the
+        # root, so the artifact keeps that layout however many themes built.
+        working-directory: /tmp/themes
+        run: |
+          mkdir -p /tmp/generated
+          git rev-parse HEAD > /tmp/generated/themes-sha.txt
+          for f in proprietary/*/tmp/generated.tokens.json; do
+            [ -f "$f" ] && cp --parents "$f" /tmp/generated/
+          done
+          find /tmp/generated -type f
+
+      - name: Hand the generated tokens to the sync job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: generated-themes
+          path: /tmp/generated
+          retention-days: 1
+
+  sync-tokens:
+    needs: build-themes
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate takes
+    # about 3.5 min here. When its first pass fails, each of the ~40 converted
+    # sets is retried with only the failing tests (about 20 s each), then the
+    # full gate runs once more: about 15 min measured locally in total.
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # Generate against development, where token work lands; main is the
+          # release branch and lags by a release, so a sync built on it went
+          # stale and conflicted (#526).
+          ref: development
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          # The same Node as the build-themes job; thematiq's engines allow ^24.
+          node-version: '24'
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: "8.3"
+          tools: composer
+
+      - name: Install PHP dependencies
+        run: composer install --no-progress --no-interaction
+
+      - name: Install Node dependencies
+        # The gate runs the vitest specs that read the shipped sets.
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Clone NL Design System themes
+        id: clone_themes
+        # The same upstream commit the build-themes job built from.
+        env:
+          THEMES_SHA: ${{ needs.build-themes.outputs.sha }}
+        run: |
+          git init -q /tmp/themes
+          git -C /tmp/themes remote add origin https://github.com/nl-design-system/themes.git
+          git -C /tmp/themes fetch -q --depth 1 origin "$THEMES_SHA"
+          git -C /tmp/themes checkout -q FETCH_HEAD
+          echo "sha=$(git -C /tmp/themes rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Download the generated upstream themes
+        # Built by the read-only build-themes job.
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: generated-themes
+          path: /tmp/generated
+
+      - name: Take the generated upstream themes
+        # Only the token files go into the checkout; a theme whose build did
+        # not run stays skipped by the converter, as before.
+        run: |
+          if [ -d /tmp/generated/proprietary ]; then
+            cp -r /tmp/generated/proprietary/. /tmp/themes/proprietary/
+          fi
+          find /tmp/themes/proprietary -path '*/tmp/generated.tokens.json'
 
       - name: Convert upstream themes onto the nldesign vocabulary
         # scripts/sync-upstream-tokens.mjs converts every upstream-managed set
