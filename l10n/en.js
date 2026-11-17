@@ -1185,7 +1185,9 @@ OC.L10N.register(
         "Enter an http or https address, or leave the field empty.": "Enter an http or https address, or leave the field empty.",
         "OpenProject in the apps menu": "OpenProject in the apps menu",
         "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}",
-        "The fill of a pill without a status colour": "The fill of a pill without a status colour"
+        "The fill of a pill without a status colour": "The fill of a pill without a status colour",
+        "refers to {token}": "refers to {token}",
+        "refers to {token}: {value}": "refers to {token}: {value}"
     },
     "nplurals=2; plural=(n != 1);"
 )

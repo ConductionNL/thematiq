@@ -1185,7 +1185,9 @@ OC.L10N.register(
         "OpenProject in the apps menu": "OpenProject in the apps menu",
         "Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.": "Contrast {ratio}:1 on the page background, under 4.5:1. Saved one step darker so text stays readable.",
         "These values could not be written into the new theme and were not saved: {names}": "These values could not be written into the new theme and were not saved: {names}",
-        "The fill of a pill without a status colour": "The fill of a pill without a status colour"
+        "The fill of a pill without a status colour": "The fill of a pill without a status colour",
+        "refers to {token}": "refers to {token}",
+        "refers to {token}: {value}": "refers to {token}: {value}"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\ThemeVersionRestoreServiceInterface;
 /**
  * Previews and restores a kept version.
  *
@@ -32,7 +33,7 @@ namespace OCA\Thematiq\Service;
  *
  * @spec openspec/specs/theme-versions/spec.md
  */
-class ThemeVersionRestoreService {
+class ThemeVersionRestoreService implements ThemeVersionRestoreServiceInterface {
 
 	/**
 	 * The scalar config keys a preview compares.

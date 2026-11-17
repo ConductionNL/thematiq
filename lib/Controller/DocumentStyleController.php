@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
-use OCA\Thematiq\Service\DocumentAssetService;
+use OCA\Thematiq\Kernel\Contracts\DocumentAssetServiceInterface;
 use OCA\Thematiq\Service\DocumentStyleService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -50,7 +50,7 @@ class DocumentStyleController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
 	 * @param DocumentStyleService $style The profile.
-	 * @param DocumentAssetService $assets The document assets.
+	 * @param DocumentAssetServiceInterface $assets The document assets.
 	 * @param IUserSession $userSession The session.
 	 * @param IL10N $l10n Translations.
 	 */
@@ -58,7 +58,7 @@ class DocumentStyleController extends Controller {
 		string $appName,
 		IRequest $request,
 		private readonly DocumentStyleService $style,
-		private readonly DocumentAssetService $assets,
+		private readonly DocumentAssetServiceInterface $assets,
 		private readonly IUserSession $userSession,
 		private readonly IL10N $l10n,
 	) {

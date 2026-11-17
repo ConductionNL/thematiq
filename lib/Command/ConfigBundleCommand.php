@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
+use OCA\Thematiq\Kernel\Contracts\ConfigBundleServiceInterface;
 use OCA\Thematiq\Service\BrandingPackageService;
-use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 
 /**
@@ -35,9 +35,9 @@ abstract class ConfigBundleCommand extends Command {
 	/**
 	 * The configuration bundle service.
 	 *
-	 * @var ConfigBundleService
+	 * @var ConfigBundleServiceInterface
 	 */
-	protected ConfigBundleService $service;
+	protected ConfigBundleServiceInterface $service;
 
 	/**
 	 * The branding package service, for `--package` on export and a package directory or ZIP on import.
@@ -49,10 +49,10 @@ abstract class ConfigBundleCommand extends Command {
 	/**
 	 * Constructor.
 	 *
-	 * @param ConfigBundleService $service The configuration bundle service.
+	 * @param ConfigBundleServiceInterface $service The configuration bundle service.
 	 * @param BrandingPackageService $packages The branding package service.
 	 */
-	public function __construct(ConfigBundleService $service, BrandingPackageService $packages) {
+	public function __construct(ConfigBundleServiceInterface $service, BrandingPackageService $packages) {
 		parent::__construct();
 		$this->service = $service;
 		$this->packages = $packages;

@@ -21,8 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
-use OCA\Thematiq\Service\TokenSetLicenceService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -47,13 +47,13 @@ class TokenSetLicenceController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param TokenSetLicenceService $licences Reads licences and keeps the confirmations.
+	 * @param TokenSetLicenceServiceInterface $licences Reads licences and keeps the confirmations.
 	 * @param IUserSession $userSession Names the acting administrator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly TokenSetLicenceService $licences,
+		private readonly TokenSetLicenceServiceInterface $licences,
 		private readonly IUserSession $userSession,
 	) {
 		parent::__construct(appName: $appName, request: $request);

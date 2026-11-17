@@ -46,7 +46,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | duo | 15/87 | declared | no (known) | pass |
 | enkhuizen | 19/87 | system | no (known) | pass |
 | enschede | 55/87 | self-hosted | no (known) | pass |
-| epe | 0/87 | self-hosted | yes | pass |
+| epe | 52/87 | self-hosted | yes | pass |
 | esdoornveen | 0/87 | self-hosted | yes | pass |
 | example-basisschool | 74/87 | self-hosted | yes | pass |
 | example-college | 74/87 | self-hosted | yes | pass |
@@ -95,7 +95,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | zwolle | 0/87 | declared | no (known) | pass |
 
 - 61 sets measured; 27 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 12 of 57 bridged sets declare none of the 87 --utrecht-* names; median 21.
+- bridge (measured, NOT gated): 11 of 57 bridged sets declare none of the 87 --utrecht-* names; median 21.
 - font: 17 declared, 40 self-hosted, 4 system.
 - logo: 34 of 61 point Nextcloud at no logo.
 - contrast: 0 of 61 do not pass.

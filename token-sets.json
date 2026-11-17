@@ -238,7 +238,7 @@
 		"description": "Design tokens for Gemeente Epe",
 		"theming": {
 			"primary_color": "#00549e",
-			"background_color": "#FFFFFF",
+			"background_color": "#ffffff",
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
 		},

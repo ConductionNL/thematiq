@@ -180,8 +180,49 @@ class TokenValueValidator {
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-the-server-checks-each-value-against-its-token-type
 	 */
 	public function findRejected(array $tokens, array $darkTokens = []): array {
-		return array_replace($this->lightRejected(tokens: $tokens), $this->darkRejected(tokens: $tokens, darkTokens: $darkTokens));
+		return array_replace(
+			$this->lightRejected(tokens: $tokens),
+			$this->cycleRejected(tokens: $tokens),
+			$this->darkRejected(tokens: $tokens, darkTokens: $darkTokens)
+		);
 	}//end findRejected()
+
+	/**
+	 * The references that close a cycle, each naming the tokens on it.
+	 *
+	 * @param array<array-key, mixed> $tokens The submitted light values.
+	 *
+	 * @return array<string, string> Token name => reason.
+	 *
+	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
+	 */
+	private function cycleRejected(array $tokens): array {
+		$rejected = [];
+		foreach (TokenReference::cycles(tokens: $tokens) as $name => $chain) {
+			$rejected[$name] = 'refers to itself through ' . implode(' -> ', $chain);
+		}
+
+		return $rejected;
+	}//end cycleRejected()
+
+	/**
+	 * Why a reference is refused: its target is no token the registry knows.
+	 *
+	 * @param string $target The referred token.
+	 *
+	 * @return string|null The reason, or null when the target exists.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
+	 *
+	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+	 */
+	private function referenceProblem(string $target): ?string {
+		if (TokenRegistry::isEditable(tokenName: $target) === false) {
+			return 'refers to ' . $target . ', which is not a token';
+		}
+
+		return null;
+	}//end referenceProblem()
 
 	/**
 	 * The light values refused: a name that is not editable, or a value its type refuses.
@@ -247,6 +288,12 @@ class TokenValueValidator {
 	private function valueProblem(mixed $value, string $type): ?string {
 		if (is_string($value) === false || preg_match('/[{};]|\\/\\*|\\*\\//', $value) === 1) {
 			return 'not an allowed value';
+		}
+
+		// A reference to another token is a value of any type; its target decides.
+		$target = TokenReference::targetOf(value: $value);
+		if ($target !== null) {
+			return $this->referenceProblem(target: $target);
 		}
 
 		if ($this->isValid(type: $type, value: $value) === false) {

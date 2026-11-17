@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\DarkPaletteService;
+use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,16 +42,16 @@ class GenerateDarkVariants extends Command {
 	/**
 	 * The dark palette derivation/generation service.
 	 *
-	 * @var DarkPaletteService
+	 * @var DarkPaletteServiceInterface
 	 */
-	private DarkPaletteService $darkPalette;
+	private DarkPaletteServiceInterface $darkPalette;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param DarkPaletteService $darkPalette The dark palette service.
+	 * @param DarkPaletteServiceInterface $darkPalette The dark palette service.
 	 */
-	public function __construct(DarkPaletteService $darkPalette) {
+	public function __construct(DarkPaletteServiceInterface $darkPalette) {
 		parent::__construct();
 		$this->darkPalette = $darkPalette;
 	}//end __construct()
