@@ -4008,8 +4008,10 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
-				"requirement": "openspec/specs/css-architecture :: Render-Context Discrimination",
-				"plan": "openspec/changes/action-menu-links-keep-text-colour"
+				"requirement": [
+					"openspec/specs/css-architecture :: Render-Context Discrimination",
+					"openspec/specs/css-architecture :: Action menu link items read as menu entries"
+				]
 			},
 			"reachedOn": "every Nextcloud page (any app), unless that app id is on the admin's exclusion list (Settings > Administration > Theming > 'Theming per app')",
 			"evidence": {
@@ -4156,8 +4158,8 @@
 				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openproject-in-the-app-menu",
-				"requirement": "openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
+				"spec": "openspec/specs/openproject-in-the-app-menu",
+				"requirement": "openspec/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
 			},
 			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
 			"evidence": {

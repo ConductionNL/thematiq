@@ -226,7 +226,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
@@ -265,7 +265,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
 		$this->assertSame(
