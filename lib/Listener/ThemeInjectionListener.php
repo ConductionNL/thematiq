@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Listener;
 
-use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\PageCopyServices;
 use OCA\Thematiq\Service\ThemeInjectionStyles;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;

@@ -30,7 +30,6 @@ namespace OCA\Thematiq\Controller;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\CssInjectionService;
 use OCA\Thematiq\Service\CssUploadCheck;
-use OCA\Thematiq\Service\CustomOverridesService;
 use OCA\Thematiq\Service\OverridesThemingSync;
 use OCA\Thematiq\Service\OverridesWrites;
 use OCA\Thematiq\Service\TokenRegistry;

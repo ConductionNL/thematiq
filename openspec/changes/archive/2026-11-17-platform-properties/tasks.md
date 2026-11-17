@@ -14,4 +14,4 @@
 - [x] 2.5 Extend `tests/Unit/Service/ThemingServiceTest.php`: `applyColors()` and `applyImages()` never write core's `name`, `url` or `slogan` (REQ-TPLAT-006)
 
 ## 3. Matrix
-- [ ] 3.1 When the tasks are done, archive this change and repoint the nine rows in `openspec/parity/capabilities.json` from `built.change` to `built.spec: openspec/specs/platform-properties`
+- [x] 3.1 When the tasks are done, archive this change and repoint the nine rows in `openspec/parity/capabilities.json` from `built.change` to `built.spec: openspec/specs/platform-properties`

@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Service;
 use DateTimeInterface;
 use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -37,7 +38,7 @@ use Psr\Log\LoggerInterface;
  *
  * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md
  */
-class TokenSetLicenceService {
+class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 
 	/**
 	 * The app config key holding the sets an upgrade found applied without a

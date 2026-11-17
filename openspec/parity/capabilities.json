@@ -1359,7 +1359,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/extended-token-sets",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
+				"requirement": "openspec/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -1411,7 +1411,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "medium",
-			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it. The scenario for adapting a shipped set is added in openspec/changes/closing-round-scenarios (12 Nov 2026 verify round).",
+			"note": "There is no separate 'duplicate this shipped set into a new named theme' action; adapting means picking a set then layering token overrides on top of it, which still matches 'start from a template and adapt' as a user would describe it. The scenario for adapting a shipped set is in the main spec (closing-round-scenarios, archived 17 Nov 2026) (12 Nov 2026 verify round).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": [
@@ -1489,7 +1489,7 @@
 			"providerHow": "read-from-code",
 			"feature": "token-sets",
 			"featureConfidence": "high",
-			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue. The gallery is the route for a province or water board set; the water board scenario is added in openspec/changes/closing-round-scenarios (12 Nov 2026 verify round).",
+			"note": "One province (Zuid-Holland) ships; no water board set exists anywhere in the catalogue. The gallery is the route for a province or water board set; the water board scenario is in the main spec (closing-round-scenarios, archived 17 Nov 2026) (12 Nov 2026 verify round).",
 			"screen": {
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
@@ -1679,7 +1679,7 @@
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqTheming"
 			},
-			"note": "The navigation scenario of Live Preview Box is added in openspec/changes/closing-round-scenarios (12 Nov 2026 coverage audit)."
+			"note": "The navigation scenario of Live Preview Box is in the main spec (closing-round-scenarios, archived 17 Nov 2026) (12 Nov 2026 coverage audit)."
 		},
 		{
 			"id": "app-login-preview",
@@ -1697,7 +1697,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/admin-settings",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/component-playground :: The playground previews the login page before it is published"
+				"requirement": "openspec/specs/component-playground :: The playground previews the login page before it is published"
 			},
 			"reachedOn": "Settings > Administration > Theming, component playground, 'Login page & Branding' tab",
 			"evidence": {
@@ -2731,20 +2731,20 @@
 			"id": "aut-save-as-new-theme",
 			"area": "authoring",
 			"name": "Save my edits as a new, named theme instead of changing the Nextcloud theme.",
-			"thematiq": "no",
+			"thematiq": "yes",
 			"nextcloud-theming": "unknown",
 			"m365-branding": "unknown",
 			"opendesk": "unknown",
 			"liferay-dxp": "unknown",
 			"tokens-studio": "unknown",
 			"built": {
-				"state": "specified",
-				"evidence": "Not built: Save in the token editor always stores edits as overrides on the active base (POST /settings/overrides, lib/Service/CustomOverridesService.php); nothing turns edits into a new custom token set. TqNieuwThema draws the dialog \"Deze wijzigingen bewaren als nieuw thema?\" (decision 406).",
+				"state": "built",
+				"evidence": "The save dialog of the token editor (js/admin.js, shipped with 76efc80f0 and completed by the change authoring-save-edits-as-a-new-theme) offers \"Bewaren als nieuw thema\", stores the edited tokens as a custom token set under the given name and lists it in the token set dropdown without a reload; values no token set can hold are kept as overrides of the new theme and listed (js/admin.js leftoverOverrides(), keepLeftoversOn()); \"Niet vragen voor het opslaan\" skips the dialog.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/custom-token-sets",
-				"requirement": "openspec/changes/authoring-save-edits-as-a-new-theme/specs/custom-token-sets :: An admin SHALL be able to save edits as a new theme",
-				"plan": "openspec/changes/authoring-save-edits-as-a-new-theme"
+				"requirement": "openspec/specs/custom-token-sets :: An admin SHALL be able to save edits as a new theme",
+				"change": "openspec/changes/archive/2026-11-17-authoring-save-edits-as-a-new-theme"
 			},
 			"reachedOn": "",
 			"provider": "thematiq",
@@ -2958,23 +2958,22 @@
 			"id": "aut-semantic-aliases",
 			"area": "authoring",
 			"name": "Define tokens as references to other tokens so one change flows through the semantic layer.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "no",
 			"opendesk": "partial",
 			"liferay-dxp": "partial",
 			"tokens-studio": "yes",
 			"built": {
-				"state": "specified",
-				"evidence": "Not built: aliases live only during a DTCG import. lib/Service/DesignTokensAliasResolver.php resolves {token.path} aliases transitively (max 10 hops, cycle and missing-target detection) and lib/Service/DesignTokensMapper.php writes the resolved value into the stored set; the token editor and custom-overrides.css hold flat values (lib/Service/TokenValueValidator.php accepts no var() reference), so a later edit of a token reaches nothing that referred to it.",
+				"state": "built",
+				"evidence": "lib/Service/TokenValueValidator.php accepts var(--nldesign-...) as the value of any token type, refusing an unknown target and a reference that closes a cycle (lib/Service/TokenReference.php targetOf(), cycles()); lib/Service/OverridesCssBuilder.php writes the reference unresolved into custom-overrides.css, so a later edit of the target reaches every token that refers to it; lib/Service/DesignTokensMapper.php referenceTarget()/assignReference() keep a DTCG alias whose target is a mapped token as a var(--...) reference; js/admin.js lets a token row take a reference and shows the resolved value beside it. Tests: tests/Unit/Service/TokenReferencesTest.php, tests/vitest/admin-token-value-types.spec.js.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
-				"change": "openspec/changes/archive/2026-07-23-dtcg-ingestion-hardening",
+				"change": "openspec/changes/archive/2026-11-17-token-references-stay-live",
 				"requirement": [
-					"openspec/changes/token-references-stay-live/specs/token-editor-ui :: A token can refer to another token",
+					"openspec/specs/token-editor-ui :: A token can refer to another token",
 					"openspec/specs/custom-token-sets :: DTCG Alias Resolution"
-				],
-				"plan": "openspec/changes/token-references-stay-live"
+				]
 			},
 			"reachedOn": "Settings > Administration > Theming, DTCG upload only (aliases are read and flattened, not preserved as an editable semantic layer)",
 			"evidence": {
@@ -3384,7 +3383,7 @@
 				"canvas": "QAAxpcsFKBCvDUGbQbwtCa",
 				"board": "TqLettertypen"
 			},
-			"note": "The listing scenario of Font Management Lifecycle is added in openspec/changes/closing-round-scenarios (12 Nov 2026 coverage audit)."
+			"note": "The listing scenario of Font Management Lifecycle is in the main spec (closing-round-scenarios, archived 17 Nov 2026) (12 Nov 2026 coverage audit)."
 		},
 		{
 			"id": "typ-font-login",
@@ -3475,8 +3474,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/token-editor-ui",
-				"change": "openspec/changes/house-style-font-size-and-weight",
-				"requirement": "openspec/changes/house-style-font-size-and-weight/specs/token-editor-ui :: Font family, size and weight come from the house style"
+				"requirement": "openspec/specs/token-editor-ui :: Font family, size and weight come from the house style"
 			},
 			"reachedOn": "Settings > Administration > Theming, token editor Typography tab (font family and the three weights); sizes are per-house-style tokens",
 			"evidence": {
@@ -3530,22 +3528,22 @@
 			"id": "typ-org-font-library",
 			"area": "typography",
 			"name": "Offer site owners a central library of approved organisation fonts to choose from.",
-			"thematiq": "partial",
+			"thematiq": "yes",
 			"nextcloud-theming": "no",
 			"m365-branding": "yes",
 			"opendesk": "no",
 			"liferay-dxp": "partial",
 			"tokens-studio": "no",
 			"built": {
-				"state": "planned",
-				"evidence": "lib/Controller/FontController.php:150 list() and lib/Service/FontService.php maintain a per-instance manifest of up to 20 uploaded fonts, each assignable to a role (body/heading) via the font-role select (admin.php:375); this gives a single instance's admins a shared, central list of self-hosted fonts to assign roles from. It is not a curated catalogue of pre-approved fonts to pick without uploading, and 'site owners' (plural, e.g. multiple tenants) has no meaning here: thematiq themes one Nextcloud instance, admin-only. Not built (12 Nov 2026): the font list holds uploads only; there is no library of approved fonts to assign without uploading. Planned in openspec/changes/rows-without-a-requirement, tasks 3.1 to 3.3.",
+				"state": "built",
+				"evidence": "lib/Service/BundledFontLibrary.php families() lists every family css/systems/nldesign/fonts.css declares whose files REUSE.toml names under one licence; lib/Service/FontService.php library() lists them with their licence and assigned roles, assignLibraryFont() assigns one to the body or heading role without an upload and buildCss() serves its faces from the app's own files and writes the same role token an upload would; lib/Controller/FontController.php library()/assignLibrary()/unassignLibrary() at GET/POST /settings/fonts/library and DELETE /settings/fonts/library/{role} (admin only); the Font library list on the Theming page (templates/settings/admin.php #nldesign-font-library, js/admin.js renderFontLibrary()). tests/Unit/Service/FontServiceLibraryTest.php, tests/Unit/Service/BundledFontLibraryTest.php, tests/Unit/Controller/FontControllerLibraryTest.php. Instance-wide and admin-only: thematiq themes one Nextcloud instance.",
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/custom-fonts",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/custom-fonts :: An administrator picks a font from an approved library",
-				"change": "rows-without-a-requirement"
+				"requirement": "openspec/specs/custom-fonts :: An administrator picks a font from an approved library",
+				"change": "openspec/changes/archive/2026-11-14-rows-without-a-requirement"
 			},
-			"reachedOn": "Settings > Administration > Theming, Custom fonts list + role select (#nldesign-font-list, #nldesign-font-role)",
+			"reachedOn": "Settings > Administration > Theming, Custom fonts: the uploaded fonts list with its role select (#nldesign-font-list, #nldesign-font-role) and the Font library list (#nldesign-font-library)",
 			"evidence": {
 				"nextcloud-theming": "nextcloud/server@v35.0.1 apps/theming/fonts holds only OpenDyslexic; no font library for site owners exists",
 				"m365-branding": "https://learn.microsoft.com/en-us/sharepoint/brand-fonts : the SharePoint brand center's Brand Fonts library is exactly 'a central library of approved organisation fonts' for site owners, also reaching Viva Connections and PowerPoint for the web",
@@ -3652,8 +3650,8 @@
 				"evidence": "Upload happens on Nextcloud core's own Theming admin page, not a thematiq page: apps/theming/src/components/AdminSectionThemingAdvanced.vue and apps/theming/lib/ImageManager.php:25 SUPPORTED_IMAGE_KEYS=['background','logo','logoheader','favicon']. thematiq composes with it: lib/Service/CssInjectionService.php:673-681,730-735 checks theming.logoheaderMime/logoMime and, when an admin uploaded a logo through core, shows it as-is instead of the token set's own logo.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: An uploaded core logo wins over the set's logo (REQ-TPLAT-001)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: An uploaded core logo wins over the set's logo (REQ-TPLAT-001)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core's own panel, separate from thematiq's Theming section)",
 			"evidence": {
@@ -3688,8 +3686,8 @@
 				"evidence": "Same core Theming panel and ImageManager as ast-upload-logo (apps/theming/lib/ImageManager.php:25 includes 'background'); thematiq's own resetToDefaults()/RESETTABLE (lib/Service/ThemingService.php:255-277) treats 'background' as one of the settings it can undo, confirming it shares the same core slot.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The login background is a core image slot (REQ-TPLAT-002)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: The login background is a core image slot (REQ-TPLAT-002)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel)",
 			"evidence": {
@@ -3724,8 +3722,8 @@
 				"evidence": "apps/theming/lib/ImageManager.php:25,57,332-345 and apps/theming/src/components/AdminSectionThemingAdvanced.vue:107 ('favicon' field) implement favicon upload/generation in Nextcloud core. thematiq serves no favicon of its own; its theming sync hands a set's favicon to core through lib/Service/ThemingService.php applyImages() (image keys logo, logoheader, favicon, background) and RESETTABLE, so core stays the owner of the slot.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The favicon is a core image slot the theming sync may fill (REQ-TPLAT-003)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: The favicon is a core image slot the theming sync may fill (REQ-TPLAT-003)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Advanced theming settings')",
 			"evidence": {
@@ -4659,8 +4657,8 @@
 				"evidence": "Serving on a custom domain is a Nextcloud server/hosting property (config.php trusted_domains / overwrite.cli.url), independent of any app; a self-hosted instance running thematiq can be reached on any domain the operator points at it. No thematiq or core-Theming code participates.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: The workspace domain is server configuration (REQ-TPLAT-004)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: The workspace domain is server configuration (REQ-TPLAT-004)"
 			},
 			"reachedOn": "machine: the web server / reverse proxy in front of the self-hosted instance",
 			"evidence": {
@@ -4695,8 +4693,8 @@
 				"evidence": "apps/theming/lib/ThemingDefaults.php:162-177 builds 'legalLinks' (Imprint/Privacy, from 'imprintUrl'/'privacyUrl') into getFooter(), which core renders both in the app footer and on the login page. thematiq does not add, remove or touch these fields (grep -niF 'legal notice|privacy|imprint|accessibility statement' in lib/, templates/settings/admin.php, js/admin.js found nothing).",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Legal links are core Theming fields (REQ-TPLAT-005)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: Legal links are core Theming fields (REQ-TPLAT-005)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, 'Legal notice URL' / 'Privacy policy URL' fields), rendered in every page footer and the login page",
 			"evidence": {
@@ -4731,8 +4729,8 @@
 				"evidence": "apps/theming/lib/Capabilities.php:47-51 (name, productName, url, slogan) are standard core Theming admin-settings fields. thematiq's own sync never touches them (lib/Service/ThemingService.php only handles primary_color/background_color/logo/background).",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Name, slogan and web address are core Theming fields (REQ-TPLAT-006)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: Name, slogan and web address are core Theming fields (REQ-TPLAT-006)"
 			},
 			"reachedOn": "Settings > Administration > Theming (Nextcloud core panel, basic settings)",
 			"evidence": {
@@ -4746,7 +4744,7 @@
 			"providerHow": "read-from-code",
 			"feature": "brand-identity",
 			"featureConfidence": "high",
-			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url. The scenario that applying a set leaves the product name and web address alone is added to REQ-TPLAT-006 in openspec/changes/platform-properties (12 Nov 2026 verify round).",
+			"note": "Entirely core Nextcloud; thematiq is silent on name/slogan/url. The scenario that applying a set leaves the product name and web address alone is in REQ-TPLAT-006 of openspec/specs/platform-properties (12 Nov 2026 verify round).",
 			"screen": {
 				"board": null,
 				"reason": "Nextcloud core: name, slogan and URL are core Theming fields, no thematiq screen"
@@ -4914,8 +4912,8 @@
 				"evidence": "Nextcloud core's personal Appearance settings let a user pick light/dark/high-contrast, which core marks on the page as 'body[data-theme-dark]'/'body[data-theme-light-highcontrast]' etc. thematiq's own generated dark stylesheets explicitly target those same attributes: css/tokens/dark/amsterdam.css:2-3,105-106 'body:not([data-theme-light]):not([data-theme-dark])...' for auto and 'body[data-theme-dark], body[data-themes*=dark]' for the explicit choice.",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Each user's theme choice comes from core (REQ-TPLAT-007)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: Each user's theme choice comes from core (REQ-TPLAT-007)"
 			},
 			"reachedOn": "Settings > Personal > Appearance and accessibility (core Nextcloud), which thematiq's per-house-style dark/high-contrast CSS then honours",
 			"evidence": {
@@ -5766,8 +5764,8 @@
 				"evidence": "lib/Settings/Admin.php:38 'class Admin implements IDelegatedSettings' with docblock 'Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class'; this is Nextcloud core's settings-admin-delegation mechanism (Settings > Administration > Security, 'Administration privileges' per group)",
 				"owner": "nextcloud/server",
 				"origin": "competitor",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: Theming can be delegated through core's admin delegation (REQ-TPLAT-008)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: Theming can be delegated through core's admin delegation (REQ-TPLAT-008)"
 			},
 			"reachedOn": "Settings > Administration > Security > Administration privileges (core), grant a group access to the Theming settings section",
 			"evidence": {
@@ -5876,7 +5874,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-theming-audit-log",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/theming-audit :: An audit entry cannot be edited or deleted"
+				"requirement": "openspec/specs/theming-audit :: An audit entry cannot be edited or deleted"
 			},
 			"reachedOn": "n/a (a guarantee about the absence of an edit path, not a screen)",
 			"evidence": {
@@ -6092,8 +6090,8 @@
 				"evidence": "appinfo/info.xml:71 <category>customization</category>, three <screenshot> URLs; .github/workflows/release.yml calls the org's reusable ConductionNL/.github/.github/workflows/release.yml@main which publishes releases to the Nextcloud App Store (per this repo's own comments about 'the store accepts' releases at line ~90)",
 				"owner": "nextcloud/server",
 				"origin": "own",
-				"change": "openspec/changes/platform-properties",
-				"requirement": "openspec/changes/platform-properties/specs/platform-properties :: thematiq installs and updates from the Nextcloud app store (REQ-TPLAT-009)"
+				"spec": "openspec/specs/platform-properties",
+				"requirement": "openspec/specs/platform-properties :: thematiq installs and updates from the Nextcloud app store (REQ-TPLAT-009)"
 			},
 			"reachedOn": "Nextcloud instance's Apps admin page, App Store listing for thematiq (formerly nldesign)",
 			"evidence": {
@@ -6690,7 +6688,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/css-architecture",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/css-architecture :: The theme reaches every page as plain CSS variables"
+				"requirement": "openspec/specs/css-architecture :: The theme reaches every page as plain CSS variables"
 			},
 			"reachedOn": "any page in the instance, automatically, for any app that writes plain CSS against the --nldesign-* variables",
 			"evidence": {
@@ -6725,7 +6723,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"change": "openspec/changes/archive/2026-07-23-render-event-injection",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/css-architecture :: The theme adds no script to an ordinary page"
+				"requirement": "openspec/specs/css-architecture :: The theme adds no script to an ordinary page"
 			},
 			"reachedOn": "every ordinary page in the instance (no admin.js/playground.js loaded there)",
 			"evidence": {
@@ -7104,7 +7102,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/token-editor-ui",
-				"requirement": "openspec/changes/rows-without-a-requirement/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
+				"requirement": "openspec/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
 			},
 			"reachedOn": "any page: selected text takes the brand primary at 20 percent",
 			"evidence": {

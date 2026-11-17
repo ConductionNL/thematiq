@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\GroupThemingServiceInterface;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -57,7 +58,7 @@ use OCP\IUserSession;
  *
  * @spec openspec/specs/per-group-theming/spec.md
  */
-class GroupThemingService {
+class GroupThemingService implements GroupThemingServiceInterface {
 
 	/**
 	 * The appconfig key holding the ordered JSON mapping array.

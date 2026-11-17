@@ -14,9 +14,13 @@
 - [x] 2.4 Extend the overrides test for `css/systems/nldesign/overrides.css`: it maps `--color-primary-element` to the set's primary and does not set `--color-background-selection`
 
 ## 3. Approved font library (typ-org-font-library)
-- [ ] 3.1 `lib/Service/FontService.php` and `lib/Controller/FontController.php`: list the fonts the app bundles under `css/systems/nldesign/fonts/` beside the uploaded ones, each with its licence
-- [ ] 3.2 `templates/settings/admin.php` and `js/admin.js`: let the administrator assign a listed font to the body or heading role without uploading a file
-- [ ] 3.3 Unit test in `tests/Unit/Service/FontServiceTest.php`: assigning a bundled font to a role writes the same font token an upload would
+- [x] 3.1 `lib/Service/FontService.php` and `lib/Controller/FontController.php`: list the fonts the app bundles under `css/systems/nldesign/fonts/` beside the uploaded ones, each with its licence
+- [x] 3.2 `templates/settings/admin.php` and `js/admin.js`: let the administrator assign a listed font to the body or heading role without uploading a file
+- [x] 3.3 Unit test in `tests/Unit/Service/FontServiceTest.php`: assigning a bundled font to a role writes the same font token an upload would
+
+  > `lib/Service/BundledFontLibrary.php` reads the families `css/systems/nldesign/fonts.css` declares, keeping those whose files `REUSE.toml` names under one licence. The library has its own endpoints (`GET`/`POST /settings/fonts/library`, `DELETE /settings/fonts/library/{role}`) so `list()` keeps its answer. A library font takes its role over from an uploaded font. The tests are in `tests/Unit/Service/FontServiceLibraryTest.php` (3.3: `testAssigningABundledFontWritesTheSameTokenAnUploadWould`), `BundledFontLibraryTest.php` and `tests/Unit/Controller/FontControllerLibraryTest.php`.
 
 ## 4. Matrix
-- [ ] 4.1 When the tasks are done, archive this change, and set `typ-org-font-library` back to `built` with its evidence
+- [x] 4.1 When the tasks are done, archive this change, and set `typ-org-font-library` back to `built` with its evidence
+
+  > Archived as `archive/2026-11-14-rows-without-a-requirement`; the seven requirements are in the main specs and the rows point there.

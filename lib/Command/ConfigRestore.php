@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\ThemeVersionRestoreService;
+use OCA\Thematiq\Kernel\Contracts\ThemeVersionRestoreServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,10 +35,10 @@ class ConfigRestore extends Command {
 	/**
 	 * Constructor.
 	 *
-	 * @param ThemeVersionRestoreService $restorer Previews and restores a version.
+	 * @param ThemeVersionRestoreServiceInterface $restorer Previews and restores a version.
 	 */
 	public function __construct(
-		private readonly ThemeVersionRestoreService $restorer,
+		private readonly ThemeVersionRestoreServiceInterface $restorer,
 	) {
 		parent::__construct();
 	}//end __construct()
