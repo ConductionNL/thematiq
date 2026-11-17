@@ -76,7 +76,7 @@ class ContrastService implements ContrastServiceInterface {
 	 *                                                                                                            The non-blocking contrast warnings.
 	 *
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	public function check(array $declarations): array {
 		$warnings = [];
@@ -157,7 +157,7 @@ class ContrastService implements ContrastServiceInterface {
 	 *
 	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> Zero or one warning.
 	 *
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	private function checkAction(array $declarations): array {
 		$colours = $this->actionColours(declarations: $declarations);
