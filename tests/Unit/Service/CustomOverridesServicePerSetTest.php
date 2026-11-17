@@ -177,7 +177,7 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 * @spec openspec/specs/custom-css-overrides/spec.md#requirement-custom-overrides-file
 	 */
 	public function testAnOverrideOnUtrechtWinsAndLeavesTheSetAlone(): void {
 		file_put_contents(

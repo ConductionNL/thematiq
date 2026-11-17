@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+ * @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ final class TokenReference {
 	 *
 	 * @return string|null The referred token's name.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
 	 */
 	public static function targetOf(mixed $value): ?string {
 		if (is_string($value) === false || preg_match(self::PATTERN, trim($value), $matches) !== 1) {
@@ -60,7 +60,7 @@ final class TokenReference {
 	 *
 	 * @return string `var(<tokenName>)`.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	public static function to(string $tokenName): string {
 		return 'var(' . $tokenName . ')';
@@ -74,7 +74,7 @@ final class TokenReference {
 	 *
 	 * @return array<string, list<string>> Every token on a cycle, with its chain.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
 	 */
 	public static function cycles(array $tokens): array {
 		$cycles = [];

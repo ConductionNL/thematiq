@@ -13,4 +13,4 @@
 - [x] 3.1 Unit tests for 1.1, 1.2 and 2.1, one per scenario of `A token can refer to another token`
 
 ## 4. Matrix
-- [ ] 4.1 When the tasks are done, archive this change and set `aut-semantic-aliases` back to `built` with its evidence
+- [x] 4.1 When the tasks are done, archive this change and set `aut-semantic-aliases` back to `built` with its evidence

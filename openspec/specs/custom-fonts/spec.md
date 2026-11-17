@@ -194,6 +194,13 @@ tasks.md#task-6.4
 - AND `/apps/nldesign/fonts/css` MUST no longer reference the family (new ETag)
 - AND body text MUST render with the shipped Fira Sans chain
 
+#### Scenario: Admin sees the stored fonts listed
+- GIVEN two stored fonts, one for the body role and one for the heading role
+- WHEN the admin opens Settings > Administration > Theming
+- THEN the Custom fonts list MUST show both fonts with their name, role and size
+- AND each font in the list MUST have a delete action
+- AND with no stored fonts the list MUST say that no fonts are uploaded
+
 ### Requirement: A Bundled Font Stylesheet Is One Something Links
 
 Every stylesheet the app ships under `css/` that declares an `@font-face`, token sets aside, MUST be
