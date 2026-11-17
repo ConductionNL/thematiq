@@ -38,5 +38,8 @@
 - [x] 5.1 `php -l`, phpcs, php-cs-fixer, phpmd, psalm and phpstan on the touched files; the three
       new test classes.
 - [x] 5.2 `composer check:strict`, once, before the push.
-- [ ] 5.3 One call against a running instance once the change is on it: 200 without a session, 304
+- [x] 5.3 One call against a running instance once the change is on it: 200 without a session, 304
       with the revision.
+      Live pass 17 Nov 2026 (NC 34.0.6): `GET /index.php/apps/thematiq/api/shell-tokens` without a
+      session answered 200 with `ETag: "e7d9695d91d7a013"` and `Cache-Control: no-cache`; the same
+      call with `If-None-Match: "e7d9695d91d7a013"` answered 304 with an empty body.

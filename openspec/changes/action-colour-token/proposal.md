@@ -21,6 +21,13 @@ An administrator can already move the button on one instance: the token editor h
 Decided by Ruben on 12 Oct 2026: thematiq gets a separate action token that defaults to the primary.
 Token sets that want another main button colour set it, and Nextcloud's own main buttons follow it.
 
+## Narrowed since
+
+Ruben decided on 13 Oct 2026 that only the main button wears the action colour (change
+`action-colour-main-button-only`, archived 2026-10-30). The delta spec of this change follows that
+decision: `--color-primary-element` keeps reading the primary, and the shell tokens' `action` role is
+the main spec's `The shell tokens answer the main button, not the element colour`.
+
 ## What changes
 
 - A token set may declare `--nldesign-color-action`, with `--nldesign-color-action-hover` and

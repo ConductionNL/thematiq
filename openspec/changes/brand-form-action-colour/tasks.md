@@ -11,4 +11,8 @@
 - [x] 6 The parity fixture with three action cases; `BrandFormServiceTest`, `brandForm.spec.js`,
       `admin-brand-form.spec.js`.
 - [x] 7 `composer check:strict` once, `npm run lint`.
-- [ ] 8 A look at the form on a running instance.
+- [x] 8 A look at the form on a running instance.
+      Live pass 17 Nov 2026 (NC 34.0.6): the box enables the colour; with #1f883d the samples show
+      the main button and its hover (#1a7434) in green with black text, the readout adds "Text on the
+      main button: 4.65:1, needs 4.5:1", and the created set (`custom-lp-action-green`) declares the
+      action colour: applied, the main buttons on the instance are green.
