@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Repair;
 
-use OCA\Thematiq\Service\TokenSetLicenceService;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use Psr\Log\LoggerInterface;
@@ -42,11 +42,11 @@ class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 	/**
 	 * Constructor.
 	 *
-	 * @param TokenSetLicenceService $licences Finds the applied, unconfirmed restricted sets and keeps the record.
+	 * @param TokenSetLicenceServiceInterface $licences Finds the applied, unconfirmed restricted sets and keeps the record.
 	 * @param LoggerInterface $logger The Nextcloud log.
 	 */
 	public function __construct(
-		private readonly TokenSetLicenceService $licences,
+		private readonly TokenSetLicenceServiceInterface $licences,
 		private readonly LoggerInterface $logger,
 	) {
 	}//end __construct()

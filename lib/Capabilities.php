@@ -31,8 +31,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\ShippedTokenSetAuditServiceInterface;
 use OCA\Thematiq\Service\DesignSystemService;
-use OCA\Thematiq\Service\ShippedTokenSetAuditService;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\ICache;
@@ -68,7 +68,7 @@ class Capabilities implements IPublicCapability {
 	 * @param IAppManager $appManager Resolves the app version and app path.
 	 * @param IURLGenerator $urlGenerator Resolves logo asset web paths.
 	 * @param DesignSystemService $designSystemService Resolves the active set's design system.
-	 * @param ShippedTokenSetAuditService $auditService Computes the WCAG contrast verdict.
+	 * @param ShippedTokenSetAuditServiceInterface $auditService Computes the WCAG contrast verdict.
 	 * @param ICacheFactory $cacheFactory Creates the distributed WCAG-level cache.
 	 */
 	public function __construct(
@@ -76,7 +76,7 @@ class Capabilities implements IPublicCapability {
 		private readonly IAppManager $appManager,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly DesignSystemService $designSystemService,
-		private readonly ShippedTokenSetAuditService $auditService,
+		private readonly ShippedTokenSetAuditServiceInterface $auditService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->cache = $cacheFactory->createDistributed(prefix: 'thematiq_wcag_level');

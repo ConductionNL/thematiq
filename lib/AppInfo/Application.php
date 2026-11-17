@@ -27,6 +27,7 @@ use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Listener\WorkspaceIconListener;
 use OCA\Thematiq\Middleware\ApiContractMiddleware;
 use OCA\Thematiq\Middleware\ConfigSourceLockMiddleware;
+use OCA\Thematiq\Service\ContractBindings;
 use OCA\Thematiq\Service\RuntimeFile\AppDataRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\AppFramework\App;
@@ -138,6 +139,10 @@ class Application extends App implements IBootstrap {
 		// live in app data, never in the signed app directory. See
 		// lib/Service/RuntimeFile/RuntimeFileStore.php.
 		$context->registerServiceAlias(RuntimeFileStore::class, AppDataRuntimeFileStore::class);
+
+		// Other components depend on the contracts in lib/Kernel/Contracts;
+		// each one resolves to the service that implements it.
+		(new ContractBindings())->register(context: $context);
 
 		// Theme as code (openspec/specs/theme-as-code/spec.md): while
 		// thematiq.config_source_lock is on, configuration setters answer 423.

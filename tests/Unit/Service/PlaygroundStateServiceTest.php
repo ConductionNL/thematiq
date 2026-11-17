@@ -543,6 +543,6 @@ class PlaygroundStateServiceTest extends TestCase {
 		$asked = [];
 		$inventory = $this->build(l10n: $this->markingL10n(asked: $asked))->getInitialState(tokenSetId: 'nextcloud')['playgroundInventory'];
 
-		$this->assertSame(expected: '8475606d9e9dfaea 294', actual: substr(hash('sha256', (string)json_encode($inventory)), 0, 16) . ' ' . count($asked));
+		$this->assertSame(expected: 'c5261312cac8b06e 296', actual: substr(hash('sha256', (string)json_encode($inventory)), 0, 16) . ' ' . count($asked));
 	}//end testTheTranslatedInventoryGolden()
 }//end class

@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -57,9 +57,9 @@ class CustomCssController extends Controller {
 	/**
 	 * The theming audit log.
 	 *
-	 * @var ThemingAuditService
+	 * @var ThemingAuditServiceInterface
 	 */
-	private ThemingAuditService $auditService;
+	private ThemingAuditServiceInterface $auditService;
 
 	/**
 	 * Constructor.
@@ -67,13 +67,13 @@ class CustomCssController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
 	 * @param CustomCssService $customCssService The freeform CSS service.
-	 * @param ThemingAuditService $auditService The theming audit log.
+	 * @param ThemingAuditServiceInterface $auditService The theming audit log.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		CustomCssService $customCssService,
-		ThemingAuditService $auditService,
+		ThemingAuditServiceInterface $auditService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->customCssService = $customCssService;

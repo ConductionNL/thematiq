@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Command;
 
-use OCA\Thematiq\Service\ConfigBundleService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +33,7 @@ use Throwable;
  * when no file is given, for OTAP (dev/test/acceptatie/productie) promotion
  * pipelines.
  *
- * Reuses {@see ConfigBundleService::export()} exclusively — no second
+ * Reuses {@see \OCA\Thematiq\Service\ConfigBundleService::export()} exclusively — no second
  * serialization path — so the output is byte-for-byte identical to the
  * `configBundle#export` HTTP endpoint.
  *

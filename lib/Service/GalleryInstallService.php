@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\GalleryInstallServiceInterface;
 use OCA\Thematiq\Service\Exception\GalleryException;
 use OCP\IL10N;
 use RuntimeException;
@@ -38,7 +39,7 @@ use Throwable;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - an install IS the upload path plus a download: it needs every class the
  *   upload controller uses, and routing it through the controller would put HTTP concerns in a service.
  */
-class GalleryInstallService {
+class GalleryInstallService implements GalleryInstallServiceInterface {
 
 	/**
 	 * Constructor.

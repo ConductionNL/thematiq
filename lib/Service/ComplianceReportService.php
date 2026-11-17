@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\ComplianceReportServiceInterface;
 use OCP\ServerVersion;
 
 /**
@@ -64,7 +65,7 @@ use OCP\ServerVersion;
  * against AA thresholds with an unevaluated-caps-the-verdict rule. The evidence contract is the
  * source of the branching, not accidental structure.
  */
-class ComplianceReportService {
+class ComplianceReportService implements ComplianceReportServiceInterface {
 
 	/**
 	 * Sentinel background identifier for the pairs measured against the

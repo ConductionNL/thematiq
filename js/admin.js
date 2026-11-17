@@ -3641,6 +3641,11 @@
 							/<input /g,
 							'<input aria-describedby="' + facts.ids + '" ',
 						))
+				+ '<span class="nldesign-token-resolved" aria-live="polite" data-token-resolved="'
+				+ escapeHtml(name)
+				+ '">'
+				+ escapeHtml(resolvedReferenceText(displayVal))
+				+ '</span>'
 				+ '<button class="nldesign-btn nldesign-btn--small nldesign-reset-btn" data-token="'
 				+ escapeHtml(name)
 				+ '" title="'
@@ -3794,6 +3799,54 @@
 		 * @param {string} lockedAttr The disabled attributes of a locked row.
 		 * @return {string} HTML.
 		 */
+		/**
+		 * What a reference resolves to, for the row that holds it: the value the
+		 * page currently gives the referred token, or '' when the value is no
+		 * reference. The reference itself stays the stored value, so a later edit
+		 * of the target reaches this token too.
+		 *
+		 * @param {string} value The token value.
+		 * @return {string} The text shown beside the row's input.
+		 */
+		function resolvedReferenceText(value) {
+			var target =
+				typeof TT.referenceTarget === 'function'
+					? TT.referenceTarget(value)
+					: null
+			if (target === null) {
+				return ''
+			}
+			var resolved =
+				typeof window !== 'undefined' && typeof window.getComputedStyle === 'function'
+					? window
+							.getComputedStyle(document.documentElement)
+							.getPropertyValue(target)
+							.trim()
+					: ''
+			return resolved === ''
+				? t('thematiq', 'refers to {token}', { token: target })
+				: t('thematiq', 'refers to {token}: {value}', {
+						token: target,
+						value: resolved,
+					})
+		}
+
+		/**
+		 * Refresh the resolved value shown beside a row after its value changed.
+		 *
+		 * @param {HTMLElement} container The editor.
+		 * @param {string} name The token.
+		 * @param {string} value The new value.
+		 */
+		function updateResolvedReference(container, name, value) {
+			var holder = container.querySelector(
+				'[data-token-resolved="' + name + '"]',
+			)
+			if (holder !== null) {
+				holder.textContent = resolvedReferenceText(value)
+			}
+		}
+
 		function buildDurationInput(name, meta, value, lockedAttr) {
 			var match = /^\s*([0-9.]+)\s*(ms|s)\s*$/.exec(value || '')
 			var amount = match !== null ? match[1] : ''
@@ -4232,6 +4285,7 @@
 						syncAlpha(container, name, value)
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
+						updateResolvedReference(container, name, value)
 					})
 				})
 
@@ -4245,6 +4299,7 @@
 						var value = field.value.trim()
 						applyLivePreview(name, value)
 						markDirty(name, value, container)
+						updateResolvedReference(container, name, value)
 					})
 				})
 
@@ -8732,6 +8787,7 @@
 		}
 
 		function loadFonts() {
+			loadFontLibrary()
 			var listEl = document.getElementById('nldesign-font-list')
 			if (listEl === null) {
 				return
@@ -8796,6 +8852,152 @@
 
 				listEl.appendChild(row)
 			})
+		}
+
+		/*
+		 * Approved font library (openspec/specs/custom-fonts, change archive/2026-11-14-rows-without-a-requirement):
+		 * the fonts the app bundles, each with its licence, assignable to the
+		 * body or heading role without an upload. Names come from the app's
+		 * own stylesheet; they are still written with textContent only.
+		 */
+		function fontRoleLabel(role) {
+			return role === 'heading'
+				? t('thematiq', 'Heading')
+				: t('thematiq', 'Body text')
+		}
+
+		function loadFontLibrary() {
+			var libraryEl = document.getElementById('nldesign-font-library')
+			if (libraryEl === null) {
+				return
+			}
+			fetch(OC.generateUrl('/apps/thematiq/settings/fonts/library'), {
+				headers: { requesttoken: OC.requestToken },
+			})
+				.then(function (r) {
+					return r.json()
+				})
+				.then(function (data) {
+					renderFontLibrary(libraryEl, (data && data.library) || [])
+				})
+				.catch(function (err) {
+					console.error('Error loading the font library:', err)
+					libraryEl.textContent = t('thematiq', 'Failed to load the font library.')
+				})
+		}
+
+		function libraryButton(label, onClick) {
+			var button = document.createElement('button')
+			button.type = 'button'
+			button.className = 'nldesign-btn nldesign-btn--small'
+			button.textContent = label
+			button.addEventListener('click', onClick)
+			return button
+		}
+
+		function renderFontLibrary(libraryEl, fonts) {
+			libraryEl.replaceChildren()
+			if (fonts.length === 0) {
+				var empty = document.createElement('p')
+				empty.className = 'settings-hint'
+				empty.textContent = t('thematiq', 'The app bundles no fonts.')
+				libraryEl.appendChild(empty)
+				return
+			}
+
+			fonts.forEach(function (font) {
+				var roles = font.roles || []
+				var row = document.createElement('div')
+				row.className = 'nldesign-custom-set-row'
+
+				var nameSpan = document.createElement('span')
+				nameSpan.className = 'nldesign-custom-set-name'
+				nameSpan.textContent = font.name
+				row.appendChild(nameSpan)
+
+				var licenceBadge = document.createElement('span')
+				licenceBadge.className = 'nldesign-badge'
+				licenceBadge.textContent = font.licence
+				licenceBadge.title = t('thematiq', 'Licence')
+				row.appendChild(licenceBadge)
+
+				;['body', 'heading'].forEach(function (role) {
+					if (roles.indexOf(role) !== -1) {
+						var roleBadge = document.createElement('span')
+						roleBadge.className = 'nldesign-badge'
+						roleBadge.textContent = fontRoleLabel(role)
+						row.appendChild(roleBadge)
+						row.appendChild(libraryButton(
+							t('thematiq', 'Stop using for {role}').replace('{role}', fontRoleLabel(role).toLowerCase()),
+							function () {
+								unassignLibraryFont(role)
+							},
+						))
+						return
+					}
+					row.appendChild(libraryButton(
+						role === 'heading'
+							? t('thematiq', 'Use for headings')
+							: t('thematiq', 'Use for body text'),
+						function () {
+							assignLibraryFont(font.name, role)
+						},
+					))
+				})
+
+				libraryEl.appendChild(row)
+			})
+		}
+
+		function libraryRequest(url, options, done) {
+			fetch(OC.generateUrl(url), options)
+				.then(function (r) {
+					return r.json().then(function (data) {
+						return { status: r.status, data: data }
+					})
+				})
+				.then(function (res) {
+					if (res.status >= 400) {
+						notify(
+							t('thematiq', 'Could not change the font:')
+								+ ' '
+								+ ((res.data && res.data.error) || ''),
+						)
+						return
+					}
+					notify(done)
+					loadFontLibrary()
+				})
+				.catch(function (err) {
+					console.error('Error changing the library font:', err)
+					notify(t('thematiq', 'Could not change the font.'))
+				})
+		}
+
+		function assignLibraryFont(name, role) {
+			libraryRequest(
+				'/apps/thematiq/settings/fonts/library',
+				{
+					method: 'POST',
+					headers: {
+						requesttoken: OC.requestToken,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ name: name, role: role }),
+				},
+				t('thematiq', 'Font assigned. Reload the page to apply it.'),
+			)
+		}
+
+		function unassignLibraryFont(role) {
+			libraryRequest(
+				'/apps/thematiq/settings/fonts/library/' + encodeURIComponent(role),
+				{
+					method: 'DELETE',
+					headers: { requesttoken: OC.requestToken },
+				},
+				t('thematiq', 'Font removed from the role. Reload the page to apply it.'),
+			)
 		}
 
 		function deleteFont(id, name) {

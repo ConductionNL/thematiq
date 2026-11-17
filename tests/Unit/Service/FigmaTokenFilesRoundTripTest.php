@@ -307,9 +307,9 @@ final class FigmaTokenFilesRoundTripTest extends TestCase {
 		$this->assertSame(expected: $dollar['declarations'], actual: $legacy['declarations']);
 		$this->assertSame(expected: '#0b5fff', actual: $dollar['declarations']['--nldesign-color-primary']);
 		$this->assertSame(
-			expected: '#0b5fff',
+			expected: 'var(--nldesign-color-primary)',
 			actual: $dollar['declarations']['--nldesign-color-link'],
-			message: 'a colour reference is stored as the colour it points at'
+			message: 'a colour reference to a mapped token stays a reference (token-references-stay-live)'
 		);
 		$this->assertSame(expected: '#1f883d', actual: $dollar['declarations']['--nldesign-color-action']);
 		$this->assertSame(expected: '6px', actual: $dollar['declarations']['--nldesign-border-radius']);

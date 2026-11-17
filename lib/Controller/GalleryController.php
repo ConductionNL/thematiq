@@ -20,9 +20,9 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\GalleryInstallServiceInterface;
+use OCA\Thematiq\Kernel\Contracts\ThemeGalleryServiceInterface;
 use OCA\Thematiq\Service\Exception\GalleryException;
-use OCA\Thematiq\Service\GalleryInstallService;
-use OCA\Thematiq\Service\ThemeGalleryService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -42,14 +42,14 @@ class GalleryController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param ThemeGalleryService $gallery The index.
-	 * @param GalleryInstallService $installer The installer.
+	 * @param ThemeGalleryServiceInterface $gallery The index.
+	 * @param GalleryInstallServiceInterface $installer The installer.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ThemeGalleryService $gallery,
-		private GalleryInstallService $installer,
+		private ThemeGalleryServiceInterface $gallery,
+		private GalleryInstallServiceInterface $installer,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()

@@ -25,7 +25,6 @@ use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\BrandColours;
 use OCA\Thematiq\Service\BrandFormSources;
 use OCA\Thematiq\Service\BrandPalette;
-use OCA\Thematiq\Service\CustomTokenSetService;
 use OCA\Thematiq\Service\CustomTokenSetValidator;
 use OCA\Thematiq\Service\NewCustomTokenSet;
 use OCA\Thematiq\Settings\Admin;
