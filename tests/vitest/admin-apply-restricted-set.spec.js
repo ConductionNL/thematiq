@@ -117,7 +117,10 @@ async function applyEpe(tokenSetAnswer) {
 	buildDom()
 	installFetchRouter([
 		['tokenset-preview', { resolved: { '--color-main-background': '#fafafa' } }],
-		['tokenset-stylesheets', { tokenSet: 'epe', designSystem: 'nldesign', layers: [] }],
+		[
+			'tokenset-stylesheets',
+			{ tokenSet: 'epe', designSystem: 'nldesign', layers: [] },
+		],
 		['/settings/overrides', { overrides: {}, status: 'ok' }],
 		['/settings/tokenset', tokenSetAnswer],
 		['/settings/theming', { status: 'ok' }, 'POST'],
@@ -149,7 +152,10 @@ describe('admin.js: applying a restricted house style nobody confirmed', () => {
 
 	it('names the confirmation instead of a bare failure', async () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {})
-		const messages = await applyEpe({ error: 'restricted_set_not_confirmed', tokenSet: 'epe' })
+		const messages = await applyEpe({
+			error: 'restricted_set_not_confirmed',
+			tokenSet: 'epe',
+		})
 
 		expect(messages).toContain(CONFIRM_FIRST)
 		expect(messages).not.toContain('Failed to apply token set.')
