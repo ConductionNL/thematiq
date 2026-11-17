@@ -72,6 +72,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | vaartveld | 6.63:1 | 4.5:1 | 6.13:1 | 3.0:1 | pass |
 | venray | 4.94:1 | 4.5:1 | 4.94:1 | 3.0:1 | pass |
 | vng | 11.98:1 | 4.5:1 | 11.98:1 | 3.0:1 | pass |
+| voorne-aan-zee | 6.97:1 | 4.5:1 | 6.97:1 | 3.0:1 | pass |
 | vught | 4.62:1 | 4.5:1 | 4.55:1 | 3.0:1 | pass |
 | warmtepompacademie | 5.96:1 | 4.5:1 | 5.51:1 | 3.0:1 | pass |
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
@@ -147,6 +148,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | vaartveld | 15 | 0 | 0 |  |
 | venray | 15 | 0 | 0 |  |
 | vng | 15 | 0 | 0 |  |
+| voorne-aan-zee | 15 | 0 | 0 |  |
 | vught | 15 | 0 | 0 |  |
 | warmtepompacademie | 15 | 0 | 0 |  |
 | westervoort | 15 | 0 | 0 |  |

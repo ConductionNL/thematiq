@@ -1430,5 +1430,23 @@
 				"en": "Warmtepompacademie · workplace on Nextcloud"
 			}
 		}
+	},
+	{
+		"id": "voorne-aan-zee",
+		"name": "Gemeente Voorne aan Zee",
+		"description": "Design tokens for Gemeente Voorne aan Zee, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1B59A4"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-voorne-aan-zee-house-style",
+			"package": "@nl-design-system-community/voorne-aan-zee-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Voorne aan Zee",
+			"restricted": true
+		}
 	}
 ]
