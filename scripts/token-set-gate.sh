@@ -24,6 +24,19 @@ node scripts/update-coverage-claims.mjs > /dev/null
 # render, so a sync that forgets this step fails rather than publishing stale
 # coverage claims.
 node scripts/audit-token-sets.mjs --markdown > /dev/null
+# The sync's per-set retry narrows the gate to the tests that failed: a PHPUnit
+# --filter pattern, and/or the vitest spec files to run. The run that accepts
+# the result is always the full gate.
+if [ -n "${TOKEN_SET_GATE_PHPUNIT_FILTER:-}" ] || [ -n "${TOKEN_SET_GATE_VITEST:-}" ]; then
+	if [ -n "${TOKEN_SET_GATE_PHPUNIT_FILTER:-}" ]; then
+		php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml --filter "$TOKEN_SET_GATE_PHPUNIT_FILTER"
+	fi
+	if [ -n "${TOKEN_SET_GATE_VITEST:-}" ]; then
+		# shellcheck disable=SC2086 # a space-separated list of spec paths
+		npx vitest run $TOKEN_SET_GATE_VITEST
+	fi
+	exit 0
+fi
 php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
 # The JavaScript tests that read the shipped sets (needs npm ci).
 npx vitest run \
