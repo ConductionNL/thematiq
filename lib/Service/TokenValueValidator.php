@@ -194,7 +194,7 @@ class TokenValueValidator {
 	 *
 	 * @return array<string, string> Token name => reason.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
+	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
 	 */
 	private function cycleRejected(array $tokens): array {
 		$rejected = [];
@@ -214,7 +214,7 @@ class TokenValueValidator {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
 	 *
-	 * @spec openspec/changes/token-references-stay-live/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
+	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-a-token-can-refer-to-another-token
 	 */
 	private function referenceProblem(string $target): ?string {
 		if (TokenRegistry::isEditable(tokenName: $target) === false) {

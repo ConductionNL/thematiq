@@ -40,7 +40,7 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
 		// The active set as eighteen shell roles and a logo, for another product
-		// that wears this Nextcloud's shell (openspec/changes/shell-tokens-endpoint).
+		// that wears this Nextcloud's shell (openspec/specs/shell-tokens).
 		// Public (#[PublicPage] + #[NoCSRFRequired] + #[AnonRateLimit]): the
 		// reader is a server without a Nextcloud session, and the values are the
 		// ones the login page already serves as CSS. A new path, so a warm

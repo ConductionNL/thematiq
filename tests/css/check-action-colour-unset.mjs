@@ -37,7 +37,7 @@
  *      take the action colour, or something other than a button did
  *   2  Chromium could not be started (nothing was checked)
  *
- * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
+ * @spec openspec/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
