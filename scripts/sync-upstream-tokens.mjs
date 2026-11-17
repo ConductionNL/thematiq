@@ -93,6 +93,9 @@ const NOT_SYNCED = {
 	example: 'the NL Design System demo theme; thematiq ships its own example-* sets',
 }
 
+/** The gate that accepts or rejects the converted sets. */
+const DEFAULT_GATE = 'bash scripts/token-set-gate.sh'
+
 /** Paths a candidate can change, relative to the repo root. */
 const ALLOWLIST_PATH = 'tests/Unit/fixtures/token-set-vocabulary-allowlist.json'
 const MANIFEST_PATH = 'token-sets.json'
@@ -399,7 +402,7 @@ function parseArgs(argv) {
 		sha: process.env.THEMES_COMMIT_SHA || null,
 		report: null,
 		only: null,
-		gate: 'bash scripts/token-set-gate.sh',
+		gate: DEFAULT_GATE,
 		runGate: true,
 		pins: {},
 	}
@@ -766,12 +769,14 @@ function restore(baseline) {
  * Run the gate command.
  *
  * @param {string} command Shell command.
+ * @param {Object} env Extra environment variables for the command.
  * @return {Object} `{ok, failures}`; failures names the failing tests.
  */
-function runGate(command) {
+function runGate(command, env = {}) {
 	const run = spawnSync('bash', ['-c', command], {
 		cwd: REPO_ROOT,
 		encoding: 'utf8',
+		env: { ...process.env, ...env },
 		maxBuffer: 256 * 1024 * 1024,
 	})
 	const output = `${run.stdout}\n${run.stderr}`
@@ -1056,19 +1061,52 @@ function dropIncompleteNewSets(baseline, candidates, sha, summary) {
 }
 
 /**
+ * The environment that narrows scripts/token-set-gate.sh to the tests that
+ * failed, or null when a failure is not a PHPUnit or vitest test name and only
+ * the full gate can judge it.
+ *
+ * @param {Array<string>} failures The failure names runGate() reported.
+ * @return {Object|null} The TOKEN_SET_GATE_* variables, or null.
+ */
+export function narrowGate(failures) {
+	const phpunit = []
+	const vitest = []
+	for (const failure of failures) {
+		if (/^tests\/vitest\/\S+\.spec\.js$/.test(failure)) {
+			vitest.push(failure)
+		} else if (/^[\w\\]+::\w+$/.test(failure)) {
+			phpunit.push(failure.replace(/\\/g, '\\\\'))
+		} else {
+			return null
+		}
+	}
+	if (phpunit.length === 0 && vitest.length === 0) {
+		return null
+	}
+	return {
+		TOKEN_SET_GATE_PHPUNIT_FILTER: phpunit.join('|'),
+		TOKEN_SET_GATE_VITEST: vitest.join(' '),
+	}
+}
+
+/**
  * Run the gate with one more set in at a time, keeping each set it passes with.
+ * With the default gate only the tests that failed run per set; the full gate
+ * still runs once on the result.
  *
  * @param {Object} baseline The baseline snapshot.
  * @param {Array<Object>} accepted The candidates to retry.
  * @param {Object} options Options.
  * @param {Object} summary Outcome lists; gains a rejection per failing set.
+ * @param {Array<string>} failures The tests that failed with every candidate in.
  * @return {Array<Object>} The candidates kept.
  */
-function retryOneAtATime(baseline, accepted, options, summary) {
+function retryOneAtATime(baseline, accepted, options, summary, failures) {
+	const narrowed = options.gate === DEFAULT_GATE ? narrowGate(failures) : null
 	const kept = []
 	for (const candidate of accepted) {
 		apply(baseline, [...kept, candidate], options.sha)
-		const single = runGate(options.gate)
+		const single = runGate(options.gate, narrowed ?? {})
 		if (single.ok === true) {
 			kept.push(candidate)
 			console.log(`  OK   ${candidate.org.slug}`)
@@ -1105,7 +1143,7 @@ function gateCandidates(baseline, accepted, options, summary) {
 			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
 		)
 		restore(baseline)
-		accepted = retryOneAtATime(baseline, accepted, options, summary)
+		accepted = retryOneAtATime(baseline, accepted, options, summary, gate.failures)
 		apply(baseline, accepted, options.sha)
 		gate = runGate(options.gate)
 	}

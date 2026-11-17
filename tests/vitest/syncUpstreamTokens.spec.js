@@ -14,6 +14,7 @@ import {
 	withOverrides,
 	declarations,
 	mergeEntry,
+	narrowGate,
 	OVERRIDES_HEADING,
 } from '../../scripts/sync-upstream-tokens.mjs'
 
@@ -489,5 +490,30 @@ describe('mergeEntry', () => {
 		)
 		expect(manifest[0].licence).toBeUndefined()
 		expect(manifest[0].upstreamVersion).toBe('2.0.0')
+	})
+})
+
+describe('narrowGate', () => {
+	it('narrows the retry to the PHPUnit tests and vitest specs that failed', () => {
+		expect(
+			narrowGate([
+				'Service\\DenhaagContrastPairsTest::testEveryShippedSetPassesEveryDenhaagPair',
+				'tests/vitest/focusRingContrast.spec.js',
+			]),
+		).toEqual({
+			TOKEN_SET_GATE_PHPUNIT_FILTER:
+				'Service\\\\DenhaagContrastPairsTest::testEveryShippedSetPassesEveryDenhaagPair',
+			TOKEN_SET_GATE_VITEST: 'tests/vitest/focusRingContrast.spec.js',
+		})
+	})
+
+	it('falls back to the full gate when a failure is not a test name', () => {
+		expect(
+			narrowGate([
+				'Service\\DenhaagContrastPairsTest::testEveryShippedSetPassesEveryDenhaagPair',
+				'PHP Fatal error: Allowed memory size exhausted',
+			]),
+		).toBeNull()
+		expect(narrowGate([])).toBeNull()
 	})
 })
