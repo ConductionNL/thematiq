@@ -56,6 +56,14 @@
             "description": "Signed-in users read the profile (`GET /api/document-style`) and its assets; administrators manage the Documents block under `/settings/document-style`."
         },
         {
+            "name": "health",
+            "description": "The health endpoint: declarative checks run by the AppHost engine."
+        },
+        {
+            "name": "metrics",
+            "description": "Prometheus metrics, for administrators."
+        },
+        {
             "name": "my-groups",
             "description": "`GET /api/my-groups/house-style` lists the delegated groups the signed-in user is subadmin of; `POST /api/my-groups/{group}/house-style` sets one. Both need the delegated setting {@see GroupHouseStyle} (an administrator, or a member of a group the administrator granted it to); the write also checks, on every call, that the user is subadmin of the named group and that the set is on its allowed list, answering 403 otherwise."
         },
@@ -272,6 +280,92 @@
                 }
             }
         },
+        "/health": {
+            "servers": [
+                {
+                    "url": "https://{host}/index.php/apps/thematiq/api",
+                    "description": "Health checks and metrics keep their unversioned URL, since they follow protocols defined outside this API.",
+                    "variables": {
+                        "host": {
+                            "default": "localhost",
+                            "description": "The host name of the Nextcloud instance."
+                        }
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "health-index",
+                "summary": "Declarative health check",
+                "description": "Declarative health check.\n\nRuns the manifest-declared checks through the AppHost engine and renders the `{status, app, version, checks}` envelope with the status code the engine's policy resolved. CORS headers are emitted only when the manifest opts in, exactly as the engine does.\n\nWhen the AppHost engine cannot be resolved — openregister absent or disabled — the endpoint still answers (the whole point of a health probe): `status: degraded`, `checks.openregister: unavailable`, HTTP 200.\n\nLiveness probe — no credential, so a ceiling and no counter.",
+                "tags": [
+                    "health"
+                ],
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "`{status, app, version, checks}`.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "servers": [
+                {
+                    "url": "https://{host}/index.php/apps/thematiq/api",
+                    "description": "Health checks and metrics keep their unversioned URL, since they follow protocols defined outside this API.",
+                    "variables": {
+                        "host": {
+                            "default": "localhost",
+                            "description": "The host name of the Nextcloud instance."
+                        }
+                    }
+                }
+            ],
+            "get": {
+                "operationId": "metrics-index",
+                "summary": "Expose Prometheus metrics",
+                "description": "Expose Prometheus metrics.\n\nNot public: the body carries internal operational detail, so the default applies and only an administrator may read it. A Prometheus scraper authenticates as an administrator, for example with an app password.",
+                "tags": [
+                    "metrics"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Plain text response with Prometheus metrics.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Problem403"
+                    }
+                }
+            }
+        },
         "/my-groups/house-style": {
             "get": {
                 "operationId": "my-groups-index",
@@ -416,14 +510,30 @@
                 ],
                 "security": [],
                 "responses": {
+                    "200": {
+                        "description": "The shell tokens document as JSON, with its `ETag`.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                }
+                            }
+                        }
+                    },
                     "304": {
-                        "description": "A redirect to the result.",
+                        "description": "The reader already holds this revision: an empty body with the same `ETag`.",
                         "headers": {
                             "API-Version": {
                                 "$ref": "#/components/headers/API-Version"
                             },
-                            "Location": {
-                                "description": "Where the result is.",
+                            "ETag": {
+                                "description": "The revision of the document.",
                                 "schema": {
                                     "type": "string"
                                 }
