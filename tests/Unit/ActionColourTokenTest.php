@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
- * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-token-set-may-declare-an-action-colour
+ * @spec openspec/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
+ * @spec openspec/specs/action-colour/spec.md#requirement-a-token-set-may-declare-an-action-colour
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ use Psr\Log\LoggerInterface;
  *
  * No Nextcloud runtime is needed: the files are this repository's own.
  *
- * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
+ * @spec openspec/specs/action-colour/spec.md#requirement-a-set-without-an-action-colour-renders-as-before
  */
 class ActionColourTokenTest extends TestCase {
 
@@ -520,7 +520,7 @@ class ActionColourTokenTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	public function testTheTextOnTheActionColourIsChecked(): void {
 		$contrast = new ContrastService();
