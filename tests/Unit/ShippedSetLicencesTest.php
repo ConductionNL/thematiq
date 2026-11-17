@@ -32,8 +32,8 @@ class ShippedSetLicencesTest extends TestCase {
 		'amsterdam', 'bodegraven-reeuwijk', 'borne', 'buren', 'demodam', 'dinkelland', 'drechterland', 'duiven', 'duo',
 		'enkhuizen', 'enschede', 'epe', 'groningen', 'haarlem', 'haarlemmermeer', 'hoeksche-waard', 'hoorn', 'horstaandemaas',
 		'leiden', 'leidschendam-voorburg', 'losser', 'nijmegen', 'noaberkracht', 'noordoostpolder', 'noordwijk', 'nora',
-		'provincie-zuid-holland', 'purmerend', 'riddeliemers', 'ridderkerk', 'rijkshuisstijl', 'rotterdam', 'stedebroec',
-		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vng', 'voorne-aan-zee', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
+		'provincie-zuid-holland', 'purmerend', 'riddeliemers', 'ridderkerk', 'rijkshuisstijl', 'rotterdam', 'sittard-geleen', 'stedebroec',
+		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vidar', 'vng', 'voorne-aan-zee', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
 	];
 
 	/**
