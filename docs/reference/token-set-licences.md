@@ -54,6 +54,7 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 | `utrecht` | `@utrecht/design-tokens` | not recorded | @utrecht/design-tokens (the set records no version) | All rights reserved; proprietary assets of Gemeente Utrecht | restricted |
 | `venray` | `@nl-design-system-unstable/venray-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Venray; permission from Gemeente Venray | restricted |
 | `vng` | `tilburg-woo-ui _tokens-vng.scss (no published package)` | not recorded | tilburg-woo-ui (hand conversion) | No published source or licence; organisation house style; treated as restricted | restricted |
+| `voorne-aan-zee` | `@nl-design-system-community/voorne-aan-zee-design-tokens` | 1.0.0 | nl-design-system/themes@8d49f299 | Use of logo and house style only by Gemeente Voorne aan Zee; permission from Gemeente Voorne aan Zee | restricted |
 | `vught` | `@nl-design-system-unstable/vught-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Vught; permission from Gemeente Vught | restricted |
 | `westervoort` | `@nl-design-system-unstable/westervoort-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Westervoort; permission from Gemeente Westervoort | restricted |
 | `xxllnc` | `@nl-design-system-unstable/xxllnc-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by XXLLNC; permission from XXLLNC | restricted |

@@ -33,7 +33,7 @@ class ShippedSetLicencesTest extends TestCase {
 		'enkhuizen', 'enschede', 'epe', 'groningen', 'haarlem', 'haarlemmermeer', 'hoeksche-waard', 'hoorn', 'horstaandemaas',
 		'leiden', 'leidschendam-voorburg', 'losser', 'nijmegen', 'noaberkracht', 'noordoostpolder', 'noordwijk', 'nora',
 		'provincie-zuid-holland', 'purmerend', 'riddeliemers', 'ridderkerk', 'rijkshuisstijl', 'rotterdam', 'stedebroec',
-		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vng', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
+		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vng', 'voorne-aan-zee', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
 	];
 
 	/**
