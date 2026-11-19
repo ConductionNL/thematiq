@@ -259,7 +259,10 @@
 	/* --color-mark: unmapped — new in NC 33/34. A fixed #fff0c7 highlight tint
 	 * behind <mark>, for search hits. NL Design has no highlight token, and a
 	 * brand colour here is the wrong instrument: the tint has to stay legible
-	 * under --color-main-text, which a saturated primary is not. */
+	 * under --color-main-text, which a saturated primary is not. A set whose
+	 * own mark background keeps that text at 4.5:1 in every mode maps it in
+	 * its css/token-overrides file (hoeksche-waard only, Q-thematiq-12; see
+	 * docs/reference/token-set-mark-colour.md). */
 	/* --color-loading-light: unmapped — NC loading animation internal */
 	/* --color-loading-dark: unmapped — NC loading animation internal */
 	/* --color-scrollbar: intentionally not overridden — depends on border-maxcontrast */
