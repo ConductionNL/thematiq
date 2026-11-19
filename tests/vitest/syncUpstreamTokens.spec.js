@@ -297,6 +297,72 @@ describe('Tokens Studio exports (thematiq#994)', () => {
 			rmSync(dir, { recursive: true, force: true })
 		}
 	})
+
+	it('reads src/tokens.json, as a Tokens Studio export when it is one (voorne-aan-zee)', async () => {
+		const { readUpstreamTokens } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const { mkdtempSync, mkdirSync, writeFileSync, rmSync } =
+			await import('node:fs')
+		const { join } = await import('node:path')
+		const { tmpdir } = await import('node:os')
+		const dir = mkdtempSync(join(tmpdir(), 'src-tokens-json-'))
+		try {
+			mkdirSync(join(dir, 'src'))
+			mkdirSync(join(dir, 'figma'))
+			writeFileSync(join(dir, 'figma', 'org.tokens.json'), '')
+			writeFileSync(
+				join(dir, 'src', 'tokens.json'),
+				JSON.stringify({
+					brand: { x: { a: { $value: '#111111' } } },
+					'color-scheme-dark/common': { x: { a: { $value: '#eeeeee' } } },
+					$metadata: { tokenSetOrder: ['brand', 'color-scheme-dark/common'] },
+				}),
+			)
+			const read = readUpstreamTokens(dir)
+			expect(read.error).toBe(null)
+			expect(read.kind).toBe('tokens-studio')
+			expect(read.tokens.x.a.$value).toBe('#111111')
+
+			writeFileSync(
+				join(dir, 'src', 'tokens.json'),
+				JSON.stringify({ x: { a: { value: '#222222' } } }),
+			)
+			const plain = readUpstreamTokens(dir)
+			expect(plain.kind).toBe('style-dictionary')
+			expect(plain.tokens.x.a.value).toBe('#222222')
+		} finally {
+			rmSync(dir, { recursive: true, force: true })
+		}
+	})
+
+	it('reads the output of a generated theme, and says when its build did not run (vidar)', async () => {
+		const { readUpstreamTokens, GENERATED_TOKENS } =
+			await import('../../scripts/sync-upstream-tokens.mjs')
+		const { mkdtempSync, mkdirSync, writeFileSync, rmSync } =
+			await import('node:fs')
+		const { join, dirname } = await import('node:path')
+		const { tmpdir } = await import('node:os')
+		const dir = mkdtempSync(join(tmpdir(), 'generated-theme-'))
+		try {
+			mkdirSync(join(dir, 'src'))
+			writeFileSync(join(dir, 'src', 'config.json'), '{}')
+			writeFileSync(join(dir, 'src', 'build-theme.mts'), '')
+			const unbuilt = readUpstreamTokens(dir)
+			expect(unbuilt.error).toContain('generated theme whose build did not run')
+
+			mkdirSync(join(dir, dirname(GENERATED_TOKENS)))
+			writeFileSync(
+				join(dir, GENERATED_TOKENS),
+				JSON.stringify({ basis: { color: { a: { $type: 'color', $value: '#00577e' } } } }),
+			)
+			const built = readUpstreamTokens(dir)
+			expect(built.error).toBe(null)
+			expect(built.kind).toBe('generated')
+			expect(built.tokens.basis.color.a.$value).toBe('#00577e')
+		} finally {
+			rmSync(dir, { recursive: true, force: true })
+		}
+	})
 })
 
 describe('count claims (thematiq#994)', () => {

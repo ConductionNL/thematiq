@@ -40,6 +40,10 @@ use RuntimeException;
  * Signed-in users read the profile (`GET /api/document-style`) and its
  * assets; administrators manage the Documents block under `/settings/document-style`.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - PHPMD 3 counts the route attributes
+ *   (NoAdminRequired, NoCSRFRequired, AuthorizedAdminSetting and Admin) as dependencies; the controller's own collaborators are its services and
+ *   the response types.
+ *
  * @spec openspec/specs/document-house-style/spec.md
  */
 class DocumentStyleController extends Controller {
