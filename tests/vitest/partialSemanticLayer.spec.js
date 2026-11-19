@@ -35,6 +35,13 @@ describe('keptValue', () => {
 		expect(keptValue({ action: 'adapted', reason: 'derived-from-brand', source: '(brand ramp)', value: '#7a7a7a' }, rule, published, new Map())).toBe('#696969')
 	})
 
+	it('refuses a published pick that is far lighter or darker than the role, keeping Nextcloud\'s default', () => {
+		const rule = { fallback: { kind: 'ramp', default: '#e0e1e2' } }
+		const small = new Set(['#2b2b2b', '#f3f5f9'])
+		expect(keptValue({ action: 'adapted', reason: 'derived-from-brand', source: '(brand ramp)', value: '#2b2b2b' }, rule, small, new Map())).toBe('#e0e1e2')
+		expect(keptValue({ action: 'adapted', reason: 'derived-from-brand', source: '(brand ramp)', value: '#f3f5f9' }, rule, small, new Map())).toBe('#f3f5f9')
+	})
+
 	it('replaces a contrast-adjusted shade with the rule fallback', () => {
 		const rule = { fallback: { kind: 'derive', from: '--nldesign-color-header-background', transform: 'onColor', args: { light: '#ffffff', dark: '#000000' } } }
 		const chosen = new Map([['--nldesign-color-header-background', '#24578F']])

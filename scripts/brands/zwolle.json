@@ -1,0 +1,50 @@
+{
+	"id": "zwolle",
+	"name": "Gemeente Zwolle",
+	"description": "Gemeente Zwolle's own design tokens: dark blue buttons and table headers on white.",
+	"rampMode": "partial",
+	"_comment_source": [
+		"Derived from @nl-design-system-unstable/zwolle-design-tokens 1.0.0 (https://registry.npmjs.org/@nl-design-system-unstable/zwolle-design-tokens/-/zwolle-design-tokens-1.0.0.tgz), Ruben's decision of 19 Nov 2026.",
+		"The package ships its own --utrecht-* component mapping (the .zwolle-theme rule), which is section B. The",
+		"ramp maps three published colours onto the role layer's steps of the same role, naming the token each is",
+		"read from; every other step is left to Nextcloud. Colours are the package's hsl() converted to hex",
+		"(round to nearest per channel), because the contrast engine reads hex."
+	],
+	"upstream": {
+		"package": "@nl-design-system-unstable/zwolle-design-tokens",
+		"url": "https://registry.npmjs.org/@nl-design-system-unstable/zwolle-design-tokens/-/zwolle-design-tokens-1.0.0.tgz",
+		"paletteFile": "dist/design-tokens.css",
+		"themeFile": "dist/design-tokens.css",
+		"onlyBlock": ".zwolle-theme",
+		"palettePrefix": "--zwolle-color-"
+	},
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "zwolle-color-white"
+		},
+		"black": {
+			"value": "#000000",
+			"from": "zwolle-color-black"
+		},
+		"black-txt": {
+			"value": "#000000",
+			"from": "zwolle-color-black"
+		},
+		"blue-500": {
+			"value": "#476db8",
+			"from": "zwolle-color-blue-50"
+		}
+	},
+	"semantic": {
+		"_comment": "From: utrecht-button-background-color (zwolle-color-blue-50), utrecht-button-color (white), utrecht-document-color (black). background-dark is zwolle-color-grey: the converter would read the table header's blue there, and black text on that blue measures 4.15:1.",
+		"primary": "#476DB8",
+		"primary-text": "#ffffff",
+		"text": "#000000",
+		"background-dark": "#ebebeb"
+	},
+	"typography": {
+		"fontFamily": "DIN, Arial, Helvetica, sans-serif",
+		"from": "zwolle-typography-sans-serif-font-family"
+	}
+}
