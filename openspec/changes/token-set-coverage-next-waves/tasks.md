@@ -42,9 +42,14 @@ own, with a delta spec, when it is picked up.
         `css/systems/nldesign/overrides.css` (63 sets carry it). `tests/vitest/infoRgbMapping.spec.js`
         checks, for every nldesign set in light and both dark scopes, that the triple names the same
         colour as `--color-info` and that body text keeps 4.5:1 on a 20% wash of it.
-  - [ ] 2.2.2 `--color-mark` from `--utrecht-mark-background-color` (7 sets). Not mapped: Nextcloud
+  - [x] 2.2.2 `--color-mark` from `--utrecht-mark-background-color` (7 sets). Not mapped: Nextcloud
         paints `mark` with that background under the inherited body text, and that pair passes
         4.5:1 in both modes for hoeksche-waard only. Waits on Q-thematiq-12.
+        Built 19 Nov (Q-thematiq-12, Ruben: map it only where the contrast passes in both modes):
+        `css/token-overrides/hoeksche-waard.css` sets `--nldesign-nc-color-mark` from the set's mark
+        background in the light and both dark scopes (13.43:1 and 5.09:1); the other ten sets that now
+        declare a mark background keep Nextcloud's tint, each with its measured ratios in
+        `docs/reference/token-set-mark-colour.md`. `tests/vitest/markColourMapping.spec.js` holds it.
   - [x] 2.2.3 The other 43 closed as measured, not built: 39 have no source token in any set, and
         the layout four (`--border-width-input`, `--border-radius-container-large`,
         `--default-font-size`, `--default-line-height`) stay with Nextcloud, because a set's body

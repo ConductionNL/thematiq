@@ -1,0 +1,32 @@
+/* SPDX-License-Identifier: EUPL-1.2
+   SPDX-FileCopyrightText: 2026 Conduction B.V.
+
+   Hoeksche Waard overrides: the search highlight takes the set's mark colour.
+
+   Nextcloud paints `<mark>` (a search hit) with --color-mark behind the
+   inherited body text. This set's --utrecht-mark-background-color keeps that
+   text legible in every mode: #0A2750 on #FFF5BE is 13.43:1 in the light, and
+   #afccf5 on #5b4d05 is 5.09:1 in both dark scopes. It is the only shipped
+   set where the pair reaches 4.5:1 in all three, so the mapping lives here and
+   not in css/systems/nldesign/overrides.css (Q-thematiq-12; the other sets and
+   their ratios are in docs/reference/token-set-mark-colour.md).
+
+   The colour goes through --nldesign-nc-color-mark, the token the theme scopes
+   read for --color-mark, so an administrator's own mark colour still wins. In
+   the dark it is declared on body, in the same scopes as the generated dark
+   variant, so it reads the dark mark colour and outranks the theme scopes'
+   zero-specificity reset. */
+:root {
+	--nldesign-nc-color-mark: var(--utrecht-mark-background-color);
+}
+
+@media (prefers-color-scheme: dark) {
+	body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {
+		--nldesign-nc-color-mark: var(--utrecht-mark-background-color);
+	}
+}
+
+body[data-theme-dark],
+body[data-themes*=dark] {
+	--nldesign-nc-color-mark: var(--utrecht-mark-background-color);
+}
