@@ -1430,5 +1430,75 @@
 				"en": "Warmtepompacademie · workplace on Nextcloud"
 			}
 		}
+	},
+	{
+		"id": "voorne-aan-zee",
+		"name": "Gemeente Voorne aan Zee",
+		"description": "Design tokens for Gemeente Voorne aan Zee, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1B59A4"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-voorne-aan-zee-house-style",
+			"package": "@nl-design-system-community/voorne-aan-zee-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Voorne aan Zee",
+			"restricted": true
+		}
+	},
+	{
+		"id": "sittard-geleen",
+		"name": "Gemeente Sittard-Geleen",
+		"description": "Design tokens for Gemeente Sittard-Geleen, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2275a5"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.2",
+		"licence": {
+			"id": "LicenseRef-sittard-geleen-house-style",
+			"package": "@nl-design-system-community/sittard-geleen-design-tokens",
+			"version": "1.0.2",
+			"holder": "Gemeente Sittard-Geleen",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
+		}
+	},
+	{
+		"id": "vidar",
+		"name": "Vidar",
+		"description": "Design tokens for Vidar, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#00577e"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-vidar-house-style",
+			"package": "@nl-design-system-community/vidar-design-tokens",
+			"version": "1.0.0",
+			"holder": "Vidar",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
+		}
 	}
 ]
