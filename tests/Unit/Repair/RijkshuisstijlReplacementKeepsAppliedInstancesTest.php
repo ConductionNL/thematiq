@@ -52,25 +52,40 @@ class RijkshuisstijlReplacementKeepsAppliedInstancesTest extends TestCase {
 
 	private const NOW = '2026-10-15T09:00:00+00:00';
 
+	/**
+	 * The token set service over the shipped release.
+	 *
+	 * @var TokenSetService
+	 */
 	private TokenSetService $tokenSets;
 
+	/**
+	 * The licence service the repair step reads and writes through.
+	 *
+	 * @var TokenSetLicenceService
+	 */
 	private TokenSetLicenceService $licences;
 
+	/**
+	 * Wire the licence service over the shipped release and an in-memory config.
+	 *
+	 * @return void
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 		// The shipped release itself; removeAppDir() is never called on it.
 		$this->appDir = dirname(__DIR__, 3);
 		$config = $this->memoryConfig();
-		$time = $this->createMock(ITimeFactory::class);
+		$time = $this->createMock(originalClassName: ITimeFactory::class);
 		$time->method('getDateTime')->willReturnCallback(fn () => new DateTime(self::NOW));
-		$this->tokenSets = $this->fixtureTokenSets($config);
+		$this->tokenSets = $this->fixtureTokenSets(config: $config);
 		$this->licences = new TokenSetLicenceService(
-			$this->tokenSets,
-			$config,
-			new ScheduledSwitchStore($config),
-			$this->createMock(ThemingAuditService::class),
-			$time,
-			$this->createMock(LoggerInterface::class)
+			tokenSets: $this->tokenSets,
+			config: $config,
+			switches: new ScheduledSwitchStore(config: $config),
+			audit: $this->createMock(originalClassName: ThemingAuditService::class),
+			time: $time,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		);
 	}//end setUp()
 
@@ -80,45 +95,70 @@ class RijkshuisstijlReplacementKeepsAppliedInstancesTest extends TestCase {
 	 * @return void
 	 */
 	private function upgrade(): void {
-		(new RecordRestrictedSetsAwaitingConfirmation($this->licences, $this->createMock(LoggerInterface::class)))
-			->run($this->createMock(IOutput::class));
+		$repair = new RecordRestrictedSetsAwaitingConfirmation(
+			licences: $this->licences,
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
+		$repair->run(output: $this->createMock(originalClassName: IOutput::class));
 	}//end upgrade()
 
+	/**
+	 * The converted set ships under the id instances already apply.
+	 *
+	 * @return void
+	 */
 	public function testTheConvertedSetShipsUnderTheIdInstancesApply(): void {
 		$manifest = json_decode((string)file_get_contents($this->appDir . '/token-sets.json'), true);
 		$entries = array_values(array_filter($manifest, fn (array $entry): bool => $entry['id'] === self::SET));
 
-		$this->assertCount(1, $entries, 'exactly one shipped entry answers to ' . self::SET);
-		$this->assertSame('@rijkshuisstijl-community/design-tokens', ($entries[0]['upstreamPackage'] ?? null), 'the entry is the converted set');
-		$this->assertTrue($entries[0]['licence']['restricted'], 'the converted set is licence-gated');
-		$this->assertTrue($this->tokenSets->isValidTokenSet(self::SET), 'css/tokens/' . self::SET . '.css is missing');
-		$this->assertFileExists($this->appDir . '/css/tokens/dark/' . self::SET . '.css');
-		$this->assertContains(self::SET, array_column($this->tokenSets->getAvailableTokenSets(), 'id'));
+		$this->assertCount(expectedCount: 1, haystack: $entries, message: 'exactly one shipped entry answers to ' . self::SET);
+		$this->assertSame(
+			expected: '@rijkshuisstijl-community/design-tokens',
+			actual: ($entries[0]['upstreamPackage'] ?? null),
+			message: 'the entry is the converted set'
+		);
+		$this->assertTrue(condition: $entries[0]['licence']['restricted'], message: 'the converted set is licence-gated');
+		$this->assertTrue(condition: $this->tokenSets->isValidTokenSet(tokenSetId: self::SET), message: 'css/tokens/' . self::SET . '.css is missing');
+		$this->assertFileExists(filename: $this->appDir . '/css/tokens/dark/' . self::SET . '.css');
+		$this->assertContains(needle: self::SET, haystack: array_column($this->tokenSets->getAvailableTokenSets(), 'id'));
 	}//end testTheConvertedSetShipsUnderTheIdInstancesApply()
 
+	/**
+	 * An instance on the hand-written set keeps it and awaits confirmation.
+	 *
+	 * @return void
+	 */
 	public function testAnInstanceOnTheHandWrittenSetKeepsItAndAwaitsConfirmation(): void {
 		$this->appValues['token_set'] = self::SET;
 		$this->appValues['group_token_sets'] = '[{"group":"rijk","tokenSet":"rijkshuisstijl"}]';
 
 		$this->upgrade();
 
-		$this->assertSame(self::SET, $this->appValues['token_set'], 'the instance keeps its theme');
-		$this->assertSame('[{"group":"rijk","tokenSet":"rijkshuisstijl"}]', $this->appValues['group_token_sets']);
-		$this->assertTrue($this->tokenSets->isValidTokenSet($this->appValues['token_set']), 'the applied id points at a set that exists');
+		$this->assertSame(expected: self::SET, actual: $this->appValues['token_set'], message: 'the instance keeps its theme');
+		$this->assertSame(expected: '[{"group":"rijk","tokenSet":"rijkshuisstijl"}]', actual: $this->appValues['group_token_sets']);
+		$this->assertTrue(
+			condition: $this->tokenSets->isValidTokenSet(tokenSetId: $this->appValues['token_set']),
+			message: 'the applied id points at a set that exists'
+		);
 		$this->assertSame(
-			[self::SET => self::NOW],
-			json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true),
-			'the upgrade records the set as awaiting an administrator'
+			expected: [self::SET => self::NOW],
+			actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true),
+			message: 'the upgrade records the set as awaiting an administrator'
 		);
 	}//end testAnInstanceOnTheHandWrittenSetKeepsItAndAwaitsConfirmation()
 
+	/**
+	 * A confirmed instance keeps the set without a new record.
+	 *
+	 * @return void
+	 */
 	public function testAConfirmedInstanceKeepsItWithoutANewRecord(): void {
 		$this->appValues['token_set'] = self::SET;
-		$this->confirmSet(self::SET);
+		$this->confirmSet(tokenSetId: self::SET);
 
 		$this->upgrade();
 
-		$this->assertSame(self::SET, $this->appValues['token_set']);
-		$this->assertSame([], json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
+		$this->assertSame(expected: self::SET, actual: $this->appValues['token_set']);
+		$this->assertSame(expected: [], actual: json_decode($this->appValues[TokenSetLicenceService::AWAITING_KEY], true));
 	}//end testAConfirmedInstanceKeepsItWithoutANewRecord()
 }//end class
