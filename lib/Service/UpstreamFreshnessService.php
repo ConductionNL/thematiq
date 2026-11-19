@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\UpstreamFreshnessServiceInterface;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
@@ -46,7 +47,7 @@ use Psr\Log\LoggerInterface;
  * path for every failure mode (offline, timeout, malformed body). Each branch is individually
  * covered by a unit test; collapsing them would trade auditable failure handling for a lower score.
  */
-class UpstreamFreshnessService {
+class UpstreamFreshnessService implements UpstreamFreshnessServiceInterface {
 
 	/**
 	 * App config key: whether the check is enabled ('yes'/'no'), default 'no'.

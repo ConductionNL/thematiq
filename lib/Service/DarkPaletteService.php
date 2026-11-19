@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
@@ -57,7 +58,7 @@ use Psr\Log\LoggerInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)           - see the ExcessiveClassLength rationale above.
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - see the ExcessiveClassLength rationale above.
  */
-class DarkPaletteService {
+class DarkPaletteService implements DarkPaletteServiceInterface {
 
 	/**
 	 * The generated-file format/algorithm version, embedded in the header
@@ -345,6 +346,11 @@ class DarkPaletteService {
 		[
 			'fg' => '--nldesign-component-status-badge-error-color',
 			'bg' => '--nldesign-component-status-badge-error-background-color',
+			'threshold' => 4.5,
+		],
+		[
+			'fg' => '--nldesign-component-status-badge-neutral-color',
+			'bg' => '--nldesign-component-status-badge-neutral-background-color',
 			'threshold' => 4.5,
 		],
 		[

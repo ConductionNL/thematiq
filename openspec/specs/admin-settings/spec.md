@@ -124,6 +124,14 @@ The settings panel MUST include a preview box that shows the visual effect of th
 - WHEN the preview renders
 - THEN it MUST fall back to Rijkshuisstijl default colors (#154273 primary, #ffffff text)
 
+#### Scenario: The preview shows the app shell navigation
+- GIVEN the settings panel is loaded with the App view of the preview
+- WHEN the preview section renders
+- THEN it MUST show a header bar with the logo, the app entries and the account glyphs
+- AND it MUST show a navigation list of labelled entries under captions
+- AND the selected navigation entry MUST be filled with the set's primary colour and labelled in its paired text colour
+- AND a change of token set MUST repaint the header bar and the navigation together
+
 ### Requirement: Hide Slogan Checkbox
 The settings panel MUST include a checkbox to toggle the hide slogan feature.
 

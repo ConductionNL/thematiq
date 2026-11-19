@@ -15,9 +15,10 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
-    # Was 15 (n=11, max 1.9 min) for the raw dump. The converter run itself takes
-    # seconds; the token-set gate takes about 50 s, and when the first pass fails
-    # every converted set is retried on its own (about 30 sets x 50 s).
+    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate takes
+    # about 3.5 min here. When its first pass fails, each of the ~40 converted
+    # sets is retried with only the failing tests (about 20 s each), then the
+    # full gate runs once more: about 15 min measured locally in total.
     timeout-minutes: 60
     steps:
       - name: Checkout repository
@@ -62,17 +63,30 @@ jobs:
         run: |
           node scripts/sync-upstream-tokens.mjs /tmp/themes ${{ steps.clone_themes.outputs.sha }} --report /tmp/sync-report.md
 
+      - name: Refresh the fixtures that follow from the shipped sets
+        # The golden fixtures and the shell catalogue are recorded over the
+        # shipped sets, so a sync that changes a set makes them stale and the
+        # unit suite red. This job changes sets and never code, so re-recording
+        # every golden only moves the ones that read the sets.
+        run: |
+          php scripts/generate-shell-catalogue.php > /dev/null
+          for test in $(grep -rlE 'THEMATIQ_GOLDEN_RECORD' tests/Unit --include='*Test.php'); do
+            THEMATIQ_GOLDEN_RECORD=1 php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php "$test" > /dev/null
+          done
+
       - name: Verify the shipped token sets
         # The same tests once more, on exactly the tree that would be committed.
         # A failure here fails the job before any branch or PR is touched.
         run: |
           php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
           node scripts/update-coverage-claims.mjs --check
+          php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php tests/Unit/ShellCatalogueTest.php
+          php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php $(grep -rlE 'THEMATIQ_GOLDEN_RECORD' tests/Unit --include='*Test.php')
 
       - name: Check for changes
         id: changes
         run: |
-          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/ README.md project.md
+          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json tests/Unit/fixtures/golden/ docs/reference/ docs/features/ README.md project.md
           if git diff --cached --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else

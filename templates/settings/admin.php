@@ -390,7 +390,7 @@ if ($_['mockUi'] === true) {
 						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
-					<!-- The main button's own colour (openspec/changes/brand-form-action-colour). Off by
+					<!-- The main button's own colour (openspec/specs/simple-brand-form). Off by
 					     default: without it the main button wears the primary, as every set did. -->
 					<div class="nldesign-field">
 						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
@@ -835,6 +835,17 @@ if ($_['mockUi'] === true) {
 		<div id="nldesign-font-list" class="nldesign-custom-set-list" role="group"
 			 aria-label="<?php p($l->t('Custom fonts')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
+		</div>
+		<!-- Approved font library (openspec/specs/custom-fonts, change archive/2026-11-14-rows-without-a-requirement):
+		     the fonts the app bundles, each with its licence, assignable to a
+		     role without uploading a file. -->
+		<h4 id="nldesign-font-library-heading"><?php p($l->t('Font library')); ?></h4>
+		<p class="settings-hint">
+			<?php p($l->t('Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.')); ?>
+		</p>
+		<div id="nldesign-font-library" class="nldesign-custom-set-list" role="group"
+			 aria-labelledby="nldesign-font-library-heading">
+			<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
 		</div>
 	</div>
 

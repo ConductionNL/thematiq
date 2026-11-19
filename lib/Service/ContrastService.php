@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\ContrastServiceInterface;
 /**
  * Computes WCAG 2.1 relative-luminance contrast ratios for token pairs.
  *
@@ -30,7 +31,7 @@ namespace OCA\Thematiq\Service;
  *
  * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
  */
-class ContrastService {
+class ContrastService implements ContrastServiceInterface {
 
 	/**
 	 * The fixed token pairs that are contrast-checked on upload.
@@ -75,7 +76,7 @@ class ContrastService {
 	 *                                                                                                            The non-blocking contrast warnings.
 	 *
 	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-1.3
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	public function check(array $declarations): array {
 		$warnings = [];
@@ -156,7 +157,7 @@ class ContrastService {
 	 *
 	 * @return array<array{pair: string, ratio: float|null, threshold: float, level: string, unevaluated?: bool}> Zero or one warning.
 	 *
-	 * @spec openspec/changes/action-colour-token/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
+	 * @spec openspec/specs/action-colour/spec.md#requirement-the-text-on-the-action-colour-is-checked
 	 */
 	private function checkAction(array $declarations): array {
 		$colours = $this->actionColours(declarations: $declarations);

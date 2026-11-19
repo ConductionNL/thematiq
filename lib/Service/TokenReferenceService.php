@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
+use OCA\Thematiq\Kernel\Contracts\TokenReferenceServiceInterface;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
 
@@ -33,7 +34,7 @@ use OCA\Thematiq\Service\RuntimeFile\SetFileReader;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design.
  */
-class TokenReferenceService {
+class TokenReferenceService implements TokenReferenceServiceInterface {
 
 	/**
 	 * The stylesheets that turn `--nldesign-*` tokens into what Nextcloud and the components read.

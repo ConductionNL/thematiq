@@ -9,7 +9,7 @@
  * `--nldesign-color-on-surface`, which the item sets to the main text colour,
  * and a class-level rule takes away theme.css's `!important` underline.
  *
- * @spec openspec/changes/action-menu-links-keep-text-colour/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md#requirement-action-menu-link-items-read-as-menu-entries
  */
 
 import fs from 'fs'

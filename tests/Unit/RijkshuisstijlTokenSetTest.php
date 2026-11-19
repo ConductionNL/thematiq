@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
  */
 
 declare(strict_types=1);

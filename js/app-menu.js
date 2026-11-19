@@ -125,7 +125,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {object|undefined} section {title, url, modules: [{key, label, url, icon}]}.
-	 * @spec openspec/changes/openproject-in-the-app-menu/specs/openproject-in-the-app-menu/spec.md
+	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md
 	 */
 	function external(grid, section) {
 		if (

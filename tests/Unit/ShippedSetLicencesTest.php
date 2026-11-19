@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ class ShippedSetLicencesTest extends TestCase {
 		'enkhuizen', 'enschede', 'epe', 'groningen', 'haarlem', 'haarlemmermeer', 'hoeksche-waard', 'hoorn', 'horstaandemaas',
 		'leiden', 'leidschendam-voorburg', 'losser', 'nijmegen', 'noaberkracht', 'noordoostpolder', 'noordwijk', 'nora',
 		'provincie-zuid-holland', 'purmerend', 'riddeliemers', 'ridderkerk', 'rijkshuisstijl', 'rotterdam', 'stedebroec',
-		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vng', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
+		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vng', 'voorne-aan-zee', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
 	];
 
 	/**

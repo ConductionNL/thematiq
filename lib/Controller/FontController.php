@@ -181,6 +181,69 @@ class FontController extends Controller {
 	}//end list()
 
 	/**
+	 * List the approved font library: the fonts the app bundles, each with its
+	 * licence and the roles it is assigned to.
+	 *
+	 * @return JSONResponse `{library: [{name, licence, roles}]}`.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function library(): JSONResponse {
+		return new JSONResponse(['library' => $this->service->library()]);
+	}//end library()
+
+	/**
+	 * Assign a font from the approved library to the body or heading role.
+	 *
+	 * Takes the family name (`name`) and the role (`role`) from the request;
+	 * no file is uploaded.
+	 *
+	 * @return JSONResponse `{status: ok}`, or `{error}` with 404 for a font the
+	 *                      library does not hold and 422 for an unknown role.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function assignLibrary(): JSONResponse {
+		$name = trim((string)$this->request->getParam('name', ''));
+		$role = trim((string)$this->request->getParam('role', ''));
+
+		try {
+			$this->service->assignLibraryFont(name: $name, role: $role);
+		} catch (RuntimeException $e) {
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
+		}
+
+		return new JSONResponse(['status' => 'ok']);
+	}//end assignLibrary()
+
+	/**
+	 * Stop using a library font for a role.
+	 *
+	 * @param string $role `body` or `heading`.
+	 *
+	 * @return JSONResponse `{status: ok}`, or `{error}` with 404 when no library
+	 *                      font is assigned to the role and 422 for an unknown role.
+	 *
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-an-administrator-picks-a-font-from-an-approved-library
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function unassignLibrary(string $role): JSONResponse {
+		try {
+			$removed = $this->service->unassignLibraryFont(role: $role);
+		} catch (RuntimeException $e) {
+			return new JSONResponse(['error' => $e->getMessage()], $this->errorStatus(exception: $e, fallback: 500));
+		}
+
+		if ($removed === false) {
+			return new JSONResponse(['error' => $this->l->t('No library font is assigned to this role.')], 404);
+		}
+
+		return new JSONResponse(['status' => 'ok']);
+	}//end unassignLibrary()
+
+	/**
 	 * Delete a font (file + manifest entry).
 	 *
 	 * @param string $id The font id.

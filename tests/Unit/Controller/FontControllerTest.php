@@ -251,7 +251,7 @@ class FontControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-font-management-lifecycle
 	 */
 	public function testListReturnsEveryStoredFontWithNameRoleAndSize(): void {
 		$fonts = [
@@ -275,7 +275,7 @@ class FontControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/closing-round-scenarios/tasks.md
+	 * @spec openspec/specs/custom-fonts/spec.md#requirement-font-management-lifecycle
 	 */
 	public function testTheAdminPageRendersADeleteActionPerFont(): void {
 		$script = (string)file_get_contents(__DIR__ . '/../../../js/admin.js');

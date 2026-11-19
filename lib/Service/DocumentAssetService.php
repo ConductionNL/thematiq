@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\DocumentAssetServiceInterface;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
@@ -36,7 +37,7 @@ use RuntimeException;
  *
  * @spec openspec/specs/document-house-style/spec.md
  */
-class DocumentAssetService {
+class DocumentAssetService implements DocumentAssetServiceInterface {
 
 	/**
 	 * The asset kinds.

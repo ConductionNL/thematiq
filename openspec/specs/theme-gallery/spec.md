@@ -4,6 +4,7 @@
 An administrator browses an opt-in index of house styles that others built and installs one as a custom token set. Created by archiving change catalogue-theme-gallery.
 
 ## Requirements
+
 ### Requirement: The gallery is opt-in and disclosed
 
 The gallery MUST default to off (`gallery_enabled`). Its toggle on Settings > Administration > Theming MUST name the host of the index URL. While off, the app MUST make no gallery request. The index URL MUST be configurable through app config `gallery_index_url` so a deployment behind an egress filter can use a mirror. Gallery requests MUST NOT carry instance-identifying data and MUST time out after 10 seconds.
@@ -37,6 +38,15 @@ With the gallery on, the Gallery block MUST list every valid index entry with it
 - GIVEN the gallery is on and the index lists `provincie-utrecht`
 - WHEN an administrator opens the Gallery block
 - THEN they MUST see "Provincie Utrecht" with its swatches, licence and contrast result
+
+#### Scenario: An administrator finds their water board
+
+@e2e exclude needs a reachable index with a real entry, which the shipped index does not have yet; proven by the same tests as the province scenario, since the gallery lists every valid entry whatever kind of organisation it belongs to
+
+- GIVEN the gallery is on and the index lists `waterschap-rivierenland`
+- WHEN an administrator opens the Gallery block
+- THEN they MUST see "Waterschap Rivierenland" with its swatches, licence and contrast result
+- AND installing it MUST offer it in the Design token set dropdown like any other set
 
 #### Scenario: The index is unreachable
 

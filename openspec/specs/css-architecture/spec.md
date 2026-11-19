@@ -655,6 +655,45 @@ A CnWeekStripWidget item (`a.cn-week-strip__item`) MUST NOT be painted by a forc
 - GIVEN the case "Parkeervergunningen binnenstad" in Wednesday's column
 - THEN its title reads in the body ink, not underlined
 
+### Requirement: The theme reaches every page as plain CSS variables
+
+The active theme MUST reach every themed page as stylesheets and style elements that set CSS custom
+properties on `:root` and Nextcloud's own variables. Another app MUST be able to style itself with
+those variables with no build step, no import and no script of this app.
+
+#### Scenario: Another app uses the brand colour
+@e2e exclude Stylesheet contract; covered by PHPUnit (CssInjectionServiceTest)
+- GIVEN the `rijkshuisstijl` set is active
+- WHEN another app's page sets `color: var(--color-primary-element)`
+- THEN that text MUST be drawn in the set's primary colour
+
+### Requirement: The theme adds no script to an ordinary page
+
+With a token set active and no opt-in page feature on, the theme MUST add stylesheets and style
+headers only, and no script. Opt-in page features that need a script (the workplace header, the apps
+menu and the others specified in `workplace-layout` and `environment-marker`) are outside this
+requirement.
+
+#### Scenario: An ordinary page under a theme
+@e2e exclude Injection contract; covered by PHPUnit (CssInjectionServiceTest::testAnOrdinaryPageGetsStylesheetsAndHeadersOnly)
+- GIVEN the `rijkshuisstijl` set is active and no opt-in page feature is on
+- WHEN a user opens Files
+- THEN the theme MUST have added stylesheets and style headers only
+- AND it MUST NOT have added a script
+
+### Requirement: Action menu link items read as menu entries
+
+An NcActionLink item (`a.action-link`) in an action menu SHALL be drawn in the
+main text colour without an underline under every nldesign set, like the
+button items of the same menu. A link in prose SHALL keep the link colour and
+the set's link decoration.
+
+#### Scenario: the case page Acties menu
+- GIVEN dossiq's case page "Acties" menu with button items and the link items "Een bug melden" and "Documentatie"
+- WHEN it opens under the Zuiddrecht set
+- THEN every item, button or link, reads in the main text colour
+- AND no item is underlined
+
 ## Current Implementation Status
 
 **Fully implemented:**

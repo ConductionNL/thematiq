@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Service;
 use DateTimeInterface;
 use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Service\Exception\RestrictedSetInUseException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -37,7 +38,7 @@ use Psr\Log\LoggerInterface;
  *
  * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md
  */
-class TokenSetLicenceService {
+class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 
 	/**
 	 * The app config key holding the sets an upgrade found applied without a
@@ -365,7 +366,7 @@ class TokenSetLicenceService {
 	 *
 	 * @return list<string> The sets recorded by this call (new ones only).
 	 *
-	 * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
 	public function recordAwaitingConfirmation(): array {
 		$before = $this->stored(key: self::AWAITING_KEY);

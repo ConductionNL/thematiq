@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-an-unchanged-document-is-answered-with-304
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-an-unchanged-document-is-answered-with-304
  */
 
 declare(strict_types=1);
@@ -40,7 +40,7 @@ use ReflectionProperty;
  * Three concerns: the auth posture the route declares, the document it
  * answers with, and the conditional request.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 class ShellTokenControllerTest extends TestCase {
 

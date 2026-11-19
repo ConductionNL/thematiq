@@ -238,7 +238,7 @@
 		"description": "Design tokens for Gemeente Epe",
 		"theming": {
 			"primary_color": "#00549e",
-			"background_color": "#FFFFFF",
+			"background_color": "#ffffff",
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
 		},
@@ -1429,6 +1429,24 @@
 				"nl": "Warmtepompacademie · werkplek op Nextcloud",
 				"en": "Warmtepompacademie · workplace on Nextcloud"
 			}
+		}
+	},
+	{
+		"id": "voorne-aan-zee",
+		"name": "Gemeente Voorne aan Zee",
+		"description": "Design tokens for Gemeente Voorne aan Zee, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1B59A4"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-voorne-aan-zee-house-style",
+			"package": "@nl-design-system-community/voorne-aan-zee-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Voorne aan Zee",
+			"restricted": true
 		}
 	}
 ]

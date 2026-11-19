@@ -118,7 +118,7 @@ class BrandFormService {
 	 *
 	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-the-derived-set-is-complete
 	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-text-on-primary-is-chosen-for-contrast
-	 * @spec openspec/changes/brand-form-action-colour/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
+	 * @spec openspec/specs/simple-brand-form/spec.md#requirement-the-form-may-give-the-main-button-its-own-colour
 	 */
 	public function derive(string $appPath, BrandPalette $palette): array {
 		$inputs = $this->inputs(appPath: $appPath);

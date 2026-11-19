@@ -425,7 +425,7 @@ class LogoLayerService {
 	 *
 	 * @return string|null The app-relative path, or null when there is none.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
 	 */
 	public function shippedLogo(string $name): ?string {
 		foreach (self::LOGO_EXTENSIONS as $extension) {

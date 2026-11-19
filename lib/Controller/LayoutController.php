@@ -24,10 +24,10 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\LayoutOptionValues;
-use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -69,14 +69,14 @@ class LayoutController extends Controller {
 	 * @param IRequest $request The current request.
 	 * @param LayoutOptionsService $layoutOptions Stores and resolves the options.
 	 * @param ActiveTokenSetService $activeTokenSet Names the instance-wide token set.
-	 * @param ThemingAuditService $auditService Records each change.
+	 * @param ThemingAuditServiceInterface $auditService Records each change.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private readonly LayoutOptionsService $layoutOptions,
 		private readonly ActiveTokenSetService $activeTokenSet,
-		private readonly ThemingAuditService $auditService,
+		private readonly ThemingAuditServiceInterface $auditService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
