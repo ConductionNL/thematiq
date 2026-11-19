@@ -54,6 +54,8 @@
  *   node scripts/generate-brand-set.mjs rotterdam ./package 1.1.0
  */
 
+/* global console, process */
+
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
