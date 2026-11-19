@@ -2,6 +2,7 @@ publiccodeYmlVersion: "0.4"
 
 name: Thematiq
 url: "https://github.com/ConductionNL/thematiq"
+logo: img/app-store.svg
 softwareVersion: "1.2.10"
 releaseDate: "2026-09-29"
 developmentStatus: stable
