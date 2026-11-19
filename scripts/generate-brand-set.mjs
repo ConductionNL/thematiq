@@ -54,6 +54,8 @@
  *   node scripts/generate-brand-set.mjs rotterdam ./package 1.1.0
  */
 
+/* global console, process */
+
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -402,6 +404,74 @@ function substituteLiterals(value, rampByValue, unsubstituted) {
 }
 
 /**
+ * Whether a role-layer value carries a colour the brand did not supply: a hex
+ * literal the ramp has no replacement for, or an rgb()/hsl() literal.
+ *
+ * @param {string} value A role-layer value.
+ * @param {Map<string, string>} rampByValue Old hex → new value.
+ * @returns {boolean} True when the value would carry a role-layer colour.
+ */
+function carriesUnsuppliedColour(value, rampByValue) {
+	if (/\b(?:rgba?|hsla?)\(/i.test(value) === true) {
+		return true
+	}
+	const hexes = value.match(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g) ?? []
+	return hexes.some((hex) => rampByValue.has(normaliseHex(hex)) === false)
+}
+
+/**
+ * The names a value reads through `var()`.
+ *
+ * @param {string} value A declaration value.
+ * @returns {string[]} The custom-property names it references.
+ */
+function referencedNames(value) {
+	return [...value.matchAll(/var\(\s*(--[A-Za-z0-9_-]+)/g)].map((match) => match[1])
+}
+
+/**
+ * The role-layer declarations a PARTIAL brand leaves to Nextcloud.
+ *
+ * A partial brand file (`"rampMode": "partial"`) names only the colours the
+ * organisation publishes. A ramp step it leaves out is not declared, and every
+ * role-layer declaration that would carry a colour the brand did not supply is
+ * left out too: directly (a role-layer literal the ramp does not replace) or
+ * through `var()` (a missing ramp step, or another declaration left out). What
+ * is left out falls back to Nextcloud's own value through the bridge, instead
+ * of to the role layer's VNG and Tilburg colours.
+ *
+ * @param {Map<string, string>} roleEffective The role layer, last-wins.
+ * @param {Map<string, string>} rampByName The brand's ramp, by role-layer name.
+ * @param {Map<string, string>} rampByValue Old hex → new value.
+ * @returns {Set<string>} The names left out.
+ */
+export function namesLeftToNextcloud(roleEffective, rampByName, rampByValue) {
+	const left = new Set()
+	for (const [name, value] of roleEffective) {
+		const isRampStep = name.startsWith('--vng-color-') === true || name.startsWith('--tilburg-color-') === true
+		if (isRampStep === true ? rampByName.has(name) === false : carriesUnsuppliedColour(value, rampByValue) === true) {
+			left.add(name)
+		}
+	}
+
+	let grew = true
+	while (grew === true) {
+		grew = false
+		for (const [name, value] of roleEffective) {
+			if (left.has(name) === true || rampByName.has(name) === true) {
+				continue
+			}
+			if (referencedNames(value).some((ref) => left.has(ref) === true)) {
+				left.add(name)
+				grew = true
+			}
+		}
+	}
+
+	return left
+}
+
+/**
  * Section C: the shared role layer filling only what B leaves undefined, with
  * the colour ramp re-pointed at the brand.
  *
@@ -409,13 +479,16 @@ function substituteLiterals(value, rampByValue, unsubstituted) {
  * @param {Map<string, string>} brandComponents Section B; its names are skipped.
  * @param {Set<string>} overrideTargets Names the brand overrides deliberately.
  * @param {Set<string>} overrideApplied Collects the overrides that matched.
- * @returns {{roleFill: Array<{name: string, value: string}>, fromRoleLayer: number, unsubstituted: Map<string, number>}} The fill and its counts.
+ * @returns {{roleFill: Array<{name: string, value: string}>, fromRoleLayer: number, unsubstituted: Map<string, number>, leftOut: number}} The fill and its counts.
  */
 function fillFromRoleLayer(brand, brandComponents, overrideTargets, overrideApplied) {
 	const roleEffective = effective(
 		readDeclarations(readFileSync(ROLE_LAYER_PATH, 'utf8')),
 	)
 	const { rampByName, rampByValue } = buildRampTables(brand, roleEffective)
+	const leftToNextcloud = brand.rampMode === 'partial'
+		? namesLeftToNextcloud(roleEffective, rampByName, rampByValue)
+		: new Set()
 
 	const unsubstituted = new Map()
 	const roleFill = []
@@ -424,6 +497,11 @@ function fillFromRoleLayer(brand, brandComponents, overrideTargets, overrideAppl
 	for (const [name, rawValue] of roleEffective) {
 		// The brand's own decision always wins.
 		if (brandComponents.has(name) === true) {
+			continue
+		}
+
+		// A partial brand leaves what it did not publish to Nextcloud.
+		if (leftToNextcloud.has(name) === true) {
 			continue
 		}
 
@@ -455,7 +533,7 @@ function fillFromRoleLayer(brand, brandComponents, overrideTargets, overrideAppl
 		}
 	}
 
-	return { roleFill, fromRoleLayer, unsubstituted }
+	return { roleFill, fromRoleLayer, unsubstituted, leftOut: leftToNextcloud.size }
 }
 
 /**
@@ -503,20 +581,21 @@ function semanticColourTokens(semanticColours) {
  */
 function brandScaleTokens(brand) {
 	const tokens = []
-	if (brand.typography.weightNormal !== undefined) {
+	const typography = brand.typography ?? {}
+	if (typography.weightNormal !== undefined) {
 		tokens.push({
 			name: `--${brand.id}-font-weight-normal`,
-			value: brand.typography.weightNormal,
+			value: typography.weightNormal,
 		})
 	}
-	if (brand.typography.weightBold !== undefined) {
+	if (typography.weightBold !== undefined) {
 		tokens.push({
 			name: `--${brand.id}-font-weight-bold`,
-			value: brand.typography.weightBold,
+			value: typography.weightBold,
 		})
 	}
 
-	for (const [step, sizes] of Object.entries(brand.typography.scale ?? {})) {
+	for (const [step, sizes] of Object.entries(typography.scale ?? {})) {
 		tokens.push({
 			name: `--${brand.id}-font-size-${step}`,
 			value: sizes.fontSize,
@@ -542,14 +621,19 @@ function brandScaleTokens(brand) {
  */
 function buildSemanticLayer(brand) {
 	const semantic = semanticColourTokens(brand.semantic)
-	semantic.push({
-		name: '--nldesign-logo-url',
-		value: `url('../../${brand.logo}')`,
-	})
-	semantic.push({
-		name: '--nldesign-font-family',
-		value: brand.typography.fontFamily,
-	})
+	// A partial brand may publish no logo or typeface; Nextcloud keeps its own.
+	if (brand.logo !== undefined) {
+		semantic.push({
+			name: '--nldesign-logo-url',
+			value: `url('../../${brand.logo}')`,
+		})
+	}
+	if (brand.typography?.fontFamily !== undefined) {
+		semantic.push({
+			name: '--nldesign-font-family',
+			value: brand.typography.fontFamily,
+		})
+	}
 	// A dark header needs Nextcloud's app-menu icons left white; the defaults
 	// layer inverts them to black for its white header. Optional, so a brand
 	// with a light header simply omits it.
@@ -562,7 +646,7 @@ function buildSemanticLayer(brand) {
 
 	semantic.push(...brandScaleTokens(brand))
 
-	for (const [key, size] of Object.entries(brand.borderRadius)) {
+	for (const [key, size] of Object.entries(brand.borderRadius ?? {})) {
 		if (key.startsWith('_') === true) {
 			continue
 		}
@@ -746,7 +830,7 @@ function recordInCatalogue(brand, brandId, upstreamVersion) {
 	entry.theming = {
 		primary_color: brand.semantic.primary,
 		background_color: '#FFFFFF',
-		logo: brand.logo,
+		...(brand.logo !== undefined ? { logo: brand.logo } : {}),
 	}
 	// TAB-indented, matching the file as committed. Writing spaces here
 	// reformats all 46 entries and buries a two-line change in a
@@ -918,7 +1002,7 @@ function main() {
 	}
 
 	// ---- C. the shared role layer, ramp re-pointed ----------------------
-	const { roleFill, fromRoleLayer, unsubstituted } = fillFromRoleLayer(
+	const { roleFill, fromRoleLayer, unsubstituted, leftOut } = fillFromRoleLayer(
 		brand,
 		brandComponents,
 		overrideTargets,
@@ -962,6 +1046,9 @@ function main() {
 	console.log(
 		`  C. role-layer fill       ${fromRoleLayer} component tokens + ${roleFill.length - fromRoleLayer} ramp entries`,
 	)
+	if (brand.rampMode === 'partial') {
+		console.log(`     left to Nextcloud     ${leftOut} role-layer tokens (partial ramp: colours the brand does not publish)`)
+	}
 	console.log(`  E. gap fillers           ${overrides.length} tokens`)
 
 	reportUpstreamOverrides(upstreamOverrides, overrideApplied)
