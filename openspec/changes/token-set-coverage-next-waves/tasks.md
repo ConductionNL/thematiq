@@ -21,13 +21,17 @@ own, with a delta spec, when it is picked up.
 
 ## 2. Vocabulary reach (from every-shipped-set-selectable 6.3, honest-token-set-coverage 6.2 and 6.3)
 
-- [ ] 2.1 The 453 internal tokens no shipped set declares
+- [x] 2.1 The 453 internal tokens no shipped set declares
       (`scripts/mapping/internal-tokens.json`: 364 component, 56 slot, 33 `--cn-*`). Start with
       the 33 `--cn-*`.
       The 33 measured 12 Oct in the change `conduction-tokens-recorded-reach`: 6 already follow the
       set through a Nextcloud variable, 19 hold a literal size and 8 are read with a fallback at
       the place of use, so no set gained a declaration. Three fixed greens wait on Q-thematiq-9.
       Still open: the 364 component and 56 slot tokens of Nextcloud, in the same record shape.
+      Built 19 Nov as the change `nextcloud-tokens-recorded-reach`: the 420 Nextcloud tokens have a
+      recorded reach in `scripts/mapping/nextcloud-token-reach.json` (39 follow, 252 literal, 56
+      use-site, 73 unmapped). Fixed colours count as literal and a token that reads only other
+      internal tokens inherits their reach (Ruben, 19 Nov).
 - [ ] 2.2 The 45 Nextcloud theme variables no shipped set can reach (header height, navigation and
       sidebar width, container radii, input border widths, clickable areas, base font size and
       line height, status text and hover colours, `--color-mark`, box shadow, scrollbar,
