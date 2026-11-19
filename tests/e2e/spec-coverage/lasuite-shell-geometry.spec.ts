@@ -120,8 +120,14 @@ test.describe('lasuite shell geometry', () => {
 	'the search field stays centred in the header', async ({ page }) => {
 		await openWith(page, 'lasuite')
 		const header = await box(page, '#header')
-		const search = await box(page, '#header .unified-search-input')
-		expect(search.height).toBeCloseTo(SEARCH_FIELD_HEIGHT, 0)
+		// Nextcloud 34 and later show a search field in the header; 32 and 33
+		// show the unified search as a button, which has to be centred as well.
+		await page.locator('#header .unified-search-input, #header button[aria-label="Unified search"]').first().waitFor()
+		const hasField = await page.locator('#header .unified-search-input').first().isVisible()
+		const search = await box(page, hasField ? '#header .unified-search-input' : '#header button[aria-label="Unified search"]')
+		if (hasField) {
+			expect(search.height).toBeCloseTo(SEARCH_FIELD_HEIGHT, 0)
+		}
 		const headerCentre = header.y + header.height / 2
 		const searchCentre = search.y + search.height / 2
 		expect(Math.abs(searchCentre - headerCentre)).toBeLessThanOrEqual(1)

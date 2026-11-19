@@ -115,8 +115,14 @@ own, with a delta spec, when it is picked up.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
-- [ ] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
+- [x] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
       per supported Nextcloud major.
+      Recorded 19 Nov (live pass) on fresh Nextcloud 32, 33, 34 and 35 rigs:
+      `tests/e2e/visual/lasuite-shell.visual.spec.ts` (opt-in `visual` project) shoots the top bar and
+      the app navigation of Files with `lasuite` at 1440 x 1000, one baseline per major
+      (`lasuite-shell-nc<major>-visual-linux.png`; 35 shows the 64px La Suite header, the others the
+      stock header). The geometry spec ran on all four; on 32 and 33 its search-centring test looked
+      for the search field Nextcloud 34 introduced and now centres the "Unified search" button there.
 
 ## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
 
@@ -132,3 +138,12 @@ own, with a delta spec, when it is picked up.
       `tests/vitest/publicBridgeRoleLayer.spec.js`, 7 of them red before the change.
 - [ ] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
       at rest, the hover step on hover, example-basisschool links in #8A2D0E (live pass, decision 139).
+      Looked at 19 Nov (live pass) on a portaliq site (portaliq 0.2.13 release, OpenRegister
+      2.2.0-dev, Nextcloud 35.0.1), the portal's theme switched to each set, buttons measured inside
+      the site: primary and secondary buttons are in the primary at rest, the primary button takes
+      the hover step on hover (basisschool #B03A12 / #8A2D0E, college #7A1F6E / #5E1755, opleider
+      #0E4D5C / #0A3A46, voortgezet #2D4FA0 / #233F82), and example-basisschool links are #8A2D0E.
+      Open: the secondary button keeps the primary on hover on all four (text and border), so it
+      never shows the hover step. The set defines the step (`--tilburg-interaction-hover-color`);
+      portaliq's `css/site-theme.css` colours `.pq-site .utrecht-button--secondary-action` from
+      `--_utrecht-button-color`, which the hover rule does not move. A portaliq change or a decision.
