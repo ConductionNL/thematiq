@@ -21,11 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Listener;
 
-use OCA\Thematiq\Service\AppThemingService;
-use OCA\Thematiq\Service\CssInjectionService;
-use OCA\Thematiq\Service\EnvironmentMarkerService;
-use OCA\Thematiq\Service\LoginCopyService;
-use OCA\Thematiq\Service\NotFoundCopyService;
+use OCA\Thematiq\Service\PageCopyServices;
+use OCA\Thematiq\Service\ThemeInjectionStyles;
 use OCP\AppFramework\Http\Events\BeforeLoginTemplateRenderedEvent;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -58,65 +55,19 @@ use Throwable;
 class ThemeInjectionListener implements IEventListener {
 
 	/**
-	 * The CSS injection service.
-	 *
-	 * @var CssInjectionService
-	 */
-	private CssInjectionService $cssInjectionService;
-
-	/**
-	 * Resolves the per-app theming exclusion guard.
-	 *
-	 * @var AppThemingService
-	 */
-	private AppThemingService $appThemingService;
-
-	/**
-	 * The current request, used only as the per-app guard's path fallback.
-	 *
-	 * @var IRequest
-	 */
-	private IRequest $request;
-
-	/**
-	 * Records a swallowed listener failure, so failing open is never silent.
-	 *
-	 * @var LoggerInterface
-	 */
-	private LoggerInterface $logger;
-
-	/**
-	 * Marks every page of a non-production server, excluded apps included.
-	 *
-	 * @var EnvironmentMarkerService
-	 */
-	private EnvironmentMarkerService $environmentMarker;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param CssInjectionService $cssInjectionService The CSS injection service.
-	 * @param AppThemingService $appThemingService The per-app theming guard resolver.
+	 * @param ThemeInjectionStyles $styles The CSS injection, the per-app theming guard and the environment marker.
 	 * @param IRequest $request The current request.
 	 * @param LoggerInterface $logger The logger for swallowed failures.
-	 * @param EnvironmentMarkerService $environmentMarker The environment marker.
-	 * @param LoginCopyService|null $loginCopy The words and the SSO button on the login page; null leaves Nextcloud's.
-	 * @param NotFoundCopyService|null $notFoundCopy The words and links on the not-found page; null leaves Nextcloud's.
+	 * @param PageCopyServices $pageCopy The login and not-found page copy.
 	 */
 	public function __construct(
-		CssInjectionService $cssInjectionService,
-		AppThemingService $appThemingService,
-		IRequest $request,
-		LoggerInterface $logger,
-		EnvironmentMarkerService $environmentMarker,
-		private readonly ?LoginCopyService $loginCopy = null,
-		private readonly ?NotFoundCopyService $notFoundCopy = null,
+		private readonly ThemeInjectionStyles $styles,
+		private readonly IRequest $request,
+		private readonly LoggerInterface $logger,
+		private readonly PageCopyServices $pageCopy = new PageCopyServices(),
 	) {
-		$this->cssInjectionService = $cssInjectionService;
-		$this->appThemingService = $appThemingService;
-		$this->request = $request;
-		$this->logger = $logger;
-		$this->environmentMarker = $environmentMarker;
 	}//end __construct()
 
 	/**
@@ -137,36 +88,11 @@ class ThemeInjectionListener implements IEventListener {
 		// before the per-app guard, on the login page and on every template
 		// render, and fails open inside its own service.
 		if ($event instanceof BeforeLoginTemplateRenderedEvent || $event instanceof BeforeTemplateRenderedEvent) {
-			$this->environmentMarker->inject();
+			$this->styles->environmentMarker->inject();
 		}
 
 		try {
-			if ($event instanceof BeforeLoginTemplateRenderedEvent) {
-				// Login is never an app page — the per-app guard never runs.
-				$this->cssInjectionService->inject(context: 'login');
-				// The board's words and order, on a themed login page only
-				// (openspec/changes/login-page-board-parity).
-				if ($this->cssInjectionService->isContextThemed(context: 'login') === true) {
-					$this->loginCopy?->injectForLogin();
-				}
-
-				return;
-			}
-
-			if ($event instanceof BeforeTemplateRenderedEvent) {
-				$response = $event->getResponse();
-
-				if ($this->isThemingDisabledForResponse(response: $response) === true) {
-					return;
-				}
-
-				$this->cssInjectionService->inject(
-					context: $this->resolveContext(response: $response),
-					appId: $this->resolveAppId(response: $response)
-				);
-
-				$this->injectNotFoundCopy(response: $response);
-			}
+			$this->injectFor(event: $event);
 		} catch (Throwable $e) {
 			// Fail open: a listener failure must never break page rendering
 			// (theming is presentation, never a hard dependency).
@@ -185,6 +111,58 @@ class ThemeInjectionListener implements IEventListener {
 	}//end handle()
 
 	/**
+	 * Inject the CSS and page copy for a login or template render; other events add nothing.
+	 *
+	 * @param Event $event The dispatched event.
+	 *
+	 * @return void
+	 */
+	private function injectFor(Event $event): void {
+		if ($event instanceof BeforeLoginTemplateRenderedEvent) {
+			$this->injectLogin();
+
+			return;
+		}
+
+		if ($event instanceof BeforeTemplateRenderedEvent) {
+			$this->injectTemplate(response: $event->getResponse());
+		}
+	}//end injectFor()
+
+	/**
+	 * The login page: its CSS, and the board's words and order on a themed login page only
+	 * (openspec/changes/login-page-board-parity). Login is never an app page — the per-app guard never runs.
+	 *
+	 * @return void
+	 */
+	private function injectLogin(): void {
+		$this->styles->cssInjectionService->inject(context: 'login');
+		if ($this->styles->cssInjectionService->isContextThemed(context: 'login') === true) {
+			$this->pageCopy->loginCopy?->injectForLogin();
+		}
+	}//end injectLogin()
+
+	/**
+	 * A template render: its CSS unless the app is excluded, then the not-found copy.
+	 *
+	 * @param TemplateResponse $response The response being rendered.
+	 *
+	 * @return void
+	 */
+	private function injectTemplate(TemplateResponse $response): void {
+		if ($this->isThemingDisabledForResponse(response: $response) === true) {
+			return;
+		}
+
+		$this->styles->cssInjectionService->inject(
+			context: $this->resolveContext(response: $response),
+			appId: $this->resolveAppId(response: $response)
+		);
+
+		$this->injectNotFoundCopy(response: $response);
+	}//end injectTemplate()
+
+	/**
 	 * Nextcloud's own "page not found" page, drawn as the NietGevonden board
 	 * draws it, when its context is themed.
 	 *
@@ -199,8 +177,8 @@ class ThemeInjectionListener implements IEventListener {
 			return;
 		}
 
-		if ($this->cssInjectionService->isContextThemed(context: $this->resolveContext(response: $response)) === true) {
-			$this->notFoundCopy?->inject();
+		if ($this->styles->cssInjectionService->isContextThemed(context: $this->resolveContext(response: $response)) === true) {
+			$this->pageCopy->notFoundCopy?->inject();
 		}
 	}//end injectNotFoundCopy()
 
@@ -247,7 +225,7 @@ class ThemeInjectionListener implements IEventListener {
 	 */
 	private function isThemingDisabledForResponse(TemplateResponse $response): bool {
 		try {
-			return $this->appThemingService->isThemingDisabledFor(appId: $this->resolveAppId(response: $response));
+			return $this->styles->appThemingService->isThemingDisabledFor(appId: $this->resolveAppId(response: $response));
 		} catch (Throwable $e) {
 			// Fail open: presentation, not security — a broken resolve must
 			// not strip theming everywhere, nor crash the render path.
@@ -270,7 +248,7 @@ class ThemeInjectionListener implements IEventListener {
 		try {
 			$appId = $response->getApp();
 			if ($appId === '' || $appId === 'core') {
-				$appId = $this->appThemingService->resolveAppIdFromPath(pathInfo: $this->request->getPathInfo());
+				$appId = $this->styles->appThemingService->resolveAppIdFromPath(pathInfo: $this->request->getPathInfo());
 			}
 
 			return $appId;

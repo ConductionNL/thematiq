@@ -56,7 +56,7 @@ class CustomCssValidatorTest extends TestCase {
 	public function testAcceptsOrdinaryCss(): void {
 		$css = ".app-content { padding: 8px; }\n#header .logo { opacity: .9; }";
 
-		$this->assertSame([], $this->validator->validate(css: $css));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: $css));
 
 	}//end testAcceptsOrdinaryCss()
 
@@ -66,7 +66,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testAcceptsEmptyCss(): void {
-		$this->assertSame([], $this->validator->validate(css: ''));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: ''));
 
 	}//end testAcceptsEmptyCss()
 
@@ -78,8 +78,8 @@ class CustomCssValidatorTest extends TestCase {
 	public function testRejectsImport(): void {
 		$errors = $this->validator->validate(css: '@import url("https://example.test/x.css");');
 
-		$this->assertNotEmpty($errors);
-		$this->assertStringContainsStringIgnoringCase('@import', implode(' ', $errors));
+		$this->assertNotEmpty(actual: $errors);
+		$this->assertStringContainsStringIgnoringCase(needle: '@import', haystack: implode(' ', $errors));
 
 	}//end testRejectsImport()
 
@@ -89,7 +89,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsCharset(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '@charset "utf-8";'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '@charset "utf-8";'));
 
 	}//end testRejectsCharset()
 
@@ -101,8 +101,8 @@ class CustomCssValidatorTest extends TestCase {
 	public function testRejectsExternalUrl(): void {
 		$errors = $this->validator->validate(css: '.x { background: url(https://evil.test/p.png); }');
 
-		$this->assertNotEmpty($errors);
-		$this->assertStringContainsStringIgnoringCase('url()', implode(' ', $errors));
+		$this->assertNotEmpty(actual: $errors);
+		$this->assertStringContainsStringIgnoringCase(needle: 'url()', haystack: implode(' ', $errors));
 
 	}//end testRejectsExternalUrl()
 
@@ -112,7 +112,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsProtocolRelativeUrl(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '.x { background: url(//evil.test/p.png); }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { background: url(//evil.test/p.png); }'));
 
 	}//end testRejectsProtocolRelativeUrl()
 
@@ -122,7 +122,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testAcceptsRelativeUrl(): void {
-		$this->assertSame([], $this->validator->validate(css: '.x { background: url(../img/logo.svg); }'));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: '.x { background: url(../img/logo.svg); }'));
 
 	}//end testAcceptsRelativeUrl()
 
@@ -134,7 +134,7 @@ class CustomCssValidatorTest extends TestCase {
 	public function testAcceptsDataUri(): void {
 		$css = '.x { background: url(data:image/gif;base64,R0lGODlhAQABAAAAACw=); }';
 
-		$this->assertSame([], $this->validator->validate(css: $css));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: $css));
 
 	}//end testAcceptsDataUri()
 
@@ -165,10 +165,10 @@ class CustomCssValidatorTest extends TestCase {
 			$errors = $this->validator->validate(css: $css);
 
 			$this->assertNotEmpty(
-				$errors,
-				$scheme . ' must still be rejected when a data: URI appears earlier in the same document.'
+				actual: $errors,
+				message: $scheme . ' must still be rejected when a data: URI appears earlier in the same document.'
 			);
-			$this->assertStringContainsStringIgnoringCase('url()', implode(' ', $errors));
+			$this->assertStringContainsStringIgnoringCase(needle: 'url()', haystack: implode(' ', $errors));
 		}
 
 	}//end testRejectsForeignSchemeAfterDataUri()
@@ -183,7 +183,7 @@ class CustomCssValidatorTest extends TestCase {
 		$css = '.b { background: url(ftp://evil.test/x.png); }' . "\n"
 			. '.a { background: url(data:image/gif;base64,R0lGODlhAQABAAAAACw=); }';
 
-		$this->assertNotEmpty($this->validator->validate(css: $css));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: $css));
 
 	}//end testRejectsForeignSchemeBeforeDataUri()
 
@@ -193,7 +193,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsForeignSchemeWithoutDataUri(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '.x { background: url(ftp://evil.test/x.png); }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { background: url(ftp://evil.test/x.png); }'));
 
 	}//end testRejectsForeignSchemeWithoutDataUri()
 
@@ -210,7 +210,7 @@ class CustomCssValidatorTest extends TestCase {
 			. ".c { background: url('../img/logo.svg'); }\n"
 			. '.d { background: url(/apps/thematiq/img/logo.svg); }';
 
-		$this->assertSame([], $this->validator->validate(css: $css));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: $css));
 
 	}//end testAcceptsMultipleDataUrisAndRelativePaths()
 
@@ -220,9 +220,9 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsScriptExecutionVectors(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '.x { width: expression(alert(1)); }'));
-		$this->assertNotEmpty($this->validator->validate(css: '.x { behavior: url(x.htc); }'));
-		$this->assertNotEmpty($this->validator->validate(css: '.x { -moz-binding: url(x.xml); }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { width: expression(alert(1)); }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { behavior: url(x.htc); }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { -moz-binding: url(x.xml); }'));
 
 	}//end testRejectsScriptExecutionVectors()
 
@@ -232,7 +232,7 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsHtmlBreakout(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '.x { color: red; } </style><script>alert(1)</script>'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { color: red; } </style><script>alert(1)</script>'));
 
 	}//end testRejectsHtmlBreakout()
 
@@ -246,8 +246,8 @@ class CustomCssValidatorTest extends TestCase {
 			$errors = $this->validator->validate(css: ':root { ' . $reserved . ': #fff; }');
 
 			$this->assertNotEmpty(
-				$errors,
-				$reserved . ' must be rejected (REQ-CSS-007 dark-mode derivation).'
+				actual: $errors,
+				message: $reserved . ' must be rejected (REQ-CSS-007 dark-mode derivation).'
 			);
 		}
 
@@ -260,7 +260,7 @@ class CustomCssValidatorTest extends TestCase {
 	 */
 	public function testRejectsReservedVariableOutsideRoot(): void {
 		$this->assertNotEmpty(
-			$this->validator->validate(css: '.sneaky { --color-background-plain: #000; }')
+			actual: $this->validator->validate(css: '.sneaky { --color-background-plain: #000; }')
 		);
 
 	}//end testRejectsReservedVariableOutsideRoot()
@@ -271,8 +271,8 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testRejectsUnbalancedBraces(): void {
-		$this->assertNotEmpty($this->validator->validate(css: '.x { color: red;'));
-		$this->assertNotEmpty($this->validator->validate(css: '.x { color: red; } }'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { color: red;'));
+		$this->assertNotEmpty(actual: $this->validator->validate(css: '.x { color: red; } }'));
 
 	}//end testRejectsUnbalancedBraces()
 
@@ -282,8 +282,8 @@ class CustomCssValidatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testBracesInStringsAndCommentsAreIgnored(): void {
-		$this->assertSame([], $this->validator->validate(css: '.x::after { content: "{"; }'));
-		$this->assertSame([], $this->validator->validate(css: '/* a { brace */ .x { color: red; }'));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: '.x::after { content: "{"; }'));
+		$this->assertSame(expected: [], actual: $this->validator->validate(css: '/* a { brace */ .x { color: red; }'));
 
 	}//end testBracesInStringsAndCommentsAreIgnored()
 
@@ -297,8 +297,8 @@ class CustomCssValidatorTest extends TestCase {
 
 		$errors = $this->validator->validate(css: $css);
 
-		$this->assertNotEmpty($errors);
-		$this->assertStringContainsStringIgnoringCase('limit', implode(' ', $errors));
+		$this->assertNotEmpty(actual: $errors);
+		$this->assertStringContainsStringIgnoringCase(needle: 'limit', haystack: implode(' ', $errors));
 
 	}//end testRejectsOversizedPayload()
 
@@ -312,7 +312,7 @@ class CustomCssValidatorTest extends TestCase {
 
 		$errors = $this->validator->validate(css: $css);
 
-		$this->assertGreaterThanOrEqual(2, count($errors), 'Both the @import and the external url() must be reported.');
+		$this->assertGreaterThanOrEqual(expected: 2, actual: count($errors), message: 'Both the @import and the external url() must be reported.');
 
 	}//end testReportsEveryViolationAtOnce()
 

@@ -13,14 +13,14 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
  */
 
 declare(strict_types=1);
 
 namespace OCA\Thematiq\Repair;
 
-use OCA\Thematiq\Service\TokenSetLicenceService;
+use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use Psr\Log\LoggerInterface;
@@ -35,18 +35,18 @@ use Throwable;
  *
  * Running it again records nothing new: a set already recorded keeps its date.
  *
- * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
  */
 class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 
 	/**
 	 * Constructor.
 	 *
-	 * @param TokenSetLicenceService $licences Finds the applied, unconfirmed restricted sets and keeps the record.
+	 * @param TokenSetLicenceServiceInterface $licences Finds the applied, unconfirmed restricted sets and keeps the record.
 	 * @param LoggerInterface $logger The Nextcloud log.
 	 */
 	public function __construct(
-		private readonly TokenSetLicenceService $licences,
+		private readonly TokenSetLicenceServiceInterface $licences,
 		private readonly LoggerInterface $logger,
 	) {
 	}//end __construct()
@@ -56,7 +56,7 @@ class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 	 *
 	 * @return string The name.
 	 *
-	 * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
 	public function getName(): string {
 		return 'Record restricted thematiq token sets that are applied without a confirmation';
@@ -69,7 +69,7 @@ class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/shipped-set-licences/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
 	public function run(IOutput $output): void {
 		try {

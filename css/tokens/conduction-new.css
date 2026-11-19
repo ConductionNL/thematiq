@@ -268,7 +268,7 @@
 	--utrecht-button-font-family: var(--conduction-typography-font-family-body);
 
 	/* Form controls */
-	--utrecht-textbox-border-color: var(--conduction-color-border-default);
+	--utrecht-textbox-border-color: #7e93c3;
 	--utrecht-textbox-color: var(--conduction-color-text-default);
 	--utrecht-textbox-font-family: var(--conduction-typography-font-family-body);
 	--utrecht-textbox-border-radius: var(--radius-md);

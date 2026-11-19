@@ -18,7 +18,7 @@
 - [x] 2.7 Controllers answer 403 with `restricted_set_not_confirmed`.
 - [x] 2.8 `tests/Unit/Service/RestrictedSetWiringTest.php`: each caller refuses and then accepts.
       Removing the gate call from any one caller turns it red (checked per caller).
-- [x] 2.9 `tests/Unit/Controller/RestrictedSetRequestPathTest.php`: the delivered status through
+- [x] 2.9 `tests/Server/Controller/RestrictedSetRequestPathTest.php`: the delivered status through
       Nextcloud's Dispatcher, with the OCS 403-to-200 control.
 
 ## 3. Confirm and withdraw
@@ -37,5 +37,13 @@
 - [x] 4.4 `tests/vitest/admin-set-licence.spec.js`.
 - [x] 4.5 `docs/features/token-set-licences.md`.
 - [ ] 4.6 The TqTokenSet board shows the block (board drift: paired design-system PR, not opened yet).
-- [ ] 4.7 Browser check of the block with a restricted shipped set (live pass, decision 139; needs the
+- [x] 4.7 Browser check of the block with a restricted shipped set (live pass, decision 139; needs the
       change that marks the shipped sets).
+      Live pass 17 Nov 2026 (NC 34.0.6): the block lists the 44 restricted sets as "Not confirmed";
+      Gemeente Epe opens with the warning naming Gemeente Epe, the source
+      `@nl-design-system-unstable/epe-design-tokens 1.0.3` and the full licence text; choosing
+      `amsterdam` in the dropdown shows "Confirm first ... Go to the confirmation" and
+      `POST /settings/tokenset` answers 403 `restricted_set_not_confirmed`; a confirmed set offers
+      "Withdraw confirmation", refused while applied ("This house style is still in use"). Found: the
+      apply dialog answered a refusal with "Failed to apply token set."; it now names the
+      confirmation (tests/vitest/admin-apply-restricted-set.spec.js).

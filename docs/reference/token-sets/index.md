@@ -55,9 +55,10 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Tilburg](./tilburg.md) `tilburg`
 - [Gemeente Tubbergen](./tubbergen.md) `tubbergen`
 - [Gemeente Utrecht](./utrecht.md) `utrecht`
-- [Vaartveld College](./vaartveld.md) `vaartveld`
+- [Zuiddrecht College](./vaartveld.md) `vaartveld`
 - [Gemeente Venray](./venray.md) `venray`
 - [VNG Vereniging Nederlandse Gemeenten](./vng.md) `vng`
+- [Gemeente Voorne aan Zee](./voorne-aan-zee.md) `voorne-aan-zee`
 - [Gemeente Vught](./vught.md) `vught`
 - [Warmtepompacademie](./warmtepompacademie.md) `warmtepompacademie`
 - [Gemeente Westervoort](./westervoort.md) `westervoort`

@@ -169,16 +169,27 @@ class RestrictedSetGate {
 	 */
 	public function confirmation(string $tokenSetId): ?array {
 		$entry = ($this->confirmations()[$tokenSetId] ?? null);
-		if (is_array($entry) === false || is_string(($entry['uid'] ?? null)) === false || is_string(($entry['at'] ?? null)) === false) {
-			return null;
-		}
-
-		if ($entry['uid'] === '' || $entry['at'] === '') {
+		if ($this->isConfirmationEntry(entry: $entry) === false) {
 			return null;
 		}
 
 		return ['uid' => $entry['uid'], 'at' => $entry['at']];
 	}//end confirmation()
+
+	/**
+	 * Whether a stored confirmation names who and when, both as non-empty strings.
+	 *
+	 * @param mixed $entry The stored entry.
+	 *
+	 * @return bool True for a readable confirmation.
+	 *
+	 * @phpstan-assert-if-true array{uid: string, at: string} $entry
+	 */
+	private function isConfirmationEntry(mixed $entry): bool {
+		return is_array($entry) === true
+			&& is_string(($entry['uid'] ?? null)) === true && $entry['uid'] !== ''
+			&& is_string(($entry['at'] ?? null)) === true && $entry['at'] !== '';
+	}//end isConfirmationEntry()
 
 	/**
 	 * Whether a set may be applied: it is not restricted, or it is confirmed.
@@ -292,23 +303,45 @@ class RestrictedSetGate {
 			return $this->manifest;
 		}
 
-		$this->manifest = [];
+		$this->manifest = $this->entriesById(data: $this->manifestData());
+
+		return $this->manifest;
+	}//end manifest()
+
+	/**
+	 * The shipped `token-sets.json`, decoded.
+	 *
+	 * @return array<array-key, mixed> The entries, or empty when the file is missing or not a list.
+	 */
+	private function manifestData(): array {
 		$path = $this->appPath . '/token-sets.json';
 		if (is_file($path) === false) {
-			return $this->manifest;
+			return [];
 		}
 
 		$data = json_decode((string)file_get_contents($path), true);
 		if (is_array($data) === false) {
-			return $this->manifest;
+			return [];
 		}
 
+		return $data;
+	}//end manifestData()
+
+	/**
+	 * The manifest entries with a string id, by id; a later entry replaces an earlier one.
+	 *
+	 * @param array<array-key, mixed> $data The decoded manifest.
+	 *
+	 * @return array<string, array<string, mixed>> Id => entry.
+	 */
+	private function entriesById(array $data): array {
+		$entries = [];
 		foreach ($data as $entry) {
 			if (is_array($entry) === true && is_string(($entry['id'] ?? null)) === true) {
-				$this->manifest[$entry['id']] = $entry;
+				$entries[$entry['id']] = $entry;
 			}
 		}
 
-		return $this->manifest;
-	}//end manifest()
+		return $entries;
+	}//end entriesById()
 }//end class

@@ -33,6 +33,9 @@
 	--nldesign-color-primary-hover: #234A78;
 	--nldesign-color-primary-light: #EAF0F7;
 	--nldesign-color-primary-light-hover: #DCE6F2;
+	/* Text on the light primary: the board's deep primary (7.88:1 on #EAF0F7,
+	 * 7.17:1 on #DCE6F2), its hover colour. */
+	--nldesign-color-primary-light-text: #234A78;
 
 	/* Zuiddrecht palette */
 	--zuiddrecht-color-red: #CC0000;
@@ -81,17 +84,25 @@
 	--nldesign-color-error: #CC0000;
 	--nldesign-color-error-rgb: 204, 0, 0;
 	--nldesign-color-error-hover: #A30000;
+	/* Error text on the page is the error ink the boards draw late deadlines
+	 * in ("1 dag te laat"), darker than the #CC0000 fill: 7.22:1 on white. */
+	--nldesign-color-error-text: #A30000;
 	--nldesign-color-warning: #7A4F00;
 	--nldesign-color-warning-rgb: 122, 79, 0;
+	/* Warning text on a warning note is the warning ink itself, as the
+	 * boards draw it; Nextcloud would derive a darker #664700. */
+	--nldesign-nc-color-warning-text: #7A4F00;
 	--nldesign-color-success: #1E6B2A;
 	--nldesign-color-success-rgb: 30, 107, 42;
 	--nldesign-color-info: #3669A5;
 	--nldesign-color-info-rgb: 54, 105, 165;
 
 	/* Border colours. The hairline is for cards and dividers; the dark step
-	 * is for control borders, which need 3:1 against white (#8A929E is 3.14). */
+	 * is for control borders, which need 3:1 against every ground a control
+	 * sits on: white (3.49), the page ground #F5F6F8 (3.23), the bulk band
+	 * #EAF0F7 (3.04) and the switch ground #ECEEF1 (3.00). */
 	--nldesign-color-border: #E4E6EA;
-	--nldesign-color-border-dark: #8A929E;
+	--nldesign-color-border-dark: #828A95;
 
 	/* Focus colour */
 	--nldesign-color-focus: rgba(54, 105, 165, 0.5);
@@ -156,6 +167,31 @@
 	--nldesign-component-status-badge-warning-color: #7A4F00;
 	--nldesign-component-status-badge-error-background-color: #FCEDEC;
 	--nldesign-component-status-badge-error-color: #A30000;
+	/* A pill without a status colour: the grey tint and pill text (9.19:1). */
+	--nldesign-component-status-badge-neutral-background-color: #F0F1F3;
+	--nldesign-component-status-badge-neutral-color: #3D4047;
+
+	/* The NL Design System hue tints a status colour is painted on (dossiq's
+	 * status pills and board columns): the boards' own tints. A badge's text is its
+	 * hue mixed 65% into the ink, and reaches AA on each tint: blue 7.21,
+	 * purple 9.03, green 6.41, orange 5.27, red 7.23, teal 8.83, grey 7.36. */
+	--nl-color-blue-light: #EAF0F7;
+	--nl-color-purple-light: #E8E6F6;
+	--nl-color-green-light: #E7F3EA;
+	--nl-color-orange-light: #FFF4DE;
+	--nl-color-red-light: #FCEDEC;
+	--nl-color-teal-light: #E3F1F3;
+	--nl-color-grey-light: #F0F1F3;
+
+	/* The text a status pill sets on its tint: the boards' pill text, blue
+	 * the boards' pill text. On its tint: blue 7.88, purple 7.12, green 5.77, orange 6.53, red 7.22, teal 6.38, grey 9.19. */
+	--nl-color-blue-text: #234A78;
+	--nl-color-purple-text: #4A3F8F;
+	--nl-color-green-text: #1E6B2A;
+	--nl-color-orange-text: #7A4F00;
+	--nl-color-red-text: #A30000;
+	--nl-color-teal-text: #1D5E66;
+	--nl-color-grey-text: #3D4047;
 
 	/* The login watermark: the grey shield, large and faint, in the bottom
 	 * corner of the login page while the workplace layout is light. */
@@ -164,10 +200,6 @@
 	/* The login card's shadow is 6% ink on the NcLogin board (the dashboard
 	 * cards keep 4%). */
 	--nldesign-login-card-shadow-color: rgba(27, 28, 29, 0.06);
-
-	/* The outlined "Inloggen" beside an SSO button: the board's field grey.
-	 * Its label carries the button, so the edge is decoration (WCAG 1.4.11). */
-	--nldesign-login-secondary-border-color: #c4c7cb;
 
 	/* The brand stripe, "de drie banen": red, blue, red in the ratio 6 : 3 : 1,
 	 * 5px high. Drawn under the header while the brand stripe option is on. */
@@ -215,8 +247,24 @@
 	--nldesign-website-heading-3-font-size: 26px;
 	/* Controls carry a 2px border: an outlined button is blue on white (5.64:1). */
 	--nldesign-website-control-border-width: 2px;
+	/* Controls are 48px high with their text at the running text's 17px
+	 * (Mijn account "Naam opslaan", Woo-verzoek "Volgende stap"): a button
+	 * pads its label 20px at the sides, a text box draws its edge in #5C6470,
+	 * 6.0:1 on white, where the card grey #D3D8DF would miss the 3:1 a
+	 * control's edge needs. */
+	--nldesign-website-control-font-size: 17px;
+	--nldesign-website-control-min-block-size: 48px;
+	--nldesign-website-control-border-color: #5C6470;
+	--nldesign-website-button-padding-block: 9px;
+	--nldesign-website-button-padding-inline: 20px;
 	/* A status tag is a pill. */
 	--nldesign-website-badge-border-radius: 14px;
+	/* 28px high with its 2px padding and 1px edge: 15px text in 600, 12px
+	 * either side
+	 * (Machtigingen "Wacht op antwoord", MijnTaken "Nog 3 dagen"). */
+	--nldesign-website-badge-font-size: 15px;
+	--nldesign-website-badge-line-height: 22px;
+	--nldesign-website-badge-padding-inline: 12px;
 	/* Process steps: 36px markers; a done step is filled blue with a white
 	 * tick (5.64:1), the current step white with a red ring and a red
 	 * number (5.89:1); the line after a done step is blue. */
@@ -233,6 +281,9 @@
 	/* Tabs: a grey line, the tab on screen marked red. */
 	--nldesign-website-tab-line-color: #D3D8DF;
 	--nldesign-website-tab-current-color: #CC0000;
+	/* Cards: the same grey line (1.43:1 on white). It only frames a card; the
+	 * links and controls in it carry their own marks, so 3:1 does not apply. */
+	--nldesign-website-card-border-color: #D3D8DF;
 
 	/* THE PUBLIC SITE (openspec/changes/zuiddrecht-site-page-title-notice-surface),
 	 * as the Kop, Home and Contentpagina boards draw it. Read by
@@ -280,4 +331,9 @@
 	--nldesign-website-attention-background-color: #FFF4DE;
 	--nldesign-website-attention-border-color: #E8C77D;
 	--nldesign-website-attention-color: #1A1A1A;
+
+	/* The set follows Cunningham's cards: a dashboard card carries its title and
+	 * body on one surface, with no rule between them (as the lasuite and
+	 * cunningham systems draw it). */
+	--nldesign-component-dashboard-card-header-border-style: none;
 }

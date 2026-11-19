@@ -46,6 +46,8 @@
  * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
 
+/* global console, process */
+
 import {
 	readFileSync,
 	writeFileSync,
@@ -85,6 +87,14 @@ export const SOURCE_PREFIX = 'nl-design-system/themes proprietary/'
 
 /** Opening line of the section that holds a set's carried-forward local overrides. */
 export const OVERRIDES_HEADING = '/* 5. Local overrides, kept by the token sync'
+
+/** Upstream organisations the sync never converts, with the reason. */
+const NOT_SYNCED = {
+	example: 'the NL Design System demo theme; thematiq ships its own example-* sets',
+}
+
+/** The gate that accepts or rejects the converted sets. */
+const DEFAULT_GATE = 'bash scripts/token-set-gate.sh'
 
 /** Paths a candidate can change, relative to the repo root. */
 const ALLOWLIST_PATH = 'tests/Unit/fixtures/token-set-vocabulary-allowlist.json'
@@ -140,15 +150,21 @@ export function mergeTokens(target, source) {
 
 /**
  * Read one organisation's upstream tokens: the style-dictionary sources under
- * `src/`, or, when upstream has moved on to it, the Tokens Studio export under
- * `figma/` (thematiq#994).
+ * `src/` (`src/tokens.json` and `src/*.tokens.json`, the sources upstream's own
+ * build reads), or, when upstream has moved on to it, the Tokens Studio export
+ * under `figma/` (thematiq#994). A file under `src/` that is itself a Tokens
+ * Studio export, recognisable by its `$metadata.tokenSetOrder`, is read as one.
  *
  * @param {string} orgDir The organisation's directory in the themes checkout.
  * @return {Object} `{kind, tokens, rawTokens, error}`; error is null when it read.
  */
 export function readUpstreamTokens(orgDir) {
 	const out = { kind: 'style-dictionary', tokens: {}, rawTokens: [], error: null }
-	let files = findTokenFiles(join(orgDir, 'src')).sort()
+	const plain = join(orgDir, 'src', 'tokens.json')
+	let files = [
+		...(existsSync(plain) ? [plain] : []),
+		...findTokenFiles(join(orgDir, 'src')).sort(),
+	]
 	if (files.length === 0) {
 		out.kind = 'tokens-studio'
 		files = findTokenFiles(join(orgDir, 'figma'))
@@ -166,6 +182,9 @@ export function readUpstreamTokens(orgDir) {
 		} catch (error) {
 			out.error = `malformed upstream JSON in ${relative(orgDir, file)}: ${error.message}`
 			return out
+		}
+		if (Array.isArray(json.$metadata?.tokenSetOrder)) {
+			out.kind = 'tokens-studio'
 		}
 		if (out.kind === 'tokens-studio') {
 			json = tokensStudioTree(json)
@@ -383,7 +402,7 @@ function parseArgs(argv) {
 		sha: process.env.THEMES_COMMIT_SHA || null,
 		report: null,
 		only: null,
-		gate: 'bash scripts/token-set-gate.sh',
+		gate: DEFAULT_GATE,
 		runGate: true,
 		pins: {},
 	}
@@ -650,8 +669,9 @@ function convertOrg(org, context) {
  * @param {Object} org The organisation.
  * @param {string|null} sha The themes commit.
  * @return {void}
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-shipped-organisation-theme-declares-its-licence
  */
-function mergeEntry(manifest, entry, org, sha) {
+export function mergeEntry(manifest, entry, org, sha) {
 	const provenance = {}
 	if (sha) {
 		provenance.upstreamRef = sha
@@ -677,6 +697,11 @@ function mergeEntry(manifest, entry, org, sha) {
 		theming.logo = existing.theming.logo
 	}
 	manifest[index] = { ...existing, theming, ...provenance }
+	// The licence names the version its text was read from, so a set converted
+	// from a newer package carries that version in its licence too.
+	if (existing.licence !== undefined && org.version) {
+		manifest[index].licence = { ...existing.licence, version: org.version }
+	}
 }
 
 /**
@@ -744,12 +769,14 @@ function restore(baseline) {
  * Run the gate command.
  *
  * @param {string} command Shell command.
+ * @param {Object} env Extra environment variables for the command.
  * @return {Object} `{ok, failures}`; failures names the failing tests.
  */
-function runGate(command) {
+function runGate(command, env = {}) {
 	const run = spawnSync('bash', ['-c', command], {
 		cwd: REPO_ROOT,
 		encoding: 'utf8',
+		env: { ...process.env, ...env },
 		maxBuffer: 256 * 1024 * 1024,
 	})
 	const output = `${run.stdout}\n${run.stderr}`
@@ -825,17 +852,18 @@ function renderReport(summary, options) {
 }
 
 /**
- * Entry point.
+ * Parse and check the command line, printing why a run cannot start.
  *
- * @return {number} Exit code.
+ * @param {Array<string>} argv Raw arguments.
+ * @return {Object|null} Options, or null on a usage error.
  */
-function main() {
+function readOptions(argv) {
 	let options
 	try {
-		options = parseArgs(process.argv.slice(2))
+		options = parseArgs(argv)
 	} catch (error) {
 		console.error(`[${LABEL}] ${error.message}`)
-		return 1
+		return null
 	}
 	if (
 		options.themes === null
@@ -844,35 +872,123 @@ function main() {
 		console.error(
 			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate]`,
 		)
-		return 1
+		return null
 	}
+	return options
+}
 
+/**
+ * The converter, its mapping table and the nldesign vocabulary it maps onto.
+ *
+ * @return {Object} Converter context.
+ */
+function converterContext() {
 	const tablePath = join(REPO_ROOT, 'scripts/mapping/nlds-to-nextcloud.json')
 	const tableRaw = readFileSync(tablePath, 'utf8')
 	const converter = require(join(REPO_ROOT, 'js/lib/tokenConverter.js'))
-	const context = {
+	return {
 		converter,
 		table: JSON.parse(tableRaw),
 		tableHash: createHash('sha256').update(tableRaw).digest('hex'),
 		vocabulary: converter.vocabularyFrom(vocabularyStylesheets()),
 	}
+}
 
-	const baseline = {
-		manifest: readRepo(MANIFEST_PATH),
-		allowlist: readRepo(ALLOWLIST_PATH),
-		files: new Map(),
-	}
-	const manifestIds = new Set(
-		JSON.parse(baseline.manifest).map((entry) => entry.id),
+/**
+ * The primary colour a set is committed to: its own primary token when this
+ * script converted it before, otherwise the manifest's theming primary.
+ *
+ * @param {Object} org `{slug, kind, oldCss}`.
+ * @param {Map<string, string>} manifestPrimaries Set id to manifest primary.
+ * @return {string|null} The committed primary.
+ */
+function committedPrimary(org, manifestPrimaries) {
+	return (
+		(org.kind === 'converted'
+			? declarations(org.oldCss).get(`--${org.slug}-color-primary`)
+			: undefined)
+		?? manifestPrimaries.get(org.slug)
+		?? null
 	)
+}
+
+/**
+ * Everything the conversion needs to know about one upstream organisation.
+ *
+ * @param {Object} found `{dir, dirName, slug, kind, oldCss}`.
+ * @param {Object} config The organisation's upstream config.
+ * @param {Map<string, string>} manifestPrimaries Set id to manifest primary.
+ * @param {Object} pins Command-line pins by slug.
+ * @return {Object} The organisation.
+ */
+function describeOrg(found, config, manifestPrimaries, pins) {
+	return {
+		...found,
+		name: config.fullName || config.name || found.slug,
+		prefix: config.prefix || found.slug,
+		version: readOrgVersion(found.dir, config),
+		manifestPrimary: committedPrimary(found, manifestPrimaries),
+		extraPins: pins[found.slug] ?? {},
+	}
+}
+
+/**
+ * Convert one organisation and turn the result into a candidate, recording a
+ * rejection or an unchanged set in the summary instead.
+ *
+ * @param {Object} org The organisation.
+ * @param {Object} context Converter context.
+ * @param {Object} baseline The baseline snapshot; gains the candidate's files.
+ * @param {Object} summary Outcome lists.
+ * @return {Object|null} The candidate, or null when there is nothing to apply.
+ */
+function candidateFor(org, context, baseline, summary) {
+	const converted = convertOrg(org, context)
+	if (converted.ok === false) {
+		summary.rejected.push({
+			slug: org.slug,
+			reason: converted.reason,
+			shipped: org.kind !== 'new',
+		})
+		console.log(`  SKIP ${org.slug}: ${converted.reason}`)
+		return null
+	}
+	if (converted.css === org.oldCss) {
+		summary.same.push(org.slug)
+		return null
+	}
+	baseline.files.set(`css/tokens/${org.slug}.css`, org.oldCss)
+	baseline.files.set(
+		`css/tokens/dark/${org.slug}.css`,
+		readRepo(`css/tokens/dark/${org.slug}.css`),
+	)
+	console.log(`  CONV ${org.slug} (${org.kind})`)
+	return {
+		org,
+		css: converted.css,
+		entry: converted.entry,
+		overrides: (converted.css.split(OVERRIDES_HEADING)[1] ?? '')
+			.split('\n')
+			.filter((line) => /^\t--/.test(line)).length,
+	}
+}
+
+/**
+ * Convert every upstream organisation the run covers into candidates.
+ *
+ * @param {Object} options Options.
+ * @param {Object} context Converter context.
+ * @param {Object} baseline The baseline snapshot.
+ * @param {Object} summary Outcome lists.
+ * @return {Array<Object>} The candidates, in directory order.
+ */
+function collectCandidates(options, context, baseline, summary) {
+	const manifest = JSON.parse(baseline.manifest)
+	const manifestIds = new Set(manifest.map((entry) => entry.id))
 	const manifestPrimaries = new Map(
-		JSON.parse(baseline.manifest).map((entry) => [
-			entry.id,
-			entry.theming?.primary_color,
-		]),
+		manifest.map((entry) => [entry.id, entry.theming?.primary_color]),
 	)
 	const proprietary = join(resolve(options.themes), 'proprietary')
-	const summary = { changed: [], rejected: [], hand: [], same: [] }
 	const candidates = []
 
 	for (const dirName of readdirSync(proprietary).sort()) {
@@ -884,6 +1000,10 @@ function main() {
 		if (options.only !== null && options.only.includes(slug) === false) {
 			continue
 		}
+		if (NOT_SYNCED[slug] !== undefined) {
+			console.log(`  OUT  ${slug}: ${NOT_SYNCED[slug]}`)
+			continue
+		}
 		const config = readOrgConfig(dir) ?? {}
 		const oldCss = readRepo(`css/tokens/${slug}.css`)
 		const kind = classifySet(oldCss, manifestIds.has(slug))
@@ -892,125 +1012,166 @@ function main() {
 			console.log(`  HAND ${slug}: hand authored, not touched`)
 			continue
 		}
-		const org = {
-			dir,
-			dirName,
-			slug,
-			kind,
-			oldCss,
-			name: config.fullName || config.name || slug,
-			prefix: config.prefix || slug,
-			version: readOrgVersion(dir, config),
-			manifestPrimary:
-				(kind === 'converted'
-					? declarations(oldCss).get(`--${slug}-color-primary`)
-					: undefined)
-				?? manifestPrimaries.get(slug)
-				?? null,
-			extraPins: options.pins[slug] ?? {},
-		}
-		const converted = convertOrg(org, context)
-		if (converted.ok === false) {
-			summary.rejected.push({
-				slug,
-				reason: converted.reason,
-				shipped: kind !== 'new',
-			})
-			console.log(`  SKIP ${slug}: ${converted.reason}`)
-			continue
-		}
-		if (converted.css === oldCss) {
-			summary.same.push(slug)
-			continue
-		}
-		baseline.files.set(`css/tokens/${slug}.css`, oldCss)
-		baseline.files.set(
-			`css/tokens/dark/${slug}.css`,
-			readRepo(`css/tokens/dark/${slug}.css`),
+		const org = describeOrg(
+			{ dir, dirName, slug, kind, oldCss },
+			config,
+			manifestPrimaries,
+			options.pins,
 		)
-		candidates.push({
-			org,
-			css: converted.css,
-			entry: converted.entry,
-			overrides: (converted.css.split(OVERRIDES_HEADING)[1] ?? '')
-				.split('\n')
-				.filter((line) => /^\t--/.test(line)).length,
-		})
-		console.log(`  CONV ${slug} (${kind})`)
+		const candidate = candidateFor(org, context, baseline, summary)
+		if (candidate !== null) {
+			candidates.push(candidate)
+		}
 	}
+	return candidates
+}
 
-	// New sets must be vocabulary complete: the allow-list never grows.
-	let accepted = candidates
-	if (accepted.length > 0) {
-		apply(baseline, accepted, options.sha)
-		const complete = vocabularyComplete()
-		const incomplete = accepted.filter(
-			(candidate) =>
-				candidate.org.kind === 'new'
-				&& complete.get(candidate.org.slug) !== true,
-		)
-		for (const candidate of incomplete) {
+/**
+ * Reject the new sets whose conversion is not vocabulary complete: the
+ * allow-list never grows. The tree is back at the baseline afterwards.
+ *
+ * @param {Object} baseline The baseline snapshot.
+ * @param {Array<Object>} candidates The candidates.
+ * @param {string|null} sha The themes commit.
+ * @param {Object} summary Outcome lists.
+ * @return {Array<Object>} The candidates that remain.
+ */
+function dropIncompleteNewSets(baseline, candidates, sha, summary) {
+	if (candidates.length === 0) {
+		return candidates
+	}
+	apply(baseline, candidates, sha)
+	const complete = vocabularyComplete()
+	const incomplete = candidates.filter(
+		(candidate) =>
+			candidate.org.kind === 'new'
+			&& complete.get(candidate.org.slug) !== true,
+	)
+	for (const candidate of incomplete) {
+		summary.rejected.push({
+			slug: candidate.org.slug,
+			reason: 'the conversion is not vocabulary complete (scripts/audit-token-sets.mjs), and a new set may not join the allow-list',
+			shipped: false,
+		})
+	}
+	restore(baseline)
+	return candidates.filter(
+		(candidate) => incomplete.includes(candidate) === false,
+	)
+}
+
+/**
+ * The environment that narrows scripts/token-set-gate.sh to the tests that
+ * failed, or null when a failure is not a PHPUnit or vitest test name and only
+ * the full gate can judge it.
+ *
+ * @param {Array<string>} failures The failure names runGate() reported.
+ * @return {Object|null} The TOKEN_SET_GATE_* variables, or null.
+ */
+export function narrowGate(failures) {
+	const phpunit = []
+	const vitest = []
+	for (const failure of failures) {
+		if (/^tests\/vitest\/\S+\.spec\.js$/.test(failure)) {
+			vitest.push(failure)
+		} else if (/^[\w\\]+::\w+$/.test(failure)) {
+			phpunit.push(failure.replace(/\\/g, '\\\\'))
+		} else {
+			return null
+		}
+	}
+	if (phpunit.length === 0 && vitest.length === 0) {
+		return null
+	}
+	return {
+		TOKEN_SET_GATE_PHPUNIT_FILTER: phpunit.join('|'),
+		TOKEN_SET_GATE_VITEST: vitest.join(' '),
+	}
+}
+
+/**
+ * Run the gate with one more set in at a time, keeping each set it passes with.
+ * With the default gate only the tests that failed run per set; the full gate
+ * still runs once on the result.
+ *
+ * @param {Object} baseline The baseline snapshot.
+ * @param {Array<Object>} accepted The candidates to retry.
+ * @param {Object} options Options.
+ * @param {Object} summary Outcome lists; gains a rejection per failing set.
+ * @param {Array<string>} failures The tests that failed with every candidate in.
+ * @return {Array<Object>} The candidates kept.
+ */
+function retryOneAtATime(baseline, accepted, options, summary, failures) {
+	const narrowed = options.gate === DEFAULT_GATE ? narrowGate(failures) : null
+	const kept = []
+	for (const candidate of accepted) {
+		apply(baseline, [...kept, candidate], options.sha)
+		const single = runGate(options.gate, narrowed ?? {})
+		if (single.ok === true) {
+			kept.push(candidate)
+			console.log(`  OK   ${candidate.org.slug}`)
+		} else {
 			summary.rejected.push({
 				slug: candidate.org.slug,
-				reason: 'the conversion is not vocabulary complete (scripts/audit-token-sets.mjs), and a new set may not join the allow-list',
-				shipped: false,
+				reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`,
+				shipped: candidate.org.kind !== 'new',
 			})
+			console.log(
+				`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`,
+			)
 		}
-		accepted = accepted.filter(
-			(candidate) => incomplete.includes(candidate) === false,
-		)
 		restore(baseline)
 	}
+	return kept
+}
 
-	if (options.runGate === true) {
+/**
+ * Apply the candidates and let the gate decide; when it fails, retry the sets
+ * one at a time and keep the ones that pass.
+ *
+ * @param {Object} baseline The baseline snapshot.
+ * @param {Array<Object>} accepted The candidates.
+ * @param {Object} options Options.
+ * @param {Object} summary Outcome lists.
+ * @return {Array<Object>|null} The candidates applied, or null when the gate still fails.
+ */
+function gateCandidates(baseline, accepted, options, summary) {
+	apply(baseline, accepted, options.sha)
+	let gate = runGate(options.gate)
+	if (gate.ok === false && accepted.length > 0) {
+		console.log(
+			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
+		)
+		restore(baseline)
+		accepted = retryOneAtATime(baseline, accepted, options, summary, gate.failures)
 		apply(baseline, accepted, options.sha)
-		let gate = runGate(options.gate)
-		if (gate.ok === false && accepted.length > 0) {
-			console.log(
-				`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
-			)
-			restore(baseline)
-			const kept = []
-			for (const candidate of accepted) {
-				apply(baseline, [...kept, candidate], options.sha)
-				const single = runGate(options.gate)
-				if (single.ok === true) {
-					kept.push(candidate)
-					console.log(`  OK   ${candidate.org.slug}`)
-				} else {
-					summary.rejected.push({
-						slug: candidate.org.slug,
-						reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`,
-						shipped: candidate.org.kind !== 'new',
-					})
-					console.log(
-						`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`,
-					)
-				}
-				restore(baseline)
-			}
-			accepted = kept
-			apply(baseline, accepted, options.sha)
-			gate = runGate(options.gate)
-		}
-		if (gate.ok === false) {
-			console.error(gate.output.split('\n').slice(-40).join('\n'))
-			console.error(
-				`[${LABEL}] the gate fails even with every rejected set put back: ${gate.failures.join(', ')}`,
-			)
-			return 2
-		}
-	} else {
-		apply(baseline, accepted, options.sha)
+		gate = runGate(options.gate)
 	}
+	if (gate.ok === false) {
+		console.error(gate.output.split('\n').slice(-40).join('\n'))
+		console.error(
+			`[${LABEL}] the gate fails even with every rejected set put back: ${gate.failures.join(', ')}`,
+		)
+		return null
+	}
+	return accepted
+}
 
+/**
+ * The report rows for the applied sets, naming a primary colour that moved.
+ *
+ * @param {Object} baseline The baseline snapshot.
+ * @param {Array<Object>} accepted The candidates applied.
+ * @return {Array<Object>} The rows.
+ */
+function changedRows(baseline, accepted) {
 	const before = new Map(
 		JSON.parse(baseline.manifest).map((entry) => [
 			entry.id,
 			entry.theming?.primary_color,
 		]),
 	)
-	for (const candidate of accepted) {
+	return accepted.map((candidate) => {
 		const oldPrimary = before.get(candidate.org.slug)
 		const newPrimary = candidate.entry.theming?.primary_color
 		const primary =
@@ -1019,14 +1180,48 @@ function main() {
 			&& String(oldPrimary).toLowerCase() !== String(newPrimary).toLowerCase()
 				? `${oldPrimary} to ${newPrimary}`
 				: null
-		summary.changed.push({
+		return {
 			slug: candidate.org.slug,
 			version: candidate.org.version,
 			isNew: candidate.org.kind === 'new',
 			overrides: candidate.overrides,
 			primary,
-		})
+		}
+	})
+}
+
+/**
+ * Entry point.
+ *
+ * @return {number} Exit code.
+ */
+function main() {
+	const options = readOptions(process.argv.slice(2))
+	if (options === null) {
+		return 1
 	}
+
+	const context = converterContext()
+	const baseline = {
+		manifest: readRepo(MANIFEST_PATH),
+		allowlist: readRepo(ALLOWLIST_PATH),
+		files: new Map(),
+	}
+	const summary = { changed: [], rejected: [], hand: [], same: [] }
+
+	const candidates = collectCandidates(options, context, baseline, summary)
+	let accepted = dropIncompleteNewSets(baseline, candidates, options.sha, summary)
+
+	if (options.runGate === true) {
+		accepted = gateCandidates(baseline, accepted, options, summary)
+		if (accepted === null) {
+			return 2
+		}
+	} else {
+		apply(baseline, accepted, options.sha)
+	}
+
+	summary.changed = changedRows(baseline, accepted)
 	summary.rejected.sort((left, right) => left.slug.localeCompare(right.slug))
 
 	const report = renderReport(summary, options)

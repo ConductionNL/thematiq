@@ -36,7 +36,7 @@ Tabs and their primary tokens:
 
 **Buttons & Status**: `--color-error`, `--color-error-hover`, `--color-warning`, `--color-warning-hover`, `--color-success`, `--color-success-hover`, `--color-info`, `--color-info-hover`, `--color-favorite`, status RGB values, semantic element/border variants, the assistant colours
 
-**Typography**: `--color-main-text`, `--color-text-maxcontrast`, `--color-text-light`, `--color-text-lighter`, `--color-text-error`, `--color-text-success`, `--color-text-warning`, `--font-face`, `--default-font-size`, `--font-size-small`, `--default-line-height`
+**Typography**: `--color-main-text`, `--color-text-maxcontrast`, `--color-text-light`, `--color-text-lighter`, `--color-text-error`, `--color-text-success`, `--color-text-warning`, `--font-face`, `--font-weight-default`, `--font-weight-element`, `--font-weight-heading`
 
 Component groups follow the tabs, one per owning component or app, each under a translated heading. An Advanced group holds every token the registry flags `advanced`, and those tokens leave their tab.
 
@@ -350,3 +350,48 @@ The editor MUST show the number of editable tokens the registry reports, and the
 - GIVEN `TokenRegistry::countEditable()` returns N tokens
 - WHEN the editor renders
 - THEN the editor MUST state N editable tokens
+
+### Requirement: Font family, size and weight come from the house style
+Each design system SHALL define the typography tokens a token set may override: the font family (`--nldesign-font-family`), the three weights (`--nldesign-font-weight-default`, `--nldesign-font-weight-element`, `--nldesign-font-weight-heading`) and the component font sizes (`--nldesign-component-heading-1-font-size` to `-6-`, `--nldesign-component-textbox-font-size`, `--nldesign-component-button-font-size`). A token set that declares one of them SHALL win over the design system default for that token. The design system SHALL map the family to Nextcloud's `--font-face` and the weights to `--font-weight-default`, `--font-weight-element` and `--font-weight-heading`. Nextcloud's body size `--default-font-size` SHALL stay unmapped, so body text keeps Nextcloud's 15px. The token editor's Typography tab SHALL offer the family and the three weights as overrides; the heading and paragraph sizes SHALL be edited in the Typography component group drawn on TqComponenten.
+
+#### Scenario: A token set brings its own heading size
+- GIVEN the Rijkshuisstijl token set declares `--nldesign-component-heading-1-font-size: 1.75rem`
+- WHEN an administrator applies that set
+- THEN a level 1 heading in the workspace renders at 1.75rem
+- AND a set that declares no heading size renders it at the design system default
+
+#### Scenario: A token set brings its own weights
+- GIVEN a token set declares `--nldesign-font-weight-heading: 600`
+- WHEN the set is active
+- THEN Nextcloud's `--font-weight-heading` resolves to 600 on every page
+
+#### Scenario: An administrator overrides the heading weight
+- GIVEN the token editor is open on the Typography tab
+- WHEN the administrator sets "Heading font weight" to 800 and saves
+- THEN `--font-weight-heading` is 800 in `custom-overrides.css`
+- AND the token set's own value is used again after a reset of that row
+
+#### Scenario: Body text keeps Nextcloud's size
+- GIVEN any shipped token set is active
+- WHEN a user opens the Files app
+- THEN body text renders at Nextcloud's `--default-font-size` of 15px
+
+### Requirement: A token can refer to another token
+The token editor SHALL accept, as the value of any token row, a reference to another `--nldesign-*` token. The saved overrides SHALL keep the reference as `var(--nldesign-...)`, so a later edit of the target reaches every token that refers to it. The row SHALL show the reference and the value it resolves to. The editor SHALL refuse a reference to a token that does not exist and a reference that would form a cycle, and SHALL save nothing in that case. A DTCG import SHALL keep an alias whose target maps onto a `--nldesign-*` token as such a reference instead of writing the resolved value.
+
+#### Scenario: An edit flows through a reference
+- GIVEN `--nldesign-color-link` refers to `--nldesign-color-primary`
+- WHEN the administrator changes `--nldesign-color-primary` to `#a00078` and saves
+- THEN links on every page MUST use `#a00078`
+- AND the row of `--nldesign-color-link` MUST still show the reference and `#a00078` beside it
+
+#### Scenario: A cycle is refused
+- GIVEN `--nldesign-color-link` refers to `--nldesign-color-primary`
+- WHEN the administrator sets `--nldesign-color-primary` to refer to `--nldesign-color-link`
+- THEN the editor MUST refuse the value and name both tokens
+- AND nothing MUST be saved
+
+#### Scenario: An imported alias stays a reference
+- GIVEN a DTCG file whose `link` token is `{color.primary}` and both tokens map onto `--nldesign-*` tokens
+- WHEN the administrator uploads it
+- THEN the stored set MUST declare the link token as `var(--nldesign-color-primary)`

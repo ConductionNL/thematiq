@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-return [
+// Every unversioned API route is also served under /api/v1/; see ApiPathAliases.
+return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 	'routes' => [
+		// The OpenAPI document of thematiq's own API, public, served under /api/v1/ too.
+		['name' => 'openApi#show', 'url' => '/api/openapi.json', 'verb' => 'GET'],
 		// Metrics — served by nldesign's own MetricsController (domain theme
 		// metrics: token sets, custom overrides, theming syncs). Admin-only:
 		// no #[PublicPage]/#[NoAdminRequired], so the SecurityMiddleware
@@ -37,7 +40,7 @@ return [
 		['name' => 'tokenReference#show', 'url' => '/api/token-sets/{id}/reference', 'verb' => 'GET'],
 		['name' => 'contrast#evaluate', 'url' => '/api/contrast/evaluate', 'verb' => 'POST'],
 		// The active set as eighteen shell roles and a logo, for another product
-		// that wears this Nextcloud's shell (openspec/changes/shell-tokens-endpoint).
+		// that wears this Nextcloud's shell (openspec/specs/shell-tokens).
 		// Public (#[PublicPage] + #[NoCSRFRequired] + #[AnonRateLimit]): the
 		// reader is a server without a Nextcloud session, and the values are the
 		// ones the login page already serves as CSS. A new path, so a warm
@@ -73,6 +76,9 @@ return [
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
+		// OpenProject's address and modules for the apps menu (openproject-in-the-app-menu), admin-only.
+		['name' => 'openProjectLink#show', 'url' => '/settings/openproject', 'verb' => 'GET'],
+		['name' => 'openProjectLink#save', 'url' => '/settings/openproject', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],
@@ -138,6 +144,10 @@ return [
 		// Custom font upload lifecycle (admin-only).
 		['name' => 'font#upload', 'url' => '/settings/fonts/upload', 'verb' => 'POST'],
 		['name' => 'font#list', 'url' => '/settings/fonts', 'verb' => 'GET'],
+		// Assign a bundled font from the approved library to a role (no upload).
+		['name' => 'font#library', 'url' => '/settings/fonts/library', 'verb' => 'GET'],
+		['name' => 'font#assignLibrary', 'url' => '/settings/fonts/library', 'verb' => 'POST'],
+		['name' => 'font#unassignLibrary', 'url' => '/settings/fonts/library/{role}', 'verb' => 'DELETE'],
 		['name' => 'font#delete', 'url' => '/settings/fonts/{id}', 'verb' => 'DELETE'],
 		// Font serving — deliberately public (#[PublicPage] + #[NoCSRFRequired]
 		// on FontController::serve()/css()): CSS `url()` font loads carry no
@@ -196,4 +206,4 @@ return [
 		['name' => 'documentStyle#upload', 'url' => '/settings/document-style/{kind}', 'verb' => 'POST'],
 		['name' => 'documentStyle#remove', 'url' => '/settings/document-style/{kind}', 'verb' => 'DELETE'],
 	],
-];
+]);

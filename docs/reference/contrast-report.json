@@ -382,6 +382,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "voorne-aan-zee": {
+            "verdict": "pass",
+            "textRatio": 6.97,
+            "uiRatio": 6.97,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "vught": {
             "verdict": "pass",
             "textRatio": 4.62,

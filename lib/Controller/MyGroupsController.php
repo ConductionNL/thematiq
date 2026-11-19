@@ -21,6 +21,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Service\DelegatedChoice;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Service\Exception\DelegationRefusedException;
 use OCA\Thematiq\Service\Exception\GroupThemingValidationException;
@@ -96,8 +97,9 @@ class MyGroupsController extends Controller {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 
 		try {
-			$this->delegation->requireDelegatedChoice(uid: $uid, group: $group, tokenSet: $tokenSet);
-			$entry = $this->delegation->setDelegatedTokenSet(uid: $uid, group: $group, tokenSet: $tokenSet);
+			$choice = new DelegatedChoice(group: $group, tokenSet: $tokenSet);
+			$this->delegation->requireDelegatedChoice(uid: $uid, choice: $choice);
+			$entry = $this->delegation->setDelegatedTokenSet(uid: $uid, choice: $choice);
 		} catch (DelegationRefusedException $e) {
 			return new JSONResponse(['error' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		} catch (GroupThemingValidationException $e) {

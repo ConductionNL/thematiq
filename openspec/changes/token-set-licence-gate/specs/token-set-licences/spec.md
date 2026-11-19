@@ -41,7 +41,7 @@ The server MUST refuse to apply a restricted set that has no confirmation. The r
 client as HTTP 403 with `error: "restricted_set_not_confirmed"` and the set id, and MUST write nothing.
 Hiding the set in the settings page is not the refusal: a direct request is refused the same way.
 
-@e2e exclude delivered status — no shipped set is restricted until the shipped sets are audited, so a browser has nothing to be refused on; the status that goes out is proven through Nextcloud's own Dispatcher and middleware chain by tests/Unit/Controller/RestrictedSetRequestPathTest.php.
+@e2e exclude delivered status — no shipped set is restricted until the shipped sets are audited, so a browser has nothing to be refused on; the status that goes out is proven through Nextcloud's own Dispatcher and middleware chain by tests/Server/Controller/RestrictedSetRequestPathTest.php.
 
 #### Scenario: A direct request for an unconfirmed set gets a 403
 
@@ -128,7 +128,7 @@ NOT be drawn.
 A place that already holds the set MAY keep it: saving the same group mapping again, choosing the
 active set again, or importing a bundle that names the set active here, is not a new use.
 
-@e2e exclude wiring — each path is asserted from its caller over the real services, and removing the gate call from any one of them turns the suite red; proven by tests/Unit/Service/RestrictedSetWiringTest.php and tests/Unit/Controller/RestrictedSetRequestPathTest.php.
+@e2e exclude wiring — each path is asserted from its caller over the real services, and removing the gate call from any one of them turns the suite red; proven by tests/Unit/Service/RestrictedSetWiringTest.php and tests/Server/Controller/RestrictedSetRequestPathTest.php.
 
 #### Scenario: A group mapping with an unconfirmed set is refused whole
 

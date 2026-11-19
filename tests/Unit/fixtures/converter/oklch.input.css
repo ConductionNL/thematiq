@@ -1,0 +1,24 @@
+/*
+ * Converter parity fixture, input D: a built theme that writes its colours
+ * as oklch() and oklab(), the way Rijkshuisstijl 18 does. Both runtimes turn
+ * them into the same hex (or rgba() when translucent) before anything is
+ * measured, mapped or given a dark variant.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ */
+.parity-theme {
+	--parity-color-blue-700: oklch(38.5% 0.1 250);
+	--parity-color-blue-100: oklch(96% 0.012 250);
+	--parity-color-grey-900: oklch(20% 0 none);
+	--parity-color-white: oklch(100% 0 0);
+	--parity-color-shadow: oklch(0% 0 none / 0.102);
+	--utrecht-button-primary-action-background-color: var(--parity-color-blue-700);
+	--utrecht-button-primary-action-color: var(--parity-color-white);
+	--utrecht-page-background-color: var(--parity-color-blue-100);
+	--utrecht-document-background-color: var(--parity-color-white);
+	--utrecht-document-color: var(--parity-color-grey-900);
+	--utrecht-link-color: oklab(0.385 -0.0342 -0.094);
+	--utrecht-focus-outline-color: oklch(50% 25% 120deg);
+	--utrecht-alert-error-background-color: oklch(62.8% 0.2577 29.23);
+}
