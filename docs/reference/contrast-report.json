@@ -326,6 +326,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "sittard-geleen": {
+            "verdict": "pass",
+            "textRatio": 5.05,
+            "uiRatio": 5.05,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "stedebroec": {
             "verdict": "pass",
             "textRatio": 8.45,
@@ -372,6 +379,13 @@
             "verdict": "pass",
             "textRatio": 4.94,
             "uiRatio": 4.94,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
+        "vidar": {
+            "verdict": "pass",
+            "textRatio": 7.88,
+            "uiRatio": 7.88,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },

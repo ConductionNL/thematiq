@@ -88,6 +88,9 @@ export const SOURCE_PREFIX = 'nl-design-system/themes proprietary/'
 /** Opening line of the section that holds a set's carried-forward local overrides. */
 export const OVERRIDES_HEADING = '/* 5. Local overrides, kept by the token sync'
 
+/** Where upstream's `src/build-theme.mts` writes a generated theme, relative to its directory. */
+export const GENERATED_TOKENS = 'tmp/generated.tokens.json'
+
 /** Upstream organisations the sync never converts, with the reason. */
 const NOT_SYNCED = {
 	example: 'the NL Design System demo theme; thematiq ships its own example-* sets',
@@ -154,6 +157,8 @@ export function mergeTokens(target, source) {
  * build reads), or, when upstream has moved on to it, the Tokens Studio export
  * under `figma/` (thematiq#994). A file under `src/` that is itself a Tokens
  * Studio export, recognisable by its `$metadata.tokenSetOrder`, is read as one.
+ * A theme upstream generates in TypeScript (`src/build-theme.mts`) has no token
+ * files of its own; the workflow runs that build first, and its output is read.
  *
  * @param {string} orgDir The organisation's directory in the themes checkout.
  * @return {Object} `{kind, tokens, rawTokens, error}`; error is null when it read.
@@ -165,6 +170,11 @@ export function readUpstreamTokens(orgDir) {
 		...(existsSync(plain) ? [plain] : []),
 		...findTokenFiles(join(orgDir, 'src')).sort(),
 	]
+	const generated = join(orgDir, GENERATED_TOKENS)
+	if (files.length === 0 && existsSync(generated)) {
+		out.kind = 'generated'
+		files = [generated]
+	}
 	if (files.length === 0) {
 		out.kind = 'tokens-studio'
 		files = findTokenFiles(join(orgDir, 'figma'))
@@ -172,7 +182,9 @@ export function readUpstreamTokens(orgDir) {
 			.sort()
 	}
 	if (files.length === 0) {
-		out.error = 'no *.tokens.json files upstream'
+		out.error = existsSync(join(orgDir, 'src', 'build-theme.mts'))
+			? `a generated theme whose build did not run (no ${GENERATED_TOKENS})`
+			: 'no *.tokens.json files upstream'
 		return out
 	}
 	for (const file of files) {

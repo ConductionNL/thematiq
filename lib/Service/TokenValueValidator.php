@@ -334,6 +334,7 @@ class TokenValueValidator {
 			return $internal[$name]['type'] === 'color';
 		}
 
-		return $this->hasDarkValue(meta: (TokenRegistry::getTokens()[$name] ?? []));
+		$tokens = TokenRegistry::getTokens();
+		return $this->hasDarkValue(meta: ($tokens[$name] ?? []));
 	}//end hasDarkValueFor()
 }//end class
