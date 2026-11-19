@@ -33,7 +33,7 @@
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/http-foundation": "^6.4",
         "twig/twig": "^3.27.0",
-        "vimeo/psalm": "^5.26"
+        "vimeo/psalm": "^7.9"
     },
     "scripts": {
         "docs:token-reference": "php scripts/generate-token-reference.php",
@@ -97,7 +97,7 @@
         "prepend-autoloader": false,
         "sort-packages": true,
         "platform": {
-            "php": "8.3",
+            "php": "8.3.16",
             "ext-xsl": "1"
         }
     }
