@@ -97,7 +97,7 @@
         "prepend-autoloader": false,
         "sort-packages": true,
         "platform": {
-            "php": "8.3",
+            "php": "8.3.16",
             "ext-xsl": "1"
         }
     }
