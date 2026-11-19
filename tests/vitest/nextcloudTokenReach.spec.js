@@ -7,7 +7,7 @@
  * `scripts/mapping/nextcloud-token-reach.json` holds the measurement, one entry
  * per token; this file keeps it true.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 import { describe, expect, it } from 'vitest'
 import fs from 'node:fs'

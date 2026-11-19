@@ -24,7 +24,7 @@
  *
  * Run with --check to compare instead of writing.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 /* global console, process */
@@ -43,7 +43,7 @@ const USE_SITE_NOTE = 'Nothing declares the variable; Nextcloud reads it with a 
 /**
  * The Nextcloud variables theme.css maps from a set token, with that token.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  * @param {string} css The design system stylesheet.
  * @return {Map<string, string>} Variable to the set token that drives it.
  */
@@ -62,7 +62,7 @@ export function mappedVariables(css) {
 /**
  * The variables a value reads, in order.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  * @param {string} value A CSS value.
  * @return {string[]} The variable names.
  */
@@ -73,7 +73,7 @@ export function readVariables(value) {
 /**
  * The reach of every Nextcloud internal token.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  * @param {object} tokens The `tokens` of the internal token map.
  * @param {Map<string, string>} mapped Variable to driving set token.
  * @return {object} Token name to its reach entry.
@@ -135,7 +135,7 @@ export function buildReach(tokens, mapped) {
 /**
  * The record as written to disk.
  *
- * @spec openspec/changes/nextcloud-tokens-recorded-reach/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  * @return {string} The JSON text.
  */
 export function render() {
