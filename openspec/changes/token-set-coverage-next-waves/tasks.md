@@ -95,3 +95,12 @@ own, with a delta spec, when it is picked up.
       `tests/vitest/publicBridgeRoleLayer.spec.js`, 7 of them red before the change.
 - [ ] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
       at rest, the hover step on hover, example-basisschool links in #8A2D0E (live pass, decision 139).
+      Looked at 19 Nov (live pass) on a portaliq site (portaliq 0.2.13 release, OpenRegister
+      2.2.0-dev, Nextcloud 35.0.1), the portal's theme switched to each set, buttons measured inside
+      the site: primary and secondary buttons are in the primary at rest, the primary button takes
+      the hover step on hover (basisschool #B03A12 / #8A2D0E, college #7A1F6E / #5E1755, opleider
+      #0E4D5C / #0A3A46, voortgezet #2D4FA0 / #233F82), and example-basisschool links are #8A2D0E.
+      Open: the secondary button keeps the primary on hover on all four (text and border), so it
+      never shows the hover step. The set defines the step (`--tilburg-interaction-hover-color`);
+      portaliq's `css/site-theme.css` colours `.pq-site .utrecht-button--secondary-action` from
+      `--_utrecht-button-color`, which the hover rule does not move. A portaliq change or a decision.
