@@ -167,8 +167,8 @@
         },
         "groningen": {
             "verdict": "pass",
-            "textRatio": 10.2,
-            "uiRatio": 10.2,
+            "textRatio": 6.59,
+            "uiRatio": 6.59,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
