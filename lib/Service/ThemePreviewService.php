@@ -176,13 +176,8 @@ class ThemePreviewService {
 			return null;
 		}
 
-		$expiresAt = (int)$this->config->getUserValue($uid, Application::APP_ID, self::USER_KEY_EXPIRES_AT, '0');
-		if ($expiresAt <= time()) {
-			$this->clearPreview(uid: $uid);
-			return null;
-		}
-
-		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSetId) === false) {
+		$expiresAt = $this->liveExpiry(uid: $uid);
+		if ($expiresAt === null || $this->tokenSetService->isValidTokenSet(tokenSetId: $tokenSetId) === false) {
 			$this->clearPreview(uid: $uid);
 			return null;
 		}
@@ -266,47 +261,115 @@ class ThemePreviewService {
 				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
 			}
 
-			$uid = $user->getUID();
+			$preview = $this->adminPreview(uid: $user->getUID(), activeTokenSet: $activeTokenSet);
 
-			$previewTokenSet = $this->config->getUserValue($uid, Application::APP_ID, self::USER_KEY_TOKEN_SET, '');
-			if ($previewTokenSet === '') {
-				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
-			}
-
-			// Demotion defence: only reached when a preview value exists.
-			if ($this->groupManager->isAdmin($uid) === false) {
-				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
-			}
-
-			$expiresAt = (int)$this->config->getUserValue($uid, Application::APP_ID, self::USER_KEY_EXPIRES_AT, '0');
-			if ($expiresAt <= time()) {
-				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
-			}
-
-			if ($this->tokenSetService->isValidTokenSet(tokenSetId: $previewTokenSet) === false) {
-				return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
-			}
-
-			// A preview that outlived its set's confirmation is not drawn:
-			// assertMayApply() throws, and the catch below falls back to the active set.
-			$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $previewTokenSet, alreadyApplied: $activeTokenSet);
-
-			return [
-				'tokenSet' => $previewTokenSet,
-				'previewActive' => true,
-				'expiresAt' => $expiresAt,
-			];
+			return ($preview ?? $this->noPreviewResult(activeTokenSet: $activeTokenSet));
 		} catch (Throwable $e) {
-			// Fail open to the active set: presentation, not security — a
-			// broken resolve (no session, CLI/occ, cron) must not crash boot.
-			$this->logger->debug(
-				'Theme preview resolution failed; falling back to the active token set.',
-				['exception' => $e]
-			);
-
-			return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
-		}//end try
+			return $this->failedResolution(e: $e, activeTokenSet: $activeTokenSet);
+		}
 	}//end resolveEffectiveTokenSet()
+
+	/**
+	 * Fail open to the active set: presentation, not security — a broken
+	 * resolve (no session, CLI/occ, cron) must not crash boot.
+	 *
+	 * @param Throwable $e Why the resolution failed.
+	 * @param string $activeTokenSet The instance-wide active token set id.
+	 *
+	 * @return array{tokenSet: string, previewActive: bool, expiresAt: int|null} The active set, no preview.
+	 */
+	private function failedResolution(Throwable $e, string $activeTokenSet): array {
+		$this->logger->debug(
+			'Theme preview resolution failed; falling back to the active token set.',
+			['exception' => $e]
+		);
+
+		return $this->noPreviewResult(activeTokenSet: $activeTokenSet);
+	}//end failedResolution()
+
+	/**
+	 * The user's own preview, when it is set, the user is still an admin, it
+	 * has not expired, and its set may still be drawn.
+	 *
+	 * @param string $uid The requesting user's id.
+	 * @param string $activeTokenSet The instance-wide active token set id.
+	 *
+	 * @return array{tokenSet: string, previewActive: bool, expiresAt: int|null}|null The preview, or null.
+	 *
+	 * @throws RestrictedSetNotConfirmedException When the previewed set lost its confirmation.
+	 */
+	private function adminPreview(string $uid, string $activeTokenSet): array|null {
+		$previewTokenSet = $this->config->getUserValue($uid, Application::APP_ID, self::USER_KEY_TOKEN_SET, '');
+		if ($previewTokenSet === '') {
+			return null;
+		}
+
+		// Demotion defence: only reached when a preview value exists.
+		if ($this->groupManager->isAdmin($uid) === false) {
+			return null;
+		}
+
+		$expiresAt = $this->liveExpiry(uid: $uid);
+		if ($expiresAt === null || $this->mayDraw(previewTokenSet: $previewTokenSet, activeTokenSet: $activeTokenSet) === false) {
+			return null;
+		}
+
+		return $this->previewResult(previewTokenSet: $previewTokenSet, expiresAt: $expiresAt);
+	}//end adminPreview()
+
+	/**
+	 * Build the "active preview" effective-token-set result.
+	 *
+	 * @param string $previewTokenSet The previewed set.
+	 * @param int $expiresAt When the preview expires.
+	 *
+	 * @return array{tokenSet: string, previewActive: bool, expiresAt: int|null}
+	 */
+	private function previewResult(string $previewTokenSet, int $expiresAt): array {
+		return [
+			'tokenSet' => $previewTokenSet,
+			'previewActive' => true,
+			'expiresAt' => $expiresAt,
+		];
+	}//end previewResult()
+
+	/**
+	 * When the user's preview expires, when that is still in the future.
+	 *
+	 * @param string $uid The user id.
+	 *
+	 * @return int|null The expiry, or null when it has passed.
+	 */
+	private function liveExpiry(string $uid): int|null {
+		$expiresAt = (int)$this->config->getUserValue($uid, Application::APP_ID, self::USER_KEY_EXPIRES_AT, '0');
+		if ($expiresAt <= time()) {
+			return null;
+		}
+
+		return $expiresAt;
+	}//end liveExpiry()
+
+	/**
+	 * Whether a previewed set still exists and may still be drawn. A preview
+	 * that outlived its set's confirmation is not drawn: assertMayApply()
+	 * throws, and the caller falls back to the active set.
+	 *
+	 * @param string $previewTokenSet The previewed set.
+	 * @param string $activeTokenSet The instance-wide active token set id.
+	 *
+	 * @return bool False when the set no longer exists.
+	 *
+	 * @throws RestrictedSetNotConfirmedException When the set lost its confirmation.
+	 */
+	private function mayDraw(string $previewTokenSet, string $activeTokenSet): bool {
+		if ($this->tokenSetService->isValidTokenSet(tokenSetId: $previewTokenSet) === false) {
+			return false;
+		}
+
+		$this->tokenSetService->licenceGate()->assertMayApply(tokenSetId: $previewTokenSet, alreadyApplied: $activeTokenSet);
+
+		return true;
+	}//end mayDraw()
 
 	/**
 	 * Build the "no active preview" effective-token-set result.

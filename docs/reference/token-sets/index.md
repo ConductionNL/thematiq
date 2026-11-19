@@ -50,14 +50,17 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Ridderkerk](./ridderkerk.md) `ridderkerk`
 - [Rijkshuisstijl](./rijkshuisstijl.md) `rijkshuisstijl`
 - [Gemeente Rotterdam](./rotterdam.md) `rotterdam`
+- [Gemeente Sittard-Geleen](./sittard-geleen.md) `sittard-geleen`
 - [Gemeente Stede Broec](./stedebroec.md) `stedebroec`
 - [Summer Breeze](./summer-breeze.md) `summer-breeze`
 - [Gemeente Tilburg](./tilburg.md) `tilburg`
 - [Gemeente Tubbergen](./tubbergen.md) `tubbergen`
 - [Gemeente Utrecht](./utrecht.md) `utrecht`
-- [Vaartveld College](./vaartveld.md) `vaartveld`
+- [Zuiddrecht College](./vaartveld.md) `vaartveld`
 - [Gemeente Venray](./venray.md) `venray`
+- [Vidar](./vidar.md) `vidar`
 - [VNG Vereniging Nederlandse Gemeenten](./vng.md) `vng`
+- [Gemeente Voorne aan Zee](./voorne-aan-zee.md) `voorne-aan-zee`
 - [Gemeente Vught](./vught.md) `vught`
 - [Warmtepompacademie](./warmtepompacademie.md) `warmtepompacademie`
 - [Gemeente Westervoort](./westervoort.md) `westervoort`

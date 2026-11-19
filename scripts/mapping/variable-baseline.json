@@ -10,9 +10,11 @@
 		"runtime/excluded": 36,
 		"slot/excluded": 27,
 		"slot/settable": 56,
-		"theme/mapped": 66,
-		"theme/settable": 45,
+		"theme/mapped": 67,
+		"theme/settable": 44,
 		"unread/excluded": 10
 	},
-	"removals": {}
+	"removals": {
+		"--color-info-rgb": "settable -> mapped (decision 244, 15 Oct 2026): overrides.css maps it to --nldesign-color-info-rgb, which 63 sets carry, so the set's info colour reaches it; tests/vitest/infoRgbMapping.spec.js measures it."
+	}
 }

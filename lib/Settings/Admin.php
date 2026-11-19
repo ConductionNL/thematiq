@@ -25,16 +25,10 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Settings;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\EmailThemingService;
-use OCA\Thematiq\Service\PlaygroundStateService;
-use OCA\Thematiq\Service\ThemePreviewService;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
-use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Settings\IDelegatedSettings;
 
@@ -58,6 +52,17 @@ class Admin implements IDelegatedSettings {
 	public const DEFAULT_DOCUMENTATION_URL = 'https://thematiq.conduction.nl';
 
 	/**
+	 * The form state the template receives, in this order.
+	 *
+	 * @var array<int, string>
+	 */
+	private const TEMPLATE_STATE_KEYS = [
+		'tokenSets', 'currentTokenSet', 'currentDesignSystem', 'hideSlogan', 'showMenuLabels', 'primaryDrivesComponents',
+		'darkVariantsEnabled', 'marianneEnabled', 'emailThemingState', 'emailFooterConfig', 'occEnableCommand',
+		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource',
+	];
+
+	/**
 	 * The application configuration service.
 	 *
 	 * @var IConfig
@@ -65,25 +70,18 @@ class Admin implements IDelegatedSettings {
 	private IConfig $config;
 
 	/**
-	 * The token set service.
+	 * The services the form reads its state from.
 	 *
-	 * @var TokenSetService
+	 * @var AdminFormServices
 	 */
-	private TokenSetService $tokenSetService;
+	private AdminFormServices $services;
 
 	/**
-	 * The email theming service.
+	 * The initial state, the request and the playground boot state.
 	 *
-	 * @var EmailThemingService
+	 * @var AdminPageState
 	 */
-	private EmailThemingService $emailThemingService;
-
-	/**
-	 * The theme preview service (drives the active-preview row).
-	 *
-	 * @var ThemePreviewService
-	 */
-	private ThemePreviewService $previewService;
+	private AdminPageState $page;
 
 	/**
 	 * The user session — resolves the requesting admin's uid for the
@@ -94,77 +92,23 @@ class Admin implements IDelegatedSettings {
 	private IUserSession $userSession;
 
 	/**
-	 * Resolves the active icon pack (icon-packs spec) for the read-only
-	 * admin indicator.
-	 *
-	 * @var DesignSystemService
-	 */
-	private DesignSystemService $designSystemService;
-
-	/**
-	 * Carries server-side state to js/admin.js.
-	 *
-	 * The panel used to serialise this state into `data-*` attributes on the
-	 * `#nldesign-settings` div and have admin.js read it back with
-	 * `getAttribute()`. That is the pattern ADR-004 rules out: it breaks on
-	 * CSP-hardened instances, and it breaks SILENTLY — any markup change that
-	 * moves or renames the carrying element leaves admin.js parsing an empty
-	 * string and rendering as though the server had sent nothing at all.
-	 *
-	 * @var IInitialState
-	 */
-	private IInitialState $initialState;
-
-	/**
-	 * The current request — read only for the `?mock=1` switch that layers the
-	 * presentation mock (js/admin-mock.js) over the panel.
-	 *
-	 * @var IRequest
-	 */
-	private IRequest $request;
-
-	/**
-	 * Assembles what the component playground instrument reads at boot: the
-	 * component inventory, the reason vocabulary and the active set's token
-	 * values.
-	 *
-	 * @var PlaygroundStateService
-	 */
-	private PlaygroundStateService $playgroundState;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
-	 * @param TokenSetService $tokenSetService The token set service.
-	 * @param EmailThemingService $emailThemingService The email theming service.
-	 * @param ThemePreviewService $previewService The theme preview service.
 	 * @param IUserSession $userSession The user session.
-	 * @param DesignSystemService $designSystemService Resolves the active icon pack.
-	 * @param IInitialState $initialState Carries server state to admin.js.
-	 * @param IRequest $request The current request (presentation-mock switch).
-	 * @param PlaygroundStateService $playgroundState What the component playground reads at boot.
+	 * @param AdminFormServices $services The services the form reads its state from.
+	 * @param AdminPageState $page The initial state, the request and the playground boot state.
 	 */
 	public function __construct(
 		IConfig $config,
-		TokenSetService $tokenSetService,
-		EmailThemingService $emailThemingService,
-		ThemePreviewService $previewService,
 		IUserSession $userSession,
-		DesignSystemService $designSystemService,
-		IInitialState $initialState,
-		IRequest $request,
-		PlaygroundStateService $playgroundState,
+		AdminFormServices $services,
+		AdminPageState $page,
 	) {
 		$this->config = $config;
-		$this->tokenSetService = $tokenSetService;
-		$this->emailThemingService = $emailThemingService;
-		$this->previewService = $previewService;
 		$this->userSession = $userSession;
-		$this->designSystemService = $designSystemService;
-		$this->initialState = $initialState;
-		$this->request = $request;
-		$this->playgroundState = $playgroundState;
+		$this->services = $services;
+		$this->page = $page;
 	}//end __construct()
 
 	/**
@@ -177,103 +121,129 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
 	public function getForm(): TemplateResponse {
+		$state = $this->formState();
+		$this->publishBootState(state: $state);
+
+		return new TemplateResponse(Application::APP_ID, 'settings/admin', $this->templateParams(state: $state));
+	}//end getForm()
+
+	/**
+	 * Everything the form shows: the selectable sets, the current one and its design system, the
+	 * flags, the e-mail theming, the signed-in admin's preview and the active icon packs.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function formState(): array {
 		// The PICKER, not the catalogue. See TokenSetSelectionPolicy.
 		$tokenSets = $this->selectableTokenSets();
+		$currentTokenSet = $this->config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud');
+		$state = ['tokenSets' => $tokenSets, 'currentTokenSet' => $currentTokenSet] + $this->flagState();
+		$state['currentDesignSystem'] = $this->designSystemOf(tokenSets: $tokenSets, tokenSetId: $currentTokenSet);
+		$state['emailThemingState'] = $this->services->emailTheming->getState();
+		$state['emailFooterConfig'] = $this->services->emailTheming->getFooterConfig();
+		$state['occEnableCommand'] = EmailThemingService::OCC_ENABLE_COMMAND;
+		$state['occDisableCommand'] = EmailThemingService::OCC_DISABLE_COMMAND;
+		$state['activePreview'] = $this->getActivePreviewForCurrentUser();
+		[$state['activeIconPacks'], $state['iconPackSource']] = $this->getActiveIconPackIndicator(tokenSetId: $currentTokenSet);
 
-		$currentTokenSet = $this->config->getAppValue(
-			Application::APP_ID,
-			'token_set',
-			'nextcloud'
-		);
+		return $state;
+	}//end formState()
 
-		$hideSlogan = $this->isFlagOn(key: 'hide_slogan');
-		$showMenuLabels = $this->isFlagOn(key: 'show_menu_labels');
+	/**
+	 * The admin's on/off choices.
+	 *
+	 * `primaryDrivesComponents`: whether the brand primary overrules every component token it used
+	 * to drive. OFF by default, which costs nothing visually: with no per-component value stored,
+	 * the component tokens already resolve to the brand primary. Turning it ON gives that back up.
+	 * `confirmSaveStock`/`confirmSaveTheme`: whether Save overrides asks first. Both default ON: the
+	 * first save is the one most worth a question, and the dialogs are the only place the "keep
+	 * this as a new token set" choice is offered.
+	 *
+	 * @return array<string, bool>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function flagState(): array {
+		return [
+			'hideSlogan' => $this->isFlagOn(key: 'hide_slogan'),
+			'showMenuLabels' => $this->isFlagOn(key: 'show_menu_labels'),
+			'primaryDrivesComponents' => $this->isFlagOn(key: 'primary_drives_components'),
+			'confirmSaveStock' => $this->isFlagOn(key: 'confirm_save_stock', fallback: '1'),
+			'confirmSaveTheme' => $this->isFlagOn(key: 'confirm_save_theme', fallback: '1'),
+			'darkVariantsEnabled' => $this->isFlagOn(key: 'dark_variants', fallback: '1'),
+			'marianneEnabled' => $this->isFlagOn(key: 'marianne_enabled'),
+		];
+	}//end flagState()
 
-		// Whether the brand primary overrules every component token it used to
-		// drive. OFF by default, and that costs nothing visually: with no
-		// per-component value stored, the component tokens already resolve to the
-		// brand primary, so an instance that has never opened the playground
-		// renders identically either way. Turning it ON is the deliberate choice
-		// to give that back up — the primary wins again and the per-component
-		// colour controls lock.
-		$drivesComponents = $this->isFlagOn(key: 'primary_drives_components');
-
-		// Whether Save overrides asks first. Both default ON: the first save an
-		// admin makes is the one most worth a question, and the dialogs are the
-		// only place the "keep this as a new token set" choice is offered.
-		$confirmSaveStock = $this->isFlagOn(key: 'confirm_save_stock', fallback: '1');
-		$confirmSaveTheme = $this->isFlagOn(key: 'confirm_save_theme', fallback: '1');
-
-		$darkVariantsEnabled = $this->isFlagOn(key: 'dark_variants', fallback: '1');
-		$marianneEnabled = $this->isFlagOn(key: 'marianne_enabled');
-
-		// The design system backing the current token set — resolved from the
-		// already-fetched $tokenSets inventory (TokenSetService surfaces
-		// `design_system` per entry), so no new service dependency is needed
-		// just to gate the Marianne notice's initial server-rendered
-		// visibility (js/admin.js re-derives it client-side on selection
-		// change from the same `data-design-system` option attribute).
-		$currentDesignSystem = 'nldesign';
+	/**
+	 * The design system behind a token set, from the already-fetched inventory.
+	 *
+	 * It gates the Marianne notice's server-rendered visibility; js/admin.js re-derives it
+	 * client-side on selection change from the same `data-design-system` option attribute.
+	 *
+	 * @param array<int, array<string, mixed>> $tokenSets The selectable sets.
+	 * @param string $tokenSetId The current set.
+	 *
+	 * @return string `nldesign` when the set is not among them.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function designSystemOf(array $tokenSets, string $tokenSetId): string {
 		foreach ($tokenSets as $tokenSet) {
-			if ($tokenSet['id'] === $currentTokenSet) {
-				$currentDesignSystem = $tokenSet['design_system'];
-				break;
+			if ($tokenSet['id'] === $tokenSetId) {
+				return $tokenSet['design_system'];
 			}
 		}
 
-		$emailThemingState = $this->emailThemingService->getState();
-		$emailFooterConfig = $this->emailThemingService->getFooterConfig();
+		return 'nldesign';
+	}//end designSystemOf()
 
-		$activePreview = $this->getActivePreviewForCurrentUser();
+	/**
+	 * Publish the server state js/admin.js needs at boot over the canonical channel (ADR-004).
+	 *
+	 * The save-confirmation flags go through initial state rather than the template because the two
+	 * controls they drive are rendered by js/admin.js inside the token editor.
+	 *
+	 * @param array<string, mixed> $state The form state.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function publishBootState(array $state): void {
+		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme'] as $key) {
+			$this->page->initialState->provideInitialState($key, $state[$key]);
+		}
 
-		[$activeIconPacks, $iconPackSource] = $this->getActiveIconPackIndicator(tokenSetId: $currentTokenSet);
+		$this->publishPreviewState(activePreview: $state['activePreview'], iconPackSource: $state['iconPackSource']);
+		$this->publishPlaygroundState(currentTokenSet: $state['currentTokenSet'], activePreview: $state['activePreview']);
+	}//end publishBootState()
 
-		// Server state that js/admin.js needs at boot, carried over the
-		// canonical channel (ADR-004) rather than `data-*` attributes on the
-		// rendered markup. The template still receives these values for the
-		// parts it renders server-side; what changed is where the SCRIPT
-		// reads them from.
-		$this->initialState->provideInitialState('tokenSets', $tokenSets);
-		$this->initialState->provideInitialState('currentTokenSet', $currentTokenSet);
+	/**
+	 * The template parameters: the form state, the mock switch, the environment marker, the
+	 * layout choices and the documentation link.
+	 *
+	 * `?mock=1` layers the theming-makeover visual shells (js/admin-mock.js, css/admin-mock.css)
+	 * over the real panel so they can be screenshotted from a running instance.
+	 *
+	 * @param array<string, mixed> $state The form state.
+	 *
+	 * @return array<string, mixed>
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function templateParams(array $state): array {
+		$params = [];
+		foreach (self::TEMPLATE_STATE_KEYS as $key) {
+			$params[$key] = $state[$key];
+		}
 
-		// The save-confirmation flags. Through initial state rather than the
-		// template because the two controls they drive are rendered by
-		// js/admin.js inside the token editor, which the template does not own.
-		$this->initialState->provideInitialState('confirmSaveStock', $confirmSaveStock);
-		$this->initialState->provideInitialState('confirmSaveTheme', $confirmSaveTheme);
-		$this->publishPreviewState(activePreview: $activePreview, iconPackSource: $iconPackSource);
+		$params['mockUi'] = ($this->page->request->getParam('mock') === '1');
 
-		$this->publishPlaygroundState(
-			currentTokenSet: $currentTokenSet,
-			activePreview: $activePreview
-		);
-
-		return new TemplateResponse(
-			Application::APP_ID,
-			'settings/admin',
-			[
-				'tokenSets' => $tokenSets,
-				'currentTokenSet' => $currentTokenSet,
-				'currentDesignSystem' => $currentDesignSystem,
-				'hideSlogan' => $hideSlogan,
-				'showMenuLabels' => $showMenuLabels,
-				'primaryDrivesComponents' => $drivesComponents,
-				'darkVariantsEnabled' => $darkVariantsEnabled,
-				'marianneEnabled' => $marianneEnabled,
-				'emailThemingState' => $emailThemingState,
-				'emailFooterConfig' => $emailFooterConfig,
-				'occEnableCommand' => EmailThemingService::OCC_ENABLE_COMMAND,
-				'occDisableCommand' => EmailThemingService::OCC_DISABLE_COMMAND,
-				'activePreview' => $activePreview,
-				'activeIconPacks' => $activeIconPacks,
-				'iconPackSource' => $iconPackSource,
-				// Presentation mock: `?mock=1` layers the theming-makeover visual shells
-				// (js/admin-mock.js, css/admin-mock.css) over the real panel so they
-				// can be screenshotted from a running instance. Nothing else changes.
-				'mockUi' => ($this->request->getParam('mock') === '1'),
-			] + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $currentDesignSystem)
-		);
-	}//end getForm()
+		return $params + $this->environmentParams() + $this->layoutParams() + $this->documentationParams(designSystem: $state['currentDesignSystem']);
+	}//end templateParams()
 
 	/**
 	 * The administrator's own layout choices, as stored. An empty value means
@@ -343,7 +313,7 @@ class Admin implements IDelegatedSettings {
 	 */
 	private function documentationParams(string $designSystem): array {
 		$urls = [];
-		foreach ($this->designSystemService->getDesignSystems() as $id => $entry) {
+		foreach ($this->services->designSystems->getDesignSystems() as $id => $entry) {
 			$url = ($entry['documentation_url'] ?? '');
 			// Only an https link: the manifest must not put a javascript: URL in the header.
 			if (is_string($url) === false || str_starts_with($url, 'https://') === false) {
@@ -353,7 +323,7 @@ class Admin implements IDelegatedSettings {
 			$urls[(string)$id] = $url;
 		}
 
-		$this->initialState->provideInitialState('designSystemDocs', $urls);
+		$this->page->initialState->provideInitialState('designSystemDocs', $urls);
 
 		return ['documentationUrl' => ($urls[$designSystem] ?? self::DEFAULT_DOCUMENTATION_URL)];
 	}//end documentationParams()
@@ -396,8 +366,8 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/icon-packs/spec.md
 	 */
 	private function publishPreviewState(?array $activePreview, string $iconPackSource): void {
-		$this->initialState->provideInitialState('activePreview', ($activePreview ?? []));
-		$this->initialState->provideInitialState('iconPackSource', $iconPackSource);
+		$this->page->initialState->provideInitialState('activePreview', ($activePreview ?? []));
+		$this->page->initialState->provideInitialState('iconPackSource', $iconPackSource);
 	}//end publishPreviewState()
 
 	/**
@@ -427,8 +397,8 @@ class Admin implements IDelegatedSettings {
 			$playgroundSet = $activePreview['tokenSet'];
 		}
 
-		foreach ($this->playgroundState->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
-			$this->initialState->provideInitialState($key, $value);
+		foreach ($this->page->playground->getInitialState(tokenSetId: $playgroundSet) as $key => $value) {
+			$this->page->initialState->provideInitialState($key, $value);
 		}
 	}//end publishPlaygroundState()
 
@@ -445,7 +415,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/icon-packs/spec.md
 	 */
 	private function getActiveIconPackIndicator(string $tokenSetId): array {
-		$activeIconPacks = $this->designSystemService->resolveActiveIconPacks(tokenSetId: $tokenSetId);
+		$activeIconPacks = $this->services->designSystems->resolveActiveIconPacks(tokenSetId: $tokenSetId);
 
 		$override = trim($this->config->getAppValue(Application::APP_ID, 'icon_pack', ''));
 
@@ -472,12 +442,12 @@ class Admin implements IDelegatedSettings {
 			return null;
 		}
 
-		$preview = $this->previewService->getActivePreview(uid: $uid);
+		$preview = $this->services->previews->getActivePreview(uid: $uid);
 		if ($preview === null) {
 			return null;
 		}
 
-		$meta = $this->tokenSetService->getAvailableTokenSets();
+		$meta = $this->services->tokenSets->getAvailableTokenSets();
 		$name = $preview['tokenSet'];
 		foreach ($meta as $tokenSet) {
 			if ($tokenSet['id'] === $preview['tokenSet']) {
@@ -539,6 +509,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function getAuthorizedAppConfig(): array {
 		return [
@@ -584,9 +555,9 @@ class Admin implements IDelegatedSettings {
 	 */
 	private function selectableTokenSets(): array {
 		return (new TokenSetSelectionPolicy())->selectable(
-			tokenSets: $this->tokenSetService,
+			tokenSets: $this->services->tokenSets,
 			config: $this->config,
-			appPath: $this->tokenSetService->getAppPath()
+			appPath: $this->services->tokenSets->getAppPath()
 		);
 	}//end selectableTokenSets()
 

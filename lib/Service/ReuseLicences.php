@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ namespace OCA\Thematiq\Service;
  * It tells a licence an annotation gives a file by name (`override`) from the
  * repository default, because only the first is a statement about that file.
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
  */
 class ReuseLicences {
 
@@ -37,7 +37,7 @@ class ReuseLicences {
 	 *
 	 * @return string The content.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
 	 */
 	public function read(string $path): string {
 		if (is_file($path) === false) {
@@ -46,6 +46,20 @@ class ReuseLicences {
 
 		return (string)file_get_contents($path);
 	}//end read()
+
+	/**
+	 * Whether a file of the repository still holds a statement written down about it.
+	 *
+	 * @param string $appPath The app root path.
+	 * @param array<string, string> $statement The repository-relative file (`source`) and the words it says (`quote`).
+	 *
+	 * @return bool True while the file holds the quote.
+	 *
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 */
+	public function stillSays(string $appPath, array $statement): bool {
+		return str_contains($this->read(path: $appPath . '/' . $statement['source']), $statement['quote']);
+	}//end stillSays()
 
 	/**
 	 * The licence `REUSE.toml` gives a file.
@@ -59,7 +73,7 @@ class ReuseLicences {
 	 *
 	 * @return array{licence: string|null, stated: bool} The SPDX identifier, and whether an override names the file.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
 	 */
 	public function licenceOf(string $file, array $annotations): array {
 		$default = null;
@@ -91,7 +105,7 @@ class ReuseLicences {
 	 *
 	 * @return array<int, array{paths: string[], licence: string, override: bool}> The annotations, in file order.
 	 *
-	 * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
+	 * @spec openspec/specs/shell-catalogue/spec.md#requirement-a-logo-is-redistributable-only-when-the-repository-says-so
 	 */
 	public function annotations(string $appPath): array {
 		$toml = (string)preg_replace('/^\s*#.*$/m', '', $this->read(path: $appPath . '/REUSE.toml'));

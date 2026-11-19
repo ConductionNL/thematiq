@@ -365,10 +365,11 @@
 			"tokens": {
 				"--nldesign-component-table-header-color": {
 					"global": "--color-text-maxcontrast",
+					"paint": { "property": "color", "selectors": ["th"], "fallback": "inherit" },
 					"label": "Table header label",
 					"type": "color",
 					"primary": false,
-					"paints": "Header row labels and secondary cells",
+					"paints": "Header row labels",
 					"callout": 1
 				},
 				"--nldesign-component-table-header-background-color": {
@@ -982,7 +983,9 @@
 				".button-vue--primary",
 				".button-vue--vue-primary",
 				"button.primary",
-				"input[type='submit']"
+				"input[type='submit']",
+				"input.primary",
+				"a.primary"
 			],
 			"tokens": {
 				"--nldesign-component-button-primary-action-background-color": {
@@ -1020,6 +1023,7 @@
 				},
 				"--nldesign-component-button-focus-border-color": {
 					"global": "--color-main-text",
+					"state": ":focus-visible",
 					"label": "Button focus ring",
 					"type": "color",
 					"primary": false,
@@ -1442,6 +1446,22 @@
 				"--nldesign-component-status-badge-error-color": {
 					"global": "--color-error-text",
 					"label": "Error pill label",
+					"type": "color",
+					"primary": false,
+					"paints": "Its label",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-neutral-background-color": {
+					"global": "--color-background-dark",
+					"label": "Neutral pill background",
+					"type": "color",
+					"primary": false,
+					"paints": "The fill of a pill without a status colour",
+					"callout": 3
+				},
+				"--nldesign-component-status-badge-neutral-color": {
+					"global": "--color-main-text",
+					"label": "Neutral pill label",
 					"type": "color",
 					"primary": false,
 					"paints": "Its label",

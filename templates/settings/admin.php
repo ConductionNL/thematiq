@@ -36,6 +36,12 @@ script('thematiq', 'lib/brandForm');
 // The per-app theming list's search, count and exclusion list
 // (window.NldesignAppTheming); admin.js builds the dropdown from it.
 script('thematiq', 'lib/appTheming');
+// What syncing Nextcloud's own theming to a set would do
+// (window.NldesignThemingPlan); admin.js shows and applies the plan.
+script('thematiq', 'lib/themingPlan');
+// The inert markup renderer (window.NldesignMarkupRender) admin.js and the
+// playground put their built markup through instead of assigning innerHTML.
+script('thematiq', 'lib/markupRender');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-config-source');
@@ -43,6 +49,7 @@ script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
 script('thematiq', 'admin-workspace-icons');
+script('thematiq', 'admin-openproject-link');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -383,7 +390,7 @@ if ($_['mockUi'] === true) {
 						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
 						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
 					</div>
-					<!-- The main button's own colour (openspec/changes/brand-form-action-colour). Off by
+					<!-- The main button's own colour (openspec/specs/simple-brand-form). Off by
 					     default: without it the main button wears the primary, as every set did. -->
 					<div class="nldesign-field">
 						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
@@ -735,6 +742,22 @@ if ($_['mockUi'] === true) {
 		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
 	</div>
 
+	<!-- OpenProject's modules in the apps menu (openproject-in-the-app-menu).
+	     Filled by js/admin-openproject-link.js. -->
+	<div class="nldesign-openproject-link" id="nldesign-openproject-link" style="margin-top:2em">
+		<h3><?php p($l->t('OpenProject in the apps menu')); ?></h3>
+		<p class="settings-hint" id="nldesign-openproject-link-hint">
+			<?php p($l->t('The apps menu lists OpenProject\'s modules in a section of their own. Leave empty for none.')); ?>
+		</p>
+		<p>
+			<label for="nldesign-openproject-url"><?php p($l->t('OpenProject address')); ?></label>
+			<input type="url" id="nldesign-openproject-url" placeholder="https://openproject.example.org"
+				   aria-describedby="nldesign-openproject-link-hint" autocomplete="off">
+			<button type="button" class="button" id="nldesign-openproject-save"><?php p($l->t('Save address')); ?></button>
+		</p>
+		<span id="nldesign-openproject-feedback" role="status" aria-live="polite"></span>
+	</div>
+
 	<!-- Brand per app: an app's own token set and logos
 	     (openspec/specs/per-app-theming/spec.md). Filled by js/admin-app-brands.js. -->
 	<div class="nldesign-app-brands" id="nldesign-app-brands" style="margin-top:2em">
@@ -812,6 +835,17 @@ if ($_['mockUi'] === true) {
 		<div id="nldesign-font-list" class="nldesign-custom-set-list" role="group"
 			 aria-label="<?php p($l->t('Custom fonts')); ?>">
 			<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
+		</div>
+		<!-- Approved font library (openspec/specs/custom-fonts, change archive/2026-11-14-rows-without-a-requirement):
+		     the fonts the app bundles, each with its licence, assignable to a
+		     role without uploading a file. -->
+		<h4 id="nldesign-font-library-heading"><?php p($l->t('Font library')); ?></h4>
+		<p class="settings-hint">
+			<?php p($l->t('Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.')); ?>
+		</p>
+		<div id="nldesign-font-library" class="nldesign-custom-set-list" role="group"
+			 aria-labelledby="nldesign-font-library-heading">
+			<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
 		</div>
 	</div>
 

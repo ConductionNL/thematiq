@@ -55,6 +55,13 @@ class LogoLayerService {
 	private const WATERMARK_SUFFIX = '-emblem-grey';
 
 	/**
+	 * What a set's coloured emblem file is called, after the set id.
+	 *
+	 * @var string
+	 */
+	private const EMBLEM_SUFFIX = '-emblem';
+
+	/**
 	 * What a bundle that masks the header logo reads when a logo exists.
 	 *
 	 * The La Suite element overrides, which Cunningham shares, paint
@@ -145,42 +152,108 @@ class LogoLayerService {
 	 *                                                                          nothing can be said about the logo (core's logo.svg unresolvable).
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-001
 	 */
 	public function layer(string $tokenSet): ?array {
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
 		// ImageManager accepts; a shipped set's is an .svg. First match wins.
 		$relative = $this->shippedLogo(name: $tokenSet);
 
-		// UNQUOTED on purpose, here and below. `Util::addHeader()` HTML-escapes
-		// its text, so a quoted `url("…")` reaches the page as
-		// `url(&quot;…&quot;)` and the declaration is invalid — measured in the
-		// browser. An app path carries no spaces, parentheses or quotes, so
-		// unquoted is both valid and safe.
-		if ($relative !== null) {
-			return $this->inlineLayer(
-				css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES
-					. $this->watermarkDeclaration(tokenSet: $tokenSet) . '}'
-			);
-		}
+		// A logo uploaded on core's Theming page wins over the set's own
+		// (REQ-TPLAT-001): core stays the place a logo is uploaded. The set's
+		// watermark and emblem are not a logo and still apply.
+		if ($this->hasUploadedLogo() === true) {
+			$extras = '';
+			if ($relative !== null) {
+				$extras = $this->watermarkDeclaration(tokenSet: $tokenSet) . $this->emblemDeclaration(tokenSet: $tokenSet);
+			}
 
-		// The same appconfig keys `ThemingDefaults` reads to decide whether a
-		// custom logo exists at all.
-		$hasUploadedLogo = ($this->config->getAppValue('theming', 'logoheaderMime', '') !== ''
-			|| $this->config->getAppValue('theming', 'logoMime', '') !== '');
-		if ($hasUploadedLogo === true) {
 			return $this->inlineLayer(
 				css: ':root{--nldesign-logo-url:var(--image-logoheader,var(--image-logo));'
-					. '--nldesign-logo-filter:none;' . self::HEADER_LOGO_VARIABLES . '}'
+					. '--nldesign-logo-filter:none;' . self::HEADER_LOGO_VARIABLES . $extras . '}'
 			);
 		}
 
-		// `imagePath()` THROWS when it cannot resolve the file, and this method
-		// runs inside the design-system layer, so an unhandled throw here would
-		// also cancel the dark-variant and contrast stylesheets emitted after
-		// it. Without the URL there is nothing to mask, so the header keeps the
-		// pre-existing empty slot rather than gaining a coloured block.
+		if ($relative !== null) {
+			return $this->ownLogoLayer(tokenSet: $tokenSet, relative: $relative);
+		}
+
+		return $this->maskedCoreLogoLayer();
+	}//end layer()
+
+	/**
+	 * The layer of a set that ships its own logo, with its watermark and emblem.
+	 *
+	 * UNQUOTED on purpose. `Util::addHeader()` HTML-escapes its text, so a
+	 * quoted `url("…")` reaches the page as `url(&quot;…&quot;)` and the
+	 * declaration is invalid — measured in the browser. An app path carries no
+	 * spaces, parentheses or quotes, so unquoted is both valid and safe.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 * @param string $relative The app-relative path of its logo.
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string} The inline layer.
+	 */
+	private function ownLogoLayer(string $tokenSet, string $relative): array {
+		return $this->inlineLayer(
+			css: ':root{--nldesign-logo-url:url(' . $this->files->url(name: $relative) . ');' . self::HEADER_LOGO_VARIABLES
+				. $this->watermarkDeclaration(tokenSet: $tokenSet) . $this->emblemDeclaration(tokenSet: $tokenSet) . '}'
+		);
+	}//end ownLogoLayer()
+
+	/**
+	 * Whether an admin uploaded a logo, by the same appconfig keys
+	 * `ThemingDefaults` reads to decide whether a custom logo exists at all.
+	 *
+	 * @return bool True when a header logo or a logo was uploaded.
+	 */
+	private function hasUploadedLogo(): bool {
+		return $this->config->getAppValue('theming', 'logoheaderMime', '') !== ''
+			|| $this->config->getAppValue('theming', 'logoMime', '') !== '';
+	}//end hasUploadedLogo()
+
+	/**
+	 * Core's logo.svg masked in the header text colour, or null when it cannot be resolved.
+	 *
+	 * `imagePath()` THROWS when it cannot resolve the file, and this runs
+	 * inside the design-system layer, so an unhandled throw here would also
+	 * cancel the dark-variant and contrast stylesheets emitted after it.
+	 * Without the URL there is nothing to mask, so the header keeps the
+	 * pre-existing empty slot rather than gaining a coloured block.
+	 *
+	 * A bundle that paints the mark in its own colour declares
+	 * --nldesign-header-mark-fill on the logo element: the La Suite element
+	 * overrides fill it with the brand, and this rule, which renders over
+	 * theirs, read only the header text colour, near-black there (#975).
+	 * The nldesign bundle declares none and keeps the header text colour.
+	 *
+	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline layer.
+	 */
+	private function maskedCoreLogoLayer(): ?array {
+		$logo = $this->coreLogoUrl();
+		if ($logo === null) {
+			return null;
+		}
+
+		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
+
+		return $this->inlineLayer(
+			css: '#nextcloud .logo{background-image:none!important;'
+				. 'background-color:var(--nldesign-header-mark-fill,var(--nldesign-color-header-text,#333333))!important;'
+				. 'filter:none!important;'
+				. '-webkit-mask:' . $mask . ';'
+				. 'mask:' . $mask . '}'
+		);
+	}//end maskedCoreLogoLayer()
+
+	/**
+	 * The url of core's logo.svg, null (and a debug line) when it cannot be resolved.
+	 *
+	 * @return string|null The url.
+	 */
+	private function coreLogoUrl(): string|null {
 		try {
-			$logo = $this->urlGenerator->imagePath(appName: 'core', file: 'logo/logo.svg');
+			return $this->urlGenerator->imagePath(appName: 'core', file: 'logo/logo.svg');
 		} catch (Throwable $e) {
 			$this->logger->debug(
 				'nldesign: core logo.svg could not be resolved, so the header keeps the active set\'s own (absent) logo.',
@@ -191,23 +264,7 @@ class LogoLayerService {
 			);
 			return null;
 		}
-
-		$mask = 'url(' . $logo . ') no-repeat center / contain!important';
-
-		// A bundle that paints the mark in its own colour declares
-		// --nldesign-header-mark-fill on the logo element: the La Suite element
-		// overrides fill it with the brand, and this rule, which renders over
-		// theirs, read only the header text colour, near-black there (#975).
-		// The nldesign bundle declares none and keeps the header text colour.
-
-		return $this->inlineLayer(
-			css: '#nextcloud .logo{background-image:none!important;'
-				. 'background-color:var(--nldesign-header-mark-fill,var(--nldesign-color-header-text,#333333))!important;'
-				. 'filter:none!important;'
-				. '-webkit-mask:' . $mask . ';'
-				. 'mask:' . $mask . '}'
-		);
-	}//end layer()
+	}//end coreLogoUrl()
 
 	/**
 	 * Re-declare the active set's DARK logo as an absolute url, in both dark
@@ -231,6 +288,44 @@ class LogoLayerService {
 	 * @spec openspec/specs/frankendesk-token-set/spec.md
 	 */
 	public function darkLayer(string $tokenSet): ?array {
+		$href = $this->darkLogoUrl(tokenSet: $tokenSet);
+		if ($href === null) {
+			return null;
+		}
+
+		return [
+			'layer' => 'dark-logo-url',
+			'kind' => 'inline',
+			'css' => $this->darkLogoCss(href: $href),
+			'id' => CssInjectionService::DARK_LOGO_STYLE_ID,
+		];
+	}//end darkLayer()
+
+	/**
+	 * The dark logo declarations, in both dark scopes.
+	 *
+	 * @param string $href The dark logo's url.
+	 *
+	 * @return string The stylesheet body.
+	 */
+	private function darkLogoCss(string $href): string {
+		$url = 'url(' . $href . ')';
+		$declarations = '{--nldesign-logo-url:' . $url . ';--nldesign-header-logo-image:' . $url . '}';
+
+		return '@media (prefers-color-scheme: dark){'
+			. 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
+			. $declarations . '}'
+			. 'body[data-theme-dark],body[data-themes*=dark]' . $declarations;
+	}//end darkLogoCss()
+
+	/**
+	 * The url of a set's dark logo, when it ships a light and a dark logo.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 *
+	 * @return string|null The url, or null when there is no pair or no url.
+	 */
+	private function darkLogoUrl(string $tokenSet): string|null {
 		if ($this->shippedLogo(name: $tokenSet) === null) {
 			return null;
 		}
@@ -245,19 +340,8 @@ class LogoLayerService {
 			return null;
 		}
 
-		$url = 'url(' . $href . ')';
-		$declarations = '{--nldesign-logo-url:' . $url . ';--nldesign-header-logo-image:' . $url . '}';
-
-		return [
-			'layer' => 'dark-logo-url',
-			'kind' => 'inline',
-			'css' => '@media (prefers-color-scheme: dark){'
-				. 'body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast])'
-				. $declarations . '}'
-				. 'body[data-theme-dark],body[data-themes*=dark]' . $declarations,
-			'id' => CssInjectionService::DARK_LOGO_STYLE_ID,
-		];
-	}//end darkLayer()
+		return $href;
+	}//end darkLogoUrl()
 
 	/**
 	 * The login watermark of a set, as an absolute url, or nothing.
@@ -283,6 +367,27 @@ class LogoLayerService {
 
 		return ';--nldesign-login-watermark-image:url(' . $this->files->url(name: $watermark) . ')';
 	}//end watermarkDeclaration()
+
+	/**
+	 * The emblem of a set, as an absolute url, or nothing.
+	 *
+	 * A set that ships its mark without the wordmark, `img/logos/<set>-emblem.svg`,
+	 * names it in `--nldesign-emblem-url`, which nextcloud-vue draws beside a page
+	 * title and at the top of the app navigation. Those rules sit in the apps'
+	 * own stylesheets, so only an absolute url resolves there.
+	 *
+	 * @param string $tokenSet The selected token set id.
+	 *
+	 * @return string One declaration starting with `;`, or the empty string.
+	 */
+	private function emblemDeclaration(string $tokenSet): string {
+		$emblem = $this->shippedLogo(name: $tokenSet . self::EMBLEM_SUFFIX);
+		if ($emblem === null) {
+			return '';
+		}
+
+		return ';--nldesign-emblem-url:url(' . $this->files->url(name: $emblem) . ')';
+	}//end emblemDeclaration()
 
 	/**
 	 * The dark logo layer as a list the injector can append: none when an
@@ -320,7 +425,7 @@ class LogoLayerService {
 	 *
 	 * @return string|null The app-relative path, or null when there is none.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-the-document-names-the-logo-of-the-active-set
 	 */
 	public function shippedLogo(string $name): ?string {
 		foreach (self::LOGO_EXTENSIONS as $extension) {

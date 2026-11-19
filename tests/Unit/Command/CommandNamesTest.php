@@ -61,7 +61,7 @@ class CommandNamesTest extends TestCase {
 	 * @return void
 	 */
 	public function testInfoXmlRegistersCommands(): void {
-		$this->assertGreaterThanOrEqual(9, count(self::commandClasses()));
+		$this->assertGreaterThanOrEqual(expected: 9, actual: count(self::commandClasses()));
 	}//end testInfoXmlRegistersCommands()
 
 	/**
@@ -76,9 +76,9 @@ class CommandNamesTest extends TestCase {
 	public function testCommandIsNamedUnderThematiq(string $class): void {
 		$command = $this->instantiate(class: $class);
 
-		$this->assertStringStartsWith('thematiq:', (string)$command->getName());
+		$this->assertStringStartsWith(prefix: 'thematiq:', string: (string)$command->getName());
 		foreach ($command->getAliases() as $alias) {
-			$this->assertStringStartsNotWith('nldesign:', $alias);
+			$this->assertStringStartsNotWith(prefix: 'nldesign:', string: $alias);
 		}
 	}//end testCommandIsNamedUnderThematiq()
 
@@ -100,13 +100,13 @@ class CommandNamesTest extends TestCase {
 				continue;
 			}
 
-			$this->assertInstanceOf(ReflectionNamedType::class, $type);
-			$this->assertFalse($type->isBuiltin(), $class . ' needs a scalar ' . $parameter->getName());
-			$args[] = $this->createMock($type->getName());
+			$this->assertInstanceOf(expected: ReflectionNamedType::class, actual: $type);
+			$this->assertFalse(condition: $type->isBuiltin(), message: $class . ' needs a scalar ' . $parameter->getName());
+			$args[] = $this->createMock(originalClassName: $type->getName());
 		}
 
 		$command = $reflection->newInstanceArgs($args);
-		$this->assertInstanceOf(Command::class, $command);
+		$this->assertInstanceOf(expected: Command::class, actual: $command);
 
 		return $command;
 	}//end instantiate()

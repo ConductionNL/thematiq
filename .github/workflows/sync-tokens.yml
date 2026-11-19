@@ -7,19 +7,99 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
-  sync-tokens:
+  build-themes:
+    # Runs upstream's theme builds (third-party code) with a read-only token
+    # and no checkout of this repository, and hands only the generated token
+    # files to the sync job as an artifact.
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
-    # Was 15 (n=11, max 1.9 min) for the raw dump. The converter run itself takes
-    # seconds; the token-set gate takes about 50 s, and when the first pass fails
-    # every converted set is retried on its own (about 30 sets x 50 s).
+    timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.clone_themes.outputs.sha }}
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          # The themes workspace requires Node ^24.22.3 to build its generated
+          # themes.
+          node-version: '24'
+
+      - name: Clone NL Design System themes
+        id: clone_themes
+        run: |
+          git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
+          echo "sha=$(git -C /tmp/themes rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build the generated upstream themes
+        # Some themes (sittard-geleen, vidar) have no token files: upstream
+        # generates them in TypeScript. Install only what those builds need,
+        # without lifecycle scripts, and write each theme's
+        # tmp/generated.tokens.json for the converter. A build that fails
+        # leaves its theme skipped, as it was before, and the others go on.
+        working-directory: /tmp/themes
+        run: |
+          themes=()
+          for build in proprietary/*/src/build-theme.mts; do
+            [ -f "$build" ] && themes+=("${build%/src/build-theme.mts}")
+          done
+          if [ "${#themes[@]}" -eq 0 ]; then
+            echo "No generated themes upstream."
+            exit 0
+          fi
+          filters=()
+          for theme in "${themes[@]}"; do
+            filters+=(--filter "./${theme}...")
+          done
+          corepack enable
+          if ! pnpm install --frozen-lockfile --ignore-scripts "${filters[@]}"; then
+            echo "::warning::could not install the generated themes' dependencies; the sync skips them"
+            exit 0
+          fi
+          for theme in "${themes[@]}"; do
+            if (cd "$theme" && node src/build-theme.mts); then
+              echo "built ${theme}"
+            else
+              echo "::warning::could not build ${theme}; the sync skips it"
+            fi
+          done
+
+      - name: Collect the generated tokens
+        # Staged under their path in the themes checkout, with a file at the
+        # root, so the artifact keeps that layout however many themes built.
+        working-directory: /tmp/themes
+        run: |
+          mkdir -p /tmp/generated
+          git rev-parse HEAD > /tmp/generated/themes-sha.txt
+          for f in proprietary/*/tmp/generated.tokens.json; do
+            [ -f "$f" ] && cp --parents "$f" /tmp/generated/
+          done
+          find /tmp/generated -type f
+
+      - name: Hand the generated tokens to the sync job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: generated-themes
+          path: /tmp/generated
+          retention-days: 1
+
+  sync-tokens:
+    needs: build-themes
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate takes
+    # about 3.5 min here. When its first pass fails, each of the ~40 converted
+    # sets is retried with only the failing tests (about 20 s each), then the
+    # full gate runs once more: about 15 min measured locally in total.
     timeout-minutes: 60
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           # Generate against development, where token work lands; main is the
           # release branch and lags by a release, so a sync built on it went
@@ -27,12 +107,13 @@ jobs:
           ref: development
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: '22'
+          # The same Node as the build-themes job; thematiq's engines allow ^24.
+          node-version: '24'
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: "8.3"
           tools: composer
@@ -46,9 +127,31 @@ jobs:
 
       - name: Clone NL Design System themes
         id: clone_themes
+        # The same upstream commit the build-themes job built from.
+        env:
+          THEMES_SHA: ${{ needs.build-themes.outputs.sha }}
         run: |
-          git clone --depth 1 https://github.com/nl-design-system/themes.git /tmp/themes
+          git init -q /tmp/themes
+          git -C /tmp/themes remote add origin https://github.com/nl-design-system/themes.git
+          git -C /tmp/themes fetch -q --depth 1 origin "$THEMES_SHA"
+          git -C /tmp/themes checkout -q FETCH_HEAD
           echo "sha=$(git -C /tmp/themes rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Download the generated upstream themes
+        # Built by the read-only build-themes job.
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: generated-themes
+          path: /tmp/generated
+
+      - name: Take the generated upstream themes
+        # Only the token files go into the checkout; a theme whose build did
+        # not run stays skipped by the converter, as before.
+        run: |
+          if [ -d /tmp/generated/proprietary ]; then
+            cp -r /tmp/generated/proprietary/. /tmp/themes/proprietary/
+          fi
+          find /tmp/themes/proprietary -path '*/tmp/generated.tokens.json'
 
       - name: Convert upstream themes onto the nldesign vocabulary
         # scripts/sync-upstream-tokens.mjs converts every upstream-managed set
@@ -60,17 +163,30 @@ jobs:
         run: |
           node scripts/sync-upstream-tokens.mjs /tmp/themes ${{ steps.clone_themes.outputs.sha }} --report /tmp/sync-report.md
 
+      - name: Refresh the fixtures that follow from the shipped sets
+        # The golden fixtures and the shell catalogue are recorded over the
+        # shipped sets, so a sync that changes a set makes them stale and the
+        # unit suite red. This job changes sets and never code, so re-recording
+        # every golden only moves the ones that read the sets.
+        run: |
+          php scripts/generate-shell-catalogue.php > /dev/null
+          for test in $(grep -rlE 'THEMATIQ_GOLDEN_RECORD' tests/Unit --include='*Test.php'); do
+            THEMATIQ_GOLDEN_RECORD=1 php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php "$test" > /dev/null
+          done
+
       - name: Verify the shipped token sets
         # The same tests once more, on exactly the tree that would be committed.
         # A failure here fails the job before any branch or PR is touched.
         run: |
           php vendor/bin/phpunit --no-coverage -c phpunit.token-sets.xml
           node scripts/update-coverage-claims.mjs --check
+          php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php tests/Unit/ShellCatalogueTest.php
+          php vendor/bin/phpunit --no-coverage --bootstrap tests/bootstrap.php $(grep -rlE 'THEMATIQ_GOLDEN_RECORD' tests/Unit --include='*Test.php')
 
       - name: Check for changes
         id: changes
         run: |
-          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json docs/reference/ docs/features/ README.md project.md
+          git add css/tokens/ css/public-bridge.css token-sets.json tests/Unit/fixtures/token-set-vocabulary-allowlist.json tests/Unit/fixtures/golden/ docs/reference/ docs/features/ README.md project.md
           if git diff --cached --quiet; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else

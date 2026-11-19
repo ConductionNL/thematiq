@@ -1,1 +1,0 @@
-- No screen: no page draws differently until a token set declares the action colour, and no shipped set does.

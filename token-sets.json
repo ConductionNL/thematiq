@@ -22,7 +22,7 @@
 	{
 		"id": "rijkshuisstijl",
 		"name": "Rijkshuisstijl",
-		"description": "Official Dutch national government design system (Rijksoverheid)",
+		"description": "The house style of the Dutch central government (Rijksoverheid), converted from the community tokens 18.0.1. Fira Sans stands in for the restricted RijksSansVF until an administrator uploads it.",
 		"theming": {
 			"primary_color": "#154273",
 			"background_color": "#F5F6F7",
@@ -1129,7 +1129,8 @@
 			"primary_color": "#3669A5",
 			"background_color": "#F5F6F8",
 			"logo": "img/logos/zuiddrecht.svg",
-			"logo_dark": "img/logos/zuiddrecht-dark.svg"
+			"logo_dark": "img/logos/zuiddrecht-dark.svg",
+			"favicon": "img/logos/zuiddrecht-emblem.svg"
 		},
 		"layout": {
 			"workplace_layout": "light",
@@ -1319,7 +1320,7 @@
 	},
 	{
 		"id": "vaartveld",
-		"name": "Vaartveld College",
+		"name": "Zuiddrecht College",
 		"description": "A secondary school (vmbo-t, havo, vwo) in the demo town of Zuiddrecht, which does not exist. Cobalt #1F4FD8 for actions, aqua #1FB5A8 as the accent, Red Hat Display over Red Hat Text. A light workplace.",
 		"design_system": "nldesign",
 		"theming": {
@@ -1337,8 +1338,8 @@
 				"en": "Log in to the workplace"
 			},
 			"subtitle": {
-				"nl": "Voor medewerkers van Vaartveld College.",
-				"en": "For staff of Vaartveld College."
+				"nl": "Voor medewerkers van Zuiddrecht College.",
+				"en": "For staff of Zuiddrecht College."
 			},
 			"sso_label": {
 				"nl": "Inloggen met uw schoolaccount",
@@ -1353,8 +1354,8 @@
 				"en": "or"
 			},
 			"footer": {
-				"nl": "Vaartveld College · werkplek op Nextcloud",
-				"en": "Vaartveld College · workplace on Nextcloud"
+				"nl": "Zuiddrecht College · werkplek op Nextcloud",
+				"en": "Zuiddrecht College · workplace on Nextcloud"
 			}
 		}
 	},
@@ -1439,6 +1440,76 @@
 				"nl": "Warmtepompacademie · werkplek op Nextcloud",
 				"en": "Warmtepompacademie · workplace on Nextcloud"
 			}
+		}
+	},
+	{
+		"id": "voorne-aan-zee",
+		"name": "Gemeente Voorne aan Zee",
+		"description": "Design tokens for Gemeente Voorne aan Zee, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1B59A4"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-voorne-aan-zee-house-style",
+			"package": "@nl-design-system-community/voorne-aan-zee-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Voorne aan Zee",
+			"restricted": true
+		}
+	},
+	{
+		"id": "sittard-geleen",
+		"name": "Gemeente Sittard-Geleen",
+		"description": "Design tokens for Gemeente Sittard-Geleen, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2275a5"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.2",
+		"licence": {
+			"id": "LicenseRef-sittard-geleen-house-style",
+			"package": "@nl-design-system-community/sittard-geleen-design-tokens",
+			"version": "1.0.2",
+			"holder": "Gemeente Sittard-Geleen",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
+		}
+	},
+	{
+		"id": "vidar",
+		"name": "Vidar",
+		"description": "Design tokens for Vidar, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#00577e"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-vidar-house-style",
+			"package": "@nl-design-system-community/vidar-design-tokens",
+			"version": "1.0.0",
+			"holder": "Vidar",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
 		}
 	}
 ]
