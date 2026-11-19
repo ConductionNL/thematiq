@@ -481,6 +481,9 @@ class TokenSetPreviewServiceTest extends TestCase {
 			$out[$id] = $service->getResolvedColors(tokenSetId: $id);
 		}
 
-		$this->assertSame(expected: '9a40148c77bfdc0e 49', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16) . ' ' . count($out['amsterdam']));
+		$this->assertSame(
+			expected: '6af724605465fe66 49',
+			actual: substr(hash('sha256', (string)json_encode($out)), 0, 16) . ' ' . count($out['amsterdam'])
+		);
 	}//end testTheShippedSetsResolvedColoursGolden()
 }//end class

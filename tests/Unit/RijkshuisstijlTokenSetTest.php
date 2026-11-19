@@ -17,11 +17,12 @@ use OCA\Thematiq\Service\CssParserService;
 use PHPUnit\Framework\TestCase;
 
 /**
- * `css/tokens/rijkshuisstijl.css` is hand-mapped from
- * `@rijkshuisstijl-community/design-tokens` (theme `lintblauw`), which ships
- * its colours as oklch(). These are the sRGB values of that release, so a
- * drift in either direction (a hand edit, or a new upstream release the
- * manifest does not name) fails here instead of on a rendered instance.
+ * `css/tokens/rijkshuisstijl.css` is converted by `scripts/convert-nlds-theme.mjs`
+ * from `@rijkshuisstijl-community/design-tokens` (`dist/index.css`), which
+ * ships its colours as oklch(). These are the sRGB values that conversion
+ * writes, so a drift in either direction (a hand edit, or a new upstream
+ * release the manifest does not name) fails here instead of on a rendered
+ * instance.
  */
 class RijkshuisstijlTokenSetTest extends TestCase {
 
@@ -31,31 +32,22 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 	private const UPSTREAM_VERSION = '18.0.1';
 
 	/**
-	 * rhc.* tokens of the lintblauw theme, converted to sRGB, under the
-	 * `--nldesign-*` name the set maps them to.
+	 * The converted release's values, in sRGB, under the `--nldesign-*` name
+	 * the converter maps them to.
 	 */
 	private const UPSTREAM_VALUES = [
 		'--nldesign-color-primary' => '#154273',
 		'--nldesign-color-primary-hover' => '#162f50',
 		'--nldesign-color-link' => '#01689b',
-		'--nldesign-color-link-hover' => '#007bc7',
+		'--nldesign-color-link-hover' => '#01496c',
 		'--nldesign-color-text' => '#0f172a',
 		'--nldesign-color-text-muted' => '#334155',
-		'--nldesign-color-border' => '#cbd5e1',
-		'--nldesign-color-border-dark' => '#64748b',
+		'--nldesign-color-border' => '#154273',
+		'--nldesign-color-border-dark' => '#738eab',
 		'--nldesign-color-success' => '#39870c',
-		'--nldesign-color-error' => '#d52b1e',
-		'--nldesign-color-info' => '#007bc7',
-		'--nldesign-color-accent' => '#007bc7',
-		'--nldesign-color-footer-background' => '#154273',
-		'--nldesign-color-surface' => '#f1f5f9',
-		'--nldesign-component-status-badge-info-color' => '#01496c',
-		'--nldesign-component-status-badge-success-color' => '#2c5d12',
-		'--nldesign-component-status-badge-warning-color' => '#673327',
-		'--nldesign-component-status-badge-error-color' => '#9e1b16',
-		'--nldesign-border-radius' => '0',
-		'--nldesign-website-border-radius' => '2px',
-		'--nldesign-website-border-radius-large' => '4px',
+		'--nldesign-color-error' => '#d70d0d',
+		'--nldesign-color-info' => '#154273',
+		'--nldesign-border-radius' => '8px',
 	];
 
 	/**
@@ -104,14 +96,20 @@ class RijkshuisstijlTokenSetTest extends TestCase {
 	}//end testTheSetCarriesTheCommunityTokenValues()
 
 	/**
-	 * The font stack falls through to fira sans.
+	 * The font stack names the restricted RijksSansVF and falls through to Fira Sans,
+	 * and the manifest asks an entitled administrator to upload the real face.
 	 *
 	 * @return void
 	 */
 	public function testTheFontStackFallsThroughToFiraSans(): void {
 		$family = $this->declarations()['--nldesign-font-family'] ?? '';
-		$this->assertStringStartsWith(prefix: "'Fira Sans'", string: $family);
-		$this->assertStringNotContainsStringIgnoringCase(needle: 'Rijksoverheid', haystack: $family, message: 'the government fonts are restricted');
+		$this->assertStringStartsWith(prefix: "'RijksSansVF', 'Fira Sans'", string: $family);
+
+		$font = $this->manifestEntry()['font'] ?? [];
+		$this->assertSame(expected: 'RijksSansVF', actual: ($font['family'] ?? null));
+		$this->assertFalse(condition: ($font['selfHosted'] ?? true), message: 'the government font is not shipped');
+		$this->assertSame(expected: 'restricted', actual: ($font['licence'] ?? null));
+		$this->assertSame(expected: 'upload', actual: ($font['action'] ?? null));
 	}//end testTheFontStackFallsThroughToFiraSans()
 
 	/**
