@@ -184,6 +184,7 @@ async function flush(rounds = 10) {
  * @param {boolean} [options.primaryDrives] Whether the primary-drives box starts ticked.
  * @param {boolean} [options.withSelect] Whether the page has the token set dropdown.
  * @param {string} [options.extraHtml] More of the settings page, inside the section.
+ * @param {object} [options.registry] The token registry the editor loads.
  */
 async function mount({
 	current = 'rijkshuisstijl',
@@ -192,6 +193,7 @@ async function mount({
 	primaryDrives = false,
 	withSelect = true,
 	extraHtml = '',
+	registry = REGISTRY,
 } = {}) {
 	installInitialState({
 		tokenSets: TOKEN_SETS,
@@ -220,12 +222,13 @@ async function mount({
 	}
 	answer('GET', '/settings/overrides?', 200, {
 		overrides,
-		registry: REGISTRY,
+		registry,
 		tabs: { content: 'Content', status: 'Status', typography: 'Type' },
 	})
 
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
+	await import('../../js/lib/themingPlan.js')
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -485,6 +488,7 @@ describe('admin.js token editor', () => {
 			})
 			// mount() rebuilds the head, so load the script here directly.
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 
@@ -506,6 +510,7 @@ describe('admin.js token editor', () => {
 				tabs: {},
 			})
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 
@@ -645,6 +650,7 @@ describe('admin.js token editor', () => {
 				tabs: {},
 			})
 			vi.resetModules()
+			await import('../../js/lib/themingPlan.js')
 			await import('../../js/admin.js?t=' + Math.random())
 			await flush()
 			unlockBase()
@@ -956,8 +962,9 @@ describe('admin.js token editor', () => {
 			})
 			window.ThematiqPlayground.exportCss.mockReturnValue({
 				css: ':root {\n  --nldesign-font-family: Fira Sans;\n}\n',
-				unexpressed: ['--color-header'],
+				unexpressed: [BUTTON],
 			})
+			answer('POST', '/settings/overrides', 200, { status: 'ok' })
 
 			saveAsNew(dialog, 'OpenWoo')
 			await flush()
@@ -985,7 +992,15 @@ describe('admin.js token editor', () => {
 				designSystem: 'none',
 				captureTheming: true,
 			})
-			expect(toasts()[0]).toContain('--color-header')
+			// The value no token set can hold stays, as an override of the new theme.
+			expect(lastBody('/settings/overrides')).toEqual({
+				overrides: { [BUTTON]: '#aa0000' },
+				tokenSet: 'custom-openwoo',
+			})
+			expect(toasts()).toContain(
+				'These values could not be written into a theme and are kept as overrides instead: '
+					+ BUTTON,
+			)
 
 			expect(saveDialog()).toBeNull()
 			const select = document.getElementById('nldesign-token-set-select')
@@ -996,6 +1011,45 @@ describe('admin.js token editor', () => {
 			expect(lastBody(COMMIT)).toEqual({ tokenSet: 'custom-openwoo' })
 			expect(toasts()).toContain(
 				'Theme "OpenWoo" created and set as the active theme. Reload the page to see it.',
+			)
+		})
+
+		it('saves no leftovers and lists none when everything fits the set (authoring-save-edits-as-a-new-theme)', async () => {
+			answer('POST', '/settings/tokensets/upload', 200, {
+				id: 'custom-openwoo',
+			})
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			const dialog = await openStockDialog()
+
+			saveAsNew(dialog, 'OpenWoo')
+			await flush()
+
+			expect(sent('/settings/overrides', 'POST')).toHaveLength(0)
+			expect(toasts().join(' ')).not.toContain('kept as overrides')
+		})
+
+		it('says which leftovers were not kept when their save fails', async () => {
+			answer('POST', '/settings/tokensets/upload', 200, {
+				id: 'custom-openwoo',
+			})
+			answer('POST', COMMIT, 200, { status: 'ok' })
+			answer('POST', '/settings/overrides', 400, { error: 'refused' })
+			const dialog = await openStockDialog()
+			window.ThematiqPlayground.exportCss.mockReturnValue({
+				css: ':root {}\n',
+				unexpressed: [FONT, '--never-edited'],
+			})
+
+			saveAsNew(dialog, 'OpenWoo')
+			await flush()
+
+			expect(lastBody('/settings/overrides')).toEqual({
+				overrides: { [FONT]: 'Fira Sans' },
+				tokenSet: 'custom-openwoo',
+			})
+			expect(toasts()).toContain(
+				'These values could not be written into the new theme and were not saved: '
+					+ FONT,
 			)
 		})
 
@@ -1503,6 +1557,7 @@ describe('admin.js theming sync rows', () => {
 		answer('POST', '/settings/theming', 200, { status: 'error', error: ' no' })
 
 		vi.resetModules()
+		await import('../../js/lib/themingPlan.js')
 		await import('../../js/admin.js?t=' + Math.random())
 		await flush()
 
@@ -1643,5 +1698,54 @@ describe('admin.js theming sync rows', () => {
 		)
 
 		expect(overlay).toBeNull()
+	})
+})
+
+describe('token editor — page text contrast', () => {
+	const MUTED = '--color-text-maxcontrast'
+	const withMuted = {
+		...REGISTRY,
+		[MUTED]: {
+			tab: 'content',
+			type: 'color',
+			label: 'Muted text',
+			group: 'internal',
+		},
+	}
+
+	beforeEach(() => {
+		requests = []
+		routes = []
+		installGlobals()
+		installFetch()
+		if (typeof global.requestAnimationFrame !== 'function') {
+			global.requestAnimationFrame = (cb) => setTimeout(cb, 0)
+		}
+	})
+
+	afterEach(() => {
+		document.head.innerHTML = ''
+		document.body.innerHTML = ''
+		document.documentElement.removeAttribute('style')
+		vi.restoreAllMocks()
+	})
+
+	it('warns beside a muted text colour under 4.5:1 and ties the note to the field', async () => {
+		await mount({ registry: withMuted, overrides: { [MUTED]: '#75758a' } })
+		const { el, text } = row(MUTED)
+		const note = el.querySelector('.nldesign-token-contrast-warning')
+		expect(note).not.toBeNull()
+		expect(note.textContent).toContain('4.49:1')
+		expect(text.getAttribute('aria-describedby')).toContain(note.id)
+	})
+
+	it('drops the warning once the colour is readable', async () => {
+		await mount({ registry: withMuted, overrides: { [MUTED]: '#75758a' } })
+		const { el, text } = row(MUTED)
+		type(text, '#5e6168')
+		expect(el.querySelector('.nldesign-token-contrast-warning')).toBeNull()
+		expect(text.getAttribute('aria-describedby') || '').not.toContain(
+			'nldesign-contrast-',
+		)
 	})
 })

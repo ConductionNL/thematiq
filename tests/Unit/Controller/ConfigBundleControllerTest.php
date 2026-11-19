@@ -69,24 +69,28 @@ class ConfigBundleControllerTest extends TestCase {
 
 	/**
 	 * Set up the controller with mocked collaborators.
+	 *
+	 * @return void
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock(ConfigBundleService::class);
-		$this->auditService = $this->createMock(ThemingAuditService::class);
-		$this->request = $this->createMock(IRequest::class);
+		$this->service = $this->createMock(originalClassName: ConfigBundleService::class);
+		$this->auditService = $this->createMock(originalClassName: ThemingAuditService::class);
+		$this->request = $this->createMock(originalClassName: IRequest::class);
 
 		$this->controller = new ConfigBundleController(
-			'nldesign',
-			$this->request,
-			$this->service,
-			$this->auditService
+			appName: 'nldesign',
+			request: $this->request,
+			service: $this->service,
+			auditService: $this->auditService
 		);
 	}//end setUp()
 
 	/**
 	 * Remove any temp upload file after each test.
+	 *
+	 * @return void
 	 */
 	protected function tearDown(): void {
 		if ($this->uploadPath !== null && file_exists($this->uploadPath) === true) {
@@ -133,39 +137,45 @@ class ConfigBundleControllerTest extends TestCase {
 	/**
 	 * export() returns the exact service bundle as the download body, with
 	 * the attachment filename and JSON content type.
+	 *
+	 * @return void
 	 */
 	public function testExportReturnsAttachmentWithBundleBody(): void {
 		$this->service->method('export')->willReturn(['format' => 'nldesign-config-bundle', 'bundleVersion' => 1]);
 
 		$response = $this->controller->export();
 
-		$this->assertInstanceOf(DataDownloadResponse::class, $response);
-		$this->assertStringContainsString('"bundleVersion": 1', $response->render());
+		$this->assertInstanceOf(expected: DataDownloadResponse::class, actual: $response);
+		$this->assertStringContainsString(needle: '"bundleVersion": 1', haystack: $response->render());
 
 		$headers = $this->rawHeaders(response: $response);
-		$this->assertStringContainsString('attachment;', $headers['Content-Disposition']);
-		$this->assertStringContainsString('nldesign-config.json', $headers['Content-Disposition']);
-		$this->assertSame('application/json', $headers['Content-Type']);
+		$this->assertStringContainsString(needle: 'attachment;', haystack: $headers['Content-Disposition']);
+		$this->assertStringContainsString(needle: 'nldesign-config.json', haystack: $headers['Content-Disposition']);
+		$this->assertSame(expected: 'application/json', actual: $headers['Content-Type']);
 	}//end testExportReturnsAttachmentWithBundleBody()
 
 	/**
 	 * No uploaded file is a 400.
+	 *
+	 * @return void
 	 */
 	public function testImportWithNoFileReturns400(): void {
 		$this->request->method('getUploadedFile')->willReturn(null);
 
 		$response = $this->controller->import();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testImportWithNoFileReturns400()
 
 	/**
 	 * A file exceeding the 256 KB cap is a 413, without ever reading its content.
+	 *
+	 * @return void
 	 */
 	public function testImportOversizeFileReturns413(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('{}'),
+				'tmp_name' => $this->writeTempFile(content: '{}'),
 				'name' => 'bundle.json',
 				'size' => ((256 * 1024) + 1),
 			]
@@ -175,16 +185,18 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(413, $response->getStatus());
+		$this->assertSame(expected: 413, actual: $response->getStatus());
 	}//end testImportOversizeFileReturns413()
 
 	/**
 	 * A non-.json file extension is a 415.
+	 *
+	 * @return void
 	 */
 	public function testImportWrongExtensionReturns415(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('{}'),
+				'tmp_name' => $this->writeTempFile(content: '{}'),
 				'name' => 'bundle.css',
 				'size' => 2,
 			]
@@ -192,16 +204,18 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(415, $response->getStatus());
+		$this->assertSame(expected: 415, actual: $response->getStatus());
 	}//end testImportWrongExtensionReturns415()
 
 	/**
 	 * Invalid JSON content is a 400, never reaching the service.
+	 *
+	 * @return void
 	 */
 	public function testImportInvalidJsonReturns400(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('not json'),
+				'tmp_name' => $this->writeTempFile(content: 'not json'),
 				'name' => 'bundle.json',
 				'size' => 8,
 			]
@@ -211,17 +225,19 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(400, $response->getStatus());
+		$this->assertSame(expected: 400, actual: $response->getStatus());
 	}//end testImportInvalidJsonReturns400()
 
 	/**
 	 * A hard validation failure from the service is a 400 with the full
 	 * per-section error listing, and logs NOTHING to the audit trail.
+	 *
+	 * @return void
 	 */
 	public function testImportValidationFailureReturns400WithErrorsAndLogsNothing(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('{"format":"nldesign-config-bundle"}'),
+				'tmp_name' => $this->writeTempFile(content: '{"format":"nldesign-config-bundle"}'),
 				'name' => 'bundle.json',
 				'size' => 30,
 			]
@@ -239,19 +255,21 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(400, $response->getStatus());
-		$this->assertFalse($response->getData()['applied']);
-		$this->assertSame('envelope', $response->getData()['errors'][0]['section']);
+		$this->assertSame(expected: 400, actual: $response->getStatus());
+		$this->assertFalse(condition: $response->getData()['applied']);
+		$this->assertSame(expected: 'envelope', actual: $response->getData()['errors'][0]['section']);
 	}//end testImportValidationFailureReturns400WithErrorsAndLogsNothing()
 
 	/**
 	 * A successful import returns 200 with the per-section results and logs
 	 * exactly one audit entry carrying those sections.
+	 *
+	 * @return void
 	 */
 	public function testImportSuccessReturns200AndLogsOneAuditEntry(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('{"format":"nldesign-config-bundle"}'),
+				'tmp_name' => $this->writeTempFile(content: '{"format":"nldesign-config-bundle"}'),
 				'name' => 'bundle.json',
 				'size' => 30,
 			]
@@ -273,18 +291,20 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(200, $response->getStatus());
-		$this->assertTrue($response->getData()['applied']);
-		$this->assertSame($sections, $response->getData()['sections']);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertTrue(condition: $response->getData()['applied']);
+		$this->assertSame(expected: $sections, actual: $response->getData()['sections']);
 	}//end testImportSuccessReturns200AndLogsOneAuditEntry()
 
 	/**
 	 * An unexpected service exception is a 500, and logs nothing.
+	 *
+	 * @return void
 	 */
 	public function testImportServiceExceptionReturns500(): void {
 		$this->request->method('getUploadedFile')->willReturn(
 			[
-				'tmp_name' => $this->writeTempFile('{"format":"nldesign-config-bundle"}'),
+				'tmp_name' => $this->writeTempFile(content: '{"format":"nldesign-config-bundle"}'),
 				'name' => 'bundle.json',
 				'size' => 30,
 			]
@@ -296,6 +316,6 @@ class ConfigBundleControllerTest extends TestCase {
 
 		$response = $this->controller->import();
 
-		$this->assertSame(500, $response->getStatus());
+		$this->assertSame(expected: 500, actual: $response->getStatus());
 	}//end testImportServiceExceptionReturns500()
 }//end class

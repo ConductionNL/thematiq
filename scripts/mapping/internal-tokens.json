@@ -5863,10 +5863,6 @@
 			"light": "#b5e6f6",
 			"dark": "#005686"
 		},
-		"--color-info-rgb": {
-			"light": "213,241,250",
-			"dark": "0,53,83"
-		},
 		"--color-info-text": {
 			"light": "#0066AC",
 			"dark": "#00AEFF"

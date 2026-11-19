@@ -70,10 +70,17 @@ final class DesignTokensRoundTripTest extends TestCase {
 		$document = (new DesignTokensWriter())->write(declarations: $declarations, setId: 'x', setName: 'X', appVersion: 'test');
 		$json = (string)json_encode($document);
 
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn(\dirname(__DIR__, 3));
 		$parser = new CssParserService();
-		$converter = new TokenSetConverterService($appManager, $parser, new ContrastService(), new DesignTokensMapper(), $this->createMock(FontService::class), $this->createMock(LoggerInterface::class));
+		$converter = new TokenSetConverterService(
+			appManager: $appManager,
+			cssParser: $parser,
+			contrast: new ContrastService(),
+			dtcgMapper: new DesignTokensMapper(),
+			fonts: $this->createMock(originalClassName: FontService::class),
+			logger: $this->createMock(originalClassName: LoggerInterface::class)
+		);
 		$result = $converter->convert(content: $json, slug: 'kopie', displayName: 'Kopie');
 
 		return ['declarations' => $parser->parseRootBlock(css: (string)$result['css']), 'report' => $result['report']];
@@ -96,7 +103,13 @@ final class DesignTokensRoundTripTest extends TestCase {
 
 		return (string)preg_replace_callback(
 			'/var\(\s*(--[A-Za-z0-9_-]+)\s*\)/',
-			fn (array $m): string => isset($set[$m[1]]) === true ? $this->resolved(value: $set[$m[1]], set: $set, depth: ($depth + 1)) : $m[0],
+			fn (array $m): string => match (isset($set[$m[1]]) === true) {
+				true => $this->resolved(
+					value: $set[$m[1]],
+					set: $set,
+					depth: ($depth + 1)
+				), default => $m[0]
+			},
 			$value
 		);
 	}//end resolved()
@@ -113,7 +126,10 @@ final class DesignTokensRoundTripTest extends TestCase {
 		if ($parsed !== null) {
 			$converter = new ColorSpaceConverter();
 
-			return $converter->toHex(rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']), alpha: $parsed['alpha']);
+			return $converter->toHex(
+				rgb: (array)$converter->toSrgb(space: $parsed['space'], components: $parsed['components']),
+				alpha: $parsed['alpha']
+			);
 		}
 
 		return (string)preg_replace('/\s+/', ' ', trim($value));
@@ -148,7 +164,7 @@ final class DesignTokensRoundTripTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $differences, $id);
+		$this->assertSame(expected: [], actual: $differences, message: $id);
 	}//end testShippedSetSurvivesTheRoundTrip()
 
 	/**
@@ -163,7 +179,7 @@ final class DesignTokensRoundTripTest extends TestCase {
 			static fn (array $entry): bool => $entry['action'] === 'skipped' && str_starts_with((string)$entry['source'], '--nldesign-')
 		);
 
-		$this->assertSame([], array_values($skipped));
+		$this->assertSame(expected: [], actual: array_values($skipped));
 	}//end testNoThematiqTokenIsSkipped()
 
 	/**
@@ -175,6 +191,6 @@ final class DesignTokensRoundTripTest extends TestCase {
 	public function testIncompleteSetStaysIncomplete(): void {
 		$back = $this->roundTrip(declarations: ['--nldesign-color-primary' => '#154273', '--nldesign-border-radius' => '4px'])['declarations'];
 
-		$this->assertSame(['--nldesign-border-radius' => '4px', '--nldesign-color-primary' => '#154273'], $back);
+		$this->assertSame(expected: ['--nldesign-border-radius' => '4px', '--nldesign-color-primary' => '#154273'], actual: $back);
 	}//end testIncompleteSetStaysIncomplete()
 }//end class

@@ -44,7 +44,7 @@ class EMailTemplate implements IEMailTemplate
     protected bool $bodyOpened = false;
     protected bool $bodyListOpened = false;
     protected bool $footerAdded = false;
-    /** @var array<string, string> */
+    /** @var array<array{name: string, content: string, mimeType: string}> */
     protected array $inlineImages = [];
     protected string $head = '';
     protected string $tail = '';
@@ -82,8 +82,13 @@ class EMailTemplate implements IEMailTemplate
     {
     }
 
+    public function renderHtmlWithInlineImages(): string
+    {
+        return '';
+    }
+
     /**
-     * @return array<string, string>
+     * @return array<array{name: string, content: string, mimeType: string}>
      */
     public function getInlineImages(): array
     {

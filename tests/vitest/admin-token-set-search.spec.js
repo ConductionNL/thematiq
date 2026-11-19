@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/token-set-picker-search/specs/token-set-picker-search/spec.md#requirement-the-token-set-list-can-be-searched-by-name
+ * @spec openspec/specs/token-set-picker-search/spec.md#requirement-the-token-set-list-can-be-searched-by-name
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'

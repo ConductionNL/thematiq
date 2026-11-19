@@ -68,7 +68,7 @@ class ErrorStatusTraitTest extends TestCase {
 			}//end status()
 		};
 
-		$this->assertSame($expected, $subject->status(new RuntimeException('x', $code), 500));
+		$this->assertSame(expected: $expected, actual: $subject->status(new RuntimeException('x', $code), 500));
 	}//end testMapsTheExceptionCode()
 
 	/**
@@ -92,6 +92,6 @@ class ErrorStatusTraitTest extends TestCase {
 			}//end status()
 		};
 
-		$this->assertSame(422, $subject->status(new RuntimeException('x', 0)));
+		$this->assertSame(expected: 422, actual: $subject->status(new RuntimeException('x', 0)));
 	}//end testUsesTheCallersFallback()
 }//end class

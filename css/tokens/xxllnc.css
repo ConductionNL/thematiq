@@ -412,7 +412,7 @@
 	--utrecht-document-color: #28282c;
 	--utrecht-document-font-family: neue-haas-grotesk-text, sans-serif;
 	--utrecht-form-input-background-color: #ffffff;
-	--utrecht-form-input-border-color: rgba(0, 0, 0, 0.22);
+	--utrecht-form-input-border-color: #949494;
 	--utrecht-form-input-border-radius: 6px;
 	--utrecht-form-input-border-width: 1px;
 	--utrecht-form-input-color: #6d6d6d;
@@ -557,7 +557,7 @@
 	--utrecht-table-row-border-block-end-color: #f5f5f5;
 	--utrecht-table-row-border-block-end-width: 1px;
 	--utrecht-textbox-background-color: #ffffff;
-	--utrecht-textbox-border-color: rgba(0, 0, 0, 0.22);
+	--utrecht-textbox-border-color: #949494;
 	--utrecht-textbox-border-radius: 6px;
 	--utrecht-textbox-border-width: 1px;
 	--utrecht-textbox-color: #6d6d6d;
@@ -591,7 +591,7 @@
 	--nldesign-color-background-darker: #e5e5e5;
 	--nldesign-color-background-hover: #f7f7f7;
 	--nldesign-color-border: rgba(0, 0, 0, 0.22);
-	--nldesign-color-border-dark: rgba(0, 0, 0, 0.22);
+	--nldesign-color-border-dark: #949494;
 	--nldesign-color-error: #dc3545;
 	--nldesign-color-error-hover: #c6303e;
 	--nldesign-color-error-rgb: 220, 53, 69;

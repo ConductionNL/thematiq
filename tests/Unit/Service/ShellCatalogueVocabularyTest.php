@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-catalogue/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
+ * @spec openspec/specs/shell-catalogue/spec.md#requirement-every-shipped-set-is-in-the-catalogue
  */
 
 declare(strict_types=1);
@@ -43,8 +43,8 @@ class ShellCatalogueVocabularyTest extends TestCase {
 		];
 
 		$this->assertSame(
-			['color-error' => '#CC0000', 'color-warning' => '#7A4F00'],
-			(new ShellCatalogueVocabulary())->ofSet(css: $css, resolved: $resolved)
+			expected: ['color-error' => '#CC0000', 'color-warning' => '#7A4F00'],
+			actual: (new ShellCatalogueVocabulary())->ofSet(css: $css, resolved: $resolved)
 		);
 	}//end testItKeepsTheSetsOwnTokensWithTheirResolvedValues()
 
@@ -69,7 +69,7 @@ class ShellCatalogueVocabularyTest extends TestCase {
 			'--nldesign-hero-action-color' => "url('x')",
 		];
 
-		$this->assertSame([], (new ShellCatalogueVocabulary())->ofSet(css: $css, resolved: $resolved));
+		$this->assertSame(expected: [], actual: (new ShellCatalogueVocabulary())->ofSet(css: $css, resolved: $resolved));
 	}//end testItLeavesOutWhatHasAnotherHomeOrNoMeaningElsewhere()
 
 	/**
@@ -79,8 +79,8 @@ class ShellCatalogueVocabularyTest extends TestCase {
 	 */
 	public function testADarkBlockGivesItsOwnVocabulary(): void {
 		$this->assertSame(
-			['color-error' => '#f43535'],
-			(new ShellCatalogueVocabulary())->ofDeclarations(declarations: ['--nldesign-color-error' => '#f43535', '--nldesign-color-background' => '#171a20'])
+			expected: ['color-error' => '#f43535'],
+			actual: (new ShellCatalogueVocabulary())->ofDeclarations(declarations: ['--nldesign-color-error' => '#f43535', '--nldesign-color-background' => '#171a20'])
 		);
 	}//end testADarkBlockGivesItsOwnVocabulary()
 }//end class

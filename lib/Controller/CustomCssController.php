@@ -21,8 +21,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Controller;
 
+use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
 use OCA\Thematiq\Service\CustomCssService;
-use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -57,9 +57,9 @@ class CustomCssController extends Controller {
 	/**
 	 * The theming audit log.
 	 *
-	 * @var ThemingAuditService
+	 * @var ThemingAuditServiceInterface
 	 */
-	private ThemingAuditService $auditService;
+	private ThemingAuditServiceInterface $auditService;
 
 	/**
 	 * Constructor.
@@ -67,13 +67,13 @@ class CustomCssController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
 	 * @param CustomCssService $customCssService The freeform CSS service.
-	 * @param ThemingAuditService $auditService The theming audit log.
+	 * @param ThemingAuditServiceInterface $auditService The theming audit log.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		CustomCssService $customCssService,
-		ThemingAuditService $auditService,
+		ThemingAuditServiceInterface $auditService,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 		$this->customCssService = $customCssService;
@@ -121,6 +121,21 @@ class CustomCssController extends Controller {
 			return new JSONResponse(['error' => 'css must be a string'], 400);
 		}
 
+		return $this->save(css: $css, params: $params);
+
+	}//end setCustomCss()
+
+	/**
+	 * Write the stylesheet, then the enable flag when one was sent; a refused stylesheet writes neither.
+	 *
+	 * @param string $css The submitted stylesheet.
+	 * @param array<string, mixed> $params The request parameters, with the optional `enabled`.
+	 *
+	 * @return JSONResponse The answer: written, 422 with every reason, or 500.
+	 *
+	 * @spec openspec/specs/custom-css-freeform/spec.md
+	 */
+	private function save(string $css, array $params): JSONResponse {
 		$before = $this->customCssService->read();
 
 		try {
@@ -130,19 +145,45 @@ class CustomCssController extends Controller {
 		}
 
 		if (empty($errors) === false) {
-			// Nothing was written — report every reason at once.
-			$this->auditService->log(
-				action: 'custom_css_rejected',
-				context: ['errors' => $errors]
-			);
-
-			return new JSONResponse(['errors' => $errors], 422);
+			return $this->rejected(errors: $errors);
 		}
 
 		if (array_key_exists('enabled', $params) === true) {
 			$this->customCssService->setEnabled(enabled: ((bool)$params['enabled']));
 		}
 
+		return $this->written(before: $before, css: $css);
+	}//end save()
+
+	/**
+	 * Audit a refused submission and answer 422 with every reason: nothing was written.
+	 *
+	 * @param array<int, string> $errors The validation errors.
+	 *
+	 * @return JSONResponse The 422 answer.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function rejected(array $errors): JSONResponse {
+		$this->auditService->log(
+			action: 'custom_css_rejected',
+			context: ['errors' => $errors]
+		);
+
+		return new JSONResponse(['errors' => $errors], 422);
+	}//end rejected()
+
+	/**
+	 * Audit a written stylesheet and answer with its size and the enable flag.
+	 *
+	 * @param string $before The stylesheet before the write.
+	 * @param string $css The stylesheet written.
+	 *
+	 * @return JSONResponse The answer.
+	 *
+	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
+	 */
+	private function written(string $before, string $css): JSONResponse {
 		$this->auditService->log(
 			action: 'custom_css_written',
 			context: [
@@ -152,6 +193,17 @@ class CustomCssController extends Controller {
 			]
 		);
 
+		return $this->writtenAnswer(css: $css);
+	}//end written()
+
+	/**
+	 * The answer to a written stylesheet: its size and the enable flag.
+	 *
+	 * @param string $css The stylesheet written.
+	 *
+	 * @return JSONResponse The answer.
+	 */
+	private function writtenAnswer(string $css): JSONResponse {
 		return new JSONResponse(
 			[
 				'status' => 'ok',
@@ -159,6 +211,5 @@ class CustomCssController extends Controller {
 				'enabled' => $this->customCssService->isEnabled(),
 			]
 		);
-
-	}//end setCustomCss()
+	}//end writtenAnswer()
 }//end class

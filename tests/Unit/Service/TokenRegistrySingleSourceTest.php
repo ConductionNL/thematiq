@@ -41,7 +41,7 @@ class TokenRegistrySingleSourceTest extends TestCase {
 	public function testNoOtherFileDefinesABrandTokenRow(): void {
 		$lib = dirname(__DIR__, 3) . '/lib';
 		$tokens = array_keys(TokenRegistry::getBrandTokens());
-		$this->assertContains('--color-error', $tokens);
+		$this->assertContains(needle: '--color-error', haystack: $tokens);
 
 		$copies = [];
 		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($lib, RecursiveDirectoryIterator::SKIP_DOTS));
@@ -58,6 +58,6 @@ class TokenRegistrySingleSourceTest extends TestCase {
 			}
 		}
 
-		$this->assertSame([], $copies, 'Token editor rows belong in TokenRegistry alone.');
+		$this->assertSame(expected: [], actual: $copies, message: 'Token editor rows belong in TokenRegistry alone.');
 	}//end testNoOtherFileDefinesABrandTokenRow()
 }//end class

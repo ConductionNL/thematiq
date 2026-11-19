@@ -126,12 +126,23 @@ class CssColorParser {
 			return $this->fromHex(hex: $match[1]);
 		}
 
+		return $this->functionColour(value: $value);
+	}//end parse()
+
+	/**
+	 * A colour function written as `name(arguments)`, read.
+	 *
+	 * @param string $value The lower-cased, trimmed value.
+	 *
+	 * @return array{space: string, components: array<int, float>, alpha: float|null}|null Null when it is no colour function this reads.
+	 */
+	private function functionColour(string $value): ?array {
 		if (preg_match('/^([a-z0-9-]+)\((.*)\)$/', $value, $match) !== 1) {
 			return null;
 		}
 
 		return $this->fromFunction(name: $match[1], arguments: $match[2]);
-	}//end parse()
+	}//end functionColour()
 
 	/**
 	 * Hex digits to sRGB.
@@ -164,23 +175,70 @@ class CssColorParser {
 	 */
 	private function fromFunction(string $name, string $arguments): ?array {
 		[$parts, $alpha] = $this->split(arguments: $arguments);
+		$space = $this->functionSpace(name: $name, parts: $parts);
+		if ($name === 'color') {
+			array_shift($parts);
+		}
+
+		if ($this->isReadable(space: $space, parts: $parts) === false) {
+			return null;
+		}
+
+		$components = $this->components(parts: $parts, reading: $this->readingOf(space: $space, name: $name));
+		if ($components === null) {
+			return null;
+		}
+
+		return $this->srgbIfHsl(colour: ['space' => $space, 'components' => $components, 'alpha' => $alpha]);
+	}//end fromFunction()
+
+	/**
+	 * The colour space a function names: its own name, or for `color()` the first word; `rgb` is `srgb`.
+	 *
+	 * @param string $name The function name.
+	 * @param list<string> $parts The component words, the space first for `color()`.
+	 *
+	 * @return string The colour space, without a trailing `a` (`rgba`, `hsla`).
+	 */
+	private function functionSpace(string $name, array $parts): string {
 		$space = $name;
 		if ($name === 'color') {
-			$space = (string)array_shift($parts);
+			$space = (string)($parts[0] ?? '');
 		}
 
 		$space = rtrim($space, 'a');
 		if ($space === 'rgb') {
-			$space = 'srgb';
+			return 'srgb';
 		}
 
-		if (count($parts) !== 3 || ($space !== 'srgb' && $this->converter->isKnownSpace(space: $space) === false)) {
-			return null;
-		}
+		return $space;
+	}//end functionSpace()
 
+	/**
+	 * Whether a function has three components in a space this reads.
+	 *
+	 * @param string $space The colour space.
+	 * @param list<string> $parts The component words.
+	 *
+	 * @return bool True when it can be read.
+	 */
+	private function isReadable(string $space, array $parts): bool {
+		return count($parts) === 3 && ($space === 'srgb' || $this->converter->isKnownSpace(space: $space) === true);
+	}//end isReadable()
+
+	/**
+	 * The component words as DTCG numbers.
+	 *
+	 * @param list<string> $parts The component words.
+	 * @param ColourFunctionReading $reading The function's space and plain-number divisor.
+	 *
+	 * @return array<int, float>|null The numbers, or null when a word is not one.
+	 */
+	private function components(array $parts, ColourFunctionReading $reading): ?array {
 		$components = [];
 		foreach ($parts as $index => $part) {
-			$number = $this->number(part: $part, space: $space, index: $index, isRgbFunction: $name !== 'color');
+			$scale = new ColourComponentScale(percent: (self::PERCENT_SCALE[$reading->space][$index] ?? 1.0), plainDivisor: $reading->plainDivisor);
+			$number = $this->number(part: $part, scale: $scale);
 			if ($number === null) {
 				return null;
 			}
@@ -188,13 +246,40 @@ class CssColorParser {
 			$components[] = $number;
 		}
 
-		if ($space === 'hsl') {
-			$space = 'srgb';
-			$components = (array)$this->converter->toSrgb(space: 'hsl', components: $components);
+		return $components;
+	}//end components()
+
+	/**
+	 * How a function's components read: rgb() channels from 0..255, everything else as written.
+	 *
+	 * @param string $space The colour space.
+	 * @param string $name The function name.
+	 *
+	 * @return ColourFunctionReading The reading.
+	 */
+	private function readingOf(string $space, string $name): ColourFunctionReading {
+		if ($space === 'srgb' && $name !== 'color') {
+			return new ColourFunctionReading(space: $space, plainDivisor: 255.0);
 		}
 
-		return ['space' => $space, 'components' => $components, 'alpha' => $alpha];
-	}//end fromFunction()
+		return new ColourFunctionReading(space: $space, plainDivisor: 1.0);
+	}//end readingOf()
+
+	/**
+	 * An hsl() colour converted to sRGB; any other colour as it is.
+	 *
+	 * @param array{space: string, components: array<int, float>, alpha: float|null} $colour The colour.
+	 *
+	 * @return array{space: string, components: array<int, float>, alpha: float|null}
+	 */
+	private function srgbIfHsl(array $colour): array {
+		if ($colour['space'] === 'hsl') {
+			$colour['space'] = 'srgb';
+			$colour['components'] = (array)$this->converter->toSrgb(space: 'hsl', components: $colour['components']);
+		}
+
+		return $colour;
+	}//end srgbIfHsl()
 
 	/**
 	 * The component words and the alpha, from comma or space syntax.
@@ -211,10 +296,7 @@ class CssColorParser {
 			$alpha = $this->alpha(text: $alphaText);
 		}
 
-		$parts = preg_split('/[\s,]+/', trim($main), -1, PREG_SPLIT_NO_EMPTY);
-		if ($parts === false) {
-			$parts = [];
-		}
+		$parts = $this->words(text: $main);
 
 		if ($alpha === null && count($parts) === 4 && str_contains($main, ',') === true) {
 			$alpha = $this->alpha(text: (string)array_pop($parts));
@@ -222,6 +304,22 @@ class CssColorParser {
 
 		return [$parts, $alpha];
 	}//end split()
+
+	/**
+	 * The words of a component list, split on spaces and commas.
+	 *
+	 * @param string $text The component list.
+	 *
+	 * @return list<string> The words.
+	 */
+	private function words(string $text): array {
+		$parts = preg_split('/[\s,]+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+		if ($parts === false) {
+			return [];
+		}
+
+		return $parts;
+	}//end words()
 
 	/**
 	 * An alpha word, number or percentage, to 0..1.
@@ -242,31 +340,42 @@ class CssColorParser {
 	 * One component word to its DTCG number.
 	 *
 	 * @param string $part The word.
-	 * @param string $space The colour space.
-	 * @param int $index Its position.
-	 * @param bool $isRgbFunction Whether it came from rgb() rather than color(srgb ...), which reads 0..255.
+	 * @param ColourComponentScale $scale How its position scales.
 	 *
 	 * @return float|null Null for a word that is not a number.
 	 */
-	private function number(string $part, string $space, int $index, bool $isRgbFunction): ?float {
+	private function number(string $part, ColourComponentScale $scale): ?float {
 		if ($part === 'none') {
 			return 0.0;
 		}
 
-		$part = preg_replace('/deg$/', '', $part);
-		if (preg_match('/^-?(\d+\.?\d*|\.\d+)(e-?\d+)?%?$/', (string)$part) !== 1) {
+		$part = (string)preg_replace('/deg$/', '', $part);
+		if (preg_match('/^-?(\d+\.?\d*|\.\d+)(e-?\d+)?%?$/', $part) !== 1) {
 			return null;
 		}
 
-		$number = (float)$part;
-		if (str_ends_with((string)$part, '%') === true) {
-			return ($number / 100 * (self::PERCENT_SCALE[$space][$index] ?? 1.0));
-		}
-
-		if ($space === 'srgb' && $isRgbFunction === true) {
-			return ($number / 255);
-		}
-
-		return $number;
+		return $this->scaled(part: $part, scale: $scale);
 	}//end number()
+
+	/**
+	 * A numeric component word scaled to its DTCG number: a percentage by the space's scale,
+	 * an rgb() channel from 0..255.
+	 *
+	 * @param string $part The numeric word.
+	 * @param ColourComponentScale $scale How its position scales.
+	 *
+	 * @return float The number.
+	 */
+	private function scaled(string $part, ColourComponentScale $scale): float {
+		$number = (float)$part;
+		if (str_ends_with($part, '%') === true) {
+			return ($number / 100 * $scale->percent);
+		}
+
+		if ($scale->plainDivisor === 1.0) {
+			return $number;
+		}
+
+		return ($number / $scale->plainDivisor);
+	}//end scaled()
 }//end class

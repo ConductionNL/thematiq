@@ -1,0 +1,1614 @@
+{
+  "app": "thematiq",
+  "productOwner": "Remco Damhuis",
+  "rows": {
+    "cat-rijkshuisstijl": {
+      "tier": "poc",
+      "reason": "The core job: apply the national government house style with one choice. The first thing to demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-municipal-sets": {
+      "tier": "poc",
+      "reason": "Picking your own municipality from ready-made sets is the reason the app exists; no competitor offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-bigcity-systems": {
+      "tier": "poc",
+      "reason": "The big city design systems are the showcase sets for the demo and the most visible NL Design System users.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-vng": {
+      "tier": "mvp",
+      "reason": "Municipal associations and shared services are a real customer group that needs its own set from day one.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-lasuite": {
+      "tier": "production",
+      "reason": "Needed for sovereign workplace bundles (MijnBureau, EDIC) that are procured as a suite, not for one Dutch organisation.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-searchable-picker": {
+      "tier": "later",
+      "reason": "Gap decision defer: no demand, no competitor rates yes; the current picker works for the catalogue size.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-swatch-preview": {
+      "tier": "mvp",
+      "reason": "Admins choosing from dozens of sets need to see the colours before applying; competitors only partly offer it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-stock-option": {
+      "tier": "poc",
+      "reason": "A demo must be able to switch the house style off again cleanly; it shows the app is safe to try.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-completeness-badge": {
+      "tier": "later",
+      "reason": "Useful signal for set maintainers, but no competitor offers it and no demand row asks for it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-design-system-choice": {
+      "tier": "mvp",
+      "reason": "Organisations need to pick high contrast or a softer theme, not only a brand; part of daily configuration.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-design-system-docs": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand, no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-community-sets": {
+      "tier": "mvp",
+      "reason": "Organisations that are not municipalities, such as agencies, need their brand set to use the app at all.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-starter-templates": {
+      "tier": "mvp",
+      "reason": "Table stakes: four of five competitors offer a starting template instead of a blank theme.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-marketplace": {
+      "tier": "later",
+      "reason": "Only openDesk rates yes and there is no demand row; the bundled catalogue covers the need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-provincial-sets": {
+      "tier": "later",
+      "reason": "Gap decision defer: no demand row and no competitor; provinces and water boards are not yet customers.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-one-click": {
+      "tier": "poc",
+      "reason": "Rebranding the whole workspace and login in one action is the core flow to demonstrate.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-diff-dialog": {
+      "tier": "production",
+      "reason": "Seeing exact value changes matters when admins manage many sets and overrides at scale; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-choose-what-changes": {
+      "tier": "production",
+      "reason": "Fine-grained admin control over which values to take over; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-no-reload": {
+      "tier": "poc",
+      "reason": "An instant repaint is what makes the demo convincing; three competitors offer it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-live-preview-shell": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; admins need to see the result before applying it to everyone.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-login-preview": {
+      "tier": "later",
+      "reason": "No competitor rates yes and no demand row; the shell preview covers the daily need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-trial-session": {
+      "tier": "production",
+      "reason": "Trying a theme safely on a live instance matters for large organisations; two competitors only partly offer it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-trial-banner": {
+      "tier": "production",
+      "reason": "Belongs with the trial session, which is a production safety feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-trial-publish": {
+      "tier": "production",
+      "reason": "Belongs with the trial session; two competitors rate yes but it only matters once trials are in use.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-trial-discard": {
+      "tier": "production",
+      "reason": "Belongs with the trial session, which is a production safety feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-component-playground": {
+      "tier": "later",
+      "reason": "Only openDesk rates yes and there is no demand row; the shell preview is enough for most admins.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-primary-lock": {
+      "tier": "production",
+      "reason": "All competitors are partial; a fine-grained admin choice that matters for strict house style compliance.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-runtime-no-deploy": {
+      "tier": "poc",
+      "reason": "Changing the brand from an admin screen without a deploy is the core promise of the demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-scheduled-switch": {
+      "tier": "later",
+      "reason": "No competitor rates yes and there is no demand row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-rollback-history": {
+      "tier": "production",
+      "reason": "Version history and rollback are audit and hardening needs for tenders; four competitors are partial.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-reset-core": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; an admin needs a way back to stock values when configuring for real.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-simple-theme-switch": {
+      "tier": "mvp",
+      "reason": "A feature request and two competitors rate yes; brand switching must work for non-specialists.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-upload-css": {
+      "tier": "mvp",
+      "reason": "An organisation without a bundled set needs to bring its own house style to use the app.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-upload-dtcg": {
+      "tier": "production",
+      "reason": "Importing the W3C token format is a migration path; only Tokens Studio rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-upload-validate": {
+      "tier": "mvp",
+      "reason": "Uploads without validation give broken themes; needed as soon as organisations upload their own set.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-upload-security": {
+      "tier": "mvp",
+      "reason": "Refusing script in uploaded styles is a security baseline for any upload feature on a live instance.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-custom-list-delete": {
+      "tier": "mvp",
+      "reason": "Three competitors rate yes; managing your own uploaded sets is basic administration.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-custom-export": {
+      "tier": "production",
+      "reason": "Export for reuse elsewhere is a migration feature; three competitors rate yes but it is not daily work.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-openproject-set-file": {
+      "tier": "production",
+      "reason": "Integration with the OpenProject plugin; matters for suite deployments, no competitor offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-dark-colours-from-file": {
+      "tier": "production",
+      "reason": "Fine-grained control over dark mode for brands that define their own dark palette; no competitor offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-menu-colour-role": {
+      "tier": "production",
+      "reason": "Integration with the OpenProject plugin shell; matters only in suite deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-colour-notation-kept": {
+      "tier": "later",
+      "reason": "Round-trip fidelity of colour notation is a nicety with no demand row and no competitor.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-convert-nlds-theme": {
+      "tier": "production",
+      "reason": "Converting existing NL Design System themes is a migration and import path for organisations moving over.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-token-editor": {
+      "tier": "mvp",
+      "reason": "Table stakes: three competitors rate yes for editing colour tokens in the browser.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-token-editor-tabs": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; grouped tokens make the editor usable for daily changes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-token-reset": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; undoing one edit is basic editor hygiene.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-token-live": {
+      "tier": "mvp",
+      "reason": "Three competitors rate yes; seeing an edit take effect is table stakes for an editor.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-overrides-persist": {
+      "tier": "mvp",
+      "reason": "Every competitor rates yes; edits that do not survive a restart make the editor useless.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-save-as-new-theme": {
+      "tier": "mvp",
+      "reason": "The drawn board canon asks for it; a real organisation keeps its edits as its own named theme.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-overrides-import-export": {
+      "tier": "production",
+      "reason": "Three competitors rate yes; moving edits between instances is a migration and OTAP need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-custom-css": {
+      "tier": "production",
+      "reason": "Only openDesk rates yes; free-form CSS is an escape hatch for demanding deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-custom-css-sanitise": {
+      "tier": "production",
+      "reason": "Belongs with free-form CSS, which is a production feature; required hardening once it exists.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-component-scoped": {
+      "tier": "production",
+      "reason": "Fine-grained per component control; one competitor yes, matters for strict design systems.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-dark-variant-auto": {
+      "tier": "mvp",
+      "reason": "Dark mode is an accessibility expectation and most sets have no hand-made dark palette.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-semantic-aliases": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand, only Tokens Studio rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-token-math": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-multi-brand-themes": {
+      "tier": "production",
+      "reason": "Three competitors rate yes; several brands in one source matters for multi-organisation and suite deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-figma-sync": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-git-sync": {
+      "tier": "production",
+      "reason": "Versioning the token source in Git is a config-as-code need of large deployments; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-multi-platform-export": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-colour-only-ui": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; a simple brand form is how a small organisation without a token set starts.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-bundled-open-fonts": {
+      "tier": "poc",
+      "reason": "The house style only looks right with its fonts; self-hosted open fonts are part of the core demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-air-gapped": {
+      "tier": "mvp",
+      "reason": "Government instances often run on-premise under a strict content security policy; fonts must still work.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-upload-font": {
+      "tier": "mvp",
+      "reason": "Many government brands use a licensed font that cannot be bundled; one competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-font-validate": {
+      "tier": "mvp",
+      "reason": "Belongs with font upload; checking format and size is the security baseline for any upload.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-font-list-delete": {
+      "tier": "mvp",
+      "reason": "Belongs with font upload; managing uploaded fonts is basic administration.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-font-login": {
+      "tier": "production",
+      "reason": "Polishing the login page with the own font matters for strict brand compliance; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-marianne-gated": {
+      "tier": "later",
+      "reason": "Only for French State deployments entitled to Marianne; no demand row and no competitor.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-font-tokens": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; font family, size and weight are part of every house style.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-dyslexia-font": {
+      "tier": "nee",
+      "reason": "Decided no: the per-user dyslexia font is Nextcloud server's own theme; per-user settings are a non-goal.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-org-font-library": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand, only Microsoft 365 rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-logo-sync": {
+      "tier": "poc",
+      "reason": "A house style without the organisation logo is not convincing; part of the one-click demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-background-sync": {
+      "tier": "mvp",
+      "reason": "The login background should match the house style for a real organisation going live.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-upload-logo": {
+      "tier": "mvp",
+      "reason": "Table stakes: three competitors rate yes and every organisation needs its own logo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-upload-background": {
+      "tier": "mvp",
+      "reason": "Table stakes: two competitors rate yes and most organisations change the login background.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-favicon": {
+      "tier": "mvp",
+      "reason": "Table stakes: four competitors rate yes for setting the browser tab icon.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-icon-library": {
+      "tier": "later",
+      "reason": "A government icon library is useful for other apps but no competitor offers it and no demand row asks.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-org-logos": {
+      "tier": "later",
+      "reason": "Bundled organisation logos are convenient; no competitor offers them and no demand row asks.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-icon-pack": {
+      "tier": "nee",
+      "reason": "Decided no: no competitor, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-icon-pack-indicator": {
+      "tier": "later",
+      "reason": "Shows a state that has no demand of its own; the icon pack itself was decided no.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-icon-contrast": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand, only Nextcloud Theming rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-dark-logo": {
+      "tier": "later",
+      "reason": "Only Nextcloud Theming rates yes and there is no demand row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-brand-images": {
+      "tier": "nee",
+      "reason": "Decided no: only Microsoft 365 offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-all-pages": {
+      "tier": "poc",
+      "reason": "Styling every page, including other apps, is what separates the app from portal-only theming; core demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-conduction-apps": {
+      "tier": "mvp",
+      "reason": "Conduction customers expect every fleet app to follow the house style through shared tokens.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-login-page": {
+      "tier": "poc",
+      "reason": "The login page is the first screen anyone sees; four competitors rate yes and it belongs in the demo.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-header-nav": {
+      "tier": "poc",
+      "reason": "Header and navigation carry the brand colour; three competitors rate yes and it is the first visible change.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-openproject-in-app-menu": {
+      "tier": "production",
+      "reason": "Integration with the OpenProject plugin for suite deployments; no competitor offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-shell-pixel-check": {
+      "tier": "production",
+      "reason": "Guarding the shell against platform release changes is hardening for running at scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-shell-canon-check": {
+      "tier": "production",
+      "reason": "Keeping several products on the same shell canon is a suite and hardening concern.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-menu-labels": {
+      "tier": "later",
+      "reason": "Only Nextcloud Theming rates yes and there is no demand row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-hide-slogan": {
+      "tier": "mvp",
+      "reason": "A simple setting government organisations change because the Nextcloud slogan does not fit them.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-public-pages": {
+      "tier": "mvp",
+      "reason": "Table stakes: three competitors rate yes; citizens see share pages without an account.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-email": {
+      "tier": "mvp",
+      "reason": "Notification emails reach citizens and staff; they must carry the house style from day one.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-email-footer": {
+      "tier": "production",
+      "reason": "A compliance footer on every email is a legal and tender demand; one competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-component-bridge": {
+      "tier": "production",
+      "reason": "Mapping Utrecht component tokens gives fidelity for strict design systems; no competitor offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-nc-variable-mapping": {
+      "tier": "poc",
+      "reason": "Without mapping every Nextcloud variable, stock colours leak through and the demo looks broken.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-error-contrast": {
+      "tier": "mvp",
+      "reason": "Readable error and status messages are a WCAG requirement for any government organisation.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-status-tokens": {
+      "tier": "mvp",
+      "reason": "Status colours are part of every house style; all competitors offer it partly.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-mobile-desktop-clients": {
+      "tier": "nee",
+      "reason": "Decided no: the official clients read core theming; owned by Nextcloud server.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-office-suite": {
+      "tier": "nee",
+      "reason": "Decided no: no competitor, no demand, and the office editor is out of reach.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-custom-domain": {
+      "tier": "production",
+      "reason": "Two competitors rate yes; an own domain is mostly hosting configuration and matters at deployment scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-footer-links": {
+      "tier": "mvp",
+      "reason": "Dutch government sites must link privacy and accessibility statements; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-web-app-name": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; an organisation renames the product to its own workspace name.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-per-app-exclude": {
+      "tier": "production",
+      "reason": "Fine-grained admin control for testing on large instances; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-per-group": {
+      "tier": "production",
+      "reason": "Several brands on one shared instance is a multi-tenant need; only Nextcloud Theming rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-group-priority": {
+      "tier": "production",
+      "reason": "Belongs with per-group theming, which is a multi-tenant production feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-login-unaffected": {
+      "tier": "production",
+      "reason": "Belongs with per-group theming, which is a multi-tenant production feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-user-choice": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; users with low vision need to choose dark or high contrast themselves.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-user-follow-os": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; following the OS accessibility preference is an accessibility baseline.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-per-site": {
+      "tier": "nee",
+      "reason": "Decided no: per-group theming spec requires anonymous pages to use the instance default.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-per-domain": {
+      "tier": "nee",
+      "reason": "Decided no: a recorded non-goal; per-domain mapping belongs to the domain theming app.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-tenant-isolation": {
+      "tier": "nee",
+      "reason": "Decided no: only Liferay offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-app-token-catalogue": {
+      "tier": "production",
+      "reason": "An integration for other apps that build their own pickers; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-contrast-on-upload": {
+      "tier": "mvp",
+      "reason": "Government organisations must meet WCAG; a contrast warning on upload prevents publishing an unreadable set.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-contrast-evaluate": {
+      "tier": "production",
+      "reason": "A contrast check for other apps is an integration; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-shipped-audit": {
+      "tier": "mvp",
+      "reason": "Organisations rely on the bundled sets meeting WCAG; this is the accessibility baseline of the catalogue.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-contrast-report-doc": {
+      "tier": "production",
+      "reason": "A published report per set is audit evidence for tenders; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-compliance-report": {
+      "tier": "production",
+      "reason": "An evidence report for audits is a tender and law driven need, not daily work.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-compliance-cli": {
+      "tier": "production",
+      "reason": "Scripted compliance reporting matters for large or automated deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-high-contrast-set": {
+      "tier": "mvp",
+      "reason": "An instance-wide maximum contrast theme is an accessibility need of real organisations; Nextcloud offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-forced-colors": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand, only Microsoft 365 rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-dark-mode": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; dark mode of the house style is an accessibility expectation.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-dark-generate-cli": {
+      "tier": "production",
+      "reason": "Command line regeneration of dark variants is an operations task for scripted deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-focus-indicators": {
+      "tier": "mvp",
+      "reason": "Visible focus is a WCAG requirement for keyboard users in every government deployment.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-reduced-motion": {
+      "tier": "mvp",
+      "reason": "Respecting reduced motion is a WCAG expectation; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-keyboard-admin": {
+      "tier": "mvp",
+      "reason": "The settings page itself must be keyboard operable to meet WCAG for administrators.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-vocabulary-audit": {
+      "tier": "production",
+      "reason": "Checking the full token vocabulary is hardening for set maintainers; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-block-inaccessible": {
+      "tier": "nee",
+      "reason": "Decided no: contrast failures are non-blocking warnings by recorded spec decision.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-contrast-in-editor": {
+      "tier": "nee",
+      "reason": "Decided no: only Microsoft 365 offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-accessibility-statement": {
+      "tier": "nee",
+      "reason": "Decided no: the report is evidence only; the statement needs an expert WCAG-EM evaluation.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-admin-only": {
+      "tier": "mvp",
+      "reason": "Every competitor rates yes; only administrators may change the theme of a real instance.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-delegated-role": {
+      "tier": "mvp",
+      "reason": "Table stakes: four competitors rate yes; communication staff, not admins, usually own the brand.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-audit-log": {
+      "tier": "production",
+      "reason": "Audit of who changed what is a tender and governance demand; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-audit-export": {
+      "tier": "production",
+      "reason": "Exporting the audit log for an auditor belongs with the audit log, a production feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-audit-append-only": {
+      "tier": "production",
+      "reason": "A tamper-proof audit log is hardening that tenders ask for.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-otap-bundle": {
+      "tier": "production",
+      "reason": "Promoting configuration through test, acceptance and production is how large organisations deploy; one competitor yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-otap-cli": {
+      "tier": "production",
+      "reason": "Scripted OTAP deployments matter at scale; openDesk rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-federated-share": {
+      "tier": "later",
+      "reason": "No competitor offers it and no demand row asks; still building.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-config-as-code": {
+      "tier": "production",
+      "reason": "Two competitors rate yes; declaring the theme in Helm values is how hosted platforms run at scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-approval-workflow": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-app-store-install": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; installing and updating from the app store is how an organisation gets the app.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-open-source": {
+      "tier": "mvp",
+      "reason": "Dutch government policy requires open source by default; procurement checks this before any use.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-licence-clarity": {
+      "tier": "production",
+      "reason": "Stating licences of bundled assets is a tender and compliance demand; openDesk rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-upstream-generated": {
+      "tier": "poc",
+      "reason": "Sets generated from the official NL Design System sources are what makes the catalogue trustworthy.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-nightly-pr": {
+      "tier": "later",
+      "reason": "Gap decision defer: partial, no demand; auto-download to the instance is a recorded non-goal.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-freshness-check": {
+      "tier": "production",
+      "reason": "Knowing when a set is behind upstream matters for running many instances over time.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-freshness-dismiss": {
+      "tier": "production",
+      "reason": "Belongs with the freshness check, a production maintenance feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-freshness-status": {
+      "tier": "production",
+      "reason": "Belongs with the freshness check, a production maintenance feature.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-nc-theming-sync": {
+      "tier": "mvp",
+      "reason": "Keeping core theming colours and logo in line avoids two conflicting brands; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-nc-theming-edit": {
+      "tier": "later",
+      "reason": "Only Nextcloud Theming itself rates yes; admins can edit core theming on its own page.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-upgrade-migration": {
+      "tier": "mvp",
+      "reason": "Three competitors rate yes; settings must survive upgrades and the rename from nldesign.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-capability-api": {
+      "tier": "production",
+      "reason": "Exposing the house style to clients and apps is an integration; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-token-set-api": {
+      "tier": "production",
+      "reason": "An API for the catalogue is an integration; two competitors rate yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-stylesheet-manifest": {
+      "tier": "production",
+      "reason": "Swapping stylesheets in place is an integration for other apps; no competitor rates yes.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-metrics": {
+      "tier": "production",
+      "reason": "Prometheus metrics are an operations need for running at scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-health": {
+      "tier": "production",
+      "reason": "Health checks for monitoring are an operations need for running at scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-tokens-for-other-apps": {
+      "tier": "mvp",
+      "reason": "Two competitors rate yes; other apps must follow the brand through the same CSS variables.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-no-js-overhead": {
+      "tier": "mvp",
+      "reason": "Three competitors rate yes; theming must not slow down ordinary pages for daily users.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-rest-api-theme": {
+      "tier": "nee",
+      "reason": "Decided no: only Microsoft 365 offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-cli-set-theme": {
+      "tier": "production",
+      "reason": "Two competitors rate yes; command line control matters for scripted deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-docs-site": {
+      "tier": "mvp",
+      "reason": "Three competitors rate yes; admins need documentation to configure the app themselves.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-sovereign-bundle": {
+      "tier": "later",
+      "reason": "Gap decision defer: no demand, only openDesk rates yes; bundling is MijnBureau or EDIC packaging.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-help-links": {
+      "tier": "nee",
+      "reason": "Decided no: help links are core ThemingDefaults; the request is against Nextcloud server.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-support-link": {
+      "tier": "nee",
+      "reason": "Decided no: footer links are core ThemingDefaults; the request is against Nextcloud server.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-localised-name": {
+      "tier": "nee",
+      "reason": "Decided no: instance name and slogan are core values; the request is against Nextcloud server.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-login-wording": {
+      "tier": "nee",
+      "reason": "Decided no: the login form labels are core; the request is against Nextcloud server.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-enforce-appearance": {
+      "tier": "nee",
+      "reason": "Decided no: enforce_theme is Nextcloud server's own setting.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-toast-timeout": {
+      "tier": "nee",
+      "reason": "Decided no: the toast timeout is a Nextcloud server user setting; per-user settings are a non-goal.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-selection-colour": {
+      "tier": "later",
+      "reason": "Only a changelog row and one competitor; a visual nicety without real demand.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-coverage-report": {
+      "tier": "nee",
+      "reason": "Decided no: no competitor, one feature request, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-suite-wide-appearance": {
+      "tier": "nee",
+      "reason": "Decided no: the missing half lives in separate office and chat servers thematiq cannot reach.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-mobile-logo": {
+      "tier": "later",
+      "reason": "A changelog row and one competitor; it only concerns the OpenProject plugin.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-environment-marker": {
+      "tier": "production",
+      "reason": "A tender row asks for a visible test versus production marker; matters for OTAP at scale.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-generated-documents": {
+      "tier": "production",
+      "reason": "A tender row asks for house style on generated letters and PDFs; two competitors partly offer it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-token-deprecation": {
+      "tier": "later",
+      "reason": "Only Tokens Studio rates yes; matters to set maintainers, not to organisations using the app.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "syn-push-to-platform": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-dtcg-bulk-convert": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-motion-tokens": {
+      "tier": "later",
+      "reason": "Only Tokens Studio rates yes and the demand is a changelog row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "typ-theme-base-size": {
+      "tier": "nee",
+      "reason": "Decided no: only Tokens Studio offers it, no demand, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-dtcg-colour-objects": {
+      "tier": "production",
+      "reason": "Reading the stable DTCG format keeps imports working as sources move; a migration and import need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-broken-reference-list": {
+      "tier": "production",
+      "reason": "A feature request; catching broken references before publishing is hardening for own sets.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "cat-living-token-docs": {
+      "tier": "later",
+      "reason": "A feature request but no competitor rates yes; nice for maintainers, not needed to theme an instance.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-brand-kit-in-editor": {
+      "tier": "nee",
+      "reason": "Decided no: the presentation editor is Collabora or OnlyOffice, out of thematiq's reach.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sco-per-app-login": {
+      "tier": "nee",
+      "reason": "Decided no: the per-group theming spec requires login pages to use the instance default.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-lock-per-space": {
+      "tier": "later",
+      "reason": "A roadmap row and one competitor; spaces with their own branding are rare in Nextcloud.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-assistant-logo": {
+      "tier": "later",
+      "reason": "A roadmap row and one competitor; a small trust signal with little demand.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-no-public-cdn": {
+      "tier": "production",
+      "reason": "Four competitors rate yes; keeping brand assets off public CDNs is a sovereignty demand in tenders.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "ast-branded-reactions": {
+      "tier": "nee",
+      "reason": "Decided no: meeting reactions are rendered by Nextcloud Talk, not by thematiq.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-block-page": {
+      "tier": "nee",
+      "reason": "Decided no: a network gateway block page is not a Nextcloud page.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "sur-per-app-brand": {
+      "tier": "later",
+      "reason": "A roadmap row and one competitor; per-app brand names are rare in government deployments.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-central-brand-library": {
+      "tier": "production",
+      "reason": "One central library used by many departments is a multi-tenant and governance need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "app-branding-package": {
+      "tier": "later",
+      "reason": "A roadmap row with no competitor yes; the catalogue already applies a set in one action.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "acc-high-contrast-tokens": {
+      "tier": "nee",
+      "reason": "Decided no: no competitor, one roadmap row, outside the core job.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-light-dark-values": {
+      "tier": "production",
+      "reason": "Separate light and dark values give fine-grained control for strict brands; one competitor partly offers it.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-add-token": {
+      "tier": "later",
+      "reason": "A roadmap row with no competitor yes; the bundled vocabulary covers what organisations need.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-alpha-hex": {
+      "tier": "later",
+      "reason": "One competitor rates yes and the demand is a changelog row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-component-preview": {
+      "tier": "later",
+      "reason": "A feature request for component builders, not for organisations theming an instance.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "aut-action-colour": {
+      "tier": "production",
+      "reason": "Separate action colour is fine-grained control some design systems need; no competitor or demand row.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "gov-restricted-set-licence": {
+      "tier": "production",
+      "reason": "Keeping licence-restricted sets off until confirmed is legal compliance, needed before wide distribution.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    },
+    "int-shell-tokens": {
+      "tier": "production",
+      "reason": "Integration for the OpenProject plugin and other products in a suite deployment.",
+      "proposedBy": "claude",
+      "proposedOn": "2026-11-17",
+      "decidedBy": null,
+      "decidedOn": null
+    }
+  }
+}

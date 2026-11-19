@@ -21,8 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Kernel\Contracts\GroupThemingServiceInterface;
 use OCA\Thematiq\Service\DesignSystemService;
-use OCA\Thematiq\Service\GroupThemingService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -55,7 +55,7 @@ class IconController extends Controller {
 	 *
 	 * @param IRequest $request The request.
 	 * @param DesignSystemService $designSystemService Resolves an icon name in the active pack.
-	 * @param GroupThemingService $groupTheming Resolves the request's token set.
+	 * @param GroupThemingServiceInterface $groupTheming Resolves the request's token set.
 	 * @param IURLGenerator $urlGenerator Builds the icon's static file URL.
 	 *
 	 * @return void
@@ -63,7 +63,7 @@ class IconController extends Controller {
 	public function __construct(
 		IRequest $request,
 		private readonly DesignSystemService $designSystemService,
-		private readonly GroupThemingService $groupTheming,
+		private readonly GroupThemingServiceInterface $groupTheming,
 		private readonly IURLGenerator $urlGenerator,
 	) {
 		parent::__construct(appName: Application::APP_ID, request: $request);

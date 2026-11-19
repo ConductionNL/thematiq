@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/token-set-picker-search/specs/token-set-picker-search/spec.md
+ * @e2e openspec/specs/token-set-picker-search/spec.md
  *
  * The search field above the token set list, on the real admin page: typing
  * hides the sets that do not match, the selected set stays, and Escape shows

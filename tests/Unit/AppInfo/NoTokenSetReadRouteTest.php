@@ -54,7 +54,7 @@ class NoTokenSetReadRouteTest extends TestCase {
 			}
 		}
 
-		$this->assertSame(['settings#setTokenSet' => 'POST'], $verbs);
-		$this->assertFalse(method_exists(SettingsController::class, 'getTokenSet'));
+		$this->assertSame(expected: ['settings#setTokenSet' => 'POST'], actual: $verbs);
+		$this->assertFalse(condition: method_exists(SettingsController::class, 'getTokenSet'));
 	}//end testOnlyThePostIsRegistered()
 }//end class

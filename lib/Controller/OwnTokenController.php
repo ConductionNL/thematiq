@@ -25,15 +25,13 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
-use OCA\Thematiq\Service\CustomOverridesService;
+use OCA\Thematiq\Service\AuditAndTranslation;
 use OCA\Thematiq\Service\OwnTokenService;
-use OCA\Thematiq\Service\ThemingAuditService;
-use OCA\Thematiq\Service\TokenDeprecationService;
+use OCA\Thematiq\Service\OwnTokenSources;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IL10N;
 use OCP\IRequest;
 use RuntimeException;
 
@@ -49,20 +47,14 @@ class OwnTokenController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param OwnTokenService $ownTokens The own token store.
-	 * @param TokenDeprecationService $deprecations Marks a removed token's deprecation as removed.
-	 * @param CustomOverridesService $overrides Rewrites the overrides files after a change.
-	 * @param ThemingAuditService $audit The audit trail.
-	 * @param IL10N $l Translations for the error texts.
+	 * @param OwnTokenSources $tokens The own tokens, the deprecation records and the custom overrides.
+	 * @param AuditAndTranslation $answers The audit trail and the translator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private OwnTokenService $ownTokens,
-		private TokenDeprecationService $deprecations,
-		private CustomOverridesService $overrides,
-		private ThemingAuditService $audit,
-		private IL10N $l,
+		private readonly OwnTokenSources $tokens,
+		private readonly AuditAndTranslation $answers,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -76,9 +68,9 @@ class OwnTokenController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function list(): JSONResponse {
-		$deprecations = $this->deprecations->list();
+		$deprecations = $this->tokens->deprecations->list();
 		$tokens = [];
-		foreach ($this->ownTokens->list() as $name => $token) {
+		foreach ($this->tokens->ownTokens->list() as $name => $token) {
 			$row = ['name' => $name] + $token;
 			if (isset($deprecations[$name]) === true) {
 				$row['deprecation'] = $deprecations[$name];
@@ -100,7 +92,7 @@ class OwnTokenController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function create(): JSONResponse {
 		try {
-			$token = $this->ownTokens->create(input: $this->input());
+			$token = $this->tokens->ownTokens->create(input: $this->input());
 		} catch (InvalidArgumentException $e) {
 			return $this->refused(exception: $e);
 		}
@@ -119,9 +111,9 @@ class OwnTokenController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function update(string $name): JSONResponse {
-		$old = ($this->ownTokens->list()[$name] ?? null);
+		$old = ($this->tokens->ownTokens->list()[$name] ?? null);
 		try {
-			$token = $this->ownTokens->update(name: $name, input: $this->input());
+			$token = $this->tokens->ownTokens->update(name: $name, input: $this->input());
 		} catch (InvalidArgumentException $e) {
 			return $this->refused(exception: $e);
 		}
@@ -141,12 +133,12 @@ class OwnTokenController extends Controller {
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function delete(string $name): JSONResponse {
 		try {
-			$old = $this->ownTokens->remove(name: $name);
+			$old = $this->tokens->ownTokens->remove(name: $name);
 		} catch (InvalidArgumentException $e) {
 			return $this->refused(exception: $e);
 		}
 
-		$this->deprecations->markRemoved(token: $name);
+		$this->tokens->deprecations->markRemoved(token: $name);
 
 		return $this->changed(name: $name, old: $old, new: null);
 	}//end delete()
@@ -176,15 +168,15 @@ class OwnTokenController extends Controller {
 	 */
 	private function changed(string $name, ?array $old, ?array $new): JSONResponse {
 		try {
-			$this->overrides->ensureExists();
-			$this->overrides->rewriteAll();
+			$this->tokens->overrides->ensureExists();
+			$this->tokens->overrides->rewriteAll();
 		} catch (RuntimeException) {
-			$error = $this->l->t('The token was saved, but the stylesheet could not be written. Save the token editor once to write it.');
+			$error = $this->answers->l->t('The token was saved, but the stylesheet could not be written. Save the token editor once to write it.');
 
 			return new JSONResponse(['error' => $error], 500);
 		}
 
-		$this->audit->log(action: 'own_token_changed', context: ['token' => $name, 'old' => $old, 'new' => $new]);
+		$this->answers->audit->log(action: 'own_token_changed', context: ['token' => $name, 'old' => $old, 'new' => $new]);
 
 		return new JSONResponse(['status' => 'ok', 'token' => $new]);
 	}//end changed()
@@ -198,21 +190,21 @@ class OwnTokenController extends Controller {
 	 */
 	private function refused(InvalidArgumentException $exception): JSONResponse {
 		$texts = [
-			'name' => $this->l->t('Use lowercase letters, digits and single dashes for the name, at most 48 characters.'),
-			'duplicate' => $this->l->t('A token with this name already exists.'),
-			'label' => $this->l->t('Give the token a label of at most 80 characters.'),
-			'type' => $this->l->t('Choose a type: colour, text, duration or easing.'),
-			'value' => $this->l->t('The value does not fit the type.'),
-			'darkValue' => $this->l->t('A dark value must be a colour, and only a colour token has one.'),
-			'description' => $this->l->t('Keep the description under 500 characters.'),
-			'unknown' => $this->l->t('There is no own token with this name.'),
+			'name' => $this->answers->l->t('Use lowercase letters, digits and single dashes for the name, at most 48 characters.'),
+			'duplicate' => $this->answers->l->t('A token with this name already exists.'),
+			'label' => $this->answers->l->t('Give the token a label of at most 80 characters.'),
+			'type' => $this->answers->l->t('Choose a type: colour, text, duration or easing.'),
+			'value' => $this->answers->l->t('The value does not fit the type.'),
+			'darkValue' => $this->answers->l->t('A dark value must be a colour, and only a colour token has one.'),
+			'description' => $this->answers->l->t('Keep the description under 500 characters.'),
+			'unknown' => $this->answers->l->t('There is no own token with this name.'),
 		];
 		$status = 400;
 		if ($exception->getCode() === 404) {
 			$status = 404;
 		}
 
-		$error = ($texts[$exception->getMessage()] ?? $this->l->t('The token was not saved.'));
+		$error = ($texts[$exception->getMessage()] ?? $this->answers->l->t('The token was not saved.'));
 
 		return new JSONResponse(['error' => $error, 'field' => $exception->getMessage()], $status);
 	}//end refused()

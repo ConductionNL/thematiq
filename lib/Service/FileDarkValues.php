@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
  * extension of the document handed on, where the converter lifts them out. A reference or a sum is
  * dropped here; every value is validated after.
  *
- * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+ * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
  */
 class FileDarkValues {
 
@@ -42,13 +42,6 @@ class FileDarkValues {
 	private const PLUGIN_EXTENSION = 'nl.conduction.openproject-thematiq';
 
 	/**
-	 * How deep a tree may nest.
-	 *
-	 * @var int
-	 */
-	private const MAX_DEPTH = 16;
-
-	/**
 	 * The content with the dark values in the thematiq extension, or as it was when there are none.
 	 *
 	 * @param string $content The content so far.
@@ -57,7 +50,7 @@ class FileDarkValues {
 	 *
 	 * @return string The content.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function withDark(string $content, array $document, array $dark): string {
 		if ($dark === []) {
@@ -76,7 +69,7 @@ class FileDarkValues {
 	 *
 	 * @return array<string, string> Name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function pluginDark(array $document): array {
 		$out = [];
@@ -98,11 +91,10 @@ class FileDarkValues {
 	 *
 	 * @return array<string, string> Name => dark value.
 	 *
-	 * @spec openspec/changes/dark-colours-from-a-file/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
+	 * @spec openspec/specs/dark-colours-from-a-file/spec.md#requirement-dark-colours-from-a-file-are-kept
 	 */
 	public function fromTree(array $tree): array {
-		$leaves = [];
-		$this->leaves(node: $tree, path: [], leaves: $leaves, depth: 0);
+		$leaves = (new DtcgTokenLeaves())->leavesOf(tree: $tree);
 
 		$out = [];
 		foreach ($leaves as $leaf) {
@@ -134,32 +126,4 @@ class FileDarkValues {
 
 		return trim($value);
 	}//end darkValue()
-
-	/**
-	 * Every token under a group, by dotted path.
-	 *
-	 * @param array<string, mixed> $node The group.
-	 * @param array<int, string> $path The group's path.
-	 * @param array<string, array<string, mixed>> $leaves Filled in place: dotted path to `path` and `token`.
-	 * @param int $depth The depth, guarded.
-	 *
-	 * @return void
-	 */
-	private function leaves(array $node, array $path, array &$leaves, int $depth): void {
-		foreach ($node as $key => $child) {
-			if (is_array($child) === false || str_starts_with((string)$key, '$') === true) {
-				continue;
-			}
-
-			$here = [...$path, (string)$key];
-			if (array_key_exists('$value', $child) === true) {
-				$leaves[implode('.', $here)] = ['path' => $here, 'token' => $child];
-				continue;
-			}
-
-			if ($depth < self::MAX_DEPTH) {
-				$this->leaves(node: $child, path: $here, leaves: $leaves, depth: ($depth + 1));
-			}
-		}
-	}//end leaves()
 }//end class

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 
 declare(strict_types=1);
@@ -48,7 +48,7 @@ use OCP\IRequest;
  * It takes no input, so there is nothing to guess and no brute-force counter;
  * the ceiling is the same one the health route has.
  *
- * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+ * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
  */
 class ShellTokenController extends Controller {
 
@@ -75,8 +75,8 @@ class ShellTokenController extends Controller {
 	 *
 	 * @return Response The document as JSON with its `ETag`, or an empty 304 with the same `ETag`.
 	 *
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
-	 * @spec openspec/changes/shell-tokens-endpoint/specs/shell-tokens/spec.md#requirement-an-unchanged-document-is-answered-with-304
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-another-product-reads-the-active-shell-tokens
+	 * @spec openspec/specs/shell-tokens/spec.md#requirement-an-unchanged-document-is-answered-with-304
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]

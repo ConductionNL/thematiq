@@ -32,6 +32,19 @@ own, with a delta spec, when it is picked up.
       sidebar width, container radii, input border widths, clickable areas, base font size and
       line height, status text and hover colours, `--color-mark`, box shadow, scrollbar,
       selection, the Assistant surface).
+      Measured 15 Oct on 64 sets: all 45 are settable in the admin editor and no set declares the
+      token for any of them. Decision 244 splits it:
+  - [x] 2.2.1 `--color-info-rgb` maps to `--nldesign-color-info-rgb` in
+        `css/systems/nldesign/overrides.css` (63 sets carry it). `tests/vitest/infoRgbMapping.spec.js`
+        checks, for every nldesign set in light and both dark scopes, that the triple names the same
+        colour as `--color-info` and that body text keeps 4.5:1 on a 20% wash of it.
+  - [ ] 2.2.2 `--color-mark` from `--utrecht-mark-background-color` (7 sets). Not mapped: Nextcloud
+        paints `mark` with that background under the inherited body text, and that pair passes
+        4.5:1 in both modes for hoeksche-waard only. Waits on Q-thematiq-12.
+  - [x] 2.2.3 The other 43 closed as measured, not built: 39 have no source token in any set, and
+        the layout four (`--border-width-input`, `--border-radius-container-large`,
+        `--default-font-size`, `--default-line-height`) stay with Nextcloud, because a set's body
+        size or radius would move Nextcloud's own layout. They stay settable in the admin editor.
 
 ## 3. Sources and thin coverage (from every-shipped-set-selectable 6.3, honest-token-set-coverage 6.4 and 6.5)
 

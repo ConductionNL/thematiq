@@ -18,8 +18,11 @@ use OCA\Thematiq\Controller\SettingsController;
 use OCA\Thematiq\Service\ActiveTokenSetService;
 use OCA\Thematiq\Service\AppThemingService;
 use OCA\Thematiq\Service\ComplianceReportService;
-use OCA\Thematiq\Service\EmailThemingService;
+use OCA\Thematiq\Service\EmailThemingSettings;
 use OCA\Thematiq\Service\GroupThemingService;
+use OCA\Thematiq\Service\SettingsConfigServices;
+use OCA\Thematiq\Service\SettingsReportServices;
+use OCA\Thematiq\Service\SettingsTokenSetServices;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\ThemingService;
 use OCA\Thematiq\Service\TokenSetPreviewService;
@@ -54,7 +57,7 @@ class SettingsControllerMarianneTest extends TestCase {
 	 * @return SettingsController The controller under test.
 	 */
 	private function makeController(): SettingsController {
-		$config = $this->createMock(IConfig::class);
+		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			function (string $app, string $key, $default = '') {
 				return ($this->configStore[$key] ?? $default);
@@ -67,64 +70,78 @@ class SettingsControllerMarianneTest extends TestCase {
 		);
 
 		return new SettingsController(
-			'nldesign',
-			$this->createMock(IRequest::class),
-			$config,
-			$this->createMock(TokenSetService::class),
-			$this->createMock(ThemingService::class),
-			$this->createMock(TokenSetPreviewService::class),
-			$this->createMock(AppThemingService::class),
-			$this->createMock(ComplianceReportService::class),
-			$this->createMock(ThemingAuditService::class),
-			$this->createMock(EmailThemingService::class),
-			$this->createMock(UpstreamFreshnessService::class),
-			$this->createMock(GroupThemingService::class),
-			$this->createMock(ActiveTokenSetService::class)
+			appName: 'nldesign',
+			request: $this->createMock(originalClassName: IRequest::class),
+			settings: new SettingsConfigServices(
+				config: $config,
+				auditService: $this->createMock(originalClassName: ThemingAuditService::class),
+				appThemingService: $this->createMock(originalClassName: AppThemingService::class),
+				groupThemingService: $this->createMock(originalClassName: GroupThemingService::class)
+			),
+			tokenSets: new SettingsTokenSetServices(
+				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
+				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
+				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				themingService: $this->createMock(originalClassName: ThemingService::class)
+			),
+			reports: new SettingsReportServices(
+				complianceService: $this->createMock(originalClassName: ComplianceReportService::class),
+				emailTheming: $this->createMock(originalClassName: EmailThemingSettings::class),
+				freshnessService: $this->createMock(originalClassName: UpstreamFreshnessService::class)
+			)
 		);
 	}//end makeController()
 
 	/**
 	 * Both Marianne routes carry #[AuthorizedAdminSetting] — non-admin
 	 * requests are rejected by that posture before the method body runs.
+	 *
+	 * @return void
 	 */
 	public function testBothEndpointsCarryAuthorizedAdminSetting(): void {
 		foreach (['getMarianneEnabled', 'setMarianneEnabled'] as $method) {
 			$reflection = new ReflectionMethod(SettingsController::class, $method);
 			$attributes = $reflection->getAttributes(AuthorizedAdminSetting::class);
-			$this->assertNotEmpty($attributes, "$method must carry #[AuthorizedAdminSetting]");
+			$this->assertNotEmpty(actual: $attributes, message: "$method must carry #[AuthorizedAdminSetting]");
 		}
 	}//end testBothEndpointsCarryAuthorizedAdminSetting()
 
 	/**
 	 * A fresh install (no `marianne_enabled` config value) defaults to
 	 * disabled — Marianne must be inert until an admin explicitly opts in.
+	 *
+	 * @return void
 	 */
 	public function testDefaultIsDisabled(): void {
 		$controller = $this->makeController();
 
 		$data = $controller->getMarianneEnabled()->getData();
 
-		$this->assertFalse($data['enabled']);
+		$this->assertFalse(condition: $data['enabled']);
 	}//end testDefaultIsDisabled()
 
 	/**
 	 * A POST persists the enabled state, reflected by the subsequent GET,
 	 * and stores the raw appconfig value as '1'.
+	 *
+	 * @return void
 	 */
 	public function testTogglePersists(): void {
 		$controller = $this->makeController();
 
 		$setResponse = $controller->setMarianneEnabled(true);
-		$this->assertSame(['status' => 'ok', 'enabled' => true], $setResponse->getData());
+		$this->assertSame(expected: ['status' => 'ok', 'enabled' => true], actual: $setResponse->getData());
 
 		$after = $controller->getMarianneEnabled()->getData();
-		$this->assertTrue($after['enabled']);
+		$this->assertTrue(condition: $after['enabled']);
 
-		$this->assertSame('1', $this->configStore['marianne_enabled']);
+		$this->assertSame(expected: '1', actual: $this->configStore['marianne_enabled']);
 	}//end testTogglePersists()
 
 	/**
 	 * Disabling after an enable reverts to Inter — persisted as '0'.
+	 *
+	 * @return void
 	 */
 	public function testDisablingAfterEnablePersists(): void {
 		$controller = $this->makeController();
@@ -132,7 +149,7 @@ class SettingsControllerMarianneTest extends TestCase {
 		$controller->setMarianneEnabled(true);
 		$controller->setMarianneEnabled(false);
 
-		$this->assertSame('0', $this->configStore['marianne_enabled']);
-		$this->assertFalse($controller->getMarianneEnabled()->getData()['enabled']);
+		$this->assertSame(expected: '0', actual: $this->configStore['marianne_enabled']);
+		$this->assertFalse(condition: $controller->getMarianneEnabled()->getData()['enabled']);
 	}//end testDisablingAfterEnablePersists()
 }//end class
