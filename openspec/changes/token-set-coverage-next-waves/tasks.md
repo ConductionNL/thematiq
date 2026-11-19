@@ -97,6 +97,12 @@ own, with a delta spec, when it is picked up.
       utrecht's 20, its primary #24578F among them, are not in @utrecht/design-tokens 7.0.0 or
       8.1.0. Recording those packages as the source would claim a provenance the colours do not
       have. Each set needs re-deriving from its package first, which changes how it looks.
+      20 Nov: `amsterdam` and `utrecht` are re-derived from @amsterdam/design-system-tokens 4.4.0
+      and @utrecht/design-tokens 8.1.0 (#1751, Ruben's decision of 19 Nov), with the package, version
+      and tarball URL recorded in `token-sets.json`; `ridderkerk` and `zwolle` likewise (#1753).
+      Still open: `vng`. Its colours come from tilburg-woo-ui's `_tokens-vng.scss`, which is not
+      published as a versioned package, so there is no version to pin; it is also the role layer
+      every brand file fills from, so changing its source moves every generated set.
 - [ ] 3.2 The 28 sets between 8 and 27 on the bridge, after wave 1.
       Measured 19 Nov 2026 from `docs/reference/token-set-coverage.md`, not built: 25 sets sit
       between 8 and 27 of 87 now (bodegraven-reeuwijk, borne, buren, conduction-new, demodam,
@@ -104,6 +110,13 @@ own, with a delta spec, when it is picked up.
       leidschendam-voorburg, noordoostpolder, nora, provincie-zuid-holland, purmerend,
       riddeliemers, stedebroec, tilburg, venray, vught, westervoort, zevenaar). Raising them takes
       the same brand-file route as 1.2, so this waits on 1.2's open question.
+      20 Nov: 1.2's question is answered (the partial shape, #1749). Not built: these 25 sets are
+      converted from their own packages by the nightly sync, and their packages publish few
+      `--utrecht-*` tokens of their own. A partial brand file raises the count only with role-layer
+      component tokens re-pointed at each organisation's colours (8 to 9 role mappings per set, each
+      read off the package), and it takes the set out of the nightly sync, which then no longer
+      applies that organisation's upstream releases. That trade is per set and is left for a
+      decision before 25 sets leave the sync.
 
 ## 4. Dead weight (from honest-token-set-coverage 6.6)
 
