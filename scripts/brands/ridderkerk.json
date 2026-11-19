@@ -1,0 +1,57 @@
+{
+	"id": "ridderkerk",
+	"name": "Ridderkerk",
+	"description": "Gemeente Ridderkerk's own design tokens: green on white, with a light blue-grey surface.",
+	"rampMode": "partial",
+	"_comment_source": [
+		"Derived from @nl-design-system-unstable/ridderkerk-design-tokens 1.0.0 (https://registry.npmjs.org/@nl-design-system-unstable/ridderkerk-design-tokens/-/ridderkerk-design-tokens-1.0.0.tgz), Ruben's decision of 19 Nov 2026.",
+		"The package publishes five colours and a typeface and no component mapping, so this is a partial brand",
+		"file: each published colour is mapped onto the role layer's step of the same role, naming the token it is",
+		"read from, and every other step is left to Nextcloud. green-20 is the primary the shipped set and the",
+		"catalogue already used."
+	],
+	"upstream": {
+		"package": "@nl-design-system-unstable/ridderkerk-design-tokens",
+		"url": "https://registry.npmjs.org/@nl-design-system-unstable/ridderkerk-design-tokens/-/ridderkerk-design-tokens-1.0.0.tgz",
+		"paletteFile": "dist/design-tokens.css",
+		"themeFile": "dist/design-tokens.css",
+		"onlyBlock": ".ridderkerk-theme",
+		"palettePrefix": "--ridderkerk-color-"
+	},
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "ridderkerk-color-grey-100"
+		},
+		"black": {
+			"value": "#2b2b2b",
+			"from": "ridderkerk-color-grey-20"
+		},
+		"black-txt": {
+			"value": "#2b2b2b",
+			"from": "ridderkerk-color-grey-20"
+		},
+		"blue-500": {
+			"value": "#008937",
+			"from": "ridderkerk-color-green-20"
+		},
+		"gray-50": {
+			"value": "#f3f5f9",
+			"from": "ridderkerk-color-blue-100"
+		},
+		"extra-purple": {
+			"value": "#4d327c",
+			"from": "ridderkerk-color-purple-30"
+		}
+	},
+	"semantic": {
+		"_comment": "From: ridderkerk-color-green-20 (primary), -grey-100 (text on the primary), -grey-20 (text).",
+		"primary": "#008937",
+		"primary-text": "#ffffff",
+		"text": "#2b2b2b"
+	},
+	"typography": {
+		"fontFamily": "Lato, Helvetica Neue, Arial, sans-serif",
+		"from": "ridderkerk-typography-sans-serif-font-family"
+	}
+}

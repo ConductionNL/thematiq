@@ -307,7 +307,7 @@
         },
         "ridderkerk": {
             "verdict": "pass",
-            "textRatio": 4.63,
+            "textRatio": 4.53,
             "uiRatio": 4.53,
             "textThreshold": 4.5,
             "uiThreshold": 3.0

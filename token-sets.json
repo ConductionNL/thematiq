@@ -559,7 +559,7 @@
 	{
 		"id": "ridderkerk",
 		"name": "Ridderkerk",
-		"description": "Design tokens for Ridderkerk",
+		"description": "Gemeente Ridderkerk's own design tokens: green on white, with a light blue-grey surface.",
 		"theming": {
 			"primary_color": "#008937",
 			"background_color": "#FFFFFF"
@@ -572,7 +572,9 @@
 			"version": "1.0.0",
 			"holder": "gemeente Ridderkerk",
 			"restricted": true
-		}
+		},
+		"upstreamPackage": "@nl-design-system-unstable/ridderkerk-design-tokens",
+		"upstreamUrl": "https://registry.npmjs.org/@nl-design-system-unstable/ridderkerk-design-tokens/-/ridderkerk-design-tokens-1.0.0.tgz"
 	},
 	{
 		"id": "stedebroec",
@@ -872,7 +874,7 @@
 	{
 		"id": "zwolle",
 		"name": "Gemeente Zwolle",
-		"description": "Design tokens for Gemeente Zwolle, resolved from the @nl-design-system-unstable/zwolle-design-tokens package",
+		"description": "Gemeente Zwolle's own design tokens: dark blue buttons and table headers on white.",
 		"theming": {
 			"primary_color": "#476DB8",
 			"background_color": "#FFFFFF"
@@ -893,7 +895,8 @@
 			"version": "1.0.0",
 			"holder": "Gemeente Zwolle",
 			"restricted": true
-		}
+		},
+		"upstreamUrl": "https://registry.npmjs.org/@nl-design-system-unstable/zwolle-design-tokens/-/zwolle-design-tokens-1.0.0.tgz"
 	},
 	{
 		"id": "hoog-contrast",

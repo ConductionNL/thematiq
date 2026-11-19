@@ -61,7 +61,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | provincie-zuid-holland | 5.82:1 | 4.5:1 | 5.82:1 | 3.0:1 | pass |
 | purmerend | 4.60:1 | 4.5:1 | 4.60:1 | 3.0:1 | pass |
 | riddeliemers | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
-| ridderkerk | 4.63:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
+| ridderkerk | 4.53:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
 | rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
 | rotterdam | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | sittard-geleen | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |

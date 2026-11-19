@@ -13,7 +13,7 @@ own, with a delta spec, when it is picked up.
       archived) generates `css/tokens/denhaag.css` from `scripts/brands/denhaag.json` and
       `scripts/brands/denhaag.components.json`, and `docs/reference/token-set-coverage.md` measures
       denhaag at 81 of 87 on the bridge (read 12 Oct). Seven sets are left at 0 of 87, see 1.2.
-- [ ] 1.2 Brand files for the other seven bridge-zero sets (`amsterdam`, `epe`, `groningen`,
+- [x] 1.2 Brand files for the other seven bridge-zero sets (`amsterdam`, `epe`, `groningen`,
       `ridderkerk`, `rijkshuisstijl`, `utrecht`, `zwolle`). Each declares 3 to 9 palette steps of
       its own (`epe` 226) and a brand file needs about 43 ramp steps, so each needs a sourced
       palette per organisation rather than a derivation. `rijkshuisstijl` last: it is the default
@@ -41,6 +41,9 @@ own, with a delta spec, when it is picked up.
       bridge-zero, converted from their own packages by the nightly sync, so they need no brand file.
       `utrecht` and `amsterdam` are partial brand files from @utrecht/design-tokens 8.1.0 and
       @amsterdam/design-system-tokens 4.4.0 (bridge 0 → 57 and 58).
+      `ridderkerk` and `zwolle` are partial brand files from
+      @nl-design-system-unstable/ridderkerk-design-tokens 1.0.0 and -zwolle-design-tokens 1.0.0
+      (bridge 0 → 56 and 65). Every set the task named is now sourced from its own package.
 
 ## 2. Vocabulary reach (from every-shipped-set-selectable 6.3, honest-token-set-coverage 6.2 and 6.3)
 

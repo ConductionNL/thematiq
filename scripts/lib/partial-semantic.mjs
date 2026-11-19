@@ -15,7 +15,8 @@
  *     colour (a hover darkened from the primary, the light tint, an `r, g, b`
  *     triple, the text colour that reads on a background);
  *   - a step picked from the set's palette only when that step is one the
- *     organisation publishes; otherwise the rule's Nextcloud default.
+ *     organisation publishes and is as light or dark as the role's Nextcloud
+ *     default; otherwise that default.
  * A colour the converter adjusted for contrast is replaced by the rule's own
  * fallback, so no shade appears that neither the organisation nor Nextcloud
  * chose.
@@ -84,6 +85,23 @@ function onColor(background, args) {
 	return ratio(background, light) >= ratio(background, dark) ? light : dark
 }
 
+/**
+ * Whether a published colour picked for a role is as light or as dark as the
+ * role's Nextcloud default. A small palette offers the picker a text grey for
+ * a background step; that pick is refused and Nextcloud's default kept.
+ *
+ * @param {string} hex The picked colour.
+ * @param {string|null} fallback The role's Nextcloud default.
+ * @return {boolean} True when the pick suits the role.
+ */
+function suitsRole(hex, fallback) {
+	const reference = fallback === null ? null : toHex(fallback)
+	if (reference === null) {
+		return true
+	}
+	return Math.abs(luminance(hex) - luminance(reference)) <= 0.35
+}
+
 /** Reasons whose value is Nextcloud's own, or derived the way Nextcloud derives it. */
 const NEXTCLOUD_REASONS = ['nextcloud-default-used', 'geometry-kept-nextcloud', 'derived-from-header']
 
@@ -117,7 +135,8 @@ export function keptValue(entry, rule, published, chosen) {
 			return entry.value
 		}
 		const hex = toHex(entry.value)
-		return hex !== null && published.has(hex) === true ? entry.value : (rule?.fallback?.default ?? null)
+		const fallback = rule?.fallback?.default ?? null
+		return hex !== null && published.has(hex) === true && suitsRole(hex, fallback) === true ? entry.value : fallback
 	}
 	if (entry.reason === 'contrast-adjusted') {
 		const fallback = rule?.fallback
