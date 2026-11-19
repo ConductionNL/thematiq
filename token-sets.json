@@ -22,18 +22,29 @@
 	{
 		"id": "rijkshuisstijl",
 		"name": "Rijkshuisstijl",
-		"description": "The house style of the Dutch central government (Rijksoverheid): lintblauw #154273 for actions, donkerblauw #01689b for links, cool greys, square corners, Fira Sans in place of the restricted RijksoverheidSans. Colours, type and spacing from the community tokens 18.0.1.",
+		"description": "The house style of the Dutch central government (Rijksoverheid), converted from the community tokens 18.0.1. Fira Sans stands in for the restricted RijksSansVF until an administrator uploads it.",
 		"theming": {
 			"primary_color": "#154273",
 			"background_color": "#F5F6F7",
 			"logo": "img/logos/rijkshuisstijl.svg"
 		},
+		"note": "Converted from @rijkshuisstijl-community/design-tokens 18.0.1 without hand edits. In dark mode the error colour #e72e2e on the page background #191c1f measures 3.93:1, under the 4.5:1 that text needs. Reported, not adjusted: the colour is the organisation's own.",
 		"licence": {
 			"id": "LicenseRef-rijkshuisstijl-house-style",
 			"package": "@rijkshuisstijl-community/design-tokens",
 			"version": "18.0.1",
 			"holder": "Rijksoverheid",
 			"restricted": true
+		},
+		"upstreamPackage": "@rijkshuisstijl-community/design-tokens",
+		"upstreamVersion": "18.0.1",
+		"font": {
+			"family": "RijksSansVF",
+			"selfHosted": false,
+			"licence": "restricted",
+			"licenceHolder": "Rijksoverheid",
+			"action": "upload",
+			"note": "The variable build of the Dutch State's own typeface, licensed for rijksoverheid use only. Thematiq self-hosts Fira Sans as its open stand-in, which is what this set renders until an entitled administrator uploads the real one."
 		}
 	},
 	{
@@ -48,7 +59,7 @@
 		"licence": {
 			"id": "LicenseRef-amsterdam-house-style",
 			"package": "@amsterdam/design-system-tokens",
-			"version": "",
+			"version": "4.3.0",
 			"holder": "Gemeente Amsterdam",
 			"restricted": true
 		}
@@ -257,15 +268,15 @@
 		"name": "Gemeente Groningen",
 		"description": "Design tokens for Gemeente Groningen",
 		"theming": {
-			"primary_color": "#154273",
+			"primary_color": "#055fa5",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "4.0.0",
+		"upstreamRef": "2a75406b722e286019e01d8d48c11d4cec14a0cb",
+		"upstreamVersion": "5.1.0",
 		"licence": {
 			"id": "LicenseRef-groningen-house-style",
 			"package": "@nl-design-system-unstable/groningen-design-tokens",
-			"version": "4.0.0",
+			"version": "5.1.0",
 			"holder": "Gemeente Groningen",
 			"restricted": true
 		}
@@ -715,7 +726,7 @@
 		"licence": {
 			"id": "LicenseRef-utrecht-house-style",
 			"package": "@utrecht/design-tokens",
-			"version": "",
+			"version": "7.0.0",
 			"holder": "Gemeente Utrecht",
 			"restricted": true
 		}
@@ -1429,6 +1440,76 @@
 				"nl": "Warmtepompacademie · werkplek op Nextcloud",
 				"en": "Warmtepompacademie · workplace on Nextcloud"
 			}
+		}
+	},
+	{
+		"id": "voorne-aan-zee",
+		"name": "Gemeente Voorne aan Zee",
+		"description": "Design tokens for Gemeente Voorne aan Zee, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#1B59A4"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-voorne-aan-zee-house-style",
+			"package": "@nl-design-system-community/voorne-aan-zee-design-tokens",
+			"version": "1.0.0",
+			"holder": "Gemeente Voorne aan Zee",
+			"restricted": true
+		}
+	},
+	{
+		"id": "sittard-geleen",
+		"name": "Gemeente Sittard-Geleen",
+		"description": "Design tokens for Gemeente Sittard-Geleen, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#2275a5"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.2",
+		"licence": {
+			"id": "LicenseRef-sittard-geleen-house-style",
+			"package": "@nl-design-system-community/sittard-geleen-design-tokens",
+			"version": "1.0.2",
+			"holder": "Gemeente Sittard-Geleen",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
+		}
+	},
+	{
+		"id": "vidar",
+		"name": "Vidar",
+		"description": "Design tokens for Vidar, converted from nl-design-system/themes",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#00577e"
+		},
+		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamVersion": "1.0.0",
+		"licence": {
+			"id": "LicenseRef-vidar-house-style",
+			"package": "@nl-design-system-community/vidar-design-tokens",
+			"version": "1.0.0",
+			"holder": "Vidar",
+			"restricted": true
+		},
+		"font": {
+			"family": "Roobert",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Displaay Type Foundry",
+			"action": "upload",
+			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
 		}
 	}
 ]

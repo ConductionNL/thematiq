@@ -41,7 +41,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | example-opleider | 9.40:1 | 4.5:1 | 9.40:1 | 3.0:1 | pass |
 | example-voortgezet | 7.67:1 | 4.5:1 | 7.67:1 | 3.0:1 | pass |
 | frankendesk | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
-| groningen | 10.20:1 | 4.5:1 | 10.20:1 | 3.0:1 | pass |
+| groningen | 6.59:1 | 4.5:1 | 6.59:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
 | hoeksche-waard | 4.56:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
@@ -64,6 +64,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | ridderkerk | 4.63:1 | 4.5:1 | 4.53:1 | 3.0:1 | pass |
 | rijkshuisstijl | 10.20:1 | 4.5:1 | 9.43:1 | 3.0:1 | pass |
 | rotterdam | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
+| sittard-geleen | 5.05:1 | 4.5:1 | 5.05:1 | 3.0:1 | pass |
 | stedebroec | 8.45:1 | 4.5:1 | 8.45:1 | 3.0:1 | pass |
 | summer-breeze | 9.08:1 | 4.5:1 | 8.47:1 | 3.0:1 | pass |
 | tilburg | 12.61:1 | 4.5:1 | 12.61:1 | 3.0:1 | pass |
@@ -71,7 +72,9 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | utrecht | 7.41:1 | 4.5:1 | 7.41:1 | 3.0:1 | pass |
 | vaartveld | 6.63:1 | 4.5:1 | 6.13:1 | 3.0:1 | pass |
 | venray | 4.94:1 | 4.5:1 | 4.94:1 | 3.0:1 | pass |
+| vidar | 7.88:1 | 4.5:1 | 7.88:1 | 3.0:1 | pass |
 | vng | 11.98:1 | 4.5:1 | 11.98:1 | 3.0:1 | pass |
+| voorne-aan-zee | 6.97:1 | 4.5:1 | 6.97:1 | 3.0:1 | pass |
 | vught | 4.62:1 | 4.5:1 | 4.55:1 | 3.0:1 | pass |
 | warmtepompacademie | 5.96:1 | 4.5:1 | 5.51:1 | 3.0:1 | pass |
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
@@ -139,6 +142,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | ridderkerk | 15 | 0 | 0 |  |
 | rijkshuisstijl | 15 | 0 | 0 |  |
 | rotterdam | 15 | 0 | 0 |  |
+| sittard-geleen | 15 | 0 | 0 |  |
 | stedebroec | 15 | 0 | 0 |  |
 | summer-breeze | 15 | 0 | 0 |  |
 | tilburg | 15 | 0 | 0 |  |
@@ -146,7 +150,9 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | utrecht | 15 | 0 | 0 |  |
 | vaartveld | 15 | 0 | 0 |  |
 | venray | 15 | 0 | 0 |  |
+| vidar | 15 | 0 | 0 |  |
 | vng | 15 | 0 | 0 |  |
+| voorne-aan-zee | 15 | 0 | 0 |  |
 | vught | 15 | 0 | 0 |  |
 | warmtepompacademie | 15 | 0 | 0 |  |
 | westervoort | 15 | 0 | 0 |  |

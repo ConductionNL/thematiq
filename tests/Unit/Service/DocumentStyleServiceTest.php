@@ -445,6 +445,10 @@ class DocumentStyleServiceTest extends TestCase {
 		$this->app['token_set'] = 'westervoort';
 		$out[] = $this->service()->forUser(uid: null);
 
-		$this->assertSame(expected: 'b5a35be6b57f31b0', actual: substr(hash('sha256', (string)json_encode($out)), 0, 16), message: (string)json_encode($out[0]));
+		$this->assertSame(
+			expected: '3d44ac856cb8a8c3',
+			actual: substr(hash('sha256', (string)json_encode($out)), 0, 16),
+			message: (string)json_encode($out[0])
+		);
 	}//end testTheWholeProfileGolden()
 }//end class
