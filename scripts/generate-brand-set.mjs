@@ -59,6 +59,8 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { converter, loadConverterContext } from './lib/converter-context.mjs'
+import { completeSemanticLayer, toHex } from './lib/partial-semantic.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -244,6 +246,49 @@ function loadBrand(brandId) {
 }
 
 /**
+ * The body of the first rule whose selector is exactly `selector`.
+ *
+ * A package that ships its light theme and its dark-mode and viewport
+ * overrides in one stylesheet would otherwise be read last-wins across all of
+ * them, so a dark value replaces the light one.
+ *
+ * @param {string} css Stylesheet source.
+ * @param {string} selector The rule's selector, e.g. `.utrecht-theme`.
+ * @returns {string} The rule's body, or '' when there is no such rule.
+ */
+export function ruleBody(css, selector) {
+	const pattern = new RegExp('(^|[}\\s])' + selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*\\{')
+	const match = pattern.exec(css)
+	if (match === null) {
+		return ''
+	}
+	let index = match.index + match[0].length
+	const start = index
+	let depth = 1
+	while (index < css.length && depth > 0) {
+		if (css[index] === '{') {
+			depth++
+		} else if (css[index] === '}') {
+			depth--
+		}
+		index++
+	}
+	return css.slice(start, index - 1)
+}
+
+/**
+ * Read an upstream stylesheet, narrowed to `upstream.onlyBlock` when set.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} path The stylesheet path.
+ * @returns {string} The source to read declarations from.
+ */
+function readUpstreamCss(brand, path) {
+	const css = readFileSync(path, 'utf8')
+	return brand.upstream.onlyBlock !== undefined ? ruleBody(css, brand.upstream.onlyBlock) : css
+}
+
+/**
  * Sections A + B from a published package: the brand's palette and its own
  * NL Design System mapping (RODS does this).
  *
@@ -264,7 +309,7 @@ function readUpstreamSources(brand, upstreamPath) {
 
 	const prefix = brand.upstream.palettePrefix
 	for (const [name, value] of effective(
-		readDeclarations(readFileSync(palettePath, 'utf8')).filter((d) =>
+		readDeclarations(readUpstreamCss(brand, palettePath)).filter((d) =>
 			d.name.startsWith(prefix),
 		),
 	)) {
@@ -274,7 +319,7 @@ function readUpstreamSources(brand, upstreamPath) {
 	// Everything that is NOT the brand's private palette prefix: these are
 	// the NL Design System component tokens the brand itself decided on.
 	const brandComponents = effective(
-		readDeclarations(readFileSync(themePath, 'utf8')).filter(
+		readDeclarations(readUpstreamCss(brand, themePath)).filter(
 			(d) => d.name.startsWith(prefix) === false,
 		),
 	)
@@ -282,7 +327,7 @@ function readUpstreamSources(brand, upstreamPath) {
 	// The theme file also restates palette entries; fold them in so every
 	// var() reference in B resolves without reaching outside this file.
 	for (const { name, value } of readDeclarations(
-		readFileSync(themePath, 'utf8'),
+		readUpstreamCss(brand, themePath),
 	)) {
 		if (name.startsWith(prefix) === true) {
 			palette.set(name, value)
@@ -436,7 +481,8 @@ function referencedNames(value) {
  * organisation publishes. A ramp step it leaves out is not declared, and every
  * role-layer declaration that would carry a colour the brand did not supply is
  * left out too: directly (a role-layer literal the ramp does not replace) or
- * through `var()` (a missing ramp step, or another declaration left out). What
+ * through `var()` (a missing ramp step, or another declaration left out). The
+ * role layer's typefaces are left out the same way. What
  * is left out falls back to Nextcloud's own value through the bridge, instead
  * of to the role layer's VNG and Tilburg colours.
  *
@@ -449,7 +495,9 @@ export function namesLeftToNextcloud(roleEffective, rampByName, rampByValue) {
 	const left = new Set()
 	for (const [name, value] of roleEffective) {
 		const isRampStep = name.startsWith('--vng-color-') === true || name.startsWith('--tilburg-color-') === true
-		if (isRampStep === true ? rampByName.has(name) === false : carriesUnsuppliedColour(value, rampByValue) === true) {
+		// A typeface is the organisation's as much as a colour is.
+		const isTypeface = name.endsWith('-font-family') === true
+		if (isTypeface === true || (isRampStep === true ? rampByName.has(name) === false : carriesUnsuppliedColour(value, rampByValue) === true)) {
 			left.add(name)
 		}
 	}
@@ -826,6 +874,9 @@ function recordInCatalogue(brand, brandId, upstreamVersion) {
 		if (upstreamVersion) {
 			entry.upstreamVersion = upstreamVersion
 		}
+		if (brand.upstream.url !== undefined) {
+			entry.upstreamUrl = brand.upstream.url
+		}
 	}
 	entry.theming = {
 		primary_color: brand.semantic.primary,
@@ -950,6 +1001,52 @@ function reportLiterals(brand, unsubstituted) {
 	}
 }
 
+/**
+ * The semantic tokens a partial brand leaves unnamed, completed without
+ * inventing a colour: the converter reads the set as rendered so far, and
+ * completeSemanticLayer() keeps only the organisation's own or Nextcloud's
+ * values.
+ *
+ * @param {object} brand The parsed brand file.
+ * @param {string} brandId The brand id.
+ * @param {string} provenance Where section A came from.
+ * @param {object} sections The sections rendered so far.
+ * @returns {Array<{name: string, value: string}>} The tokens to add.
+ */
+function completePartialSemantic(brand, brandId, provenance, sections) {
+	const context = loadConverterContext()
+	const result = converter.convert(renderSet(brand, brandId, provenance, sections), {
+		slug: brandId,
+		displayName: brand.name,
+		sourceName: provenance,
+		table: context.table,
+		tableHash: context.tableHash,
+		vocabulary: context.vocabulary,
+		fonts: [],
+	})
+	const published = new Set()
+	for (const value of [...sections.palette.values(), ...sections.brandComponents.values()]) {
+		const hex = toHex(value)
+		if (hex !== null) {
+			published.add(hex)
+		}
+	}
+	for (const value of Object.values(brand.semantic ?? {})) {
+		const hex = typeof value === 'string' ? toHex(value) : null
+		if (hex !== null) {
+			published.add(hex)
+		}
+	}
+	const declaredValues = new Map(sections.semantic.map(({ name, value }) => [name, value]))
+	return completeSemanticLayer({
+		report: result.report,
+		rules: context.table.rules,
+		declared: new Set(declaredValues.keys()),
+		declaredValues,
+		published,
+	})
+}
+
 function main() {
 	const [brandId, upstreamPath, upstreamVersion] = process.argv.slice(2)
 	const brand = loadBrand(brandId)
@@ -1022,15 +1119,19 @@ function main() {
 	// ---- emit -----------------------------------------------------------
 	const provenance = describeProvenance(brand, upstreamVersion)
 	const outputPath = join(TOKENS_DIR, `${brandId}.css`)
+	const sections = { palette, brandComponents, roleFill, overrides, semantic }
+
+	// A partial brand names only what it publishes; the rest of the semantic
+	// layer is completed from its own values or Nextcloud's (partial-semantic.mjs).
+	if (brand.rampMode === 'partial') {
+		const completed = completePartialSemantic(brand, brandId, provenance, sections)
+		semantic.push(...completed)
+		console.log(`  D+ completed             ${completed.length} semantic tokens from the set's own values or Nextcloud's`)
+	}
+
 	writeFileSync(
 		outputPath,
-		renderSet(brand, brandId, provenance, {
-			palette,
-			brandComponents,
-			roleFill,
-			overrides,
-			semantic,
-		}),
+		renderSet(brand, brandId, provenance, sections),
 		'utf8',
 	)
 

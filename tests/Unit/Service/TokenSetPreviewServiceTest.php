@@ -482,7 +482,7 @@ class TokenSetPreviewServiceTest extends TestCase {
 		}
 
 		$this->assertSame(
-			expected: '6af724605465fe66 49',
+			expected: '3b21e05e3eacda66 49',
 			actual: substr(hash('sha256', (string)json_encode($out)), 0, 16) . ' ' . count($out['amsterdam'])
 		);
 	}//end testTheShippedSetsResolvedColoursGolden()

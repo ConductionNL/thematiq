@@ -1,0 +1,78 @@
+{
+	"id": "amsterdam",
+	"name": "Gemeente Amsterdam",
+	"description": "Gemeente Amsterdam's own design tokens, from @amsterdam/design-system-tokens: blue interaction on white, red reserved for feedback.",
+	"rampMode": "partial",
+	"_comment_source": [
+		"Derived from @amsterdam/design-system-tokens 4.4.0 (https://registry.npmjs.org/@amsterdam/design-system-tokens/-/design-system-tokens-4.4.0.tgz), Ruben's decision of 19 Nov 2026.",
+		"A partial brand file: the package's --ams-color-* palette is section A and its other --ams-* tokens section B.",
+		"The ramp maps a published colour onto the role layer's step of the same role (interactive, text, separator,",
+		"feedback), each naming the token it is read from; every other step is left to Nextcloud. The semantic layer",
+		"takes only the values the package assigns to that role."
+	],
+	"upstream": {
+		"package": "@amsterdam/design-system-tokens",
+		"url": "https://registry.npmjs.org/@amsterdam/design-system-tokens/-/design-system-tokens-4.4.0.tgz",
+		"paletteFile": "dist/index.css",
+		"themeFile": "dist/index.css",
+		"palettePrefix": "--ams-color-"
+	},
+	"ramp": {
+		"white": {
+			"value": "#ffffff",
+			"from": "ams-color-background-body"
+		},
+		"black": {
+			"value": "#202020",
+			"from": "ams-color-text"
+		},
+		"black-txt": {
+			"value": "#202020",
+			"from": "ams-color-text"
+		},
+		"blue-500": {
+			"value": "#004699",
+			"from": "ams-color-interactive"
+		},
+		"gray-500": {
+			"value": "#767676",
+			"from": "ams-color-text-secondary"
+		},
+		"gray-300": {
+			"value": "#d1d1d1",
+			"from": "ams-color-separator"
+		},
+		"red-300": {
+			"value": "#ec0000",
+			"from": "ams-color-feedback-error"
+		},
+		"green-300": {
+			"value": "#00893c",
+			"from": "ams-color-feedback-success"
+		},
+		"orange-300": {
+			"value": "#ff9100",
+			"from": "ams-color-feedback-warning"
+		}
+	},
+	"semantic": {
+		"_comment": "From: ams-color-interactive, -interactive-hover, -text-inverse, -text, -text-secondary, -separator, -feedback-error, -interactive-invalid-hover, -feedback-success.",
+		"primary": "#004699",
+		"primary-text": "#ffffff",
+		"primary-hover": "#003677",
+		"link": "#004699",
+		"link-hover": "#003677",
+		"text": "#202020",
+		"text-muted": "#767676",
+		"text-light": "#ffffff",
+		"border": "#d1d1d1",
+		"error": "#ec0000",
+		"error-hover": "#b70000",
+		"success": "#00893c"
+	},
+	"logo": "img/logos/amsterdam.svg",
+	"typography": {
+		"fontFamily": "'Amsterdam Sans', Arial, sans-serif",
+		"from": "ams-typography-font-family"
+	}
+}

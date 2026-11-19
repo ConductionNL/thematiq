@@ -50,7 +50,7 @@
 	{
 		"id": "amsterdam",
 		"name": "Gemeente Amsterdam",
-		"description": "Design tokens for Gemeente Amsterdam",
+		"description": "Gemeente Amsterdam's own design tokens, from @amsterdam/design-system-tokens: blue interaction on white, red reserved for feedback.",
 		"theming": {
 			"primary_color": "#004699",
 			"background_color": "#FFFFFF",
@@ -59,9 +59,20 @@
 		"licence": {
 			"id": "LicenseRef-amsterdam-house-style",
 			"package": "@amsterdam/design-system-tokens",
-			"version": "4.3.0",
+			"version": "4.4.0",
 			"holder": "Gemeente Amsterdam",
 			"restricted": true
+		},
+		"upstreamPackage": "@amsterdam/design-system-tokens",
+		"upstreamVersion": "4.4.0",
+		"upstreamUrl": "https://registry.npmjs.org/@amsterdam/design-system-tokens/-/design-system-tokens-4.4.0.tgz",
+		"font": {
+			"family": "Amsterdam Sans",
+			"selfHosted": false,
+			"licence": "proprietary",
+			"licenceHolder": "Gemeente Amsterdam",
+			"action": "upload",
+			"note": "The City of Amsterdam's corporate typeface, which @amsterdam/design-system-tokens names. It is not published under a licence that allows redistribution in an app package; an administrator with access uploads it under custom fonts, and until then the page renders Arial, the next family in the stack."
 		}
 	},
 	{
@@ -717,7 +728,7 @@
 	{
 		"id": "utrecht",
 		"name": "Gemeente Utrecht",
-		"description": "Design tokens for Gemeente Utrecht",
+		"description": "Gemeente Utrecht's own design tokens, from @utrecht/design-tokens: dark blue buttons and links on white.",
 		"theming": {
 			"primary_color": "#24578F",
 			"background_color": "#FFFFFF",
@@ -726,9 +737,20 @@
 		"licence": {
 			"id": "LicenseRef-utrecht-house-style",
 			"package": "@utrecht/design-tokens",
-			"version": "7.0.0",
+			"version": "8.1.0",
 			"holder": "Gemeente Utrecht",
 			"restricted": true
+		},
+		"upstreamPackage": "@utrecht/design-tokens",
+		"upstreamVersion": "8.1.0",
+		"upstreamUrl": "https://registry.npmjs.org/@utrecht/design-tokens/-/design-tokens-8.1.0.tgz",
+		"font": {
+			"family": "Noto Sans Variable",
+			"selfHosted": false,
+			"licence": "OFL-1.1",
+			"licenceHolder": "Google",
+			"action": "upload",
+			"note": "The variable build of Noto Sans that @utrecht/design-tokens names. It is open (SIL OFL 1.1) but Thematiq does not bundle it yet; an administrator uploads it under custom fonts, and until then the page renders Arial, the next family in the stack."
 		}
 	},
 	{

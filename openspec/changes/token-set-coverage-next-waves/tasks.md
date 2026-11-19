@@ -33,6 +33,14 @@ own, with a delta spec, when it is picked up.
       organisation does not publish, which this task rules out. Open: a per-set decision on how
       to fill those steps, or a brand file shape that leaves a step to Nextcloud rather than to the
       role layer's own colours.
+      Decided 19 Nov (Ruben): the partial brand file shape. Built in #1749 (`rampMode: partial` in
+      `scripts/generate-brand-set.mjs`: only the steps the organisation publishes, every role-layer
+      colour and typeface it does not publish left to Nextcloud) and `scripts/lib/partial-semantic.mjs`
+      (the semantic layer completed only with the set's own values or Nextcloud's). Measured again
+      19 Nov: `epe` (52/87), `groningen` (55/87) and `rijkshuisstijl` (42/87) are no longer
+      bridge-zero, converted from their own packages by the nightly sync, so they need no brand file.
+      `utrecht` and `amsterdam` are partial brand files from @utrecht/design-tokens 8.1.0 and
+      @amsterdam/design-system-tokens 4.4.0 (bridge 0 → 57 and 58).
 
 ## 2. Vocabulary reach (from every-shipped-set-selectable 6.3, honest-token-set-coverage 6.2 and 6.3)
 

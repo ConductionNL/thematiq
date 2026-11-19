@@ -1,0 +1,40 @@
+{
+	"id": "utrecht",
+	"name": "Gemeente Utrecht",
+	"description": "Gemeente Utrecht's own design tokens, from @utrecht/design-tokens: dark blue buttons and links on white.",
+	"rampMode": "partial",
+	"_comment_source": [
+		"Derived from @utrecht/design-tokens 8.1.0 (https://registry.npmjs.org/@utrecht/design-tokens/-/design-tokens-8.1.0.tgz), Ruben's decision of 19 Nov 2026.",
+		"A partial brand file: the package's own --utrecht-* component mapping (the .utrecht-theme rule, without its",
+		"dark-mode and viewport overrides) is section B, and the role layer adds only what carries no colour. The",
+		"ramp is empty because the package colours its own components. Every semantic colour below is a value the",
+		"package assigns to that role, converted from its hsl() to hex (round to nearest per channel), because the",
+		"contrast engine reads hex. A role the package does not colour is left out, so Nextcloud keeps its own."
+	],
+	"upstream": {
+		"package": "@utrecht/design-tokens",
+		"url": "https://registry.npmjs.org/@utrecht/design-tokens/-/design-tokens-8.1.0.tgz",
+		"paletteFile": "dist/index.css",
+		"themeFile": "dist/index.css",
+		"onlyBlock": ".utrecht-theme",
+		"palettePrefix": "--utrecht-color-"
+	},
+	"ramp": {},
+	"semantic": {
+		"_comment": "From: button-primary-action background (blue-35), its colour (white) and hover (blue-40); link (blue-35) and link focus (blue-40); document colour (black); feedback-danger (red-40); separator (blue-90).",
+		"primary": "#24578F",
+		"primary-text": "#ffffff",
+		"primary-hover": "#2964a3",
+		"link": "#24578f",
+		"link-hover": "#2964a3",
+		"link-visited": "#24578f",
+		"text": "#000000",
+		"error": "#cc0000",
+		"border": "#d6e5f5"
+	},
+	"logo": "img/logos/utrecht.svg",
+	"typography": {
+		"fontFamily": "\"Noto Sans Variable\", \"Arial\", sans-serif",
+		"from": "utrecht-typography-sans-serif-font-family"
+	}
+}

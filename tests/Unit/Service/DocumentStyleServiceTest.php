@@ -446,7 +446,7 @@ class DocumentStyleServiceTest extends TestCase {
 		$out[] = $this->service()->forUser(uid: null);
 
 		$this->assertSame(
-			expected: '3d44ac856cb8a8c3',
+			expected: '788ce4e5947a455f',
 			actual: substr(hash('sha256', (string)json_encode($out)), 0, 16),
 			message: (string)json_encode($out[0])
 		);
