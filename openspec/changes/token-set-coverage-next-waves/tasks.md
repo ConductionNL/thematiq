@@ -115,8 +115,14 @@ own, with a delta spec, when it is picked up.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
-- [ ] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
+- [x] 6.1 Record screenshot baselines for `tests/e2e/spec-coverage/lasuite-shell-geometry.spec.ts`
       per supported Nextcloud major.
+      Recorded 19 Nov (live pass) on fresh Nextcloud 32, 33, 34 and 35 rigs:
+      `tests/e2e/visual/lasuite-shell.visual.spec.ts` (opt-in `visual` project) shoots the top bar and
+      the app navigation of Files with `lasuite` at 1440 x 1000, one baseline per major
+      (`lasuite-shell-nc<major>-visual-linux.png`; 35 shows the 64px La Suite header, the others the
+      stock header). The geometry spec ran on all four; on 32 and 33 its search-centring test looked
+      for the search field Nextcloud 34 introduced and now centres the "Unified search" button there.
 
 ## 7. Generated sets whose buttons wear the hover step (from example-gemeente-theme 4.2)
 
