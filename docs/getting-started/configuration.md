@@ -4,59 +4,59 @@ sidebar_position: 2
 
 # Choosing your theme
 
-This page walks you through picking your organisation's theme and adjusting the optional display settings.
+This page walks you through picking a theme for your organisation, checking it and applying it.
 
 ## Where to find the settings
 
-After installing Thematiq, navigate to:
-
 1. Click your **avatar** (top-right corner)
 2. Choose **Administration settings**
-3. Click **Appearance** in the left sidebar
-4. Scroll down until you see the **Thematiq** section
+3. Click **Theming** in the left sidebar
+4. Scroll down to the heading **Thematiq**
 
-![The Thematiq section in Nextcloud admin settings, showing the Design token set dropdown, two checkboxes, and the preview area](../img/guide-nl-design-section.png)
+## Step 1 — Pick a theme
 
-## Step 1 — Pick your organisation
+Under **Design token set** you see a list of themes. Type part of a name in the **Search by name** field to narrow the list, then choose your theme.
 
-Click the **Design token set** dropdown. A list of 39 organisations appears — scroll through and click yours.
+Is your organisation not in the list? You can create a theme from your own colours and logo under **Custom token sets** further down the page. See [Custom token sets](../features/custom-token-sets.md).
 
-![The Design token set dropdown open, showing a list of Dutch municipalities including Gemeente Amsterdam, Gemeente Den Haag, and others](../img/guide-dropdown-open.png)
-
-As soon as you select an organisation, the **Preview** section below updates to show the new colours. The **Apply token set** dialog may appear asking which colours to apply — see [Apply Token Set Dialog](../features/apply-dialog) for details, or simply click **Apply selected** to accept all changes.
-
-:::tip
-Not sure which one to choose? Try a few — the preview updates instantly and nothing is saved until you confirm.
+:::note
+Some themes are the property of the organisation they are named after. When you pick one of those, Thematiq asks you to confirm that your organisation may use it before the theme can be applied. The confirmation is under **House styles of other organisations**.
 :::
 
-## Step 2 — Check the preview
+## Step 2 — Check the result
 
-The **Preview** section shows sample buttons in your organisation's colours. This is a live preview of what Nextcloud will look like after you save.
+As soon as you choose a theme, the **Preview** section further down the page shows it. Use the **App** and **Login** tabs to see the app screens and the login page.
 
-![Preview section showing Primary Button and Secondary Button styled in the selected organisation's brand colours](../img/admin-preview-section.png)
+Want to see it on real pages first? Click **Preview in my session**. You then see the theme on every page you open, while other users keep the current look. See [Try a theme before you publish it](../features/theme-preview.md).
 
-## Step 3 — Optional display settings
+## Step 3 — Apply the theme
 
-Two checkboxes let you adjust how Nextcloud looks:
+When you choose a theme, the **Apply token set** dialog opens. It lists the colours and settings that will change.
 
-![Two checkboxes: Hide Nextcloud slogan/payoff on login page, and Show text labels in app menu](../img/admin-nl-design-panel.png)
+- Click **Apply selected** to apply the theme.
+- Click **Cancel** to keep the current theme.
 
-**Hide Nextcloud slogan/payoff on login page**
-Removes the "a safe home for all your data" tagline from the login screen. Useful if you want a cleaner, more professional login page for your organisation.
-
-**Show text labels in app menu (hide icons)**
-Adds text labels next to the app icons in the left sidebar. This makes navigation easier for users who aren't familiar with the icons, and improves accessibility.
+Nothing is saved until you click **Apply selected**. See [Apply token set dialog](../features/apply-dialog.md) to apply only some of the changes.
 
 ## That's it!
 
-Your Nextcloud now has your organisation's house style. The change takes effect immediately for all users — no restart needed.
+Your Nextcloud now shows your organisation's theme. The change applies to all users straight away — no restart needed. Users who already have Nextcloud open see it after they reload the page.
 
 ---
 
+## Optional display settings
+
+Further down the Thematiq settings you find options that change the layout rather than the colours, for example:
+
+- **Hide Nextcloud slogan/payoff on login page** — removes the "a safe home for all your data" tagline from the login page
+- **Show text labels in app menu (hide icons)** — shows the app names in the top bar instead of their icons, which helps users who don't know the icons
+
 ## Fine-tuning (optional)
 
-If the theme isn't quite right — for example your organisation uses a slightly different shade of blue — you can adjust individual colours using the **Custom Token Overrides** section directly below the preview.
+If the theme isn't quite right — for example your organisation uses a slightly different shade of blue — adjust individual colours in the **Custom token overrides** section, directly below the preview. See [Token editor](../features/token-editor.md).
 
-See [Token Editor](../features/token-editor) for a step-by-step guide on adjusting specific colours.
+You can also **export** your settings as a file and **import** them on another Nextcloud. See [Import & export](../features/import-export.md).
 
-You can also **export your settings** as a CSS file and **import** them on another instance. See [Import & Export](../features/import-export).
+## Going back to the standard look
+
+Click **Reset theme to Nextcloud**, next to the theme list, to return to the standard Nextcloud look.
