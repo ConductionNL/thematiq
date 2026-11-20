@@ -63,6 +63,7 @@ import { join, dirname, resolve, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { vocabularyStylesheets } from './lib/converter-context.mjs'
+import { withPartialRoleFill } from './lib/partial-role-fill.mjs'
 import {
 	extractOrgId,
 	findTokenFiles,
@@ -632,7 +633,9 @@ function convertOrg(org, context) {
 		}
 	}
 
-	let css = result.css
+	// The role layer's component tokens, re-pointed at the colours upstream
+	// publishes and nothing else (scripts/lib/partial-role-fill.mjs).
+	let css = withPartialRoleFill(result.css, result.report).css
 	if (org.oldCss !== null && source.kind === 'tokens-studio') {
 		// The old raw dump was made from the src/ format upstream has since
 		// dropped, so the names it wrote cannot be recomputed. It only ever wrote

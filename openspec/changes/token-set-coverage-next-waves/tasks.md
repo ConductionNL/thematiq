@@ -103,7 +103,7 @@ own, with a delta spec, when it is picked up.
       Still open: `vng`. Its colours come from tilburg-woo-ui's `_tokens-vng.scss`, which is not
       published as a versioned package, so there is no version to pin; it is also the role layer
       every brand file fills from, so changing its source moves every generated set.
-- [ ] 3.2 The 28 sets between 8 and 27 on the bridge, after wave 1.
+- [x] 3.2 The 28 sets between 8 and 27 on the bridge, after wave 1.
       Measured 19 Nov 2026 from `docs/reference/token-set-coverage.md`, not built: 25 sets sit
       between 8 and 27 of 87 now (bodegraven-reeuwijk, borne, buren, conduction-new, demodam,
       drechterland, duiven, duo, enkhuizen, haarlem, haarlemmermeer, hoorn, horstaandemaas,
@@ -117,6 +117,17 @@ own, with a delta spec, when it is picked up.
       read off the package), and it takes the set out of the nightly sync, which then no longer
       applies that organisation's upstream releases. That trade is per set and is left for a
       decision before 25 sets leave the sync.
+      Decided 20 Nov (option b, coordinator for Ruben): the sets stay in the nightly sync and the
+      sync learns the partial fill. Built: `scripts/lib/partial-role-fill.mjs`, called from
+      `convertOrg()` in `scripts/sync-upstream-tokens.mjs`, adds the role layer's component tokens
+      a converted set does not declare, re-pointed at the colours the converter applied from
+      upstream (primary, text, status, border, page). A token that would carry any other colour, a
+      role-layer typeface, a Den Haag token (the Den Haag bridge maps those from the set's own
+      colours) and a foreground whose background would stay with the bridge are left out, so
+      Nextcloud keeps its value. The fill is recomputed on every sync run, so the sets keep
+      receiving upstream releases. The 24 converted sets were filled from themes commit 9cfc4c5a
+      (bridge now 40 to 62 of 87). `conduction-new` is hand-authored, not synced, and has no
+      upstream package, so it is not part of this.
 
 ## 4. Dead weight (from honest-token-set-coverage 6.6)
 

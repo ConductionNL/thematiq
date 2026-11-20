@@ -89,7 +89,7 @@ const ROLE_LAYER_PATH = join(TOKENS_DIR, 'vng.css')
  * @param {string} css Stylesheet source.
  * @returns {Array<{name: string, value: string}>} Declarations in order.
  */
-function readDeclarations(css) {
+export function readDeclarations(css) {
 	const declarations = []
 	const namePattern = /(--[A-Za-z0-9_-]+)\s*:/g
 	let match
@@ -149,7 +149,7 @@ function readDeclarations(css) {
  * @param {Array<{name: string, value: string}>} declarations Input.
  * @returns {Map<string, string>} Effective name → value.
  */
-function effective(declarations) {
+export function effective(declarations) {
 	const result = new Map()
 	for (const { name, value } of declarations) {
 		result.set(name, value)
@@ -397,7 +397,7 @@ function readInlineSources(brand, brandId) {
  * @param {Map<string, string>} roleEffective The role layer, last-wins.
  * @returns {{rampByName: Map<string, string>, rampByValue: Map<string, string>}} The tables.
  */
-function buildRampTables(brand, roleEffective) {
+export function buildRampTables(brand, roleEffective) {
 	const rampByName = new Map()
 	const rampByValue = new Map()
 
@@ -434,7 +434,7 @@ function buildRampTables(brand, roleEffective) {
  * @param {Map<string, number>} unsubstituted Collects literals left unchanged, with their count.
  * @returns {string} The value with the ramp re-pointed.
  */
-function substituteLiterals(value, rampByValue, unsubstituted) {
+export function substituteLiterals(value, rampByValue, unsubstituted) {
 	return value.replace(/#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b/g, (hex) => {
 		const swapped = rampByValue.get(normaliseHex(hex))
 		if (swapped !== undefined) {
@@ -489,10 +489,11 @@ function referencedNames(value) {
  * @param {Map<string, string>} roleEffective The role layer, last-wins.
  * @param {Map<string, string>} rampByName The brand's ramp, by role-layer name.
  * @param {Map<string, string>} rampByValue Old hex → new value.
+ * @param {Iterable<string>} [seed] Names to leave out as well, with what reads them.
  * @returns {Set<string>} The names left out.
  */
-export function namesLeftToNextcloud(roleEffective, rampByName, rampByValue) {
-	const left = new Set()
+export function namesLeftToNextcloud(roleEffective, rampByName, rampByValue, seed = []) {
+	const left = new Set(seed)
 	for (const [name, value] of roleEffective) {
 		const isRampStep = name.startsWith('--vng-color-') === true || name.startsWith('--tilburg-color-') === true
 		// A typeface is the organisation's as much as a colour is.

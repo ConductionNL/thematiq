@@ -33,18 +33,18 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | Token set | bridge | font | logo | contrast |
 |-----------|-------:|:-----|:----:|:--------:|
 | amsterdam | 58/87 | declared | yes | pass |
-| bodegraven-reeuwijk | 18/87 | self-hosted | no (known) | pass |
-| borne | 8/87 | declared | no (known) | pass |
-| buren | 17/87 | self-hosted | no (known) | pass |
+| bodegraven-reeuwijk | 55/87 | self-hosted | no (known) | pass |
+| borne | 51/87 | declared | no (known) | pass |
+| buren | 58/87 | self-hosted | no (known) | pass |
 | conduction-new | 26/87 | self-hosted | no (known) | pass |
 | cunningham | n/a | declared | no (known) | pass |
-| demodam | 21/87 | self-hosted | no (known) | pass |
+| demodam | 55/87 | self-hosted | no (known) | pass |
 | denhaag | 81/87 | declared | yes | pass |
 | dinkelland | 53/87 | self-hosted | no (known) | pass |
-| drechterland | 19/87 | system | yes | pass |
-| duiven | 10/87 | self-hosted | no (known) | pass |
-| duo | 15/87 | declared | no (known) | pass |
-| enkhuizen | 19/87 | system | no (known) | pass |
+| drechterland | 56/87 | system | yes | pass |
+| duiven | 55/87 | self-hosted | no (known) | pass |
+| duo | 55/87 | declared | no (known) | pass |
+| enkhuizen | 56/87 | system | no (known) | pass |
 | enschede | 55/87 | self-hosted | no (known) | pass |
 | epe | 52/87 | self-hosted | yes | pass |
 | esdoornveen | 0/87 | self-hosted | yes | pass |
@@ -55,50 +55,50 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | example-voortgezet | 74/87 | self-hosted | yes | pass |
 | frankendesk | n/a | self-hosted | yes | pass |
 | groningen | 55/87 | self-hosted | no (known) | pass |
-| haarlem | 27/87 | declared | no (known) | pass |
-| haarlemmermeer | 16/87 | declared | no (known) | pass |
+| haarlem | 62/87 | declared | no (known) | pass |
+| haarlemmermeer | 55/87 | declared | no (known) | pass |
 | hoeksche-waard | 53/87 | self-hosted | no (known) | pass |
 | hoog-contrast | n/a | self-hosted | no (known) | pass |
-| hoorn | 19/87 | self-hosted | yes | pass |
-| horstaandemaas | 10/87 | declared | no (known) | pass |
+| hoorn | 57/87 | self-hosted | yes | pass |
+| horstaandemaas | 52/87 | declared | no (known) | pass |
 | lasuite | n/a | declared | no (known) | pass |
 | leiden | 55/87 | self-hosted | yes | pass |
-| leidschendam-voorburg | 20/87 | self-hosted | no (known) | pass |
+| leidschendam-voorburg | 56/87 | self-hosted | no (known) | pass |
 | losser | 55/87 | self-hosted | no (known) | pass |
 | nijmegen | 58/87 | self-hosted | yes | pass |
 | noaberkracht | 53/87 | declared | no (known) | pass |
-| noordoostpolder | 20/87 | self-hosted | no (known) | pass |
+| noordoostpolder | 54/87 | self-hosted | no (known) | pass |
 | noordwijk | 52/87 | self-hosted | yes | pass |
-| nora | 18/87 | self-hosted | no (known) | pass |
+| nora | 50/87 | self-hosted | no (known) | pass |
 | opencatalogi | 79/87 | declared | yes | pass |
-| provincie-zuid-holland | 23/87 | declared | yes | pass |
-| purmerend | 21/87 | self-hosted | no (known) | pass |
-| riddeliemers | 10/87 | self-hosted | no (known) | pass |
+| provincie-zuid-holland | 56/87 | declared | yes | pass |
+| purmerend | 55/87 | self-hosted | no (known) | pass |
+| riddeliemers | 40/87 | self-hosted | no (known) | pass |
 | ridderkerk | 56/87 | self-hosted | no (known) | pass |
 | rijkshuisstijl | 42/87 | declared | yes | pass |
 | rotterdam | 79/87 | declared | yes | pass |
 | sittard-geleen | 55/87 | declared | no (known) | pass |
-| stedebroec | 21/87 | system | no (known) | pass |
-| tilburg | 25/87 | system | yes | pass |
+| stedebroec | 57/87 | system | no (known) | pass |
+| tilburg | 62/87 | system | yes | pass |
 | tubbergen | 53/87 | self-hosted | no (known) | pass |
 | utrecht | 57/87 | declared | yes | pass |
 | vaartveld | 0/87 | self-hosted | yes | pass |
-| venray | 23/87 | declared | no (known) | pass |
+| venray | 60/87 | declared | no (known) | pass |
 | vidar | 55/87 | declared | no (known) | pass |
 | vng | 74/87 | declared | yes | pass |
 | voorne-aan-zee | 55/87 | self-hosted | no (known) | pass |
-| vught | 23/87 | declared | no (known) | pass |
+| vught | 60/87 | declared | no (known) | pass |
 | warmtepompacademie | 0/87 | self-hosted | yes | pass |
-| westervoort | 8/87 | self-hosted | no (known) | pass |
+| westervoort | 53/87 | self-hosted | no (known) | pass |
 | wilgenboom | 0/87 | self-hosted | yes | pass |
 | xxllnc | 46/87 | declared | yes | pass |
 | zaanstad | 55/87 | self-hosted | no (known) | pass |
-| zevenaar | 8/87 | self-hosted | no (known) | pass |
+| zevenaar | 52/87 | self-hosted | no (known) | pass |
 | zuiddrecht | 0/87 | self-hosted | yes | pass |
 | zwolle | 65/87 | declared | no (known) | pass |
 
 - 64 sets measured; 27 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 5 of 60 bridged sets declare none of the 87 --utrecht-* names; median 35.
+- bridge (measured, NOT gated): 5 of 60 bridged sets declare none of the 87 --utrecht-* names; median 55.
 - font: 22 declared, 38 self-hosted, 4 system.
 - logo: 37 of 64 point Nextcloud at no logo.
 - contrast: 0 of 64 do not pass.
