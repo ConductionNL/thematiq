@@ -37,6 +37,10 @@
 - [x] 4.4 `tests/vitest/admin-set-licence.spec.js`.
 - [x] 4.5 `docs/features/token-set-licences.md`.
 - [ ] 4.6 The TqTokenSet board shows the block (board drift: paired design-system PR, not opened yet).
+      20 Nov: the paired PR is open, https://github.com/ConductionNL/design-system/pull/1188. It
+      redraws the board's licence part from `js/admin-set-licence.js` and the shipped nl/en strings
+      (the 12 Nov drawing showed a flow that was never built). design-system integrates on `main`
+      only, which the cloud builder may not merge into, so it waits on a human merge; tick then.
 - [x] 4.7 Browser check of the block with a restricted shipped set (live pass, decision 139; needs the
       change that marks the shipped sets).
       Live pass 17 Nov 2026 (NC 34.0.6): the block lists the 44 restricted sets as "Not confirmed";

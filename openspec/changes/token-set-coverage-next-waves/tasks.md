@@ -58,7 +58,7 @@ own, with a delta spec, when it is picked up.
       recorded reach in `scripts/mapping/nextcloud-token-reach.json` (39 follow, 252 literal, 56
       use-site, 73 unmapped). Fixed colours count as literal and a token that reads only other
       internal tokens inherits their reach (Ruben, 19 Nov).
-- [ ] 2.2 The 45 Nextcloud theme variables no shipped set can reach (header height, navigation and
+- [x] 2.2 The 45 Nextcloud theme variables no shipped set can reach (header height, navigation and
       sidebar width, container radii, input border widths, clickable areas, base font size and
       line height, status text and hover colours, `--color-mark`, box shadow, scrollbar,
       selection, the Assistant surface).
@@ -103,6 +103,11 @@ own, with a delta spec, when it is picked up.
       Still open: `vng`. Its colours come from tilburg-woo-ui's `_tokens-vng.scss`, which is not
       published as a versioned package, so there is no version to pin; it is also the role layer
       every brand file fills from, so changing its source moves every generated set.
+      Checked 20 Nov on the npm registry: no VNG design token package exists
+      (`@vng/design-tokens`, `@vng-realisatie/design-tokens`,
+      `@nl-design-system-unstable/vng-design-tokens` and `@nl-design-system-candidate/vng-design-tokens`
+      answer 404; a search for VNG tokens finds only `@vng-api/*` OpenAPI packages). Stays open until
+      VNG publishes a versioned token package or an official palette.
 - [x] 3.2 The 28 sets between 8 and 27 on the bridge, after wave 1.
       Measured 19 Nov 2026 from `docs/reference/token-set-coverage.md`, not built: 25 sets sit
       between 8 and 27 of 87 now (bodegraven-reeuwijk, borne, buren, conduction-new, demodam,
@@ -147,6 +152,11 @@ own, with a delta spec, when it is picked up.
       theme against it. Moved here from nlds-theme-converter 9.7 (Q-thematiq-6, decision 137): that
       change closed on the Utrecht paste, because the reference file was never committed and
       `@conduction/theme` 2.1.0 ships OpenWOO only as Style Dictionary sources.
+      Checked 20 Nov: 2.1.0 is still the latest `@conduction/theme`; its OpenWOO sources are under
+      `other/openwoo-design-tokens/src/` (brand, common and component token JSON). Those are the
+      converter's input, not the reference: the reference is the set a person authors for the
+      OpenWOO theme in thematiq's vocabulary, so building it from the same sources would diff the
+      converter against itself. Waits on that authoring.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 
