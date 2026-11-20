@@ -171,7 +171,7 @@ own, with a delta spec, when it is picked up.
       example-basisschool also points `--utrecht-link-color` at `--nldesign-color-link` (#8A2D0E).
       Sets, dark variants and reference pages regenerated; 17 new assertions in
       `tests/vitest/publicBridgeRoleLayer.spec.js`, 7 of them red before the change.
-- [ ] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
+- [x] 7.2 Look at each of the four on a portal site: primary and secondary buttons in the primary
       at rest, the hover step on hover, example-basisschool links in #8A2D0E (live pass, decision 139).
       Looked at 19 Nov (live pass) on a portaliq site (portaliq 0.2.13 release, OpenRegister
       2.2.0-dev, Nextcloud 35.0.1), the portal's theme switched to each set, buttons measured inside
@@ -182,3 +182,7 @@ own, with a delta spec, when it is picked up.
       never shows the hover step. The set defines the step (`--tilburg-interaction-hover-color`);
       portaliq's `css/site-theme.css` colours `.pq-site .utrecht-button--secondary-action` from
       `--_utrecht-button-color`, which the hover rule does not move. A portaliq change or a decision.
+      Fixed 20 Nov (decided by the coordinator for Ruben): portaliq's site theme now gives the secondary
+      button a hover rule of the same weight that reads the secondary hover tokens
+      (https://github.com/ConductionNL/portaliq/pull/2605, merged). Pinned there by
+      `tests/site-secondary-button-hover.spec.mjs`; not yet looked at live.
