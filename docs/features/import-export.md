@@ -4,9 +4,9 @@ sidebar_position: 4.3
 
 # Import & Export
 
-The **Download** and **Upload** buttons in the Custom Token Overrides header let you export your current token overrides as a CSS file and import overrides from an existing CSS file.
+The **Download** and **Upload** buttons in the Custom token overrides header let you export your current token overrides as a CSS file and import overrides from an existing CSS file.
 
-![Custom Token Overrides section header showing the Download button and Upload button](../img/import-export-buttons.png)
+![Custom token overrides section header showing the Download button and Upload button](../img/import-export-buttons.png)
 
 ## Download (Export)
 
