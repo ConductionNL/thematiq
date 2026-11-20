@@ -65,7 +65,7 @@ The composer checks print `ALL CHECKS PASSED - EXCEPT test:all, WHICH DID NOT RU
 
 ## Architecture decisions
 
-Decisions are recorded per change in the "Decisions" sections of `openspec/changes/archive/*/design.md` (and `design.md` in open changes under `openspec/changes/`). The `css/` layer order and configuration keys are summarised in `project.md`; the newer design files take precedence where they differ.
+The main architecture decisions are in `docs/adr/` (index: `docs/adr/README.md`), each citing the design file it came from. New decisions are recorded per change in the "Decisions" sections of `design.md` under `openspec/changes/`; archived ones are in `openspec/changes/archive/*/design.md`. The `css/` layer order and configuration keys are summarised in `project.md`; the newer design files take precedence where they differ.
 
 ## Conventions
 
