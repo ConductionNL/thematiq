@@ -86,7 +86,7 @@ class ActiveTokenSetService {
 	 *                                   nothing is written then.
 	 *
 	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function switchTo(string $tokenSet, string $auditAction = 'token_set_changed', array $auditContext = []): string {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {

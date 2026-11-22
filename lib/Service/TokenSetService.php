@@ -127,7 +127,7 @@ class TokenSetService {
 	 *
 	 * @return IConfig The config.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	protected function licenceConfig(): IConfig {
 		return $this->runtime->config;
