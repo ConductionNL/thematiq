@@ -16,7 +16,7 @@ Five tokens keep the `vng` value, because OpenWOO publishes nothing for them: th
 
 ## Where the values come from
 
-The source is OpenWOO's own styling: `@conduction/theme` 2.1.0, `other/openwoo-design-tokens/src`, read on 22 November 2026. OpenWOO's licence there allows its house style only within OpenWOO.
+The source is OpenWOO's own styling: `@conduction/theme` 2.1.0, `other/openwoo-design-tokens/src`, read on 22 November 2026. OpenWOO's licence there allows its house style only within OpenWOO, so the set ships restricted: an administrator confirms first, as for any other organisation's house style. The licence text is `css/tokens/openwoo.LICENSE.md`.
 
 | Role | Value | OpenWOO token | Choice |
 |---|---|---|---|

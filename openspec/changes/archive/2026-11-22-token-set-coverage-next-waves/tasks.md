@@ -174,8 +174,9 @@ own, with a delta spec, when it is picked up.
       role (info = primary green), its own alert text colour is used. Every choice and its source
       token is in `docs/reference/openwoo-reference.md`, with the diff of the converter's output for
       the OpenWOO sources (`scripts/diff-converter-reference.mjs`): 19 tokens the same, 21 different,
-      8 only in the reference. The set has no manifest entry: it is the reference, not a selectable
-      theme.
+      8 only in the reference. Every file under `css/tokens/` is a shipped set, so `openwoo` also has
+      a manifest entry and ships restricted (`openwoo.LICENSE.md`): OpenWOO's licence allows its house
+      style only within OpenWOO.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 

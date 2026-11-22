@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* global process, console */
+
 /**
  * Export a token set the way the component playground's "Export as token set" does.
  *

@@ -6,7 +6,7 @@ sidebar_position: 31
 
 Read on 22 November 2026. Most shipped sets name their source in `token-sets.json`: an npm package with its version, or a commit of `nl-design-system/themes`. See [Licences of the shipped token sets](token-set-licences.md) for those.
 
-This page covers the 20 sets that carry no `upstreamVersion` and no `upstreamRef`. For each one it names the published source, with a link and the date it was read. A set with no published source anywhere says so, with the reason.
+This page covers the 21 sets that carry no `upstreamVersion` and no `upstreamRef`. For each one it names the published source, with a link and the date it was read. A set with no published source anywhere says so, with the reason.
 
 ## Sets with a published source
 
@@ -20,6 +20,7 @@ This page covers the 20 sets that carry no `upstreamVersion` and no `upstreamRef
 | `nextcloud` | [nextcloud/server](https://github.com/nextcloud/server/blob/stable32/core/css/server.css), `core/css/server.css` | Nextcloud 32 | 22 Nov 2026 | The fallback only. `StockTokensService` reads the stock values from the running instance. |
 | `conduction-new` | [identity.conduction.nl](https://identity.conduction.nl/), theme `theme-conduction-2026` | not versioned | 22 Nov 2026 | Conduction's own house style. The site answered 200. It publishes no version, so the set has nothing to pin. |
 | `opencatalogi` | The custom properties served by [opencatalogi.nl](https://opencatalogi.nl/) | not versioned | 20 Aug 2026 | Generated from `scripts/brands/opencatalogi.json`, as the set's header says. The site publishes no version. |
+| `openwoo` | [@conduction/theme](https://registry.npmjs.org/@conduction/theme/-/theme-2.1.0.tgz), `other/openwoo-design-tokens/src` | 2.1.0 | 22 Nov 2026 | Authored in the component playground from OpenWOO's own tokens. Every choice is in [OpenWOO reference set](openwoo-reference.md). |
 
 ## Sets with no public source
 

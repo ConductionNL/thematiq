@@ -284,6 +284,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "openwoo": {
+            "verdict": "pass",
+            "textRatio": 4.64,
+            "uiRatio": 4.64,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "provincie-zuid-holland": {
             "verdict": "pass",
             "textRatio": 5.82,

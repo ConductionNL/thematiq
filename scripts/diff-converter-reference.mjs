@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* global process, console */
+
 /**
  * Diff the converter's output for a theme against a reference token set.
  *
@@ -19,6 +21,7 @@
 
 import { readFileSync } from 'node:fs'
 import { basename, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { converter, loadConverterContext } from './lib/converter-context.mjs'
 import { declaredTokens } from './export-playground-set.mjs'
 
@@ -88,6 +91,6 @@ function main() {
 	}
 }
 
-if (process.argv[1] !== undefined && resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname)) {
+if (process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 	main()
 }

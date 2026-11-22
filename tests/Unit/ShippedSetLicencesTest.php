@@ -31,7 +31,7 @@ class ShippedSetLicencesTest extends TestCase {
 	private const RESTRICTED = [
 		'amsterdam', 'bodegraven-reeuwijk', 'borne', 'buren', 'demodam', 'dinkelland', 'drechterland', 'duiven', 'duo',
 		'enkhuizen', 'enschede', 'epe', 'groningen', 'haarlem', 'haarlemmermeer', 'hoeksche-waard', 'hoorn', 'horstaandemaas',
-		'leiden', 'leidschendam-voorburg', 'losser', 'nijmegen', 'noaberkracht', 'noordoostpolder', 'noordwijk', 'nora',
+		'leiden', 'leidschendam-voorburg', 'losser', 'nijmegen', 'noaberkracht', 'noordoostpolder', 'noordwijk', 'nora', 'openwoo',
 		'provincie-zuid-holland', 'purmerend', 'riddeliemers', 'ridderkerk', 'rijkshuisstijl', 'rotterdam', 'sittard-geleen', 'stedebroec',
 		'tilburg', 'tubbergen', 'utrecht', 'venray', 'vidar', 'vng', 'voorne-aan-zee', 'vught', 'westervoort', 'xxllnc', 'zaanstad', 'zevenaar', 'zwolle',
 	];
