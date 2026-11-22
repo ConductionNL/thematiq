@@ -51,18 +51,13 @@ class AppMenuListState {
 	 *
 	 * @param IL10N $l The language of this request.
 	 *
-	 * @return array<string, mixed> `openproject` and `external` (when an app has an address), `order` and `labels`.
+	 * @return array<string, mixed> `external` (when an app has an address), `order` and `labels`.
 	 *
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
 	 */
 	public function state(IL10N $l): array {
 		$state = [];
-		$openProject = $this->externalApps->openProject()->section(l: $l);
-		if ($openProject !== null) {
-			$state['openproject'] = $openProject;
-		}
-
 		$external = $this->externalApps->section(l: $l);
 		if ($external !== null) {
 			$state['external'] = $external;

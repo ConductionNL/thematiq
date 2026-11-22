@@ -15,14 +15,14 @@
 
 ## 3. The menu
 
-- [ ] 3.1 `js/app-menu.js`: one ordered list, the first nine, "All apps" and "Hide apps", the external apps heading.
-- [ ] 3.2 Drag to reorder, Alt with an arrow key to reorder, the live region, saving.
-- [ ] 3.3 Keyboard navigation over the visible entries in screen order.
-- [ ] 3.4 Hover to open, click to pin, on Nextcloud with and without its own hover-open.
-- [ ] 3.5 `css/header-workplace.css`: three columns, the fold, the toggle, the heading, reduced motion. Tokens only.
-- [ ] 3.6 vitest: `tests/vitest/appMenu.spec.js` and `tests/vitest/appMenuOpening.spec.js`.
+- [x] 3.1 `js/app-menu.js`: one ordered list, the first nine, "All apps" and "Hide apps", the external apps heading.
+- [x] 3.2 Drag to reorder, Alt with an arrow key to reorder, the live region, saving.
+- [x] 3.3 Keyboard navigation over the visible entries in screen order.
+- [x] 3.4 Hover to open, click to pin, on Nextcloud with and without its own hover-open.
+- [x] 3.5 `css/header-workplace.css`: three columns, the fold, the toggle, the heading, reduced motion. Tokens only.
+- [x] 3.6 vitest: `tests/vitest/appMenu.spec.js` and `tests/vitest/appMenuOpening.spec.js`.
 
 ## 4. Live
 
-- [ ] 4.1 Playwright: `tests/e2e/spec-coverage/apps-menu-ordered-list.spec.ts`.
+- [x] 4.1 Playwright: `tests/e2e/spec-coverage/apps-menu-ordered-list.spec.ts`.
 - [ ] 4.2 Looked at live with the Zuiddrecht set; the AppMenu board follows (`screens.md`).

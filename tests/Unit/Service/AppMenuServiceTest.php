@@ -327,11 +327,11 @@ class AppMenuServiceTest extends TestCase {
 	}//end testTheWorkplaceHeaderLoadsTheScriptAndNothingElseDoes()
 
 	/**
-	 * With OpenProject's address, the menu carries its modules as a section of their own.
+	 * With OpenProject's address, its modules are external apps.
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
@@ -347,14 +347,6 @@ class AppMenuServiceTest extends TestCase {
 			AppMenuService::STATE_KEY,
 			[
 				'hint' => 'Hint',
-				'openproject' => [
-					'title' => 'OpenProject',
-					'url' => 'https://op.example.org',
-					'modules' => [
-						['key' => 'boards', 'label' => 'Boards', 'url' => 'https://op.example.org/boards', 'icon' => OpenProjectModules::MODULES['boards']['icon']],
-						['key' => 'meetings', 'label' => 'Meetings', 'url' => 'https://op.example.org/meetings', 'icon' => OpenProjectModules::MODULES['meetings']['icon']],
-					],
-				],
 				'external' => [
 					'title' => 'External apps',
 					'note' => 'opens in a new tab',
@@ -392,7 +384,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
 		$this->assertSame(
