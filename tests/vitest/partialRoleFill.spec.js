@@ -4,7 +4,7 @@
  *
  * The token sync fills a converted set with the role layer's component
  * tokens, re-pointed at the colours its upstream publishes and nothing else
- * (openspec/changes/token-set-coverage-next-waves, task 3.2).
+ * (openspec/changes/archive/2026-11-22-token-set-coverage-next-waves, task 3.2).
  */
 import { describe, expect, it } from 'vitest'
 import { halfPairs, partialRoleFill, rampFromReport, withPartialRoleFill, FILL_HEADING } from '../../scripts/lib/partial-role-fill.mjs'

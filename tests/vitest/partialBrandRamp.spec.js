@@ -5,7 +5,7 @@
  * A partial brand file names only the colours the organisation publishes. A
  * ramp step it leaves out is not declared, and no role-layer declaration
  * carries a VNG or Tilburg colour in its place: those are left to Nextcloud
- * (openspec/changes/token-set-coverage-next-waves, task 1.2).
+ * (openspec/changes/archive/2026-11-22-token-set-coverage-next-waves, task 1.2).
  */
 import { describe, expect, it } from 'vitest'
 import { namesLeftToNextcloud } from '../../scripts/generate-brand-set.mjs'

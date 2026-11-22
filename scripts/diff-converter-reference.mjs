@@ -14,7 +14,7 @@
  * Usage:
  *   node scripts/diff-converter-reference.mjs <input> --slug openwoo --reference css/tokens/openwoo.css
  *
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md#task-5.2
+ * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md#task-5.2
  */
 
 import { readFileSync } from 'node:fs'

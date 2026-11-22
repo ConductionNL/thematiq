@@ -5,8 +5,8 @@
  * The OpenWOO reference set is a playground export the vocabulary audit rates
  * complete, and the committed file is exactly what the playground exports.
  *
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md#task-5.1
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md#task-5.2
+ * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md#task-5.2
  */
 
 import { describe, it, expect } from 'vitest'

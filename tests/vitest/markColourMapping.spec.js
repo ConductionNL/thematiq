@@ -13,7 +13,7 @@
  * (#fff0c7, dark #4d3800). The measured ratios per set are recorded in
  * docs/reference/token-set-mark-colour.md.
  *
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md
+ * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md
  */
 
 import { describe, expect, it } from 'vitest'

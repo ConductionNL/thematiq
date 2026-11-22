@@ -21,7 +21,7 @@
  *
  * --check exits 1 when the committed file differs from a fresh export.
  *
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md#task-5.1
+ * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md#task-5.1
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
