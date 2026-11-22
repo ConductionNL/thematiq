@@ -4,7 +4,7 @@
  *
  * A partial brand's semantic layer is completed only with the organisation's
  * own values or Nextcloud's, never with a shade nobody chose
- * (openspec/changes/token-set-coverage-next-waves, task 1.2).
+ * (openspec/changes/archive/2026-11-22-token-set-coverage-next-waves, task 1.2).
  */
 import { describe, expect, it } from 'vitest'
 import { completeSemanticLayer, keptValue, toHex } from '../../scripts/lib/partial-semantic.mjs'

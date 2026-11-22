@@ -151,9 +151,14 @@ own, with a delta spec, when it is picked up.
 
 ## 5. Playground handover (from component-playground 8.2 and 9.1)
 
-- [ ] 5.1 Export a token set from the component playground that the vocabulary audit rates
+- [x] 5.1 Export a token set from the component playground that the vocabulary audit rates
       complete: the reference the converter's output is diffed against.
-- [ ] 5.2 Author the OpenWOO reference values (design work; the playground is the tool, not the
+      Built 22 Nov: `scripts/export-playground-set.mjs` runs the playground's own `exportCss()` over
+      the tokens a shipped set declares plus recorded overrides, so the file equals the one the
+      "Export as token set" button downloads. `css/tokens/openwoo.css` is that export (base `vng`,
+      overrides in `scripts/playground/openwoo.overrides.json`); `npm run audit:token-sets` rates it
+      complete (0 missing, 0 foreign). `tests/vitest/openwooReferenceSet.spec.js` pins both.
+- [x] 5.2 Author the OpenWOO reference values (design work; the playground is the tool, not the
       set), commit them as `css/tokens/openwoo.css`, and diff the converter's output for the OpenWOO
       theme against it. Moved here from nlds-theme-converter 9.7 (Q-thematiq-6, decision 137): that
       change closed on the Utrecht paste, because the reference file was never committed and
@@ -163,6 +168,15 @@ own, with a delta spec, when it is picked up.
       converter's input, not the reference: the reference is the set a person authors for the
       OpenWOO theme in thematiq's vocabulary, so building it from the same sources would diff the
       converter against itself. Waits on that authoring.
+      Built 22 Nov (product decisions delegated by Ruben): the OpenWOO values were authored in the
+      playground from OpenWOO's own styling and committed as `css/tokens/openwoo.css`. Where OpenWOO's
+      literal colour fails text contrast (warning #ffc107, success #28a745) or would read as another
+      role (info = primary green), its own alert text colour is used. Every choice and its source
+      token is in `docs/reference/openwoo-reference.md`, with the diff of the converter's output for
+      the OpenWOO sources (`scripts/diff-converter-reference.mjs`): 19 tokens the same, 21 different,
+      8 only in the reference. Every file under `css/tokens/` is a shipped set, so `openwoo` also has
+      a manifest entry and ships restricted (`openwoo.LICENSE.md`): OpenWOO's licence allows its house
+      style only within OpenWOO.
 
 ## 6. Shell geometry baselines (from lasuite-shell-geometry 5.2)
 

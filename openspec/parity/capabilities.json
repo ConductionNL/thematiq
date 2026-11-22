@@ -5603,7 +5603,7 @@
 					"openspec/specs/token-sets :: Incomplete Sets Are Surfaced In The Admin Dropdown",
 					"openspec/specs/token-sets :: Shipped Token Set Vocabulary Completeness"
 				],
-				"plan": "openspec/changes/token-set-coverage-next-waves"
+				"plan": "openspec/changes/archive/2026-11-22-token-set-coverage-next-waves"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {

@@ -826,6 +826,22 @@
 		}
 	},
 	{
+		"id": "openwoo",
+		"name": "OpenWOO",
+		"description": "Conduction's own house style for OpenWOO, its Woo publication product: green actions on white, an ice blue header with navy text, Arial. The reference set the converter's output for the OpenWOO theme is compared with.",
+		"theming": {
+			"primary_color": "#23845c",
+			"background_color": "#FFFFFF"
+		},
+		"licence": {
+			"id": "LicenseRef-openwoo-house-style",
+			"package": "@conduction/theme (other/openwoo-design-tokens)",
+			"version": "2.1.0",
+			"holder": "Conduction",
+			"restricted": true
+		}
+	},
+	{
 		"id": "xxllnc",
 		"name": "xxllnc",
 		"description": "Design tokens for xxllnc",
