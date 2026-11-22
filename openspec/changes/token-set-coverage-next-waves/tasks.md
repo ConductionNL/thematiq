@@ -83,7 +83,7 @@ own, with a delta spec, when it is picked up.
 
 ## 3. Sources and thin coverage (from every-shipped-set-selectable 6.3, honest-token-set-coverage 6.4 and 6.5)
 
-- [ ] 3.1 The 18 sets with no recorded source, including every set written by hand for a real
+- [x] 3.1 The 18 sets with no recorded source, including every set written by hand for a real
       organisation. The only drift check (`openspec/specs/upstream-freshness`) is opt-in, applies
       nothing and covers only sets with an upstream.
       Measured 19 Nov 2026, not built. Since the list was written, `opencatalogi` and the five
@@ -108,6 +108,12 @@ own, with a delta spec, when it is picked up.
       `@nl-design-system-unstable/vng-design-tokens` and `@nl-design-system-candidate/vng-design-tokens`
       answer 404; a search for VNG tokens finds only `@vng-api/*` OpenAPI packages). Stays open until
       VNG publishes a versioned token package or an official palette.
+      22 Nov: recorded. `vng`'s colours are pinned to commit d4d55b90 of the public
+      ConductionNL/tilburg-woo-ui repository (`src/styles/nlds/_tokens-vng.scss`; all 54 colours of
+      `css/tokens/vng.css` appear there). `docs/reference/token-set-sources.md` records every set with
+      no `upstreamVersion` or `upstreamRef` (20 sets): 8 with a published source, link and read date,
+      12 hand-authored with no public source and the reason (Thematiq's own themes and fictional
+      organisations).
 - [x] 3.2 The 28 sets between 8 and 27 on the bridge, after wave 1.
       Measured 19 Nov 2026 from `docs/reference/token-set-coverage.md`, not built: 25 sets sit
       between 8 and 27 of 87 now (bodegraven-reeuwijk, borne, buren, conduction-new, demodam,
