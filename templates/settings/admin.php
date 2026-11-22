@@ -143,7 +143,7 @@ if ($_['mockUi'] === true) {
 		     while one runs (openspec/specs/scheduled-switch/spec.md). -->
 		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
 		<!-- The selected set is another organisation's house style and nobody
-		     confirmed it yet (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+		     confirmed it yet (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md).
 		     Filled by js/admin-set-licence.js. -->
 		<p class="settings-hint nldesign-set-licence-hint" id="nldesign-set-licence-hint" role="status" hidden></p>
 		<!-- What can be done with the selected set: the buttons act on it, the
@@ -180,7 +180,7 @@ if ($_['mockUi'] === true) {
 
 	<!-- House styles whose licence limits their use to their owner: the warning,
 	     the licence text and the confirmation per set
-	     (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md). Filled by js/admin-set-licence.js. -->
+	     (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md). Filled by js/admin-set-licence.js. -->
 	<div class="nldesign-set-licences" id="nldesign-set-licences" hidden>
 		<h3><?php p($l->t('House styles of other organisations')); ?></h3>
 		<div class="nldesign-set-licences-awaiting" id="nldesign-set-licences-awaiting" role="alert" hidden></div>

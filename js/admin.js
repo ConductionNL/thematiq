@@ -1487,7 +1487,7 @@
 				.then(function (data) {
 					if (data.error === 'restricted_set_not_confirmed') {
 						// Another organisation's house style, not confirmed
-						// (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+						// (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md).
 						notify(
 							t(
 								'thematiq',

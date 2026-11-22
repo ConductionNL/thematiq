@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+ * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ namespace OCA\Thematiq\Service\Exception;
  * set already refuses on that type, so a caller nobody updated treats a
  * restricted set as one it may not apply, never as one it may.
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+ * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
  */
 class RestrictedSetNotConfirmedException extends \InvalidArgumentException {
 
@@ -57,7 +57,7 @@ class RestrictedSetNotConfirmedException extends \InvalidArgumentException {
 	 *
 	 * @return string The set id.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
 	 */
 	public function getTokenSetId(): string {
 		return $this->tokenSetId;

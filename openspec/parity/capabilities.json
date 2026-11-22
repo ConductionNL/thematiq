@@ -8256,13 +8256,13 @@
 				"evidence": "lib/Service/TokenSetLicenceService.php reads a set's licence and its confirmation; lib/Service/RestrictedSetGate.php mayApply() and assertMayApply() refuse a restricted set until an administrator confirms it (lib/Controller/TokenSetLicenceController.php), and every path that applies a set asks it: ActiveTokenSetService, ThemePreviewService, ScheduledSwitchService, GroupMappingRules, DelegatedGroupThemingService, AppBrandService and RestrictedSetsInBundle in lib/Service/; lib/Repair/RecordRestrictedSetsAwaitingConfirmation.php records sets applied before they were restricted",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openspec/changes/token-set-licence-gate",
+				"change": "openspec/changes/archive/2026-11-22-token-set-licence-gate",
 				"requirement": [
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: A restricted set is refused until an administrator confirms it",
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: An administrator confirms a restricted set",
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: Every path that applies a set asks the same gate"
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: A restricted set is refused until an administrator confirms it",
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: An administrator confirms a restricted set",
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: Every path that applies a set asks the same gate"
 				],
-				"plan": "openspec/changes/token-set-licence-gate"
+				"plan": "openspec/changes/archive/2026-11-22-token-set-licence-gate"
 			},
 			"reachedOn": "Settings > Administration > Theming, the token set picker: a restricted set shows its licence and asks for confirmation",
 			"evidence": {

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+ * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ use OCP\IConfig;
  * applies a set holds that service, so each of them asks here before it
  * writes, and none of them can be built without the gate.
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+ * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
  */
 trait ProvidesLicenceGate {
 
@@ -43,7 +43,7 @@ trait ProvidesLicenceGate {
 	 *
 	 * @return string The path.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	abstract public function getAppPath(): string;
 
@@ -52,7 +52,7 @@ trait ProvidesLicenceGate {
 	 *
 	 * @return IConfig The config.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	abstract protected function licenceConfig(): IConfig;
 
@@ -62,7 +62,7 @@ trait ProvidesLicenceGate {
 	 *
 	 * @return RestrictedSetGate The gate, one per request.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function licenceGate(): RestrictedSetGate {
 		if ($this->licenceGate === null) {
