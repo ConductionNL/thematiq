@@ -2,16 +2,16 @@
 
 ## 1. Server
 
-- [ ] 1.1 `lib/Service/AppMenuOrder.php`: read, clean and save the user's order (user value `app_menu_order`).
-- [ ] 1.2 `lib/Controller/AppMenuOrderController.php` and the route `POST /app-menu/order`, signed-in users only.
-- [ ] 1.3 `lib/Service/ExternalApps.php`: the addresses in `external_apps`, OpenProject's modules through `OpenProjectModules`, the section.
-- [ ] 1.4 `lib/Controller/ExternalAppsController.php` and the routes `GET`/`POST /settings/external-apps`, admin only.
-- [ ] 1.5 `AppMenuService::inject()` adds `order`, `external` and the labels to the menu's state.
-- [ ] 1.6 PHPUnit: `AppMenuOrderTest`, `AppMenuOrderControllerTest`, `ExternalAppsTest`, `ExternalAppsControllerTest`, `AppMenuServiceTest`.
+- [x] 1.1 `lib/Service/AppMenuOrder.php`: read, clean and save the user's order (user value `app_menu_order`).
+- [x] 1.2 `lib/Controller/AppMenuOrderController.php` and the route `POST /app-menu/order`, signed-in users only.
+- [x] 1.3 `lib/Service/ExternalApps.php`: the addresses in `external_apps`, OpenProject's modules through `OpenProjectModules`, the section.
+- [x] 1.4 `lib/Controller/ExternalAppsController.php` and the routes `GET`/`POST /settings/external-apps`, admin only.
+- [x] 1.5 `AppMenuService::inject()` adds `order`, `external` and the labels to the menu's state.
+- [x] 1.6 PHPUnit: `AppMenuOrderTest`, `AppMenuOrderControllerTest`, `ExternalAppsTest`, `ExternalAppsControllerTest`, `AppMenuServiceTest`.
 
 ## 2. Admin page
 
-- [ ] 2.1 The block "External apps in the apps menu": one address field per app, one save button, English and Dutch.
+- [x] 2.1 The block "External apps in the apps menu": one address field per app, one save button, English and Dutch.
 
 ## 3. The menu
 
