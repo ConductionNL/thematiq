@@ -1200,7 +1200,26 @@
         "Use for headings": "Use for headings",
         "refers to {token}": "refers to {token}",
         "refers to {token}: {value}": "refers to {token}: {value}",
-        "The fill of a pill without a status colour": "The fill of a pill without a status colour"
+        "The fill of a pill without a status colour": "The fill of a pill without a status colour",
+        "External apps": "External apps",
+        "opens in a new tab": "opens in a new tab",
+        "Projects and work packages": "Projects and work packages",
+        "Mail": "Mail",
+        "Chat": "Chat",
+        "Knowledge base": "Knowledge base",
+        "Code": "Code",
+        "Video meetings": "Video meetings",
+        "All apps": "All apps",
+        "Hide apps": "Hide apps",
+        "Drag an app to change the order.": "Drag an app to change the order.",
+        "Alt with an arrow key moves the app.": "Alt with an arrow key moves the app.",
+        "{app} moved to place {place} of {total}.": "{app} moved to place {place} of {total}.",
+        "The order could not be saved.": "The order could not be saved.",
+        "External apps in the apps menu": "External apps in the apps menu",
+        "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.": "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.",
+        "%s address": "%s address",
+        "Save addresses": "Save addresses",
+        "Addresses saved.": "Addresses saved."
     },
     "plurals": {}
 }

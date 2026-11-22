@@ -49,7 +49,7 @@ script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
 script('thematiq', 'admin-workspace-icons');
-script('thematiq', 'admin-openproject-link');
+script('thematiq', 'admin-external-apps');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -742,20 +742,27 @@ if ($_['mockUi'] === true) {
 		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
 	</div>
 
-	<!-- OpenProject's modules in the apps menu (openproject-in-the-app-menu).
-	     Filled by js/admin-openproject-link.js. -->
-	<div class="nldesign-openproject-link" id="nldesign-openproject-link" style="margin-top:2em">
-		<h3><?php p($l->t('OpenProject in the apps menu')); ?></h3>
-		<p class="settings-hint" id="nldesign-openproject-link-hint">
-			<?php p($l->t('The apps menu lists OpenProject\'s modules in a section of their own. Leave empty for none.')); ?>
+	<!-- The external apps of the apps menu (external-apps-in-the-app-menu): OpenProject
+	     and the apps of ExternalApps::APPS, one address each. Filled by js/admin-external-apps.js. -->
+	<div class="nldesign-external-apps" id="nldesign-external-apps" style="margin-top:2em">
+		<h3><?php p($l->t('External apps in the apps menu')); ?></h3>
+		<p class="settings-hint" id="nldesign-external-apps-hint">
+			<?php p($l->t('Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.')); ?>
 		</p>
+		<?php
+		$thematiqExternalApps = ['openproject' => 'OpenProject'];
+		foreach (\OCA\Thematiq\Service\ExternalApps::APPS as $thematiqKey => $thematiqApp) {
+			$thematiqExternalApps[$thematiqKey] = $thematiqApp['name'];
+		}
+		foreach ($thematiqExternalApps as $thematiqKey => $thematiqName) { ?>
 		<p>
-			<label for="nldesign-openproject-url"><?php p($l->t('OpenProject address')); ?></label>
-			<input type="url" id="nldesign-openproject-url" placeholder="https://openproject.example.org"
-				   aria-describedby="nldesign-openproject-link-hint" autocomplete="off">
-			<button type="button" class="button" id="nldesign-openproject-save"><?php p($l->t('Save address')); ?></button>
+			<label for="nldesign-external-app-<?php p($thematiqKey); ?>"><?php p($l->t('%s address', [$thematiqName])); ?></label>
+			<input type="url" id="nldesign-external-app-<?php p($thematiqKey); ?>" data-external-app="<?php p($thematiqKey); ?>"
+				   placeholder="https://" aria-describedby="nldesign-external-apps-hint" autocomplete="off">
 		</p>
-		<span id="nldesign-openproject-feedback" role="status" aria-live="polite"></span>
+		<?php } ?>
+		<button type="button" class="button" id="nldesign-external-apps-save"><?php p($l->t('Save addresses')); ?></button>
+		<span id="nldesign-external-apps-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos
