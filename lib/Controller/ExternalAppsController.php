@@ -23,7 +23,6 @@ use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\IL10N;
 use OCP\IRequest;
 
 /**
@@ -40,13 +39,13 @@ class ExternalAppsController extends Controller {
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
 	 * @param ExternalApps $externalApps Reads and saves the addresses.
-	 * @param IL10N $l The messages.
+	 * @param \OCP\IL10N $l The messages.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private readonly ExternalApps $externalApps,
-		private readonly IL10N $l,
+		private readonly \OCP\IL10N $l,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
