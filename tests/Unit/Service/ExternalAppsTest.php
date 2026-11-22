@@ -78,7 +78,12 @@ final class ExternalAppsTest extends TestCase {
 	public function testOnlyTheAppsWithAnAddressAreListed(): void {
 		$this->assertNull(actual: $this->apps()->section(l: $this->l()), message: 'no address, no section');
 
-		$this->assertSame(expected: [], actual: $this->apps()->save(urls: ['openproject' => 'https://op.example.org/', 'code' => ' https://code.example.org ', 'nope' => 'https://x.example.org']));
+		$this->assertSame(
+			expected: [],
+			actual: $this->apps()->save(
+				urls: ['openproject' => 'https://op.example.org/', 'code' => ' https://code.example.org ', 'nope' => 'https://x.example.org']
+			)
+		);
 		$section = $this->apps()->section(l: $this->l());
 
 		$this->assertSame(expected: 'External apps', actual: $section['title']);
@@ -93,7 +98,13 @@ final class ExternalAppsTest extends TestCase {
 			actual: array_column($section['apps'], 'key')
 		);
 		$this->assertSame(
-			expected: ['key' => 'external-code', 'label' => 'Forgejo', 'line' => 'Code', 'url' => 'https://code.example.org', 'icon' => ExternalApps::APPS['code']['icon']],
+			expected: [
+				'key' => 'external-code',
+				'label' => 'Forgejo',
+				'line' => 'Code',
+				'url' => 'https://code.example.org',
+				'icon' => ExternalApps::APPS['code']['icon'],
+			],
 			actual: $section['apps'][4]
 		);
 		$this->assertSame(expected: 'https://op.example.org/work_packages', actual: $section['apps'][0]['url']);
@@ -160,7 +171,10 @@ final class ExternalAppsTest extends TestCase {
 		$rows = $this->apps()->stored(l: $this->l());
 
 		$this->assertSame(expected: ['openproject', 'mail', 'chat', 'wiki', 'code', 'video'], actual: array_column($rows, 'key'));
-		$this->assertSame(expected: ['key' => 'video', 'name' => 'BigBlueButton', 'line' => 'Video meetings', 'url' => 'https://meet.example.org'], actual: $rows[5]);
+		$this->assertSame(
+			expected: ['key' => 'video', 'name' => 'BigBlueButton', 'line' => 'Video meetings', 'url' => 'https://meet.example.org'],
+			actual: $rows[5]
+		);
 		$this->assertSame(expected: '', actual: $rows[0]['url']);
 	}//end testTheAdminPageGetsEveryApp()
 }//end class

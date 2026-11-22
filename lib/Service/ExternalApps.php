@@ -76,6 +76,17 @@ class ExternalApps {
 	}//end __construct()
 
 	/**
+	 * OpenProject's address and modules, which keep their own keys.
+	 *
+	 * @return OpenProjectModules The OpenProject half.
+	 *
+	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 */
+	public function openProject(): OpenProjectModules {
+		return $this->openProject;
+	}//end openProject()
+
+	/**
 	 * The section for the menu, or null when no app has an address.
 	 *
 	 * @param IL10N $l The language of this request.
@@ -160,7 +171,11 @@ class ExternalApps {
 				continue;
 			}
 
-			$url = is_string($url) === true ? trim($url) : '';
+			if (is_string($url) === false) {
+				$url = '';
+			}
+
+			$url = trim($url);
 			$normalized = $this->openProject->normalize(value: $url);
 			if ($url !== '' && $normalized === null) {
 				$refused[] = $key;
@@ -200,8 +215,16 @@ class ExternalApps {
 	private function addresses(): array {
 		$stored = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
 		$addresses = [];
+		if (is_array($stored) === false) {
+			return $addresses;
+		}
+
 		foreach (array_keys(self::APPS) as $key) {
-			$url = is_array($stored) === true && is_string($stored[$key] ?? null) === true ? $this->openProject->normalize(value: $stored[$key]) : null;
+			$url = null;
+			if (is_string($stored[$key] ?? null) === true) {
+				$url = $this->openProject->normalize(value: $stored[$key]);
+			}
+
 			if ($url !== null) {
 				$addresses[$key] = $url;
 			}

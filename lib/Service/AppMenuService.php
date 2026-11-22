@@ -23,8 +23,6 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IL10N;
-use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -102,10 +100,7 @@ class AppMenuService {
 	 * @param IInitialState $initialState The initial state channel.
 	 * @param IFactory $l10nFactory The language of this request.
 	 * @param LoggerInterface $logger Records a swallowed failure.
-	 * @param OpenProjectModules|null $openProjectModules OpenProject's modules, a section of their own.
-	 * @param ExternalApps|null $externalApps The external apps with an address.
-	 * @param AppMenuOrder|null $order The signed-in user's order.
-	 * @param IUserSession|null $userSession The signed-in user.
+	 * @param AppMenuListState|null $listState The external apps, the user's order and the list's texts.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -113,10 +108,7 @@ class AppMenuService {
 		private readonly IInitialState $initialState,
 		private readonly IFactory $l10nFactory,
 		private readonly LoggerInterface $logger,
-		private readonly ?OpenProjectModules $openProjectModules = null,
-		private readonly ?ExternalApps $externalApps = null,
-		private readonly ?AppMenuOrder $order = null,
-		private readonly ?IUserSession $userSession = null,
+		private readonly ?AppMenuListState $listState = null,
 	) {
 	}//end __construct()
 
@@ -258,7 +250,7 @@ class AppMenuService {
 	 * @return void
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -269,13 +261,9 @@ class AppMenuService {
 
 			$l10n = $this->l10nFactory->get(Application::APP_ID);
 			$menu = $this->resolveMenu(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
-			// OpenProject's modules, when an administrator gave its address (openproject-in-the-app-menu).
-			$openProject = $this->openProjectModules?->section(l: $l10n);
-			if ($openProject !== null) {
-				$menu['openproject'] = $openProject;
+			if ($this->listState !== null) {
+				$menu = array_merge($menu, $this->listState->state(l: $l10n));
 			}
-
-			$menu = array_merge($menu, $this->personal(l: $l10n));
 
 			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
 			$this->emitScript();
@@ -286,38 +274,6 @@ class AppMenuService {
 			);
 		}
 	}//end inject()
-
-	/**
-	 * What the ordered list needs besides the sections: the external apps, the signed-in user's
-	 * order and the texts of the toggle, the drag hint and the live region.
-	 *
-	 * @param IL10N $l The language of this request.
-	 *
-	 * @return array<string, mixed> `external` (when an app has an address), `order` and `labels`.
-	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
-	 */
-	private function personal(IL10N $l): array {
-		$state = [];
-		$external = $this->externalApps?->section(l: $l);
-		if ($external !== null) {
-			$state['external'] = $external;
-		}
-
-		$user = $this->userSession?->getUser();
-		$state['order'] = ($user !== null && $this->order !== null) ? $this->order->get(userId: $user->getUID()) : [];
-		$state['labels'] = [
-			'allApps' => $l->t('All apps'),
-			'hideApps' => $l->t('Hide apps'),
-			'dragHint' => $l->t('Drag an app to change the order.'),
-			'moveHint' => $l->t('Alt with an arrow key moves the app.'),
-			'moved' => $l->t('{app} moved to place {place} of {total}.'),
-			'saveFailed' => $l->t('The order could not be saved.'),
-		];
-
-		return $state;
-	}//end personal()
 
 	/**
 	 * Load js/app-menu.js. A seam, so unit tests need no Nextcloud bootstrap.

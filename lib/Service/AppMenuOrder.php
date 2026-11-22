@@ -67,8 +67,11 @@ class AppMenuOrder {
 	 */
 	public function get(string $userId): array {
 		$stored = json_decode($this->config->getUserValue($userId, Application::APP_ID, self::KEY, ''), true);
+		if (is_array($stored) === false) {
+			return [];
+		}
 
-		return self::clean(keys: is_array($stored) === true ? $stored : []);
+		return self::clean(keys: $stored);
 	}//end get()
 
 	/**

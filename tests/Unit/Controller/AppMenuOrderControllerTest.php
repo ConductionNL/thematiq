@@ -86,7 +86,10 @@ final class AppMenuOrderControllerTest extends TestCase {
 		$this->assertSame(expected: ['order' => ['deck', 'files']], actual: $response->getData());
 		$this->assertSame(expected: ['anna' => '["deck","files"]'], actual: $this->stored);
 
-		$params = array_map(static fn ($param): string => $param->getName(), (new ReflectionMethod(AppMenuOrderController::class, 'save'))->getParameters());
+		$params = array_map(
+			static fn ($param): string => $param->getName(),
+			(new ReflectionMethod(AppMenuOrderController::class, 'save'))->getParameters()
+		);
 		$this->assertSame(expected: ['order'], actual: $params);
 	}//end testItWritesOnlyTheSignedInUser()
 

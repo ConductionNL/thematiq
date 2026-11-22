@@ -45,7 +45,9 @@ final class AppMenuOrderTest extends TestCase {
 	 */
 	private function order(): AppMenuOrder {
 		$config = $this->createMock(originalClassName: IConfig::class);
-		$config->method('getUserValue')->willReturnCallback(fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user . '/' . $app . '/' . $key] ?? $default));
+		$config->method('getUserValue')->willReturnCallback(
+			fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user . '/' . $app . '/' . $key] ?? $default)
+		);
 		$config->method('setUserValue')->willReturnCallback(function (string $user, string $app, string $key, $value): void {
 			$this->stored[$user . '/' . $app . '/' . $key] = (string)$value;
 		});

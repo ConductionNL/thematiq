@@ -76,10 +76,10 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
-		// OpenProject's address and modules for the apps menu (openproject-in-the-app-menu), admin-only.
-		['name' => 'openProjectLink#show', 'url' => '/settings/openproject', 'verb' => 'GET'],
-		['name' => 'openProjectLink#save', 'url' => '/settings/openproject', 'verb' => 'POST'],
-		// The external apps of the apps menu (external-apps-in-the-app-menu), admin-only.
+		// The external apps of the apps menu (external-apps-in-the-app-menu), admin-only. OpenProject
+		// keeps its own address and modules endpoint.
+		['name' => 'externalApps#openProject', 'url' => '/settings/openproject', 'verb' => 'GET'],
+		['name' => 'externalApps#saveOpenProject', 'url' => '/settings/openproject', 'verb' => 'POST'],
 		['name' => 'externalApps#show', 'url' => '/settings/external-apps', 'verb' => 'GET'],
 		['name' => 'externalApps#save', 'url' => '/settings/external-apps', 'verb' => 'POST'],
 		// The signed-in user's own order of the apps menu (apps-menu-order).

@@ -69,7 +69,10 @@
 				}
 				var refused = result.body.refused || []
 				inputs.forEach(function (input) {
-					if (refused.indexOf(input.getAttribute('data-external-app')) !== -1) {
+					if (
+						refused.indexOf(input.getAttribute('data-external-app'))
+						!== -1
+					) {
 						input.setAttribute('aria-invalid', 'true')
 					} else {
 						input.removeAttribute('aria-invalid')

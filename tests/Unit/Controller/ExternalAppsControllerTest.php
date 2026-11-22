@@ -90,12 +90,39 @@ final class ExternalAppsControllerTest extends TestCase {
 	}//end testAddressesAreSavedAndABadOneIsRefused()
 
 	/**
+	 * OpenProject's own endpoint saves, reads and clears its address and modules.
+	 *
+	 * @return void
+	 */
+	public function testOpenProjectsAddressIsSavedReadAndCleared(): void {
+		$this->assertSame(
+			expected: ['url' => '', 'modules' => OpenProjectModules::DEFAULT, 'available' => array_keys(OpenProjectModules::MODULES)],
+			actual: $this->controller()->openProject()->getData()
+		);
+
+		$saved = $this->controller()->saveOpenProject(url: 'https://op.example.org/', modules: 'boards,meetings,nope')->getData();
+		$this->assertSame(expected: 'https://op.example.org', actual: $saved['url']);
+		$this->assertSame(expected: ['boards', 'meetings'], actual: $saved['modules']);
+		$this->assertSame(
+			expected: ['boards', 'meetings'],
+			actual: $this->controller()->saveOpenProject(url: 'https://op.example.org')->getData()['modules'],
+			message: 'modules left out stay'
+		);
+
+		$this->assertSame(expected: 400, actual: $this->controller()->saveOpenProject(url: 'javascript:alert(1)')->getStatus());
+		$this->assertSame(expected: 'https://op.example.org', actual: $this->stored['openproject_url'], message: 'a refused address changes nothing');
+
+		$this->assertSame(expected: '', actual: $this->controller()->saveOpenProject(url: '')->getData()['url']);
+		$this->assertArrayNotHasKey(key: 'openproject_url', array: $this->stored);
+	}//end testOpenProjectsAddressIsSavedReadAndCleared()
+
+	/**
 	 * Scenario: only an administrator sets the addresses.
 	 *
 	 * @return void
 	 */
 	public function testEveryMethodIsAdminOnly(): void {
-		foreach (['show', 'save'] as $method) {
+		foreach (['show', 'save', 'openProject', 'saveOpenProject'] as $method) {
 			$attributes = (new ReflectionMethod(ExternalAppsController::class, $method))->getAttributes(AuthorizedAdminSetting::class);
 			$this->assertCount(expectedCount: 1, haystack: $attributes, message: $method);
 			$this->assertSame(expected: Admin::class, actual: $attributes[0]->getArguments()['settings']);
