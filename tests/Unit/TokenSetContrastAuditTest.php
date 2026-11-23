@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.1
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.2
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.3
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.4
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.1
- * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.2
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 
 declare(strict_types=1);
@@ -81,8 +81,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * Every audited set yields a computed verdict for both fixed pairs.
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.1
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.2
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 *
 	 * @return void
 	 */
@@ -122,7 +122,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * An unevaluated pair is never classified as passing.
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.4
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 *
 	 * @return void
 	 */
@@ -143,7 +143,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * Every set the documentation presents as WCAG-AA compliant actually meets AA.
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.3
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 *
 	 * @return void
 	 */
@@ -183,7 +183,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	 * TokenSetVocabularyTest's does. An audit that has stopped classifying
 	 * would pass a shipped-set-only assertion too.
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-2.3
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 *
 	 * @return void
 	 */
@@ -352,7 +352,7 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * A set tagged high-contrast must meet WCAG AAA (>= 7:1 text, >= 4.5:1 UI).
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-high-contrast-token-set/tasks.md#task-4.1
+	 * @spec openspec/specs/high-contrast-token-set/spec.md
 	 *
 	 * @return void
 	 */
@@ -390,8 +390,8 @@ class TokenSetContrastAuditTest extends TestCase {
 	/**
 	 * The generated report is byte-identical on regeneration and covers every set.
 	 *
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.1
-	 * @spec openspec/changes/archive/2026-07-07-shipped-token-set-contrast-audit/tasks.md#task-3.2
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 *
 	 * @return void
 	 */

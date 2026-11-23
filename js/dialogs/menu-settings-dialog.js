@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
  */
 ;(function thematiqMenuSettingsDialog() {
 	var SVG_NS = 'http://www.w3.org/2000/svg'
@@ -64,7 +64,7 @@
 	 * @param {string} template The text.
 	 * @param {object} values The values.
 	 * @return {string} The text.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function fill(template, values) {
 		return String(template || '').replace(/\{(\w+)\}/g, function (all, name) {
@@ -79,7 +79,7 @@
 	 * @param {object} attrs The attributes; `text` sets the text, `on` the listeners.
 	 * @param {Array} children The children.
 	 * @return {HTMLElement} The element.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function h(tag, attrs, children) {
 		var el = document.createElement(tag)
@@ -112,7 +112,7 @@
 	 * @param {string} d The path data.
 	 * @param {number} size The size in pixels.
 	 * @return {SVGElement} The icon.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function svg(d, size) {
 		var el = document.createElementNS(SVG_NS, 'svg')
@@ -134,7 +134,7 @@
 	 * @param {string} path The path under /apps/thematiq.
 	 * @param {object|FormData|undefined} body The body.
 	 * @return {Promise<object>} The answer's JSON; rejects on a failure.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	function request(method, path, body) {
 		var headers = { requesttoken: OC.requestToken, Accept: 'application/json' }
@@ -161,7 +161,7 @@
 	 * @param {Array<object>} entries The entries {key, rank}.
 	 * @param {Array<string>} order The keys.
 	 * @return {Array<object>} The entries, sorted.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function inOrder(entries, order) {
 		var index = {}
@@ -182,7 +182,7 @@
 	 * A fresh id for a new external app.
 	 *
 	 * @return {string} 12 hexadecimal characters.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	function newId() {
 		var out = ''
@@ -197,7 +197,7 @@
 	 *
 	 * @param {string} value The address.
 	 * @return {boolean} True when it may.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	function isHttps(value) {
 		if (!/^https:\/\/[^\s/]+/i.test(value || '')) {
@@ -217,7 +217,7 @@
 	 * @param {object} data The server's answer.
 	 * @param {string} scope `everyone` or `me`.
 	 * @return {object} The form.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	function formFor(data, scope) {
 		var base = scope === 'everyone' ? data.defaults : data.effective
@@ -238,7 +238,7 @@
 	 * @param {object} data The server's answer.
 	 * @param {object} options {menu, entries, opener}.
 	 * @return {object} {el, close}.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function build(data, options) {
 		var L = data.labels || {}
@@ -1179,7 +1179,7 @@
 	 *
 	 * @param {object} options {menu, entries, opener}.
 	 * @return {Promise<object|null>} The dialog, or null when the settings could not be read.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function open(options) {
 		var opts = options || {}

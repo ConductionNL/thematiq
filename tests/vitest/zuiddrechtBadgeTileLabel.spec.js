@@ -6,7 +6,7 @@
  * in a circle at the end, which the boards set at 600 (DqDashboard,
  * DqMijnTeam) and the library styles so.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

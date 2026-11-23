@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/specs/token-import-export/spec.md
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Service;
  *
  * Extracts --token-name: value pairs from raw CSS strings.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/specs/token-import-export/spec.md
  * @spec openspec/specs/dark-mode/spec.md
  */
 class CssParserService {
@@ -43,7 +43,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string>|null Parsed token map, or null if none found.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 * @spec openspec/specs/token-import-export/spec.md
 	 */
 	public function parseDeclarations(string $content): ?array {
 		$parsed = (new CssDeclarationScanner(content: $content))->scan();
@@ -84,7 +84,7 @@ class CssParserService {
 	 *
 	 * @return array<string, string> Map of token name => value.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 * @spec openspec/specs/token-import-export/spec.md
 	 */
 	public function parseRootBlock(string $css): array {
 		// Comments first: one holding braces (defaults.css has `{normal,bold}`) ended the block early.

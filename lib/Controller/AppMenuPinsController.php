@@ -31,7 +31,7 @@ use OCP\IUserSession;
  * Save the pinned apps of the signed-in user. The route takes no user id: a person writes only
  * their own value, and only entries they can see.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 class AppMenuPinsController extends Controller {
 
@@ -61,7 +61,7 @@ class AppMenuPinsController extends Controller {
 	 *
 	 * @return JSONResponse `{pins}` as stored, or 401 without a signed-in user.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	#[NoAdminRequired]
 	public function save(array $pins = []): JSONResponse {

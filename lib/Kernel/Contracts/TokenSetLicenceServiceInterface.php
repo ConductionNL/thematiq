@@ -47,7 +47,7 @@ interface TokenSetLicenceServiceInterface {
 	 *
 	 * @return list<array{tokenSet: string, appliedIn: list<array{kind: string, id: string}>, since: string}> One entry per set.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
 	 */
 	public function awaitingConfirmation(): array;
 
@@ -61,7 +61,7 @@ interface TokenSetLicenceServiceInterface {
 	 *
 	 * @throws InvalidArgumentException When the set does not exist or is not restricted, or no administrator is named.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	public function confirm(string $tokenSetId, string $uid): array;
 
@@ -73,7 +73,7 @@ interface TokenSetLicenceServiceInterface {
 	 * @return array<string, mixed>|null The declaration, the full text, the confirmation and where the
 	 *                                   set is applied; null when the set declares no licence.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	public function describe(string $tokenSetId): ?array;
 
@@ -95,7 +95,7 @@ interface TokenSetLicenceServiceInterface {
 	 * @return list<array{id: string, name: string, licence: array<string, mixed>, confirmation: array{uid: string, at: string}|null}>
 	 *                                                                                                                                 Sorted by name.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	public function restrictedSets(): array;
 
@@ -111,7 +111,7 @@ interface TokenSetLicenceServiceInterface {
 	 *
 	 * @throws \OCA\Thematiq\Service\Exception\RestrictedSetInUseException When the set is still applied; it names where.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
 	public function withdraw(string $tokenSetId, string $uid): void;
 }//end interface

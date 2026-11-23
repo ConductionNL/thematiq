@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/specs/admin-settings/spec.md
+ * @spec openspec/specs/admin-settings/spec.md
+ * @spec openspec/specs/admin-settings/spec.md
  * @spec openspec/specs/admin-settings/spec.md#requirement-session-preview-controls
  * @spec openspec/specs/icon-packs/spec.md
  */
@@ -38,9 +38,9 @@ use OCP\Settings\IDelegatedSettings;
  * Provides the configuration interface for selecting design token sets.
  * Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+ * @spec openspec/specs/admin-settings/spec.md
+ * @spec openspec/specs/admin-settings/spec.md
+ * @spec openspec/specs/admin-settings/spec.md
  */
 class Admin implements IDelegatedSettings {
 
@@ -116,7 +116,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return TemplateResponse The settings form template.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/specs/admin-settings/spec.md
 	 * @spec openspec/specs/dark-mode/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
@@ -265,9 +265,9 @@ class Admin implements IDelegatedSettings {
 	 *     headerStyle: string
 	 * } The template parameters.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	private function layoutParams(): array {
 		return [
@@ -389,7 +389,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	private function publishPlaygroundState(string $currentTokenSet, ?array $activePreview): void {
 		$playgroundSet = $currentTokenSet;
@@ -467,7 +467,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string The section identifier (theming).
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-56
+	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	public function getSection(): string {
 		return 'theming';
@@ -478,7 +478,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return int The priority value (lower = higher priority).
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-57
+	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	public function getPriority(): int {
 		return 50;
@@ -491,7 +491,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string|null The settings display name, or null.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	public function getName(): ?string {
 		return null;
@@ -505,11 +505,11 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return array<string, string[]> The authorized app config map.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-55
+	 * @spec openspec/specs/admin-settings/spec.md
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 */
 	public function getAuthorizedAppConfig(): array {
 		return [

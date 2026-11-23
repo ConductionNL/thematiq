@@ -331,7 +331,7 @@ class DesignSystemServiceTest extends TestCase {
 	 * An id design-systems.json does not ship resolves to an empty bundle,
 	 * so no design-system stylesheet is loaded and nothing throws.
 	 *
-	 * @spec openspec/specs/css-architecture/spec.md#unknown-design-system-falls-back-safely
+	 * @spec openspec/specs/css-architecture/spec.md#scenario-unknown-design-system-falls-back-safely
 	 *
 	 * @return void
 	 */
@@ -346,7 +346,7 @@ class DesignSystemServiceTest extends TestCase {
 	 * design-systems.json is read once per service instance (one request):
 	 * a second call answers from the cache even after the file changed.
 	 *
-	 * @spec openspec/specs/css-architecture/spec.md#design-systems-are-cached-per-request
+	 * @spec openspec/specs/css-architecture/spec.md#scenario-design-systems-are-cached-per-request
 	 *
 	 * @return void
 	 */

@@ -30,7 +30,7 @@ use OCP\IUserSession;
  * Save the order of the workplace apps menu for the signed-in user. The route takes no user id:
  * a person writes only their own value.
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
  */
 class AppMenuOrderController extends Controller {
 
@@ -58,7 +58,7 @@ class AppMenuOrderController extends Controller {
 	 *
 	 * @return JSONResponse `{order}` as stored, or 401 without a signed-in user.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	#[NoAdminRequired]
 	public function save(array $order = []): JSONResponse {

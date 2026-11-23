@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ namespace OCA\Thematiq\Service;
  * address must be https, the icon one of the library's or an uploaded icon's id. The menu draws it
  * as a link that opens in a new tab.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
  */
 final class AppMenuExternalApp {
 
@@ -122,7 +122,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return string The key.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public static function key(array $app): string {
 		return 'external-' . (string)$app['id'];
@@ -135,7 +135,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return array<int, array<string, mixed>>|null The clean apps in their order.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public static function cleanList(array $apps): ?array {
 		if (count($apps) > self::MAX || array_is_list($apps) === false) {
@@ -173,7 +173,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one condition per field of the app.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public static function clean(array $app, int $index): ?array {
 		$id = ($app['id'] ?? '');
@@ -205,7 +205,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return string|null The text, or null when it is not allowed.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private static function text(mixed $value, int $max): ?string {
 		if (is_string($value) === false) {
@@ -228,7 +228,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return string|null The address.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private static function address(mixed $value): ?string {
 		if (is_string($value) === false || strlen($value) > 2000) {
@@ -256,7 +256,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return bool True for localhost, 127.x and ::1.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private static function isLoopback(string $host): bool {
 		$host = strtolower(trim($host, '[]'));
@@ -270,7 +270,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return array<string, string> The path data, by name.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
 	 */
 	public static function icons(): array {
 		$icons = self::LIBRARY;
@@ -291,7 +291,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return array<int, string> The names.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
 	 */
 	public static function strokeIcons(): array {
 		return array_values(array_diff(array_keys(self::icons()), array_keys(self::LIBRARY), array_keys(self::BOARD_ICONS)));
@@ -304,7 +304,7 @@ final class AppMenuExternalApp {
 	 *
 	 * @return array<string, string>|null The icon.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private static function icon(mixed $value): ?array {
 		if (is_array($value) === false || count($value) !== 1) {

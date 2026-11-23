@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 declare(strict_types=1);
@@ -25,7 +25,7 @@ use OCP\App\IAppManager;
 /**
  * The app directory, the resolved token values and their sources, the conversion reason vocabulary and the instance's own stock theme.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 final class PlaygroundTokenSources {
 
@@ -37,7 +37,7 @@ final class PlaygroundTokenSources {
 	 * @param TokenSetConverterService $converter The conversion reason vocabulary.
 	 * @param StockTokensService $stockTokens The instance's own stock theme.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function __construct(
 		public readonly IAppManager $appManager,

@@ -18,7 +18,7 @@
  *     16% wash of the navigation's primary element colour over the main
  *     background, 22% while it is hovered.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

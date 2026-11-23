@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+ * @spec openspec/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

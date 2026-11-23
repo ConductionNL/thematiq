@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -128,7 +128,7 @@ class LayoutControllerTest extends TestCase {
 	/**
 	 * A choice is stored, audited, and answered with what the page resolves to.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -172,7 +172,7 @@ class LayoutControllerTest extends TestCase {
 	/**
 	 * The empty choice follows the theme, and the answer says what that is.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -198,7 +198,7 @@ class LayoutControllerTest extends TestCase {
 	 * The newer options are stored and audited with the two older ones,
 	 * and the answer resolves them for the active set.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -257,7 +257,7 @@ class LayoutControllerTest extends TestCase {
 	 *
 	 * @dataProvider unknownValueProvider
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
 	public function testAnUnknownValueStoresNothing(string $layout, string $stripe, array $newer = []): void {
 		$response = $this->save(params: (['workplaceLayout' => $layout, 'brandStripe' => $stripe] + $newer));
@@ -343,7 +343,7 @@ class LayoutControllerTest extends TestCase {
 	/**
 	 * The endpoint is delegated-admin only, like every other settings write.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 *
 	 * @return void
 	 */

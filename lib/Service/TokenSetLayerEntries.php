@@ -99,7 +99,7 @@ class TokenSetLayerEntries {
 	 * @return array{layer: string, kind: string, css: string, id: string}|null The inline
 	 *                                                                          layer, or null when the instance could not be read.
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function stockTokens(): ?array {
 		$css = $this->stockTokens->getCss();

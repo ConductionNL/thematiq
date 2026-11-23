@@ -10,8 +10,8 @@
  * conditional stylesheet, off unless asked for; the tests below read the
  * files and hold each to what it may and may not do.
  *
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
  */
 
 import fs from 'node:fs'

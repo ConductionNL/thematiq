@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 declare(strict_types=1);
@@ -42,7 +42,7 @@ use OCP\IRequest;
  * class already carries eight services and seven test files construct it by
  * hand; this needs two.
  *
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 class LayerController extends Controller {
 
@@ -91,7 +91,7 @@ class LayerController extends Controller {
 	 *
 	 * @return JSONResponse `{tokenSet, designSystem, layers: [{layer, kind, href|css, id?}]}`, or 404.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getStylesheets(string $tokenSetId): JSONResponse {

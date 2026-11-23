@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+ * @spec openspec/specs/token-set-apply-dialog/spec.md
+ * @spec openspec/specs/token-set-apply-dialog/spec.md
  */
 
 declare(strict_types=1);
@@ -38,8 +38,8 @@ use OCP\App\IAppManager;
  * This is pure string manipulation — no DOM, no CSS parser.
  * Only editable tokens (in TokenRegistry) are returned.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+ * @spec openspec/specs/token-set-apply-dialog/spec.md
+ * @spec openspec/specs/token-set-apply-dialog/spec.md
  */
 class TokenSetPreviewService {
 
@@ -95,7 +95,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --nldesign-* token name => declared value.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getResolvedTokens(string $tokenSetId): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
@@ -124,7 +124,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --nldesign-* token name => declared value.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getDeclaredTokens(string $tokenSetId): array {
 		$css = $this->files->read(store: $this->store, appPath: $this->appManager->getAppPath('thematiq'), name: 'css/tokens/' . $tokenSetId . '.css');
@@ -146,7 +146,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Only the --nldesign-* entries, sorted by name.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	private function semanticLayer(array $vars): array {
 		$tokens = [];
@@ -172,7 +172,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --color-* (or --border-radius-*, …) to --nldesign-* token.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getTokenSources(): array {
 		if ($this->sourceMemo !== null) {
@@ -193,7 +193,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --color-* token name => resolved hex/color value.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-48
+	 * @spec openspec/specs/token-set-apply-dialog/spec.md
 	 */
 	public function getResolvedColors(string $tokenSetId): array {
 		$appPath = $this->appManager->getAppPath('thematiq');
@@ -271,7 +271,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --property-name => value.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/specs/token-set-apply-dialog/spec.md
 	 */
 	private function parseCssVars(string $filePath): array {
 		if (file_exists($filePath) === false) {
@@ -315,7 +315,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return array<string, string> Map of --color-X => --nldesign-Y.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/specs/token-set-apply-dialog/spec.md
 	 */
 	private function parseMappings(string $filePath): array {
 		if (file_exists($filePath) === false) {
@@ -368,7 +368,7 @@ class TokenSetPreviewService {
 	 *
 	 * @return string The resolved value or the original reference.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-49
+	 * @spec openspec/specs/token-set-apply-dialog/spec.md
 	 */
 	private function resolveVarReference(string $ref, array $vars): string {
 		// Direct lookup (ref is a --nldesign-* token name).

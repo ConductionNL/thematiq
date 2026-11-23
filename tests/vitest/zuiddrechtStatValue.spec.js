@@ -6,7 +6,7 @@
  * (DqDashboard, DqTermijnen, DqTeamwachtrij) and the board look sets that.
  * The set sets no font size of its own on it.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

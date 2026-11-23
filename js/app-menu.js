@@ -24,7 +24,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqAppMenuInit() {
 	var BLOCK = 'thematiq-app-menu'
@@ -119,7 +119,7 @@
 	 * @param {object} source The object.
 	 * @param {string} key The key.
 	 * @return {string} The text.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function text(source, key) {
 		return source && typeof source[key] === 'string' ? source[key].trim() : ''
@@ -130,7 +130,7 @@
 	 *
 	 * @param {string} url The address.
 	 * @return {boolean} True when it may be linked.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function linkable(url) {
 		return typeof url === 'string' && /^(https?:\/\/|\/(?!\/))/i.test(url)
@@ -141,7 +141,7 @@
 	 *
 	 * @param {HTMLAnchorElement} tile The tile.
 	 * @return {string} The id, or the empty string.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md
+	 * @spec openspec/specs/apps-menu-order/spec.md
 	 */
 	function appIdOf(tile) {
 		var match = /\/apps\/([a-z0-9_]+)/.exec(tile.getAttribute('href') || '')
@@ -155,7 +155,7 @@
 	 * @param {string} key A key that finds the row again.
 	 * @param {number} order Its place.
 	 * @return {HTMLElement} The row.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function row(grid, key, order) {
 		var el = grid.querySelector(':scope > [data-thematiq-row="' + key + '"]')
@@ -174,7 +174,7 @@
 	 *
 	 * @param {Element} el The element.
 	 * @param {boolean} folded Whether it is folded.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function fold(el, folded) {
 		if (folded) {
@@ -192,7 +192,7 @@
 	 *
 	 * @param {object} menu The menu.
 	 * @return {object} Every key of DEFAULTS.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-is-drawn-from-the-settings
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-is-drawn-from-the-settings
 	 */
 	function settingsOf(menu) {
 		var given = menu.settings && typeof menu.settings === 'object' ? menu.settings : {}
@@ -212,7 +212,7 @@
 	 *
 	 * @param {string} d The path data.
 	 * @return {SVGElement} The icon.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md
+	 * @spec openspec/specs/apps-menu-create/spec.md
 	 */
 	function icon(d) {
 		var svg = document.createElementNS(SVG_NS, 'svg')
@@ -232,7 +232,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {object} labels The texts.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-apps-menu-has-a-title-and-a-chevron-on-its-toggle
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-apps-menu-has-a-title-and-a-chevron-on-its-toggle
 	 */
 	function title(grid, labels) {
 		if (
@@ -259,7 +259,7 @@
 	 * Files does not answer.
 	 *
 	 * @return {Promise<Array<object>>} The creators.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function creators() {
 		if (window.thematiqAppMenuCreators) {
@@ -305,7 +305,7 @@
 	 *
 	 * @param {Array<object>} list The creators.
 	 * @return {Array<{kind: object, creator: object}>} The row.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function rowCreators(list) {
 		var taken = []
@@ -343,7 +343,7 @@
 	 * @param {object} creator The creator.
 	 * @param {number} attempt The try, from 1.
 	 * @return {string} The name.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
 	 */
 	function fileName(creator, attempt) {
 		var base = text(creator, 'label').replace(/[\\/]/g, ' ').trim()
@@ -358,7 +358,7 @@
 	 * @param {object} creator The creator.
 	 * @param {Function} failed Called when the file could not be made.
 	 * @return {Promise<void>} Settles when done.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
 	 */
 	function createFile(creator, failed) {
 		var attempt = function (n) {
@@ -399,7 +399,7 @@
 	 * without one goes to the app that registered it over the event bus.
 	 *
 	 * @param {object} action The navigation entry.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function runAction(action) {
 		if (linkable(action.href)) {
@@ -414,7 +414,7 @@
 	 * entries its app menu draws in its action row. Empty before Nextcloud 35.
 	 *
 	 * @return {Array<object>} The actions with a name.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function coreActions() {
 		var list = []
@@ -437,7 +437,7 @@
 	 * @param {string} d The icon's path data.
 	 * @param {Function} onClick What it does.
 	 * @return {HTMLButtonElement} The button.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function chip(name, d, onClick) {
 		var button = document.createElement('button')
@@ -464,7 +464,7 @@
 	 * Announced with the `thematiq:create-actions` event.
 	 *
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function shareCreateActions(menu) {
 		var labels = menu.labels || {}
@@ -527,7 +527,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function createRow(grid, menu) {
 		var labels = menu.labels || {}
@@ -629,7 +629,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object|undefined} section {title, note, apps: [{key, label, line, url, icon}]}.
 	 * @return {Array<HTMLAnchorElement>} The links, in the section's order.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md
 	 */
 	function externalLinks(grid, section) {
 		var existing = Array.prototype.slice.call(
@@ -716,7 +716,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @return {{entries: Array<{key: string, el: Element, external: boolean, rank: number}>, manage: (string|null)}} The entries and the manage address.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md
+	 * @spec openspec/specs/apps-menu-order/spec.md
 	 */
 	function collect(grid, menu) {
 		var settings = settingsOf(menu)
@@ -823,7 +823,7 @@
 	 * @param {Array<object>} entries The entries.
 	 * @param {Array<string>} order The stored keys.
 	 * @return {Array<object>} The entries, sorted.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	function sorted(entries, order) {
 		var index = {}
@@ -846,7 +846,7 @@
 	 * @param {string} template The text.
 	 * @param {object} values The values.
 	 * @return {string} The text.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function fill(template, values) {
 		return template.replace(/\{(\w+)\}/g, function (all, name) {
@@ -859,7 +859,7 @@
 	 *
 	 * @param {Element} el The entry.
 	 * @return {string} The name.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function nameOf(el) {
 		var label = el.querySelector('.app-item__label')
@@ -872,7 +872,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu; `menu.order` is updated by a move.
 	 * @param {Function} save Saves the order.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	function arrange(grid, menu, save) {
 		grid.setAttribute('data-' + BLOCK, '')
@@ -998,7 +998,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @param {string|null} manage The address of Nextcloud's outlined tile.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	function footer(grid, menu, manage) {
 		var labels = menu.labels || {}
@@ -1064,7 +1064,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @return {Array<object>} {key, name, icon, description, rank, external}.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	function dialogEntries(grid, menu) {
 		var descriptions = {}
@@ -1094,7 +1094,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @return {Array<Element>} The elements.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	function reachable(grid) {
 		var els = Array.prototype.slice.call(
@@ -1124,7 +1124,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {Element} el The element.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	function focusOn(grid, el) {
 		reachable(grid).forEach(function (other) {
@@ -1143,7 +1143,7 @@
 	 * @param {string} key The entry's key.
 	 * @param {number} to Its new place, from 0.
 	 * @return {Array<string>} The new order.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function move(grid, menu, save, key, to) {
 		var keys = sorted(collect(grid, menu).entries, menu.order).map(
@@ -1170,7 +1170,7 @@
 	 * @param {object} menu The menu.
 	 * @param {Element} grid The grid.
 	 * @return {string} The key, or the empty string.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function keyOf(el, menu, grid) {
 		var hit = collect(grid, menu).entries.filter(function (entry) {
@@ -1185,7 +1185,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {EventTarget} target The target.
 	 * @return {Element|null} The entry.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function entryAt(grid, target) {
 		var el = target && target.closest ? target.closest('a.app-item') : null
@@ -1202,7 +1202,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @param {Function} save Saves the order.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function wire(grid, menu, save) {
 		if (grid.thematiqWired) {
@@ -1406,7 +1406,7 @@
 	 *
 	 * @param {string} href The address.
 	 * @return {string} The id, or the empty string.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
 	 */
 	function appIdOfHref(href) {
 		var match = /\/apps\/([a-z0-9_]+)/.exec(href || '')
@@ -1420,7 +1420,7 @@
 	 * @param {object} menu The menu.
 	 * @param {string} key The entry's key.
 	 * @return {object|null} {key, name, href, iconUrl?, path?, external, active}.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
 	 */
 	function resolvePin(menu, key) {
 		var apps = []
@@ -1467,7 +1467,7 @@
 	 *
 	 * @param {object} info The resolved entry.
 	 * @return {HTMLElement} The circle.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
 	 */
 	function pinIcon(info) {
 		var circle = document.createElement('span')
@@ -1491,7 +1491,7 @@
 	 *
 	 * @param {object} menu The menu; `menu.pins` holds the keys.
 	 * @return {object} The bar's operations.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
 	 */
 	function pinBar(menu) {
 		var labels = menu.labels || {}
@@ -1749,7 +1749,7 @@
 	 * @param {object} menu The menu.
 	 * @param {object} bar The pin bar.
 	 * @param {Element} el The bar's element.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-unpins-an-app
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-a-person-unpins-an-app
 	 */
 	function wirePins(menu, bar, el) {
 		var labels = menu.labels || {}
@@ -1843,7 +1843,7 @@
 	 *
 	 * @param {object} menu The menu.
 	 * @return {Function} Saves an order.
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	function saver(menu) {
 		var timer = null
@@ -1891,7 +1891,7 @@
 	 * the pointer leaves. A pinned or click-opened menu ignores the pointer
 	 * leaving; Escape, a click outside and a click on the button close it.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-opening/spec.md#requirement-the-apps-menu-opens-on-hover-and-pins-on-click
+	 * @spec openspec/specs/apps-menu-opening/spec.md#requirement-the-apps-menu-opens-on-hover-and-pins-on-click
 	 */
 	function opening() {
 		if (window.thematiqAppMenuOpening) {
@@ -2071,7 +2071,7 @@
 	 * the Menu settings.
 	 *
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
 	 */
 	function classic(menu) {
 		var labels = menu.labels || {}
@@ -2111,7 +2111,7 @@
 	/**
 	 * Watch for the menu to open and arrange it.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqAppMenuMain() {
 		if (

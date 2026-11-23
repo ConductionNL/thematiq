@@ -80,8 +80,8 @@ class ThemeInjectionListener implements IEventListener {
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/per-app-theming/spec.md
 	 * @spec openspec/specs/environment-marker/spec.md
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	public function handle(Event $event): void {
 		// The environment marker is a safety signal, not a theme: it runs
@@ -170,7 +170,7 @@ class ThemeInjectionListener implements IEventListener {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
 	 */
 	private function injectNotFoundCopy(TemplateResponse $response): void {
 		if ($response->getApp() !== 'core' || $response->getTemplateName() !== '404') {

@@ -30,7 +30,7 @@ use OCP\IL10N;
  * THE LIST IS FIXED, like the plugin's: it does not ask OpenProject which modules exist or which
  * ones the user may open. OpenProject decides that when the link is followed.
  *
- * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+ * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
  */
 class OpenProjectModules {
 
@@ -100,7 +100,7 @@ class OpenProjectModules {
 	 *
 	 * @return array{title: string, url: string, modules: array<int, array{key: string, label: string, url: string, icon: string}>}|null
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function section(IL10N $l): ?array {
 		$base = $this->normalize(value: $this->config->getAppValue(Application::APP_ID, self::URL_KEY, ''));
@@ -138,7 +138,7 @@ class OpenProjectModules {
 	 *
 	 * @return array{url: string, modules: array<int, string>, available: array<int, string>}
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function stored(): array {
 		return [
@@ -156,7 +156,7 @@ class OpenProjectModules {
 	 *
 	 * @return bool False, and nothing saved, for an address that is not http or https.
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function save(string $url, ?string $modules): bool {
 		$normalized = $this->normalize(value: $url);
@@ -184,7 +184,7 @@ class OpenProjectModules {
 	 *
 	 * @return string|null The address.
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function normalize(string $value): ?string {
 		$url = (string)preg_replace('#/+$#', '', trim($value));
@@ -202,7 +202,7 @@ class OpenProjectModules {
 	 *
 	 * @return array<int, string> The keys.
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function wanted(string $value): array {
 		$keys = (array)preg_split('/[\s,|]+/', strtolower(trim($value)), -1, PREG_SPLIT_NO_EMPTY);

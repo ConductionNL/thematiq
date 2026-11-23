@@ -28,7 +28,7 @@
  *   node scripts/generate-denhaag-bridge.mjs           write the section
  *   node scripts/generate-denhaag-bridge.mjs --check   fail when the committed section differs
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/denhaag-component-tokens/spec.md
+ * @spec openspec/specs/denhaag-component-tokens/spec.md
  */
 
 import { createHash } from 'crypto'

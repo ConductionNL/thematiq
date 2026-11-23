@@ -23,7 +23,7 @@
  * matching `js/lib/tokenTransforms.js` — this app has no JS bundler and serves
  * these files directly as `<script>`.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 ;(function tokenConverterModule() {

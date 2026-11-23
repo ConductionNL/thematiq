@@ -11,7 +11,7 @@
  * tests below resolve a set the way a portal page does: the bridge first,
  * then the set, `var()` followed to its end.
  *
- * @spec openspec/changes/brand-motif-on-portals/specs/brand-motif-on-portals/spec.md
+ * @spec openspec/specs/brand-motif-on-portals/spec.md
  */
 
 import fs from 'node:fs'

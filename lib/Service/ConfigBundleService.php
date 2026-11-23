@@ -198,7 +198,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 *
 	 * @return array<string, string> Camel-case option name to stored value.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 * @spec openspec/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 */
 	private function exportLayoutOptions(): array {
 		$export = [];

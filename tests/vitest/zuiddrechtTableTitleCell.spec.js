@@ -7,7 +7,7 @@
  * board look sets that, but `#app-content-vue .cn-data-table tbody td` beat it
  * with its id (r30: search titles at 14px).
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

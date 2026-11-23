@@ -6,7 +6,7 @@
  * at 13px bold in sentence case (DqMijnWerk, DqDashboard). The set sets no
  * letter spacing on it, so the board look's own kicker rule holds.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

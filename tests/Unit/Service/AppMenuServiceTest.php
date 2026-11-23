@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -261,8 +261,8 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function testTheOrderAndTheExternalAppsJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
@@ -313,7 +313,7 @@ class AppMenuServiceTest extends TestCase {
 	/**
 	 * The shipped Zuiddrecht menu, in Dutch, as the AppMenu board draws it.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 *
 	 * @return void
 	 */
@@ -336,7 +336,7 @@ class AppMenuServiceTest extends TestCase {
 	 * Invalid app ids, untitled or empty sections and unsafe links are
 	 * dropped; the override's sections replace the set's.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 *
 	 * @return void
 	 */
@@ -369,7 +369,7 @@ class AppMenuServiceTest extends TestCase {
 	 * With the workplace header the menu is provided and the script loaded;
 	 * without it nothing; a failure is logged.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 *
 	 * @return void
 	 */
@@ -393,7 +393,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
@@ -452,7 +452,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
 		$this->assertSame(
@@ -500,7 +500,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
 	 */
 	public function testTheClassicStyleLeavesTheMenuAlone(): void {
 		$this->configure(block: ['hint' => 'Hint']);

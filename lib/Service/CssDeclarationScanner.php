@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/specs/token-import-export/spec.md
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ namespace OCA\Thematiq\Service;
  * an at-rule or a stray brace is simply not a declaration. The object holds the scan position
  * and is used once.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+ * @spec openspec/specs/token-import-export/spec.md
  */
 final class CssDeclarationScanner {
 
@@ -95,7 +95,7 @@ final class CssDeclarationScanner {
 	 *
 	 * @return array<string, string> Token name => value, empty when the content declares nothing.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-27
+	 * @spec openspec/specs/token-import-export/spec.md
 	 */
 	public function scan(): array {
 		for ($this->index = 0; $this->index < $this->length; $this->index++) {

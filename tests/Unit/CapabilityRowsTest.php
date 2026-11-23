@@ -10,7 +10,8 @@
  * No Nextcloud runtime required: it reads token-sets.json and the nldesign
  * overrides stylesheet from the repository.
  *
- * @spec openspec/changes/archive/2026-11-14-rows-without-a-requirement/proposal.md
+ * @spec openspec/specs/token-sets/spec.md#requirement-community-brand-sets-sit-beside-the-government-ones
+ * @spec openspec/specs/nextcloud-variable-mapping/spec.md#requirement-selected-text-takes-the-brand-colour-in-a-readable-translucent-form
  */
 
 declare(strict_types=1);

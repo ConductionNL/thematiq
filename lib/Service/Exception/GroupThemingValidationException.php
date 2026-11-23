@@ -63,7 +63,7 @@ class GroupThemingValidationException extends \InvalidArgumentException {
 	 *
 	 * @return string|null The set id, or null when the entry failed for another reason.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function getRestrictedSet(): ?string {
 		return $this->restrictedSet;

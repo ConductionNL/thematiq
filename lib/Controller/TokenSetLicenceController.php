@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 
 declare(strict_types=1);
@@ -38,7 +38,7 @@ use OCP\IUserSession;
  * a 403 from an OCS controller with HTTP 200, and a refusal has to reach the
  * browser as an error status.
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 class TokenSetLicenceController extends Controller {
 
@@ -65,7 +65,7 @@ class TokenSetLicenceController extends Controller {
 	 *
 	 * @return JSONResponse `{sets: [...], awaiting: [...]}`.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function index(): JSONResponse {
@@ -79,7 +79,7 @@ class TokenSetLicenceController extends Controller {
 	 *
 	 * @return JSONResponse The licence, or 404 when the set declares none.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function show(string $id): JSONResponse {
@@ -102,7 +102,7 @@ class TokenSetLicenceController extends Controller {
 	 *
 	 * @return JSONResponse The stored confirmation; 400 without the statement, 404 for a set that is not restricted.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function confirm(string $id, mixed $confirmed = null): JSONResponse {
@@ -127,7 +127,7 @@ class TokenSetLicenceController extends Controller {
 	 *
 	 * @return JSONResponse `{status: 'ok'}`, or 409 naming where the set is still applied.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function withdraw(string $id): JSONResponse {

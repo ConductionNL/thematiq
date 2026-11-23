@@ -12,7 +12,7 @@
  * five workplace sets declare the boards' tints, and the text reaches AA on
  * every one, in the light and in both dark scopes.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

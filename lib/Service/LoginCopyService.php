@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use Throwable;
  * script writes text and never markup, and a failure is logged and leaves
  * Nextcloud's own login page.
  *
- * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class LoginCopyService {
 
@@ -115,7 +115,7 @@ class LoginCopyService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 */
 	public function injectForLogin(): void {
 		if ($this->groupTheming === null || $this->layoutOptions === null) {
@@ -149,7 +149,7 @@ class LoginCopyService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the not-found page.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {
 		$meta = $this->sources->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -219,7 +219,7 @@ class LoginCopyService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -257,7 +257,7 @@ class LoginCopyService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);

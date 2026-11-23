@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

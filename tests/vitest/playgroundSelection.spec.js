@@ -9,7 +9,7 @@
  * whether they are right: which chips a tab offers, what a shared link
  * reopens, and what leaves the panel as a file.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 import { describe, it, expect } from 'vitest'
