@@ -371,6 +371,15 @@ body#body-login
 	margin-top: 0 !important;
 }
 
+/* NcLogin draws the login button as its words alone, without the arrow. */
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	button[type='submit']
+	.button-vue__icon {
+	display: none !important;
+}
+
 body#body-login
 	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
 	.login-box__wrapper

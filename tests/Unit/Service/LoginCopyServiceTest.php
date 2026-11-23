@@ -195,7 +195,28 @@ class LoginCopyServiceTest extends TestCase {
 		$this->assertSame(expected: 'Inloggen met uw gemeenteaccount', actual: $copy['ssoLabel']);
 		$this->assertSame(expected: 'Gebruikersnaam of e-mail', actual: $copy['usernameLabel']);
 		$this->assertSame(expected: 'Gemeente Zuiddrecht · werkplek op Nextcloud', actual: $copy['footer']);
+		$this->assertSame(expected: 'Inloggen', actual: $copy['submitLabel']);
+		$this->assertSame(expected: 'Wachtwoord vergeten?', actual: $copy['resetLabel']);
 	}//end testZuiddrechtShipsTheBoardsCopy()
+
+	/**
+	 * The English copy of the shipped set words the login button and the lost
+	 * password link as the English NcLogin board does.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
+	 */
+	public function testZuiddrechtWordsTheLoginActionsInEnglish(): void {
+		$manifest = json_decode((string)file_get_contents(__DIR__ . '/../../../token-sets.json'), true);
+		$entry = array_values(array_filter($manifest, fn (array $set) => $set['id'] === 'zuiddrecht'))[0];
+		$this->configure(login: $entry['login']);
+
+		$copy = $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'en');
+
+		$this->assertSame(expected: 'Sign in', actual: $copy['submitLabel']);
+		$this->assertSame(expected: 'Forgot your password?', actual: $copy['resetLabel']);
+	}//end testZuiddrechtWordsTheLoginActionsInEnglish()
 
 	/**
 	 * A language map picks the request's language, then its primary subtag;
