@@ -25,4 +25,4 @@
 ## 4. Live
 
 - [x] 4.1 Playwright: `tests/e2e/spec-coverage/apps-menu-ordered-list.spec.ts`.
-- [ ] 4.2 Looked at live with the Zuiddrecht set; the AppMenu board follows (`screens.md`).
+- [x] 4.2 Looked at live with the Zuiddrecht set on :8076 (Nextcloud 34.0.6), 23 Nov 2026: 7/7 Playwright green, pointer over to shown 154 ms, click to shown 36 to 62 ms, no request on open. The AppMenu board still has to follow (`screens.md`).
