@@ -1,7 +1,7 @@
 # high-contrast-token-set Specification
 
 ## Purpose
-TBD - created by archiving change high-contrast-token-set. Update Purpose after archive.
+A maximum-contrast house style for people who need it: its own design system and token set at WCAG AAA in light and dark, cooperating with the operating system's high-contrast and forced-colours modes.
 ## Requirements
 ### Requirement: High-Contrast Design System and Token Set
 The app MUST ship a `high-contrast` design system in `design-systems.json` — an ordered list of stylesheets under `css/systems/high-contrast/` — and a `hoog-contrast` token set in `token-sets.json` (backed by `css/tokens/hoog-contrast.css`) bound to that design system. The token set MUST be selectable exactly like any other shipped set, with no new UI, controller, route, or config key. Like every shipped brand it is offered in the admin dropdown under the token-sets requirement "Only Fully Functional Brands Are Selectable": today that means while it is active or mapped to a group, until the vocabulary audit admits it to `SELECTABLE_SHIPPED_SETS`. Its fixed WCAG pairs MUST meet WCAG 2.2 AAA: `--nldesign-color-primary` vs `--nldesign-color-primary-text` ≥ 7:1, and `--nldesign-color-primary` vs the set background ≥ 4.5:1.

@@ -1,7 +1,7 @@
 # config-portability Specification
 
 ## Purpose
-TBD - created by archiving change theme-config-portability. Update Purpose after archive.
+The whole theming configuration as one bundle that moves from test to acceptance to production: exported and imported from the admin page or with occ, validated as a whole before anything is applied, and carrying the planned switches, fonts and layout options with it.
 
 ## Requirements
 

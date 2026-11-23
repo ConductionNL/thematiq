@@ -1,7 +1,7 @@
 # lasuite-parity Specification
 
 ## Purpose
-TBD - created by archiving change lasuite-token-completeness. Update Purpose after archive.
+The La Suite numerique look in Nextcloud: a Cunningham token base generated from the upstream source, the sourced violet brand and a blue sibling set, every Nextcloud variable bridged, component parity checked end to end, and a guard against drift from the generated tokens.
 ## Requirements
 ### Requirement: Generated Cunningham Token Base
 

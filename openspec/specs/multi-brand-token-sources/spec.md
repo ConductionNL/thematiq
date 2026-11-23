@@ -1,7 +1,7 @@
 # multi-brand-token-sources Specification
 
 ## Purpose
-TBD - created by archiving change authoring-multi-brand-token-source. Update Purpose after archive.
+Importing a token source that holds several brands: thematiq recognises it by its content, the administrator picks the brands to import, each becomes a custom token set through the existing conversion, and a new version of the source updates all of them together.
 
 ## Requirements
 
