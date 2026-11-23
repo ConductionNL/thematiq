@@ -263,6 +263,9 @@ body:not(#body-login) #header .cn-brand-bar__divider {
  * link with the emblem, the organisation over the app's name, then the
  * divider 12px on. */
 body:not(#body-login) #header .thematiq-brand-host {
+	/* js/header-brand.js draws the block only while this reaches it. */
+	--thematiq-brand-block: 1;
+
 	display: flex;
 	flex: none;
 	align-items: center;

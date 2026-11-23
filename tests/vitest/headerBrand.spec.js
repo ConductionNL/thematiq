@@ -59,14 +59,43 @@ const BAR =
 	'<header id="header"><div class="header-start"><nav class="app-menu"></nav></div>'
 	+ '<div class="header-end"></div></header>'
 
+// jsdom applies no stylesheet: stand in for css/header-workplace.css, whose
+// rule for the host sets --thematiq-brand-block: 1.
+let sheetLoaded = true
+const realComputedStyle = window.getComputedStyle.bind(window)
+
 describe('the brand block for an app that draws none', () => {
 	beforeEach(() => {
 		document.body.innerHTML = BAR
+		sheetLoaded = true
+		vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+			const style = realComputedStyle(element)
+			return {
+				getPropertyValue: (name) =>
+					name === '--thematiq-brand-block'
+					&& sheetLoaded
+					&& element.classList.contains('thematiq-brand-host')
+						? '1'
+						: style.getPropertyValue(name),
+			}
+		})
 	})
 
 	afterEach(() => {
 		document.body.innerHTML = ''
 		delete global.OCP
+		vi.restoreAllMocks()
+	})
+
+	it('leaves the bar alone when the browser holds an older sheet without the block\'s rules', async () => {
+		sheetLoaded = false
+		installState(APPS, CAPABILITIES)
+		await loadScript()
+
+		expect(document.querySelector('.thematiq-brand-host')).toBeNull()
+		expect(
+			document.getElementById('header').hasAttribute('data-thematiq-brand'),
+		).toBe(false)
 	})
 
 	it('puts the emblem, the organisation and the open app first in the bar', async () => {
