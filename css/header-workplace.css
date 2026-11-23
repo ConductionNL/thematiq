@@ -207,7 +207,7 @@ body:not(#body-login) #header .notifications-button__icon svg {
 
 /* The unread dot: Nextcloud draws its bell with a dot only while there is
  * something new; then the board's dot sits on the bell's shoulder, the
- * accent with a ring of the bar's own colour. */
+ * accent with a ring of the bar's own colour, a 13px square rounded 5px. */
 body:not(#body-login)
 	#header
 	#notifications
@@ -219,7 +219,7 @@ body:not(#body-login)
 	width: 9px;
 	height: 9px;
 	border: 2px solid var(--color-main-background);
-	border-radius: 50%;
+	border-radius: 5px;
 	background-color: var(--nldesign-color-accent, var(--color-error));
 	pointer-events: none;
 }

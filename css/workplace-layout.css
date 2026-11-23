@@ -905,3 +905,24 @@ body:not(#body-login) {
 	font-size: 16px !important;
 	font-weight: 600 !important;
 }
+
+/* The keyboard ring of the light workplace
+ * (openspec/changes/zuiddrecht-workplace-type-and-focus/specs/zuiddrecht-token-set/spec.md).
+ *
+ * A set that names its ring colour in --nldesign-color-focus-ring (Zuiddrecht:
+ * the action blue, as DqTokens draws it) gets a 2px solid ring in it on every
+ * control with keyboard focus. Any other set keeps the ring it draws today:
+ * the opaque focus colour the design system derives on the focused element
+ * (--nldesign-focus-ring-color, css/systems/nldesign/theme.css), and else
+ * Nextcloud's own ring in the main text colour. Only the outline's colour and
+ * width are set here, so the offset and halo of the system stay as they are.
+ * The selectors match theme.css, NcButton's included, so this later sheet wins
+ * at the same specificity. No colour is written here. */
+:where(body:not(#body-login)) *:focus-visible,
+body .button-vue.button-vue:focus-visible {
+	outline: 2px solid
+		var(
+			--nldesign-color-focus-ring,
+			var(--nldesign-focus-ring-color, var(--color-main-text))
+		) !important;
+}
