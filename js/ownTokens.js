@@ -341,6 +341,30 @@
 	}
 
 	/**
+	 * Give the focus back to the redrawn button that opened the last dialog. A
+	 * redraw replaces the list's buttons, so the one the focus returned to is gone.
+	 *
+	 * @return {void}
+	 */
+	function refocusOpener() {
+		if (opener === null || document.contains(opener) || el.section === null) {
+			return
+		}
+		if (document.activeElement !== null && document.activeElement !== document.body) {
+			return
+		}
+		var label = opener.getAttribute('aria-label')
+		var buttons = el.section.querySelectorAll('button[aria-label]')
+		for (var i = 0; i < buttons.length; i++) {
+			if (buttons[i].getAttribute('aria-label') === label) {
+				opener = buttons[i]
+				buttons[i].focus()
+				return
+			}
+		}
+	}
+
+	/**
 	 * Load both lists and draw them.
 	 *
 	 * @return {Promise<void>} Done.
@@ -354,6 +378,7 @@
 				renderTokens()
 				renderDeprecations()
 				markEditorRows()
+				refocusOpener()
 			})
 			.catch(function () {
 				say(t('thematiq', 'Your own tokens could not be loaded.'))
