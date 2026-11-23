@@ -524,7 +524,8 @@ class LayoutOptionsServiceTest extends TestCase {
 
 	/**
 	 * Mail, Calendar and Deck get their own stylesheet on their own pages, only
-	 * with the light layout; any other app, and a page without an app, gets none.
+	 * with the light layout, after the brand sheet while the header is the
+	 * workplace one; any other app, and a page without an app, gets none.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 *
@@ -532,12 +533,15 @@ class LayoutOptionsServiceTest extends TestCase {
 	 */
 	public function testMailCalendarAndDeckGetTheirOwnStylesheet(): void {
 		foreach (['mail', 'calendar', 'deck'] as $app) {
-			$this->assertSame(expected: ['workplace-apps/' . $app], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app));
+			$this->assertSame(expected: ['workplace-apps/brand', 'workplace-apps/' . $app], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app));
 			$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'utrecht', appId: $app));
 		}
 
 		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'files'));
 		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: null));
+
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'default'));
+		$this->assertSame(expected: ['workplace-apps/mail'], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));
 
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
 		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));

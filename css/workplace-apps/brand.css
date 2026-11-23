@@ -1,0 +1,47 @@
+/**
+ * Workplace app layer: the brand at the start of the bar, for the apps that
+ * draw no brand block of their own (Mail, Calendar, Deck).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * The workplace header (css/header-workplace.css) hides Nextcloud's logo and
+ * current-app button, because a Conduction app draws its own brand block
+ * there. Mail, Calendar and Deck draw none, so on their pages this sheet
+ * shows both again as the boards draw the bar (MlHeader, ClWeek, TbBoard):
+ * the set's logo, a hairline, the app's name in bold, then the apps grid.
+ * The name is Nextcloud's own, so it is translated and read out as before.
+ *
+ * Loaded only on those apps' pages with the workplace header
+ * (LayoutStylesheets::forApp()); no colour is written.
+ */
+
+body:not(#body-login) #header #nextcloud {
+	display: flex !important;
+	height: 100% !important;
+	margin-inline-end: 4px;
+}
+
+body:not(#body-login) #header .app-menu__current-app {
+	display: inline-flex !important;
+	height: 40px !important;
+	margin-block: 14px;
+	margin-inline: 0 12px !important;
+	padding-inline: 12px 8px !important;
+	border-inline-start: 1px solid var(--color-border) !important;
+	border-radius: 0 !important;
+	background-color: transparent !important;
+}
+
+body:not(#body-login) #header .app-menu__current-app-icon,
+body:not(#body-login) #header .app-menu__current-app-cog {
+	display: none !important;
+}
+
+body:not(#body-login) #header .app-menu__current-app-name {
+	max-width: 200px;
+	font-size: 18px !important;
+	font-weight: 700 !important;
+	letter-spacing: 0 !important;
+	color: var(--color-main-text) !important;
+}

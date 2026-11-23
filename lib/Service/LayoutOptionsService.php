@@ -431,13 +431,14 @@ class LayoutOptionsService {
 	}//end stylesheets()
 
 	/**
-	 * The stylesheet of the rendered app, after the conditional stylesheets:
-	 * `workplace-apps/<app>` for Mail, Calendar and Deck while the layout is light.
+	 * The stylesheets of the rendered app, after the conditional stylesheets:
+	 * `workplace-apps/brand` with the workplace header, then `workplace-apps/<app>`,
+	 * for Mail, Calendar and Deck while the layout is light.
 	 *
 	 * @param string $tokenSet The token set the page renders with.
 	 * @param string|null $appId The rendered app.
 	 *
-	 * @return array<int, string> Zero or one stylesheet.
+	 * @return array<int, string> Zero, one or two stylesheets.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 */
@@ -446,7 +447,7 @@ class LayoutOptionsService {
 			return [];
 		}
 
-		return (new LayoutStylesheets())->forApp(workplaceLayout: $this->workplaceLayout(tokenSet: $tokenSet), appId: $appId);
+		return (new LayoutStylesheets())->forApp(resolved: $this->resolved(tokenSet: $tokenSet), appId: $appId);
 	}//end appStylesheets()
 
 	/**

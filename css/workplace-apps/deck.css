@@ -6,7 +6,7 @@
  *
  * Loaded only on Deck's own pages, and only while the workplace layout is
  * light (LayoutStylesheets::forApp()). Every rule starts at
- * `#content.app-deck`, so no other page pays for it, and every colour is a
+ * `:is(#content, #content-vue).app-deck`, so no other page pays for it, and every colour is a
  * Nextcloud or NL Design variable, so the dark scheme follows by itself.
  *
  * The board: a white canvas, a title row with a hairline under it, and one
@@ -16,18 +16,18 @@
  * date and the people in 12px.
  */
 
-#content.app-deck {
+:is(#content, #content-vue).app-deck {
 	--nldesign-color-accent-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
 	--nldesign-color-accent-text: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
 	--nldesign-component-navigation-active-color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
 }
 
-#content.app-deck #app-content-vue {
-	background-color: var(--color-main-background) !important;
+:is(#content, #content-vue).app-deck #app-content-vue {
+	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
 }
 
 /* The title row. */
-#content.app-deck .board-wrapper > .controls {
+:is(#content, #content-vue).app-deck .board-wrapper > .controls {
 	min-height: 56px;
 	margin: 0 !important;
 	padding: 8px 16px 8px 24px !important;
@@ -36,41 +36,46 @@
 	border-bottom: 1px solid var(--color-border);
 }
 
-#content.app-deck .controls .board-title {
+:is(#content, #content-vue).app-deck .controls .board-title {
 	align-items: center;
 	gap: 8px;
 }
 
-#content.app-deck .controls .board-title h2 {
+:is(#content, #content-vue).app-deck .controls .board-title h2 {
 	margin: 0 !important;
 	font-size: 22px !important;
 	font-weight: 700 !important;
 	line-height: 28px !important;
 }
 
-#content.app-deck .controls .board-bullet {
+:is(#content, #content-vue).app-deck .controls .board-bullet {
 	width: 10px !important;
 	height: 10px !important;
 	margin: 0 !important;
 }
 
 /* The columns. */
-#content.app-deck .board {
+:is(#content, #content-vue).app-deck .board {
 	padding: 16px 16px 0 24px !important;
 	box-sizing: border-box;
 }
 
-#content.app-deck .board > .smooth-dnd-container.horizontal {
+:is(#content, #content-vue).app-deck .board > .smooth-dnd-container.horizontal {
 	gap: 12px;
 }
 
-#content.app-deck .stack-draggable-wrapper {
+:is(#content, #content-vue).app-deck .stack-draggable-wrapper {
+	align-self: flex-start;
+	height: auto !important;
 	margin: 0 !important;
 	padding: 0 !important;
 }
 
-#content.app-deck .stack {
+:is(#content, #content-vue).app-deck .stack {
 	width: 248px !important;
+	height: auto !important;
+	max-height: calc(100vh - var(--header-height, 68px) - 88px);
+	overflow-y: auto;
 	padding: 0 6px 6px !important;
 	box-sizing: border-box;
 	border-radius: var(--border-radius-large, 12px);
@@ -80,7 +85,7 @@
 	) !important;
 }
 
-#content.app-deck .stack__header {
+:is(#content, #content-vue).app-deck .stack__header {
 	min-height: 40px;
 	height: 40px;
 	padding: 0 0 0 6px !important;
@@ -88,12 +93,12 @@
 	box-shadow: none !important;
 }
 
-#content.app-deck .stack__header::before,
-#content.app-deck .stack__header::after {
+:is(#content, #content-vue).app-deck .stack__header::before,
+:is(#content, #content-vue).app-deck .stack__header::after {
 	display: none !important;
 }
 
-#content.app-deck .stack__title {
+:is(#content, #content-vue).app-deck .stack__title {
 	font-size: 12px !important;
 	font-weight: 600 !important;
 	line-height: 16px !important;
@@ -102,7 +107,7 @@
 	color: var(--color-main-text) !important;
 }
 
-#content.app-deck .stack__header .button-vue--icon-only {
+:is(#content, #content-vue).app-deck .stack__header .button-vue--icon-only {
 	width: 32px !important;
 	min-width: 32px !important;
 	height: 32px !important;
@@ -110,22 +115,27 @@
 	color: var(--color-text-maxcontrast) !important;
 }
 
-#content.app-deck .stack .dnd-container {
+:is(#content, #content-vue).app-deck .stack .dnd-container {
+	width: auto !important;
+	min-height: 64px;
+	height: auto !important;
+	margin: 0 !important;
 	padding: 0 !important;
-	gap: 8px;
 }
 
 /* The cards. */
-#content.app-deck .stack .smooth-dnd-draggable-wrapper {
+:is(#content, #content-vue).app-deck .stack .smooth-dnd-draggable-wrapper {
+	width: auto !important;
 	margin: 0 0 8px !important;
 	padding: 0 !important;
 	overflow: visible;
 }
 
-#content.app-deck .card {
+:is(#content, #content-vue).app-deck .card {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	width: auto !important;
 	margin: 0 !important;
 	padding: 10px 12px !important;
 	border: 1px solid var(--color-border) !important;
@@ -134,27 +144,27 @@
 	box-shadow: none !important;
 }
 
-#content.app-deck .card:hover,
-#content.app-deck .card:focus-within {
+:is(#content, #content-vue).app-deck .card:hover,
+:is(#content, #content-vue).app-deck .card:focus-within {
 	border-color: var(--color-border-maxcontrast) !important;
 }
 
-#content.app-deck .card.current-card {
+:is(#content, #content-vue).app-deck .card.current-card {
 	border-color: var(--color-primary-element) !important;
 	box-shadow: inset 0 0 0 1px var(--color-primary-element) !important;
 	background-color: var(--color-primary-element-light) !important;
 }
 
-#content.app-deck .card .card-labels {
+:is(#content, #content-vue).app-deck .card .card-labels {
 	order: -1;
 }
 
-#content.app-deck .card .card-upper {
+:is(#content, #content-vue).app-deck .card .card-upper {
 	min-height: 0 !important;
 	padding: 0 !important;
 }
 
-#content.app-deck .card .card-upper h4 {
+:is(#content, #content-vue).app-deck .card .card-upper h4 {
 	margin: 0 !important;
 	padding: 0 !important;
 	font-size: 15px !important;
@@ -162,12 +172,12 @@
 	line-height: 20px !important;
 }
 
-#content.app-deck .card .labels {
+:is(#content, #content-vue).app-deck .card .labels {
 	margin: 0 !important;
 	gap: 4px;
 }
 
-#content.app-deck .card .labels li {
+:is(#content, #content-vue).app-deck .card .labels li {
 	height: 18px;
 	margin: 0 !important;
 	padding: 0 6px !important;
@@ -179,39 +189,44 @@
 	text-transform: uppercase;
 }
 
-#content.app-deck .card .labels li span {
+:is(#content, #content-vue).app-deck .card .labels li span {
 	padding: 0 !important;
 	line-height: 18px !important;
 }
 
-#content.app-deck .card .card-controls {
+:is(#content, #content-vue).app-deck .card .card-controls {
 	min-height: 0 !important;
 	margin: 0 !important;
 }
 
-#content.app-deck .card .badges {
+:is(#content, #content-vue).app-deck .card .badges {
 	align-items: center;
 }
 
-#content.app-deck .card .badges .due {
+:is(#content, #content-vue).app-deck .card .badges .due {
 	padding: 0 !important;
 	background-color: transparent !important;
 	font-size: 12px !important;
 	color: var(--color-text-maxcontrast);
 }
 
-#content.app-deck .card .badges .due.overdue,
-#content.app-deck .card .badges .due.dangerous {
+:is(#content, #content-vue).app-deck .card .duedate[data-due-state='Overdue'] .due {
 	color: var(--color-error-text, var(--color-error)) !important;
 	font-weight: 600;
 }
 
-#content.app-deck .card .badges .due.now {
+:is(#content, #content-vue).app-deck .card .duedate[data-due-state='Now'] .due {
 	color: var(--color-main-text) !important;
 	font-weight: 600;
 }
 
-#content.app-deck .card .badge-right .button-vue--icon-only {
+:is(#content, #content-vue).app-deck .card .avatars {
+	height: 28px !important;
+	min-height: 0 !important;
+	align-items: center;
+}
+
+:is(#content, #content-vue).app-deck .card .badge-right .button-vue--icon-only {
 	width: 28px !important;
 	min-width: 28px !important;
 	height: 28px !important;
@@ -219,13 +234,13 @@
 }
 
 /* The card panel. */
-#content.app-deck .app-sidebar-header__mainname {
+:is(#content, #content-vue).app-deck .app-sidebar-header__mainname {
 	font-size: 20px !important;
 	font-weight: 700 !important;
 	line-height: 26px !important;
 }
 
-#content.app-deck .app-sidebar-header__subname {
+:is(#content, #content-vue).app-deck .app-sidebar-header__subname {
 	font-size: 13px !important;
 	color: var(--color-text-maxcontrast) !important;
 }
