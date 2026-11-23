@@ -37,18 +37,10 @@ body:not(#body-login) .app-menu__popover-base .app-menu__popover {
 	box-shadow: 0 8px 24px rgba(27, 28, 29, 0.12);
 }
 
-/* 2px under the bar, where Nextcloud places it 4px higher. */
+/* 2px under the bar, where Nextcloud places it 4px higher. The menu keeps
+ * Nextcloud's horizontal place: moved further left, it ran off the window. */
 body:not(#body-login) .app-menu__popover-base .v-popper__wrapper {
 	margin-block-start: 6px !important;
-}
-
-/* The boards open the menu 116px left of the apps button, 34px left of
- * Nextcloud's place. Only on a wide window: on a narrow one Nextcloud keeps
- * the menu inside the window and a further shift would push it out. */
-@media (min-width: 1024px) {
-	body:not(#body-login) .app-menu__popover-base .v-popper__wrapper {
-		margin-inline-start: -34px;
-	}
 }
 
 body:not(#body-login) .app-menu__popover-base .v-popper__inner {
