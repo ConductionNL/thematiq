@@ -38,6 +38,8 @@
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
 	var CREATE_ROW = 99900
+	var PINS_MAX = 5
+	var PINS = 'thematiq-app-pins'
 	var CREATE_MAX = 4
 	var CREATE_TRIES = 20
 	var TEMPLATES_URL = '/ocs/v2.php/apps/files/api/v1/templates'
@@ -848,19 +850,21 @@
 		if (grid.querySelector(':scope > [data-thematiq-row="footer"]') !== null) {
 			return
 		}
-		var hint = text(menu, 'hint')
-		var drag = [text(labels, 'dragHint'), text(labels, 'moveHint')]
-			.filter(Boolean)
-			.join(' ')
+		var lines = [text(labels, 'dragHint'), text(labels, 'moveHint')].filter(
+			Boolean,
+		)
+		if (lines.length === 0 && text(menu, 'hint') !== '') {
+			lines = [text(menu, 'hint')]
+		}
 		var label = text(menu, 'manageLabel')
-		if (hint === '' && drag === '' && !(label !== '' && linkable(manage))) {
+		if (lines.length === 0 && !(label !== '' && linkable(manage))) {
 			return
 		}
 		var el = row(grid, 'footer', FOOTER)
 		el.className = BLOCK + '__footer'
 		var hints = document.createElement('span')
 		hints.className = BLOCK + '__hint'
-		;[drag, hint].forEach(function (value) {
+		lines.forEach(function (value) {
 			if (value !== '') {
 				var span = document.createElement('span')
 				span.textContent = value
@@ -1009,6 +1013,19 @@
 					return
 				}
 				var current = els[index]
+				if (
+					event.altKey
+					&& !event.shiftKey
+					&& (event.code === 'KeyP' || String(event.key).toLowerCase() === 'p')
+				) {
+					event.preventDefault()
+					event.stopImmediatePropagation()
+					var pinKey = current.tagName === 'A' ? keyOf(current, menu, grid) : ''
+					if (pinKey !== '' && menu.pinBar) {
+						menu.pinBar.toggle(pinKey, nameOf(current))
+					}
+					return
+				}
 				var earlier = event.key === 'ArrowUp' || event.key === 'ArrowLeft'
 				var later = event.key === 'ArrowDown' || event.key === 'ArrowRight'
 				if (event.altKey && !event.shiftKey && (earlier || later)) {
@@ -1104,6 +1121,23 @@
 				}
 				drag.moved = true
 				drag.el.setAttribute('data-thematiq-dragging', '')
+				window.thematiqAppMenuDragging = true
+			}
+			var bar = menu.pinBar
+			drag.overBar = !!bar && bar.over(event.clientX, event.clientY)
+			if (bar) {
+				var dragKey = keyOf(drag.el, menu, grid)
+				var pinnable = drag.overBar && !bar.has(dragKey)
+				bar.slot(pinnable)
+				bar.ghost(
+					pinnable ? resolvePin(menu, dragKey) : null,
+					event.clientX,
+					event.clientY,
+					'',
+				)
+			}
+			if (drag.overBar) {
+				return
 			}
 			var under = document.elementsFromPoint
 				? document.elementsFromPoint(event.clientX, event.clientY)
@@ -1143,12 +1177,448 @@
 				return
 			}
 			done.el.removeAttribute('data-thematiq-dragging')
+			window.thematiqAppMenuDragging = false
 			swallowUntil = Date.now() + 300
 			save(menu.order)
+			if (menu.pinBar) {
+				menu.pinBar.slot(false)
+				menu.pinBar.ghost(null)
+				var dropKey = keyOf(done.el, menu, grid)
+				if (done.overBar && !menu.pinBar.has(dropKey)) {
+					menu.pinBar.toggle(dropKey, nameOf(done.el))
+				}
+			}
 		}
 		document.addEventListener('pointermove', onMove)
 		document.addEventListener('pointerup', onEnd)
 		document.addEventListener('pointercancel', onEnd)
+	}
+
+	/**
+	 * The app id in a Nextcloud address: the segment after `/apps/`.
+	 *
+	 * @param {string} href The address.
+	 * @return {string} The id, or the empty string.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 */
+	function appIdOfHref(href) {
+		var match = /\/apps\/([a-z0-9_]+)/.exec(href || '')
+		return match ? match[1] : ''
+	}
+
+	/**
+	 * What the top bar needs to draw a pinned entry: Nextcloud's own app
+	 * (`core/apps`) or an external app of the menu.
+	 *
+	 * @param {object} menu The menu.
+	 * @param {string} key The entry's key.
+	 * @return {object|null} {key, name, href, iconUrl?, path?, external, active}.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 */
+	function resolvePin(menu, key) {
+		var apps = []
+		try {
+			apps = OCP.InitialState.loadState('core', 'apps', [])
+		} catch (e) {
+			apps = []
+		}
+		var list = Array.isArray(apps) ? apps : Object.values(apps || {})
+		var app = list.filter(function (entry) {
+			return entry && (entry.id === key || appIdOfHref(entry.href) === key)
+		})[0]
+		if (app && linkable(app.href) && text(app, 'name') !== '') {
+			return {
+				key: key,
+				name: text(app, 'name'),
+				href: app.href,
+				iconUrl: typeof app.icon === 'string' ? app.icon : '',
+				external: false,
+				active: app.active === true,
+			}
+		}
+		var external = menu.external && Array.isArray(menu.external.apps)
+			? menu.external.apps.filter(function (entry) {
+				return entry && entry.key === key
+			})[0]
+			: null
+		if (external && /^https?:\/\//i.test(external.url || '') && text(external, 'label') !== '') {
+			return {
+				key: key,
+				name: text(external, 'label'),
+				href: external.url,
+				path: /^[MmLlHhVvCcSsQqTtAaZz0-9 .,-]+$/.test(external.icon || '') ? external.icon : '',
+				external: true,
+				active: false,
+			}
+		}
+		return null
+	}
+
+	/**
+	 * The circle of a pinned entry or of the dragged chip: the app's icon as a
+	 * mask in the text colour, or an external app's path.
+	 *
+	 * @param {object} info The resolved entry.
+	 * @return {HTMLElement} The circle.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 */
+	function pinIcon(info) {
+		var circle = document.createElement('span')
+		circle.className = PINS + '__icon'
+		circle.setAttribute('aria-hidden', 'true')
+		if (info.iconUrl) {
+			circle.style.setProperty(
+				'--thematiq-app-icon',
+				'url("' + info.iconUrl.replace(/["\\]/g, '') + '")',
+			)
+		} else if (info.path) {
+			circle.appendChild(icon(info.path))
+		}
+		return circle
+	}
+
+	/**
+	 * The pinned apps in the top bar, next to the grid button, and everything
+	 * that pins or unpins: dragging an app onto the bar, dragging a pin off
+	 * it, and Alt+P. The pins are saved on the server for the person.
+	 *
+	 * @param {object} menu The menu; `menu.pins` holds the keys.
+	 * @return {object} The bar's operations.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-pins-apps-to-the-top-bar
+	 */
+	function pinBar(menu) {
+		var labels = menu.labels || {}
+		var timer = null
+		var ghost = null
+		var drop = null
+		menu.pins = Array.isArray(menu.pins)
+			? menu.pins.filter(function (key) {
+				return typeof key === 'string'
+			}).slice(0, PINS_MAX)
+			: []
+
+		var liveRegion = function () {
+			var live = document.getElementById(PINS + '-live')
+			if (live === null) {
+				live = document.createElement('div')
+				live.id = PINS + '-live'
+				live.className = 'hidden-visually'
+				live.setAttribute('role', 'status')
+				live.setAttribute('aria-live', 'polite')
+				document.body.appendChild(live)
+			}
+			return live
+		}
+		var announce = function (message) {
+			if (message !== '') {
+				liveRegion().textContent = message
+			}
+		}
+		var persist = function () {
+			if (
+				typeof OC === 'undefined'
+				|| typeof OC.generateUrl !== 'function'
+				|| typeof fetch !== 'function'
+			) {
+				return
+			}
+			clearTimeout(timer)
+			timer = setTimeout(function () {
+				var failed = function () {
+					announce(text(labels, 'pinSaveFailed'))
+				}
+				fetch(OC.generateUrl('/apps/thematiq/app-menu/pins'), {
+					method: 'POST',
+					headers: {
+						requesttoken: OC.requestToken,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ pins: menu.pins }),
+				})
+					.then(function (res) {
+						if (!res.ok) {
+							failed()
+						}
+					})
+					.catch(failed)
+			}, SAVE_DELAY)
+		}
+		var anchor = function () {
+			return document.querySelector('#header .app-menu, .header-start .app-menu')
+		}
+		var nav = function () {
+			var el = document.querySelector('nav.' + PINS)
+			var after = anchor()
+			if (after === null || !after.parentNode) {
+				return el
+			}
+			if (el === null) {
+				el = document.createElement('nav')
+				el.className = PINS
+				el.setAttribute('aria-label', text(labels, 'pinned') || 'Pinned apps')
+			}
+			if (after.nextSibling !== el) {
+				after.parentNode.insertBefore(el, after.nextSibling)
+			}
+			return el
+		}
+
+		var bar = {
+			has: function (key) {
+				return menu.pins.indexOf(key) !== -1
+			},
+			nav: nav,
+			announce: announce,
+			ensure: function () {
+				var el = nav()
+				if (el !== null && el.getAttribute('data-thematiq-pins') !== menu.pins.join(',')) {
+					bar.render()
+				}
+			},
+			render: function () {
+				var el = nav()
+				if (el === null) {
+					return
+				}
+				var focused = document.activeElement
+				var focusKey =
+					focused && focused.parentNode === el
+						? focused.getAttribute('data-thematiq-pin')
+						: null
+				Array.prototype.slice.call(el.querySelectorAll(':scope > a')).forEach(function (a) {
+					a.remove()
+				})
+				menu.pins.forEach(function (key) {
+					var info = resolvePin(menu, key)
+					if (info === null) {
+						return
+					}
+					var a = document.createElement('a')
+					a.className = PINS + '__pin'
+					a.href = info.href
+					a.setAttribute('data-thematiq-pin', key)
+					a.setAttribute('aria-label', info.name)
+					a.title = info.name
+					if (info.external) {
+						a.target = '_blank'
+						a.rel = 'noopener noreferrer'
+					}
+					if (info.active) {
+						a.setAttribute('aria-current', 'page')
+					}
+					a.appendChild(pinIcon(info))
+					el.insertBefore(a, drop && drop.parentNode === el ? drop : null)
+					if (key === focusKey) {
+						a.focus()
+					}
+				})
+				el.hidden = el.childElementCount === 0
+				el.setAttribute('data-thematiq-pins', menu.pins.join(','))
+				if (!bar.wired) {
+					bar.wired = true
+					wirePins(menu, bar, el)
+				}
+			},
+			toggle: function (key, name) {
+				if (bar.has(key)) {
+					menu.pins = menu.pins.filter(function (other) {
+						return other !== key
+					})
+					announce(fill(text(labels, 'unpinnedApp'), { app: name }))
+				} else if (menu.pins.length >= PINS_MAX) {
+					announce(fill(text(labels, 'pinFull'), { max: PINS_MAX }))
+					return false
+				} else if (resolvePin(menu, key) === null) {
+					return false
+				} else {
+					menu.pins = menu.pins.concat([key])
+					announce(fill(text(labels, 'pinnedApp'), { app: name }))
+				}
+				bar.render()
+				persist()
+				return true
+			},
+			move: function (key, by) {
+				var from = menu.pins.indexOf(key)
+				var to = from + by
+				if (from === -1 || to < 0 || to >= menu.pins.length) {
+					return
+				}
+				menu.pins.splice(from, 1)
+				menu.pins.splice(to, 0, key)
+				bar.render()
+				persist()
+				var info = resolvePin(menu, key)
+				announce(
+					fill(text(labels, 'moved'), {
+						app: info ? info.name : key,
+						place: to + 1,
+						total: menu.pins.length,
+					}),
+				)
+			},
+			over: function (x, y) {
+				var header = document.getElementById('header')
+				if (header === null) {
+					return false
+				}
+				var box = header.getBoundingClientRect()
+				return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom
+			},
+			inBar: function (x, y) {
+				var el = nav()
+				if (el === null || el.hidden) {
+					return false
+				}
+				var box = el.getBoundingClientRect()
+				return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom
+			},
+			slot: function (on) {
+				var el = nav()
+				if (el === null) {
+					return
+				}
+				if (on && drop === null) {
+					drop = document.createElement('span')
+					drop.className = PINS + '__drop'
+					var hint = document.createElement('span')
+					hint.className = PINS + '__hint'
+					hint.setAttribute('role', 'status')
+					hint.textContent = text(labels, 'dropToPin')
+					drop.appendChild(hint)
+					el.appendChild(drop)
+					el.hidden = false
+				} else if (!on && drop !== null) {
+					drop.remove()
+					drop = null
+					el.hidden = el.querySelector(':scope > a') === null
+				}
+			},
+			ghost: function (info, x, y, hintText) {
+				if (info === null) {
+					if (ghost !== null) {
+						ghost.remove()
+						ghost = null
+					}
+					return
+				}
+				if (ghost === null) {
+					ghost = document.createElement('div')
+					ghost.className = PINS + '__ghost'
+					ghost.setAttribute('aria-hidden', 'true')
+					ghost.appendChild(pinIcon(info))
+					var name = document.createElement('span')
+					name.className = PINS + '__ghost-name'
+					name.textContent = info.name
+					ghost.appendChild(name)
+					var hint = document.createElement('span')
+					hint.className = PINS + '__hint ' + PINS + '__ghost-hint'
+					ghost.appendChild(hint)
+					document.body.appendChild(ghost)
+				}
+				ghost.style.left = x + 12 + 'px'
+				ghost.style.top = y + 12 + 'px'
+				var hintEl = ghost.querySelector('.' + PINS + '__ghost-hint')
+				hintEl.textContent = hintText || ''
+				hintEl.hidden = !hintText
+			},
+		}
+		return bar
+	}
+
+	/**
+	 * The pointer and the keyboard on the pinned apps: drag a pin off the bar
+	 * to unpin it, Alt+P unpins the focused pin, Alt with an arrow key moves it.
+	 *
+	 * @param {object} menu The menu.
+	 * @param {object} bar The pin bar.
+	 * @param {Element} el The bar's element.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-a-person-unpins-an-app
+	 */
+	function wirePins(menu, bar, el) {
+		var labels = menu.labels || {}
+		var drag = null
+		var swallowUntil = 0
+		var pinOf = function (target) {
+			var a = target && target.closest ? target.closest('a[data-thematiq-pin]') : null
+			return a !== null && a.parentNode === el ? a : null
+		}
+		el.addEventListener('dragstart', function (event) {
+			event.preventDefault()
+		})
+		el.addEventListener(
+			'click',
+			function (event) {
+				if (Date.now() < swallowUntil) {
+					event.preventDefault()
+					event.stopImmediatePropagation()
+				}
+			},
+			true,
+		)
+		el.addEventListener('keydown', function (event) {
+			var a = pinOf(event.target)
+			if (a === null || !event.altKey || event.ctrlKey || event.metaKey) {
+				return
+			}
+			var key = a.getAttribute('data-thematiq-pin')
+			if (event.code === 'KeyP' || String(event.key).toLowerCase() === 'p') {
+				event.preventDefault()
+				var next = a.nextElementSibling || a.previousElementSibling
+				bar.toggle(key, a.getAttribute('aria-label'))
+				var target = next && next.matches('a[data-thematiq-pin]')
+					? el.querySelector('a[data-thematiq-pin="' + next.getAttribute('data-thematiq-pin') + '"]')
+					: document.querySelector('.app-menu__waffle')
+				if (target !== null) {
+					target.focus()
+				}
+			} else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+				event.preventDefault()
+				bar.move(key, -1)
+			} else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+				event.preventDefault()
+				bar.move(key, 1)
+			}
+		})
+		el.addEventListener('pointerdown', function (event) {
+			var a = pinOf(event.target)
+			if (a !== null && event.button === 0) {
+				drag = { el: a, x: event.clientX, y: event.clientY, moved: false }
+			}
+		})
+		document.addEventListener('pointermove', function (event) {
+			if (drag === null) {
+				return
+			}
+			if (!drag.moved) {
+				if (Math.abs(event.clientX - drag.x) + Math.abs(event.clientY - drag.y) < DRAG_START) {
+					return
+				}
+				drag.moved = true
+				drag.info = resolvePin(menu, drag.el.getAttribute('data-thematiq-pin'))
+				drag.el.setAttribute('data-thematiq-dragging', '')
+			}
+			var off = !bar.inBar(event.clientX, event.clientY)
+			bar.ghost(drag.info, event.clientX, event.clientY, off ? text(labels, 'releaseToRemove') : '')
+		})
+		var end = function (event) {
+			if (drag === null) {
+				return
+			}
+			var done = drag
+			drag = null
+			if (!done.moved) {
+				return
+			}
+			done.el.removeAttribute('data-thematiq-dragging')
+			bar.ghost(null)
+			swallowUntil = Date.now() + 300
+			if (event.type === 'pointerup' && !bar.inBar(event.clientX, event.clientY)) {
+				bar.toggle(done.el.getAttribute('data-thematiq-pin'), done.el.getAttribute('aria-label'))
+			}
+		}
+		document.addEventListener('pointerup', end)
+		document.addEventListener('pointercancel', end)
 	}
 
 	/**
@@ -1239,7 +1709,9 @@
 				attributeFilter: ['aria-expanded'],
 			})
 		}
-		var zone = TRIGGERS + ', .app-menu, .app-menu__popover, .app-menu__trigger'
+		var zone =
+			TRIGGERS
+			+ ', .app-menu, .app-menu__popover, .app-menu__trigger, .' + PINS
 
 		var waffle = function () {
 			return document.querySelector('.app-menu__waffle')
@@ -1306,7 +1778,7 @@
 			}
 			clearTimeout(closeTimer)
 			closeTimer = setTimeout(function () {
-				if (peek && !pinned && isOpen()) {
+				if (peek && !pinned && isOpen() && !window.thematiqAppMenuDragging) {
 					toggle()
 				}
 				peek = false
@@ -1401,6 +1873,7 @@
 		}
 		var save = saver(menu)
 		opening()
+		menu.pinBar = pinBar(menu)
 
 		var busy = false
 		var scan = function () {
@@ -1409,6 +1882,7 @@
 			}
 			busy = true
 			try {
+				menu.pinBar.ensure()
 				document
 					.querySelectorAll('.app-menu__grid')
 					.forEach(function (grid) {

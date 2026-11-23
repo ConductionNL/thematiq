@@ -1227,7 +1227,16 @@
         "New presentation": "New presentation",
         "New whiteboard": "New whiteboard",
         "More": "More",
-        "The file could not be created.": "The file could not be created."
+        "The file could not be created.": "The file could not be created.",
+        "Drag an app to reorder it or pin it to the top bar.": "Drag an app to reorder it or pin it to the top bar.",
+        "Alt with an arrow key moves, Alt+P pins or unpins.": "Alt with an arrow key moves, Alt+P pins or unpins.",
+        "Pinned apps": "Pinned apps",
+        "Drop to pin": "Drop to pin",
+        "Release to remove": "Release to remove",
+        "{app} pinned to the top bar.": "{app} pinned to the top bar.",
+        "{app} removed from the top bar.": "{app} removed from the top bar.",
+        "You can pin up to {max} apps.": "You can pin up to {max} apps.",
+        "The pinned apps could not be saved.": "The pinned apps could not be saved."
     },
     "plurals": {}
 }

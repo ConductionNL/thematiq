@@ -258,8 +258,11 @@ describe('the apps menu as one ordered list', () => {
 		await loadScript()
 
 		const footer = grid.querySelector('[data-thematiq-row="footer"]')
-		expect(footer.textContent).toContain('Pijltjestoetsen bladeren')
-		expect(footer.textContent).toContain('Sleep een app')
+		expect(
+			Array.from(footer.querySelectorAll('.thematiq-app-menu__hint > span')).map(
+				(span) => span.textContent,
+			),
+		).toEqual([LABELS.dragHint, LABELS.moveHint])
 		expect(footer.querySelector('a').getAttribute('href')).toBe(
 			'/index.php/settings/apps',
 		)

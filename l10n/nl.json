@@ -1227,7 +1227,16 @@
         "New presentation": "Nieuwe presentatie",
         "New whiteboard": "Nieuw whiteboard",
         "More": "Meer",
-        "The file could not be created.": "Het bestand kon niet worden gemaakt."
+        "The file could not be created.": "Het bestand kon niet worden gemaakt.",
+        "Drag an app to reorder it or pin it to the top bar.": "Sleep een app om te ordenen of vast te zetten in de bovenbalk.",
+        "Alt with an arrow key moves, Alt+P pins or unpins.": "Alt met een pijltjestoets verplaatst, Alt+P zet vast of maakt los.",
+        "Pinned apps": "Vastgezette apps",
+        "Drop to pin": "Laat los om vast te zetten",
+        "Release to remove": "Laat los om te verwijderen",
+        "{app} pinned to the top bar.": "{app} staat nu vast in de bovenbalk.",
+        "{app} removed from the top bar.": "{app} is uit de bovenbalk gehaald.",
+        "You can pin up to {max} apps.": "Je kunt maximaal {max} apps vastzetten.",
+        "The pinned apps could not be saved.": "De vastgezette apps konden niet worden opgeslagen."
     },
     "plurals": {}
 }
