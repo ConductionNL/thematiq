@@ -576,3 +576,28 @@
 		animation: none;
 	}
 }
+
+/* An account's caption on one line, its menu at the end, as the navigation
+ * captions of MlInbox and MlNav sit ("FOLDERS" with its button). The design
+ * system lays a caption out as a block, which put the account's menu on a
+ * row of its own under the address. */
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption {
+	display: flex !important;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 4px;
+}
+
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__name {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__actions {
+	flex: none;
+	width: auto;
+}
