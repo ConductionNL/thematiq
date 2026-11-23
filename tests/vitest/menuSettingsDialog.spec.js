@@ -326,4 +326,23 @@ describe('the Menu settings dialog', () => {
 		const icons = dialog.querySelectorAll('dialog.thematiq-menu-settings--form [role="radiogroup"] [data-icon]')
 		expect(Array.from(icons).map((b) => b.getAttribute('data-icon'))).toEqual(['link', 'book'])
 	})
+
+	it('lays the grid section out as the board, steppers beside the preview', async () => {
+		const dialog = await openDialog(answer(true))
+		dialog.querySelector('#thematiq-menu-settings-tab-configuration').click()
+
+		const grid = dialog.querySelector('section[aria-labelledby="thematiq-menu-settings-grid"]')
+		expect(grid.classList.contains('thematiq-menu-settings__section--grid')).toBe(true)
+		expect(grid.querySelector(':scope > .thematiq-menu-settings__steppers')).not.toBeNull()
+		expect(grid.querySelector(':scope > .thematiq-menu-settings__figure')).not.toBeNull()
+	})
+
+	it('marks the new-tab note of the external app form with the open-in-new-tab icon', async () => {
+		const dialog = await openDialog(answer(false))
+		dialog.querySelector('[data-part="add-external"]').click()
+
+		const note = dialog.querySelector('dialog.thematiq-menu-settings--form .thematiq-menu-settings__note')
+		expect(note.textContent).toContain('alwaysNewTab')
+		expect(note.querySelector('svg path').getAttribute('d')).toMatch(/^M14,3V5H17\.59/)
+	})
 })
