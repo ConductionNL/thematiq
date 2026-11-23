@@ -252,7 +252,11 @@ final class OwnTokenControllerTest extends TestCase {
 	public function testCreateWritesFileAndAuditsOnce(): void {
 		$this->audit->expects($this->once())->method('log')->with(
 			'own_token_changed',
-			$this->callback(callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent' && $c['old'] === null && $c['new']['value'] === '#e17000')
+			$this->callback(
+				callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent'
+					&& $c['old'] === null
+					&& $c['new']['value'] === '#e17000'
+			)
 		);
 
 		$response = $this->own(params: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000'])->create();
@@ -309,7 +313,9 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->audit->expects($this->once())->method('log')->with('token_deprecation_changed');
 
-		$refused = $this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing'])->save();
+		$refused = $this->deprecationController(
+			params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing']
+		)->save();
 		$this->assertSame(expected: 400, actual: $refused->getStatus());
 		$this->assertSame(expected: 'replacement', actual: $refused->getData()['field']);
 
@@ -324,7 +330,8 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAdoptRecordsNotices(): void {
-		$response = $this->deprecationController(params: ['notices' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary']]])->adopt();
+		$notice = ['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary'];
+		$response = $this->deprecationController(params: ['notices' => [$notice]])->adopt();
 
 		$this->assertSame(expected: ['--nldesign-color-primary'], actual: $response->getData()['recorded']);
 		$this->assertSame(expected: 'import', actual: $this->deprecations->list()['--nldesign-color-primary']['source']);
