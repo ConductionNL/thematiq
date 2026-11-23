@@ -267,6 +267,21 @@ describe('the apps menu as one ordered list', () => {
 		expect(grid.hasAttribute('data-thematiq-app-menu-manage')).toBe(true)
 	})
 
+	it('settles after its own changes instead of watching them for ever', async () => {
+		const grid = openMenu()
+		installState(menu({ external: EXTERNAL }))
+		await loadScript()
+		let seen = 0
+		const counter = new MutationObserver((records) => {
+			seen += records.length
+		})
+		counter.observe(grid, { childList: true, subtree: true })
+		grid.appendChild(document.createElement('span'))
+		await new Promise((resolve) => setTimeout(resolve, 20))
+		counter.disconnect()
+		expect(seen).toBeLessThan(10)
+	})
+
 	it('is idempotent when the observer runs again', async () => {
 		const grid = openMenu()
 		installState(menu({ external: EXTERNAL }))

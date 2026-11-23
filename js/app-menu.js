@@ -377,7 +377,10 @@
 				toggle.appendChild(button)
 			}
 			button.setAttribute('aria-expanded', expanded ? 'true' : 'false')
-			button.textContent = text(labels, expanded ? 'hideApps' : 'allApps')
+			var caption = text(labels, expanded ? 'hideApps' : 'allApps')
+			if (button.textContent !== caption) {
+				button.textContent = caption
+			}
 			fold(toggle, false)
 		} else if (toggle !== null) {
 			fold(toggle, true)
@@ -951,6 +954,11 @@
 						arrange(grid, menu, save)
 					})
 			} finally {
+				// The script's own changes are mutations too: drop them, or the
+				// watcher would call scan again for ever.
+				if (window.thematiqAppMenuObserver) {
+					window.thematiqAppMenuObserver.takeRecords()
+				}
 				busy = false
 			}
 		}
