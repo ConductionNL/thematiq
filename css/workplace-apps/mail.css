@@ -361,6 +361,20 @@
 		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-settings .app-navigation-entry__name {
 			display: none;
 		}
+
+		/* The rail shows the folders of the account that is open, as MlThread
+		 * draws one account's rail: with several accounts the other accounts'
+		 * folders, and the shared views above the first account (Priority
+		 * inbox, All inboxes) unless one of them is open, wait in the full
+		 * column. An account's caption and folders are siblings in one list,
+		 * so the account is told apart by the caption before it. */
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list:has(.app-navigation-caption ~ li .active) > li:not(.app-navigation-caption ~ li):not(.app-navigation-caption):not(:has(.active)),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption ~ li,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:has(~ .app-navigation-caption ~ li .active) {
+			display: none !important;
+		}
 	}
 }
 
