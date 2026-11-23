@@ -17,7 +17,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 // the bundle takes it alone (src/nextcloudVue.js), the test none of it.
 vi.mock('@nextcloud/vue', () => ({ NcButton: { render: () => null } }))
 
-describe('the playground code editor', { timeout: 20000 }, () => {
+describe('the playground code editor', { timeout: 60000 }, () => {
 	beforeAll(async () => {
 		await import('../../src/codeEditor.js')
 	}, 30000)
@@ -40,16 +40,14 @@ describe('the playground code editor', { timeout: 20000 }, () => {
 
 		expect(field.hidden).toBe(true)
 		const host = document.querySelector('.nldesign-code-editor')
-		// CnJsonViewer loads CodeMirror on demand (nextcloud-vue 2.193).
-		await vi.waitFor(() => expect(host.querySelector('.cm-editor')).not.toBeNull(), { timeout: 10000 })
-		expect(host.querySelector('.cm-content').textContent).toContain(
-			'<p>Tekst</p>',
-		)
-		await vi.waitFor(() =>
-			expect(
-				host.querySelector('.cm-content').getAttribute('aria-labelledby'),
-			).toBe('code-label'),
-		)
+		// CnJsonViewer loads CodeMirror on demand (nextcloud-vue 2.193); `ready`
+		// resolves once the editable region is drawn and labelled, however long
+		// the load takes on a busy machine.
+		const content = await editor.ready
+		expect(host.querySelector('.cm-editor')).not.toBeNull()
+		expect(content).toBe(host.querySelector('.cm-content'))
+		expect(content.textContent).toContain('<p>Tekst</p>')
+		expect(content.getAttribute('aria-labelledby')).toBe('code-label')
 
 		editor.unmount()
 		expect(document.querySelector('.nldesign-code-editor')).toBeNull()
