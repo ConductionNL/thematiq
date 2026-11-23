@@ -29,6 +29,40 @@ namespace OCA\Thematiq\Service;
 final class LayoutStylesheets {
 
 	/**
+	 * The apps the light layout draws with a stylesheet of their own, under `css/workplace-apps/`.
+	 *
+	 * @var string[]
+	 */
+	public const array APP_LAYERS = ['mail', 'calendar', 'deck'];
+
+	/**
+	 * The stylesheets the light layout adds for one app, only on that app's own pages: with the
+	 * workplace header first `workplace-apps/brand`, the organisation and the app name at the start
+	 * of the bar, then `workplace-apps/common`, what the three apps share, then the app's own sheet.
+	 *
+	 * @param array<string, mixed> $resolved The resolved options.
+	 * @param string|null $appId The rendered app.
+	 *
+	 * @return array<int, string> No stylesheet, or two or three.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	public function forApp(array $resolved, ?string $appId): array {
+		if ($resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT || in_array($appId, self::APP_LAYERS, true) === false) {
+			return [];
+		}
+
+		$files = [];
+		if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
+			$files[] = 'workplace-apps/brand';
+		}
+
+		$files[] = 'workplace-apps/common';
+		$files[] = 'workplace-apps/' . $appId;
+		return $files;
+	}//end forApp()
+
+	/**
 	 * The stylesheets of the workplace layout, the brand stripe and the navigation, in that order.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.

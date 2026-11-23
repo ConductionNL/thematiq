@@ -25,6 +25,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use InvalidArgumentException;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\LayoutOptionsService;
+use OCA\Thematiq\Service\LayoutStylesheets;
 use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -521,4 +522,47 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertNotContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'zuiddrecht'));
 		$this->assertFalse(condition: $this->service->accepts(key: 'header_style', value: 'dark'));
 	}//end testTheWorkplaceHeaderNeedsTheLightLayout()
+
+	/**
+	 * Mail, Calendar and Deck get their own stylesheet on their own pages, only
+	 * with the light layout, after the brand sheet while the header is the
+	 * workplace one; any other app, and a page without an app, gets none.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 *
+	 * @return void
+	 */
+	public function testMailCalendarAndDeckGetTheirOwnStylesheet(): void {
+		foreach (['mail', 'calendar', 'deck'] as $app) {
+			$this->assertSame(
+				expected: ['workplace-apps/brand', 'workplace-apps/common', 'workplace-apps/' . $app],
+				actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: $app)
+			);
+			$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'utrecht', appId: $app));
+		}
+
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'files'));
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: null));
+
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'default'));
+		$this->assertSame(
+			expected: ['workplace-apps/common', 'workplace-apps/mail'],
+			actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'mail')
+		);
+
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'mail'));
+	}//end testMailCalendarAndDeckGetTheirOwnStylesheet()
+
+	/**
+	 * The app stylesheets a page of this app loads with this token set, as CssInjectionService picks them.
+	 *
+	 * @param string $tokenSet The token set.
+	 * @param string|null $appId The rendered app.
+	 *
+	 * @return array<int, string> The stylesheets.
+	 */
+	private function appSheets(string $tokenSet, ?string $appId): array {
+		return (new LayoutStylesheets())->forApp(resolved: $this->service->resolved(tokenSet: $tokenSet), appId: $appId);
+	}//end appSheets()
 }//end class
