@@ -1201,7 +1201,26 @@ OC.L10N.register(
         "Use for headings": "Gebruiken voor koppen",
         "refers to {token}": "verwijst naar {token}",
         "refers to {token}: {value}": "verwijst naar {token}: {value}",
-        "The fill of a pill without a status colour": "De vulling van een label zonder statuskleur"
+        "The fill of a pill without a status colour": "De vulling van een label zonder statuskleur",
+        "External apps": "Externe apps",
+        "opens in a new tab": "opent in een nieuw tabblad",
+        "Projects and work packages": "Projecten en werkpakketten",
+        "Mail": "E-mail",
+        "Chat": "Chat",
+        "Knowledge base": "Kennisbank",
+        "Code": "Code",
+        "Video meetings": "Videovergaderingen",
+        "All apps": "Alle apps",
+        "Hide apps": "Apps verbergen",
+        "Drag an app to change the order.": "Sleep een app om de volgorde te wijzigen.",
+        "Alt with an arrow key moves the app.": "Alt met een pijltjestoets verplaatst de app.",
+        "{app} moved to place {place} of {total}.": "{app} staat nu op plaats {place} van {total}.",
+        "The order could not be saved.": "De volgorde kon niet worden opgeslagen.",
+        "External apps in the apps menu": "Externe apps in het appmenu",
+        "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.": "Geef per app een adres. Een app zonder adres staat niet in het menu. Elke link opent in een nieuw tabblad.",
+        "%s address": "Adres van %s",
+        "Save addresses": "Adressen opslaan",
+        "Addresses saved.": "Adressen opgeslagen."
     },
     "nplurals=2; plural=(n != 1);"
 )
