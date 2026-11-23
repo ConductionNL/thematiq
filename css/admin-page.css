@@ -1,0 +1,83 @@
+/**
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ *
+ * The page header of the Theming page, as TqTheming draws it
+ * (openspec/changes/admin-pages-as-the-tq-boards). Every colour reads a token,
+ * with Nextcloud's own variable behind it.
+ */
+
+.thematiq-page-header {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 6px 27px 8px;
+	color: var(--color-main-text);
+}
+
+.thematiq-page-header__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px 24px;
+}
+
+/* The NL Design heading sizes are `!important`; the board's page title is 28px. */
+#thematiq-page-header h1.thematiq-page-header__title {
+	margin: 0;
+	font-size: 28px !important;
+	font-weight: 700;
+	line-height: normal !important;
+}
+
+.thematiq-page-header__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+/* Nextcloud's core rules style every button and link; the header's actions
+ * take the board's outlined look with a selector that outranks them. */
+#thematiq-page-header .thematiq-page-header__action {
+	display: inline-flex;
+	box-sizing: border-box;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 14px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#thematiq-page-header .thematiq-page-header__action:hover {
+	background: var(--color-background-hover);
+}
+
+#thematiq-page-header .thematiq-page-header__action:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
+.thematiq-page-header__crumbs {
+	display: flex;
+	gap: 8px;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+#thematiq-page-header p.thematiq-page-header__intro {
+	max-width: none;
+	margin: 0;
+	color: var(--nl-color-grey-text, var(--color-text-maxcontrast));
+	font-size: 15px !important;
+	line-height: 1.5 !important;
+}

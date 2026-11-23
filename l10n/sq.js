@@ -1354,7 +1354,11 @@ OC.L10N.register(
         "Nothing to create here.": "Nothing to create here.",
         "Quick add": "Quick add",
         "New event": "New event",
-        "Select a conversation": "Select a conversation"
+        "Select a conversation": "Select a conversation",
+        "Themes and appearance": "Themes and appearance",
+        "Administration settings": "Administration settings",
+        "Breadcrumb": "Breadcrumb",
+        "Nextcloud sets the name, the colour and the logo. On top of that, thematiq lays your organisation's house style over the whole workplace: tokens, layout, website and the dark variant.": "Nextcloud sets the name, the colour and the logo. On top of that, thematiq lays your organisation's house style over the whole workplace: tokens, layout, website and the dark variant."
     },
     "nplurals=2; plural=(n != 1);"
 )

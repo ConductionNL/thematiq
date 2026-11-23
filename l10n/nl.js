@@ -1354,7 +1354,11 @@ OC.L10N.register(
         "Nothing to create here.": "Hier valt niets te maken.",
         "Quick add": "Snel toevoegen",
         "New event": "Nieuwe afspraak",
-        "Select a conversation": "Selecteer een gesprek"
+        "Select a conversation": "Selecteer een gesprek",
+        "Themes and appearance": "Thema's en uiterlijk",
+        "Administration settings": "Beheerinstellingen",
+        "Breadcrumb": "Kruimelpad",
+        "Nextcloud sets the name, the colour and the logo. On top of that, thematiq lays your organisation's house style over the whole workplace: tokens, layout, website and the dark variant.": "Nextcloud bepaalt de naam, de kleur en het logo. Daarbovenop legt thematiq de huisstijl van uw organisatie over de hele werkplek: tokens, indeling, website en de donkere variant."
     },
     "nplurals=2; plural=(n != 1);"
 )
