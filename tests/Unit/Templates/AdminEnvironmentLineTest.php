@@ -70,4 +70,33 @@ class AdminEnvironmentLineTest extends TestCase {
 			haystack: $row
 		);
 	}//end testTheHeadingRowIsTheBoards()
+
+	/**
+	 * The picker and its actions sit in the Active token set card, with the board's words.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testThePickerIsTheActiveTokenSetCard(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<section class="nldesign-token-set-selector thematiq-card"');
+		$this->assertNotFalse(condition: $start);
+		$card = substr($template, $start, (strpos($template, '</section>', $start) - $start));
+		foreach (['Active token set', 'Token set', 'Back to the Nextcloud theme', 'Open token set', 'Download token overview'] as $words) {
+			$this->assertStringContainsString(needle: "\$l->t('" . $words . "')", haystack: $card);
+		}
+
+		$ids = [
+			'nldesign-token-set-select',
+			'nldesign-reset-theme-btn',
+			'nldesign-figma-format',
+			'nldesign-dtcg-download',
+			'nldesign-token-reference-link',
+		];
+		foreach ($ids as $id) {
+			$this->assertStringContainsString(needle: 'id="' . $id . '"', haystack: $card);
+		}
+	}//end testThePickerIsTheActiveTokenSetCard()
 }//end class

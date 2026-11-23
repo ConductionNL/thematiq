@@ -131,7 +131,7 @@ test.describe('admin-settings', () => {
 		// The label element with for="nldesign-token-set-select" must exist
 		const label = page.locator('label[for="nldesign-token-set-select"]')
 		await expect(label).toBeVisible()
-		await expect(label).toContainText('Design token set')
+		await expect(label).toContainText('Token set')
 	})
 
 	test(// @e2e openspec/specs/admin-settings/spec.md#design-system-badge-updates-on-selection
