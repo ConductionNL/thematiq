@@ -121,11 +121,17 @@ body:not(#body-login)
 	align-self: end;
 }
 
-/* Past the nine, folded until "All apps" unfolds them. */
+/* Past the fold, folded until "More apps" unfolds them. The tile rule above
+ * sets `display: grid !important` with a higher specificity, so a folded tile
+ * is named the same way. */
 body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu]
-	> [data-thematiq-folded] {
+	> [data-thematiq-folded],
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.app-item[data-thematiq-folded] {
 	display: none !important;
 }
 
@@ -541,12 +547,12 @@ body:not(#body-login)
 }
 
 /* The rows setting: past that many rows the unfolded menu scrolls. An entry
- * row is 60px with an 8px gap; the title, toggle, Create row and footer take
- * the rest. */
+ * row is 60px with an 8px gap; the title, toggle, headings, Create row and
+ * footer take the rest. */
 body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu][data-thematiq-expanded] {
-	max-height: calc(var(--thematiq-app-menu-rows, 6) * 68px + 320px) !important;
+	max-height: calc(var(--thematiq-app-menu-rows, 6) * 68px + 400px) !important;
 	overflow-y: auto !important;
 }
 
@@ -710,17 +716,17 @@ body:not(#body-login) .thematiq-app-pins__hint {
 	white-space: nowrap;
 }
 
-body:not(#body-login) #header .thematiq-app-pins__drop > .thematiq-app-pins__hint {
-	position: absolute;
-	inset-inline-start: 50%;
-	top: 46px;
-	z-index: 3;
+/* The hint under the drop slot sits on the body, over the open menu. */
+body:not(#body-login) .thematiq-app-pins__drop-hint {
+	position: fixed;
+	z-index: 100100;
 	transform: translateX(-50%);
+	pointer-events: none;
 }
 
 body:not(#body-login) .thematiq-app-pins__ghost {
 	position: fixed;
-	z-index: 10010;
+	z-index: 100100;
 	display: flex;
 	align-items: center;
 	gap: 10px;
