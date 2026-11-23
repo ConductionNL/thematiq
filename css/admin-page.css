@@ -285,3 +285,365 @@
 	flex-basis: 100%;
 	order: 1;
 }
+
+/* The cards of thematiq's part: TqTheming's white card with a 12px corner. */
+#nldesign-settings .thematiq-card {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0 0 24px;
+	padding: 22px 24px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-container-large, 12px);
+	background: var(--color-main-background);
+}
+
+#nldesign-settings .thematiq-card h2.thematiq-card__title {
+	justify-content: flex-start !important;
+	max-width: none !important;
+	margin: 0 !important;
+	text-align: start !important;
+	font-size: 20px !important;
+	font-weight: 700;
+	line-height: normal !important;
+}
+
+#nldesign-settings .thematiq-card__note {
+	max-width: none;
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+/* Active token set: the 14px label over a 40px picker, the chips beside it. */
+#nldesign-settings section.nldesign-token-set-selector.thematiq-card > label {
+	margin-bottom: -10px;
+	font-size: 14px !important;
+	font-weight: 600 !important;
+}
+
+#nldesign-settings .thematiq-card .nldesign-token-set-search {
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-card .nldesign-token-set-row {
+	gap: 12px;
+}
+
+#nldesign-settings .thematiq-card #nldesign-token-set-select,
+#nldesign-settings .thematiq-card #nldesign-figma-format {
+	box-sizing: border-box;
+	flex: 0 1 380px;
+	height: 40px !important;
+	min-height: 40px !important;
+	margin: 0;
+	padding: 0 10px !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	font-size: 15px !important;
+}
+
+#nldesign-settings .thematiq-card #nldesign-figma-format {
+	flex: 0 1 auto;
+}
+
+#nldesign-settings .thematiq-card .nldesign-token-set-row .nldesign-badge {
+	display: inline-flex;
+	box-sizing: border-box;
+	align-items: center;
+	height: 26px;
+	margin: 0;
+	padding: 0 10px;
+	border-radius: 13px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-card #nldesign-design-system-badge {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
+/* What can be done with the set: 40px outlined buttons, 14px semibold links. */
+#nldesign-settings .thematiq-card .nldesign-token-set-actions {
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-card .nldesign-token-set-actions button.button {
+	box-sizing: border-box;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 14px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* NL Design underlines every link with `!important`; the board's actions are not. */
+#nldesign-settings .thematiq-card .nldesign-token-set-actions .nldesign-token-reference-link {
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none !important;
+}
+
+/* The preview of the active set: tabs, swatches and the two samples. */
+.thematiq-active-set-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.thematiq-active-set-preview__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.thematiq-active-set-preview__title {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.thematiq-active-set-preview__tabs {
+	display: inline-flex;
+	overflow: hidden;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+}
+
+#nldesign-settings .thematiq-active-set-preview__tab {
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0 14px;
+	border: 0;
+	border-radius: 0;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-active-set-preview__tab + .thematiq-active-set-preview__tab {
+	border-inline-start: 1px solid var(--color-border-maxcontrast);
+}
+
+#nldesign-settings .thematiq-active-set-preview__tab[aria-selected='true'] {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
+.thematiq-active-set-preview__note {
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+.thematiq-active-set-preview__panel:not([hidden]) {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.thematiq-active-set-preview__frame {
+	overflow: hidden;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+}
+
+.thematiq-swatches {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.thematiq-swatch {
+	display: flex;
+	flex: 1 1 100px;
+	flex-direction: column;
+}
+
+.thematiq-swatch__colour {
+	display: block;
+	height: 48px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.thematiq-swatch__name {
+	padding: 8px 10px 0;
+	line-height: normal;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.thematiq-swatch__value {
+	padding: 0 10px 10px;
+	line-height: normal;
+	color: var(--color-text-maxcontrast);
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 12px;
+}
+
+.thematiq-set-sample {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 14px;
+	padding: 14px;
+	border-top: 1px solid var(--color-border);
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	line-height: normal;
+}
+
+.thematiq-set-sample__bar {
+	display: flex;
+	box-sizing: border-box;
+	flex: 1 1 340px;
+	align-items: center;
+	gap: 10px;
+	height: 44px;
+	padding: 0 12px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+}
+
+.thematiq-set-sample__logo,
+.thematiq-login-sample__logo {
+	width: 26px;
+	height: 26px;
+	background: var(--image-logoheader, var(--image-logo)) center / contain no-repeat;
+}
+
+.thematiq-set-sample__name {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.thematiq-set-sample__spacer {
+	flex: 1;
+}
+
+.thematiq-set-sample__avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 13px;
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+	font-size: 11px;
+	font-weight: 700;
+}
+
+.thematiq-set-sample__controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 14px;
+}
+
+.thematiq-set-sample__nav,
+.thematiq-set-sample__primary,
+.thematiq-set-sample__secondary {
+	display: inline-flex;
+	box-sizing: border-box;
+	align-items: center;
+	height: 34px;
+	padding: 0 14px;
+	border-radius: var(--border-radius-element, 8px);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.thematiq-set-sample__nav {
+	padding: 0 12px;
+	background: var(--nldesign-color-accent-light, var(--color-primary-element-light));
+	color: var(--nldesign-component-navigation-active-color, var(--color-primary-element-light-text));
+}
+
+.thematiq-set-sample__primary {
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+
+.thematiq-set-sample__secondary {
+	border: 1px solid var(--color-border-maxcontrast);
+	background: var(--color-main-background);
+}
+
+.thematiq-set-sample__pill {
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.thematiq-login-sample {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	padding: 28px 16px 22px;
+	border-radius: 10px;
+	background: var(--color-primary-element);
+}
+
+.thematiq-login-sample__logo {
+	width: 60px;
+	height: 34px;
+	padding: 0 12px;
+	border-radius: var(--border-radius-element, 8px);
+	background-color: var(--color-main-background);
+	background-origin: content-box;
+}
+
+.thematiq-login-sample__card {
+	display: flex;
+	box-sizing: border-box;
+	flex-direction: column;
+	gap: 10px;
+	width: 300px;
+	max-width: 100%;
+	padding: 18px;
+	border-radius: 12px;
+	background: var(--color-main-background);
+	box-shadow: 0 6px 18px var(--color-box-shadow);
+}
+
+.thematiq-login-sample__label {
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.thematiq-login-sample__field {
+	height: 34px;
+	box-sizing: border-box;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+}
+
+.thematiq-login-sample__button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 38px;
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-primary-element-hover);
+	color: var(--color-primary-element-text);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.thematiq-login-sample__slogan {
+	color: var(--color-primary-element-text);
+	font-size: 13px;
+}
