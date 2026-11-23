@@ -9,8 +9,8 @@
  * @author  Conduction <info@conduction.nl>
  * @license EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  *
- * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-5.1
- * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2
+ * @spec openspec/specs/custom-token-sets/spec.md
+ * @spec openspec/specs/custom-token-sets/spec.md
  */
 
 declare(strict_types=1);
@@ -145,7 +145,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	public function testSemicolonSmuggledBackgroundDeclarationIsForbidden(): void {
 		$this->assertTrue(
@@ -160,7 +160,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.2
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	public function testBareCommentMarkerValueIsForbidden(): void {
 		$this->assertTrue(condition: $this->validator->isForbiddenValue(value: 'red /* } */'));
@@ -176,7 +176,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-2.3
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	public function testValidateDeclarationsRejectsSemicolonSmugglingEndToEnd(): void {
 		$split = $this->validator->validateDeclarations(
@@ -209,7 +209,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	public function testForbiddenValueUnderASkippedNameIsAHardFailure(string $name): void {
 		$split = $this->validator->validateDeclarations(
@@ -337,7 +337,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	/**
 	 * The component prefixes the converter emits are accepted beside `--nldesign-*` and the slug.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @return void
 	 */
@@ -363,7 +363,7 @@ class CustomTokenSetValidatorTest extends TestCase {
 	 * Widening the names did not widen the values: a component token smuggling a declaration or
 	 * a comment marker is still a hard failure.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @return void
 	 */

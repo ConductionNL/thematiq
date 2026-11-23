@@ -5,7 +5,7 @@
  * The attention banner's case title is one 20px line at the font's normal
  * line height (24px), as DqMijnWerk draws "Parkeervergunningen binnenstad".
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

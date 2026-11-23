@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
+ * @spec openspec/specs/lasuite-stack/spec.md
  */
 
 declare(strict_types=1);

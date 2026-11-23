@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use OCP\IL10N;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp holds the external app rule.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
  */
 class AppMenuLegacyExternalApps {
 
@@ -67,7 +67,7 @@ class AppMenuLegacyExternalApps {
 	 *
 	 * @return int The number of apps moved; 0 when there was nothing to move or it ran before.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
 	 */
 	public function migrateOnce(IL10N $l): int {
 		if ($this->config->getAppValue(Application::APP_ID, self::MARKER, '') === '1') {
@@ -109,7 +109,7 @@ class AppMenuLegacyExternalApps {
 	 *
 	 * @return array<int, array<string, mixed>> The apps.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
 	 */
 	private function moved(IL10N $l): array {
 		$apps = [];

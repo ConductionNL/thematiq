@@ -12,7 +12,7 @@
  * wash is measured the same way, on the set's page background (Nextcloud's own where the set sets none), in the light
  * theme and in both dark scopes.
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md
+ * @spec openspec/specs/token-sets/spec.md
  */
 
 import { describe, expect, it } from 'vitest'

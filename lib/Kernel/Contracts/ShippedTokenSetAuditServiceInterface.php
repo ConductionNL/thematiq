@@ -57,7 +57,7 @@ interface ShippedTokenSetAuditServiceInterface {
 	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function auditSet(string $appPath, string $id, array $theming, string $level = 'AA'): array;
 }//end interface

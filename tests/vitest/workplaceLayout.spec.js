@@ -12,8 +12,8 @@
  * in CSS from unitless ratios; the test resolves the same arithmetic from the
  * stylesheet's own expressions, with Zuiddrecht's tokens and with none.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
  */
 
 import fs from 'node:fs'
@@ -416,7 +416,7 @@ describe('brand stripe', () => {
 
 describe('the brand stripe: a motif of its own', () => {
 	/**
-	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-a-set-may-draw-its-motif-in-the-brand-stripe
+	 * @spec openspec/specs/school-token-sets/spec.md#requirement-a-set-may-draw-its-motif-in-the-brand-stripe
 	 */
 	it('draws a set image in place of the three bands, and the bands without one', () => {
 		const sheet = postcss.parse(read('css/brand-stripe.css'))
@@ -474,7 +474,7 @@ function withSelector(rules, needle) {
 }
 
 describe('workplace layout: the login page and the guest pages', () => {
-	// @spec openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md
+	// @spec openspec/specs/workplace-layout/spec.md
 	const rules = rulesOf('css/workplace-layout.css')
 
 	it("shows Nextcloud's own guest logo above the card, 56px high, with the set's logo in it", () => {
@@ -576,7 +576,7 @@ describe('workplace layout: the login page and the guest pages', () => {
 })
 
 describe('workplace layout: the top bar', () => {
-	// @spec openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md
+	// @spec openspec/specs/workplace-layout/spec.md
 	const rules = rulesOf('css/workplace-layout.css')
 
 	it('is 68px high through the variable Nextcloud lays the page out from', () => {
@@ -617,7 +617,7 @@ describe('workplace layout: the top bar', () => {
 })
 
 describe('workplace layout: the standard apps as cards on the surface', () => {
-	// @spec openspec/changes/workplace-layout-standard-apps/specs/workplace-layout/spec.md
+	// @spec openspec/specs/workplace-layout/spec.md
 	const rules = rulesOf('css/workplace-layout.css')
 
 	it("draws the dashboard's panels as cards with the card title size", () => {

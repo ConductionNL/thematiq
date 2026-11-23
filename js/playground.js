@@ -30,7 +30,7 @@
  * `window.ThematiqPlayground` in the browser, where it also boots itself. No
  * `import`/`export`, because this app has no bundler.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 ;(function (root, factory) {
 	var api = factory()

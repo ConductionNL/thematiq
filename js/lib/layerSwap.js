@@ -30,7 +30,7 @@
  * pure parts are unit-testable without a DOM) and `window.NldesignLayerSwap`
  * in the browser. No `import`/`export`, because `js/admin.js` is not built.
  *
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 ;(function (root, factory) {
 	var api = factory()

@@ -9,9 +9,9 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
- * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md
- * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/apps-menu-order/spec.md
+ * @spec openspec/specs/external-apps-in-the-app-menu/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

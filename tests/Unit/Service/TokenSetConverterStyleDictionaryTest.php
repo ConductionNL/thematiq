@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -44,7 +44,7 @@ use RuntimeException;
  *  - a `value` that is not a scalar is a group that happens to use the word,
  *    not a leaf, and must not be flattened into a declaration.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 class TokenSetConverterStyleDictionaryTest extends TestCase {
 
@@ -99,7 +99,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * prefixed with the set's own slug so it cannot collide with the app
 	 * vocabulary.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -129,7 +129,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 *
 	 * @dataProvider componentPrefixProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -160,7 +160,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * `$`-prefixed keys are Style Dictionary metadata, not tokens. Walking
 	 * into them would emit declarations named after a schema URL.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -183,7 +183,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * a leaf. Flattening it would produce a declaration whose value is the
 	 * string "Array".
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -206,7 +206,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * different names for the same tree, so reading one as the other would
 	 * silently emit the wrong vocabulary.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -221,7 +221,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * refused with the 422 the upload endpoint turns into a message, not with
 	 * an empty token set.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -238,7 +238,7 @@ class TokenSetConverterStyleDictionaryTest extends TestCase {
 	 * `convert()` returns, so a stale warning from a previous upload would be
 	 * attributed to the wrong document.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ use OCP\IL10N;
  * The dialog's texts in the request's language, sent when the dialog opens so pages that never
  * open it do not carry them.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
  */
 final class AppMenuDialogLabels {
 
@@ -39,7 +39,7 @@ final class AppMenuDialogLabels {
 	 *
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - a list of texts, one per line.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	public static function labels(IL10N $l): array {
 		return [

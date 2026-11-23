@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqNotFoundInit() {
 	var BLOCK = 'thematiq-not-found'
@@ -34,7 +34,7 @@
 	 * @param {object} copy The copy.
 	 * @param {string} key The key.
 	 * @return {string} The text.
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function text(copy, key) {
 		return typeof copy[key] === 'string' ? copy[key].trim() : ''
@@ -46,7 +46,7 @@
 	 *
 	 * @param {object} copy The copy.
 	 * @return {Array<{label: string, url: string}>} The links.
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function links(copy) {
 		if (!Array.isArray(copy.links)) {
@@ -67,7 +67,7 @@
 	 * A chevron, hidden from assistive technology.
 	 *
 	 * @return {SVGElement} The icon.
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function chevron() {
 		var svg = document.createElementNS(SVG_NS, 'svg')
@@ -93,7 +93,7 @@
 	 * @param {string} part The BEM part after the block.
 	 * @param {string} value The text.
 	 * @return {HTMLElement} The element.
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function el(tag, part, value) {
 		var node = document.createElement(tag)
@@ -105,7 +105,7 @@
 	/**
 	 * Write the copy into the card.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqNotFoundMain() {
 		if (

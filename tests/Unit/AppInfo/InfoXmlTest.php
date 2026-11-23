@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-009
+ * @spec openspec/specs/platform-properties/spec.md#requirement-thematiq-installs-and-updates-from-the-nextcloud-app-store-req-tplat-009
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ class InfoXmlTest extends TestCase {
 	/**
 	 * The app id, licence, category and Nextcloud range the store reads.
 	 *
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-009
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-thematiq-installs-and-updates-from-the-nextcloud-app-store-req-tplat-009
 	 *
 	 * @return void
 	 */

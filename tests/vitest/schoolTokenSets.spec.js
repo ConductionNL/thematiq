@@ -12,7 +12,7 @@
  * dark scopes. The expected values are the designs' own
  * (openspec/changes/school-token-sets).
  *
- * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md
+ * @spec openspec/specs/school-token-sets/spec.md
  */
 
 import fs from 'node:fs'

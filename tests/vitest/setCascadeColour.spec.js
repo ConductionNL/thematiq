@@ -6,7 +6,7 @@
  * hsl(), as the token sets write them (a mark background in hsl() left the
  * mark colour tests unable to measure).
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-coverage-next-waves/tasks.md
+ * @spec openspec/specs/token-sets/spec.md
  */
 
 import { describe, expect, it } from 'vitest'

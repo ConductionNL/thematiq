@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ use OCP\IConfig;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuOrder::clean() holds the shared key rule.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 class AppMenuPins {
 
@@ -65,7 +65,7 @@ class AppMenuPins {
 	 *
 	 * @return array<int, string> The keys.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	public function get(string $userId): array {
 		$stored = json_decode((string)$this->config->getUserValue($userId, Application::APP_ID, self::KEY, ''), true);
@@ -86,7 +86,7 @@ class AppMenuPins {
 	 *
 	 * @return array<int, string> The keys stored.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	public function save(string $userId, array $keys, array $known): array {
 		$clean = self::clean(keys: $keys, known: $known);
@@ -109,7 +109,7 @@ class AppMenuPins {
 	 *
 	 * @return array<int, string> The clean keys.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	public static function clean(array $keys, ?array $known): array {
 		$clean = array_values(

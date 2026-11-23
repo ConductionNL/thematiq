@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -116,7 +116,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	/**
 	 * Zuiddrecht carries both defaults, and wears them with nothing stored.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -133,7 +133,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * zuiddrecht's 5px stripe does, also turns the stripe on; the other three
 	 * leave it to the administrator.
 	 *
-	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
+	 * @spec openspec/specs/school-token-sets/spec.md#requirement-each-school-set-wears-the-light-workplace
 	 *
 	 * @return void
 	 */
@@ -155,7 +155,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * no stripe. Walks the whole manifest, so a set added later with a layout
 	 * block has to be named here on purpose.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -181,7 +181,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * An unknown set, and a set whose manifest entry is not there, resolve to
 	 * the defaults rather than failing the page render.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -205,7 +205,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * stripe on the login card only and the workplace top bar; it leaves the
 	 * watermark to the built-in default.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -238,7 +238,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * selected entry, the stripe in both places, the watermark drawn and
 	 * Nextcloud's own top bar.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -278,7 +278,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * A stored choice wins over the set for each newer option, and the empty
 	 * choice follows the set again.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -326,7 +326,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 *
 	 * @dataProvider refusedNewerValueProvider
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function testAValueAnOptionDoesNotAcceptIsRefused(string $key, string $value): void {
 		$this->assertFalse(condition: $this->service->accepts(key: $key, value: $value));
@@ -361,7 +361,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * A stored value the option no longer accepts, and a manifest default the
 	 * option does not accept, both read as "follow": the page still renders.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -388,7 +388,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * A set may declare the width as a number or as a string, and may say
 	 * the watermark is off and the stripe is on the login card only.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -430,7 +430,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	/**
 	 * The administrator's choice always wins, in both directions.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -449,7 +449,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	/**
 	 * Storing the empty value hands the option back to the set.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -466,7 +466,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	/**
 	 * A value outside the three is refused and nothing is written.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -486,7 +486,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * A value that reached the store some other way (an occ command, an old
 	 * import) and is not one of the three is read as "follow the set".
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 *
 	 * @return void
 	 */
@@ -504,7 +504,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 * administrator that asks for it on Nextcloud's own coloured bar gets
 	 * nothing, since the bar it places is the light one.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 *
 	 * @return void
 	 */

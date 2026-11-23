@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ namespace OCA\Thematiq\Service;
  * The conditional stylesheets the resolved layout options switch on, in the
  * order a page loads them. Built by LayoutOptionsService.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 final class LayoutStylesheets {
 
@@ -69,7 +69,7 @@ final class LayoutStylesheets {
 	 *
 	 * @return array<int, string> The stylesheets.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	public function forOptions(array $resolved): array {
 		return array_merge(

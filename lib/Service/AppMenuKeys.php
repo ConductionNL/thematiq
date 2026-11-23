@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use OCP\INavigationManager;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp::key() names an external app's entry.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 class AppMenuKeys {
 
@@ -52,7 +52,7 @@ class AppMenuKeys {
 	 *
 	 * @return array<int, string> The keys.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	public function known(?string $userId = null): array {
 		$keys = [];

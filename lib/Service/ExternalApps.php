@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+ * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ use OCP\IL10N;
  * app config key `external_apps` as `{key: address}`. An app without an address is left out, so
  * the menu never shows a dead link. Nothing here contacts those addresses.
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+ * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
  */
 class ExternalApps {
 
@@ -80,7 +80,7 @@ class ExternalApps {
 	 *
 	 * @return OpenProjectModules The OpenProject half.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function openProject(): OpenProjectModules {
 		return $this->openProject;
@@ -93,7 +93,7 @@ class ExternalApps {
 	 *
 	 * @return array{title: string, note: string, apps: array<int, array{key: string, label: string, line: string, url: string, icon: string}>}|null
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function section(IL10N $l): ?array {
 		$apps = [];
@@ -132,7 +132,7 @@ class ExternalApps {
 	 *
 	 * @return array<int, array{key: string, name: string, line: string, url: string}>
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function stored(IL10N $l): array {
 		$rows = [
@@ -160,7 +160,7 @@ class ExternalApps {
 	 *
 	 * @return array<int, string> The keys refused; empty when everything was saved.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function save(array $urls): array {
 		$refused = [];
@@ -210,7 +210,7 @@ class ExternalApps {
 	 *
 	 * @return array<string, string> The addresses by key.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	private function addresses(): array {
 		$stored = json_decode($this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, ''), true);
@@ -240,7 +240,7 @@ class ExternalApps {
 	 *
 	 * @return array<string, string> The lines by key.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	private function lines(IL10N $l): array {
 		return [

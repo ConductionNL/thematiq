@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 
 declare(strict_types=1);
@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
  * Both writes leave an entry in the theming audit trail and a line in the
  * Nextcloud log, with who and which set.
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 
@@ -76,7 +76,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 * @return array<string, mixed>|null The declaration, the full text, the confirmation and where the
 	 *                                   set is applied; null when the set declares no licence.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	public function describe(string $tokenSetId): ?array {
 		$gate = $this->tokenSets->licenceGate();
@@ -100,7 +100,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 * @return list<array{id: string, name: string, licence: array<string, mixed>, confirmation: array{uid: string, at: string}|null}>
 	 *                                                                                                                                 Sorted by name.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
 	public function restrictedSets(): array {
 		$gate = $this->tokenSets->licenceGate();
@@ -146,7 +146,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @throws InvalidArgumentException When the set does not exist or is not restricted, or no administrator is named.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	public function confirm(string $tokenSetId, string $uid): array {
 		$gate = $this->tokenSets->licenceGate();
@@ -216,7 +216,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @throws RestrictedSetInUseException When the set is still applied; it names where.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
 	public function withdraw(string $tokenSetId, string $uid): void {
 		$gate = $this->tokenSets->licenceGate();
@@ -273,7 +273,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @return list<array{kind: string, id: string}> One entry per place; empty when it is applied nowhere.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
 	public function appliedIn(string $tokenSetId): array {
 		$places = [];
@@ -338,7 +338,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @return list<array{tokenSet: string, appliedIn: list<array{kind: string, id: string}>, since: string}> One entry per set.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
 	 */
 	public function awaitingConfirmation(): array {
 		$gate = $this->tokenSets->licenceGate();

@@ -13,7 +13,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqHeaderCreateInit() {
 	var BLOCK = 'thematiq-quick-add'
@@ -32,7 +32,7 @@
 	 * The id of the open app, from Nextcloud's navigation entries.
 	 *
 	 * @return {string} The id, or the empty string.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function openApp() {
 		var apps = null
@@ -59,7 +59,7 @@
 	 * @param {boolean} stroked Draw the path as a 1.75px line.
 	 * @param {number} size The size in px.
 	 * @return {SVGElement} The icon.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function icon(d, stroked, size) {
 		var svg = document.createElementNS(SVG_NS, 'svg')
@@ -86,7 +86,7 @@
 	 *
 	 * @param {object} source The shared Create actions.
 	 * @return {HTMLElement} The wrapper holding both.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function build(source) {
 		var wrap = document.createElement('div')
@@ -209,7 +209,7 @@
 	 * Draw the button before the bell on the apps whose boards have it, once
 	 * the apps menu has shared its Create actions, and keep it in the bar.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqHeaderCreateMain() {
 		if (

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ use Throwable;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the login and not-found copy.
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class AppMenuService {
 
@@ -129,7 +129,7 @@ class AppMenuService {
 	 * @return array<string, mixed> `othersTitle`, `hint`, `manageLabel` and `groups`
 	 *                              (each `{title, link?: {label, url}, apps: [{id, description?}]}`).
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	public function resolveMenu(string $tokenSet, string $language): array {
 		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -160,7 +160,7 @@ class AppMenuService {
 	 *
 	 * @return array<int, array<string, mixed>> The sections.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function groups(array $rows, string $language): array {
 		$groups = [];
@@ -196,7 +196,7 @@ class AppMenuService {
 	 *
 	 * @return array<int, array{id: string, description?: string}> The apps.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function apps(array $rows, string $language): array {
 		$apps = [];
@@ -231,7 +231,7 @@ class AppMenuService {
 	 *
 	 * @return array{label: string, url: string}|null The link.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function link(mixed $row, string $language): ?array {
 		if (is_array($row) === false) {
@@ -256,8 +256,8 @@ class AppMenuService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -296,7 +296,7 @@ class AppMenuService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::DIALOG);
@@ -310,7 +310,7 @@ class AppMenuService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
 	 */
 	protected function emitMenuStyle(): void {
 		\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);

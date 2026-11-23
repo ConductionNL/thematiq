@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
  */
 
 declare(strict_types=1);
@@ -33,7 +33,7 @@ use OCP\IConfig;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuOrder::clean() and AppMenuExternalApp hold the shared value rules.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
  */
 class AppMenuSettings {
 
@@ -130,7 +130,7 @@ class AppMenuSettings {
 	 *
 	 * @return array<string, mixed> Every key of DEFAULTS.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	public function effective(?string $userId): array {
 		$admin = $this->defaults();
@@ -156,7 +156,7 @@ class AppMenuSettings {
 	 *
 	 * @return array<string, mixed> The keys set.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	public function defaults(): array {
 		$values = [];
@@ -176,7 +176,7 @@ class AppMenuSettings {
 	 *
 	 * @return array<string, mixed> The keys set.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	public function overrides(string $userId): array {
 		$values = [];
@@ -204,7 +204,7 @@ class AppMenuSettings {
 	 *
 	 * @throws InvalidArgumentException Naming the first key or value that is not allowed; nothing is stored then.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public function saveOverrides(string $userId, array $values, array $known): array {
 		foreach (array_keys($values) as $key) {
@@ -237,7 +237,7 @@ class AppMenuSettings {
 	 *
 	 * @throws InvalidArgumentException Naming the first key or value that is not allowed; nothing is stored then.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public function saveDefaults(array $values, array $known): array {
 		$clean = self::strict(values: $values, known: $known);
@@ -260,7 +260,7 @@ class AppMenuSettings {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-reset-to-default
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-reset-to-default
 	 */
 	public function resetOverrides(string $userId): void {
 		foreach (self::PERSONAL as $key) {
@@ -275,7 +275,7 @@ class AppMenuSettings {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-reset-to-default
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-reset-to-default
 	 */
 	public function resetDefaults(): void {
 		foreach (array_keys(self::DEFAULTS) as $key) {
@@ -294,7 +294,7 @@ class AppMenuSettings {
 	 *
 	 * @throws InvalidArgumentException Naming the first key that is not allowed.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public static function strict(array $values, ?array $known): array {
 		$clean = [];
@@ -327,7 +327,7 @@ class AppMenuSettings {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	private function keep(array &$values, string $key, string $stored): void {
 		if ($stored === '') {
@@ -351,7 +351,7 @@ class AppMenuSettings {
 	 *
 	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one branch per kind of setting.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	private static function check(string $key, mixed $value, ?array $known): mixed {
 		if (isset(self::CHOICES[$key]) === true) {
@@ -403,7 +403,7 @@ class AppMenuSettings {
 	 *
 	 * @return int|null The number.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	private static function number(mixed $value, array $range): ?int {
 		$number = filter_var($value, FILTER_VALIDATE_INT);

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ namespace OCA\Thematiq\Service;
  * The OpenProject plugin's set file, then a file from a Figma tool: token sets merged, the `value`
  * spelling respelled, thematiq's own paths given their CSS names back. Any other content is untouched.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 final class ToolTokenFileNormaliser {
 
@@ -36,7 +36,7 @@ final class ToolTokenFileNormaliser {
 	 *
 	 * @return string The rewritten document, or the content itself when no tool wrote it.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	public function normalise(string $content, array &$skipped): string {
 		$content = (new OpenProjectSetFile())->normalise(content: $content, skipped: $skipped);

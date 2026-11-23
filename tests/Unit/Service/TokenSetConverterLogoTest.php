@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ use Psr\Log\LoggerInterface;
  * admin panel and stored in the audit log, so a 40 KB data URI must not travel
  * through either.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 class TokenSetConverterLogoTest extends TestCase {
 
@@ -124,7 +124,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * and handed back as bytes to write under the SET's id, so an uploaded
 	 * theme called "Amsterdam" cannot overwrite the shipped logo.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -162,7 +162,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * the payload is URL-encoded, and treating it as base64 would produce
 	 * bytes that are not the image.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -186,7 +186,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * A PNG payload lands under the extension the table maps the mime to, not
 	 * under the mime's own spelling — the file has to be servable by name.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -209,7 +209,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * conversion still succeeds, because a theme without a usable logo is
 	 * still a usable theme.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -236,7 +236,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * a TRUNCATED stand-in rather than the payload: the report is rendered in
 	 * the admin panel and written to the audit log.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -264,7 +264,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * A relative path that already lives in the table's logo directory is kept
 	 * as-is: the theme resolved it itself, so there are no bytes to write.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -296,7 +296,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 *
 	 * @dataProvider rejectedLocalTargetProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -339,7 +339,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 *
 	 * @dataProvider remoteTargetProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -382,7 +382,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * theme that explicitly switches the wordmark off has said something, and
 	 * it must not be reported as an unsupported format.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -404,7 +404,7 @@ class TokenSetConverterLogoTest extends TestCase {
 	 * be pointed at `--nldesign-logo-url` instead of each carrying a copy of
 	 * the payload.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */

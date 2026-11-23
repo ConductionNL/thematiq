@@ -47,7 +47,7 @@ use OCP\IConfig;
  * block, `css`, with the element `id` the client replaces).
  *
  * @spec openspec/specs/css-architecture/spec.md
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 class TokenSetLayers {
 
@@ -296,7 +296,7 @@ class TokenSetLayers {
 	 * @return array<int, array{layer: string, kind: string, file?: string, name?: string, css?: string, id?: string}> The entries, in cascade order.
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	private function noDesignSystemLayers(string $tokenSet): array {
 		$layers = [];

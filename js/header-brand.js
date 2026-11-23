@@ -24,7 +24,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqHeaderBrandInit() {
 	var HOST_CLASS = 'thematiq-brand-host'
@@ -44,7 +44,7 @@
 	 * @param {string} key The key.
 	 * @param {*} fallback The value without a state.
 	 * @return {*} The state.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function readState(app, key, fallback) {
 		try {
@@ -58,7 +58,7 @@
 	 * What the block shows: the emblem, the organisation and the open app.
 	 *
 	 * @return {{emblem: string, caption: string, name: string, href: string}|null} The brand, or null without an open app.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function resolveBrand() {
 		var apps = readState('core', 'apps', null)
@@ -91,7 +91,7 @@
 	 *
 	 * @param {{emblem: string, caption: string, name: string, href: string}} brand The brand.
 	 * @return {HTMLElement} The host element.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function buildBrand(brand) {
 		var host = document.createElement('div')
@@ -139,7 +139,7 @@
 	 *
 	 * @param {HTMLElement} host The host, in the bar.
 	 * @return {boolean} True when the sheet's rules reach it.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function styled(host) {
 		return (
@@ -151,7 +151,7 @@
 	 * Draw the block when the open app has no brand of its own, and keep it
 	 * first in the bar.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqHeaderBrandMain() {
 		if (typeof OCP === 'undefined' || !OCP.InitialState) {

@@ -7,7 +7,7 @@
  * ground of its own there, which drew a 22% white wash over the board's
  * #3d4047.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

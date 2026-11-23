@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -45,7 +45,7 @@ use Throwable;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules this service shares with the login page.
  *
- * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class NotFoundCopyService {
 
@@ -109,7 +109,7 @@ class NotFoundCopyService {
 	 *
 	 * @return array<string, string|array<int, array{label: string, url: string}>> The copy, keyed in camel case.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public function resolveCopy(string $tokenSet, string $language): array {
 		$meta = $this->sources->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -140,7 +140,7 @@ class NotFoundCopyService {
 	 *
 	 * @return array<int, array{label: string, url: string}> The links.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	private static function links(array $rows, string $language): array {
 		$links = [];
@@ -165,7 +165,7 @@ class NotFoundCopyService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
 	 */
 	public function inject(): void {
 		try {
@@ -190,7 +190,7 @@ class NotFoundCopyService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);

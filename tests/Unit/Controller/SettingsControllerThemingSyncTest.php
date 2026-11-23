@@ -55,7 +55,7 @@ use PHPUnit\Framework\TestCase;
  * 400.
  *
  * @spec openspec/specs/theming-sync/spec.md
- * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
  */
 class SettingsControllerThemingSyncTest extends TestCase {
 
@@ -353,7 +353,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * were synced — stock Nextcloud is the ABSENCE of a synced theme, not a
 	 * set of values to write.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -383,7 +383,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 * A reset is not counted as a sync: the counter measures themes pushed
 	 * into core, and a reset pushes none.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -405,7 +405,7 @@ class SettingsControllerThemingSyncTest extends TestCase {
 	 *
 	 * @dataProvider notAResetProvider
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */

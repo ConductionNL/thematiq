@@ -373,8 +373,8 @@ class CssInjectionService {
 	 *     layout: array<string, bool|int|string|null>
 	 * }
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/css-architecture/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function getStylesheetManifest(string $tokenSet): array {
 		$tokenSetMeta = $this->context->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -401,7 +401,7 @@ class CssInjectionService {
 	 *
 	 * @return array{layer: string, kind: string, href?: string, css?: string, id?: string}
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	private function manifestLayer(array $entry): array {
 		if ($entry['kind'] === 'inline') {
@@ -518,9 +518,9 @@ class CssInjectionService {
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/component-tokens/spec.md
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	private function injectConditionalStyles(string $tokenSet, ?string $appId): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet

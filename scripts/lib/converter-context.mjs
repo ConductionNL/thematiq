@@ -12,7 +12,7 @@
  * parity test compares the emitted provenance line, so the two cannot drift
  * without a red test.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-converted-output-shape-and-provenance
+ * @spec openspec/specs/token-set-converter/spec.md#requirement-converted-output-shape-and-provenance
  */
 
 import { readFileSync, readdirSync, statSync } from 'node:fs'

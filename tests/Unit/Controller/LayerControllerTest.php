@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 declare(strict_types=1);
@@ -37,7 +37,7 @@ use PHPUnit\Framework\TestCase;
  * cascade, and the client asks it rather than keeping a second copy of the
  * layer order in JavaScript. So the assertion is identity, not shape.
  *
- * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 class LayerControllerTest extends TestCase {
 
@@ -84,7 +84,7 @@ class LayerControllerTest extends TestCase {
 	/**
 	 * A known id is answered with the cascade owner's manifest, unchanged.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 *
 	 * @return void
 	 */
@@ -117,7 +117,7 @@ class LayerControllerTest extends TestCase {
 	 * built for it. A manifest of links to files that do not exist is exactly
 	 * what the client would insert into the live page.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 *
 	 * @return void
 	 */
@@ -137,7 +137,7 @@ class LayerControllerTest extends TestCase {
 	 * here would make the endpoint answer about a different theme than the one
 	 * the admin is previewing.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 *
 	 * @return void
 	 */

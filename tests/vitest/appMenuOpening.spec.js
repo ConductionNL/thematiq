@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-opening/spec.md
+ * @spec openspec/specs/apps-menu-opening/spec.md
  */
 
 import { readFileSync } from 'node:fs'

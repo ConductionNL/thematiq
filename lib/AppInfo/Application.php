@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
- * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
+ * @spec openspec/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 declare(strict_types=1);
@@ -42,8 +42,8 @@ use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
  *
  * Bootstraps the NL Design theme system and injects design tokens.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-1
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-2
+ * @spec openspec/specs/css-architecture/spec.md
+ * @spec openspec/specs/css-architecture/spec.md
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - the composition root: it names every listener,
  *                                                    middleware and service alias it registers.
@@ -105,8 +105,8 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
-	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.1
+	 * @spec openspec/specs/prometheus-metrics/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/theming-capability/spec.md
 	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
@@ -204,7 +204,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @return string The absolute path to `vendor/autoload.php`.
 	 *
-	 * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-2
+	 * @spec openspec/specs/prometheus-metrics/spec.md
 	 */
 	protected function composerAutoloader(): string {
 		return dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -225,7 +225,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - IBootstrap::boot() mandates this exact signature
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-3.2
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function boot(IBootContext $context): void {
 	}//end boot()

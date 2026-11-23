@@ -12,7 +12,7 @@
  * theme rather than a stale data file. That is the failure this file exists to
  * make loud, and it is the drift guard a Vue build would have given for free.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 import { describe, it, expect } from 'vitest'

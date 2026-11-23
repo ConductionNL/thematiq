@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 
 declare(strict_types=1);
@@ -45,7 +45,7 @@ use OCP\IConfig;
  * {@see TokenSetService::licenceGate()} hands this out, so every service that
  * can apply a set already holds the way to ask.
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 class RestrictedSetGate {
 
@@ -83,7 +83,7 @@ class RestrictedSetGate {
 	 * @return array{id: string, package: string, version: string, holder: string, restricted: bool}|null
 	 *                                                                                                    Null when the set declares none.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
 	 */
 	public function licenceOf(string $tokenSetId): ?array {
 		$licence = ($this->manifest()[$tokenSetId]['licence'] ?? null);
@@ -107,7 +107,7 @@ class RestrictedSetGate {
 	 *
 	 * @return string|null The text, or null when the set ships none.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
 	 */
 	public function licenceText(string $tokenSetId): ?string {
 		if (preg_match('/^[a-z0-9][a-z0-9-]*$/', $tokenSetId) !== 1) {
@@ -134,7 +134,7 @@ class RestrictedSetGate {
 	 *
 	 * @return bool True for a restricted set.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
 	 */
 	public function isRestricted(string $tokenSetId): bool {
 		return (($this->licenceOf(tokenSetId: $tokenSetId)['restricted'] ?? false) === true);
@@ -145,7 +145,7 @@ class RestrictedSetGate {
 	 *
 	 * @return list<string> The set ids.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-token-set-declares-its-licence
 	 */
 	public function restrictedIds(): array {
 		$ids = [];
@@ -165,7 +165,7 @@ class RestrictedSetGate {
 	 *
 	 * @return array{uid: string, at: string}|null Who confirmed and when (ISO 8601), or null.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	public function confirmation(string $tokenSetId): ?array {
 		$entry = ($this->confirmations()[$tokenSetId] ?? null);
@@ -198,7 +198,7 @@ class RestrictedSetGate {
 	 *
 	 * @return bool True when applying it is allowed.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
 	 */
 	public function mayApply(string $tokenSetId): bool {
 		if ($this->isRestricted(tokenSetId: $tokenSetId) === false) {
@@ -223,7 +223,7 @@ class RestrictedSetGate {
 	 *
 	 * @throws RestrictedSetNotConfirmedException When the set is restricted, not confirmed and not already there.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
 	 */
 	public function assertMayApply(string $tokenSetId, ?string $alreadyApplied = null): void {
 		if ($this->refuses(tokenSetId: $tokenSetId, alreadyApplied: $alreadyApplied) === true) {
@@ -239,7 +239,7 @@ class RestrictedSetGate {
 	 *
 	 * @return bool True when the set is restricted, not confirmed and not already there.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-restricted-set-is-refused-until-an-administrator-confirms-it
 	 */
 	public function refuses(string $tokenSetId, ?string $alreadyApplied = null): bool {
 		return ($tokenSetId !== $alreadyApplied && $this->mayApply(tokenSetId: $tokenSetId) === false);
@@ -255,7 +255,7 @@ class RestrictedSetGate {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
 	public function storeConfirmation(string $tokenSetId, string $uid, string $confirmedAt): void {
 		$all = $this->confirmations();
@@ -271,7 +271,7 @@ class RestrictedSetGate {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
 	public function dropConfirmation(string $tokenSetId): void {
 		$all = $this->confirmations();

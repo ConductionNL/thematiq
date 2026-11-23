@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\IConfig;
  * so it follows them to every browser. js/app-menu.js reads it from the menu's initial state and
  * saves it through AppMenuOrderController.
  *
- * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+ * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
  */
 class AppMenuOrder {
 
@@ -70,7 +70,7 @@ class AppMenuOrder {
 	 *
 	 * @return array<int, string> The keys.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	public function get(string $userId): array {
 		$raw = (string)$this->config->getUserValue($userId, Application::APP_ID, self::KEY, '');
@@ -94,7 +94,7 @@ class AppMenuOrder {
 	 *
 	 * @return array<int, string> The keys stored.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	public function save(string $userId, array $keys): array {
 		$clean = self::clean(keys: $keys);
@@ -117,7 +117,7 @@ class AppMenuOrder {
 	 *
 	 * @return array<int, string> The clean keys.
 	 *
-	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	public static function clean(array $keys): array {
 		$clean = [];

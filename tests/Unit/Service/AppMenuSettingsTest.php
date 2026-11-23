@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Over an in-memory app and user config.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 final class AppMenuSettingsTest extends TestCase {
 
@@ -92,7 +92,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	public function testThePersonsOwnKeysWinAndTheirAppsFollowTheAdministrators(): void {
 		$settings = $this->settings();
@@ -123,7 +123,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public function testAPersonMaySetOnlyTheirOwnKeys(): void {
 		$settings = $this->settings();
@@ -144,7 +144,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public function testAValueThatIsNotAllowedRefusesTheSave(): void {
 		$settings = $this->settings();
@@ -178,7 +178,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	public function testListsKeepKnownEntriesAndTheOldOrderIsRead(): void {
 		$settings = $this->settings();
@@ -199,7 +199,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-reset-to-default
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-reset-to-default
 	 */
 	public function testResetClearsTheScope(): void {
 		$settings = $this->settings();
@@ -221,7 +221,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public function testAnExternalAppIsChecked(): void {
 		$this->assertNotNull(actual: AppMenuExternalApp::clean(app: self::app(id: 'ok'), index: 0));

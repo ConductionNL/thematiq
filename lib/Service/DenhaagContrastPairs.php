@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ namespace OCA\Thematiq\Service;
  * are resolved here before they are measured. A pair whose colours do not
  * resolve to literals is `unevaluated`, which never passes.
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 class DenhaagContrastPairs {
 
@@ -77,7 +77,7 @@ class DenhaagContrastPairs {
 	 * @param ContrastService $contrast The WCAG contrast service.
 	 * @param ColourFunctionEvaluator $functions Turns hsl() and color-mix() into hex.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function __construct(
 		private readonly ContrastService $contrast = new ContrastService(),
@@ -92,7 +92,7 @@ class DenhaagContrastPairs {
 	 *
 	 * @return array<string, array{foreground: string, background: string, ratio: float|null, verdict: string}> The pairs by name.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function pairs(array $declarations): array {
 		$page = $this->resolve(declarations: $declarations, name: self::PAGE);
@@ -140,7 +140,7 @@ class DenhaagContrastPairs {
 	 *
 	 * @return array<int, string> The report lines.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function reportLines(array $rows): array {
 		$lines = [];
@@ -190,7 +190,7 @@ class DenhaagContrastPairs {
 	 *
 	 * @return string|null The literal, or null when the chain does not end in one.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function resolve(array $declarations, string $name): ?string {
 		if (isset($declarations[$name]) === false) {

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use Throwable;
  * Presentation, never a dependency: with nobody signed in it does nothing,
  * and a failure is logged and leaves the page with Nextcloud's own avatar.
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class HeaderUserService {
 
@@ -104,7 +104,7 @@ class HeaderUserService {
 	 *
 	 * @return array{name: string, role: string}|null The person; the role is empty when the profile names none.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	public function person(): ?array {
 		$user = $this->userSession->getUser();
@@ -132,7 +132,7 @@ class HeaderUserService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -163,7 +163,7 @@ class HeaderUserService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);

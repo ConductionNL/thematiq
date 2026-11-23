@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ use OCP\IConfig;
  * as an app's brand. A confirmation does not travel in a bundle; it is given
  * per server. The set that is active here now may stay.
  *
- * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
  */
 class RestrictedSetsInBundle {
 
@@ -43,7 +43,7 @@ class RestrictedSetsInBundle {
 	 *
 	 * @return list<array{section: string, message: string}> One error per refused set; empty when none is refused.
 	 *
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function errors(array $bundle, TokenSetService $tokenSets, IConfig $config): array {
 		$active = (string)$config->getAppValue(Application::APP_ID, ActiveTokenSetService::CONFIG_KEY, ActiveTokenSetService::DEFAULT_SET);

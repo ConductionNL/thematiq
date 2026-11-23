@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
  * An uploaded icon is an SVG without script or a PNG of at most 100 kB, kept in the app data under
  * the hash of its bytes, so the same icon is stored once and its id names it for good.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
  */
 class AppMenuIcons {
 
@@ -79,7 +79,7 @@ class AppMenuIcons {
 	 *
 	 * @return string|null The icon's id, or null when it is not a PNG or a safe SVG of at most 100 kB.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public function store(string $bytes): ?string {
 		$mime = $this->sniffer->type(bytes: $bytes);
@@ -106,7 +106,7 @@ class AppMenuIcons {
 	 *
 	 * @return array{bytes: string, mime: string}|null The icon, or null when there is none.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public function read(string $id): ?array {
 		if (preg_match(self::ID_PATTERN, $id) !== 1) {

@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqHeaderUserInit() {
 	var CHIP_CLASS = 'thematiq-user-chip'
@@ -36,7 +36,7 @@
 	 *
 	 * @param {string} name The display name.
 	 * @return {string} One or two capital letters.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function initialsOf(name) {
 		var words = String(name).trim().split(/\s+/).filter(Boolean)
@@ -54,7 +54,7 @@
 	 *
 	 * @param {{name: string, role: string}} person The person.
 	 * @return {HTMLElement} The label.
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function buildChip(person) {
 		var chip = document.createElement('span')
@@ -99,7 +99,7 @@
 	/**
 	 * Read the person and keep the label in the account menu.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqHeaderUserMain() {
 		if (

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use OCP\IConfig;
  * and the scheduled switch job both go through switchTo(), so both run the
  * same isValidTokenSet() check and both leave an audit entry.
  *
- * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
+ * @spec openspec/specs/scheduled-switch/spec.md
  */
 class ActiveTokenSetService {
 
@@ -66,7 +66,7 @@ class ActiveTokenSetService {
 	 *
 	 * @return string The id.
 	 *
-	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	public function getActive(): string {
 		return $this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, self::DEFAULT_SET);
@@ -85,8 +85,8 @@ class ActiveTokenSetService {
 	 *                                   RestrictedSetNotConfirmedException) is restricted and not confirmed;
 	 *                                   nothing is written then.
 	 *
-	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
-	 * @spec openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/specs/scheduled-switch/spec.md
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	public function switchTo(string $tokenSet, string $auditAction = 'token_set_changed', array $auditContext = []): string {
 		if ($this->tokenSets->isValidTokenSet(tokenSetId: $tokenSet) === false) {

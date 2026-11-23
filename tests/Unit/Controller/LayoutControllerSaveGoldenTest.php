@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+ * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
  */
 
 declare(strict_types=1);

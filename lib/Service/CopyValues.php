@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -31,7 +31,7 @@ namespace OCA\Thematiq\Service;
  * is dropped, not cut, and an address must be an http(s) address or a path on
  * this server.
  *
- * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class CopyValues {
 
@@ -52,7 +52,7 @@ class CopyValues {
 	 *
 	 * @return string|null The trimmed string, or null.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public static function pick(mixed $value, string $language): ?string {
 		if (is_array($value) === true) {
@@ -80,7 +80,7 @@ class CopyValues {
 	 *
 	 * @return bool True when it may be linked.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 */
 	public static function isAddress(string $value): bool {
 		return (preg_match('#^(https?:/{2}[^\s]+|/(?!/)[^\s]*)$#i', $value) === 1);
@@ -93,7 +93,7 @@ class CopyValues {
 	 *
 	 * @return string The camel-case name.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public static function camel(string $key): string {
 		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
@@ -107,7 +107,7 @@ class CopyValues {
 	 *
 	 * @return array<string, mixed> Key => value as written.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public static function only(array $source, array $keys): array {
 		$values = [];
@@ -126,7 +126,7 @@ class CopyValues {
 	 *
 	 * @return array<string, string> Camel-case name => value.
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-not-found-copy
 	 */
 	public static function picked(array $values, string $language): array {
 		$copy = [];

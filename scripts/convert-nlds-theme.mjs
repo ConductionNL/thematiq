@@ -36,7 +36,7 @@
  *
  * Exit codes: 0 converted, 1 usage or conversion error.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'

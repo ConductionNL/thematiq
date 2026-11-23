@@ -48,7 +48,7 @@ use OCP\IUserSession;
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp holds the external app rule.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - one controller for the dialog's endpoints.
  *
- * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
  */
 class AppMenuSettingsController extends Controller {
 
@@ -88,7 +88,7 @@ class AppMenuSettingsController extends Controller {
 	 * @return JSONResponse `{labels, library, iconUrl, admin, effective, overrides, defaults?, manageUrl?}`,
 	 *                      or 401 without a session.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
 	 */
 	#[NoAdminRequired]
 	public function show(): JSONResponse {
@@ -127,7 +127,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @no-admin-idor-exempt writes only the signed-in person's own user values, keyed by the session's uid; it takes no object id.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	#[NoAdminRequired]
 	public function save(array $settings = []): JSONResponse {
@@ -154,7 +154,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{defaults}`, or 400 naming the refused setting.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function saveDefaults(array $settings = []): JSONResponse {
@@ -174,7 +174,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{effective}`, or 401 without a session.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-reset-to-default
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-reset-to-default
 	 */
 	#[NoAdminRequired]
 	public function reset(): JSONResponse {
@@ -193,7 +193,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{defaults}`.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-reset-to-default
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-reset-to-default
 	 */
 	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function resetDefaults(): JSONResponse {
@@ -209,7 +209,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @no-admin-idor-exempt stores new bytes under the hash of their content; it reads or changes no existing object.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	#[NoAdminRequired]
 	public function uploadIcon(): JSONResponse {
@@ -235,7 +235,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @no-admin-idor-exempt icons are shared, inert images named by the hash of their bytes, shown in everyone's menu.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
@@ -263,7 +263,7 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @throws InvalidArgumentException When an external app is not allowed.
 	 *
-	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private static function withIds(array $values): array {
 		if (array_key_exists('externalApps', $values) === false || $values['externalApps'] === null) {

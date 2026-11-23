@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
  * A value this class does not recognise comes back unchanged, so the caller
  * still reports it as unevaluated.
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 class ColourFunctionEvaluator {
 
@@ -39,7 +39,7 @@ class ColourFunctionEvaluator {
 	 *
 	 * @param ContrastService $contrast Parses the hex and rgb() literals inside a function.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function __construct(
 		private readonly ContrastService $contrast = new ContrastService(),
@@ -53,7 +53,7 @@ class ColourFunctionEvaluator {
 	 *
 	 * @return string A hex literal, or the value unchanged.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function evaluate(string $value): string {
 		$value = trim($value);
