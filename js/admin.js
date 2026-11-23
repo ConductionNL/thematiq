@@ -4802,7 +4802,7 @@
 				+ escapeHtml(
 					t(
 						'thematiq',
-						'You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; "Reset theme to Nextcloud" brings the original back.',
+						'You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; "Back to the Nextcloud theme" brings the original back.',
 					),
 				)
 				+ '</p>'

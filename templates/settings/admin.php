@@ -106,8 +106,12 @@ if ($_['mockUi'] === true) {
 		</span>
 	</div>
 
-	<div class="nldesign-token-set-selector">
-		<label for="nldesign-token-set-select"><?php p($l->t('Design token set')); ?></label>
+	<!-- The Active token set card TqTheming draws: the picker with its chips, then
+	     what can be done with the set. -->
+	<section class="nldesign-token-set-selector thematiq-card"
+		aria-labelledby="thematiq-active-set-title">
+		<h2 id="thematiq-active-set-title" class="thematiq-card__title"><?php p($l->t('Active token set')); ?></h2>
+		<label for="nldesign-token-set-select"><?php p($l->t('Token set')); ?></label>
 		<!-- Search the list by name (openspec/changes/token-set-picker-search). admin.js
 		     hides the sets that do not match; the selected set always stays in the list. -->
 		<div class="nldesign-token-set-search">
@@ -150,7 +154,7 @@ if ($_['mockUi'] === true) {
 		     select's line at arbitrary points. -->
 		<div class="nldesign-token-set-actions">
 			<button type="button" id="nldesign-reset-theme-btn" class="button">
-				<?php p($l->t('Reset theme to Nextcloud')); ?>
+				<?php p($l->t('Back to the Nextcloud theme')); ?>
 			</button>
 			<!-- The file format of the download, for Figma and other design tools
 			     (openspec/changes/figma-token-files). The rows under Custom token sets use it too. -->
@@ -168,11 +172,19 @@ if ($_['mockUi'] === true) {
 			<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
 			     admin.js keeps both links on the selected set. -->
 			<span class="nldesign-token-set-links">
-				<a id="nldesign-token-reference-link" class="nldesign-token-reference-link" target="_blank" rel="noopener noreferrer"><?php p($l->t('Token reference')); ?></a>
-				<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token reference')); ?></a>
+				<a id="nldesign-token-reference-link" class="nldesign-token-reference-link"
+					target="_blank" rel="noopener noreferrer"><?php p($l->t('Open token set')); ?></a>
+				<a id="nldesign-token-reference-download" class="nldesign-token-reference-link"><?php p($l->t('Download token overview')); ?></a>
 			</span>
 		</div>
-	</div>
+		<p class="thematiq-card__note">
+			<?php
+			// One literal, so the translation tools find the sentence whole.
+			// phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			p($l->t('File formats: W3C design tokens, Figma with every colour as text, Tokens Studio for Figma, Tokens Studio in the old spelling with value and type, and the set file for the OpenProject plugin. A token keeps the same path in every format. The set file moves a set to the plugin without a connection. Any file can be uploaded again as a custom token set.'));
+			?>
+		</p>
+	</section>
 
 	<!-- House styles whose licence limits their use to their owner: the warning,
 	     the licence text and the confirmation per set

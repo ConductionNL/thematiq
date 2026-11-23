@@ -1358,7 +1358,13 @@
         "Administration settings": "Beheerinstellingen",
         "Breadcrumb": "Kruimelpad",
         "Nextcloud sets the name, the colour and the logo. On top of that, thematiq lays your organisation's house style over the whole workplace: tokens, layout, website and the dark variant.": "Nextcloud bepaalt de naam, de kleur en het logo. Daarbovenop legt thematiq de huisstijl van uw organisatie over de hele werkplek: tokens, indeling, website en de donkere variant.",
-        "Choose a token set from a Dutch government body as a base, or adjust single tokens.": "Kies een tokenset van een Nederlandse overheid als basis, of pas losse tokens aan."
+        "Choose a token set from a Dutch government body as a base, or adjust single tokens.": "Kies een tokenset van een Nederlandse overheid als basis, of pas losse tokens aan.",
+        "Active token set": "Actieve tokenset",
+        "Back to the Nextcloud theme": "Terug naar het Nextcloud-thema",
+        "Open token set": "Tokenset openen",
+        "Download token overview": "Tokenoverzicht downloaden",
+        "File formats: W3C design tokens, Figma with every colour as text, Tokens Studio for Figma, Tokens Studio in the old spelling with value and type, and the set file for the OpenProject plugin. A token keeps the same path in every format. The set file moves a set to the plugin without a connection. Any file can be uploaded again as a custom token set.": "Bestandsformaten: W3C design tokens, Figma met elke kleur als tekst, Tokens Studio voor Figma, Tokens Studio in de oude spelling met value en type, en het setbestand voor de OpenProject-plugin. Elke token houdt in alle formaten hetzelfde pad. Het setbestand zet een set over naar de plugin zonder koppeling. Elk bestand kunt u ook weer uploaden als eigen tokenset.",
+        "You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; \"Back to the Nextcloud theme\" brings the original back.": "Je werkt aan het standaardthema van Nextcloud. Bewaar de wijzigingen als een eigen tokenset, of schrijf ze over het Nextcloud-thema heen. Dat verandert Nextcloud voor iedereen; met \"Terug naar het Nextcloud-thema\" komt het origineel terug."
     },
     "plurals": {}
 }
