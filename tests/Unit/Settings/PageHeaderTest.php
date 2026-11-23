@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Settings;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Settings\Admin;
 use OCA\Thematiq\Settings\PageHeader;
 use PHPUnit\Framework\TestCase;
 
@@ -47,8 +46,7 @@ class PageHeaderTest extends TestCase {
 	}//end testComesFirstInTheThemingSection()
 
 	/**
-	 * It renders its own template with the default documentation address,
-	 * which js/admin.js then points at the chosen design system's docs.
+	 * It renders its own template.
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 *
@@ -59,7 +57,6 @@ class PageHeaderTest extends TestCase {
 
 		$this->assertSame(expected: Application::APP_ID, actual: $form->getApp());
 		$this->assertSame(expected: 'settings/page-header', actual: $form->getTemplateName());
-		$this->assertSame(expected: Admin::DEFAULT_DOCUMENTATION_URL, actual: $form->getParams()['documentationUrl']);
 	}//end testRendersTheHeaderTemplate()
 
 	/**
@@ -74,6 +71,7 @@ class PageHeaderTest extends TestCase {
 
 		$this->assertStringContainsString(needle: 'id="nldesign-preview-btn"', haystack: $template);
 		$this->assertStringContainsString(needle: 'id="nldesign-doc-link"', haystack: $template);
+		$this->assertStringContainsString(needle: 'Admin::DEFAULT_DOCUMENTATION_URL', haystack: $template);
 		$this->assertStringContainsString(needle: "'Themes and appearance'", haystack: $template);
 		$this->assertStringContainsString(needle: 'aria-current="page"', haystack: $template);
 	}//end testTemplateKeepsTheActionIds()

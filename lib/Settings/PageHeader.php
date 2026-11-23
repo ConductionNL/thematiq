@@ -46,11 +46,7 @@ class PageHeader implements ISettings {
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 */
 	public function getForm(): TemplateResponse {
-		return new TemplateResponse(
-			Application::APP_ID,
-			'settings/page-header',
-			['documentationUrl' => Admin::DEFAULT_DOCUMENTATION_URL]
-		);
+		return new TemplateResponse(Application::APP_ID, 'settings/page-header', []);
 	}//end getForm()
 
 	/**

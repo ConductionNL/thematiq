@@ -51,10 +51,12 @@
 	border: 1px solid var(--color-border-maxcontrast);
 	border-radius: var(--border-radius-element, 8px);
 	background: var(--color-main-background);
-	color: var(--color-main-text);
+	/* NL Design colours and underlines every link that is not a `.button`,
+	 * which is why Documentation carries that class. */
+	color: var(--color-main-text) !important;
 	font-size: 14px;
 	font-weight: 600;
-	text-decoration: none;
+	text-decoration: none !important;
 	cursor: pointer;
 }
 
@@ -80,4 +82,20 @@
 	color: var(--nl-color-grey-text, var(--color-text-maxcontrast));
 	font-size: 15px !important;
 	line-height: 1.5 !important;
+}
+
+.thematiq-page-header__icon {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	background-color: currentColor;
+	mask: var(--thematiq-icon) center / contain no-repeat;
+}
+
+.thematiq-page-header__icon--preview {
+	--thematiq-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z'/%3E%3C/svg%3E");
+}
+
+.thematiq-page-header__icon--external {
+	--thematiq-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z'/%3E%3C/svg%3E");
 }
