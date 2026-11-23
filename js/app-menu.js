@@ -807,7 +807,7 @@
 		var synthetic = false
 		var openTimer = null
 		var closeTimer = null
-		var zone = TRIGGERS + ', .app-menu__popover, .app-menu__trigger'
+		var zone = TRIGGERS + ', .app-menu, .app-menu__popover, .app-menu__trigger'
 
 		var waffle = function () {
 			return document.querySelector('.app-menu__waffle')

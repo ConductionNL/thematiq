@@ -137,10 +137,18 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 	it('a menu opened by a click stays open when the pointer leaves', async () => {
 		const waffle = header()
+		const nav = document.createElement('nav')
+		nav.className = 'app-menu'
+		waffle.parentNode.parentNode.insertBefore(nav, waffle.parentNode)
+		nav.appendChild(waffle.parentNode)
+		const coreLeave = vi.fn()
+		nav.addEventListener('mouseleave', coreLeave)
 		await loadScript()
 
 		waffle.click()
 		expect(isOpen()).toBe(true)
+		nav.dispatchEvent(new MouseEvent('mouseleave'))
+		expect(coreLeave, 'Nextcloud never hears the pointer leave a pinned menu').not.toHaveBeenCalled()
 		out(waffle)
 		vi.advanceTimersByTime(1000)
 		expect(isOpen()).toBe(true)
