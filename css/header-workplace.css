@@ -388,10 +388,11 @@ body[data-themes*='dark'] #header .thematiq-user-chip__avatar {
  * cut off after a few rows. The board draws a 640px menu without an inner
  * scrollbar: tiles that never break a name in the middle and are never
  * underlined. js/app-menu.js marks the grid `data-thematiq-app-menu` and
- * arranges it by the token set's sections; the grid is then 12 columns,
- * a section's apps take three (four to a row, with their description), the
- * other apps two (six to a row), and the headings and the footer the full
- * row. Every colour reads a token, with Nextcloud's own variable behind it.
+ * lays it out as one ordered list (apps-menu-ordered-list): the grid is then
+ * 12 columns, every entry takes four (three to a row, the icon beside the
+ * name and its second line), and the toggle, the line, the heading and the
+ * footer take the full row. Every colour reads a token, with Nextcloud's own
+ * variable behind it.
  */
 body:not(#body-login) .app-menu__popover-base .app-menu__popover {
 	box-sizing: border-box;
@@ -445,7 +446,63 @@ body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu]
 	> a.app-item {
-	grid-column: span 2;
+	display: grid !important;
+	grid-column: span 4;
+	grid-template-columns: 40px minmax(0, 1fr);
+	column-gap: 12px;
+	row-gap: 2px;
+	align-content: center;
+	align-items: center;
+	justify-items: start;
+	min-height: 60px;
+	padding: 10px 12px !important;
+	text-align: start;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.app-item
+	> .app-item__circle {
+	grid-row: 1 / span 2;
+	grid-column: 1;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.app-item
+	> .app-item__label {
+	grid-row: 1 / span 2;
+	grid-column: 2;
+	max-width: 100%;
+	text-align: start;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.app-item:has(.thematiq-app-menu__description)
+	> .app-item__label {
+	grid-row: 1;
+	align-self: end;
+}
+
+/* Past the nine, folded until "All apps" unfolds them. */
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> [data-thematiq-folded] {
+	display: none !important;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu]
+	> a.app-item[data-thematiq-dragging] {
+	outline: 2px dashed var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: -2px;
+	opacity: 0.6;
 }
 
 body:not(#body-login)
@@ -494,42 +551,19 @@ body:not(#body-login)
 	display: none;
 }
 
-/* A section's own apps: wider tiles, a 44px circle in the primary's light
- * wash, the name above the description. */
-body:not(#body-login)
-	.app-menu__popover-base
-	.app-menu__grid
-	> a.app-item.thematiq-app-menu__featured {
-	grid-column: span 3;
-	padding: 14px 8px 12px !important;
-}
-
-body:not(#body-login)
-	.app-menu__popover-base
-	.thematiq-app-menu__featured
-	.app-item__circle {
-	width: 44px;
-	height: 44px;
-	background: var(
-		--nldesign-color-primary-light,
-		var(--color-primary-element-light)
-	);
-	color: var(--nldesign-color-primary-hover, var(--color-primary-element));
-}
-
-body:not(#body-login)
-	.app-menu__popover-base
-	.thematiq-app-menu__featured
-	.app-item__label {
-	font-size: 14px;
-	font-weight: 600;
-}
-
+/* The second line of an entry: what the app is for. */
 body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__description {
+	grid-row: 2;
+	grid-column: 2;
+	align-self: start;
+	max-width: 100%;
+	overflow: hidden;
 	color: var(--color-text-maxcontrast);
 	font-size: 12px;
 	line-height: 1.2;
-	text-align: center;
+	text-align: start;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 /* The app on screen: the accent's light wash, the circle in the accent. */
@@ -564,7 +598,7 @@ body:not(#body-login)
 body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu-manage]
-	> a.thematiq-app-menu__outlined {
+	> a[data-thematiq-outlined] {
 	display: none;
 }
 
@@ -581,10 +615,54 @@ body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__heading {
 	margin-block: 0 6px;
 }
 
+body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__note {
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+/* "All apps" and "Hide apps": a text button under the nine. */
+body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__toggle-row {
+	display: flex;
+	grid-column: 1 / -1;
+	justify-content: flex-start;
+}
+
 body:not(#body-login)
 	.app-menu__popover-base
-	.thematiq-app-menu__heading:not([data-thematiq-row='group-0']) {
-	margin-block-start: 12px;
+	.thematiq-app-menu__toggle-row
+	> button.thematiq-app-menu__toggle {
+	min-height: var(--default-clickable-area, 34px);
+	margin: 0;
+	padding: 4px 12px;
+	border: 0;
+	border-radius: var(--border-radius-element, 8px);
+	background: transparent;
+	color: var(--nldesign-color-link, var(--color-primary-element));
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.thematiq-app-menu__toggle-row
+	> button.thematiq-app-menu__toggle:hover,
+body:not(#body-login)
+	.app-menu__popover-base
+	.thematiq-app-menu__toggle-row
+	> button.thematiq-app-menu__toggle:focus-visible {
+	background: var(
+		--nldesign-color-background-hover,
+		var(--color-background-hover)
+	);
+}
+
+/* The line between the nine and the rest. */
+body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__line {
+	grid-column: 1 / -1;
+	height: 0;
+	margin-block: 4px;
+	border-top: 1px solid var(--color-border);
 }
 
 /* The NL Design heading rule sizes every h2 with id strength. */
@@ -617,22 +695,15 @@ body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__footer {
 }
 
 body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__hint {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 	color: var(--color-text-maxcontrast);
 }
 
-/* OpenProject's modules (openproject-in-the-app-menu): links thematiq adds, so
- * Nextcloud's scoped tile styles do not reach them. They take the layout of a
- * tile here, and their icon is an inline SVG instead of the masked app icon. */
-body:not(#body-login)
-	.app-menu__popover-base
-	.app-menu__grid
-	> a.app-item.thematiq-app-menu__external {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	text-align: center;
-}
+/* The external apps (external-apps-in-the-app-menu): links thematiq adds, so
+ * Nextcloud's scoped tile styles do not reach them. They take the layout of an
+ * entry above, and their icon is an inline SVG instead of the masked app icon. */
 
 body:not(#body-login)
 	.app-menu__popover-base
@@ -664,4 +735,23 @@ body:not(#body-login)
 		--nldesign-color-background-hover,
 		var(--color-background-hover)
 	);
+}
+
+/* Three columns do not fit a phone: two. */
+@media (max-width: 600px) {
+	body:not(#body-login)
+		.app-menu__popover-base
+		.app-menu__grid[data-thematiq-app-menu]
+		> a.app-item {
+		grid-column: span 6;
+	}
+}
+
+/* Asked for less motion: the menu opens and closes without a transition. */
+@media (prefers-reduced-motion: reduce) {
+	body:not(#body-login) .app-menu__popover-base,
+	body:not(#body-login) .app-menu__popover-base * {
+		transition: none !important;
+		animation: none !important;
+	}
 }
