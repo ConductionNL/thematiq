@@ -17,12 +17,14 @@ use OCA\Thematiq\Service\AppMenuListState;
 use OCA\Thematiq\Service\AppMenuOrder;
 use OCA\Thematiq\Service\AppMenuPins;
 use OCA\Thematiq\Service\AppMenuService;
+use OCA\Thematiq\Service\AppMenuSettings;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ExternalApps;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\OpenProjectModules;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -159,10 +161,12 @@ class AppMenuServiceTest extends TestCase {
 		return [
 			'order' => [],
 			'pins' => [],
+			'settings' => array_diff_key(AppMenuSettings::DEFAULTS, ['order' => 0, 'pinned' => 0, 'externalApps' => 0]),
+			'admin' => false,
 			'labels' => [
 				'title' => 'Apps',
-				'allApps' => 'All apps',
-				'hideApps' => 'Hide apps',
+				'allApps' => 'More apps',
+				'hideApps' => 'Fewer apps',
 				'dragHint' => 'Drag an app to reorder it or pin it to the top bar.',
 				'moveHint' => 'Alt with an arrow key moves, Alt+P pins or unpins.',
 				'moved' => '{app} moved to place {place} of {total}.',
@@ -181,6 +185,7 @@ class AppMenuServiceTest extends TestCase {
 				'unpinnedApp' => '{app} removed from the top bar.',
 				'pinFull' => 'You can pin up to {max} apps.',
 				'pinSaveFailed' => 'The pinned apps could not be saved.',
+				'menuSettings' => 'Menu settings',
 			],
 		];
 	}//end ordered()
@@ -207,7 +212,8 @@ class AppMenuServiceTest extends TestCase {
 			externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
 			order: new AppMenuOrder(config: $config),
 			userSession: $session,
-			pins: new AppMenuPins(config: $config)
+			pins: new AppMenuPins(config: $config),
+			settings: new AppMenuSettings(config: $config)
 		);
 	}//end listState()
 
@@ -264,7 +270,7 @@ class AppMenuServiceTest extends TestCase {
 			],
 			actual: $state['external']['apps']
 		);
-		$this->assertSame(expected: 'All apps', actual: $state['labels']['allApps']);
+		$this->assertSame(expected: 'More apps', actual: $state['labels']['allApps']);
 	}//end testTheOrderAndTheExternalAppsJoinTheMenu()
 
 	/**
@@ -444,4 +450,55 @@ class AppMenuServiceTest extends TestCase {
 			message: 'no address, no section'
 		);
 	}//end testTheAddressAndTheModulesAreChecked()
+
+	/**
+	 * With the classic style a person gets Nextcloud's apps menu as it ships: no state and no
+	 * script. An administrator keeps the gear, so only the dialog's script and stylesheet load.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	public function testTheClassicStyleLeavesTheMenuAlone(): void {
+		$this->configure(block: ['hint' => 'Hint']);
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, $default = '') => (['menu.style' => '"classic"'][$key] ?? $default)
+		);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
+		$l10n->method('getLanguageCode')->willReturn('en');
+		$l10n->method('t')->willReturnArgument(0);
+		$factory = $this->createMock(originalClassName: IFactory::class);
+		$factory->method('get')->willReturn($l10n);
+
+		foreach ([false, true] as $admin) {
+			$initialState = $this->createMock(originalClassName: IInitialState::class);
+			$initialState->expects($admin === true ? $this->once() : $this->never())->method('provideInitialState');
+			$groups = $this->createMock(originalClassName: IGroupManager::class);
+			$groups->method('isAdmin')->willReturn($admin);
+			$session = $this->createMock(originalClassName: IUserSession::class);
+			$user = $this->createMock(originalClassName: IUser::class);
+			$user->method('getUID')->willReturn('anna');
+			$session->method('getUser')->willReturn($user);
+			$listState = new AppMenuListState(
+				externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
+				order: new AppMenuOrder(config: $config),
+				userSession: $session,
+				pins: new AppMenuPins(config: $config),
+				settings: new AppMenuSettings(config: $config),
+				groups: $groups
+			);
+			$service = $this->getMockBuilder(className: AppMenuService::class)
+				->setConstructorArgs([$this->config, $this->designSystemService, $initialState, $factory, $this->logger, $listState])
+				->onlyMethods(['emitScript'])
+				->getMock();
+			if ($admin === true) {
+				$service->expects($this->once())->method('emitScript')->with(false);
+			} else {
+				$service->expects($this->never())->method('emitScript');
+			}
+
+			$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+		}
+	}//end testTheClassicStyleLeavesTheMenuAlone()
 }//end class

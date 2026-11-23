@@ -39,7 +39,7 @@ class AppMenuPins {
 	 *
 	 * @var string
 	 */
-	public const KEY = 'app_menu_pins';
+	public const KEY = 'menu.pinned';
 
 	/**
 	 * The most pins.
@@ -68,7 +68,7 @@ class AppMenuPins {
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 */
 	public function get(string $userId): array {
-		$stored = json_decode($this->config->getUserValue($userId, Application::APP_ID, self::KEY, ''), true);
+		$stored = json_decode((string)$this->config->getUserValue($userId, Application::APP_ID, self::KEY, ''), true);
 		if (is_array($stored) === false) {
 			return [];
 		}

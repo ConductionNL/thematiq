@@ -1306,6 +1306,56 @@
 							}
 						}
 					]
+				},
+				{
+					"title": {
+						"nl": "Nextcloud",
+						"en": "Nextcloud"
+					},
+					"apps": [
+						{
+							"id": "files",
+							"description": {
+								"nl": "Documenten",
+								"en": "Documents"
+							}
+						},
+						{
+							"id": "calendar",
+							"description": {
+								"nl": "Afspraken",
+								"en": "Appointments"
+							}
+						},
+						{
+							"id": "contacts",
+							"description": {
+								"nl": "Adresboek",
+								"en": "Address book"
+							}
+						},
+						{
+							"id": "spreed",
+							"description": {
+								"nl": "Chat en bellen",
+								"en": "Chat and calls"
+							}
+						},
+						{
+							"id": "deck",
+							"description": {
+								"nl": "Kanbanborden",
+								"en": "Kanban boards"
+							}
+						},
+						{
+							"id": "notes",
+							"description": {
+								"nl": "Aantekeningen",
+								"en": "Notes"
+							}
+						}
+					]
 				}
 			],
 			"others_title": {

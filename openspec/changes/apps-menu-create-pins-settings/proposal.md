@@ -20,10 +20,10 @@ design-system PR #1197). The boards are the canon, and the menu in the workplace
   A chip makes an empty file in your home folder through the templates API and opens it.
 - **Pinned apps.** Drag an app onto the top bar to pin it next to the grid button. Drag a pinned app off
   the bar to unpin it. Alt+P pins or unpins the focused app. Pins are stored per person on the server.
-- **Menu settings.** A gear button "Menu settings" replaces "Manage apps" in the footer. Its dialog
-  sets the menu style (workplace or classic Nextcloud), the pinned apps, the order and visibility of
-  the menu's entries, and switches for external apps and create actions. Admins also see a
-  "Manage apps" link. Every value is checked on the server before it is stored.
+- **Menu settings.** A gear button "Menu settings" replaces "Manage apps" in the footer. Its dialog has
+  the tabs Menu items, Configuration and Theming (design-system #1201). Administrators set the defaults
+  for everyone; a person sets their own order, pins, hidden apps and external apps. External apps get
+  their own form with an icon library and an upload. Every value is checked on the server.
 
 ## Not in this change
 
@@ -34,6 +34,10 @@ design-system PR #1197). The boards are the canon, and the menu in the workplace
 
 - `js/app-menu.js`, `css/header-workplace.css`
 - `lib/Service/AppMenuListState.php` and the menu's initial state
+- new `lib/Service/AppMenuSettings.php`, `AppMenuExternalApp.php`, `AppMenuIcons.php`, `AppMenuDialogLabels.php`,
+  `lib/Controller/AppMenuSettingsController.php` and the `/app-menu/settings`, `/defaults`, `/icons` routes
+- new `js/dialogs/menu-settings-dialog.js`, `css/menu-settings-dialog.css`; the menu's CSS moves to `css/app-menu.css`
+- `token-sets.json`: payoffs for the Nextcloud apps in Zuiddrecht
 - new `lib/Service/AppMenuPins.php`, `lib/Service/AppMenuKeys.php`, `lib/Controller/AppMenuPinsController.php`,
   route `POST /app-menu/pins`
 - l10n: the new strings in English and Dutch
