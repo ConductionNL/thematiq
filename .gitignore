@@ -79,6 +79,7 @@
 !/js/header-user.js
 !/js/header-brand.js
 !/js/app-menu.js
+!/js/dialogs/
 !/js/search-placeholder.js
 !/js/login-copy.js
 !/js/not-found.js
