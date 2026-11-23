@@ -521,4 +521,25 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertNotContains(needle: 'header-workplace', haystack: $this->service->stylesheets(tokenSet: 'zuiddrecht'));
 		$this->assertFalse(condition: $this->service->accepts(key: 'header_style', value: 'dark'));
 	}//end testTheWorkplaceHeaderNeedsTheLightLayout()
+
+	/**
+	 * Mail, Calendar and Deck get their own stylesheet on their own pages, only
+	 * with the light layout; any other app, and a page without an app, gets none.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 *
+	 * @return void
+	 */
+	public function testMailCalendarAndDeckGetTheirOwnStylesheet(): void {
+		foreach (['mail', 'calendar', 'deck'] as $app) {
+			$this->assertSame(expected: ['workplace-apps/' . $app], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app));
+			$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'utrecht', appId: $app));
+		}
+
+		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'files'));
+		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: null));
+
+		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
+		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));
+	}//end testMailCalendarAndDeckGetTheirOwnStylesheet()
 }//end class

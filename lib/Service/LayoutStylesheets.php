@@ -29,6 +29,31 @@ namespace OCA\Thematiq\Service;
 final class LayoutStylesheets {
 
 	/**
+	 * The apps the light layout draws with a stylesheet of their own, under `css/workplace-apps/`.
+	 *
+	 * @var string[]
+	 */
+	public const array APP_LAYERS = ['mail', 'calendar', 'deck'];
+
+	/**
+	 * The stylesheet the light layout adds for one app: only on that app's own pages.
+	 *
+	 * @param string $workplaceLayout The resolved workplace layout.
+	 * @param string|null $appId The rendered app.
+	 *
+	 * @return array<int, string> Zero or one stylesheet.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	public function forApp(string $workplaceLayout, ?string $appId): array {
+		if ($workplaceLayout !== LayoutOptionsService::LAYOUT_LIGHT || in_array($appId, self::APP_LAYERS, true) === false) {
+			return [];
+		}
+
+		return ['workplace-apps/' . $appId];
+	}//end forApp()
+
+	/**
 	 * The stylesheets of the workplace layout, the brand stripe and the navigation, in that order.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.

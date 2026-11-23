@@ -1718,6 +1718,33 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetsLayoutDefaultsEmitBothStylesheets()
 
 	/**
+	 * A Deck page with the light layout links Deck's own stylesheet after the
+	 * workplace layout; a Files page links none of the app stylesheets.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 *
+	 * @return void
+	 */
+	public function testTheRenderedAppLinksItsOwnWorkplaceStylesheet(): void {
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light']]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'deck');
+
+		$layout = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-layout.css');
+		$deck = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/deck.css');
+		$this->assertGreaterThan(expected: $layout, actual: $deck);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'files');
+
+		$this->assertSame(expected: [], actual: preg_grep('#/css/workplace-apps/#', $linkLog));
+	}//end testTheRenderedAppLinksItsOwnWorkplaceStylesheet()
+
+	/**
 	 * A stored choice wins over the set, in both directions: an administrator
 	 * can switch a set's layout off, and can give a set without one the light
 	 * layout and the stripe.
