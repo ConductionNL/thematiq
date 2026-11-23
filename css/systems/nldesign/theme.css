@@ -1133,10 +1133,19 @@ button:not(.action-button):not(.cn-look-board *),
 	border-radius: var(--nldesign-border-radius) !important;
 }
 
+/* A dialog's corner is half again the brand radius (12px on an 8px set, as
+ * the boards draw it; a square set stays square). It keeps its shadow, so it
+ * lifts off the page; the shadow rule further down leaves it out. */
 .modal-container {
+	--thematiq-dialog-shadow: 0 16px 48px rgba(27, 28, 29, 0.28);
+
 	border-radius: var(
 		--nldesign-component-dialog-border-radius,
-		var(--nldesign-border-radius)
+		calc(var(--nldesign-border-radius) * 1.5)
+	) !important;
+	box-shadow: var(
+		--nldesign-component-dialog-box-shadow,
+		var(--thematiq-dialog-shadow)
 	) !important;
 }
 
@@ -1222,7 +1231,6 @@ body,
 
 .panel,
 .widget,
-.modal-container,
 .popover,
 .dropdown,
 button,
