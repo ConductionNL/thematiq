@@ -6,7 +6,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 
 ## 1. The page (TqTheming)
 
-- [ ] 1.1 Page header: title, breadcrumb, intro, actions (Preview in my session, Documentation, menu).
+- [x] 1.1 Page header: title, breadcrumb, intro, actions (Preview in my session, Documentation). The board's third button is buildiq's inspect button, an app this page does not ship.
 - [ ] 1.2 Theme card around Nextcloud's own theming fields in the board's three-column grid, with the Nextcloud chip.
 - [ ] 1.3 Thematiq heading with the environment chip and its line.
 - [ ] 1.4 Active token set card: picker, chips, Workplace / Login page tabs, swatches, sample, actions, switch line, formats note.

@@ -8,8 +8,9 @@ kind: code
 
 Every capability the 36 thematiq boards name is built (`openspec/parity/capabilities.json`), but the
 administration page is not drawn as the boards draw it. Measured on 23 November 2026 with compdiff on
-the demo stack (`/settings/admin/theming` as admin, the boards in English): for 35 of the 36 boards
-not one board component pairs with the live page. The page is one long column of
+the demo stack (`/settings/admin/theming` as admin, the boards in English): for 32 of the 36 boards
+not one board component pairs with the live page, and TqBeweging, TqMerkPerApp, TqTokenSet and
+TqWissels pair one component each. The page is one long column of
 `templates/settings/admin.php` sections under Nextcloud's own Theming form, where the boards draw a
 page header with actions, a set of cards (Theme, Active token set with its preview, Token sets as a
 filterable table, Layout, Website lettering, Dark variant), dialogs for the confirmations and

@@ -86,10 +86,6 @@ if ($_['mockUi'] === true) {
 <div id="nldesign-settings" class="section">
 	<div class="nldesign-settings-header">
 		<h2>Thematiq</h2>
-		<a href="<?php p($_['documentationUrl']); ?>" id="nldesign-doc-link" target="_blank" rel="noopener noreferrer" class="nldesign-doc-link">
-			<span class="icon-link-external"></span>
-			<?php p($l->t('Documentation')); ?>
-		</a>
 	</div>
 	<p class="settings-hint">
 		<?php p($l->t('Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below.')); ?>
@@ -149,9 +145,6 @@ if ($_['mockUi'] === true) {
 		     links read it. A row of their own, so they no longer wrap into the
 		     select's line at arbitrary points. -->
 		<div class="nldesign-token-set-actions">
-			<button type="button" id="nldesign-preview-btn" class="button">
-				<?php p($l->t('Preview in my session')); ?>
-			</button>
 			<button type="button" id="nldesign-reset-theme-btn" class="button">
 				<?php p($l->t('Reset theme to Nextcloud')); ?>
 			</button>
