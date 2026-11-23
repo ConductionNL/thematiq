@@ -37,6 +37,8 @@ final class AppMenuDialogLabels {
 	 *
 	 * @return array<string, string> The texts.
 	 *
+	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - a list of texts, one per line.
+	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
 	 */
 	public static function labels(IL10N $l): array {

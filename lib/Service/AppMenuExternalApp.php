@@ -146,6 +146,8 @@ final class AppMenuExternalApp {
 	 *
 	 * @return array<string, mixed>|null The clean app, or null when it is not allowed.
 	 *
+	 * @SuppressWarnings(PHPMD.CyclomaticComplexity) - one condition per field of the app.
+	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	public static function clean(array $app, int $index): ?array {
@@ -209,7 +211,7 @@ final class AppMenuExternalApp {
 
 		$value = trim($value);
 		$parts = parse_url($value);
-		if ($parts === false || strtolower((string)($parts['scheme'] ?? '')) !== 'https' || ($parts['host'] ?? '') === ''
+		if ($parts === false || strtolower($parts['scheme'] ?? '') !== 'https' || ($parts['host'] ?? '') === ''
 			|| isset($parts['user']) === true || preg_match('/\s/', $value) === 1
 		) {
 			return null;

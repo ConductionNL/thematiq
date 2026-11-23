@@ -124,7 +124,7 @@ class AppMenuServiceTest extends TestCase {
 
 		$service = $this->getMockBuilder(className: AppMenuService::class)
 			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger])
-			->onlyMethods(['emitScript'])
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->method('emitScript')->willReturnCallback(
 			function (): void {
@@ -251,7 +251,7 @@ class AppMenuServiceTest extends TestCase {
 			->setConstructorArgs(
 				[$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $this->listState(config: $config, uid: 'anna')]
 			)
-			->onlyMethods(['emitScript'])
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 
@@ -399,7 +399,7 @@ class AppMenuServiceTest extends TestCase {
 			->setConstructorArgs(
 				[$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $this->listState(config: $config, uid: null)]
 			)
-			->onlyMethods(['emitScript'])
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 	}//end testOpenProjectsModulesJoinTheMenu()
@@ -495,13 +495,15 @@ class AppMenuServiceTest extends TestCase {
 			);
 			$service = $this->getMockBuilder(className: AppMenuService::class)
 				->setConstructorArgs([$this->config, $this->designSystemService, $initialState, $factory, $this->logger, $listState])
-				->onlyMethods(['emitScript'])
+				->onlyMethods(['emitScript', 'emitMenuStyle'])
 				->getMock();
+			$emits = $this->never();
 			if ($admin === true) {
-				$service->expects($this->once())->method('emitScript')->with(false);
-			} else {
-				$service->expects($this->never())->method('emitScript');
+				$emits = $this->once();
 			}
+
+			$service->expects($emits)->method('emitScript');
+			$service->expects($this->never())->method('emitMenuStyle');
 
 			$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 		}

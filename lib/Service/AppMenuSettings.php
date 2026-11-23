@@ -214,7 +214,7 @@ class AppMenuSettings {
 		}
 
 		$clean = self::strict(values: $values, known: $known);
-		foreach ($values as $key => $value) {
+		foreach (array_keys($values) as $key) {
 			if (array_key_exists($key, $clean) === true) {
 				$this->config->setUserValue($userId, Application::APP_ID, self::PREFIX . $key, (string)json_encode($clean[$key]));
 				continue;
@@ -241,7 +241,7 @@ class AppMenuSettings {
 	 */
 	public function saveDefaults(array $values, array $known): array {
 		$clean = self::strict(values: $values, known: $known);
-		foreach ($values as $key => $value) {
+		foreach (array_keys($values) as $key) {
 			if (array_key_exists($key, $clean) === true) {
 				$this->config->setAppValue(Application::APP_ID, self::PREFIX . $key, (string)json_encode($clean[$key]));
 				continue;

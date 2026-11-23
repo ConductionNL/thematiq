@@ -278,7 +278,10 @@ class AppMenuService {
 			}
 
 			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
-			$this->emitScript(workplace: $workplace);
+			$this->emitScript();
+			if ($workplace === true) {
+				$this->emitMenuStyle();
+			}
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: the apps menu sections failed for this render; the menu keeps one grid.',
@@ -288,21 +291,28 @@ class AppMenuService {
 	}//end inject()
 
 	/**
-	 * Load js/app-menu.js and the Menu settings dialog, and css/app-menu.css for the workplace
-	 * menu. A seam, so unit tests need no Nextcloud bootstrap.
-	 *
-	 * @param bool $workplace False for the classic menu: only the dialog's stylesheet loads.
+	 * Load js/app-menu.js and the Menu settings dialog with its stylesheet. A seam, so unit tests
+	 * need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
-	protected function emitScript(bool $workplace = true): void {
+	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::DIALOG);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
 		\OCP\Util::addStyle(application: Application::APP_ID, file: 'menu-settings-dialog');
-		if ($workplace === true) {
-			\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);
-		}
 	}//end emitScript()
+
+	/**
+	 * Load css/app-menu.css, the workplace menu's look. A seam, so unit tests need no Nextcloud
+	 * bootstrap.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	protected function emitMenuStyle(): void {
+		\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);
+	}//end emitMenuStyle()
 }//end class
