@@ -88,6 +88,7 @@ body:not(#body-login)
 	align-items: center;
 	justify-items: start;
 	/* The board's tile: 12px by 6px padding round a 44px content box, 68px in all. */
+	box-sizing: border-box;
 	min-height: 68px;
 	padding: 12px 6px !important;
 	text-align: start;
