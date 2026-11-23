@@ -754,3 +754,11 @@ body:not(#body-login)
 		animation: none !important;
 	}
 }
+
+/* An external entry's name reads like a Nextcloud app's, not like a link. */
+body:not(#body-login)
+	.app-menu__popover-base
+	.thematiq-app-menu__external
+	.app-item__label {
+	color: var(--color-main-text) !important;
+}
