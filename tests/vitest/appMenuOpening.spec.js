@@ -57,7 +57,9 @@ function out(el, to = document.getElementById('elsewhere')) {
 
 describe('the apps menu opens on hover and pins on click', () => {
 	beforeEach(() => {
-		vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame'] })
+		vi.useFakeTimers({
+			toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame'],
+		})
 		coreClicks = 0
 		window.matchMedia = vi.fn(() => ({ matches: true }))
 		vi.spyOn(document, 'hasFocus').mockReturnValue(true)
@@ -120,9 +122,15 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 		const outsidePress = vi.fn()
 		document.addEventListener('mousedown', outsidePress, true)
-		const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+		const press = new MouseEvent('mousedown', {
+			bubbles: true,
+			cancelable: true,
+		})
 		waffle.dispatchEvent(press)
-		expect(outsidePress, 'the popover never saw the press').not.toHaveBeenCalled()
+		expect(
+			outsidePress,
+			'the popover never saw the press',
+		).not.toHaveBeenCalled()
 		expect(press.defaultPrevented, 'focus stays in the menu').toBe(true)
 		document.removeEventListener('mousedown', outsidePress, true)
 		const pin = new MouseEvent('click', { bubbles: true, cancelable: true })
@@ -143,9 +151,11 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 		over(waffle)
 		vi.advanceTimersByTime(150)
-		waffle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+		waffle.dispatchEvent(
+			new MouseEvent('click', { bubbles: true, cancelable: true }),
+		)
 		waffle.setAttribute('aria-expanded', 'false')
-		vi.advanceTimersByTime(40)
+		await Promise.resolve()
 		expect(isOpen()).toBe(true)
 		expect(coreClicks).toBe(2)
 	})
@@ -165,7 +175,10 @@ describe('the apps menu opens on hover and pins on click', () => {
 		nav.addEventListener('pointerleave', coreLeave)
 		nav.dispatchEvent(new MouseEvent('mouseleave'))
 		nav.dispatchEvent(new MouseEvent('pointerleave'))
-		expect(coreLeave, 'Nextcloud never hears the pointer leave a pinned menu').not.toHaveBeenCalled()
+		expect(
+			coreLeave,
+			'Nextcloud never hears the pointer leave a pinned menu',
+		).not.toHaveBeenCalled()
 		out(waffle)
 		vi.advanceTimersByTime(1000)
 		expect(isOpen()).toBe(true)

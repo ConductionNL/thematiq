@@ -33,6 +33,7 @@
 	var DRAG_START = 6
 	var HOVER_OPEN = 150
 	var HOVER_CLOSE = 180
+	var REOPEN_WINDOW = 600
 	var SAVE_DELAY = 400
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
@@ -807,6 +808,28 @@
 		var synthetic = false
 		var openTimer = null
 		var closeTimer = null
+		var reopenUntil = 0
+		var watched = null
+		var watchButton = function () {
+			var button = waffle()
+			if (
+				button === null
+				|| button === watched
+				|| typeof MutationObserver !== 'function'
+			) {
+				return
+			}
+			watched = button
+			new MutationObserver(function () {
+				if (pinned && !isOpen() && Date.now() < reopenUntil) {
+					reopenUntil = 0
+					toggle()
+				}
+			}).observe(button, {
+				attributes: true,
+				attributeFilter: ['aria-expanded'],
+			})
+		}
 		var zone = TRIGGERS + ', .app-menu, .app-menu__popover, .app-menu__trigger'
 
 		var waffle = function () {
@@ -893,6 +916,7 @@
 				clearTimeout(openTimer)
 				clearTimeout(closeTimer)
 				settle()
+				watchButton()
 				if (isOpen() && !pinned) {
 					event.preventDefault()
 					event.stopImmediatePropagation()
@@ -900,16 +924,7 @@
 					pinned = true
 					// The popover library hears this click before any other
 					// script and hides the menu a frame later: open it again.
-					var raf = window.requestAnimationFrame || function (fn) {
-						return setTimeout(fn, 16)
-					}
-					raf(function () {
-						raf(function () {
-							if (pinned && !isOpen()) {
-								toggle()
-							}
-						})
-					})
+					reopenUntil = Date.now() + REOPEN_WINDOW
 					return
 				}
 				pinned = !isOpen()
@@ -938,17 +953,19 @@
 				true,
 			)
 		})
-		;['mouseleave', 'pointerleave', 'mouseout', 'pointerout'].forEach(function (type) {
-			window.addEventListener(
-				type,
-				function (event) {
-					if (pinned && isOpen() && inZone(event.target)) {
-						event.stopImmediatePropagation()
-					}
-				},
-				true,
-			)
-		})
+		;['mouseleave', 'pointerleave', 'mouseout', 'pointerout'].forEach(
+			function (type) {
+				window.addEventListener(
+					type,
+					function (event) {
+						if (pinned && isOpen() && inZone(event.target)) {
+							event.stopImmediatePropagation()
+						}
+					},
+					true,
+				)
+			},
+		)
 	}
 
 	/**
