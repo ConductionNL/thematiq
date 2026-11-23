@@ -24,7 +24,7 @@
 		{ label: 'Accent soft', vars: ['--nldesign-color-accent-light', '--color-primary-light'] },
 		{ label: 'Ink', vars: ['--color-main-text'] },
 		{ label: 'Grey text', vars: ['--color-text-maxcontrast'] },
-		{ label: 'Work surface', vars: ['--color-background-dark', '--color-background-hover'] },
+		{ label: 'Work area', vars: ['--color-background-dark', '--color-background-hover'] },
 	]
 
 	/**
@@ -133,7 +133,7 @@
 		bar.appendChild(el('span', 'thematiq-set-sample__avatar', initials()))
 		sample.appendChild(bar)
 		var controls = el('div', 'thematiq-set-sample__controls')
-		controls.appendChild(el('span', 'thematiq-set-sample__nav', tr('All items')))
+		controls.appendChild(el('span', 'thematiq-set-sample__nav', tr('All cases')))
 		controls.appendChild(el('span', 'thematiq-set-sample__primary', tr('Primary button')))
 		controls.appendChild(el('span', 'thematiq-set-sample__secondary', tr('Second button')))
 		controls.appendChild(el('span', 'thematiq-set-sample__pill', tr('In progress')))
@@ -202,8 +202,8 @@
 
 		var names = [tr('Workplace'), tr('Login page')]
 		var notes = [
-			tr('Login page shows the logo, the login card with the primary button and the slogan, in the chosen set.'),
-			tr('Login page tab: this is how the set draws the login page. Logo and slogan come from the Nextcloud theme.'),
+			tr('The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.'),
+			tr('Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.'),
 		]
 		var tabs = []
 		var panels = []
