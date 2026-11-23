@@ -721,11 +721,14 @@
 	font-size: 14px;
 }
 
-.thematiq-token-sets__table th {
+/* NL Design paints every table head; the board's is plain grey text. */
+#nldesign-settings .thematiq-token-sets__table th {
 	padding: 8px 12px;
 	border-bottom: 1px solid var(--color-border);
-	color: var(--color-text-maxcontrast);
-	font-weight: 600;
+	background: transparent !important;
+	color: var(--color-text-maxcontrast) !important;
+	font-weight: 600 !important;
+	line-height: normal !important;
 	text-align: start;
 }
 
@@ -739,8 +742,9 @@
 	font: inherit;
 }
 
-.thematiq-token-sets__table td {
+#nldesign-settings .thematiq-token-sets__table td {
 	padding: 10px 12px;
+	line-height: normal !important;
 	border-bottom: 1px solid var(--color-border);
 	color: var(--color-main-text);
 	vertical-align: middle;
