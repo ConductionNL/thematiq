@@ -48,7 +48,10 @@ describe('the nldesign dialog frame', () => {
 		const blocks = blocksWith(sheet('css/systems/nldesign/theme.css'), '.modal-container')
 		expect(blocks.some((b) => /box-shadow:\s*none/.test(b))).toBe(false)
 		expect(blocks.join('\n')).toMatch(
-			/box-shadow:\s*var\(\s*--nldesign-component-dialog-box-shadow,\s*0 16px 48px rgba\(27, 28, 29, 0\.28\)\s*\)\s*!important/,
+			/box-shadow:\s*var\(\s*--nldesign-component-dialog-box-shadow,\s*var\(--thematiq-dialog-shadow\)\s*\)\s*!important/,
+		)
+		expect(blocks.join('\n')).toMatch(
+			/--thematiq-dialog-shadow:\s*0 16px 48px rgba\(27, 28, 29, 0\.28\);/,
 		)
 	})
 })

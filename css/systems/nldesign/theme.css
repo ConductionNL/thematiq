@@ -1137,13 +1137,15 @@ button:not(.action-button):not(.cn-look-board *),
  * the boards draw it; a square set stays square). It keeps its shadow, so it
  * lifts off the page; the shadow rule further down leaves it out. */
 .modal-container {
+	--thematiq-dialog-shadow: 0 16px 48px rgba(27, 28, 29, 0.28);
+
 	border-radius: var(
 		--nldesign-component-dialog-border-radius,
 		calc(var(--nldesign-border-radius) * 1.5)
 	) !important;
 	box-shadow: var(
 		--nldesign-component-dialog-box-shadow,
-		0 16px 48px rgba(27, 28, 29, 0.28)
+		var(--thematiq-dialog-shadow)
 	) !important;
 }
 
