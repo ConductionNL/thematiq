@@ -1352,7 +1352,9 @@ OC.L10N.register(
         "without tiles": "without tiles",
         "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Add, change or remove external apps in the apps menu: Menu settings, Menu items.",
         "Nothing to create here.": "Nothing to create here.",
-        "Quick add": "Quick add"
+        "Quick add": "Quick add",
+        "New event": "New event",
+        "Select a conversation": "Select a conversation"
     },
     "nplurals=2; plural=(n != 1);"
 )

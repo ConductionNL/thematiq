@@ -1352,7 +1352,9 @@ OC.L10N.register(
         "without tiles": "zonder tegels",
         "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Voeg externe apps toe, wijzig ze of verwijder ze in het app-menu: Menu-instellingen, Menuonderdelen.",
         "Nothing to create here.": "Hier valt niets te maken.",
-        "Quick add": "Snel toevoegen"
+        "Quick add": "Snel toevoegen",
+        "New event": "Nieuwe afspraak",
+        "Select a conversation": "Selecteer een gesprek"
     },
     "nplurals=2; plural=(n != 1);"
 )
