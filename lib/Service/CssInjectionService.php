@@ -309,14 +309,18 @@ class CssInjectionService {
 	}//end injectDesignSystemStyles()
 
 	/**
-	 * The URL of a static app stylesheet, with the installed version as cache-buster.
+	 * The URL of a static app stylesheet, with the installed version and the theming
+	 * cachebuster as cache-buster: the same pair the app's scripts carry, so a deploy
+	 * that keeps the version but raises the cachebuster never pairs a cached sheet with
+	 * a new script.
 	 *
 	 * @param string $file The stylesheet path relative to `css/`, without extension.
 	 *
 	 * @return string The URL.
 	 */
 	private function staticLayerUrl(string $file): string {
-		$version = $this->context->config->getAppValue(Application::APP_ID, 'installed_version', '0');
+		$version = $this->context->config->getAppValue(Application::APP_ID, 'installed_version', '0')
+			. '-' . $this->context->config->getAppValue('theming', 'cachebuster', '0');
 
 		return $this->context->urlGenerator->linkTo(appName: Application::APP_ID, file: 'css/' . $file . '.css') . '?v=' . rawurlencode($version);
 	}//end staticLayerUrl()
