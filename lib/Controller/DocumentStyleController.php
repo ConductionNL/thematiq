@@ -165,7 +165,12 @@ class DocumentStyleController extends Controller {
 		try {
 			$this->assets->store(kind: $kind, bytes: (string)file_get_contents($file['tmp_name']));
 		} catch (RuntimeException $e) {
-			return new JSONResponse(['error' => $this->uploadError(code: $e->getCode())], $e->getCode());
+			$status = Http::STATUS_UNPROCESSABLE_ENTITY;
+			if (in_array($e->getCode(), [Http::STATUS_NOT_FOUND, Http::STATUS_REQUEST_ENTITY_TOO_LARGE], true) === true) {
+				$status = $e->getCode();
+			}
+
+			return new JSONResponse(['error' => $this->uploadError(code: $status)], $status);
 		}
 
 		return $this->settings();
