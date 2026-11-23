@@ -141,4 +141,111 @@ describe('the Quick add button', () => {
 			'Nothing to create here.',
 		)
 	})
+
+	it('moves through the items with the arrows, wrapping, and closes on Tab', async () => {
+		installState('mail')
+		await loadScript()
+		document.querySelector('.thematiq-quick-add__button').click()
+		await flush()
+		const menu = document.querySelector('.thematiq-quick-add__menu')
+		const items = Array.from(menu.querySelectorAll('[role="menuitem"]'))
+		const key = (name) => menu.dispatchEvent(new window.KeyboardEvent('keydown', { key: name, bubbles: true }))
+
+		key('ArrowDown')
+		expect(document.activeElement).toBe(items[1])
+		key('ArrowDown')
+		expect(document.activeElement).toBe(items[0])
+		key('ArrowUp')
+		expect(document.activeElement).toBe(items[1])
+		key('a')
+		expect(menu.hidden).toBe(false)
+		key('Tab')
+		expect(menu.hidden).toBe(true)
+	})
+
+	it('closes on a second click of the button and on a click outside it', async () => {
+		installState('mail')
+		await loadScript()
+		const button = document.querySelector('.thematiq-quick-add__button')
+		const menu = document.querySelector('.thematiq-quick-add__menu')
+		button.click()
+		await flush()
+		button.click()
+		expect(menu.hidden).toBe(true)
+		expect(button.getAttribute('aria-expanded')).toBe('false')
+
+		button.click()
+		await flush()
+		menu.click()
+		expect(menu.hidden).toBe(false)
+		document.getElementById('notifications').click()
+		expect(menu.hidden).toBe(true)
+	})
+
+	it('says there is nothing to create when the actions cannot be listed', async () => {
+		window.thematiqCreateActions.list = () => Promise.reject(new Error('offline'))
+		installState('mail')
+		await loadScript()
+		document.querySelector('.thematiq-quick-add__button').click()
+		await flush()
+		await flush()
+		expect(document.querySelector('.thematiq-quick-add__status').textContent).toBe('Nothing to create here.')
+	})
+
+	it('opens again with the failure when an action reports one', async () => {
+		window.thematiqCreateActions.list = () => Promise.resolve([
+			{ name: 'New document', icon: 'M0 0', run: (failed) => failed() },
+		])
+		installState('deck')
+		await loadScript()
+		const button = document.querySelector('.thematiq-quick-add__button')
+		button.click()
+		await flush()
+		document.querySelector('.thematiq-quick-add__menu [role="menuitem"]').click()
+
+		const menu = document.querySelector('.thematiq-quick-add__menu')
+		expect(menu.hidden).toBe(false)
+		expect(button.getAttribute('aria-expanded')).toBe('true')
+		expect(menu.querySelector('.thematiq-quick-add__status').textContent).toBe('The file could not be created.')
+	})
+
+	it('puts the button back when Nextcloud re-renders the end of the bar', async () => {
+		installState('calendar')
+		await loadScript()
+		const wrap = document.querySelector('.thematiq-quick-add')
+		const end = document.querySelector('#header .header-end')
+		end.remove()
+		const fresh = document.createElement('div')
+		fresh.className = 'header-end'
+		fresh.innerHTML = '<div id="notifications"></div>'
+		document.getElementById('header').appendChild(fresh)
+		await flush()
+
+		expect(fresh.firstElementChild).toBe(wrap)
+		expect(wrap.nextElementSibling.id).toBe('notifications')
+	})
+
+	it('is not drawn without translations or when the apps state cannot be read', async () => {
+		installState('mail')
+		delete global.t
+		await loadScript()
+		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
+
+		global.t = (app, text) => text
+		global.OCP = { InitialState: { loadState: () => { throw new Error('no state') } } }
+		await loadScript()
+		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
+	})
+
+	it('waits for DOMContentLoaded while the page is loading', async () => {
+		installState('mail')
+		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		await loadScript()
+		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
+
+		readyState.mockReturnValue('complete')
+		document.dispatchEvent(new Event('DOMContentLoaded'))
+		expect(document.querySelector('.thematiq-quick-add')).not.toBeNull()
+		readyState.mockRestore()
+	})
 })
