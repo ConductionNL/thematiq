@@ -230,7 +230,7 @@ describe('the title, the chevron and the Create row', () => {
 
 	it('draws no row and asks nothing when the create actions are switched off', async () => {
 		const grid = openMenu()
-		installState({ labels: LABELS, order: [], createActions: false })
+		installState({ labels: LABELS, order: [], settings: { showCreateActions: false } })
 		await loadScript()
 
 		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()

@@ -71,7 +71,7 @@ class AppMenuPinsController extends Controller {
 		}
 
 		return new JSONResponse(
-			['pins' => $this->pins->save(userId: $user->getUID(), keys: $pins, known: $this->keys->known())]
+			['pins' => $this->pins->save(userId: $user->getUID(), keys: $pins, known: $this->keys->known(userId: $user->getUID()))]
 		);
 	}//end save()
 }//end class

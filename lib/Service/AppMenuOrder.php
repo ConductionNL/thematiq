@@ -37,7 +37,14 @@ class AppMenuOrder {
 	 *
 	 * @var string
 	 */
-	public const KEY = 'app_menu_order';
+	public const KEY = 'menu.order';
+
+	/**
+	 * The user config key the order had before the menu settings, still read when KEY is absent.
+	 *
+	 * @var string
+	 */
+	public const LEGACY_KEY = 'app_menu_order';
 
 	/**
 	 * The most keys kept.
@@ -66,7 +73,12 @@ class AppMenuOrder {
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 */
 	public function get(string $userId): array {
-		$stored = json_decode($this->config->getUserValue($userId, Application::APP_ID, self::KEY, ''), true);
+		$raw = (string)$this->config->getUserValue($userId, Application::APP_ID, self::KEY, '');
+		if ($raw === '') {
+			$raw = (string)$this->config->getUserValue($userId, Application::APP_ID, self::LEGACY_KEY, '');
+		}
+
+		$stored = json_decode($raw, true);
 		if (is_array($stored) === false) {
 			return [];
 		}
@@ -86,6 +98,7 @@ class AppMenuOrder {
 	 */
 	public function save(string $userId, array $keys): array {
 		$clean = self::clean(keys: $keys);
+		$this->config->deleteUserValue($userId, Application::APP_ID, self::LEGACY_KEY);
 		if ($clean === []) {
 			$this->config->deleteUserValue($userId, Application::APP_ID, self::KEY);
 			return [];

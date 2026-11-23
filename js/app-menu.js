@@ -28,7 +28,22 @@
  */
 ;(function thematiqAppMenuInit() {
 	var BLOCK = 'thematiq-app-menu'
-	var SHOWN = 9
+	// The menu settings where nobody set one (AppMenuSettings::DEFAULTS).
+	var DEFAULTS = {
+		style: 'workplace',
+		columns: 4,
+		rows: 6,
+		rowsAboveFold: 2,
+		showCreateActions: true,
+		showExternalApps: true,
+		shape: 'round',
+		tiles: false,
+		payoff: true,
+		iconSize: 'large',
+		iconColour: 'brand',
+		hidden: [],
+	}
+	var RANGES = { columns: [2, 5], rows: [1, 12], rowsAboveFold: [1, 12] }
 	var FOOTER = 99999
 	var DRAG_START = 6
 	var HOVER_OPEN = 150
@@ -85,6 +100,8 @@
 			mimetypes: ['application/vnd.excalidraw+json'],
 		},
 	]
+	var COG =
+		'M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z'
 	var MORE_ICON =
 		'M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z'
 	var FILE_ICON =
@@ -165,6 +182,29 @@
 		} else {
 			el.removeAttribute('data-thematiq-folded')
 		}
+	}
+
+	/**
+	 * The menu settings of this page: the shipped values, overlaid with the
+	 * effective settings the server sent (the administrator's, then the
+	 * person's own). A value of the wrong kind keeps the shipped one; a number
+	 * is held inside its range.
+	 *
+	 * @param {object} menu The menu.
+	 * @return {object} Every key of DEFAULTS.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-is-drawn-from-the-settings
+	 */
+	function settingsOf(menu) {
+		var given = menu.settings && typeof menu.settings === 'object' ? menu.settings : {}
+		var out = {}
+		Object.keys(DEFAULTS).forEach(function (key) {
+			out[key] = typeof given[key] === typeof DEFAULTS[key] ? given[key] : DEFAULTS[key]
+		})
+		out.hidden = Array.isArray(given.hidden) ? given.hidden : []
+		Object.keys(RANGES).forEach(function (key) {
+			out[key] = Math.max(RANGES[key][0], Math.min(RANGES[key][1], Math.round(out[key])))
+		})
+		return out
 	}
 
 	/**
@@ -427,7 +467,7 @@
 	 */
 	function createRow(grid, menu) {
 		var labels = menu.labels || {}
-		var off = text(labels, 'create') === '' || menu.createActions === false
+		var off = text(labels, 'create') === '' || !settingsOf(menu).showCreateActions
 		var heading = grid.querySelector(':scope > [data-thematiq-row="create-title"]')
 		if (off) {
 			;['create-title', 'create', 'create-more'].forEach(function (key) {
@@ -569,7 +609,15 @@
 					path.setAttribute('d', app.icon)
 					svg.appendChild(path)
 				}
-				circle.appendChild(svg)
+				if (linkable(app.iconUrl) && !/^https?:/i.test(app.iconUrl)) {
+					var img = document.createElement('img')
+					img.className = BLOCK + '__external-icon'
+					img.src = app.iconUrl
+					img.alt = ''
+					circle.appendChild(img)
+				} else {
+					circle.appendChild(svg)
+				}
 				var label = document.createElement('span')
 				label.className = 'app-item__label'
 				label.textContent = text(app, 'label')
@@ -603,6 +651,8 @@
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md
 	 */
 	function collect(grid, menu) {
+		var settings = settingsOf(menu)
+		var payoff = settings.payoff
 		var place = {}
 		var groups = Array.isArray(menu.groups) ? menu.groups : []
 		var n = 0
@@ -644,11 +694,12 @@
 			}
 			seen[key] = true
 			var spot = place[id]
-			var description = spot ? text(spot.app, 'description') : ''
-			if (
-				description !== ''
-				&& tile.querySelector('.' + BLOCK + '__description') === null
-			) {
+			var description = spot && payoff ? text(spot.app, 'description') : ''
+			var drawn = tile.querySelector('.' + BLOCK + '__description')
+			if (!payoff && drawn !== null) {
+				drawn.remove()
+			}
+			if (description !== '' && drawn === null) {
 				var span = document.createElement('span')
 				span.className = BLOCK + '__description'
 				span.setAttribute('aria-hidden', 'true')
@@ -662,7 +713,23 @@
 				rank: spot ? spot.rank : 1000 + i,
 			})
 		})
-		externalLinks(grid, menu.external).forEach(function (a, i) {
+		var external = []
+		if (settings.showExternalApps) {
+			external = externalLinks(grid, menu.external)
+		} else {
+			grid.querySelectorAll(':scope > a[data-thematiq-external]').forEach(function (a) {
+				fold(a, true)
+			})
+		}
+		if (!payoff) {
+			external.forEach(function (a) {
+				var line = a.querySelector('.' + BLOCK + '__description')
+				if (line !== null) {
+					line.remove()
+				}
+			})
+		}
+		external.forEach(function (a, i) {
 			entries.push({
 				key: a.getAttribute('data-thematiq-external'),
 				el: a,
@@ -734,11 +801,29 @@
 	function arrange(grid, menu, save) {
 		grid.setAttribute('data-' + BLOCK, '')
 		var labels = menu.labels || {}
+		var settings = settingsOf(menu)
+		var shown = settings.columns * Math.min(settings.rowsAboveFold, settings.rows)
+		grid.style.setProperty('--thematiq-app-menu-columns', String(settings.columns))
+		grid.style.setProperty('--thematiq-app-menu-rows', String(settings.rows))
+		grid.setAttribute('data-thematiq-shape', settings.shape)
+		grid.setAttribute('data-thematiq-icon-size', settings.iconSize)
+		grid.setAttribute('data-thematiq-icon-colour', settings.iconColour)
+		if (settings.tiles) {
+			grid.setAttribute('data-thematiq-tiles', '')
+		} else {
+			grid.removeAttribute('data-thematiq-tiles')
+		}
 		var found = collect(grid, menu)
-		var list = sorted(found.entries, menu.order)
+		var list = sorted(found.entries, menu.order).filter(function (entry) {
+			var hidden = settings.hidden.indexOf(entry.key) !== -1
+			if (hidden) {
+				fold(entry.el, true)
+			}
+			return !hidden
+		})
 		var expanded = grid.hasAttribute('data-thematiq-expanded')
-		var many = list.length > SHOWN
-		var rest = list.slice(SHOWN)
+		var many = list.length > shown
+		var rest = list.slice(shown)
 		var restApps = rest.filter(function (entry) {
 			return !entry.external
 		})
@@ -746,7 +831,7 @@
 			return entry.external
 		})
 
-		list.slice(0, SHOWN).forEach(function (entry, i) {
+		list.slice(0, shown).forEach(function (entry, i) {
 			entry.el.style.order = String(100 + i)
 			fold(entry.el, false)
 		})
@@ -872,7 +957,20 @@
 			}
 		})
 		el.appendChild(hints)
-		if (label !== '' && linkable(manage)) {
+		var dialog = window.ThematiqMenuSettingsDialog
+		if (dialog && typeof dialog.open === 'function' && text(labels, 'menuSettings') !== '') {
+			var gear = document.createElement('button')
+			gear.type = 'button'
+			gear.className = BLOCK + '__settings'
+			gear.setAttribute('aria-haspopup', 'dialog')
+			gear.appendChild(icon(COG))
+			gear.appendChild(document.createTextNode(text(labels, 'menuSettings')))
+			gear.addEventListener('click', function () {
+				dialog.open({ menu: menu, entries: dialogEntries(grid, menu), opener: gear })
+			})
+			el.appendChild(gear)
+			grid.setAttribute('data-thematiq-app-menu-manage', '')
+		} else if (label !== '' && linkable(manage)) {
 			var a = document.createElement('a')
 			a.className = BLOCK + '__manage'
 			a.href = manage
@@ -880,6 +978,38 @@
 			el.appendChild(a)
 			grid.setAttribute('data-thematiq-app-menu-manage', '')
 		}
+	}
+
+	/**
+	 * What the Menu settings dialog lists: every entry of the grid, hidden
+	 * ones too, with its name, icon, second line and place in the default
+	 * order.
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {object} menu The menu.
+	 * @return {Array<object>} {key, name, icon, description, rank, external}.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+	 */
+	function dialogEntries(grid, menu) {
+		var descriptions = {}
+		;(Array.isArray(menu.groups) ? menu.groups : []).forEach(function (group) {
+			;(group.apps || []).forEach(function (app) {
+				if (app && typeof app.id === 'string') {
+					descriptions[app.id] = text(app, 'description')
+				}
+			})
+		})
+		return sorted(collect(grid, menu).entries, menu.order).map(function (entry) {
+			var img = entry.el.querySelector('img.app-item__icon')
+			return {
+				key: entry.key,
+				name: nameOf(entry.el),
+				icon: img ? img.getAttribute('src') || '' : '',
+				description: descriptions[entry.key] || '',
+				rank: entry.rank,
+				external: entry.external,
+			}
+		})
 	}
 
 	/**
@@ -1850,6 +1980,49 @@
 	}
 
 	/**
+	 * The classic menu: Nextcloud's apps menu stays as it ships. An
+	 * administrator gets one row with the gear at its end, the way back to
+	 * the Menu settings.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	function classic(menu) {
+		var labels = menu.labels || {}
+		if (menu.admin !== true || text(labels, 'menuSettings') === '') {
+			return
+		}
+		var add = function () {
+			var dialog = window.ThematiqMenuSettingsDialog
+			if (!dialog || typeof dialog.open !== 'function') {
+				return
+			}
+			document.querySelectorAll('.app-menu__grid').forEach(function (grid) {
+				if (grid.querySelector(':scope > .' + BLOCK + '__classic') !== null) {
+					return
+				}
+				var gear = document.createElement('button')
+				gear.type = 'button'
+				gear.className = BLOCK + '__settings'
+				gear.setAttribute('aria-haspopup', 'dialog')
+				gear.appendChild(icon(COG))
+				gear.appendChild(document.createTextNode(text(labels, 'menuSettings')))
+				gear.addEventListener('click', function () {
+					dialog.open({ menu: menu, entries: dialogEntries(grid, menu), opener: gear })
+				})
+				var holder = document.createElement('div')
+				holder.className = BLOCK + '__classic'
+				holder.appendChild(gear)
+				grid.appendChild(holder)
+			})
+		}
+		add()
+		if (typeof MutationObserver === 'function') {
+			new MutationObserver(add).observe(document.body, { childList: true, subtree: true })
+		}
+	}
+
+	/**
 	 * Watch for the menu to open and arrange it.
 	 *
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/workplace-layout/spec.md
@@ -1869,6 +2042,10 @@
 			return
 		}
 		if (!menu || typeof menu !== 'object') {
+			return
+		}
+		if (settingsOf(menu).style === 'classic') {
+			classic(menu)
 			return
 		}
 		var save = saver(menu)
