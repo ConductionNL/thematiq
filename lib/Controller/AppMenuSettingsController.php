@@ -23,6 +23,7 @@ use OCA\Thematiq\Service\AppMenuDialogLabels;
 use OCA\Thematiq\Service\AppMenuExternalApp;
 use OCA\Thematiq\Service\AppMenuIcons;
 use OCA\Thematiq\Service\AppMenuKeys;
+use OCA\Thematiq\Service\AppMenuLegacyExternalApps;
 use OCA\Thematiq\Service\AppMenuSettings;
 use OCA\Thematiq\Settings\Admin;
 use OCP\AppFramework\Controller;
@@ -63,6 +64,7 @@ class AppMenuSettingsController extends Controller {
 	 * @param IGroupManager $groupManager Whether the person is an administrator.
 	 * @param IURLGenerator $urls Builds the Manage apps address.
 	 * @param IL10N $l The language of this request.
+	 * @param AppMenuLegacyExternalApps|null $legacy Moves the admin page's external apps into the settings, once.
 	 */
 	public function __construct(
 		string $appName,
@@ -74,6 +76,7 @@ class AppMenuSettingsController extends Controller {
 		private readonly IGroupManager $groupManager,
 		private readonly IURLGenerator $urls,
 		private readonly IL10N $l,
+		private readonly ?AppMenuLegacyExternalApps $legacy = null,
 	) {
 		parent::__construct(appName: $appName, request: $request);
 	}//end __construct()
@@ -94,10 +97,13 @@ class AppMenuSettingsController extends Controller {
 			return new JSONResponse(['error' => 'unauthorized'], Http::STATUS_UNAUTHORIZED);
 		}
 
+		$this->legacy?->migrateOnce(l: $this->l);
 		$admin = $this->groupManager->isAdmin($user->getUID());
 		$data = [
 			'labels' => AppMenuDialogLabels::labels(l: $this->l),
-			'library' => AppMenuExternalApp::LIBRARY,
+			'library' => AppMenuExternalApp::icons(),
+			'picker' => array_keys(AppMenuExternalApp::LIBRARY),
+			'stroke' => AppMenuExternalApp::strokeIcons(),
 			'iconUrl' => $this->urls->linkToRoute('thematiq.appMenuSettings.icon', ['id' => '__id__']),
 			'admin' => $admin,
 			'effective' => $this->settings->effective(userId: $user->getUID()),

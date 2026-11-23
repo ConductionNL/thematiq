@@ -50,10 +50,33 @@ confirmation first and then call the endpoint of the chosen scope.
 - WHEN she resets
 - THEN Deck MUST be pinned in her menu again
 
+### Requirement: The external apps of the admin page move into the menu settings
+The external apps an administrator gave an address on the admin page (app values `external_apps`,
+`openproject_url`, `openproject_modules`) MUST move once into the administrator's
+`menu.externalApps`, after any app already there, each with its title, payoff, address and icon and
+with the same menu key (`external-openproject-work_packages`, `external-wiki`), so a person's order,
+pins and hidden apps still name it. OpenProject's work packages, Gantt charts, boards and meetings and
+XWiki MUST take the icons the AppMenu board draws for them. The old values MUST be removed and a marker
+(`menu.externalAppsMigrated`) set, so the move runs once and a later reset of the defaults does not
+bring them back. The move MUST run from a repair step on upgrade and on the first page that draws the
+menu or opens Menu settings. The admin page MUST no longer edit external apps: its block points to
+Menu settings, and its endpoints `/settings/external-apps` and `/settings/openproject` are gone.
+
+#### Scenario: The demo's OpenProject and XWiki move
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuLegacyExternalAppsTest.php (testTheAdminPageAppsMoveOnceAndKeepTheirKeys)
+- GIVEN OpenProject at `http://localhost:8077` and XWiki at `http://localhost:8078` on the admin page
+- WHEN the menu is drawn
+- THEN Menu settings MUST list Work packages, Gantt charts, Boards, Meetings and XWiki with edit and delete
+- AND the admin page values MUST be gone
+
 ### Requirement: External apps are checked on the server
-An external app MUST be `{id, title, payoff, url, icon, visible, order}`: a title of 1 to 60 characters
-without markup, a payoff of at most 80, an `https` address with a host and without user info, and an
-icon that is `{library: <name>}` from the 16 library icons or `{upload: <id>}` of an uploaded icon. One
+An external app MUST be `{id, title, payoff, url, icon, visible, order}`: an id of lower case letters,
+digits, `_` and `-`, a title of 1 to 60 characters without markup, a payoff of at most 80, an `https`
+address with a host and without user info (plain `http` only on this machine's loopback address,
+localhost, 127.x or ::1, where a development or demo service runs without TLS), and an icon that is
+`{library: <name>}` or `{upload: <id>}` of an uploaded icon. The dialog offers the 16 library icons;
+the icons the AppMenu boards draw for the moved apps, and the admin page's own line icons, are
+accepted too. One
 app that is not allowed MUST refuse the save. The menu MUST draw a visible external app as a link with
 `target="_blank"`, `rel="noopener noreferrer"` and the hidden text "(opens in a new tab)". An uploaded
 icon MUST be a PNG or an SVG without script, event handlers or foreign objects, at most 100 kB, sent to
@@ -76,8 +99,10 @@ people with `Content-Security-Policy: default-src 'none'` and `X-Content-Type-Op
 The open menu MUST show `columns` entries per row and `columns` times `rowsAboveFold` entries before the
 fold toggle, which reads "More apps" and, unfolded, "Fewer apps"; past `rows` rows the unfolded menu MUST
 scroll. `shape` square MUST give the icons a rounded square, `tiles` MUST give every entry a tile,
-`iconSize` small MUST draw 32 px icons and large 40 px, `iconColour` brand MUST draw the icons in the
-brand's light wash. With `payoff` off no entry shows its second line; hidden entries MUST NOT show; with
+`iconSize` small MUST draw 32 px icons and large 40 px. With `iconColour` brand the organisation's work
+apps, the apps of the menu's first section, MUST take the brand's light wash and every other app,
+external apps included, the grey chip; `neutral` MUST draw every app grey. An entry MUST be 68 px high
+(12 px by 6 px padding round a 44 px content box), as the AppMenuAlles board measures. With `payoff` off no entry shows its second line; hidden entries MUST NOT show; with
 `showExternalApps` off the external apps MUST NOT show; with `showCreateActions` off the Create row MUST
 NOT show and the templates API MUST NOT be asked. A value the menu cannot use MUST fall back to its
 shipped value or the nearest allowed number. The footer MUST show a gear button "Menu settings" with
@@ -117,8 +142,10 @@ preview, and say that an external app always opens in a new tab. Configuration M
 labelled steppers for columns (2 to 5), rows and rows above More apps with help text, a preview of the
 grid, the two section switches, and for an administrator the Manage apps link with "Admins only"; for a
 person in Only for me its controls MUST be disabled with the note that the administrator sets them.
-Theming MUST have the shape, the tiles and payoff switches, the icon size as a `radiogroup`, the icon
-colour and a preview of four items. The footer MUST have Reset to default, Cancel and Save. Save MUST
+Theming MUST have the shape, the tiles and payoff switches, the icon size as a `radiogroup` beside its
+name, the icon colour as two inline radios with a swatch, and a preview of four items beside them with
+a sentence built from the settings ("Round, large icons in the brand colour, with payoff and without
+tiles."). The scope help MUST sit beside the For everyone / Only for me switch. The footer MUST have Reset to default, Cancel and Save. Save MUST
 send the person's changed personal keys, or for For everyone every setting; Reset MUST ask first, then
 clear the person's keys or restore the shipped defaults. After a save or reset the page MUST reload;
 on a failure the dialog MUST say so in an alert. Closing MUST give focus back to the gear.

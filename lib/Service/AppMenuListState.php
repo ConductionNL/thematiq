@@ -39,22 +39,22 @@ class AppMenuListState {
 	/**
 	 * Constructor.
 	 *
-	 * @param ExternalApps $externalApps The external apps with an address.
 	 * @param AppMenuOrder $order The users' orders.
 	 * @param IUserSession $userSession The signed-in user.
 	 * @param AppMenuPins|null $pins The users' pinned apps.
 	 * @param AppMenuSettings|null $settings The menu settings: the defaults and the person's own.
 	 * @param IURLGenerator|null $urls Builds the address of an uploaded icon.
 	 * @param IGroupManager|null $groups Whether the person is an administrator.
+	 * @param AppMenuLegacyExternalApps|null $legacy Moves the admin page's external apps into the settings, once.
 	 */
 	public function __construct(
-		private readonly ExternalApps $externalApps,
 		private readonly AppMenuOrder $order,
 		private readonly IUserSession $userSession,
 		private readonly ?AppMenuPins $pins = null,
 		private readonly ?AppMenuSettings $settings = null,
 		private readonly ?IURLGenerator $urls = null,
 		private readonly ?IGroupManager $groups = null,
+		private readonly ?AppMenuLegacyExternalApps $legacy = null,
 	) {
 	}//end __construct()
 
@@ -73,10 +73,7 @@ class AppMenuListState {
 	 */
 	public function state(IL10N $l): array {
 		$state = [];
-		$external = $this->externalApps->section(l: $l);
-		if ($external !== null) {
-			$state['external'] = $external;
-		}
+		$this->legacy?->migrateOnce(l: $l);
 
 		$state['order'] = [];
 		$state['pins'] = [];
@@ -90,7 +87,7 @@ class AppMenuListState {
 			$settings = $this->settings->effective(userId: $user?->getUID());
 			$state['order'] = $settings['order'];
 			$state['pins'] = $settings['pinned'];
-			$state['external'] = $this->withConfigured(section: ($state['external'] ?? null), apps: $settings['externalApps'], l: $l);
+			$state['external'] = $this->withConfigured(apps: $settings['externalApps'], l: $l);
 			if ($state['external'] === null) {
 				unset($state['external']);
 			}
@@ -130,10 +127,8 @@ class AppMenuListState {
 	}//end state()
 
 	/**
-	 * The external apps section with the visible apps an administrator or the person added
-	 * after the ones with an address on the admin page.
+	 * The external apps section with the visible apps an administrator or the person added.
 	 *
-	 * @param array<string, mixed>|null $section The section of the admin page's apps, or null.
 	 * @param array<int, array<string, mixed>> $apps The configured external apps.
 	 * @param IL10N $l The language of this request.
 	 *
@@ -141,8 +136,8 @@ class AppMenuListState {
 	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
-	private function withConfigured(?array $section, array $apps, IL10N $l): ?array {
-		$section ??= ['title' => $l->t('External apps'), 'note' => $l->t('opens in a new tab'), 'apps' => []];
+	private function withConfigured(array $apps, IL10N $l): ?array {
+		$section = ['title' => $l->t('External apps'), 'note' => $l->t('opens in a new tab'), 'apps' => []];
 		foreach ($apps as $app) {
 			if ($app['visible'] !== true) {
 				continue;
@@ -150,7 +145,8 @@ class AppMenuListState {
 
 			$entry = ['key' => AppMenuExternalApp::key(app: $app), 'label' => $app['title'], 'line' => $app['payoff'], 'url' => $app['url'], 'icon' => ''];
 			if (isset($app['icon']['library']) === true) {
-				$entry['icon'] = AppMenuExternalApp::LIBRARY[$app['icon']['library']];
+				$entry['icon'] = AppMenuExternalApp::icons()[$app['icon']['library']];
+				$entry['stroke'] = in_array($app['icon']['library'], AppMenuExternalApp::strokeIcons(), true);
 			} elseif ($this->urls !== null) {
 				$entry['iconUrl'] = $this->urls->linkToRoute('thematiq.appMenuSettings.icon', ['id' => $app['icon']['upload']]);
 			}

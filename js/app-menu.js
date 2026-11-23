@@ -599,11 +599,15 @@
 				svg.setAttribute('width', '20')
 				svg.setAttribute('height', '20')
 				svg.setAttribute('aria-hidden', 'true')
-				svg.setAttribute('fill', 'none')
-				svg.setAttribute('stroke', 'currentColor')
-				svg.setAttribute('stroke-width', '1.75')
-				svg.setAttribute('stroke-linecap', 'round')
-				svg.setAttribute('stroke-linejoin', 'round')
+				if (app.stroke === true) {
+					svg.setAttribute('fill', 'none')
+					svg.setAttribute('stroke', 'currentColor')
+					svg.setAttribute('stroke-width', '1.75')
+					svg.setAttribute('stroke-linecap', 'round')
+					svg.setAttribute('stroke-linejoin', 'round')
+				} else {
+					svg.setAttribute('fill', 'currentColor')
+				}
 				if (/^[MmLlHhVvCcSsQqTtAaZz0-9 .,-]+$/.test(app.icon || '')) {
 					var path = document.createElementNS(SVG_NS, 'path')
 					path.setAttribute('d', app.icon)
@@ -656,10 +660,12 @@
 		var place = {}
 		var groups = Array.isArray(menu.groups) ? menu.groups : []
 		var n = 0
-		groups.forEach(function (group) {
+		// The first section is the organisation's own work apps; the menu
+		// draws them in the brand's wash, every other app in grey.
+		groups.forEach(function (group, g) {
 			;(group.apps || []).forEach(function (app) {
 				if (app && typeof app.id === 'string' && !(app.id in place)) {
-					place[app.id] = { rank: n++, app: app }
+					place[app.id] = { rank: n++, app: app, work: g === 0 }
 				}
 			})
 		})
@@ -706,10 +712,16 @@
 				span.textContent = description
 				tile.appendChild(span)
 			}
+			if (spot && spot.work) {
+				tile.setAttribute('data-thematiq-work', '')
+			} else {
+				tile.removeAttribute('data-thematiq-work')
+			}
 			entries.push({
 				key: key,
 				el: tile,
 				external: false,
+				work: !!(spot && spot.work),
 				rank: spot ? spot.rank : 1000 + i,
 			})
 		})
@@ -1008,6 +1020,7 @@
 				description: descriptions[entry.key] || '',
 				rank: entry.rank,
 				external: entry.external,
+				work: entry.work === true,
 			}
 		})
 	}

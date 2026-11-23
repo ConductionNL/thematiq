@@ -27,4 +27,12 @@
 - [x] 3.7 The menu's CSS moves from css/header-workplace.css to css/app-menu.css.
 - [x] 3.8 Zuiddrecht: the Nextcloud apps get a payoff.
 - [x] 3.9 PHPUnit `AppMenuSettingsTest`, `AppMenuIconsTest`, `AppMenuSettingsControllerTest`, `AppMenuServiceTest`; vitest `appMenuSettings.spec.js`, `menuSettingsDialog.spec.js`.
-- [ ] 3.10 Live check on the demo stack after the coordinator deploys it.
+- [x] 3.10 Live check on the demo stack (:8076, 23 Nov 2026), menu-check.js as pieter and admin; gaps fixed in #1800.
+
+## 4. The boards as canon
+
+- [x] 4.1 `lib/Service/AppMenuLegacyExternalApps.php`, `lib/Repair/MigrateMenuExternalApps.php`: the admin page's external apps move into `menu.externalApps` once; the admin block points to Menu settings; `ExternalAppsController` and `js/admin-external-apps.js` go.
+- [x] 4.2 Icon colour: brand washes the first section's work apps, the rest grey.
+- [x] 4.3 Theming: inline colour radios, the size beside its name, the preview sentence; the scope help beside the switch.
+- [x] 4.4 Entries 68 px high, as measured on AppMenuAlles.
+- [x] 4.5 Zuiddrecht payoffs for Register, Integriq, Mail, Dashboard, Photos, Activity and Office.

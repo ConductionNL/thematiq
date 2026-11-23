@@ -229,6 +229,12 @@ final class AppMenuSettingsTest extends TestCase {
 			$this->assertNull(actual: AppMenuExternalApp::clean(app: self::app(id: 'a', url: $url), index: 0), message: $url);
 		}
 
+		foreach (['http://localhost:8078', 'http://127.0.0.1/wiki', 'http://[::1]:8077/'] as $url) {
+			$this->assertNotNull(actual: AppMenuExternalApp::clean(app: self::app(id: 'a', url: $url), index: 0), message: $url);
+		}
+
+		$this->assertNull(actual: AppMenuExternalApp::clean(app: self::app(id: 'a', url: 'http://10.0.0.1/'), index: 0));
+		$this->assertNotNull(actual: AppMenuExternalApp::clean(app: ['icon' => ['library' => 'openproject-boards']] + self::app(id: 'a'), index: 0));
 		$this->assertNull(actual: AppMenuExternalApp::clean(app: ['title' => ''] + self::app(id: 'a'), index: 0));
 		$this->assertNull(actual: AppMenuExternalApp::clean(app: ['title' => '<b>x</b>'] + self::app(id: 'a'), index: 0));
 		$this->assertNull(actual: AppMenuExternalApp::clean(app: ['icon' => ['library' => 'rocket']] + self::app(id: 'a'), index: 0));

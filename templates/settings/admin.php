@@ -49,7 +49,6 @@ script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
 script('thematiq', 'admin-workspace-icons');
-script('thematiq', 'admin-external-apps');
 style('thematiq', 'admin');
 // Your own tokens and the deprecations list (authoring-token-lifecycle).
 script('thematiq', 'ownTokens');
@@ -742,27 +741,13 @@ if ($_['mockUi'] === true) {
 		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
 	</div>
 
-	<!-- The external apps of the apps menu (external-apps-in-the-app-menu): OpenProject
-	     and the apps of ExternalApps::APPS, one address each. Filled by js/admin-external-apps.js. -->
+	<!-- The external apps of the apps menu live in the menu settings
+	     (apps-menu-create-pins-settings); this block only points there. -->
 	<div class="nldesign-external-apps" id="nldesign-external-apps" style="margin-top:2em">
 		<h3><?php p($l->t('External apps in the apps menu')); ?></h3>
-		<p class="settings-hint" id="nldesign-external-apps-hint">
-			<?php p($l->t('Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.')); ?>
+		<p class="settings-hint">
+			<?php p($l->t('Add, change or remove external apps in the apps menu: Menu settings, Menu items.')); ?>
 		</p>
-		<?php
-		$thematiqExternalApps = ['openproject' => 'OpenProject'];
-		foreach (\OCA\Thematiq\Service\ExternalApps::APPS as $thematiqKey => $thematiqApp) {
-			$thematiqExternalApps[$thematiqKey] = $thematiqApp['name'];
-		}
-		foreach ($thematiqExternalApps as $thematiqKey => $thematiqName) { ?>
-		<p>
-			<label for="nldesign-external-app-<?php p($thematiqKey); ?>"><?php p($l->t('%s address', [$thematiqName])); ?></label>
-			<input type="url" id="nldesign-external-app-<?php p($thematiqKey); ?>" data-external-app="<?php p($thematiqKey); ?>"
-				   placeholder="https://" aria-describedby="nldesign-external-apps-hint" autocomplete="off">
-		</p>
-		<?php } ?>
-		<button type="button" class="button" id="nldesign-external-apps-save"><?php p($l->t('Save addresses')); ?></button>
-		<span id="nldesign-external-apps-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Brand per app: an app's own token set and logos

@@ -22,12 +22,9 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppMenuKeys;
 use OCA\Thematiq\Service\AppMenuPins;
-use OCA\Thematiq\Service\ExternalApps;
-use OCA\Thematiq\Service\OpenProjectModules;
+use OCA\Thematiq\Service\AppMenuSettings;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\INavigationManager;
-use OCP\L10N\IFactory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -108,7 +105,12 @@ final class AppMenuPinsTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheKnownKeysComeFromTheNavigationAndTheExternalApps(): void {
-		$config = $this->config();
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, $default = '') => ([
+				'menu.externalApps' => '[{"id":"code","title":"Forgejo","payoff":"Code","url":"https://code.example.org","icon":{"library":"link"},"visible":true,"order":0}]',
+			][$key] ?? $default)
+		);
 		$navigation = $this->createMock(originalClassName: INavigationManager::class);
 		$navigation->method('getAll')->with(INavigationManager::TYPE_APPS)->willReturn(
 			[
@@ -117,15 +119,7 @@ final class AppMenuPinsTest extends TestCase {
 				['id' => '', 'href' => 'https://example.org/'],
 			]
 		);
-		$l10n = $this->createMock(originalClassName: IL10N::class);
-		$l10n->method('t')->willReturnArgument(0);
-		$factory = $this->createMock(originalClassName: IFactory::class);
-		$factory->method('get')->willReturn($l10n);
-		$keys = new AppMenuKeys(
-			navigation: $navigation,
-			externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
-			l10nFactory: $factory
-		);
+		$keys = new AppMenuKeys(navigation: $navigation, settings: new AppMenuSettings(config: $config));
 
 		$this->assertSame(expected: ['files', 'talk', 'spreed', 'external-code'], actual: $keys->known());
 	}//end testTheKnownKeysComeFromTheNavigationAndTheExternalApps()

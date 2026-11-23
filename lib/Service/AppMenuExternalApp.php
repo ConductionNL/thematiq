@@ -84,6 +84,31 @@ final class AppMenuExternalApp {
 	];
 
 	/**
+	 * The icons the AppMenu boards draw for the external apps that moved from the admin page,
+	 * filled like the library.
+	 *
+	 * @var array<string, string>
+	 */
+	public const BOARD_ICONS = [
+		'openproject-work-packages' => 'M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 '
+			. '0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5'
+			. 'H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z',
+		'openproject-gantt' => 'M2,5H10V2H12V22H10V18H6V15H10V13H4V10H10V8H2V5M14,5H17V8H14V5M14,10H19V13H14V10M14,15H22V18H14V15Z',
+		'openproject-boards' => 'M16,5V18H21V5M4,18H9V5H4M10,18H15V5H10V18Z',
+		'openproject-meetings' => 'M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56'
+			. ',8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0'
+			. ',1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 1'
+			. '7.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,1'
+			. '8.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H2'
+			. '0.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z',
+		'app-wiki' => 'M21,5C19.89,4.65 18.67,4.5 17.5,4.5C15.55,4.5 13.45,4.9 12,6C10.55,4.9 8.45,4.5 6.5,4.5C4.55,4.5 2.4'
+			. '5,4.9 1,6V20.65C1,20.9 1.25,21.15 1.5,21.15C1.6,21.15 1.65,21.1 1.75,21.1C3.1,20.45 5.05,20 6.5,20C8'
+			. '.45,20 10.55,20.4 12,21.5C13.35,20.65 15.8,20 17.5,20C19.15,20 20.85,20.3 22.25,21.05C22.35,21.1 22.'
+			. '4,21.1 22.5,21.1C22.75,21.1 23,20.85 23,20.6V6C22.4,5.55 21.75,5.25 21,5M21,18.5C19.9,18.15 18.7,18 '
+			. '17.5,18C15.8,18 13.35,18.65 12,19.5V8C13.35,7.15 15.8,6.5 17.5,6.5C18.7,6.5 19.9,6.65 21,7V18.5Z',
+	];
+
+	/**
 	 * The most external apps in one list.
 	 *
 	 * @var int
@@ -162,7 +187,7 @@ final class AppMenuExternalApp {
 		$icon = self::icon(value: ($app['icon'] ?? null));
 		$visible = ($app['visible'] ?? true);
 		$order = filter_var(($app['order'] ?? $index), FILTER_VALIDATE_INT);
-		if (is_string($id) === false || preg_match('/^[a-z0-9]{1,32}$/', $id) !== 1
+		if (is_string($id) === false || preg_match('/^[a-z0-9_-]{1,40}$/', $id) !== 1
 			|| $title === null || $title === '' || $payoff === null || $url === null || $icon === null
 			|| is_bool($visible) === false || is_int($order) === false
 		) {
@@ -196,7 +221,8 @@ final class AppMenuExternalApp {
 	}//end text()
 
 	/**
-	 * An https address with a host, or null.
+	 * An https address with a host, or null. Plain http is allowed only on this machine's loopback
+	 * address (localhost, 127.x, ::1), where a development or demo service runs without TLS.
 	 *
 	 * @param mixed $value The address.
 	 *
@@ -211,14 +237,65 @@ final class AppMenuExternalApp {
 
 		$value = trim($value);
 		$parts = parse_url($value);
-		if ($parts === false || strtolower($parts['scheme'] ?? '') !== 'https' || ($parts['host'] ?? '') === ''
-			|| isset($parts['user']) === true || preg_match('/\s/', $value) === 1
-		) {
+		if ($parts === false || ($parts['host'] ?? '') === '' || isset($parts['user']) === true || preg_match('/\s/', $value) === 1) {
+			return null;
+		}
+
+		$scheme = strtolower($parts['scheme'] ?? '');
+		if ($scheme !== 'https' && ($scheme !== 'http' || self::isLoopback(host: $parts['host']) === false)) {
 			return null;
 		}
 
 		return $value;
 	}//end address()
+
+	/**
+	 * Whether a host is this machine's loopback address.
+	 *
+	 * @param string $host The host.
+	 *
+	 * @return bool True for localhost, 127.x and ::1.
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
+	 */
+	private static function isLoopback(string $host): bool {
+		$host = strtolower(trim($host, '[]'));
+
+		return $host === 'localhost' || $host === '::1' || preg_match('/^127(\.\d{1,3}){3}$/', $host) === 1;
+	}//end isLoopback()
+
+	/**
+	 * Every icon an external app may name: the library the dialog offers, and the icons the
+	 * external apps had on the admin page before they moved into the menu settings.
+	 *
+	 * @return array<string, string> The path data, by name.
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 */
+	public static function icons(): array {
+		$icons = self::LIBRARY;
+		foreach (OpenProjectModules::MODULES as $key => $module) {
+			$icons['openproject-' . str_replace('_', '-', $key)] = $module['icon'];
+		}
+
+		foreach (ExternalApps::APPS as $key => $app) {
+			$icons['app-' . $key] = $app['icon'];
+		}
+
+		return array_merge($icons, self::BOARD_ICONS);
+	}//end icons()
+
+	/**
+	 * The names of the icons drawn as a line instead of filled: the admin page's own icons that
+	 * no board redrew.
+	 *
+	 * @return array<int, string> The names.
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-external-apps-of-the-admin-page-move-into-the-menu-settings
+	 */
+	public static function strokeIcons(): array {
+		return array_values(array_diff(array_keys(self::icons()), array_keys(self::LIBRARY), array_keys(self::BOARD_ICONS)));
+	}//end strokeIcons()
 
 	/**
 	 * `{library: <name>}` from the library, or `{upload: <id>}` of an uploaded icon, or null.
@@ -234,7 +311,7 @@ final class AppMenuExternalApp {
 			return null;
 		}
 
-		if (is_string($value['library'] ?? null) === true && isset(self::LIBRARY[$value['library']]) === true) {
+		if (is_string($value['library'] ?? null) === true && isset(self::icons()[$value['library']]) === true) {
 			return ['library' => $value['library']];
 		}
 

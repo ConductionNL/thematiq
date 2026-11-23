@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppMenuExternalApp;
+use OCA\Thematiq\Service\AppMenuLegacyExternalApps;
 use OCA\Thematiq\Service\AppMenuListState;
 use OCA\Thematiq\Service\AppMenuOrder;
 use OCA\Thematiq\Service\AppMenuPins;
@@ -74,6 +76,13 @@ class AppMenuServiceTest extends TestCase {
 	 * @var int
 	 */
 	private int $scripts = 0;
+
+	/**
+	 * The app values of the in-memory config.
+	 *
+	 * @var array<string, string>
+	 */
+	private array $appValues = [];
 
 	/**
 	 * Set up the mocks.
@@ -199,6 +208,7 @@ class AppMenuServiceTest extends TestCase {
 	 * @return AppMenuListState
 	 */
 	private function listState(IConfig $config, ?string $uid): AppMenuListState {
+		$settings = new AppMenuSettings(config: $config);
 		$session = $this->createMock(originalClassName: IUserSession::class);
 		$user = null;
 		if ($uid !== null) {
@@ -209,13 +219,42 @@ class AppMenuServiceTest extends TestCase {
 		$session->method('getUser')->willReturn($user);
 
 		return new AppMenuListState(
-			externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
 			order: new AppMenuOrder(config: $config),
 			userSession: $session,
 			pins: new AppMenuPins(config: $config),
-			settings: new AppMenuSettings(config: $config)
+			settings: $settings,
+			legacy: new AppMenuLegacyExternalApps(
+				config: $config,
+				externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
+				settings: $settings
+			)
 		);
 	}//end listState()
+
+	/**
+	 * A config that keeps app values and user values in memory.
+	 *
+	 * @param array<string, string> $app The app values to start with.
+	 * @param array<string, string> $user The user values to start with, by user id and key joined.
+	 *
+	 * @return IConfig
+	 */
+	private function memory(array $app, array $user = []): IConfig {
+		$this->appValues = $app;
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(fn (string $a, string $key, $default = '') => ($this->appValues[$key] ?? $default));
+		$config->method('setAppValue')->willReturnCallback(function (string $a, string $key, $value): void {
+			$this->appValues[$key] = (string)$value;
+		});
+		$config->method('deleteAppValue')->willReturnCallback(function (string $a, string $key): void {
+			unset($this->appValues[$key]);
+		});
+		$config->method('getUserValue')->willReturnCallback(
+			static fn (string $uid, string $a, string $key, $default = '') => ($user[$uid . $key] ?? $default)
+		);
+
+		return $config;
+	}//end memory()
 
 	/**
 	 * The signed-in user's order and the external apps join the menu's state.
@@ -227,14 +266,9 @@ class AppMenuServiceTest extends TestCase {
 	 */
 	public function testTheOrderAndTheExternalAppsJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
-		$config = $this->createMock(originalClassName: IConfig::class);
-		$config->method('getAppValue')->willReturnCallback(
-			static fn (string $app, string $key, $default = '') => ([ExternalApps::CONFIG_KEY => '{"code":"https://code.example.org"}'][$key] ?? $default)
-		);
-		$config->method('getUserValue')->willReturnCallback(
-			static fn (string $user, string $app, string $key, $default = '') => (
-				['anna' . AppMenuOrder::KEY => '["files","external-code"]', 'anna' . AppMenuPins::KEY => '["deck"]'][$user . $key] ?? $default
-			)
+		$config = $this->memory(
+			app: [ExternalApps::CONFIG_KEY => '{"code":"https://code.example.org"}'],
+			user: ['anna' . AppMenuOrder::KEY => '["files","external-code"]', 'anna' . AppMenuPins::KEY => '["deck"]']
 		);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('en');
@@ -266,10 +300,13 @@ class AppMenuServiceTest extends TestCase {
 					'line' => 'Code',
 					'url' => 'https://code.example.org',
 					'icon' => ExternalApps::APPS['code']['icon'],
+					'stroke' => true,
 				],
 			],
 			actual: $state['external']['apps']
 		);
+		$this->assertArrayNotHasKey(key: ExternalApps::CONFIG_KEY, array: $this->appValues, message: 'the admin page value is gone');
+		$this->assertSame(expected: '1', actual: $this->appValues[AppMenuLegacyExternalApps::MARKER]);
 		$this->assertSame(expected: 'More apps', actual: $state['labels']['allApps']);
 	}//end testTheOrderAndTheExternalAppsJoinTheMenu()
 
@@ -290,7 +327,7 @@ class AppMenuServiceTest extends TestCase {
 		$this->assertSame(expected: 'Werk', actual: $menu['groups'][0]['title']);
 		$this->assertSame(expected: ['label' => 'Mijn werkdag in launchpad', 'url' => '/apps/launchpad/'], actual: $menu['groups'][0]['link']);
 		$this->assertSame(expected: ['id' => 'dossiq', 'description' => 'Zaken en Woo'], actual: $menu['groups'][0]['apps'][1]);
-		$this->assertCount(expectedCount: 8, haystack: $menu['groups'][0]['apps']);
+		$this->assertCount(expectedCount: 10, haystack: $menu['groups'][0]['apps']);
 		$this->assertSame(expected: 'Nextcloud', actual: $menu['othersTitle']);
 		$this->assertSame(expected: 'Apps beheren', actual: $menu['manageLabel']);
 	}//end testZuiddrechtShipsTheBoardsSections()
@@ -360,39 +397,17 @@ class AppMenuServiceTest extends TestCase {
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
-		$config = $this->createMock(originalClassName: IConfig::class);
-		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, $default = '') => ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings'][$key] ?? $default);
+		$config = $this->memory(app: ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings']);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('nl');
 		$l10n->method('t')->willReturnArgument(0);
 		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturn($l10n);
-
-		$this->initialState->expects($this->once())->method('provideInitialState')->with(
-			AppMenuService::STATE_KEY,
-			[
-				'hint' => 'Hint',
-				'external' => [
-					'title' => 'External apps',
-					'note' => 'opens in a new tab',
-					'apps' => [
-						[
-							'key' => 'external-openproject-boards',
-							'label' => 'Boards',
-							'line' => 'OpenProject',
-							'url' => 'https://op.example.org/boards',
-							'icon' => OpenProjectModules::MODULES['boards']['icon'],
-						],
-						[
-							'key' => 'external-openproject-meetings',
-							'label' => 'Meetings',
-							'line' => 'OpenProject',
-							'url' => 'https://op.example.org/meetings',
-							'icon' => OpenProjectModules::MODULES['meetings']['icon'],
-						],
-					],
-				],
-			] + $this->ordered()
+		$state = null;
+		$this->initialState->method('provideInitialState')->willReturnCallback(
+			function (string $key, $value) use (&$state): void {
+				$state = $value;
+			}
 		);
 
 		$service = $this->getMockBuilder(className: AppMenuService::class)
@@ -402,6 +417,33 @@ class AppMenuServiceTest extends TestCase {
 			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+
+		$this->assertSame(
+			expected: [
+				[
+					'key' => 'external-openproject-boards',
+					'label' => 'Boards',
+					'line' => 'OpenProject',
+					'url' => 'https://op.example.org/boards',
+					'icon' => AppMenuExternalApp::BOARD_ICONS['openproject-boards'],
+					'stroke' => false,
+				],
+				[
+					'key' => 'external-openproject-meetings',
+					'label' => 'Meetings',
+					'line' => 'OpenProject',
+					'url' => 'https://op.example.org/meetings',
+					'icon' => AppMenuExternalApp::BOARD_ICONS['openproject-meetings'],
+					'stroke' => false,
+				],
+			],
+			actual: $state['external']['apps']
+		);
+		$this->assertSame(expected: ['openproject-boards', 'openproject-meetings'], actual: array_column(json_decode($this->appValues['menu.externalApps'], true), 'id'));
+
+		$this->appValues['openproject_url'] = 'https://other.example.org/';
+		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+		$this->assertCount(expectedCount: 2, haystack: $state['external']['apps'], message: 'the move runs once');
 	}//end testOpenProjectsModulesJoinTheMenu()
 
 	/**
@@ -486,7 +528,6 @@ class AppMenuServiceTest extends TestCase {
 			$user->method('getUID')->willReturn('anna');
 			$session->method('getUser')->willReturn($user);
 			$listState = new AppMenuListState(
-				externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
 				order: new AppMenuOrder(config: $config),
 				userSession: $session,
 				pins: new AppMenuPins(config: $config),
