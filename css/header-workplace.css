@@ -406,11 +406,10 @@ body:not(#body-login) .app-menu__popover-base .app-menu__popover {
 	box-shadow: 0 8px 24px rgba(27, 28, 29, 0.12);
 }
 
-/* The board opens the menu 116px left of the grid button and 2px under the
- * bar; Nextcloud places it 82px left and 4px higher. */
+/* 2px under the bar, where Nextcloud places it 4px higher. The menu keeps
+ * Nextcloud's horizontal place: moved further left, it ran off the window. */
 body:not(#body-login) .app-menu__popover-base .v-popper__wrapper {
 	margin-block-start: 6px !important;
-	margin-inline-start: -34px;
 }
 
 body:not(#body-login) .app-menu__popover-base .v-popper__inner {
@@ -599,7 +598,7 @@ body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu-manage]
 	> a[data-thematiq-outlined] {
-	display: none;
+	display: none !important;
 }
 
 body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__heading,

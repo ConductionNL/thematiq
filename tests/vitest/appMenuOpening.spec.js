@@ -224,6 +224,17 @@ describe('the apps menu opens on hover and pins on click', () => {
 		).not.toHaveBeenCalled()
 	})
 
+	it('the stylesheet hides the outlined tile and keeps the menu inside the window', () => {
+		const css = readFileSync(
+			resolve(__dirname, '../../css/header-workplace.css'),
+			'utf8',
+		)
+		expect(css).toMatch(
+			/a\[data-thematiq-outlined\] \{\s*display: none !important;/,
+		)
+		expect(css).not.toContain('margin-inline-start: -34px')
+	})
+
 	it('the stylesheet turns transitions off under reduced motion', () => {
 		const css = readFileSync(
 			resolve(__dirname, '../../css/header-workplace.css'),
