@@ -189,7 +189,7 @@
     "file:workplace-apps/common.css": "952e6950c0ccfbcc8e66a1481fc15378b26b37777051c1ea4a8b7dc81fb799e0",
     "file:workplace-apps/deck.css": "07b6eb316d3c11bacd20cfd96aef7c5f47f2392d33ac72bde7f509af0f7e30e1",
     "file:workplace-apps/mail.css": "d712ba446620d5784858c7631c3c780ed9950c0eae37ff39d17923987ec423c3",
-    "file:workplace-layout.css": "b99406b223f0c74dd3575002a31963d21218fdf2af226a3661ad440c142b4038",
+    "file:workplace-layout.css": "7c11ad62b668fde9a92602773aaa4fa6759be48bf5e0674b555b8632118a7933",
     "seed:1": "{\"in\":\"--a: v;)/{*/\\n\",\"out\":{\"--a\":\"v\"}}",
     "seed:2": "{\"in\":\"!important:root {*/!important:root {{--b-c*/ \",\"out\":null}",
     "seed:3": "{\"in\":\"*url(--e:; --f : g }\\\"'data:a;b1px--a: v;*\\\"--e:--c: url('a;b')\\\\; --ax ( url(--e:(\\n\",\"out\":{\"--e\":\"(\",\"--a\":\"v;*\\\"--e:--c: url('a;b')\\\\\"}}",
