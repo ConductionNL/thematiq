@@ -194,7 +194,7 @@ class CssInjectionService {
 		}
 
 		// EVERY LAYER IS INDEPENDENT: see runLayer() and nldesign#264.
-		$this->injectStylesheetLayers(page: $page);
+		$this->injectStylesheetLayers(page: $page, appId: $appId);
 		$this->injectPageLayers(page: $page, appId: $appId);
 	}//end inject()
 
@@ -239,13 +239,14 @@ class CssInjectionService {
 	 * fonts; 5 the conditional stylesheets.
 	 *
 	 * @param array{tokenSet: string, tokenSetMeta: array, designSystemId: mixed} $page The page.
+	 * @param string|null $appId The rendered app, for its own workplace stylesheet.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/custom-fonts/spec.md
 	 */
-	private function injectStylesheetLayers(array $page): void {
+	private function injectStylesheetLayers(array $page, ?string $appId): void {
 		$tokenSet = $page['tokenSet'];
 		$designSystemId = $page['designSystemId'];
 		$this->runLayer(
@@ -254,7 +255,7 @@ class CssInjectionService {
 		);
 		$this->runLayer(layer: 'override-styles', work: fn () => $this->injectOverrideStyles(tokenSet: $tokenSet, designSystemId: $designSystemId));
 		$this->runLayer(layer: 'custom-font-link', work: fn () => $this->injectCustomFontLink(designSystemId: $designSystemId));
-		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet));
+		$this->runLayer(layer: 'conditional-styles', work: fn () => $this->injectConditionalStyles(tokenSet: $tokenSet, appId: $appId));
 	}//end injectStylesheetLayers()
 
 	/**
@@ -506,16 +507,18 @@ class CssInjectionService {
 	 * take effect again.
 	 *
 	 * @param string $tokenSet The token set this page renders with.
+	 * @param string|null $appId The rendered app, for its own workplace stylesheet.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 * @spec openspec/specs/component-tokens/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
 	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
-	private function injectConditionalStyles(string $tokenSet): void {
+	private function injectConditionalStyles(string $tokenSet, ?string $appId): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
 		// before every header, and the saved overrides are a header, so as
 		// addStyle() entries the toggles landed before custom-overrides. The
@@ -529,7 +532,11 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
-		foreach ($this->layoutOptions->stylesheets(tokenSet: $tokenSet) as $file) {
+		$files = array_merge(
+			$this->layoutOptions->stylesheets(tokenSet: $tokenSet),
+			(new LayoutStylesheets())->forApp(resolved: $this->layoutOptions->resolved(tokenSet: $tokenSet), appId: $appId)
+		);
+		foreach ($files as $file) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
 		}
 

@@ -1,0 +1,52 @@
+/**
+ * Workplace app layer: what Mail, Calendar and Deck share on the boards.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only on those apps' pages while the workplace layout is light
+ * (LayoutStylesheets::forApp()), before the app's own sheet. No colour is
+ * written: every value is a Nextcloud or NL Design variable.
+ *
+ * - The selected navigation entry is the primary's light tint with its
+ *   paired text, as MlNav, ClNav and TbNav draw it. The set's accent stays
+ *   on the other apps (DqZijbalk draws the accent).
+ * - The app's "New ..." button is the filled primary action.
+ * - Lists, rows and calendar entries are `<a>` elements but not links in
+ *   prose: inside the content they keep the text colour and no underline.
+ *   Both go through the variables the link rules read, so nothing competes
+ *   on specificity.
+ * - An icon-only button is a square, not a padded text button: the
+ *   design system's button padding made them 64px wide.
+ */
+
+:is(#content, #content-vue) {
+	--nldesign-color-accent-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
+	--nldesign-color-accent-text: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	--nldesign-component-navigation-active-color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+}
+
+:is(#content, #content-vue) #app-content-vue,
+:is(#content, #content-vue) #app-sidebar-vue {
+	--nldesign-component-link-text-decoration: none;
+	--nldesign-color-on-surface: var(--color-main-text);
+}
+
+:is(#content, #content-vue) .button-vue--icon-only:not(.button-vue--size-large) {
+	min-width: var(--default-clickable-area, 34px) !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue) .app-navigation-caption__name {
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:is(#content, #content-vue) .app-sidebar-header__mainname {
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 26px !important;
+}

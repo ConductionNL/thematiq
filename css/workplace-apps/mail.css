@@ -1,0 +1,142 @@
+/**
+ * Workplace app layer: Mail, drawn as the mail boards (MlInbox, MlThreadList,
+ * MlThread).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only on Mail's pages while the workplace layout is light
+ * (LayoutStylesheets::forApp()), after workplace-apps/common.css. Every rule
+ * starts at `.app-mail` under the content element; every colour is a
+ * variable.
+ *
+ * The list is one white column of rows with a hairline between them, not
+ * floating rounded tiles: sender, subject and preview in three lines, the
+ * selected row in the primary's light tint with a 3px primary edge. The
+ * conversation is white cards on the grey surface, its subject in the page
+ * title size of the boards (20px).
+ */
+
+/* "New message" is the filled primary action. */
+:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .button-vue--vue-secondary {
+	border-color: var(--nldesign-color-button-primary-border, var(--nldesign-color-primary)) !important;
+	background-color: var(--nldesign-color-button-primary-background, var(--nldesign-color-primary)) !important;
+	color: var(--nldesign-color-button-primary-text, var(--nldesign-color-primary-text)) !important;
+}
+
+:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .button-vue--vue-secondary:hover {
+	background-color: var(--nldesign-color-button-primary-hover, var(--nldesign-color-primary-hover)) !important;
+}
+
+/* The list. */
+:is(#content, #content-vue).app-mail .splitpanes__pane-list {
+	border-inline-end: 1px solid var(--color-border);
+	background-color: var(--thematiq-global-color-main-background, var(--color-main-background));
+}
+
+:is(#content, #content-vue).app-mail .envelope-list {
+	background-color: var(--thematiq-global-color-main-background, var(--color-main-background));
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper {
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item {
+	padding: 9px 14px 9px 10px !important;
+	border-bottom: 1px solid var(--color-border);
+	border-radius: 0 !important;
+	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item:hover {
+	background-color: var(--color-background-hover) !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper--active .list-item,
+:is(#content, #content-vue).app-mail .envelope-list .list-item--active {
+	box-shadow: inset 3px 0 0 var(--color-primary-element);
+	background-color: var(--color-primary-element-light) !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper--active .list-item *,
+:is(#content, #content-vue).app-mail .envelope-list .list-item--active * {
+	color: var(--color-primary-element-light-text) !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item-content__name {
+	font-size: 14px !important;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item-content__inner__main {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+:is(#content, #content-vue).app-mail .envelope-list .list-item-content__inner__details {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The list's date groups ("Last hour") are captions, not page titles. */
+:is(#content, #content-vue).app-mail .envelope-list h2 {
+	margin: 12px 14px 4px !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	line-height: 16px !important;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+/* The conversation. */
+:is(#content, #content-vue).app-mail #mail-thread-header-fields {
+	background-color: transparent !important;
+}
+
+:is(#content, #content-vue).app-mail #mail-thread-header-fields h2 {
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 28px !important;
+}
+
+:is(#content, #content-vue).app-mail #mail-message .envelope {
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-mail #mail-message .envelope .sender {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+:is(#content, #content-vue).app-mail #mail-message .envelope .timestamp {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-mail #mail-message .mail-message-attachments {
+	margin: 0 12px;
+	padding-inline-start: 12px !important;
+	border-top: 1px solid var(--color-border);
+}
+
+:is(#content, #content-vue).app-mail #mail-message .attachment {
+	border-radius: var(--border-radius-element, 8px);
+}
+
+:is(#content, #content-vue).app-mail #mail-message .attachment-name {
+	color: var(--color-primary-element-light-text);
+	font-size: 14px;
+}
+
+/* OpenRegister's panel beside the conversation (#openregister-mail-sidebar)
+ * is mounted outside the content element; its title takes the panel title
+ * size of the boards, inside the panel. */
+#openregister-mail-sidebar .app-sidebar-header__mainname {
+	padding-top: 4px;
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 26px !important;
+}
