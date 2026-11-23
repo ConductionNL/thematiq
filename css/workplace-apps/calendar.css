@@ -530,8 +530,10 @@
 	margin: 0 !important;
 }
 
-/* A day of the month before or after, as ClMonth draws it: its number in muted text. */
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+/* A day of the month before or after, as ClMonth draws it: its number in muted
+ * text. The number is a link, so the rule outranks element-overrides.css's
+ * link colour (one id, six classes, four elements). */
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-frame .fc-daygrid-day-top a.fc-daygrid-day-number {
 	color: var(--color-text-maxcontrast) !important;
 }
 
