@@ -26,7 +26,7 @@ describe('the playground code editor', { timeout: 20000 }, () => {
 		document.body.innerHTML = ''
 	})
 
-	it('mounts CodeMirror over the field and puts the field back on unmount', () => {
+	it('mounts CodeMirror over the field and puts the field back on unmount', async () => {
 		document.body.innerHTML = `
 			<label id="code-label" for="code">HTML</label>
 			<textarea id="code"><p>Tekst</p></textarea>
@@ -40,13 +40,16 @@ describe('the playground code editor', { timeout: 20000 }, () => {
 
 		expect(field.hidden).toBe(true)
 		const host = document.querySelector('.nldesign-code-editor')
-		expect(host.querySelector('.cm-editor')).not.toBeNull()
+		// CnJsonViewer loads CodeMirror on demand (nextcloud-vue 2.193).
+		await vi.waitFor(() => expect(host.querySelector('.cm-editor')).not.toBeNull(), { timeout: 10000 })
 		expect(host.querySelector('.cm-content').textContent).toContain(
 			'<p>Tekst</p>',
 		)
-		expect(
-			host.querySelector('.cm-content').getAttribute('aria-labelledby'),
-		).toBe('code-label')
+		await vi.waitFor(() =>
+			expect(
+				host.querySelector('.cm-content').getAttribute('aria-labelledby'),
+			).toBe('code-label'),
+		)
 
 		editor.unmount()
 		expect(document.querySelector('.nldesign-code-editor')).toBeNull()

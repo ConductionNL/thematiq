@@ -74,16 +74,33 @@ function editorApp(textarea, props) {
 }
 
 /**
- * Name the editable region by the text area's own label.
+ * Name the editable region by the text area's own label. CnJsonViewer loads
+ * CodeMirror on demand, so the region may appear after the mount: it is
+ * labelled as soon as it is there.
  *
  * @param {HTMLElement} host The element the editor is mounted in.
  * @param {string} [labelledBy] The id of the field's visible label.
+ * @return {Function} Stops waiting for the region.
  */
 function labelEditor(host, labelledBy) {
-	const content = host.querySelector('.cm-content')
-	if (content !== null && labelledBy) {
+	const label = () => {
+		const content = host.querySelector('.cm-content')
+		if (content === null) {
+			return false
+		}
 		content.setAttribute('aria-labelledby', labelledBy)
+		return true
 	}
+	if (!labelledBy || label() || typeof MutationObserver !== 'function') {
+		return () => {}
+	}
+	const observer = new MutationObserver(() => {
+		if (label()) {
+			observer.disconnect()
+		}
+	})
+	observer.observe(host, { childList: true, subtree: true })
+	return () => observer.disconnect()
 }
 
 /**
@@ -107,10 +124,11 @@ function mount(textarea, options = {}) {
 		height: options.height || '180px',
 	})
 	app.mount(host)
-	labelEditor(host, options.labelledBy)
+	const stopLabelling = labelEditor(host, options.labelledBy)
 
 	return {
 		unmount() {
+			stopLabelling()
 			app.unmount()
 			host.remove()
 			textarea.hidden = false
