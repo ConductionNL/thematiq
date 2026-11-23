@@ -55,6 +55,7 @@ class AppMenuListState {
 	 *
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 * @spec openspec/changes/apps-menu-ordered-list/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-that-have-an-address
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	public function state(IL10N $l): array {
 		$state = [];
@@ -70,12 +71,20 @@ class AppMenuListState {
 		}
 
 		$state['labels'] = [
+			'title' => $l->t('Apps'),
 			'allApps' => $l->t('All apps'),
 			'hideApps' => $l->t('Hide apps'),
 			'dragHint' => $l->t('Drag an app to change the order.'),
 			'moveHint' => $l->t('Alt with an arrow key moves the app.'),
 			'moved' => $l->t('{app} moved to place {place} of {total}.'),
 			'saveFailed' => $l->t('The order could not be saved.'),
+			'create' => $l->t('Create'),
+			'newDocument' => $l->t('New document'),
+			'newSpreadsheet' => $l->t('New spreadsheet'),
+			'newPresentation' => $l->t('New presentation'),
+			'newWhiteboard' => $l->t('New whiteboard'),
+			'more' => $l->t('More'),
+			'createFailed' => $l->t('The file could not be created.'),
 		];
 
 		return $state;

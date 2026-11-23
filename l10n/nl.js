@@ -1220,7 +1220,15 @@ OC.L10N.register(
         "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.": "Geef per app een adres. Een app zonder adres staat niet in het menu. Elke link opent in een nieuw tabblad.",
         "%s address": "Adres van %s",
         "Save addresses": "Adressen opslaan",
-        "Addresses saved.": "Adressen opgeslagen."
+        "Addresses saved.": "Adressen opgeslagen.",
+        "Apps": "Apps",
+        "Create": "Nieuw maken",
+        "New document": "Nieuw document",
+        "New spreadsheet": "Nieuwe spreadsheet",
+        "New presentation": "Nieuwe presentatie",
+        "New whiteboard": "Nieuw whiteboard",
+        "More": "Meer",
+        "The file could not be created.": "Het bestand kon niet worden gemaakt."
     },
     "nplurals=2; plural=(n != 1);"
 )

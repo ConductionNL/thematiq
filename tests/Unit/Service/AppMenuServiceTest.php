@@ -158,12 +158,20 @@ class AppMenuServiceTest extends TestCase {
 		return [
 			'order' => [],
 			'labels' => [
+				'title' => 'Apps',
 				'allApps' => 'All apps',
 				'hideApps' => 'Hide apps',
 				'dragHint' => 'Drag an app to change the order.',
 				'moveHint' => 'Alt with an arrow key moves the app.',
 				'moved' => '{app} moved to place {place} of {total}.',
 				'saveFailed' => 'The order could not be saved.',
+				'create' => 'Create',
+				'newDocument' => 'New document',
+				'newSpreadsheet' => 'New spreadsheet',
+				'newPresentation' => 'New presentation',
+				'newWhiteboard' => 'New whiteboard',
+				'more' => 'More',
+				'createFailed' => 'The file could not be created.',
 			],
 		];
 	}//end ordered()
