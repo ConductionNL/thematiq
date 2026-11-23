@@ -257,9 +257,10 @@ class AdminInitialStateTest extends TestCase {
 			message: 'A design system without docs, or with a non-https link, gets the app docs.'
 		);
 
-		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/admin.php');
+		// The link lives in the page header; js/admin.js points it at designSystemDocs.
+		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/page-header.php');
 		$this->assertStringNotContainsString(needle: 'href="https://nldesign.app"', haystack: $template);
-		$this->assertStringContainsString(needle: "p(\$_['documentationUrl'])", haystack: $template);
+		$this->assertStringContainsString(needle: 'id="nldesign-doc-link"', haystack: $template);
 	}//end testTheDocumentationLinkFollowsTheDesignSystem()
 
 	/**
