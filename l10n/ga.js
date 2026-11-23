@@ -1220,7 +1220,15 @@ OC.L10N.register(
         "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.": "Give an address per app. An app without an address stays out of the menu. Each link opens in a new tab.",
         "%s address": "%s address",
         "Save addresses": "Save addresses",
-        "Addresses saved.": "Addresses saved."
+        "Addresses saved.": "Addresses saved.",
+        "Apps": "Apps",
+        "Create": "Create",
+        "New document": "New document",
+        "New spreadsheet": "New spreadsheet",
+        "New presentation": "New presentation",
+        "New whiteboard": "New whiteboard",
+        "More": "More",
+        "The file could not be created.": "The file could not be created."
     },
     "nplurals=2; plural=(n != 1);"
 )

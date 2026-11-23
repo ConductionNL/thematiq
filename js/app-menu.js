@@ -37,6 +37,56 @@
 	var SAVE_DELAY = 400
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
+	var CREATE_ROW = 99900
+	var CREATE_MAX = 4
+	var CREATE_TRIES = 20
+	var TEMPLATES_URL = '/ocs/v2.php/apps/files/api/v1/templates'
+	var CHEVRON_DOWN =
+		'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z'
+	var CHEVRON_UP = 'M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z'
+	// The kinds of the Create row, in the row's order: the label key, the
+	// icon, and the mimetypes or app a Files template creator must offer.
+	var KINDS = [
+		{
+			kind: 'document',
+			label: 'newDocument',
+			icon: 'M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z',
+			mimetypes: [
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'application/vnd.oasis.opendocument.text',
+				'text/markdown',
+			],
+		},
+		{
+			kind: 'spreadsheet',
+			label: 'newSpreadsheet',
+			icon: 'M4,3H20A2,2 0 0,1 22,5V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V5A2,2 0 0,1 4,3M4,7V10H8V7H4M10,7V10H14V7H10M20,10V7H16V10H20M4,12V15H8V12H4M4,20H8V17H4V20M10,12V15H14V12H10M10,20H14V17H10V20M20,20V17H16V20H20M20,12H16V15H20V12Z',
+			mimetypes: [
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				'application/vnd.oasis.opendocument.spreadsheet',
+			],
+		},
+		{
+			kind: 'presentation',
+			label: 'newPresentation',
+			icon: 'M2,3H10A2,2 0 0,1 12,1A2,2 0 0,1 14,3H22V5H21V16H15.25L17,22H15L13.25,16H10.75L9,22H7L8.75,16H3V5H2V3M5,5V14H19V5H5Z',
+			mimetypes: [
+				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+				'application/vnd.oasis.opendocument.presentation',
+			],
+		},
+		{
+			kind: 'whiteboard',
+			label: 'newWhiteboard',
+			icon: 'M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z',
+			app: 'whiteboard',
+			mimetypes: ['application/vnd.excalidraw+json'],
+		},
+	]
+	var MORE_ICON =
+		'M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z'
+	var FILE_ICON =
+		'M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z'
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqAppMenuMain)
@@ -113,6 +163,357 @@
 		} else {
 			el.removeAttribute('data-thematiq-folded')
 		}
+	}
+
+	/**
+	 * A 24px icon, drawn in the text colour, hidden from assistive technology.
+	 *
+	 * @param {string} d The path data.
+	 * @return {SVGElement} The icon.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md
+	 */
+	function icon(d) {
+		var svg = document.createElementNS(SVG_NS, 'svg')
+		svg.setAttribute('viewBox', '0 0 24 24')
+		svg.setAttribute('width', '18')
+		svg.setAttribute('height', '18')
+		svg.setAttribute('fill', 'currentColor')
+		svg.setAttribute('aria-hidden', 'true')
+		var path = document.createElementNS(SVG_NS, 'path')
+		path.setAttribute('d', d)
+		svg.appendChild(path)
+		return svg
+	}
+
+	/**
+	 * The "Apps" title at the top of the panel, added once per grid.
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {object} labels The texts.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-apps-menu-has-a-title-and-a-chevron-on-its-toggle
+	 */
+	function title(grid, labels) {
+		if (
+			text(labels, 'title') === ''
+			|| grid.querySelector(':scope > [data-thematiq-row="title"]') !== null
+		) {
+			return
+		}
+		var el = row(grid, 'title', 1)
+		el.className = BLOCK + '__title-row'
+		var h = document.createElement('h2')
+		h.className = BLOCK + '__apps-title'
+		h.id = 'thematiq-app-menu-title'
+		h.textContent = text(labels, 'title')
+		el.appendChild(h)
+		if (grid.getAttribute('role') === 'menu') {
+			grid.setAttribute('aria-labelledby', h.id)
+		}
+	}
+
+	/**
+	 * The template creators Nextcloud's Files offers this person, fetched once
+	 * per page from the Files templates API. Resolves to an empty list when
+	 * Files does not answer.
+	 *
+	 * @return {Promise<Array<object>>} The creators.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function creators() {
+		if (window.thematiqAppMenuCreators) {
+			return window.thematiqAppMenuCreators
+		}
+		if (typeof fetch !== 'function' || typeof OC === 'undefined') {
+			return Promise.resolve([])
+		}
+		window.thematiqAppMenuCreators = fetch(
+			(OC.webroot || '') + TEMPLATES_URL + '?format=json',
+			{
+				headers: {
+					'OCS-APIRequest': 'true',
+					Accept: 'application/json',
+					requesttoken: OC.requestToken,
+				},
+			},
+		)
+			.then(function (res) {
+				return res.ok ? res.json() : null
+			})
+			.then(function (body) {
+				var data = body && body.ocs ? body.ocs.data : null
+				return Array.isArray(data)
+					? data.filter(function (creator) {
+						return (
+							creator
+							&& text(creator, 'label') !== ''
+							&& /^\.[a-z0-9]{1,10}$/i.test(creator.extension || '')
+						)
+					})
+					: []
+			})
+			.catch(function () {
+				return []
+			})
+		return window.thematiqAppMenuCreators
+	}
+
+	/**
+	 * The creator for each kind of the Create row, in the row's order. A kind
+	 * no installed app offers is left out.
+	 *
+	 * @param {Array<object>} list The creators.
+	 * @return {Array<{kind: object, creator: object}>} The row.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function rowCreators(list) {
+		var taken = []
+		return KINDS.map(function (kind) {
+			var found = null
+			kind.mimetypes.some(function (type) {
+				found = list.filter(function (creator) {
+					return (
+						taken.indexOf(creator) === -1
+						&& (Array.isArray(creator.mimetypes)
+							? creator.mimetypes.indexOf(type) !== -1
+							: false)
+					)
+				})[0] || null
+				return found !== null
+			})
+			if (found === null && kind.app) {
+				found = list.filter(function (creator) {
+					return creator.app === kind.app && taken.indexOf(creator) === -1
+				})[0] || null
+			}
+			if (found !== null) {
+				taken.push(found)
+			}
+			return { kind: kind, creator: found }
+		}).filter(function (item) {
+			return item.creator !== null
+		})
+	}
+
+	/**
+	 * A file name that Files accepts: the creator's label without slashes,
+	 * numbered from the second try, with the creator's extension.
+	 *
+	 * @param {object} creator The creator.
+	 * @param {number} attempt The try, from 1.
+	 * @return {string} The name.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
+	 */
+	function fileName(creator, attempt) {
+		var base = text(creator, 'label').replace(/[\\/]/g, ' ').trim()
+		return base + (attempt > 1 ? ' (' + attempt + ')' : '') + creator.extension
+	}
+
+	/**
+	 * Create an empty file of a creator in the person's home folder through
+	 * the Files templates API, and open it. A name that is taken is tried
+	 * again with a number.
+	 *
+	 * @param {object} creator The creator.
+	 * @param {Function} failed Called when the file could not be made.
+	 * @return {Promise<void>} Settles when done.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-a-create-action-makes-the-file-and-opens-it
+	 */
+	function createFile(creator, failed) {
+		var attempt = function (n) {
+			return fetch((OC.webroot || '') + TEMPLATES_URL + '/create?format=json', {
+				method: 'POST',
+				headers: {
+					'OCS-APIRequest': 'true',
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					requesttoken: OC.requestToken,
+				},
+				body: JSON.stringify({
+					filePath: '/' + fileName(creator, n),
+					templatePath: '',
+					templateType: 'user',
+				}),
+			}).then(function (res) {
+				if (res.status === 403 && n < CREATE_TRIES) {
+					return attempt(n + 1)
+				}
+				if (!res.ok) {
+					throw new Error('create')
+				}
+				return res.json().then(function (body) {
+					var id = body && body.ocs && body.ocs.data ? body.ocs.data.fileid : null
+					if (typeof id !== 'number' && !/^\d+$/.test(String(id))) {
+						throw new Error('create')
+					}
+					window.location.assign(OC.generateUrl('/f/{id}', { id: id }))
+				})
+			})
+		}
+		return attempt(1).catch(failed)
+	}
+
+	/**
+	 * Run one of Nextcloud's own navigation actions: a link opens, an action
+	 * without one goes to the app that registered it over the event bus.
+	 *
+	 * @param {object} action The navigation entry.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function runAction(action) {
+		if (linkable(action.href)) {
+			window.location.assign(action.href)
+		} else if (window._nc_event_bus && typeof window._nc_event_bus.emit === 'function') {
+			window._nc_event_bus.emit('core:navigation:action', action)
+		}
+	}
+
+	/**
+	 * Nextcloud's own navigation actions (`core/navigationActions`), the
+	 * entries its app menu draws in its action row. Empty before Nextcloud 35.
+	 *
+	 * @return {Array<object>} The actions with a name.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function coreActions() {
+		var list = []
+		try {
+			list = OCP.InitialState.loadState('core', 'navigationActions', [])
+		} catch (e) {
+			list = []
+		}
+		return Array.isArray(list)
+			? list.filter(function (action) {
+				return action && text(action, 'name') !== ''
+			})
+			: []
+	}
+
+	/**
+	 * A button of the Create row: a round chip with the icon and the name.
+	 *
+	 * @param {string} name The name.
+	 * @param {string} d The icon's path data.
+	 * @param {Function} onClick What it does.
+	 * @return {HTMLButtonElement} The button.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function chip(name, d, onClick) {
+		var button = document.createElement('button')
+		button.type = 'button'
+		button.className = BLOCK + '__create'
+		var circle = document.createElement('span')
+		circle.className = BLOCK + '__create-icon'
+		circle.appendChild(icon(d))
+		var label = document.createElement('span')
+		label.className = BLOCK + '__create-label'
+		label.textContent = name
+		button.appendChild(circle)
+		button.appendChild(label)
+		button.addEventListener('click', onClick)
+		return button
+	}
+
+	/**
+	 * The Create row above the footer: New document, New spreadsheet, New
+	 * presentation and New whiteboard when an installed app offers them, and
+	 * More, which unfolds every creator and every Nextcloud navigation action.
+	 * Drawn once the creators are known; hidden when there are none.
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function createRow(grid, menu) {
+		var labels = menu.labels || {}
+		var off = text(labels, 'create') === '' || menu.createActions === false
+		var heading = grid.querySelector(':scope > [data-thematiq-row="create-title"]')
+		if (off) {
+			;['create-title', 'create', 'create-more'].forEach(function (key) {
+				var el = grid.querySelector(':scope > [data-thematiq-row="' + key + '"]')
+				if (el !== null) {
+					fold(el, true)
+				}
+			})
+			return
+		}
+		if (heading !== null) {
+			fold(heading, false)
+			var drawn = grid.querySelector(':scope > [data-thematiq-row="create"]')
+			if (drawn !== null) {
+				fold(drawn, false)
+			}
+			return
+		}
+		creators().then(function (list) {
+			if (grid.querySelector(':scope > [data-thematiq-row="create-title"]') !== null) {
+				return
+			}
+			var actions = coreActions()
+			var items = rowCreators(list).slice(0, CREATE_MAX)
+			if (list.length === 0 && actions.length === 0) {
+				return
+			}
+			var live = function (message) {
+				var region = grid.querySelector(':scope > [data-thematiq-row="live"]')
+				if (region !== null && message !== '') {
+					region.textContent = message
+				}
+			}
+			var failed = function () {
+				live(text(labels, 'createFailed'))
+			}
+			var head = row(grid, 'create-title', CREATE_ROW)
+			head.className = BLOCK + '__heading ' + BLOCK + '__create-heading'
+			var h = document.createElement('h3')
+			h.className = BLOCK + '__title'
+			h.id = 'thematiq-app-menu-create'
+			h.textContent = text(labels, 'create')
+			head.appendChild(h)
+
+			var bar = row(grid, 'create', CREATE_ROW + 1)
+			bar.className = BLOCK + '__create-row'
+			bar.setAttribute('role', 'group')
+			bar.setAttribute('aria-labelledby', h.id)
+			items.forEach(function (item) {
+				var name = text(labels, item.kind.label) || text(item.creator, 'label')
+				bar.appendChild(
+					chip(name, item.kind.icon, function () {
+						createFile(item.creator, failed)
+					}),
+				)
+			})
+
+			var more = row(grid, 'create-more', CREATE_ROW + 2)
+			more.className = BLOCK + '__create-more'
+			more.id = 'thematiq-app-menu-create-more'
+			fold(more, true)
+			list.forEach(function (creator) {
+				more.appendChild(
+					chip(
+						text(creator, 'actionLabel') || text(creator, 'label'),
+						FILE_ICON,
+						function () {
+							createFile(creator, failed)
+						},
+					),
+				)
+			})
+			actions.forEach(function (action) {
+				more.appendChild(
+					chip(text(action, 'name'), MORE_ICON, function () {
+						runAction(action)
+					}),
+				)
+			})
+			var moreButton = chip(text(labels, 'more'), MORE_ICON, function () {
+				var open = moreButton.getAttribute('aria-expanded') === 'true'
+				moreButton.setAttribute('aria-expanded', open ? 'false' : 'true')
+				fold(more, open)
+			})
+			moreButton.setAttribute('aria-expanded', 'false')
+			moreButton.setAttribute('aria-controls', more.id)
+			bar.appendChild(moreButton)
+		})
 	}
 
 	/**
@@ -375,12 +776,18 @@
 					}
 					arrange(grid, menu, save)
 				})
+				button.appendChild(icon(''))
+				button.appendChild(document.createElement('span'))
 				toggle.appendChild(button)
 			}
 			button.setAttribute('aria-expanded', expanded ? 'true' : 'false')
+			button
+				.querySelector('path')
+				.setAttribute('d', expanded ? CHEVRON_UP : CHEVRON_DOWN)
 			var caption = text(labels, expanded ? 'hideApps' : 'allApps')
-			if (button.textContent !== caption) {
-				button.textContent = caption
+			var captionEl = button.querySelector('span')
+			if (captionEl.textContent !== caption) {
+				captionEl.textContent = caption
 			}
 			fold(toggle, false)
 		} else if (toggle !== null) {
@@ -416,6 +823,8 @@
 			}
 		}
 
+		title(grid, labels)
+		createRow(grid, menu)
 		footer(grid, menu, found.manage)
 		wire(grid, menu, save)
 	}
