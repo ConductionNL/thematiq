@@ -1359,7 +1359,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/extended-token-sets",
-				"requirement": "openspec/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
+				"requirement": "openspec/specs/token-sets :: Community brand sets sit beside the government ones"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -4158,8 +4158,8 @@
 				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/openproject-in-the-app-menu",
-				"requirement": "openspec/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
+				"spec": "openspec/specs/external-apps-in-the-app-menu",
+				"requirement": "openspec/specs/external-apps-in-the-app-menu :: The apps menu lists the external apps from Menu settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
 			"evidence": {
@@ -7106,7 +7106,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/token-editor-ui",
-				"requirement": "openspec/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
+				"requirement": "openspec/specs/nextcloud-variable-mapping :: Selected text takes the brand colour in a readable, translucent form"
 			},
 			"reachedOn": "any page: selected text takes the brand primary at 20 percent",
 			"evidence": {
