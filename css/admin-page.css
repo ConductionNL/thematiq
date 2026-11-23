@@ -299,7 +299,7 @@
 	background: var(--color-main-background);
 }
 
-#nldesign-settings .thematiq-card h2.thematiq-card__title {
+#nldesign-settings h2.thematiq-card__title {
 	justify-content: flex-start !important;
 	max-width: none !important;
 	margin: 0 !important;
@@ -646,4 +646,268 @@
 .thematiq-login-sample__slogan {
 	color: var(--color-primary-element-text);
 	font-size: 13px;
+}
+
+/* Token sets: a heading with the count line and the tools, then the table card. */
+.thematiq-token-sets {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0 0 24px;
+}
+
+.thematiq-token-sets__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.thematiq-token-sets__intro {
+	display: flex;
+	flex: 1 1 400px;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.thematiq-token-sets__count {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+.thematiq-token-sets__tools {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-token-sets__search {
+	box-sizing: border-box;
+	width: 220px;
+	height: 40px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-token-sets__own {
+	height: 40px;
+	margin: 0;
+	padding: 0 14px;
+	border: 0;
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-token-sets__card {
+	gap: 14px;
+	margin: 0;
+}
+
+.thematiq-token-sets__scroll {
+	overflow-x: auto;
+}
+
+.thematiq-token-sets__table {
+	width: 100%;
+	min-width: 760px;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.thematiq-token-sets__table th {
+	padding: 8px 12px;
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-text-maxcontrast);
+	font-weight: 600;
+	text-align: start;
+}
+
+#nldesign-settings .thematiq-token-sets__table th button {
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.thematiq-token-sets__table td {
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-main-text);
+	vertical-align: middle;
+}
+
+.thematiq-token-sets__table th:first-child,
+.thematiq-token-sets__table td:first-child {
+	padding-inline-start: 0;
+}
+
+.thematiq-token-sets__table th:last-child,
+.thematiq-token-sets__table td:last-child {
+	padding-inline-end: 0;
+	text-align: end;
+}
+
+#nldesign-settings .thematiq-token-sets__name a {
+	font-weight: 600;
+	text-decoration: none !important;
+}
+
+.thematiq-token-sets__system {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.thematiq-token-sets__tag {
+	padding: 1px 8px;
+	border-radius: 10px;
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.thematiq-token-sets__tag--warning {
+	background: var(--color-warning);
+	color: var(--color-warning-text);
+}
+
+.thematiq-token-sets__colour {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-family: var(--font-face-monospace, monospace);
+	font-size: 13px;
+}
+
+.thematiq-token-sets__chip {
+	width: 16px;
+	height: 16px;
+	border-radius: 4px;
+	box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.thematiq-token-sets__pill {
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.thematiq-token-sets__pill--active {
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	color: var(--color-success-text);
+}
+
+.thematiq-token-sets__pill--licence {
+	background: color-mix(in srgb, var(--color-warning) 18%, var(--color-main-background));
+	color: var(--color-warning-text);
+}
+
+.thematiq-token-sets__actions {
+	position: relative;
+}
+
+#nldesign-settings .thematiq-token-sets__toggle {
+	width: 34px;
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 17px;
+	background: transparent;
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .thematiq-token-sets__toggle::before {
+	content: '';
+	display: block;
+	width: 20px;
+	height: 20px;
+	margin: auto;
+	background-color: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+}
+
+#nldesign-settings .thematiq-token-sets__toggle:hover {
+	background-color: var(--color-background-hover);
+}
+
+.thematiq-token-sets__menu {
+	position: absolute;
+	z-index: 10;
+	inset-inline-end: 0;
+	display: flex;
+	flex-direction: column;
+	min-width: 220px;
+	padding: 4px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	box-shadow: 0 4px 16px var(--color-box-shadow);
+	text-align: start;
+}
+
+.thematiq-token-sets__menu[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-token-sets__item {
+	display: block;
+	min-height: 34px;
+	margin: 0;
+	padding: 6px 10px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: var(--color-main-text) !important;
+	font-size: 14px;
+	text-align: start;
+	text-decoration: none !important;
+}
+
+#nldesign-settings .thematiq-token-sets__item:hover,
+#nldesign-settings .thematiq-token-sets__item:focus-visible {
+	background: var(--color-background-hover);
+}
+
+.thematiq-token-sets__footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-token-sets__more {
+	height: 36px;
+	margin: 0;
+	padding: 0 14px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-token-sets__more[hidden] {
+	display: none;
 }

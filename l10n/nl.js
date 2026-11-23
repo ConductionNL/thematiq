@@ -1382,7 +1382,24 @@ OC.L10N.register(
         "Workplace": "Werkplek",
         "Login page": "Inlogpagina",
         "The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.": "Inlogpagina toont het logo, de inlogkaart met de primaire knop en de slogan, in de gekozen set.",
-        "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.": "Tab Inlogpagina: zo tekent de set de inlogpagina. Logo en slogan komen uit het Nextcloud-thema."
+        "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.": "Tab Inlogpagina: zo tekent de set de inlogpagina. Logo en slogan komen uit het Nextcloud-thema.",
+        "Token sets": "Tokensets",
+        "Search token sets": "Zoek tokensets",
+        "Own token set": "Eigen tokenset",
+        "Design system": "Ontwerpsysteem",
+        "Primary colour": "Primaire kleur",
+        "Layout": "Indeling",
+        "Show more": "Meer tonen",
+        "Active": "Actief",
+        "Available": "Beschikbaar",
+        "Confirm licence": "Licentie bevestigen",
+        "Light workplace": "Lichte werkplek",
+        "Follows Nextcloud": "Volgt Nextcloud",
+        "Own set": "Eigen set",
+        "More actions for {name}": "Meer acties voor {name}",
+        "Use this token set": "Deze tokenset gebruiken",
+        "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.": "{shown} van {total} tokensets, waarvan {own} eigen sets. Een set die niet elke token van haar ontwerpsysteem zet, is gemarkeerd als onvolledig.",
+        "{shown} of {total}": "{shown} van {total}"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -37,6 +37,7 @@ use OCP\IConfig;
  *     description: string,
  *     design_system: string,
  *     theming?: array<string, mixed>,
+ *     workplaceLayout?: string,
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
@@ -49,6 +50,7 @@ use OCP\IConfig;
  *     description: string,
  *     design_system: string,
  *     theming?: array<string, mixed>,
+ *     workplaceLayout?: string,
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
@@ -293,6 +295,12 @@ class TokenSetService {
 		$theming = $this->entryTheming(candidates: [($sources['captured'][$id] ?? null), ($meta['theming'] ?? null)]);
 		if ($theming !== null) {
 			$tokenSet['theming'] = $theming;
+		}
+
+		// The workplace layout the set brings, for the Layout column of the token sets table.
+		$workplaceLayout = ($meta['layout']['workplace_layout'] ?? null);
+		if (is_string($workplaceLayout) === true) {
+			$tokenSet['workplaceLayout'] = $workplaceLayout;
 		}
 
 		$listed = new ListedTokenSet(

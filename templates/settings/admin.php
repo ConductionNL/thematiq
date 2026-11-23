@@ -45,6 +45,7 @@ script('thematiq', 'lib/markupRender');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-active-set-preview');
+script('thematiq', 'admin-token-sets-table');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
@@ -187,6 +188,45 @@ if ($_['mockUi'] === true) {
 			p($l->t('File formats: W3C design tokens, Figma with every colour as text, Tokens Studio for Figma, Tokens Studio in the old spelling with value and type, and the set file for the OpenProject plugin. A token keeps the same path in every format. The set file moves a set to the plugin without a connection. Any file can be uploaded again as a custom token set.'));
 			?>
 		</p>
+	</section>
+
+	<!-- Token sets as TqTheming draws them; js/admin-token-sets-table.js fills the
+	     table from the tokenSets state and sends Use this token set through the
+	     picker above. -->
+	<section class="thematiq-token-sets" id="thematiq-token-sets" aria-labelledby="thematiq-token-sets-title">
+		<div class="thematiq-token-sets__head">
+			<div class="thematiq-token-sets__intro">
+				<h2 id="thematiq-token-sets-title" class="thematiq-card__title"><?php p($l->t('Token sets')); ?></h2>
+				<span class="thematiq-token-sets__count"></span>
+			</div>
+			<div class="thematiq-token-sets__tools">
+				<label for="thematiq-token-sets-search" class="hidden-visually"><?php p($l->t('Search token sets')); ?></label>
+				<input type="search" id="thematiq-token-sets-search" class="thematiq-token-sets__search"
+					placeholder="<?php p($l->t('Search token sets')); ?>" autocomplete="off">
+				<button type="button" class="thematiq-token-sets__own"><?php p($l->t('Own token set')); ?></button>
+			</div>
+		</div>
+		<div class="thematiq-card thematiq-token-sets__card">
+			<div class="thematiq-token-sets__scroll">
+				<table class="thematiq-token-sets__table">
+					<thead>
+						<tr>
+						<th scope="col" data-column="name"><button type="button"><?php p($l->t('Name')); ?></button></th>
+						<th scope="col" data-column="designSystem"><button type="button"><?php p($l->t('Design system')); ?></button></th>
+						<th scope="col" data-column="primary"><button type="button"><?php p($l->t('Primary colour')); ?></button></th>
+						<th scope="col" data-column="layout"><button type="button"><?php p($l->t('Layout')); ?></button></th>
+						<th scope="col" data-column="status"><button type="button"><?php p($l->t('Status')); ?></button></th>
+							<th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div class="thematiq-token-sets__footer">
+				<span class="thematiq-token-sets__shown" aria-live="polite"></span>
+				<button type="button" class="thematiq-token-sets__more"><?php p($l->t('Show more')); ?></button>
+			</div>
+		</div>
 	</section>
 
 	<!-- House styles whose licence limits their use to their owner: the warning,
