@@ -525,6 +525,43 @@ body:not(#body-login)
 	}
 }
 
+/* A phone (board LpMobiel, 390px): the bar keeps one row inside the screen.
+ * The brand block loses its caption, and below 420px its words, so the bell,
+ * the contacts menu and the avatar no longer push the page sideways. */
+@media (max-width: 512px) {
+	body:not(#body-login) #header {
+		padding-inline: 8px 12px;
+	}
+
+	body:not(#body-login) #header a.thematiq-brand {
+		width: auto;
+	}
+
+	body:not(#body-login) #header .thematiq-brand__caption {
+		display: none;
+	}
+
+	body:not(#body-login) #header .thematiq-brand-host {
+		margin-inline-end: 4px;
+	}
+
+	body:not(#body-login) #header .header-end {
+		gap: 2px;
+		min-width: 0;
+	}
+
+	body:not(#body-login) #header .header-end > #user-menu {
+		flex: none;
+	}
+}
+
+@media (max-width: 420px) {
+	body:not(#body-login) #header .thematiq-brand__text,
+	body:not(#body-login) #header .thematiq-brand__divider {
+		display: none;
+	}
+}
+
 body:not(#body-login) #header .thematiq-user-chip__chevron path {
 	fill: currentColor !important;
 	stroke: none !important;
