@@ -80,10 +80,13 @@ describe('the workplace app layer script', () => {
 
 		const links = () => Array.from(document.querySelectorAll('.fc-col-header-cell-cushion')).map((a) => a.textContent)
 		expect(links()).toEqual(['Mon 23', 'Sun 1'])
+		const numbers = () => Array.from(document.querySelectorAll('.fc-col-header-cell-cushion > .thematiq-day-number')).map((s) => s.textContent)
+		expect(numbers(), 'the day of the month sits in a span of its own').toEqual(['23', '1'])
 
 		document.querySelector('.fc-col-header-cell-cushion').textContent = 'Mon 23/11/2026'
 		await frame()
 		expect(links()).toEqual(['Mon 23', 'Sun 1'])
+		expect(numbers()).toEqual(['23', '1'])
 	})
 
 	it('leaves the month view\'s weekday heads alone', async () => {
