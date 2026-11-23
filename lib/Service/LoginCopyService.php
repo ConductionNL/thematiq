@@ -78,6 +78,8 @@ class LoginCopyService {
 		'subtitle',
 		'sso_label',
 		'username_label',
+		'submit_label',
+		'reset_label',
 		'divider',
 		'footer',
 		'footer_hint',
