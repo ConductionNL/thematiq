@@ -432,3 +432,117 @@
 		transform: rotate(2deg);
 	}
 }
+
+/*
+ * With a card open the navigation folds to a 64px rail of icons with a small
+ * label under each, as TbCard draws it; the board keeps the room. Keyboard
+ * focus or an open menu unfolds the full column over the board at once, the
+ * pointer after 200ms, as Mail's rail does (css/workplace-apps/mail.css).
+ * The boards under All boards and rows without an icon have nothing to show
+ * in the rail. Without style queries the column stays unfolded.
+ */
+@property --thematiq-deck-rail {
+	syntax: "<integer>";
+	inherits: true;
+	initial-value: 0;
+}
+
+@keyframes thematiq-deck-rail-unfold {
+	from,
+	to {
+		--thematiq-deck-rail: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation {
+		--thematiq-deck-rail: 1;
+
+		position: relative;
+		z-index: 2000;
+		flex: 0 0 64px !important;
+		width: 64px !important;
+		min-width: 64px !important;
+		max-width: 64px !important;
+	}
+
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:is(:focus-within, :has(#app-navigation-vue [aria-haspopup][aria-expanded="true"])) {
+		--thematiq-deck-rail: 0;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:hover {
+			animation: thematiq-deck-rail-unfold 1ms 200ms forwards;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:hover {
+			--thematiq-deck-rail: 0;
+		}
+	}
+
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 264px;
+		border-inline-end: 1px solid var(--color-border);
+		background-color: var(--color-main-background);
+		box-shadow: 0 4px 16px var(--color-box-shadow);
+	}
+
+	@container style(--thematiq-deck-rail: 1) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue {
+			width: 64px;
+			box-shadow: none;
+			padding-inline: 4px !important;
+			overflow: hidden;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue :is(.app-navigation-entry__children, .app-navigation-entry__actions, .app-navigation-entry__utils, .app-navigation-caption, .icon-collapse) {
+			display: none !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+			display: none !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-list {
+			padding-inline: 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue :is(.app-navigation-entry, .app-navigation-entry-link) {
+			height: auto !important;
+			min-height: 48px !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-link {
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			width: 100% !important;
+			padding: 4px 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-icon {
+			width: 20px !important;
+			height: 22px !important;
+			min-height: 22px !important;
+			margin: 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry__name {
+			max-width: 56px;
+			height: auto !important;
+			min-height: 0 !important;
+			padding: 0 !important;
+			overflow: hidden;
+			font-size: 11px !important;
+			line-height: 14px !important;
+			text-align: center;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+}

@@ -361,6 +361,20 @@
 		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-settings .app-navigation-entry__name {
 			display: none;
 		}
+
+		/* The rail shows the folders of the account that is open, as MlThread
+		 * draws one account's rail: with several accounts the other accounts'
+		 * folders, and the shared views above the first account (Priority
+		 * inbox, All inboxes) unless one of them is open, wait in the full
+		 * column. An account's caption and folders are siblings in one list,
+		 * so the account is told apart by the caption before it. */
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list:has(.app-navigation-caption ~ li .active) > li:not(.app-navigation-caption ~ li):not(.app-navigation-caption):not(:has(.active)),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption ~ li,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:has(~ .app-navigation-caption ~ li .active) {
+			display: none !important;
+		}
 	}
 }
 
@@ -574,5 +588,40 @@
 		--thematiq-mail-rail: 0;
 
 		animation: none;
+	}
+}
+
+/* An account's caption on one line, its menu at the end, as the navigation
+ * captions of MlInbox and MlNav sit ("FOLDERS" with its button). The design
+ * system lays a caption out as a block, which put the account's menu on a
+ * row of its own under the address. */
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption {
+	display: flex !important;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 4px;
+}
+
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__name {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__actions {
+	flex: none;
+	width: auto;
+}
+
+/* The list's search field starts at the list's edge. Mail keeps room before
+ * it for the button that folds the navigation, which the workplace hides on
+ * a wide screen (css/token-overrides/zuiddrecht.css); the boards draw the
+ * list header from the edge. */
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-mail .search-messages__input {
+		margin-inline-start: 12px;
 	}
 }

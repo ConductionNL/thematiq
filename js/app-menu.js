@@ -48,6 +48,9 @@
 	var DRAG_START = 6
 	var HOVER_OPEN = 150
 	var HOVER_CLOSE = 180
+	// On the root while the apps menu is open because the pointer rested on
+	// its button, until the next key press.
+	var PEEK = 'data-thematiq-app-menu-peek'
 	var REOPEN_WINDOW = 600
 	var SAVE_DELAY = 400
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
@@ -1980,10 +1983,21 @@
 			openTimer = setTimeout(function () {
 				if (!isOpen()) {
 					peek = true
+					document.documentElement.setAttribute(PEEK, '')
 					toggle()
 				}
 			}, HOVER_OPEN)
 		})
+		// A menu the pointer opened moves focus into itself, and the browser
+		// draws that focus as if it came from the keyboard. The marker lets
+		// the stylesheet leave the ring out until a key is pressed.
+		document.addEventListener(
+			'keydown',
+			function () {
+				document.documentElement.removeAttribute(PEEK)
+			},
+			true,
+		)
 		document.addEventListener('pointerout', function (event) {
 			if (!inZone(event.target) || inZone(event.relatedTarget)) {
 				return
