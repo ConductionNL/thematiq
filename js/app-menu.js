@@ -906,7 +906,8 @@
 			true,
 		)
 		// A press on a button while a look is open would reach the popover's
-		// outside-press handler and close it before the click can pin it.
+		// outside-press handler, or move focus out of the popover, and either
+		// closes it before the click can pin it.
 		;['pointerdown', 'mousedown'].forEach(function (type) {
 			window.addEventListener(
 				type,
@@ -918,13 +919,14 @@
 						&& event.target.closest
 						&& event.target.closest(TRIGGERS) !== null
 					) {
+						event.preventDefault()
 						event.stopImmediatePropagation()
 					}
 				},
 				true,
 			)
 		})
-		;['mouseleave', 'pointerleave'].forEach(function (type) {
+		;['mouseleave', 'pointerleave', 'mouseout', 'pointerout'].forEach(function (type) {
 			window.addEventListener(
 				type,
 				function (event) {

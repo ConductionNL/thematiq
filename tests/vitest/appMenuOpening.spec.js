@@ -120,8 +120,10 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 		const outsidePress = vi.fn()
 		document.addEventListener('mousedown', outsidePress, true)
-		waffle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+		const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true })
+		waffle.dispatchEvent(press)
 		expect(outsidePress, 'the popover never saw the press').not.toHaveBeenCalled()
+		expect(press.defaultPrevented, 'focus stays in the menu').toBe(true)
 		document.removeEventListener('mousedown', outsidePress, true)
 		const pin = new MouseEvent('click', { bubbles: true, cancelable: true })
 		waffle.dispatchEvent(pin)
