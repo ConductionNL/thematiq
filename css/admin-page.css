@@ -473,12 +473,14 @@
 
 .thematiq-swatch__name {
 	padding: 8px 10px 0;
+	line-height: normal;
 	font-size: 13px;
 	font-weight: 600;
 }
 
 .thematiq-swatch__value {
 	padding: 0 10px 10px;
+	line-height: normal;
 	color: var(--color-text-maxcontrast);
 	font-family: var(--font-face-monospace, monospace);
 	font-size: 12px;
@@ -491,7 +493,8 @@
 	gap: 14px;
 	padding: 14px;
 	border-top: 1px solid var(--color-border);
-	background: var(--color-background-dark);
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	line-height: normal;
 }
 
 .thematiq-set-sample__bar {
@@ -559,7 +562,7 @@
 .thematiq-set-sample__nav {
 	padding: 0 12px;
 	background: var(--nldesign-color-accent-light, var(--color-primary-element-light));
-	color: var(--nldesign-color-accent-dark, var(--color-primary-element-light-text));
+	color: var(--nldesign-component-navigation-active-color, var(--color-primary-element-light-text));
 }
 
 .thematiq-set-sample__primary {

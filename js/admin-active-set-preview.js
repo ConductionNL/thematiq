@@ -24,7 +24,7 @@
 		{ label: 'Accent soft', vars: ['--nldesign-color-accent-light', '--color-primary-light'] },
 		{ label: 'Ink', vars: ['--color-main-text'] },
 		{ label: 'Grey text', vars: ['--color-text-maxcontrast'] },
-		{ label: 'Work area', vars: ['--color-background-dark', '--color-background-hover'] },
+		{ label: 'Work area', vars: ['--nldesign-component-content-surface-background-color', '--color-background-hover'] },
 	]
 
 	/**
