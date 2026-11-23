@@ -12,11 +12,8 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import converter from '../../js/lib/tokenConverter.js'
-import { loadConverterContext } from '../../scripts/lib/converter-context.mjs'
+import { converter, loadConverterContext } from '../../scripts/lib/converter-context.mjs'
 
-// The converter is imported here, not taken from converter-context.mjs: that one is loaded
-// through Node's require, which coverage does not see.
 const context = loadConverterContext()
 
 /**

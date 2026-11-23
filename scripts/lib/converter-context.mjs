@@ -19,12 +19,13 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
+// A static import, not createRequire: vitest transforms (and so measures) an
+// imported module, while a module loaded through Node's require stays invisible
+// to coverage.
+import converterModule from '../../js/lib/tokenConverter.js'
 
 export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-export const converter = require(join(repoRoot, 'js/lib/tokenConverter.js'))
+export const converter = converterModule
 export const FIXTURE_DIR = join(repoRoot, 'tests/Unit/fixtures/converter')
 
 /**
