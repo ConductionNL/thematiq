@@ -100,6 +100,7 @@
 	--thematiq-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z'/%3E%3C/svg%3E");
 }
 
+<<<<<<< HEAD
 /* Thematiq's own part of the page starts on the header's edge, at the
  * board's width. */
 #nldesign-settings {
@@ -121,10 +122,51 @@
 #nldesign-settings .nldesign-settings-header h2 {
 	margin: 0 !important;
 	font-size: 22px !important;
+=======
+/* The Theme card: Nextcloud's own theming form, the core block at
+ * priority 5, drawn as TqTheming's first card. Core is restyled, never forked:
+ * its section ids and the components' public classes are the only hooks. */
+#settings-admin-theming {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	margin: 16px 27px 0;
+	padding: 22px 24px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-container-large, 12px);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+}
+
+#settings-admin-theming > .settings-section {
+	width: auto !important;
+	max-width: none !important;
+	margin: 0;
+	padding: 0;
+	border-bottom: 0 !important;
+}
+
+#settings-admin-theming > .settings-section + .settings-section {
+	padding-top: 18px;
+	border-top: 1px solid var(--color-border);
+}
+
+#settings-admin-theming h2.settings-section__name {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	height: auto;
+	margin: 0;
+	text-align: start !important;
+	justify-content: flex-start;
+	font-size: 17px !important;
+>>>>>>> origin/development
 	font-weight: 700;
 	line-height: normal !important;
 }
 
+<<<<<<< HEAD
 #nldesign-settings .nldesign-settings-header .nldesign-environment {
 	margin: 0;
 }
@@ -149,4 +191,91 @@
 #nldesign-settings .nldesign-settings-header .nldesign-environment:has(code) {
 	flex-basis: 100%;
 	order: 1;
+=======
+#settings-admin-theming > .settings-section:first-child h2.settings-section__name {
+	font-size: 20px !important;
+}
+
+#settings-admin-theming .settings-section__desc {
+	max-width: none !important;
+	margin: 4px 0 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+	line-height: normal !important;
+}
+
+/* The fields in the board's grid, the label above the field. */
+#settings-admin-theming > .settings-section > div:has(> .input-field) {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 14px 24px;
+	max-width: none !important;
+	margin-top: 18px;
+}
+
+#settings-admin-theming > .settings-section > div:has(> .input-field) > hr {
+	display: none;
+}
+
+#settings-admin-theming .input-field {
+	margin: 0 !important;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+
+#settings-admin-theming .input-field__main-wrapper {
+	height: auto !important;
+	padding-top: 23px !important;
+}
+
+#settings-admin-theming .input-field__label {
+	position: absolute !important;
+	top: 0 !important;
+	inset-inline-start: 0 !important;
+	max-width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	transform: none !important;
+	background: none !important;
+	color: var(--color-main-text) !important;
+	font-size: 14px !important;
+	font-weight: 600 !important;
+	line-height: 17px !important;
+}
+
+#settings-admin-theming .input-field__input {
+	box-sizing: border-box !important;
+	height: 40px !important;
+	padding: 0 12px !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	box-shadow: none !important;
+	font-size: 15px !important;
+}
+
+#settings-admin-theming .input-field__trailing-button {
+	top: 23px !important;
+	height: 40px !important;
+	min-height: 40px !important;
+}
+
+/* Background and colour: Nextcloud's pickers and uploads as 44px controls. */
+#settings-admin-theming > .settings-section:nth-child(2) > div:last-child {
+	max-width: none !important;
+	margin-top: 14px;
+}
+
+#settings-admin-theming > .settings-section:nth-child(2) .button-vue--size-large {
+	height: 44px !important;
+	min-height: 44px !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	font-size: 14px !important;
+}
+
+#settings-admin-theming > .settings-section:nth-child(2) p,
+#settings-admin-theming > .settings-section:nth-child(2) .checkbox-content__description {
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+	line-height: 1.4;
+>>>>>>> origin/development
 }

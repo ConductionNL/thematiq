@@ -7,7 +7,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 ## 1. The page (TqTheming)
 
 - [x] 1.1 Page header: title, breadcrumb, intro, actions (Preview in my session, Documentation). The board's third button is buildiq's inspect button, an app this page does not ship.
-- [ ] 1.2 Theme card around Nextcloud's own theming fields in the board's three-column grid, with the Nextcloud chip.
+- [x] 1.2 Theme card around Nextcloud's own theming fields in the board's three-column grid. compdiff pairs the card and flags nothing. The card's words stay Nextcloud's own ("Theming", core's intro and field labels) and the Nextcloud chip and the board's helper lines under the fields are not drawn, because core's form has no hook for them without changing its markup. Core's extra controls (legal notice link, favicon, navigation bar logo, the navigation bar settings) stay inside the card, so it is taller than the board's.
 - [ ] 1.3 Thematiq heading with the environment chip and its line.
 - [ ] 1.4 Active token set card: picker, chips, Workplace / Login page tabs, swatches, sample, actions, switch line, formats note.
 - [ ] 1.5 Token sets: search, Own token set, a table with Name, Design system, Primary colour, Layout and Status columns, filters, pills, row menu, Show more.
