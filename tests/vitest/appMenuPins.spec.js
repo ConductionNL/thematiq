@@ -211,13 +211,14 @@ describe('pinned apps in the top bar', () => {
 		expect(bar().querySelector('.thematiq-app-pins__drop')).toBeNull()
 
 		pointer(document, 'pointermove', 300, 30)
-		const slot = bar().querySelector('.thematiq-app-pins__drop')
-		expect(slot.querySelector('[role="status"]').textContent).toBe('Laat los om vast te zetten')
+		expect(bar().querySelector('.thematiq-app-pins__drop')).not.toBeNull()
+		expect(document.querySelector('.thematiq-app-pins__drop-hint[role="status"]').textContent).toBe('Laat los om vast te zetten')
 		expect(document.querySelector('.thematiq-app-pins__ghost').textContent).toContain('Deck')
 
 		pointer(document, 'pointerup', 300, 30)
 		expect(bar().querySelector('.thematiq-app-pins__drop')).toBeNull()
 		expect(document.querySelector('.thematiq-app-pins__ghost')).toBeNull()
+		expect(document.querySelector('.thematiq-app-pins__drop-hint')).toBeNull()
 		expect(pinned()).toEqual(['files', 'deck'])
 		vi.advanceTimersByTime(500)
 		expect(posted.filter((p) => p.url.endsWith('/pins'))[0].body.pins).toEqual(['files', 'deck'])
