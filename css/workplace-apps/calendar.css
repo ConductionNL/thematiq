@@ -485,3 +485,56 @@
 :is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) .fc-daygrid-event-dot::after {
 	opacity: 0;
 }
+
+/*
+ * The navigation's head in the order ClWeek and ClMonth draw it: "New event"
+ * across the full width on top, the month with its two arrows under it, then
+ * the filter, Today and the view menu on one row. Calendar puts the filter
+ * first and squeezes the button beside Today and the view menu; the two
+ * sections are unwrapped (`display: contents`) so their controls can be
+ * ordered in one wrapping row. Nothing is hidden or moved out of the header.
+ */
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	gap: 8px 4px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section {
+	display: contents;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section > .new-event {
+	order: 1;
+	flex: 1 1 100%;
+	margin: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .datepicker-button-section {
+	order: 2;
+	flex: 1 1 100%;
+	margin: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .app-navigation-header__filter {
+	order: 3;
+	flex: 1 1 0;
+	min-width: 0;
+	margin: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section > :not(.new-event) {
+	order: 4;
+	flex: none;
+	margin: 0 !important;
+}
+
+/* A day of the month before or after, as ClMonth draws it: its number in muted text. */
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other:not(.fc-day-sat, .fc-day-sun) {
+	background-color: var(--color-main-background) !important;
+}
