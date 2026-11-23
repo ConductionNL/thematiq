@@ -601,3 +601,13 @@
 	flex: none;
 	width: auto;
 }
+
+/* The list's search field starts at the list's edge. Mail keeps room before
+ * it for the button that folds the navigation, which the workplace hides on
+ * a wide screen (css/token-overrides/zuiddrecht.css); the boards draw the
+ * list header from the edge. */
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-mail .search-messages__input {
+		margin-inline-start: 12px;
+	}
+}
