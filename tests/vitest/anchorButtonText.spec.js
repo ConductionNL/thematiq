@@ -6,7 +6,8 @@
  *
  * A link drawn as a button (NcButton with href or to, a core `a.button`,
  * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button,
- * a CnWeekStripWidget item card: DqMijnWerk "Termijnen deze week")
+ * a CnWeekStripWidget item card: DqMijnWerk "Termijnen deze week", a CnAppTile:
+ * LpVandaag's app tiles)
  * reads as a button: the link colour rules leave it to its button's own text
  * colour, and its text is never underlined, in any state.
  *
@@ -88,6 +89,8 @@ const BUTTONS = {
 		'<a class="cn-link-button-widget__button" href="#">Naar het portaal</a>',
 	'week strip item':
 		'<a class="cn-week-strip__item cn-week-strip__item--link" href="#"><strong class="cn-week-strip__title">Parkeervergunningen binnenstad</strong><span class="cn-week-strip__meta">2026-4837</span></a>',
+	'app tile':
+		'<a class="cn-app-tile" href="#" aria-label="Dossiq"><span class="cn-app-tile__icon" aria-hidden="true"></span><span class="cn-app-tile__label">Dossiq</span></a>',
 }
 
 beforeAll(() => {
