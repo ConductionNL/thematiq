@@ -310,6 +310,7 @@
 }
 
 #nldesign-settings .thematiq-card__note {
+	max-width: none;
 	margin: 0;
 	color: var(--color-text-maxcontrast);
 	font-size: 13px;
@@ -384,9 +385,11 @@
 	font-weight: 600;
 }
 
+/* NL Design underlines every link with `!important`; the board's actions are not. */
 #nldesign-settings .thematiq-card .nldesign-token-set-actions .nldesign-token-reference-link {
 	font-size: 14px;
 	font-weight: 600;
+	text-decoration: none !important;
 }
 
 /* The preview of the active set: tabs, swatches and the two samples. */
