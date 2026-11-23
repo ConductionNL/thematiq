@@ -161,12 +161,42 @@ export function resolve(value, vars) {
 }
 
 /**
- * Parse #rgb, #rrggbb or a `#fff`-style keyword-free colour.
+ * Convert an opaque `hsl()`, in the space- or comma-separated syntax, to
+ * [r, g, b]; null for anything else or a colour that is not opaque.
+ *
+ * @param {string} value The colour.
+ * @return {number[]|null} [r, g, b], or null.
+ */
+function hslToRgb(value) {
+	const m = /^hsla?\(\s*(-?[\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%(?:\s*[,/]\s*([\d.]+)(%?))?\s*\)$/i.exec(value.trim())
+	if (m === null) {
+		return null
+	}
+	if (m[4] !== undefined && Number(m[4]) !== (m[5] === '%' ? 100 : 1)) {
+		return null
+	}
+	const hue = ((Number(m[1]) % 360) + 360) % 360
+	const sat = Number(m[2]) / 100
+	const light = Number(m[3]) / 100
+	const chroma = (1 - Math.abs(2 * light - 1)) * sat
+	const at = (n) => {
+		const k = (n + hue / 30) % 12
+		return light - chroma / 2 * Math.max(-1, Math.min(k - 3, 9 - k, 1))
+	}
+	return [at(0), at(8), at(4)].map((c) => Math.round(c * 255))
+}
+
+/**
+ * Parse #rgb, #rrggbb or an opaque `hsl()` colour.
  *
  * @param {string} value The colour.
  * @return {number[]} [r, g, b].
  */
 export function rgb(value) {
+	const fromHsl = hslToRgb(value)
+	if (fromHsl !== null) {
+		return fromHsl
+	}
 	let h = value.trim().replace('#', '')
 	if (h.length === 8) {
 		h = h.slice(0, 6)
