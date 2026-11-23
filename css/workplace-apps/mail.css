@@ -10,7 +10,8 @@
  * starts at `.app-mail` under the content element; every colour is a
  * variable.
  *
- * The folders are 34px rows in body text. The list is one 410px white column
+ * The folders are 34px rows in body text; with a conversation open they fold
+ * to a 64px rail that unfolds on hover or keyboard focus. The list is one 410px white column
  * of rows with a hairline between them, not floating rounded tiles: a 32px
  * initials circle in the primary's light tint, then sender, subject and a
  * one-line preview. The selected row is in the primary's light tint with a
@@ -203,4 +204,126 @@
 :is(#content, #content-vue).app-mail #mail-message .attachment-name {
 	color: var(--color-primary-element-light-text);
 	font-size: 14px;
+}
+
+/* With a conversation open the folders fold to a 64px rail of icons with a
+ * small label under each (MlThread, MlFolding). Hover, keyboard focus or an
+ * open folder menu unfolds the full column over the list, so every folder
+ * and its menu stays reachable. */
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation {
+		position: relative;
+		z-index: 2000;
+		flex: 0 0 64px !important;
+		width: 64px !important;
+		min-width: 64px !important;
+		max-width: 64px !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 264px;
+		border-inline-end: 1px solid var(--color-border);
+		background-color: var(--color-main-background);
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:is(:hover, :focus-within, :has([aria-expanded="true"])) {
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) {
+		width: 64px;
+		padding-inline: 4px !important;
+		overflow: hidden;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) :is(.refresh__button, .button-vue__text, .app-navigation-entry__actions, .app-navigation-caption__actions, .app-navigation-caption__name) {
+		display: none !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .mail-navigation__new-message-button {
+		justify-content: center;
+		padding: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .mail-navigation__new-message-button .button-vue {
+		width: 40px !important;
+		min-width: 40px !important;
+		height: 40px !important;
+		min-height: 40px !important;
+		padding: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-caption {
+		height: 1px;
+		margin: 8px 12px !important;
+		padding: 0 !important;
+		border-top: 1px solid var(--color-border);
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-list {
+		padding-inline: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) :is(.app-navigation-entry, .app-navigation-entry-link) {
+		height: auto !important;
+		min-height: 48px !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry-link {
+		position: relative;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100% !important;
+		padding: 4px 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry-icon {
+		width: 20px !important;
+		height: 22px !important;
+		min-height: 22px !important;
+		margin: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry__name {
+		max-width: 56px;
+		height: auto !important;
+		min-height: 0 !important;
+		padding: 0 !important;
+		overflow: hidden;
+		font-size: 11px !important;
+		line-height: 14px !important;
+		text-align: center;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry__utils {
+		position: absolute;
+		top: 2px;
+		inset-inline-end: 8px;
+		width: auto !important;
+		height: auto !important;
+		min-height: 0 !important;
+		padding: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry__counter-wrapper {
+		margin: 0 !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .app-navigation-entry__counter-wrapper .counter-bubble__counter {
+		min-width: 16px !important;
+		height: 16px !important;
+		padding: 0 4px !important;
+		font-size: 10px !important;
+		line-height: 16px !important;
+	}
+
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue:not(:hover, :focus-within, :has([aria-expanded="true"])) .mail-settings .app-navigation-entry__name {
+		display: none;
+	}
 }
