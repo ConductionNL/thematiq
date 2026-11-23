@@ -273,6 +273,11 @@
 			display: none !important;
 		}
 
+		/* A row without an icon ("Show all folders") has nothing to show in the rail. */
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+			display: none !important;
+		}
+
 		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-navigation__new-message-button {
 			justify-content: center;
 			padding: 0 !important;
