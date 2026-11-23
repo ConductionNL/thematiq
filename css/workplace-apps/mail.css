@@ -566,3 +566,13 @@
 :is(#content, #content-vue).app-mail #mail-message .reply-buttons > .button-vue {
 	margin-inline: 0 !important;
 }
+
+/* Reduced motion: the rail unfolds on hover at once, without the delayed
+ * one-frame animation that stands in for a hover delay. */
+@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation:hover {
+		--thematiq-mail-rail: 0;
+
+		animation: none;
+	}
+}
