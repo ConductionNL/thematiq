@@ -5,8 +5,9 @@
  * The workplace app sheets (css/workplace-apps/) draw Mail, Calendar and Deck
  * as the boards. They load in the light and in the dark, so they take every
  * colour from a variable; they are scoped to the app's content or the header,
- * so no other page pays for them; and they use no `:has()`, which makes the
- * browser re-check a rule on every change below it.
+ * so no other page pays for them (Calendar's event popover, mounted at the
+ * end of the body, by its own class); and they use no `:has()`, which makes
+ * the browser re-check a rule on every change below it.
  *
  * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
  */
@@ -18,7 +19,7 @@ import { describe, expect, it } from 'vitest'
 
 const DIR = path.resolve(__dirname, '../../css/workplace-apps')
 const SHEETS = ['brand', 'common', 'mail', 'calendar', 'deck']
-const ROOTS = [':is(#content, #content-vue)', 'body:not(#body-login) #header', '#openregister-mail-sidebar']
+const ROOTS = [':is(#content, #content-vue)', 'body:not(#body-login) #header', '#openregister-mail-sidebar', '.event-popover']
 const COLOUR = /#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i
 
 describe('workplace app sheets', () => {
