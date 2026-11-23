@@ -340,8 +340,8 @@ test.describe('admin-settings', () => {
 	test(// @e2e openspec/specs/admin-settings/spec.md#settings-hint-rendered
 	'Settings hint text rendered', async () => {
 		const hint = page
-			.locator('.settings-hint')
-			.filter({ hasText: 'Select a Dutch government design token set' })
+			.locator('.nldesign-settings-header__line')
+			.filter({ hasText: 'Choose a token set from a Dutch government body as a base' })
 		await expect(hint).toBeVisible()
 	})
 

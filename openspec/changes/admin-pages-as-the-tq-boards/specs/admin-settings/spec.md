@@ -45,3 +45,27 @@ MUST be left out and named in the task of its board.
 - WHEN they open the Zuiddrecht set
 - THEN the page MUST be drawn as TqTokenSet
 - AND compdiff MUST pair every component with no flag
+
+## MODIFIED Requirements
+
+### Requirement: Settings Hint Text
+The settings panel MUST include instructional text explaining the purpose of the controls.
+
+#### Scenario: Settings hint rendered
+- GIVEN the settings panel is loaded
+- WHEN the heading row renders
+- THEN the row MUST hold the "Thematiq" title, the environment chip when the server declares an environment, and the line "Choose a token set from a Dutch government body as a base, or adjust single tokens." (localized), as TqTheming draws it
+- AND without a declared environment the occ command that declares one MUST show on a line under the row
+- AND the row MUST appear before the token set selector
+
+#### Scenario: Hint text is localized
+@e2e exclude Requires Dutch-language Nextcloud session — test environment uses English locale.
+- GIVEN the admin has their Nextcloud language set to Dutch
+- WHEN the settings panel loads
+- THEN the line MUST be displayed in Dutch via the `$l->t()` localization function
+
+#### Scenario: Hint text provides sufficient context
+@e2e exclude Subjective copy-quality assertion — not verifiable via automated DOM test; hint text presence is covered by admin-settings spec-coverage.
+- GIVEN a first-time admin user opens the settings panel
+- WHEN they read the line
+- THEN they MUST understand that they can either choose a token set as a base OR adjust single tokens

@@ -99,3 +99,54 @@
 .thematiq-page-header__icon--external {
 	--thematiq-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z'/%3E%3C/svg%3E");
 }
+
+/* Thematiq's own part of the page starts on the header's edge, at the
+ * board's width. */
+#nldesign-settings {
+	max-width: none;
+	margin: 24px 27px 0;
+	padding: 0;
+}
+
+/* The heading row: the title, the environment chip and one line. */
+#nldesign-settings .nldesign-settings-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 16px;
+	padding: 8px 0 0;
+}
+
+#nldesign-settings .nldesign-settings-header h2 {
+	margin: 0 !important;
+	font-size: 22px !important;
+	font-weight: 700;
+	line-height: normal !important;
+}
+
+#nldesign-settings .nldesign-settings-header .nldesign-environment {
+	margin: 0;
+}
+
+.nldesign-environment__chip {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	color: var(--color-success-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.nldesign-settings-header__line {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+/* Without a declared environment the occ command takes a line of its own
+ * under the row. */
+#nldesign-settings .nldesign-settings-header .nldesign-environment:has(code) {
+	flex-basis: 100%;
+	order: 1;
+}
