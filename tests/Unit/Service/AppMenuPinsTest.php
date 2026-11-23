@@ -57,7 +57,9 @@ final class AppMenuPinsTest extends TestCase {
 		$config->method('deleteUserValue')->willReturnCallback(function (string $user): void {
 			unset($this->stored[$user]);
 		});
-		$config->method('getUserValue')->willReturnCallback(fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user] ?? $default));
+		$config->method('getUserValue')->willReturnCallback(
+			fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user] ?? $default)
+		);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ([ExternalApps::CONFIG_KEY => '{"code":"https://code.example.org"}'][$key] ?? $default)
 		);
