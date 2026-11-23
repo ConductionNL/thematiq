@@ -20,6 +20,6 @@ refused and MUST NOT be linked. Only an administrator MUST be able to set it.
 - THEN it MUST show a section "OpenProject" with links to `https://op.example.org/work_packages`, `/gantt`, `/boards` and `/meetings`
 
 #### Scenario: An address that is not one
-@e2e exclude a status code; proven by tests/Unit/Controller/OpenProjectLinkControllerTest.php (testTheAddressIsSavedReadAndCleared)
+@e2e exclude a status code; proven by tests/Unit/Controller/ExternalAppsControllerTest.php (testOpenProjectsAddressIsSavedReadAndCleared)
 - WHEN an administrator saves `javascript:alert(1)`
 - THEN the answer MUST be 400 and nothing MUST be stored
