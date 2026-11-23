@@ -427,7 +427,7 @@ class DesignTokensMapper {
 			return null;
 		}
 
-		$target = ($run->leaves[$targetPath]['cssVariable'] ?? null) ?? $this->resolveTarget(path: $targetPath);
+		$target = $run->leaves[$targetPath]['cssVariable'] ?? $this->resolveTarget(path: $targetPath);
 		$own = ($this->extensionTarget ?? $this->resolveTarget(path: $path));
 		if ($target === null || $target === $own || str_starts_with($target, '--nldesign-') === false) {
 			return null;

@@ -256,7 +256,7 @@ class CustomTokenSetsBundleSection {
 	/**
 	 * The error for a set whose shape is fine.
 	 *
-	 * @param array{id: string, index: int} $shape The set's position and id.
+	 * @param array{id: string, index: int, ...} $shape The set's position and id.
 	 * @param string $message What is wrong.
 	 *
 	 * @return array<string, mixed> The error.
