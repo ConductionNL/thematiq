@@ -93,8 +93,9 @@ describe('the DqKop bar', () => {
 	})
 
 	it("reads the brand block in the bar in the light bar's muted text and border colours", () => {
+		// Important: the nldesign theme forces the header colour on `#header *`.
 		expect(declsOf(`${BAR} .cn-brand-bar__caption`).color).toBe(
-			'var(--color-text-maxcontrast)',
+			'var(--color-text-maxcontrast) !important',
 		)
 		expect(declsOf(`${BAR} .cn-brand-bar__divider`).background).toBe(
 			'var(--color-border)',

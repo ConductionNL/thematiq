@@ -62,6 +62,13 @@ class HeaderUserService {
 	public const SCRIPT = 'header-user';
 
 	/**
+	 * The script that draws the brand block for an app that draws none (js/header-brand.js).
+	 *
+	 * @var string
+	 */
+	public const BRAND_SCRIPT = 'header-brand';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IUserSession $userSession The signed-in person.
@@ -135,7 +142,7 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js and js/header-brand.js. A seam, so unit tests need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
@@ -145,5 +152,6 @@ class HeaderUserService {
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
 	}//end emitScript()
 }//end class
