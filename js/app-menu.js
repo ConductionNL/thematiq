@@ -898,6 +898,18 @@
 					event.stopImmediatePropagation()
 					peek = false
 					pinned = true
+					// The popover library hears this click before any other
+					// script and hides the menu a frame later: open it again.
+					var raf = window.requestAnimationFrame || function (fn) {
+						return setTimeout(fn, 16)
+					}
+					raf(function () {
+						raf(function () {
+							if (pinned && !isOpen()) {
+								toggle()
+							}
+						})
+					})
 					return
 				}
 				pinned = !isOpen()

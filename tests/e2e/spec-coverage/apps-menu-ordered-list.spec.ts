@@ -230,16 +230,16 @@ test.describe('the apps menu as one ordered list', () => {
 	// @e2e apps-menu-opening::a-click-pins-the-menu
 	test('pointing opens, leaving closes, and a click pins', async ({ page }) => {
 		const waffle = page.locator('.app-menu__waffle')
-		await page.mouse.move(400, 400)
+		await page.mouse.move(1200, 650)
 		await waffle.hover()
 		await expect(grid(page)).toBeVisible({ timeout: 3000 })
-		await page.mouse.move(600, 600)
+		await page.mouse.move(1200, 650)
 		await expect(grid(page)).toBeHidden({ timeout: 3000 })
 
 		await waffle.hover()
 		await expect(grid(page)).toBeVisible({ timeout: 3000 })
 		await waffle.click()
-		await page.mouse.move(600, 600)
+		await page.mouse.move(1200, 650)
 		await page.waitForTimeout(800)
 		await expect(grid(page)).toBeVisible()
 		await closeMenu(page)

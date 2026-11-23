@@ -57,7 +57,7 @@ function out(el, to = document.getElementById('elsewhere')) {
 
 describe('the apps menu opens on hover and pins on click', () => {
 	beforeEach(() => {
-		vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+		vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame'] })
 		coreClicks = 0
 		window.matchMedia = vi.fn(() => ({ matches: true }))
 		vi.spyOn(document, 'hasFocus').mockReturnValue(true)
@@ -135,6 +135,19 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 		waffle.click()
 		expect(isOpen()).toBe(false)
+	})
+
+	it('opens the menu again when the popover library hid it on the pinning click', async () => {
+		const waffle = header()
+		await loadScript()
+
+		over(waffle)
+		vi.advanceTimersByTime(150)
+		waffle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+		waffle.setAttribute('aria-expanded', 'false')
+		vi.advanceTimersByTime(40)
+		expect(isOpen()).toBe(true)
+		expect(coreClicks).toBe(2)
 	})
 
 	it('a menu opened by a click stays open when the pointer leaves', async () => {
