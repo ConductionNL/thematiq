@@ -252,7 +252,11 @@ final class OwnTokenControllerTest extends TestCase {
 	public function testCreateWritesFileAndAuditsOnce(): void {
 		$this->audit->expects($this->once())->method('log')->with(
 			'own_token_changed',
-			$this->callback(callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent' && $c['old'] === null && $c['new']['value'] === '#e17000')
+			$this->callback(
+				callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent'
+					&& $c['old'] === null
+					&& $c['new']['value'] === '#e17000'
+			)
 		);
 
 		$response = $this->own(params: ['slug' => 'brand-accent', 'label' => 'Brand accent', 'type' => 'color', 'value' => '#e17000'])->create();
@@ -309,7 +313,9 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
 		$this->audit->expects($this->once())->method('log')->with('token_deprecation_changed');
 
-		$refused = $this->deprecationController(params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing'])->save();
+		$refused = $this->deprecationController(
+			params: ['token' => '--nldesign-org-old-accent', 'severity' => 'warning', 'replacement' => '--nldesign-org-missing']
+		)->save();
 		$this->assertSame(expected: 400, actual: $refused->getStatus());
 		$this->assertSame(expected: 'replacement', actual: $refused->getData()['field']);
 
@@ -324,7 +330,8 @@ final class OwnTokenControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAdoptRecordsNotices(): void {
-		$response = $this->deprecationController(params: ['notices' => [['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary']]])->adopt();
+		$notice = ['path' => 'color.primary', 'message' => 'Use color.brand.primary instead', 'token' => '--nldesign-color-primary'];
+		$response = $this->deprecationController(params: ['notices' => [$notice]])->adopt();
 
 		$this->assertSame(expected: ['--nldesign-color-primary'], actual: $response->getData()['recorded']);
 		$this->assertSame(expected: 'import', actual: $this->deprecations->list()['--nldesign-color-primary']['source']);
@@ -385,4 +392,88 @@ final class OwnTokenControllerTest extends TestCase {
 		$this->assertSame(expected: 'warning', actual: ($logged[0]['old']['severity'] ?? null));
 		$this->assertNull(actual: $logged[0]['new']);
 	}//end testWithdrawAuditsTheWithdrawnRecord()
+
+	/**
+	 * The list carries every own token by name, the prefix, and a deprecation only where one exists.
+	 *
+	 * @return void
+	 */
+	public function testListCarriesTheTokensWithTheirDeprecation(): void {
+		$this->ownTokens->create(input: ['slug' => 'old-accent', 'label' => 'Old', 'type' => 'color', 'value' => '#aa0000']);
+		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']);
+		$this->deprecations->deprecate(token: '--nldesign-org-old-accent', input: ['severity' => 'warning'], today: '2026-10-02');
+
+		$data = $this->own()->list()->getData();
+
+		$this->assertSame(expected: OwnTokenService::PREFIX, actual: $data['prefix']);
+		$byName = array_column($data['tokens'], null, 'name');
+		$names = array_keys($byName);
+		sort($names);
+		$this->assertSame(expected: ['--nldesign-org-brand-accent', '--nldesign-org-old-accent'], actual: $names);
+		$this->assertSame(expected: '#e17000', actual: $byName['--nldesign-org-brand-accent']['value']);
+		$this->assertArrayNotHasKey(key: 'deprecation', array: $byName['--nldesign-org-brand-accent']);
+		$this->assertSame(expected: 'warning', actual: $byName['--nldesign-org-old-accent']['deprecation']['severity']);
+	}//end testListCarriesTheTokensWithTheirDeprecation()
+
+	/**
+	 * An update keeps the name, rewrites the stylesheet and audits the old and the new token.
+	 *
+	 * @return void
+	 */
+	public function testUpdateRewritesAndAuditsOldAndNew(): void {
+		$this->ownTokens->create(input: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']);
+		$this->audit->expects($this->once())->method('log')->with(
+			'own_token_changed',
+			$this->callback(
+				callback: fn (array $c): bool => $c['token'] === '--nldesign-org-brand-accent'
+					&& $c['old']['value'] === '#e17000'
+					&& $c['new']['value'] === '#00689e'
+			)
+		);
+
+		$response = $this->own(params: ['label' => 'Brand', 'type' => 'color', 'value' => '#00689e'])->update(name: '--nldesign-org-brand-accent');
+
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: 'ok', actual: $response->getData()['status']);
+		$this->assertSame(expected: '#00689e', actual: $response->getData()['token']['value']);
+		$this->assertStringContainsString(needle: '--nldesign-org-brand-accent: #00689e;', haystack: $this->overrides->getRawContent());
+	}//end testUpdateRewritesAndAuditsOldAndNew()
+
+	/**
+	 * An update of a token that does not exist is refused, naming it, and audits nothing.
+	 *
+	 * @return void
+	 */
+	public function testUpdateOfAnUnknownTokenIsRefused(): void {
+		$this->audit->expects($this->never())->method('log');
+
+		$response = $this->own(params: ['label' => 'Brand', 'type' => 'color', 'value' => '#00689e'])->update(name: '--nldesign-org-nothing');
+
+		$this->assertSame(expected: 'unknown', actual: $response->getData()['field']);
+		$this->assertSame(expected: 'There is no own token with this name.', actual: $response->getData()['error']);
+		$this->assertSame(expected: 404, actual: $response->getStatus());
+	}//end testUpdateOfAnUnknownTokenIsRefused()
+
+	/**
+	 * A saved token whose stylesheet cannot be written is a 500 that says so, and is not audited.
+	 *
+	 * @return void
+	 */
+	public function testAStylesheetThatCannotBeWrittenIsA500(): void {
+		$overrides = $this->createMock(originalClassName: CustomOverridesService::class);
+		$overrides->method('rewriteAll')->willThrowException(new \RuntimeException('read-only'));
+		$this->audit->expects($this->never())->method('log');
+		$controller = new OwnTokenController(
+			appName: 'thematiq',
+			request: $this->request(params: ['slug' => 'brand-accent', 'label' => 'Brand', 'type' => 'color', 'value' => '#e17000']),
+			tokens: new OwnTokenSources(ownTokens: $this->ownTokens, deprecations: $this->deprecations, overrides: $overrides),
+			answers: new AuditAndTranslation(audit: $this->audit, l: $this->l10n())
+		);
+
+		$response = $controller->create();
+
+		$this->assertSame(expected: 500, actual: $response->getStatus());
+		$this->assertStringStartsWith(prefix: 'The token was saved, but the stylesheet could not be written.', string: $response->getData()['error']);
+		$this->assertArrayHasKey(key: '--nldesign-org-brand-accent', array: $this->ownTokens->list());
+	}//end testAStylesheetThatCannotBeWrittenIsA500()
 }//end class
