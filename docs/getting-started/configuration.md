@@ -25,7 +25,7 @@ Some themes are the property of the organisation they are named after. When you 
 
 ## Step 2 — Check the result
 
-As soon as you choose a theme, the **Preview** section further down the page shows it. Use the **App** and **Login** tabs to see the app screens and the login page.
+Choosing a theme opens the **Apply token set** dialog straight away. It lists every value that changes (see Step 3). Once a theme is applied, the **Preview** under **Custom token overrides** shows it. The tabs above it (**Login page & Branding**, **Content area**, **Buttons & Status** and **Typography**) switch between the login page and the app screens.
 
 Want to see it on real pages first? Click **Preview in my session**. You then see the theme on every page you open, while other users keep the current look. See [Try a theme before you publish it](../features/theme-preview.md).
 
