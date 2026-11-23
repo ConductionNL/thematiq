@@ -499,9 +499,10 @@ body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu]
 	> a.app-item[data-thematiq-dragging] {
-	outline: 2px dashed var(--nldesign-color-primary, var(--color-primary-element));
-	outline-offset: -2px;
-	opacity: 0.6;
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+	box-shadow: inset 0 0 0 1px var(--color-border-maxcontrast);
+	opacity: 0.45;
 }
 
 body:not(#body-login)
@@ -873,4 +874,157 @@ body:not(#body-login)
 	.thematiq-app-menu__external
 	.app-item__label {
 	color: var(--color-main-text) !important;
+}
+
+/*
+ * PINNED APPS (the AppMenuVastzetten and AppMenuLosmaken boards). js/app-menu.js
+ * puts a `nav.thematiq-app-pins` after the grid button: a 40px square per pinned
+ * app, the dashed drop slot with "Drop to pin" while an app is dragged onto the
+ * bar, and a chip under the pointer with "Release to remove" while a pin is
+ * dragged off it.
+ */
+body:not(#body-login) #header .thematiq-app-pins {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-inline-start: 12px;
+}
+
+body:not(#body-login) #header .thematiq-app-pins[hidden] {
+	display: none;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__pin,
+body:not(#body-login) #header .thematiq-app-pins__drop {
+	position: relative;
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 40px;
+	height: 40px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+body:not(#body-login) #header .thematiq-app-pins__pin {
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
+	text-decoration: none;
+	touch-action: none;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__pin:hover {
+	background: var(
+		--nldesign-color-primary-light-hover,
+		var(--color-primary-element-light-hover)
+	);
+}
+
+body:not(#body-login) #header .thematiq-app-pins__pin:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
+/* A pin dragged off the bar leaves its slot empty. */
+body:not(#body-login) #header .thematiq-app-pins__pin[data-thematiq-dragging] {
+	border: 2px dashed var(--color-border-maxcontrast);
+	background: var(--color-background-dark);
+}
+
+body:not(#body-login)
+	#header
+	.thematiq-app-pins__pin[data-thematiq-dragging]
+	.thematiq-app-pins__icon {
+	visibility: hidden;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__drop {
+	border: 2px dashed var(--nldesign-color-primary, var(--color-primary-element));
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+body:not(#body-login) .thematiq-app-pins__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+}
+
+body:not(#body-login) .thematiq-app-pins__icon[style*='--thematiq-app-icon']::before {
+	content: '';
+	width: 20px;
+	height: 20px;
+	background-color: currentcolor;
+	mask: var(--thematiq-app-icon) center / contain no-repeat;
+}
+
+body:not(#body-login) .thematiq-app-pins__icon svg {
+	width: 20px;
+	height: 20px;
+}
+
+/* The hints: a dark label under the drop slot, beside the dragged chip. */
+body:not(#body-login) .thematiq-app-pins__hint {
+	padding: 6px 10px;
+	border-radius: 6px;
+	background: var(--color-main-text);
+	color: var(--color-main-background);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__drop > .thematiq-app-pins__hint {
+	position: absolute;
+	inset-inline-start: 50%;
+	top: 46px;
+	z-index: 3;
+	transform: translateX(-50%);
+}
+
+body:not(#body-login) .thematiq-app-pins__ghost {
+	position: fixed;
+	z-index: 10010;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 14px 6px 6px;
+	border: 1px solid var(--color-border);
+	border-radius: 26px;
+	background: var(--color-main-background);
+	box-shadow: 0 10px 28px rgba(27, 28, 29, 0.24);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+	pointer-events: none;
+}
+
+body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
+}
+
+body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__hint[hidden] {
+	display: none;
 }

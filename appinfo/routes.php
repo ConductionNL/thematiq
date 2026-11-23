@@ -84,6 +84,8 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'externalApps#save', 'url' => '/settings/external-apps', 'verb' => 'POST'],
 		// The signed-in user's own order of the apps menu (apps-menu-order).
 		['name' => 'appMenuOrder#save', 'url' => '/app-menu/order', 'verb' => 'POST'],
+		// The signed-in user's pinned apps in the top bar (apps-menu-pins).
+		['name' => 'appMenuPins#save', 'url' => '/app-menu/pins', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],

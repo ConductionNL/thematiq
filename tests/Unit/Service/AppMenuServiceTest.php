@@ -15,6 +15,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\AppMenuListState;
 use OCA\Thematiq\Service\AppMenuOrder;
+use OCA\Thematiq\Service\AppMenuPins;
 use OCA\Thematiq\Service\AppMenuService;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ExternalApps;
@@ -157,12 +158,13 @@ class AppMenuServiceTest extends TestCase {
 	private function ordered(): array {
 		return [
 			'order' => [],
+			'pins' => [],
 			'labels' => [
 				'title' => 'Apps',
 				'allApps' => 'All apps',
 				'hideApps' => 'Hide apps',
-				'dragHint' => 'Drag an app to change the order.',
-				'moveHint' => 'Alt with an arrow key moves the app.',
+				'dragHint' => 'Drag an app to reorder it or pin it to the top bar.',
+				'moveHint' => 'Alt with an arrow key moves, Alt+P pins or unpins.',
 				'moved' => '{app} moved to place {place} of {total}.',
 				'saveFailed' => 'The order could not be saved.',
 				'create' => 'Create',
@@ -172,6 +174,13 @@ class AppMenuServiceTest extends TestCase {
 				'newWhiteboard' => 'New whiteboard',
 				'more' => 'More',
 				'createFailed' => 'The file could not be created.',
+				'pinned' => 'Pinned apps',
+				'dropToPin' => 'Drop to pin',
+				'releaseToRemove' => 'Release to remove',
+				'pinnedApp' => '{app} pinned to the top bar.',
+				'unpinnedApp' => '{app} removed from the top bar.',
+				'pinFull' => 'You can pin up to {max} apps.',
+				'pinSaveFailed' => 'The pinned apps could not be saved.',
 			],
 		];
 	}//end ordered()
@@ -197,7 +206,8 @@ class AppMenuServiceTest extends TestCase {
 		return new AppMenuListState(
 			externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
 			order: new AppMenuOrder(config: $config),
-			userSession: $session
+			userSession: $session,
+			pins: new AppMenuPins(config: $config)
 		);
 	}//end listState()
 
@@ -217,7 +227,7 @@ class AppMenuServiceTest extends TestCase {
 		);
 		$config->method('getUserValue')->willReturnCallback(
 			static fn (string $user, string $app, string $key, $default = '') => (
-				['anna' . AppMenuOrder::KEY => '["files","external-code"]'][$user . $key] ?? $default
+				['anna' . AppMenuOrder::KEY => '["files","external-code"]', 'anna' . AppMenuPins::KEY => '["deck"]'][$user . $key] ?? $default
 			)
 		);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
@@ -240,6 +250,7 @@ class AppMenuServiceTest extends TestCase {
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 
 		$this->assertSame(expected: ['files', 'external-code'], actual: $state['order']);
+		$this->assertSame(expected: ['deck'], actual: $state['pins']);
 		$this->assertSame(expected: 'External apps', actual: $state['external']['title']);
 		$this->assertSame(
 			expected: [

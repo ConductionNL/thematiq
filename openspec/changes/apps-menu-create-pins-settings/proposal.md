@@ -34,4 +34,6 @@ design-system PR #1197). The boards are the canon, and the menu in the workplace
 
 - `js/app-menu.js`, `css/header-workplace.css`
 - `lib/Service/AppMenuListState.php` and the menu's initial state
+- new `lib/Service/AppMenuPins.php`, `lib/Service/AppMenuKeys.php`, `lib/Controller/AppMenuPinsController.php`,
+  route `POST /app-menu/pins`
 - l10n: the new strings in English and Dutch
