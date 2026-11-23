@@ -328,6 +328,105 @@ body:not(#body-login) #header .thematiq-brand__divider {
 	background: var(--color-border);
 }
 
+/* Quick add (js/header-create.js, the MlInbox, ClWeek and TbBoard bars): a
+ * 44px round button with a stroked plus before the bell, and its menu. */
+body:not(#body-login) #header .thematiq-quick-add {
+	position: relative;
+	display: flex;
+	align-items: center;
+	height: var(--header-height);
+}
+
+body:not(#body-login) #header .thematiq-quick-add__button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 22px;
+	background: transparent;
+	color: var(--color-main-text) !important;
+	cursor: pointer;
+}
+
+body:not(#body-login) #header .thematiq-quick-add__button:hover,
+body:not(#body-login) #header .thematiq-quick-add__button[aria-expanded='true'] {
+	background: var(--color-background-hover);
+}
+
+body:not(#body-login) #header .thematiq-quick-add__button:focus-visible,
+body:not(#body-login) #header .thematiq-quick-add__item:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
+body:not(#body-login) #header .thematiq-quick-add__menu {
+	position: absolute;
+	inset-block-start: calc(50% + 28px);
+	inset-inline-end: 0;
+	z-index: 2000;
+	box-sizing: border-box;
+	min-width: 260px;
+	max-height: calc(100vh - var(--header-height, 68px) - 24px);
+	overflow-y: auto;
+	padding: 8px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-container-large, 12px);
+	background: var(--color-main-background);
+	box-shadow: 0 8px 24px rgba(27, 28, 29, 0.12);
+}
+
+body:not(#body-login) #header .thematiq-quick-add__menu[hidden] {
+	display: none;
+}
+
+body:not(#body-login) #header .thematiq-quick-add__item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 10px;
+	border: 0;
+	border-radius: var(--border-radius-element, 8px);
+	background: transparent;
+	color: var(--color-main-text) !important;
+	font-size: 15px;
+	font-weight: 400;
+	text-align: start;
+	cursor: pointer;
+}
+
+body:not(#body-login) #header .thematiq-quick-add__item:hover,
+body:not(#body-login) #header .thematiq-quick-add__item:focus-visible {
+	background: var(--color-background-hover);
+}
+
+body:not(#body-login) #header .thematiq-quick-add__mark {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--nldesign-color-primary-light, var(--color-primary-element-light));
+	color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text)) !important;
+}
+
+body:not(#body-login) #header .thematiq-quick-add__status {
+	margin: 0;
+	padding: 10px;
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 14px;
+}
+
 /* The person: only once the script has added the label. */
 body:not(#body-login) #header[data-thematiq-user-chip] #user-menu {
 	position: relative;
