@@ -116,6 +116,26 @@ final class AppMenuLegacyExternalAppsTest extends TestCase {
 	}//end testTheAdminPageAppsMoveOnceAndKeepTheirKeys()
 
 	/**
+	 * An admin page app whose id the menu settings already have is not moved again.
+	 *
+	 * @return void
+	 */
+	public function testAnAppTheSettingsAlreadyHaveIsNotMovedAgain(): void {
+		$this->app = [
+			'external_apps' => '{"wiki":"https://wiki.example.org","code":"https://code.example.org"}',
+			'menu.externalApps' => '[{"id":"wiki","title":"Our wiki","payoff":"","url":"https://wiki.example.org",'
+				. '"icon":{"library":"book"},"visible":false,"order":0}]',
+		];
+
+		$this->assertSame(expected: 1, actual: $this->legacy()->migrateOnce(l: $this->english()));
+		$apps = json_decode($this->app['menu.externalApps'], true);
+		$this->assertSame(expected: ['wiki', 'code'], actual: array_column($apps, 'id'));
+		$this->assertSame(expected: ['Our wiki', false], actual: [$apps[0]['title'], $apps[0]['visible']]);
+		$this->assertSame(expected: 1, actual: $apps[1]['order']);
+		$this->assertArrayNotHasKey(key: 'external_apps', array: $this->app);
+	}//end testAnAppTheSettingsAlreadyHaveIsNotMovedAgain()
+
+	/**
 	 * Without any admin page app nothing moves and the marker is still set.
 	 *
 	 * @return void
