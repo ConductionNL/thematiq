@@ -240,3 +240,108 @@ describe('every rule of the app sheets starts at an allowed root', () => {
 		expect(withoutRootGuard(":root[style*='--v'] :is(#content, #content-vue) a")).toBe(':is(#content, #content-vue) a')
 	})
 })
+
+/**
+ * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-calendar-fades-entries-that-have-passed-req-tqas-101
+ * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-calendar-draws-an-entry-not-answered-yet-with-a-dashed-frame-req-tqas-102
+ * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-deck-lifts-a-card-mid-move-over-a-dashed-slot-req-tqas-103
+ */
+describe('the entry states of Calendar and the card mid-move of Deck', () => {
+	const CONTENT = ':is(#content, #content-vue)'
+	const COLOUR_LITERAL = /#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i
+
+	/**
+	 * The rules of a sheet whose selector names the given class, with the at-rule they sit in.
+	 *
+	 * @param {string} rel The sheet.
+	 * @param {string} name The class, without its dot.
+	 * @return {Array<{selector: string, decls: Record<string, string>, media: string|null}>} The rules.
+	 */
+	const rulesNaming = (rel, name) => {
+		const out = []
+		postcss.parse(read(rel)).walkRules((rule) => {
+			if (!rule.selector.includes('.' + name)) {
+				return
+			}
+			const decls = {}
+			rule.walkDecls((decl) => {
+				decls[decl.prop] = decl.value + (decl.important ? ' !important' : '')
+			})
+			out.push({
+				selector: rule.selector.replace(/\s+/g, ' '),
+				decls,
+				media: rule.parent.type === 'atrule' ? rule.parent.params : null,
+			})
+		})
+		return out
+	}
+
+	const startsAtContent = (rules) => rules.every((rule) => rule.selector.split(/,(?![^(]*\))/).every((part) => part.trim().startsWith(CONTENT)))
+	const writesNoColour = (rules) => rules.every((rule) => Object.values(rule.decls).every((value) => !COLOUR_LITERAL.test(value)))
+
+	// The WCAG contrast of two #RRGGBB colours, and a colour mixed over white as `color-mix(in srgb)` does.
+	const channels = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
+	const luminance = (rgb) => {
+		const [r, g, b] = rgb.map((c) => c / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b
+	}
+	const contrast = (a, b) => {
+		const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+		return (hi + 0.05) / (lo + 0.05)
+	}
+	const mixOverWhite = (hex, share) => channels(hex).map((c) => Math.round(c * share + 255 * (1 - share)))
+
+	it('records the classes the apps put on the states', () => {
+		const calendar = read('css/workplace-apps/calendar.css')
+		for (const name of ['fc-event-past', 'fc-event-nc-tentative', 'fc-event-nc-needs-action', '--nc-event-color']) {
+			expect(calendar).toContain('`' + name + '`')
+		}
+		expect(read('css/workplace-apps/deck.css')).toContain('`.smooth-dnd-ghost`')
+	})
+
+	it('fades a past entry in the week and the month view, from tokens and the content element', () => {
+		const rules = rulesNaming('css/workplace-apps/calendar.css', 'fc-event-past')
+		const selectors = rules.map((rule) => rule.selector).join(' ')
+		expect(selectors).toContain('.fc-timegrid-event')
+		expect(selectors).toContain('.fc-daygrid-dot-event')
+		expect(rules.some((rule) => /6%/.test(rule.decls.background || ''))).toBe(true)
+		expect(rules.some((rule) => rule.decls.color === 'var(--color-text-maxcontrast) !important')).toBe(true)
+		expect(rules.every((rule) => rule.decls.opacity === undefined || rule.selector.includes('.fc-daygrid-event-dot'))).toBe(true)
+		expect(startsAtContent(rules)).toBe(true)
+		expect(writesNoColour(rules)).toBe(true)
+	})
+
+	it('keeps a faded entry\'s text at 4.5:1 under Zuiddrecht, whatever the calendar\'s colour', () => {
+		const muted = channels('#5E6168')
+		for (const colour of ['#3669A5', '#000000', '#0082C9', '#E9322D', '#1B1C1D', '#A30000']) {
+			expect(contrast(muted, mixOverWhite(colour, 0.06))).toBeGreaterThanOrEqual(4.5)
+		}
+	})
+
+	it('draws an entry not answered yet, or tentative, with a dashed frame and a dashed 3px edge on white', () => {
+		const tentative = rulesNaming('css/workplace-apps/calendar.css', 'fc-event-nc-tentative')
+		const unanswered = rulesNaming('css/workplace-apps/calendar.css', 'fc-event-nc-needs-action')
+		expect(tentative.map((rule) => rule.selector)).toEqual(unanswered.map((rule) => rule.selector))
+		const block = tentative.find((rule) => rule.selector.includes('.fc-timegrid-event'))
+		expect(block.decls.border).toMatch(/^1px dashed var\(--nc-event-color/)
+		expect(block.decls['border-inline-start-width']).toBe('3px !important')
+		expect(block.decls.background).toBe('var(--color-main-background) !important')
+		const dot = tentative.find((rule) => / \.fc-daygrid-event-dot$/.test(rule.selector))
+		expect(dot.decls['border-style']).toBe('dashed !important')
+		expect(dot.decls['background-image']).toBe('none !important')
+		expect(startsAtContent(tentative)).toBe(true)
+		expect(writesNoColour(tentative)).toBe(true)
+	})
+
+	it('lifts the dragged card from Deck\'s content element, the tilt only without reduced motion', () => {
+		const rules = rulesNaming('css/workplace-apps/deck.css', 'smooth-dnd-ghost')
+		const lift = rules.find((rule) => rule.media === null)
+		const tilt = rules.find((rule) => rule.decls.transform !== undefined)
+		expect(lift.decls['box-shadow']).toContain('var(')
+		expect(lift.decls.transform).toBeUndefined()
+		expect(tilt.media).toBe('(prefers-reduced-motion: no-preference)')
+		expect(tilt.decls.transform).toMatch(/^rotate\(/)
+		expect(startsAtContent(rules)).toBe(true)
+		expect(writesNoColour(rules)).toBe(true)
+	})
+})

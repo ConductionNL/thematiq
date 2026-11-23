@@ -427,3 +427,61 @@
 	font-size: 14px;
 	font-weight: 600;
 }
+
+/*
+ * Entry states, as ClWeek draws them
+ * (openspec/changes/workplace-app-sheets-entry-states).
+ *
+ * The classes, read from the apps' own code (nextcloud/calendar main,
+ * 23 November 2026):
+ *   - `fc-event-past`: FullCalendar's, on an entry that has ended.
+ *   - `fc-event-nc-tentative`: Calendar's, when the event's STATUS is
+ *     TENTATIVE or the person answered "tentative"
+ *     (src/fullcalendar/eventSources/eventSourceFunction.js).
+ *   - `fc-event-nc-needs-action`: Calendar's, when the person has not
+ *     answered yet (their PARTSTAT is NEEDS-ACTION).
+ * Calendar sets the entry's colour as `--nc-event-color` on the element
+ * (src/fullcalendar/rendering/eventDidMount.js), and draws a tentative entry
+ * with inline stripes, which the rules below replace.
+ *
+ * A past entry is faded: a lighter tint, a lighter edge and its text in the
+ * muted text colour, which keeps 4.5:1 on that tint. Its colours are mixed,
+ * not made transparent, so the text keeps its contrast.
+ */
+:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past {
+	background: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 6%, var(--color-main-background)) !important;
+	border-color: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 45%, var(--color-main-background)) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past .fc-event-main,
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event.fc-event-past {
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event.fc-event-past .fc-daygrid-event-dot {
+	opacity: 0.5;
+}
+
+/* An entry not answered yet, or answered tentatively: a dashed 1px frame and
+   a dashed 3px edge in the calendar's colour on a white ground. */
+:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event):is(.fc-event-nc-tentative, .fc-event-nc-needs-action) {
+	background: var(--color-main-background) !important;
+	border: 1px dashed var(--nc-event-color, var(--color-primary-element)) !important;
+	border-inline-start-width: 3px !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) {
+	border: 1px dashed var(--nc-event-color, var(--color-primary-element)) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) .fc-daygrid-event-dot {
+	min-width: 0 !important;
+	min-height: 0 !important;
+	border-width: 0 0 0 3px !important;
+	border-style: dashed !important;
+	background-image: none !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) .fc-daygrid-event-dot::after {
+	opacity: 0;
+}
