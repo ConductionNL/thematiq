@@ -25,6 +25,7 @@ namespace OCA\Thematiq\Tests\Unit\Service;
 use InvalidArgumentException;
 use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\LayoutOptionsService;
+use OCA\Thematiq\Service\LayoutStylesheets;
 use OCP\IConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -535,21 +536,33 @@ class LayoutOptionsServiceTest extends TestCase {
 		foreach (['mail', 'calendar', 'deck'] as $app) {
 			$this->assertSame(
 				expected: ['workplace-apps/brand', 'workplace-apps/common', 'workplace-apps/' . $app],
-				actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app)
+				actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: $app)
 			);
-			$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'utrecht', appId: $app));
+			$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'utrecht', appId: $app));
 		}
 
-		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'files'));
-		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: null));
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'files'));
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: null));
 
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'default'));
 		$this->assertSame(
 			expected: ['workplace-apps/common', 'workplace-apps/mail'],
-			actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail')
+			actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'mail')
 		);
 
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
-		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));
+		$this->assertSame(expected: [], actual: $this->appSheets(tokenSet: 'zuiddrecht', appId: 'mail'));
 	}//end testMailCalendarAndDeckGetTheirOwnStylesheet()
+
+	/**
+	 * The app stylesheets a page of this app loads with this token set, as CssInjectionService picks them.
+	 *
+	 * @param string $tokenSet The token set.
+	 * @param string|null $appId The rendered app.
+	 *
+	 * @return array<int, string> The stylesheets.
+	 */
+	private function appSheets(string $tokenSet, ?string $appId): array {
+		return (new LayoutStylesheets())->forApp(resolved: $this->service->resolved(tokenSet: $tokenSet), appId: $appId);
+	}//end appSheets()
 }//end class

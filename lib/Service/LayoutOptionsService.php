@@ -431,26 +431,6 @@ class LayoutOptionsService {
 	}//end stylesheets()
 
 	/**
-	 * The stylesheets of the rendered app, after the conditional stylesheets:
-	 * `workplace-apps/brand` with the workplace header, `workplace-apps/common`, then `workplace-apps/<app>`,
-	 * for Mail, Calendar and Deck while the layout is light.
-	 *
-	 * @param string $tokenSet The token set the page renders with.
-	 * @param string|null $appId The rendered app.
-	 *
-	 * @return array<int, string> No stylesheet, or two or three.
-	 *
-	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
-	 */
-	public function appStylesheets(string $tokenSet, ?string $appId): array {
-		if ($appId === null) {
-			return [];
-		}
-
-		return (new LayoutStylesheets())->forApp(resolved: $this->resolved(tokenSet: $tokenSet), appId: $appId);
-	}//end appStylesheets()
-
-	/**
 	 * The inline styles a page rendered with this token set carries, after the
 	 * conditional stylesheets: the navigation width as one `:root` variable
 	 * that `css/navigation-width.css` reads. Each has an `id`, so the admin

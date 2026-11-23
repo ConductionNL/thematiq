@@ -534,7 +534,7 @@ class CssInjectionService {
 
 		$files = array_merge(
 			$this->layoutOptions->stylesheets(tokenSet: $tokenSet),
-			$this->layoutOptions->appStylesheets(tokenSet: $tokenSet, appId: $appId)
+			(new LayoutStylesheets())->forApp(resolved: $this->layoutOptions->resolved(tokenSet: $tokenSet), appId: $appId)
 		);
 		foreach ($files as $file) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: $file));
