@@ -44,6 +44,7 @@ script('thematiq', 'lib/themingPlan');
 script('thematiq', 'lib/markupRender');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
+script('thematiq', 'admin-active-set-preview');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
@@ -144,6 +145,8 @@ if ($_['mockUi'] === true) {
 		<!-- A running planned switch puts its token set back on every job run, so a
 		     set picked here would silently not last. admin.js fills and shows this
 		     while one runs (openspec/specs/scheduled-switch/spec.md). -->
+		<!-- The preview tabs, swatches and samples; js/admin-active-set-preview.js draws them. -->
+		<div class="thematiq-active-set-preview" id="thematiq-active-set-preview"></div>
 		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
 		<!-- The selected set is another organisation's house style and nobody
 		     confirmed it yet (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md).
