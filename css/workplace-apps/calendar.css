@@ -540,3 +540,29 @@
 :is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other:not(.fc-day-sat, .fc-day-sun) {
 	background-color: var(--color-main-background) !important;
 }
+
+/* A week day's heading as ClWeek draws it: the weekday in muted text, the day
+ * of the month after it in the text colour and semibold, and today's number
+ * alone in the primary badge (js/workplace-apps.js puts the number in
+ * `.thematiq-day-number`; without the script the whole heading keeps the
+ * badge). */
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell-cushion .thematiq-day-number {
+	margin-inline-start: 2px;
+	font-weight: 600;
+	color: var(--color-main-text);
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion:has(.thematiq-day-number) {
+	padding: 0 !important;
+	background-color: transparent !important;
+	font-weight: 400;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .thematiq-day-number {
+	display: inline-block;
+	padding: 0 5px;
+	border-radius: var(--border-radius-small, 4px);
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
