@@ -228,3 +228,60 @@
 	font-size: 13px;
 	line-height: 1.4;
 }
+
+/* Thematiq's own part of the page starts on the header's edge, at the
+ * board's width. */
+/* The light workplace draws every settings `.section` as a card with
+ * `!important`; the board draws the cards inside this part, not around it. */
+#content.app-settings #app-content-vue #nldesign-settings.section,
+#nldesign-settings {
+	max-width: none !important;
+	margin: 24px 27px 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+/* The heading row: the title, the environment chip and one line. */
+#nldesign-settings .nldesign-settings-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 16px;
+	padding: 8px 0 0;
+}
+
+#nldesign-settings .nldesign-settings-header h2 {
+	margin: 0 !important;
+	font-size: 22px !important;
+	font-weight: 700;
+	line-height: normal !important;
+}
+
+#nldesign-settings .nldesign-settings-header .nldesign-environment {
+	margin: 0;
+}
+
+.nldesign-environment__chip {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	color: var(--color-success-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.nldesign-settings-header__line {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+/* Without a declared environment the occ command takes a line of its own
+ * under the row. */
+#nldesign-settings .nldesign-settings-header .nldesign-environment:has(code) {
+	flex-basis: 100%;
+	order: 1;
+}

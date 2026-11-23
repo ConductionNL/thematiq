@@ -49,4 +49,25 @@ class AdminEnvironmentLineTest extends TestCase {
 			message: 'The page must not offer a control that writes the value.'
 		);
 	}//end testTheEnvironmentLineIsReadOnly()
+
+	/**
+	 * The heading row holds the title, the environment chip and the board's line.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-settings-hint-text
+	 *
+	 * @return void
+	 */
+	public function testTheHeadingRowIsTheBoards(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<div class="nldesign-settings-header">');
+		$this->assertNotFalse(condition: $start);
+		$row = substr($template, $start, (strpos($template, '</span>', strpos($template, 'nldesign-settings-header__line')) - $start));
+		$this->assertStringContainsString(needle: '<h2>Thematiq</h2>', haystack: $row);
+		$this->assertStringContainsString(needle: 'class="nldesign-environment__chip"', haystack: $row);
+		$this->assertStringContainsString(
+			needle: "'Choose a token set from a Dutch government body as a base, or adjust single tokens.'",
+			haystack: $row
+		);
+	}//end testTheHeadingRowIsTheBoards()
 }//end class

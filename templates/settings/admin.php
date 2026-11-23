@@ -84,22 +84,26 @@ if ($_['mockUi'] === true) {
      lib/Settings/Admin.php and read with OCP.InitialState.loadState() — NOT
      via data-* attributes on this element. See ADR-004. -->
 <div id="nldesign-settings" class="section">
+	<!-- The heading row TqTheming draws: the title, the environment chip and
+	     one line. The OTAP environment is the one this server declares in
+	     config.php, read-only (openspec/specs/environment-marker/spec.md); no
+	     control writes it. Without one, the occ command goes on a line under
+	     the row. -->
 	<div class="nldesign-settings-header">
 		<h2>Thematiq</h2>
-	</div>
-	<p class="settings-hint">
-		<?php p($l->t('Select a Dutch government design token set as a base, or customize individual Nextcloud CSS tokens below.')); ?>
-	</p>
-
-	<!-- The OTAP environment this server declares in config.php, read-only
-	     (openspec/specs/environment-marker/spec.md). No control writes it. -->
-	<div class="nldesign-environment" id="nldesign-environment">
-		<?php if ($_['environment'] !== ''): ?>
-			<p><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></p>
-		<?php else: ?>
-			<p class="settings-hint"><?php p($l->t('No environment is set, so no page is marked. Declare it in config.php with:')); ?></p>
-			<code><?php p($_['environmentCommand']); ?></code>
-		<?php endif; ?>
+		<div class="nldesign-environment" id="nldesign-environment">
+			<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps -- a template reads its parameters from $_. ?>
+			<?php if ($_['environment'] !== ''): ?>
+				<span class="nldesign-environment__chip"><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></span>
+			<?php else: ?>
+				<p class="settings-hint"><?php p($l->t('No environment is set, so no page is marked. Declare it in config.php with:')); ?></p>
+				<code><?php p($_['environmentCommand']); ?></code>
+			<?php endif; ?>
+			<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
+		</div>
+		<span class="nldesign-settings-header__line">
+			<?php p($l->t('Choose a token set from a Dutch government body as a base, or adjust single tokens.')); ?>
+		</span>
 	</div>
 
 	<div class="nldesign-token-set-selector">
