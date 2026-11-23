@@ -234,4 +234,61 @@ describe('House styles of other organisations', () => {
 		select.dispatchEvent(new Event('change'))
 		expect(hint.hidden).toBe(true)
 	})
+
+	it('names an app and a planned switch among the places a set is in use', async () => {
+		withdrawAnswer = {
+			status: 409,
+			body: { error: 'restricted_set_in_use', appliedIn: [{ kind: 'app', id: 'deck' }, { kind: 'schedule', id: '3' }] },
+		}
+		await loadScript()
+		const two = document.getElementById('nldesign-set-licence-owned-two')
+		two.querySelector('button').click()
+		await flush()
+		expect(two.querySelector('[role="status"]').textContent).toBe(
+			'This house style is still in use. Choose another one there first: app deck, a planned switch.',
+		)
+	})
+
+	it('says a withdrawal or a confirmation was not saved when the server refuses it otherwise', async () => {
+		withdrawAnswer = { status: 500, body: {} }
+		await loadScript()
+		const two = document.getElementById('nldesign-set-licence-owned-two')
+		two.querySelector('button').click()
+		await flush()
+		expect(two.querySelector('[role="status"]').textContent).toBe('The confirmation was not withdrawn. Try again.')
+
+		global.fetch.mockImplementation((url, options) => {
+			const method = (options && options.method) || 'GET'
+			if (method === 'POST') {
+				return answer(500, {})
+			}
+			return answer(200, url.endsWith('/licences') ? overview : { text: '' })
+		})
+		const owned = document.getElementById('nldesign-set-licence-owned')
+		const check = owned.querySelector('input[type="checkbox"]')
+		check.checked = true
+		check.dispatchEvent(new Event('change'))
+		owned.querySelector('button').click()
+		await flush()
+		expect(owned.querySelector('[role="status"]').textContent).toBe('The confirmation was not saved. Try again.')
+	})
+
+	it('opens the confirmation from the picker hint, and names an awaiting set it does not list by its id', async () => {
+		overview.awaiting = [{ tokenSet: 'unlisted', appliedIn: [] }]
+		await loadScript()
+		expect(document.getElementById('nldesign-set-licences-awaiting').textContent).toContain('unlisted is in use')
+
+		const select = document.getElementById('nldesign-token-set-select')
+		select.value = 'owned'
+		select.dispatchEvent(new Event('change'))
+		document.querySelector('#nldesign-set-licence-hint a').click()
+		expect(document.getElementById('nldesign-set-licence-owned').open).toBe(true)
+	})
+
+	it('leaves the block alone when the overview cannot be read', async () => {
+		global.fetch.mockImplementation(() => answer(500, {}))
+		await loadScript()
+		expect(document.getElementById('nldesign-set-licences-list').textContent).toBe('')
+		expect(document.getElementById('nldesign-set-licences').hidden).toBe(true)
+	})
 })

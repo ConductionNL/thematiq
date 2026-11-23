@@ -369,4 +369,136 @@ describe('ownTokens.js', () => {
 				expect(label.classList.contains('hidden-visually')).toBe(false)
 			})
 	})
+
+	it('edits a token in its prefilled dialog with the name locked, and saves it with PUT', async () => {
+		answer('PUT', '/settings/tokens/own/', 200, { status: 'ok' })
+		await mount()
+		const edit = document.querySelector('button[aria-label="Edit --nldesign-org-brand-accent"]')
+		click(edit)
+		const dialog = document.getElementById('nldesign-own-token-dialog')
+		const form = dialog.querySelector('form')
+		expect(dialog.querySelector('.nldesign-dialog-title').textContent).toBe('Edit --nldesign-org-brand-accent')
+		expect(form.elements.slug.value).toBe('brand-accent')
+		expect(form.elements.slug.disabled).toBe(true)
+		expect(form.elements.darkValue.value).toBe('#ff9a3c')
+		expect(form.elements.description.value).toBe('')
+
+		form.elements.value.value = '#00689e'
+		form.dispatchEvent(new window.Event('submit', { cancelable: true }))
+		await flush()
+
+		const [put] = sent('/settings/tokens/own/--nldesign-org-brand-accent', 'PUT')
+		expect(JSON.parse(put.body)).toMatchObject({ value: '#00689e', darkValue: '#ff9a3c' })
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('Token saved.')
+	})
+
+	it('sends no dark value for a type that is not a colour, and names a refusal without a server text', async () => {
+		answer('POST', '/settings/tokens/own', 400, {})
+		await mount({ tokens: [] })
+		click(document.getElementById('nldesign-own-token-add'))
+		const form = document.querySelector('#nldesign-own-token-dialog form')
+		form.elements.slug.value = 'fade'
+		form.elements.label.value = 'Fade'
+		form.elements.type.value = 'duration'
+		form.elements.value.value = '200ms'
+		form.elements.darkValue.value = '#000000'
+		form.dispatchEvent(new window.Event('submit', { cancelable: true }))
+		await flush()
+
+		expect(JSON.parse(sent('/settings/tokens/own', 'POST')[0].body).darkValue).toBe('')
+		expect(document.querySelector('#nldesign-own-token-dialog .nldesign-dialog-error').textContent).toBe('The token was not saved.')
+	})
+
+	it('says a removal failed with the server text, or in its own words', async () => {
+		vi.spyOn(window, 'confirm').mockReturnValue(true)
+		answer('DELETE', '/settings/tokens/own/', 409, { error: 'In use.' })
+		await mount()
+		click(document.querySelector('button[aria-label="Remove --nldesign-org-brand-accent"]'))
+		await flush()
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('In use.')
+
+		answer('DELETE', '/settings/tokens/own/', 500, {})
+		click(document.querySelector('button[aria-label="Remove --nldesign-org-brand-accent"]'))
+		await flush()
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('The token was not removed.')
+	})
+
+	it('lists every detail of a deprecation, and says when there is none', async () => {
+		await mount({
+			deprecations: [{ token: '--nldesign-org-gone', severity: 'critical', replacement: null, removalDate: '2026-01-01', message: 'Use the brand colour.', due: false, state: 'removed', own: true }],
+		})
+		const row = document.querySelector('[data-deprecated-token="--nldesign-org-gone"]')
+		expect(row.textContent).toContain('Deprecated: critical')
+		expect(row.querySelector('.nldesign-deprecation-detail').textContent).toBe(' removal 2026-01-01, removed, Use the brand colour.')
+
+		await mount({ deprecations: [] })
+		expect(document.getElementById('nldesign-deprecation-list').textContent).toBe('No deprecated tokens.')
+	})
+
+	it('edits a deprecation in its prefilled dialog, and withdraws one', async () => {
+		answer('DELETE', '/settings/tokens/deprecations/', 200, { status: 'ok' })
+		await mount()
+		click(document.querySelector('button[aria-label="Edit the deprecation of --nldesign-org-old-accent"]'))
+		const form = document.querySelector('#nldesign-deprecation-dialog form')
+		expect(form.elements.token.value).toBe('--nldesign-org-old-accent')
+		expect(form.elements.severity.value).toBe('warning')
+		expect(form.elements.replacement.value).toBe('--nldesign-org-brand-accent')
+		expect(form.elements.removalDate.value).toBe('2026-10-01')
+		expect(form.elements.message.value).toBe('')
+
+		click(document.querySelector('button[aria-label="Withdraw the deprecation of --nldesign-org-old-accent"]'))
+		await flush()
+		expect(sent('/settings/tokens/deprecations/--nldesign-org-old-accent', 'DELETE')).toHaveLength(1)
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('Deprecation withdrawn.')
+	})
+
+	it('opens an empty deprecation for a typed token, and keeps the dialog open on a refusal', async () => {
+		answer('POST', '/settings/tokens/deprecations', 400, {})
+		await mount()
+		click(document.getElementById('nldesign-deprecation-add'))
+		const dialog = document.getElementById('nldesign-deprecation-dialog')
+		const form = dialog.querySelector('form')
+		expect(form.elements.token.value).toBe('')
+		expect(form.elements.token.disabled).toBe(false)
+		form.elements.token.value = '--nldesign-color-primary'
+		form.dispatchEvent(new window.Event('submit', { cancelable: true }))
+		await flush()
+
+		expect(dialog.hasAttribute('open')).toBe(true)
+		expect(dialog.querySelector('.nldesign-dialog-error').textContent).toBe('The deprecation was not saved.')
+
+		answer('POST', '/settings/tokens/deprecations', 200, { status: 'ok' })
+		form.dispatchEvent(new window.Event('submit', { cancelable: true }))
+		await flush()
+		expect(dialog.hasAttribute('open')).toBe(false)
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('Deprecation saved.')
+	})
+
+	it('closes a dialog with Cancel or Escape and gives the focus back', async () => {
+		await mount()
+		const add = document.getElementById('nldesign-own-token-add')
+		click(add)
+		const dialog = document.getElementById('nldesign-own-token-dialog')
+		click(dialog.querySelector('.nldesign-dialog-cancel'))
+		expect(dialog.hasAttribute('open')).toBe(false)
+		expect(document.activeElement).toBe(add)
+
+		click(add)
+		document.body.focus()
+		dialog.dispatchEvent(new window.Event('cancel'))
+		expect(document.activeElement).toBe(add)
+	})
+
+	it('says so when the tokens cannot be loaded', async () => {
+		answer('GET', '/settings/tokens/own', 500, {})
+		global.fetch.mockImplementation((url, options = {}) => {
+			requests.push({ url, method: options.method || 'GET' })
+			return Promise.reject(new Error('offline'))
+		})
+		document.body.innerHTML = templateMarkup()
+		vi.resetModules()
+		await import('../../js/ownTokens.js?t=' + Math.random())
+		await flush()
+		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('Your own tokens could not be loaded.')
+	})
 })
