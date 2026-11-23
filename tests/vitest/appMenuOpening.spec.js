@@ -74,6 +74,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 			delete window.thematiqAppMenuObserver
 		}
 		document.body.innerHTML = ''
+		document.documentElement.removeAttribute('data-thematiq-app-menu-peek')
 		delete window.matchMedia
 		delete global.OCP
 	})
@@ -99,6 +100,30 @@ describe('the apps menu opens on hover and pins on click', () => {
 		expect(isOpen()).toBe(true)
 		vi.advanceTimersByTime(1)
 		expect(isOpen()).toBe(false)
+	})
+
+	it('a hover open marks the root until a key is pressed, so the focused tile draws no ring', async () => {
+		const waffle = header()
+		await loadScript()
+		const marked = () =>
+			document.documentElement.hasAttribute('data-thematiq-app-menu-peek')
+
+		expect(marked()).toBe(false)
+		over(waffle)
+		vi.advanceTimersByTime(150)
+		expect(isOpen()).toBe(true)
+		expect(marked()).toBe(true)
+
+		document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+		expect(marked(), 'a key press brings the ring back').toBe(false)
+
+		const css = readFileSync(
+			resolve(__dirname, '../../css/app-menu.css'),
+			'utf8',
+		)
+		expect(css).toMatch(
+			/:root\[data-thematiq-app-menu-peek\][^{]*\.app-menu__popover-base :focus-visible[^{]*\{\s*outline: none !important;\s*box-shadow: none !important;/,
+		)
 	})
 
 	it('a short pass does not open', async () => {
