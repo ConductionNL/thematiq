@@ -10,7 +10,7 @@
  *   event button "New event" (ClMonth, ClWeek).
  * - Calendar's week view names a day "Mon 12" (ClWeek), where the locale
  *   format writes "Mon 23/11/2026": the weekday the app wrote, then the day
- *   of the month from the column's own date.
+ *   of the month from the column's own date, in a span the sheet styles.
  * - The input in use: `data-thematiq-pointer` on the root while the person
  *   works with a pointer, so the sheets can leave out a focus ring that an
  *   app puts on a heading it focuses itself (Deck's card title, TbCard). A
@@ -24,6 +24,7 @@
 ;(function thematiqWorkplaceAppsInit() {
 	var POINTER = 'data-thematiq-pointer'
 	var DAY_LINK = '.fc-timeGridWeek-view .fc-col-header-cell[data-date] .fc-col-header-cell-cushion'
+	var DAY_NUMBER = 'thematiq-day-number'
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqWorkplaceAppsMain)
@@ -44,7 +45,8 @@
 
 	/**
 	 * Write "Mon 12" on every day of Calendar's week view that still reads
-	 * otherwise.
+	 * otherwise, the day of the month in a span of its own: ClWeek sets the
+	 * number apart and marks today on the number alone.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 */
@@ -56,10 +58,20 @@
 			if (day === null || weekday === '') {
 				return
 			}
-			var short = weekday + ' ' + String(Number(day[1]))
-			if (link.textContent !== short) {
-				link.textContent = short
+			var number = String(Number(day[1]))
+			var current = link.querySelector(':scope > .' + DAY_NUMBER)
+			if (
+				link.textContent === weekday + ' ' + number
+				&& current !== null
+				&& link.childNodes.length === 2
+			) {
+				return
 			}
+			var span = document.createElement('span')
+			span.className = DAY_NUMBER
+			span.textContent = number
+			link.textContent = weekday + ' '
+			link.appendChild(span)
 		})
 	}
 
