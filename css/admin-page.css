@@ -300,7 +300,9 @@
 }
 
 #nldesign-settings .thematiq-card h2.thematiq-card__title {
+	max-width: none !important;
 	margin: 0 !important;
+	text-align: start !important;
 	font-size: 20px !important;
 	font-weight: 700;
 	line-height: normal !important;
