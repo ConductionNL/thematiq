@@ -30,7 +30,7 @@ use OCP\IUserSession;
  * apps, the signed-in user's order and the texts of the toggle, the hints and the live region.
  * {@see AppMenuService::inject()} merges it into the menu.
  *
- * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp names an external app's entry and icon.
+ * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp names the entry and icon of an external app.
  *
  * @spec openspec/changes/apps-menu-ordered-list/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
  */
@@ -137,6 +137,8 @@ class AppMenuListState {
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	private function withConfigured(array $apps, IL10N $l): ?array {
+		$icons = AppMenuExternalApp::icons();
+		$stroke = AppMenuExternalApp::strokeIcons();
 		$section = ['title' => $l->t('External apps'), 'note' => $l->t('opens in a new tab'), 'apps' => []];
 		foreach ($apps as $app) {
 			if ($app['visible'] !== true) {
@@ -145,8 +147,8 @@ class AppMenuListState {
 
 			$entry = ['key' => AppMenuExternalApp::key(app: $app), 'label' => $app['title'], 'line' => $app['payoff'], 'url' => $app['url'], 'icon' => ''];
 			if (isset($app['icon']['library']) === true) {
-				$entry['icon'] = AppMenuExternalApp::icons()[$app['icon']['library']];
-				$entry['stroke'] = in_array($app['icon']['library'], AppMenuExternalApp::strokeIcons(), true);
+				$entry['icon'] = $icons[$app['icon']['library']];
+				$entry['stroke'] = in_array($app['icon']['library'], $stroke, true);
 			} elseif ($this->urls !== null) {
 				$entry['iconUrl'] = $this->urls->linkToRoute('thematiq.appMenuSettings.icon', ['id' => $app['icon']['upload']]);
 			}
