@@ -108,7 +108,8 @@ final class AppMenuPinsTest extends TestCase {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getAppValue')->willReturnCallback(
 			static fn (string $app, string $key, $default = '') => ([
-				'menu.externalApps' => '[{"id":"code","title":"Forgejo","payoff":"Code","url":"https://code.example.org","icon":{"library":"link"},"visible":true,"order":0}]',
+				'menu.externalApps' => '[{"id":"code","title":"Forgejo","payoff":"Code","url":"https://code.example.org",'
+					. '"icon":{"library":"link"},"visible":true,"order":0}]',
 			][$key] ?? $default)
 		);
 		$navigation = $this->createMock(originalClassName: INavigationManager::class);

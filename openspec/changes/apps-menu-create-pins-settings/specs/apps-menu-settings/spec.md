@@ -58,8 +58,8 @@ with the same menu key (`external-openproject-work_packages`, `external-wiki`), 
 pins and hidden apps still name it. OpenProject's work packages, Gantt charts, boards and meetings and
 XWiki MUST take the icons the AppMenu board draws for them. The old values MUST be removed and a marker
 (`menu.externalAppsMigrated`) set, so the move runs once and a later reset of the defaults does not
-bring them back. The move MUST run from a repair step on upgrade and on the first page that draws the
-menu or opens Menu settings. The admin page MUST no longer edit external apps: its block points to
+bring them back. The move MUST run on the first page that draws the menu and when Menu settings opens, so it
+needs no upgrade. The admin page MUST no longer edit external apps: its block points to
 Menu settings, and its endpoints `/settings/external-apps` and `/settings/openproject` are gone.
 
 #### Scenario: The demo's OpenProject and XWiki move

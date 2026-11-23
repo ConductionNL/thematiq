@@ -31,7 +31,7 @@
 
 ## 4. The boards as canon
 
-- [x] 4.1 `lib/Service/AppMenuLegacyExternalApps.php`, `lib/Repair/MigrateMenuExternalApps.php`: the admin page's external apps move into `menu.externalApps` once; the admin block points to Menu settings; `ExternalAppsController` and `js/admin-external-apps.js` go.
+- [x] 4.1 `lib/Service/AppMenuLegacyExternalApps.php`: the admin page's external apps move into `menu.externalApps` once; the admin block points to Menu settings; `ExternalAppsController` and `js/admin-external-apps.js` go.
 - [x] 4.2 Icon colour: brand washes the first section's work apps, the rest grey.
 - [x] 4.3 Theming: inline colour radios, the size beside its name, the preview sentence; the scope help beside the switch.
 - [x] 4.4 Entries 68 px high, as measured on AppMenuAlles.

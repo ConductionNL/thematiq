@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Tests for AppMenuLegacyExternalApps and the MigrateMenuExternalApps repair step.
+ * Tests for AppMenuLegacyExternalApps.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
@@ -20,15 +20,12 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
-use OCA\Thematiq\Repair\MigrateMenuExternalApps;
 use OCA\Thematiq\Service\AppMenuLegacyExternalApps;
 use OCA\Thematiq\Service\AppMenuSettings;
 use OCA\Thematiq\Service\ExternalApps;
 use OCA\Thematiq\Service\OpenProjectModules;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\L10N\IFactory;
-use OCP\Migration\IOutput;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -89,7 +86,8 @@ final class AppMenuLegacyExternalAppsTest extends TestCase {
 		$this->app = [
 			'openproject_url' => 'http://localhost:8077',
 			'external_apps' => '{"wiki":"http://localhost:8078"}',
-			'menu.externalApps' => '[{"id":"intra","title":"Intranet","payoff":"","url":"https://intra.example.org","icon":{"library":"news"},"visible":true,"order":0}]',
+			'menu.externalApps' => '[{"id":"intra","title":"Intranet","payoff":"","url":"https://intra.example.org",'
+				. '"icon":{"library":"news"},"visible":true,"order":0}]',
 		];
 
 		$this->assertSame(expected: 5, actual: $this->legacy()->migrateOnce(l: $this->english()));
@@ -99,7 +97,15 @@ final class AppMenuLegacyExternalAppsTest extends TestCase {
 			actual: array_column($apps, 'id')
 		);
 		$this->assertSame(
-			expected: ['id' => 'wiki', 'title' => 'XWiki', 'payoff' => 'Knowledge base', 'url' => 'http://localhost:8078', 'icon' => ['library' => 'app-wiki'], 'visible' => true, 'order' => 5],
+			expected: [
+				'id' => 'wiki',
+				'title' => 'XWiki',
+				'payoff' => 'Knowledge base',
+				'url' => 'http://localhost:8078',
+				'icon' => ['library' => 'app-wiki'],
+				'visible' => true,
+				'order' => 5,
+			],
 			actual: $apps[5]
 		);
 		$this->assertSame(expected: ['library' => 'openproject-work-packages'], actual: $apps[1]['icon']);
@@ -110,19 +116,12 @@ final class AppMenuLegacyExternalAppsTest extends TestCase {
 	}//end testTheAdminPageAppsMoveOnceAndKeepTheirKeys()
 
 	/**
-	 * Without any admin page app the marker is still set, and the repair step reports the count.
+	 * Without any admin page app nothing moves and the marker is still set.
 	 *
 	 * @return void
 	 */
-	public function testTheRepairStepRunsTheMove(): void {
-		$factory = $this->createMock(originalClassName: IFactory::class);
-		$factory->method('get')->willReturn($this->english());
-		$output = $this->createMock(originalClassName: IOutput::class);
-		$output->expects($this->once())->method('info')->with('MigrateMenuExternalApps: 0 external app(s) moved into the menu settings.');
-		$step = new MigrateMenuExternalApps(legacy: $this->legacy(), l10nFactory: $factory);
-
-		$this->assertNotSame(expected: '', actual: $step->getName());
-		$step->run(output: $output);
+	public function testWithoutAdminPageAppsOnlyTheMarkerIsSet(): void {
+		$this->assertSame(expected: 0, actual: $this->legacy()->migrateOnce(l: $this->english()));
 		$this->assertSame(expected: [AppMenuLegacyExternalApps::MARKER => '1'], actual: $this->app);
-	}//end testTheRepairStepRunsTheMove()
+	}//end testWithoutAdminPageAppsOnlyTheMarkerIsSet()
 }//end class

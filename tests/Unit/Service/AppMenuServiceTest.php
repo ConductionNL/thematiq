@@ -439,7 +439,8 @@ class AppMenuServiceTest extends TestCase {
 			],
 			actual: $state['external']['apps']
 		);
-		$this->assertSame(expected: ['openproject-boards', 'openproject-meetings'], actual: array_column(json_decode($this->appValues['menu.externalApps'], true), 'id'));
+		$moved = json_decode($this->appValues['menu.externalApps'], true);
+		$this->assertSame(expected: ['openproject-boards', 'openproject-meetings'], actual: array_column($moved, 'id'));
 
 		$this->appValues['openproject_url'] = 'https://other.example.org/';
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));

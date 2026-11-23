@@ -272,9 +272,6 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 			     Idempotent, never throws. Not under <install>: a fresh install
 			     has no overrides file yet. -->
 			<step>OCA\Thematiq\Repair\MigrateOverrideValueTypes</step>
-			<!-- Apps menu settings (apps-menu-create-pins-settings): the admin page's
-			     external apps move into menu.externalApps, once. -->
-			<step>OCA\Thematiq\Repair\MigrateMenuExternalApps</step>
 			<!-- Theme as code (openspec/specs/theme-as-code/spec.md): apply the
 			     branding package named in thematiq.config_source when it
 			     changed. Last, after the configuration rescue above. -->

@@ -31,6 +31,7 @@ use OCP\IL10N;
  * and keep their menu keys (`external-openproject-boards`, `external-wiki`), so a person's order,
  * pins and hidden apps still name them. The old values are removed, so the menu settings are the
  * only source. A marker makes it run once: a later reset of the defaults does not bring them back.
+ * It runs on the first page that draws the menu and when Menu settings opens.
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuExternalApp holds the external app rule.
  *
