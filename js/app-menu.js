@@ -924,15 +924,17 @@
 				true,
 			)
 		})
-		window.addEventListener(
-			'mouseleave',
-			function (event) {
-				if (pinned && isOpen() && inZone(event.target)) {
-					event.stopImmediatePropagation()
-				}
-			},
-			true,
-		)
+		;['mouseleave', 'pointerleave'].forEach(function (type) {
+			window.addEventListener(
+				type,
+				function (event) {
+					if (pinned && isOpen() && inZone(event.target)) {
+						event.stopImmediatePropagation()
+					}
+				},
+				true,
+			)
+		})
 	}
 
 	/**

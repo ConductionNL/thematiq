@@ -147,7 +147,9 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 		waffle.click()
 		expect(isOpen()).toBe(true)
+		nav.addEventListener('pointerleave', coreLeave)
 		nav.dispatchEvent(new MouseEvent('mouseleave'))
+		nav.dispatchEvent(new MouseEvent('pointerleave'))
 		expect(coreLeave, 'Nextcloud never hears the pointer leave a pinned menu').not.toHaveBeenCalled()
 		out(waffle)
 		vi.advanceTimersByTime(1000)
