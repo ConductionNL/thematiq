@@ -97,6 +97,8 @@ function menu(extra = {}) {
 		manageLabel: 'Apps beheren',
 		labels: LABELS,
 		order: [],
+		// Three columns of three rows: the grid these cases were written for.
+		settings: { columns: 3, rowsAboveFold: 3 },
 		...extra,
 	}
 }

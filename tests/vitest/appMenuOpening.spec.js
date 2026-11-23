@@ -226,7 +226,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 	it('the stylesheet hides the outlined tile and keeps the menu inside the window', () => {
 		const css = readFileSync(
-			resolve(__dirname, '../../css/header-workplace.css'),
+			resolve(__dirname, '../../css/app-menu.css'),
 			'utf8',
 		)
 		expect(css).toMatch(
@@ -237,7 +237,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 
 	it('the stylesheet turns transitions off under reduced motion', () => {
 		const css = readFileSync(
-			resolve(__dirname, '../../css/header-workplace.css'),
+			resolve(__dirname, '../../css/app-menu.css'),
 			'utf8',
 		)
 		const block = css.slice(

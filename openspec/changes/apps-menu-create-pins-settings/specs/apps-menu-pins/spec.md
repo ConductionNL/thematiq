@@ -41,7 +41,7 @@ one place and the live region MUST say its new place.
 - THEN only Files MUST be pinned
 
 ### Requirement: Pins are stored for the person on the server
-The pins MUST be saved in the person's own user settings (user value `thematiq` / `app_menu_pins`)
+The pins MUST be saved in the person's own user settings (user value `thematiq` / `menu.pinned`, the personal key of the menu settings)
 through `POST /apps/thematiq/app-menu/pins` with `{pins: [keys]}`, and MUST be in the
 `thematiq/app-menu` initial state as `pins`. The endpoint MUST take no user id and MUST refuse a request
 without a session. Before storing, the server MUST keep only keys of entries the person can see: an
