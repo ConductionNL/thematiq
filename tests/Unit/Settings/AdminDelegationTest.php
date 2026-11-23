@@ -182,9 +182,9 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider jobOwnedKeyProvider
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 *
 	 * @return void
-	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 */
 	public function testJobOwnedKeysAreNotDelegable(string $key): void {
 		$this->assertNotContains(
