@@ -167,6 +167,8 @@
 		}
 
 		var host = buildBrand(brand)
+		// Whether the sheet styles the block cannot change while the page lives, so it is read once.
+		var sheetStylesBlock = null
 		var sync = function () {
 			if (document.querySelector(OWN_BRAND) !== null) {
 				if (host.parentNode !== null) {
@@ -180,12 +182,42 @@
 			}
 			// A browser that still holds an older css/header-workplace.css has
 			// no rules for the block and would draw the emblem at full size.
-			if (!styled(host)) {
+			if (sheetStylesBlock === null) {
+				sheetStylesBlock = styled(host)
+			}
+			if (!sheetStylesBlock) {
 				header.removeChild(host)
 				header.removeAttribute(BRAND_ATTR)
 				return
 			}
-			header.setAttribute(BRAND_ATTR, '')
+			if (!header.hasAttribute(BRAND_ATTR)) {
+				header.setAttribute(BRAND_ATTR, '')
+			}
+		}
+
+		// Only a change to the bar's own children, or an app's brand coming or
+		// going, can change the block. A clock or a counter elsewhere on the
+		// page changes the body every second and must not re-run the sync.
+		var concernsBrand = function (node) {
+			return (
+				node.nodeType === 1
+				&& (node === host || node.matches(OWN_BRAND) || node.querySelector(OWN_BRAND) !== null)
+			)
+		}
+		var relevant = function (records) {
+			for (var i = 0; i < records.length; i++) {
+				var record = records[i]
+				if (record.target === header) {
+					return true
+				}
+				var nodes = Array.prototype.slice.call(record.addedNodes).concat(Array.prototype.slice.call(record.removedNodes))
+				for (var j = 0; j < nodes.length; j++) {
+					if (concernsBrand(nodes[j])) {
+						return true
+					}
+				}
+			}
+			return false
 		}
 
 		sync()
@@ -193,8 +225,8 @@
 		// re-render of the bar can drop a node it did not create.
 		if (typeof MutationObserver === 'function') {
 			var queued = false
-			new MutationObserver(function () {
-				if (queued) {
+			new MutationObserver(function (records) {
+				if (queued || !relevant(records)) {
 					return
 				}
 				queued = true
