@@ -18,6 +18,8 @@
  * css/workplace-apps/brand.css give it.
  *
  * While the block is in the bar, the bar is marked `data-thematiq-brand`.
+ * The block is drawn only when css/header-workplace.css styles it, so a
+ * browser that cached an older sheet keeps the bar it had.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -132,6 +134,20 @@
 	}
 
 	/**
+	 * Whether css/header-workplace.css styles the block: its rule for the
+	 * host sets `--thematiq-brand-block: 1`.
+	 *
+	 * @param {HTMLElement} host The host, in the bar.
+	 * @return {boolean} True when the sheet's rules reach it.
+	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+	 */
+	function styled(host) {
+		return (
+			window.getComputedStyle(host).getPropertyValue('--thematiq-brand-block').trim() === '1'
+		)
+	}
+
+	/**
 	 * Draw the block when the open app has no brand of its own, and keep it
 	 * first in the bar.
 	 *
@@ -161,6 +177,13 @@
 			}
 			if (header.firstChild !== host) {
 				header.insertBefore(host, header.firstChild)
+			}
+			// A browser that still holds an older css/header-workplace.css has
+			// no rules for the block and would draw the emblem at full size.
+			if (!styled(host)) {
+				header.removeChild(host)
+				header.removeAttribute(BRAND_ATTR)
+				return
 			}
 			header.setAttribute(BRAND_ATTR, '')
 		}
