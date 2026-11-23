@@ -67,6 +67,30 @@ const OUTPUTS = [
  * fails when a set names a family no linked stylesheet serves and
  * `token-sets.json` declares nothing about it.
  */
+/**
+ * The faces of a family, each followed by a face for U+2E31 WORD SEPARATOR
+ * MIDDLE DOT with the same weight and style. Fira Sans has no glyph for it,
+ * Deck writes "Modified: ... ⸱ Created: ..." with it, and most systems then
+ * drew an empty box. `fira-sans-separator.otf` holds only Fira's own middle
+ * dot under that code point. A face per weight and style, because a browser
+ * looks for a missing character only among faces with the same descriptors.
+ *
+ * @param {Array<object>} faces The family's faces.
+ * @return {Array<object>} The faces with their separator faces.
+ */
+function withSeparator(faces) {
+	return faces.flatMap((face) => [
+		face,
+		{
+			weight: face.weight,
+			style: face.style,
+			file: 'fira-sans-separator',
+			formats: ['otf'],
+			unicodeRange: 'U+2E31',
+		},
+	])
+}
+
 const FAMILIES = [
 	{
 		family: 'Fira Sans',
@@ -75,7 +99,7 @@ const FAMILIES = [
 			'2012-2015 The Mozilla Foundation and Telefonica S.A. (https://github.com/mozilla/Fira)',
 		upstream: '@fontsource/fira-sans',
 		note: 'The NL Design System default, and the open-source stand-in for RijksoverheidSansWebText. Medium and SemiBold are there for sets whose design uses four weights (zuiddrecht).',
-		faces: [
+		faces: withSeparator([
 			{
 				weight: 400,
 				style: 'normal',
@@ -132,7 +156,7 @@ const FAMILIES = [
 				file: 'fira-sans-latin-700-italic',
 				formats: ['woff2', 'woff'],
 			},
-		],
+		]),
 	},
 	{
 		family: 'Source Sans 3',
@@ -604,12 +628,18 @@ const NOTICES = {
 	'Apache-2.0': 'APACHE-2.0.txt',
 }
 
+/** The CSS format hint of a file extension that differs from it. */
+const FORMAT_HINTS = {
+	otf: 'opentype',
+	ttf: 'truetype',
+}
+
 /** Render one @font-face block. */
 function renderFace(family, face) {
-	const sources = [`local('${face.local}')`].concat(
+	const sources = (face.local === undefined ? [] : [`local('${face.local}')`]).concat(
 		face.formats.map(
 			(format) =>
-				`url('${family.dir}/${face.file}.${format}') format('${format}')`,
+				`url('${family.dir}/${face.file}.${format}') format('${FORMAT_HINTS[format] ?? format}')`,
 		),
 	)
 
@@ -621,8 +651,10 @@ function renderFace(family, face) {
 		`\tfont-weight: ${face.weight};`,
 		`\tfont-style: ${face.style};`,
 		'\tfont-display: swap;',
-		'}',
-	].join('\n')
+	]
+		.concat(face.unicodeRange === undefined ? [] : [`\tunicode-range: ${face.unicodeRange};`])
+		.concat(['}'])
+		.join('\n')
 }
 
 /** Render one family's comment header plus its faces. */
@@ -678,16 +710,16 @@ function renderStylesheet(output) {
 
 /** Every binary the table names, relative to one output's font directory. */
 function expectedBinaries() {
-	const files = []
+	const files = new Set()
 	for (const family of FAMILIES) {
 		for (const face of family.faces) {
 			for (const format of face.formats) {
-				files.push(`${face.file}.${format}`)
+				files.add(`${face.file}.${format}`)
 			}
 		}
 	}
 
-	return files
+	return [...files]
 }
 
 /**
