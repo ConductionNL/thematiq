@@ -250,13 +250,79 @@ body:not(#body-login) #header .header-end > :has(+ #user-menu)::after {
  * the organisation in the muted text colour, the divider in the border
  * colour of the light bar. */
 body:not(#body-login) #header .cn-brand-bar__caption {
-	color: var(--color-text-maxcontrast);
+	color: var(--color-text-maxcontrast) !important;
 	opacity: 1;
 }
 
 body:not(#body-login) #header .cn-brand-bar__divider {
 	background: var(--color-border);
 	opacity: 1;
+}
+
+/* The same block for an app that draws none (js/header-brand.js): a 237px
+ * link with the emblem, the organisation over the app's name, then the
+ * divider 12px on. */
+body:not(#body-login) #header .thematiq-brand-host {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 12px;
+	height: 100%;
+	margin-inline-end: 12px;
+}
+
+body:not(#body-login) #header a.thematiq-brand {
+	display: flex;
+	flex: none;
+	align-items: center;
+	gap: 10px;
+	box-sizing: border-box;
+	width: 237px;
+	min-width: 0;
+	min-height: 48px;
+	padding: 0 6px;
+	border-radius: var(--border-radius-element, 8px);
+	color: var(--color-main-text) !important;
+	text-decoration: none !important;
+}
+
+body:not(#body-login) #header a.thematiq-brand:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
+body:not(#body-login) #header .thematiq-brand__emblem {
+	flex: none;
+	width: auto;
+	height: 34px;
+	object-fit: contain;
+}
+
+body:not(#body-login) #header .thematiq-brand__text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.15;
+}
+
+body:not(#body-login) #header .thematiq-brand__caption {
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 13px;
+	white-space: nowrap;
+}
+
+body:not(#body-login) #header .thematiq-brand__name {
+	color: var(--color-main-text) !important;
+	font-size: 18px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+body:not(#body-login) #header .thematiq-brand__divider {
+	flex: none;
+	width: 1px;
+	height: 28px;
+	background: var(--color-border);
 }
 
 /* The person: only once the script has added the label. */

@@ -12,22 +12,26 @@
  * the set's logo, the app's name in bold, a hairline, then the apps grid.
  * The name is Nextcloud's own, so it is translated and read out as before.
  *
+ * This is the fallback: once js/header-brand.js has put the board's brand
+ * block in the bar (and marked it `data-thematiq-brand`), these rules step
+ * back and the logo and the current-app name stay hidden.
+ *
  * Loaded only on those apps' pages with the workplace header
  * (LayoutStylesheets::forApp()); no colour is written.
  */
 
-body:not(#body-login) #header #nextcloud {
+body:not(#body-login) #header:not([data-thematiq-brand]) #nextcloud {
 	display: flex !important;
 	height: 100% !important;
 	margin-inline-end: 4px;
 }
 
-body:not(#body-login) #header nav.app-menu {
+body:not(#body-login) #header:not([data-thematiq-brand]) nav.app-menu {
 	display: flex;
 	align-items: center;
 }
 
-body:not(#body-login) #header .app-menu__current-app {
+body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app {
 	display: inline-flex !important;
 	order: -1;
 	height: 40px !important;
@@ -38,12 +42,12 @@ body:not(#body-login) #header .app-menu__current-app {
 	background-color: transparent !important;
 }
 
-body:not(#body-login) #header .app-menu__current-app-icon,
-body:not(#body-login) #header .app-menu__current-app-cog {
+body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app-icon,
+body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app-cog {
 	display: none !important;
 }
 
-body:not(#body-login) #header .app-menu__current-app-name {
+body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app-name {
 	max-width: 200px;
 	font-size: 18px !important;
 	font-weight: 700 !important;
