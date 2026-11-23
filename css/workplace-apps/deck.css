@@ -349,7 +349,8 @@
 	line-height: 24px !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus:not(:focus-visible) {
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus:not(:focus-visible),
+:root[data-thematiq-pointer] :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus {
 	outline: none !important;
 	box-shadow: none !important;
 }

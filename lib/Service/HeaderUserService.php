@@ -76,6 +76,14 @@ class HeaderUserService {
 	public const CREATE_SCRIPT = 'header-create';
 
 	/**
+	 * The script that gives Mail, Calendar and Deck the boards' words and day names (js/workplace-apps.js).
+	 * It acts only while css/workplace-apps/common.css is on the page.
+	 *
+	 * @var string
+	 */
+	public const APPS_SCRIPT = 'workplace-apps';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IUserSession $userSession The signed-in person.
@@ -149,7 +157,7 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js, js/header-brand.js and js/header-create.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js, js/header-brand.js, js/header-create.js and js/workplace-apps.js. A seam, so unit tests need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
@@ -161,5 +169,6 @@ class HeaderUserService {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::CREATE_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::APPS_SCRIPT);
 	}//end emitScript()
 }//end class

@@ -20,6 +20,11 @@
  *   design system's button padding made them 64px wide.
  */
 
+/* js/workplace-apps.js acts only while this sheet is on the page. */
+:root {
+	--thematiq-workplace-apps: 1;
+}
+
 :is(#content, #content-vue) {
 	--nldesign-color-accent-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
 	--nldesign-color-accent-text: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));

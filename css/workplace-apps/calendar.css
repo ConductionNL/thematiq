@@ -307,6 +307,17 @@
 	flex: 1 1 auto;
 }
 
+/* "New event", as ClMonth and ClWeek label it, where Calendar writes "Event"
+ * (js/workplace-apps.js sets the translated words). */
+:root[style*='--thematiq-calendar-new-event'] :is(#content, #content-vue).app-calendar #app-navigation-vue .new-event .button-vue__text {
+	font-size: 0 !important;
+}
+
+:root[style*='--thematiq-calendar-new-event'] :is(#content, #content-vue).app-calendar #app-navigation-vue .new-event .button-vue__text::after {
+	content: var(--thematiq-calendar-new-event);
+	font-size: 14px;
+}
+
 /* The month: a timed entry is a chip as in ClMonth: its calendar's tint, a
    3px edge, the time in 10px muted text and the title in 11px. Calendar
    gives a month entry its colour only on the dot, so the dot becomes the

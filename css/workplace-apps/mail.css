@@ -441,6 +441,31 @@
 	display: none !important;
 }
 
+/* "Select a conversation", as MlInbox reads, where Mail writes "Welcome to
+ * <name> Mail" (js/workplace-apps.js sets the translated words). The
+ * heading's own text goes; the words follow the envelope. */
+:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .app-content-details:has(.no-message-selected__heading) {
+	flex-direction: column;
+}
+
+:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .no-message-selected__heading {
+	width: 64px;
+	height: 0;
+	overflow: visible;
+	color: transparent !important;
+	font-size: 0 !important;
+}
+
+:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .app-content-details:has(.no-message-selected__heading)::after {
+	content: var(--thematiq-mail-empty-title);
+	margin-top: 8px;
+	color: var(--color-main-text);
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 26px;
+	text-align: center;
+}
+
 /* Attachments are rows: a typed badge, the name as a link, the size at the end. */
 :is(#content, #content-vue).app-mail #mail-message .attachments {
 	display: flex !important;
