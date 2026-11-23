@@ -1184,15 +1184,15 @@
 		"login": {
 			"title": {
 				"nl": "Inloggen bij de werkplek",
-				"en": "Log in to the workplace"
+				"en": "Sign in to the workplace"
 			},
 			"subtitle": {
 				"nl": "Voor medewerkers van Gemeente Zuiddrecht.",
-				"en": "For staff of Gemeente Zuiddrecht."
+				"en": "For employees of the Municipality of Zuiddrecht."
 			},
 			"sso_label": {
 				"nl": "Inloggen met uw gemeenteaccount",
-				"en": "Log in with your municipality account"
+				"en": "Sign in with your municipal account"
 			},
 			"username_label": {
 				"nl": "Gebruikersnaam of e-mail",
@@ -1204,7 +1204,7 @@
 			},
 			"footer": {
 				"nl": "Gemeente Zuiddrecht · werkplek op Nextcloud",
-				"en": "Gemeente Zuiddrecht · workplace on Nextcloud"
+				"en": "Municipality of Zuiddrecht · workspace on Nextcloud"
 			}
 		},
 		"not_found": {
