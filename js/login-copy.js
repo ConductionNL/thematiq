@@ -4,7 +4,8 @@
  * Loaded only on the login page while the workplace layout resolves to
  * `light` (LoginCopyService), with the copy of the page's token set as
  * initial state (`thematiq/login-copy`): title, subtitle, ssoLabel,
- * usernameLabel, divider, footer, footerHint, footerLinkLabel, footerLinkUrl.
+ * usernameLabel, submitLabel, resetLabel, divider, footer, footerHint,
+ * footerLinkLabel, footerLinkUrl.
  * Every key is optional.
  *
  * - An intro block (title and subtitle) becomes the first child of the
@@ -17,8 +18,9 @@
  *   follows them. With exactly one alternative login the SSO label replaces
  *   its name. The card is marked `data-thematiq-sso`, and the stylesheet then
  *   draws the password button as the secondary action.
- * - The username label, the footer line and an optional footer hint with a
- *   link are written as text. Nextcloud's legal links in the footer stay.
+ * - The username label, the words of the submit button and of the lost
+ *   password link, the footer line and an optional footer hint with a link
+ *   are written as text. Nextcloud's legal links in the footer stay.
  *
  * Text only, never markup. Nextcloud re-renders parts of the card (the reset
  * password form and back); every step is idempotent and runs again then.
@@ -185,6 +187,27 @@
 	}
 
 	/**
+	 * The words of the submit button and of the lost password link.
+	 *
+	 * @param {Element} box The login card.
+	 * @param {object} copy The copy.
+	 * @spec openspec/specs/workplace-layout/spec.md
+	 */
+	function labelActions(box, copy) {
+		var targets = [
+			['submitLabel', '[data-login-form-submit]'],
+			['resetLabel', '#lost-password'],
+		]
+		targets.forEach(function (target) {
+			var label = text(copy, target[0])
+			var button = label ? box.querySelector(target[1]) : null
+			if (button !== null) {
+				setText(button.querySelector('.button-vue__text') || button, label)
+			}
+		})
+	}
+
+	/**
 	 * The footer line, keeping Nextcloud's legal links, and the hint.
 	 *
 	 * @param {object} copy The copy.
@@ -258,6 +281,7 @@
 			var intro = placeIntro(box, copy)
 			placeAlternatives(box, intro, copy)
 			labelUsername(box, copy)
+			labelActions(box, copy)
 		}
 
 		apply()
