@@ -1,0 +1,135 @@
+/**
+ * Workplace app layer: Calendar, drawn as the calendar boards (ClWeek,
+ * ClMonth, ClEvent).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only on Calendar's pages while the workplace layout is light
+ * (LayoutStylesheets::forApp()), after workplace-apps/common.css. Every rule
+ * starts at `.app-calendar` under the content element; every colour is a
+ * variable, and an entry keeps its calendar's own colour.
+ *
+ * The grid is white with hairlines, the weekend a shade darker. A day heading
+ * is the day in muted text; today is the primary. An entry is its
+ * calendar's tint with a 3px edge, the title semibold and the time small.
+ */
+
+:is(#content, #content-vue).app-calendar #app-content-vue {
+	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
+}
+
+/* The navigation: the date picker fits beside its two arrows. */
+:is(#content, #content-vue).app-calendar .datepicker-button-section {
+	display: flex;
+}
+
+:is(#content, #content-vue).app-calendar .datepicker-button-section__datepicker {
+	flex: 1 1 auto;
+	min-width: 0;
+	width: auto !important;
+}
+
+:is(#content, #content-vue).app-calendar .datepicker-button-section .dp__input {
+	width: 100% !important;
+	min-width: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar .datepicker-button-section .button-vue {
+	flex: none;
+	width: var(--default-clickable-area, 34px) !important;
+	min-width: var(--default-clickable-area, 34px) !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar .new-event-today-view-section {
+	gap: 4px;
+}
+
+/* The grid. */
+:is(#content, #content-vue).app-calendar .fc {
+	--fc-border-color: var(--color-border);
+	--fc-today-bg-color: transparent;
+	--fc-neutral-bg-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+
+	font-size: 13px;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-day-sat,
+:is(#content, #content-vue).app-calendar .fc .fc-day-sun {
+	background-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell {
+	padding: 8px 6px;
+	text-align: start;
+	font-weight: 400;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell-cushion {
+	padding: 0 !important;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today {
+	background-color: transparent !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion {
+	padding: 2px 6px !important;
+	border-radius: var(--border-radius-small, 4px);
+	background-color: var(--color-primary-element) !important;
+	font-weight: 700;
+	color: var(--color-primary-element-text) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-slot {
+	height: 36px;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-slot-label-cushion,
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-axis-cushion {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-now-indicator-line {
+	border-color: var(--color-main-text);
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day-number {
+	font-size: 13px;
+	font-weight: 500;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-day-today .fc-daygrid-day-number {
+	border-radius: var(--border-radius-small, 4px);
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text) !important;
+}
+
+/* The entries. */
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event,
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-block-event {
+	border-width: 0 0 0 3px !important;
+	border-radius: var(--border-radius-small, 4px) !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-event-main {
+	padding: 2px 6px !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-event-title {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 16px;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-event-time {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 14px;
+}

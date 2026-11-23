@@ -16,12 +16,6 @@
  * date and the people in 12px.
  */
 
-:is(#content, #content-vue).app-deck {
-	--nldesign-color-accent-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
-	--nldesign-color-accent-text: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
-	--nldesign-component-navigation-active-color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
-}
-
 :is(#content, #content-vue).app-deck #app-content-vue {
 	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
 }
@@ -231,16 +225,4 @@
 	min-width: 28px !important;
 	height: 28px !important;
 	min-height: 28px !important;
-}
-
-/* The card panel. */
-:is(#content, #content-vue).app-deck .app-sidebar-header__mainname {
-	font-size: 20px !important;
-	font-weight: 700 !important;
-	line-height: 26px !important;
-}
-
-:is(#content, #content-vue).app-deck .app-sidebar-header__subname {
-	font-size: 13px !important;
-	color: var(--color-text-maxcontrast) !important;
 }

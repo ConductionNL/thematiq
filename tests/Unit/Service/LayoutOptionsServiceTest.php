@@ -533,7 +533,7 @@ class LayoutOptionsServiceTest extends TestCase {
 	 */
 	public function testMailCalendarAndDeckGetTheirOwnStylesheet(): void {
 		foreach (['mail', 'calendar', 'deck'] as $app) {
-			$this->assertSame(expected: ['workplace-apps/brand', 'workplace-apps/' . $app], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app));
+			$this->assertSame(expected: ['workplace-apps/brand', 'workplace-apps/common', 'workplace-apps/' . $app], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: $app));
 			$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'utrecht', appId: $app));
 		}
 
@@ -541,7 +541,7 @@ class LayoutOptionsServiceTest extends TestCase {
 		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: null));
 
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'header_style', value: 'default'));
-		$this->assertSame(expected: ['workplace-apps/mail'], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));
+		$this->assertSame(expected: ['workplace-apps/common', 'workplace-apps/mail'], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));
 
 		$this->assertSame(expected: '', actual: $this->service->setOption(key: 'workplace_layout', value: 'default'));
 		$this->assertSame(expected: [], actual: $this->service->appStylesheets(tokenSet: 'zuiddrecht', appId: 'mail'));

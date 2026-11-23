@@ -38,12 +38,12 @@ final class LayoutStylesheets {
 	/**
 	 * The stylesheets the light layout adds for one app, only on that app's own pages: with the
 	 * workplace header first `workplace-apps/brand`, the organisation and the app name at the start
-	 * of the bar, then the app's own sheet.
+	 * of the bar, then `workplace-apps/common`, what the three apps share, then the app's own sheet.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.
 	 * @param string|null $appId The rendered app.
 	 *
-	 * @return array<int, string> Zero, one or two stylesheets.
+	 * @return array<int, string> No stylesheet, or two or three.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 */
@@ -57,6 +57,7 @@ final class LayoutStylesheets {
 			$files[] = 'workplace-apps/brand';
 		}
 
+		$files[] = 'workplace-apps/common';
 		$files[] = 'workplace-apps/' . $appId;
 		return $files;
 	}//end forApp()

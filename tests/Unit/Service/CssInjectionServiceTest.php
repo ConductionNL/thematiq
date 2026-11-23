@@ -1718,8 +1718,8 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetsLayoutDefaultsEmitBothStylesheets()
 
 	/**
-	 * A Deck page with the light layout links Deck's own stylesheet after the
-	 * workplace layout; a Files page links none of the app stylesheets.
+	 * A Deck page with the light layout links the shared app sheet and then
+	 * Deck's own after the workplace layout; a Files page links none of them.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 *
@@ -1734,8 +1734,10 @@ class CssInjectionServiceTest extends TestCase {
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'deck');
 
 		$layout = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-layout.css');
+		$common = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/common.css');
 		$deck = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/deck.css');
-		$this->assertGreaterThan(expected: $layout, actual: $deck);
+		$this->assertGreaterThan(expected: $layout, actual: $common);
+		$this->assertGreaterThan(expected: $common, actual: $deck);
 
 		$styleLog = [];
 		$linkLog = [];

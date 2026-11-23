@@ -9,7 +9,7 @@
  * current-app button, because a Conduction app draws its own brand block
  * there. Mail, Calendar and Deck draw none, so on their pages this sheet
  * shows both again as the boards draw the bar (MlHeader, ClWeek, TbBoard):
- * the set's logo, a hairline, the app's name in bold, then the apps grid.
+ * the set's logo, the app's name in bold, a hairline, then the apps grid.
  * The name is Nextcloud's own, so it is translated and read out as before.
  *
  * Loaded only on those apps' pages with the workplace header
@@ -22,13 +22,18 @@ body:not(#body-login) #header #nextcloud {
 	margin-inline-end: 4px;
 }
 
+body:not(#body-login) #header nav.app-menu {
+	display: flex;
+	align-items: center;
+}
+
 body:not(#body-login) #header .app-menu__current-app {
 	display: inline-flex !important;
+	order: -1;
 	height: 40px !important;
-	margin-block: 14px;
 	margin-inline: 0 12px !important;
-	padding-inline: 12px 8px !important;
-	border-inline-start: 1px solid var(--color-border) !important;
+	padding-inline: 4px 16px !important;
+	border-inline-end: 1px solid var(--color-border) !important;
 	border-radius: 0 !important;
 	background-color: transparent !important;
 }
