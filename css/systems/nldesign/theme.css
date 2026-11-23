@@ -943,7 +943,13 @@ th:not(.cn-look-board *) {
 	font-weight: var(--nldesign-component-table-header-font-weight) !important;
 }
 
-tr:hover td {
+/* Only a data table's rows: a table with a head row, no nested tables and
+   no presentation role. A layout grid drawn as a table (Calendar's week,
+   where one row holds the whole week) keeps its own colours. */
+:where(table:has(> thead):not([role='presentation']):not(:has(table)))
+	> tbody
+	> tr:hover
+	> td {
 	background-color: var(
 		--nldesign-component-table-row-hover-background-color
 	) !important;
