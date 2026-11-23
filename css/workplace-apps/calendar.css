@@ -1,18 +1,20 @@
 /**
  * Workplace app layer: Calendar, drawn as the calendar boards (ClWeek,
- * ClMonth, ClEvent).
+ * ClMonth, ClEventPopover).
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * Loaded only on Calendar's pages while the workplace layout is light
  * (LayoutStylesheets::forApp()), after workplace-apps/common.css. Every rule
- * starts at `.app-calendar` under the content element; every colour is a
+ * starts at `.app-calendar` under the content element, except the event
+ * popover's, which is mounted at the end of the body; every colour is a
  * variable, and an entry keeps its calendar's own colour.
  *
  * The grid is white with hairlines, the weekend a shade darker. A day heading
  * is the day in muted text; today is the primary. An entry is its
- * calendar's tint with a 3px edge, the title semibold and the time small.
+ * calendar's tint with a 3px edge, the title semibold over the time in muted
+ * text.
  */
 
 :is(#content, #content-vue).app-calendar #app-content-vue {
@@ -48,7 +50,7 @@
 
 /* The grid. */
 :is(#content, #content-vue).app-calendar .fc {
-	--fc-border-color: var(--color-border);
+	--fc-border-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background));
 	--fc-today-bg-color: transparent;
 	--fc-neutral-bg-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
 
@@ -61,16 +63,20 @@
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-col-header-cell {
-	padding: 8px 6px;
+	padding: 6px 6px 6px 8px;
 	text-align: start;
 	font-weight: 400;
+	height: 34px;
+	vertical-align: bottom;
+	border-bottom-color: var(--color-border);
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-col-header-cell-cushion {
 	padding: 0 !important;
-	font-size: 14px;
-	font-weight: 500;
+	font-size: 13px;
+	font-weight: 400;
 	color: var(--color-text-maxcontrast) !important;
+	line-height: 20px;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today {
@@ -81,7 +87,7 @@
 	padding: 2px 6px !important;
 	border-radius: var(--border-radius-small, 4px);
 	background-color: var(--color-primary-element) !important;
-	font-weight: 700;
+	font-weight: 600;
 	color: var(--color-primary-element-text) !important;
 }
 
@@ -91,8 +97,9 @@
 
 :is(#content, #content-vue).app-calendar .fc .fc-timegrid-slot-label-cushion,
 :is(#content, #content-vue).app-calendar .fc .fc-timegrid-axis-cushion {
-	font-size: 12px;
+	font-size: 11px;
 	color: var(--color-text-maxcontrast);
+	line-height: 16px;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-timegrid-now-indicator-line {
@@ -112,7 +119,7 @@
 
 :is(#content, #content-vue).app-calendar .fc .fc-daygrid-day-number {
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 400;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-day-today .fc-daygrid-day-number {
@@ -135,13 +142,277 @@
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-event-title {
-	font-size: 13px;
+	font-size: 12px;
 	font-weight: 600;
-	line-height: 16px;
+	line-height: 15px;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-event-time {
 	font-size: 11px;
 	font-weight: 400;
 	line-height: 14px;
+}
+
+/*
+ * Pass two, measured against ClWeek and ClMonth frame (a).
+ *
+ * The grid is a table, and the design system greys every cell of a hovered
+ * row (`tr:hover td`). In the grid one row holds the whole week, so pointing
+ * anywhere greyed the page; the grid keeps its own cell colours instead.
+ */
+:is(#content, #content-vue).app-calendar .fc tr:hover td,
+:is(#content, #content-vue).app-calendar .fc th.fc-col-header-cell {
+	background-color: transparent !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc tr:hover td:is(.fc-day-sat, .fc-day-sun),
+:is(#content, #content-vue).app-calendar .fc th.fc-col-header-cell:is(.fc-day-sat, .fc-day-sun) {
+	background-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover)) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-axis-cushion {
+	font-size: 10px;
+	line-height: 12px;
+}
+
+/* An entry: the calendar's colour at 14% on white, its text the colour
+   darkened, the title first and the time under it in muted text. */
+:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event) {
+	background: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 14%, var(--color-main-background)) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event) .fc-event-main {
+	padding: 4px 7px !important;
+	color: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 60%, var(--color-main-text)) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event .fc-event-title-container {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event .fc-event-time {
+	flex: none;
+	order: 2;
+	margin: 0;
+	line-height: 15px;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-main {
+	padding: 0 6px !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-main-frame {
+	flex-direction: row;
+	align-items: baseline;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-title-container {
+	flex: 1 1 auto;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-title {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-time {
+	display: block !important;
+	margin-inline-start: auto;
+	padding-inline-start: 4px;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-time::after {
+	content: none;
+}
+
+/* The navigation: 34px rows in 14px, a caption and its add button on one line. */
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry {
+	min-height: 34px;
+	height: 34px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-link {
+	min-height: 34px;
+	height: 34px;
+	gap: 10px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 21px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-icon {
+	width: 16px;
+	min-width: 16px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-wrapper + .app-navigation-entry-wrapper {
+	margin-top: 1px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption {
+	display: flex !important;
+	flex-wrap: nowrap;
+	align-items: center;
+	height: 25px;
+	margin-top: 18px;
+	padding: 0 4px 4px 10px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption__name {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption__actions {
+	flex: none;
+	width: auto;
+}
+
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	:is(.app-navigation-caption__actions, .app-navigation-entry__utils, .new-event-today-view-section)
+	.button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+}
+
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	:is(.app-navigation-caption__actions, .app-navigation-entry__utils)
+	.button-vue,
+:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .action-item .button-vue {
+	width: 34px !important;
+	min-width: 34px !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .button-vue:not(.button-vue--icon-only) {
+	padding: 0 14px !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	font-size: 14px;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .button-vue__text {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .new-event {
+	flex: 1 1 auto;
+}
+
+/* The month: a timed entry is a chip as in ClMonth: its calendar's tint, a
+   3px edge, the time in 10px muted text and the title in 11px. Calendar
+   gives a month entry its colour only on the dot, so the dot becomes the
+   edge, and its ::after takes the dot's colour as the 14% tint. */
+:is(#content, #content-vue).app-calendar .fc .fc-dayGridMonth-view .fc-col-header-cell {
+	height: 28px;
+	padding: 0 8px;
+	vertical-align: middle;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	height: 18px;
+	margin: 1px 3px 0 !important;
+	padding: 0 5px 0 8px !important;
+	gap: 4px;
+	border: 0 !important;
+	border-radius: var(--border-radius-small, 4px) !important;
+	background: var(--color-main-background) !important;
+	font-size: 11px;
+	line-height: 18px;
+	color: var(--color-main-text) !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-daygrid-event-dot {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: auto;
+	height: auto;
+	margin: 0;
+	box-sizing: border-box;
+	border-width: 0 0 0 3px;
+	border-style: solid;
+	border-radius: 0;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-daygrid-event-dot::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-left: 2000px solid;
+	border-color: inherit;
+	opacity: 0.14;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-event-time {
+	margin: 0;
+	font-size: 10px;
+	font-weight: 400;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-event-title {
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 18px;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-more-link {
+	padding: 0 5px;
+	font-size: 11px;
+	color: var(--color-text-maxcontrast);
+}
+
+/* The event popover (ClEventPopover). It is mounted at the end of the body,
+   outside the content element, and only Calendar draws `.event-popover`.
+   Opening it moves the focus into it, which drew the focus ring around the
+   whole box; its controls keep their own. */
+.event-popover {
+	outline: none !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-radius: 10px !important;
+	box-shadow: 0 8px 24px var(--color-box-shadow) !important;
+}
+
+.event-popover .event-popover__inner {
+	padding: 12px 16px 16px !important;
+}
+
+.event-popover .property-title__input--readonly {
+	font-size: 18px !important;
+	line-height: 24px !important;
+}
+
+.event-popover :is(.property-title-time-picker-read-only-wrapper__label, .property-text__readonly-value) {
+	font-size: 14px;
+}
+
+.event-popover .button-vue {
+	min-height: 40px !important;
+	height: 40px !important;
+	padding-block: 0 !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+}
+
+.event-popover .button-vue--icon-only,
+.event-popover .event-popover__footer .action-item__menutoggle {
+	width: 40px !important;
+	min-width: 40px !important;
+	padding: 0 !important;
+}
+
+.event-popover .button-vue__text {
+	font-size: 14px;
+	font-weight: 600;
 }
