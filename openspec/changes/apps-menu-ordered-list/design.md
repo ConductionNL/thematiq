@@ -51,7 +51,7 @@ Nextcloud 33 and 34 open the menu on a click only. The fork's Nextcloud 35 alrea
 hover (`.app-menu__trigger` exists there), but closes a click-opened menu when the pointer leaves.
 So the script:
 
-- without `.app-menu__trigger`: opens the menu 300 ms after a fine pointer enters the grid button or
+- without `.app-menu__trigger`: opens the menu 150 ms after a fine pointer enters the grid button or
   the current-app button, and closes it 180 ms after the pointer has left both the buttons and the
   menu, unless it is pinned;
 - with `.app-menu__trigger`: leaves the hover-open to Nextcloud;

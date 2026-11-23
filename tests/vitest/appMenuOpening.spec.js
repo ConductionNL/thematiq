@@ -81,7 +81,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 		await loadScript()
 
 		over(waffle)
-		vi.advanceTimersByTime(299)
+		vi.advanceTimersByTime(149)
 		expect(isOpen()).toBe(false)
 		vi.advanceTimersByTime(1)
 		expect(isOpen()).toBe(true)
@@ -104,7 +104,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 		await loadScript()
 
 		over(waffle)
-		vi.advanceTimersByTime(150)
+		vi.advanceTimersByTime(100)
 		out(waffle)
 		vi.advanceTimersByTime(500)
 		expect(isOpen()).toBe(false)
@@ -115,9 +115,14 @@ describe('the apps menu opens on hover and pins on click', () => {
 		await loadScript()
 
 		over(waffle)
-		vi.advanceTimersByTime(300)
+		vi.advanceTimersByTime(150)
 		expect(coreClicks).toBe(1)
 
+		const outsidePress = vi.fn()
+		document.addEventListener('mousedown', outsidePress, true)
+		waffle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+		expect(outsidePress, 'the popover never saw the press').not.toHaveBeenCalled()
+		document.removeEventListener('mousedown', outsidePress, true)
 		const pin = new MouseEvent('click', { bubbles: true, cancelable: true })
 		waffle.dispatchEvent(pin)
 		expect(pin.defaultPrevented).toBe(true)

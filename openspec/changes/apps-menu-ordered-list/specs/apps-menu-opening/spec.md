@@ -4,7 +4,7 @@
 
 ### Requirement: The apps menu opens on hover and pins on click
 In the workplace header, pointing a fine pointer at the grid button or the current-app button MUST
-open the apps menu after a pause of about 300 ms, in a focused window only. A menu opened this way
+open the apps menu after a pause of about 150 ms, in a focused window only, and MUST show within 350 ms. A menu opened this way
 MUST close about 180 ms after the pointer has left both the buttons and the menu. A click on a
 button while the menu is open by hover MUST pin it: it MUST stay open when the pointer leaves, until
 a click outside it, Escape or another click on the button. A menu opened by a click or by the
@@ -27,9 +27,9 @@ without a transition.
 - THEN the apps menu MUST close
 
 #### Scenario: Passing over the button does nothing
-@e2e exclude a pointer passing within 300 ms is a timing detail; proven by tests/vitest/appMenuOpening.spec.js (a short pass does not open)
+@e2e exclude a pointer passing within 150 ms is a timing detail; proven by tests/vitest/appMenuOpening.spec.js (a short pass does not open)
 - GIVEN a page with the workplace header
-- WHEN the pointer crosses the grid button in less than 300 ms
+- WHEN the pointer crosses the grid button in less than 150 ms
 - THEN the apps menu MUST NOT open
 
 #### Scenario: The keyboard opens and closes the menu

@@ -31,7 +31,7 @@
 	var SHOWN = 9
 	var FOOTER = 99999
 	var DRAG_START = 6
-	var HOVER_OPEN = 300
+	var HOVER_OPEN = 150
 	var HOVER_CLOSE = 180
 	var SAVE_DELAY = 400
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
@@ -905,6 +905,25 @@
 			},
 			true,
 		)
+		// A press on a button while a look is open would reach the popover's
+		// outside-press handler and close it before the click can pin it.
+		;['pointerdown', 'mousedown'].forEach(function (type) {
+			window.addEventListener(
+				type,
+				function (event) {
+					if (
+						!synthetic
+						&& !pinned
+						&& isOpen()
+						&& event.target.closest
+						&& event.target.closest(TRIGGERS) !== null
+					) {
+						event.stopImmediatePropagation()
+					}
+				},
+				true,
+			)
+		})
 		window.addEventListener(
 			'mouseleave',
 			function (event) {
