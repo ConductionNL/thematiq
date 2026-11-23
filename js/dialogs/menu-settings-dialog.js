@@ -298,7 +298,7 @@
 			}
 			body.appendChild(tabList(tabs))
 			var panel = h('div', {
-				class: BLOCK + '__panel',
+				class: BLOCK + '__panel ' + BLOCK + '__panel--' + tab,
 				role: 'tabpanel',
 				id: BLOCK + '-panel-' + tab,
 				'aria-labelledby': BLOCK + '-tab-' + tab,
@@ -440,7 +440,7 @@
 				return entry.key
 			})
 			var pinnedCount = form.pinned.length
-			var list = h('ul', { class: BLOCK + '__list' })
+			var list = h('ul', { class: BLOCK + '__list ' + BLOCK + '__list--apps' })
 			ordered.forEach(function (entry) {
 				var shown = form.hidden.indexOf(entry.key) === -1
 				var pinned = form.pinned.indexOf(entry.key) !== -1
@@ -871,7 +871,7 @@
 
 		// The Add or Edit external app dialog, over this one.
 		var externalForm = function (app, opener) {
-			var draft = app ? JSON.parse(JSON.stringify(app)) : { id: newId(), title: '', payoff: '', url: 'https://', icon: { library: 'link' }, visible: true, order: form.externalApps.length }
+			var draft = app ? JSON.parse(JSON.stringify(app)) : { id: newId(), title: '', payoff: '', url: '', icon: { library: 'link' }, visible: true, order: form.externalApps.length }
 			var sub = h('dialog', { class: BLOCK + ' ' + BLOCK + '--form', 'aria-labelledby': BLOCK + '-form-title' })
 			var error = {}
 			var field = function (key, type, nameKey, helpKey) {
@@ -880,6 +880,7 @@
 					id: id,
 					type: type,
 					value: draft[key],
+					placeholder: key === 'url' ? 'https://' : null,
 					'aria-describedby': id + '-help' + (error[key] ? ' ' + id + '-error' : ''),
 					'aria-invalid': error[key] ? 'true' : null,
 					on: {

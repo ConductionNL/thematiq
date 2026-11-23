@@ -1421,6 +1421,7 @@
 		var timer = null
 		var ghost = null
 		var drop = null
+		var dropHint = null
 		menu.pins = Array.isArray(menu.pins)
 			? menu.pins.filter(function (key) {
 				return typeof key === 'string'
@@ -1611,16 +1612,24 @@
 				if (on && drop === null) {
 					drop = document.createElement('span')
 					drop.className = PINS + '__drop'
-					var hint = document.createElement('span')
-					hint.className = PINS + '__hint'
-					hint.setAttribute('role', 'status')
-					hint.textContent = text(labels, 'dropToPin')
-					drop.appendChild(hint)
+					drop.setAttribute('aria-hidden', 'true')
 					el.appendChild(drop)
 					el.hidden = false
+					dropHint = document.createElement('span')
+					dropHint.className = PINS + '__hint ' + PINS + '__drop-hint'
+					dropHint.setAttribute('role', 'status')
+					dropHint.textContent = text(labels, 'dropToPin')
+					var box = drop.getBoundingClientRect()
+					dropHint.style.left = box.left + box.width / 2 + 'px'
+					dropHint.style.top = box.bottom + 6 + 'px'
+					document.body.appendChild(dropHint)
 				} else if (!on && drop !== null) {
 					drop.remove()
 					drop = null
+					if (dropHint !== null) {
+						dropHint.remove()
+						dropHint = null
+					}
 					el.hidden = el.querySelector(':scope > a') === null
 				}
 			},
