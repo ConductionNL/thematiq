@@ -92,12 +92,14 @@ if ($_['mockUi'] === true) {
 	<div class="nldesign-settings-header">
 		<h2>Thematiq</h2>
 		<div class="nldesign-environment" id="nldesign-environment">
+			<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps -- a template reads its parameters from $_. ?>
 			<?php if ($_['environment'] !== ''): ?>
 				<span class="nldesign-environment__chip"><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></span>
 			<?php else: ?>
 				<p class="settings-hint"><?php p($l->t('No environment is set, so no page is marked. Declare it in config.php with:')); ?></p>
 				<code><?php p($_['environmentCommand']); ?></code>
 			<?php endif; ?>
+			<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
 		</div>
 		<span class="nldesign-settings-header__line">
 			<?php p($l->t('Choose a token set from a Dutch government body as a base, or adjust single tokens.')); ?>
