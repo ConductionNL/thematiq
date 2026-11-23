@@ -28,6 +28,8 @@ use OCP\IConfig;
  * like {@see AppMenuOrder}. js/app-menu.js reads them from the menu's initial state and saves them
  * through AppMenuPinsController.
  *
+ * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuOrder::clean() holds the shared key rule.
+ *
  * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
  */
 class AppMenuPins {
