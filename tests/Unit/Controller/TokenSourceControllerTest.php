@@ -78,8 +78,8 @@ final class TokenSourceControllerTest extends TestCase {
 	/**
 	 * The controller over a request with an optional upload and pasted content.
 	 *
-	 * @param array<string, mixed>|null $file    The uploaded `file`, or null.
-	 * @param string                    $content The pasted `content`.
+	 * @param array<string, mixed>|null $file The uploaded `file`, or null.
+	 * @param string $content The pasted `content`.
 	 *
 	 * @return TokenSourceController
 	 */
@@ -88,7 +88,7 @@ final class TokenSourceControllerTest extends TestCase {
 		$request->method('getUploadedFile')->with('file')->willReturn($file);
 		$request->method('getParam')->with('content', '')->willReturn($content);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
-		$l10n->method('t')->willReturnCallback(fn (string $text): string => 'T:'.$text);
+		$l10n->method('t')->willReturnCallback(fn (string $text): string => 'T:' . $text);
 
 		return new TokenSourceController(appName: 'thematiq', request: $request, imports: $this->imports, l: $l10n);
 	}//end controller()
@@ -203,17 +203,17 @@ final class TokenSourceControllerTest extends TestCase {
 	public static function failureProvider(): array {
 		return [
 			'unknown source' => [404, 404, 'T:There is no token source with this id.'],
-			'conflict'       => [409, 409, 'Brand "a" is in use.'],
-			'invalid'        => [0, 422, 'Brand "a" is in use.'],
-			'other code'     => [500, 422, 'Brand "a" is in use.'],
+			'conflict' => [409, 409, 'Brand "a" is in use.'],
+			'invalid' => [0, 422, 'Brand "a" is in use.'],
+			'other code' => [500, 422, 'Brand "a" is in use.'],
 		];
 	}//end failureProvider()
 
 	/**
 	 * A failing update answers with the mapped status and error.
 	 *
-	 * @param int    $thrown   The exception code.
-	 * @param int    $status   The expected HTTP status.
+	 * @param int $thrown The exception code.
+	 * @param int $status The expected HTTP status.
 	 * @param string $expected The expected error.
 	 *
 	 * @return void

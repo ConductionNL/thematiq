@@ -117,7 +117,7 @@ final class DocumentStyleControllerTest extends TestCase {
 
 		$session->method('getUser')->willReturn($user);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
-		$l10n->method('t')->willReturnCallback(fn (string $text): string => 'T:'.$text);
+		$l10n->method('t')->willReturnCallback(fn (string $text): string => 'T:' . $text);
 
 		return new DocumentStyleController(
 			appName: 'thematiq',
@@ -222,10 +222,10 @@ final class DocumentStyleControllerTest extends TestCase {
 	 */
 	public static function noFileProvider(): array {
 		return [
-			'nothing'          => [null],
-			'empty'            => [[]],
-			'no tmp_name'      => [['name' => 'logo.png']],
-			'an upload error'  => [['tmp_name' => '/tmp/x', 'error' => 4]],
+			'nothing' => [null],
+			'empty' => [[]],
+			'no tmp_name' => [['name' => 'logo.png']],
+			'an upload error' => [['tmp_name' => '/tmp/x', 'error' => 4]],
 		];
 	}//end noFileProvider()
 
@@ -269,16 +269,16 @@ final class DocumentStyleControllerTest extends TestCase {
 	 */
 	public static function refusedUploadProvider(): array {
 		return [
-			'too large'     => [413, 'T:The file is larger than 2 MB.'],
-			'unknown kind'  => [404, 'T:Unknown document image.'],
-			'not an image'  => [422, 'T:Upload a PNG, JPEG or WebP image, or an SVG without script.'],
+			'too large' => [413, 'T:The file is larger than 2 MB.'],
+			'unknown kind' => [404, 'T:Unknown document image.'],
+			'not an image' => [422, 'T:Upload a PNG, JPEG or WebP image, or an SVG without script.'],
 		];
 	}//end refusedUploadProvider()
 
 	/**
 	 * A refused upload carries the store's status and the matching reason.
 	 *
-	 * @param int    $code     The store's error code.
+	 * @param int $code The store's error code.
 	 * @param string $expected The expected reason.
 	 *
 	 * @return void
