@@ -107,7 +107,8 @@ final class AppMenuSettingsTest extends TestCase {
 		$this->assertSame(expected: 'square', actual: $anna['shape']);
 		$this->assertSame(expected: ['deck', 'files'], actual: $anna['order']);
 		$this->assertSame(expected: ['deck'], actual: $anna['pinned']);
-		$this->assertSame(expected: [['adm', false], ['own', true]], actual: array_map(static fn (array $app): array => [$app['id'], $app['own']], $anna['externalApps']));
+		$apps = array_map(static fn (array $app): array => [$app['id'], $app['own']], $anna['externalApps']);
+		$this->assertSame(expected: [['adm', false], ['own', true]], actual: $apps);
 		$this->assertSame(expected: '3', actual: $this->app['menu.columns']);
 
 		$bob = $settings->effective(userId: 'bob');

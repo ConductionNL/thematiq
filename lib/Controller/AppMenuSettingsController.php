@@ -119,6 +119,8 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{effective}`, 400 naming the refused setting, or 401 without a session.
 	 *
+	 * @no-admin-idor-exempt writes only the signed-in person's own user values, keyed by the session's uid; it takes no object id.
+	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
 	 */
 	#[NoAdminRequired]
@@ -199,6 +201,8 @@ class AppMenuSettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{id}`, 400 without a file, or 422 for a file that is not a PNG or a safe SVG of at most 100 kB.
 	 *
+	 * @no-admin-idor-exempt stores new bytes under the hash of their content; it reads or changes no existing object.
+	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
 	#[NoAdminRequired]
@@ -222,6 +226,8 @@ class AppMenuSettingsController extends Controller {
 	 * @param string $id The icon's id.
 	 *
 	 * @return Response The icon, or 404.
+	 *
+	 * @no-admin-idor-exempt icons are shared, inert images named by the hash of their bytes, shown in everyone's menu.
 	 *
 	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-external-apps-are-checked-on-the-server
 	 */
@@ -258,7 +264,11 @@ class AppMenuSettingsController extends Controller {
 			return $values;
 		}
 
-		$apps = is_array($values['externalApps']) === true ? AppMenuExternalApp::cleanList(apps: $values['externalApps']) : null;
+		$apps = null;
+		if (is_array($values['externalApps']) === true) {
+			$apps = AppMenuExternalApp::cleanList(apps: $values['externalApps']);
+		}
+
 		if ($apps === null) {
 			throw new InvalidArgumentException('externalApps');
 		}

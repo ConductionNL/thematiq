@@ -28,6 +28,7 @@ use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Response;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -37,6 +38,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * Over an in-memory config.
@@ -58,6 +60,20 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	 * @var array<string, array<string, string>>
 	 */
 	private array $user = [];
+
+	/**
+	 * The icons the controller uses, or null for a bare mock.
+	 *
+	 * @var AppMenuIcons|null
+	 */
+	private ?AppMenuIcons $icons = null;
+
+	/**
+	 * The uploaded file the request carries, or null.
+	 *
+	 * @var array<string, mixed>|null
+	 */
+	private ?array $upload = null;
 
 	/**
 	 * The controller for a person, an administrator or nobody.
@@ -101,13 +117,15 @@ final class AppMenuSettingsControllerTest extends TestCase {
 		$urls->method('linkToRoute')->willReturn('/settings/apps');
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);
+		$request = $this->createMock(originalClassName: IRequest::class);
+		$request->method('getUploadedFile')->willReturn($this->upload);
 
 		return new AppMenuSettingsController(
 			appName: 'thematiq',
-			request: $this->createMock(originalClassName: IRequest::class),
+			request: $request,
 			settings: new AppMenuSettings(config: $config),
 			keys: $keys,
-			icons: $this->createMock(originalClassName: AppMenuIcons::class),
+			icons: ($this->icons ?? $this->createMock(originalClassName: AppMenuIcons::class)),
 			userSession: $session,
 			groupManager: $groups,
 			urls: $urls,
@@ -142,7 +160,15 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAPersonSavesOnlyTheirOwnKeys(): void {
-		$app = ['id' => 'intra', 'title' => 'Intranet', 'payoff' => '', 'url' => 'https://intranet.example.org', 'icon' => ['library' => 'news'], 'visible' => true, 'order' => 0];
+		$app = [
+			'id' => 'intra',
+			'title' => 'Intranet',
+			'payoff' => '',
+			'url' => 'https://intranet.example.org',
+			'icon' => ['library' => 'news'],
+			'visible' => true,
+			'order' => 0,
+		];
 		$response = $this->controller(uid: 'anna')->save(settings: ['pinned' => ['deck', 'external-intra'], 'externalApps' => [$app]]);
 		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(expected: ['deck', 'external-intra'], actual: $response->getData()['effective']['pinned']);
@@ -191,7 +217,12 @@ final class AppMenuSettingsControllerTest extends TestCase {
 			$method = new ReflectionMethod(AppMenuSettingsController::class, $name);
 			$this->assertCount(expectedCount: 1, haystack: $method->getAttributes(NoAdminRequired::class), message: $name);
 			$this->assertCount(expectedCount: 0, haystack: $method->getAttributes(PublicPage::class), message: $name);
-			$this->assertCount(expectedCount: $name === 'icon' ? 1 : 0, haystack: $method->getAttributes(NoCSRFRequired::class), message: $name);
+			$csrf = 0;
+			if ($name === 'icon') {
+				$csrf = 1;
+			}
+
+			$this->assertCount(expectedCount: $csrf, haystack: $method->getAttributes(NoCSRFRequired::class), message: $name);
 		}
 	}//end testWhoMayCallWhat()
 
@@ -202,5 +233,33 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	 */
 	public function testAnIconIsServedSafely(): void {
 		$this->assertSame(expected: 404, actual: $this->controller(uid: 'anna')->icon(id: str_repeat('a', 32))->getStatus());
+
+		$this->icons = $this->createMock(originalClassName: AppMenuIcons::class);
+		$this->icons->method('read')->willReturn(['bytes' => '<svg/>', 'mime' => 'image/svg+xml']);
+		$served = $this->controller(uid: 'anna')->icon(id: str_repeat('a', 32));
+		$this->assertSame(expected: 200, actual: $served->getStatus());
+		$headers = (new ReflectionProperty(Response::class, 'headers'))->getValue($served);
+		$this->assertSame(expected: 'image/svg+xml', actual: $headers['Content-Type']);
+		$this->assertSame(expected: 'nosniff', actual: $headers['X-Content-Type-Options']);
+		$this->assertStringStartsWith(prefix: "default-src 'none'", string: $headers['Content-Security-Policy']);
 	}//end testAnIconIsServedSafely()
+
+	/**
+	 * An upload without a file is a 400, a refused image a 422, a kept one its id.
+	 *
+	 * @return void
+	 */
+	public function testAnUploadedIconIsKeptOrRefused(): void {
+		$this->assertSame(expected: 400, actual: $this->controller(uid: 'anna')->uploadIcon()->getStatus());
+
+		$tmp = (string)tempnam(sys_get_temp_dir(), 'icon');
+		file_put_contents($tmp, 'bytes');
+		$this->upload = ['tmp_name' => $tmp, 'error' => 0];
+		$this->icons = $this->createMock(originalClassName: AppMenuIcons::class);
+		$this->icons->method('store')->willReturnOnConsecutiveCalls(null, str_repeat('b', 32));
+		$controller = $this->controller(uid: 'anna');
+		$this->assertSame(expected: 422, actual: $controller->uploadIcon()->getStatus());
+		$this->assertSame(expected: ['id' => str_repeat('b', 32)], actual: $controller->uploadIcon()->getData());
+		unlink($tmp);
+	}//end testAnUploadedIconIsKeptOrRefused()
 }//end class

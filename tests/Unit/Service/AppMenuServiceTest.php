@@ -473,7 +473,12 @@ class AppMenuServiceTest extends TestCase {
 
 		foreach ([false, true] as $admin) {
 			$initialState = $this->createMock(originalClassName: IInitialState::class);
-			$initialState->expects($admin === true ? $this->once() : $this->never())->method('provideInitialState');
+			$calls = $this->never();
+			if ($admin === true) {
+				$calls = $this->once();
+			}
+
+			$initialState->expects($calls)->method('provideInitialState');
 			$groups = $this->createMock(originalClassName: IGroupManager::class);
 			$groups->method('isAdmin')->willReturn($admin);
 			$session = $this->createMock(originalClassName: IUserSession::class);

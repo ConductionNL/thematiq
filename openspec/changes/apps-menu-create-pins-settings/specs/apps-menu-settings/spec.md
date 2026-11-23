@@ -37,6 +37,19 @@ nothing MUST be stored. A key sent as null MUST follow the default again.
 - WHEN they send `{columns: 3}`
 - THEN the answer MUST be 400 naming `columns` and nothing MUST change
 
+### Requirement: Reset to default
+`DELETE /apps/thematiq/app-menu/settings` MUST remove the signed-in person's personal keys, including
+the order kept before these settings, so the administrator's values apply again.
+`DELETE /apps/thematiq/app-menu/defaults` MUST be for administrators only and MUST remove every
+`menu.<key>` app value, so the shipped values apply again. The dialog's Reset to default MUST ask for a
+confirmation first and then call the endpoint of the chosen scope.
+
+#### Scenario: A person resets their menu items
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuSettingsTest.php (testResetClearsTheScope)
+- GIVEN Anna pinned nothing for herself while the administrator pinned Deck
+- WHEN she resets
+- THEN Deck MUST be pinned in her menu again
+
 ### Requirement: External apps are checked on the server
 An external app MUST be `{id, title, payoff, url, icon, visible, order}`: a title of 1 to 60 characters
 without markup, a payoff of at most 80, an `https` address with a host and without user info, and an
