@@ -295,6 +295,21 @@ final class DocumentStyleControllerTest extends TestCase {
 	}//end testUploadReportsTheStoresRefusal()
 
 	/**
+	 * A store failure without an HTTP code (a storage error, code 0) answers 422, never a status of 0.
+	 *
+	 * @return void
+	 */
+	public function testAStoreFailureWithoutAStatusCodeIsA422(): void {
+		$this->tmp = tempnam(directory: sys_get_temp_dir(), prefix: 'tq');
+		$this->request->method('getUploadedFile')->willReturn(['tmp_name' => $this->tmp]);
+		$this->assets->method('store')->willThrowException(new RuntimeException('disk full'));
+
+		$response = $this->controller()->upload(kind: 'logo');
+		$this->assertSame(expected: 422, actual: $response->getStatus());
+		$this->assertSame(expected: ['error' => 'T:Upload a PNG, JPEG or WebP image, or an SVG without script.'], actual: $response->getData());
+	}//end testAStoreFailureWithoutAStatusCodeIsA422()
+
+	/**
 	 * Removing an asset answers with the settings, and an unknown one with 404.
 	 *
 	 * @return void
