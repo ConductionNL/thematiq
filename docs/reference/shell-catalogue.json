@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:e45ea860eac803e4",
+    "generated_from": "sets:1a6a9160720f1e46",
     "sets": [
         {
             "id": "amsterdam",
@@ -11895,6 +11895,7 @@
                 "css/fonts/fira-sans-latin-700-italic.woff2",
                 "css/fonts/fira-sans-latin-700-normal.woff",
                 "css/fonts/fira-sans-latin-700-normal.woff2",
+                "css/fonts/fira-sans-separator.otf",
                 "css/systems/nldesign/fonts/fira-sans-latin-400-italic.woff",
                 "css/systems/nldesign/fonts/fira-sans-latin-400-italic.woff2",
                 "css/systems/nldesign/fonts/fira-sans-latin-400-normal.woff",
@@ -11910,7 +11911,8 @@
                 "css/systems/nldesign/fonts/fira-sans-latin-700-italic.woff",
                 "css/systems/nldesign/fonts/fira-sans-latin-700-italic.woff2",
                 "css/systems/nldesign/fonts/fira-sans-latin-700-normal.woff",
-                "css/systems/nldesign/fonts/fira-sans-latin-700-normal.woff2"
+                "css/systems/nldesign/fonts/fira-sans-latin-700-normal.woff2",
+                "css/systems/nldesign/fonts/fira-sans-separator.otf"
             ],
             "licence": "OFL-1.1",
             "licence_files": [
