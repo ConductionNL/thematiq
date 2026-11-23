@@ -390,6 +390,105 @@ body#body-login
 	margin-block: -4px -3px !important;
 }
 
+/* Remember me as NcLogin draws it: the 18px box on the fields' left edge,
+ * 18px under the password, the words 14px regular beside it. The 24px
+ * target overlaps the gaps, as the text actions' do. */
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	.checkbox-radio-switch {
+	margin: 0 !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	.checkbox-radio-switch
+	.checkbox-content {
+	align-items: center !important;
+	height: 24px !important;
+	min-height: 24px !important;
+	/* The icon draws its box 3px inside its 24px square. */
+	margin-block: -3px !important;
+	margin-inline-start: -3px !important;
+	padding: 0 !important;
+	gap: 7px !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	.checkbox-radio-switch
+	.checkbox-content__icon {
+	align-self: center !important;
+	margin: 0 !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	.checkbox-radio-switch
+	.checkbox-content__wrapper,
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-form
+	.checkbox-radio-switch
+	.checkbox-content__wrapper
+	* {
+	padding: 0 !important;
+	color: var(--color-main-text) !important;
+	font-size: 14px !important;
+	font-weight: 400 !important;
+	line-height: 17px !important;
+}
+
+/* Under the form: Forgot your password? first, then Log in with a device
+ * with a phone icon in a strip of its own at the foot of the card. Both are
+ * single links, so the order on screen is the only order a reader needs. */
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-box__wrapper
+	> #lost-password {
+	order: 1;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-box__wrapper
+	> .button-vue--vue-tertiary:not(#lost-password) {
+	order: 2;
+	box-sizing: border-box !important;
+	height: 40px !important;
+	min-height: 40px !important;
+	margin-block: 0 -7px !important;
+	padding-top: 15px !important;
+	border: 0 !important;
+	border-top: 1px solid var(--color-border) !important;
+	border-radius: 0 !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-box__wrapper
+	> .button-vue--vue-tertiary:not(#lost-password)
+	.button-vue__wrapper {
+	gap: 8px !important;
+}
+
+body#body-login
+	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
+	.login-box__wrapper
+	> .button-vue--vue-tertiary:not(#lost-password)
+	.button-vue__wrapper::before {
+	content: '';
+	flex: 0 0 18px;
+	width: 18px;
+	height: 18px;
+	background-color: var(--nldesign-color-link, var(--color-primary-element));
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17,19H7V5H17M17,1H7C5.89,1 5,1.89 5,3V21A2,2 0 0,0 7,23H17A2,2 0 0,0 19,21V3C19,1.89 18.1,1 17,1Z'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+}
+
 /* The field labels sit 6px above the field, as the board's label and
  * column gap draw them (Fira Sans 14px: a 17px line). */
 body#body-login
