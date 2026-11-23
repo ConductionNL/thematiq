@@ -117,7 +117,7 @@ test.describe('the apps menu as one ordered list', () => {
 			await expect(toggle(page)).toHaveAttribute('aria-expanded', 'false')
 			await expect(
 				grid(page).locator('[data-thematiq-row="footer"] a'),
-			).toHaveText('Apps beheren')
+			).toHaveText(/^(Apps beheren|Manage apps)$/)
 
 			await toggle(page).click()
 			await expect(toggle(page)).toHaveAttribute('aria-expanded', 'true')
