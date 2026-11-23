@@ -64,12 +64,6 @@
 	color: var(--color-primary-element-light-text) !important;
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .avatardiv {
-	width: 32px !important;
-	height: 32px !important;
-	margin-top: 2px;
-}
-
 :is(#content, #content-vue).app-mail .envelope-list .list-item-content__name {
 	font-size: 14px !important;
 }
@@ -120,11 +114,6 @@
 :is(#content, #content-vue).app-mail #mail-message .envelope .timestamp {
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
-}
-
-:is(#content, #content-vue).app-mail #mail-message .envelope__header__avatar .avatardiv {
-	width: 32px !important;
-	height: 32px !important;
 }
 
 :is(#content, #content-vue).app-mail #mail-message .mail-message-attachments {

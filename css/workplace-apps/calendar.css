@@ -99,12 +99,24 @@
 	border-color: var(--color-main-text);
 }
 
+:is(#content, #content-vue).app-calendar .fc .fc-timegrid-col.fc-day-today,
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-today {
+	background-color: transparent !important;
+}
+
+:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day-top {
+	flex-direction: row !important;
+	justify-content: flex-start !important;
+	padding: 4px 6px 0;
+}
+
 :is(#content, #content-vue).app-calendar .fc .fc-daygrid-day-number {
 	font-size: 13px;
 	font-weight: 500;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-day-today .fc-daygrid-day-number {
+	padding: 0 6px;
 	border-radius: var(--border-radius-small, 4px);
 	background-color: var(--color-primary-element);
 	color: var(--color-primary-element-text) !important;
