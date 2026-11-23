@@ -36,8 +36,9 @@ applies to the tentative state alone and the builder MUST note that in the task.
 While a Deck card is dragged in the light layout, the card under the pointer MUST be drawn lifted, with
 a shadow and a slight tilt, and the place it will drop MUST be a dashed slot of the card's height in
 the border colour, as TbBoard draws it. With reduced motion asked for, the tilt MUST be left out. The
-rules MUST read tokens only and start at Deck's content element; the element smooth-dnd moves to the end
-of the body while dragging MAY be the rule's start, named by its own class only.
+rules MUST read tokens only and start at Deck's content element. When the dragged copy is drawn outside
+that element, the lift MUST be left out rather than styled from the body, and the dashed slot alone
+MUST show.
 
 #### Scenario: A card between two columns
 @e2e exclude A pointer drag across columns; static check in tests/vitest/workplaceApps.spec.js, looked at live against TbBoard
