@@ -22,4 +22,4 @@
 
 - [x] 4.1 `js/workplace-apps.js`: the boards' words, week day headings, the pointer mark; loaded by `HeaderUserService` (#1809).
 - [x] 4.2 vitest `tests/vitest/workplaceApps.spec.js` (#1783, #1795, #1809).
-- [ ] 4.3 vitest `tests/vitest/workplaceApps.spec.js`: assert the selector rule of the modified requirement (every selector starts at an allowed root, `:has(` only under the content element).
+- [x] 4.3 vitest `tests/vitest/workplaceApps.spec.js`: assert the selector rule of the modified requirement (every selector starts at an allowed root, `:has(` only under the content element).

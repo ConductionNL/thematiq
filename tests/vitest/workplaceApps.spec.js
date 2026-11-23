@@ -133,3 +133,110 @@ describe('the app sheets show the words only once the script set them', () => {
 		expect(read('css/workplace-apps/common.css')).toMatch(/--thematiq-workplace-apps: 1;/)
 	})
 })
+
+/**
+ * @spec openspec/specs/workplace-layout/spec.md#scenario-the-sheets-use-tokens-only
+ */
+describe('every rule of the app sheets starts at an allowed root', () => {
+	const SHEETS = fs.readdirSync(path.join(ROOT, 'css/workplace-apps')).filter((name) => name.endsWith('.css'))
+	const ROOTS = [':is(#content, #content-vue)', 'body:not(#body-login) #header', '#openregister-mail-sidebar', '.event-popover']
+	const CONTENT = ':is(#content, #content-vue)'
+
+	// Split a selector list on its top-level commas only, so ":is(a, b)" stays whole.
+	const splitList = (selector) => {
+		const parts = []
+		let depth = 0
+		let current = ''
+		for (const char of selector) {
+			if (char === '(' || char === '[') depth++
+			if (char === ')' || char === ']') depth--
+			if (char === ',' && depth === 0) {
+				parts.push(current.trim())
+				current = ''
+				continue
+			}
+			current += char
+		}
+		parts.push(current.trim())
+		return parts.map((part) => part.replace(/\s+/g, ' '))
+	}
+
+	// A leading ":root[...]" compound only guards on the root's own state; the rule still starts after it.
+	const withoutRootGuard = (selector) => selector.replace(/^:root(\[[^\]]*\])+ /, '')
+
+	// The outermost rules: nested rules and keyframe steps hang below them.
+	const topRules = (rel) => {
+		const rules = []
+		postcss.parse(read(rel)).walkRules((rule) => {
+			let parent = rule.parent
+			while (parent && parent.type === 'atrule') {
+				if (/keyframes$/.test(parent.name)) {
+					return
+				}
+				parent = parent.parent
+			}
+			if (parent && parent.type === 'rule') {
+				return
+			}
+			rules.push(rule)
+		})
+		return rules
+	}
+
+	const hasNestedHas = (rule) => {
+		let found = false
+		rule.walkRules((inner) => {
+			if (inner.selector.includes(':has(')) {
+				found = true
+			}
+		})
+		return found
+	}
+
+	it('finds the five sheets', () => {
+		expect(SHEETS.sort()).toEqual(['brand.css', 'calendar.css', 'common.css', 'deck.css', 'mail.css'])
+	})
+
+	it.each(SHEETS)('%s: every selector starts at the content element, the header, a mounted panel or the event popover', (sheet) => {
+		const strays = []
+		for (const rule of topRules('css/workplace-apps/' + sheet)) {
+			// The bare root only carries the mark and the custom properties the script and sheets read.
+			if (rule.selector.trim() === ':root') {
+				rule.each((node) => {
+					if (node.type === 'decl' && !node.prop.startsWith('--')) {
+						strays.push(':root { ' + node.prop + ' }')
+					}
+				})
+				continue
+			}
+			for (const selector of splitList(rule.selector)) {
+				const start = withoutRootGuard(selector)
+				if (!ROOTS.some((root) => start.startsWith(root))) {
+					strays.push(selector)
+				}
+			}
+		}
+		expect(strays).toEqual([])
+	})
+
+	it.each(SHEETS)('%s: :has( is used only under the content element', (sheet) => {
+		const strays = []
+		for (const rule of topRules('css/workplace-apps/' + sheet)) {
+			const nested = hasNestedHas(rule)
+			for (const selector of splitList(rule.selector)) {
+				if ((selector.includes(':has(') || nested) && !withoutRootGuard(selector).startsWith(CONTENT)) {
+					strays.push(selector)
+				}
+			}
+		}
+		expect(strays).toEqual([])
+	})
+
+	it('the checks catch a stray root and a stray :has(', () => {
+		const sheet = postcss.parse('.app-mail .x { color: var(--a); } #header:has(.y) { color: var(--a); }')
+		const starts = sheet.nodes.map((rule) => withoutRootGuard(rule.selector))
+		expect(starts.filter((start) => !ROOTS.some((root) => start.startsWith(root)))).toEqual(['.app-mail .x', '#header:has(.y)'])
+		expect(splitList(':is(#content, #content-vue).app-mail a, .b')).toEqual([':is(#content, #content-vue).app-mail a', '.b'])
+		expect(withoutRootGuard(":root[style*='--v'] :is(#content, #content-vue) a")).toBe(':is(#content, #content-vue) a')
+	})
+})
