@@ -1,7 +1,7 @@
 # dark-mode Specification
 
 ## Purpose
-TBD - created by archiving change dark-mode-token-variants. Update Purpose after archive.
+A dark variant of every house style: dark colours derived from the light palette and checked against WCAG, hand-written dark values that win over derived ones, generated dark files injected under Nextcloud's dark scopes, and an admin switch to turn dark variants on or off.
 
 ## Requirements
 

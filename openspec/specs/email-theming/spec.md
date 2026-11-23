@@ -1,7 +1,7 @@
 # email-theming Specification
 
 ## Purpose
-TBD - created by archiving change email-template-theming. Update Purpose after archive.
+Nextcloud's notification emails in the house style: thematiq's own email template class, a configurable compliance footer with the organisation's name and its accessibility and privacy links, and an admin switch that sets the mail template in the system config.
 ## Requirements
 ### Requirement: NL Design Email Template Class
 

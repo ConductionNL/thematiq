@@ -1,7 +1,7 @@
 # own-tokens Specification
 
 ## Purpose
-TBD - created by archiving change authoring-token-lifecycle. Update Purpose after archive.
+Tokens an organisation adds to its house style without touching the theme code: added, edited and removed in the token editor, served in light and dark, and carried in the configuration bundle.
 
 ## Requirements
 

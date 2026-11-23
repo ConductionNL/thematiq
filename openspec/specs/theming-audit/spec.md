@@ -1,7 +1,7 @@
 # theming-audit Specification
 
 ## Purpose
-TBD - created by archiving change theming-audit-log. Update Purpose after archive.
+An append-only log of every theming change: who changed what, from what to what and when, kept as rotated JSONL in app data, written from every place that changes a setting, and read or exported by administrators.
 
 ## Requirements
 
