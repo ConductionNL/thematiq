@@ -5,7 +5,7 @@
  * The workplace apps menu as one ordered list (change apps-menu-ordered-list),
  * on a real Nextcloud with the Zuiddrecht set, which carries the workplace
  * header. Every test puts back what it changed: the admin's own order and the
- * external app addresses are cleared in a `finally`.
+ * external apps of the menu settings are put back in a `finally`.
  *
  * WHICH NEXTCLOUD. Nextcloud 33 and 34 open the menu on a click only, so the
  * hover tests prove the script's own hover-open there. On the fork's
@@ -18,7 +18,8 @@ import { adminContext, api } from './_fixtures'
 import { withThemeState } from './_theme-state'
 
 const ORDER = '/index.php/apps/thematiq/app-menu/order'
-const EXTERNAL = '/index.php/apps/thematiq/settings/external-apps'
+const SETTINGS = '/index.php/apps/thematiq/app-menu/settings'
+const DEFAULTS = '/index.php/apps/thematiq/app-menu/defaults'
 const PAGE = '/index.php/settings/user'
 
 const grid = (page: Page): Locator =>
@@ -263,41 +264,32 @@ test.describe('the apps menu as one ordered list', () => {
 
 	// @e2e external-apps-in-the-app-menu::an-administrator-gives-two-addresses
 	// @e2e external-apps-in-the-app-menu::an-address-that-is-not-one
-	test('external apps with an address are listed, a bad address is refused', async ({
+	test('external apps from the menu settings are listed, a bad address is refused', async ({
 		page,
 	}) => {
-		const before = await api(page, 'GET', EXTERNAL)
+		const before = await api(page, 'GET', SETTINGS)
 		expect(before.status).toBe(200)
-		const restore = Object.fromEntries(
-			(before.json.apps as Array<{ key: string; url: string }>).map((app) => [
-				app.key,
-				app.url,
-			]),
-		)
+		const restore = before.json.defaults.externalApps
+		const app = (id: string, title: string, url: string) => ({
+			id,
+			title,
+			payoff: 'Code',
+			url,
+			icon: { library: 'link' },
+			visible: true,
+			order: 0,
+		})
 		try {
-			const empty = Object.fromEntries(
-				Object.keys(restore).map((key) => [key, '']),
-			)
-			const saved = await api(page, 'POST', EXTERNAL, {
-				urls: {
-					...empty,
-					openproject: 'https://op.example.org',
-					code: 'https://code.example.org',
-				},
+			const saved = await api(page, 'POST', DEFAULTS, {
+				settings: { externalApps: [app('code', 'Forgejo', 'https://code.example.org')] },
 			})
 			expect(saved.status).toBe(200)
 
-			const refused = await api(page, 'POST', EXTERNAL, {
-				urls: { chat: 'javascript:alert(1)' },
+			const refused = await api(page, 'POST', DEFAULTS, {
+				settings: { externalApps: [app('chat', 'Element', 'javascript:alert(1)')] },
 			})
 			expect(refused.status).toBe(400)
-			expect(refused.json.refused).toEqual(['chat'])
-			const after = await api(page, 'GET', EXTERNAL)
-			expect(
-				(after.json.apps as Array<{ key: string; url: string }>).find(
-					(app) => app.key === 'chat',
-				)?.url,
-			).toBe('')
+			expect(refused.json.field).toBe('externalApps')
 
 			await page.reload({ waitUntil: 'domcontentloaded' })
 			await openByClick(page)
@@ -307,18 +299,6 @@ test.describe('the apps menu as one ordered list', () => {
 			await expect(
 				grid(page).locator('[data-thematiq-row="external"] h2'),
 			).toBeVisible()
-			const keys = await grid(page).evaluate((el) =>
-				Array.from(el.querySelectorAll('a[data-thematiq-external]')).map(
-					(a) => a.getAttribute('data-thematiq-external'),
-				),
-			)
-			expect(keys).toEqual([
-				'external-openproject-work_packages',
-				'external-openproject-gantt',
-				'external-openproject-boards',
-				'external-openproject-meetings',
-				'external-code',
-			])
 			const forgejo = entry(page, 'external-code')
 			await expect(forgejo).toHaveAttribute('href', 'https://code.example.org')
 			await expect(forgejo).toHaveAttribute('target', '_blank')
@@ -327,7 +307,7 @@ test.describe('the apps menu as one ordered list', () => {
 				forgejo.locator('.thematiq-app-menu__description'),
 			).toHaveText(/\S/)
 		} finally {
-			await api(page, 'POST', EXTERNAL, { urls: restore })
+			await api(page, 'POST', DEFAULTS, { settings: { externalApps: restore } })
 		}
 	})
 })

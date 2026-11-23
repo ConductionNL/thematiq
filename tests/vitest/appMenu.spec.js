@@ -521,7 +521,8 @@ describe('the apps menu as one ordered list', () => {
 		expect(opened).not.toHaveBeenCalled()
 
 		vi.advanceTimersByTime(500)
-		expect(posted[0].body.order[0]).toBe('calendar')
+		// A save an earlier case scheduled on a real timer may land here first.
+		expect(posted[posted.length - 1].body.order[0]).toBe('calendar')
 		delete document.elementsFromPoint
 		vi.useRealTimers()
 	})

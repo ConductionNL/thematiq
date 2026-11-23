@@ -153,6 +153,15 @@ final class AppMenuDialogLabels {
 			'iconShield' => $l->t('Shield'),
 			'iconTree' => $l->t('Tree'),
 			'iconStar' => $l->t('Star'),
+			'previewSentence' => $l->t('{shape}, {size} icons in {colour}, {payoff} and {tiles}.'),
+			'sizeLarge' => $l->t('large'),
+			'sizeSmall' => $l->t('small'),
+			'colourBrand' => $l->t('the brand colour'),
+			'colourNeutral' => $l->t('grey'),
+			'withPayoff' => $l->t('with payoff'),
+			'withoutPayoff' => $l->t('without payoff'),
+			'withTiles' => $l->t('with tiles'),
+			'withoutTiles' => $l->t('without tiles'),
 		];
 	}//end labels()
 }//end class

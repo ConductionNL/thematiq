@@ -1340,7 +1340,17 @@ OC.L10N.register(
         "Shield": "Schild",
         "Tree": "Boom",
         "Star": "Ster",
-        "Fewer apps": "Minder apps"
+        "Fewer apps": "Minder apps",
+        "{shape}, {size} icons in {colour}, {payoff} and {tiles}.": "{shape}, {size} pictogrammen in {colour}, {payoff} en {tiles}.",
+        "large": "grote",
+        "small": "kleine",
+        "the brand colour": "de huisstijlkleur",
+        "grey": "grijs",
+        "with payoff": "met payoff",
+        "without payoff": "zonder payoff",
+        "with tiles": "met tegels",
+        "without tiles": "zonder tegels",
+        "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Voeg externe apps toe, wijzig ze of verwijder ze in het app-menu: Menu-instellingen, Menuonderdelen."
     },
     "nplurals=2; plural=(n != 1);"
 )

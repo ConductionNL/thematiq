@@ -175,4 +175,28 @@ describe('the apps menu drawn from the settings', () => {
 		expect(footer.querySelector('button')).toBeNull()
 		expect(footer.querySelector('a').textContent).toBe('Apps beheren')
 	})
+
+	it('marks the first section as work apps, and draws filled or line icons for external apps', async () => {
+		const grid = openMenu()
+		installState(menu({}, {
+			external: {
+				title: 'Externe apps',
+				note: 'opent in een nieuw tabblad',
+				apps: [
+					{ key: 'external-code', label: 'Forgejo', line: 'Code', url: 'https://code.example.org', icon: 'M0 0', stroke: true },
+					{ key: 'external-wiki', label: 'XWiki', line: 'Wiki', url: 'http://localhost:8078', icon: 'M1 1' },
+				],
+			},
+		}))
+		await loadScript()
+
+		expect(grid.querySelector('a[href*="/apps/dossiq/"]').hasAttribute('data-thematiq-work')).toBe(true)
+		expect(grid.querySelector('a[href*="/apps/files/"]').hasAttribute('data-thematiq-work')).toBe(false)
+		const code = grid.querySelector('a[data-thematiq-external="external-code"] svg')
+		const wiki = grid.querySelector('a[data-thematiq-external="external-wiki"] svg')
+		expect(code.getAttribute('fill')).toBe('none')
+		expect(code.getAttribute('stroke')).toBe('currentColor')
+		expect(wiki.getAttribute('fill')).toBe('currentColor')
+		expect(wiki.hasAttribute('stroke')).toBe(false)
+	})
 })

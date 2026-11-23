@@ -1304,6 +1304,20 @@
 								"nl": "Huisstijl",
 								"en": "House style"
 							}
+						},
+						{
+							"id": "openregister",
+							"description": {
+								"nl": "Registers en gegevens",
+								"en": "Registers and data"
+							}
+						},
+						{
+							"id": "integriq",
+							"description": {
+								"nl": "Koppelingen",
+								"en": "Integrations"
+							}
 						}
 					]
 				},
@@ -1353,6 +1367,41 @@
 							"description": {
 								"nl": "Aantekeningen",
 								"en": "Notes"
+							}
+						},
+						{
+							"id": "mail",
+							"description": {
+								"nl": "Postvak",
+								"en": "Inbox"
+							}
+						},
+						{
+							"id": "dashboard",
+							"description": {
+								"nl": "Overzicht",
+								"en": "Overview"
+							}
+						},
+						{
+							"id": "photos",
+							"description": {
+								"nl": "Foto's en video's",
+								"en": "Photos and videos"
+							}
+						},
+						{
+							"id": "activity",
+							"description": {
+								"nl": "Tijdlijn",
+								"en": "Timeline"
+							}
+						},
+						{
+							"id": "onlyoffice",
+							"description": {
+								"nl": "Kantoordocumenten",
+								"en": "Office documents"
 							}
 						}
 					]

@@ -13,7 +13,11 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const LABELS = new Proxy({}, { get: (target, key) => (key === 'moved' ? '{app} moved to place {place} of {total}.' : String(key)) })
+const TEMPLATES = {
+	moved: '{app} moved to place {place} of {total}.',
+	previewSentence: '{shape}, {size} icons in {colour}, {payoff} and {tiles}.',
+}
+const LABELS = new Proxy({}, { get: (target, key) => TEMPLATES[key] || String(key) })
 
 const DEFAULTS = {
 	style: 'workplace',
@@ -286,5 +290,40 @@ describe('the Menu settings dialog', () => {
 		expect(alert.hidden).toBe(false)
 		expect(alert.textContent).toBe('saveFailed')
 		expect(reload).not.toHaveBeenCalled()
+	})
+
+	it('draws Theming as the board: inline colour radios, the size beside its name, and a sentence that follows the settings', async () => {
+		const dialog = await openDialog(answer(true))
+		dialog.querySelector('#thematiq-menu-settings-tab-theming').click()
+
+		const group = dialog.querySelector('[role="radiogroup"][aria-labelledby="thematiq-menu-settings-icon-size"]')
+		expect(dialog.querySelector('#thematiq-menu-settings-icon-size').textContent).toBe('iconSize')
+		expect(group.querySelector('[aria-checked="true"]').textContent).toBe('large')
+		expect(dialog.querySelectorAll('.thematiq-menu-settings__inline-radio input[name="thematiq-menu-settings-colour"]')).toHaveLength(2)
+		const caption = () => dialog.querySelector('.thematiq-menu-settings__figure figcaption').textContent
+		expect(caption()).toBe('round, sizeLarge icons in colourBrand, withPayoff and withoutTiles.')
+
+		dialog.querySelector('#thematiq-menu-settings-switch-tiles').click()
+		dialog.querySelector('input[name="thematiq-menu-settings-colour"][value="neutral"]').dispatchEvent(new Event('change'))
+		expect(caption()).toContain('withTiles')
+		expect(caption()).toContain('colourNeutral')
+	})
+
+	it('offers the picker icons only, and colours only the work apps in the brand', async () => {
+		const data = answer(false)
+		data.picker = ['link', 'book']
+		installFetch(data)
+		vi.resetModules()
+		await import('../../js/dialogs/menu-settings-dialog.js?t=' + Math.random())
+		const entries = ENTRIES.map((entry, i) => ({ ...entry, work: i < 2 }))
+		await window.ThematiqMenuSettingsDialog.open({ menu: { labels: LABELS }, entries })
+		await flush()
+		const dialog = document.querySelector('dialog.thematiq-menu-settings')
+
+		expect(row(dialog, 'launchpad').querySelector('.thematiq-menu-settings__app-icon--work')).not.toBeNull()
+		expect(row(dialog, 'files').querySelector('.thematiq-menu-settings__app-icon--work')).toBeNull()
+		dialog.querySelector('[data-part="add-external"]').click()
+		const icons = dialog.querySelectorAll('dialog.thematiq-menu-settings--form [role="radiogroup"] [data-icon]')
+		expect(Array.from(icons).map((b) => b.getAttribute('data-icon'))).toEqual(['link', 'book'])
 	})
 })

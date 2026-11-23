@@ -87,8 +87,10 @@ body:not(#body-login)
 	align-content: center;
 	align-items: center;
 	justify-items: start;
-	min-height: 60px;
-	padding: 10px 12px !important;
+	/* The board's tile: 12px by 6px padding round a 44px content box, 68px in all. */
+	box-sizing: border-box;
+	min-height: 68px;
+	padding: 12px 6px !important;
 	text-align: start;
 }
 
@@ -530,11 +532,13 @@ body:not(#body-login)
 	height: 32px;
 }
 
-/* The icon colour: the brand's light wash, or the quiet neutral chip. */
+/* The icon colour: with the brand colour, the organisation's work apps (the
+ * menu's first section) take the brand's light wash and every other app the
+ * quiet grey chip; neutral draws every app grey. */
 body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-icon-colour='brand']
-	> a.app-item:not(.app-item--active)
+	> a.app-item[data-thematiq-work]:not(.app-item--active)
 	.app-item__circle {
 	background: var(
 		--nldesign-color-primary-light,
@@ -547,12 +551,12 @@ body:not(#body-login)
 }
 
 /* The rows setting: past that many rows the unfolded menu scrolls. An entry
- * row is 60px with an 8px gap; the title, toggle, headings, Create row and
+ * row is 68px with an 8px gap; the title, toggle, headings, Create row and
  * footer take the rest. */
 body:not(#body-login)
 	.app-menu__popover-base
 	.app-menu__grid[data-thematiq-app-menu][data-thematiq-expanded] {
-	max-height: calc(var(--thematiq-app-menu-rows, 6) * 68px + 400px) !important;
+	max-height: calc(var(--thematiq-app-menu-rows, 6) * 76px + 400px) !important;
 	overflow-y: auto !important;
 }
 

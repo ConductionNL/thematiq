@@ -1340,7 +1340,17 @@ OC.L10N.register(
         "Shield": "Shield",
         "Tree": "Tree",
         "Star": "Star",
-        "Fewer apps": "Fewer apps"
+        "Fewer apps": "Fewer apps",
+        "{shape}, {size} icons in {colour}, {payoff} and {tiles}.": "{shape}, {size} icons in {colour}, {payoff} and {tiles}.",
+        "large": "large",
+        "small": "small",
+        "the brand colour": "the brand colour",
+        "grey": "grey",
+        "with payoff": "with payoff",
+        "without payoff": "without payoff",
+        "with tiles": "with tiles",
+        "without tiles": "without tiles",
+        "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Add, change or remove external apps in the apps menu: Menu settings, Menu items."
     },
     "nplurals=2; plural=(n != 1);"
 )

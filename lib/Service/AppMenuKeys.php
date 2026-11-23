@@ -20,9 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
-use OCA\Thematiq\AppInfo\Application;
 use OCP\INavigationManager;
-use OCP\L10N\IFactory;
 
 /**
  * The entry keys js/app-menu.js uses, as the server knows them for the signed-in person: every app
@@ -39,14 +37,10 @@ class AppMenuKeys {
 	 * Constructor.
 	 *
 	 * @param INavigationManager $navigation The person's navigation entries.
-	 * @param ExternalApps $externalApps The external apps with an address.
-	 * @param IFactory $l10nFactory The language of this request.
 	 * @param AppMenuSettings|null $settings The external apps an administrator or the person added.
 	 */
 	public function __construct(
 		private readonly INavigationManager $navigation,
-		private readonly ExternalApps $externalApps,
-		private readonly IFactory $l10nFactory,
 		private readonly ?AppMenuSettings $settings = null,
 	) {
 	}//end __construct()
@@ -67,11 +61,6 @@ class AppMenuKeys {
 			if (preg_match('/\/apps\/([a-z0-9_]+)/', (string)($entry['href'] ?? ''), $match) === 1) {
 				$keys[] = $match[1];
 			}
-		}
-
-		$section = $this->externalApps->section(l: $this->l10nFactory->get(Application::APP_ID));
-		foreach (($section['apps'] ?? []) as $app) {
-			$keys[] = (string)$app['key'];
 		}
 
 		foreach (($this->settings?->effective(userId: $userId)['externalApps'] ?? []) as $app) {

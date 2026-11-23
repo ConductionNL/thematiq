@@ -331,6 +331,12 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
+	background: var(--color-background-dark);
+	color: var(--color-main-text);
+}
+
+/* The organisation's work apps take the brand's wash, as in the menu. */
+.thematiq-menu-settings__app-icon--work {
 	background: var(
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
@@ -628,7 +634,8 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	border-radius: var(--border-radius-element, 8px);
 }
 
-.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon {
+.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon,
+.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon--work {
 	background: var(--color-background-dark);
 	color: var(--color-main-text);
 }
@@ -992,4 +999,38 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 		grid-row: auto;
 		grid-column: 1;
 	}
+}
+
+/* The scope help beside the switch, wrapping in its own column. */
+.thematiq-menu-settings__scope-row > .thematiq-menu-settings__help {
+	flex: 1 1 0;
+	min-width: 200px;
+}
+
+/* Icon size: its name on the left, the segmented control on the right. */
+.thematiq-menu-settings__inline-field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.thematiq-menu-settings__field-name {
+	color: var(--color-main-text);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+/* Icon colour: two radios in a row, each with its swatch. */
+.thematiq-menu-settings__inline-radios {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.thematiq-menu-settings__inline-radio {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
 }

@@ -470,7 +470,7 @@
 					},
 				}, [
 					h('span', { class: BLOCK + '__handle', 'aria-hidden': 'true', 'data-drag': entry.key }, [svg(ICONS.handle, 18)]),
-					h('span', { class: BLOCK + '__app-icon', 'aria-hidden': 'true', style: entry.icon ? '--thematiq-app-icon: url("' + entry.icon.replace(/["\\]/g, '') + '")' : null }),
+					h('span', { class: BLOCK + '__app-icon' + (entry.work ? ' ' + BLOCK + '__app-icon--work' : ''), 'aria-hidden': 'true', style: entry.icon ? '--thematiq-app-icon: url("' + entry.icon.replace(/["\\]/g, '') + '")' : null }),
 					h('span', { class: BLOCK + '__name', text: entry.name }),
 					iconButton(t('moveUp', { app: entry.name }), ICONS.up, function () {
 						move(-1, '[data-part="up"]')
@@ -674,7 +674,16 @@
 			if (app.icon && app.icon.upload) {
 				circle.appendChild(h('img', { src: String(data.iconUrl || '').replace('__id__', app.icon.upload), alt: '' }))
 			} else {
-				circle.appendChild(svg((data.library || {})[app.icon && app.icon.library] || '', size))
+				var name = app.icon && app.icon.library
+				var drawn = svg((data.library || {})[name] || '', size)
+				if ((data.stroke || []).indexOf(name) !== -1) {
+					drawn.setAttribute('fill', 'none')
+					drawn.setAttribute('stroke', 'currentColor')
+					drawn.setAttribute('stroke-width', '1.75')
+					drawn.setAttribute('stroke-linecap', 'round')
+					drawn.setAttribute('stroke-linejoin', 'round')
+				}
+				circle.appendChild(drawn)
 			}
 			return circle
 		}
@@ -844,11 +853,32 @@
 					},
 				}))
 			})
-			panel.appendChild(h('fieldset', { class: BLOCK + '__fieldset' }, [h('legend', { text: t('iconSize') }), group]))
-			panel.appendChild(radioCards('colour', t('iconColour'), [
-				{ value: 'brand', label: t('brand'), sample: h('span', { class: BLOCK + '__swatch', 'aria-hidden': 'true' }) },
-				{ value: 'neutral', label: t('neutral'), sample: h('span', { class: BLOCK + '__swatch ' + BLOCK + '__swatch--neutral', 'aria-hidden': 'true' }) },
-			], 'iconColour', false))
+			group.removeAttribute('aria-label')
+			group.setAttribute('aria-labelledby', BLOCK + '-icon-size')
+			panel.appendChild(h('div', { class: BLOCK + '__inline-field' }, [
+				h('span', { id: BLOCK + '-icon-size', class: BLOCK + '__field-name', text: t('iconSize') }),
+				group,
+			]))
+			var colours = h('div', { class: BLOCK + '__inline-radios' })
+			;[['brand', t('brand'), ''], ['neutral', t('neutral'), ' ' + BLOCK + '__swatch--neutral']].forEach(function (choice) {
+				colours.appendChild(h('label', { class: BLOCK + '__inline-radio' }, [
+					h('input', {
+						type: 'radio',
+						name: BLOCK + '-colour',
+						value: choice[0],
+						checked: form.iconColour === choice[0],
+						on: {
+							change: function () {
+								form.iconColour = choice[0]
+								render('input[name="' + BLOCK + '-colour"][value="' + choice[0] + '"]')
+							},
+						},
+					}),
+					h('span', { class: BLOCK + '__swatch' + choice[2], 'aria-hidden': 'true' }),
+					h('span', { text: choice[1] }),
+				]))
+			})
+			panel.appendChild(h('fieldset', { class: BLOCK + '__fieldset' }, [h('legend', { text: t('iconColour') }), colours]))
 			var sample = h('div', {
 				class: BLOCK + '__sample',
 				'aria-hidden': 'true',
@@ -859,14 +889,25 @@
 			})
 			apps.slice(0, 4).forEach(function (entry) {
 				sample.appendChild(h('span', { class: BLOCK + '__sample-item' }, [
-					h('span', { class: BLOCK + '__app-icon', style: entry.icon ? '--thematiq-app-icon: url("' + entry.icon.replace(/["\\]/g, '') + '")' : null }),
+					h('span', { class: BLOCK + '__app-icon' + (entry.work ? ' ' + BLOCK + '__app-icon--work' : ''), style: entry.icon ? '--thematiq-app-icon: url("' + entry.icon.replace(/["\\]/g, '') + '")' : null }),
 					h('span', { class: BLOCK + '__sample-text' }, [
 						h('span', { text: entry.name }),
 						form.payoff && entry.description ? h('span', { class: BLOCK + '__sub', text: entry.description }) : null,
 					]),
 				]))
 			})
-			panel.appendChild(h('figure', { class: BLOCK + '__figure' }, [h('figcaption', { text: t('preview') }), sample]))
+			var sentence = t('previewSentence', {
+				shape: form.shape === 'square' ? t('square') : t('round'),
+				size: form.iconSize === 'small' ? t('sizeSmall') : t('sizeLarge'),
+				colour: form.iconColour === 'neutral' ? t('colourNeutral') : t('colourBrand'),
+				payoff: form.payoff ? t('withPayoff') : t('withoutPayoff'),
+				tiles: form.tiles ? t('withTiles') : t('withoutTiles'),
+			})
+			panel.appendChild(h('figure', { class: BLOCK + '__figure' }, [
+				h('span', { class: BLOCK + '__field-name', text: t('preview') }),
+				sample,
+				h('figcaption', { class: BLOCK + '__help', text: sentence }),
+			]))
 		}
 
 		// The Add or Edit external app dialog, over this one.
@@ -906,7 +947,7 @@
 				previewTitle.textContent = draft.title
 				previewPayoff.textContent = draft.payoff
 			}
-			var library = Object.keys(data.library || {})
+			var library = Array.isArray(data.picker) ? data.picker : Object.keys(data.library || {})
 			var iconGroup = function () {
 				var group = h('div', { class: BLOCK + '__icon-grid', role: 'radiogroup', 'aria-label': t('iconLibrary') })
 				var current = draft.icon.library ? library.indexOf(draft.icon.library) : -1
