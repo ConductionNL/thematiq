@@ -456,6 +456,70 @@
 	}
 
 	/**
+	 * Offer the Create row's actions to the other scripts of the bar (the top
+	 * bar's Quick add menu, js/header-create.js), so both list the same things
+	 * in the same order: `window.thematiqCreateActions.list()` resolves to
+	 * `{name, icon, run}` entries: the row's kinds, the other creators, then
+	 * Nextcloud's navigation actions. Empty while the setting is off.
+	 * Announced with the `thematiq:create-actions` event.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 */
+	function shareCreateActions(menu) {
+		var labels = menu.labels || {}
+		var on = text(labels, 'create') !== '' && settingsOf(menu).showCreateActions
+		window.thematiqCreateActions = {
+			title: text(labels, 'create'),
+			failed: text(labels, 'createFailed'),
+			list: function () {
+				if (!on) {
+					return Promise.resolve([])
+				}
+				return creators().then(function (list) {
+					var row = rowCreators(list)
+					var entries = row.map(function (item) {
+						return {
+							name: text(labels, item.kind.label) || text(item.creator, 'label'),
+							icon: item.kind.icon,
+							run: function (failed) {
+								return createFile(item.creator, failed)
+							},
+						}
+					})
+					list.forEach(function (creator) {
+						var inRow = row.some(function (item) {
+							return item.creator === creator
+						})
+						if (!inRow) {
+							entries.push({
+								name: text(creator, 'actionLabel') || text(creator, 'label'),
+								icon: FILE_ICON,
+								run: function (failed) {
+									return createFile(creator, failed)
+								},
+							})
+						}
+					})
+					coreActions().forEach(function (action) {
+						entries.push({
+							name: text(action, 'name'),
+							icon: MORE_ICON,
+							run: function () {
+								runAction(action)
+							},
+						})
+					})
+					return entries
+				})
+			},
+		}
+		if (typeof window.CustomEvent === 'function') {
+			document.dispatchEvent(new window.CustomEvent('thematiq:create-actions'))
+		}
+	}
+
+	/**
 	 * The Create row above the footer: New document, New spreadsheet, New
 	 * presentation and New whiteboard when an installed app offers them, and
 	 * More, which unfolds every creator and every Nextcloud navigation action.
@@ -2073,6 +2137,7 @@
 		var save = saver(menu)
 		opening()
 		menu.pinBar = pinBar(menu)
+		shareCreateActions(menu)
 
 		var busy = false
 		var scan = function () {

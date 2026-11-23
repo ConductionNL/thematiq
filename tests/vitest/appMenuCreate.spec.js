@@ -124,6 +124,7 @@ describe('the title, the chevron and the Create row', () => {
 			delete window.thematiqAppMenuObserver
 		}
 		delete window.thematiqAppMenuCreators
+		delete window.thematiqCreateActions
 		document.body.innerHTML = ''
 		delete global.OCP
 		delete global.OC
@@ -226,6 +227,34 @@ describe('the title, the chevron and the Create row', () => {
 		await loadScript()
 
 		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()
+	})
+
+	it('shares the same actions, in the same order, with the top bar\'s Quick add', async () => {
+		openMenu()
+		installState({ labels: LABELS, order: [] }, [{ id: 'talk', name: 'New conversation', href: '/apps/spreed/' }])
+		const announced = vi.fn()
+		document.addEventListener('thematiq:create-actions', announced)
+		await loadScript()
+
+		expect(announced).toHaveBeenCalled()
+		expect(window.thematiqCreateActions.title).toBe('Nieuw maken')
+		const entries = await window.thematiqCreateActions.list()
+		expect(entries.map((entry) => entry.name)).toEqual([
+			'Nieuw document',
+			'Nieuwe spreadsheet',
+			'Nieuwe presentatie',
+			'Create new text file',
+			'New conversation',
+		])
+		document.removeEventListener('thematiq:create-actions', announced)
+	})
+
+	it('shares nothing when the create actions are switched off', async () => {
+		openMenu()
+		installState({ labels: LABELS, order: [], settings: { showCreateActions: false } })
+		await loadScript()
+
+		expect(await window.thematiqCreateActions.list()).toEqual([])
 	})
 
 	it('draws no row and asks nothing when the create actions are switched off', async () => {

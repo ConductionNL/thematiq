@@ -1350,7 +1350,9 @@ OC.L10N.register(
         "without payoff": "zonder payoff",
         "with tiles": "met tegels",
         "without tiles": "zonder tegels",
-        "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Voeg externe apps toe, wijzig ze of verwijder ze in het app-menu: Menu-instellingen, Menuonderdelen."
+        "Add, change or remove external apps in the apps menu: Menu settings, Menu items.": "Voeg externe apps toe, wijzig ze of verwijder ze in het app-menu: Menu-instellingen, Menuonderdelen.",
+        "Nothing to create here.": "Hier valt niets te maken.",
+        "Quick add": "Snel toevoegen"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -69,6 +69,13 @@ class HeaderUserService {
 	public const BRAND_SCRIPT = 'header-brand';
 
 	/**
+	 * The script that draws the Quick add button for the apps whose boards have it (js/header-create.js).
+	 *
+	 * @var string
+	 */
+	public const CREATE_SCRIPT = 'header-create';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IUserSession $userSession The signed-in person.
@@ -142,7 +149,7 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js and js/header-brand.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js, js/header-brand.js and js/header-create.js. A seam, so unit tests need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
@@ -153,5 +160,6 @@ class HeaderUserService {
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::CREATE_SCRIPT);
 	}//end emitScript()
 }//end class
