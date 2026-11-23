@@ -234,8 +234,9 @@ class CustomTokenSetsBundleSection {
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
 	private function validateDeclarations(array $shape, array &$errors): ?array {
+		$position = ['id' => $shape['id'], 'index' => $shape['index']];
 		if ($this->validator->hasDisallowedSelector(css: $shape['css']) === true) {
-			$errors[] = $this->entryError(shape: $shape, message: 'The CSS contains a selector or at-rule other than :root.');
+			$errors[] = $this->entryError(shape: $position, message: 'The CSS contains a selector or at-rule other than :root.');
 
 			return null;
 		}
@@ -245,7 +246,7 @@ class CustomTokenSetsBundleSection {
 		$split = $this->validator->validateDeclarations(declarations: $declarations, slug: $slug);
 		if ($split === null) {
 			$validatorError = $this->validator->getLastError();
-			$errors[] = $this->entryError(shape: $shape, message: ($validatorError['message'] ?? 'Declaration validation failed.'));
+			$errors[] = $this->entryError(shape: $position, message: ($validatorError['message'] ?? 'Declaration validation failed.'));
 
 			return null;
 		}

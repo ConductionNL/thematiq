@@ -182,7 +182,7 @@ class LoginCopyService {
 		$copy = [];
 		foreach (self::KEYS as $key) {
 			$value = CopyValues::pick(value: ($source[$key] ?? null), language: $language);
-			if ($this->isShown(key: $key, value: $value) === true) {
+			if ($value !== null && $this->isShown(key: $key, value: $value) === true) {
 				$copy[CopyValues::camel(key: $key)] = $value;
 			}
 		}
