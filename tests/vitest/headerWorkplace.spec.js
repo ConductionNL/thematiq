@@ -101,4 +101,11 @@ describe('the DqKop bar', () => {
 			'var(--color-border)',
 		)
 	})
+
+	it('keeps the bar inside a phone screen (LpMobiel)', () => {
+		expect(declsOf('body:not(#body-login) #header a.thematiq-brand', '(max-width: 512px)').width).toBe('auto')
+		expect(declsOf('body:not(#body-login) #header .thematiq-brand__caption', '(max-width: 512px)').display).toBe('none')
+		expect(declsOf('body:not(#body-login) #header .header-end > #user-menu', '(max-width: 512px)').flex).toBe('none')
+		expect(declsOf('body:not(#body-login) #header .thematiq-brand__text', '(max-width: 420px)').display).toBe('none')
+	})
 })

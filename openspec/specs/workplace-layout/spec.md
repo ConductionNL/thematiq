@@ -384,6 +384,14 @@ Nextcloud's login page.
 - THEN the button MUST come before the form in the DOM, read "Inloggen met uw gemeenteaccount", and be followed by "of"
 - AND the password button MUST be drawn outlined
 
+#### Scenario: Remember me and Log in with a device stay on the card
+@e2e exclude Measured with compdiff against werkplek/NcLogin on the demo stack; unit: vitest tests/vitest/loginRememberMeAndDevice.spec.js
+- GIVEN the light workplace
+- WHEN the login page renders
+- THEN Remember me MUST show under the password, before the login button, with its box on the fields' left edge and its words in regular 14px
+- AND Forgot your password? MUST come before Log in with a device
+- AND Log in with a device MUST carry a phone icon in a strip of its own, under a hairline, at the foot of the card
+
 #### Scenario: Only the login page asks for the copy
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Listener/ThemeInjectionListenerTest.php
 - GIVEN the light workplace
