@@ -231,10 +231,16 @@
 
 /* Thematiq's own part of the page starts on the header's edge, at the
  * board's width. */
+/* The light workplace draws every settings `.section` as a card with
+ * `!important`; the board draws the cards inside this part, not around it. */
+#content.app-settings #app-content-vue #nldesign-settings.section,
 #nldesign-settings {
-	max-width: none;
-	margin: 24px 27px 0;
-	padding: 0;
+	max-width: none !important;
+	margin: 24px 27px 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
 }
 
 /* The heading row: the title, the environment chip and one line. */
