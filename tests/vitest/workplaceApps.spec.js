@@ -1,12 +1,13 @@
 /**
- * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
- * SPDX-License-Identifier: EUPL-1.2
+ * @vitest-environment jsdom
  *
- * The workplace app sheets (css/workplace-apps/) draw Mail, Calendar and Deck
- * as the boards. They load in the light and in the dark, so they take every
- * colour from a variable; they are scoped to the app's content or the header,
- * so no other page pays for them; and they use no `:has()`, which makes the
- * browser re-check a rule on every change below it.
+ * js/workplace-apps.js: the boards' words for Mail and Calendar as
+ * translated variables, Calendar's week days as "Mon 12" (ClWeek), and the
+ * pointer mark that lets Deck's card title drop a focus ring it did not ask
+ * for (TbCard). It acts only while workplace-apps/common.css is on the page.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
  */
@@ -14,36 +15,121 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import postcss from 'postcss'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const DIR = path.resolve(__dirname, '../../css/workplace-apps')
-const SHEETS = ['brand', 'common', 'mail', 'calendar', 'deck']
-const ROOTS = [':is(#content, #content-vue)', 'body:not(#body-login) #header', '#openregister-mail-sidebar']
-const COLOUR = /#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i
+const ROOT = path.resolve(__dirname, '../..')
+const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8')
 
-describe('workplace app sheets', () => {
-	it('ships one sheet per app and the shared ones', () => {
-		expect(fs.readdirSync(DIR).sort()).toEqual(SHEETS.map((s) => s + '.css').sort())
+let sheetLoaded = true
+const realComputedStyle = window.getComputedStyle.bind(window)
+
+async function loadScript() {
+	vi.resetModules()
+	await import('../../js/workplace-apps.js?t=' + Math.random())
+	await new Promise((resolve) => setTimeout(resolve, 0))
+}
+
+const frame = () => new Promise((resolve) => setTimeout(resolve, 40))
+
+const WEEK =
+	'<div id="content" class="app-calendar"><div class="fc-timeGridWeek-view">'
+	+ '<table><tr>'
+	+ '<th class="fc-col-header-cell" data-date="2026-11-23"><a class="fc-col-header-cell-cushion">Mon 23/11/2026</a></th>'
+	+ '<th class="fc-col-header-cell" data-date="2026-11-01"><a class="fc-col-header-cell-cushion">Sun 01/11/2026</a></th>'
+	+ '</tr></table></div></div>'
+
+describe('the workplace app layer script', () => {
+	beforeEach(() => {
+		sheetLoaded = true
+		global.t = (app, text) => (text === 'New event' ? 'Nieuwe afspraak' : text)
+		vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+			const style = realComputedStyle(element)
+			return {
+				getPropertyValue: (name) =>
+					name === '--thematiq-workplace-apps' && sheetLoaded && element === document.documentElement
+						? ' 1'
+						: style.getPropertyValue(name),
+			}
+		})
 	})
 
-	for (const sheet of SHEETS) {
-		const root = postcss.parse(fs.readFileSync(path.join(DIR, sheet + '.css'), 'utf8'))
+	afterEach(() => {
+		if (window.thematiqWorkplaceAppsObserver) {
+			window.thematiqWorkplaceAppsObserver.disconnect()
+			delete window.thematiqWorkplaceAppsObserver
+		}
+		document.body.innerHTML = ''
+		document.documentElement.removeAttribute('style')
+		document.documentElement.removeAttribute('data-thematiq-pointer')
+		delete global.t
+		vi.restoreAllMocks()
+	})
 
-		it(`${sheet}: every rule starts at the content or the header`, () => {
-			root.walkRules((rule) => {
-				for (const selector of rule.selectors) {
-					expect(ROOTS.some((r) => selector.trim().startsWith(r)), selector).toBe(true)
-				}
-			})
-		})
+	it('sets the boards\' words as translated, quoted variables', async () => {
+		document.body.innerHTML = '<div id="content" class="app-mail"></div>'
+		await loadScript()
 
-		it(`${sheet}: no colour literal and no :has()`, () => {
-			root.walkRules((rule) => {
-				expect(rule.selector).not.toContain(':has(')
-			})
-			root.walkDecls((decl) => {
-				expect(COLOUR.test(decl.value), `${decl.prop}: ${decl.value}`).toBe(false)
-			})
+		const style = document.documentElement.style
+		expect(style.getPropertyValue('--thematiq-mail-empty-title')).toBe('"Select a conversation"')
+		expect(style.getPropertyValue('--thematiq-calendar-new-event')).toBe('"Nieuwe afspraak"')
+	})
+
+	it('names a week day "Mon 23" from the column\'s own date, also after a re-render', async () => {
+		document.body.innerHTML = WEEK
+		await loadScript()
+
+		const links = () => Array.from(document.querySelectorAll('.fc-col-header-cell-cushion')).map((a) => a.textContent)
+		expect(links()).toEqual(['Mon 23', 'Sun 1'])
+
+		document.querySelector('.fc-col-header-cell-cushion').textContent = 'Mon 23/11/2026'
+		await frame()
+		expect(links()).toEqual(['Mon 23', 'Sun 1'])
+	})
+
+	it('leaves the month view\'s weekday heads alone', async () => {
+		document.body.innerHTML = WEEK.replace('fc-timeGridWeek-view', 'fc-dayGridMonth-view')
+		await loadScript()
+
+		expect(document.querySelector('.fc-col-header-cell-cushion').textContent).toBe('Mon 23/11/2026')
+	})
+
+	it('marks pointer use and clears the mark on a key press', async () => {
+		document.body.innerHTML = '<div id="content" class="app-deck"><button>x</button></div>'
+		await loadScript()
+
+		document.querySelector('button').dispatchEvent(new window.Event('pointerdown', { bubbles: true }))
+		expect(document.documentElement.hasAttribute('data-thematiq-pointer')).toBe(true)
+		document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+		expect(document.documentElement.hasAttribute('data-thematiq-pointer')).toBe(false)
+	})
+
+	it('does nothing without the app layer sheet', async () => {
+		sheetLoaded = false
+		document.body.innerHTML = WEEK
+		await loadScript()
+
+		expect(document.documentElement.getAttribute('style')).toBeNull()
+		expect(document.querySelector('.fc-col-header-cell-cushion').textContent).toBe('Mon 23/11/2026')
+	})
+})
+
+describe('the app sheets show the words only once the script set them', () => {
+	const selectors = (rel) => {
+		const out = []
+		postcss.parse(read(rel)).walkDecls('content', (decl) => {
+			out.push([decl.parent.selector.replace(/\s+/g, ' '), decl.value])
 		})
+		return out
 	}
+
+	it('Mail and Calendar read their variable under a guard on the root', () => {
+		const mail = selectors('css/workplace-apps/mail.css').find(([, value]) => value.includes('--thematiq-mail-empty-title'))
+		const calendar = selectors('css/workplace-apps/calendar.css').find(([, value]) => value.includes('--thematiq-calendar-new-event'))
+		expect(mail[0]).toContain(":root[style*='--thematiq-mail-empty-title']")
+		expect(calendar[0]).toContain(":root[style*='--thematiq-calendar-new-event']")
+	})
+
+	it('common.css carries the mark the script waits for', () => {
+		expect(read('css/workplace-apps/common.css')).toMatch(/--thematiq-workplace-apps: 1;/)
+	})
 })

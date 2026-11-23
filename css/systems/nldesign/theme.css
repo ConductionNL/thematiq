@@ -601,13 +601,13 @@ a {
 
 a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)) {
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 }
 
 /* A link drawn as a button (NcButton with href or to, a core `a.button`,
- * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button)
- * is a button: the link rules here and in element-overrides.css leave it out,
+ * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button,
+ * a CnWeekStripWidget item, a CnAppTile) is a button: the link rules here and in element-overrides.css leave it out,
  * so it keeps its button's own text colour, and its text is never underlined,
  * in any state. */
 a.button-vue,
@@ -616,24 +616,28 @@ a[role='button'],
 a.cn-banner-widget__action,
 a.cn-link-button-widget__button,
 a.cn-week-strip__item,
+a.cn-app-tile,
 a.button-vue:hover,
 a.button:hover,
 a[role='button']:hover,
 a.cn-banner-widget__action:hover,
 a.cn-link-button-widget__button:hover,
 a.cn-week-strip__item:hover,
+a.cn-app-tile:hover,
 a.button-vue:visited,
 a.button:visited,
 a[role='button']:visited,
 a.cn-banner-widget__action:visited,
 a.cn-link-button-widget__button:visited,
 a.cn-week-strip__item:visited,
+a.cn-app-tile:visited,
 a.button-vue:focus,
 a.button:focus,
 a[role='button']:focus,
 a.cn-banner-widget__action:focus,
 a.cn-link-button-widget__button:focus,
-a.cn-week-strip__item:focus {
+a.cn-week-strip__item:focus,
+a.cn-app-tile:focus {
 	text-decoration: none !important;
 }
 
@@ -644,7 +648,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
@@ -652,7 +656,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)):hover {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
@@ -660,7 +664,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)):visited {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 
@@ -939,7 +943,13 @@ th:not(.cn-look-board *) {
 	font-weight: var(--nldesign-component-table-header-font-weight) !important;
 }
 
-tr:hover td {
+/* Only a data table's rows: a table with a head row, no nested tables and
+   no presentation role. A layout grid drawn as a table (Calendar's week,
+   where one row holds the whole week) keeps its own colours. */
+:where(table:has(> thead):not([role='presentation']):not(:has(table)))
+	> tbody
+	> tr:hover
+	> td {
 	background-color: var(
 		--nldesign-component-table-row-hover-background-color
 	) !important;

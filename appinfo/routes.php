@@ -76,14 +76,18 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'appBrand#remove', 'url' => '/settings/app-brands/{appId}', 'verb' => 'DELETE'],
 		['name' => 'appBrand#uploadLogo', 'url' => '/settings/app-brands/{appId}/logo/{size}', 'verb' => 'POST'],
 		// The workspace's mobile logo and touch icon (mobile-logo-and-touch-icon), admin-only.
-		// The external apps of the apps menu (external-apps-in-the-app-menu), admin-only. OpenProject
-		// keeps its own address and modules endpoint.
-		['name' => 'externalApps#openProject', 'url' => '/settings/openproject', 'verb' => 'GET'],
-		['name' => 'externalApps#saveOpenProject', 'url' => '/settings/openproject', 'verb' => 'POST'],
-		['name' => 'externalApps#show', 'url' => '/settings/external-apps', 'verb' => 'GET'],
-		['name' => 'externalApps#save', 'url' => '/settings/external-apps', 'verb' => 'POST'],
 		// The signed-in user's own order of the apps menu (apps-menu-order).
 		['name' => 'appMenuOrder#save', 'url' => '/app-menu/order', 'verb' => 'POST'],
+		// The signed-in user's pinned apps in the top bar (apps-menu-pins).
+		['name' => 'appMenuPins#save', 'url' => '/app-menu/pins', 'verb' => 'POST'],
+		// The menu settings (apps-menu-settings): the person's own, and the defaults for everyone.
+		['name' => 'appMenuSettings#show', 'url' => '/app-menu/settings', 'verb' => 'GET'],
+		['name' => 'appMenuSettings#save', 'url' => '/app-menu/settings', 'verb' => 'POST'],
+		['name' => 'appMenuSettings#reset', 'url' => '/app-menu/settings', 'verb' => 'DELETE'],
+		['name' => 'appMenuSettings#saveDefaults', 'url' => '/app-menu/defaults', 'verb' => 'POST'],
+		['name' => 'appMenuSettings#resetDefaults', 'url' => '/app-menu/defaults', 'verb' => 'DELETE'],
+		['name' => 'appMenuSettings#uploadIcon', 'url' => '/app-menu/icons', 'verb' => 'POST'],
+		['name' => 'appMenuSettings#icon', 'url' => '/app-menu/icons/{id}', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],

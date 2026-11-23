@@ -77,7 +77,11 @@
 !/js/preview-banner.js
 !/js/environment-marker.js
 !/js/header-user.js
+!/js/header-brand.js
+!/js/header-create.js
+!/js/workplace-apps.js
 !/js/app-menu.js
+!/js/dialogs/
 !/js/search-placeholder.js
 !/js/login-copy.js
 !/js/not-found.js

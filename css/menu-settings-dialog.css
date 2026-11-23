@@ -1,0 +1,1036 @@
+/**
+ * The Menu settings dialog of the apps menu (the AppMenuInstellingen,
+ * AppMenuConfiguratie, AppMenuVormgeving and AppMenuExterneApp boards), and
+ * the gear row an administrator gets in Nextcloud's classic apps menu.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded with js/dialogs/menu-settings-dialog.js by AppMenuService. Every
+ * colour reads a token, with Nextcloud's own variable behind it.
+ */
+
+dialog.thematiq-menu-settings {
+	box-sizing: border-box;
+	width: 760px;
+	max-width: calc(100vw - 32px);
+	max-height: calc(100vh - 32px);
+	padding: 0;
+	border: 0;
+	border-radius: var(--border-radius-container-large, 12px);
+	background: var(--color-main-background);
+	box-shadow: 0 16px 40px rgba(27, 28, 29, 0.28);
+	color: var(--color-main-text);
+	font-size: 14px;
+}
+
+dialog.thematiq-menu-settings[open] {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	height: fit-content;
+	margin: auto !important;
+}
+
+dialog.thematiq-menu-settings::backdrop {
+	background: rgba(27, 28, 29, 0.45);
+}
+
+dialog.thematiq-menu-settings--form {
+	width: 600px;
+}
+
+.thematiq-menu-settings__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 20px 20px 12px 28px;
+}
+
+.thematiq-menu-settings__head h2 {
+	margin: 0 !important;
+	color: var(--color-main-text) !important;
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 1.2 !important;
+}
+
+.thematiq-menu-settings__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 16px;
+	min-height: 0;
+	padding: 4px 28px 8px;
+	overflow-y: auto;
+}
+
+.thematiq-menu-settings__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 16px 28px 20px;
+	border-top: 1px solid var(--color-border);
+}
+
+.thematiq-menu-settings__foot-end {
+	display: flex;
+	gap: 12px;
+}
+
+.thematiq-menu-settings__close,
+.thematiq-menu-settings__icon-button {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--color-main-text);
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__icon-button {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+.thematiq-menu-settings__icon-button:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.thematiq-menu-settings__pin[aria-pressed='true'] {
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
+}
+
+.thematiq-menu-settings__button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	margin: 0;
+	padding: 0 18px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__button--primary {
+	border-color: transparent;
+	background: var(--nldesign-color-primary, var(--color-primary-element));
+	color: var(--nldesign-color-primary-text, var(--color-primary-element-text));
+}
+
+.thematiq-menu-settings__reset {
+	border-color: transparent;
+	background: transparent;
+	color: var(--nldesign-color-link, var(--color-primary-element));
+}
+
+dialog.thematiq-menu-settings button:focus-visible,
+dialog.thematiq-menu-settings input:focus-visible,
+dialog.thematiq-menu-settings a:focus-visible,
+dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
+/* For everyone | Only for me, and the icon size: a segmented control. */
+.thematiq-menu-settings__scope-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+}
+
+.thematiq-menu-settings__scope {
+	display: inline-flex;
+	width: fit-content;
+	gap: 2px;
+	padding: 3px;
+	border-radius: 10px;
+	background: var(--color-background-dark);
+}
+
+.thematiq-menu-settings__segment {
+	min-height: 36px;
+	margin: 0;
+	padding: 0 14px;
+	border: 0;
+	border-radius: var(--border-radius-element, 8px);
+	background: transparent;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__segment[aria-checked='true'] {
+	background: var(--color-main-background);
+	box-shadow: 0 1px 3px rgba(27, 28, 29, 0.16);
+	color: var(--color-main-text);
+}
+
+.thematiq-menu-settings__tabs-row {
+	border-bottom: 1px solid var(--color-border);
+}
+
+.thematiq-menu-settings__tabs {
+	display: flex;
+	gap: 4px;
+}
+
+.thematiq-menu-settings__tab {
+	min-height: 44px;
+	margin: 0;
+	padding: 0 14px;
+	border: 0;
+	border-bottom: 3px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: var(--color-text-maxcontrast);
+	font-size: 15px;
+	font-weight: 500;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__tab[aria-selected='true'] {
+	border-bottom-color: var(--nldesign-color-primary, var(--color-primary-element));
+	color: var(--color-main-text);
+	font-weight: 700;
+}
+
+.thematiq-menu-settings__panel {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.thematiq-menu-settings__section {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.thematiq-menu-settings__section-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.thematiq-menu-settings h3,
+.thematiq-menu-settings legend {
+	margin: 0 !important;
+	padding: 0;
+	color: var(--color-main-text) !important;
+	font-size: 15px !important;
+	font-weight: 700 !important;
+	line-height: 1.2 !important;
+}
+
+.thematiq-menu-settings__help,
+.thematiq-menu-settings__sub {
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+	line-height: 1.3;
+}
+
+.thematiq-menu-settings__note {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-menu-settings__error,
+.thematiq-menu-settings__field-error {
+	margin: 0;
+	color: var(--color-error-text, var(--color-error));
+	font-size: 13px;
+}
+
+.thematiq-menu-settings__error {
+	padding: 0 28px;
+}
+
+.thematiq-menu-settings__list {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	list-style: none;
+}
+
+.thematiq-menu-settings__row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 48px;
+	padding: 0 8px 0 10px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.thematiq-menu-settings__row:last-child {
+	border-bottom: 0;
+}
+
+.thematiq-menu-settings__row--off .thematiq-menu-settings__name {
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-menu-settings__row--off .thematiq-menu-settings__app-icon {
+	opacity: 0.5;
+}
+
+.thematiq-menu-settings__row[data-dragging] {
+	opacity: 0.5;
+}
+
+.thematiq-menu-settings__row[data-drop-before] {
+	box-shadow: inset 0 2px 0 var(--nldesign-color-primary, var(--color-primary-element));
+}
+
+.thematiq-menu-settings__handle {
+	display: flex;
+	color: var(--color-text-maxcontrast);
+	cursor: grab;
+	touch-action: none;
+}
+
+.thematiq-menu-settings__app-icon {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--color-background-dark);
+	color: var(--color-main-text);
+}
+
+/* The organisation's work apps take the brand's wash, as in the menu. */
+.thematiq-menu-settings__app-icon--work {
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
+}
+
+.thematiq-menu-settings__app-icon[style*='--thematiq-app-icon']::before {
+	content: '';
+	width: 16px;
+	height: 16px;
+	background-color: currentcolor;
+	mask: var(--thematiq-app-icon) center / contain no-repeat;
+}
+
+.thematiq-menu-settings__app-icon img {
+	width: 18px;
+	height: 18px;
+	object-fit: contain;
+}
+
+.thematiq-menu-settings__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	font-weight: 500;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.thematiq-menu-settings__name--two {
+	display: flex;
+	flex-direction: column;
+}
+
+.thematiq-menu-settings__switch-wrap {
+	display: flex;
+}
+
+.thematiq-menu-settings__switch {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+	width: 44px;
+	height: 24px;
+	margin: 0 0 0 4px;
+	padding: 2px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--color-border-maxcontrast);
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__switch[aria-checked='true'] {
+	justify-content: flex-end;
+	background: var(--nldesign-color-primary, var(--color-primary-element));
+}
+
+.thematiq-menu-settings__switch:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.thematiq-menu-settings__knob {
+	display: block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--color-main-background);
+}
+
+.thematiq-menu-settings__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	min-height: 40px;
+}
+
+.thematiq-menu-settings__toggle-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.thematiq-menu-settings__toggle-name {
+	font-weight: 500;
+}
+
+/* Radio cards: the menu style, the shape and the icon colour. */
+.thematiq-menu-settings__fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.thematiq-menu-settings__cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+}
+
+.thematiq-menu-settings__card {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	border: 2px solid var(--color-border);
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__card--on {
+	border-color: var(--nldesign-color-primary, var(--color-primary-element));
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+.thematiq-menu-settings__card-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.thematiq-menu-settings__card-name {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.thematiq-menu-settings__style-sample {
+	display: block;
+	height: 48px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background:
+		linear-gradient(var(--color-main-background), var(--color-main-background))
+			top / 100% 14px no-repeat,
+		var(--color-background-dark);
+}
+
+.thematiq-menu-settings__shape-sample {
+	display: flex;
+	gap: 8px;
+}
+
+.thematiq-menu-settings__shape-sample > span {
+	width: 28px;
+	height: 28px;
+	box-sizing: border-box;
+	border: 1px solid
+		var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	border-radius: 50%;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+.thematiq-menu-settings__shape-sample--square > span {
+	border-radius: 6px;
+}
+
+.thematiq-menu-settings__swatch {
+	width: 22px;
+	height: 22px;
+	box-sizing: border-box;
+	border: 2px solid
+		var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	border-radius: 6px;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+.thematiq-menu-settings__swatch--neutral {
+	border-color: var(--color-text-maxcontrast);
+	background: var(--color-background-dark);
+}
+
+/* The steppers and the grid preview. */
+.thematiq-menu-settings__steppers {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+}
+
+.thematiq-menu-settings__stepper {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.thematiq-menu-settings__stepper-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-weight: 600;
+}
+
+.thematiq-menu-settings__stepper-controls {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.thematiq-menu-settings__stepper-controls input {
+	width: 64px;
+	min-height: 36px;
+	margin: 0;
+	text-align: center;
+}
+
+.thematiq-menu-settings__figure {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+}
+
+.thematiq-menu-settings__grid-preview {
+	display: grid;
+	grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+	gap: 4px;
+	padding: 8px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+}
+
+.thematiq-menu-settings__cell {
+	height: 14px;
+	border-radius: 4px;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+.thematiq-menu-settings__cell--below {
+	background: var(--color-background-dark);
+}
+
+.thematiq-menu-settings__fold {
+	grid-column: 1 / -1;
+	color: var(--nldesign-color-link, var(--color-primary-element));
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* The theming preview: four items drawn as the settings say. */
+.thematiq-menu-settings__sample {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 8px;
+	padding: 12px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+}
+
+.thematiq-menu-settings__sample-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+	padding: 8px 6px;
+	border-radius: 10px;
+}
+
+.thematiq-menu-settings__sample[data-tiles='true'] .thematiq-menu-settings__sample-item {
+	border: 1px solid var(--color-border);
+	background: var(--color-background-hover);
+}
+
+.thematiq-menu-settings__sample .thematiq-menu-settings__app-icon {
+	width: 40px;
+	height: 40px;
+}
+
+.thematiq-menu-settings__sample[data-icon-size='small'] .thematiq-menu-settings__app-icon {
+	width: 32px;
+	height: 32px;
+}
+
+.thematiq-menu-settings__sample[data-shape='square'] .thematiq-menu-settings__app-icon {
+	border-radius: var(--border-radius-element, 8px);
+}
+
+.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon,
+.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon--work {
+	background: var(--color-background-dark);
+	color: var(--color-main-text);
+}
+
+.thematiq-menu-settings__sample-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+/* The Manage apps link, for administrators. */
+.thematiq-menu-settings__admin {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 14px;
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-background-dark);
+}
+
+.thematiq-menu-settings__manage {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--nldesign-color-link, var(--color-primary-element));
+	font-weight: 600;
+}
+
+.thematiq-menu-settings__badge {
+	padding: 2px 8px;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	background: var(--color-main-background);
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* The external app form. */
+.thematiq-menu-settings__field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.thematiq-menu-settings__field label {
+	font-weight: 600;
+}
+
+.thematiq-menu-settings__field input {
+	width: 100%;
+	min-height: 40px;
+	margin: 0;
+}
+
+.thematiq-menu-settings__icon-grid {
+	display: grid;
+	grid-template-columns: repeat(8, 44px);
+	gap: 8px;
+}
+
+.thematiq-menu-settings__icon-choice {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 44px;
+	height: 44px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	cursor: pointer;
+}
+
+.thematiq-menu-settings__icon-choice[aria-checked='true'] {
+	border: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+}
+
+.thematiq-menu-settings__upload {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+.thematiq-menu-settings__preview {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.thematiq-menu-settings__preview-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+}
+
+.thematiq-menu-settings__preview-item > span:last-child {
+	display: flex;
+	flex-direction: column;
+}
+
+.thematiq-menu-settings__preview-item .thematiq-menu-settings__app-icon {
+	width: 40px;
+	height: 40px;
+}
+
+.thematiq-menu-settings__preview-title {
+	font-weight: 600;
+}
+
+/* Nextcloud's classic menu: one row at the end with the gear. */
+.app-menu__grid > .thematiq-app-menu__classic {
+	display: flex;
+	grid-column: 1 / -1;
+	justify-content: flex-end;
+	padding-block-start: 8px;
+	border-top: 1px solid var(--color-border);
+}
+
+.app-menu__grid > .thematiq-app-menu__classic > .thematiq-app-menu__settings {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 40px;
+	padding: 0 12px 0 10px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-main-background);
+	color: var(--nldesign-color-link, var(--color-primary-element));
+	font-weight: 600;
+	cursor: pointer;
+}
+
+@media (max-width: 600px) {
+	.thematiq-menu-settings__sample {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.thematiq-menu-settings__icon-grid {
+		grid-template-columns: repeat(4, 44px);
+	}
+}
+
+/*
+ * Nextcloud's core button and input rules (`button:not(.button-vue)...`) and the
+ * NL Design element overrides outrank a class selector, and gave every control
+ * of the dialog a filled box. The board draws quiet controls, so the dialog's
+ * own controls take their look with `!important`.
+ */
+dialog.thematiq-menu-settings button.thematiq-menu-settings__close,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-button,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__tab,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__segment,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__switch,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__button {
+	box-sizing: border-box !important;
+	margin: 0 !important;
+	box-shadow: none !important;
+	font-family: inherit !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__close {
+	width: 44px !important;
+	height: 44px !important;
+	min-height: 44px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 50% !important;
+	background: transparent !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-button {
+	width: 32px !important;
+	min-width: 32px !important;
+	height: 32px !important;
+	min-height: 32px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	background: transparent !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-button:hover:not(:disabled) {
+	background: var(--color-background-hover) !important;
+	color: var(--color-main-text) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__pin[aria-pressed='true'] {
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	) !important;
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__tab {
+	min-height: 44px !important;
+	padding: 0 14px !important;
+	border: 0 !important;
+	border-bottom: 3px solid transparent !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	color: var(--color-text-maxcontrast) !important;
+	font-weight: 500 !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__tab[aria-selected='true'] {
+	border-bottom-color: var(--nldesign-color-primary, var(--color-primary-element)) !important;
+	color: var(--color-main-text) !important;
+	font-weight: 700 !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__segment {
+	min-height: 36px !important;
+	padding: 0 14px !important;
+	border: 0 !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	background: transparent !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__segment[aria-checked='true'] {
+	background: var(--color-main-background) !important;
+	box-shadow: 0 1px 3px rgba(27, 28, 29, 0.16) !important;
+	color: var(--color-main-text) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__switch {
+	display: flex !important;
+	justify-content: flex-start !important;
+	width: 44px !important;
+	min-width: 44px !important;
+	height: 24px !important;
+	min-height: 24px !important;
+	padding: 2px !important;
+	border: 0 !important;
+	border-radius: 12px !important;
+	background: var(--color-border-maxcontrast) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__switch[aria-checked='true'] {
+	justify-content: flex-end !important;
+	background: var(--nldesign-color-primary, var(--color-primary-element)) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice {
+	width: 44px !important;
+	height: 44px !important;
+	min-height: 44px !important;
+	padding: 0 !important;
+	border: 1px solid var(--color-border) !important;
+	border-radius: 10px !important;
+	background: var(--color-main-background) !important;
+	color: var(--color-main-text) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice[aria-checked='true'] {
+	border: 2px solid var(--nldesign-color-primary, var(--color-primary-element)) !important;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__button {
+	min-height: 44px !important;
+	padding: 0 18px !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	background: var(--color-main-background) !important;
+	color: var(--color-main-text) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__button--primary,
+dialog.thematiq-menu-settings button.thematiq-menu-settings__button--primary * {
+	border-color: transparent !important;
+	background: var(--nldesign-color-primary, var(--color-primary-element)) !important;
+	color: var(--nldesign-color-primary-text, var(--color-primary-element-text)) !important;
+}
+
+dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
+	padding: 0 4px !important;
+	border-color: transparent !important;
+	background: transparent !important;
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+}
+
+/* The apps of Menu items in two columns, as the board lists them. */
+.thematiq-menu-settings__list--apps {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: 16px;
+	border: 0;
+	border-radius: 0;
+}
+
+.thematiq-menu-settings__list--apps > .thematiq-menu-settings__row {
+	min-height: 38px;
+	padding: 0 4px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.thematiq-menu-settings__list--apps > .thematiq-menu-settings__row:last-child {
+	border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 700px) {
+	.thematiq-menu-settings__list--apps {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* Theming: the choices on the left, the preview of four items on the right. */
+.thematiq-menu-settings__panel--theming {
+	display: grid;
+	grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+	align-items: start;
+	gap: 20px 24px;
+}
+
+.thematiq-menu-settings__panel--theming > * {
+	grid-column: 1;
+}
+
+.thematiq-menu-settings__panel--theming > .thematiq-menu-settings__figure {
+	grid-row: 1 / span 4;
+	grid-column: 2;
+}
+
+.thematiq-menu-settings__panel--theming .thematiq-menu-settings__cards {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.thematiq-menu-settings__panel--theming .thematiq-menu-settings__sample {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 700px) {
+	.thematiq-menu-settings__panel--theming {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.thematiq-menu-settings__panel--theming > .thematiq-menu-settings__figure {
+		grid-row: auto;
+		grid-column: 1;
+	}
+}
+
+/* The scope help beside the switch, wrapping in its own column. */
+.thematiq-menu-settings__scope-row > .thematiq-menu-settings__help {
+	flex: 1 1 0;
+	min-width: 200px;
+}
+
+/* Icon size: its name on the left, the segmented control on the right. */
+.thematiq-menu-settings__inline-field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.thematiq-menu-settings__field-name {
+	color: var(--color-main-text);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+/* Icon colour: two radios in a row, each with its swatch. */
+.thematiq-menu-settings__inline-radios {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.thematiq-menu-settings__inline-radio {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}

@@ -1434,7 +1434,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
 	 */
 	public function testStylesheetManifestMatchesInjectedSetLayers(): void {
-		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
+		// The theming cachebuster joins the version, as it does on the app's scripts.
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9', 'cachebuster' => '42']);
 		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
 			->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
@@ -1471,9 +1472,9 @@ class CssInjectionServiceTest extends TestCase {
 		foreach ($manifest['layers'] as $layer) {
 			if ($layer['kind'] === 'file') {
 				$this->assertStringEndsWith(
-					suffix: '?v=9.9.9',
+					suffix: '?v=9.9.9-42',
 					string: $layer['href'],
-					message: 'a manifest href carries the installed version as cache-buster'
+					message: 'a manifest href carries the installed version and the theming cachebuster'
 				);
 				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
 			} else {
@@ -1890,12 +1891,12 @@ class CssInjectionServiceTest extends TestCase {
 		);
 		$this->assertSame(
 			expected: [
-				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0',
-				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0',
-				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0',
-				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0',
-				'link:/custom_apps/thematiq/css/navigation-width.css?v=0',
-				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0',
+				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0-0',
+				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0-0',
+				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0-0',
+				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0-0',
+				'link:/custom_apps/thematiq/css/navigation-width.css?v=0-0',
+				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0-0',
 				'inline:thematiq-navigation-width::root { --thematiq-navigation-width: 264px; }',
 			],
 			actual: $conditional

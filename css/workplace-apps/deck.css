@@ -9,11 +9,12 @@
  * `:is(#content, #content-vue).app-deck`, so no other page pays for it, and every colour is a
  * Nextcloud or NL Design variable, so the dark scheme follows by itself.
  *
- * The board: a white canvas, a title row with a hairline under it, and one
- * grey column per stack on it. A column has a small uppercase heading and
- * white cards with a hairline and the control radius. A card shows its labels
- * above the title as small chips, the title at 15px semibold, then the due
- * date and the people in 12px.
+ * The board: a white canvas, a 60px title row with a hairline under it, and
+ * one grey 224px column per stack on it. A column has a small uppercase
+ * heading and white cards with a hairline and the control radius. A card
+ * shows its labels above the title as coloured capitals, the title at 14px,
+ * then the person and the due date in 12px. An open card sits in a 480px
+ * panel with its tabs as a strip of folder tabs.
  */
 
 :is(#content, #content-vue).app-deck #app-content-vue {
@@ -22,9 +23,9 @@
 
 /* The title row. */
 :is(#content, #content-vue).app-deck .board-wrapper > .controls {
-	min-height: 56px;
+	min-height: 60px;
 	margin: 0 !important;
-	padding: 8px 16px 8px 24px !important;
+	padding: 0 16px !important;
 	box-sizing: border-box;
 	align-items: center;
 	border-bottom: 1px solid var(--color-border);
@@ -37,25 +38,27 @@
 
 :is(#content, #content-vue).app-deck .controls .board-title h2 {
 	margin: 0 !important;
-	font-size: 22px !important;
+	font-size: 20px !important;
 	font-weight: 700 !important;
-	line-height: 28px !important;
+	line-height: 24px !important;
 }
 
 :is(#content, #content-vue).app-deck .controls .board-bullet {
 	width: 10px !important;
 	height: 10px !important;
 	margin: 0 !important;
+	display: none !important;
 }
 
 /* The columns. */
 :is(#content, #content-vue).app-deck .board {
-	padding: 16px 16px 0 24px !important;
+	padding: 12px 12px 0 !important;
 	box-sizing: border-box;
 }
 
 :is(#content, #content-vue).app-deck .board > .smooth-dnd-container.horizontal {
-	gap: 12px;
+	gap: 10px;
+	padding: 0 !important;
 }
 
 :is(#content, #content-vue).app-deck .stack-draggable-wrapper {
@@ -63,28 +66,29 @@
 	height: auto !important;
 	margin: 0 !important;
 	padding: 0 !important;
+	flex: none !important;
+	width: auto !important;
+	min-width: 0 !important;
 }
 
 :is(#content, #content-vue).app-deck .stack {
-	width: 248px !important;
+	width: 224px !important;
 	height: auto !important;
 	max-height: calc(100vh - var(--header-height, 68px) - 88px);
 	overflow-y: auto;
 	padding: 0 6px 6px !important;
 	box-sizing: border-box;
-	border-radius: var(--border-radius-large, 12px);
-	background-color: var(
-		--nldesign-component-content-surface-background-color,
-		var(--color-background-hover)
-	) !important;
+	border-radius: var(--border-radius-element, 8px);
+	background-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background)) !important;
 }
 
 :is(#content, #content-vue).app-deck .stack__header {
-	min-height: 40px;
-	height: 40px;
-	padding: 0 0 0 6px !important;
+	min-height: 32px;
+	height: 32px;
+	padding: 0 4px 0 6px !important;
 	background-color: transparent !important;
 	box-shadow: none !important;
+	margin: 6px 0 2px;
 }
 
 :is(#content, #content-vue).app-deck .stack__header::before,
@@ -95,7 +99,7 @@
 :is(#content, #content-vue).app-deck .stack__title {
 	font-size: 12px !important;
 	font-weight: 600 !important;
-	line-height: 16px !important;
+	line-height: 14px !important;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	color: var(--color-main-text) !important;
@@ -115,6 +119,8 @@
 	height: auto !important;
 	margin: 0 !important;
 	padding: 0 !important;
+	overflow: visible !important;
+	gap: 8px !important;
 }
 
 /* The cards. */
@@ -145,7 +151,7 @@
 
 :is(#content, #content-vue).app-deck .card.current-card {
 	border-color: var(--color-primary-element) !important;
-	box-shadow: inset 0 0 0 1px var(--color-primary-element) !important;
+	box-shadow: none !important;
 	background-color: var(--color-primary-element-light) !important;
 }
 
@@ -161,8 +167,8 @@
 :is(#content, #content-vue).app-deck .card .card-upper h4 {
 	margin: 0 !important;
 	padding: 0 !important;
-	font-size: 15px !important;
-	font-weight: 600 !important;
+	font-size: 14px !important;
+	font-weight: 500 !important;
 	line-height: 20px !important;
 }
 
@@ -172,20 +178,24 @@
 }
 
 :is(#content, #content-vue).app-deck .card .labels li {
-	height: 18px;
+	height: 16px;
 	margin: 0 !important;
-	padding: 0 6px !important;
-	border-radius: var(--border-radius-small, 4px) !important;
-	font-size: 11px !important;
+	padding: 0 !important;
+	border-radius: 0 !important;
+	font-size: 12px !important;
 	font-weight: 700 !important;
-	line-height: 18px !important;
-	letter-spacing: 0.04em;
+	line-height: 16px !important;
+	letter-spacing: 0;
 	text-transform: uppercase;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent !important;
 }
 
 :is(#content, #content-vue).app-deck .card .labels li span {
 	padding: 0 !important;
-	line-height: 18px !important;
+	line-height: 16px !important;
+	color: transparent !important;
 }
 
 :is(#content, #content-vue).app-deck .card .card-controls {
@@ -195,6 +205,8 @@
 
 :is(#content, #content-vue).app-deck .card .badges {
 	align-items: center;
+	height: 22px;
+	gap: 6px;
 }
 
 :is(#content, #content-vue).app-deck .card .badges .due {
@@ -225,4 +237,173 @@
 	min-width: 28px !important;
 	height: 28px !important;
 	min-height: 28px !important;
+}
+
+/*
+ * Pass two, measured against TbBoard frame (a): a 60px title row with the
+ * title in 20px, 224px columns 10px apart on a 12px margin, a 32px column
+ * heading, 14px card titles, labels as coloured capitals with no chip, and
+ * the person first in the card's footer.
+ */
+
+/* The column scrolls as a whole; its card list does not get a scrollbar of
+   its own inside it. */
+
+:is(#content, #content-vue).app-deck .stack .dnd-container > .smooth-dnd-draggable-wrapper {
+	margin: 0 !important;
+}
+
+/* A label is its own colour as text: the chip's background is clipped to
+   the letters, so every label keeps the colour Deck gives it. */
+
+:is(#content, #content-vue).app-deck .card .badges .icon-badge {
+	height: 22px;
+	align-items: center;
+}
+
+:is(#content, #content-vue).app-deck .card .badge-right {
+	display: contents;
+}
+
+:is(#content, #content-vue).app-deck .card .badges .avatars {
+	flex: none;
+	order: -1;
+	height: 22px !important;
+}
+
+:is(#content, #content-vue).app-deck .card .badges .badge-left {
+	flex: 1 1 auto;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatar-list {
+	height: 22px !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatardiv {
+	--avatar-size: 22px !important;
+	width: 22px !important;
+	margin: 0 !important;
+	height: 22px !important;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatardiv img {
+	width: 22px !important;
+	height: 22px !important;
+}
+
+/* The card menu shows when the card is pointed at or has the focus. */
+:is(#content, #content-vue).app-deck .card .card-menu {
+	opacity: 0;
+}
+
+:is(#content, #content-vue).app-deck .card:is(:hover, :focus-within) .card-menu {
+	opacity: 1;
+}
+
+/* The navigation: 34px rows in 14px. */
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry {
+	min-height: 34px;
+	height: 34px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry-link {
+	min-height: 34px;
+	height: 34px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 21px;
+}
+
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry .button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+}
+
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry-wrapper + .app-navigation-entry-wrapper {
+	margin-top: 1px;
+}
+
+/* The card panel (TbCard): 480px, the title in 18px without the focus ring
+   its opening puts on it, and the tabs as a strip of folder tabs in text. */
+:is(#content, #content-vue).app-deck #app-sidebar-vue {
+	--app-sidebar-width: 480px;
+
+	width: 480px !important;
+	max-width: 100vw;
+	border-inline-start: 1px solid var(--color-border);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__desc {
+	padding: 12px 76px 8px 16px !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname {
+	font-size: 18px !important;
+	line-height: 24px !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus:not(:focus-visible),
+:root[data-thematiq-pointer] :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__subname {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__nav {
+	gap: 4px;
+	margin: 0 !important;
+	padding: 0 16px !important;
+	border-bottom: 1px solid var(--color-border-maxcontrast);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab {
+	flex: none !important;
+	height: 36px !important;
+	min-height: 36px !important;
+	margin: 0 0 -1px !important;
+	padding: 0 !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-bottom: 0 !important;
+	border-radius: var(--border-radius-element, 8px) var(--border-radius-element, 8px) 0 0 !important;
+	background-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background)) !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab[aria-selected='true'],
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab.checkbox-radio-switch--checked {
+	height: 37px !important;
+	background-color: var(--color-main-background) !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab .checkbox-content {
+	flex-direction: row !important;
+	height: 36px;
+	padding: 0 12px !important;
+	border: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab .checkbox-content__icon {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab-caption {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-main-text);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar__tab {
+	padding: 12px 16px !important;
 }

@@ -97,6 +97,8 @@ function menu(extra = {}) {
 		manageLabel: 'Apps beheren',
 		labels: LABELS,
 		order: [],
+		// Three columns of three rows: the grid these cases were written for.
+		settings: { columns: 3, rowsAboveFold: 3 },
 		...extra,
 	}
 }
@@ -258,8 +260,11 @@ describe('the apps menu as one ordered list', () => {
 		await loadScript()
 
 		const footer = grid.querySelector('[data-thematiq-row="footer"]')
-		expect(footer.textContent).toContain('Pijltjestoetsen bladeren')
-		expect(footer.textContent).toContain('Sleep een app')
+		expect(
+			Array.from(footer.querySelectorAll('.thematiq-app-menu__hint > span')).map(
+				(span) => span.textContent,
+			),
+		).toEqual([LABELS.dragHint, LABELS.moveHint])
 		expect(footer.querySelector('a').getAttribute('href')).toBe(
 			'/index.php/settings/apps',
 		)
@@ -516,7 +521,8 @@ describe('the apps menu as one ordered list', () => {
 		expect(opened).not.toHaveBeenCalled()
 
 		vi.advanceTimersByTime(500)
-		expect(posted[0].body.order[0]).toBe('calendar')
+		// A save an earlier case scheduled on a real timer may land here first.
+		expect(posted[posted.length - 1].body.order[0]).toBe('calendar')
 		delete document.elementsFromPoint
 		vi.useRealTimers()
 	})

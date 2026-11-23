@@ -62,6 +62,28 @@ class HeaderUserService {
 	public const SCRIPT = 'header-user';
 
 	/**
+	 * The script that draws the brand block for an app that draws none (js/header-brand.js).
+	 *
+	 * @var string
+	 */
+	public const BRAND_SCRIPT = 'header-brand';
+
+	/**
+	 * The script that draws the Quick add button for the apps whose boards have it (js/header-create.js).
+	 *
+	 * @var string
+	 */
+	public const CREATE_SCRIPT = 'header-create';
+
+	/**
+	 * The script that gives Mail, Calendar and Deck the boards' words and day names (js/workplace-apps.js).
+	 * It acts only while css/workplace-apps/common.css is on the page.
+	 *
+	 * @var string
+	 */
+	public const APPS_SCRIPT = 'workplace-apps';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IUserSession $userSession The signed-in person.
@@ -135,7 +157,7 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js, js/header-brand.js, js/header-create.js and js/workplace-apps.js. A seam, so unit tests need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
@@ -145,5 +167,8 @@ class HeaderUserService {
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::CREATE_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::APPS_SCRIPT);
 	}//end emitScript()
 }//end class

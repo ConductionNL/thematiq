@@ -65,6 +65,13 @@ class AppMenuService {
 	public const SCRIPT = 'app-menu';
 
 	/**
+	 * The Menu settings dialog's script under `js/`, without the extension.
+	 *
+	 * @var string
+	 */
+	public const DIALOG = 'dialogs/menu-settings-dialog';
+
+	/**
 	 * The app config key an administrator overrides the set's block in.
 	 *
 	 * @var string
@@ -265,8 +272,16 @@ class AppMenuService {
 				$menu = array_merge($menu, $this->listState->state(l: $l10n));
 			}
 
+			$workplace = ($menu['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']) !== 'classic';
+			if ($workplace === false && ($menu['admin'] ?? false) !== true) {
+				return;
+			}
+
 			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
 			$this->emitScript();
+			if ($workplace === true) {
+				$this->emitMenuStyle();
+			}
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: the apps menu sections failed for this render; the menu keeps one grid.',
@@ -276,13 +291,28 @@ class AppMenuService {
 	}//end inject()
 
 	/**
-	 * Load js/app-menu.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/app-menu.js and the Menu settings dialog with its stylesheet. A seam, so unit tests
+	 * need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	protected function emitScript(): void {
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::DIALOG);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
+		\OCP\Util::addStyle(application: Application::APP_ID, file: 'menu-settings-dialog');
 	}//end emitScript()
+
+	/**
+	 * Load css/app-menu.css, the workplace menu's look. A seam, so unit tests need no Nextcloud
+	 * bootstrap.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apps-menu-create-pins-settings/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	protected function emitMenuStyle(): void {
+		\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);
+	}//end emitMenuStyle()
 }//end class
