@@ -407,3 +407,28 @@
 :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar__tab {
 	padding: 12px 16px !important;
 }
+
+/*
+ * A card mid-move, as TbBoard draws it
+ * (openspec/changes/workplace-app-sheets-entry-states).
+ *
+ * Deck moves cards with vue3-smooth-dnd over smooth-dnd 0.12, without a
+ * `dragClass`, `dropClass` or `dropPlaceholder` (src/components/board/Stack.vue,
+ * nextcloud/deck main, 23 November 2026). smooth-dnd then draws the dragged
+ * copy as `.smooth-dnd-ghost`, a fixed wrapper it appends to the parent of the
+ * card's `.smooth-dnd-draggable-wrapper`: the stack's container, inside Deck's
+ * content element, so the lift starts there. It moves the ghost with an inline
+ * transform, so the tilt goes on the card inside it. Without `dropPlaceholder`
+ * smooth-dnd draws no element where the card will land, only a gap between
+ * the cards, so there is no slot to draw dashed (see the change's tasks).
+ */
+:is(#content, #content-vue).app-deck .smooth-dnd-ghost .card {
+	border-color: var(--color-border-dark, var(--color-border)) !important;
+	box-shadow: 0 8px 24px var(--nldesign-component-content-card-shadow-color, var(--color-box-shadow)) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:is(#content, #content-vue).app-deck .smooth-dnd-ghost .card {
+		transform: rotate(2deg);
+	}
+}

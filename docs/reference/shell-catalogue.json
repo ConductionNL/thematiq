@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:1a6a9160720f1e46",
+    "generated_from": "sets:a5a6135c399a78eb",
     "sets": [
         {
             "id": "amsterdam",
@@ -11263,6 +11263,7 @@
                 "color-error-text": "#A30000",
                 "color-focus": "rgba(54, 105, 165, 0.5)",
                 "color-focus-rgb": "54, 105, 165",
+                "color-focus-ring": "#3669A5",
                 "color-footer-background": "#234A78",
                 "color-footer-text": "#ffffff",
                 "color-header-background": "#ffffff",
@@ -11283,6 +11284,8 @@
                 "component-content-card-shadow-color": "rgba(27, 28, 29, 0.04)",
                 "component-content-surface-background-color": "#F5F6F8",
                 "component-dashboard-card-header-border-style": "none",
+                "component-heading-1-font-size": "28px",
+                "component-heading-3-font-size": "17px",
                 "component-navigation-active-background-color": "#CC0000",
                 "component-navigation-active-color": "#A30000",
                 "component-navigation-badge-background-color": "#CC0000",
@@ -11392,6 +11395,7 @@
                     "color-favorite": "#f48c25",
                     "color-focus": "#5b8ac280",
                     "color-focus-rgb": "91, 138, 194",
+                    "color-focus-ring": "#5b8ac2",
                     "color-footer-background": "#7fa6d4",
                     "color-footer-text": "#2e2e2e",
                     "color-header-background": "#141414",

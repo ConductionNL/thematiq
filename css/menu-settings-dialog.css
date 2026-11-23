@@ -12,7 +12,7 @@
 
 dialog.thematiq-menu-settings {
 	box-sizing: border-box;
-	width: 760px;
+	width: 820px;
 	max-width: calc(100vw - 32px);
 	max-height: calc(100vh - 32px);
 	padding: 0;
@@ -38,7 +38,16 @@ dialog.thematiq-menu-settings::backdrop {
 }
 
 dialog.thematiq-menu-settings--form {
-	width: 600px;
+	width: 560px;
+}
+
+/* The form's title sits 22px over its first field, as on the board. */
+dialog.thematiq-menu-settings--form > .thematiq-menu-settings__head {
+	padding-block-end: 4px;
+}
+
+dialog.thematiq-menu-settings--form > .thematiq-menu-settings__body {
+	padding-block-start: 8px;
 }
 
 .thematiq-menu-settings__head {
@@ -209,7 +218,7 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	border-bottom: 3px solid transparent;
 	border-radius: 0;
 	background: transparent;
-	color: var(--color-text-maxcontrast);
+	color: var(--nl-color-grey-text, var(--color-text-maxcontrast));
 	font-size: 15px;
 	font-weight: 500;
 	white-space: nowrap;
@@ -264,6 +273,18 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	gap: 8px;
 	margin: 0;
 	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+/* The NL Design paragraph size is `!important`; the board's note is 13px. */
+dialog.thematiq-menu-settings p.thematiq-menu-settings__note {
+	font-size: 13px !important;
+	line-height: normal !important;
+}
+
+.thematiq-menu-settings__note > svg {
+	flex: none;
+	color: var(--nldesign-color-link, var(--color-primary-element));
 }
 
 .thematiq-menu-settings__error,
@@ -366,6 +387,7 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	min-width: 0;
 	overflow: hidden;
 	font-weight: 500;
+	line-height: normal;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -373,6 +395,18 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 .thematiq-menu-settings__name--two {
 	display: flex;
 	flex-direction: column;
+	gap: 1px;
+}
+
+/* An external app's second line: 12px, as the board draws its address. */
+.thematiq-menu-settings__name--two .thematiq-menu-settings__sub {
+	font-size: 12px;
+	line-height: 1.2;
+}
+
+/* An external app's row is 53px with its rule, as on the board. */
+.thematiq-menu-settings__list:not(.thematiq-menu-settings__list--apps) > .thematiq-menu-settings__row {
+	min-height: 52px;
 }
 
 .thematiq-menu-settings__switch-wrap {
@@ -418,7 +452,7 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	align-items: center;
 	justify-content: space-between;
 	gap: 12px;
-	min-height: 40px;
+	min-height: 44px;
 }
 
 .thematiq-menu-settings__toggle-text {
@@ -429,6 +463,7 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 
 .thematiq-menu-settings__toggle-name {
 	font-weight: 500;
+	line-height: normal;
 }
 
 /* Radio cards: the menu style, the shape and the icon colour. */
@@ -457,6 +492,11 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	cursor: pointer;
 }
 
+/* A radio card is a label, and the NL Design labels are bold with `!important`. */
+dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
+	font-weight: 400 !important;
+}
+
 .thematiq-menu-settings__card--on {
 	border-color: var(--nldesign-color-primary, var(--color-primary-element));
 	background: var(
@@ -471,25 +511,110 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	gap: 10px;
 }
 
+.thematiq-menu-settings__card-head input[type='radio'] {
+	flex: none;
+	width: 20px;
+	height: 20px;
+	min-height: 0;
+	margin: 0;
+}
+
 .thematiq-menu-settings__card-name {
 	font-size: 15px;
 	font-weight: 600;
+	line-height: normal;
+}
+
+.thematiq-menu-settings__fieldset > legend {
+	margin-block-end: 10px;
+	padding: 0;
 }
 
 .thematiq-menu-settings__style-sample {
+	--sample-primary: var(--nldesign-color-primary, var(--color-primary-element));
+	--sample-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
+	--sample-deep: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	--sample-accent: var(--nldesign-color-accent, var(--color-error));
+
+	position: relative;
 	display: block;
-	height: 48px;
+	box-sizing: border-box;
+	height: 64px;
+	overflow: hidden;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-element, 8px);
 	background:
-		linear-gradient(var(--color-main-background), var(--color-main-background))
-			top / 100% 14px no-repeat,
-		var(--color-background-dark);
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
+		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
+			no-repeat,
+		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+}
+
+/* The workplace menu: one apps button, and its menu open as a small grid. */
+.thematiq-menu-settings__style-sample--workplace {
+	background:
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
+		linear-gradient(
+				var(--nl-color-grey-text, var(--color-main-text)),
+				var(--nl-color-grey-text, var(--color-main-text))
+			)
+			40px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
+			no-repeat,
+		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+}
+
+.thematiq-menu-settings__style-sample--workplace::before {
+	position: absolute;
+	top: 24px;
+	left: 28px;
+	box-sizing: border-box;
+	width: 112px;
+	height: 34px;
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	background:
+		linear-gradient(var(--sample-light), var(--sample-light)) 4px 4px / 23px 11px no-repeat,
+		linear-gradient(
+				var(--nldesign-color-accent-light, var(--sample-light)),
+				var(--nldesign-color-accent-light, var(--sample-light))
+			)
+			30px 4px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 57px 4px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 83px 4px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 4px 18px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 30px 18px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 57px 18px / 23px 11px no-repeat,
+		linear-gradient(var(--color-background-hover), var(--color-background-hover)) 83px 18px /
+			23px 11px no-repeat,
+		var(--color-main-background);
+	box-shadow: 0 2px 6px rgba(27, 28, 29, 0.12);
+	content: '';
+}
+
+/* The classic menu: a row of app icons in the bar, the current one in the accent. */
+.thematiq-menu-settings__style-sample--classic {
+	background:
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 40px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 54px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 68px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 82px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 96px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--sample-accent), var(--sample-accent)) 110px 4px / 10px 10px no-repeat,
+		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
+			no-repeat,
+		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
 }
 
 .thematiq-menu-settings__shape-sample {
 	display: flex;
-	gap: 8px;
+	justify-content: center;
+	gap: 10px;
+	padding: 14px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
 }
 
 .thematiq-menu-settings__shape-sample > span {
@@ -527,73 +652,149 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	background: var(--color-background-dark);
 }
 
-/* The steppers and the grid preview. */
-.thematiq-menu-settings__steppers {
+/* The grid: the steppers on the left, the preview card on the right. */
+.thematiq-menu-settings__section--grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 12px;
+	grid-template-columns: minmax(0, 1fr) 300px;
+	align-items: start;
+	gap: 8px 24px;
+}
+
+.thematiq-menu-settings__section--grid > .thematiq-menu-settings__section-head {
+	grid-column: 1 / -1;
+	margin-block-end: 6px;
+}
+
+.thematiq-menu-settings__steppers {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
 }
 
 .thematiq-menu-settings__stepper {
 	display: flex;
-	flex-direction: column;
-	gap: 6px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
 }
 
 .thematiq-menu-settings__stepper-text {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	font-weight: 600;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: normal;
 }
 
+.thematiq-menu-settings__stepper-text .thematiq-menu-settings__help {
+	font-weight: 400;
+}
+
+/* One box of 130 by 42px: minus, the number and plus, as the board draws it. */
 .thematiq-menu-settings__stepper-controls {
 	display: flex;
-	align-items: center;
-	gap: 4px;
+	flex: none;
+	align-items: stretch;
+	overflow: hidden;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-element, 8px);
+}
+
+dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.thematiq-menu-settings__icon-button {
+	width: 40px !important;
+	min-width: 40px !important;
+	height: 40px !important;
+	min-height: 40px !important;
+	margin: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
 }
 
 .thematiq-menu-settings__stepper-controls input {
-	width: 64px;
-	min-height: 36px;
+	box-sizing: border-box;
+	width: 48px;
+	height: 40px;
+	min-height: 40px;
 	margin: 0;
+	padding: 0;
+	border: 0 !important;
+	border-inline: 1px solid var(--color-border) !important;
+	border-radius: 0 !important;
+	font-size: 15px;
+	font-weight: 600;
 	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.thematiq-menu-settings__stepper-controls input::-webkit-inner-spin-button,
+.thematiq-menu-settings__stepper-controls input::-webkit-outer-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
 }
 
 .thematiq-menu-settings__figure {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 8px;
 	margin: 0;
 }
 
 .thematiq-menu-settings__grid-preview {
 	display: grid;
 	grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
-	gap: 4px;
-	padding: 8px;
+	gap: 16px 8px;
+	padding: 10px;
 	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius-element, 8px);
+	border-radius: 10px;
+	background: var(--color-main-background);
+	box-shadow: 0 4px 12px rgba(27, 28, 29, 0.08);
 }
 
+/* A cell is an app in small: a dot for its icon and a bar for its name. */
 .thematiq-menu-settings__cell {
-	height: 14px;
-	border-radius: 4px;
-	background: var(
-		--nldesign-color-primary-light,
-		var(--color-primary-element-light)
-	);
+	height: 12px;
+	background:
+		radial-gradient(
+				circle 6px at 6px 50%,
+				var(--nldesign-color-primary-light, var(--color-primary-element-light)) 98%,
+				transparent
+			)
+			no-repeat,
+		linear-gradient(var(--color-main-text), var(--color-main-text)) 22px 50% / 28px 3px
+			no-repeat;
 }
 
 .thematiq-menu-settings__cell--below {
-	background: var(--color-background-dark);
+	background:
+		radial-gradient(circle 6px at 6px 50%, var(--color-background-dark) 98%, transparent)
+			no-repeat,
+		linear-gradient(var(--color-text-maxcontrast), var(--color-text-maxcontrast)) 22px 50% /
+			28px 3px no-repeat;
 }
 
 .thematiq-menu-settings__fold {
+	display: flex;
 	grid-column: 1 / -1;
+	align-items: center;
+	gap: 6px;
 	color: var(--nldesign-color-link, var(--color-primary-element));
-	font-size: 12px;
+	font-size: 10px;
 	font-weight: 600;
+	line-height: 12px;
+}
+
+.thematiq-menu-settings__fold::before,
+.thematiq-menu-settings__fold::after {
+	flex: 1;
+	border-top: 1px dashed var(--color-border-maxcontrast);
+	content: '';
+}
+
+@media (max-width: 700px) {
+	.thematiq-menu-settings__section--grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 /* The theming preview: four items drawn as the settings say. */
@@ -679,17 +880,28 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 .thematiq-menu-settings__field {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 }
 
 .thematiq-menu-settings__field label {
-	font-weight: 600;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: normal;
+}
+
+.thematiq-menu-settings__field .thematiq-menu-settings__help {
+	font-size: 12px;
+	line-height: normal;
 }
 
 .thematiq-menu-settings__field input {
+	box-sizing: border-box;
 	width: 100%;
-	min-height: 40px;
+	height: 44px;
+	min-height: 44px;
 	margin: 0;
+	padding: 0 12px;
+	font-size: 15px;
 }
 
 .thematiq-menu-settings__icon-grid {
@@ -726,22 +938,45 @@ dialog.thematiq-menu-settings [role='tabpanel']:focus-visible {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+	justify-content: space-between;
 	gap: 10px;
 }
 
+/* Upload is a quiet link with its icon, as the board draws it. */
+dialog.thematiq-menu-settings .thematiq-menu-settings__upload button.thematiq-menu-settings__button {
+	min-height: 32px !important;
+	padding: 0 4px !important;
+	border-color: transparent !important;
+	background: transparent !important;
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+}
+
+/* The preview: the label beside one menu item, on a grey band. */
 .thematiq-menu-settings__preview {
 	display: flex;
-	flex-direction: column;
-	gap: 6px;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 14px;
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--color-background-dark);
+}
+
+.thematiq-menu-settings__preview > .thematiq-menu-settings__help {
+	color: var(--color-main-text);
+	font-size: 13px;
+	font-weight: 600;
+	line-height: normal;
 }
 
 .thematiq-menu-settings__preview-item {
 	display: flex;
+	box-sizing: border-box;
 	align-items: center;
 	gap: 12px;
-	padding: 10px 12px;
-	border: 1px solid var(--color-border);
+	width: 220px;
+	padding: 8px 10px;
 	border-radius: 10px;
+	background: var(--color-main-background);
 }
 
 .thematiq-menu-settings__preview-item > span:last-child {
@@ -855,7 +1090,7 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__tab {
 	border-bottom: 3px solid transparent !important;
 	border-radius: 0 !important;
 	background: transparent !important;
-	color: var(--color-text-maxcontrast) !important;
+	color: var(--nl-color-grey-text, var(--color-text-maxcontrast)) !important;
 	font-weight: 500 !important;
 }
 
@@ -944,14 +1179,15 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 .thematiq-menu-settings__list--apps {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	column-gap: 16px;
+	column-gap: 20px;
 	border: 0;
 	border-radius: 0;
 }
 
 .thematiq-menu-settings__list--apps > .thematiq-menu-settings__row {
-	min-height: 38px;
-	padding: 0 4px;
+	min-height: 44px;
+	gap: 6px;
+	padding: 0 2px;
 	border-bottom: 1px solid var(--color-border);
 }
 
@@ -968,7 +1204,7 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 /* Theming: the choices on the left, the preview of four items on the right. */
 .thematiq-menu-settings__panel--theming {
 	display: grid;
-	grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+	grid-template-columns: minmax(0, 1fr) 300px;
 	align-items: start;
 	gap: 20px 24px;
 }
@@ -988,6 +1224,38 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 
 .thematiq-menu-settings__panel--theming .thematiq-menu-settings__sample {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
+	border-radius: 10px;
+	background: var(--color-main-background);
+	box-shadow: 0 4px 12px rgba(27, 28, 29, 0.08);
+}
+
+.thematiq-menu-settings__panel--theming .thematiq-menu-settings__figure > .thematiq-menu-settings__field-name {
+	font-size: 13px;
+	font-weight: 700;
+	line-height: normal;
+}
+
+/* The shape samples: three items on the work area, the current app in the accent. */
+.thematiq-menu-settings__shape-sample > span:nth-child(2) {
+	border-color: transparent;
+	background: var(--nldesign-color-accent, var(--color-error));
+}
+
+.thematiq-menu-settings__shape-sample > span:nth-child(3) {
+	border-color: var(--color-border);
+	background: var(--color-background-hover);
+}
+
+dialog.thematiq-menu-settings label.thematiq-menu-settings__inline-radio {
+	font-size: 14px;
+	font-weight: 400 !important;
+}
+
+.thematiq-menu-settings__inline-radio input[type='radio'] {
+	width: 20px;
+	height: 20px;
+	min-height: 0;
+	margin: 0;
 }
 
 @media (max-width: 700px) {
@@ -1012,7 +1280,7 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
+	gap: 16px;
 }
 
 .thematiq-menu-settings__field-name {
@@ -1031,6 +1299,6 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 .thematiq-menu-settings__inline-radio {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: 10px;
 	cursor: pointer;
 }

@@ -107,6 +107,11 @@
 	/* Focus colour */
 	--nldesign-color-focus: rgba(54, 105, 165, 0.5);
 	--nldesign-color-focus-rgb: 54, 105, 165;
+	/* The workplace's keyboard ring, as DqTokens draws it ("Focus: 2 px blue
+	 * border, always visible"): the action blue, opaque, not the halo above.
+	 * 5.64:1 on white and 5.22:1 on the workspace #F5F6F8. Read by
+	 * css/workplace-layout.css (openspec/changes/zuiddrecht-workplace-type-and-focus). */
+	--nldesign-color-focus-ring: #3669A5;
 
 	/* Link colours (interactive blue, not the red accent) */
 	--nldesign-color-link: #3669A5;
@@ -120,6 +125,11 @@
 
 	/* Typography: Fira Sans in 400, 500, 600 and 700, bundled by thematiq */
 	--nldesign-font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+	/* The workplace's type scale of DqTokens: page title 28px, card title
+	 * 17px. Text (15px) and small text (13px) stay Nextcloud's own, so the
+	 * set declares neither --default-font-size nor --font-size-small. */
+	--nldesign-component-heading-1-font-size: 28px;
+	--nldesign-component-heading-3-font-size: 17px;
 
 	/* Border radius: NEXTCLOUD'S SCALE, NOT THE WEBSITE'S.
 	 *

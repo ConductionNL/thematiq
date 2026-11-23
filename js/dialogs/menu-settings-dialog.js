@@ -37,7 +37,6 @@
 		external: 'M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z',
 		reset: 'M12,4C14.1,4 16.1,4.8 17.6,6.3C20.7,9.4 20.7,14.5 17.6,17.6C15.8,19.5 13.3,20.2 10.9,19.9L11.4,17.9C13.1,18.1 14.9,17.5 16.2,16.2C18.5,13.9 18.5,10.1 16.2,7.7C15.1,6.6 13.5,6 12,6V10.6L7,5.6L12,0.6V4M6.3,17.6C3.7,15 3.3,11 5.1,7.9L6.6,9.4C5.5,11.6 5.9,14.4 7.8,16.2C8.3,16.7 8.9,17.1 9.6,17.4L9,19.4C8,19 7.1,18.4 6.3,17.6Z',
 		upload: 'M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z',
-		info: 'M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z',
 	}
 	var LIBRARY_LABELS = {
 		link: 'iconLink',
@@ -773,7 +772,7 @@
 			for (var j = 0; j < form.columns * (form.rows - fold); j++) {
 				preview.appendChild(h('span', { class: BLOCK + '__cell ' + BLOCK + '__cell--below' }))
 			}
-			panel.appendChild(h('section', { class: BLOCK + '__section', 'aria-labelledby': BLOCK + '-grid' }, [
+			panel.appendChild(h('section', { class: BLOCK + '__section ' + BLOCK + '__section--grid', 'aria-labelledby': BLOCK + '-grid' }, [
 				h('div', { class: BLOCK + '__section-head' }, [
 					h('h3', { id: BLOCK + '-grid', text: t('grid') }),
 					h('span', { class: BLOCK + '__help', text: t('gridHelp') }),
@@ -1036,7 +1035,7 @@
 					h('span', { class: BLOCK + '__help', text: t('formPreview') }),
 					h('span', { class: BLOCK + '__preview-item', 'aria-hidden': 'true' }, [previewIcon, h('span', {}, [previewTitle, previewPayoff])]),
 				]))
-				content.appendChild(h('p', { class: BLOCK + '__note' }, [svg(ICONS.info, 18), t('alwaysNewTab')]))
+				content.appendChild(h('p', { class: BLOCK + '__note' }, [svg(ICONS.external, 16), t('alwaysNewTab')]))
 				updatePreview()
 				if (focusSelector) {
 					var target = sub.querySelector(focusSelector)
