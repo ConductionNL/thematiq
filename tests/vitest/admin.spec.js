@@ -179,6 +179,8 @@ async function loadAdmin() {
 	vi.resetModules()
 	await import('../../js/lib/appTheming.js')
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -369,11 +371,11 @@ describe('admin.js theming reset dialog for a stock set', () => {
 		vi.restoreAllMocks()
 	})
 
-	it('shows every synced setting against the Nextcloud default, with both previews', async () => {
+	it('shows every synced setting against the Nextcloud default', async () => {
 		const overlay = await switchToStock(SYNCED)
 
 		expect(overlay).not.toBeNull()
-		expect(overlay.querySelector('h3').textContent).toBe('Reset Nextcloud theming to its defaults?')
+		expect(overlay.querySelector('h2').textContent).toBe('Reset the Nextcloud theme to the default?')
 		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map((tr) => Array.from(tr.cells).map((td) => td.textContent.trim()))
 		expect(rows).toEqual([
 			['Primary color', '#aa0000', '#00679e Nextcloud default'],
@@ -381,24 +383,14 @@ describe('admin.js theming reset dialog for a stock set', () => {
 			['Logo', '(custom logo)', 'Nextcloud logo'],
 			['Background image', '(custom)', 'Nextcloud default'],
 		])
-		const [current, proposed] = overlay.querySelectorAll('.nldesign-dialog-preview-box')
-		expect(current.getAttribute('style')).toContain('background-color:#bb0000')
-		expect(current.getAttribute('style')).toContain('background-image:url(/bg.jpg)')
-		expect(current.querySelector('img').getAttribute('src')).toBe('/logo.svg')
-		expect(proposed.getAttribute('style')).toContain('background-color:#0082c9')
-		expect(proposed.querySelector('img').getAttribute('src')).toBe('/core/img/logo/logo.svg')
 	})
 
-	it('falls back to the default primary for the background, and draws no current logo without one', async () => {
+	it('lists only what was synced, against the default primary', async () => {
 		const overlay = await switchToStock({ primary_color: '#aa0000', has_custom_logo: false, has_custom_background: false })
 
 		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map((tr) => tr.cells[0].textContent)
 		expect(rows).toEqual(['Primary color'])
 		expect(overlay.querySelector('tbody tr').cells[2].textContent).toContain('#00679e')
-		const [current, proposed] = overlay.querySelectorAll('.nldesign-dialog-preview-box')
-		expect(current.querySelector('img')).toBeNull()
-		expect(current.getAttribute('style')).not.toContain('background-image')
-		expect(proposed.getAttribute('style')).toContain('background-color:#00679e')
 	})
 
 	it('shows no dialog when nothing was synced', async () => {
@@ -437,7 +429,7 @@ describe('admin.js theming reset dialog for a stock set', () => {
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()
 
 		overlay = await switchToStock(SYNCED)
-		overlay.querySelector('.nldesign-dialog').click()
+		overlay.querySelector('.thematiq-admin-dialog__body').click()
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).not.toBeNull()
 		overlay.click()
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()

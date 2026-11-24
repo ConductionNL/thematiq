@@ -1452,7 +1452,14 @@ OC.L10N.register(
         "borders of fields, tables and cards": "randen van velden, tabellen en kaarten",
         "corners of buttons and fields": "hoeken van knoppen en velden",
         "To change a component, use its own rows. Those affect only that component.": "Wilt u een component veranderen, gebruik dan zijn eigen rijen. Die raken alleen dat component.",
-        "Edit anyway": "Toch bewerken"
+        "Edit anyway": "Toch bewerken",
+        "After choosing a token set": "Na het kiezen van een tokenset",
+        "Reset the Nextcloud theme to the default?": "Het Nextcloud-thema terugzetten naar de standaard?",
+        "Update the Nextcloud theme to {name}?": "Het Nextcloud-thema bijwerken naar {name}?",
+        "Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.": "Thematiq zet de waarden van Nextcloud gelijk aan de tokenset, zodat inlogpagina, e-mail en apps dezelfde huisstijl tonen. Alleen waarden die verschillen staan hier; zonder voorgestelde waarde blijft iets zoals het is.",
+        "If you choose the token set Nextcloud, the same dialog asks \"Reset the Nextcloud theme to the default?\" with the Nextcloud default values in the Proposed column.": "Kiest u de tokenset Nextcloud, dan stelt hetzelfde venster de vraag \"Het Nextcloud-thema terugzetten naar de standaard?\" met in de kolom Voorgesteld de standaardwaarden van Nextcloud.",
+        "Reset theme": "Thema terugzetten",
+        "Update theme": "Thema bijwerken"
     },
     "nplurals=2; plural=(n != 1);"
 )

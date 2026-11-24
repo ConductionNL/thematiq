@@ -233,6 +233,7 @@ async function mount({
 	await import('../../js/dialogs/new-theme-dialog.js?t=' + Math.random())
 	await import('../../js/dialogs/save-overrides-dialog.js?t=' + Math.random())
 	await import('../../js/dialogs/base-tokens-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }

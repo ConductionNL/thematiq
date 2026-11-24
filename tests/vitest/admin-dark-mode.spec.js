@@ -118,6 +118,8 @@ async function flush(rounds = 8) {
 async function loadAdminScript() {
 	vi.resetModules()
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -187,11 +189,9 @@ describe('admin.js dark mode', () => {
 			const overlay = await openThemingDialog(TOKEN_SET_WITH_DARK_LOGO)
 			expect(overlay).not.toBeNull()
 
-			const row = overlay.querySelector('.nldesign-dialog-dark-logo-row')
-			expect(row).not.toBeNull()
-
-			const img = row.querySelector('img')
-			expect(img.getAttribute('src')).toBe('img/logos/withlogo-dark.svg')
+			const row = [...overlay.querySelectorAll('tbody tr')].find((tr) => tr.cells[0].textContent === 'Dark logo')
+			expect(row).not.toBeUndefined()
+			expect(row.cells[2].textContent).toBe('withlogo-dark.svg')
 		})
 
 		it('omits the dark-logo row when theming.logo_dark is absent', async () => {
@@ -199,8 +199,8 @@ describe('admin.js dark mode', () => {
 			expect(overlay).not.toBeNull()
 
 			expect(
-				overlay.querySelector('.nldesign-dialog-dark-logo-row'),
-			).toBeNull()
+				[...overlay.querySelectorAll('tbody tr')].map((tr) => tr.cells[0].textContent),
+			).not.toContain('Dark logo')
 		})
 
 		it('never includes logo_dark in the POST /settings/theming payload on confirm', async () => {

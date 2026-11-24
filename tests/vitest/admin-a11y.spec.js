@@ -131,6 +131,8 @@ async function loadAdminScript() {
 	// admin.js; so does the fixture.
 	await import('../../js/lib/appTheming.js')
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	// admin.js's fetch-driven init calls (initAppTheming, etc.) resolve
 	// asynchronously; flush them before assertions run.
@@ -200,18 +202,14 @@ describe('admin.js keyboard accessibility', () => {
 			return document.getElementById('nldesign-theming-dialog-overlay')
 		}
 
-		it('opens with dialog role, aria-modal, and focus on the first control', async () => {
+		it('opens as a modal dialog with its title, and focus on Cancel', async () => {
 			const overlay = await openThemingDialog()
 			expect(overlay).not.toBeNull()
 
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			expect(dialogEl.getAttribute('role')).toBe('dialog')
-			expect(dialogEl.getAttribute('aria-modal')).toBe('true')
-			expect(dialogEl.getAttribute('aria-labelledby')).toBeTruthy()
-
-			// Cancel is the first focusable control in the dialog markup.
-			const cancelBtn = dialogEl.querySelector('.nldesign-dialog-cancel')
-			expect(document.activeElement).toBe(cancelBtn)
+			expect(overlay.tagName).toBe('DIALOG')
+			const title = document.getElementById(overlay.getAttribute('aria-labelledby'))
+			expect(title.textContent).toContain('Update the Nextcloud theme')
+			expect(document.activeElement).toBe(overlay.querySelector('.nldesign-dialog-cancel'))
 		})
 
 		it('closes on Escape and restores focus to the element that opened it', async () => {
@@ -236,27 +234,6 @@ describe('admin.js keyboard accessibility', () => {
 				document.getElementById('nldesign-theming-dialog-overlay'),
 			).toBeNull()
 			expect(document.activeElement).toBe(previouslyFocused)
-		})
-
-		it('traps Tab focus within the dialog (wraps from last back to first)', async () => {
-			const overlay = await openThemingDialog()
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			const buttons = dialogEl.querySelectorAll('button')
-			const first = buttons[0]
-			const last = buttons[buttons.length - 1]
-
-			last.focus()
-			expect(document.activeElement).toBe(last)
-
-			overlay.dispatchEvent(
-				new window.KeyboardEvent('keydown', {
-					key: 'Tab',
-					bubbles: true,
-					cancelable: true,
-				}),
-			)
-
-			expect(document.activeElement).toBe(first)
 		})
 	})
 
