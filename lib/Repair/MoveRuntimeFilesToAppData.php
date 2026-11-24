@@ -89,6 +89,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
+	#[\Override]
 	public function getName(): string {
 		return 'Move thematiq runtime files out of the app directory into app data';
 	}//end getName()
@@ -105,6 +106,7 @@ class MoveRuntimeFilesToAppData implements IRepairStep {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
+	#[\Override]
 	public function run(IOutput $output): void {
 		$appPath = rtrim($this->appManager->getAppPath(Application::APP_ID), '/');
 		$moved = 0;

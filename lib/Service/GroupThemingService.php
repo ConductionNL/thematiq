@@ -127,6 +127,7 @@ class GroupThemingService implements GroupThemingServiceInterface {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
+	#[\Override]
 	public function getMapping(): array {
 		$raw = $this->config->getAppValue(appName: Application::APP_ID, key: self::CONFIG_KEY, default: '[]');
 
@@ -283,6 +284,7 @@ class GroupThemingService implements GroupThemingServiceInterface {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
+	#[\Override]
 	public function resolveTokenSetForRequest(?string $appBrandSet = null): string {
 		try {
 			return $this->resolveTokenSetForRequestUnsafe(appBrandSet: $appBrandSet);

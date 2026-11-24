@@ -237,6 +237,7 @@ class UpstreamFreshnessService implements UpstreamFreshnessServiceInterface {
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
+	#[\Override]
 	public function runCheck(): void {
 		if ($this->isEnabled() === false) {
 			return;

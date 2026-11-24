@@ -50,6 +50,7 @@ class ThemeList extends Command {
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:theme:list')
 			->setDescription('List every available token set: id, kind (shipped or custom) and name.');
@@ -67,6 +68,7 @@ class ThemeList extends Command {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - Symfony's execute() signature; this command takes no input.
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		foreach ($this->tokenSets->getAvailableTokenSets() as $set) {
 			$kind = 'shipped';

@@ -140,6 +140,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
+	#[\Override]
 	public function export(): array {
 		return [
 			'format' => self::FORMAT,
@@ -224,6 +225,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 * between "validate only" and "validate then apply" (`occ thematiq:config:import --dry-run`);
 	 * splitting into two public methods would duplicate phase 1 rather than remove a real flag.
 	 */
+	#[\Override]
 	public function import(array $bundle, bool $dryRun = false): array {
 		$validation = $this->validate(bundle: $bundle);
 

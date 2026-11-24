@@ -148,6 +148,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
+	#[\Override]
 	public static function getTokens(): array {
 		return array_merge(self::getBrandTokens(), self::getComponentTokens());
 	}//end getTokens()
@@ -462,6 +463,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
+	#[\Override]
 	public static function getTabLabels(): array {
 		return [
 			'login' => 'Login page & Branding',
@@ -504,6 +506,7 @@ class TokenRegistry implements TokenRegistryInterface {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md
 	 */
+	#[\Override]
 	public static function isEditable(string $tokenName): bool {
 		return array_key_exists($tokenName, self::getTokens()) === true
 			|| array_key_exists($tokenName, self::getInternalTokens()) === true;

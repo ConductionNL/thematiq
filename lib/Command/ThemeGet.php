@@ -53,6 +53,7 @@ class ThemeGet extends Command {
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-list-and-read-token-sets
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:theme:get')
 			->setDescription('Print the active token set and every group mapping, highest priority first.');
@@ -70,6 +71,7 @@ class ThemeGet extends Command {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - Symfony's execute() signature; this command takes no input.
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$output->writeln('Active token set: ' . $this->active->getActive());
 		$mapping = $this->groups->getMapping();

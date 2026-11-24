@@ -74,6 +74,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		return new TemplateResponse(Application::APP_ID, 'settings/group-house-style', []);
 	}//end getForm()
@@ -85,6 +86,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
+	#[\Override]
 	public function getSection(): ?string {
 		$user = $this->userSession->getUser();
 		if ($user === null || $this->delegation->hasDelegatedGroups(uid: $user->getUID()) === false) {
@@ -101,6 +103,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 60;
 	}//end getPriority()
@@ -112,6 +115,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
+	#[\Override]
 	public function getName(): ?string {
 		return $this->l10n->t('House style of my groups');
 	}//end getName()
@@ -124,6 +128,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
+	#[\Override]
 	public function getAuthorizedAppConfig(): array {
 		return [];
 	}//end getAuthorizedAppConfig()

@@ -117,6 +117,7 @@ class TokenReferenceService implements TokenReferenceServiceInterface {
 	 * @spec openspec/specs/token-reference/spec.md#requirement-the-docs-site-has-a-reference-page-per-shipped-set
 	 * @spec openspec/specs/token-reference/spec.md#requirement-the-reference-does-not-rely-on-colour-alone
 	 */
+	#[\Override]
 	public function render(string $appPath, array $set, string $format): string {
 		$model = $this->model(appPath: $appPath, set: $set);
 		if ($format === 'html') {

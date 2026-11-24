@@ -70,6 +70,7 @@ class GenerateDarkVariantsRepairStep implements IRepairStep {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	public function getName(): string {
 		return 'Generate NL Design dark-mode token variants';
 	}//end getName()
@@ -85,6 +86,7 @@ class GenerateDarkVariantsRepairStep implements IRepairStep {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	public function run(IOutput $output): void {
 		$results = $this->darkPalette->generateAll(force: false);
 		$written = 0;

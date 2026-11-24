@@ -50,6 +50,7 @@ class ConfigRestore extends Command {
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:config:restore')
 			->setDescription('Restore a kept configuration version through the validated bundle import.')
@@ -67,6 +68,7 @@ class ConfigRestore extends Command {
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$request = $this->request(input: $input);
 		$result = $this->previewOrRestore(request: $request);

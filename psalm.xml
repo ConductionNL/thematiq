@@ -7,6 +7,7 @@
     findUnusedBaselineEntry="true"
     findUnusedCode="true"
     findUnusedVariablesAndParams="true"
+    strictBinaryOperands="false"
 >
     <projectFiles>
         <directory name="lib" />
@@ -34,12 +35,17 @@
         <file name="stubs/nextcloud-theming.php" />
         <file name="stubs/nextcloud-mail.php" />
     </stubs>
+    <!-- strictBinaryOperands: psalm 7 turned it on by default (psalm 5's
+         default was false). This keeps the rule the code was written and
+         checked against; with it on, psalm 7 reports 160 InvalidOperand
+         findings for int and float mixed in the colour arithmetic. -->
     <issueHandlers>
         <!-- Burned down on 2026-10-02 from 37 blanket handlers and a 70-class
-             UndefinedClass list to the five below. Every other issue type is
-             live: fix a new finding, do not add a handler for it.
+             UndefinedClass list to the four below, plus the psalm 7 handlers
+             after them. Every other issue type is live: fix a new finding, do
+             not add a handler for it.
 
-             All five are the same false positive. Psalm sees only lib/, so
+             All four are the same false positive. Psalm sees only lib/, so
              it cannot see the callers Nextcloud reaches by reflection
              (routes.php to controller methods, the DI container to services,
              info.xml to repair steps, commands and jobs, events to
@@ -52,16 +58,18 @@
         <UnusedClass errorLevel="suppress"/>
         <PossiblyUnusedParam errorLevel="suppress"/>
         <PossiblyUnusedReturnValue errorLevel="suppress"/>
-        <UnusedMethod>
-            <errorLevel type="suppress">
-                <file name="lib/Service/Config/NlDesignThemeShareableConfigType.php"/>
-            </errorLevel>
-        </UnusedMethod>
-        <UnusedProperty>
-            <errorLevel type="suppress">
-                <file name="lib/Service/Config/NlDesignThemeShareableConfigType.php"/>
-            </errorLevel>
-        </UnusedProperty>
+        <!-- Psalm 7 reports members it does not see used. On the first psalm 7
+             run (7.11.0) every one of its 281 UnusedMethod, 83 UnusedProperty
+             and 128 PossiblyUnusedProperty findings was checked against the
+             code and is called or read, e.g. SettingsController::saveBooleanSetting()
+             (four calls) and AppBrandSources::$brands (read by AppBrandController).
+             Launchpad, learniq, planninq and stackiq, also on psalm 7, suppress
+             the same two. This also covers the private members of
+             NlDesignThemeShareableConfigType, the class only OpenRegister
+             instantiates, which had a file-scoped suppression before. -->
+        <UnusedMethod errorLevel="suppress"/>
+        <UnusedProperty errorLevel="suppress"/>
+        <PossiblyUnusedProperty errorLevel="suppress"/>
     </issueHandlers>
     <extraFiles>
         <directory name="vendor/nextcloud/ocp" />

@@ -79,6 +79,7 @@ class WorkspaceIconListener implements IEventListener {
 	 *
 	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
+	#[\Override]
 	public function handle(Event $event): void {
 		if (($event instanceof BeforeTemplateRenderedEvent) === false && ($event instanceof BeforeLoginTemplateRenderedEvent) === false) {
 			return;

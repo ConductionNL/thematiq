@@ -161,6 +161,7 @@ class MigrateStoredClassNames implements IRepairStep {
 	 * @spec exclude One-off OCA\NLDesign -> OCA\Thematiq namespace rename
 	 *  plumbing; no capability spec describes the rename.
 	 */
+	#[\Override]
 	public function getName(): string {
 		return 'Rewrite stored OCA\\NLDesign class names to OCA\\Thematiq';
 	}//end getName()
@@ -176,6 +177,7 @@ class MigrateStoredClassNames implements IRepairStep {
 	 *  plumbing: it rewrites one stored FQCN and adds no behaviour of its own.
 	 *  The email theming it restores is specified where it is read.
 	 */
+	#[\Override]
 	public function run(IOutput $output): void {
 		$configured = $this->configuredClass(output: $output);
 		if ($configured === null) {

@@ -60,6 +60,7 @@ class ThemeSet extends Command {
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-switch-the-active-token-set
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:theme:set')
 			->setDescription('Make a token set the active instance-wide set.')
@@ -79,6 +80,7 @@ class ThemeSet extends Command {
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-operators-switch-the-active-token-set
 	 * @spec openspec/specs/theme-cli/spec.md#requirement-core-theming-is-changed-only-on-request
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$target = (string)$input->getArgument('token-set');
 		if ($this->reportUnknown(target: $target, output: $output) === true) {

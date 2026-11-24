@@ -259,6 +259,7 @@ class ContrastService implements ContrastServiceInterface {
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
+	#[\Override]
 	public function evaluate(array $candidates, string $background): array {
 		$results = [];
 		foreach ($candidates as $candidate) {

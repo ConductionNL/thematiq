@@ -63,6 +63,7 @@ class GenerateDarkVariants extends Command {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:generate-dark-variants')
 			->setDescription('Generate static dark-mode CSS variants (css/tokens/dark/{id}.css) for eligible NL Design token sets.')
@@ -90,6 +91,7 @@ class GenerateDarkVariants extends Command {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$force = ($input->getOption('force') !== false);
 		$failed = false;

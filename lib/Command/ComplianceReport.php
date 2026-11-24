@@ -65,6 +65,7 @@ class ComplianceReport extends Command {
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:compliance-report')
 			->setDescription(
@@ -96,6 +97,7 @@ class ComplianceReport extends Command {
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$format = $input->getOption('format');
 		if ($format !== 'json' && $format !== 'markdown') {

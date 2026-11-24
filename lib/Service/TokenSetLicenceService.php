@@ -78,6 +78,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
+	#[\Override]
 	public function describe(string $tokenSetId): ?array {
 		$gate = $this->tokenSets->licenceGate();
 		$licence = $gate->licenceOf(tokenSetId: $tokenSetId);
@@ -102,6 +103,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-the-picker-shows-the-warning-and-the-licence-text
 	 */
+	#[\Override]
 	public function restrictedSets(): array {
 		$gate = $this->tokenSets->licenceGate();
 		$sets = [];
@@ -148,6 +150,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-administrator-confirms-a-restricted-set
 	 */
+	#[\Override]
 	public function confirm(string $tokenSetId, string $uid): array {
 		$gate = $this->tokenSets->licenceGate();
 		$this->assertConfirmable(tokenSetId: $tokenSetId, uid: $uid);
@@ -218,6 +221,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-confirmation-can-be-withdrawn-once-the-set-is-no-longer-applied
 	 */
+	#[\Override]
 	public function withdraw(string $tokenSetId, string $uid): void {
 		$gate = $this->tokenSets->licenceGate();
 		$existing = $gate->confirmation(tokenSetId: $tokenSetId);
@@ -340,6 +344,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-a-set-applied-before-it-was-restricted-stays-applied-and-asks-for-confirmation
 	 */
+	#[\Override]
 	public function awaitingConfirmation(): array {
 		$gate = $this->tokenSets->licenceGate();
 		$recorded = $this->stored(key: self::AWAITING_KEY);
@@ -368,6 +373,7 @@ class TokenSetLicenceService implements TokenSetLicenceServiceInterface {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
+	#[\Override]
 	public function recordAwaitingConfirmation(): array {
 		$before = $this->stored(key: self::AWAITING_KEY);
 		$now = $this->time->getDateTime()->format(DateTimeInterface::ATOM);

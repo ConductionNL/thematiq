@@ -714,6 +714,7 @@ class DarkPaletteService implements DarkPaletteServiceInterface {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	public function discoverAllSetIds(): array {
 		$ids = $this->shippedSetIds(tokensDir: $this->appManager->getAppPath('thematiq') . '/css/tokens');
 
@@ -1964,6 +1965,7 @@ class DarkPaletteService implements DarkPaletteServiceInterface {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	public function generateAndWrite(string $setId, bool $force = false): array {
 		$reason = $this->skipReason(setId: $setId);
 		if ($reason !== null) {
@@ -2050,6 +2052,7 @@ class DarkPaletteService implements DarkPaletteServiceInterface {
 	 *
 	 * @spec openspec/specs/dark-mode/spec.md
 	 */
+	#[\Override]
 	public function generateAll(bool $force = false): array {
 		$results = [];
 		foreach ($this->discoverAllSetIds() as $setId) {

@@ -45,6 +45,7 @@ class PageHeader implements ISettings {
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 */
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		return new TemplateResponse(Application::APP_ID, 'settings/page-header', []);
 	}//end getForm()
@@ -56,6 +57,7 @@ class PageHeader implements ISettings {
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 */
+	#[\Override]
 	public function getSection(): string {
 		return 'theming';
 	}//end getSection()
@@ -67,6 +69,7 @@ class PageHeader implements ISettings {
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 1;
 	}//end getPriority()

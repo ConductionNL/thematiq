@@ -51,6 +51,7 @@ class ConfigImport extends ConfigBundleCommand {
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
+	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:config:import')
 			->setDescription(
@@ -81,6 +82,7 @@ class ConfigImport extends ConfigBundleCommand {
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$request = new ImportRequest(
 			path: (string)$input->getArgument('file'),

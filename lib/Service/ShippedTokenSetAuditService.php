@@ -298,6 +298,7 @@ class ShippedTokenSetAuditService implements ShippedTokenSetAuditServiceInterfac
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
+	#[\Override]
 	public function auditSet(string $appPath, string $id, array $theming, string $level = 'AA'): array {
 		$declarations = $this->resolveDeclarations(appPath: $appPath, id: $id, theming: $theming);
 		$measurement = $this->measure(declarations: $declarations, level: $level);

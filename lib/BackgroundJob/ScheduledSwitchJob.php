@@ -83,6 +83,7 @@ class ScheduledSwitchJob extends TimedJob {
 	 *
 	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		try {
 			$this->service->runDue();

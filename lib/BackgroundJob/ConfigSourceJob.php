@@ -67,6 +67,7 @@ class ConfigSourceJob extends TimedJob {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - TimedJob's signature.
 	 */
+	#[\Override]
 	protected function run($argument): void {
 		try {
 			$this->source->applyIfChanged();

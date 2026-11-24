@@ -205,6 +205,7 @@ class ThemingAuditService implements ThemingAuditServiceInterface {
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-append-only-audit-entries
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
+	#[\Override]
 	public function log(string $action, array $context = []): void {
 		if (in_array($action, self::VOCABULARY, true) === false) {
 			$this->logger->warning(
@@ -298,6 +299,7 @@ class ThemingAuditService implements ThemingAuditServiceInterface {
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-jsonl-appdata-storage-with-capped-rotation
 	 */
+	#[\Override]
 	public function getRecent(int $limit): array {
 		$capped = $limit;
 		if ($capped < 0) {
@@ -332,6 +334,7 @@ class ThemingAuditService implements ThemingAuditServiceInterface {
 	 *
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-jsonl-appdata-storage-with-capped-rotation
 	 */
+	#[\Override]
 	public function exportAll(): string {
 		try {
 			$folder = $this->getAuditFolder();

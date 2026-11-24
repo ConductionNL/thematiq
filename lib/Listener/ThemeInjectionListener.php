@@ -83,6 +83,7 @@ class ThemeInjectionListener implements IEventListener {
 	 * @spec openspec/specs/workplace-layout/spec.md
 	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
+	#[\Override]
 	public function handle(Event $event): void {
 		// The environment marker is a safety signal, not a theme: it runs
 		// before the per-app guard, on the login page and on every template

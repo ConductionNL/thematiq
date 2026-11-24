@@ -165,6 +165,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 *
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
+	#[\Override]
 	public function addHeader(): void {
 		if ($this->headerAdded === true) {
 			return;
@@ -278,6 +279,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 *
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
+	#[\Override]
 	public function renderHtmlWithInlineImages(): string {
 		if ($this->headerLogoUrl === '') {
 			return parent::renderHtmlWithInlineImages();
@@ -330,6 +332,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 *
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
+	#[\Override]
 	public function addBodyButton(string $text, string $url, $plainText = ''): void {
 		$theme = $this->resolveTheme();
 		if ($theme === null) {
@@ -376,6 +379,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 *
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
+	#[\Override]
 	public function addBodyButtonGroup(
 		string $textLeft,
 		string $urlLeft,
@@ -428,6 +432,7 @@ class NLDesignEMailTemplate extends EMailTemplate {
 	 *
 	 * @spec openspec/specs/email-theming/spec.md
 	 */
+	#[\Override]
 	public function addFooter(string $text = '', ?string $lang = null): void {
 		if ($this->footerAdded === true) {
 			return;

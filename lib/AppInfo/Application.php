@@ -110,6 +110,7 @@ class Application extends App implements IBootstrap {
 	 * @spec openspec/specs/theming-capability/spec.md
 	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
 	 */
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		// The API contract (version header, deprecation of unversioned paths,
 		// problem details). Registered first: Nextcloud runs afterController in
@@ -227,6 +228,7 @@ class Application extends App implements IBootstrap {
 	 *
 	 * @spec openspec/specs/css-architecture/spec.md
 	 */
+	#[\Override]
 	public function boot(IBootContext $context): void {
 	}//end boot()
 }//end class

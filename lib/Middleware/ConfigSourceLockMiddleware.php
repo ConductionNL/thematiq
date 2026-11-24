@@ -84,6 +84,7 @@ class ConfigSourceLockMiddleware extends Middleware {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
+	#[\Override]
 	public function beforeController(Controller $controller, string $methodName): void {
 		if (strtoupper($this->request->getMethod()) === 'GET' || $this->source->isLocked() === false) {
 			return;
@@ -141,6 +142,7 @@ class ConfigSourceLockMiddleware extends Middleware {
 	 *
 	 * @SuppressWarnings(PHPMD.UnusedFormalParameter) - Middleware's signature.
 	 */
+	#[\Override]
 	public function afterException(Controller $controller, string $methodName, Exception $exception): Response {
 		if ($exception instanceof ConfigSourceLockedException) {
 			return new JSONResponse(['error' => $exception->getMessage(), 'locked' => true], Http::STATUS_LOCKED);
