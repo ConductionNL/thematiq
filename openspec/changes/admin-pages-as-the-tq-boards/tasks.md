@@ -46,7 +46,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 - [ ] 3.14 TqWissels
 - [ ] 3.15 TqGalerij
 - [ ] 3.16 TqBundel
-- [ ] 3.17 TqContrastrapport
+- [x] 3.17 TqContrastrapport, the panel at #contrast, reached from More settings. compdiff pairs all 9 components. Not built: the per-column sort and filter buttons, the count of overrides in About this report (the report does not carry it), and the inspect button.
 - [x] 3.18 TqLogboek, the panel at #log, reached from More settings. compdiff pairs all 5 components. Not built: the per-column sort and filter buttons, the row menu (the one action, restore, is the row's button), the inspect button and the storage figure (the page does not know the versions' size).
 - [ ] 3.19 TqAiAssistent
 - [ ] 3.20 TqOmgevingsmarkering
