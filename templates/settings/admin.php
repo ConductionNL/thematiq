@@ -64,6 +64,7 @@ script('thematiq', 'admin-fonts-panel');
 script('thematiq', 'admin-contrast-panel');
 script('thematiq', 'admin-bundle-panel');
 script('thematiq', 'admin-assistant-panel');
+script('thematiq', 'admin-switches-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -962,6 +963,95 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Scheduled switches (TqWissels), a panel of this page at #switches (design.md): a token set
+	     for a period (openspec/specs/scheduled-switch). admin.js plans, lists and cancels;
+	     js/admin-switches-panel.js writes the counts and the background-job mode. -->
+	<section class="thematiq-panel thematiq-switches-panel" id="nldesign-scheduled-switches" data-thematiq-panel="switches" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-switches-new-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-switches-new-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('New switch')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('For a campaign, elections or a public holiday. With an end time the previous token set comes back by itself.')); ?></span>
+					</div>
+					<form id="nldesign-scheduled-form" class="thematiq-switches-panel__form">
+						<div class="thematiq-switches-panel__fields">
+							<div class="thematiq-fonts-panel__field">
+								<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
+								<select id="nldesign-scheduled-set" name="tokenSet">
+									<?php foreach ($_['tokenSets'] as $tokenSet): ?>
+										<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
+									<?php endforeach; ?>
+								</select>
+							</div>
+							<div class="thematiq-fonts-panel__field">
+								<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
+								<input type="datetime-local" id="nldesign-scheduled-start" name="startAt">
+							</div>
+							<div class="thematiq-fonts-panel__field">
+								<label for="nldesign-scheduled-end"><?php p($l->t('End')); ?> <span class="thematiq-switches-panel__optional"><?php p($l->t('(optional)')); ?></span></label>
+								<input type="datetime-local" id="nldesign-scheduled-end" name="endAt" aria-describedby="thematiq-switches-end-hint">
+								<span id="thematiq-switches-end-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Leave empty: the switch stays until you reset it yourself.')); ?></span>
+							</div>
+						</div>
+						<p class="thematiq-panel__fact-hint" id="nldesign-scheduled-zone"></p>
+						<!-- No option: a switch applies the set as the apply dialog does, the
+						     Nextcloud logo and colours included. -->
+						<p class="thematiq-switches-panel__applies" id="nldesign-scheduled-applies">
+							<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+							<span><?php p($l->t('The switch sets the token set as you would by hand, with the matching Nextcloud logo and colours. At the end the token set, logo and colours from before the switch come back.')); ?></span>
+						</p>
+						<div class="thematiq-css-panel__actions">
+							<span class="thematiq-preview__spacer"></span>
+							<button type="submit" class="thematiq-css-panel__save" id="nldesign-scheduled-submit"><?php p($l->t('Schedule')); ?></button>
+						</div>
+					</form>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-switches-list-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-switches-list-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Switches')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead thematiq-switches-panel__summary"></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Switches')); ?>">
+						<table class="nldesign-audit-table thematiq-switches-panel__table">
+							<thead>
+								<tr>
+									<th scope="col"><?php p($l->t('Token set')); ?></th>
+									<th scope="col"><?php p($l->t('From')); ?></th>
+									<th scope="col"><?php p($l->t('Until')); ?></th>
+									<th scope="col"><?php p($l->t('Status')); ?></th>
+									<th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th>
+								</tr>
+							</thead>
+							<tbody id="nldesign-scheduled-list"></tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside thematiq-switches-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-switches-jobs-title">
+					<h2 id="thematiq-switches-jobs-title" class="thematiq-panel__card-title"><?php p($l->t('Background jobs')); ?></h2>
+					<div class="thematiq-switches-panel__jobs">
+						<span class="thematiq-contrast-panel__pill thematiq-switches-panel__mode"></span>
+						<span class="thematiq-panel__fact-hint" id="nldesign-scheduled-last-run"></span>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('If background jobs run in AJAX mode, a switch may start later. Then choose Cron under Basic settings, Background jobs.')); ?></p>
+					<p class="thematiq-fonts-panel__notice" id="nldesign-scheduled-cron-warning" role="status" hidden><?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-switches-active-title">
+					<h2 id="thematiq-switches-active-title" class="thematiq-panel__card-title"><?php p($l->t('Now active')); ?></h2>
+					<span class="thematiq-switches-panel__active"></span>
+					<p class="thematiq-panel__fact-hint" id="nldesign-scheduled-status" aria-live="polite"></p>
+					<a href="#" class="thematiq-bundle-panel__link"><?php p($l->t('To the active token set')); ?></a>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-switches-log-title">
+					<h2 id="thematiq-switches-log-title" class="thematiq-panel__card-title"><?php p($l->t('In the log')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Every switch that starts, ends or fails goes in the log as "Scheduled switch applied", with the system user as who.')); ?></p>
+					<a href="#log" class="thematiq-bundle-panel__link"><?php p($l->t('Open log')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -972,6 +1062,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#fonts"><?php p($l->t('Typefaces')); ?></a></li>
 			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
 			<li><a href="#assistant"><?php p($l->t('AI assistant')); ?></a></li>
+			<li><a href="#switches"><?php p($l->t('Scheduled switches')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
@@ -987,48 +1078,6 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-set-licences-awaiting" id="nldesign-set-licences-awaiting" role="alert" hidden></div>
 		<p class="settings-hint"><?php p($l->t('These house styles belong to the organisation they are named after. You can apply one after you confirm that you may use it.')); ?></p>
 		<div id="nldesign-set-licences-list"></div>
-	</div>
-
-	<!-- Planned token set switches (openspec/specs/scheduled-switch).
-	     admin.js fills the status, the list and the time zone hint. -->
-	<div class="nldesign-scheduled-switches" id="nldesign-scheduled-switches">
-		<h3><?php p($l->t('Planned switches')); ?></h3>
-		<p class="settings-hint"><?php p($l->t('Plan a switch to another token set, for a campaign or a holiday look. With an end time the previous token set comes back by itself.')); ?></p>
-		<p class="settings-hint" id="nldesign-scheduled-status" aria-live="polite"></p>
-		<p class="nldesign-scheduled-cron-warning" id="nldesign-scheduled-cron-warning" role="status" hidden>
-			<?php p($l->t('Background jobs run in AJAX mode, so a planned switch may start late. Choose Cron under Administration settings, Basic settings, Background jobs.')); ?>
-		</p>
-		<form id="nldesign-scheduled-form" class="nldesign-scheduled-form">
-			<div class="nldesign-fields">
-				<div class="nldesign-field">
-					<label for="nldesign-scheduled-set"><?php p($l->t('Token set')); ?></label>
-					<select id="nldesign-scheduled-set" name="tokenSet">
-						<?php foreach ($_['tokenSets'] as $tokenSet): ?>
-							<option value="<?php p($tokenSet['id']); ?>"><?php p($tokenSet['name']); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-				<div class="nldesign-field">
-					<label for="nldesign-scheduled-start"><?php p($l->t('Start')); ?></label>
-					<input type="datetime-local" id="nldesign-scheduled-start" name="startAt" required>
-				</div>
-				<div class="nldesign-field">
-					<label for="nldesign-scheduled-end"><?php p($l->t('End (optional)')); ?></label>
-					<input type="datetime-local" id="nldesign-scheduled-end" name="endAt">
-				</div>
-			</div>
-			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-zone"></p>
-			<!-- No option: a switch applies the set as the apply dialog does, the
-			     Nextcloud logo and colours included. Without them a switch changed
-			     the token set and nothing anyone could see. -->
-			<p class="settings-hint nldesign-field-hint" id="nldesign-scheduled-applies">
-				<?php p($l->t('The switch applies the token set as you would by hand, including the Nextcloud logo and colors it carries. At the end, the token set, logo and colors from before the switch come back.')); ?>
-			</p>
-			<div class="nldesign-form-actions">
-				<button type="submit" class="button primary" id="nldesign-scheduled-submit"><?php p($l->t('Plan switch')); ?></button>
-			</div>
-		</form>
-		<ul class="nldesign-scheduled-list" id="nldesign-scheduled-list"></ul>
 	</div>
 
 	<!-- Active icon pack — read-only indicator (theme-switchable iconography,
