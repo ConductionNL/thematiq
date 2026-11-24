@@ -7253,10 +7253,11 @@
 		}
 
 		/**
-		 * The brand picker after a multi-brand upload
-		 * (openspec/specs/multi-brand-token-sources): one labelled checkbox per
-		 * brand, all ticked, with its token count and group; Import repeats the upload with
-		 * the chosen brands, Cancel stores nothing. Focus moves to the picker's heading.
+		 * The brand picker after a multi-brand upload, as the TqMerkenKiezen board
+		 * draws it (openspec/specs/multi-brand-token-sources): a dialog with one
+		 * labelled checkbox per brand, all ticked, with its token count and group.
+		 * Import repeats the upload with the chosen brands; Cancel, Escape and
+		 * the close button store nothing. Focus moves to the picker's legend.
 		 *
 		 * @param {HTMLElement} resultEl The upload result region.
 		 * @param {string} name The source name.
@@ -7265,73 +7266,95 @@
 		 * @return {void}
 		 */
 		function renderBrandPicker(resultEl, name, file, brands) {
-			var picker = document.createElement('fieldset')
-			picker.className = 'nldesign-brand-picker'
-			var legend = document.createElement('legend')
-			legend.tabIndex = -1
-			legend.textContent = t(
-				'thematiq',
-				'This file holds {count} brands. Choose the ones to import.',
-				{ count: brands.length },
-			)
-			picker.appendChild(legend)
-			brands.forEach(function (brand, index) {
-				var row = document.createElement('div')
-				var box = document.createElement('input')
-				box.type = 'checkbox'
-				box.checked = true
-				box.value = brand.key
-				box.id = 'nldesign-brand-pick-' + index
-				box.className = 'checkbox'
-				var label = document.createElement('label')
-				label.setAttribute('for', box.id)
-				label.textContent =
-					brand.name
-					+ ' '
-					+ n(
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			var h = frame.h
+			var picker = h('fieldset', { class: 'nldesign-brand-picker' }, [
+				h('legend', {
+					tabindex: '-1',
+					class: 'thematiq-admin-dialog__lead',
+					text: t(
 						'thematiq',
-						'({count} token)',
-						'({count} tokens)',
-						brand.tokenCount,
-						{
-							count: brand.tokenCount,
-						},
-					)
-					+ (brand.group ? ' · ' + brand.group : '')
-				row.appendChild(box)
-				row.appendChild(label)
-				picker.appendChild(row)
-			})
-			var confirm = document.createElement('button')
-			confirm.type = 'button'
-			confirm.className = 'button primary nldesign-brand-import'
-			confirm.textContent = t('thematiq', 'Import the chosen brands')
-			confirm.addEventListener('click', function () {
-				var chosen = Array.prototype.slice
-					.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
-					.map(function (box) {
-						return box.value
-					})
-				if (chosen.length === 0) {
-					notify(t('thematiq', 'Choose at least one brand.'))
-					return
-				}
-				uploadCustomTokenSet(name, file, chosen)
-			})
-			var cancel = document.createElement('button')
-			cancel.type = 'button'
-			cancel.className = 'button nldesign-brand-cancel'
-			cancel.textContent = t('thematiq', 'Cancel')
-			cancel.addEventListener('click', function () {
+						'This file holds {count} brands. Choose the ones to import.',
+						{ count: brands.length },
+					),
+				}),
+				file && file.name ? h('code', { class: 'thematiq-brand-file', text: file.name }) : null,
+				h('div', { class: 'thematiq-brand-list' }, brands.map(function (brand, index) {
+					var id = 'nldesign-brand-pick-' + index
+					return h('div', { class: 'thematiq-brand-row' }, [
+						h('input', { type: 'checkbox', id: id, value: brand.key, checked: true }),
+						h('label', { for: id }, [
+							h('span', { class: 'thematiq-brand-row__name', text: brand.name }),
+							' ',
+							h('span', {
+								class: 'thematiq-brand-row__meta',
+								text: n('thematiq', '({count} token)', '({count} tokens)', brand.tokenCount, { count: brand.tokenCount })
+									+ (brand.group ? ' · ' + brand.group : ''),
+							}),
+						]),
+					])
+				})),
+			])
+
+			/**
+			 * Close without importing, and say so in the result region.
+			 *
+			 * @param {object} dialog The open dialog.
+			 * @return {void}
+			 */
+			function nothing(dialog) {
+				dialog.close()
 				resultEl.replaceChildren()
 				resultEl.appendChild(
 					document.createTextNode(t('thematiq', 'Nothing was imported.')),
 				)
+			}
+
+			var dialog = frame.open({
+				id: 'nldesign-brand-picker-dialog',
+				width: 640,
+				focus: '.nldesign-brand-picker legend',
+				eyebrow: t('thematiq', 'Upload file'),
+				title: t('thematiq', 'Choose brands to import'),
+				body: [
+					picker,
+					frame.notice(
+						t('thematiq', 'Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.'),
+						'info',
+					),
+				],
+				onDismiss: function () {
+					nothing(dialog)
+				},
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						className: 'nldesign-brand-cancel',
+						onClick: nothing,
+					},
+					{
+						label: t('thematiq', 'Import chosen brands'),
+						variant: 'primary',
+						className: 'nldesign-brand-import',
+						onClick: function (open) {
+							var chosen = Array.prototype.slice
+								.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
+								.map(function (box) {
+									return box.value
+								})
+							if (chosen.length === 0) {
+								notify(t('thematiq', 'Choose at least one brand.'))
+								return
+							}
+							open.close()
+							uploadCustomTokenSet(name, file, chosen)
+						},
+					},
+				],
 			})
-			picker.appendChild(confirm)
-			picker.appendChild(cancel)
-			resultEl.appendChild(picker)
-			legend.focus()
 		}
 
 		/**
