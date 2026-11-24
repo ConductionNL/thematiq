@@ -1080,3 +1080,12 @@
 	font-size: 14px;
 	font-weight: 600;
 }
+
+#nldesign-settings .thematiq-layout-card {
+	gap: 14px;
+}
+
+#nldesign-settings .thematiq-lettering-card,
+#nldesign-settings .thematiq-dark-card {
+	gap: 12px;
+}
