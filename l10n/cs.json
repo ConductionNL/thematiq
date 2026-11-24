@@ -1413,7 +1413,21 @@
         "Everything about collection days.": "Everything about collection days.",
         "Put the bin out before 7:30.": "Put the bin out before 7:30.",
         "{label} {size}": "{label} {size}",
-        "In the token set": "In the token set"
+        "In the token set": "In the token set",
+        "Reset theme to Nextcloud?": "Reset theme to Nextcloud?",
+        "This resets the theme completely to the Nextcloud default theme.": "This resets the theme completely to the Nextcloud default theme.",
+        "This goes": "This goes",
+        "This stays": "This stays",
+        "The overrides of the current theme {name}": "The overrides of the current theme {name}",
+        "The override of the current theme {name}": "The override of the current theme {name}",
+        "The {count} overrides of the current theme {name}": "The {count} overrides of the current theme {name}",
+        "Every change written over the Nextcloud theme": "Every change written over the Nextcloud theme",
+        "Colours and logo of Nextcloud: these go back to the default": "Colours and logo of Nextcloud: these go back to the default",
+        "Own token sets": "Own token sets",
+        "Typefaces": "Typefaces",
+        "Custom CSS": "Custom CSS",
+        "This cannot be undone.": "This cannot be undone.",
+        "Reset to Nextcloud": "Reset to Nextcloud"
     },
     "plurals": {}
 }

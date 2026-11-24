@@ -1479,14 +1479,39 @@ describe('admin.js token editor', () => {
 	})
 
 	describe('reset theme to Nextcloud', () => {
-		/** Press the button and answer the confirmation. */
+		/** The dialog admin.js opened, and how it was closed. */
+		let opened = null
+		const dialog = { busy: vi.fn(), close: vi.fn() }
+
+		/** Press the button and answer the dialog. */
 		async function pressReset(confirmed) {
-			OC.dialogs.confirm.mockImplementation((text, title, callback) =>
-				callback(confirmed),
-			)
+			window.ThematiqResetThemeDialog = {
+				open: (options) => {
+					opened = options
+					if (confirmed) {
+						options.onConfirm(dialog)
+					}
+					return dialog
+				},
+			}
 			click(document.getElementById('nldesign-reset-theme-btn'))
 			await flush()
 		}
+
+		afterEach(() => {
+			delete window.ThematiqResetThemeDialog
+			opened = null
+		})
+
+		it('names the edited theme and its saved overrides in the dialog', async () => {
+			await mount()
+
+			await pressReset(false)
+
+			expect(opened.opener).toBe(document.getElementById('nldesign-reset-theme-btn'))
+			expect(typeof opened.themeName).toBe('string')
+			expect(typeof opened.overrideCount).toBe('number')
+		})
 
 		it('does nothing when the admin backs out', async () => {
 			await mount()
@@ -1519,6 +1544,7 @@ describe('admin.js token editor', () => {
 				document.getElementById('nldesign-reset-theme-btn').disabled,
 			).toBe(false)
 			expect(toasts()).toContain('The theme could not be reset.')
+			expect(dialog.close).toHaveBeenCalled()
 		})
 	})
 })
