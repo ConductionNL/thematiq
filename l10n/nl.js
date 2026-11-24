@@ -1413,7 +1413,8 @@ OC.L10N.register(
         "Bulky waste": "Grofvuil",
         "Everything about collection days.": "Alles over de ophaaldagen.",
         "Put the bin out before 7:30.": "Zet de container voor 7.30 uur buiten.",
-        "{label} {size}": "{label} {size}"
+        "{label} {size}": "{label} {size}",
+        "In the token set": "In de tokenset"
     },
     "nplurals=2; plural=(n != 1);"
 )

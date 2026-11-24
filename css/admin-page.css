@@ -993,8 +993,13 @@
 #nldesign-settings .thematiq-card .nldesign-option {
 	display: flex;
 	flex-direction: column;
+	align-items: stretch;
 	gap: 6px;
 	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	text-align: start;
 }
 
 #nldesign-settings .thematiq-card .nldesign-option:has(> input[type='checkbox']) {
@@ -1005,6 +1010,8 @@
 }
 
 #nldesign-settings .thematiq-card .nldesign-option > label {
+	flex: none;
+	text-align: start;
 	font-size: 14px !important;
 	font-weight: 600 !important;
 }
@@ -1026,6 +1033,14 @@
 	border: 1px solid var(--color-border-maxcontrast) !important;
 	border-radius: var(--border-radius-element, 8px) !important;
 	font-size: 15px !important;
+}
+
+#nldesign-settings .thematiq-card .nldesign-option > .settings-hint {
+	padding-inline-start: 0;
+}
+
+#nldesign-settings .thematiq-card .nldesign-option:has(> input[type='checkbox']) > .settings-hint {
+	padding-inline-start: 25px;
 }
 
 #nldesign-settings .thematiq-card .settings-hint {
@@ -1052,4 +1067,16 @@
 
 .thematiq-lettering__sample {
 	line-height: 1.2;
+}
+
+.thematiq-card__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-card__link {
+	font-size: 14px;
+	font-weight: 600;
 }

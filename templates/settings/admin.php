@@ -437,7 +437,10 @@ if ($_['mockUi'] === true) {
 		<div class="thematiq-card-column">
 			<!-- js/admin-website-lettering.js draws the sizes the active set gives the website. -->
 			<section class="thematiq-card thematiq-lettering-card" id="thematiq-website-lettering" aria-labelledby="thematiq-lettering-title">
-				<h2 id="thematiq-lettering-title" class="thematiq-card__title"><?php p($l->t('Website: lettering')); ?></h2>
+				<div class="thematiq-card__head">
+					<h2 id="thematiq-lettering-title" class="thematiq-card__title"><?php p($l->t('Website: lettering')); ?></h2>
+					<a class="thematiq-card__link thematiq-lettering__link" target="_blank" rel="noopener noreferrer"><?php p($l->t('In the token set')); ?></a>
+				</div>
 				<span class="thematiq-card__lead"><?php p($l->t('The website reads these sizes from the token set. Drawn here at 60 percent.')); ?></span>
 				<div class="thematiq-lettering"></div>
 			</section>

@@ -82,15 +82,45 @@
 		}
 	}
 
+	/**
+	 * The set the page wears, from the initial state.
+	 *
+	 * @return {string} The set id, or an empty string.
+	 */
+	function currentSet() {
+		try {
+			return window.OCP.InitialState.loadState('thematiq', 'currentTokenSet')
+		} catch (e) {
+			return ''
+		}
+	}
+
+	/**
+	 * Point the In the token set link at the token reference of a set.
+	 *
+	 * @param {HTMLAnchorElement|null} link The link.
+	 * @param {string} id The set id.
+	 */
+	function pointLink(link, id) {
+		if (link === null || !id) {
+			return
+		}
+		var path = '/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
+		link.href = (window.OC && typeof OC.generateUrl === 'function' ? OC.generateUrl(path) : path) + '?format=html'
+	}
+
 	/** Find the list and draw it, again when another set is applied. */
 	function main() {
 		var list = document.querySelector('#thematiq-website-lettering .thematiq-lettering')
 		if (list === null) {
 			return
 		}
+		var link = document.querySelector('#thematiq-website-lettering .thematiq-lettering__link')
 		draw(list)
-		document.addEventListener('thematiq:theme-applied', function () {
+		pointLink(link, currentSet())
+		document.addEventListener('thematiq:theme-applied', function (event) {
 			draw(list)
+			pointLink(link, event.detail && event.detail.tokenSet)
 		})
 	}
 

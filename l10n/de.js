@@ -1413,7 +1413,8 @@ OC.L10N.register(
         "Bulky waste": "Bulky waste",
         "Everything about collection days.": "Everything about collection days.",
         "Put the bin out before 7:30.": "Put the bin out before 7:30.",
-        "{label} {size}": "{label} {size}"
+        "{label} {size}": "{label} {size}",
+        "In the token set": "In the token set"
     },
     "nplurals=2; plural=(n != 1);"
 )
