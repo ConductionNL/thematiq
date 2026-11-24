@@ -13,6 +13,12 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	display: none !important;
 }
 
+/* Nextcloud's theme paints every element whose class holds "panel" white, with an
+   id in its selector, so the panel's own fills carry !important. */
+#nldesign-settings section.thematiq-panel {
+	background: transparent;
+}
+
 .thematiq-panel[hidden],
 .thematiq-panel__now {
 	display: none !important;
@@ -24,14 +30,14 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	color: var(--color-text-maxcontrast);
 }
 
-.thematiq-panel__columns {
+#nldesign-settings .thematiq-panel .thematiq-panel__columns {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start;
 	gap: 20px;
 }
 
-.thematiq-panel__main {
+#nldesign-settings .thematiq-panel .thematiq-panel__main {
 	display: flex;
 	flex: 999 1 520px;
 	flex-direction: column;
@@ -39,7 +45,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	min-width: 0;
 }
 
-.thematiq-panel__aside {
+#nldesign-settings .thematiq-panel .thematiq-panel__aside {
 	display: flex;
 	flex: 1 1 380px;
 	flex-direction: column;
@@ -74,14 +80,14 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-size: 17px !important;
 }
 
-.thematiq-panel__card-head {
+#nldesign-settings .thematiq-panel .thematiq-panel__card-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
 }
 
-.thematiq-panel__count {
+#nldesign-settings .thematiq-panel .thematiq-panel__count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -90,7 +96,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	height: 24px;
 	padding: 0 8px;
 	border-radius: 12px;
-	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background)) !important;
 	color: var(--color-warning);
 	font-size: 13px;
 	font-weight: 700;
@@ -161,7 +167,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-weight: 600 !important;
 }
 
-.thematiq-panel__fact {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-start;
@@ -170,14 +176,14 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	border-top: 1px solid var(--color-background-dark);
 }
 
-.thematiq-panel__fact-text {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact-text {
 	display: flex;
 	flex: 1 1 260px;
 	flex-direction: column;
 	gap: 4px;
 }
 
-.thematiq-panel__fact-value {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact-value {
 	display: flex;
 	flex: 0 1 300px;
 	flex-direction: column;
@@ -185,28 +191,28 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-size: 15px;
 }
 
-.thematiq-panel__fact-value a {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact-value a {
 	font-size: 13px;
 	font-weight: 600;
 }
 
-.thematiq-panel__fact-label {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact-label {
 	font-size: 15px;
 	font-weight: 600;
 }
 
-.thematiq-panel__fact-hint {
+#nldesign-settings .thematiq-panel .thematiq-panel__fact-hint {
 	font-size: 13px;
 	line-height: 1.45;
 	color: var(--color-text-maxcontrast);
 }
 
-.thematiq-layout-panel__summary {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__summary {
 	font-size: 14px;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
 
-.thematiq-layout-panel__change {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__change {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -214,27 +220,27 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	border-top: 1px solid var(--color-background-dark);
 }
 
-.thematiq-layout-panel__change-name {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__change-name {
 	font-size: 14px;
 	font-weight: 600;
 }
 
-.thematiq-layout-panel__change-value {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__change-value {
 	font-size: 13px;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
 
-.thematiq-layout-panel__pill {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__pill {
 	padding: 3px 10px;
 	border-radius: 12px;
-	background: var(--color-background-hover);
+	background: var(--color-background-hover) !important;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 	font-size: 13px;
 	font-weight: 600;
 }
 
-.thematiq-layout-panel__preview--after .thematiq-layout-panel__pill {
-	background: var(--color-primary-element-light);
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__preview--after .thematiq-layout-panel__pill {
+	background: var(--color-primary-element-light) !important;
 	color: var(--color-primary-element-light-text);
 }
 
@@ -252,14 +258,14 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 }
 
 /* The small drawings of the workspace and the login card. */
-.thematiq-preview {
+#nldesign-settings .thematiq-panel .thematiq-preview {
 	overflow: hidden;
 	border: 1px solid var(--color-border);
 	border-radius: 10px;
 	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
 }
 
-.thematiq-preview__bar {
+#nldesign-settings .thematiq-panel .thematiq-preview__bar {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -269,20 +275,20 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	color: var(--color-primary-element-text);
 }
 
-.thematiq-preview__bar--light {
+#nldesign-settings .thematiq-panel .thematiq-preview__bar--light {
 	border-bottom: 1px solid var(--color-border);
 	background: var(--color-main-background);
 	color: var(--color-main-text);
 }
 
-.thematiq-preview__logo {
+#nldesign-settings .thematiq-panel .thematiq-preview__logo {
 	flex: none;
 	width: 48px;
 	height: 22px;
 	background: var(--image-logoheader, var(--image-logo, none)) left center / contain no-repeat;
 }
 
-.thematiq-preview__icon {
+#nldesign-settings .thematiq-panel .thematiq-preview__icon {
 	width: 16px;
 	height: 16px;
 	border-radius: 4px;
@@ -290,26 +296,26 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	opacity: 0.85;
 }
 
-.thematiq-preview__spacer {
+#nldesign-settings .thematiq-panel .thematiq-preview__spacer {
 	flex: 1;
 }
 
-.thematiq-preview__app {
+#nldesign-settings .thematiq-panel .thematiq-preview__app {
 	display: flex;
 	flex-direction: column;
 	line-height: 1.1;
 }
 
-.thematiq-preview__org {
+#nldesign-settings .thematiq-panel .thematiq-preview__org {
 	font-size: 10px;
 	color: var(--color-text-maxcontrast);
 }
 
-.thematiq-preview__app-name {
+#nldesign-settings .thematiq-panel .thematiq-preview__app-name {
 	font-size: 13px;
 }
 
-.thematiq-preview__search {
+#nldesign-settings .thematiq-panel .thematiq-preview__search {
 	flex: 1;
 	height: 24px;
 	margin: 0 6px;
@@ -318,7 +324,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
 }
 
-.thematiq-preview__avatar {
+#nldesign-settings .thematiq-panel .thematiq-preview__avatar {
 	display: inline-flex;
 	flex: none;
 	align-items: center;
@@ -332,16 +338,16 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-weight: 700;
 }
 
-.thematiq-preview__user {
+#nldesign-settings .thematiq-panel .thematiq-preview__user {
 	font-size: 11px;
 }
 
-.thematiq-preview__body {
+#nldesign-settings .thematiq-panel .thematiq-preview__body {
 	display: flex;
 	min-height: 190px;
 }
 
-.thematiq-preview__nav {
+#nldesign-settings .thematiq-panel .thematiq-preview__nav {
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;
@@ -352,30 +358,30 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	background: var(--color-main-background);
 }
 
-.thematiq-layout-panel__preview--after .thematiq-preview__nav {
+#nldesign-settings .thematiq-panel .thematiq-layout-panel__preview--after .thematiq-preview__nav {
 	border-right: 1px solid var(--color-border);
 }
 
-.thematiq-preview__entry {
+#nldesign-settings .thematiq-panel .thematiq-preview__entry {
 	padding: 6px 8px;
 	border-radius: 6px;
 	font-size: 12px;
 	color: var(--color-main-text);
 }
 
-.thematiq-preview__entry--filled {
+#nldesign-settings .thematiq-panel .thematiq-preview__entry--filled {
 	background: var(--color-primary-element);
 	color: var(--color-primary-element-text);
 	font-weight: 600;
 }
 
-.thematiq-preview__entry--soft {
+#nldesign-settings .thematiq-panel .thematiq-preview__entry--soft {
 	background: var(--nldesign-color-accent-light, var(--color-primary-element-light));
 	color: var(--nldesign-color-accent-text, var(--color-primary-element-light-text));
 	font-weight: 700;
 }
 
-.thematiq-preview__content {
+#nldesign-settings .thematiq-panel .thematiq-preview__content {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
@@ -383,25 +389,25 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	padding: 12px;
 }
 
-.thematiq-preview__line {
+#nldesign-settings .thematiq-panel .thematiq-preview__line {
 	width: 60%;
 	height: 12px;
 	border-radius: 6px;
 	background: var(--color-main-text);
 }
 
-.thematiq-preview__block {
+#nldesign-settings .thematiq-panel .thematiq-preview__block {
 	height: 70px;
 	border: 1px solid var(--color-border);
 	border-radius: 8px;
 	background: var(--color-main-background);
 }
 
-.thematiq-preview__block--small {
+#nldesign-settings .thematiq-panel .thematiq-preview__block--small {
 	height: 40px;
 }
 
-.thematiq-preview-login {
+#nldesign-settings .thematiq-panel .thematiq-preview-login {
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -411,7 +417,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
 }
 
-.thematiq-preview-login__watermark {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__watermark {
 	position: absolute;
 	right: -30px;
 	bottom: -40px;
@@ -421,7 +427,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	opacity: 0.25;
 }
 
-.thematiq-preview-login__card {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__card {
 	position: relative;
 	overflow: hidden;
 	width: 210px;
@@ -430,40 +436,40 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	background: var(--color-main-background);
 }
 
-.thematiq-preview-login__stripe {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__stripe {
 	display: flex;
 	height: 5px;
 }
 
-.thematiq-preview-login__stripe span:nth-child(1) {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__stripe span:nth-child(1) {
 	flex: var(--nldesign-brand-stripe-ratio-1, 1);
 	background: var(--nldesign-brand-stripe-color-1, var(--color-primary-element));
 }
 
-.thematiq-preview-login__stripe span:nth-child(2) {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__stripe span:nth-child(2) {
 	flex: var(--nldesign-brand-stripe-ratio-2, 1);
 	background: var(--nldesign-brand-stripe-color-2, var(--color-primary-element-hover));
 }
 
-.thematiq-preview-login__stripe span:nth-child(3) {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__stripe span:nth-child(3) {
 	flex: var(--nldesign-brand-stripe-ratio-3, 1);
 	background: var(--nldesign-brand-stripe-color-3, var(--nldesign-brand-stripe-color-1, var(--color-primary-element)));
 }
 
-.thematiq-preview-login__form {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__form {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 	padding: 14px;
 }
 
-.thematiq-preview-login__field {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__field {
 	height: 26px;
 	border: 1px solid var(--color-border-maxcontrast);
 	border-radius: 6px;
 }
 
-.thematiq-preview-login__button {
+#nldesign-settings .thematiq-panel .thematiq-preview-login__button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -473,4 +479,337 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	color: var(--color-primary-element-text);
 	font-size: 12px;
 	font-weight: 600;
+}
+
+/* Dark variant (TqDonker). */
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__previews {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__preview {
+	gap: 12px;
+	padding: 18px 20px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-panel__aside .thematiq-dark-panel__aside-title {
+	font-size: 15px !important;
+	font-weight: 600 !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__preview .thematiq-dark-panel__aside-title {
+	font-size: 17px !important;
+	font-weight: 700 !important;
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__frame {
+	overflow: hidden;
+	border: 1px solid var(--frame-line);
+	border-radius: 10px;
+	background: var(--frame-ground) !important;
+	color: var(--frame-ink);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__bar-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	height: 44px;
+	padding: 0 12px;
+	border-bottom: 1px solid var(--frame-line);
+	background: var(--frame-bar) !important;
+	font-size: 13px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__body {
+	display: flex;
+	min-height: 150px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__nav {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	box-sizing: content-box;
+	width: 120px;
+	padding: 10px 8px;
+	border-right: 1px solid var(--frame-line);
+	background: var(--frame-card) !important;
+	font-size: 12px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__nav span {
+	padding: 6px 8px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__nav .thematiq-dark-panel__active {
+	border-radius: 6px;
+	background: var(--frame-soft) !important;
+	color: var(--frame-soft-ink);
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__item {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 10px 12px;
+	border: 1px solid var(--frame-line);
+	border-radius: 8px;
+	background: var(--frame-card) !important;
+	font-size: 13px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__muted {
+	font-size: 12px;
+	color: var(--frame-muted);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__link {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--frame-link);
+	text-decoration: underline;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__actions {
+	display: flex;
+	gap: 6px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__button,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__accent {
+	padding: 6px 12px;
+	border-radius: 6px;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__button {
+	background: var(--frame-button) !important;
+	color: var(--frame-button-ink);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__accent {
+	background: var(--frame-soft) !important;
+	color: var(--frame-soft-ink);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__tokens {
+	flex: 999 1 600px;
+	gap: 6px;
+	min-width: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__tokens-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__tokens-intro {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__filter {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 14px;
+	padding: 9px 0;
+	border-bottom: 1px solid var(--color-background-dark);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row--head {
+	padding: 8px 0;
+	border-bottom-color: var(--color-border);
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row > :nth-child(1) {
+	flex: 1 1 200px;
+	min-width: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row > :nth-child(2),
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row > :nth-child(3) {
+	flex: 0 0 110px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row > :nth-child(4) {
+	display: flex;
+	flex: 0 0 110px;
+	justify-content: flex-end;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__name {
+	display: flex;
+	flex-direction: column;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__label {
+	font-size: 15px;
+	font-weight: 500;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__token {
+	font: 400 12px ui-monospace, Menlo, monospace;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__note {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--color-warning);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__colour {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font: 400 12px ui-monospace, Menlo, monospace;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__chip {
+	flex: none;
+	box-sizing: border-box;
+	width: 22px;
+	height: 22px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 6px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill,
+#thematiq-page-header .thematiq-dark-panel__status {
+	padding: 3px 10px;
+	border-radius: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--surface,
+#thematiq-page-header .thematiq-dark-panel__status--none {
+	background: var(--color-background-hover) !important;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--pass,
+#thematiq-page-header .thematiq-dark-panel__status--generated {
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background)) !important;
+	color: var(--color-success);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--warn,
+#thematiq-page-header .thematiq-dark-panel__status--warn {
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background)) !important;
+	color: var(--color-warning);
+}
+
+#thematiq-page-header .thematiq-page-header__intro .thematiq-dark-panel__status {
+	display: inline-block;
+	margin-inline-end: 8px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__aside {
+	flex: 1 1 280px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__score {
+	font-size: 26px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__bar {
+	overflow: hidden;
+	height: 6px;
+	border-radius: 3px;
+	background: var(--color-border) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__bar span {
+	display: block;
+	height: 6px;
+	background: var(--color-success) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__problems,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__steps {
+	display: grid;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__steps {
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__steps li {
+	display: flex;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__steps li > span:first-child {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 11px;
+	background: var(--color-primary-element-light) !important;
+	color: var(--color-primary-element-light-text);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__toggle {
+	padding-top: 10px;
+	border-top: 1px solid var(--color-background-dark);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__body,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__main,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__muted,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__link,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__name,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__label,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__token,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__note,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__colour,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__verdict,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__actions,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__rows,
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__row {
+	background: transparent !important;
 }
