@@ -7,8 +7,8 @@
  * text, and a 2px ring in the opaque action blue that the light workplace
  * draws from a token of the set, with the ring of any other set as fallback.
  *
- * @spec openspec/changes/zuiddrecht-workplace-type-and-focus/specs/zuiddrecht-token-set/spec.md#requirement-the-set-declares-the-dqtokens-type-scale-req-tqzd-001
- * @spec openspec/changes/zuiddrecht-workplace-type-and-focus/specs/zuiddrecht-token-set/spec.md#requirement-keyboard-focus-shows-a-2-px-blue-ring-req-tqzd-002
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md#requirement-the-set-declares-the-dqtokens-type-scale-req-tqzd-001
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md#requirement-keyboard-focus-shows-a-2-px-blue-ring-req-tqzd-002
  */
 
 import fs from 'node:fs'

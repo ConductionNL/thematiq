@@ -462,7 +462,7 @@
 
 /*
  * A card mid-move, as TbBoard draws it
- * (openspec/changes/workplace-app-sheets-entry-states).
+ * (openspec/changes/archive/2026-11-24-workplace-app-sheets-entry-states).
  *
  * Deck moves cards with vue3-smooth-dnd over smooth-dnd 0.12, without a
  * `dragClass`, `dropClass` or `dropPlaceholder` (src/components/board/Stack.vue,
