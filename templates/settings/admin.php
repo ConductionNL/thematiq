@@ -46,6 +46,7 @@ script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-active-set-preview');
 script('thematiq', 'admin-token-sets-table');
+script('thematiq', 'admin-website-lettering');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
@@ -231,6 +232,243 @@ if ($_['mockUi'] === true) {
 			</div>
 		</div>
 	</section>
+
+	<!-- Layout, Website: lettering and Dark variant, in two columns as TqTheming draws them. -->
+	<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength -- a template reads its parameters from $_; the options keep their markup. ?>
+	<div class="thematiq-card-grid">
+		<section class="thematiq-card thematiq-layout-card" aria-labelledby="thematiq-layout-title">
+			<h2 id="thematiq-layout-title" class="thematiq-card__title"><?php p($l->t('Layout')); ?></h2>
+			<span class="thematiq-card__lead"><?php p($l->t('Leave empty to follow the theme. Your choice here always wins.')); ?></span>
+			<!-- Workplace layout and brand stripe (openspec/changes/zuiddrecht-workplace-theme).
+			     Each has three states. "Follow the theme" stores nothing: the option then
+			     takes the default the active token set carries in token-sets.json, and a
+			     set that carries none keeps the layout it always had. -->
+			<div class="nldesign-option">
+				<label for="thematiq-workplace-layout">
+					<?php p($l->t('Workplace layout')); ?>
+				</label>
+				<select name="thematiq-workplace-layout" id="thematiq-workplace-layout">
+					<option value="" <?php if (in_array($_['workplaceLayout'], ['default', 'light'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="default" <?php if ($_['workplaceLayout'] === 'default'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Default')); ?>
+					</option>
+					<option value="light" <?php if ($_['workplaceLayout'] === 'light'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Light top bar')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.')); ?>
+				</p>
+			</div>
+
+			<div class="nldesign-option">
+				<label for="thematiq-brand-stripe">
+					<?php p($l->t('Brand stripe under the top bar')); ?>
+				</label>
+				<select name="thematiq-brand-stripe" id="thematiq-brand-stripe">
+					<option value="" <?php if (in_array($_['brandStripe'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="1" <?php if ($_['brandStripe'] === '1'): ?>selected<?php endif; ?>>
+						<?php p($l->t('On')); ?>
+					</option>
+					<option value="0" <?php if ($_['brandStripe'] === '0'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Off')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.')); ?>
+				</p>
+			</div>
+
+			<!-- The newer layout options (openspec/changes/layout-options-navigation-stripe-watermark):
+			     where the stripe is drawn, the navigation width, the selected entry's
+			     style and the login watermark. Same three states as the two above:
+			     an empty value follows the theme. -->
+			<div class="nldesign-option">
+				<label for="thematiq-brand-stripe-placement">
+					<?php p($l->t('Where the brand stripe is drawn')); ?>
+				</label>
+				<select name="thematiq-brand-stripe-placement" id="thematiq-brand-stripe-placement">
+					<option value="" <?php if (in_array($_['brandStripePlacement'], ['header-and-login', 'header', 'login'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="header-and-login" <?php if ($_['brandStripePlacement'] === 'header-and-login'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Top bar and login card')); ?>
+					</option>
+					<option value="header" <?php if ($_['brandStripePlacement'] === 'header'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Top bar only')); ?>
+					</option>
+					<option value="login" <?php if ($_['brandStripePlacement'] === 'login'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Login card only')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('Only while the brand stripe is on. A theme that names nothing draws it in both places.')); ?>
+				</p>
+			</div>
+
+			<div class="nldesign-option">
+				<label for="thematiq-navigation-width-input">
+					<?php p($l->t('Navigation width in pixels')); ?>
+				</label>
+				<input type="number"
+					   name="thematiq-navigation-width"
+					   id="thematiq-navigation-width-input"
+					   min="200"
+					   max="480"
+					   step="1"
+					   placeholder="<?php p($l->t('Follow the theme')); ?>"
+					   value="<?php p($_['navigationWidth']); ?>">
+				<p class="settings-hint">
+					<?php p($l->t('The width of the app navigation, from 200 to 480. Leave it empty to follow the theme; a theme that names none keeps the width Nextcloud gives it.')); ?>
+				</p>
+			</div>
+
+			<div class="nldesign-option">
+				<label for="thematiq-navigation-active-style">
+					<?php p($l->t('Selected navigation entry')); ?>
+				</label>
+				<select name="thematiq-navigation-active-style" id="thematiq-navigation-active-style">
+					<option value="" <?php if (in_array($_['navigationActiveStyle'], ['default', 'soft'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="default" <?php if ($_['navigationActiveStyle'] === 'default'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Default')); ?>
+					</option>
+					<option value="soft" <?php if ($_['navigationActiveStyle'] === 'soft'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Soft tint with a bold label')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('The soft style draws the entry you are on as a light tint of the accent color, with the accent as its label. A theme without an accent uses its primary color.')); ?>
+				</p>
+			</div>
+
+			<div class="nldesign-option">
+				<label for="thematiq-login-watermark">
+					<?php p($l->t('Login watermark')); ?>
+				</label>
+				<select name="thematiq-login-watermark" id="thematiq-login-watermark">
+					<option value="" <?php if (in_array($_['loginWatermark'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="1" <?php if ($_['loginWatermark'] === '1'): ?>selected<?php endif; ?>>
+						<?php p($l->t('On')); ?>
+					</option>
+					<option value="0" <?php if ($_['loginWatermark'] === '0'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Off')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('The emblem a theme draws large and faint on the login page, with the light top bar. Off hides it; a theme that names no image shows none either way.')); ?>
+				</p>
+			</div>
+
+			<!-- The header style (openspec/changes/header-style-workplace): the
+			     workplace top bar of the DqKop board, with the light workplace layout
+			     only. Same three states: an empty value follows the theme. -->
+			<div class="nldesign-option">
+				<label for="thematiq-header-style">
+					<?php p($l->t('Top bar style')); ?>
+				</label>
+				<select name="thematiq-header-style" id="thematiq-header-style">
+					<option value="" <?php if (in_array($_['headerStyle'], ['default', 'workplace'], true) === false): ?>selected<?php endif; ?>>
+						<?php p($l->t('Follow the theme')); ?>
+					</option>
+					<option value="default" <?php if ($_['headerStyle'] === 'default'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Default')); ?>
+					</option>
+					<option value="workplace" <?php if ($_['headerStyle'] === 'workplace'): ?>selected<?php endif; ?>>
+						<?php p($l->t('Workplace, with your name and role')); ?>
+					</option>
+				</select>
+				<p class="settings-hint">
+					<?php p($l->t('Only with the light workplace layout. The workplace bar drops the logo and the app name. It shows your name and the role from your profile.')); ?>
+				</p>
+			</div>
+
+			<!-- Primary drives every component — the deliberate opt-out of per-component
+			     theming (openspec/specs/component-tokens/spec.md). Off by default, and
+			     that is not a behaviour change: with no per-component value stored the
+			     component tokens already resolve to the brand primary. Turning it on
+			     emits css/primary-lock.css, which forces them back to the brand value,
+			     and locks the colour controls the primary now owns. Stored values are
+			     kept, so turning it off restores them. -->
+			<div class="nldesign-option">
+				<input type="checkbox"
+					   name="nldesign-primary-drives-components"
+					   id="nldesign-primary-drives-components"
+					   class="checkbox"
+					   <?php if ($_['primaryDrivesComponents'] === true): ?>checked<?php endif; ?>>
+				<label for="nldesign-primary-drives-components">
+					<?php p($l->t('Let the primary color drive every component')); ?>
+				</label>
+				<p class="settings-hint">
+					<?php p($l->t('While this is on, the brand primary overrules any color set on an individual component, and those controls are locked. Switching it off gives each component its own color back.')); ?>
+				</p>
+			</div>
+			<!-- Hide Slogan/Payoff Option -->
+			<div class="nldesign-option">
+				<input type="checkbox"
+					   name="nldesign-hide-slogan"
+					   id="nldesign-hide-slogan"
+					   class="checkbox"
+					   <?php if ($_['hideSlogan'] === true): ?>checked<?php endif; ?>>
+				<label for="nldesign-hide-slogan">
+					<?php p($l->t('Hide Nextcloud slogan/payoff on login page')); ?>
+				</label>
+			</div>
+
+			<!-- Show Menu Labels Option -->
+			<div class="nldesign-option">
+				<input type="checkbox"
+					   name="nldesign-show-menu-labels"
+					   id="nldesign-show-menu-labels"
+					   class="checkbox"
+					   <?php if ($_['showMenuLabels'] === true): ?>checked<?php endif; ?>>
+				<label for="nldesign-show-menu-labels">
+					<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
+				</label>
+			</div>
+		</section>
+		<div class="thematiq-card-column">
+			<!-- js/admin-website-lettering.js draws the sizes the active set gives the website. -->
+			<section class="thematiq-card thematiq-lettering-card" id="thematiq-website-lettering" aria-labelledby="thematiq-lettering-title">
+				<div class="thematiq-card__head">
+					<h2 id="thematiq-lettering-title" class="thematiq-card__title"><?php p($l->t('Website: lettering')); ?></h2>
+					<a class="thematiq-card__link thematiq-lettering__link" target="_blank" rel="noopener noreferrer"><?php p($l->t('In the token set')); ?></a>
+				</div>
+				<span class="thematiq-card__lead"><?php p($l->t('The website reads these sizes from the token set. Drawn here at 60 percent.')); ?></span>
+				<div class="thematiq-lettering"></div>
+			</section>
+			<section class="thematiq-card thematiq-dark-card" aria-labelledby="thematiq-dark-title">
+				<h2 id="thematiq-dark-title" class="thematiq-card__title"><?php p($l->t('Dark variant')); ?></h2>
+				<!-- Dark mode variants — instance-wide toggle for the generated dark
+				     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
+				     user's/instance's Nextcloud dark/light/system theme choice; it only
+				     follows whatever Nextcloud itself already decided. -->
+				<div class="nldesign-option">
+					<input type="checkbox"
+						   name="nldesign-dark-variants"
+						   id="nldesign-dark-variants"
+						   class="checkbox"
+						   <?php if ($_['darkVariantsEnabled'] === true): ?>checked<?php endif; ?>>
+					<label for="nldesign-dark-variants">
+						<?php p($l->t('Enable dark mode variants for the active token set')); ?>
+					</label>
+				</div>
+				<p class="settings-hint">
+					<?php p($l->t('When enabled, a generated dark-mode stylesheet follows whichever Nextcloud dark/light/system theme is already active — it never changes your Nextcloud theme choice itself.')); ?>
+				</p>
+			</section>
+		</div>
+	</div>
+	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
+
+
 
 	<!-- House styles whose licence limits their use to their owner: the warning,
 	     the licence text and the confirmation per set
@@ -895,220 +1133,6 @@ if ($_['mockUi'] === true) {
 			<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
 		</div>
 	</div>
-
-	<!-- Hide Slogan/Payoff Option -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-hide-slogan"
-			   id="nldesign-hide-slogan"
-			   class="checkbox"
-			   <?php if ($_['hideSlogan']): ?>checked<?php endif; ?>>
-		<label for="nldesign-hide-slogan">
-			<?php p($l->t('Hide Nextcloud slogan/payoff on login page')); ?>
-		</label>
-	</div>
-
-	<!-- Show Menu Labels Option -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-show-menu-labels"
-			   id="nldesign-show-menu-labels"
-			   class="checkbox"
-			   <?php if ($_['showMenuLabels']): ?>checked<?php endif; ?>>
-		<label for="nldesign-show-menu-labels">
-			<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
-		</label>
-	</div>
-
-	<!-- Workplace layout and brand stripe (openspec/changes/zuiddrecht-workplace-theme).
-	     Each has three states. "Follow the theme" stores nothing: the option then
-	     takes the default the active token set carries in token-sets.json, and a
-	     set that carries none keeps the layout it always had. -->
-	<div class="nldesign-option">
-		<label for="thematiq-workplace-layout">
-			<?php p($l->t('Workplace layout')); ?>
-		</label>
-		<select name="thematiq-workplace-layout" id="thematiq-workplace-layout">
-			<option value="" <?php if (in_array($_['workplaceLayout'], ['default', 'light'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="default" <?php if ($_['workplaceLayout'] === 'default'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Default')); ?>
-			</option>
-			<option value="light" <?php if ($_['workplaceLayout'] === 'light'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Light top bar')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('The light layout paints the top bar in the main background, with its text color. A theme can turn it on by itself. Your choice here always wins.')); ?>
-		</p>
-	</div>
-
-	<div class="nldesign-option">
-		<label for="thematiq-brand-stripe">
-			<?php p($l->t('Brand stripe under the top bar')); ?>
-		</label>
-		<select name="thematiq-brand-stripe" id="thematiq-brand-stripe">
-			<option value="" <?php if (in_array($_['brandStripe'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="1" <?php if ($_['brandStripe'] === '1'): ?>selected<?php endif; ?>>
-				<?php p($l->t('On')); ?>
-			</option>
-			<option value="0" <?php if ($_['brandStripe'] === '0'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Off')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('Three colors along the bottom edge of the top bar. The theme sets the colors and their ratio.')); ?>
-		</p>
-	</div>
-
-	<!-- The newer layout options (openspec/changes/layout-options-navigation-stripe-watermark):
-	     where the stripe is drawn, the navigation width, the selected entry's
-	     style and the login watermark. Same three states as the two above:
-	     an empty value follows the theme. -->
-	<div class="nldesign-option">
-		<label for="thematiq-brand-stripe-placement">
-			<?php p($l->t('Where the brand stripe is drawn')); ?>
-		</label>
-		<select name="thematiq-brand-stripe-placement" id="thematiq-brand-stripe-placement">
-			<option value="" <?php if (in_array($_['brandStripePlacement'], ['header-and-login', 'header', 'login'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="header-and-login" <?php if ($_['brandStripePlacement'] === 'header-and-login'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Top bar and login card')); ?>
-			</option>
-			<option value="header" <?php if ($_['brandStripePlacement'] === 'header'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Top bar only')); ?>
-			</option>
-			<option value="login" <?php if ($_['brandStripePlacement'] === 'login'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Login card only')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('Only while the brand stripe is on. A theme that names nothing draws it in both places.')); ?>
-		</p>
-	</div>
-
-	<div class="nldesign-option">
-		<label for="thematiq-navigation-width-input">
-			<?php p($l->t('Navigation width in pixels')); ?>
-		</label>
-		<input type="number"
-			   name="thematiq-navigation-width"
-			   id="thematiq-navigation-width-input"
-			   min="200"
-			   max="480"
-			   step="1"
-			   placeholder="<?php p($l->t('Follow the theme')); ?>"
-			   value="<?php p($_['navigationWidth']); ?>">
-		<p class="settings-hint">
-			<?php p($l->t('The width of the app navigation, from 200 to 480. Leave it empty to follow the theme; a theme that names none keeps the width Nextcloud gives it.')); ?>
-		</p>
-	</div>
-
-	<div class="nldesign-option">
-		<label for="thematiq-navigation-active-style">
-			<?php p($l->t('Selected navigation entry')); ?>
-		</label>
-		<select name="thematiq-navigation-active-style" id="thematiq-navigation-active-style">
-			<option value="" <?php if (in_array($_['navigationActiveStyle'], ['default', 'soft'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="default" <?php if ($_['navigationActiveStyle'] === 'default'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Default')); ?>
-			</option>
-			<option value="soft" <?php if ($_['navigationActiveStyle'] === 'soft'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Soft tint with a bold label')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('The soft style draws the entry you are on as a light tint of the accent color, with the accent as its label. A theme without an accent uses its primary color.')); ?>
-		</p>
-	</div>
-
-	<div class="nldesign-option">
-		<label for="thematiq-login-watermark">
-			<?php p($l->t('Login watermark')); ?>
-		</label>
-		<select name="thematiq-login-watermark" id="thematiq-login-watermark">
-			<option value="" <?php if (in_array($_['loginWatermark'], ['0', '1'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="1" <?php if ($_['loginWatermark'] === '1'): ?>selected<?php endif; ?>>
-				<?php p($l->t('On')); ?>
-			</option>
-			<option value="0" <?php if ($_['loginWatermark'] === '0'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Off')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('The emblem a theme draws large and faint on the login page, with the light top bar. Off hides it; a theme that names no image shows none either way.')); ?>
-		</p>
-	</div>
-
-	<!-- The header style (openspec/changes/header-style-workplace): the
-	     workplace top bar of the DqKop board, with the light workplace layout
-	     only. Same three states: an empty value follows the theme. -->
-	<div class="nldesign-option">
-		<label for="thematiq-header-style">
-			<?php p($l->t('Top bar style')); ?>
-		</label>
-		<select name="thematiq-header-style" id="thematiq-header-style">
-			<option value="" <?php if (in_array($_['headerStyle'], ['default', 'workplace'], true) === false): ?>selected<?php endif; ?>>
-				<?php p($l->t('Follow the theme')); ?>
-			</option>
-			<option value="default" <?php if ($_['headerStyle'] === 'default'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Default')); ?>
-			</option>
-			<option value="workplace" <?php if ($_['headerStyle'] === 'workplace'): ?>selected<?php endif; ?>>
-				<?php p($l->t('Workplace, with your name and role')); ?>
-			</option>
-		</select>
-		<p class="settings-hint">
-			<?php p($l->t('Only with the light workplace layout. The workplace bar drops the logo and the app name. It shows your name and the role from your profile.')); ?>
-		</p>
-	</div>
-
-	<!-- Primary drives every component — the deliberate opt-out of per-component
-	     theming (openspec/specs/component-tokens/spec.md). Off by default, and
-	     that is not a behaviour change: with no per-component value stored the
-	     component tokens already resolve to the brand primary. Turning it on
-	     emits css/primary-lock.css, which forces them back to the brand value,
-	     and locks the colour controls the primary now owns. Stored values are
-	     kept, so turning it off restores them. -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-primary-drives-components"
-			   id="nldesign-primary-drives-components"
-			   class="checkbox"
-			   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
-		<label for="nldesign-primary-drives-components">
-			<?php p($l->t('Let the primary color drive every component')); ?>
-		</label>
-		<p class="settings-hint">
-			<?php p($l->t('While this is on, the brand primary overrules any color set on an individual component, and those controls are locked. Switching it off gives each component its own color back.')); ?>
-		</p>
-	</div>
-
-	<!-- Dark mode variants — instance-wide toggle for the generated dark
-	     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
-	     user's/instance's Nextcloud dark/light/system theme choice; it only
-	     follows whatever Nextcloud itself already decided. -->
-	<div class="nldesign-option">
-		<input type="checkbox"
-			   name="nldesign-dark-variants"
-			   id="nldesign-dark-variants"
-			   class="checkbox"
-			   <?php if ($_['darkVariantsEnabled']): ?>checked<?php endif; ?>>
-		<label for="nldesign-dark-variants">
-			<?php p($l->t('Enable dark mode variants for the active token set')); ?>
-		</label>
-	</div>
-	<p class="settings-hint">
-		<?php p($l->t('When enabled, a generated dark-mode stylesheet follows whichever Nextcloud dark/light/system theme is already active — it never changes your Nextcloud theme choice itself.')); ?>
-	</p>
 
 	<!-- Email template theming — mail_template_class toggle + compliance footer -->
 	<div class="nldesign-email-theming" id="nldesign-email-theming" style="margin-top:2em"

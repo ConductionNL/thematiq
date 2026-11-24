@@ -1399,7 +1399,22 @@ OC.L10N.register(
         "More actions for {name}": "Meer acties voor {name}",
         "Use this token set": "Deze tokenset gebruiken",
         "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.": "{shown} van {total} tokensets, waarvan {own} eigen sets. Een set die niet elke token van haar ontwerpsysteem zet, is gemarkeerd als onvolledig.",
-        "{shown} of {total}": "{shown} van {total}"
+        "{shown} of {total}": "{shown} van {total}",
+        "Leave empty to follow the theme. Your choice here always wins.": "Leeg laten volgt het thema. Uw keuze hier wint altijd.",
+        "Website: lettering": "Website: letters",
+        "The website reads these sizes from the token set. Drawn here at 60 percent.": "De website leest deze maten uit de tokenset. Hier op 60 procent getekend.",
+        "Dark variant": "Donkere variant",
+        "Page title": "Paginatitel",
+        "Heading 2": "Kop 2",
+        "Heading 3": "Kop 3",
+        "Lead": "Inleiding",
+        "Waste and recycling": "Afval en recycling",
+        "When is it collected?": "Wanneer wordt het opgehaald?",
+        "Bulky waste": "Grofvuil",
+        "Everything about collection days.": "Alles over de ophaaldagen.",
+        "Put the bin out before 7:30.": "Zet de container voor 7.30 uur buiten.",
+        "{label} {size}": "{label} {size}",
+        "In the token set": "In de tokenset"
     },
     "nplurals=2; plural=(n != 1);"
 )

@@ -188,7 +188,7 @@
     "file:workplace-apps/calendar.css": "10ff54c336bed6e0a09c3d3f4926528aa34dd2d093cb8b5e9933028473f14c7a",
     "file:workplace-apps/common.css": "952e6950c0ccfbcc8e66a1481fc15378b26b37777051c1ea4a8b7dc81fb799e0",
     "file:workplace-apps/deck.css": "0b631c8bcb475d747fbeaa86805c6414d22224099cea0599635f6cabc7a0bba4",
-    "file:workplace-apps/mail.css": "d712ba446620d5784858c7631c3c780ed9950c0eae37ff39d17923987ec423c3",
+    "file:workplace-apps/mail.css": "11242170b33d983224cac7fc0a8b04bb3b3833ddaeb37e6638961444571b77e3",
     "file:workplace-layout.css": "7c11ad62b668fde9a92602773aaa4fa6759be48bf5e0674b555b8632118a7933",
     "seed:1": "{\"in\":\"--a: v;)/{*/\\n\",\"out\":{\"--a\":\"v\"}}",
     "seed:2": "{\"in\":\"!important:root {*/!important:root {{--b-c*/ \",\"out\":null}",
