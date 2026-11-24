@@ -145,15 +145,18 @@ describe('the workplace app layer script', () => {
 		global.t = (app, text, vars) => text.replace(/{(\w+)}/g, (whole, key) => (vars && key in vars ? vars[key] : whole))
 		global.fetch = vi.fn(() => Promise.resolve({
 			ok: true,
-			json: () => Promise.resolve({ ocs: { data: [{ cards: [{ id: 7, description: 'From mail: Hanneke Visser\nProject: Website\n\nText' }] }] } }),
+			json: () => Promise.resolve({ ocs: { data: [{ cards: [{ id: 7, description: 'From mail: Hanneke Visser\nProject: Website\n\nText', assignedUsers: [{ participant: { uid: 'sanne', displayname: 'Sanne de Vries' } }] }] }] } }),
 		}))
 		document.body.innerHTML = '<div id="content" class="app-deck"><div class="stack"><div class="dnd-container"><div class="smooth-dnd-draggable-wrapper"><div class="card">'
 			+ '<div class="card-upper"><h4><span>Prepare the demo</span></h4></div>'
 			+ '<div class="card-labels"><ul class="labels"><li><span>Task</span></li><li><span>Priority high</span></li></ul></div>'
-			+ '<div class="card-controls"><div class="badges"><div class="inline-badges"><div class="cardid icon-badge"><span>#7</span></div></div></div></div>'
+			+ '<div class="card-controls"><div class="badges"><div class="inline-badges"><div class="cardid icon-badge"><span>#7</span></div></div>'
+			+ '<div class="avatars"><div class="avatardiv"><img src="/avatar/sanne/64"></div></div></div></div>'
 			+ '</div></div></div></div></div>'
 		await loadScript()
 		await frame()
+
+		expect(document.querySelector('.avatardiv').getAttribute('data-thematiq-initials'), 'first and last word').toBe('SV')
 
 		expect(global.fetch.mock.calls[0][0]).toContain('/ocs/v2.php/apps/deck/api/v1.0/stacks/2')
 		expect(document.querySelector('.card-controls').getAttribute('data-thematiq-mail')).toBe('From mail: Hanneke Visser')

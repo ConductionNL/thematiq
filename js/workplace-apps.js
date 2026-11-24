@@ -164,6 +164,24 @@
 	}
 
 	/**
+	 * The initials of a name as TbBoard writes them: the first letter of the
+	 * first and of the last word ("Sanne de Vries" is "SV").
+	 *
+	 * @param {string} name The name.
+	 * @return {string} The initials.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function initials(name) {
+		var words = String(name).trim().split(/\s+/).filter(Boolean)
+		if (words.length === 0) {
+			return ''
+		}
+		var first = words[0].charAt(0)
+		var last = words.length > 1 ? words[words.length - 1].charAt(0) : ''
+		return (first + last).toUpperCase()
+	}
+
+	/**
 	 * Load the open board's cards from Deck's API, at most every 30 seconds
 	 * (5 when a card is missing), and draw again once they are in.
 	 *
@@ -189,7 +207,12 @@
 			var byId = {}
 			;(Array.isArray(stacks) ? stacks : []).forEach(function (stack) {
 				;(stack.cards || []).forEach(function (card) {
-					byId[String(card.id)] = cardLines(card.description)
+					var lines = cardLines(card.description)
+					lines.people = (card.assignedUsers || []).map(function (user) {
+						var who = user.participant || {}
+						return initials(who.displayname || who.uid || '')
+					})
+					byId[String(card.id)] = lines
 				})
 			})
 			deckCards = { board: board, at: Date.now(), byId: byId, loading: false }
@@ -237,6 +260,10 @@
 					: null
 				setData(controls, 'data-thematiq-mail', from)
 			}
+			card.querySelectorAll('.avatars .avatardiv').forEach(function (avatar, index) {
+				var person = lines !== null && lines.people ? lines.people[index] : null
+				setData(avatar, 'data-thematiq-initials', person || null)
+			})
 			var high = false
 			card.querySelectorAll('.card-labels .labels li').forEach(function (label) {
 				var priority = PRIORITY_LABELS.indexOf((label.textContent || '').trim().toLowerCase()) >= 0
