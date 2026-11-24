@@ -69,6 +69,7 @@ script('thematiq', 'admin-gallery-panel');
 script('thematiq', 'admin-own-sets-panel');
 script('thematiq', 'admin-groups-panel');
 script('thematiq', 'admin-brands-panel');
+script('thematiq', 'admin-email-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1441,6 +1442,132 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Email and documents (TqEmailDocumenten), a panel of this page at #email (design.md): the
+	     mail template with its compliance footer, and the document house style profile that fleet
+	     apps read for letters and PDF exports (openspec/specs/document-house-style/spec.md).
+	     admin.js and js/admin-documents.js fill and save; js/admin-email-panel.js draws the examples. -->
+	<section class="thematiq-panel thematiq-email-panel" data-thematiq-panel="email" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-email-theming" id="nldesign-email-theming" aria-labelledby="thematiq-email-title"
+					data-state="<?php p($_['emailThemingState']['state']); ?>"
+					data-config-read-only="<?php p($_['emailThemingState']['configReadOnly'] ? '1' : '0'); ?>"
+					data-foreign-class="<?php p($_['emailThemingState']['foreignClass'] ?? ''); ?>">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-email-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Email template')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('For the mails Nextcloud itself sends. The footer goes under every mail.')); ?></span>
+					</div>
+					<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>
+						<p class="thematiq-fonts-panel__notice nldesign-email-foreign-note" role="alert"><?php p($l->t('A different mail template class is already configured ({class}); nldesign will not overwrite it.', ['class' => $_['emailThemingState']['foreignClass']])); ?></p>
+					<?php endif; ?>
+					<div class="thematiq-css-panel__check">
+						<input type="checkbox" name="nldesign-email-theming-enabled" id="nldesign-email-theming-enabled" class="checkbox" aria-describedby="thematiq-email-enabled-hint"
+							<?php if ($_['emailThemingState']['state'] === 'enabled'): ?>checked<?php endif; ?>
+							<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>disabled<?php endif; ?>>
+						<label for="nldesign-email-theming-enabled"><?php p($l->t('Use NL Design email template')); ?></label>
+						<span id="thematiq-email-enabled-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Password reset, share notifications and other system mails get the colour and logo of the active token set. If you turn thematiq off later, Nextcloud falls back to the default template by itself: mail never stops.')); ?></span>
+					</div>
+					<!-- autocomplete="off": instance-wide values about the organisation, not the admin's own details (WCAG 2.2 SC 1.3.5). -->
+					<div class="nldesign-email-footer-fields thematiq-email-panel__fields">
+						<div class="thematiq-fonts-panel__field">
+							<label for="nldesign-email-footer-org-name"><?php p($l->t('Organisation name')); ?></label>
+							<input type="text" id="nldesign-email-footer-org-name" class="nldesign-email-footer-input" autocomplete="off" value="<?php p($_['emailFooterConfig']['orgName']); ?>" placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>" maxlength="2048">
+						</div>
+						<div class="thematiq-fonts-panel__field">
+							<label for="nldesign-email-footer-accessibility-url"><?php p($l->t('Link to accessibility statement')); ?></label>
+							<input type="url" id="nldesign-email-footer-accessibility-url" class="nldesign-email-footer-input" autocomplete="off" value="<?php p($_['emailFooterConfig']['accessibilityUrl']); ?>" placeholder="https://example.org/toegankelijkheidsverklaring" maxlength="2048">
+						</div>
+						<div class="thematiq-fonts-panel__field">
+							<label for="nldesign-email-footer-privacy-url"><?php p($l->t('Link to privacy statement')); ?></label>
+							<input type="url" id="nldesign-email-footer-privacy-url" class="nldesign-email-footer-input" autocomplete="off" value="<?php p($_['emailFooterConfig']['privacyUrl']); ?>" placeholder="https://example.org/privacy" maxlength="2048">
+						</div>
+					</div>
+					<p class="thematiq-fonts-panel__notice" id="nldesign-email-occ-hint" role="alert" style="display:none"><?php p($l->t('config.php is read-only. Run one of the commands under If config.php is read-only.')); ?></p>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-email-theming-feedback" class="thematiq-css-panel__feedback nldesign-email-theming-feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-email-theming-save" class="thematiq-css-panel__save"><?php p($l->t('Save email template')); ?></button>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-documents" id="nldesign-documents" aria-labelledby="thematiq-documents-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-documents-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Documents')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Apps that make letters and PDF exports use these values, so documents follow the house style. Without uploads they take the logo of the house style and the footer of the email.')); ?></span>
+					</div>
+					<div class="thematiq-email-panel__fields">
+						<div class="thematiq-fonts-panel__field nldesign-documents-upload">
+							<label id="nldesign-documents-logo-label" for="nldesign-documents-logo"><?php p($l->t('Document logo')); ?></label>
+							<div class="nldesign-file-pick">
+								<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+								<button type="button" class="button" id="nldesign-documents-logo-btn" aria-labelledby="nldesign-documents-logo-label nldesign-documents-logo-btn"><?php p($l->t('Choose file')); ?></button>
+								<span class="nldesign-file-pick__name" id="nldesign-documents-logo-name"><?php p($l->t('No file chosen')); ?></span>
+							</div>
+							<button type="button" class="button thematiq-email-panel__remove" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
+							<span class="thematiq-panel__fact-hint"><?php p($l->t('PNG, JPEG, WebP or SVG, at most 2 MB')); ?></span>
+						</div>
+						<div class="thematiq-fonts-panel__field nldesign-documents-upload">
+							<label id="nldesign-documents-cover-label" for="nldesign-documents-cover"><?php p($l->t('Cover image')); ?></label>
+							<div class="nldesign-file-pick">
+								<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+								<button type="button" class="button" id="nldesign-documents-cover-btn" aria-labelledby="nldesign-documents-cover-label nldesign-documents-cover-btn"><?php p($l->t('Choose file')); ?></button>
+								<span class="nldesign-file-pick__name" id="nldesign-documents-cover-name"><?php p($l->t('No file chosen')); ?></span>
+							</div>
+							<button type="button" class="button thematiq-email-panel__remove" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
+							<span class="thematiq-panel__fact-hint"><?php p($l->t('PNG, JPEG, WebP or SVG, at most 2 MB')); ?></span>
+						</div>
+					</div>
+					<div class="thematiq-fonts-panel__field">
+						<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label>
+						<input type="text" id="nldesign-documents-footer-line" maxlength="200" aria-describedby="thematiq-documents-footer-hint">
+						<span id="thematiq-documents-footer-hint" class="thematiq-panel__fact-hint"><?php p($l->t('At most 200 characters. Goes under the email footer.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-documents-feedback" class="thematiq-css-panel__feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" class="thematiq-css-panel__save" id="nldesign-documents-footer-save"><?php p($l->t('Save footer line')); ?></button>
+					</div>
+					<h3 class="thematiq-brands-panel__subtitle"><?php p($l->t('What apps receive')); ?></h3>
+					<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-email-example-title">
+					<h2 id="thematiq-email-example-title" class="thematiq-panel__card-title"><?php p($l->t('Example: email')); ?></h2>
+					<div class="thematiq-email-panel__mail" role="img" aria-label="<?php p($l->t('Example of a system mail in the house style')); ?>">
+						<div class="thematiq-email-panel__subject"><?php p($l->t('Subject: Pieter Jansen shared "Raadsvoorstel Havenpark" with you')); ?></div>
+						<div class="thematiq-email-panel__bar"></div>
+						<div class="thematiq-email-panel__body">
+							<strong><?php p($l->t('A file was shared with you')); ?></strong>
+							<span><?php p($l->t('Pieter Jansen shared Raadsvoorstel Havenpark.pdf with you.')); ?></span>
+							<span class="thematiq-email-panel__button"><?php p($l->t('Open')); ?></span>
+						</div>
+						<div class="thematiq-email-panel__foot"><span class="thematiq-email-panel__org"></span> · <span><?php p($l->t('Accessibility')); ?></span> <span><?php p($l->t('Privacy')); ?></span></div>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-email-letter-title">
+					<h2 id="thematiq-email-letter-title" class="thematiq-panel__card-title"><?php p($l->t('Example: letter')); ?></h2>
+					<div class="thematiq-email-panel__letter" role="img" aria-label="<?php p($l->t('Example of a letter in the house style')); ?>">
+						<div class="thematiq-email-panel__letter-logo"></div>
+						<strong><?php p($l->t('Decision on your application')); ?></strong>
+						<span class="thematiq-email-panel__letter-lines"></span>
+						<span class="thematiq-email-panel__letter-foot"></span>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('This is how an app reads the document values, for example for a decision letter.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-email-other-title">
+					<h2 id="thematiq-email-other-title" class="thematiq-panel__card-title"><?php p($l->t('If there is already another template')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('If another email template is already set, thematiq does not overwrite it: the checkbox is then off and cannot be used.')); ?></p>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('A link in the footer must start with http:// or https://. Otherwise thematiq saves nothing and you see which field is wrong.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-email-readonly-title">
+					<h2 id="thematiq-email-readonly-title" class="thematiq-panel__card-title"><?php p($l->t('If config.php is read-only')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Then thematiq cannot enable the template itself. Run one of these commands yourself:')); ?></p>
+					<code class="thematiq-log-panel__code" id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code>
+					<code class="thematiq-log-panel__code" id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1455,6 +1582,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#own-sets"><?php p($l->t('Own token sets')); ?></a></li>
 			<li><a href="#groups"><?php p($l->t('House style per group')); ?></a></li>
 			<li><a href="#brands"><?php p($l->t('Brand per app')); ?></a></li>
+			<li><a href="#email"><?php p($l->t('Email and documents')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
@@ -1840,115 +1968,6 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Add, change or remove external apps in the apps menu: Menu settings, Menu items.')); ?>
 		</p>
-	</div>
-
-	<!-- Email template theming — mail_template_class toggle + compliance footer -->
-	<div class="nldesign-email-theming" id="nldesign-email-theming" style="margin-top:2em"
-		 data-state="<?php p($_['emailThemingState']['state']); ?>"
-		 data-config-read-only="<?php p($_['emailThemingState']['configReadOnly'] ? '1' : '0'); ?>"
-		 data-foreign-class="<?php p($_['emailThemingState']['foreignClass'] ?? ''); ?>">
-		<h3><?php p($l->t('Email template')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Brand password-reset, share-notification, and other system emails with the active token set\'s color and logo. If nldesign is later disabled, Nextcloud automatically falls back to the stock email template — mail is never blocked by this setting.')); ?>
-		</p>
-
-		<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>
-			<p class="nldesign-email-foreign-note" role="alert">
-				<?php p($l->t('A different mail template class is already configured ({class}); nldesign will not overwrite it.', ['class' => $_['emailThemingState']['foreignClass']])); ?>
-			</p>
-		<?php endif; ?>
-
-		<div class="nldesign-option">
-			<input type="checkbox"
-				   name="nldesign-email-theming-enabled"
-				   id="nldesign-email-theming-enabled"
-				   class="checkbox"
-				   <?php if ($_['emailThemingState']['state'] === 'enabled'): ?>checked<?php endif; ?>
-				   <?php if ($_['emailThemingState']['state'] === 'foreign'): ?>disabled<?php endif; ?>>
-			<label for="nldesign-email-theming-enabled">
-				<?php p($l->t('Use NL Design email template')); ?>
-			</label>
-		</div>
-
-		<div class="nldesign-email-footer-fields">
-			<!-- autocomplete="off" on all three: these are INSTANCE-WIDE
-			     configuration values (the organisation shown in every
-			     outgoing mail, and that organisation's public statement
-			     URLs), not personal details of the admin filling the form.
-			     WCAG 2.2 SC 1.3.5 asks for an autocomplete token when a
-			     field collects information ABOUT THE USER; none of these
-			     do, so declaring the purpose as "off" is the accurate
-			     answer, and it stops a browser offering the admin's own
-			     profile data as the value for a setting that applies to
-			     everyone on the instance. -->
-			<label for="nldesign-email-footer-org-name"><?php p($l->t('Organization name')); ?></label>
-			<input type="text" id="nldesign-email-footer-org-name" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['orgName']); ?>"
-				   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>" maxlength="2048">
-
-			<label for="nldesign-email-footer-accessibility-url"><?php p($l->t('Accessibility statement URL')); ?></label>
-			<input type="url" id="nldesign-email-footer-accessibility-url" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['accessibilityUrl']); ?>"
-				   placeholder="https://example.org/toegankelijkheidsverklaring" maxlength="2048">
-
-			<label for="nldesign-email-footer-privacy-url"><?php p($l->t('Privacy statement URL')); ?></label>
-			<input type="url" id="nldesign-email-footer-privacy-url" class="nldesign-email-footer-input"
-				   autocomplete="off"
-				   value="<?php p($_['emailFooterConfig']['privacyUrl']); ?>"
-				   placeholder="https://example.org/privacy" maxlength="2048">
-		</div>
-
-		<button type="button" id="nldesign-email-theming-save" class="button">
-			<?php p($l->t('Save email template settings')); ?>
-		</button>
-		<span id="nldesign-email-theming-feedback" class="nldesign-email-theming-feedback" role="status" aria-live="polite"></span>
-
-		<div class="nldesign-email-occ-hint" id="nldesign-email-occ-hint" role="alert" style="display:none">
-			<p><?php p($l->t('config.php is read-only. Run one of the following commands manually to enable or disable the email template:')); ?></p>
-			<p><code id="nldesign-email-occ-enable"><?php p($_['occEnableCommand']); ?></code></p>
-			<p><code id="nldesign-email-occ-disable"><?php p($_['occDisableCommand']); ?></code></p>
-		</div>
-	</div>
-
-	<!-- Documents: the document house style profile that fleet apps read
-	     for letters and PDF exports (openspec/specs/document-house-style/spec.md).
-	     Filled and saved by js/admin-documents.js. -->
-	<div class="nldesign-documents" id="nldesign-documents" style="margin-top:2em">
-		<h3><?php p($l->t('Documents')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Apps that generate letters and PDF exports use these values, so documents follow the house style. Without uploads they use the house style logo and the email footer.')); ?>
-		</p>
-		<!-- Nextcloud's own button instead of the browser's file control, which
-		     draws in the browser's language and style; see the brand logo above. -->
-		<div class="nldesign-documents-upload">
-			<label id="nldesign-documents-logo-label" for="nldesign-documents-logo"><?php p($l->t('Document logo (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label>
-			<div class="nldesign-file-pick">
-				<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
-				<button type="button" class="button" id="nldesign-documents-logo-btn"
-						aria-labelledby="nldesign-documents-logo-label nldesign-documents-logo-btn"><?php p($l->t('Choose image')); ?></button>
-				<span class="nldesign-file-pick__name" id="nldesign-documents-logo-name"><?php p($l->t('No file chosen')); ?></span>
-				<button type="button" class="button" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
-			</div>
-		</div>
-		<div class="nldesign-documents-upload">
-			<label id="nldesign-documents-cover-label" for="nldesign-documents-cover"><?php p($l->t('Cover image (PNG, JPEG, WebP or SVG, at most 2 MB)')); ?></label>
-			<div class="nldesign-file-pick">
-				<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
-				<button type="button" class="button" id="nldesign-documents-cover-btn"
-						aria-labelledby="nldesign-documents-cover-label nldesign-documents-cover-btn"><?php p($l->t('Choose image')); ?></button>
-				<span class="nldesign-file-pick__name" id="nldesign-documents-cover-name"><?php p($l->t('No file chosen')); ?></span>
-				<button type="button" class="button" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
-			</div>
-		</div>
-		<p>
-			<label for="nldesign-documents-footer-line"><?php p($l->t('Extra footer line')); ?></label><br>
-			<input type="text" id="nldesign-documents-footer-line" maxlength="200">
-			<button type="button" class="button primary" id="nldesign-documents-footer-save"><?php p($l->t('Save footer line')); ?></button>
-		</p>
-		<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
-		<span id="nldesign-documents-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<p class="nldesign-info">
