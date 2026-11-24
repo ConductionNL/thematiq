@@ -343,3 +343,31 @@ dialog.thematiq-admin-dialog::backdrop {
 	border: 0;
 	box-shadow: inset 0 0 0 1px rgba(27, 28, 29, 0.18);
 }
+
+.thematiq-admin-dialog__toggles {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	font-size: 14px;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__toggle {
+	min-height: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.thematiq-admin-dialog__count {
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-admin-dialog__table td > input[type='checkbox'] {
+	margin: 0;
+}

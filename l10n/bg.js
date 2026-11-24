@@ -1459,7 +1459,17 @@ OC.L10N.register(
         "Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.": "Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.",
         "If you choose the token set Nextcloud, the same dialog asks \"Reset the Nextcloud theme to the default?\" with the Nextcloud default values in the Proposed column.": "If you choose the token set Nextcloud, the same dialog asks \"Reset the Nextcloud theme to the default?\" with the Nextcloud default values in the Proposed column.",
         "Reset theme": "Reset theme",
-        "Update theme": "Update theme"
+        "Update theme": "Update theme",
+        "These values change. Tick which ones you take into your own overrides; what stays unticked keeps its current value. The page gets the new house style at once, without reloading.": "These values change. Tick which ones you take into your own overrides; what stays unticked keeps its current value. The page gets the new house style at once, without reloading.",
+        "Select none": "Select none",
+        "Take over": "Take over",
+        "Take over {token}": "Take over {token}",
+        "Nextcloud theme": "Nextcloud theme",
+        "Also reset the Nextcloud theme to the default": "Also reset the Nextcloud theme to the default",
+        "Also update the Nextcloud theme": "Also update the Nextcloud theme",
+        "Sign-in page, emails and the apps on phone and computer.": "Sign-in page, emails and the apps on phone and computer.",
+        "Apply chosen values": "Apply chosen values",
+        "{chosen} of {total} chosen": "{chosen} of {total} chosen"
     },
     "nplurals=2; plural=(n != 1);"
 )

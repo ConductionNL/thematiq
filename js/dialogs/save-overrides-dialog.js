@@ -44,23 +44,6 @@
 	}
 
 	/**
-	 * A value: a swatch for a colour, then the value as code.
-	 *
-	 * @param {Function} h The element helper.
-	 * @param {string} value The value.
-	 * @return {HTMLElement} The value.
-	 */
-	function valueCell(h, value) {
-		var shown = typeof value === 'string' && value !== '' ? value : '–'
-		var swatch = null
-		if (isColour(value)) {
-			swatch = h('span', { class: BLOCK + '__swatch', 'aria-hidden': 'true' })
-			swatch.style.background = value
-		}
-		return h('span', { class: BLOCK + '__value' }, [swatch, h('code', { text: shown })])
-	}
-
-	/**
 	 * Open the dialog.
 	 *
 	 * @param {object} options The dialog.
@@ -90,8 +73,8 @@
 						h('span', { class: BLOCK + '__token-label', text: change.label || change.name }),
 						h('code', { text: change.name }),
 					]),
-					valueCell(h, change.was),
-					valueCell(h, change.becomes),
+					frame.value(change.was, { colour: isColour(change.was), code: true }),
+					frame.value(change.becomes, { colour: isColour(change.becomes), code: true }),
 				]
 			})))
 		}

@@ -29,26 +29,6 @@
 	}
 
 	/**
-	 * A value: a swatch for a colour, then the value.
-	 *
-	 * @param {Function} h The element helper.
-	 * @param {object} diff The setting.
-	 * @param {string} value The value.
-	 * @param {string} [note] A word after the value.
-	 * @return {HTMLElement} The value.
-	 */
-	function value(h, diff, value, note) {
-		var swatch = null
-		var text = h('span', { text: value || '' })
-		if (diff.kind === 'color' && value) {
-			swatch = h('span', { class: BLOCK + '__swatch ' + BLOCK + '__swatch--large', 'aria-hidden': 'true' })
-			swatch.style.background = value
-			text = h('code', { text: value })
-		}
-		return h('span', { class: BLOCK + '__value' }, [swatch, text, note ? ' ' : null, note ? h('span', { class: BLOCK + '__value-note', text: note }) : null])
-	}
-
-	/**
 	 * Open the dialog.
 	 *
 	 * @param {object} options The dialog.
@@ -77,7 +57,11 @@
 			body: [
 				h('p', { class: BLOCK + '__lead', text: tr('Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.') }),
 				frame.table([tr('Setting'), tr('Current'), tr('Proposed')], (options.diffs || []).map(function (diff) {
-					return [diff.label, value(h, diff, diff.current), value(h, diff, diff.proposed, diff.proposedNote)]
+					return [
+						diff.label,
+						frame.value(diff.current, { colour: diff.kind === 'color', large: true }),
+						frame.value(diff.proposed, { colour: diff.kind === 'color', large: true, note: diff.proposedNote }),
+					]
 				})),
 				frame.notice(reset
 					? tr("Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.")
