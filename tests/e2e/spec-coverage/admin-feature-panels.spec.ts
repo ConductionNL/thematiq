@@ -36,14 +36,32 @@ async function apiGet(page: Page, path: string): Promise<Record<string, unknown>
 	}, path)
 }
 
-/** Each wave feature: its settings-panel anchor and a human label. */
-const PANELS: Array<{ id: string; label: string }> = [
-	{ id: '#nldesign-email-theming', label: 'email template theming' },
-	{ id: '#nldesign-custom-fonts', label: 'custom font upload' },
-	{ id: '#nldesign-audit-log', label: 'theming audit log' },
-	{ id: '#nldesign-upstream-freshness', label: 'upstream token freshness' },
-	{ id: '#nldesign-group-theming', label: 'per-group theming' },
+/** Each wave feature: its anchor, the admin page panel (#hash) it lives in, and a human label. */
+const PANELS: Array<{ id: string; hash: string; label: string }> = [
+	{
+		id: '#nldesign-email-theming',
+		hash: 'email',
+		label: 'email template theming',
+	},
+	{ id: '#nldesign-custom-fonts', hash: 'fonts', label: 'custom font upload' },
+	{ id: '#nldesign-audit-log', hash: 'log', label: 'theming audit log' },
+	{
+		id: '#nldesign-upstream-freshness',
+		hash: 'gallery',
+		label: 'upstream token freshness',
+	},
+	{ id: '#nldesign-group-theming', hash: 'groups', label: 'per-group theming' },
 ]
+
+/** Open the admin page panel at `#hash` on the shared page. */
+async function openPanel(page: Page, hash: string): Promise<void> {
+	await page.evaluate((h) => {
+		window.location.hash = h
+	}, hash)
+	await expect(
+		page.locator(`section[data-thematiq-panel="${hash}"]`),
+	).toBeVisible()
+}
 
 test.describe('admin panels for the market-gap wave features', () => {
 	// One page load serves every test below. Each only reads the rendered
@@ -84,6 +102,7 @@ test.describe('admin panels for the market-gap wave features', () => {
 
 	for (const panel of PANELS) {
 		test(`the ${panel.label} panel is present and visible`, async () => {
+			await openPanel(page, panel.hash)
 			const el = page.locator(panel.id)
 			await expect(
 				el,
@@ -105,16 +124,11 @@ test.describe('admin panels for the market-gap wave features', () => {
 	})
 
 	test('the audit log lists entries with the documented columns', async () => {
+		await openPanel(page, 'log')
 		const table = page.locator('#nldesign-audit-table')
 		await expect(table).toBeVisible()
-		for (const header of [
-			'Timestamp',
-			'User',
-			'Action',
-			'From',
-			'To',
-			'Changed',
-		]) {
+		// The columns of the TqLogboek board.
+		for (const header of ['Time', 'Who', 'Action', 'From', 'To', 'Changed']) {
 			await expect(table.locator('thead')).toContainText(header)
 		}
 	})
