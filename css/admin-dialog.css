@@ -437,3 +437,28 @@ dialog.thematiq-admin-dialog::backdrop {
 .thematiq-apply-tokens th:nth-child(2) {
 	width: 40%;
 }
+
+.thematiq-admin-dialog__file {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.thematiq-admin-dialog__file-label {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.thematiq-admin-dialog__file-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__aside {
+	margin: 0;
+	font-size: 14px !important;
+	line-height: 1.5 !important;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}

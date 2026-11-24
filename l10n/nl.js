@@ -1469,7 +1469,13 @@ OC.L10N.register(
         "Also update the Nextcloud theme": "Ook het Nextcloud-thema bijwerken",
         "Sign-in page, emails and the apps on phone and computer.": "Inlogpagina, e-mails en de apps op telefoon en computer.",
         "Apply chosen values": "Gekozen waarden toepassen",
-        "{chosen} of {total} chosen": "{chosen} van {total} gekozen"
+        "{chosen} of {total} chosen": "{chosen} van {total} gekozen",
+        "The values in the file immediately replace every saved value of this theme. Values the editor does not know are skipped, and changes not yet saved are lost.": "De waarden in het bestand vervangen meteen elke opgeslagen waarde van dit thema. Waarden die de editor niet kent worden overgeslagen, en wijzigingen die nog niet zijn opgeslagen gaan verloren.",
+        "File": "Bestand",
+        "custom-overrides.css, CSS only": "custom-overrides.css, alleen CSS",
+        "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.": "Na het uploaden ziet u hoeveel tokens zijn geïmporteerd en hoeveel zijn overgeslagen omdat ze niet werden herkend.",
+        "Want to add a whole theme as a new token set? Then use": "Wilt u een heel thema toevoegen als nieuwe tokenset? Gebruik dan",
+        "Choose and upload file": "Bestand kiezen en uploaden"
     },
     "nplurals=2; plural=(n != 1);"
 )

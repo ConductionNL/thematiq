@@ -1468,7 +1468,13 @@
         "Also update the Nextcloud theme": "Also update the Nextcloud theme",
         "Sign-in page, emails and the apps on phone and computer.": "Sign-in page, emails and the apps on phone and computer.",
         "Apply chosen values": "Apply chosen values",
-        "{chosen} of {total} chosen": "{chosen} of {total} chosen"
+        "{chosen} of {total} chosen": "{chosen} of {total} chosen",
+        "The values in the file immediately replace every saved value of this theme. Values the editor does not know are skipped, and changes not yet saved are lost.": "The values in the file immediately replace every saved value of this theme. Values the editor does not know are skipped, and changes not yet saved are lost.",
+        "File": "File",
+        "custom-overrides.css, CSS only": "custom-overrides.css, CSS only",
+        "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.": "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.",
+        "Want to add a whole theme as a new token set? Then use": "Want to add a whole theme as a new token set? Then use",
+        "Choose and upload file": "Choose and upload file"
     },
     "plurals": {}
 }
