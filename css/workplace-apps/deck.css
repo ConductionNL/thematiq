@@ -733,7 +733,7 @@
 	opacity: 0.85;
 }
 
-:is(#content, #content-vue).app-deck .card .icon-badge:has(.cardid) {
+:is(#content, #content-vue).app-deck .card .cardid {
 	display: none !important;
 }
 
