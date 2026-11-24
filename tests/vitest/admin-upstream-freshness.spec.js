@@ -72,6 +72,7 @@ async function load() {
 
 const $ = (id) => document.getElementById(id)
 const notices = () => Array.from($('nldesign-upstream-freshness-notices').children).map((row) => row.querySelector('span').textContent)
+const names = () => Array.from($('nldesign-upstream-freshness-notices').children).map((row) => row.querySelector('strong').textContent)
 const calls = (url, method) => global.fetch.mock.calls.filter(([u, o = {}]) => u === url && (o.method || 'GET') === method)
 
 describe('admin.js upstream token freshness', () => {
@@ -80,7 +81,7 @@ describe('admin.js upstream token freshness', () => {
 			enabled: true,
 			lastChecked: '1700000000',
 			notices: [
-				{ setId: 'utrecht', upstreamVersion: 'v2.1.0' },
+				{ setId: 'utrecht', upstreamVersion: 'v2.1.0', detectedAt: 1700000000 },
 				{ setId: 'unknown-set', headSha: 'abcdef1234567' },
 				{ setId: '__generic__', headSha: '0123456789abc' },
 			],
@@ -108,11 +109,16 @@ describe('admin.js upstream token freshness', () => {
 		expect($('nldesign-upstream-freshness-toggle').checked).toBe(true)
 		expect($('nldesign-upstream-freshness-lastchecked').textContent).toBe('Last checked: ' + new Date(1700000000 * 1000).toLocaleString())
 		expect(notices()).toEqual([
-			'Token set Gemeente Utrecht has upstream update v2.1.0 — review & apply',
-			'Token set unknown-set has upstream update abcdef1 — review & apply',
-			'Upstream token sets have updates (0123456) — review & apply',
+			'Source has update v2.1.0. Review the tokens and apply them yourself.',
+			'Source has update abcdef1. Review the tokens and apply them yourself.',
+			'Source has update 0123456. Review the tokens and apply them yourself.',
 		])
+		expect(names()).toEqual(['Gemeente Utrecht', 'unknown-set', 'NL Design System themes'])
+		expect($('nldesign-upstream-freshness-notices').querySelector('button').getAttribute('aria-label')).toBe('Ignore notice about Gemeente Utrecht')
 		expect($('nldesign-upstream-freshness-notices').querySelectorAll('button')).toHaveLength(3)
+		expect($('nldesign-upstream-freshness-notices').querySelector('.nldesign-upstream-notice__found').textContent).toBe(
+			'found on ' + new Date(1700000000 * 1000).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }),
+		)
 	})
 
 	it.each([
@@ -130,7 +136,7 @@ describe('admin.js upstream token freshness', () => {
 	it('names the update with an empty version when it has neither a version nor a sha', async () => {
 		status = { enabled: true, notices: [{ setId: '__generic__' }] }
 		await load()
-		expect(notices()).toEqual(['Upstream token sets have updates () — review & apply'])
+		expect(notices()).toEqual(['Source has update . Review the tokens and apply them yourself.'])
 	})
 
 	it('dismisses a notice with its set and version, or its sha, and reloads the panel', async () => {

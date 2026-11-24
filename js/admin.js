@@ -9549,26 +9549,37 @@
 			}
 		}
 
-		// Build the human-facing label for one notice: the specific-set message
-		// when a setId was attributed, or a generic fallback when attribution
-		// failed and only a head SHA is known.
+		/**
+		 * What a notice is about: the set's name, or the upstream themes as a
+		 * whole when the update could not be tied to one set.
+		 *
+		 * @param {object} notice The notice.
+		 * @return {string} The name.
+		 */
+		function upstreamNoticeName(notice) {
+			if (notice.setId && notice.setId !== '__generic__') {
+				var ts = tokenSetsData[notice.setId]
+				return ts ? ts.name : notice.setId
+			}
+			return t('thematiq', 'NL Design System themes')
+		}
+
+		/**
+		 * The line under a notice's name: which update the source has.
+		 *
+		 * @param {object} notice The notice.
+		 * @return {string} The line.
+		 */
 		function upstreamNoticeLabel(notice) {
 			var version =
 				notice.upstreamVersion
 				|| (notice.headSha ? notice.headSha.slice(0, 7) : '')
-			if (notice.setId && notice.setId !== '__generic__') {
-				var ts = tokenSetsData[notice.setId]
-				var name = ts ? ts.name : notice.setId
-				return t(
-					'thematiq',
-					'Token set {name} has upstream update {version} — review & apply',
-					{ name: name, version: version },
-				)
-			}
 			return t(
 				'thematiq',
-				'Upstream token sets have updates ({version}) — review & apply',
+				'Source has update {version}. Review the tokens and apply them yourself.',
 				{ version: version },
+				undefined,
+				{ escape: false },
 			)
 		}
 
@@ -9601,14 +9612,39 @@
 				var row = document.createElement('div')
 				row.className = 'nldesign-upstream-notice'
 
+				var text = document.createElement('div')
+				text.className = 'nldesign-upstream-notice__text'
+				var name = document.createElement('strong')
+				name.textContent = upstreamNoticeName(notice)
 				var label = document.createElement('span')
 				label.textContent = upstreamNoticeLabel(notice)
-				row.appendChild(label)
+				text.append(name, label)
+				if (notice.detectedAt) {
+					var found = document.createElement('span')
+					found.className = 'nldesign-upstream-notice__found'
+					found.textContent = t(
+						'thematiq',
+						'found on {date}',
+						{ date: new Date(Number(notice.detectedAt) * 1000).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }) },
+					)
+					text.appendChild(found)
+				}
+				row.appendChild(text)
 
 				var dismissBtn = document.createElement('button')
 				dismissBtn.type = 'button'
 				dismissBtn.className = 'nldesign-btn nldesign-btn--small'
-				dismissBtn.textContent = t('thematiq', 'Dismiss')
+				dismissBtn.textContent = t('thematiq', 'Ignore')
+				dismissBtn.setAttribute(
+					'aria-label',
+					t(
+						'thematiq',
+						'Ignore notice about {name}',
+						{ name: upstreamNoticeName(notice) },
+						undefined,
+						{ escape: false },
+					),
+				)
 				dismissBtn.addEventListener('click', function () {
 					dismissUpstreamNotice(
 						notice.setId,
@@ -9619,6 +9655,7 @@
 
 				noticesEl.appendChild(row)
 			})
+			document.dispatchEvent(new CustomEvent('thematiq:upstream-freshness', { detail: data }))
 		}
 
 		function loadUpstreamFreshness() {
@@ -9717,7 +9754,7 @@
 		 */
 		function initGallery() {
 			var toggle = document.getElementById('nldesign-gallery-toggle')
-			var label = document.getElementById('nldesign-gallery-toggle-label')
+			var label = document.getElementById('nldesign-gallery-toggle-hint')
 			var statusEl = document.getElementById('nldesign-gallery-status')
 			var list = document.getElementById('nldesign-gallery-list')
 			if (toggle === null || list === null) {
@@ -9765,26 +9802,45 @@
 				})
 				item.appendChild(swatches)
 
-				var text = document.createElement('span')
+				var text = document.createElement('div')
 				text.className = 'nldesign-gallery-text'
-				var name = document.createElement('strong')
+				var name = document.createElement('h3')
+				name.className = 'nldesign-gallery-name'
 				name.textContent = entry.name
 				text.appendChild(name)
 				var meta = document.createElement('span')
 				meta.className = 'nldesign-gallery-meta'
-				meta.textContent = t(
-					'thematiq',
-					'{organisation}, licence {licence}. {contrast}.',
-					{
-						organisation: entry.organisation,
-						licence: entry.licence,
-						contrast: contrastText(entry.contrast),
-					},
-					undefined,
-					{ escape: false },
-				)
+				meta.textContent = entry.addedOn
+					? t(
+							'thematiq',
+							'{organisation}, added {date}',
+							{
+								organisation: entry.organisation,
+								date: new Date(entry.addedOn).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }),
+							},
+							undefined,
+							{ escape: false },
+						)
+					: entry.organisation
 				text.appendChild(meta)
+				if (entry.description) {
+					var description = document.createElement('p')
+					description.className = 'nldesign-gallery-description'
+					description.textContent = entry.description
+					text.appendChild(description)
+				}
+				var licence = document.createElement('span')
+				licence.className = 'nldesign-gallery-licence'
+				var code = document.createElement('code')
+				code.textContent = entry.licence
+				licence.append(t('thematiq', 'Licence') + ' ', code)
+				text.appendChild(licence)
+				var contrast = document.createElement('span')
+				contrast.className = 'nldesign-gallery-contrast'
+				contrast.textContent = contrastText(entry.contrast)
+				text.appendChild(contrast)
 				var source = document.createElement('a')
+				source.className = 'nldesign-gallery-source'
 				source.href = entry.sourceUrl
 				source.target = '_blank'
 				source.rel = 'noopener noreferrer'
@@ -9798,38 +9854,42 @@
 				text.appendChild(source)
 				item.appendChild(text)
 
+				var foot = document.createElement('div')
+				foot.className = 'nldesign-gallery-foot'
+				item.appendChild(foot)
 				if (entry.installed && !entry.updateAvailable) {
 					var done = document.createElement('span')
-					done.className = 'nldesign-badge'
+					done.className = 'nldesign-badge nldesign-badge--success'
 					done.textContent = t('thematiq', 'Installed')
-					item.appendChild(done)
+					foot.appendChild(done)
 					return item
 				}
 
 				var button = document.createElement('button')
 				button.type = 'button'
-				button.className = 'nldesign-btn nldesign-btn--small'
 				if (entry.updateAvailable) {
 					var badge = document.createElement('span')
 					badge.className = 'nldesign-badge nldesign-badge--warning'
 					badge.textContent = t('thematiq', 'Update available')
-					item.appendChild(badge)
+					foot.appendChild(badge)
+					button.className = 'nldesign-gallery-update'
 					button.textContent = t('thematiq', 'Update')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Update {name}', { name: entry.name }),
+						t('thematiq', 'Update {name}', { name: entry.name }, undefined, { escape: false }),
 					)
 				} else {
+					button.className = 'nldesign-gallery-install'
 					button.textContent = t('thematiq', 'Install')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Install {name}', { name: entry.name }),
+						t('thematiq', 'Install {name}', { name: entry.name }, undefined, { escape: false }),
 					)
 				}
 				button.addEventListener('click', function () {
 					install(entry, button)
 				})
-				item.appendChild(button)
+				foot.appendChild(button)
 				return item
 			}
 
@@ -9838,10 +9898,11 @@
 				if (label !== null && data.host) {
 					label.textContent = t(
 						'thematiq',
-						'Show the theme gallery (contacts {host})',
+						'Reads {host} while you have this page open. Off by default.',
 						{ host: data.host },
 					)
 				}
+				document.dispatchEvent(new CustomEvent('thematiq:gallery', { detail: data }))
 				list.replaceChildren()
 				if (data.enabled !== true) {
 					setStatus('')
