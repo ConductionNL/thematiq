@@ -1911,7 +1911,10 @@ OC.L10N.register(
         "Email template on": "Email template on",
         "Email template off": "Email template off",
         "document logo set": "document logo set",
-        "no document logo": "no document logo"
+        "no document logo": "no document logo",
+        "Text colour": "Text colour",
+        "Font headings": "Font headings",
+        "Font text": "Font text"
     },
     "nplurals=2; plural=(n != 1);"
 )

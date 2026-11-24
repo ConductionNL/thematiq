@@ -32,6 +32,16 @@
 	}
 
 	/**
+	 * The first family of a font stack, without its quotes.
+	 *
+	 * @param {string} stack The CSS font-family value.
+	 * @return {string} The family.
+	 */
+	function firstFamily(stack) {
+		return String(stack || '').split(',')[0].trim().replace(/^['"]|['"]$/g, '')
+	}
+
+	/**
 	 * Show the profile.
 	 *
 	 * @param {HTMLElement} preview The preview element.
@@ -52,10 +62,10 @@
 		var list = document.createElement('dl')
 		list.className = 'nldesign-documents-profile'
 		row(list, t('thematiq', 'House style'), profile.tokenSet.name)
-		row(list, t('thematiq', 'Primary color'), profile.colours.primary || '')
-		row(list, t('thematiq', 'Text color'), profile.colours.text || '')
-		row(list, t('thematiq', 'Heading font'), profile.fonts.heading.family || '')
-		row(list, t('thematiq', 'Body font'), profile.fonts.body.family || '')
+		row(list, t('thematiq', 'Primary colour'), profile.colours.primary || '')
+		row(list, t('thematiq', 'Text colour'), profile.colours.text || '')
+		row(list, t('thematiq', 'Font headings'), firstFamily(profile.fonts.heading.family))
+		row(list, t('thematiq', 'Font text'), firstFamily(profile.fonts.body.family))
 		row(list, t('thematiq', 'Footer'), profile.footer.lines.join(' · '))
 		preview.appendChild(list)
 		if (profile.warnings && profile.warnings.length > 0) {

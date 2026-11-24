@@ -2352,7 +2352,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 
 #nldesign-settings .thematiq-panel .nldesign-documents-profile {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-columns: auto minmax(0, 1fr);
 	margin: 0;
 	font-size: 14px;
 }
@@ -2361,6 +2361,8 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 #nldesign-settings .thematiq-panel .nldesign-documents-profile dd {
 	margin: 0;
 	padding: 7px 0;
+	text-align: start;
+	overflow-wrap: anywhere;
 	border-top: 1px solid var(--color-background-dark);
 }
 
@@ -2369,6 +2371,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 }
 
 #nldesign-settings .thematiq-panel .nldesign-documents-profile dd {
+	padding-inline-start: 16px;
 	font-weight: 600;
 	text-align: end;
 }

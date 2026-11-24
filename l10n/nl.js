@@ -1911,7 +1911,10 @@ OC.L10N.register(
         "Email template on": "E-mailsjabloon aan",
         "Email template off": "E-mailsjabloon uit",
         "document logo set": "documentlogo ingesteld",
-        "no document logo": "geen documentlogo"
+        "no document logo": "geen documentlogo",
+        "Text colour": "Tekstkleur",
+        "Font headings": "Letter koppen",
+        "Font text": "Letter tekst"
     },
     "nplurals=2; plural=(n != 1);"
 )
