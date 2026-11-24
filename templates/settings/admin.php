@@ -63,6 +63,7 @@ script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
 script('thematiq', 'admin-contrast-panel');
 script('thematiq', 'admin-bundle-panel');
+script('thematiq', 'admin-assistant-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -885,6 +886,82 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+
+	<!-- AI assistant (TqAiAssistent), a panel of this page at #assistant (design.md): the
+	     approved mark (openspec/specs/assistant-approved-mark/spec.md). Filled and saved by
+	     js/admin-assistant-mark.js; js/admin-assistant-panel.js shows it in a sample panel. -->
+	<section class="thematiq-panel thematiq-assistant-panel nldesign-assistant-mark" id="nldesign-assistant-mark" data-thematiq-panel="assistant" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-assistant-title">
+					<h2 id="thematiq-assistant-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('AI assistant')); ?></h2>
+					<p class="thematiq-bundle-panel__text"><?php p($l->t('Show users which AI assistant your organisation has approved. The mark sits at the bottom of the assistant panel in Conduction apps. The mark informs honest users. It is not a security measure.')); ?></p>
+					<div class="thematiq-css-panel__check">
+						<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
+						<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approval mark')); ?></label>
+					</div>
+					<div class="thematiq-fonts-panel__field">
+						<label for="nldesign-assistant-mark-organisation"><?php p($l->t('Name of the organisation')); ?></label>
+						<input type="text" id="nldesign-assistant-mark-organisation" maxlength="120" aria-describedby="thematiq-assistant-org-hint">
+						<span id="thematiq-assistant-org-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Leave empty: the name from the email footer.')); ?></span>
+					</div>
+					<div class="thematiq-fonts-panel__field">
+						<label for="nldesign-assistant-mark-logo"><?php p($l->t('Address of the logo')); ?></label>
+						<input type="text" id="nldesign-assistant-mark-logo" maxlength="500" aria-describedby="thematiq-assistant-logo-hint">
+						<span id="thematiq-assistant-logo-hint" class="thematiq-panel__fact-hint"><?php p($l->t('An https address or a path on this server. Leave empty: the logo of the active house style.')); ?></span>
+					</div>
+					<div class="thematiq-assistant-panel__preview">
+						<span class="thematiq-panel__fact-hint"><?php p($l->t('Preview')); ?></span>
+						<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-assistant-mark-feedback" class="thematiq-css-panel__feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-assistant-mark-save" class="thematiq-css-panel__save"><?php p($l->t('Save AI assistant settings')); ?></button>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-assistant-sample-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-assistant-sample-title" class="thematiq-panel__card-title"><?php p($l->t('How an employee sees it')); ?></h2>
+						<span class="thematiq-panel__fact-hint"><?php p($l->t('The assistant panel of a Conduction app, with the mark at the bottom.')); ?></span>
+					</div>
+					<div class="thematiq-assistant-panel__sample-row">
+						<div class="thematiq-assistant-panel__sample" role="img" aria-label="<?php p($l->t('Preview of the assistant panel')); ?>">
+							<div class="thematiq-assistant-panel__sample-head"><?php p($l->t('Assistant')); ?></div>
+							<div class="thematiq-assistant-panel__sample-chat">
+								<div class="thematiq-assistant-panel__bubble thematiq-assistant-panel__bubble--user"><span><?php p($l->t('You')); ?></span><?php p($l->t('Summarise the advice on the lighting of the cycle path.')); ?></div>
+								<div class="thematiq-assistant-panel__bubble"><span><?php p($l->t('Assistant')); ?></span><?php p($l->t('The advice recommends 42 energy-saving street lights along the whole cycle path. The work takes about six weeks.')); ?></div>
+							</div>
+							<div class="thematiq-assistant-panel__sample-ask"><?php p($l->t('Ask a question')); ?></div>
+							<div class="thematiq-assistant-panel__sample-foot"></div>
+						</div>
+						<div class="thematiq-assistant-panel__sample-text">
+							<p><?php p($l->t('The mark sits in the footer of the assistant panel, in every Conduction app. With the logo and the name an employee knows which assistant the organisation has approved.')); ?></p>
+							<p><?php p($l->t('If the mark is off, or thematiq is not installed, nothing is shown there.')); ?></p>
+						</div>
+					</div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-assistant-rules-title">
+					<h2 id="thematiq-assistant-rules-title" class="thematiq-panel__card-title"><?php p($l->t('Defaults and rules')); ?></h2>
+					<div class="thematiq-css-panel__rules">
+						<div><span><?php p($l->t('Default')); ?></span><strong><?php p($l->t('off')); ?></strong></div>
+						<div><span><?php p($l->t('Name empty')); ?></span><strong><?php p($l->t('name from the email footer')); ?></strong></div>
+						<div><span><?php p($l->t('Logo empty')); ?></span><strong><?php p($l->t('logo of the house style')); ?></strong></div>
+						<div><span><?php p($l->t('Logo address')); ?></span><strong><?php p($l->t('https or path on this server')); ?></strong></div>
+						<div><span><?php p($l->t('Turn on without name')); ?></span><strong><?php p($l->t('not possible')); ?></strong></div>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Without a name of your own and without a name in the email footer, the mark stays off. You then see why.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-assistant-bundle-title">
+					<h2 id="thematiq-assistant-bundle-title" class="thematiq-panel__card-title"><?php p($l->t('In the configuration bundle')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('On or off, the name and the logo travel in the configuration bundle, under assistantMark. So the mark is the same in test and production.')); ?></p>
+					<a href="#bundle" class="thematiq-bundle-panel__link"><?php p($l->t('Go to the configuration bundle')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -894,6 +971,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
 			<li><a href="#fonts"><?php p($l->t('Typefaces')); ?></a></li>
 			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
+			<li><a href="#assistant"><?php p($l->t('AI assistant')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
@@ -1685,31 +1763,6 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
 		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
 			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
-	</div>
-
-	<!-- AI assistant: the approved mark (openspec/specs/assistant-approved-mark/spec.md).
-	     Filled and saved by js/admin-assistant-mark.js. -->
-	<div class="nldesign-assistant-mark" id="nldesign-assistant-mark" style="margin-top:2em">
-		<h3><?php p($l->t('AI assistant')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Show users which AI assistant your organisation approved. The mark appears in the footer of the assistant panel in Conduction apps.')); ?>
-			<?php p($l->t('The mark informs honest users. It is not a security control.')); ?>
-		</p>
-		<div class="nldesign-option">
-			<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
-			<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approved mark')); ?></label>
-		</div>
-		<p>
-			<label for="nldesign-assistant-mark-organisation"><?php p($l->t('Organisation name')); ?></label><br>
-			<input type="text" id="nldesign-assistant-mark-organisation" maxlength="120">
-		</p>
-		<p>
-			<label for="nldesign-assistant-mark-logo"><?php p($l->t('Logo address')); ?></label><br>
-			<input type="text" id="nldesign-assistant-mark-logo" maxlength="500">
-		</p>
-		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
-		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
-		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<p class="nldesign-info">

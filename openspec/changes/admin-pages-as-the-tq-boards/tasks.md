@@ -48,7 +48,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 - [x] 3.16 TqBundel, the panel at #bundle, reached from More settings. compdiff pairs 5 of the board's 7 components: the board's import refusal is a state after a failed upload, and its theme-as-code details show only where thematiq.config_source is set (not on the demo stack). Not built: the revision in the header line (the page knows it only with a config source) and the inspect button.
 - [x] 3.17 TqContrastrapport, the panel at #contrast, reached from More settings. compdiff pairs all 9 components. Not built: the per-column sort and filter buttons, the count of overrides in About this report (the report does not carry it), and the inspect button.
 - [x] 3.18 TqLogboek, the panel at #log, reached from More settings. compdiff pairs all 5 components. Not built: the per-column sort and filter buttons, the row menu (the one action, restore, is the row's button), the inspect button and the storage figure (the page does not know the versions' size).
-- [ ] 3.19 TqAiAssistent
+- [x] 3.19 TqAiAssistent, the panel at #assistant, reached from More settings. compdiff pairs 8 of the board's 9 components; the sample assistant panel differs in its inner drawing (the board draws a close button and a conversation in its own style). Not built: the inspect button.
 - [ ] 3.20 TqOmgevingsmarkering
 - [ ] 3.21 TqVoorbeeldSessie
 - [ ] 3.22 TqPersoonlijk and NcThema (the personal Appearance section)
