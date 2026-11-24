@@ -238,7 +238,13 @@ describe('House styles of other organisations', () => {
 	it('names an app and a planned switch among the places a set is in use', async () => {
 		withdrawAnswer = {
 			status: 409,
-			body: { error: 'restricted_set_in_use', appliedIn: [{ kind: 'app', id: 'deck' }, { kind: 'schedule', id: '3' }] },
+			body: {
+				error: 'restricted_set_in_use',
+				appliedIn: [
+					{ kind: 'app', id: 'deck' },
+					{ kind: 'schedule', id: '3' },
+				],
+			},
 		}
 		await loadScript()
 		const two = document.getElementById('nldesign-set-licence-owned-two')
@@ -255,7 +261,9 @@ describe('House styles of other organisations', () => {
 		const two = document.getElementById('nldesign-set-licence-owned-two')
 		two.querySelector('button').click()
 		await flush()
-		expect(two.querySelector('[role="status"]').textContent).toBe('The confirmation was not withdrawn. Try again.')
+		expect(two.querySelector('[role="status"]').textContent).toBe(
+			'The confirmation was not withdrawn. Try again.',
+		)
 
 		global.fetch.mockImplementation((url, options) => {
 			const method = (options && options.method) || 'GET'
@@ -270,13 +278,17 @@ describe('House styles of other organisations', () => {
 		check.dispatchEvent(new Event('change'))
 		owned.querySelector('button').click()
 		await flush()
-		expect(owned.querySelector('[role="status"]').textContent).toBe('The confirmation was not saved. Try again.')
+		expect(owned.querySelector('[role="status"]').textContent).toBe(
+			'The confirmation was not saved. Try again.',
+		)
 	})
 
 	it('opens the confirmation from the picker hint, and names an awaiting set it does not list by its id', async () => {
 		overview.awaiting = [{ tokenSet: 'unlisted', appliedIn: [] }]
 		await loadScript()
-		expect(document.getElementById('nldesign-set-licences-awaiting').textContent).toContain('unlisted is in use')
+		expect(
+			document.getElementById('nldesign-set-licences-awaiting').textContent,
+		).toContain('unlisted is in use')
 
 		const select = document.getElementById('nldesign-token-set-select')
 		select.value = 'owned'
@@ -288,7 +300,9 @@ describe('House styles of other organisations', () => {
 	it('leaves the block alone when the overview cannot be read', async () => {
 		global.fetch.mockImplementation(() => answer(500, {}))
 		await loadScript()
-		expect(document.getElementById('nldesign-set-licences-list').textContent).toBe('')
+		expect(
+			document.getElementById('nldesign-set-licences-list').textContent,
+		).toBe('')
 		expect(document.getElementById('nldesign-set-licences').hidden).toBe(true)
 	})
 })

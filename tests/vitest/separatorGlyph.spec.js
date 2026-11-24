@@ -50,7 +50,9 @@ describe.each([
 
 	it('loads the separator from a file that ships beside the sheet', () => {
 		for (const face of separator) {
-			expect(face.src).toBe("url('fonts/fira-sans-separator.otf') format('opentype')")
+			expect(face.src).toBe(
+				"url('fonts/fira-sans-separator.otf') format('opentype')",
+			)
 		}
 		expect(fs.existsSync(path.join(ROOT, dir, 'fira-sans-separator.otf'))).toBe(
 			true,

@@ -16,32 +16,36 @@ test.describe('token-import-export', () => {
 	// Requirement: Export Current Overrides
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/token-import-export/spec.md#admin-downloads-overrides
-	'Download button is present in the token editor panel', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		// The export/download control of the editor panel is the canonical
-		// `#nldesign-export-btn`. Uploaded custom token sets each render their
-		// own per-row "Download" button, so a text-only locator is ambiguous.
-		const downloadBtn = page.locator('#nldesign-export-btn')
-		await expect(downloadBtn).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/token-import-export/spec.md#admin-downloads-overrides
+		'Download button is present in the token editor panel',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			// The export/download control of the editor panel is the canonical
+			// `#nldesign-export-btn`. Uploaded custom token sets each render their
+			// own per-row "Download" button, so a text-only locator is ambiguous.
+			const downloadBtn = page.locator('#nldesign-export-btn')
+			await expect(downloadBtn).toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/token-import-export/spec.md#download-says-what-it-does-first
-	'Download explains the file before downloading, and Cancel downloads nothing', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		await page.locator('#nldesign-export-btn').click()
+	test(
+		// @e2e openspec/specs/token-import-export/spec.md#download-says-what-it-does-first
+		'Download explains the file before downloading, and Cancel downloads nothing',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			await page.locator('#nldesign-export-btn').click()
 
-		const dialog = page.locator('#nldesign-export-overrides-overlay')
-		await expect(dialog).toBeVisible()
-		await expect(dialog).toContainText('It is not a complete theme.')
+			const dialog = page.locator('#nldesign-export-overrides-overlay')
+			await expect(dialog).toBeVisible()
+			await expect(dialog).toContainText('It is not a complete theme.')
 
-		await dialog.locator('.nldesign-dialog-cancel').click()
-		await expect(dialog).toHaveCount(0)
-	})
+			await dialog.locator('.nldesign-dialog-cancel').click()
+			await expect(dialog).toHaveCount(0)
+		},
+	)
 
 	// Scenario: Download with no custom overrides
 	// @e2e exclude openspec/specs/token-import-export/spec.md#download-with-no-custom-overrides
@@ -56,31 +60,35 @@ test.describe('token-import-export', () => {
 	// Requirement: Import Token File
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/token-import-export/spec.md#admin-uploads-a-valid-overrides-file
-	'Upload control is present in the token editor panel', async ({ page }) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		const uploadTrigger = page.locator('#nldesign-import-btn')
-		await expect(uploadTrigger).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/token-import-export/spec.md#admin-uploads-a-valid-overrides-file
+		'Upload control is present in the token editor panel',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			const uploadTrigger = page.locator('#nldesign-import-btn')
+			await expect(uploadTrigger).toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/token-import-export/spec.md#upload-says-what-it-does-first
-	'Upload explains the replace before the file picker, and Cancel opens none', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		await page.locator('#nldesign-import-btn').click()
+	test(
+		// @e2e openspec/specs/token-import-export/spec.md#upload-says-what-it-does-first
+		'Upload explains the replace before the file picker, and Cancel opens none',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			await page.locator('#nldesign-import-btn').click()
 
-		const dialog = page.locator('#nldesign-import-overrides-overlay')
-		await expect(dialog).toBeVisible()
-		await expect(dialog).toContainText(
-			'replace every value saved for this theme',
-		)
+			const dialog = page.locator('#nldesign-import-overrides-overlay')
+			await expect(dialog).toBeVisible()
+			await expect(dialog).toContainText(
+				'replace every value saved for this theme',
+			)
 
-		await dialog.locator('.nldesign-dialog-cancel').click()
-		await expect(dialog).toHaveCount(0)
-	})
+			await dialog.locator('.nldesign-dialog-cancel').click()
+			await expect(dialog).toHaveCount(0)
+		},
+	)
 
 	// Scenario: Import replaces existing overrides
 	// @e2e exclude openspec/specs/token-import-export/spec.md#import-replaces-existing-overrides

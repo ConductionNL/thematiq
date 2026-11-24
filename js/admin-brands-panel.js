@@ -35,15 +35,27 @@
 	 * @return {string} The line.
 	 */
 	function line() {
-		var boxes = document.querySelectorAll('#nldesign-app-theming-list input[type="checkbox"][data-app-id]')
+		var boxes = document.querySelectorAll(
+			'#nldesign-app-theming-list input[type="checkbox"][data-app-id]',
+		)
 		var themed = Array.prototype.filter.call(boxes, function (box) {
 			return box.checked === true
 		}).length
-		var own = brands === 1 ? tr('1 app with its own brand') : tr('{count} apps with their own brand', { count: brands })
+		var own =
+			brands === 1
+				? tr('1 app with its own brand')
+				: tr('{count} apps with their own brand', { count: brands })
 		if (boxes.length === 0) {
 			return own
 		}
-		return own + ', ' + tr('{themed} of {total} apps follow the house style', { themed: themed, total: boxes.length })
+		return (
+			own
+			+ ', '
+			+ tr('{themed} of {total} apps follow the house style', {
+				themed: themed,
+				total: boxes.length,
+			})
+		)
 	}
 
 	/**
@@ -52,10 +64,15 @@
 	 * @return {void}
 	 */
 	function sayInHeader() {
-		if (window.ThematiqPanels === undefined || window.ThematiqPanels.current() !== 'brands') {
+		if (
+			window.ThematiqPanels === undefined
+			|| window.ThematiqPanels.current() !== 'brands'
+		) {
 			return
 		}
-		var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		var intro = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__intro',
+		)
 		if (intro !== null) {
 			intro.textContent = line()
 		}
@@ -69,7 +86,8 @@
 	function actions() {
 		var add = document.createElement('button')
 		add.type = 'button'
-		add.className = 'thematiq-page-header__action thematiq-page-header__action--primary'
+		add.className =
+			'thematiq-page-header__action thematiq-page-header__action--primary'
 		add.textContent = tr('Add brand')
 		add.addEventListener('click', function () {
 			var app = document.getElementById('nldesign-app-brands-app')
@@ -81,7 +99,10 @@
 	}
 
 	document.addEventListener('thematiq:app-brands', function (event) {
-		brands = event.detail && event.detail.brands ? Object.keys(event.detail.brands).length : 0
+		brands =
+			event.detail && event.detail.brands
+				? Object.keys(event.detail.brands).length
+				: 0
 		sayInHeader()
 	})
 	var list = document.getElementById('nldesign-app-theming-list')

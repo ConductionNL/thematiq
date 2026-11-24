@@ -47,7 +47,9 @@ body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app-
 	display: none !important;
 }
 
-body:not(#body-login) #header:not([data-thematiq-brand]) .app-menu__current-app-name {
+body:not(#body-login)
+	#header:not([data-thematiq-brand])
+	.app-menu__current-app-name {
 	max-width: 200px;
 	font-size: 18px !important;
 	font-weight: 700 !important;

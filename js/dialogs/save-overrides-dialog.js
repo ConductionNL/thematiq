@@ -24,7 +24,9 @@
 	 * @return {string} The text in the reader's language.
 	 */
 	function tr(text, values) {
-		return typeof window.t === 'function' ? window.t('thematiq', text, values) : text
+		return typeof window.t === 'function'
+			? window.t('thematiq', text, values)
+			: text
 	}
 
 	/**
@@ -34,7 +36,11 @@
 	 * @return {boolean} True for a colour.
 	 */
 	function isColour(value) {
-		if (typeof value !== 'string' || value.trim() === '' || value.indexOf('var(') !== -1) {
+		if (
+			typeof value !== 'string'
+			|| value.trim() === ''
+			|| value.indexOf('var(') !== -1
+		) {
 			return false
 		}
 		if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
@@ -60,31 +66,57 @@
 		}
 		var h = frame.h
 		var changes = options.changes || []
-		var title = changes.length === 1
-			? tr('Save 1 override?')
-			: tr('Save {count} overrides?', { count: changes.length })
+		var title =
+			changes.length === 1
+				? tr('Save 1 override?')
+				: tr('Save {count} overrides?', { count: changes.length })
 		var body = [
-			h('p', { class: BLOCK + '__lead', text: tr('They go on top of {set}. Save puts them live for everyone and writes a line in the log.', { set: options.setName }) }),
+			h('p', {
+				class: BLOCK + '__lead',
+				text: tr(
+					'They go on top of {set}. Save puts them live for everyone and writes a line in the log.',
+					{ set: options.setName },
+				),
+			}),
 		]
 		if (changes.length > 0) {
-			body.push(frame.table([tr('Token'), tr('Was'), tr('Becomes')], changes.map(function (change) {
-				return [
-					h('span', {}, [
-						h('span', { class: BLOCK + '__token-label', text: change.label || change.name }),
-						h('code', { text: change.name }),
-					]),
-					frame.value(change.was, { colour: isColour(change.was), code: true }),
-					frame.value(change.becomes, { colour: isColour(change.becomes), code: true }),
-				]
-			})))
+			body.push(
+				frame.table(
+					[tr('Token'), tr('Was'), tr('Becomes')],
+					changes.map(function (change) {
+						return [
+							h('span', {}, [
+								h('span', {
+									class: BLOCK + '__token-label',
+									text: change.label || change.name,
+								}),
+								h('code', { text: change.name }),
+							]),
+							frame.value(change.was, {
+								colour: isColour(change.was),
+								code: true,
+							}),
+							frame.value(change.becomes, {
+								colour: isColour(change.becomes),
+								code: true,
+							}),
+						]
+					}),
+				),
+			)
 		}
-		body.push(h('label', { class: BLOCK + '__check' }, [
-			h('input', { type: 'checkbox', class: 'nldesign-dialog-dontask' }),
-			h('span', {}, [
-				tr('Do not ask again before saving'),
-				h('span', { class: BLOCK + '__check-hint', text: tr('Can be reset below the token list.') }),
+		body.push(
+			h('label', { class: BLOCK + '__check' }, [
+				h('input', { type: 'checkbox', class: 'nldesign-dialog-dontask' }),
+				h('span', {}, [
+					tr('Do not ask again before saving'),
+					h('span', {
+						class: BLOCK + '__check-hint',
+						text: tr('Can be reset below the token list.'),
+					}),
+				]),
 			]),
-		]))
+		)
 
 		return frame.open({
 			id: 'nldesign-save-dialog-overlay',
@@ -95,7 +127,11 @@
 			title: title,
 			body: body,
 			actions: [
-				{ label: tr('Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+				{
+					label: tr('Cancel'),
+					cancel: true,
+					className: 'nldesign-dialog-cancel',
+				},
 				{
 					label: tr('Save overrides'),
 					variant: 'primary',

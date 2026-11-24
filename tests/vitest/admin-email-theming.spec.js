@@ -22,7 +22,8 @@ let toast
 
 /** Minimal globals admin.js reads at load time; the email endpoint answers from the two variables above. */
 function installGlobals() {
-	global.t = (app, text, values = {}) => text.replace(/\{(\w+)\}/g, (match, key) => values[key])
+	global.t = (app, text, values = {}) =>
+		text.replace(/\{(\w+)\}/g, (match, key) => values[key])
 	global.n = (app, singular, plural, count) => (count === 1 ? singular : plural)
 	toast = vi.fn()
 	global.OC = {
@@ -43,9 +44,18 @@ function installGlobals() {
 			if (answer instanceof Error) {
 				return Promise.reject(answer)
 			}
-			return Promise.resolve({ ok: answer.ok, status: answer.ok ? 200 : 400, json: () => Promise.resolve(answer.data) })
+			return Promise.resolve({
+				ok: answer.ok,
+				status: answer.ok ? 200 : 400,
+				json: () => Promise.resolve(answer.data),
+			})
 		}
-		return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}), headers: { get: () => null } })
+		return Promise.resolve({
+			ok: true,
+			status: 200,
+			json: () => Promise.resolve({}),
+			headers: { get: () => null },
+		})
 	})
 }
 
@@ -64,7 +74,11 @@ async function load() {
 }
 
 const $ = (id) => document.getElementById(id)
-const posted = () => global.fetch.mock.calls.filter(([url, options]) => url === URL_EMAIL && options && options.method === 'POST')
+const posted = () =>
+	global.fetch.mock.calls.filter(
+		([url, options]) =>
+			url === URL_EMAIL && options && options.method === 'POST',
+	)
 
 async function save() {
 	$('nldesign-email-theming-save').click()
@@ -76,11 +90,26 @@ describe('admin.js email template theming', () => {
 		getAnswer = {
 			ok: true,
 			data: {
-				state: { state: 'enabled', configReadOnly: false, foreignClass: null },
-				footer: { orgName: 'Zuiddrecht', accessibilityUrl: 'https://zuiddrecht.nl/a11y', privacyUrl: '' },
+				state: {
+					state: 'enabled',
+					configReadOnly: false,
+					foreignClass: null,
+				},
+				footer: {
+					orgName: 'Zuiddrecht',
+					accessibilityUrl: 'https://zuiddrecht.nl/a11y',
+					privacyUrl: '',
+				},
 			},
 		}
-		postAnswer = { ok: true, data: { status: 'ok', state: { state: 'disabled', configReadOnly: true }, footer: { orgName: 'Gemeente Zuiddrecht' } } }
+		postAnswer = {
+			ok: true,
+			data: {
+				status: 'ok',
+				state: { state: 'disabled', configReadOnly: true },
+				footer: { orgName: 'Gemeente Zuiddrecht' },
+			},
+		}
 		installGlobals()
 		document.body.innerHTML = `
 			<div id="nldesign-settings" class="section">
@@ -111,19 +140,32 @@ describe('admin.js email template theming', () => {
 		await load()
 
 		const root = $('nldesign-email-theming')
-		expect(global.fetch).toHaveBeenCalledWith(URL_EMAIL, { headers: { requesttoken: 'test-token' } })
+		expect(global.fetch).toHaveBeenCalledWith(URL_EMAIL, {
+			headers: { requesttoken: 'test-token' },
+		})
 		expect(root.getAttribute('data-state')).toBe('enabled')
 		expect(root.getAttribute('data-config-read-only')).toBe('0')
 		expect(root.getAttribute('data-foreign-class')).toBe('')
 		expect($('nldesign-email-theming-enabled').checked).toBe(true)
 		expect($('nldesign-email-theming-enabled').disabled).toBe(false)
 		expect($('nldesign-email-footer-org-name').value).toBe('Zuiddrecht')
-		expect($('nldesign-email-footer-accessibility-url').value).toBe('https://zuiddrecht.nl/a11y')
+		expect($('nldesign-email-footer-accessibility-url').value).toBe(
+			'https://zuiddrecht.nl/a11y',
+		)
 		expect($('nldesign-email-footer-privacy-url').value).toBe('')
 	})
 
 	it('locks the switch when another mail template class is configured', async () => {
-		getAnswer = { ok: true, data: { state: { state: 'foreign', configReadOnly: true, foreignClass: 'OCA\\Other\\Mail' } } }
+		getAnswer = {
+			ok: true,
+			data: {
+				state: {
+					state: 'foreign',
+					configReadOnly: true,
+					foreignClass: 'OCA\\Other\\Mail',
+				},
+			},
+		}
 		await load()
 
 		const root = $('nldesign-email-theming')
@@ -139,40 +181,64 @@ describe('admin.js email template theming', () => {
 		const error = vi.spyOn(console, 'error').mockImplementation(() => {})
 		await load()
 		expect(error).toHaveBeenCalledWith('Error loading email theming:', getAnswer)
-		expect($('nldesign-email-theming').getAttribute('data-state')).toBe('disabled')
+		expect($('nldesign-email-theming').getAttribute('data-state')).toBe(
+			'disabled',
+		)
 	})
 
 	it('saves the switch and the footer, and draws what the server answers', async () => {
 		await load()
-		$('nldesign-email-footer-privacy-url').value = 'https://zuiddrecht.nl/privacy'
+		$('nldesign-email-footer-privacy-url').value =
+			'https://zuiddrecht.nl/privacy'
 		await save()
 
 		const [[, options]] = posted()
-		expect(options.headers).toEqual({ 'Content-Type': 'application/json', requesttoken: 'test-token' })
+		expect(options.headers).toEqual({
+			'Content-Type': 'application/json',
+			requesttoken: 'test-token',
+		})
 		expect(JSON.parse(options.body)).toEqual({
 			enabled: true,
 			orgName: 'Zuiddrecht',
 			accessibilityUrl: 'https://zuiddrecht.nl/a11y',
 			privacyUrl: 'https://zuiddrecht.nl/privacy',
 		})
-		expect($('nldesign-email-theming').getAttribute('data-state')).toBe('disabled')
+		expect($('nldesign-email-theming').getAttribute('data-state')).toBe(
+			'disabled',
+		)
 		expect($('nldesign-email-footer-org-name').value).toBe('Gemeente Zuiddrecht')
 		expect($('nldesign-email-footer-accessibility-url').value).toBe('')
-		expect($('nldesign-email-theming-feedback').textContent).toBe('Email template settings saved.')
+		expect($('nldesign-email-theming-feedback').textContent).toBe(
+			'Email template settings saved.',
+		)
 		expect(toast).toHaveBeenCalledWith('Email template settings saved.')
 	})
 
 	it('shows the occ commands when config.php is read-only', async () => {
 		await load()
-		postAnswer = { ok: false, data: { error: 'config_read_only', occEnable: 'occ config:system:set mail_template_class', occDisable: 'occ config:system:delete mail_template_class', footer: { orgName: 'Kept' } } }
+		postAnswer = {
+			ok: false,
+			data: {
+				error: 'config_read_only',
+				occEnable: 'occ config:system:set mail_template_class',
+				occDisable: 'occ config:system:delete mail_template_class',
+				footer: { orgName: 'Kept' },
+			},
+		}
 		await save()
 
 		expect($('nldesign-email-theming-enabled').checked).toBe(false)
 		expect($('nldesign-email-occ-hint').style.display).toBe('')
-		expect($('nldesign-email-occ-enable').textContent).toBe('occ config:system:set mail_template_class')
-		expect($('nldesign-email-occ-disable').textContent).toBe('occ config:system:delete mail_template_class')
+		expect($('nldesign-email-occ-enable').textContent).toBe(
+			'occ config:system:set mail_template_class',
+		)
+		expect($('nldesign-email-occ-disable').textContent).toBe(
+			'occ config:system:delete mail_template_class',
+		)
 		expect($('nldesign-email-footer-org-name').value).toBe('Kept')
-		expect(toast).toHaveBeenCalledWith('config.php is read-only; run the shown occ command manually.')
+		expect(toast).toHaveBeenCalledWith(
+			'config.php is read-only; run the shown occ command manually.',
+		)
 	})
 
 	it('keeps the old occ commands when the answer has none', async () => {
@@ -185,21 +251,43 @@ describe('admin.js email template theming', () => {
 
 	it('locks the switch and names the class when another mail template class is configured on save', async () => {
 		await load()
-		postAnswer = { ok: false, data: { error: 'foreign_mail_template_class', class: 'OCA\\Other\\Mail' } }
+		postAnswer = {
+			ok: false,
+			data: {
+				error: 'foreign_mail_template_class',
+				class: 'OCA\\Other\\Mail',
+			},
+		}
 		await save()
 
 		expect($('nldesign-email-theming-enabled').checked).toBe(false)
 		expect($('nldesign-email-theming-enabled').disabled).toBe(true)
-		expect(document.querySelector('.nldesign-email-foreign-note').textContent).toBe(
+		expect(
+			document.querySelector('.nldesign-email-foreign-note').textContent,
+		).toBe(
 			'A different mail template class is already configured (OCA\\Other\\Mail); nldesign will not overwrite it.',
 		)
-		expect(toast).toHaveBeenCalledWith('A different mail template class is already configured.')
+		expect(toast).toHaveBeenCalledWith(
+			'A different mail template class is already configured.',
+		)
 	})
 
 	it.each([
-		['an invalid footer', { ok: false, data: { error: 'invalid_footer' } }, 'Invalid footer URL — use an http:// or https:// address.'],
-		['an unknown refusal', { ok: false, data: { error: 'something' } }, 'Failed to save email template settings.'],
-		['an ok status code without status ok', { ok: true, data: {} }, 'Failed to save email template settings.'],
+		[
+			'an invalid footer',
+			{ ok: false, data: { error: 'invalid_footer' } },
+			'Invalid footer URL — use an http:// or https:// address.',
+		],
+		[
+			'an unknown refusal',
+			{ ok: false, data: { error: 'something' } },
+			'Failed to save email template settings.',
+		],
+		[
+			'an ok status code without status ok',
+			{ ok: true, data: {} },
+			'Failed to save email template settings.',
+		],
 	])('says so on %s', async (label, answer, message) => {
 		await load()
 		postAnswer = answer

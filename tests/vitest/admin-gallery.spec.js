@@ -129,7 +129,9 @@ describe('admin.js theme gallery', () => {
 		)
 		expect(
 			document.getElementById('nldesign-gallery-toggle-hint').textContent,
-		).toBe('Reads raw.githubusercontent.com while you have this page open. Off by default.')
+		).toBe(
+			'Reads raw.githubusercontent.com while you have this page open. Off by default.',
+		)
 		expect(
 			document.getElementById('nldesign-gallery-list').children,
 		).toHaveLength(0)
@@ -151,7 +153,9 @@ describe('admin.js theme gallery', () => {
 		expect(JSON.parse(post.body)).toEqual({ enabled: true })
 		const item = document.querySelector('[data-gallery-id="provincie-utrecht"]')
 		expect(item.textContent).toContain('Provincie Utrecht')
-		expect(item.querySelector('.nldesign-gallery-licence').textContent).toBe('Licence EUPL-1.2')
+		expect(item.querySelector('.nldesign-gallery-licence').textContent).toBe(
+			'Licence EUPL-1.2',
+		)
 		expect(item.querySelector('h3').textContent).toBe('Provincie Utrecht')
 		expect(item.textContent).toContain('Contrast: all checks pass')
 		expect(item.querySelectorAll('.nldesign-gallery-swatch')).toHaveLength(3)

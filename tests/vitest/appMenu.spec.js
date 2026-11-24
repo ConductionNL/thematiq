@@ -261,9 +261,9 @@ describe('the apps menu as one ordered list', () => {
 
 		const footer = grid.querySelector('[data-thematiq-row="footer"]')
 		expect(
-			Array.from(footer.querySelectorAll('.thematiq-app-menu__hint > span')).map(
-				(span) => span.textContent,
-			),
+			Array.from(
+				footer.querySelectorAll('.thematiq-app-menu__hint > span'),
+			).map((span) => span.textContent),
 		).toEqual([LABELS.dragHint, LABELS.moveHint])
 		expect(footer.querySelector('a').getAttribute('href')).toBe(
 			'/index.php/settings/apps',

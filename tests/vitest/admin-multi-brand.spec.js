@@ -177,7 +177,9 @@ describe('admin.js multi-brand sources', () => {
 
 		boxes[2].checked = false
 		const dialog = document.getElementById('nldesign-brand-picker-dialog')
-		expect(dialog.querySelector('h2').textContent).toBe('Choose brands to import')
+		expect(dialog.querySelector('h2').textContent).toBe(
+			'Choose brands to import',
+		)
 		dialog.querySelector('.nldesign-brand-import').click()
 		await flush()
 

@@ -154,7 +154,11 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog__notice--warning {
-	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-error) 7%,
+		var(--color-main-background)
+	);
 	color: var(--color-error-hover, var(--color-error-text));
 }
 
@@ -287,7 +291,10 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog__table code {
-	font: 400 13px ui-monospace, Menlo, monospace;
+	font:
+		400 13px ui-monospace,
+		Menlo,
+		monospace;
 	color: inherit;
 	overflow-wrap: anywhere;
 }
@@ -396,7 +403,11 @@ dialog.thematiq-admin-dialog::backdrop {
 	padding: 12px 14px;
 	border: 0;
 	border-radius: 8px;
-	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-warning-hover) 35%,
+		var(--color-main-background)
+	);
 	color: var(--color-warning);
 	font-size: 14px;
 	line-height: 1.5;
@@ -571,7 +582,10 @@ dialog.thematiq-admin-dialog::backdrop {
 	border-radius: 8px 0 0 8px;
 	background: var(--color-background-hover);
 	color: var(--nl-color-grey-text, var(--color-main-text));
-	font: 400 13px ui-monospace, Menlo, monospace;
+	font:
+		400 13px ui-monospace,
+		Menlo,
+		monospace;
 }
 
 .thematiq-admin-dialog .thematiq-admin-dialog__affix input {
@@ -586,13 +600,19 @@ dialog.thematiq-admin-dialog::backdrop {
 	gap: 6px;
 	padding: 12px 14px;
 	border-radius: 8px;
-	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	);
 	font-size: 13px;
 	color: var(--color-text-maxcontrast);
 }
 
 .thematiq-admin-dialog__usage code {
-	font: 400 13px ui-monospace, Menlo, monospace;
+	font:
+		400 13px ui-monospace,
+		Menlo,
+		monospace;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
 
@@ -601,7 +621,11 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog__notice--caution {
-	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-warning-hover) 35%,
+		var(--color-main-background)
+	);
 	color: var(--color-warning);
 }
 

@@ -30,9 +30,20 @@ function installFetch() {
 	requests = []
 	answers = []
 	global.fetch = vi.fn((url, options = {}) => {
-		requests.push({ url, method: options.method || 'GET', headers: options.headers, body: options.body })
-		const answer = (options.method || 'GET') === 'GET' ? { ok: true, body: status } : answers.shift()
-		return Promise.resolve({ ok: answer.ok, json: () => Promise.resolve(answer.body) })
+		requests.push({
+			url,
+			method: options.method || 'GET',
+			headers: options.headers,
+			body: options.body,
+		})
+		const answer =
+			(options.method || 'GET') === 'GET'
+				? { ok: true, body: status }
+				: answers.shift()
+		return Promise.resolve({
+			ok: answer.ok,
+			json: () => Promise.resolve(answer.body),
+		})
 	})
 }
 
@@ -53,7 +64,8 @@ const flush = async () => {
 	}
 }
 const row = (kind) => document.querySelector('[data-kind="' + kind + '"]')
-const feedback = () => document.getElementById('nldesign-workspace-icons-feedback').textContent
+const feedback = () =>
+	document.getElementById('nldesign-workspace-icons-feedback').textContent
 
 /**
  * Choose a file in a row's hidden input.
@@ -71,7 +83,10 @@ describe('the workspace icons block', () => {
 	beforeEach(() => {
 		document.body.innerHTML = BLOCK
 		global.t = (app, text) => text
-		global.OC = { generateUrl: (url) => '/index.php' + url, requestToken: 'token' }
+		global.OC = {
+			generateUrl: (url) => '/index.php' + url,
+			requestToken: 'token',
+		}
 		status = {}
 		installFetch()
 	})
@@ -85,20 +100,38 @@ describe('the workspace icons block', () => {
 
 	it('draws a row per image, unset ones saying Nextcloud keeps its own and without a remove button', async () => {
 		await loadScript()
-		expect(requests[0]).toMatchObject({ url: BASE, method: 'GET', headers: { requesttoken: 'token' } })
-		expect(Array.from(document.querySelectorAll('[data-kind]')).map((el) => el.dataset.kind)).toEqual(['mobile-logo', 'touch-icon'])
+		expect(requests[0]).toMatchObject({
+			url: BASE,
+			method: 'GET',
+			headers: { requesttoken: 'token' },
+		})
+		expect(
+			Array.from(document.querySelectorAll('[data-kind]')).map(
+				(el) => el.dataset.kind,
+			),
+		).toEqual(['mobile-logo', 'touch-icon'])
 
 		const logo = row('mobile-logo')
 		expect(logo.querySelector('label').textContent).toBe('Mobile logo')
-		expect(logo.querySelector('label').getAttribute('for')).toBe('nldesign-workspace-icons-mobile-logo')
-		expect(logo.querySelector('.nldesign-workspace-icons__preview').textContent).toBe("Not set: Nextcloud's own is used.")
-		expect(logo.querySelector('input').accept).toBe('image/png,image/jpeg,image/webp,image/svg+xml')
+		expect(logo.querySelector('label').getAttribute('for')).toBe(
+			'nldesign-workspace-icons-mobile-logo',
+		)
+		expect(
+			logo.querySelector('.nldesign-workspace-icons__preview').textContent,
+		).toBe("Not set: Nextcloud's own is used.")
+		expect(logo.querySelector('input').accept).toBe(
+			'image/png,image/jpeg,image/webp,image/svg+xml',
+		)
 		expect(row('touch-icon').querySelector('input').accept).toBe('image/png')
 		expect(logo.querySelector('[id$="-remove"]')).toBeNull()
 
 		const pick = logo.querySelector('#nldesign-workspace-icons-mobile-logo-btn')
-		expect(pick.getAttribute('aria-labelledby')).toBe('nldesign-workspace-icons-mobile-logo-label nldesign-workspace-icons-mobile-logo-btn')
-		expect(pick.getAttribute('aria-describedby')).toBe('nldesign-workspace-icons-mobile-logo-hint')
+		expect(pick.getAttribute('aria-labelledby')).toBe(
+			'nldesign-workspace-icons-mobile-logo-label nldesign-workspace-icons-mobile-logo-btn',
+		)
+		expect(pick.getAttribute('aria-describedby')).toBe(
+			'nldesign-workspace-icons-mobile-logo-hint',
+		)
 	})
 
 	it('shows a set image as its preview, with a remove button', async () => {
@@ -108,12 +141,20 @@ describe('the workspace icons block', () => {
 		const img = icon.querySelector('.nldesign-workspace-icons__preview img')
 		expect(img.getAttribute('src')).toBe('/icon.png')
 		expect(img.getAttribute('alt')).toBe('')
-		expect(icon.querySelector('#nldesign-workspace-icons-touch-icon-remove').textContent).toBe('Remove image')
+		expect(
+			icon.querySelector('#nldesign-workspace-icons-touch-icon-remove')
+				.textContent,
+		).toBe('Remove image')
 		expect(row('mobile-logo').querySelector('img')).toBeNull()
 	})
 
 	it('draws the rows as unset when the status cannot be read', async () => {
-		global.fetch = vi.fn(() => Promise.resolve({ ok: false, json: () => Promise.resolve({ 'mobile-logo': '/x.png' }) }))
+		global.fetch = vi.fn(() =>
+			Promise.resolve({
+				ok: false,
+				json: () => Promise.resolve({ 'mobile-logo': '/x.png' }),
+			}),
+		)
 		await loadScript()
 		expect(row('mobile-logo').querySelector('img')).toBeNull()
 	})
@@ -138,7 +179,9 @@ describe('the workspace icons block', () => {
 		expect(upload.url).toBe(BASE + '/mobile-logo')
 		expect(upload.body.get('file')).toBeInstanceOf(File)
 		expect(feedback()).toBe('Image saved.')
-		expect(row('mobile-logo').querySelector('img').getAttribute('src')).toBe('/logo.svg')
+		expect(row('mobile-logo').querySelector('img').getAttribute('src')).toBe(
+			'/logo.svg',
+		)
 	})
 
 	it('shows the server reason when an upload is refused, and sends nothing without a file', async () => {
@@ -159,7 +202,9 @@ describe('the workspace icons block', () => {
 		answers.push({ ok: false, body: { error: 'Could not remove.' } })
 		row('mobile-logo').querySelector('[id$="-remove"]').click()
 		await flush()
-		expect(requests.find((r) => r.method === 'DELETE').url).toBe(BASE + '/mobile-logo')
+		expect(requests.find((r) => r.method === 'DELETE').url).toBe(
+			BASE + '/mobile-logo',
+		)
 		expect(feedback()).toBe('Could not remove.')
 
 		status = {}
@@ -182,7 +227,9 @@ describe('the workspace icons block', () => {
 	})
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(global.fetch).not.toHaveBeenCalled()
 

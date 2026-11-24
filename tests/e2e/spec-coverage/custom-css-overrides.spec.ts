@@ -45,193 +45,218 @@ test.use({ colorScheme: 'light' })
 test.describe('custom-css-overrides', () => {
 	test.describe.configure({ mode: 'serial', timeout: 60_000 })
 
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#file-exists-with-custom-tokens
-	'a stored --color-* override is served and applies on top of every layer on the next load', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(
-			browser,
-			{ tokenSet: SET, overrides: { '--color-primary': '#123456' } },
-			async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				const layers = await thematiqLayers(page)
-				const overrides = layers.indexOf('custom-overrides')
-				for (const [i, l] of layers.entries()) {
-					if (l.startsWith('systems/') || l.startsWith('tokens/')) {
-						expect(i, l).toBeLessThan(overrides)
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#file-exists-with-custom-tokens
+		'a stored --color-* override is served and applies on top of every layer on the next load',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: { '--color-primary': '#123456' } },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					const layers = await thematiqLayers(page)
+					const overrides = layers.indexOf('custom-overrides')
+					for (const [i, l] of layers.entries()) {
+						if (l.startsWith('systems/') || l.startsWith('tokens/')) {
+							expect(i, l).toBeLessThan(overrides)
+						}
 					}
-				}
-				expect(
-					rootDeclarations(await servedCss(page, 'custom-overrides')).get(
-						'--color-primary',
-					),
-				).toBe('#123456 !important')
-				expect(
-					await resolveColor(page, await rootVar(page, '--color-primary')),
-				).toBe('rgb(18, 52, 86)')
-			},
-		)
-	})
-
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#custom-override-wins-over-nl-design-token-set
-	"on utrecht, a saved --color-primary #0000FF beats the token set's mapped primary", async ({
-		browser,
-		page,
-	}) => {
-		const tokenPrimary = rootDeclarations(
-			repoFile('css/tokens/utrecht.css'),
-		).get('--nldesign-color-primary') as string
-		expect(tokenPrimary).toBeTruthy()
-		await withThemeState(
-			browser,
-			{ tokenSet: 'utrecht', overrides: { '--color-primary': '#0000FF' } },
-			async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				expect(await thematiqLayers(page)).toContain('tokens/utrecht')
-				// overrides.css maps --color-primary to the token on :root ...
-				expect(
-					stripComments(
-						await servedCss(page, 'systems/nldesign/overrides'),
-					),
-				).toMatch(/--color-primary:\s*var\(--nldesign-color-primary\)/)
-				// ... and the later, saved value wins there.
-				expect(
-					await resolveColor(page, await rootVar(page, '--color-primary')),
-				).toBe('rgb(0, 0, 255)')
-				expect(
-					await resolveColor(
-						page,
-						await rootVar(page, '--nldesign-color-primary'),
-					),
-				).toBe(await resolveColor(page, tokenPrimary))
-			},
-		)
-	})
-
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#file-is-written-by-the-save-endpoint
-	'saving writes the header comment and one :root line per posted token', async ({
-		browser,
-		page,
-	}) => {
-		const posted = { '--color-primary': '#c00000', '--color-error': '#b30000' }
-		await withThemeState(
-			browser,
-			{ tokenSet: SET, overrides: posted },
-			async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				const css = await servedCss(page, 'custom-overrides')
-				expect(css.split('\n')[0]).toBe(HEADER)
-				const lines = rootBlockLines(css)
-				// Exactly the posted tokens, each on its own line ending in a semicolon.
-				// The writer adds !important to every line (CustomOverridesService::
-				// buildDeclarationLines) so the value outranks the design-system layers.
-				expect(lines).toEqual([
-					'  --color-primary: #c00000 !important;',
-					'  --color-error: #b30000 !important;',
-				])
-			},
-		)
-	})
-
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#no-custom-tokens-results-in-empty-overrides-block
-	'saving an empty map leaves the header and an empty :root block, and the file stays', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(browser, { tokenSet: SET, overrides: {} }, async () => {
-			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-			// servedCss() fails on anything but 200: the file was not deleted.
-			const css = await servedCss(page, 'custom-overrides')
-			expect(css).toBe(`${HEADER}\n:root {}\n`)
-		})
-	})
-
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#read-current-overrides
-	'GET /settings/overrides returns exactly the tokens in the file, not defaults', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(
-			browser,
-			{ tokenSet: SET, overrides: { '--color-primary': '#224466' } },
-			async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				const res = await api(page, 'GET', OVERRIDES_ENDPOINT)
-				expect(res.status).toBe(200)
-				expect(res.json.overrides).toEqual({ '--color-primary': '#224466' })
-				// The registry rides along for the editor; it is not the overrides.
-				expect(Object.keys(res.json.registry)).toContain('--color-error')
-			},
-		)
-	})
-
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#write-new-overrides
-	'POST validates every token against the registry: unknown tokens are refused and nothing is written', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(browser, { tokenSet: SET, overrides: {} }, async () => {
-			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-			const ok = await api(page, 'POST', OVERRIDES_ENDPOINT, {
-				overrides: { '--color-primary': '#335577' },
-			})
-			expect(ok.status).toBe(200)
-			expect(ok.json).toEqual({ status: 'ok', written: 1 })
-			expect(
-				rootDeclarations(await servedCss(page, 'custom-overrides')).get(
-					'--color-primary',
-				),
-			).toBe('#335577 !important')
-
-			const refused = await api(page, 'POST', OVERRIDES_ENDPOINT, {
-				overrides: {
-					'--color-primary': '#000000',
-					'--not-a-registry-token': '#000000',
+					expect(
+						rootDeclarations(
+							await servedCss(page, 'custom-overrides'),
+						).get('--color-primary'),
+					).toBe('#123456 !important')
+					expect(
+						await resolveColor(
+							page,
+							await rootVar(page, '--color-primary'),
+						),
+					).toBe('rgb(18, 52, 86)')
 				},
-			})
-			expect(refused.status).toBe(400)
-			expect(Object.keys(refused.json.rejected)).toEqual([
-				'--not-a-registry-token',
-			])
-			// The whole save was refused: the earlier value is still the file.
-			expect(
-				(await api(page, 'GET', OVERRIDES_ENDPOINT)).json.overrides,
-			).toEqual({
-				'--color-primary': '#335577',
-			})
-		})
-	})
+			)
+		},
+	)
 
-	test(// @e2e openspec/specs/custom-css-overrides/spec.md#resetting-to-defaults-requires-only-file-deletion
-	'emptying the file returns the page to the token set, with no other call', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(
-			browser,
-			{ tokenSet: SET, overrides: { '--color-primary': '#ff00ff' } },
-			async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				expect(
-					await resolveColor(page, await rootVar(page, '--color-primary')),
-				).toBe('rgb(255, 0, 255)')
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#custom-override-wins-over-nl-design-token-set
+		"on utrecht, a saved --color-primary #0000FF beats the token set's mapped primary",
+		async ({ browser, page }) => {
+			const tokenPrimary = rootDeclarations(
+				repoFile('css/tokens/utrecht.css'),
+			).get('--nldesign-color-primary') as string
+			expect(tokenPrimary).toBeTruthy()
+			await withThemeState(
+				browser,
+				{ tokenSet: 'utrecht', overrides: { '--color-primary': '#0000FF' } },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					expect(await thematiqLayers(page)).toContain('tokens/utrecht')
+					// overrides.css maps --color-primary to the token on :root ...
+					expect(
+						stripComments(
+							await servedCss(page, 'systems/nldesign/overrides'),
+						),
+					).toMatch(/--color-primary:\s*var\(--nldesign-color-primary\)/)
+					// ... and the later, saved value wins there.
+					expect(
+						await resolveColor(
+							page,
+							await rootVar(page, '--color-primary'),
+						),
+					).toBe('rgb(0, 0, 255)')
+					expect(
+						await resolveColor(
+							page,
+							await rootVar(page, '--nldesign-color-primary'),
+						),
+					).toBe(await resolveColor(page, tokenPrimary))
+				},
+			)
+		},
+	)
 
-				const emptied = await api(page, 'POST', OVERRIDES_ENDPOINT, {
-					overrides: {},
-				})
-				expect(emptied.status).toBe(200)
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#file-is-written-by-the-save-endpoint
+		'saving writes the header comment and one :root line per posted token',
+		async ({ browser, page }) => {
+			const posted = {
+				'--color-primary': '#c00000',
+				'--color-error': '#b30000',
+			}
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: posted },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					const css = await servedCss(page, 'custom-overrides')
+					expect(css.split('\n')[0]).toBe(HEADER)
+					const lines = rootBlockLines(css)
+					// Exactly the posted tokens, each on its own line ending in a semicolon.
+					// The writer adds !important to every line (CustomOverridesService::
+					// buildDeclarationLines) so the value outranks the design-system layers.
+					expect(lines).toEqual([
+						'  --color-primary: #c00000 !important;',
+						'  --color-error: #b30000 !important;',
+					])
+				},
+			)
+		},
+	)
 
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				expect(
-					await resolveColor(page, await rootVar(page, '--color-primary')),
-				).toBe(
-					await resolveColor(
-						page,
-						await rootVar(page, '--nldesign-color-primary'),
-					),
-				)
-			},
-		)
-	})
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#no-custom-tokens-results-in-empty-overrides-block
+		'saving an empty map leaves the header and an empty :root block, and the file stays',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: {} },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					// servedCss() fails on anything but 200: the file was not deleted.
+					const css = await servedCss(page, 'custom-overrides')
+					expect(css).toBe(`${HEADER}\n:root {}\n`)
+				},
+			)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#read-current-overrides
+		'GET /settings/overrides returns exactly the tokens in the file, not defaults',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: { '--color-primary': '#224466' } },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					const res = await api(page, 'GET', OVERRIDES_ENDPOINT)
+					expect(res.status).toBe(200)
+					expect(res.json.overrides).toEqual({
+						'--color-primary': '#224466',
+					})
+					// The registry rides along for the editor; it is not the overrides.
+					expect(Object.keys(res.json.registry)).toContain('--color-error')
+				},
+			)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#write-new-overrides
+		'POST validates every token against the registry: unknown tokens are refused and nothing is written',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: {} },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					const ok = await api(page, 'POST', OVERRIDES_ENDPOINT, {
+						overrides: { '--color-primary': '#335577' },
+					})
+					expect(ok.status).toBe(200)
+					expect(ok.json).toEqual({ status: 'ok', written: 1 })
+					expect(
+						rootDeclarations(
+							await servedCss(page, 'custom-overrides'),
+						).get('--color-primary'),
+					).toBe('#335577 !important')
+
+					const refused = await api(page, 'POST', OVERRIDES_ENDPOINT, {
+						overrides: {
+							'--color-primary': '#000000',
+							'--not-a-registry-token': '#000000',
+						},
+					})
+					expect(refused.status).toBe(400)
+					expect(Object.keys(refused.json.rejected)).toEqual([
+						'--not-a-registry-token',
+					])
+					// The whole save was refused: the earlier value is still the file.
+					expect(
+						(await api(page, 'GET', OVERRIDES_ENDPOINT)).json.overrides,
+					).toEqual({
+						'--color-primary': '#335577',
+					})
+				},
+			)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/custom-css-overrides/spec.md#resetting-to-defaults-requires-only-file-deletion
+		'emptying the file returns the page to the token set, with no other call',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: SET, overrides: { '--color-primary': '#ff00ff' } },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					expect(
+						await resolveColor(
+							page,
+							await rootVar(page, '--color-primary'),
+						),
+					).toBe('rgb(255, 0, 255)')
+
+					const emptied = await api(page, 'POST', OVERRIDES_ENDPOINT, {
+						overrides: {},
+					})
+					expect(emptied.status).toBe(200)
+
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					expect(
+						await resolveColor(
+							page,
+							await rootVar(page, '--color-primary'),
+						),
+					).toBe(
+						await resolveColor(
+							page,
+							await rootVar(page, '--nldesign-color-primary'),
+						),
+					)
+				},
+			)
+		},
+	)
 })

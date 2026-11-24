@@ -32,29 +32,40 @@ describe('Log panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.scrollTo = vi.fn()
 		document.documentElement.lang = 'en-GB'
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
 		await import('../../js/admin-log-panel.js?t=' + Math.random())
 		window.history.replaceState(null, '', '#log')
 		window.dispatchEvent(new HashChangeEvent('hashchange'))
-		document.dispatchEvent(new CustomEvent('thematiq:audit-rendered', { detail: { count: 7, versions: 6, since: '2026-10-02T15:50:00Z' } }))
+		document.dispatchEvent(
+			new CustomEvent('thematiq:audit-rendered', {
+				detail: { count: 7, versions: 6, since: '2026-10-02T15:50:00Z' },
+			}),
+		)
 	})
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -62,10 +73,18 @@ describe('Log panel', () => {
 	})
 
 	it('writes the counts and the header line', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Log')
-		expect(document.querySelector('.thematiq-log-panel__count').textContent).toBe('7 of 7 changes')
-		expect(document.querySelector('.thematiq-log-panel__versions').textContent).toBe('6 of 50')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toMatch(/^7 changes since .*2026$/)
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Log')
+		expect(
+			document.querySelector('.thematiq-log-panel__count').textContent,
+		).toBe('7 of 7 changes')
+		expect(
+			document.querySelector('.thematiq-log-panel__versions').textContent,
+		).toBe('6 of 50')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toMatch(/^7 changes since .*2026$/)
 	})
 
 	it("downloads through the table's own button", () => {

@@ -35,8 +35,11 @@
 	 * @return {string} The line.
 	 */
 	function line() {
-		var count = list !== null ? list.querySelectorAll('.thematiq-font-row').length : 0
-		return count === 1 ? tr('1 uploaded font') : tr('{count} uploaded fonts', { count: count })
+		var count =
+			list !== null ? list.querySelectorAll('.thematiq-font-row').length : 0
+		return count === 1
+			? tr('1 uploaded font')
+			: tr('{count} uploaded fonts', { count: count })
 	}
 
 	/**
@@ -51,8 +54,13 @@
 			return
 		}
 		var rows = []
-		;[['heading', tr('Headings')], ['body', tr('Body text')]].forEach(function (role) {
-			var row = document.querySelector('.thematiq-font-row--' + role[0] + ' .thematiq-font-row__title')
+		;[
+			['heading', tr('Headings')],
+			['body', tr('Body text')],
+		].forEach(function (role) {
+			var row = document.querySelector(
+				'.thematiq-font-row--' + role[0] + ' .thematiq-font-row__title',
+			)
 			if (row === null) {
 				return
 			}
@@ -75,8 +83,13 @@
 	 */
 	function follow() {
 		drawNow()
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'fonts') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'fonts'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.textContent = line()
 			}

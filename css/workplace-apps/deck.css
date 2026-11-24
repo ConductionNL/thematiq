@@ -18,7 +18,10 @@
  */
 
 :is(#content, #content-vue).app-deck #app-content-vue {
-	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	) !important;
 }
 
 /* The title row. */
@@ -79,7 +82,11 @@
 	padding: 0 6px 6px !important;
 	box-sizing: border-box;
 	border-radius: var(--border-radius-element, 8px);
-	background-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background)) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	) !important;
 	--thematiq-deck-dot: var(--thematiq-deck-status-closed);
 	--thematiq-deck-dot-ring: var(--thematiq-deck-status-closed-ring);
 
@@ -261,7 +268,10 @@
 /* The column scrolls as a whole; its card list does not get a scrollbar of
    its own inside it. */
 
-:is(#content, #content-vue).app-deck .stack .dnd-container > .smooth-dnd-draggable-wrapper {
+:is(#content, #content-vue).app-deck
+	.stack
+	.dnd-container
+	> .smooth-dnd-draggable-wrapper {
 	margin: 0 !important;
 }
 
@@ -335,12 +345,18 @@
 	line-height: 21px;
 }
 
-:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry .button-vue {
+:is(#content, #content-vue).app-deck
+	#app-navigation-vue
+	.app-navigation-entry
+	.button-vue {
 	min-height: 34px !important;
 	height: 34px !important;
 }
 
-:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry-wrapper + .app-navigation-entry-wrapper {
+:is(#content, #content-vue).app-deck
+	#app-navigation-vue
+	.app-navigation-entry-wrapper
+	+ .app-navigation-entry-wrapper {
 	margin-top: 1px;
 }
 
@@ -363,8 +379,13 @@
 	line-height: 24px !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus:not(:focus-visible),
-:root[data-thematiq-pointer] :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname:focus {
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus:not(:focus-visible),
+:root[data-thematiq-pointer]
+	:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus {
 	outline: none !important;
 	box-shadow: none !important;
 }
@@ -389,17 +410,29 @@
 	padding: 0 !important;
 	border: 1px solid var(--color-border-maxcontrast) !important;
 	border-bottom: 0 !important;
-	border-radius: var(--border-radius-element, 8px) var(--border-radius-element, 8px) 0 0 !important;
-	background-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background)) !important;
+	border-radius: var(--border-radius-element, 8px)
+		var(--border-radius-element, 8px) 0 0 !important;
+	background-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	) !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab[aria-selected='true'],
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab.checkbox-radio-switch--checked {
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab[aria-selected='true'],
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab.checkbox-radio-switch--checked {
 	height: 37px !important;
 	background-color: var(--color-main-background) !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab .checkbox-content {
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content {
 	flex-direction: row !important;
 	height: 36px;
 	padding: 0 12px !important;
@@ -408,11 +441,16 @@
 	box-shadow: none !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab .checkbox-content__icon {
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content__icon {
 	display: none !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab-caption {
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab-caption {
 	font-size: 14px;
 	font-weight: 500;
 	color: var(--color-main-text);
@@ -438,7 +476,8 @@
  */
 :is(#content, #content-vue).app-deck .smooth-dnd-ghost .card {
 	border-color: var(--color-border-dark, var(--color-border)) !important;
-	box-shadow: 0 8px 24px var(--nldesign-component-content-card-shadow-color, var(--color-box-shadow)) !important;
+	box-shadow: 0 8px 24px
+		var(--nldesign-component-content-card-shadow-color, var(--color-box-shadow)) !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -456,7 +495,7 @@
  * in the rail. Without style queries the column stays unfolded.
  */
 @property --thematiq-deck-rail {
-	syntax: "<integer>";
+	syntax: '<integer>';
 	inherits: true;
 	initial-value: 0;
 }
@@ -480,18 +519,24 @@
 		max-width: 64px !important;
 	}
 
-	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:is(:focus-within, :has(#app-navigation-vue [aria-haspopup][aria-expanded="true"])) {
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+		.app-navigation:is(
+			:focus-within,
+			:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
+		) {
 		--thematiq-deck-rail: 0;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:hover {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			.app-navigation:hover {
 			animation: thematiq-deck-rail-unfold 1ms 200ms forwards;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation:hover {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			.app-navigation:hover {
 			--thematiq-deck-rail: 0;
 		}
 	}
@@ -507,31 +552,48 @@
 	}
 
 	@container style(--thematiq-deck-rail: 1) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue {
 			width: 64px;
 			box-shadow: none;
 			padding-inline: 4px !important;
 			overflow: hidden;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue :is(.app-navigation-entry__children, .app-navigation-entry__actions, .app-navigation-entry__utils, .app-navigation-caption, .icon-collapse) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			:is(
+				.app-navigation-entry__children,
+				.app-navigation-entry__actions,
+				.app-navigation-entry__utils,
+				.app-navigation-caption,
+				.icon-collapse
+			) {
 			display: none !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
 			display: none !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-list {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-list {
 			padding-inline: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue :is(.app-navigation-entry, .app-navigation-entry-link) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			:is(.app-navigation-entry, .app-navigation-entry-link) {
 			height: auto !important;
 			min-height: 48px !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-link {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-link {
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
@@ -539,14 +601,18 @@
 			padding: 4px 0 !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry-icon {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-icon {
 			width: 20px !important;
 			height: 22px !important;
 			min-height: 22px !important;
 			margin: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue .app-navigation-entry__name {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry__name {
 			max-width: 56px;
 			height: auto !important;
 			min-height: 0 !important;
@@ -587,22 +653,43 @@
 	--thematiq-deck-status-closed-ring: #adb5bd;
 }
 
-:is(#content, #content-vue).app-deck .stack:is([data-cy-stack='New' i], [data-cy-stack='To do' i], [data-cy-stack='Nieuw' i]) {
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='New' i],
+		[data-cy-stack='To do' i],
+		[data-cy-stack='Nieuw' i]
+	) {
 	--thematiq-deck-dot: var(--thematiq-deck-status-new);
 	--thematiq-deck-dot-ring: var(--thematiq-deck-status-new-ring);
 }
 
-:is(#content, #content-vue).app-deck .stack:is([data-cy-stack='In progress' i], [data-cy-stack='In development' i], [data-cy-stack='Doing' i], [data-cy-stack='In behandeling' i]) {
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='In progress' i],
+		[data-cy-stack='In development' i],
+		[data-cy-stack='Doing' i],
+		[data-cy-stack='In behandeling' i]
+	) {
 	--thematiq-deck-dot: var(--thematiq-deck-status-progress);
 	--thematiq-deck-dot-ring: var(--thematiq-deck-status-progress-ring);
 }
 
-:is(#content, #content-vue).app-deck .stack:is([data-cy-stack='In review' i], [data-cy-stack='Review' i], [data-cy-stack='Ter controle' i]) {
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='In review' i],
+		[data-cy-stack='Review' i],
+		[data-cy-stack='Ter controle' i]
+	) {
 	--thematiq-deck-dot: var(--thematiq-deck-status-review);
 	--thematiq-deck-dot-ring: var(--thematiq-deck-status-review-ring);
 }
 
-:is(#content, #content-vue).app-deck .stack:is([data-cy-stack='On hold' i], [data-cy-stack='Blocked' i], [data-cy-stack='Geparkeerd' i]) {
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='On hold' i],
+		[data-cy-stack='Blocked' i],
+		[data-cy-stack='Geparkeerd' i]
+	) {
 	--thematiq-deck-dot: var(--thematiq-deck-status-hold);
 	--thematiq-deck-dot-ring: var(--thematiq-deck-status-hold-ring);
 }
@@ -640,7 +727,10 @@
 
 /* The count: a counter over the cards, drawn after the last of them and
    placed in the heading, left of the plus. */
-:is(#content, #content-vue).app-deck .stack .dnd-container > .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost) {
+:is(#content, #content-vue).app-deck
+	.stack
+	.dnd-container
+	> .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost) {
 	counter-increment: thematiq-deck-cards;
 }
 
@@ -678,8 +768,13 @@
 	order: 2;
 }
 
-:is(#content, #content-vue).app-deck .stack:is(:hover, :focus-within) .stack__header > .action-item:not(:last-child),
-:is(#content, #content-vue).app-deck .stack__header > .action-item--open:not(:last-child) {
+:is(#content, #content-vue).app-deck
+	.stack:is(:hover, :focus-within)
+	.stack__header
+	> .action-item:not(:last-child),
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item--open:not(:last-child) {
 	opacity: 1;
 }
 
@@ -696,8 +791,17 @@
 	height: 16px;
 }
 
-:is(#content, #content-vue).app-deck .stack__header > .action-item:last-child svg path,
-:is(#content, #content-vue).app-deck .card .duedate:not([data-due-state='Done']) .due svg path,
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item:last-child
+	svg
+	path,
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:not([data-due-state='Done'])
+	.due
+	svg
+	path,
 :is(#content, #content-vue).app-deck .card .icon-badge .attachment-icon svg path {
 	fill: none;
 	stroke: currentColor;
@@ -706,16 +810,29 @@
 	stroke-linejoin: round;
 }
 
-:is(#content, #content-vue).app-deck .stack__header > .action-item:last-child svg path {
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item:last-child
+	svg
+	path {
 	d: path('M12 5v14M5 12h14');
 }
 
-:is(#content, #content-vue).app-deck .card .duedate:not([data-due-state='Done']) .due svg path {
-	d: path('M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z');
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:not([data-due-state='Done'])
+	.due
+	svg
+	path {
+	d: path(
+		'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'
+	);
 }
 
 :is(#content, #content-vue).app-deck .card .icon-badge .attachment-icon svg path {
-	d: path('m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48');
+	d: path(
+		'm21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48'
+	);
 }
 
 /* The card face. */
@@ -748,7 +865,10 @@
 }
 
 /* The description mark is not on the board's card face. */
-:is(#content, #content-vue).app-deck .card .inline-badges .icon-badge:has(.text-icon) {
+:is(#content, #content-vue).app-deck
+	.card
+	.inline-badges
+	.icon-badge:has(.text-icon) {
 	display: none !important;
 }
 
@@ -776,7 +896,10 @@
 	white-space: nowrap;
 }
 
-:is(#content, #content-vue).app-deck .card .duedate:is([data-due-state='Now'], [data-due-state='Next']) .due {
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:is([data-due-state='Now'], [data-due-state='Next'])
+	.due {
 	color: var(--color-main-text) !important;
 	font-weight: 600;
 }
@@ -798,7 +921,9 @@
 	line-height: 22px !important;
 }
 
-:is(#content, #content-vue).app-deck .controls .board-title[data-thematiq-open]::after {
+:is(#content, #content-vue).app-deck
+	.controls
+	.board-title[data-thematiq-open]::after {
 	content: attr(data-thematiq-open);
 	color: var(--color-text-maxcontrast);
 	font-size: 11px;
@@ -815,7 +940,9 @@
 	flex-wrap: wrap;
 }
 
-:is(#content, #content-vue).app-deck .card .card-upper[data-thematiq-project]::after {
+:is(#content, #content-vue).app-deck
+	.card
+	.card-upper[data-thematiq-project]::after {
 	content: attr(data-thematiq-project);
 	flex: 1 0 100%;
 	overflow: hidden;
@@ -827,13 +954,16 @@
 	white-space: nowrap;
 }
 
-:is(#content, #content-vue).app-deck .card .card-controls[data-thematiq-mail]::before {
+:is(#content, #content-vue).app-deck
+	.card
+	.card-controls[data-thematiq-mail]::before {
 	content: attr(data-thematiq-mail);
 	display: block;
 	overflow: hidden;
 	margin-bottom: 6px;
 	padding-inline-start: 19px;
-	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235e6168' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6'/%3E%3C/svg%3E") left center / 14px 14px no-repeat;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235e6168' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6'/%3E%3C/svg%3E")
+		left center / 14px 14px no-repeat;
 	color: var(--color-text-maxcontrast);
 	font-size: 12px;
 	line-height: 16px;
@@ -845,21 +975,31 @@
 	display: none !important;
 }
 
-:is(#content, #content-vue).app-deck .card .card-labels[data-thematiq-priority]::after {
+:is(#content, #content-vue).app-deck
+	.card
+	.card-labels[data-thematiq-priority]::after {
 	content: '';
 	flex: none;
 	width: 16px;
 	height: 16px;
 	margin-inline-start: auto;
 	background-color: var(--thematiq-deck-status-hold-ring);
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 13 6-6 6 6M6 19l6-6 6 6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 13 6-6 6 6M6 19l6-6 6 6'/%3E%3C/svg%3E")
+		center / 16px 16px no-repeat;
 }
 
-:is(#content, #content-vue).app-deck .card .avatars .avatardiv[data-thematiq-initials] img {
+:is(#content, #content-vue).app-deck
+	.card
+	.avatars
+	.avatardiv[data-thematiq-initials]
+	img {
 	display: none !important;
 }
 
-:is(#content, #content-vue).app-deck .card .avatars .avatardiv[data-thematiq-initials]::after {
+:is(#content, #content-vue).app-deck
+	.card
+	.avatars
+	.avatardiv[data-thematiq-initials]::after {
 	content: attr(data-thematiq-initials);
 	display: inline-flex;
 	align-items: center;

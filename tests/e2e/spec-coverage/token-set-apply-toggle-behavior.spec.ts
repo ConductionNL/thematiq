@@ -99,66 +99,75 @@ async function openApplyDialog(page: Page) {
 }
 
 test.describe('token-set-apply-toggle-behavior', () => {
-	test(// @e2e openspec/specs/token-set-apply-dialog/spec.md#select-all-deselect-all
-	'Deselect all unchecks every row, then Select all re-checks every row', async ({
-		page,
-	}) => {
-		const { overlay } = await openApplyDialog(page)
-		const checks = overlay.locator('.nldesign-apply-check')
-		const count = await checks.count()
-		expect(
-			count,
-			'apply dialog must have at least one change row',
-		).toBeGreaterThan(0)
+	test(
+		// @e2e openspec/specs/token-set-apply-dialog/spec.md#select-all-deselect-all
+		'Deselect all unchecks every row, then Select all re-checks every row',
+		async ({ page }) => {
+			const { overlay } = await openApplyDialog(page)
+			const checks = overlay.locator('.nldesign-apply-check')
+			const count = await checks.count()
+			expect(
+				count,
+				'apply dialog must have at least one change row',
+			).toBeGreaterThan(0)
 
-		// Default state: all checked.
-		for (let i = 0; i < count; i++) await expect(checks.nth(i)).toBeChecked()
+			// Default state: all checked.
+			for (let i = 0; i < count; i++) await expect(checks.nth(i)).toBeChecked()
 
-		// Deselect all → none checked.
-		await overlay.locator('#nldesign-apply-deselect-all').click()
-		for (let i = 0; i < count; i++) await expect(checks.nth(i)).not.toBeChecked()
+			// Deselect all → none checked.
+			await overlay.locator('#nldesign-apply-deselect-all').click()
+			for (let i = 0; i < count; i++)
+				await expect(checks.nth(i)).not.toBeChecked()
 
-		// Select all → all checked again.
-		await overlay.locator('#nldesign-apply-select-all').click()
-		for (let i = 0; i < count; i++) await expect(checks.nth(i)).toBeChecked()
+			// Select all → all checked again.
+			await overlay.locator('#nldesign-apply-select-all').click()
+			for (let i = 0; i < count; i++) await expect(checks.nth(i)).toBeChecked()
 
-		// Cancel to revert dropdown + preview, write nothing.
-		await overlay.locator('.nldesign-dialog-cancel').first().click()
-		await expect(overlay).not.toBeVisible()
-	})
+			// Cancel to revert dropdown + preview, write nothing.
+			await overlay.locator('.nldesign-dialog-cancel').first().click()
+			await expect(overlay).not.toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/token-set-apply-dialog/spec.md#admin-unchecks-a-row
-	'Unchecking a single row leaves the other rows untouched', async ({ page }) => {
-		const { overlay } = await openApplyDialog(page)
-		const checks = overlay.locator('.nldesign-apply-check')
-		const count = await checks.count()
-		test.skip(count < 2, 'needs at least two change rows to assert independence')
+	test(
+		// @e2e openspec/specs/token-set-apply-dialog/spec.md#admin-unchecks-a-row
+		'Unchecking a single row leaves the other rows untouched',
+		async ({ page }) => {
+			const { overlay } = await openApplyDialog(page)
+			const checks = overlay.locator('.nldesign-apply-check')
+			const count = await checks.count()
+			test.skip(
+				count < 2,
+				'needs at least two change rows to assert independence',
+			)
 
-		await checks.first().uncheck()
-		await expect(checks.first()).not.toBeChecked()
-		// Every other row stays checked.
-		for (let i = 1; i < count; i++) await expect(checks.nth(i)).toBeChecked()
+			await checks.first().uncheck()
+			await expect(checks.first()).not.toBeChecked()
+			// Every other row stays checked.
+			for (let i = 1; i < count; i++) await expect(checks.nth(i)).toBeChecked()
 
-		await overlay.locator('.nldesign-dialog-cancel').first().click()
-		await expect(overlay).not.toBeVisible()
-	})
+			await overlay.locator('.nldesign-dialog-cancel').first().click()
+			await expect(overlay).not.toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/token-set-apply-dialog/spec.md#dialog-closed-with-cancel
-	'Clicking the overlay backdrop cancels the dialog (reverts the dropdown)', async ({
-		page,
-	}) => {
-		const { overlay, select, original, target } = await openApplyDialog(page)
-		// Sanity: the dropdown currently shows the (un-applied) target value.
-		expect(target).not.toBe(original)
-		await expect(select).toHaveValue(target)
+	test(
+		// @e2e openspec/specs/token-set-apply-dialog/spec.md#dialog-closed-with-cancel
+		'Clicking the overlay backdrop cancels the dialog (reverts the dropdown)',
+		async ({ page }) => {
+			const { overlay, select, original, target } = await openApplyDialog(page)
+			// Sanity: the dropdown currently shows the (un-applied) target value.
+			expect(target).not.toBe(original)
+			await expect(select).toHaveValue(target)
 
-		// Click the overlay itself (its own backdrop) — handler cancels when
-		// e.target === overlay.
-		await overlay.click({ position: { x: 4, y: 4 } })
-		await expect(overlay).not.toBeVisible({ timeout: 5_000 })
+			// Click the overlay itself (its own backdrop) — handler cancels when
+			// e.target === overlay.
+			await overlay.click({ position: { x: 4, y: 4 } })
+			await expect(overlay).not.toBeVisible({ timeout: 5_000 })
 
-		// cancelDialog reverts the dropdown to the originally-active token set
-		// and writes nothing to the server.
-		await expect(select).toHaveValue(original)
-	})
+			// cancelDialog reverts the dropdown to the originally-active token set
+			// and writes nothing to the server.
+			await expect(select).toHaveValue(original)
+		},
+	)
 })

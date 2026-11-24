@@ -113,82 +113,91 @@ test.describe('token-set-contrast-audit', () => {
 	// Requirement: Non-Compliant Sets Are Surfaced in the Apply Dialog
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/token-set-contrast-audit/spec.md#applying-a-sub-aa-shipped-set-shows-a-warning-but-still-applies
-	'Applying a sub-AA shipped set shows a non-blocking contrast warning', async ({
-		page,
-	}) => {
-		await openTheming(page)
+	test(
+		// @e2e openspec/specs/token-set-contrast-audit/spec.md#applying-a-sub-aa-shipped-set-shows-a-warning-but-still-applies
+		'Applying a sub-AA shipped set shows a non-blocking contrast warning',
+		async ({ page }) => {
+			await openTheming(page)
 
-		// A shipped set the committed report does not pass, when one is offered.
-		// The dropdown is the SELECTABLE list, not the catalogue, so a
-		// non-compliant set can exist and still not be on it.
-		const select = page.locator('#nldesign-token-set-select')
-		let shipped = ''
-		for (const id of nonCompliantShippedSets()) {
-			if ((await select.locator(`option[value="${id}"]`).count()) > 0) {
-				shipped = id
-				break
+			// A shipped set the committed report does not pass, when one is offered.
+			// The dropdown is the SELECTABLE list, not the catalogue, so a
+			// non-compliant set can exist and still not be on it.
+			const select = page.locator('#nldesign-token-set-select')
+			let shipped = ''
+			for (const id of nonCompliantShippedSets()) {
+				if ((await select.locator(`option[value="${id}"]`).count()) > 0) {
+					shipped = id
+					break
+				}
 			}
-		}
-		// Only a shipped set reaches the shipped audit (an uploaded one carries
-		// the warnings stored at upload), so an uploaded stand-in would not test
-		// this scenario. Since the token sync every shipped set passes; until one
-		// fails again, the shipped warnings path is covered by PHPUnit
-		// (TokenSetServiceWarningsCacheTest) and the banner itself by the test
-		// below. This test re-arms by itself when the report records a failure.
-		test.skip(
-			shipped === '',
-			'no shipped set fails the contrast audit (docs/reference/contrast-report.json) '
-				+ 'and is selectable on this instance',
-		)
+			// Only a shipped set reaches the shipped audit (an uploaded one carries
+			// the warnings stored at upload), so an uploaded stand-in would not test
+			// this scenario. Since the token sync every shipped set passes; until one
+			// fails again, the shipped warnings path is covered by PHPUnit
+			// (TokenSetServiceWarningsCacheTest) and the banner itself by the test
+			// below. This test re-arms by itself when the report records a failure.
+			test.skip(
+				shipped === '',
+				'no shipped set fails the contrast audit (docs/reference/contrast-report.json) '
+					+ 'and is selectable on this instance',
+			)
 
-		await expectNonBlockingContrastWarning(page, shipped)
-	})
+			await expectNonBlockingContrastWarning(page, shipped)
+		},
+	)
 
-	test(// @e2e openspec/specs/custom-token-sets/spec.md#contrast-warning-resurfaces-when-applying-the-set
-	'Applying a sub-AA uploaded set shows its stored contrast warning, non-blocking', async ({
-		browser,
-		page,
-	}) => {
-		// Runs on every run, whatever the shipped sets do: the set is the test's
-		// own, white text on a white primary on a white page (1:1). Its warning
-		// is computed and stored at upload, and the dialog must show it again
-		// when the set is chosen after a page load.
-		await withUploadedSet(
-			browser,
-			'Low contrast',
-			LOW_CONTRAST_CSS,
-			async (id) => {
-				await openTheming(page)
-				await expectNonBlockingContrastWarning(page, id)
-			},
-		)
-	})
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#contrast-warning-resurfaces-when-applying-the-set
+		'Applying a sub-AA uploaded set shows its stored contrast warning, non-blocking',
+		async ({ browser, page }) => {
+			// Runs on every run, whatever the shipped sets do: the set is the test's
+			// own, white text on a white primary on a white page (1:1). Its warning
+			// is computed and stored at upload, and the dialog must show it again
+			// when the set is chosen after a page load.
+			await withUploadedSet(
+				browser,
+				'Low contrast',
+				LOW_CONTRAST_CSS,
+				async (id) => {
+					await openTheming(page)
+					await expectNonBlockingContrastWarning(page, id)
+				},
+			)
+		},
+	)
 
-	test(// @e2e openspec/specs/token-set-contrast-audit/spec.md#a-compliant-shipped-set-shows-no-contrast-warning
-	'A compliant shipped set shows no contrast warning', async ({ page }) => {
-		await openTheming(page)
+	test(
+		// @e2e openspec/specs/token-set-contrast-audit/spec.md#a-compliant-shipped-set-shows-no-contrast-warning
+		'A compliant shipped set shows no contrast warning',
+		async ({ page }) => {
+			await openTheming(page)
 
-		const select = page.locator('#nldesign-token-set-select')
+			const select = page.locator('#nldesign-token-set-select')
 
-		// rijkshuisstijl is a documented AA-compliant set (10.2:1 / 9.43:1).
-		const exists = await select.locator('option[value="rijkshuisstijl"]').count()
-		test.skip(exists === 0, 'rijkshuisstijl set not present in this instance')
-		// Choosing the set that is already active opens no dialog, and then
-		// there is no dialog to show the absence of a warning in.
-		test.skip(
-			(await select.inputValue()) === 'rijkshuisstijl',
-			'rijkshuisstijl is already the active set',
-		)
+			// rijkshuisstijl is a documented AA-compliant set (10.2:1 / 9.43:1).
+			const exists = await select
+				.locator('option[value="rijkshuisstijl"]')
+				.count()
+			test.skip(
+				exists === 0,
+				'rijkshuisstijl set not present in this instance',
+			)
+			// Choosing the set that is already active opens no dialog, and then
+			// there is no dialog to show the absence of a warning in.
+			test.skip(
+				(await select.inputValue()) === 'rijkshuisstijl',
+				'rijkshuisstijl is already the active set',
+			)
 
-		await select.selectOption('rijkshuisstijl')
+			await select.selectOption('rijkshuisstijl')
 
-		// Waited for, not probed: isVisible() answers at once, so the previous
-		// `if (isVisible)` read a dialog that had not opened yet and asserted
-		// nothing.
-		const overlay = page.locator('#nldesign-apply-dialog-overlay')
-		await expect(overlay).toBeVisible({ timeout: 10_000 })
-		await expect(contrastWarning(overlay)).toHaveCount(0)
-		await overlay.locator('.nldesign-dialog-cancel').first().click()
-	})
+			// Waited for, not probed: isVisible() answers at once, so the previous
+			// `if (isVisible)` read a dialog that had not opened yet and asserted
+			// nothing.
+			const overlay = page.locator('#nldesign-apply-dialog-overlay')
+			await expect(overlay).toBeVisible({ timeout: 10_000 })
+			await expect(contrastWarning(overlay)).toHaveCount(0)
+			await overlay.locator('.nldesign-dialog-cancel').first().click()
+		},
+	)
 })

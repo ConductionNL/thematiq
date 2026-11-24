@@ -83,8 +83,12 @@ describe('Brand per app block', () => {
 		await loadScript()
 		const row = document.querySelector('[data-app="collectives"]')
 		expect(row.querySelector('strong').textContent).toBe('Collectives')
-		expect(row.querySelector('.nldesign-app-brand-set').textContent).toBe('Kennisbank')
-		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe('WCAG AA')
+		expect(row.querySelector('.nldesign-app-brand-set').textContent).toBe(
+			'Kennisbank',
+		)
+		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe(
+			'WCAG AA',
+		)
 		const input = row.querySelector('input[type="file"]')
 		expect(
 			document.querySelector('label[for="' + input.id + '"]').textContent,
@@ -126,65 +130,111 @@ describe('Brand per app block', () => {
 		const row = document.querySelector('[data-app="deck"]')
 		expect(row.querySelector('strong').textContent).toBe('deck')
 		expect(row.querySelector('.nldesign-app-brand-set').textContent).toBe('gone')
-		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe('Below WCAG AA')
-		expect(row.querySelector('.nldesign-app-brand-stale').textContent).toContain('Not applied')
+		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe(
+			'Below WCAG AA',
+		)
+		expect(row.querySelector('.nldesign-app-brand-stale').textContent).toContain(
+			'Not applied',
+		)
 	})
 
 	it('says no app has its own brand when there is none', async () => {
 		state.brands = {}
 		await loadScript()
-		expect(document.getElementById('nldesign-app-brands-list').textContent).toBe('No app has its own brand.')
+		expect(document.getElementById('nldesign-app-brands-list').textContent).toBe(
+			'No app has its own brand.',
+		)
 	})
 
 	it('uploads a logo for a size, shows the file name, and says it is saved or why not', async () => {
 		await loadScript()
-		const input = document.getElementById('nldesign-app-brands-collectives-small')
-		const pick = document.getElementById('nldesign-app-brands-collectives-small-btn')
+		const input = document.getElementById(
+			'nldesign-app-brands-collectives-small',
+		)
+		const pick = document.getElementById(
+			'nldesign-app-brands-collectives-small-btn',
+		)
 		const click = vi.spyOn(input, 'click').mockImplementation(() => {})
 		pick.click()
 		expect(click).toHaveBeenCalled()
-		expect(pick.getAttribute('aria-labelledby')).toBe('nldesign-app-brands-collectives-small-label nldesign-app-brands-collectives-small-btn')
+		expect(pick.getAttribute('aria-labelledby')).toBe(
+			'nldesign-app-brands-collectives-small-label nldesign-app-brands-collectives-small-btn',
+		)
 
 		Object.defineProperty(input, 'files', { value: [], configurable: true })
 		input.dispatchEvent(new Event('change'))
 		await flush()
-		expect(input.parentNode.querySelector('.nldesign-file-pick__name').textContent).toBe('No file chosen')
-		expect(global.fetch.mock.calls.some(([url]) => url.endsWith('/logo/small'))).toBe(false)
+		expect(
+			input.parentNode.querySelector('.nldesign-file-pick__name').textContent,
+		).toBe('No file chosen')
+		expect(
+			global.fetch.mock.calls.some(([url]) => url.endsWith('/logo/small')),
+		).toBe(false)
 
-		Object.defineProperty(input, 'files', { value: [new File(['x'], 'logo.svg')], configurable: true })
+		Object.defineProperty(input, 'files', {
+			value: [new File(['x'], 'logo.svg')],
+			configurable: true,
+		})
 		input.dispatchEvent(new Event('change'))
-		expect(input.parentNode.querySelector('.nldesign-file-pick__name').textContent).toBe('logo.svg')
+		expect(
+			input.parentNode.querySelector('.nldesign-file-pick__name').textContent,
+		).toBe('logo.svg')
 		await flush()
-		const upload = global.fetch.mock.calls.find(([url]) => url === '/apps/thematiq/settings/app-brands/collectives/logo/small')
+		const upload = global.fetch.mock.calls.find(
+			([url]) =>
+				url === '/apps/thematiq/settings/app-brands/collectives/logo/small',
+		)
 		expect(upload[1].method).toBe('POST')
 		expect(upload[1].body.get('file')).toBeInstanceOf(File)
 		expect(upload[1].headers).toEqual({ requesttoken: 'token' })
-		expect(document.getElementById('nldesign-app-brands-feedback').textContent).toBe('Logo saved.')
+		expect(
+			document.getElementById('nldesign-app-brands-feedback').textContent,
+		).toBe('Logo saved.')
 
 		saveAnswer = { ok: false, body: { error: 'The logo is larger than 1 MB.' } }
-		const large = document.getElementById('nldesign-app-brands-collectives-large')
-		Object.defineProperty(large, 'files', { value: [new File(['x'], 'big.png')], configurable: true })
+		const large = document.getElementById(
+			'nldesign-app-brands-collectives-large',
+		)
+		Object.defineProperty(large, 'files', {
+			value: [new File(['x'], 'big.png')],
+			configurable: true,
+		})
 		large.dispatchEvent(new Event('change'))
 		await flush()
-		expect(document.getElementById('nldesign-app-brands-feedback').textContent).toBe('The logo is larger than 1 MB.')
+		expect(
+			document.getElementById('nldesign-app-brands-feedback').textContent,
+		).toBe('The logo is larger than 1 MB.')
 	})
 
 	it('removes a brand and loads the list again', async () => {
 		await loadScript()
-		const remove = Array.from(document.querySelectorAll('[data-app="collectives"] button')).find((b) => b.textContent === 'Remove brand')
-		expect(remove.getAttribute('aria-label')).toBe('Remove the brand of Collectives')
+		const remove = Array.from(
+			document.querySelectorAll('[data-app="collectives"] button'),
+		).find((b) => b.textContent === 'Remove brand')
+		expect(remove.getAttribute('aria-label')).toBe(
+			'Remove the brand of Collectives',
+		)
 		state.brands = {}
 		remove.click()
 		await flush()
-		expect(global.fetch.mock.calls.find(([url, o]) => o && o.method === 'DELETE')[0]).toBe('/apps/thematiq/settings/app-brands/collectives')
-		expect(document.getElementById('nldesign-app-brands-list').textContent).toBe('No app has its own brand.')
+		expect(
+			global.fetch.mock.calls.find(
+				([url, o]) => o && o.method === 'DELETE',
+			)[0],
+		).toBe('/apps/thematiq/settings/app-brands/collectives')
+		expect(document.getElementById('nldesign-app-brands-list').textContent).toBe(
+			'No app has its own brand.',
+		)
 	})
 
 	it('logs a list that cannot be loaded, and does nothing without its block or OC', async () => {
 		global.fetch = vi.fn(() => Promise.reject(new Error('offline')))
 		const error = vi.spyOn(console, 'error').mockImplementation(() => {})
 		await loadScript()
-		expect(error).toHaveBeenCalledWith('Error loading the brands per app:', expect.any(Error))
+		expect(error).toHaveBeenCalledWith(
+			'Error loading the brands per app:',
+			expect.any(Error),
+		)
 
 		global.fetch = vi.fn()
 		document.body.innerHTML = '<div id="nldesign-app-brands-list"></div>'
@@ -193,7 +243,9 @@ describe('Brand per app block', () => {
 	})
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(global.fetch).not.toHaveBeenCalled()
 		readyState.mockReturnValue('complete')

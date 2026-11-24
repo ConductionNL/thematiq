@@ -34,7 +34,9 @@
 	 * @return {string} The words.
 	 */
 	function tokens() {
-		return counts.tokens === 1 ? tr('1 own token') : tr('{count} own tokens', { count: counts.tokens })
+		return counts.tokens === 1
+			? tr('1 own token')
+			: tr('{count} own tokens', { count: counts.tokens })
 	}
 
 	/**
@@ -60,8 +62,14 @@
 		}
 		set('.thematiq-own-tokens-panel__count', tokens())
 		set('.thematiq-own-tokens-panel__deprecated', deprecated())
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'own-tokens') {
-			set('#thematiq-page-header .thematiq-page-header__intro', tokens() + ', ' + deprecated())
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'own-tokens'
+		) {
+			set(
+				'#thematiq-page-header .thematiq-page-header__intro',
+				tokens() + ', ' + deprecated(),
+			)
 		}
 	}
 
@@ -76,7 +84,9 @@
 	function headerButton(label, id, primary) {
 		var button = document.createElement('button')
 		button.type = 'button'
-		button.className = 'thematiq-page-header__action' + (primary === true ? ' thematiq-page-header__action--primary' : '')
+		button.className =
+			'thematiq-page-header__action'
+			+ (primary === true ? ' thematiq-page-header__action--primary' : '')
 		button.textContent = label
 		button.addEventListener('click', function () {
 			var own = document.getElementById(id)
@@ -89,8 +99,12 @@
 
 	document.addEventListener('thematiq:own-tokens', function (event) {
 		var detail = event.detail || {}
-		counts.tokens = Array.isArray(detail.tokens) === true ? detail.tokens.length : 0
-		counts.deprecated = Array.isArray(detail.deprecations) === true ? detail.deprecations.length : 0
+		counts.tokens =
+			Array.isArray(detail.tokens) === true ? detail.tokens.length : 0
+		counts.deprecated =
+			Array.isArray(detail.deprecations) === true
+				? detail.deprecations.length
+				: 0
 		render()
 	})
 
@@ -102,7 +116,11 @@
 			},
 			actions: function () {
 				return [
-					headerButton(tr('Deprecate token'), 'nldesign-deprecation-add', false),
+					headerButton(
+						tr('Deprecate token'),
+						'nldesign-deprecation-add',
+						false,
+					),
 					headerButton(tr('Add token'), 'nldesign-own-token-add', true),
 				]
 			},

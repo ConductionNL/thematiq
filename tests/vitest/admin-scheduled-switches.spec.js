@@ -139,8 +139,12 @@ describe('admin.js planned switches', () => {
 			items[0].querySelector('button').getAttribute('aria-label'),
 		).toContain('koningsdag-oranje')
 		expect(items[1].textContent).toContain('no longer exists')
-		expect(items[0].querySelector('.thematiq-switches-panel__status').textContent).toBe('Scheduled')
-		expect(items[1].querySelector('.thematiq-switches-panel__status').textContent).toBe('Failed')
+		expect(
+			items[0].querySelector('.thematiq-switches-panel__status').textContent,
+		).toBe('Scheduled')
+		expect(
+			items[1].querySelector('.thematiq-switches-panel__status').textContent,
+		).toBe('Failed')
 		expect(items[1].children[2].textContent).toBe('no end')
 	})
 
@@ -214,8 +218,12 @@ describe('admin.js planned switches', () => {
 		)
 		expect(status.textContent).toContain('then Rijkshuisstijl comes back')
 		const item = document.querySelector('#nldesign-scheduled-list tr')
-		expect(item.querySelector('strong').textContent).toBe("Koningsdag 's-Hertogenbosch")
-		expect(document.querySelector('.thematiq-switches-panel__active').textContent).toBe("Koningsdag 's-Hertogenbosch")
+		expect(item.querySelector('strong').textContent).toBe(
+			"Koningsdag 's-Hertogenbosch",
+		)
+		expect(
+			document.querySelector('.thematiq-switches-panel__active').textContent,
+		).toBe("Koningsdag 's-Hertogenbosch")
 		expect(item.querySelector('button').getAttribute('aria-label')).toBe(
 			"Cancel the switch to Koningsdag 's-Hertogenbosch",
 		)

@@ -168,7 +168,10 @@ export function resolve(value, vars) {
  * @return {number[]|null} [r, g, b], or null.
  */
 function hslToRgb(value) {
-	const m = /^hsla?\(\s*(-?[\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%(?:\s*[,/]\s*([\d.]+)(%?))?\s*\)$/i.exec(value.trim())
+	const m =
+		/^hsla?\(\s*(-?[\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%(?:\s*[,/]\s*([\d.]+)(%?))?\s*\)$/i.exec(
+			value.trim(),
+		)
 	if (m === null) {
 		return null
 	}
@@ -181,7 +184,7 @@ function hslToRgb(value) {
 	const chroma = (1 - Math.abs(2 * light - 1)) * sat
 	const at = (n) => {
 		const k = (n + hue / 30) % 12
-		return light - chroma / 2 * Math.max(-1, Math.min(k - 3, 9 - k, 1))
+		return light - (chroma / 2) * Math.max(-1, Math.min(k - 3, 9 - k, 1))
 	}
 	return [at(0), at(8), at(4)].map((c) => Math.round(c * 255))
 }

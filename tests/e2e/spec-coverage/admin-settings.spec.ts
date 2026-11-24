@@ -58,23 +58,29 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-001: Settings Panel Registration
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#settings-panel-appears-in-admin-area
-	'Settings panel appears in admin area', async () => {
-		const heading = page.locator('h2:has-text("Thematiq")')
-		await expect(heading).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#settings-panel-appears-in-admin-area
+		'Settings panel appears in admin area',
+		async () => {
+			const heading = page.locator('h2:has-text("Thematiq")')
+			await expect(heading).toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#settings-panel-position-relative-to-nextcloud-theming
-	'Settings panel position relative to Nextcloud theming', async () => {
-		// Both sections are present — the native "Theming" heading and the
-		// NL Design heading, which must come after.
-		const sections = page.locator('main h2')
-		const texts = await sections.allTextContents()
-		const themeIdx = texts.findIndex((t) => /^Theming/.test(t.trim()))
-		const nlIdx = texts.findIndex((t) => /Thematiq/.test(t))
-		expect(themeIdx).toBeGreaterThanOrEqual(0)
-		expect(nlIdx).toBeGreaterThan(themeIdx)
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#settings-panel-position-relative-to-nextcloud-theming
+		'Settings panel position relative to Nextcloud theming',
+		async () => {
+			// Both sections are present — the native "Theming" heading and the
+			// NL Design heading, which must come after.
+			const sections = page.locator('main h2')
+			const texts = await sections.allTextContents()
+			const themeIdx = texts.findIndex((t) => /^Theming/.test(t.trim()))
+			const nlIdx = texts.findIndex((t) => /Thematiq/.test(t))
+			expect(themeIdx).toBeGreaterThanOrEqual(0)
+			expect(nlIdx).toBeGreaterThan(themeIdx)
+		},
+	)
 
 	// Scenario: Settings panel is absent when app is disabled
 	// @e2e exclude openspec/specs/admin-settings/spec.md#settings-panel-is-absent-when-app-is-disabled
@@ -102,43 +108,52 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-003: Token Set Selector Dropdown
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#dropdown-populated-with-token-sets
-	'Dropdown populated with token sets', async () => {
-		const select = page.locator('#nldesign-token-set-select')
-		await expect(select).toBeVisible()
-		// The dropdown is the SELECTABLE list, not the catalogue: only brands
-		// that are fully functional are offered (TokenSetSelectionPolicy, which
-		// derives that from the data since #1038), and `nextcloud` is always
-		// among them.
-		const values = await select
-			.locator('option')
-			.evaluateAll((options) =>
-				options.map((option) => (option as HTMLOptionElement).value),
-			)
-		expect(values).toContain('nextcloud')
-		// Whatever is running is offered too, so the current value is always
-		// one of the options — a dropdown that renders with nothing selected
-		// re-themes the instance on the first save.
-		expect(values).toContain(await select.inputValue())
-		// Each option must have a non-empty text and value
-		const firstOption = select.locator('option').first()
-		const val = await firstOption.getAttribute('value')
-		expect(val).toBeTruthy()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#dropdown-populated-with-token-sets
+		'Dropdown populated with token sets',
+		async () => {
+			const select = page.locator('#nldesign-token-set-select')
+			await expect(select).toBeVisible()
+			// The dropdown is the SELECTABLE list, not the catalogue: only brands
+			// that are fully functional are offered (TokenSetSelectionPolicy, which
+			// derives that from the data since #1038), and `nextcloud` is always
+			// among them.
+			const values = await select
+				.locator('option')
+				.evaluateAll((options) =>
+					options.map((option) => (option as HTMLOptionElement).value),
+				)
+			expect(values).toContain('nextcloud')
+			// Whatever is running is offered too, so the current value is always
+			// one of the options — a dropdown that renders with nothing selected
+			// re-themes the instance on the first save.
+			expect(values).toContain(await select.inputValue())
+			// Each option must have a non-empty text and value
+			const firstOption = select.locator('option').first()
+			const val = await firstOption.getAttribute('value')
+			expect(val).toBeTruthy()
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#dropdown-label-is-associated-with-select
-	'Dropdown label is associated with select', async () => {
-		// The label element with for="nldesign-token-set-select" must exist
-		const label = page.locator('label[for="nldesign-token-set-select"]')
-		await expect(label).toBeVisible()
-		await expect(label).toContainText('Token set')
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#dropdown-label-is-associated-with-select
+		'Dropdown label is associated with select',
+		async () => {
+			// The label element with for="nldesign-token-set-select" must exist
+			const label = page.locator('label[for="nldesign-token-set-select"]')
+			await expect(label).toBeVisible()
+			await expect(label).toContainText('Token set')
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#design-system-badge-updates-on-selection
-	'Design system badge is present after page load', async () => {
-		const badge = page.locator('#nldesign-design-system-badge')
-		await expect(badge).toBeAttached()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#design-system-badge-updates-on-selection
+		'Design system badge is present after page load',
+		async () => {
+			const badge = page.locator('#nldesign-design-system-badge')
+			await expect(badge).toBeAttached()
+		},
+	)
 
 	// Scenario: Admin selects a different token set
 	// @e2e exclude openspec/specs/admin-settings/spec.md#admin-selects-a-different-token-set
@@ -154,23 +169,26 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-004: Live Preview Box
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#preview-box-renders-with-token-set-colors
-	'Preview box renders with token set colors', async ({ page }) => {
-		// Its own page: opening the Buttons & Status tab changes the page.
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		// Live preview is rendered as `.nldesign-preview` (id #nldesign-preview)
-		// containing app/login `.nldesign-preview-stage` shells. The primary
-		// action is the `.nl-btn--primary` button inside the app-shell stage.
-		// That button sits in the shell's dialog, which the playground shows on
-		// the Buttons & Status tab only (css/admin.css, data-pg-tab), so that
-		// tab is opened first.
-		const previewBox = page.locator('#nldesign-preview')
-		await expect(previewBox).toBeVisible()
-		await openTokenTab(page, 'status')
-		const primaryBtn = previewBox.locator('.nl-btn--primary').first()
-		await expect(primaryBtn).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#preview-box-renders-with-token-set-colors
+		'Preview box renders with token set colors',
+		async ({ page }) => {
+			// Its own page: opening the Buttons & Status tab changes the page.
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			// Live preview is rendered as `.nldesign-preview` (id #nldesign-preview)
+			// containing app/login `.nldesign-preview-stage` shells. The primary
+			// action is the `.nl-btn--primary` button inside the app-shell stage.
+			// That button sits in the shell's dialog, which the playground shows on
+			// the Buttons & Status tab only (css/admin.css, data-pg-tab), so that
+			// tab is opened first.
+			const previewBox = page.locator('#nldesign-preview')
+			await expect(previewBox).toBeVisible()
+			await openTokenTab(page, 'status')
+			const primaryBtn = previewBox.locator('.nl-btn--primary').first()
+			await expect(primaryBtn).toBeVisible()
+		},
+	)
 
 	// Scenario: Preview updates on token set change
 	// @e2e exclude openspec/specs/admin-settings/spec.md#preview-updates-on-token-set-change
@@ -185,29 +203,35 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-005: Hide Slogan Checkbox
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
-	'Hide slogan checkbox is present and has correct label', async () => {
-		const checkbox = page.locator('#nldesign-hide-slogan')
-		await expect(checkbox).toBeAttached()
-		const label = page.locator('label[for="nldesign-hide-slogan"]')
-		await expect(label).toBeVisible()
-		await expect(label).toContainText('Hide Nextcloud slogan')
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
+		'Hide slogan checkbox is present and has correct label',
+		async () => {
+			const checkbox = page.locator('#nldesign-hide-slogan')
+			await expect(checkbox).toBeAttached()
+			const label = page.locator('label[for="nldesign-hide-slogan"]')
+			await expect(label).toBeVisible()
+			await expect(label).toContainText('Hide Nextcloud slogan')
+		},
+	)
 
 	// Scenario: Checkbox reflects disabled state
 	// @e2e exclude openspec/specs/admin-settings/spec.md#checkbox-reflects-disabled-state
 	// Depends on IConfig state of running environment — not deterministic in shared env.
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
-	'Hide slogan checkbox label text and accessibility', async () => {
-		const label = page.locator('label[for="nldesign-hide-slogan"]')
-		await expect(label).toContainText(
-			'Hide Nextcloud slogan/payoff on login page',
-		)
-		// label[for] links it to the checkbox — WCAG SC 1.3.1
-		const checkbox = page.locator('#nldesign-hide-slogan')
-		await expect(checkbox).toBeAttached()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
+		'Hide slogan checkbox label text and accessibility',
+		async () => {
+			const label = page.locator('label[for="nldesign-hide-slogan"]')
+			await expect(label).toContainText(
+				'Hide Nextcloud slogan/payoff on login page',
+			)
+			// label[for] links it to the checkbox — WCAG SC 1.3.1
+			const checkbox = page.locator('#nldesign-hide-slogan')
+			await expect(checkbox).toBeAttached()
+		},
+	)
 
 	// Scenario: Checkbox change triggers API call
 	// @e2e exclude openspec/specs/admin-settings/spec.md#checkbox-change-triggers-api-call
@@ -233,28 +257,34 @@ test.describe('admin-settings', () => {
 	// covered — so the menu-labels scenarios have been credited by the
 	// hide-slogan tests all along. That over-crediting is a gate defect and is
 	// filed upstream; it cannot be fixed from the test side.
-	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
-	'Show menu labels checkbox is present and has correct label', async () => {
-		const checkbox = page.locator('#nldesign-show-menu-labels')
-		await expect(checkbox).toBeAttached()
-		const label = page.locator('label[for="nldesign-show-menu-labels"]')
-		await expect(label).toBeVisible()
-		await expect(label).toContainText('Show text labels in app menu')
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#checkbox-reflects-enabled-state
+		'Show menu labels checkbox is present and has correct label',
+		async () => {
+			const checkbox = page.locator('#nldesign-show-menu-labels')
+			await expect(checkbox).toBeAttached()
+			const label = page.locator('label[for="nldesign-show-menu-labels"]')
+			await expect(label).toBeVisible()
+			await expect(label).toContainText('Show text labels in app menu')
+		},
+	)
 
 	// Scenario: Checkbox reflects disabled state
 	// @e2e exclude openspec/specs/admin-settings/spec.md#checkbox-reflects-disabled-state-1
 	// Depends on IConfig runtime state.
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
-	'Show menu labels checkbox label text and accessibility', async () => {
-		const label = page.locator('label[for="nldesign-show-menu-labels"]')
-		await expect(label).toContainText(
-			'Show text labels in app menu (hide icons)',
-		)
-		const checkbox = page.locator('#nldesign-show-menu-labels')
-		await expect(checkbox).toBeAttached()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#checkbox-label-text-and-accessibility
+		'Show menu labels checkbox label text and accessibility',
+		async () => {
+			const label = page.locator('label[for="nldesign-show-menu-labels"]')
+			await expect(label).toContainText(
+				'Show text labels in app menu (hide icons)',
+			)
+			const checkbox = page.locator('#nldesign-show-menu-labels')
+			await expect(checkbox).toBeAttached()
+		},
+	)
 
 	// Scenario: Checkbox change triggers API call
 	// @e2e exclude openspec/specs/admin-settings/spec.md#checkbox-change-triggers-api-call-1
@@ -264,24 +294,30 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-007: External Documentation Links
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#documentation-link-rendered
-	'Documentation link rendered with correct attributes', async () => {
-		// The href follows the active design system (#662), so find the link by id.
-		const link = page.locator('#nldesign-doc-link')
-		await expect(link).toBeVisible()
-		await expect(link).toHaveAttribute('href', /^https:\/\//)
-		await expect(link).not.toHaveAttribute('href', /nldesign\.app/)
-		await expect(link).toHaveAttribute('target', '_blank')
-		await expect(link).toHaveAttribute('rel', /noopener/)
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#documentation-link-rendered
+		'Documentation link rendered with correct attributes',
+		async () => {
+			// The href follows the active design system (#662), so find the link by id.
+			const link = page.locator('#nldesign-doc-link')
+			await expect(link).toBeVisible()
+			await expect(link).toHaveAttribute('href', /^https:\/\//)
+			await expect(link).not.toHaveAttribute('href', /nldesign\.app/)
+			await expect(link).toHaveAttribute('target', '_blank')
+			await expect(link).toHaveAttribute('rel', /noopener/)
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#nl-design-system-info-link-rendered
-	'NL Design System info link rendered', async () => {
-		const link = page.locator('a[href="https://nldesignsystem.nl/"]')
-		await expect(link).toBeVisible()
-		await expect(link).toHaveAttribute('target', '_blank')
-		await expect(link).toHaveAttribute('rel', /noopener/)
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#nl-design-system-info-link-rendered
+		'NL Design System info link rendered',
+		async () => {
+			const link = page.locator('a[href="https://nldesignsystem.nl/"]')
+			await expect(link).toBeVisible()
+			await expect(link).toHaveAttribute('target', '_blank')
+			await expect(link).toHaveAttribute('rel', /noopener/)
+		},
+	)
 
 	// Scenario: Links open in new tab without security risk
 	// @e2e exclude openspec/specs/admin-settings/spec.md#links-open-in-new-tab-without-security-risk
@@ -309,21 +345,27 @@ test.describe('admin-settings', () => {
 	// @e2e exclude openspec/specs/admin-settings/spec.md#api-endpoints-restricted-to-admin-via-annotation
 	// PHP annotation check — backend implementation detail.
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#admin-with-valid-session-can-access-all-endpoints
-	'Admin with valid session can access settings page', async () => {
-		await expect(page).not.toHaveURL(/login/)
-		await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#admin-with-valid-session-can-access-all-endpoints
+		'Admin with valid session can access settings page',
+		async () => {
+			await expect(page).not.toHaveURL(/login/)
+			await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
+		},
+	)
 
 	// -----------------------------------------------------------------------
 	// REQ-ASET-010: Token Editor Panel Integration
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#token-editor-mount-point-rendered
-	'Token editor mount point rendered with content', async () => {
-		const editorEl = page.locator('#nldesign-token-editor')
-		await expect(editorEl).toBeAttached()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#token-editor-mount-point-rendered
+		'Token editor mount point rendered with content',
+		async () => {
+			const editorEl = page.locator('#nldesign-token-editor')
+			await expect(editorEl).toBeAttached()
+		},
+	)
 
 	// Scenario: Token editor loads override data from API
 	// @e2e exclude openspec/specs/admin-settings/spec.md#token-editor-loads-override-data-from-api
@@ -337,13 +379,16 @@ test.describe('admin-settings', () => {
 	// REQ-ASET-011: Settings Hint Text
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#settings-hint-rendered
-	'Settings hint text rendered', async () => {
-		const hint = page
-			.locator('.nldesign-settings-header__line')
-			.filter({ hasText: 'Choose a token set from a Dutch government body as a base' })
-		await expect(hint).toBeVisible()
-	})
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#settings-hint-rendered
+		'Settings hint text rendered',
+		async () => {
+			const hint = page.locator('.nldesign-settings-header__line').filter({
+				hasText: 'Choose a token set from a Dutch government body as a base',
+			})
+			await expect(hint).toBeVisible()
+		},
+	)
 
 	// Scenario: Hint text is localized
 	// @e2e exclude openspec/specs/admin-settings/spec.md#hint-text-is-localized
@@ -374,56 +419,67 @@ test.describe('admin-settings', () => {
 		return JSON.parse(Buffer.from(encoded as string, 'base64').toString('utf-8'))
 	}
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#token-sets-provided-as-initial-state
-	'Token sets provided as initial state, not as a data attribute', async () => {
-		const settingsDiv = page.locator('#nldesign-settings')
-		await expect(settingsDiv).toBeAttached()
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#token-sets-provided-as-initial-state
+		'Token sets provided as initial state, not as a data attribute',
+		async () => {
+			const settingsDiv = page.locator('#nldesign-settings')
+			await expect(settingsDiv).toBeAttached()
 
-		const parsed = await readInitialState(page, 'tokenSets')
-		expect(Array.isArray(parsed)).toBe(true)
-		expect(parsed.length).toBeGreaterThan(0)
+			const parsed = await readInitialState(page, 'tokenSets')
+			expect(Array.isArray(parsed)).toBe(true)
+			expect(parsed.length).toBeGreaterThan(0)
 
-		// The old transport must be gone, not merely unused. Asserting on
-		// the ITEM (the attribute) rather than on the panel rendering
-		// correctly is deliberate: the panel would render correctly with
-		// both mechanisms present, and that is exactly the state this
-		// change exists to leave behind.
-		expect(await settingsDiv.getAttribute('data-token-sets')).toBeNull()
-	})
+			// The old transport must be gone, not merely unused. Asserting on
+			// the ITEM (the attribute) rather than on the panel rendering
+			// correctly is deliberate: the panel would render correctly with
+			// both mechanisms present, and that is exactly the state this
+			// change exists to leave behind.
+			expect(await settingsDiv.getAttribute('data-token-sets')).toBeNull()
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#current-token-set-provided-as-initial-state
-	'Current token set provided as initial state, not as a data attribute', async () => {
-		const current = await readInitialState(page, 'currentTokenSet')
-		expect(typeof current).toBe('string')
-		expect(current.length).toBeGreaterThan(0)
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#current-token-set-provided-as-initial-state
+		'Current token set provided as initial state, not as a data attribute',
+		async () => {
+			const current = await readInitialState(page, 'currentTokenSet')
+			expect(typeof current).toBe('string')
+			expect(current.length).toBeGreaterThan(0)
 
-		const settingsDiv = page.locator('#nldesign-settings')
-		expect(await settingsDiv.getAttribute('data-current-token-set')).toBeNull()
-	})
+			const settingsDiv = page.locator('#nldesign-settings')
+			expect(
+				await settingsDiv.getAttribute('data-current-token-set'),
+			).toBeNull()
+		},
+	)
 
-	test(// @e2e openspec/specs/admin-settings/spec.md#active-preview-and-icon-pack-source-provided-as-initial-state
-	'Active preview and icon pack source provided as initial state', async () => {
-		// `activePreview` is null when no preview is running — a null is a
-		// value here, so the assertion is that the KEY is published, not
-		// that it is truthy.
-		await expect(
-			page.locator('#initial-state-thematiq-activePreview'),
-		).toBeAttached()
+	test(
+		// @e2e openspec/specs/admin-settings/spec.md#active-preview-and-icon-pack-source-provided-as-initial-state
+		'Active preview and icon pack source provided as initial state',
+		async () => {
+			// `activePreview` is null when no preview is running — a null is a
+			// value here, so the assertion is that the KEY is published, not
+			// that it is truthy.
+			await expect(
+				page.locator('#initial-state-thematiq-activePreview'),
+			).toBeAttached()
 
-		const source = await readInitialState(page, 'iconPackSource')
-		expect(typeof source).toBe('string')
+			const source = await readInitialState(page, 'iconPackSource')
+			expect(typeof source).toBe('string')
 
-		expect(
-			await page
-				.locator('#nldesign-settings')
-				.getAttribute('data-active-preview'),
-		).toBeNull()
-		expect(
-			await page
-				.locator('#nldesign-icon-pack-indicator')
-				.getAttribute('data-icon-pack-source'),
-		).toBeNull()
-	})
+			expect(
+				await page
+					.locator('#nldesign-settings')
+					.getAttribute('data-active-preview'),
+			).toBeNull()
+			expect(
+				await page
+					.locator('#nldesign-icon-pack-indicator')
+					.getAttribute('data-icon-pack-source'),
+			).toBeNull()
+		},
+	)
 
 	// Scenario: JavaScript reads initial state on initialization
 	// @e2e exclude openspec/specs/admin-settings/spec.md#javascript-reads-initial-state-on-initialization

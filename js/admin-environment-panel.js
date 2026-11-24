@@ -24,7 +24,9 @@
 		window.ThematiqPanels.register('environment', {
 			title: tr('Environment marker'),
 			intro: function () {
-				var line = document.querySelector('.thematiq-environment-panel__line')
+				var line = document.querySelector(
+					'.thematiq-environment-panel__line',
+				)
 				return line !== null ? line.textContent.trim() : ''
 			},
 			actions: function () {

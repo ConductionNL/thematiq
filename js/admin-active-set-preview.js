@@ -17,14 +17,38 @@
 	 * @type {Array<{label: string, vars: string[]}>}
 	 */
 	var SWATCHES = [
-		{ label: 'Action', vars: ['--nldesign-color-primary', '--color-primary-element'] },
-		{ label: 'Action dark', vars: ['--nldesign-color-primary-hover', '--color-primary-element-hover'] },
-		{ label: 'Action soft', vars: ['--nldesign-color-primary-light', '--color-primary-element-light'] },
+		{
+			label: 'Action',
+			vars: ['--nldesign-color-primary', '--color-primary-element'],
+		},
+		{
+			label: 'Action dark',
+			vars: [
+				'--nldesign-color-primary-hover',
+				'--color-primary-element-hover',
+			],
+		},
+		{
+			label: 'Action soft',
+			vars: [
+				'--nldesign-color-primary-light',
+				'--color-primary-element-light',
+			],
+		},
 		{ label: 'Accent', vars: ['--nldesign-color-accent', '--color-primary'] },
-		{ label: 'Accent soft', vars: ['--nldesign-color-accent-light', '--color-primary-light'] },
+		{
+			label: 'Accent soft',
+			vars: ['--nldesign-color-accent-light', '--color-primary-light'],
+		},
 		{ label: 'Ink', vars: ['--color-main-text'] },
 		{ label: 'Grey text', vars: ['--color-text-maxcontrast'] },
-		{ label: 'Work area', vars: ['--nldesign-component-content-surface-background-color', '--color-background-hover'] },
+		{
+			label: 'Work area',
+			vars: [
+				'--nldesign-component-content-surface-background-color',
+				'--color-background-hover',
+			],
+		},
 	]
 
 	/**
@@ -63,9 +87,15 @@
 	function toHex(value) {
 		var rgb = /^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/i.exec(value)
 		if (rgb !== null) {
-			return '#' + [rgb[1], rgb[2], rgb[3]].map(function (n) {
-				return ('0' + parseInt(n, 10).toString(16)).slice(-2)
-			}).join('').toUpperCase()
+			return (
+				'#'
+				+ [rgb[1], rgb[2], rgb[3]]
+					.map(function (n) {
+						return ('0' + parseInt(n, 10).toString(16)).slice(-2)
+					})
+					.join('')
+					.toUpperCase()
+			)
 		}
 		return /^#[0-9a-f]{3,8}$/i.test(value) ? value.toUpperCase() : value
 	}
@@ -113,10 +143,19 @@
 	 * @return {string} The initials.
 	 */
 	function initials() {
-		var name = (window.OC && typeof OC.getCurrentUser === 'function' && OC.getCurrentUser().displayName) || ''
-		return name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (part) {
-			return part.charAt(0).toUpperCase()
-		}).join('')
+		var name =
+			(window.OC
+				&& typeof OC.getCurrentUser === 'function'
+				&& OC.getCurrentUser().displayName)
+			|| ''
+		return name
+			.split(/\s+/)
+			.filter(Boolean)
+			.slice(0, 2)
+			.map(function (part) {
+				return part.charAt(0).toUpperCase()
+			})
+			.join('')
 	}
 
 	/**
@@ -128,15 +167,27 @@
 		var sample = el('div', 'thematiq-set-sample')
 		var bar = el('div', 'thematiq-set-sample__bar')
 		bar.appendChild(el('span', 'thematiq-set-sample__logo'))
-		bar.appendChild(el('span', 'thematiq-set-sample__name', (window.OC && OC.theme && OC.theme.name) || 'Nextcloud'))
+		bar.appendChild(
+			el(
+				'span',
+				'thematiq-set-sample__name',
+				(window.OC && OC.theme && OC.theme.name) || 'Nextcloud',
+			),
+		)
 		bar.appendChild(el('span', 'thematiq-set-sample__spacer'))
 		bar.appendChild(el('span', 'thematiq-set-sample__avatar', initials()))
 		sample.appendChild(bar)
 		var controls = el('div', 'thematiq-set-sample__controls')
 		controls.appendChild(el('span', 'thematiq-set-sample__nav', tr('All cases')))
-		controls.appendChild(el('span', 'thematiq-set-sample__primary', tr('Primary button')))
-		controls.appendChild(el('span', 'thematiq-set-sample__secondary', tr('Second button')))
-		controls.appendChild(el('span', 'thematiq-set-sample__pill', tr('In progress')))
+		controls.appendChild(
+			el('span', 'thematiq-set-sample__primary', tr('Primary button')),
+		)
+		controls.appendChild(
+			el('span', 'thematiq-set-sample__secondary', tr('Second button')),
+		)
+		controls.appendChild(
+			el('span', 'thematiq-set-sample__pill', tr('In progress')),
+		)
 		sample.appendChild(controls)
 		return sample
 	}
@@ -150,7 +201,9 @@
 		var sample = el('div', 'thematiq-login-sample')
 		sample.appendChild(el('span', 'thematiq-login-sample__logo'))
 		var card = el('div', 'thematiq-login-sample__card')
-		card.appendChild(el('span', 'thematiq-login-sample__label', tr('Username or email')))
+		card.appendChild(
+			el('span', 'thematiq-login-sample__label', tr('Username or email')),
+		)
 		card.appendChild(el('span', 'thematiq-login-sample__field'))
 		card.appendChild(el('span', 'thematiq-login-sample__label', tr('Password')))
 		card.appendChild(el('span', 'thematiq-login-sample__field'))
@@ -191,7 +244,9 @@
 	function build(root) {
 		root.textContent = ''
 		var head = el('div', 'thematiq-active-set-preview__head')
-		head.appendChild(el('span', 'thematiq-active-set-preview__title', tr('Preview')))
+		head.appendChild(
+			el('span', 'thematiq-active-set-preview__title', tr('Preview')),
+		)
 		var tablist = el('div', 'thematiq-active-set-preview__tabs')
 		tablist.setAttribute('role', 'tablist')
 		tablist.setAttribute('aria-label', tr('Preview of'))
@@ -202,8 +257,12 @@
 
 		var names = [tr('Workplace'), tr('Login page')]
 		var notes = [
-			tr('The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.'),
-			tr('Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.'),
+			tr(
+				'The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.',
+			),
+			tr(
+				'Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.',
+			),
 		]
 		var tabs = []
 		var panels = []
@@ -228,7 +287,9 @@
 		frame.appendChild(strip)
 		frame.appendChild(workplaceSample())
 		panels[0].appendChild(frame)
-		panels[1].appendChild(el('span', 'thematiq-active-set-preview__note', notes[1]))
+		panels[1].appendChild(
+			el('span', 'thematiq-active-set-preview__note', notes[1]),
+		)
 		panels[1].appendChild(loginSample())
 		drawSwatches(strip)
 
@@ -237,7 +298,12 @@
 				select(tabs, panels, i, false)
 			})
 			tab.addEventListener('keydown', function (event) {
-				var next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[event.key]
+				var next = {
+					ArrowRight: i + 1,
+					ArrowLeft: i - 1,
+					Home: 0,
+					End: tabs.length - 1,
+				}[event.key]
 				if (next === undefined) {
 					return
 				}
@@ -262,7 +328,12 @@
 	}
 
 	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = { build: build, toHex: toHex, readVar: readVar, SWATCHES: SWATCHES }
+		module.exports = {
+			build: build,
+			toHex: toHex,
+			readVar: readVar,
+			SWATCHES: SWATCHES,
+		}
 	}
 
 	if (document.readyState === 'loading') {

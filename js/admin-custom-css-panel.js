@@ -78,10 +78,15 @@
 	 * @return {void}
 	 */
 	function sayInHeader() {
-		if (window.ThematiqPanels === undefined || window.ThematiqPanels.current() !== 'css') {
+		if (
+			window.ThematiqPanels === undefined
+			|| window.ThematiqPanels.current() !== 'css'
+		) {
 			return
 		}
-		var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		var intro = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__intro',
+		)
 		if (intro !== null) {
 			intro.textContent = summary()
 		}
@@ -100,10 +105,18 @@
 		// js/admin.js writes the save's answer here and colours a refusal red;
 		// the pill follows that.
 		new MutationObserver(function () {
-			feedback.classList.toggle('thematiq-css-panel__feedback--error', feedback.style.color !== '')
+			feedback.classList.toggle(
+				'thematiq-css-panel__feedback--error',
+				feedback.style.color !== '',
+			)
 			number()
 			sayInHeader()
-		}).observe(feedback, { childList: true, characterData: true, subtree: true, attributes: true })
+		}).observe(feedback, {
+			childList: true,
+			characterData: true,
+			subtree: true,
+			attributes: true,
+		})
 	}
 
 	if (window.ThematiqPanels !== undefined) {

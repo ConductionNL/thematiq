@@ -84,15 +84,22 @@
 		var status = 'available'
 		if (set.id === current) {
 			status = 'active'
-		} else if (set.licence && set.licence.restricted === true && set.licence.confirmed !== true) {
+		} else if (
+			set.licence
+			&& set.licence.restricted === true
+			&& set.licence.confirmed !== true
+		) {
 			status = 'licence'
 		}
 		return {
 			id: set.id,
 			name: set.name || set.id,
-			designSystem: DESIGN_SYSTEMS[set.design_system] || set.design_system || '',
+			designSystem:
+				DESIGN_SYSTEMS[set.design_system] || set.design_system || '',
 			custom: set.custom === true || String(set.id).indexOf('custom-') === 0,
-			incomplete: warnings.some(function (w) { return w && w.kind === 'incomplete' }),
+			incomplete: warnings.some(function (w) {
+				return w && w.kind === 'incomplete'
+			}),
 			primary: (set.theming && set.theming.primary_color) || '',
 			layout: set.workplaceLayout === 'light' ? 'light' : 'nextcloud',
 			status: status,
@@ -139,7 +146,9 @@
 	 * @return {object} Handles for tests.
 	 */
 	function build(root, sets, current) {
-		var rows = sets.map(function (set) { return toRow(set, current) })
+		var rows = sets.map(function (set) {
+			return toRow(set, current)
+		})
 		var view = { query: '', column: 'default', ascending: true, shown: PAGE }
 
 		var count = root.querySelector('.thematiq-token-sets__count')
@@ -147,18 +156,23 @@
 		var body = root.querySelector('tbody')
 		var footerCount = root.querySelector('.thematiq-token-sets__shown')
 		var more = root.querySelector('.thematiq-token-sets__more')
-		var headers = Array.prototype.slice.call(root.querySelectorAll('th[data-column]'))
+		var headers = Array.prototype.slice.call(
+			root.querySelectorAll('th[data-column]'),
+		)
 		var own = root.querySelector('.thematiq-token-sets__own')
 
 		/** Close every open row menu. */
 		function closeMenus() {
-			Array.prototype.forEach.call(root.querySelectorAll('.thematiq-token-sets__menu'), function (menu) {
-				menu.hidden = true
-				var toggle = menu.previousSibling
-				if (toggle) {
-					toggle.setAttribute('aria-expanded', 'false')
-				}
-			})
+			Array.prototype.forEach.call(
+				root.querySelectorAll('.thematiq-token-sets__menu'),
+				function (menu) {
+					menu.hidden = true
+					var toggle = menu.previousSibling
+					if (toggle) {
+						toggle.setAttribute('aria-expanded', 'false')
+					}
+				},
+			)
 		}
 
 		/**
@@ -186,16 +200,28 @@
 			var cell = el('td', 'thematiq-token-sets__actions')
 			var toggle = el('button', 'thematiq-token-sets__toggle')
 			toggle.type = 'button'
-			toggle.setAttribute('aria-label', tr('More actions for {name}', { name: row.name }))
+			toggle.setAttribute(
+				'aria-label',
+				tr('More actions for {name}', { name: row.name }),
+			)
 			toggle.setAttribute('aria-haspopup', 'true')
 			toggle.setAttribute('aria-expanded', 'false')
 			var menu = el('div', 'thematiq-token-sets__menu')
 			menu.setAttribute('role', 'menu')
 			menu.hidden = true
 			var items = [
-				{ text: tr('Use this token set'), run: function () { useSet(row.id) }, hidden: row.status === 'active' },
+				{
+					text: tr('Use this token set'),
+					run: function () {
+						useSet(row.id)
+					},
+					hidden: row.status === 'active',
+				},
 				{ text: tr('Open token set'), href: referenceUrl(row.id, false) },
-				{ text: tr('Download token overview'), href: referenceUrl(row.id, true) },
+				{
+					text: tr('Download token overview'),
+					href: referenceUrl(row.id, true),
+				},
 			]
 			items.forEach(function (item) {
 				if (item.hidden) {
@@ -258,12 +284,24 @@
 			tr0.appendChild(name)
 
 			var system = el('td')
-			var systemWrap = el('span', 'thematiq-token-sets__system', row.designSystem)
+			var systemWrap = el(
+				'span',
+				'thematiq-token-sets__system',
+				row.designSystem,
+			)
 			if (row.custom) {
-				systemWrap.appendChild(el('span', 'thematiq-token-sets__tag', tr('Own set')))
+				systemWrap.appendChild(
+					el('span', 'thematiq-token-sets__tag', tr('Own set')),
+				)
 			}
 			if (row.incomplete) {
-				systemWrap.appendChild(el('span', 'thematiq-token-sets__tag thematiq-token-sets__tag--warning', tr('Incomplete set')))
+				systemWrap.appendChild(
+					el(
+						'span',
+						'thematiq-token-sets__tag thematiq-token-sets__tag--warning',
+						tr('Incomplete set'),
+					),
+				)
 			}
 			system.appendChild(systemWrap)
 			tr0.appendChild(system)
@@ -274,7 +312,9 @@
 				var chip = el('span', 'thematiq-token-sets__chip')
 				chip.style.background = row.primary
 				colourWrap.appendChild(chip)
-				colourWrap.appendChild(document.createTextNode(row.primary.toUpperCase()))
+				colourWrap.appendChild(
+					document.createTextNode(row.primary.toUpperCase()),
+				)
 				colour.appendChild(colourWrap)
 			}
 			tr0.appendChild(colour)
@@ -282,7 +322,14 @@
 			tr0.appendChild(el('td', '', tr(LAYOUT[row.layout])))
 
 			var status = el('td')
-			status.appendChild(el('span', 'thematiq-token-sets__pill thematiq-token-sets__pill--' + row.status, tr(STATUS[row.status])))
+			status.appendChild(
+				el(
+					'span',
+					'thematiq-token-sets__pill thematiq-token-sets__pill--'
+						+ row.status,
+					tr(STATUS[row.status]),
+				),
+			)
 			tr0.appendChild(status)
 
 			tr0.appendChild(menuCell(row))
@@ -293,10 +340,16 @@
 		function draw() {
 			var query = view.query.trim().toLowerCase()
 			var matching = rows.filter(function (row) {
-				return query === '' || row.name.toLowerCase().indexOf(query) !== -1 || row.designSystem.toLowerCase().indexOf(query) !== -1
+				return (
+					query === ''
+					|| row.name.toLowerCase().indexOf(query) !== -1
+					|| row.designSystem.toLowerCase().indexOf(query) !== -1
+				)
 			})
 			matching.sort(function (a, b) {
-				var order = sortKey(a, view.column).localeCompare(sortKey(b, view.column))
+				var order = sortKey(a, view.column).localeCompare(
+					sortKey(b, view.column),
+				)
 				return view.ascending ? order : -order
 			})
 			body.textContent = ''
@@ -304,12 +357,27 @@
 				body.appendChild(rowElement(row))
 			})
 			var shown = Math.min(view.shown, matching.length)
-			var own = rows.filter(function (row) { return row.custom }).length
-			count.textContent = tr('{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.', { shown: shown, total: rows.length, own: own })
-			footerCount.textContent = tr('{shown} of {total}', { shown: shown, total: matching.length })
+			var own = rows.filter(function (row) {
+				return row.custom
+			}).length
+			count.textContent = tr(
+				'{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.',
+				{ shown: shown, total: rows.length, own: own },
+			)
+			footerCount.textContent = tr('{shown} of {total}', {
+				shown: shown,
+				total: matching.length,
+			})
 			more.hidden = shown >= matching.length
 			headers.forEach(function (th) {
-				th.setAttribute('aria-sort', th.dataset.column === view.column ? (view.ascending ? 'ascending' : 'descending') : 'none')
+				th.setAttribute(
+					'aria-sort',
+					th.dataset.column === view.column
+						? view.ascending
+							? 'ascending'
+							: 'descending'
+						: 'none',
+				)
 			})
 		}
 
@@ -342,7 +410,9 @@
 		document.addEventListener('thematiq:theme-applied', function (event) {
 			var id = event.detail && event.detail.tokenSet
 			if (id) {
-				rows = sets.map(function (set) { return toRow(set, id) })
+				rows = sets.map(function (set) {
+					return toRow(set, id)
+				})
 				draw()
 			}
 		})
@@ -359,8 +429,12 @@
 	 * @return {string} The URL.
 	 */
 	function referenceUrl(id, download) {
-		var path = '/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
-		var base = window.OC && typeof OC.generateUrl === 'function' ? OC.generateUrl(path) : path
+		var path =
+			'/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
+		var base =
+			window.OC && typeof OC.generateUrl === 'function'
+				? OC.generateUrl(path)
+				: path
 		return base + '?format=' + (download ? 'md&download=1' : 'html')
 	}
 

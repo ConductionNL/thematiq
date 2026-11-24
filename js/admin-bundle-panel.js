@@ -46,25 +46,58 @@
 	 */
 	function contents(bundle) {
 		var config = bundle.config || {}
-		var options = Object.keys(config.layoutOptions || {}).length
-			+ ['hideSlogan', 'showMenuLabels', 'primaryDrivesComponents'].filter(function (key) {
-				return key in config
-			}).length
+		var options =
+			Object.keys(config.layoutOptions || {}).length
+			+ ['hideSlogan', 'showMenuLabels', 'primaryDrivesComponents'].filter(
+				function (key) {
+					return key in config
+				},
+			).length
 		var select = document.getElementById('nldesign-token-set-select')
-		var option = select !== null ? select.querySelector('option[value="' + config.tokenSet + '"]') : null
-		var overrides = (String(bundle.customOverridesCss || '').match(/--[a-z0-9-]+\s*:/gi) || []).length
+		var option =
+			select !== null
+				? select.querySelector('option[value="' + config.tokenSet + '"]')
+				: null
+		var overrides = (
+			String(bundle.customOverridesCss || '').match(/--[a-z0-9-]+\s*:/gi) || []
+		).length
 		var footer = bundle.emailFooter || {}
 		var footerSet = Object.keys(footer).some(function (key) {
 			return typeof footer[key] === 'string' && footer[key] !== ''
 		})
 		return [
-			[tr('Active token set'), option !== null ? option.textContent.trim() : String(config.tokenSet || '')],
-			[tr('Switches and layout'), count(options, '1 option', '{count} options')],
-			[tr('Theme per app'), count((config.disabledApps || []).length, '1 app off', '{count} apps off')],
+			[
+				tr('Active token set'),
+				option !== null
+					? option.textContent.trim()
+					: String(config.tokenSet || ''),
+			],
+			[
+				tr('Switches and layout'),
+				count(options, '1 option', '{count} options'),
+			],
+			[
+				tr('Theme per app'),
+				count(
+					(config.disabledApps || []).length,
+					'1 app off',
+					'{count} apps off',
+				),
+			],
 			[tr('Token overrides'), count(overrides, '1 token', '{count} tokens')],
-			[tr('Own token sets'), count((bundle.customTokenSets || []).length, '1 set', '{count} sets')],
+			[
+				tr('Own token sets'),
+				count(
+					(bundle.customTokenSets || []).length,
+					'1 set',
+					'{count} sets',
+				),
+			],
 			[tr('Email footer'), footerSet === true ? tr('set') : tr('not set')],
-			[tr('Updates from the source'), config.upstreamFreshnessEnabled === true ? tr('on') : tr('off')],
+			[
+				tr('Updates from the source'),
+				config.upstreamFreshnessEnabled === true ? tr('on') : tr('off'),
+			],
 		]
 	}
 
@@ -78,23 +111,29 @@
 		if (rows === null) {
 			return Promise.resolve()
 		}
-		return fetch(window.OC.generateUrl('/apps/thematiq/settings/config/export'), {
-			headers: { requesttoken: window.OC.requestToken },
-		})
+		return fetch(
+			window.OC.generateUrl('/apps/thematiq/settings/config/export'),
+			{
+				headers: { requesttoken: window.OC.requestToken },
+			},
+		)
 			.then(function (r) {
 				return r.json()
 			})
 			.then(function (bundle) {
-				rows.replaceChildren.apply(rows, contents(bundle || {}).map(function (row) {
-					var line = document.createElement('div')
-					var label = document.createElement('span')
-					label.textContent = row[0]
-					var value = document.createElement('strong')
-					value.textContent = row[1]
-					line.appendChild(label)
-					line.appendChild(value)
-					return line
-				}))
+				rows.replaceChildren.apply(
+					rows,
+					contents(bundle || {}).map(function (row) {
+						var line = document.createElement('div')
+						var label = document.createElement('span')
+						label.textContent = row[0]
+						var value = document.createElement('strong')
+						value.textContent = row[1]
+						line.appendChild(label)
+						line.appendChild(value)
+						return line
+					}),
+				)
 			})
 			.catch(function () {
 				var line = document.createElement('p')
@@ -111,12 +150,18 @@
 	 */
 	function actions() {
 		return [
-			['nldesign-config-bundle-download-btn', tr('Download configuration'), false],
+			[
+				'nldesign-config-bundle-download-btn',
+				tr('Download configuration'),
+				false,
+			],
 			['nldesign-config-bundle-upload-btn', tr('Upload configuration'), true],
 		].map(function (entry) {
 			var button = document.createElement('button')
 			button.type = 'button'
-			button.className = 'thematiq-page-header__action' + (entry[2] === true ? ' thematiq-page-header__action--primary' : '')
+			button.className =
+				'thematiq-page-header__action'
+				+ (entry[2] === true ? ' thematiq-page-header__action--primary' : '')
 			button.textContent = entry[1]
 			button.addEventListener('click', function () {
 				var target = document.getElementById(entry[0])
@@ -132,7 +177,9 @@
 		window.ThematiqPanels.register('bundle', {
 			title: tr('Configuration bundle'),
 			intro: function () {
-				return tr('The complete configuration as one file, for every environment.')
+				return tr(
+					'The complete configuration as one file, for every environment.',
+				)
 			},
 			actions: actions,
 			onOpen: load,

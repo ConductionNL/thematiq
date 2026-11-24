@@ -16,7 +16,18 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { ENVIRONMENTS, SETS, bundle, cascade, exists, reachesBody, read, ratio, resolve, rgb } from './support/setCascade.js'
+import {
+	ENVIRONMENTS,
+	SETS,
+	bundle,
+	cascade,
+	exists,
+	reachesBody,
+	read,
+	ratio,
+	resolve,
+	rgb,
+} from './support/setCascade.js'
 
 const WASH_ALPHA = 0.2
 

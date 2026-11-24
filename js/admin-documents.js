@@ -38,7 +38,10 @@
 	 * @return {string} The family.
 	 */
 	function firstFamily(stack) {
-		return String(stack || '').split(',')[0].trim().replace(/^['"]|['"]$/g, '')
+		return String(stack || '')
+			.split(',')[0]
+			.trim()
+			.replace(/^['"]|['"]$/g, '')
 	}
 
 	/**
@@ -64,7 +67,11 @@
 		row(list, t('thematiq', 'House style'), profile.tokenSet.name)
 		row(list, t('thematiq', 'Primary colour'), profile.colours.primary || '')
 		row(list, t('thematiq', 'Text colour'), profile.colours.text || '')
-		row(list, t('thematiq', 'Font headings'), firstFamily(profile.fonts.heading.family))
+		row(
+			list,
+			t('thematiq', 'Font headings'),
+			firstFamily(profile.fonts.heading.family),
+		)
 		row(list, t('thematiq', 'Font text'), firstFamily(profile.fonts.body.family))
 		row(list, t('thematiq', 'Footer'), profile.footer.lines.join(' · '))
 		preview.appendChild(list)

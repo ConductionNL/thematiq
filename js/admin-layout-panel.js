@@ -16,15 +16,36 @@
 	 * `key` is the option's name in a set's layout block.
 	 */
 	var OPTIONS = [
-		{ id: 'thematiq-workplace-layout', key: 'workplace_layout', fallback: 'default' },
+		{
+			id: 'thematiq-workplace-layout',
+			key: 'workplace_layout',
+			fallback: 'default',
+		},
 		{ id: 'thematiq-header-style', key: 'header_style', fallback: 'default' },
-		{ id: 'thematiq-navigation-active-style', key: 'navigation_active_style', fallback: 'default' },
-		{ id: 'thematiq-navigation-width-input', key: 'navigation_width', fallback: '' },
+		{
+			id: 'thematiq-navigation-active-style',
+			key: 'navigation_active_style',
+			fallback: 'default',
+		},
+		{
+			id: 'thematiq-navigation-width-input',
+			key: 'navigation_width',
+			fallback: '',
+		},
 		{ id: 'thematiq-brand-stripe', key: 'brand_stripe', fallback: '0' },
-		{ id: 'thematiq-brand-stripe-placement', key: 'brand_stripe_placement', fallback: 'header-and-login' },
+		{
+			id: 'thematiq-brand-stripe-placement',
+			key: 'brand_stripe_placement',
+			fallback: 'header-and-login',
+		},
 		{ id: 'thematiq-login-watermark', key: 'login_watermark', fallback: '1' },
 	]
-	var CHECKS = ['nldesign-show-menu-labels', 'nldesign-hide-slogan', 'nldesign-primary-drives-components', 'nldesign-dark-variants']
+	var CHECKS = [
+		'nldesign-show-menu-labels',
+		'nldesign-hide-slogan',
+		'nldesign-primary-drives-components',
+		'nldesign-dark-variants',
+	]
 	var session = {}
 
 	/**
@@ -57,9 +78,11 @@
 			sets = []
 		}
 		var id = select !== null ? select.value : ''
-		return (sets || []).find(function (set) {
-			return set.id === id
-		}) || { name: id }
+		return (
+			(sets || []).find(function (set) {
+				return set.id === id
+			}) || { name: id }
+		)
 	}
 
 	/**
@@ -89,7 +112,9 @@
 	 */
 	function words(control, value) {
 		if (control.tagName !== 'SELECT') {
-			return value === '' ? tr("Nextcloud's own width") : tr('{width} px', { width: value })
+			return value === ''
+				? tr("Nextcloud's own width")
+				: tr('{width} px', { width: value })
 		}
 		var match = Array.prototype.find.call(control.options, function (opt) {
 			return opt.value === value
@@ -118,9 +143,12 @@
 				control.insertAdjacentElement('afterend', line)
 			}
 			var theme = themeValue(option, layout)
-			line.textContent = control.value !== '' && control.value === theme
-				? tr('Chosen, the theme says the same')
-				: tr('The theme says: {choice}', { choice: words(control, theme) })
+			line.textContent =
+				control.value !== '' && control.value === theme
+					? tr('Chosen, the theme says the same')
+					: tr('The theme says: {choice}', {
+							choice: words(control, theme),
+						})
 		})
 	}
 
@@ -146,24 +174,30 @@
 			return
 		}
 		var ids = Object.keys(session)
-		panel.querySelector('.thematiq-panel__count').textContent = String(ids.length)
-		panel.querySelector('.thematiq-layout-panel__summary').textContent = ids.length === 1
-			? tr('1 choice in this session.')
-			: tr('{count} choices in this session.', { count: ids.length })
+		panel.querySelector('.thematiq-panel__count').textContent = String(
+			ids.length,
+		)
+		panel.querySelector('.thematiq-layout-panel__summary').textContent =
+			ids.length === 1
+				? tr('1 choice in this session.')
+				: tr('{count} choices in this session.', { count: ids.length })
 		var list = panel.querySelector('.thematiq-layout-panel__changes')
-		list.replaceChildren.apply(list, ids.map(function (id) {
-			var row = document.createElement('div')
-			row.className = 'thematiq-layout-panel__change'
-			var name = document.createElement('span')
-			name.className = 'thematiq-layout-panel__change-name'
-			name.textContent = session[id].label
-			var value = document.createElement('span')
-			value.className = 'thematiq-layout-panel__change-value'
-			value.textContent = session[id].value
-			row.appendChild(name)
-			row.appendChild(value)
-			return row
-		}))
+		list.replaceChildren.apply(
+			list,
+			ids.map(function (id) {
+				var row = document.createElement('div')
+				row.className = 'thematiq-layout-panel__change'
+				var name = document.createElement('span')
+				name.className = 'thematiq-layout-panel__change-name'
+				name.textContent = session[id].label
+				var value = document.createElement('span')
+				value.className = 'thematiq-layout-panel__change-value'
+				value.textContent = session[id].value
+				row.appendChild(name)
+				row.appendChild(value)
+				return row
+			}),
+		)
 	}
 
 	/**
@@ -182,7 +216,10 @@
 		})
 		var value
 		if (option !== undefined) {
-			value = control.value === '' ? tr('Follow the theme') : words(control, control.value)
+			value =
+				control.value === ''
+					? tr('Follow the theme')
+					: words(control, control.value)
 		} else if (CHECKS.indexOf(control.id) !== -1) {
 			value = control.checked === true ? tr('on') : tr('off')
 		} else {
@@ -205,7 +242,9 @@
 		if (match === null) {
 			return null
 		}
-		return Math.round(match[2] === 'rem' ? parseFloat(match[1]) * 16 : parseFloat(match[1]))
+		return Math.round(
+			match[2] === 'rem' ? parseFloat(match[1]) * 16 : parseFloat(match[1]),
+		)
 	}
 
 	/**
@@ -220,9 +259,15 @@
 		}
 		var style = getComputedStyle(document.body)
 		var parts = []
-		var heading = pixels(style.getPropertyValue('--nldesign-website-heading-1-font-size'))
-		var body = pixels(style.getPropertyValue('--nldesign-website-content-font-size'))
-		var page = pixels(style.getPropertyValue('--nldesign-website-page-max-width'))
+		var heading = pixels(
+			style.getPropertyValue('--nldesign-website-heading-1-font-size'),
+		)
+		var body = pixels(
+			style.getPropertyValue('--nldesign-website-content-font-size'),
+		)
+		var page = pixels(
+			style.getPropertyValue('--nldesign-website-page-max-width'),
+		)
 		if (heading !== null) {
 			parts.push(tr('Heading 1 {size} px', { size: heading }))
 		}
@@ -232,9 +277,10 @@
 		if (page !== null) {
 			parts.push(tr('page {size} px', { size: page }))
 		}
-		panel.querySelector('.thematiq-layout-panel__website').textContent = parts.length > 0
-			? parts.join(', ')
-			: tr('The set gives the website no sizes.')
+		panel.querySelector('.thematiq-layout-panel__website').textContent =
+			parts.length > 0
+				? parts.join(', ')
+				: tr('The set gives the website no sizes.')
 		var source = document.querySelector('.thematiq-lettering__link')
 		var link = panel.querySelector('.thematiq-layout-panel__website-link')
 		if (source !== null && source.getAttribute('href')) {
@@ -259,7 +305,9 @@
 		if (option === undefined || control === null) {
 			return ''
 		}
-		return control.value !== '' ? control.value : themeValue(option, activeSet().layout || {})
+		return control.value !== ''
+			? control.value
+			: themeValue(option, activeSet().layout || {})
 	}
 
 	/**
@@ -286,21 +334,44 @@
 	 * @return {HTMLElement} The drawing.
 	 */
 	function workspaceDrawing(after) {
-		var light = after === true && effective('thematiq-workplace-layout') === 'light'
-		var workplace = light === true && effective('thematiq-header-style') === 'workplace'
-		var soft = after === true && effective('thematiq-navigation-active-style') === 'soft'
-		var user = typeof window.OC !== 'undefined' && typeof window.OC.getCurrentUser === 'function' ? window.OC.getCurrentUser() : null
+		var light =
+			after === true && effective('thematiq-workplace-layout') === 'light'
+		var workplace =
+			light === true && effective('thematiq-header-style') === 'workplace'
+		var soft =
+			after === true
+			&& effective('thematiq-navigation-active-style') === 'soft'
+		var user =
+			typeof window.OC !== 'undefined'
+			&& typeof window.OC.getCurrentUser === 'function'
+				? window.OC.getCurrentUser()
+				: null
 		var name = user !== null && user.displayName ? user.displayName : ''
-		var initials = name.split(/\s+/).map(function (part) {
-			return part.charAt(0)
-		}).join('').slice(0, 2).toUpperCase()
+		var initials = name
+			.split(/\s+/)
+			.map(function (part) {
+				return part.charAt(0)
+			})
+			.join('')
+			.slice(0, 2)
+			.toUpperCase()
 
 		var frame = el('div', 'thematiq-preview')
-		var bar = el('div', 'thematiq-preview__bar' + (light === true ? ' thematiq-preview__bar--light' : ''))
+		var bar = el(
+			'div',
+			'thematiq-preview__bar'
+				+ (light === true ? ' thematiq-preview__bar--light' : ''),
+		)
 		bar.appendChild(el('span', 'thematiq-preview__logo'))
 		if (workplace === true) {
 			var app = el('span', 'thematiq-preview__app')
-			app.appendChild(el('span', 'thematiq-preview__org', window.OC && window.OC.theme ? window.OC.theme.name : ''))
+			app.appendChild(
+				el(
+					'span',
+					'thematiq-preview__org',
+					window.OC && window.OC.theme ? window.OC.theme.name : '',
+				),
+			)
 			app.appendChild(el('strong', 'thematiq-preview__app-name', tr('Files')))
 			bar.appendChild(app)
 			bar.appendChild(el('span', 'thematiq-preview__search'))
@@ -318,17 +389,25 @@
 
 		var body = el('div', 'thematiq-preview__body')
 		var nav = el('div', 'thematiq-preview__nav')
-		;[tr('All files'), tr('Recent'), tr('Favourites'), tr('Shared')].forEach(function (label, index) {
-			var entry = el('span', 'thematiq-preview__entry', label)
-			if (index === 0) {
-				entry.classList.add(soft === true ? 'thematiq-preview__entry--soft' : 'thematiq-preview__entry--filled')
-			}
-			nav.appendChild(entry)
-		})
+		;[tr('All files'), tr('Recent'), tr('Favourites'), tr('Shared')].forEach(
+			function (label, index) {
+				var entry = el('span', 'thematiq-preview__entry', label)
+				if (index === 0) {
+					entry.classList.add(
+						soft === true
+							? 'thematiq-preview__entry--soft'
+							: 'thematiq-preview__entry--filled',
+					)
+				}
+				nav.appendChild(entry)
+			},
+		)
 		var content = el('div', 'thematiq-preview__content')
 		content.appendChild(el('span', 'thematiq-preview__line'))
 		content.appendChild(el('span', 'thematiq-preview__block'))
-		content.appendChild(el('span', 'thematiq-preview__block thematiq-preview__block--small'))
+		content.appendChild(
+			el('span', 'thematiq-preview__block thematiq-preview__block--small'),
+		)
 		body.appendChild(nav)
 		body.appendChild(content)
 		frame.appendChild(body)
@@ -342,24 +421,34 @@
 	 */
 	function afterCaption() {
 		var light = effective('thematiq-workplace-layout') === 'light'
-		var bar = light === true
-			? (effective('thematiq-header-style') === 'workplace' ? tr('White top bar with your name and role') : tr('White top bar'))
-			: tr('Top bar in the primary colour')
+		var bar =
+			light === true
+				? effective('thematiq-header-style') === 'workplace'
+					? tr('White top bar with your name and role')
+					: tr('White top bar')
+				: tr('Top bar in the primary colour')
 		var width = effective('thematiq-navigation-width-input')
 		var parts = [bar]
 		if (width !== '') {
 			parts.push(tr('menu of {width} px', { width: width }))
 		}
-		parts.push(effective('thematiq-navigation-active-style') === 'soft' ? tr('the chosen entry in a soft tint') : tr('the chosen entry filled'))
+		parts.push(
+			effective('thematiq-navigation-active-style') === 'soft'
+				? tr('the chosen entry in a soft tint')
+				: tr('the chosen entry filled'),
+		)
 		var stripe = effective('thematiq-brand-stripe') === '1'
 		var placement = effective('thematiq-brand-stripe-placement')
-		var stripeLine = stripe === false
-			? tr('No brand stripe.')
-			: placement === 'login'
-				? tr('The brand stripe is only on the login card.')
-				: placement === 'header'
-					? tr('The brand stripe is only under the top bar.')
-					: tr('The brand stripe is under the top bar and on the login card.')
+		var stripeLine =
+			stripe === false
+				? tr('No brand stripe.')
+				: placement === 'login'
+					? tr('The brand stripe is only on the login card.')
+					: placement === 'header'
+						? tr('The brand stripe is only under the top bar.')
+						: tr(
+								'The brand stripe is under the top bar and on the login card.',
+							)
 		return parts.join(', ') + '. ' + stripeLine
 	}
 
@@ -369,7 +458,9 @@
 	 * @return {HTMLElement} The drawing.
 	 */
 	function loginDrawing() {
-		var stripe = effective('thematiq-brand-stripe') === '1' && effective('thematiq-brand-stripe-placement') !== 'header'
+		var stripe =
+			effective('thematiq-brand-stripe') === '1'
+			&& effective('thematiq-brand-stripe-placement') !== 'header'
 		var stage = el('div', 'thematiq-preview-login')
 		if (effective('thematiq-login-watermark') === '1') {
 			stage.appendChild(el('span', 'thematiq-preview-login__watermark'))
@@ -399,11 +490,25 @@
 	 */
 	function loginCaption() {
 		var parts = []
-		var stripe = effective('thematiq-brand-stripe') === '1' && effective('thematiq-brand-stripe-placement') !== 'header'
-		parts.push(stripe === true ? tr('Brand stripe on the card') : tr('No brand stripe on the card'))
-		parts.push(effective('thematiq-login-watermark') === '1' ? tr('emblem large and faint behind it') : tr('no emblem behind it'))
+		var stripe =
+			effective('thematiq-brand-stripe') === '1'
+			&& effective('thematiq-brand-stripe-placement') !== 'header'
+		parts.push(
+			stripe === true
+				? tr('Brand stripe on the card')
+				: tr('No brand stripe on the card'),
+		)
+		parts.push(
+			effective('thematiq-login-watermark') === '1'
+				? tr('emblem large and faint behind it')
+				: tr('no emblem behind it'),
+		)
 		var slogan = document.getElementById('nldesign-hide-slogan')
-		parts.push(slogan !== null && slogan.checked === true ? tr('no slogan') : tr('with the slogan'))
+		parts.push(
+			slogan !== null && slogan.checked === true
+				? tr('no slogan')
+				: tr('with the slogan'),
+		)
 		return parts.join(', ') + '.'
 	}
 
@@ -418,7 +523,11 @@
 	 * @return {HTMLElement} The card.
 	 */
 	function previewCard(title, pill, drawing, caption, modifier) {
-		var card = el('section', 'thematiq-card thematiq-panel__card thematiq-layout-panel__preview ' + modifier)
+		var card = el(
+			'section',
+			'thematiq-card thematiq-panel__card thematiq-layout-panel__preview '
+				+ modifier,
+		)
 		var head = el('div', 'thematiq-panel__card-head')
 		head.appendChild(el('h2', 'thematiq-panel__card-title', title))
 		if (pill !== null) {
@@ -436,16 +545,46 @@
 	 * @return {void}
 	 */
 	function drawPreviews() {
-		var aside = document.querySelector('[data-thematiq-panel="layout"] .thematiq-panel__aside')
+		var aside = document.querySelector(
+			'[data-thematiq-panel="layout"] .thematiq-panel__aside',
+		)
 		if (aside === null) {
 			return
 		}
-		aside.querySelectorAll('.thematiq-layout-panel__preview').forEach(function (card) {
-			card.remove()
-		})
-		aside.appendChild(previewCard(tr('Before'), tr('Nextcloud default'), workspaceDrawing(false), tr('Top bar in the primary colour, icons only, the chosen entry filled.'), 'thematiq-layout-panel__preview--before'))
-		aside.appendChild(previewCard(tr('After'), tr('With these choices'), workspaceDrawing(true), afterCaption(), 'thematiq-layout-panel__preview--after'))
-		aside.appendChild(previewCard(tr('Login card'), null, loginDrawing(), loginCaption(), 'thematiq-layout-panel__preview--login'))
+		aside
+			.querySelectorAll('.thematiq-layout-panel__preview')
+			.forEach(function (card) {
+				card.remove()
+			})
+		aside.appendChild(
+			previewCard(
+				tr('Before'),
+				tr('Nextcloud default'),
+				workspaceDrawing(false),
+				tr(
+					'Top bar in the primary colour, icons only, the chosen entry filled.',
+				),
+				'thematiq-layout-panel__preview--before',
+			),
+		)
+		aside.appendChild(
+			previewCard(
+				tr('After'),
+				tr('With these choices'),
+				workspaceDrawing(true),
+				afterCaption(),
+				'thematiq-layout-panel__preview--after',
+			),
+		)
+		aside.appendChild(
+			previewCard(
+				tr('Login card'),
+				null,
+				loginDrawing(),
+				loginCaption(),
+				'thematiq-layout-panel__preview--login',
+			),
+		)
 	}
 
 	/**
@@ -472,7 +611,8 @@
 	function actions() {
 		var button = document.createElement('button')
 		button.type = 'button'
-		button.className = 'thematiq-page-header__action thematiq-layout-panel__follow'
+		button.className =
+			'thematiq-page-header__action thematiq-layout-panel__follow'
 		button.textContent = tr('Everything follows the theme')
 		button.addEventListener('click', followTheTheme)
 		return [button]
@@ -495,7 +635,10 @@
 		window.ThematiqPanels.register('layout', {
 			title: tr('Layout and options'),
 			intro: function () {
-				return tr('How the workspace looks on top of the colours. Every option you leave empty follows the active token set, now {name}. Your choice here always wins.', { name: activeSet().name || '' })
+				return tr(
+					'How the workspace looks on top of the colours. Every option you leave empty follows the active token set, now {name}. Your choice here always wins.',
+					{ name: activeSet().name || '' },
+				)
 			},
 			actions: actions,
 			onOpen: function () {

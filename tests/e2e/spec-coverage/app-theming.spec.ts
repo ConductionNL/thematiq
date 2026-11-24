@@ -119,57 +119,63 @@ test.describe('per-app-theming', () => {
 		await page.close()
 	})
 
-	test(// @e2e openspec/specs/per-app-theming/spec.md#admin-excludes-an-app-via-the-panel
-	// @e2e openspec/specs/per-app-theming/spec.md#excluded-app-renders-without-any-nldesign-css
-	// @e2e openspec/specs/per-app-theming/spec.md#non-excluded-app-stays-fully-themed
-	'Excluding an app via the panel strips nldesign CSS from its pages only', async ({
-		page,
-	}) => {
-		await setThemed(page, false)
+	test(
+		// @e2e openspec/specs/per-app-theming/spec.md#admin-excludes-an-app-via-the-panel
+		// @e2e openspec/specs/per-app-theming/spec.md#excluded-app-renders-without-any-nldesign-css
+		// @e2e openspec/specs/per-app-theming/spec.md#non-excluded-app-stays-fully-themed
+		'Excluding an app via the panel strips nldesign CSS from its pages only',
+		async ({ page }) => {
+			await setThemed(page, false)
 
-		await page.goto(`/apps/${TARGET_APP}/`)
-		await page.waitForLoadState('domcontentloaded')
-		expect(await nldesignStyleCount(page)).toBe(0)
+			await page.goto(`/apps/${TARGET_APP}/`)
+			await page.waitForLoadState('domcontentloaded')
+			expect(await nldesignStyleCount(page)).toBe(0)
 
-		await page.goto('/apps/files/')
-		await page.waitForLoadState('domcontentloaded')
-		expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
-	})
+			await page.goto('/apps/files/')
+			await page.waitForLoadState('domcontentloaded')
+			expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
+		},
+	)
 
-	test(// @e2e openspec/specs/per-app-theming/spec.md#admin-re-enables-theming-for-an-app
-	'Re-enabling an app restores theming on its pages', async ({ page }) => {
-		await setThemed(page, false)
-		await setThemed(page, true)
+	test(
+		// @e2e openspec/specs/per-app-theming/spec.md#admin-re-enables-theming-for-an-app
+		'Re-enabling an app restores theming on its pages',
+		async ({ page }) => {
+			await setThemed(page, false)
+			await setThemed(page, true)
 
-		await page.goto(`/apps/${TARGET_APP}/`)
-		await page.waitForLoadState('domcontentloaded')
-		expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
-	})
+			await page.goto(`/apps/${TARGET_APP}/`)
+			await page.waitForLoadState('domcontentloaded')
+			expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
+		},
+	)
 
-	test(// @e2e openspec/specs/per-app-theming/spec.md#login-and-settings-pages-are-always-themed
-	'Settings pages stay themed even with an active exclusion list', async ({
-		page,
-	}) => {
-		await setThemed(page, false)
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
-	})
+	test(
+		// @e2e openspec/specs/per-app-theming/spec.md#login-and-settings-pages-are-always-themed
+		'Settings pages stay themed even with an active exclusion list',
+		async ({ page }) => {
+			await setThemed(page, false)
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			expect(await nldesignStyleCount(page)).toBeGreaterThan(0)
+		},
+	)
 
-	test(// @e2e openspec/specs/per-app-theming/spec.md#checkboxes-are-accessible
-	'Every app row exposes a checkbox associated with a visible label', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		await openAppThemingDropdown(page)
-		const box = page.locator(
-			`#nldesign-app-theming-list input[data-app-id="${TARGET_APP}"]`,
-		)
-		await box.waitFor({ state: 'visible' })
-		const id = await box.getAttribute('id')
-		const label = page.locator(`label[for="${id}"]`)
-		await expect(label).toBeVisible()
-		await expect(label).not.toBeEmpty()
-	})
+	test(
+		// @e2e openspec/specs/per-app-theming/spec.md#checkboxes-are-accessible
+		'Every app row exposes a checkbox associated with a visible label',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			await openAppThemingDropdown(page)
+			const box = page.locator(
+				`#nldesign-app-theming-list input[data-app-id="${TARGET_APP}"]`,
+			)
+			await box.waitFor({ state: 'visible' })
+			const id = await box.getAttribute('id')
+			const label = page.locator(`label[for="${id}"]`)
+			await expect(label).toBeVisible()
+			await expect(label).not.toBeEmpty()
+		},
+	)
 })

@@ -4,16 +4,24 @@ test('after the confirmation', async ({ page }) => {
 	test.setTimeout(120_000)
 	await page.goto('/settings/admin/theming', { waitUntil: 'load' })
 	await page.waitForTimeout(3000)
-	console.log('AWAITING-VISIBLE', await page.locator('#nldesign-set-licences-awaiting').isVisible())
+	console.log(
+		'AWAITING-VISIBLE',
+		await page.locator('#nldesign-set-licences-awaiting').isVisible(),
+	)
 	const entry = page.locator('#nldesign-set-licence-epe')
-	console.log('SUMMARY', (await entry.locator('summary').innerText()).replace(/\s+/g, ' '))
+	console.log(
+		'SUMMARY',
+		(await entry.locator('summary').innerText()).replace(/\s+/g, ' '),
+	)
 	await entry.locator('summary').click()
 	await page.waitForTimeout(800)
 	const txt = (await entry.innerText()).replace(/\s+/g, ' ')
 	console.log('ENTRY-TAIL', txt.slice(-300))
 	const withdraw = entry.getByRole('button', { name: 'Withdraw confirmation' })
 	console.log('WITHDRAW', await withdraw.count())
-	await entry.locator('summary').screenshot({ path: `${OUT}/licence-epe-confirmed.png` })
+	await entry
+		.locator('summary')
+		.screenshot({ path: `${OUT}/licence-epe-confirmed.png` })
 	if (await withdraw.count()) {
 		await withdraw.scrollIntoViewIfNeeded()
 		await withdraw.screenshot({ path: `${OUT}/licence-epe-withdraw.png` })

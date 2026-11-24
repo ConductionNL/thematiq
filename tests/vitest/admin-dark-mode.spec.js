@@ -189,7 +189,9 @@ describe('admin.js dark mode', () => {
 			const overlay = await openThemingDialog(TOKEN_SET_WITH_DARK_LOGO)
 			expect(overlay).not.toBeNull()
 
-			const row = [...overlay.querySelectorAll('tbody tr')].find((tr) => tr.cells[0].textContent === 'Dark logo')
+			const row = [...overlay.querySelectorAll('tbody tr')].find(
+				(tr) => tr.cells[0].textContent === 'Dark logo',
+			)
 			expect(row).not.toBeUndefined()
 			expect(row.cells[2].textContent).toBe('withlogo-dark.svg')
 		})
@@ -199,7 +201,9 @@ describe('admin.js dark mode', () => {
 			expect(overlay).not.toBeNull()
 
 			expect(
-				[...overlay.querySelectorAll('tbody tr')].map((tr) => tr.cells[0].textContent),
+				[...overlay.querySelectorAll('tbody tr')].map(
+					(tr) => tr.cells[0].textContent,
+				),
 			).not.toContain('Dark logo')
 		})
 

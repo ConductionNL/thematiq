@@ -38,15 +38,30 @@ describe('OpenWOO reference set', () => {
 
 	it('keeps only the base set tokens that carry no brand value', () => {
 		const spec = JSON.parse(fs.readFileSync(OVERRIDES, 'utf8'))
-		const kept = Object.keys(declaredTokens(exportSet(OVERRIDES).css))
-			.filter((name) => spec.overrides[name] === undefined)
-		expect(kept).toEqual(['--nldesign-animation-quick', '--nldesign-animation-slow', '--nldesign-border-radius-pill', '--nldesign-border-radius-rounded', '--nldesign-color-text-light'])
+		const kept = Object.keys(declaredTokens(exportSet(OVERRIDES).css)).filter(
+			(name) => spec.overrides[name] === undefined,
+		)
+		expect(kept).toEqual([
+			'--nldesign-animation-quick',
+			'--nldesign-animation-slow',
+			'--nldesign-border-radius-pill',
+			'--nldesign-border-radius-rounded',
+			'--nldesign-color-text-light',
+		])
 	})
 })
 
 describe('compare', () => {
 	it('names each token same, different, or one side only', () => {
-		const rows = compare({ '--a': '#FFF', '--b': '1px', '--c': 'x' }, { '--a': '#fff', '--b': '2px', '--d': 'y' })
-		expect(rows.map((row) => row.verdict)).toEqual(['same', 'different', 'reference only', 'converter only'])
+		const rows = compare(
+			{ '--a': '#FFF', '--b': '1px', '--c': 'x' },
+			{ '--a': '#fff', '--b': '2px', '--d': 'y' },
+		)
+		expect(rows.map((row) => row.verdict)).toEqual([
+			'same',
+			'different',
+			'reference only',
+			'converter only',
+		])
 	})
 })

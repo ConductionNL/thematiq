@@ -136,7 +136,9 @@
 		function render() {
 			list.textContent = ''
 			var ids = Object.keys(state.brands)
-			document.dispatchEvent(new CustomEvent('thematiq:app-brands', { detail: state }))
+			document.dispatchEvent(
+				new CustomEvent('thematiq:app-brands', { detail: state }),
+			)
 			if (ids.length === 0) {
 				var empty = document.createElement('tr')
 				var none = document.createElement('td')
@@ -171,7 +173,9 @@
 
 				var contrastCell = document.createElement('td')
 				var contrast = document.createElement('span')
-				contrast.className = 'nldesign-app-brand-contrast' + (set.wcagLevel ? '' : ' nldesign-app-brand-contrast--below')
+				contrast.className =
+					'nldesign-app-brand-contrast'
+					+ (set.wcagLevel ? '' : ' nldesign-app-brand-contrast--below')
 				contrast.textContent = set.wcagLevel
 					? t('thematiq', 'WCAG {level}', { level: set.wcagLevel })
 					: t('thematiq', 'Below WCAG AA')

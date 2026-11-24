@@ -223,7 +223,9 @@
 }
 
 #settings-admin-theming > .settings-section:nth-child(2) p,
-#settings-admin-theming > .settings-section:nth-child(2) .checkbox-content__description {
+#settings-admin-theming
+	> .settings-section:nth-child(2)
+	.checkbox-content__description {
 	color: var(--color-text-maxcontrast);
 	font-size: 13px;
 	line-height: 1.4;
@@ -268,7 +270,11 @@
 	display: inline-block;
 	padding: 3px 10px;
 	border-radius: 12px;
-	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-success) 12%,
+		var(--color-main-background)
+	);
 	color: var(--color-success-text);
 	font-size: 13px;
 	font-weight: 600;
@@ -386,7 +392,10 @@
 }
 
 /* NL Design underlines every link with `!important`; the board's actions are not. */
-#nldesign-settings .thematiq-card .nldesign-token-set-actions .nldesign-token-reference-link {
+#nldesign-settings
+	.thematiq-card
+	.nldesign-token-set-actions
+	.nldesign-token-reference-link {
 	font-size: 14px;
 	font-weight: 600;
 	text-decoration: none !important;
@@ -431,7 +440,9 @@
 	font-weight: 600;
 }
 
-#nldesign-settings .thematiq-active-set-preview__tab + .thematiq-active-set-preview__tab {
+#nldesign-settings
+	.thematiq-active-set-preview__tab
+	+ .thematiq-active-set-preview__tab {
 	border-inline-start: 1px solid var(--color-border-maxcontrast);
 }
 
@@ -496,7 +507,10 @@
 	gap: 14px;
 	padding: 14px;
 	border-top: 1px solid var(--color-border);
-	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	);
 	line-height: normal;
 }
 
@@ -564,8 +578,14 @@
 
 .thematiq-set-sample__nav {
 	padding: 0 12px;
-	background: var(--nldesign-color-accent-light, var(--color-primary-element-light));
-	color: var(--nldesign-component-navigation-active-color, var(--color-primary-element-light-text));
+	background: var(
+		--nldesign-color-accent-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-component-navigation-active-color,
+		var(--color-primary-element-light-text)
+	);
 }
 
 .thematiq-set-sample__primary {
@@ -821,12 +841,20 @@
 }
 
 .thematiq-token-sets__pill--active {
-	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-success) 12%,
+		var(--color-main-background)
+	);
 	color: var(--color-success-text);
 }
 
 .thematiq-token-sets__pill--licence {
-	background: color-mix(in srgb, var(--color-warning) 18%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-warning) 18%,
+		var(--color-main-background)
+	);
 	color: var(--color-warning-text);
 }
 
@@ -1016,7 +1044,10 @@
 	font-weight: 600 !important;
 }
 
-#nldesign-settings .thematiq-card .nldesign-option:has(> input[type='checkbox']) > label {
+#nldesign-settings
+	.thematiq-card
+	.nldesign-option:has(> input[type='checkbox'])
+	> label {
 	flex: 1 1 0;
 	font-size: 15px !important;
 	font-weight: 400 !important;
@@ -1039,7 +1070,10 @@
 	padding-inline-start: 0;
 }
 
-#nldesign-settings .thematiq-card .nldesign-option:has(> input[type='checkbox']) > .settings-hint {
+#nldesign-settings
+	.thematiq-card
+	.nldesign-option:has(> input[type='checkbox'])
+	> .settings-hint {
 	padding-inline-start: 25px;
 }
 

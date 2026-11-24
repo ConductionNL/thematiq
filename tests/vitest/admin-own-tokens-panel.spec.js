@@ -34,16 +34,22 @@ describe('Own tokens panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+		window.t = (app, text, vars) =>
+			Object.keys(vars || {}).reduce(
+				(acc, key) => acc.replace('{' + key + '}', vars[key]),
+				text,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -54,7 +60,9 @@ describe('Own tokens panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -65,21 +73,40 @@ describe('Own tokens panel', () => {
 
 	it('counts the own and the deprecated tokens', () => {
 		expect(text('.thematiq-page-header__title')).toBe('Own tokens')
-		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: [{}, {}, {}], deprecations: [{}, {}] } }))
-		expect(text('.thematiq-page-header__intro')).toBe('3 own tokens, 2 deprecated')
+		document.dispatchEvent(
+			new CustomEvent('thematiq:own-tokens', {
+				detail: { tokens: [{}, {}, {}], deprecations: [{}, {}] },
+			}),
+		)
+		expect(text('.thematiq-page-header__intro')).toBe(
+			'3 own tokens, 2 deprecated',
+		)
 		expect(text('.thematiq-own-tokens-panel__count')).toBe('3 own tokens')
 		expect(text('.thematiq-own-tokens-panel__deprecated')).toBe('2 deprecated')
-		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: [{}], deprecations: [] } }))
+		document.dispatchEvent(
+			new CustomEvent('thematiq:own-tokens', {
+				detail: { tokens: [{}], deprecations: [] },
+			}),
+		)
 		expect(text('.thematiq-own-tokens-panel__count')).toBe('1 own token')
 	})
 
 	it('presses the panel buttons from the header', () => {
 		const add = vi.fn()
 		const deprecate = vi.fn()
-		document.getElementById('nldesign-own-token-add').addEventListener('click', add)
-		document.getElementById('nldesign-deprecation-add').addEventListener('click', deprecate)
-		const buttons = document.querySelectorAll('.thematiq-page-header__actions button')
-		expect(Array.from(buttons).map((b) => b.textContent)).toEqual(['Deprecate token', 'Add token'])
+		document
+			.getElementById('nldesign-own-token-add')
+			.addEventListener('click', add)
+		document
+			.getElementById('nldesign-deprecation-add')
+			.addEventListener('click', deprecate)
+		const buttons = document.querySelectorAll(
+			'.thematiq-page-header__actions button',
+		)
+		expect(Array.from(buttons).map((b) => b.textContent)).toEqual([
+			'Deprecate token',
+			'Add token',
+		])
 		buttons[0].click()
 		buttons[1].click()
 		expect(deprecate).toHaveBeenCalled()

@@ -37,7 +37,11 @@ const PAGE = `
 
 const SETS = [
 	{ id: 'custom-a', name: 'Elections', warnings: [] },
-	{ id: 'custom-b', name: "King's Day", warnings: [{ pair: 'text on primary', ratio: 3.5 }] },
+	{
+		id: 'custom-b',
+		name: "King's Day",
+		warnings: [{ pair: 'text on primary', ratio: 3.5 }],
+	},
 	{ id: 'custom-c', name: 'Broken', warnings: [{ kind: 'incomplete' }] },
 ]
 
@@ -49,16 +53,22 @@ describe('Own token sets panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+		window.t = (app, text, vars) =>
+			Object.keys(vars || {}).reduce(
+				(acc, key) => acc.replace('{' + key + '}', vars[key]),
+				text,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -69,7 +79,9 @@ describe('Own token sets panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -77,10 +89,16 @@ describe('Own token sets panel', () => {
 	})
 
 	it('counts the own sets against all sets', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Own token sets')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Own token sets')
 		send('thematiq:custom-sets', { sets: SETS })
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('3 own sets, 3 token sets in total')
-		expect(document.querySelector('.thematiq-own-sets-panel__count').textContent).toBe('3 own token sets')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('3 own sets, 3 token sets in total')
+		expect(
+			document.querySelector('.thematiq-own-sets-panel__count').textContent,
+		).toBe('3 own token sets')
 	})
 
 	it('names the sets with a contrast warning, not the incomplete one', () => {
@@ -93,19 +111,48 @@ describe('Own token sets panel', () => {
 	})
 
 	it('shows a scheduled switch in the Used column of its set', () => {
-		send('thematiq:scheduled-switches', { switches: [{ tokenSet: 'custom-a', startAt: '2027-03-02T06:00:00Z', status: 'planned' }, { tokenSet: 'custom-b', startAt: '2026-10-01T07:00:00Z', status: 'failed' }] })
-		const day = new Date('2027-03-02T06:00:00Z').toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' })
-		expect(document.querySelector('[data-set-id="custom-a"] .nldesign-custom-set-used').textContent).toBe('Scheduled for ' + day)
-		expect(document.querySelector('[data-set-id="custom-b"] .nldesign-custom-set-used').textContent).toBe('')
+		send('thematiq:scheduled-switches', {
+			switches: [
+				{
+					tokenSet: 'custom-a',
+					startAt: '2027-03-02T06:00:00Z',
+					status: 'planned',
+				},
+				{
+					tokenSet: 'custom-b',
+					startAt: '2026-10-01T07:00:00Z',
+					status: 'failed',
+				},
+			],
+		})
+		const day = new Date('2027-03-02T06:00:00Z').toLocaleDateString([], {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+		})
+		expect(
+			document.querySelector(
+				'[data-set-id="custom-a"] .nldesign-custom-set-used',
+			).textContent,
+		).toBe('Scheduled for ' + day)
+		expect(
+			document.querySelector(
+				'[data-set-id="custom-b"] .nldesign-custom-set-used',
+			).textContent,
+		).toBe('')
 		send('thematiq:custom-sets', { sets: SETS })
-		expect(document.querySelectorAll('.thematiq-own-sets-panel__scheduled')).toHaveLength(1)
+		expect(
+			document.querySelectorAll('.thematiq-own-sets-panel__scheduled'),
+		).toHaveLength(1)
 	})
 
 	it('opens the colours form from the header button', () => {
 		const tab = document.getElementById('nldesign-create-tab-colours')
 		const clicked = vi.fn()
 		tab.addEventListener('click', clicked)
-		const button = document.querySelector('.thematiq-page-header__actions button')
+		const button = document.querySelector(
+			'.thematiq-page-header__actions button',
+		)
 		expect(button.textContent).toBe('Create house style')
 		button.click()
 		expect(clicked).toHaveBeenCalled()

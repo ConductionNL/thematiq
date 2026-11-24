@@ -116,7 +116,9 @@
 
 		var loaded = null
 		var items = function () {
-			return Array.prototype.slice.call(panel.querySelectorAll('[role="menuitem"]'))
+			return Array.prototype.slice.call(
+				panel.querySelectorAll('[role="menuitem"]'),
+			)
 		}
 		var close = function (refocus) {
 			panel.hidden = true

@@ -22,12 +22,16 @@ import { freezePage } from './_visual-helpers'
 
 test.use({ viewport: { width: 1440, height: 1000 } })
 
-test('the lasuite shell of Files looks as it did on this Nextcloud major', async ({ page }) => {
+test('the lasuite shell of Files looks as it did on this Nextcloud major', async ({
+	page,
+}) => {
 	const snapshot = await applyThemeState(page, { tokenSet: 'lasuite' })
 	try {
 		await page.goto('/apps/files/')
 		await page.waitForSelector('tr.files-list__row', { timeout: 60_000 })
-		const version = await page.evaluate(() => String((window as any).OC?.config?.version ?? ''))
+		const version = await page.evaluate(() =>
+			String((window as any).OC?.config?.version ?? ''),
+		)
 		expect(version, 'the page must expose OC.config.version').not.toBe('')
 		const major = version.split('.')[0]
 		await freezePage(page)

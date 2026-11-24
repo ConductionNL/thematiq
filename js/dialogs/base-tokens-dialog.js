@@ -49,14 +49,31 @@
 			eyebrow: tr("Also edit Nextcloud's base tokens"),
 			title: tr("Edit Nextcloud's base tokens?"),
 			body: [
-				h('p', { class: 'thematiq-admin-dialog__lead', text: tr('These are the colours and sizes Nextcloud itself is built on, such as the colour of regular text. Change one and every part of Nextcloud that reads it changes. That is far more than the component you are looking at, and more than this panel shows.') }),
-				frame.table([tr('Base token'), tr('Read by')], examples.map(function (row) {
-					return [h('code', { text: row[0] }), row[1]]
-				})),
-				frame.notice(tr('To change a component, use its own rows. Those affect only that component.'), 'info'),
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: tr(
+						'These are the colours and sizes Nextcloud itself is built on, such as the colour of regular text. Change one and every part of Nextcloud that reads it changes. That is far more than the component you are looking at, and more than this panel shows.',
+					),
+				}),
+				frame.table(
+					[tr('Base token'), tr('Read by')],
+					examples.map(function (row) {
+						return [h('code', { text: row[0] }), row[1]]
+					}),
+				),
+				frame.notice(
+					tr(
+						'To change a component, use its own rows. Those affect only that component.',
+					),
+					'info',
+				),
 			],
 			actions: [
-				{ label: tr('Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+				{
+					label: tr('Cancel'),
+					cancel: true,
+					className: 'nldesign-dialog-cancel',
+				},
 				{
 					label: tr('Edit anyway'),
 					variant: 'primary',

@@ -42,19 +42,31 @@ describe('Save these changes as a new theme dialog', () => {
 	it('draws the board: notice, line, the name field with its hint, the note and three buttons', () => {
 		window.ThematiqNewThemeDialog.open({ proceed: vi.fn() })
 
-		expect(dialog().querySelector('.thematiq-admin-dialog__eyebrow').textContent).toBe('Save')
-		expect(dialog().querySelector('h2').textContent).toBe('Save these changes as a new theme?')
-		expect(dialog().querySelector('.thematiq-admin-dialog__notice--info').textContent).toContain('Nextcloud default theme')
-		const label = dialog().querySelector('label[for="nldesign-save-newset-name"]')
+		expect(
+			dialog().querySelector('.thematiq-admin-dialog__eyebrow').textContent,
+		).toBe('Save')
+		expect(dialog().querySelector('h2').textContent).toBe(
+			'Save these changes as a new theme?',
+		)
+		expect(
+			dialog().querySelector('.thematiq-admin-dialog__notice--info')
+				.textContent,
+		).toContain('Nextcloud default theme')
+		const label = dialog().querySelector(
+			'label[for="nldesign-save-newset-name"]',
+		)
 		expect(label.textContent).toBe('Name of the new theme')
 		expect(name().placeholder).toBe('My organisation')
-		expect(document.getElementById(name().getAttribute('aria-describedby')).textContent).toBe('You then choose it in the active token set list.')
+		expect(
+			document.getElementById(name().getAttribute('aria-describedby'))
+				.textContent,
+		).toBe('You then choose it in the active token set list.')
 		expect(document.activeElement).toBe(name())
-		expect([...dialog().querySelectorAll('.thematiq-admin-dialog__foot button')].map((b) => b.textContent)).toEqual([
-			'Change the Nextcloud theme',
-			'Cancel',
-			'Save as new theme',
-		])
+		expect(
+			[
+				...dialog().querySelectorAll('.thematiq-admin-dialog__foot button'),
+			].map((b) => b.textContent),
+		).toEqual(['Change the Nextcloud theme', 'Cancel', 'Save as new theme'])
 	})
 
 	it('writes over the Nextcloud theme from the link button', () => {
@@ -75,13 +87,19 @@ describe('Save these changes as a new theme dialog', () => {
 		dialog().querySelector('.nldesign-dialog-confirm').click()
 
 		expect(proceed).not.toHaveBeenCalled()
-		expect(document.getElementById('nldesign-save-newset-error').textContent).toBe('Give the new theme a name.')
+		expect(
+			document.getElementById('nldesign-save-newset-error').textContent,
+		).toBe('Give the new theme a name.')
 		expect(name().getAttribute('aria-invalid')).toBe('true')
 	})
 
 	it('stays open on a refusal and closes once the set exists', () => {
 		let route
-		window.ThematiqNewThemeDialog.open({ proceed: (...args) => { route = args } })
+		window.ThematiqNewThemeDialog.open({
+			proceed: (...args) => {
+				route = args
+			},
+		})
 		name().value = ' OpenWoo '
 
 		dialog().querySelector('.nldesign-dialog-confirm').click()
@@ -92,10 +110,14 @@ describe('Save these changes as a new theme dialog', () => {
 		route[2].fail('A token set named "OpenWoo" already exists.')
 		expect(dialog()).not.toBeNull()
 		expect(name().disabled).toBe(false)
-		expect(document.getElementById('nldesign-save-newset-error').hidden).toBe(false)
+		expect(document.getElementById('nldesign-save-newset-error').hidden).toBe(
+			false,
+		)
 
 		dialog().querySelector('.nldesign-dialog-confirm').click()
-		expect(document.getElementById('nldesign-save-newset-error').hidden).toBe(true)
+		expect(document.getElementById('nldesign-save-newset-error').hidden).toBe(
+			true,
+		)
 		route[2].done()
 		expect(dialog()).toBeNull()
 	})
@@ -107,7 +129,9 @@ describe('Save these changes as a new theme dialog', () => {
 		expect(dialog()).toBeNull()
 
 		window.ThematiqNewThemeDialog.open({ proceed })
-		dialog().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		dialog().dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 		expect(dialog()).toBeNull()
 		expect(proceed).not.toHaveBeenCalled()
 		expect(document.activeElement).toBe(opener)

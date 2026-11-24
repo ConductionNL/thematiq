@@ -97,10 +97,14 @@
 	 * @return {string|null} The colour.
 	 */
 	function hex(value) {
-		var text = String(value || '').trim().toLowerCase()
+		var text = String(value || '')
+			.trim()
+			.toLowerCase()
 		var short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(text)
 		if (short !== null) {
-			return '#' + short[1] + short[1] + short[2] + short[2] + short[3] + short[3]
+			return (
+				'#' + short[1] + short[1] + short[2] + short[2] + short[3] + short[3]
+			)
 		}
 		return /^#[0-9a-f]{6}$/.test(text) ? text : null
 	}
@@ -147,7 +151,10 @@
 			return { id: '', name: '' }
 		}
 		var option = select.options[select.selectedIndex]
-		return { id: select.value, name: option !== undefined ? option.textContent.trim() : select.value }
+		return {
+			id: select.value,
+			name: option !== undefined ? option.textContent.trim() : select.value,
+		}
 	}
 
 	/**
@@ -160,9 +167,22 @@
 		var ground = hex(state.dark['--nldesign-color-background']) || '#171a20'
 		var button = hex(state.dark['--nldesign-color-button-primary-background'])
 		state.rows = ROWS.map(function (row) {
-			var light = hex(state.light[row[1]] || page.getPropertyValue(row[1]) || page.getPropertyValue(NEXTCLOUD[row[1]] || ''))
+			var light = hex(
+				state.light[row[1]]
+					|| page.getPropertyValue(row[1])
+					|| page.getPropertyValue(NEXTCLOUD[row[1]] || ''),
+			)
 			var dark = hex(state.dark[row[1]])
-			var entry = { label: tr(row[0]), name: row[1], kind: row[2], light: light, dark: dark, pass: true, verdict: tr('Surface'), ratio: null }
+			var entry = {
+				label: tr(row[0]),
+				name: row[1],
+				kind: row[2],
+				light: light,
+				dark: dark,
+				pass: true,
+				verdict: tr('Surface'),
+				ratio: null,
+			}
 			if (dark === null || row[2] === 'surface') {
 				entry.verdict = dark === null ? '–' : tr('Surface')
 				return entry
@@ -170,9 +190,10 @@
 			var against = row[2] === 'button' && button !== null ? button : ground
 			entry.ratio = ratio(dark, against)
 			entry.pass = entry.ratio >= (row[2] === 'border' ? 3 : 4.5)
-			entry.verdict = row[2] === 'button'
-				? tr('{ratio} on button', { ratio: formatRatio(entry.ratio) })
-				: formatRatio(entry.ratio)
+			entry.verdict =
+				row[2] === 'button'
+					? tr('{ratio} on button', { ratio: formatRatio(entry.ratio) })
+					: formatRatio(entry.ratio)
 			entry.unchanged = light !== null && light === dark
 			return entry
 		})
@@ -192,7 +213,9 @@
 			chip.style.background = value
 		}
 		cell.appendChild(chip)
-		cell.appendChild(document.createTextNode(value !== null ? value.toUpperCase() : '–'))
+		cell.appendChild(
+			document.createTextNode(value !== null ? value.toUpperCase() : '–'),
+		)
 		return cell
 	}
 
@@ -205,13 +228,18 @@
 	function drawRows(panel) {
 		var only = panel.querySelector('.thematiq-dark-panel__only-warnings')
 		var rows = panel.querySelector('.thematiq-dark-panel__rows')
-		var head = el('div', 'thematiq-dark-panel__row thematiq-dark-panel__row--head')
+		var head = el(
+			'div',
+			'thematiq-dark-panel__row thematiq-dark-panel__row--head',
+		)
 		head.setAttribute('role', 'row')
-		;[tr('Token'), tr('Light'), tr('Dark'), tr('Contrast')].forEach(function (text) {
-			var cell = el('span', '', text)
-			cell.setAttribute('role', 'columnheader')
-			head.appendChild(cell)
-		})
+		;[tr('Token'), tr('Light'), tr('Dark'), tr('Contrast')].forEach(
+			function (text) {
+				var cell = el('span', '', text)
+				cell.setAttribute('role', 'columnheader')
+				head.appendChild(cell)
+			},
+		)
 		var lines = [head]
 		state.rows.forEach(function (entry) {
 			if (only !== null && only.checked === true && entry.pass === true) {
@@ -224,14 +252,31 @@
 			name.appendChild(el('span', 'thematiq-dark-panel__label', entry.label))
 			name.appendChild(el('code', 'thematiq-dark-panel__token', entry.name))
 			if (entry.unchanged === true) {
-				name.appendChild(el('span', 'thematiq-dark-panel__note', tr('Not converted by the generator')))
+				name.appendChild(
+					el(
+						'span',
+						'thematiq-dark-panel__note',
+						tr('Not converted by the generator'),
+					),
+				)
 			}
 			row.appendChild(name)
 			row.appendChild(colourCell(entry.light))
 			row.appendChild(colourCell(entry.dark))
 			var verdict = el('span', 'thematiq-dark-panel__verdict')
 			verdict.setAttribute('role', 'cell')
-			verdict.appendChild(el('span', 'thematiq-dark-panel__pill thematiq-dark-panel__pill--' + (entry.ratio === null ? 'surface' : (entry.pass ? 'pass' : 'warn')), entry.verdict))
+			verdict.appendChild(
+				el(
+					'span',
+					'thematiq-dark-panel__pill thematiq-dark-panel__pill--'
+						+ (entry.ratio === null
+							? 'surface'
+							: entry.pass
+								? 'pass'
+								: 'warn'),
+					entry.verdict,
+				),
+			)
 			row.appendChild(verdict)
 			lines.push(row)
 		})
@@ -260,19 +305,42 @@
 		var passing = rows.filter(function (entry) {
 			return entry.pass
 		})
-		panel.querySelector('.thematiq-dark-panel__score').textContent = tr('{passing} of {total}', { passing: passing.length, total: rows.length })
-		panel.querySelector('.thematiq-dark-panel__bar span').style.width = (rows.length > 0 ? Math.round(passing.length / rows.length * 100) : 0) + '%'
+		panel.querySelector('.thematiq-dark-panel__score').textContent = tr(
+			'{passing} of {total}',
+			{ passing: passing.length, total: rows.length },
+		)
+		panel.querySelector('.thematiq-dark-panel__bar span').style.width =
+			(rows.length > 0 ? Math.round((passing.length / rows.length) * 100) : 0)
+			+ '%'
 		var list = panel.querySelector('.thematiq-dark-panel__problems')
-		list.replaceChildren.apply(list, rows.filter(function (entry) {
-			return entry.pass === false
-		}).map(function (entry) {
-			var item = el('li', '')
-			item.appendChild(el('strong', '', entry.label))
-			item.appendChild(document.createTextNode(' ' + (entry.unchanged === true
-				? tr('is not converted and stays {value}: {ratio}.', { value: entry.dark.toUpperCase(), ratio: formatRatio(entry.ratio) })
-				: tr('comes out at {ratio}.', { ratio: formatRatio(entry.ratio) }))))
-			return item
-		}))
+		list.replaceChildren.apply(
+			list,
+			rows
+				.filter(function (entry) {
+					return entry.pass === false
+				})
+				.map(function (entry) {
+					var item = el('li', '')
+					item.appendChild(el('strong', '', entry.label))
+					item.appendChild(
+						document.createTextNode(
+							' '
+								+ (entry.unchanged === true
+									? tr(
+											'is not converted and stays {value}: {ratio}.',
+											{
+												value: entry.dark.toUpperCase(),
+												ratio: formatRatio(entry.ratio),
+											},
+										)
+									: tr('comes out at {ratio}.', {
+											ratio: formatRatio(entry.ratio),
+										})),
+						),
+					)
+					return item
+				}),
+		)
 	}
 
 	/**
@@ -289,27 +357,74 @@
 		var pick = function (name, fallback) {
 			return tokens[name] || page.getPropertyValue(name).trim() || fallback
 		}
-		var card = el('section', 'thematiq-card thematiq-panel__card thematiq-dark-panel__preview')
+		var card = el(
+			'section',
+			'thematiq-card thematiq-panel__card thematiq-dark-panel__preview',
+		)
 		var head = el('div', 'thematiq-panel__card-head')
-		head.appendChild(el('h2', 'thematiq-panel__card-title thematiq-dark-panel__aside-title', title))
+		head.appendChild(
+			el(
+				'h2',
+				'thematiq-panel__card-title thematiq-dark-panel__aside-title',
+				title,
+			),
+		)
 		head.appendChild(el('span', 'thematiq-panel__fact-hint', note))
 		card.appendChild(head)
 		var frame = el('div', 'thematiq-dark-panel__frame')
-		frame.style.setProperty('--frame-ground', dark === true
-			? pick('--nldesign-color-background', 'transparent')
-			: page.getPropertyValue('--nldesign-component-content-surface-background-color').trim() || 'transparent')
-		frame.style.setProperty('--frame-ink', pick('--nldesign-color-text', 'inherit'))
-		frame.style.setProperty('--frame-bar', pick('--nldesign-color-header-background', 'transparent'))
-		frame.style.setProperty('--frame-line', pick('--nldesign-color-border', 'transparent'))
-		frame.style.setProperty('--frame-card', dark === true
-			? pick('--nldesign-color-background-dark', 'transparent')
-			: page.getPropertyValue('--color-main-background').trim() || 'transparent')
-		frame.style.setProperty('--frame-soft', pick('--nldesign-color-accent-light', 'transparent'))
-		frame.style.setProperty('--frame-soft-ink', pick('--nldesign-color-accent-text', 'inherit'))
-		frame.style.setProperty('--frame-muted', pick('--nldesign-color-text-muted', 'inherit'))
-		frame.style.setProperty('--frame-link', pick('--nldesign-color-link', 'inherit'))
-		frame.style.setProperty('--frame-button', pick('--nldesign-color-button-primary-background', 'transparent'))
-		frame.style.setProperty('--frame-button-ink', pick('--nldesign-color-button-primary-text', 'inherit'))
+		frame.style.setProperty(
+			'--frame-ground',
+			dark === true
+				? pick('--nldesign-color-background', 'transparent')
+				: page
+						.getPropertyValue(
+							'--nldesign-component-content-surface-background-color',
+						)
+						.trim() || 'transparent',
+		)
+		frame.style.setProperty(
+			'--frame-ink',
+			pick('--nldesign-color-text', 'inherit'),
+		)
+		frame.style.setProperty(
+			'--frame-bar',
+			pick('--nldesign-color-header-background', 'transparent'),
+		)
+		frame.style.setProperty(
+			'--frame-line',
+			pick('--nldesign-color-border', 'transparent'),
+		)
+		frame.style.setProperty(
+			'--frame-card',
+			dark === true
+				? pick('--nldesign-color-background-dark', 'transparent')
+				: page.getPropertyValue('--color-main-background').trim()
+						|| 'transparent',
+		)
+		frame.style.setProperty(
+			'--frame-soft',
+			pick('--nldesign-color-accent-light', 'transparent'),
+		)
+		frame.style.setProperty(
+			'--frame-soft-ink',
+			pick('--nldesign-color-accent-text', 'inherit'),
+		)
+		frame.style.setProperty(
+			'--frame-muted',
+			pick('--nldesign-color-text-muted', 'inherit'),
+		)
+		frame.style.setProperty(
+			'--frame-link',
+			pick('--nldesign-color-link', 'inherit'),
+		)
+		frame.style.setProperty(
+			'--frame-button',
+			pick('--nldesign-color-button-primary-background', 'transparent'),
+		)
+		frame.style.setProperty(
+			'--frame-button-ink',
+			pick('--nldesign-color-button-primary-text', 'inherit'),
+		)
 		var bar = el('div', 'thematiq-dark-panel__bar-row')
 		bar.appendChild(el('span', 'thematiq-preview__logo'))
 		bar.appendChild(el('strong', '', tr('Files')))
@@ -323,11 +438,17 @@
 		var main = el('div', 'thematiq-dark-panel__main')
 		var item = el('div', 'thematiq-dark-panel__item')
 		item.appendChild(el('strong', '', tr('Annual report 2026')))
-		item.appendChild(el('span', 'thematiq-dark-panel__muted', tr('2.4 MB · today')))
-		item.appendChild(el('span', 'thematiq-dark-panel__link', tr('View documents')))
+		item.appendChild(
+			el('span', 'thematiq-dark-panel__muted', tr('2.4 MB · today')),
+		)
+		item.appendChild(
+			el('span', 'thematiq-dark-panel__link', tr('View documents')),
+		)
 		var actions = el('div', 'thematiq-dark-panel__actions')
 		actions.appendChild(el('span', 'thematiq-dark-panel__button', tr('Save')))
-		actions.appendChild(el('span', 'thematiq-dark-panel__accent', tr('Deadline passed')))
+		actions.appendChild(
+			el('span', 'thematiq-dark-panel__accent', tr('Deadline passed')),
+		)
 		main.appendChild(item)
 		main.appendChild(actions)
 		body.appendChild(nav)
@@ -355,11 +476,19 @@
 			preview(tr('Dark'), 'tokens/dark/' + set.id + '.css', state.dark, true),
 		)
 		var ground = hex(state.dark['--nldesign-color-background'])
-		panel.querySelector('.thematiq-dark-panel__measured').textContent = tr('Own dark values are set per token in the token editor. Contrast measured on the dark background {colour}.', { colour: ground !== null ? ground.toUpperCase() : '–' })
+		panel.querySelector('.thematiq-dark-panel__measured').textContent = tr(
+			'Own dark values are set per token in the token editor. Contrast measured on the dark background {colour}.',
+			{ colour: ground !== null ? ground.toUpperCase() : '–' },
+		)
 		drawRows(panel)
 		drawCheck(panel)
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'dark') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'dark'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.replaceChildren.apply(intro, introNodes())
 			}
@@ -374,15 +503,36 @@
 	function introNodes() {
 		var nodes = []
 		var generated = Object.keys(state.dark).length > 0
-		nodes.push(el('span', 'thematiq-dark-panel__status thematiq-dark-panel__status--' + (generated ? 'generated' : 'none'), generated ? tr('Generated') : tr('Not generated')))
+		nodes.push(
+			el(
+				'span',
+				'thematiq-dark-panel__status thematiq-dark-panel__status--'
+					+ (generated ? 'generated' : 'none'),
+				generated ? tr('Generated') : tr('Not generated'),
+			),
+		)
 		var warnings = measured().filter(function (entry) {
 			return entry.pass === false
 		}).length
 		if (warnings > 0) {
-			nodes.push(el('span', 'thematiq-dark-panel__status thematiq-dark-panel__status--warn', warnings === 1 ? tr('1 contrast warning') : tr('{count} contrast warnings', { count: warnings })))
+			nodes.push(
+				el(
+					'span',
+					'thematiq-dark-panel__status thematiq-dark-panel__status--warn',
+					warnings === 1
+						? tr('1 contrast warning')
+						: tr('{count} contrast warnings', { count: warnings }),
+				),
+			)
 		}
 		if (state.version !== '') {
-			nodes.push(el('span', 'thematiq-panel__fact-hint', tr('Generator version {version}', { version: state.version })))
+			nodes.push(
+				el(
+					'span',
+					'thematiq-panel__fact-hint',
+					tr('Generator version {version}', { version: state.version }),
+				),
+			)
 		}
 		return nodes
 	}
@@ -395,13 +545,18 @@
 	function load() {
 		var set = activeSet()
 		var file = function (path) {
-			return fetch(window.OC.linkTo('thematiq', path)).then(function (r) {
-				return r.ok ? r.text() : ''
-			}).catch(function () {
-				return ''
-			})
+			return fetch(window.OC.linkTo('thematiq', path))
+				.then(function (r) {
+					return r.ok ? r.text() : ''
+				})
+				.catch(function () {
+					return ''
+				})
 		}
-		return Promise.all([file('css/tokens/' + set.id + '.css'), file('css/tokens/dark/' + set.id + '.css')]).then(function (files) {
+		return Promise.all([
+			file('css/tokens/' + set.id + '.css'),
+			file('css/tokens/dark/' + set.id + '.css'),
+		]).then(function (files) {
 			state.light = declarations(files[0])
 			state.dark = declarations(files[1])
 			var version = /DarkPaletteService v(\d+)/.exec(files[1])
@@ -410,14 +565,19 @@
 		})
 	}
 
-	var only = document.querySelector('section[data-thematiq-panel="dark"] .thematiq-dark-panel__only-warnings')
+	var only = document.querySelector(
+		'section[data-thematiq-panel="dark"] .thematiq-dark-panel__only-warnings',
+	)
 	if (only !== null) {
 		only.addEventListener('change', function () {
 			drawRows(document.querySelector('section[data-thematiq-panel="dark"]'))
 		})
 	}
 	document.addEventListener('thematiq:theme-applied', function () {
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'dark') {
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'dark'
+		) {
 			load()
 		}
 	})
@@ -427,7 +587,10 @@
 			title: tr('Dark variant'),
 			crumb: tr('Dark'),
 			crumbs: function () {
-				return [{ text: tr('Token sets'), href: '#' }, { text: activeSet().name }]
+				return [
+					{ text: tr('Token sets'), href: '#' },
+					{ text: activeSet().name },
+				]
 			},
 			intro: introNodes,
 			onOpen: function () {

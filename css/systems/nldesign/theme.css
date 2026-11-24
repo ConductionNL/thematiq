@@ -601,7 +601,9 @@ a {
 
 a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)) {
+	):not(:where(.cn-link-button-widget__button)):not(
+		:where(.cn-week-strip__item)
+	):not(:where(.cn-app-tile)) {
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 }
 

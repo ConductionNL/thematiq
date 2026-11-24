@@ -42,10 +42,12 @@ describe('AI assistant panel', () => {
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -56,7 +58,9 @@ describe('AI assistant panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -64,28 +68,46 @@ describe('AI assistant panel', () => {
 	})
 
 	it('opens with the title and whether the mark is on, and follows the switch', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('AI assistant')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('On, users see the approved mark')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('AI assistant')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('On, users see the approved mark')
 		const toggle = document.getElementById('nldesign-assistant-mark-enabled')
 		toggle.checked = false
 		toggle.dispatchEvent(new Event('change'))
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('Off, users see no mark')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('Off, users see no mark')
 	})
 
 	it('shows the preview in the footer of the sample panel, also after a change', async () => {
-		expect(document.querySelector('.thematiq-assistant-panel__sample-foot').textContent).toBe('Approved by Zuiddrecht')
-		document.getElementById('nldesign-assistant-mark-preview').replaceChildren(document.createTextNode('Approved by Utrecht'))
+		expect(
+			document.querySelector('.thematiq-assistant-panel__sample-foot')
+				.textContent,
+		).toBe('Approved by Zuiddrecht')
+		document
+			.getElementById('nldesign-assistant-mark-preview')
+			.replaceChildren(document.createTextNode('Approved by Utrecht'))
 		await flush()
-		expect(document.querySelector('.thematiq-assistant-panel__sample-foot').textContent).toBe('Approved by Utrecht')
+		expect(
+			document.querySelector('.thematiq-assistant-panel__sample-foot')
+				.textContent,
+		).toBe('Approved by Utrecht')
 	})
 
 	it('marks a refused save', async () => {
 		const feedback = document.getElementById('nldesign-assistant-mark-feedback')
 		feedback.textContent = 'Set a name first.'
 		await flush()
-		expect(feedback.classList.contains('thematiq-css-panel__feedback--error')).toBe(true)
+		expect(
+			feedback.classList.contains('thematiq-css-panel__feedback--error'),
+		).toBe(true)
 		feedback.textContent = 'AI assistant settings saved.'
 		await flush()
-		expect(feedback.classList.contains('thematiq-css-panel__feedback--error')).toBe(false)
+		expect(
+			feedback.classList.contains('thematiq-css-panel__feedback--error'),
+		).toBe(false)
 	})
 })

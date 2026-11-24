@@ -32,7 +32,9 @@
 	 * @return {string} The line.
 	 */
 	function line() {
-		return toggle !== null && toggle.checked === true ? tr('On, users see the approved mark') : tr('Off, users see no mark')
+		return toggle !== null && toggle.checked === true
+			? tr('On, users see the approved mark')
+			: tr('Off, users see no mark')
 	}
 
 	/**
@@ -44,9 +46,12 @@
 		if (preview === null || foot === null) {
 			return
 		}
-		foot.replaceChildren.apply(foot, Array.prototype.map.call(preview.childNodes, function (node) {
-			return node.cloneNode(true)
-		}))
+		foot.replaceChildren.apply(
+			foot,
+			Array.prototype.map.call(preview.childNodes, function (node) {
+				return node.cloneNode(true)
+			}),
+		)
 	}
 
 	/**
@@ -55,10 +60,15 @@
 	 * @return {void}
 	 */
 	function sayInHeader() {
-		if (window.ThematiqPanels === undefined || window.ThematiqPanels.current() !== 'assistant') {
+		if (
+			window.ThematiqPanels === undefined
+			|| window.ThematiqPanels.current() !== 'assistant'
+		) {
 			return
 		}
-		var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		var intro = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__intro',
+		)
 		if (intro !== null) {
 			intro.textContent = line()
 		}
@@ -66,15 +76,26 @@
 
 	if (typeof MutationObserver === 'function') {
 		if (preview !== null) {
-			new MutationObserver(mirror).observe(preview, { childList: true, subtree: true, characterData: true })
+			new MutationObserver(mirror).observe(preview, {
+				childList: true,
+				subtree: true,
+				characterData: true,
+			})
 		}
 		if (feedback !== null) {
 			new MutationObserver(function () {
 				// js/admin-assistant-mark.js writes the save's answer here; anything but
 				// the saved line is a refusal.
 				var text = feedback.textContent
-				feedback.classList.toggle('thematiq-css-panel__feedback--error', text !== '' && text !== tr('AI assistant settings saved.'))
-			}).observe(feedback, { childList: true, characterData: true, subtree: true })
+				feedback.classList.toggle(
+					'thematiq-css-panel__feedback--error',
+					text !== '' && text !== tr('AI assistant settings saved.'),
+				)
+			}).observe(feedback, {
+				childList: true,
+				characterData: true,
+				subtree: true,
+			})
 		}
 	}
 	if (toggle !== null) {

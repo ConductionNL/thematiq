@@ -207,9 +207,13 @@ describe('admin.js keyboard accessibility', () => {
 			expect(overlay).not.toBeNull()
 
 			expect(overlay.tagName).toBe('DIALOG')
-			const title = document.getElementById(overlay.getAttribute('aria-labelledby'))
+			const title = document.getElementById(
+				overlay.getAttribute('aria-labelledby'),
+			)
 			expect(title.textContent).toContain('Update the Nextcloud theme')
-			expect(document.activeElement).toBe(overlay.querySelector('.nldesign-dialog-cancel'))
+			expect(document.activeElement).toBe(
+				overlay.querySelector('.nldesign-dialog-cancel'),
+			)
 		})
 
 		it('closes on Escape and restores focus to the element that opened it', async () => {
@@ -402,7 +406,9 @@ describe('admin.js keyboard accessibility', () => {
 			expect(overlay).not.toBeNull()
 
 			expect(overlay.tagName).toBe('DIALOG')
-			const title = document.getElementById(overlay.getAttribute('aria-labelledby'))
+			const title = document.getElementById(
+				overlay.getAttribute('aria-labelledby'),
+			)
 			expect(title.textContent).toContain('Apply token set')
 			expect(overlay.contains(document.activeElement)).toBe(true)
 		})
@@ -434,18 +440,26 @@ describe('admin.js keyboard accessibility', () => {
 			const { overlay } = await openApplyDialog()
 			const count = overlay.querySelector('.thematiq-admin-dialog__count')
 			const checks = [...overlay.querySelectorAll('.nldesign-apply-check')]
-			expect(count.textContent).toBe(checks.length + ' of ' + checks.length + ' chosen')
+			expect(count.textContent).toBe(
+				checks.length + ' of ' + checks.length + ' chosen',
+			)
 			overlay.querySelector('#nldesign-apply-deselect-all').click()
 			expect(count.textContent).toBe('0 of ' + checks.length + ' chosen')
 		})
 
 		it('reaches Select all, Select none and every checkbox, each with a name', async () => {
 			const { overlay } = await openApplyDialog()
-			expect(overlay.querySelector('#nldesign-apply-select-all').tagName).toBe('BUTTON')
-			expect(overlay.querySelector('#nldesign-apply-deselect-all').tagName).toBe('BUTTON')
+			expect(overlay.querySelector('#nldesign-apply-select-all').tagName).toBe(
+				'BUTTON',
+			)
+			expect(
+				overlay.querySelector('#nldesign-apply-deselect-all').tagName,
+			).toBe('BUTTON')
 			const checks = [...overlay.querySelectorAll('.nldesign-apply-check')]
 			expect(checks.length).toBeGreaterThan(0)
-			checks.forEach((check) => expect(check.getAttribute('aria-label')).toMatch(/^Take over --/))
+			checks.forEach((check) =>
+				expect(check.getAttribute('aria-label')).toMatch(/^Take over --/),
+			)
 		})
 	})
 

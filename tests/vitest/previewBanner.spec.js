@@ -23,7 +23,8 @@ let reload
 function installState(preview, extra = {}) {
 	global.OCP = {
 		InitialState: {
-			loadState: (app, key, fallback) => (app === 'thematiq' && key === 'preview' ? preview : fallback),
+			loadState: (app, key, fallback) =>
+				app === 'thematiq' && key === 'preview' ? preview : fallback,
 		},
 		...extra,
 	}
@@ -50,8 +51,12 @@ const banner = () => document.getElementById('nldesign-preview-banner')
 describe('the theme preview banner', () => {
 	beforeEach(() => {
 		document.body.innerHTML = ''
-		global.t = (app, text, values = {}) => text.replace(/\{(\w+)\}/g, (match, key) => values[key])
-		global.OC = { generateUrl: (url) => '/index.php' + url, requestToken: 'token' }
+		global.t = (app, text, values = {}) =>
+			text.replace(/\{(\w+)\}/g, (match, key) => values[key])
+		global.OC = {
+			generateUrl: (url) => '/index.php' + url,
+			requestToken: 'token',
+		}
 		reload = vi.fn()
 		vi.spyOn(window, 'location', 'get').mockReturnValue({ reload })
 	})
@@ -70,11 +75,17 @@ describe('the theme preview banner', () => {
 		await loadScript()
 
 		expect(banner().getAttribute('role')).toBe('status')
-		expect(banner().querySelector('.nldesign-preview-banner-text').textContent).toBe('Preview: Zuiddrecht — this is only visible to you')
+		expect(
+			banner().querySelector('.nldesign-preview-banner-text').textContent,
+		).toBe('Preview: Zuiddrecht — this is only visible to you')
 		const publish = banner().querySelector('a.nldesign-preview-banner-publish')
-		expect(publish.getAttribute('href')).toBe('/index.php/settings/admin/theming#nldesign-settings')
+		expect(publish.getAttribute('href')).toBe(
+			'/index.php/settings/admin/theming#nldesign-settings',
+		)
 		expect(publish.textContent).toBe('Publish')
-		const discard = banner().querySelector('button.nldesign-preview-banner-discard')
+		const discard = banner().querySelector(
+			'button.nldesign-preview-banner-discard',
+		)
 		expect(discard.type).toBe('button')
 		expect(discard.textContent).toBe('Discard')
 	})
@@ -105,7 +116,9 @@ describe('the theme preview banner', () => {
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
 		installState({ tokenSet: 'zuiddrecht' })
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(banner()).toBeNull()
 
@@ -122,10 +135,13 @@ describe('the theme preview banner', () => {
 		discard.click()
 
 		expect(discard.disabled).toBe(true)
-		expect(global.fetch).toHaveBeenCalledWith('/index.php/apps/thematiq/settings/preview', {
-			method: 'DELETE',
-			headers: { requesttoken: 'token' },
-		})
+		expect(global.fetch).toHaveBeenCalledWith(
+			'/index.php/apps/thematiq/settings/preview',
+			{
+				method: 'DELETE',
+				headers: { requesttoken: 'token' },
+			},
+		)
 		await flush()
 		expect(reload).toHaveBeenCalled()
 	})
@@ -158,10 +174,21 @@ describe('the theme preview banner', () => {
 		expect(info).not.toHaveBeenCalled()
 
 		document.body.innerHTML = ''
-		installState({ tokenSet: 'zuiddrecht' }, { Toast: { message: () => { throw new Error('toast') } } })
+		installState(
+			{ tokenSet: 'zuiddrecht' },
+			{
+				Toast: {
+					message: () => {
+						throw new Error('toast')
+					},
+				},
+			},
+		)
 		await loadScript()
 		banner().querySelector('button').click()
 		await flush()
-		expect(info).toHaveBeenCalledWith('[nldesign] Failed to discard theme preview.')
+		expect(info).toHaveBeenCalledWith(
+			'[nldesign] Failed to discard theme preview.',
+		)
 	})
 })

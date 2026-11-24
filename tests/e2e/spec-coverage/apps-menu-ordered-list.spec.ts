@@ -281,12 +281,18 @@ test.describe('the apps menu as one ordered list', () => {
 		})
 		try {
 			const saved = await api(page, 'POST', DEFAULTS, {
-				settings: { externalApps: [app('code', 'Forgejo', 'https://code.example.org')] },
+				settings: {
+					externalApps: [
+						app('code', 'Forgejo', 'https://code.example.org'),
+					],
+				},
 			})
 			expect(saved.status).toBe(200)
 
 			const refused = await api(page, 'POST', DEFAULTS, {
-				settings: { externalApps: [app('chat', 'Element', 'javascript:alert(1)')] },
+				settings: {
+					externalApps: [app('chat', 'Element', 'javascript:alert(1)')],
+				},
 			})
 			expect(refused.status).toBe(400)
 			expect(refused.json.field).toBe('externalApps')
@@ -307,7 +313,9 @@ test.describe('the apps menu as one ordered list', () => {
 				forgejo.locator('.thematiq-app-menu__description'),
 			).toHaveText(/\S/)
 		} finally {
-			await api(page, 'POST', DEFAULTS, { settings: { externalApps: restore } })
+			await api(page, 'POST', DEFAULTS, {
+				settings: { externalApps: restore },
+			})
 		}
 	})
 })

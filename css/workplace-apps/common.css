@@ -26,9 +26,18 @@
 }
 
 :is(#content, #content-vue) {
-	--nldesign-color-accent-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
-	--nldesign-color-accent-text: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
-	--nldesign-component-navigation-active-color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	--nldesign-color-accent-light: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	--nldesign-color-accent-text: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
+	--nldesign-component-navigation-active-color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
 }
 
 :is(#content, #content-vue) #app-content-vue,

@@ -91,14 +91,17 @@
 			actions: Array.prototype.slice.call(parts.actions.childNodes),
 		}
 		parts.title.textContent = config.title
-		var crumbs = typeof config.crumbs === 'function' ? config.crumbs() : config.crumbs
+		var crumbs =
+			typeof config.crumbs === 'function' ? config.crumbs() : config.crumbs
 		var steps = [
 			[tr('Administration settings'), null],
 			[tr('Themes and appearance'), '#'],
 			['Thematiq', null],
-		].concat((crumbs || []).map(function (step) {
-			return [step.text, step.href || null]
-		}))
+		].concat(
+			(crumbs || []).map(function (step) {
+				return [step.text, step.href || null]
+			}),
+		)
 		steps.push([config.crumb || config.title, null])
 		parts.crumbs.replaceChildren()
 		steps.forEach(function (step, index) {
@@ -108,15 +111,21 @@
 				slash.textContent = '/'
 				parts.crumbs.appendChild(slash)
 			}
-			parts.crumbs.appendChild(crumb(step[0], step[1], index === steps.length - 1))
+			parts.crumbs.appendChild(
+				crumb(step[0], step[1], index === steps.length - 1),
+			)
 		})
-		var intro = typeof config.intro === 'function' ? config.intro() : (config.intro || '')
+		var intro =
+			typeof config.intro === 'function' ? config.intro() : config.intro || ''
 		if (Array.isArray(intro) === true) {
 			parts.intro.replaceChildren.apply(parts.intro, intro)
 		} else {
 			parts.intro.textContent = intro
 		}
-		parts.actions.replaceChildren.apply(parts.actions, typeof config.actions === 'function' ? config.actions() : [])
+		parts.actions.replaceChildren.apply(
+			parts.actions,
+			typeof config.actions === 'function' ? config.actions() : [],
+		)
 	}
 
 	/**
@@ -144,12 +153,18 @@
 	 */
 	function borrow(section) {
 		section.querySelectorAll('[data-thematiq-slot]').forEach(function (slot) {
-			var control = document.getElementById(slot.getAttribute('data-thematiq-slot'))
+			var control = document.getElementById(
+				slot.getAttribute('data-thematiq-slot'),
+			)
 			if (control === null) {
 				return
 			}
 			var option = control.closest('.nldesign-option') || control
-			borrowed.push({ option: option, parent: option.parentNode, next: option.nextSibling })
+			borrowed.push({
+				option: option,
+				parent: option.parentNode,
+				next: option.nextSibling,
+			})
 			slot.appendChild(option)
 		})
 	}
@@ -177,7 +192,9 @@
 		}
 		var hash = current
 		var config = panels[hash]
-		var section = document.querySelector('section[data-thematiq-panel="' + hash + '"]')
+		var section = document.querySelector(
+			'section[data-thematiq-panel="' + hash + '"]',
+		)
 		giveBack()
 		undressHeader()
 		if (section !== null) {
@@ -202,7 +219,9 @@
 	 */
 	function open(hash) {
 		var config = panels[hash]
-		var section = document.querySelector('section[data-thematiq-panel="' + hash + '"]')
+		var section = document.querySelector(
+			'section[data-thematiq-panel="' + hash + '"]',
+		)
 		if (config === undefined || section === null) {
 			return false
 		}
@@ -219,7 +238,9 @@
 			config.onOpen(section)
 		}
 		window.scrollTo(0, 0)
-		var title = document.querySelector('#thematiq-page-header .thematiq-page-header__title')
+		var title = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__title',
+		)
 		if (title !== null) {
 			title.setAttribute('tabindex', '-1')
 			title.focus()

@@ -37,28 +37,36 @@ describe('Custom CSS panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
 		await import('../../js/admin-custom-css-panel.js?t=' + Math.random())
-		document.getElementById('nldesign-custom-css-input').value = 'a {}\nb {}\nc {}\nd {}'
+		document.getElementById('nldesign-custom-css-input').value =
+			'a {}\nb {}\nc {}\nd {}'
 		window.history.replaceState(null, '', '#css')
 		window.dispatchEvent(new HashChangeEvent('hashchange'))
 	})
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -66,9 +74,17 @@ describe('Custom CSS panel', () => {
 	})
 
 	it('opens with the title, says it is on and how long, and numbers the lines', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Custom CSS')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('On, 4 lines')
-		expect([...document.querySelectorAll('.thematiq-css-panel__gutter span')].map((n) => n.textContent)).toEqual(['1', '2', '3', '4'])
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Custom CSS')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('On, 4 lines')
+		expect(
+			[...document.querySelectorAll('.thematiq-css-panel__gutter span')].map(
+				(n) => n.textContent,
+			),
+		).toEqual(['1', '2', '3', '4'])
 	})
 
 	it('follows typing and the switch', () => {
@@ -78,8 +94,12 @@ describe('Custom CSS panel', () => {
 		const toggle = document.getElementById('nldesign-custom-css-enabled')
 		toggle.checked = false
 		toggle.dispatchEvent(new Event('change'))
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('Off, 1 line')
-		expect(document.querySelectorAll('.thematiq-css-panel__gutter span')).toHaveLength(3)
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('Off, 1 line')
+		expect(
+			document.querySelectorAll('.thematiq-css-panel__gutter span'),
+		).toHaveLength(3)
 	})
 
 	it('marks a refused save', async () => {
@@ -87,10 +107,14 @@ describe('Custom CSS panel', () => {
 		feedback.textContent = 'Refused: @import'
 		feedback.style.color = 'red'
 		await flush()
-		expect(feedback.classList.contains('thematiq-css-panel__feedback--error')).toBe(true)
+		expect(
+			feedback.classList.contains('thematiq-css-panel__feedback--error'),
+		).toBe(true)
 		feedback.style.color = ''
 		feedback.textContent = 'Saved.'
 		await flush()
-		expect(feedback.classList.contains('thematiq-css-panel__feedback--error')).toBe(false)
+		expect(
+			feedback.classList.contains('thematiq-css-panel__feedback--error'),
+		).toBe(false)
 	})
 })

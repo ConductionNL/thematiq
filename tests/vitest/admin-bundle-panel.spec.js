@@ -13,7 +13,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const BUNDLE = {
-	config: { tokenSet: 'zuiddrecht', hideSlogan: true, showMenuLabels: false, primaryDrivesComponents: false, layoutOptions: { a: 1, b: 2 }, disabledApps: ['mail', 'deck'], upstreamFreshnessEnabled: true },
+	config: {
+		tokenSet: 'zuiddrecht',
+		hideSlogan: true,
+		showMenuLabels: false,
+		primaryDrivesComponents: false,
+		layoutOptions: { a: 1, b: 2 },
+		disabledApps: ['mail', 'deck'],
+		upstreamFreshnessEnabled: true,
+	},
 	customOverridesCss: ':root { --color-primary: #fff; --color-text: #000; }',
 	customTokenSets: [{ id: 'custom-a' }],
 	emailFooter: { orgName: 'Zuiddrecht' },
@@ -42,18 +50,25 @@ describe('Configuration bundle panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.OC = { generateUrl: (url) => url, requestToken: 'token' }
 		window.scrollTo = vi.fn()
-		global.fetch = vi.fn(() => Promise.resolve({ json: () => Promise.resolve(BUNDLE) }))
+		global.fetch = vi.fn(() =>
+			Promise.resolve({ json: () => Promise.resolve(BUNDLE) }),
+		)
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -66,7 +81,9 @@ describe('Configuration bundle panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -74,8 +91,13 @@ describe('Configuration bundle panel', () => {
 	})
 
 	it('lists what the bundle holds', () => {
-		expect(global.fetch).toHaveBeenCalledWith('/apps/thematiq/settings/config/export', { headers: { requesttoken: 'token' } })
-		const rows = [...document.querySelectorAll('.thematiq-bundle-panel__rows > div')].map((row) => row.textContent)
+		expect(global.fetch).toHaveBeenCalledWith(
+			'/apps/thematiq/settings/config/export',
+			{ headers: { requesttoken: 'token' } },
+		)
+		const rows = [
+			...document.querySelectorAll('.thematiq-bundle-panel__rows > div'),
+		].map((row) => row.textContent)
 		expect(rows).toEqual([
 			'Active token setGemeente Zuiddrecht',
 			'Switches and layout5 options',
@@ -89,9 +111,16 @@ describe('Configuration bundle panel', () => {
 
 	it('downloads and uploads through the panel buttons', () => {
 		const pressed = vi.fn()
-		document.getElementById('nldesign-config-bundle-upload-btn').addEventListener('click', pressed)
-		const buttons = document.querySelectorAll('.thematiq-page-header__actions button')
-		expect([...buttons].map((b) => b.textContent)).toEqual(['Download configuration', 'Upload configuration'])
+		document
+			.getElementById('nldesign-config-bundle-upload-btn')
+			.addEventListener('click', pressed)
+		const buttons = document.querySelectorAll(
+			'.thematiq-page-header__actions button',
+		)
+		expect([...buttons].map((b) => b.textContent)).toEqual([
+			'Download configuration',
+			'Upload configuration',
+		])
 		buttons[1].click()
 		expect(pressed).toHaveBeenCalledTimes(1)
 	})

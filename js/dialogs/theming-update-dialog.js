@@ -25,7 +25,9 @@
 	 * @return {string} The text in the reader's language.
 	 */
 	function tr(text, values) {
-		return typeof window.t === 'function' ? window.t('thematiq', text, values) : text
+		return typeof window.t === 'function'
+			? window.t('thematiq', text, values)
+			: text
 	}
 
 	/**
@@ -53,29 +55,60 @@
 			eyebrow: tr('After choosing a token set'),
 			title: reset
 				? tr('Reset the Nextcloud theme to the default?')
-				: tr('Update the Nextcloud theme to {name}?', { name: options.setName }),
+				: tr('Update the Nextcloud theme to {name}?', {
+						name: options.setName,
+					}),
 			body: [
-				h('p', { class: BLOCK + '__lead', text: tr('Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.') }),
-				frame.table([tr('Setting'), tr('Current'), tr('Proposed')], (options.diffs || []).map(function (diff) {
-					return [
-						diff.label,
-						frame.value(diff.current, { colour: diff.kind === 'color', large: true }),
-						frame.value(diff.proposed, { colour: diff.kind === 'color', large: true, note: diff.proposedNote }),
-					]
-				})),
-				frame.notice(reset
-					? tr("Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.")
-					: tr('If you choose the token set Nextcloud, the same dialog asks "Reset the Nextcloud theme to the default?" with the Nextcloud default values in the Proposed column.'), 'neutral'),
+				h('p', {
+					class: BLOCK + '__lead',
+					text: tr(
+						'Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.',
+					),
+				}),
+				frame.table(
+					[tr('Setting'), tr('Current'), tr('Proposed')],
+					(options.diffs || []).map(function (diff) {
+						return [
+							diff.label,
+							frame.value(diff.current, {
+								colour: diff.kind === 'color',
+								large: true,
+							}),
+							frame.value(diff.proposed, {
+								colour: diff.kind === 'color',
+								large: true,
+								note: diff.proposedNote,
+							}),
+						]
+					}),
+				),
+				frame.notice(
+					reset
+						? tr(
+								"Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
+							)
+						: tr(
+								'If you choose the token set Nextcloud, the same dialog asks "Reset the Nextcloud theme to the default?" with the Nextcloud default values in the Proposed column.',
+							),
+					'neutral',
+				),
 			],
 			actions: [
-				{ label: tr('Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+				{
+					label: tr('Cancel'),
+					cancel: true,
+					className: 'nldesign-dialog-cancel',
+				},
 				{
 					label: reset ? tr('Reset theme') : tr('Update theme'),
 					variant: 'primary',
 					icon: 'check',
 					className: 'nldesign-dialog-confirm',
 					onClick: function (handle) {
-						options.onConfirm(handle, handle.el.querySelector('.nldesign-dialog-confirm'))
+						options.onConfirm(
+							handle,
+							handle.el.querySelector('.nldesign-dialog-confirm'),
+						)
 					},
 				},
 			],

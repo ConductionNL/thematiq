@@ -35,17 +35,22 @@ describe('Fonts panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.scrollTo = vi.fn()
 		Element.prototype.scrollIntoView = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -56,7 +61,9 @@ describe('Fonts panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -64,19 +71,29 @@ describe('Fonts panel', () => {
 	})
 
 	it('titles the header and counts the uploaded fonts, also after a change', async () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Typefaces')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('2 uploaded fonts')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Typefaces')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('2 uploaded fonts')
 		document.querySelector('#nldesign-font-list .thematiq-font-row').remove()
 		await flush()
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('1 uploaded font')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('1 uploaded font')
 	})
 
 	it('says which font the headings and the body text use now', () => {
-		expect(document.querySelector('.thematiq-fonts-panel__now').textContent).toBe('HeadingsZuiddrecht SansBody textFira Sans')
+		expect(
+			document.querySelector('.thematiq-fonts-panel__now').textContent,
+		).toBe('HeadingsZuiddrecht SansBody textFira Sans')
 	})
 
 	it('takes the admin to the upload form', () => {
 		document.querySelector('.thematiq-page-header__actions button').click()
-		expect(document.activeElement).toBe(document.getElementById('nldesign-font-name'))
+		expect(document.activeElement).toBe(
+			document.getElementById('nldesign-font-name'),
+		)
 	})
 })

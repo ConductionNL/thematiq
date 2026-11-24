@@ -42,67 +42,74 @@ function expectedBadge(dsId: string): { label: string; cls: RegExp } {
 }
 
 test.describe('token-set-dropdown-badge', () => {
-	test(// @e2e openspec/specs/token-set-dropdown/spec.md#dropdown-renders-with-all-token-sets
-	'Design-system badge matches the currently-selected token set on load', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
-		await dismissSyncDialog(page)
+	test(
+		// @e2e openspec/specs/token-set-dropdown/spec.md#dropdown-renders-with-all-token-sets
+		'Design-system badge matches the currently-selected token set on load',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-set-select', {
+				timeout: 15_000,
+			})
+			await dismissSyncDialog(page)
 
-		const select = page.locator('#nldesign-token-set-select')
-		const current = await select.inputValue()
-		const dsId =
-			(await select
-				.locator(`option[value="${current}"]`)
-				.getAttribute('data-design-system')) ?? 'nldesign'
+			const select = page.locator('#nldesign-token-set-select')
+			const current = await select.inputValue()
+			const dsId =
+				(await select
+					.locator(`option[value="${current}"]`)
+					.getAttribute('data-design-system')) ?? 'nldesign'
 
-		const badge = page.locator('#nldesign-design-system-badge')
-		const exp = expectedBadge(dsId)
-		await expect(badge).toHaveText(exp.label)
-		await expect(badge).toHaveClass(exp.cls)
-	})
+			const badge = page.locator('#nldesign-design-system-badge')
+			const exp = expectedBadge(dsId)
+			await expect(badge).toHaveText(exp.label)
+			await expect(badge).toHaveClass(exp.cls)
+		},
+	)
 
-	test(// @e2e openspec/specs/token-set-dropdown/spec.md#preview-reflects-new-selection
-	'Selecting a different token set updates the design-system badge optimistically', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
-		await dismissSyncDialog(page)
+	test(
+		// @e2e openspec/specs/token-set-dropdown/spec.md#preview-reflects-new-selection
+		'Selecting a different token set updates the design-system badge optimistically',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-set-select', {
+				timeout: 15_000,
+			})
+			await dismissSyncDialog(page)
 
-		const select = page.locator('#nldesign-token-set-select')
-		const current = await select.inputValue()
+			const select = page.locator('#nldesign-token-set-select')
+			const current = await select.inputValue()
 
-		// Find any other option and compute its expected badge.
-		const options = await select.locator('option').all()
-		let target = ''
-		let targetDs = 'nldesign'
-		for (const o of options) {
-			const v = (await o.getAttribute('value')) ?? ''
-			if (v && v !== current) {
-				target = v
-				targetDs = (await o.getAttribute('data-design-system')) ?? 'nldesign'
-				break
+			// Find any other option and compute its expected badge.
+			const options = await select.locator('option').all()
+			let target = ''
+			let targetDs = 'nldesign'
+			for (const o of options) {
+				const v = (await o.getAttribute('value')) ?? ''
+				if (v && v !== current) {
+					target = v
+					targetDs =
+						(await o.getAttribute('data-design-system')) ?? 'nldesign'
+					break
+				}
 			}
-		}
-		expect(target, 'need at least two token sets').toBeTruthy()
+			expect(target, 'need at least two token sets').toBeTruthy()
 
-		await select.selectOption(target)
+			await select.selectOption(target)
 
-		// Badge updates immediately (updateDesignSystemBadge runs before the
-		// async preview fetch / apply dialog).
-		const badge = page.locator('#nldesign-design-system-badge')
-		const exp = expectedBadge(targetDs)
-		await expect(badge).toHaveText(exp.label)
-		await expect(badge).toHaveClass(exp.cls)
+			// Badge updates immediately (updateDesignSystemBadge runs before the
+			// async preview fetch / apply dialog).
+			const badge = page.locator('#nldesign-design-system-badge')
+			const exp = expectedBadge(targetDs)
+			await expect(badge).toHaveText(exp.label)
+			await expect(badge).toHaveClass(exp.cls)
 
-		// An apply dialog may or may not appear depending on whether values
-		// differ; if it did, cancel it to revert. Otherwise restore selection.
-		const overlay = page.locator('#nldesign-apply-dialog-overlay')
-		if (await overlay.isVisible({ timeout: 3_000 }).catch(() => false)) {
-			await overlay.locator('.nldesign-dialog-cancel').first().click()
-			await expect(overlay).not.toBeVisible()
-		}
-	})
+			// An apply dialog may or may not appear depending on whether values
+			// differ; if it did, cancel it to revert. Otherwise restore selection.
+			const overlay = page.locator('#nldesign-apply-dialog-overlay')
+			if (await overlay.isVisible({ timeout: 3_000 }).catch(() => false)) {
+				await overlay.locator('.nldesign-dialog-cancel').first().click()
+				await expect(overlay).not.toBeVisible()
+			}
+		},
+	)
 })

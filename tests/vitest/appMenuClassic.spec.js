@@ -19,7 +19,8 @@ const APPS = ['files', 'dossiq', 'calendar']
 function installState(state) {
 	global.OCP = {
 		InitialState: {
-			loadState: (app, key, fallback) => (app === 'thematiq' && key === 'app-menu' ? state : fallback),
+			loadState: (app, key, fallback) =>
+				app === 'thematiq' && key === 'app-menu' ? state : fallback,
 		},
 	}
 }
@@ -50,7 +51,9 @@ function grid() {
 function classicMenu(extra = {}) {
 	return {
 		admin: true,
-		groups: [{ title: 'Werk', apps: [{ id: 'dossiq', description: 'Zaken en Woo' }] }],
+		groups: [
+			{ title: 'Werk', apps: [{ id: 'dossiq', description: 'Zaken en Woo' }] },
+		],
 		labels: { menuSettings: 'Menu settings' },
 		order: [],
 		settings: { style: 'classic' },
@@ -63,7 +66,10 @@ describe('the classic apps menu', () => {
 
 	beforeEach(() => {
 		// A fresh body per test: an earlier test's observer watches the old one.
-		document.documentElement.replaceChild(document.createElement('body'), document.body)
+		document.documentElement.replaceChild(
+			document.createElement('body'),
+			document.body,
+		)
 		document.body.innerHTML = grid()
 		global.OC = { generateUrl: (url) => url, requestToken: 'token' }
 		global.fetch = vi.fn(() => Promise.resolve({ ok: true }))
@@ -89,9 +95,15 @@ describe('the classic apps menu', () => {
 		await loadScript()
 		const menuGrid = document.querySelector('.app-menu__grid')
 
-		expect(Array.from(menuGrid.querySelectorAll(':scope > a.app-item')).map((a) => a.textContent)).toEqual(APPS)
+		expect(
+			Array.from(menuGrid.querySelectorAll(':scope > a.app-item')).map(
+				(a) => a.textContent,
+			),
+		).toEqual(APPS)
 		expect(menuGrid.querySelector('[data-thematiq-folded]')).toBeNull()
-		const rows = menuGrid.querySelectorAll(':scope > .thematiq-app-menu__classic')
+		const rows = menuGrid.querySelectorAll(
+			':scope > .thematiq-app-menu__classic',
+		)
 		expect(rows).toHaveLength(1)
 		expect(menuGrid.lastElementChild).toBe(rows[0])
 		const gear = rows[0].querySelector('button.thematiq-app-menu__settings')
@@ -114,9 +126,19 @@ describe('the classic apps menu', () => {
 		expect(args.opener).toBe(gear)
 		expect(args.menu).toBe(menu)
 		// The apps of the menu's groups come first, then the rest in grid order.
-		expect(args.entries.map((entry) => entry.key)).toEqual(['dossiq', 'files', 'calendar'])
+		expect(args.entries.map((entry) => entry.key)).toEqual([
+			'dossiq',
+			'files',
+			'calendar',
+		])
 		const dossiq = args.entries.find((entry) => entry.key === 'dossiq')
-		expect(dossiq).toMatchObject({ name: 'dossiq', icon: '/apps/dossiq/img/app.svg', description: 'Zaken en Woo', external: false, work: true })
+		expect(dossiq).toMatchObject({
+			name: 'dossiq',
+			icon: '/apps/dossiq/img/app.svg',
+			description: 'Zaken en Woo',
+			external: false,
+			work: true,
+		})
 	})
 
 	it('adds the gear to a grid that opens later, once', async () => {
@@ -128,7 +150,9 @@ describe('the classic apps menu', () => {
 		document.body.appendChild(document.createElement('span'))
 		await flush()
 
-		expect(document.querySelectorAll('.thematiq-app-menu__classic')).toHaveLength(1)
+		expect(
+			document.querySelectorAll('.thematiq-app-menu__classic'),
+		).toHaveLength(1)
 	})
 
 	it.each([
@@ -154,15 +178,33 @@ describe('the classic apps menu', () => {
 
 	it.each([
 		['no OCP', () => delete global.OCP],
-		['no initial state loader', () => { global.OCP = { InitialState: {} } }],
-		['a state that throws', () => { global.OCP = { InitialState: { loadState: () => { throw new Error('no') } } } }],
+		[
+			'no initial state loader',
+			() => {
+				global.OCP = { InitialState: {} }
+			},
+		],
+		[
+			'a state that throws',
+			() => {
+				global.OCP = {
+					InitialState: {
+						loadState: () => {
+							throw new Error('no')
+						},
+					},
+				}
+			},
+		],
 		['no menu', () => installState(null)],
 		['a menu that is not an object', () => installState('classic')],
 	])('leaves the page alone with %s', async (label, arrange) => {
 		arrange()
 		await loadScript()
 		expect(document.querySelector('.thematiq-app-menu__classic')).toBeNull()
-		expect(document.querySelector('.app-menu__grid').children).toHaveLength(APPS.length)
+		expect(document.querySelector('.app-menu__grid').children).toHaveLength(
+			APPS.length,
+		)
 		expect(window.thematiqAppMenuObserver).toBeUndefined()
 	})
 })

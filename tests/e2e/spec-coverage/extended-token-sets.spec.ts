@@ -101,152 +101,176 @@ async function bodyVars(
 }
 
 test.describe('extended-token-sets', () => {
-	test(// @e2e openspec/specs/extended-token-sets/spec.md#token-generation-from-json
-	'the generated groningen.css is one :root block of --nldesign-* declarations', async ({
-		page,
-	}) => {
-		await openThemedPage(page)
-		const css = await servedCss(page, 'tokens/groningen.css')
-		// TokenSetConverterService records where a generated file came from in
-		// its provenance block; the header text itself is the converter's own.
-		expect(css).toMatch(
-			/source:\s+nl-design-system\/themes proprietary\/groningen-design-tokens/,
-		)
-		const body = stripComments(css)
-		expect(body.match(/:root\b/g) ?? []).toHaveLength(1)
-		expect(body.match(/\{/g) ?? []).toHaveLength(1)
-		expect(declarations(body, '--nldesign-').size).toBeGreaterThan(0)
-	})
-
-	test(// @e2e openspec/specs/extended-token-sets/spec.md#organization-specific-palette-preservation
-	'the generated haarlem.css keeps the --haarlem-color-* palette beside the --nldesign-* tokens', async ({
-		page,
-	}) => {
-		await openThemedPage(page)
-		const css = await servedCss(page, 'tokens/haarlem.css')
-		expect(css).toMatch(
-			/source:\s+nl-design-system\/themes proprietary\/haarlem-design-tokens/,
-		)
-		const palette = declarations(css, '--haarlem-color-')
-		expect(palette.get('--haarlem-color-oceaan-10')?.toLowerCase()).toBe(
-			'#e8eef5',
-		)
-		expect(declarations(css, '--nldesign-').size).toBeGreaterThan(palette.size)
-		// On a page the served file reaches, the palette resolves as written.
-		const v = await page.evaluate((text) => {
-			const style = document.createElement('style')
-			style.textContent = text
-			document.head.appendChild(style)
-			const value = getComputedStyle(document.documentElement)
-				.getPropertyValue('--haarlem-color-oceaan-10')
-				.trim()
-			style.remove()
-			return value
-		}, css)
-		expect(v.toLowerCase()).toBe('#e8eef5')
-	})
-
-	test(// @e2e openspec/specs/extended-token-sets/spec.md#token-set-validation
-	'setTokenSet accepts a set because its CSS file exists and refuses ids with no file', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		const token = await requestToken(page)
-		const before = await getTokenSet(page, token)
-		try {
-			// No file, and path traversal: both refused, nothing changes.
-			expect(await postTokenSet(page, 'e2e-no-such-set')).toBe(400)
-			expect(await postTokenSet(page, '../token-sets')).toBe(400)
-			expect(await getTokenSet(page, token)).toBe(before)
-
-			// groningen is on no allowlist (TokenSetService::SELECTABLE_SHIPPED_SETS
-			// holds nextcloud and cunningham), so accepting it shows the check is
-			// the file on disk, not a hardcoded array of names.
-			expect(fs.existsSync(path.join(TOKENS_DIR, 'groningen.css'))).toBe(true)
-			expect(await postTokenSet(page, 'groningen')).toBe(200)
-			expect(await getTokenSet(page, token)).toBe('groningen')
-		} finally {
-			await setTokenSet(page, token, before)
-		}
-	})
-
-	test(// @e2e openspec/specs/extended-token-sets/spec.md#available-token-sets-api
-	'the catalogue lists every token file on disk, and the admin listing adds descriptions', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		const files: string[] = fs.readdirSync(TOKENS_DIR)
-		const onDisk = files
-			.filter((f) => f.endsWith('.css') && f.startsWith('custom-') === false)
-			.map((f) => f.replace(/\.css$/, ''))
-		expect(onDisk.length).toBeGreaterThan(40)
-
-		const catalogue = await getJson(page, '/apps/thematiq/api/token-sets')
-		expect(catalogue.status).toBe(200)
-		const ids = catalogue.body.tokenSets.map((s) => s.id)
-		const missing = onDisk.filter((id) => ids.includes(id) === false)
-		expect(
-			missing,
-			`files with no catalogue entry: ${missing.join(', ')}`,
-		).toEqual([])
-		const unnamed = catalogue.body.tokenSets.filter((s) => (s.name ?? '') === '')
-		expect(unnamed.map((s) => s.id)).toEqual([])
-		const amsterdam = catalogue.body.tokenSets.find((s) => s.id === 'amsterdam')
-		expect(amsterdam?.name).toBe('Gemeente Amsterdam')
-
-		const token = await requestToken(page)
-		const offer = await offerTokenSets(page, token, ['amsterdam'])
-		try {
-			const admin = await getJson(page, '/apps/thematiq/settings/tokensets')
-			expect(admin.status).toBe(200)
-			const withoutDescription = admin.body.tokenSets.filter(
-				(s) => (s.description ?? '') === '',
+	test(
+		// @e2e openspec/specs/extended-token-sets/spec.md#token-generation-from-json
+		'the generated groningen.css is one :root block of --nldesign-* declarations',
+		async ({ page }) => {
+			await openThemedPage(page)
+			const css = await servedCss(page, 'tokens/groningen.css')
+			// TokenSetConverterService records where a generated file came from in
+			// its provenance block; the header text itself is the converter's own.
+			expect(css).toMatch(
+				/source:\s+nl-design-system\/themes proprietary\/groningen-design-tokens/,
 			)
-			expect(withoutDescription.map((s) => s.id)).toEqual([])
-			expect(
-				admin.body.tokenSets.find((s) => s.id === 'amsterdam')?.description,
-			).toBe('Design tokens for Gemeente Amsterdam')
-		} finally {
-			await withdrawTokenSetOffer(page, token, offer)
-		}
-	})
+			const body = stripComments(css)
+			expect(body.match(/:root\b/g) ?? []).toHaveLength(1)
+			expect(body.match(/\{/g) ?? []).toHaveLength(1)
+			expect(declarations(body, '--nldesign-').size).toBeGreaterThan(0)
+		},
+	)
 
-	test(// @e2e openspec/specs/extended-token-sets/spec.md#admin-views-token-set-dropdown
-	'each dropdown option shows the display name token-sets.json gives the set', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		const token = await requestToken(page)
-		const offer = await offerTokenSets(page, token, ['amsterdam', 'zwolle'])
-		try {
+	test(
+		// @e2e openspec/specs/extended-token-sets/spec.md#organization-specific-palette-preservation
+		'the generated haarlem.css keeps the --haarlem-color-* palette beside the --nldesign-* tokens',
+		async ({ page }) => {
+			await openThemedPage(page)
+			const css = await servedCss(page, 'tokens/haarlem.css')
+			expect(css).toMatch(
+				/source:\s+nl-design-system\/themes proprietary\/haarlem-design-tokens/,
+			)
+			const palette = declarations(css, '--haarlem-color-')
+			expect(palette.get('--haarlem-color-oceaan-10')?.toLowerCase()).toBe(
+				'#e8eef5',
+			)
+			expect(declarations(css, '--nldesign-').size).toBeGreaterThan(
+				palette.size,
+			)
+			// On a page the served file reaches, the palette resolves as written.
+			const v = await page.evaluate((text) => {
+				const style = document.createElement('style')
+				style.textContent = text
+				document.head.appendChild(style)
+				const value = getComputedStyle(document.documentElement)
+					.getPropertyValue('--haarlem-color-oceaan-10')
+					.trim()
+				style.remove()
+				return value
+			}, css)
+			expect(v.toLowerCase()).toBe('#e8eef5')
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/extended-token-sets/spec.md#token-set-validation
+		'setTokenSet accepts a set because its CSS file exists and refuses ids with no file',
+		async ({ page }) => {
 			await page.goto(THEMING_URL)
 			await page.waitForLoadState('domcontentloaded')
-			const options = await page
-				.locator('#nldesign-token-set-select option')
-				.evaluateAll((els) =>
-					els.map((el) => ({
-						id: (el as HTMLOptionElement).value,
-						text: (el.textContent ?? '').trim(),
-					})),
+			const token = await requestToken(page)
+			const before = await getTokenSet(page, token)
+			try {
+				// No file, and path traversal: both refused, nothing changes.
+				expect(await postTokenSet(page, 'e2e-no-such-set')).toBe(400)
+				expect(await postTokenSet(page, '../token-sets')).toBe(400)
+				expect(await getTokenSet(page, token)).toBe(before)
+
+				// groningen is on no allowlist (TokenSetService::SELECTABLE_SHIPPED_SETS
+				// holds nextcloud and cunningham), so accepting it shows the check is
+				// the file on disk, not a hardcoded array of names.
+				expect(fs.existsSync(path.join(TOKENS_DIR, 'groningen.css'))).toBe(
+					true,
 				)
-			const listed = await getJson(page, '/apps/thematiq/settings/tokensets')
-			const names = new Map(listed.body.tokenSets.map((s) => [s.id, s.name]))
-			const wrong = options.filter((o) => names.get(o.id) !== o.text)
-			expect(wrong, JSON.stringify(wrong)).toEqual([])
-			// The names token-sets.json gives these two sets.
-			expect(options.find((o) => o.id === 'amsterdam')?.text).toBe(
-				'Gemeente Amsterdam',
+				expect(await postTokenSet(page, 'groningen')).toBe(200)
+				expect(await getTokenSet(page, token)).toBe('groningen')
+			} finally {
+				await setTokenSet(page, token, before)
+			}
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/extended-token-sets/spec.md#available-token-sets-api
+		'the catalogue lists every token file on disk, and the admin listing adds descriptions',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			const files: string[] = fs.readdirSync(TOKENS_DIR)
+			const onDisk = files
+				.filter(
+					(f) => f.endsWith('.css') && f.startsWith('custom-') === false,
+				)
+				.map((f) => f.replace(/\.css$/, ''))
+			expect(onDisk.length).toBeGreaterThan(40)
+
+			const catalogue = await getJson(page, '/apps/thematiq/api/token-sets')
+			expect(catalogue.status).toBe(200)
+			const ids = catalogue.body.tokenSets.map((s) => s.id)
+			const missing = onDisk.filter((id) => ids.includes(id) === false)
+			expect(
+				missing,
+				`files with no catalogue entry: ${missing.join(', ')}`,
+			).toEqual([])
+			const unnamed = catalogue.body.tokenSets.filter(
+				(s) => (s.name ?? '') === '',
 			)
-			expect(options.find((o) => o.id === 'zwolle')?.text).toBe(
-				'Gemeente Zwolle',
+			expect(unnamed.map((s) => s.id)).toEqual([])
+			const amsterdam = catalogue.body.tokenSets.find(
+				(s) => s.id === 'amsterdam',
 			)
-		} finally {
-			await withdrawTokenSetOffer(page, token, offer)
-		}
-	})
+			expect(amsterdam?.name).toBe('Gemeente Amsterdam')
+
+			const token = await requestToken(page)
+			const offer = await offerTokenSets(page, token, ['amsterdam'])
+			try {
+				const admin = await getJson(
+					page,
+					'/apps/thematiq/settings/tokensets',
+				)
+				expect(admin.status).toBe(200)
+				const withoutDescription = admin.body.tokenSets.filter(
+					(s) => (s.description ?? '') === '',
+				)
+				expect(withoutDescription.map((s) => s.id)).toEqual([])
+				expect(
+					admin.body.tokenSets.find((s) => s.id === 'amsterdam')
+						?.description,
+				).toBe('Design tokens for Gemeente Amsterdam')
+			} finally {
+				await withdrawTokenSetOffer(page, token, offer)
+			}
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/extended-token-sets/spec.md#admin-views-token-set-dropdown
+		'each dropdown option shows the display name token-sets.json gives the set',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			const token = await requestToken(page)
+			const offer = await offerTokenSets(page, token, ['amsterdam', 'zwolle'])
+			try {
+				await page.goto(THEMING_URL)
+				await page.waitForLoadState('domcontentloaded')
+				const options = await page
+					.locator('#nldesign-token-set-select option')
+					.evaluateAll((els) =>
+						els.map((el) => ({
+							id: (el as HTMLOptionElement).value,
+							text: (el.textContent ?? '').trim(),
+						})),
+					)
+				const listed = await getJson(
+					page,
+					'/apps/thematiq/settings/tokensets',
+				)
+				const names = new Map(
+					listed.body.tokenSets.map((s) => [s.id, s.name]),
+				)
+				const wrong = options.filter((o) => names.get(o.id) !== o.text)
+				expect(wrong, JSON.stringify(wrong)).toEqual([])
+				// The names token-sets.json gives these two sets.
+				expect(options.find((o) => o.id === 'amsterdam')?.text).toBe(
+					'Gemeente Amsterdam',
+				)
+				expect(options.find((o) => o.id === 'zwolle')?.text).toBe(
+					'Gemeente Zwolle',
+				)
+			} finally {
+				await withdrawTokenSetOffer(page, token, offer)
+			}
+		},
+	)
 
 	test.describe('with Gemeente Utrecht active', () => {
 		test.describe.configure({ mode: 'serial', timeout: 90_000 })
@@ -264,93 +288,105 @@ test.describe('extended-token-sets', () => {
 			}
 		})
 
-		test(// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-complete-token-set
-		'the instance renders with Utrecht brand colour, typography and border radius', async ({
-			page,
-		}) => {
-			await openThemedPage(page)
-			const file = declarations(
-				await servedCss(page, 'tokens/utrecht.css'),
-				'--nldesign-',
-			)
-			const root = await rootVars(page, [
-				'--nldesign-color-primary',
-				'--nldesign-font-family',
-				'--nldesign-border-radius',
-				'--font-face',
-			])
-			expect(root['--nldesign-color-primary'].toLowerCase()).toBe('#24578f')
-			expect(normaliseCss(root['--nldesign-font-family'])).toBe(
-				normaliseCss(file.get('--nldesign-font-family') ?? ''),
-			)
-			expect(root['--nldesign-font-family']).toMatch(/^['"]Fira Sans['"]/)
-			expect(root['--nldesign-border-radius']).toBe('4px')
-			// Nextcloud's own variables carry them to every app.
-			expect(normaliseCss(root['--font-face'])).toBe(
-				normaliseCss(root['--nldesign-font-family']),
-			)
-			const body = await bodyVars(page, [
-				'--color-primary-element',
-				'--border-radius',
-			])
-			expect(body['--color-primary-element'].toLowerCase()).toBe('#24578f')
-			expect(body['--border-radius']).toBe('4px')
-		})
+		test(
+			// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-complete-token-set
+			'the instance renders with Utrecht brand colour, typography and border radius',
+			async ({ page }) => {
+				await openThemedPage(page)
+				const file = declarations(
+					await servedCss(page, 'tokens/utrecht.css'),
+					'--nldesign-',
+				)
+				const root = await rootVars(page, [
+					'--nldesign-color-primary',
+					'--nldesign-font-family',
+					'--nldesign-border-radius',
+					'--font-face',
+				])
+				expect(root['--nldesign-color-primary'].toLowerCase()).toBe(
+					'#24578f',
+				)
+				expect(normaliseCss(root['--nldesign-font-family'])).toBe(
+					normaliseCss(file.get('--nldesign-font-family') ?? ''),
+				)
+				expect(root['--nldesign-font-family']).toMatch(/^['"]Fira Sans['"]/)
+				expect(root['--nldesign-border-radius']).toBe('4px')
+				// Nextcloud's own variables carry them to every app.
+				expect(normaliseCss(root['--font-face'])).toBe(
+					normaliseCss(root['--nldesign-font-family']),
+				)
+				const body = await bodyVars(page, [
+					'--color-primary-element',
+					'--border-radius',
+				])
+				expect(body['--color-primary-element'].toLowerCase()).toBe('#24578f')
+				expect(body['--border-radius']).toBe('4px')
+			},
+		)
 	})
 
 	test.describe('with a set that leaves tokens out', () => {
 		test.describe.configure({ timeout: 90_000 })
 
-		test(// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-incomplete-token-set
-		'the font weights an incomplete set declares apply and everything it leaves out falls back to defaults.css', async ({
-			browser,
-			page,
-		}) => {
-			// The set is the test's own. The spec's example, Groningen, used to
-			// ship only its font weights; since the token sync (#1006, #1008)
-			// every shipped set is complete, so none is incomplete any more.
-			const css =
-				':root {\n'
-				+ '\t--nldesign-typography-font-weight-normal: 300;\n'
-				+ '\t--nldesign-typography-font-weight-bold: 600;\n'
-				+ '}\n'
-			await withUploadedSet(browser, 'font weights only', css, async (set) => {
-				const restore = await activateTokenSet(browser, set)
-				try {
-					await openThemedPage(page)
-					const file = declarations(
-						await servedLayer(page, `tokens/${set}`),
-						'--nldesign-',
-					)
-					expect([...file.keys()].sort()).toEqual([
-						'--nldesign-typography-font-weight-bold',
-						'--nldesign-typography-font-weight-normal',
-					])
-					const defaults = declarations(
-						await servedCss(page, DEFAULTS),
-						'--nldesign-',
-					)
-					const v = await rootVars(page, [
-						'--nldesign-typography-font-weight-normal',
-						'--nldesign-typography-font-weight-bold',
-						'--nldesign-color-primary',
-						'--nldesign-border-radius',
-					])
-					expect(v['--nldesign-typography-font-weight-normal']).toBe('300')
-					expect(v['--nldesign-typography-font-weight-bold']).toBe('600')
-					expect(v['--nldesign-color-primary'].toLowerCase()).toBe(
-						(
-							defaults.get('--nldesign-color-primary') ?? ''
-						).toLowerCase(),
-					)
-					expect(v['--nldesign-border-radius']).toBe(
-						defaults.get('--nldesign-border-radius'),
-					)
-				} finally {
-					await restore()
-				}
-			})
-		})
+		test(
+			// @e2e openspec/specs/extended-token-sets/spec.md#organization-with-incomplete-token-set
+			'the font weights an incomplete set declares apply and everything it leaves out falls back to defaults.css',
+			async ({ browser, page }) => {
+				// The set is the test's own. The spec's example, Groningen, used to
+				// ship only its font weights; since the token sync (#1006, #1008)
+				// every shipped set is complete, so none is incomplete any more.
+				const css =
+					':root {\n'
+					+ '\t--nldesign-typography-font-weight-normal: 300;\n'
+					+ '\t--nldesign-typography-font-weight-bold: 600;\n'
+					+ '}\n'
+				await withUploadedSet(
+					browser,
+					'font weights only',
+					css,
+					async (set) => {
+						const restore = await activateTokenSet(browser, set)
+						try {
+							await openThemedPage(page)
+							const file = declarations(
+								await servedLayer(page, `tokens/${set}`),
+								'--nldesign-',
+							)
+							expect([...file.keys()].sort()).toEqual([
+								'--nldesign-typography-font-weight-bold',
+								'--nldesign-typography-font-weight-normal',
+							])
+							const defaults = declarations(
+								await servedCss(page, DEFAULTS),
+								'--nldesign-',
+							)
+							const v = await rootVars(page, [
+								'--nldesign-typography-font-weight-normal',
+								'--nldesign-typography-font-weight-bold',
+								'--nldesign-color-primary',
+								'--nldesign-border-radius',
+							])
+							expect(
+								v['--nldesign-typography-font-weight-normal'],
+							).toBe('300')
+							expect(v['--nldesign-typography-font-weight-bold']).toBe(
+								'600',
+							)
+							expect(v['--nldesign-color-primary'].toLowerCase()).toBe(
+								(
+									defaults.get('--nldesign-color-primary') ?? ''
+								).toLowerCase(),
+							)
+							expect(v['--nldesign-border-radius']).toBe(
+								defaults.get('--nldesign-border-radius'),
+							)
+						} finally {
+							await restore()
+						}
+					},
+				)
+			},
+		)
 	})
 
 	test.describe('with a withheld set active', () => {
@@ -411,28 +447,32 @@ test.describe('extended-token-sets', () => {
 			}
 		})
 
-		test(// @e2e openspec/specs/extended-token-sets/spec.md#settings-page-shows-all-token-sets
-		'the dropdown is the selectable list resolved at request time, with the running set offered and selected', async ({
-			page,
-		}) => {
-			await page.goto(THEMING_URL)
-			await page.waitForLoadState('domcontentloaded')
-			const select = page.locator('#nldesign-token-set-select')
-			await expect(select).toBeVisible()
-			const options = await select.locator('option').evaluateAll((els) =>
-				els.map((el) => ({
-					id: (el as HTMLOptionElement).value,
-					text: (el.textContent ?? '').trim(),
-				})),
-			)
-			const listed = await getJson(page, '/apps/thematiq/settings/tokensets')
-			expect(options).toEqual(
-				listed.body.tokenSets.map((s) => ({ id: s.id, text: s.name })),
-			)
-			// Offered ONLY because the instance is running it (the precondition
-			// above saw it withheld). A hardcoded list could not contain it.
-			expect(options.map((o) => o.id)).toContain(withheld)
-			expect(await select.inputValue()).toBe(withheld)
-		})
+		test(
+			// @e2e openspec/specs/extended-token-sets/spec.md#settings-page-shows-all-token-sets
+			'the dropdown is the selectable list resolved at request time, with the running set offered and selected',
+			async ({ page }) => {
+				await page.goto(THEMING_URL)
+				await page.waitForLoadState('domcontentloaded')
+				const select = page.locator('#nldesign-token-set-select')
+				await expect(select).toBeVisible()
+				const options = await select.locator('option').evaluateAll((els) =>
+					els.map((el) => ({
+						id: (el as HTMLOptionElement).value,
+						text: (el.textContent ?? '').trim(),
+					})),
+				)
+				const listed = await getJson(
+					page,
+					'/apps/thematiq/settings/tokensets',
+				)
+				expect(options).toEqual(
+					listed.body.tokenSets.map((s) => ({ id: s.id, text: s.name })),
+				)
+				// Offered ONLY because the instance is running it (the precondition
+				// above saw it withheld). A hardcoded list could not contain it.
+				expect(options.map((o) => o.id)).toContain(withheld)
+				expect(await select.inputValue()).toBe(withheld)
+			},
+		)
 	})
 })

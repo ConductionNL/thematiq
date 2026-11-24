@@ -315,7 +315,9 @@ describe('Tokens Studio exports (thematiq#994)', () => {
 				JSON.stringify({
 					brand: { x: { a: { $value: '#111111' } } },
 					'color-scheme-dark/common': { x: { a: { $value: '#eeeeee' } } },
-					$metadata: { tokenSetOrder: ['brand', 'color-scheme-dark/common'] },
+					$metadata: {
+						tokenSetOrder: ['brand', 'color-scheme-dark/common'],
+					},
 				}),
 			)
 			const read = readUpstreamTokens(dir)
@@ -348,12 +350,16 @@ describe('Tokens Studio exports (thematiq#994)', () => {
 			writeFileSync(join(dir, 'src', 'config.json'), '{}')
 			writeFileSync(join(dir, 'src', 'build-theme.mts'), '')
 			const unbuilt = readUpstreamTokens(dir)
-			expect(unbuilt.error).toContain('generated theme whose build did not run')
+			expect(unbuilt.error).toContain(
+				'generated theme whose build did not run',
+			)
 
 			mkdirSync(join(dir, dirname(GENERATED_TOKENS)))
 			writeFileSync(
 				join(dir, GENERATED_TOKENS),
-				JSON.stringify({ basis: { color: { a: { $type: 'color', $value: '#00577e' } } } }),
+				JSON.stringify({
+					basis: { color: { a: { $type: 'color', $value: '#00577e' } } },
+				}),
 			)
 			const built = readUpstreamTokens(dir)
 			expect(built.error).toBe(null)

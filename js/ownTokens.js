@@ -203,12 +203,14 @@
 	 * @return {string} The kind.
 	 */
 	function kindLabel(type) {
-		return {
-			color: t('thematiq', 'Colour'),
-			text: t('thematiq', 'Text'),
-			duration: t('thematiq', 'Duration'),
-			easing: t('thematiq', 'Easing'),
-		}[type] || type
+		return (
+			{
+				color: t('thematiq', 'Colour'),
+				text: t('thematiq', 'Text'),
+				duration: t('thematiq', 'Duration'),
+				easing: t('thematiq', 'Easing'),
+			}[type] || type
+		)
 	}
 
 	/**
@@ -229,7 +231,8 @@
 		if (token.darkValue) {
 			dark.append(t('thematiq', 'dark') + ' ', code(token.darkValue))
 		} else {
-			dark.textContent = t('thematiq', 'dark') + ' ' + t('thematiq', 'derived from light')
+			dark.textContent =
+				t('thematiq', 'dark') + ' ' + t('thematiq', 'derived from light')
 		}
 		return cell([light, dark], 'nldesign-own-token-value')
 	}
@@ -241,9 +244,20 @@
 	 */
 	function renderTokens() {
 		el.tokenList.textContent = ''
-		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: state.tokens, deprecations: state.deprecations } }))
+		document.dispatchEvent(
+			new CustomEvent('thematiq:own-tokens', {
+				detail: { tokens: state.tokens, deprecations: state.deprecations },
+			}),
+		)
 		if (state.tokens.length === 0) {
-			el.tokenList.appendChild(emptyRow(t('thematiq', 'No own tokens yet. Add one, then use it in custom CSS.')))
+			el.tokenList.appendChild(
+				emptyRow(
+					t(
+						'thematiq',
+						'No own tokens yet. Add one, then use it in custom CSS.',
+					),
+				),
+			)
 			return
 		}
 		state.tokens.forEach(function (token) {
@@ -276,31 +290,40 @@
 				about.push(badge(token.deprecation))
 			}
 
-			var actions = cell([
-				button(
-					t('thematiq', 'Edit'),
-					t('thematiq', 'Edit {name}', { name: token.name }),
-					function (b) {
-						openTokenDialog(b, token)
-					},
-				),
-				button(
-					t('thematiq', 'Deprecate'),
-					t('thematiq', 'Deprecate {name}', { name: token.name }),
-					function (b) {
-						openDeprecationDialog(b, token.name, token.deprecation)
-					},
-				),
-				button(
-					t('thematiq', 'Remove'),
-					t('thematiq', 'Remove {name}', { name: token.name }),
-					function () {
-						removeToken(token)
-					},
-				),
-			], 'nldesign-own-token-actions')
+			var actions = cell(
+				[
+					button(
+						t('thematiq', 'Edit'),
+						t('thematiq', 'Edit {name}', { name: token.name }),
+						function (b) {
+							openTokenDialog(b, token)
+						},
+					),
+					button(
+						t('thematiq', 'Deprecate'),
+						t('thematiq', 'Deprecate {name}', { name: token.name }),
+						function (b) {
+							openDeprecationDialog(b, token.name, token.deprecation)
+						},
+					),
+					button(
+						t('thematiq', 'Remove'),
+						t('thematiq', 'Remove {name}', { name: token.name }),
+						function () {
+							removeToken(token)
+						},
+					),
+				],
+				'nldesign-own-token-actions',
+			)
 
-			row.append(nameCell, cell([kind]), valueCell(token), cell(about, 'nldesign-own-token-about'), actions)
+			row.append(
+				nameCell,
+				cell([kind]),
+				valueCell(token),
+				cell(about, 'nldesign-own-token-about'),
+				actions,
+			)
 			el.tokenList.appendChild(row)
 		})
 	}
@@ -312,9 +335,15 @@
 	 */
 	function renderDeprecations() {
 		el.deprecationList.textContent = ''
-		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: state.tokens, deprecations: state.deprecations } }))
+		document.dispatchEvent(
+			new CustomEvent('thematiq:own-tokens', {
+				detail: { tokens: state.tokens, deprecations: state.deprecations },
+			}),
+		)
 		if (state.deprecations.length === 0) {
-			el.deprecationList.appendChild(emptyRow(t('thematiq', 'No deprecated tokens.')))
+			el.deprecationList.appendChild(
+				emptyRow(t('thematiq', 'No deprecated tokens.')),
+			)
 			return
 		}
 		state.deprecations.forEach(function (record) {
@@ -328,11 +357,14 @@
 			}
 			var when = document.createElement('span')
 			when.className = 'nldesign-deprecation-when'
-			when.textContent = record.state === 'removed'
-				? t('thematiq', 'removed')
-				: (record.removalDate
-					? t('thematiq', 'removed from {date}', { date: record.removalDate })
-					: t('thematiq', 'no date'))
+			when.textContent =
+				record.state === 'removed'
+					? t('thematiq', 'removed')
+					: record.removalDate
+						? t('thematiq', 'removed from {date}', {
+								date: record.removalDate,
+							})
+						: t('thematiq', 'no date')
 			replacement.push(when)
 
 			var message = []
@@ -344,30 +376,36 @@
 			if (record.own === false) {
 				var notice = document.createElement('span')
 				notice.className = 'nldesign-deprecation-detail'
-				notice.textContent = t('thematiq', 'Notice only: the value comes from the token set')
+				notice.textContent = t(
+					'thematiq',
+					'Notice only: the value comes from the token set',
+				)
 				message.push(notice)
 			}
 
-			var actions = cell([
-				button(
-					t('thematiq', 'Edit'),
-					t('thematiq', 'Edit the deprecation of {name}', {
-						name: record.token,
-					}),
-					function (b) {
-						openDeprecationDialog(b, record.token, record)
-					},
-				),
-				button(
-					t('thematiq', 'Withdraw'),
-					t('thematiq', 'Withdraw the deprecation of {name}', {
-						name: record.token,
-					}),
-					function () {
-						withdraw(record.token)
-					},
-				),
-			], 'nldesign-own-token-actions')
+			var actions = cell(
+				[
+					button(
+						t('thematiq', 'Edit'),
+						t('thematiq', 'Edit the deprecation of {name}', {
+							name: record.token,
+						}),
+						function (b) {
+							openDeprecationDialog(b, record.token, record)
+						},
+					),
+					button(
+						t('thematiq', 'Withdraw'),
+						t('thematiq', 'Withdraw the deprecation of {name}', {
+							name: record.token,
+						}),
+						function () {
+							withdraw(record.token)
+						},
+					),
+				],
+				'nldesign-own-token-actions',
+			)
 
 			row.append(
 				cell([code(record.token)]),
@@ -415,7 +453,10 @@
 		if (opener === null || document.contains(opener) || el.section === null) {
 			return
 		}
-		if (document.activeElement !== null && document.activeElement !== document.body) {
+		if (
+			document.activeElement !== null
+			&& document.activeElement !== document.body
+		) {
 			return
 		}
 		var label = opener.getAttribute('aria-label')
@@ -496,7 +537,8 @@
 	function syncDarkField() {
 		var form = el.tokenDialog.querySelector('form')
 		var colour = form.elements.type.value === 'color'
-		el.tokenDialog.querySelector('.nldesign-own-token-dark').hidden = colour === false
+		el.tokenDialog.querySelector('.nldesign-own-token-dark').hidden =
+			colour === false
 		var hint = el.tokenDialog.querySelector('.nldesign-own-token-colour-hint')
 		if (hint !== null) {
 			hint.hidden = colour === false
@@ -691,11 +733,13 @@
 			event.preventDefault()
 			onSubmit()
 		})
-		dialog.querySelectorAll('.nldesign-dialog-cancel').forEach(function (cancel) {
-			cancel.addEventListener('click', function () {
-				closeDialog(dialog)
+		dialog
+			.querySelectorAll('.nldesign-dialog-cancel')
+			.forEach(function (cancel) {
+				cancel.addEventListener('click', function () {
+					closeDialog(dialog)
+				})
 			})
-		})
 		dialog.addEventListener('cancel', function () {
 			if (opener && typeof opener.focus === 'function') {
 				opener.focus()

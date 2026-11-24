@@ -14,10 +14,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const REPORT = {
-	metadata: { tokenSet: { name: 'Gemeente Zuiddrecht' }, designSystem: 'nldesign', generatedAt: '2026-10-07T12:12:00Z' },
+	metadata: {
+		tokenSet: { name: 'Gemeente Zuiddrecht' },
+		designSystem: 'nldesign',
+		generatedAt: '2026-10-07T12:12:00Z',
+	},
 	pairs: [
-		{ foreground: '--color-primary-text', background: '--color-primary', foregroundValue: '#ffffff', backgroundValue: '#3669a5', ratio: 5.64, threshold: 4.5, basis: 'normal-text', verdict: 'pass' },
-		{ foreground: '--color-border-maxcontrast', background: '--color-main-background', foregroundValue: '#cccccc', backgroundValue: '#ffffff', ratio: 1.6, threshold: 3, basis: 'ui-component', verdict: 'fail' },
+		{
+			foreground: '--color-primary-text',
+			background: '--color-primary',
+			foregroundValue: '#ffffff',
+			backgroundValue: '#3669a5',
+			ratio: 5.64,
+			threshold: 4.5,
+			basis: 'normal-text',
+			verdict: 'pass',
+		},
+		{
+			foreground: '--color-border-maxcontrast',
+			background: '--color-main-background',
+			foregroundValue: '#cccccc',
+			backgroundValue: '#ffffff',
+			ratio: 1.6,
+			threshold: 3,
+			basis: 'ui-component',
+			verdict: 'fail',
+		},
 	],
 	summary: { passed: 1, failed: 1, unevaluated: 0, verdict: 'fail' },
 }
@@ -46,19 +68,26 @@ describe('Contrast report panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.OC = { generateUrl: (url) => url, requestToken: 'token' }
 		window.scrollTo = vi.fn()
 		document.documentElement.lang = 'en-GB'
-		global.fetch = vi.fn(() => Promise.resolve({ json: () => Promise.resolve(REPORT) }))
+		global.fetch = vi.fn(() =>
+			Promise.resolve({ json: () => Promise.resolve(REPORT) }),
+		)
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -71,7 +100,9 @@ describe('Contrast report panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -79,30 +110,52 @@ describe('Contrast report panel', () => {
 	})
 
 	it('reads the report as JSON with the request token', () => {
-		expect(global.fetch).toHaveBeenCalledWith('/apps/thematiq/settings/compliance-report?format=json', { headers: { requesttoken: 'token' } })
+		expect(global.fetch).toHaveBeenCalledWith(
+			'/apps/thematiq/settings/compliance-report?format=json',
+			{ headers: { requesttoken: 'token' } },
+		)
 	})
 
 	it('draws the totals and the header line', () => {
-		const numbers = [...document.querySelectorAll('.thematiq-contrast-panel__number')].map((n) => n.textContent)
+		const numbers = [
+			...document.querySelectorAll('.thematiq-contrast-panel__number'),
+		].map((n) => n.textContent)
 		expect(numbers).toEqual(['2', '1', '1', '0'])
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Contrast report')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('1 of 2 pairs pass, token set Gemeente Zuiddrecht')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Contrast report')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('1 of 2 pairs pass, token set Gemeente Zuiddrecht')
 	})
 
 	it('draws each pair with its example, ratio, standard and verdict', () => {
-		const rows = [...document.querySelectorAll('.thematiq-contrast-panel__rows tr')]
+		const rows = [
+			...document.querySelectorAll('.thematiq-contrast-panel__rows tr'),
+		]
 		expect(rows).toHaveLength(2)
 		expect(rows[0].textContent).toContain('--color-primary-text')
 		expect(rows[0].textContent).toContain('5.64:1')
 		expect(rows[0].textContent).toContain('4.5:1 text')
-		expect(rows[0].querySelector('.thematiq-contrast-panel__pill--pass').textContent).toBe('Meets')
+		expect(
+			rows[0].querySelector('.thematiq-contrast-panel__pill--pass')
+				.textContent,
+		).toBe('Meets')
 		expect(rows[1].textContent).toContain('3.0:1 part')
-		expect(rows[1].querySelector('.thematiq-contrast-panel__pill--fail').textContent).toBe('Too low')
-		expect(rows[0].querySelector('.thematiq-contrast-panel__example').style.background).toContain('rgb(54, 105, 165)')
+		expect(
+			rows[1].querySelector('.thematiq-contrast-panel__pill--fail')
+				.textContent,
+		).toBe('Too low')
+		expect(
+			rows[0].querySelector('.thematiq-contrast-panel__example').style
+				.background,
+		).toContain('rgb(54, 105, 165)')
 	})
 
 	it('says what the report is about, and downloads through the report links', () => {
-		expect(document.querySelector('.thematiq-contrast-panel__about').textContent).toContain('NL Design System')
+		expect(
+			document.querySelector('.thematiq-contrast-panel__about').textContent,
+		).toContain('NL Design System')
 		const json = document.getElementById('nldesign-compliance-report-json')
 		const pressed = vi.fn()
 		json.addEventListener('click', pressed)

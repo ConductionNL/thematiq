@@ -303,7 +303,12 @@ describe('admin.js HTML escaping', () => {
 })
 
 describe('admin.js theming reset dialog for a stock set', () => {
-	const STOCK = { id: 'nextcloud', name: 'Nextcloud', design_system: 'none', theming: { primary_color: '#00679e' } }
+	const STOCK = {
+		id: 'nextcloud',
+		name: 'Nextcloud',
+		design_system: 'none',
+		theming: { primary_color: '#00679e' },
+	}
 	const SYNCED = {
 		primary_color: '#aa0000',
 		background_color: '#bb0000',
@@ -339,20 +344,31 @@ describe('admin.js theming reset dialog for a stock set', () => {
 					body = current
 				}
 			}
-			return Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve(body) })
+			return Promise.resolve({
+				status: 200,
+				ok: true,
+				json: () => Promise.resolve(body),
+			})
 		})
 	}
 
 	/** Load the page on rijkshuisstijl and switch to the stock set. */
 	async function switchToStock(current) {
 		const sets = [TOKEN_SETS[0], STOCK]
-		installGlobals({ tokenSets: sets, currentTokenSet: 'rijkshuisstijl', activePreview: null })
+		installGlobals({
+			tokenSets: sets,
+			currentTokenSet: 'rijkshuisstijl',
+			activePreview: null,
+		})
 		global.OC.imagePath = (app, path) => '/' + app + '/img/' + path
 		global.OCP.Toast = { message: vi.fn() }
 		window.OCP = global.OCP
 		buildDom('rijkshuisstijl')
 		const select = document.getElementById('nldesign-token-set-select')
-		select.insertAdjacentHTML('beforeend', '<option value="nextcloud" data-design-system="none">Nextcloud</option>')
+		select.insertAdjacentHTML(
+			'beforeend',
+			'<option value="nextcloud" data-design-system="none">Nextcloud</option>',
+		)
 		installRouter(current)
 		await loadAdmin()
 		select.value = 'nextcloud'
@@ -375,8 +391,12 @@ describe('admin.js theming reset dialog for a stock set', () => {
 		const overlay = await switchToStock(SYNCED)
 
 		expect(overlay).not.toBeNull()
-		expect(overlay.querySelector('h2').textContent).toBe('Reset the Nextcloud theme to the default?')
-		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map((tr) => Array.from(tr.cells).map((td) => td.textContent.trim()))
+		expect(overlay.querySelector('h2').textContent).toBe(
+			'Reset the Nextcloud theme to the default?',
+		)
+		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map((tr) =>
+			Array.from(tr.cells).map((td) => td.textContent.trim()),
+		)
 		expect(rows).toEqual([
 			['Primary color', '#aa0000', '#00679e Nextcloud default'],
 			['Background color', '#bb0000', '#0082c9 Nextcloud default'],
@@ -386,15 +406,26 @@ describe('admin.js theming reset dialog for a stock set', () => {
 	})
 
 	it('lists only what was synced, against the default primary', async () => {
-		const overlay = await switchToStock({ primary_color: '#aa0000', has_custom_logo: false, has_custom_background: false })
+		const overlay = await switchToStock({
+			primary_color: '#aa0000',
+			has_custom_logo: false,
+			has_custom_background: false,
+		})
 
-		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map((tr) => tr.cells[0].textContent)
+		const rows = Array.from(overlay.querySelectorAll('tbody tr')).map(
+			(tr) => tr.cells[0].textContent,
+		)
 		expect(rows).toEqual(['Primary color'])
-		expect(overlay.querySelector('tbody tr').cells[2].textContent).toContain('#00679e')
+		expect(overlay.querySelector('tbody tr').cells[2].textContent).toContain(
+			'#00679e',
+		)
 	})
 
 	it('shows no dialog when nothing was synced', async () => {
-		const overlay = await switchToStock({ has_custom_logo: false, has_custom_background: false })
+		const overlay = await switchToStock({
+			has_custom_logo: false,
+			has_custom_background: false,
+		})
 		expect(overlay).toBeNull()
 	})
 
@@ -408,7 +439,9 @@ describe('admin.js theming reset dialog for a stock set', () => {
 
 		expect(posts).toEqual(['reset=1'])
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()
-		expect(global.OCP.Toast.message).toHaveBeenCalledWith('Nextcloud theming reset to its defaults.')
+		expect(global.OCP.Toast.message).toHaveBeenCalledWith(
+			'Nextcloud theming reset to its defaults.',
+		)
 	})
 
 	it('closes and says so when the reset fails', async () => {
@@ -419,8 +452,13 @@ describe('admin.js theming reset dialog for a stock set', () => {
 		await flush()
 
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()
-		expect(error).toHaveBeenCalledWith('Error resetting theming:', expect.any(Error))
-		expect(global.OCP.Toast.message).toHaveBeenCalledWith('Failed to reset Nextcloud theming.')
+		expect(error).toHaveBeenCalledWith(
+			'Error resetting theming:',
+			expect.any(Error),
+		)
+		expect(global.OCP.Toast.message).toHaveBeenCalledWith(
+			'Failed to reset Nextcloud theming.',
+		)
 	})
 
 	it('closes without a request on Cancel and on a click on the backdrop, but not inside the dialog', async () => {
@@ -430,7 +468,9 @@ describe('admin.js theming reset dialog for a stock set', () => {
 
 		overlay = await switchToStock(SYNCED)
 		overlay.querySelector('.thematiq-admin-dialog__body').click()
-		expect(document.getElementById('nldesign-theming-dialog-overlay')).not.toBeNull()
+		expect(
+			document.getElementById('nldesign-theming-dialog-overlay'),
+		).not.toBeNull()
 		overlay.click()
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()
 		expect(posts).toEqual([])

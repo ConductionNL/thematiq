@@ -1,5 +1,7 @@
 import { test } from '@playwright/test'
-test('apply dialog refuses an unconfirmed set and names the confirmation', async ({ page }) => {
+test('apply dialog refuses an unconfirmed set and names the confirmation', async ({
+	page,
+}) => {
 	test.setTimeout(120_000)
 	await page.goto('/settings/admin/theming', { waitUntil: 'load' })
 	await page.waitForTimeout(2000)
@@ -11,5 +13,11 @@ test('apply dialog refuses an unconfirmed set and names the confirmation', async
 		await dlg.locator('.nldesign-dialog-confirm').click()
 		await page.waitForTimeout(3000)
 	}
-	console.log('TOASTS', JSON.stringify(await page.locator('.toastify').allInnerTexts()).slice(0, 400))
+	console.log(
+		'TOASTS',
+		JSON.stringify(await page.locator('.toastify').allInnerTexts()).slice(
+			0,
+			400,
+		),
+	)
 })

@@ -34,23 +34,31 @@ const PAGE = `
 `
 
 function send(rows) {
-	document.dispatchEvent(new CustomEvent('thematiq:group-theming', { detail: { rows } }))
+	document.dispatchEvent(
+		new CustomEvent('thematiq:group-theming', { detail: { rows } }),
+	)
 }
 
 describe('House style per group panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+		window.t = (app, text, vars) =>
+			Object.keys(vars || {}).reduce(
+				(acc, key) => acc.replace('{' + key + '}', vars[key]),
+				text,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -61,7 +69,9 @@ describe('House style per group panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -77,20 +87,35 @@ describe('House style per group panel', () => {
 	})
 
 	it('counts the linked and the delegated groups', () => {
-		const rows = [{ delegated: true }, { delegated: false }, { delegated: true }, {}]
+		const rows = [
+			{ delegated: true },
+			{ delegated: false },
+			{ delegated: true },
+			{},
+		]
 		send(rows)
-		expect(text('.thematiq-page-header__intro')).toBe('4 groups linked, 2 with delegated choice')
-		expect(text('.thematiq-groups-panel__delegated')).toBe('2 of 4 groups choose themselves')
+		expect(text('.thematiq-page-header__intro')).toBe(
+			'4 groups linked, 2 with delegated choice',
+		)
+		expect(text('.thematiq-groups-panel__delegated')).toBe(
+			'2 of 4 groups choose themselves',
+		)
 		expect(text('.thematiq-groups-panel__linked')).toBe('4')
 		rows[1].delegated = true
-		document.querySelector('[data-field="delegated"]').dispatchEvent(new Event('change', { bubbles: true }))
+		document
+			.querySelector('[data-field="delegated"]')
+			.dispatchEvent(new Event('change', { bubbles: true }))
 		expect(text('.thematiq-groups-panel__delegated-count')).toBe('3')
 	})
 
 	it('adds a row from the header button', () => {
 		const clicked = vi.fn()
-		document.getElementById('nldesign-group-theming-add').addEventListener('click', clicked)
-		const button = document.querySelector('.thematiq-page-header__actions button')
+		document
+			.getElementById('nldesign-group-theming-add')
+			.addEventListener('click', clicked)
+		const button = document.querySelector(
+			'.thematiq-page-header__actions button',
+		)
 		expect(button.textContent).toBe('Add connection')
 		button.click()
 		expect(clicked).toHaveBeenCalled()

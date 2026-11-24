@@ -23,7 +23,10 @@ let toast
 
 /** Globals admin.js reads at load time; the freshness endpoints answer from the variables above. */
 function installGlobals() {
-	global.t = (app, text, values = {}) => text.replace(/\{(\w+)\}/g, (match, key) => (key in values ? values[key] : match))
+	global.t = (app, text, values = {}) =>
+		text.replace(/\{(\w+)\}/g, (match, key) =>
+			key in values ? values[key] : match,
+		)
 	global.n = (app, singular, plural, count) => (count === 1 ? singular : plural)
 	toast = vi.fn()
 	global.OC = {
@@ -35,7 +38,10 @@ function installGlobals() {
 	}
 	global.OCP = {
 		InitialState: {
-			loadState: (app, key, fallback) => (key === 'tokenSets' ? [{ id: 'utrecht', name: 'Gemeente Utrecht' }] : fallback),
+			loadState: (app, key, fallback) =>
+				key === 'tokenSets'
+					? [{ id: 'utrecht', name: 'Gemeente Utrecht' }]
+					: fallback,
 		},
 		Toast: { message: toast },
 	}
@@ -53,7 +59,12 @@ function installGlobals() {
 			}
 			answer = status
 		}
-		return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(answer), headers: { get: () => null } })
+		return Promise.resolve({
+			ok: true,
+			status: 200,
+			json: () => Promise.resolve(answer),
+			headers: { get: () => null },
+		})
 	})
 }
 
@@ -71,9 +82,18 @@ async function load() {
 }
 
 const $ = (id) => document.getElementById(id)
-const notices = () => Array.from($('nldesign-upstream-freshness-notices').children).map((row) => row.querySelector('span').textContent)
-const names = () => Array.from($('nldesign-upstream-freshness-notices').children).map((row) => row.querySelector('strong').textContent)
-const calls = (url, method) => global.fetch.mock.calls.filter(([u, o = {}]) => u === url && (o.method || 'GET') === method)
+const notices = () =>
+	Array.from($('nldesign-upstream-freshness-notices').children).map(
+		(row) => row.querySelector('span').textContent,
+	)
+const names = () =>
+	Array.from($('nldesign-upstream-freshness-notices').children).map(
+		(row) => row.querySelector('strong').textContent,
+	)
+const calls = (url, method) =>
+	global.fetch.mock.calls.filter(
+		([u, o = {}]) => u === url && (o.method || 'GET') === method,
+	)
 
 describe('admin.js upstream token freshness', () => {
 	beforeEach(() => {
@@ -81,7 +101,11 @@ describe('admin.js upstream token freshness', () => {
 			enabled: true,
 			lastChecked: '1700000000',
 			notices: [
-				{ setId: 'utrecht', upstreamVersion: 'v2.1.0', detectedAt: 1700000000 },
+				{
+					setId: 'utrecht',
+					upstreamVersion: 'v2.1.0',
+					detectedAt: 1700000000,
+				},
 				{ setId: 'unknown-set', headSha: 'abcdef1234567' },
 				{ setId: '__generic__', headSha: '0123456789abc' },
 			],
@@ -107,53 +131,93 @@ describe('admin.js upstream token freshness', () => {
 		await load()
 
 		expect($('nldesign-upstream-freshness-toggle').checked).toBe(true)
-		expect($('nldesign-upstream-freshness-lastchecked').textContent).toBe('Last checked: ' + new Date(1700000000 * 1000).toLocaleString())
+		expect($('nldesign-upstream-freshness-lastchecked').textContent).toBe(
+			'Last checked: ' + new Date(1700000000 * 1000).toLocaleString(),
+		)
 		expect(notices()).toEqual([
 			'Source has update v2.1.0. Review the tokens and apply them yourself.',
 			'Source has update abcdef1. Review the tokens and apply them yourself.',
 			'Source has update 0123456. Review the tokens and apply them yourself.',
 		])
-		expect(names()).toEqual(['Gemeente Utrecht', 'unknown-set', 'NL Design System themes'])
-		expect($('nldesign-upstream-freshness-notices').querySelector('button').getAttribute('aria-label')).toBe('Ignore notice about Gemeente Utrecht')
-		expect($('nldesign-upstream-freshness-notices').querySelectorAll('button')).toHaveLength(3)
-		expect($('nldesign-upstream-freshness-notices').querySelector('.nldesign-upstream-notice__found').textContent).toBe(
-			'found on ' + new Date(1700000000 * 1000).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }),
+		expect(names()).toEqual([
+			'Gemeente Utrecht',
+			'unknown-set',
+			'NL Design System themes',
+		])
+		expect(
+			$('nldesign-upstream-freshness-notices')
+				.querySelector('button')
+				.getAttribute('aria-label'),
+		).toBe('Ignore notice about Gemeente Utrecht')
+		expect(
+			$('nldesign-upstream-freshness-notices').querySelectorAll('button'),
+		).toHaveLength(3)
+		expect(
+			$('nldesign-upstream-freshness-notices').querySelector(
+				'.nldesign-upstream-notice__found',
+			).textContent,
+		).toBe(
+			'found on '
+				+ new Date(1700000000 * 1000).toLocaleDateString([], {
+					day: 'numeric',
+					month: 'short',
+					year: 'numeric',
+				}),
 		)
 	})
 
 	it.each([
 		['never checked', undefined, 'Not checked yet.'],
-		['a date text', '2026-11-23T10:00:00Z', 'Last checked: ' + new Date(Date.parse('2026-11-23T10:00:00Z')).toLocaleString()],
+		[
+			'a date text',
+			'2026-11-23T10:00:00Z',
+			'Last checked: '
+				+ new Date(Date.parse('2026-11-23T10:00:00Z')).toLocaleString(),
+		],
 		['a value that is no date', 'yesterday', 'Last checked: yesterday'],
-	])('reads the last check when it was %s', async (label, lastChecked, expected) => {
-		status = { enabled: false, lastChecked, notices: [] }
-		await load()
-		expect($('nldesign-upstream-freshness-toggle').checked).toBe(false)
-		expect($('nldesign-upstream-freshness-lastchecked').textContent).toBe(expected)
-		expect(notices()).toEqual([])
-	})
+	])(
+		'reads the last check when it was %s',
+		async (label, lastChecked, expected) => {
+			status = { enabled: false, lastChecked, notices: [] }
+			await load()
+			expect($('nldesign-upstream-freshness-toggle').checked).toBe(false)
+			expect($('nldesign-upstream-freshness-lastchecked').textContent).toBe(
+				expected,
+			)
+			expect(notices()).toEqual([])
+		},
+	)
 
 	it('names the update with an empty version when it has neither a version nor a sha', async () => {
 		status = { enabled: true, notices: [{ setId: '__generic__' }] }
 		await load()
-		expect(notices()).toEqual(['Source has update . Review the tokens and apply them yourself.'])
+		expect(notices()).toEqual([
+			'Source has update . Review the tokens and apply them yourself.',
+		])
 	})
 
 	it('dismisses a notice with its set and version, or its sha, and reloads the panel', async () => {
 		await load()
 		const before = calls(URL_STATUS, 'GET').length
-		const buttons = $('nldesign-upstream-freshness-notices').querySelectorAll('button')
+		const buttons = $('nldesign-upstream-freshness-notices').querySelectorAll(
+			'button',
+		)
 		buttons[0].click()
 		await flush()
 		buttons[1].click()
 		await flush()
 
-		const bodies = calls(URL_DISMISS, 'POST').map(([, options]) => JSON.parse(options.body))
+		const bodies = calls(URL_DISMISS, 'POST').map(([, options]) =>
+			JSON.parse(options.body),
+		)
 		expect(bodies).toEqual([
 			{ setId: 'utrecht', version: 'v2.1.0' },
 			{ setId: 'unknown-set', version: 'abcdef1234567' },
 		])
-		expect(calls(URL_DISMISS, 'POST')[0][1].headers).toEqual({ 'Content-Type': 'application/json', requesttoken: 'test-token' })
+		expect(calls(URL_DISMISS, 'POST')[0][1].headers).toEqual({
+			'Content-Type': 'application/json',
+			requesttoken: 'test-token',
+		})
 		expect(calls(URL_STATUS, 'GET').length).toBe(before + 2)
 	})
 
@@ -185,14 +249,20 @@ describe('admin.js upstream token freshness', () => {
 		await flush()
 
 		expect(toggle.checked).toBe(true)
-		expect(error).toHaveBeenCalledWith('Error saving upstream freshness setting:', saveAnswer)
+		expect(error).toHaveBeenCalledWith(
+			'Error saving upstream freshness setting:',
+			saveAnswer,
+		)
 	})
 
 	it('leaves the panel empty when the status cannot be loaded', async () => {
 		status = new Error('offline')
 		const error = vi.spyOn(console, 'error').mockImplementation(() => {})
 		await load()
-		expect(error).toHaveBeenCalledWith('Error loading upstream freshness status:', status)
+		expect(error).toHaveBeenCalledWith(
+			'Error loading upstream freshness status:',
+			status,
+		)
 		expect(notices()).toEqual([])
 	})
 })
