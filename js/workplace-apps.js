@@ -14,7 +14,10 @@
  * - Deck's card faces as TbBoard draws them: the card's number next to its
  *   type label, the due date as a short date ("16 Oct") from the full date
  *   Deck keeps on the badge, and the number of open cards under the board
- *   title, each as a data attribute the Deck sheet shows.
+ *   title, each as a data attribute the Deck sheet shows. From the board's
+ *   cards as Deck's API returns them: the lines "From mail: <sender>" and
+ *   "Project: <name>" a description starts with, shown under the title, and
+ *   a label named "Priority high" shown as the priority mark.
  * - The input in use: `data-thematiq-pointer` on the root while the person
  *   works with a pointer, so the sheets can leave out a focus ring that an
  *   app puts on a heading it focuses itself (Deck's card title, TbCard). A
@@ -29,6 +32,8 @@
 	var POINTER = 'data-thematiq-pointer'
 	var DAY_LINK = '.fc-timeGridWeek-view .fc-col-header-cell[data-date] .fc-col-header-cell-cushion'
 	var DAY_NUMBER = 'thematiq-day-number'
+	var PRIORITY_LABELS = ['priority high', 'high priority', 'prioriteit hoog']
+	var deckCards = { board: null, at: 0, byId: {}, loading: false }
 	var MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
 
 	if (document.readyState === 'loading') {
@@ -136,6 +141,90 @@
 	}
 
 	/**
+	 * The lines "From mail: <sender>" and "Project: <name>" at the start of a
+	 * card's description.
+	 *
+	 * @param {string} description The description.
+	 * @return {{mail: string|null, project: string|null}} The values found.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function cardLines(description) {
+		var found = { mail: null, project: null }
+		var lines = String(description || '').split(/\r?\n/).slice(0, 4)
+		lines.forEach(function (line) {
+			var mail = /^\s*(?:From mail|Uit mail):\s*(.+?)\s*$/i.exec(line)
+			var project = /^\s*(?:Project):\s*(.+?)\s*$/i.exec(line)
+			if (mail !== null && found.mail === null) {
+				found.mail = mail[1]
+			} else if (project !== null && found.project === null) {
+				found.project = project[1]
+			}
+		})
+		return found
+	}
+
+	/**
+	 * The initials of a name as TbBoard writes them: the first letter of the
+	 * first and of the last word ("Sanne de Vries" is "SV").
+	 *
+	 * @param {string} name The name.
+	 * @return {string} The initials.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function initials(name) {
+		var words = String(name).trim().split(/\s+/).filter(Boolean)
+		if (words.length === 0) {
+			return ''
+		}
+		var first = words[0].charAt(0)
+		var last = words.length > 1 ? words[words.length - 1].charAt(0) : ''
+		return (first + last).toUpperCase()
+	}
+
+	/**
+	 * Load the open board's cards from Deck's API, at most every 30 seconds
+	 * (5 when a card is missing), and draw again once they are in.
+	 *
+	 * @param {string} board The board id.
+	 * @param {boolean} force A card is missing: load after 5 seconds already.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function loadDeckCards(board, force) {
+		var now = Date.now()
+		if (deckCards.loading || typeof fetch !== 'function' || (deckCards.board === board && now - deckCards.at < (force ? 5000 : 30000))) {
+			return
+		}
+		deckCards.loading = true
+		var token = (window.OC && window.OC.requestToken) || (document.head && document.head.getAttribute('data-requesttoken')) || ''
+		var webroot = (window.OC && window.OC.webroot) || ''
+		fetch(webroot + '/ocs/v2.php/apps/deck/api/v1.0/stacks/' + encodeURIComponent(board) + '?format=json', {
+			credentials: 'same-origin',
+			headers: { 'OCS-APIRequest': 'true', requesttoken: token, Accept: 'application/json' },
+		}).then(function (response) {
+			return response.ok ? response.json() : null
+		}).then(function (body) {
+			var stacks = body && body.ocs ? body.ocs.data : body
+			var byId = {}
+			;(Array.isArray(stacks) ? stacks : []).forEach(function (stack) {
+				;(stack.cards || []).forEach(function (card) {
+					var lines = cardLines(card.description)
+					lines.people = (card.assignedUsers || []).map(function (user) {
+						var who = user.participant || {}
+						return initials(who.displayname || who.uid || '')
+					})
+					byId[String(card.id)] = lines
+				})
+			})
+			deckCards = { board: board, at: Date.now(), byId: byId, loading: false }
+			drawDeckCards()
+		}).catch(function () {
+			deckCards.loading = false
+			deckCards.at = Date.now()
+			deckCards.board = board
+		})
+	}
+
+	/**
 	 * Give Deck's cards their number beside the type, their due date as a
 	 * short date, and the board title the number of open cards (TbBoard).
 	 *
@@ -144,11 +233,46 @@
 	function drawDeckCards() {
 		var root = document.documentElement
 		var locale = (root.getAttribute('data-locale') || root.lang || 'en').replace('_', '-')
+		var route = /\/apps\/deck\/(?:#\/)?board\/(\d+)/.exec(window.location.pathname + window.location.hash)
+		var board = route !== null ? route[1] : null
+		if (board !== null && deckCards.board !== board) {
+			loadDeckCards(board, false)
+		}
 		document.querySelectorAll('.app-deck .card').forEach(function (card) {
 			var labels = card.querySelector('.card-labels .labels')
 			var number = card.querySelector('.cardid span')
 			if (labels !== null) {
 				setData(labels, 'data-thematiq-number', number !== null ? (number.textContent || '').trim() || null : null)
+			}
+			var id = number !== null ? (number.textContent || '').replace(/[^0-9]/g, '') : ''
+			var lines = deckCards.byId[id] || null
+			if (id !== '' && lines === null && board !== null) {
+				loadDeckCards(board, true)
+			}
+			var upper = card.querySelector('.card-upper')
+			var controls = card.querySelector('.card-controls')
+			if (upper !== null) {
+				setData(upper, 'data-thematiq-project', lines !== null ? lines.project : null)
+			}
+			if (controls !== null) {
+				var from = lines !== null && lines.mail !== null
+					? (typeof t === 'function' ? t('thematiq', 'From mail: {sender}', { sender: lines.mail }) : 'From mail: ' + lines.mail)
+					: null
+				setData(controls, 'data-thematiq-mail', from)
+			}
+			card.querySelectorAll('.avatars .avatardiv').forEach(function (avatar, index) {
+				var person = lines !== null && lines.people ? lines.people[index] : null
+				setData(avatar, 'data-thematiq-initials', person || null)
+			})
+			var high = false
+			card.querySelectorAll('.card-labels .labels li').forEach(function (label) {
+				var priority = PRIORITY_LABELS.indexOf((label.textContent || '').trim().toLowerCase()) >= 0
+				high = high || priority
+				setData(label, 'data-thematiq-priority', priority ? 'high' : null)
+			})
+			var head = card.querySelector('.card-labels')
+			if (head !== null) {
+				setData(head, 'data-thematiq-priority', high ? (typeof t === 'function' ? t('thematiq', 'Priority high') : 'Priority high') : null)
 			}
 			var due = card.querySelector('.duedate .due')
 			if (due !== null) {

@@ -1354,6 +1354,8 @@ OC.L10N.register(
         "Quick add": "Snel toevoegen",
         "New event": "Nieuwe afspraak",
         "_%n open card_::_%n open cards_": ["%n open kaart","%n open kaarten"],
+        "From mail: {sender}": "Uit mail: {sender}",
+        "Priority high": "Prioriteit hoog",
         "Select a conversation": "Selecteer een gesprek",
         "Themes and appearance": "Thema's en uiterlijk",
         "Administration settings": "Beheerinstellingen",
