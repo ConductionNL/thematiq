@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  *
  * The environment marker panel (js/admin-environment-panel.js, the
- * TqOmgevingsmarkering board): the header line, the marker the declared
- * environment gets, and the Documentation link kept from the overview.
+ * TqOmgevingsmarkering board): the template's line in the header and a copy
+ * of the overview's Documentation link, which stays where it was.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -13,7 +13,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const page = (environment) => `
+const PAGE = `
 	<section id="thematiq-page-header">
 		<h1 class="thematiq-page-header__title">Themes and appearance</h1>
 		<div class="thematiq-page-header__actions"><a id="nldesign-doc-link" class="thematiq-page-header__action button" href="https://docs.example/thematiq">Documentation</a></div>
@@ -21,8 +21,8 @@ const page = (environment) => `
 		<p class="thematiq-page-header__intro"></p>
 	</section>
 	<div id="nldesign-settings">
-		<section class="thematiq-panel" data-thematiq-panel="environment" data-environment="${environment}" hidden>
-			<span class="thematiq-environment-panel__marker"></span>
+		<section class="thematiq-panel" data-thematiq-panel="environment" hidden>
+			<p class="thematiq-environment-panel__line"> Environment: test, set in config.php </p>
 		</section>
 	</div>
 `
@@ -30,19 +30,11 @@ const page = (environment) => `
 describe('Environment marker panel', () => {
 	let added = []
 
-	async function open(environment) {
-		document.body.innerHTML = page(environment)
-		window.history.replaceState(null, '', window.location.pathname)
-		vi.resetModules()
-		await import('../../js/admin-panels.js?t=' + Math.random())
-		await import('../../js/admin-environment-panel.js?t=' + Math.random())
-		window.history.replaceState(null, '', '#environment')
-		window.dispatchEvent(new HashChangeEvent('hashchange'))
-	}
-
-	beforeEach(() => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+	beforeEach(async () => {
+		window.t = (app, text) => text
 		window.scrollTo = vi.fn()
+		document.body.innerHTML = PAGE
+		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
 			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
@@ -50,6 +42,11 @@ describe('Environment marker panel', () => {
 				original(type, listener, options)
 			})
 		}
+		vi.resetModules()
+		await import('../../js/admin-panels.js?t=' + Math.random())
+		await import('../../js/admin-environment-panel.js?t=' + Math.random())
+		window.history.replaceState(null, '', '#environment')
+		window.dispatchEvent(new HashChangeEvent('hashchange'))
 	})
 
 	afterEach(() => {
@@ -61,30 +58,16 @@ describe('Environment marker panel', () => {
 		delete document.documentElement.dataset.thematiqOpenPanel
 	})
 
-	const text = (selector) => document.querySelector(selector).textContent
+	it('puts the template line in the header', () => {
+		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Environment marker')
+		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('Environment: test, set in config.php')
+	})
 
-	it('names the declared environment and its marker, and keeps the Documentation link', async () => {
-		await open('test')
-		expect(text('.thematiq-page-header__title')).toBe('Environment marker')
-		expect(text('.thematiq-page-header__intro')).toBe('Environment: test, set in config.php')
-		expect(text('.thematiq-environment-panel__marker')).toBe('Every page of this server carries the marker Test environment.')
+	it('shows a copy of the Documentation link and gives the original back', () => {
 		const link = document.querySelector('.thematiq-page-header__actions a')
 		expect(link.getAttribute('href')).toBe('https://docs.example/thematiq')
 		expect(link.id).toBe('')
 		window.ThematiqPanels.close()
-		expect(document.getElementById('nldesign-doc-link')).not.toBeNull()
-	})
-
-	it('marks an unknown value as unknown, and production as no marker', async () => {
-		await open('tset')
-		expect(text('.thematiq-environment-panel__marker')).toBe('Every page of this server carries the marker Unknown environment.')
-		window.ThematiqPanels.close()
-		await open('production')
-		expect(text('.thematiq-environment-panel__marker')).toBe('No page of this server carries a marker.')
-	})
-
-	it('says when no environment is set', async () => {
-		await open('')
-		expect(text('.thematiq-page-header__intro')).toBe('No environment set')
+		expect(document.getElementById('nldesign-doc-link').isConnected).toBe(true)
 	})
 })

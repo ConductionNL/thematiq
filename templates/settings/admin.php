@@ -1574,7 +1574,23 @@ if ($_['mockUi'] === true) {
 	<!-- Environment marker (TqOmgevingsmarkering), a panel of this page at #environment (design.md):
 	     the OTAP environment this server declares in config.php, read-only
 	     (openspec/specs/environment-marker/spec.md), and what each marker looks like. -->
-	<section class="thematiq-panel thematiq-environment-panel" data-thematiq-panel="environment" data-environment="<?php p($_['environment']); ?>" aria-labelledby="thematiq-page-title" hidden>
+	<section class="thematiq-panel thematiq-environment-panel" data-thematiq-panel="environment" aria-labelledby="thematiq-page-title" hidden>
+		<?php
+		$environmentMarkers = [
+			'development' => $l->t('Development environment'),
+			'test' => $l->t('Test environment'),
+			'acceptance' => $l->t('Acceptance environment'),
+		];
+		$environmentLine = $l->t('No environment set');
+		$environmentNote = $l->t('No page of this server carries a marker.');
+		if ($_['environment'] !== '') {
+			$environmentLine = $l->t('Environment: {environment}, set in config.php', ['environment' => $_['environment']]);
+		}
+		if ($_['environment'] !== '' && $_['environment'] !== 'production') {
+			$environmentNote = $l->t('Every page of this server carries the marker {marker}.', ['marker' => ($environmentMarkers[$_['environment']] ?? $l->t('Unknown environment'))]);
+		}
+		?>
+		<p class="thematiq-environment-panel__line" hidden><?php p($environmentLine); ?></p>
 		<div class="thematiq-panel__columns">
 			<div class="thematiq-panel__main">
 				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-environment-title">
@@ -1585,7 +1601,7 @@ if ($_['mockUi'] === true) {
 					<?php if ($_['environment'] !== ''): ?>
 						<div class="thematiq-environment-panel__now">
 							<span class="nldesign-environment__chip"><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></span>
-							<span class="thematiq-environment-panel__marker"></span>
+							<span class="thematiq-environment-panel__marker"><?php p($environmentNote); ?></span>
 						</div>
 					<?php endif; ?>
 					<p class="thematiq-groups-panel__text"><?php p($l->t('The environment belongs to the server, not to the database. That is why it sits in config.php and you can only read it here. A database copied from production to test thus keeps the label test.')); ?></p>
