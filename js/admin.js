@@ -8514,49 +8514,51 @@
 				return
 			}
 
+			var locale = document.documentElement.lang || undefined
 			entries.forEach(function (entry) {
 				var row = document.createElement('tr')
+				var moment = auditFormat.formatAuditMoment
+					? auditFormat.formatAuditMoment(entry.ts, locale)
+					: { date: auditFormat.formatAuditTimestamp(entry.ts), time: '' }
+				var action = auditFormat.formatAuditAction
+					? auditFormat.formatAuditAction(entry.action)
+					: { label: entry.action || '', kind: 'neutral' }
 
-				// One fact per cell. The old single Details column held
-				// "from X to Y" as one string, which meant the two values could
-				// not be lined up down the table — the thing an audit is read
-				// for is what changed, and that is a comparison between two
-				// columns, not a sentence.
+				// One fact per cell, set with textContent throughout: an entry
+				// can carry an admin-supplied custom token set name.
+				var when = auditCell('nldesign-audit-ts')
+				when.appendChild(auditText('strong', 'nldesign-audit-date', moment.date))
+				when.appendChild(auditText('span', 'nldesign-audit-time', moment.time))
+				row.appendChild(when)
+
+				var who = auditCell('nldesign-audit-actor')
+				who.textContent = entry.actor || ''
+				row.appendChild(who)
+
+				var what = auditCell('nldesign-audit-action')
+				what.appendChild(auditText('span', 'nldesign-audit-pill nldesign-audit-pill--' + action.kind, action.label))
+				what.appendChild(auditText('code', 'nldesign-audit-code', entry.action || ''))
+				row.appendChild(what)
+
 				;[
-					[
-						'nldesign-audit-ts',
-						auditFormat.formatAuditTimestamp(entry.ts),
-					],
-					['nldesign-audit-actor', entry.actor || ''],
-					['nldesign-audit-action', entry.action || ''],
-					[
-						'nldesign-audit-value',
-						auditFormat.formatAuditValue(entry.old),
-					],
-					[
-						'nldesign-audit-value',
-						auditFormat.formatAuditValue(entry.new),
-					],
-					[
-						'nldesign-audit-changed',
-						auditFormat.formatAuditChanged(entry),
-					],
-				].forEach(function (cell) {
-					var td = document.createElement('td')
-					td.className = cell[0]
-					// textContent throughout: an entry can carry an
-					// admin-supplied custom token set name.
-					td.textContent = cell[1]
-					row.appendChild(td)
+					auditFormat.formatAuditValue(entry.old),
+					auditFormat.formatAuditValue(entry.new),
+				].forEach(function (value) {
+					var cell = auditCell('nldesign-audit-value')
+					cell.textContent = value
+					row.appendChild(cell)
 				})
 
-				var restoreCell = document.createElement('td')
-				restoreCell.className = 'nldesign-audit-restore-cell'
+				var changed = auditCell('nldesign-audit-changed')
+				changed.textContent = auditFormat.formatAuditChanged(entry)
+				row.appendChild(changed)
+
+				var restoreCell = auditCell('nldesign-audit-restore-cell')
 				if (typeof entry.versionId === 'string' && entry.versionId !== '') {
 					var restoreBtn = document.createElement('button')
 					restoreBtn.type = 'button'
-					restoreBtn.className = 'button nldesign-audit-restore'
-					restoreBtn.textContent = t('thematiq', 'Restore')
+					restoreBtn.className = 'nldesign-audit-restore'
+					restoreBtn.title = t('thematiq', 'Restore')
 					restoreBtn.setAttribute(
 						'aria-label',
 						t('thematiq', 'Restore the configuration from {time}', {
@@ -8572,6 +8574,45 @@
 
 				tableBody.appendChild(row)
 			})
+
+			document.dispatchEvent(
+				new CustomEvent('thematiq:audit-rendered', {
+					detail: {
+						count: entries.length,
+						versions: entries.filter(function (entry) {
+							return typeof entry.versionId === 'string' && entry.versionId !== ''
+						}).length,
+						since: entries.length > 0 ? entries[entries.length - 1].ts : null,
+					},
+				}),
+			)
+		}
+
+		/**
+		 * A cell of the audit table.
+		 *
+		 * @param {string} className The cell's class.
+		 * @return {HTMLTableCellElement} The cell.
+		 */
+		function auditCell(className) {
+			var td = document.createElement('td')
+			td.className = className
+			return td
+		}
+
+		/**
+		 * A piece of text in an audit cell.
+		 *
+		 * @param {string} tag The tag.
+		 * @param {string} className The class.
+		 * @param {string} text The text.
+		 * @return {HTMLElement} The element.
+		 */
+		function auditText(tag, className, text) {
+			var el = document.createElement(tag)
+			el.className = className
+			el.textContent = text
+			return el
 		}
 
 		/**

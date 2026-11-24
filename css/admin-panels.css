@@ -987,3 +987,31 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-size: 14px;
 	font-weight: 600;
 }
+
+/* Log (TqLogboek). */
+#nldesign-settings .thematiq-panel .nldesign-audit-log {
+	gap: 16px;
+	margin: 0 0 20px !important;
+	padding: 22px 24px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-log-panel__count {
+	font-size: 14px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-log-panel__cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 20px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-log-panel__code {
+	font: 400 12px ui-monospace, Menlo, monospace;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	overflow-wrap: anywhere;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-log-panel__cards .thematiq-panel__card-title {
+	font-size: 17px !important;
+}

@@ -92,6 +92,7 @@ async function load() {
 		</div>
 	`
 	vi.resetModules()
+	await import('../../js/lib/auditFormat.js?t=' + Math.random())
 	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
@@ -116,6 +117,20 @@ describe('admin.js version restore', () => {
 	afterEach(() => {
 		document.body.innerHTML = ''
 		vi.restoreAllMocks()
+	})
+
+	it('draws each entry as the log board: date and time, the action as a pill, and announces the count', async () => {
+		const rendered = vi.fn()
+		document.addEventListener('thematiq:audit-rendered', rendered)
+		await load()
+		document.removeEventListener('thematiq:audit-rendered', rendered)
+
+		const row = document.querySelector('#nldesign-audit-table-body tr')
+		expect(row.querySelector('.nldesign-audit-date').textContent).not.toBe('')
+		expect(row.querySelector('.nldesign-audit-pill')).not.toBeNull()
+		expect(row.querySelector('.nldesign-audit-code').textContent).toBe(ENTRIES[0].action)
+		expect(rendered).toHaveBeenCalledTimes(1)
+		expect(rendered.mock.calls[0][0].detail.count).toBe(ENTRIES.length)
 	})
 
 	it('offers restore only on rows that have a version', async () => {
