@@ -1491,7 +1491,13 @@
         "Gone from": "Weg per",
         "Message": "Bericht",
         "At most 500 characters.": "Hoogstens 500 tekens.",
-        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Uitfaseren verandert nooit een waarde. Apps lezen de lijst via /apps/thematiq/api/token-deprecations en kunnen hun ontwikkelaars waarschuwen."
+        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Uitfaseren verandert nooit een waarde. Apps lezen de lijst via /apps/thematiq/api/token-deprecations en kunnen hun ontwikkelaars waarschuwen.",
+        "{field}: {from} becomes {to}": "{field}: {from} wordt {to}",
+        "The {role} font {name} is no longer uploaded and stays on the default font. Thematiq does not invent a font.": "Het lettertype voor {role}, {name}, is niet meer geüpload en blijft op het standaardlettertype. Thematiq verzint geen lettertype.",
+        "This changes when you restore. Nothing is written until you click Restore version.": "Dit verandert er als u terugzet. Er wordt pas iets geschreven als u op Versie terugzetten klikt.",
+        "Restoring is itself a change with its own version in the log. So you can undo it again.": "Terugzetten is zelf een wijziging met een eigen versie in het logboek. U kunt het dus weer ongedaan maken.",
+        "Log, version of {time}": "Logboek, versie van {time}",
+        "Restore version": "Versie terugzetten"
     },
     "plurals": {}
 }

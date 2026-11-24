@@ -21,6 +21,7 @@
 		check: 'M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z',
 		warning: 'M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16',
 		info: 'M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z',
+		swap: 'M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z',
 		restore: 'M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z',
 	}
 
@@ -87,16 +88,18 @@
 		return el
 	}
 
+	var LIST_ICONS = { goes: 'close', stays: 'check', changes: 'swap' }
+
 	/**
-	 * A list of what an action removes (a cross) or keeps (a tick).
+	 * A list of what an action removes (a cross), keeps (a tick) or changes (two arrows).
 	 *
 	 * @param {string[]} items The lines.
-	 * @param {'goes'|'stays'} kind Which list.
+	 * @param {'goes'|'stays'|'changes'} kind Which list.
 	 * @return {HTMLElement} The list.
 	 */
 	function list(items, kind) {
 		return h('ul', { class: BLOCK + '__list ' + BLOCK + '__list--' + kind }, items.map(function (item) {
-			return h('li', {}, [icon(kind === 'goes' ? 'close' : 'check', 18), h('span', { text: item })])
+			return h('li', {}, [icon(LIST_ICONS[kind] || 'check', 18), h('span', { text: item })])
 		}))
 	}
 
@@ -104,11 +107,11 @@
 	 * A notice in the body: a warning, a piece of information, or a grey aside.
 	 *
 	 * @param {string} text The notice.
-	 * @param {'warning'|'info'|'neutral'} kind Which notice.
+	 * @param {'warning'|'caution'|'info'|'neutral'} kind Which notice.
 	 * @return {HTMLElement} The notice.
 	 */
 	function notice(text, kind) {
-		return h('div', { class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind }, [icon(kind === 'warning' ? 'warning' : 'info', 18), h('span', { text: text })])
+		return h('div', { class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind }, [icon(kind === 'warning' || kind === 'caution' ? 'warning' : 'info', 18), h('span', { text: text })])
 	}
 
 	/**
