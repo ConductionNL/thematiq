@@ -244,7 +244,13 @@ jobs:
       enable-frontend: true
       enable-eslint: true
       enable-sbom: true
-      enable-phpunit: true
+      # PHPUnit runs in the sharded `phpunit-*` jobs at the end of this file,
+      # not in the shared job. The shared job runs the suite in one process
+      # with Xdebug coverage on every leg; here that took 43 minutes and the
+      # coverage leg, which runs the suite a second time for the merge base,
+      # hit the 45-minute cap (PR #1960). Until the shared workflow can shard
+      # PHPUnit, these jobs do what it did, split over shards.
+      enable-phpunit: false
       # thematiq ships ZERO .vue files — nc-vue is a build-only devDependency
       # used for icon generation. That is precisely why this app NEEDS e2e
       # rather than being exempt from it: thematiq's entire product surface is
@@ -475,3 +481,319 @@ jobs:
       # branch and on the release PR into beta. Breadth moves from
       # per-commit to per-merge, it is not dropped.
       reduce-pr-matrix: true
+
+  # ── PHPUnit, sharded ─────────────────────────────────────────────────────
+  # The shared job's PHPUnit, split over PHPUNIT_SHARDS legs per server. The
+  # suite's time sits in a long tail of tests that walk all shipped token sets
+  # (CssInjectionGoldenTest, TokenSetConverterGoldenTest, DtcgExportControllerTest),
+  # and Xdebug multiplies that tail. scripts/phpunit-shard-config.php gives
+  # each leg every PHPUNIT_SHARDS-th test file; together they run the suite
+  # exactly once. Measured round robin over the local timings: six shards put
+  # at most 28% of the suite on one leg.
+  #
+  # Matrix as the shared job had it with `reduce-pr-matrix: true`: a pull
+  # request into development runs PHP 8.3 on stable35, everything else runs
+  # both PHP versions on every server in the declared range.
+  #
+  # Coverage is measured on that one leg only (PHP 8.3, stable35), which is
+  # also the only leg whose coverage the shared job kept. Its shards also
+  # measure the merge base, and phpunit-coverage merges both into the clover
+  # reports the coverage guard compares, as the shared job did in one process.
+  #
+  # Unlike the shared job these jobs do not skip on a docs-only diff: they
+  # always run, which is the direction the path filter fails safe towards.
+  phpunit-shard:
+    if: (github.event_name != 'pull_request' || github.head_ref != 'development' || github.base_ref == 'beta')
+    runs-on: ubuntu-latest
+    name: "PHPUnit (PHP ${{ matrix.php-version }}, NC ${{ matrix.nextcloud-ref }}, shard ${{ matrix.shard }})"
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: nextcloud
+          POSTGRES_PASSWORD: nextcloud
+          POSTGRES_DB: nextcloud
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U nextcloud"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ${{ (github.event_name == 'pull_request' && github.base_ref == 'development') && fromJSON('["8.3"]') || fromJSON('["8.3", "8.4"]') }}
+        nextcloud-ref: ${{ (github.event_name == 'pull_request' && github.base_ref == 'development') && fromJSON('["stable35"]') || fromJSON('["stable35", "stable32", "stable33", "stable34"]') }}
+        # Keep this list 1..PHPUNIT_SHARDS.
+        shard: [1, 2, 3, 4, 5, 6]
+    env:
+      PHPUNIT_SHARDS: 6
+      SHARD: ${{ matrix.shard }}
+      COVERAGE_LEG: ${{ matrix.php-version == '8.3' && matrix.nextcloud-ref == 'stable35' }}
+    steps:
+      - name: Checkout Nextcloud server
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          repository: nextcloud/server
+          ref: ${{ matrix.nextcloud-ref }}
+          path: server
+
+      - name: Checkout server submodules
+        run: |
+          cd server
+          git submodule update --init 3rdparty
+
+      - name: Checkout app
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          path: server/apps/thematiq
+          fetch-depth: 0
+
+      # Xdebug 3.5.3 is pinned for the reason the shared workflow gives: the
+      # packaged 3.6.0alpha1 made suites about 12x slower. Legs that measure no
+      # coverage load no driver at all.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ${{ env.COVERAGE_LEG == 'true' && 'mbstring, intl, sqlite3, pgsql, pdo_pgsql, zip, gd, curl, xml, json, xdebug-3.5.3' || 'mbstring, intl, sqlite3, pgsql, pdo_pgsql, zip, gd, curl, xml, json' }}
+          coverage: ${{ env.COVERAGE_LEG == 'true' && 'xdebug' || 'none' }}
+          tools: composer:v2
+
+      - name: Checkout OpenRegister
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch development https://github.com/ConductionNL/openregister.git server/apps/openregister
+          for attempt in 1 2 3; do
+            mode="--prefer-dist"
+            [ "$attempt" -eq 3 ] && mode="--prefer-source"
+            if ( cd server/apps/openregister && composer install --no-progress $mode --optimize-autoloader --no-dev ); then
+              exit 0
+            fi
+            [ "$attempt" -lt 3 ] && sleep $((attempt * 15))
+          done
+          echo "::error::composer install for openregister failed 3 times. Refusing to run the suite against a half-installed app."
+          exit 1
+
+      - name: Install Nextcloud
+        run: |
+          set -euo pipefail
+          cd server
+          php occ maintenance:install \
+            --database pgsql \
+            --database-host 127.0.0.1 \
+            --database-port 5432 \
+            --database-name nextcloud \
+            --database-user nextcloud \
+            --database-pass nextcloud \
+            --admin-user admin \
+            --admin-pass admin
+          php occ app:enable openregister
+          chmod -R a+w config
+
+      - name: Cache Composer downloads
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-composer-files-php${{ matrix.php-version }}-${{ hashFiles('server/apps/thematiq/composer.lock', 'server/apps/thematiq/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-files-php${{ matrix.php-version }}-
+            ${{ runner.os }}-composer-files-
+
+      - name: Install app dependencies and enable app
+        run: |
+          cd server/apps/thematiq
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          cd ../../
+          php occ app:enable thematiq
+
+      - name: Run PHPUnit shard
+        run: |
+          set -euo pipefail
+          cd server/apps/thematiq
+          php scripts/phpunit-shard-config.php "$SHARD" "$PHPUNIT_SHARDS" phpunit.xml phpunit-shard.xml
+          mkdir -p "$RUNNER_TEMP/coverage"
+          ARGS=(-c phpunit-shard.xml --colors=always --log-junit "$RUNNER_TEMP/phpunit-junit.xml")
+          if [ "$COVERAGE_LEG" = "true" ]; then
+            ARGS+=(--coverage-php "$RUNNER_TEMP/coverage/head-$SHARD.cov")
+          else
+            ARGS+=(--no-coverage)
+          fi
+          ./vendor/bin/phpunit "${ARGS[@]}"
+
+      # The merge base's coverage, for this shard of the merge base's suite.
+      # Same resolution and the same refusals as the shared job's "Measure
+      # merge-base coverage"; the base is split with the head's shard script,
+      # because the base may not have one.
+      - name: Measure merge-base coverage
+        if: ${{ !cancelled() && env.COVERAGE_LEG == 'true' && github.event_name == 'pull_request' }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          cd server/apps/thematiq
+          case "$PR_HEAD_REF" in
+            development|beta|release/beta-to-main-*)
+              echo "::notice::Release promotion ($PR_HEAD_REF -> $BASE_REF): the merge-base ratchet does not run; the committed .coverage-baseline floor is enforced instead."
+              exit 0
+              ;;
+          esac
+          HEAD_SHA="$(git rev-parse HEAD)"
+          SECOND_PARENT="$(git rev-parse --verify --quiet "${HEAD_SHA}^2" || true)"
+          if [ "$HEAD_SHA" != "$PR_HEAD_SHA" ] && [ "$SECOND_PARENT" = "$PR_HEAD_SHA" ]; then
+            MERGE_BASE="$(git merge-base "$(git rev-parse "${HEAD_SHA}^1")" "$PR_HEAD_SHA")"
+          elif git rev-parse --verify --quiet "refs/remotes/origin/$BASE_REF" >/dev/null; then
+            MERGE_BASE="$(git merge-base "$(git rev-parse "refs/remotes/origin/$BASE_REF")" "$HEAD_SHA")"
+          else
+            MERGE_BASE="$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
+            echo "::warning::Neither the merge ref nor origin/$BASE_REF was available; falling back to the event payload's base.sha=$BASE_SHA, which may be stale."
+          fi
+          echo "head=$HEAD_SHA merge-base=$MERGE_BASE"
+          echo "$MERGE_BASE" > "$RUNNER_TEMP/coverage/merge-base.txt"
+          cp scripts/phpunit-shard-config.php "$RUNNER_TEMP/phpunit-shard-config.php"
+          git checkout --force --detach "$MERGE_BASE"
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          php "$RUNNER_TEMP/phpunit-shard-config.php" "$SHARD" "$PHPUNIT_SHARDS" phpunit.xml phpunit-shard.xml
+          # The base's result is measured, not judged: a red base must not turn every PR red.
+          ./vendor/bin/phpunit -c phpunit-shard.xml --coverage-php "$RUNNER_TEMP/coverage/base-$SHARD.cov" || true
+          git checkout --force --detach "$HEAD_SHA"
+          composer install --no-progress --prefer-dist --optimize-autoloader
+          if [ ! -s "$RUNNER_TEMP/coverage/base-$SHARD.cov" ]; then
+            echo "::error::Shard $SHARD of merge base $MERGE_BASE produced no coverage (see the PHPUnit output above). Refusing to report a ratchet that did not run."
+            exit 1
+          fi
+
+      - name: Upload shard coverage
+        if: ${{ !cancelled() && env.COVERAGE_LEG == 'true' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: phpunit-coverage-shard-${{ matrix.shard }}
+          path: ${{ runner.temp }}/coverage/
+          retention-days: 3
+          if-no-files-found: error
+
+  # Merges the coverage shards and runs the coverage guard exactly as the
+  # shared job's "Guard coverage baseline" did. The checkout path matches the
+  # shards' (server/apps/thematiq), because the coverage records absolute file
+  # names and the clover writer reads those files; the base report is written
+  # with the merge base checked out for the same reason.
+  phpunit-coverage:
+    needs: phpunit-shard
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'development' || github.base_ref == 'beta') }}
+    runs-on: ubuntu-latest
+    name: "PHPUnit coverage"
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          path: server/apps/thematiq
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer:v2
+
+      - name: Install app dependencies
+        run: |
+          cd server/apps/thematiq
+          composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Download shard coverage
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: phpunit-coverage-shard-*
+          path: ${{ runner.temp }}/coverage
+          merge-multiple: true
+
+      - name: Merge shard coverage
+        run: |
+          set -euo pipefail
+          cd server/apps/thematiq
+          mkdir -p coverage
+          HEAD_FILES=("$RUNNER_TEMP"/coverage/head-*.cov)
+          if [ "${#HEAD_FILES[@]}" -ne 6 ]; then
+            echo "::error::Expected coverage from 6 shards, found ${#HEAD_FILES[@]}. A missing shard would under-report coverage."
+            exit 1
+          fi
+          php scripts/merge-coverage.php coverage/clover.xml "${HEAD_FILES[@]}"
+          if [ -s "$RUNNER_TEMP/coverage/merge-base.txt" ]; then
+            BASE_FILES=("$RUNNER_TEMP"/coverage/base-*.cov)
+            if [ "${#BASE_FILES[@]}" -ne 6 ]; then
+              echo "::error::Expected merge-base coverage from 6 shards, found ${#BASE_FILES[@]}."
+              exit 1
+            fi
+            cp scripts/merge-coverage.php "$RUNNER_TEMP/merge-coverage.php"
+            HEAD_SHA="$(git rev-parse HEAD)"
+            git checkout --force --detach "$(cat "$RUNNER_TEMP/coverage/merge-base.txt")"
+            php "$RUNNER_TEMP/merge-coverage.php" "$RUNNER_TEMP/base-clover.xml" "${BASE_FILES[@]}"
+            git checkout --force --detach "$HEAD_SHA"
+          fi
+
+      - name: Guard coverage baseline
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          cd server/apps/thematiq
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            php scripts/coverage-guard.php coverage/clover.xml
+            exit 0
+          fi
+          case "${PR_HEAD_REF:-}" in
+            development|beta|release/beta-to-main-*)
+              php scripts/coverage-guard.php coverage/clover.xml
+              exit 0
+              ;;
+          esac
+          if [ ! -s "$RUNNER_TEMP/base-clover.xml" ]; then
+            echo "::error::No merge-base clover report. Refusing to report a ratchet that did not run."
+            exit 1
+          fi
+          MERGE_BASE="$(cat "$RUNNER_TEMP/coverage/merge-base.txt")"
+          git diff --name-only "$MERGE_BASE" HEAD -- '*.php' > "$RUNNER_TEMP/changed-php.txt" || true
+          php scripts/coverage-guard.php coverage/clover.xml \
+            --against="$RUNNER_TEMP/base-clover.xml" \
+            --changed-files="$RUNNER_TEMP/changed-php.txt" \
+            --deletion-neutral
+
+      - name: Upload coverage artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-report
+          path: server/apps/thematiq/coverage/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  # One check that stands for the whole sharded suite, so a branch protection
+  # rule can require "PHPUnit" instead of every shard by name.
+  phpunit:
+    needs: [phpunit-shard, phpunit-coverage]
+    if: ${{ always() && (github.event_name != 'pull_request' || github.head_ref != 'development' || github.base_ref == 'beta') }}
+    runs-on: ubuntu-latest
+    name: "PHPUnit"
+    permissions: {}
+    steps:
+      - name: Every shard and the coverage guard passed
+        env:
+          SHARDS: ${{ needs.phpunit-shard.result }}
+          COVERAGE: ${{ needs.phpunit-coverage.result }}
+        run: |
+          echo "shards: $SHARDS, coverage: $COVERAGE"
+          [ "$SHARDS" = "success" ] && [ "$COVERAGE" = "success" ]
