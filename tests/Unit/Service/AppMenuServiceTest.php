@@ -174,8 +174,8 @@ class AppMenuServiceTest extends TestCase {
 			'admin' => false,
 			'labels' => [
 				'title' => 'Apps',
-				'allApps' => 'More apps',
-				'hideApps' => 'Fewer apps',
+				'allApps' => 'More',
+				'hideApps' => 'Fewer',
 				'dragHint' => 'Drag an app to reorder it or pin it to the top bar.',
 				'moveHint' => 'Alt with an arrow key moves, Alt+P pins or unpins.',
 				'moved' => '{app} moved to place {place} of {total}.',
@@ -307,7 +307,7 @@ class AppMenuServiceTest extends TestCase {
 		);
 		$this->assertArrayNotHasKey(key: ExternalApps::CONFIG_KEY, array: $this->appValues, message: 'the admin page value is gone');
 		$this->assertSame(expected: '1', actual: $this->appValues[AppMenuLegacyExternalApps::MARKER]);
-		$this->assertSame(expected: 'More apps', actual: $state['labels']['allApps']);
+		$this->assertSame(expected: 'More', actual: $state['labels']['allApps']);
 	}//end testTheOrderAndTheExternalAppsJoinTheMenu()
 
 	/**

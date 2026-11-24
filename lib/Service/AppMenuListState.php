@@ -100,8 +100,8 @@ class AppMenuListState {
 
 		$state['labels'] = [
 			'title' => $l->t('Apps'),
-			'allApps' => $l->t('More apps'),
-			'hideApps' => $l->t('Fewer apps'),
+			'allApps' => $l->t('More'),
+			'hideApps' => $l->t('Fewer'),
 			'dragHint' => $l->t('Drag an app to reorder it or pin it to the top bar.'),
 			'moveHint' => $l->t('Alt with an arrow key moves, Alt+P pins or unpins.'),
 			'moved' => $l->t('{app} moved to place {place} of {total}.'),

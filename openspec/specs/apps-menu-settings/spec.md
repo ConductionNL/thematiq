@@ -100,7 +100,7 @@ people with `Content-Security-Policy: default-src 'none'` and `X-Content-Type-Op
 
 ### Requirement: The menu is drawn from the settings
 The open menu MUST show `columns` entries per row and `columns` times `rowsAboveFold` entries before the
-fold toggle, which reads "More apps" and, unfolded, "Fewer apps"; past `rows` rows the unfolded menu MUST
+fold toggle, which reads "More" and, unfolded, "Fewer"; past `rows` rows the unfolded menu MUST
 scroll. `shape` square MUST give the icons a rounded square, `tiles` MUST give every entry a tile,
 `iconSize` small MUST draw 32 px icons and large 40 px. With `iconColour` brand the organisation's work
 apps, the apps of the menu's first section, MUST take the brand's light wash and every other app,
@@ -116,7 +116,7 @@ apps their payoff too.
 @e2e exclude the demo stack is being filmed and cannot be deployed to; proven by tests/vitest/appMenuSettings.spec.js (shows four columns of two rows by default)
 - GIVEN the shipped settings
 - WHEN the apps menu opens
-- THEN 8 entries MUST show before More apps
+- THEN 8 entries MUST show before More
 
 ### Requirement: The classic style leaves Nextcloud's apps menu alone
 With the effective `style` classic, the workplace header MUST NOT load css/app-menu.css or arrange the
@@ -142,7 +142,7 @@ external apps with up, down, show, edit and delete, and Add external app. The Ad
 dialog MUST have labelled fields for Title, Payoff and URL with help text, mark a wrong field with
 `aria-invalid` and say why, offer the icon library as a keyboard `radiogroup` and an upload, show a
 preview, and say that an external app always opens in a new tab. Configuration MUST have the menu style,
-labelled steppers for columns (2 to 5), rows and rows above More apps with help text, a preview of the
+labelled steppers for columns (2 to 5), rows and rows above More with help text, a preview of the
 grid, the two section switches, and for an administrator the Manage apps link with "Admins only"; for a
 person in Only for me its controls MUST be disabled with the note that the administrator sets them.
 Theming MUST have the shape, the tiles and payoff switches, the icon size as a `radiogroup` beside its
