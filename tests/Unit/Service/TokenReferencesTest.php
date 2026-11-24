@@ -50,6 +50,10 @@ use Psr\Log\LoggerInterface;
  * @uses   \OCA\Thematiq\Service\LeafScope
  * @uses   \OCA\Thematiq\Service\MappedToken
  * @uses   \OCA\Thematiq\Service\TypedValue
+ * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\OwnTokenCss
  */
 class TokenReferencesTest extends TestCase {
 

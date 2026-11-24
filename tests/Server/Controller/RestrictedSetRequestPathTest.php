@@ -225,6 +225,7 @@ use ReflectionProperty;
 #[UsesClass(\OCA\Thematiq\Service\DtcgValueSerializer::class)]
 #[UsesClass(\OCA\Thematiq\Service\PlannedSwitches::class)]
 #[UsesClass(\OCA\Thematiq\Service\SwitchWindow::class)]
+#[UsesClass(\OCA\Thematiq\Service\AppBrandRecords::class)]
 class RestrictedSetRequestPathTest extends TestCase {
 
 	use RestrictedSetFixture;

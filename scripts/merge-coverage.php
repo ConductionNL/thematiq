@@ -12,8 +12,10 @@
  * guard reads. It is what `phpcov merge --clover` does, without adding phpcov
  * to the dependencies: php-code-coverage already comes with PHPUnit.
  *
- * The shards must run on the same checkout path as this script, because the
- * coverage records absolute file names and the clover writer reads the files.
+ * Run it from the app root: it loads that checkout's vendor/autoload.php, so a
+ * copy kept outside the checkout (to merge the merge base's shards) works too.
+ * The shards must run on the same checkout path, because the coverage records
+ * absolute file names and the clover writer reads the files.
  *
  * Exit codes:
  *   0 — the report is written
@@ -29,7 +31,7 @@ declare(strict_types=1);
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Report\Clover;
 
-require __DIR__ . '/../vendor/autoload.php';
+require getcwd() . '/vendor/autoload.php';
 
 $target = ($argv[1] ?? '');
 $shards = array_slice($argv, 2);
