@@ -10,8 +10,9 @@
  * browser's back button and deep links work.
  *
  * `window.ThematiqPanels.register(hash, {title, crumbs, intro, actions, onOpen, onClose})`
- * describes a panel. `crumbs` are the steps between Thematiq and the title;
- * `actions` returns the header buttons.
+ * describes a panel. `crumbs` are the steps between Thematiq and the page itself, which
+ * the breadcrumb names `crumb` (the title when left out);
+ * `intro` is the line under them, text or nodes; `actions` returns the header buttons.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -86,18 +87,19 @@
 		saved = {
 			title: parts.title.textContent,
 			crumbs: Array.prototype.slice.call(parts.crumbs.childNodes),
-			intro: parts.intro.textContent,
+			intro: Array.prototype.slice.call(parts.intro.childNodes),
 			actions: Array.prototype.slice.call(parts.actions.childNodes),
 		}
 		parts.title.textContent = config.title
+		var crumbs = typeof config.crumbs === 'function' ? config.crumbs() : config.crumbs
 		var steps = [
 			[tr('Administration settings'), null],
 			[tr('Themes and appearance'), '#'],
 			['Thematiq', null],
-		].concat((config.crumbs || []).map(function (step) {
+		].concat((crumbs || []).map(function (step) {
 			return [step.text, step.href || null]
 		}))
-		steps.push([config.title, null])
+		steps.push([config.crumb || config.title, null])
 		parts.crumbs.replaceChildren()
 		steps.forEach(function (step, index) {
 			if (index > 0) {
@@ -108,7 +110,12 @@
 			}
 			parts.crumbs.appendChild(crumb(step[0], step[1], index === steps.length - 1))
 		})
-		parts.intro.textContent = typeof config.intro === 'function' ? config.intro() : (config.intro || '')
+		var intro = typeof config.intro === 'function' ? config.intro() : (config.intro || '')
+		if (Array.isArray(intro) === true) {
+			parts.intro.replaceChildren.apply(parts.intro, intro)
+		} else {
+			parts.intro.textContent = intro
+		}
 		parts.actions.replaceChildren.apply(parts.actions, typeof config.actions === 'function' ? config.actions() : [])
 	}
 
@@ -124,7 +131,7 @@
 		}
 		parts.title.textContent = saved.title
 		parts.crumbs.replaceChildren.apply(parts.crumbs, saved.crumbs)
-		parts.intro.textContent = saved.intro
+		parts.intro.replaceChildren.apply(parts.intro, saved.intro)
 		parts.actions.replaceChildren.apply(parts.actions, saved.actions)
 		saved = null
 	}

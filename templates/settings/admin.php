@@ -57,6 +57,7 @@ script('thematiq', 'admin-token-sets-table');
 script('thematiq', 'admin-website-lettering');
 script('thematiq', 'admin-panels');
 script('thematiq', 'admin-layout-panel');
+script('thematiq', 'admin-dark-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -557,6 +558,45 @@ if ($_['mockUi'] === true) {
 					<span class="thematiq-layout-panel__summary"></span>
 					<div class="thematiq-layout-panel__changes"></div>
 					<span class="thematiq-panel__fact-hint"><?php p($l->t('Each choice is live for everyone as you make it, and writes a line in the log.')); ?></span>
+				</section>
+			</aside>
+		</div>
+	</section>
+
+	<!-- Dark variant (TqDonker), a panel of this page at #dark (design.md).
+	     js/admin-dark-panel.js draws the previews, the tokens and the contrast check
+	     from the active set's light and generated dark token files. -->
+	<section class="thematiq-panel thematiq-dark-panel" data-thematiq-panel="dark" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-dark-panel__previews"></div>
+		<div class="thematiq-panel__columns">
+			<section class="thematiq-card thematiq-panel__card thematiq-dark-panel__tokens" aria-labelledby="thematiq-dark-tokens-title">
+				<div class="thematiq-dark-panel__tokens-head">
+					<div class="thematiq-dark-panel__tokens-intro">
+						<h2 id="thematiq-dark-tokens-title" class="thematiq-panel__card-title"><?php p($l->t('Tokens, light next to dark')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-dark-panel__measured"></span>
+					</div>
+					<label class="thematiq-dark-panel__filter"><input type="checkbox" class="thematiq-dark-panel__only-warnings"> <?php p($l->t('Warnings only')); ?></label>
+				</div>
+				<div class="thematiq-dark-panel__rows" role="table" aria-labelledby="thematiq-dark-tokens-title"></div>
+			</section>
+			<aside class="thematiq-panel__aside thematiq-dark-panel__aside">
+				<section class="thematiq-card thematiq-panel__card thematiq-dark-panel__check" aria-labelledby="thematiq-dark-check-title">
+					<h2 id="thematiq-dark-check-title" class="thematiq-panel__card-title thematiq-dark-panel__aside-title"><?php p($l->t('Contrast check')); ?></h2>
+					<strong class="thematiq-dark-panel__score"></strong>
+					<span class="thematiq-panel__fact-hint thematiq-dark-panel__score-line"><?php p($l->t('text and border colours meet their standard in dark')); ?></span>
+					<span class="thematiq-dark-panel__bar"><span></span></span>
+					<ul class="thematiq-dark-panel__problems"></ul>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-dark-panel__how" aria-labelledby="thematiq-dark-how-title">
+					<h2 id="thematiq-dark-how-title" class="thematiq-panel__card-title thematiq-dark-panel__aside-title"><?php p($l->t('How it works')); ?></h2>
+					<ol class="thematiq-dark-panel__steps">
+						<li><span>1</span><span><?php p($l->t('The generator reads the light tokens of the set and works out a dark value per colour that keeps its contrast.')); ?></span></li>
+						<li><span>2</span><span><?php p($l->t('Your own dark values come first. In the token editor, an empty dark field stays derived from the light value.')); ?></span></li>
+						<li><span>3</span><span><?php p($l->t('The dark stylesheet follows the choice Nextcloud makes for system, light or dark.')); ?></span></li>
+						<li><span>4</span><span><?php p($l->t('The logo changes along: in dark the set shows its dark logo when it has one. Without a dark logo the light one stays.')); ?></span></li>
+						<li><span>5</span><span><?php p($l->t('The High contrast set also follows the operating system: with the preference for more contrast it gets stronger, and with forced colours it leaves the system colours alone.')); ?></span></li>
+					</ol>
+					<div class="thematiq-dark-panel__toggle" data-thematiq-slot="nldesign-dark-variants"></div>
 				</section>
 			</aside>
 		</div>
