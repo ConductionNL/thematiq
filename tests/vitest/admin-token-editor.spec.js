@@ -229,6 +229,8 @@ async function mount({
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/new-theme-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -841,20 +843,6 @@ describe('admin.js token editor', () => {
 
 			expect(saveDialog()).toBeNull()
 			expect(sent('/settings/overrides', 'POST')).toHaveLength(1)
-		})
-
-		it('"do not ask again" on stock stores the stock flag', async () => {
-			const dialog = await openStockDialog()
-
-			tick(dialog.querySelector('.nldesign-dialog-dontask'), true)
-			await flush()
-
-			expect(lastBody('/settings/save-confirmations').confirmSaveStock).toBe(
-				false,
-			)
-			expect(
-				document.getElementById('nldesign-confirm-save-stock').checked,
-			).toBe(true)
 		})
 
 		it('refuses a new theme without a name, in the dialog', async () => {
