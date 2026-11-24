@@ -41,7 +41,7 @@
 		var swatch = null
 		var text = h('span', { text: value || '' })
 		if (diff.kind === 'color' && value) {
-			swatch = h('span', { class: BLOCK + '__swatch', 'aria-hidden': 'true' })
+			swatch = h('span', { class: BLOCK + '__swatch ' + BLOCK + '__swatch--large', 'aria-hidden': 'true' })
 			swatch.style.background = value
 			text = h('code', { text: value })
 		}
