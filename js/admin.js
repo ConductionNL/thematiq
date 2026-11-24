@@ -5416,13 +5416,14 @@
 								'aria-label': t('thematiq', 'Take over {token}', { token: change.name }),
 							}),
 							h('code', { text: change.name, title: meta.label || change.name }),
-							frame.value(change.current, { colour: colour }),
-							frame.value(change.newVal, { colour: colour }),
+							frame.value(change.current, { colour: colour, large: true }),
+							frame.value(change.newVal, { colour: colour, large: true }),
 						]
 					}),
 				),
 			]
 			tokensTable.classList.add('thematiq-apply-tokens')
+			tokensTable.querySelector('th').classList.add('hidden-visually')
 			// Core theming as a section of this dialog, ticked by default, so
 			// there is one confirm and not a second dialog afterwards.
 			if (plan.mode !== 'none') {
@@ -5475,6 +5476,7 @@
 					{
 						label: t('thematiq', 'Apply chosen values'),
 						variant: 'primary',
+						icon: 'check',
 						className: 'nldesign-dialog-confirm',
 					},
 				],
