@@ -76,7 +76,7 @@ class TokenReferencesTest extends TestCase {
 		$this->assertNull(TokenReference::targetOf(value: 'var(--nldesign-color-primary, red)'));
 		$this->assertNull(TokenReference::targetOf(value: '#a00078'));
 		$this->assertNull(TokenReference::targetOf(value: null));
-		$this->assertSame('var(--nldesign-color-link)', TokenReference::to(tokenName: '--nldesign-color-link'));
+		$this->assertSame('var(--nldesign-color-link)', TokenReference::valueFor(tokenName: '--nldesign-color-link'));
 	}//end testAReferenceNamesItsTarget()
 
 	/**

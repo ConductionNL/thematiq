@@ -62,9 +62,9 @@ final class TokenReference {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
-	public static function to(string $tokenName): string {
+	public static function valueFor(string $tokenName): string {
 		return 'var(' . $tokenName . ')';
-	}//end to()
+	}//end valueFor()
 
 	/**
 	 * The cycles among the references of a token set: token name => the chain
