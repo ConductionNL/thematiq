@@ -2,7 +2,7 @@
  * Environment marker (the TqOmgevingsmarkering board), the panel of the
  * Theming page at #environment. The environment is read-only: this script
  * only names the marker the declared environment gets, says in the header
- * where it comes from, and keeps the overview's Documentation link.
+ * where it comes from, and shows a copy of the overview's Documentation link.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -11,12 +11,6 @@
  */
 ;(function thematiqEnvironmentPanel() {
 	var section = document.querySelector('section[data-thematiq-panel="environment"]')
-	var docs = null
-	document.querySelectorAll('#thematiq-page-header .thematiq-page-header__actions a[href]').forEach(function (link) {
-		if (docs === null) {
-			docs = link.getAttribute('href')
-		}
-	})
 
 	/**
 	 * A translated string of the app.
@@ -87,15 +81,12 @@
 			title: tr('Environment marker'),
 			intro: line,
 			actions: function () {
+				var docs = document.getElementById('nldesign-doc-link')
 				if (docs === null) {
 					return []
 				}
-				var link = document.createElement('a')
-				link.className = 'thematiq-page-header__action'
-				link.href = docs
-				link.target = '_blank'
-				link.rel = 'noopener noreferrer'
-				link.textContent = tr('Documentation')
+				var link = docs.cloneNode(true)
+				link.removeAttribute('id')
 				return [link]
 			},
 			onOpen: render,

@@ -2559,16 +2559,17 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	flex-direction: column;
 	gap: 10px;
 	padding: 14px 16px;
+	border: 1px solid var(--color-border);
 	border-radius: 8px;
 	background: var(--color-background-hover) !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-environment-panel__box code,
 #nldesign-settings .thematiq-panel .thematiq-environment-panel__code {
-	padding: 10px 12px;
+	padding: 12px 14px;
 	border-radius: 6px;
-	background: var(--color-main-background) !important;
-	border: 1px solid var(--color-border);
+	background: var(--color-main-text) !important;
+	color: var(--color-main-background);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-environment-panel__samples {
@@ -2590,7 +2591,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	overflow: hidden;
 	border: 1px solid var(--color-border);
 	border-radius: 8px;
-	background: var(--color-background-hover) !important;
+	background: var(--color-main-background) !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-environment-panel__stripe {
@@ -2614,7 +2615,7 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	margin: 22px 10px 0;
 	padding: 6px 10px;
 	border-radius: 6px;
-	background: var(--color-main-background) !important;
+	background: var(--color-background-hover) !important;
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
 }

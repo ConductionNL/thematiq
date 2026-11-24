@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 const page = (environment) => `
 	<section id="thematiq-page-header">
 		<h1 class="thematiq-page-header__title">Themes and appearance</h1>
-		<div class="thematiq-page-header__actions"><a href="https://docs.example/thematiq">Documentation</a></div>
+		<div class="thematiq-page-header__actions"><a id="nldesign-doc-link" class="thematiq-page-header__action button" href="https://docs.example/thematiq">Documentation</a></div>
 		<nav class="thematiq-page-header__crumbs"></nav>
 		<p class="thematiq-page-header__intro"></p>
 	</section>
@@ -68,7 +68,11 @@ describe('Environment marker panel', () => {
 		expect(text('.thematiq-page-header__title')).toBe('Environment marker')
 		expect(text('.thematiq-page-header__intro')).toBe('Environment: test, set in config.php')
 		expect(text('.thematiq-environment-panel__marker')).toBe('Every page of this server carries the marker Test environment.')
-		expect(document.querySelector('.thematiq-page-header__actions a').getAttribute('href')).toBe('https://docs.example/thematiq')
+		const link = document.querySelector('.thematiq-page-header__actions a')
+		expect(link.getAttribute('href')).toBe('https://docs.example/thematiq')
+		expect(link.id).toBe('')
+		window.ThematiqPanels.close()
+		expect(document.getElementById('nldesign-doc-link')).not.toBeNull()
 	})
 
 	it('marks an unknown value as unknown, and production as no marker', async () => {
