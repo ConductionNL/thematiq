@@ -68,6 +68,7 @@ script('thematiq', 'admin-switches-panel');
 script('thematiq', 'admin-gallery-panel');
 script('thematiq', 'admin-own-sets-panel');
 script('thematiq', 'admin-groups-panel');
+script('thematiq', 'admin-brands-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1355,6 +1356,91 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Brand per app (TqMerkPerApp), a panel of this page at #brands (design.md): the workspace's
+	     mobile logo and home screen icon (openspec/changes/mobile-logo-and-touch-icon, filled by
+	     js/admin-workspace-icons.js), an app's own token set and logos
+	     (openspec/specs/per-app-theming/spec.md, js/admin-app-brands.js) and the apps the house
+	     style applies to (admin.js). js/admin-brands-panel.js writes the counts. -->
+	<section class="thematiq-panel thematiq-brands-panel" data-thematiq-panel="brands" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-workspace-icons" id="nldesign-workspace-icons" aria-labelledby="thematiq-brands-icons-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-brands-icons-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Mobile logo and home screen icon')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without these images Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.')); ?></span>
+					</div>
+					<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
+					<span id="nldesign-workspace-icons-feedback" class="thematiq-css-panel__feedback" role="status" aria-live="polite"></span>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Both images apply to the whole workspace, whichever token set is active. A brand per app keeps its own small logo.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-app-brands" id="nldesign-app-brands" aria-labelledby="thematiq-brands-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-brands-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Brand per app')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t("Give an app its own house style and logo, such as a knowledge base or a participation platform. On that app's pages the brand replaces the house style, for everyone. Other pages stay as they are.")); ?></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Brand per app')); ?>">
+						<table class="nldesign-audit-table thematiq-brands-panel__table">
+							<thead>
+								<tr>
+									<th scope="col"><?php p($l->t('App')); ?></th>
+									<th scope="col"><?php p($l->t('Token set')); ?></th>
+									<th scope="col"><?php p($l->t('Logos')); ?></th>
+									<th scope="col"><?php p($l->t('Contrast')); ?></th>
+									<th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th>
+								</tr>
+							</thead>
+							<tbody id="nldesign-app-brands-list" class="nldesign-app-brands-list"></tbody>
+						</table>
+					</div>
+					<h3 class="thematiq-brands-panel__subtitle"><?php p($l->t('Add brand')); ?></h3>
+					<div class="thematiq-brands-panel__fields">
+						<div class="thematiq-fonts-panel__field">
+							<label for="nldesign-app-brands-app"><?php p($l->t('App')); ?></label>
+							<select id="nldesign-app-brands-app"></select>
+						</div>
+						<div class="thematiq-fonts-panel__field">
+							<label for="nldesign-app-brands-set"><?php p($l->t('Token set')); ?></label>
+							<select id="nldesign-app-brands-set"></select>
+						</div>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-app-brands-feedback" class="thematiq-css-panel__feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" class="thematiq-css-panel__save" id="nldesign-app-brands-add"><?php p($l->t('Save brand')); ?></button>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-app-theming" id="nldesign-app-theming" aria-labelledby="thematiq-brands-apps-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-brands-apps-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Theme per app')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Choose which apps the thematiq house style applies to. An excluded app draws its pages with the Nextcloud default style, including the top bar on those pages.')); ?></span>
+					</div>
+					<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group" aria-label="<?php p($l->t('Theme per app')); ?>">
+						<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-app-theming-feedback" class="thematiq-css-panel__feedback nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-app-theming-save" class="thematiq-css-panel__save"><?php p($l->t('Save theme per app')); ?></button>
+					</div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-brands-two-title">
+					<h2 id="thematiq-brands-two-title" class="thematiq-panel__card-title"><?php p($l->t('Two settings, two questions')); ?></h2>
+					<div class="thematiq-css-panel__rules">
+						<div><span><?php p($l->t('Theme per app')); ?></span><strong><?php p($l->t('House style on or off')); ?></strong></div>
+						<div><span><?php p($l->t('Brand per app')); ?></span><strong><?php p($l->t('Which house style')); ?></strong></div>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Theme per app turns the thematiq house style on or off per app. Brand per app chooses which token set and logo an app gets.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-brands-bundle-title">
+					<h2 id="thematiq-brands-bundle-title" class="thematiq-panel__card-title"><?php p($l->t('Also in the bundle')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Brands and excluded apps travel in the configuration bundle to test, acceptance and production.')); ?></p>
+					<a href="#bundle" class="thematiq-bundle-panel__link"><?php p($l->t('Configuration bundle')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1368,6 +1454,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#switches"><?php p($l->t('Scheduled switches')); ?></a></li>
 			<li><a href="#own-sets"><?php p($l->t('Own token sets')); ?></a></li>
 			<li><a href="#groups"><?php p($l->t('House style per group')); ?></a></li>
+			<li><a href="#brands"><?php p($l->t('Brand per app')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
@@ -1746,33 +1833,6 @@ if ($_['mockUi'] === true) {
 	</dialog>
 	<?php // phpcs:enable Generic.Files.LineLength ?>
 
-	<!-- Theming per app — exclude individual apps from nldesign theming -->
-	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Theming per app')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Choose which apps the NL Design theme applies to. Unchecking an app makes its pages render with stock Nextcloud styling, including the header on those pages.')); ?>
-		</p>
-		<div id="nldesign-app-theming-list" class="nldesign-app-theming-list" role="group"
-			 aria-label="<?php p($l->t('Theming per app')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading apps…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-app-theming-save" class="button">
-			<?php p($l->t('Save app theming')); ?>
-		</button>
-		<span id="nldesign-app-theming-feedback" class="nldesign-app-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).
-	     Filled by js/admin-workspace-icons.js. -->
-	<div class="nldesign-workspace-icons" id="nldesign-workspace-icons" style="margin-top:2em">
-		<h3><?php p($l->t('Mobile logo and home screen icon')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without them Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.')); ?>
-		</p>
-		<div id="nldesign-workspace-icons-list" class="nldesign-workspace-icons-list"></div>
-		<span id="nldesign-workspace-icons-feedback" role="status" aria-live="polite"></span>
-	</div>
-
 	<!-- The external apps of the apps menu live in the menu settings
 	     (apps-menu-create-pins-settings); this block only points there. -->
 	<div class="nldesign-external-apps" id="nldesign-external-apps" style="margin-top:2em">
@@ -1780,25 +1840,6 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint">
 			<?php p($l->t('Add, change or remove external apps in the apps menu: Menu settings, Menu items.')); ?>
 		</p>
-	</div>
-
-	<!-- Brand per app: an app's own token set and logos
-	     (openspec/specs/per-app-theming/spec.md). Filled by js/admin-app-brands.js. -->
-	<div class="nldesign-app-brands" id="nldesign-app-brands" style="margin-top:2em">
-		<h3><?php p($l->t('Brand per app')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Give an app its own house style and logo, for example a knowledge base or a participation platform. On that app\'s pages the brand replaces the house style for everyone. Other pages stay as they are.')); ?>
-			<?php p($l->t('The app\'s name stays as Nextcloud shows it: the app menu and page titles come from Nextcloud.')); ?>
-		</p>
-		<div id="nldesign-app-brands-list" class="nldesign-app-brands-list"></div>
-		<p>
-			<label for="nldesign-app-brands-app"><?php p($l->t('App')); ?></label>
-			<select id="nldesign-app-brands-app"></select>
-			<label for="nldesign-app-brands-set"><?php p($l->t('Token set')); ?></label>
-			<select id="nldesign-app-brands-set"></select>
-			<button type="button" class="button primary" id="nldesign-app-brands-add"><?php p($l->t('Save brand')); ?></button>
-		</p>
-		<span id="nldesign-app-brands-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Email template theming — mail_template_class toggle + compliance footer -->

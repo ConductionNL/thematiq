@@ -82,8 +82,9 @@ describe('Brand per app block', () => {
 	it('lists a branded app with its set, contrast and labelled logo inputs', async () => {
 		await loadScript()
 		const row = document.querySelector('[data-app="collectives"]')
-		expect(row.textContent).toContain('Collectives: Kennisbank')
-		expect(row.textContent).toContain('Contrast: WCAG AA')
+		expect(row.querySelector('strong').textContent).toBe('Collectives')
+		expect(row.querySelector('.nldesign-app-brand-set').textContent).toBe('Kennisbank')
+		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe('WCAG AA')
 		const input = row.querySelector('input[type="file"]')
 		expect(
 			document.querySelector('label[for="' + input.id + '"]').textContent,
@@ -123,8 +124,9 @@ describe('Brand per app block', () => {
 		state.brands = { deck: { tokenSet: 'gone', stale: true } }
 		await loadScript()
 		const row = document.querySelector('[data-app="deck"]')
-		expect(row.querySelector('strong').textContent).toBe('deck: gone')
-		expect(row.textContent).toContain('(Contrast: below WCAG AA)')
+		expect(row.querySelector('strong').textContent).toBe('deck')
+		expect(row.querySelector('.nldesign-app-brand-set').textContent).toBe('gone')
+		expect(row.querySelector('.nldesign-app-brand-contrast').textContent).toBe('Below WCAG AA')
 		expect(row.querySelector('.nldesign-app-brand-stale').textContent).toContain('Not applied')
 	})
 

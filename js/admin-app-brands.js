@@ -136,48 +136,60 @@
 		function render() {
 			list.textContent = ''
 			var ids = Object.keys(state.brands)
+			document.dispatchEvent(new CustomEvent('thematiq:app-brands', { detail: state }))
 			if (ids.length === 0) {
-				var empty = document.createElement('p')
-				empty.className = 'settings-hint'
-				empty.textContent = t('thematiq', 'No app has its own brand.')
+				var empty = document.createElement('tr')
+				var none = document.createElement('td')
+				none.colSpan = 5
+				none.className = 'settings-hint'
+				none.textContent = t('thematiq', 'No app has its own brand.')
+				empty.appendChild(none)
 				list.appendChild(empty)
 			}
 			ids.forEach(function (appId) {
 				var brand = state.brands[appId]
 				var set = setInfo(brand.tokenSet)
-				var row = document.createElement('div')
+				var row = document.createElement('tr')
 				row.className = 'nldesign-app-brand-row'
 				row.setAttribute('data-app', appId)
+
+				var appCell = document.createElement('td')
 				var title = document.createElement('strong')
-				title.textContent = appName(appId) + ': ' + set.name
-				row.appendChild(title)
+				title.textContent = appName(appId)
+				var idLine = document.createElement('span')
+				idLine.className = 'nldesign-app-brand-id'
+				idLine.textContent = appId
+				appCell.append(title, idLine)
+
+				var setCell = document.createElement('td')
+				setCell.className = 'nldesign-app-brand-set'
+				setCell.textContent = set.name
+
+				var logoCell = document.createElement('td')
+				logoCell.className = 'nldesign-app-brand-logos'
+				logoCell.append(logoInput(appId, 'large'), logoInput(appId, 'small'))
+
+				var contrastCell = document.createElement('td')
 				var contrast = document.createElement('span')
-				contrast.className = 'settings-hint'
-				contrast.textContent =
-					' ('
-					+ (set.wcagLevel
-						? t('thematiq', 'Contrast: WCAG {level}', {
-								level: set.wcagLevel,
-							})
-						: t('thematiq', 'Contrast: below WCAG AA'))
-					+ ')'
-				row.appendChild(contrast)
+				contrast.className = 'nldesign-app-brand-contrast' + (set.wcagLevel ? '' : ' nldesign-app-brand-contrast--below')
+				contrast.textContent = set.wcagLevel
+					? t('thematiq', 'WCAG {level}', { level: set.wcagLevel })
+					: t('thematiq', 'Below WCAG AA')
+				contrastCell.appendChild(contrast)
 				if (brand.stale) {
 					var stale = document.createElement('span')
 					stale.className = 'nldesign-app-brand-stale'
-					stale.textContent =
-						' '
-						+ t(
-							'thematiq',
-							'Not applied: the app is not installed, excluded, or its token set is gone.',
-						)
-					row.appendChild(stale)
+					stale.textContent = t(
+						'thematiq',
+						'Not applied: the app is not installed, excluded, or its token set is gone.',
+					)
+					contrastCell.appendChild(stale)
 				}
-				row.appendChild(logoInput(appId, 'large'))
-				row.appendChild(logoInput(appId, 'small'))
+
+				var actionCell = document.createElement('td')
 				var remove = document.createElement('button')
 				remove.type = 'button'
-				remove.className = 'button'
+				remove.className = 'nldesign-app-brand-remove'
 				remove.textContent = t('thematiq', 'Remove brand')
 				remove.setAttribute(
 					'aria-label',
@@ -190,7 +202,9 @@
 						method: 'DELETE',
 					}).then(load)
 				})
-				row.appendChild(remove)
+				actionCell.appendChild(remove)
+
+				row.append(appCell, setCell, logoCell, contrastCell, actionCell)
 				list.appendChild(row)
 			})
 		}
