@@ -55,6 +55,6 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 
 ## 4. Checks
 
-- [ ] 4.1 A compdiff spec row per board state (route, user, steps) in the repo, so the next run measures the same states. Started: `tests/compdiff/admin-boards.tsv` holds the rows that open with a click (TqTheming, TqTerugNaarNextcloud, TqBasistokens, TqOverridesUploaden, TqTokenToevoegen, TqTokenUitfaseren); the dialogs that open only after a choice or an upload still need a step compdiff can take.
+- [x] 4.1 A compdiff spec row per board state (route, user, steps) in the repo, so the next run measures the same states. `tests/compdiff/admin-boards.tsv` holds a row per panel, at its route `/settings/admin/theming#<hash>`, and the rows of the dialogs that open with a click; Add token and Deprecate token open from the own tokens panel. Not in it: the dialogs that open only after a choice or an upload (TqTokensetToepassen, TqThemingBijwerken, TqNieuwThema, TqOverridesOpslaan, TqMerkenKiezen, TqVersieHerstellen), which need a write compdiff refuses, and TqEigenSets measures against its board without the drawn delete dialog (the row measures the dialog only).
 - [ ] 4.2 Playwright e2e per dialog and page: it opens, its actions work, Escape closes a dialog and gives focus back.
 - [ ] 4.3 The admin page passes the WCAG 2.2 AA checks of `admin-panel-accessibility` after the rebuild.
