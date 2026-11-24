@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Kernel\Contracts\DarkPaletteServiceInterface;
+use OCA\Thematiq\Service\RuntimeFile\AppFilePath;
 use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileStore;
 use OCP\App\IAppManager;
@@ -680,8 +681,8 @@ class DarkPaletteService implements DarkPaletteServiceInterface {
 			return $this->store->read(name: $name);
 		}
 
-		$path = $this->appManager->getAppPath('thematiq') . '/' . $name;
-		if (is_file($path) === false) {
+		$path = (new AppFilePath())->join(root: $this->appManager->getAppPath('thematiq'), name: $name);
+		if ($path === null || is_file($path) === false) {
 			return null;
 		}
 
