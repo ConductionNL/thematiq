@@ -55,6 +55,9 @@ script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-active-set-preview');
 script('thematiq', 'admin-token-sets-table');
 script('thematiq', 'admin-website-lettering');
+script('thematiq', 'admin-panels');
+script('thematiq', 'admin-layout-panel');
+style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
@@ -245,7 +248,10 @@ if ($_['mockUi'] === true) {
 	<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength -- a template reads its parameters from $_; the options keep their markup. ?>
 	<div class="thematiq-card-grid">
 		<section class="thematiq-card thematiq-layout-card" aria-labelledby="thematiq-layout-title">
-			<h2 id="thematiq-layout-title" class="thematiq-card__title"><?php p($l->t('Layout')); ?></h2>
+			<div class="thematiq-card__head">
+				<h2 id="thematiq-layout-title" class="thematiq-card__title"><?php p($l->t('Layout')); ?></h2>
+				<a class="thematiq-card__link" href="#layout"><?php p($l->t('All options')); ?></a>
+			</div>
 			<span class="thematiq-card__lead"><?php p($l->t('Leave empty to follow the theme. Your choice here always wins.')); ?></span>
 			<!-- Workplace layout and brand stripe (openspec/changes/zuiddrecht-workplace-theme).
 			     Each has three states. "Follow the theme" stores nothing: the option then
@@ -453,7 +459,10 @@ if ($_['mockUi'] === true) {
 				<div class="thematiq-lettering"></div>
 			</section>
 			<section class="thematiq-card thematiq-dark-card" aria-labelledby="thematiq-dark-title">
-				<h2 id="thematiq-dark-title" class="thematiq-card__title"><?php p($l->t('Dark variant')); ?></h2>
+				<div class="thematiq-card__head">
+					<h2 id="thematiq-dark-title" class="thematiq-card__title"><?php p($l->t('Dark variant')); ?></h2>
+					<a class="thematiq-card__link" href="#dark"><?php p($l->t('View and adjust')); ?></a>
+				</div>
 				<!-- Dark mode variants — instance-wide toggle for the generated dark
 				     stylesheets (openspec/specs/dark-mode/spec.md). Never touches the
 				     user's/instance's Nextcloud dark/light/system theme choice; it only
@@ -474,6 +483,80 @@ if ($_['mockUi'] === true) {
 			</section>
 		</div>
 	</div>
+	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
+
+	<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength -- a template reads its parameters from $_; the panel keeps the board's markup. ?>
+	<!-- Layout and options (TqLayout), a panel of this page at #layout (design.md).
+	     The slots borrow the Layout card's options while the panel is open;
+	     js/admin-layout-panel.js adds what the theme says and the session's changes. -->
+	<section class="thematiq-panel thematiq-layout-panel" data-thematiq-panel="layout" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<form class="thematiq-panel__main" aria-label="<?php p($l->t('Layout and options')); ?>">
+				<section class="thematiq-card thematiq-panel__card">
+					<h2 class="thematiq-panel__card-title"><?php p($l->t('Workspace')); ?></h2>
+					<div data-thematiq-slot="thematiq-workplace-layout"></div>
+					<div data-thematiq-slot="thematiq-header-style"></div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card">
+					<h2 class="thematiq-panel__card-title"><?php p($l->t('Menu')); ?></h2>
+					<div data-thematiq-slot="thematiq-navigation-active-style"></div>
+					<div data-thematiq-slot="thematiq-navigation-width-input"></div>
+					<div data-thematiq-slot="nldesign-show-menu-labels"></div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card">
+					<h2 class="thematiq-panel__card-title"><?php p($l->t('Brand stripe and sign-in page')); ?></h2>
+					<div data-thematiq-slot="thematiq-brand-stripe"></div>
+					<div data-thematiq-slot="thematiq-brand-stripe-placement"></div>
+					<div data-thematiq-slot="thematiq-login-watermark"></div>
+					<div data-thematiq-slot="nldesign-hide-slogan"></div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card">
+					<h2 class="thematiq-panel__card-title"><?php p($l->t('Icons, colour and website')); ?></h2>
+					<div data-thematiq-slot="nldesign-primary-drives-components"></div>
+					<div data-thematiq-slot="nldesign-dark-variants"></div>
+					<div class="thematiq-panel__fact">
+						<div class="thematiq-panel__fact-text">
+							<span class="thematiq-panel__fact-label"><?php p($l->t('Icon set')); ?></span>
+							<span class="thematiq-panel__fact-hint"><?php p($l->t('Source: the active design system. Changed with occ, not on this page.')); ?></span>
+						</div>
+						<div class="thematiq-panel__fact-value">
+							<span><?php p(empty($_['activeIconPacks']) === true ? $l->t('None') : implode(', ', $_['activeIconPacks'])); ?></span>
+						</div>
+					</div>
+					<div class="thematiq-panel__fact">
+						<div class="thematiq-panel__fact-text">
+							<span class="thematiq-panel__fact-label"><?php p($l->t('Website')); ?></span>
+							<span class="thematiq-panel__fact-hint"><?php p($l->t('The website reads its lettering, buttons and columns from the token set.')); ?></span>
+						</div>
+						<div class="thematiq-panel__fact-value">
+							<span class="thematiq-layout-panel__website"></span>
+							<a class="thematiq-layout-panel__website-link" target="_blank" rel="noopener noreferrer"><?php p($l->t('In the token set')); ?></a>
+						</div>
+					</div>
+					<div class="thematiq-panel__fact">
+						<div class="thematiq-panel__fact-text">
+							<span class="thematiq-panel__fact-label"><?php p($l->t('Dark variant')); ?></span>
+							<span class="thematiq-panel__fact-hint"><?php p($l->t('Generated from the light tokens, adjustable per token.')); ?></span>
+						</div>
+						<div class="thematiq-panel__fact-value">
+							<a href="#dark"><?php p($l->t('Open dark variant')); ?></a>
+						</div>
+					</div>
+				</section>
+			</form>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('This session')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-layout-panel__session" aria-labelledby="thematiq-layout-session-title">
+					<div class="thematiq-panel__card-head">
+						<h2 id="thematiq-layout-session-title" class="thematiq-panel__card-title"><?php p($l->t('Changes in this session')); ?></h2>
+						<span class="thematiq-panel__count">0</span>
+					</div>
+					<span class="thematiq-layout-panel__summary"></span>
+					<div class="thematiq-layout-panel__changes"></div>
+					<span class="thematiq-panel__fact-hint"><?php p($l->t('Each choice is live for everyone as you make it, and writes a line in the log.')); ?></span>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 

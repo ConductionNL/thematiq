@@ -303,6 +303,11 @@ class TokenSetService {
 			$tokenSet['workplaceLayout'] = $workplaceLayout;
 		}
 
+		// Every layout default the set brings, for the "the theme says" lines of the Layout panel.
+		if (is_array($meta['layout'] ?? null) === true) {
+			$tokenSet['layout'] = $meta['layout'];
+		}
+
 		$listed = new ListedTokenSet(
 			id: $id,
 			appPath: $sources['appPath'],

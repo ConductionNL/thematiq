@@ -207,7 +207,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 	}//end testUpstreamRefWithoutVersionSurvivesAlone()
 
 	/**
-	 * The workplace layout a set brings is on its entry, for the token sets table.
+	 * The workplace layout a set brings is on its entry, for the token sets table,
+	 * and so is every layout default, for the Layout panel.
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
 	 *
@@ -229,6 +230,8 @@ class TokenSetServiceProvenanceTest extends TestCase {
 		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
 
 		$this->assertSame(expected: 'light', actual: $byId['zuiddrecht']['workplaceLayout']);
+		$this->assertSame(expected: ['workplace_layout' => 'light'], actual: $byId['zuiddrecht']['layout']);
 		$this->assertArrayNotHasKey(key: 'workplaceLayout', array: $byId['utrecht']);
+		$this->assertArrayNotHasKey(key: 'layout', array: $byId['utrecht']);
 	}//end testTheWorkplaceLayoutIsOnTheEntry()
 }//end class
