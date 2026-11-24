@@ -88,6 +88,7 @@
 				{
 					label: reset ? tr('Reset theme') : tr('Update theme'),
 					variant: 'primary',
+					icon: 'check',
 					className: 'nldesign-dialog-confirm',
 					onClick: function (handle) {
 						options.onConfirm(handle, handle.el.querySelector('.nldesign-dialog-confirm'))
