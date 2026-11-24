@@ -27,11 +27,11 @@
 	 * The line about the active theme's own overrides.
 	 *
 	 * @param {string} themeName The active theme's name.
-	 * @param {number|null} count How many overrides it has, or null when unknown.
+	 * @param {number|null} count How many overrides it has; none or unknown leaves the number out.
 	 * @return {string} The line.
 	 */
 	function overridesLine(themeName, count) {
-		if (typeof count !== 'number') {
+		if (typeof count !== 'number' || count === 0) {
 			return tr('The overrides of the current theme {name}', { name: themeName })
 		}
 		if (count === 1) {
