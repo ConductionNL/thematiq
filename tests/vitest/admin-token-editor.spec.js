@@ -231,6 +231,7 @@ async function mount({
 	await import('../../js/lib/themingPlan.js')
 	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/dialogs/new-theme-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/save-overrides-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -675,7 +676,7 @@ describe('admin.js token editor', () => {
 
 			const dialog = saveDialog()
 			expect(dialog.textContent).toContain(
-				'They are applied on top of Rijkshuisstijl.',
+				'They go on top of Rijkshuisstijl.',
 			)
 			click(dialog.querySelector('.nldesign-dialog-cancel'))
 			expect(saveDialog()).toBeNull()

@@ -46,6 +46,7 @@ script('thematiq', 'lib/markupRender');
 script('thematiq', 'dialogs/admin-dialog');
 script('thematiq', 'dialogs/reset-theme-dialog');
 script('thematiq', 'dialogs/new-theme-dialog');
+script('thematiq', 'dialogs/save-overrides-dialog');
 style('thematiq', 'admin-dialog');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
