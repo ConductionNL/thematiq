@@ -390,6 +390,9 @@ describe('ownTokens.js', () => {
 		const [put] = sent('/settings/tokens/own/--nldesign-org-brand-accent', 'PUT')
 		expect(JSON.parse(put.body)).toMatchObject({ value: '#00689e', darkValue: '#ff9a3c' })
 		expect(document.getElementById('nldesign-own-tokens-status').textContent).toBe('Token saved.')
+		// WCAG 2.4.3: the redraw replaced the Edit button; the focus goes to the new one.
+		expect(edit.isConnected).toBe(false)
+		expect(document.activeElement).toBe(document.querySelector('button[aria-label="Edit --nldesign-org-brand-accent"]'))
 	})
 
 	it('sends no dark value for a type that is not a colour, and names a refusal without a server text', async () => {
