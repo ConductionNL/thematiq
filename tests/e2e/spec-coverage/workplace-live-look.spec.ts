@@ -117,7 +117,9 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 	]) {
 		test(`Tab draws the 2px action-blue ring on ${name}`, async ({ page, browser }) => {
 			await withThemeState(browser, { tokenSet: 'zuiddrecht' }, async () => {
-				await page.goto(path, { waitUntil: 'networkidle' })
+				await page.goto(path, { waitUntil: 'domcontentloaded' })
+				await expect(page.locator('#content, #content-vue').first()).toBeVisible()
+				await page.waitForFunction(() => typeof (window as any).OC?.requestToken === 'string')
 				const ring = await tabToRing(page)
 				expect(ring.style).toBe('solid')
 				expect(ring.width).toBe('2px')
@@ -140,7 +142,7 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 			expect(await calDav(page, 'PUT', user, open, event(open, 'Thematiq open entry', todayAt(23, 0), todayAt(23, 30), user))).toBeLessThan(300)
 
 			await withThemeState(browser, { tokenSet: 'zuiddrecht' }, async () => {
-				await page.goto('/index.php/apps/calendar/timeGridDay/now', { waitUntil: 'networkidle' })
+				await page.goto('/index.php/apps/calendar/timeGridDay/now', { waitUntil: 'domcontentloaded' })
 
 				const ended = page.locator('.fc-timegrid-event.fc-event-past', { hasText: 'Thematiq ended entry' }).first()
 				await expect(ended).toBeVisible()
@@ -192,7 +194,7 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 			await withThemeState(browser, { tokenSet: 'zuiddrecht' }, async () => {
 				for (const motion of ['no-preference', 'reduce'] as const) {
 					await page.emulateMedia({ reducedMotion: motion })
-					await page.goto(`/index.php/apps/deck/board/${boardId}`, { waitUntil: 'networkidle' })
+					await page.goto(`/index.php/apps/deck/board/${boardId}`, { waitUntil: 'domcontentloaded' })
 					const source = page.locator('.card', { hasText: 'Thematiq moving card' }).first()
 					const target = page.locator('.stack', { hasText: 'Done' }).first()
 					await expect(source).toBeVisible()
