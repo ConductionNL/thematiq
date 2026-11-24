@@ -8564,7 +8564,7 @@
 						}),
 					)
 					restoreBtn.addEventListener('click', function () {
-						restoreVersion(entry.versionId, restoreBtn)
+						restoreVersion(entry.versionId, restoreBtn, auditFormat.formatAuditTimestamp(entry.ts))
 					})
 					restoreCell.appendChild(restoreBtn)
 				}
@@ -8575,10 +8575,11 @@
 		}
 
 		/**
-		 * Describe a version preview as plain text lines for the dialog.
+		 * Describe a version preview for the dialog: the changes as lines, and
+		 * the fonts that are no longer uploaded.
 		 *
 		 * @param {object} preview The preview from POST /settings/versions/{id}/preview.
-		 * @return {string} The description.
+		 * @return {{changes: string[], fonts: string[]}} The description.
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
 		function describeVersionPreview(preview) {
@@ -8587,7 +8588,7 @@
 				lines.push(
 					t(
 						'thematiq',
-						'{field}: {from} to {to}',
+						'{field}: {from} becomes {to}',
 						{
 							field: change.field,
 							from: auditFormat.formatAuditValue(change.from),
@@ -8621,54 +8622,107 @@
 					),
 				)
 			})
-			;(preview.missingFonts || []).forEach(function (font) {
-				lines.push(
-					t(
-						'thematiq',
-						'The {role} font {name} is no longer uploaded and stays on the default font.',
-						{
-							role: font.role,
-							name: font.name,
-						},
-						undefined,
-						{ escape: false },
-					),
+			var fonts = (preview.missingFonts || []).map(function (font) {
+				return t(
+					'thematiq',
+					'The {role} font {name} is no longer uploaded and stays on the default font. Thematiq does not invent a font.',
+					{
+						role: font.role,
+						name: font.name,
+					},
+					undefined,
+					{ escape: false },
 				)
 			})
-			if (lines.length === 0) {
-				lines.push(
-					t('thematiq', 'This version matches the current configuration.'),
-				)
-			}
-			return lines.join('\n')
+			return { changes: lines, fonts: fonts }
 		}
 
 		/**
-		 * Return focus to an element once a Nextcloud dialog has closed.
+		 * Restore this version? (the TqVersieHerstellen board): what changes, the
+		 * fonts that stay on the default, and that restoring is itself a version.
+		 * Nothing is written until Restore version is pressed.
 		 *
-		 * Nextcloud 35 calls the dialog callback first and closes the dialog
-		 * after it, and the closing focus trap moves focus again, to the body
-		 * (#934). Focusing inside the callback is therefore undone. This
-		 * focuses now and again on the next ticks of the teardown, but only
-		 * while focus sits on the body, so it never takes focus back from
-		 * wherever the administrator has moved on to.
-		 *
-		 * @param {HTMLElement} element The element that opened the dialog.
+		 * @param {string} base The version's URL.
+		 * @param {object} post The request options for a POST.
+		 * @param {HTMLElement} button The row's restore button.
+		 * @param {string} time When the version was saved.
+		 * @param {object} preview The preview of the restore.
+		 * @return {void}
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
-		function focusAfterDialog(element) {
-			element.focus()
-			;[0, 100, 300, 600].forEach(function (delay) {
-				window.setTimeout(function () {
-					var active = document.activeElement
-					if (
-						(active === null || active === document.body)
-						&& element.isConnected
-						&& element.disabled !== true
-					) {
-						element.focus()
-					}
-				}, delay)
+		function openRestoreDialog(base, post, button, time, preview) {
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			var h = frame.h
+			var described = describeVersionPreview(preview)
+			var same = described.changes.length === 0 && described.fonts.length === 0
+			var body = [
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: same
+						? t('thematiq', 'This version matches the current configuration.')
+						: t('thematiq', 'This changes when you restore. Nothing is written until you click Restore version.'),
+				}),
+			]
+			if (described.changes.length > 0) {
+				body.push(frame.list(described.changes, 'changes'))
+			}
+			described.fonts.forEach(function (line) {
+				body.push(frame.notice(line, 'caution'))
+			})
+			body.push(h('p', {
+				class: 'thematiq-admin-dialog__aside thematiq-admin-dialog__aside--muted',
+				text: t('thematiq', 'Restoring is itself a change with its own version in the log. So you can undo it again.'),
+			}))
+
+			frame.open({
+				id: 'nldesign-restore-version-dialog',
+				width: 560,
+				opener: button,
+				eyebrow: t('thematiq', 'Log, version of {time}', { time: time || '' }),
+				title: t('thematiq', 'Restore this version?'),
+				body: body,
+				actions: [
+					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: t('thematiq', 'Restore version'),
+						variant: 'primary',
+						icon: 'restore',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.busy(true)
+							fetch(base + '/restore', post)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (result) {
+									if (result && result.applied === true) {
+										window.location.reload()
+										return
+									}
+									dialog.close()
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+								})
+								.catch(function (err) {
+									console.error('Error restoring a version:', err)
+									dialog.close()
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+								})
+						},
+					},
+				],
 			})
 		}
 
@@ -8679,9 +8733,10 @@
 		 *
 		 * @param {string} versionId The version to restore.
 		 * @param {HTMLElement} button The row's restore button.
+		 * @param {string} time When the version was saved, as the log shows it.
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
-		function restoreVersion(versionId, button) {
+		function restoreVersion(versionId, button, time) {
 			var base = OC.generateUrl(
 				'/apps/thematiq/settings/versions/' + encodeURIComponent(versionId),
 			)
@@ -8703,47 +8758,7 @@
 						button.focus()
 						return
 					}
-					// The dialog's focus trap returns focus to whatever held it
-					// on open; the button lost it while it was disabled.
-					button.focus()
-					OC.dialogs.confirm(
-						describeVersionPreview(preview),
-						t('thematiq', 'Restore this version?'),
-						function (confirmed) {
-							if (confirmed !== true) {
-								focusAfterDialog(button)
-								return
-							}
-							fetch(base + '/restore', post)
-								.then(function (r) {
-									return r.json()
-								})
-								.then(function (result) {
-									if (result && result.applied === true) {
-										window.location.reload()
-										return
-									}
-									notify(
-										t(
-											'thematiq',
-											'The version was not restored. Nothing was changed.',
-										),
-									)
-									button.focus()
-								})
-								.catch(function (err) {
-									console.error('Error restoring a version:', err)
-									notify(
-										t(
-											'thematiq',
-											'The version was not restored. Nothing was changed.',
-										),
-									)
-									button.focus()
-								})
-						},
-						true,
-					)
+					openRestoreDialog(base, post, button, time, preview)
 				})
 				.catch(function (err) {
 					console.error('Error restoring a version:', err)

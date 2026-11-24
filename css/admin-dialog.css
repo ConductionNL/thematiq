@@ -599,3 +599,16 @@ dialog.thematiq-admin-dialog::backdrop {
 .thematiq-admin-dialog .thematiq-admin-dialog__error:empty {
 	display: none;
 }
+
+.thematiq-admin-dialog__notice--caution {
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	color: var(--color-warning);
+}
+
+.thematiq-admin-dialog__list--changes svg {
+	color: var(--color-primary-element-light-text);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__aside--muted {
+	color: var(--color-text-maxcontrast);
+}

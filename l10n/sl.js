@@ -1492,7 +1492,13 @@ OC.L10N.register(
         "Gone from": "Gone from",
         "Message": "Message",
         "At most 500 characters.": "At most 500 characters.",
-        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers."
+        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.",
+        "{field}: {from} becomes {to}": "{field}: {from} becomes {to}",
+        "The {role} font {name} is no longer uploaded and stays on the default font. Thematiq does not invent a font.": "The {role} font {name} is no longer uploaded and stays on the default font. Thematiq does not invent a font.",
+        "This changes when you restore. Nothing is written until you click Restore version.": "This changes when you restore. Nothing is written until you click Restore version.",
+        "Restoring is itself a change with its own version in the log. So you can undo it again.": "Restoring is itself a change with its own version in the log. So you can undo it again.",
+        "Log, version of {time}": "Log, version of {time}",
+        "Restore version": "Restore version"
     },
     "nplurals=2; plural=(n != 1);"
 )
