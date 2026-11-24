@@ -419,6 +419,36 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 	return `/index.php/s/${shareToken}`
 }
 
+// The comparison itself, on a made-up mismatch: no page, no instance. A
+// failing assertion throws synchronously, so the deliberate failure is
+// caught and its message read, and this test passes.
+test(// @e2e lasuite-parity::mismatch-names-the-property-and-delta
+'a radius mismatch fails and names the property, the expected and the actual value', () => {
+	const computed: ComputedSubset = {
+		backgroundColor: '',
+		color: '',
+		borderColor: '',
+		borderWidth: '',
+		borderStyle: '',
+		borderRadius: '8px',
+		fontFamily: '',
+		fontWeight: '',
+	}
+	expect(() =>
+		assertMatchesReference('lasuite text input', computed, {
+			borderRadius: '4px',
+		}),
+	).toThrow(/border-radius — expected 4px, got 8px/)
+	// A matching value passes.
+	expect(() =>
+		assertMatchesReference(
+			'lasuite text input',
+			{ ...computed, borderRadius: '4px' },
+			{ borderRadius: '4px' },
+		),
+	).not.toThrow()
+})
+
 test.describe('lasuite-parity', () => {
 	// NO `mode: 'serial'`.
 	//
@@ -449,12 +479,6 @@ test.describe('lasuite-parity', () => {
 	// the actual error is a navigation timeout, which reads as a regression that
 	// is not there. Budget set once for the whole describe.
 	test.setTimeout(120_000)
-
-	// @e2e exclude openspec/specs/lasuite-parity/spec.md#mismatch-names-the-property-and-delta
-	// Proven by manually reverting a reference value and observing the
-	// Playwright assertion message during development (see PR description);
-	// asserting a DELIBERATE failure is not something a passing CI suite can
-	// carry permanently.
 
 	test.beforeAll(async ({ browser }) => {
 		// This hook mutates instance-wide state, so it gets a realistic budget:
@@ -487,7 +511,8 @@ test.describe('lasuite-parity', () => {
 
 	for (const set of ['lasuite', 'cunningham'] as const) {
 		for (const element of referenceTable(set)) {
-			test(`${set}: ${element.name} matches the Cunningham reference`, async ({
+			test(// @e2e lasuite-parity::rendered-components-match-cunningham-reference-values
+			`${set}: ${element.name} matches the Cunningham reference`, async ({
 				page,
 			}) => {
 				await page.goto(THEMING_URL, { waitUntil: 'domcontentloaded' })
