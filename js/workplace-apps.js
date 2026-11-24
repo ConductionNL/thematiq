@@ -11,6 +11,10 @@
  * - Calendar's week view names a day "Mon 12" (ClWeek), where the locale
  *   format writes "Mon 23/11/2026": the weekday the app wrote, then the day
  *   of the month from the column's own date, in a span the sheet styles.
+ * - Deck's card faces as TbBoard draws them: the card's number next to its
+ *   type label, the due date as a short date ("16 Oct") from the full date
+ *   Deck keeps on the badge, and the number of open cards under the board
+ *   title, each as a data attribute the Deck sheet shows.
  * - The input in use: `data-thematiq-pointer` on the root while the person
  *   works with a pointer, so the sheets can leave out a focus ring that an
  *   app puts on a heading it focuses itself (Deck's card title, TbCard). A
@@ -25,6 +29,7 @@
 	var POINTER = 'data-thematiq-pointer'
 	var DAY_LINK = '.fc-timeGridWeek-view .fc-col-header-cell[data-date] .fc-col-header-cell-cushion'
 	var DAY_NUMBER = 'thematiq-day-number'
+	var MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqWorkplaceAppsMain)
@@ -76,6 +81,89 @@
 	}
 
 	/**
+	 * The short date ("16 Oct") of a full date Deck writes in English
+	 * ("Friday, 16 October 2026 17:00" or "Friday, October 16, 2026 5:00 PM"),
+	 * in the page's locale; null when the text is not such a date.
+	 *
+	 * @param {string} text The full date.
+	 * @param {string} locale The page's locale, for example "en-GB".
+	 * @return {string|null} The short date.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function shortDate(text, locale) {
+		var dayFirst = /(\d{1,2})(?:st|nd|rd|th)? ([A-Za-z]+),? (\d{4})/.exec(text || '')
+		var monthFirst = /([A-Za-z]+) (\d{1,2}),? (\d{4})/.exec(text || '')
+		var day = null
+		var month = -1
+		var year = null
+		if (dayFirst !== null && MONTHS.indexOf(dayFirst[2].toLowerCase()) >= 0) {
+			day = Number(dayFirst[1])
+			month = MONTHS.indexOf(dayFirst[2].toLowerCase())
+			year = Number(dayFirst[3])
+		} else if (monthFirst !== null && MONTHS.indexOf(monthFirst[1].toLowerCase()) >= 0) {
+			day = Number(monthFirst[2])
+			month = MONTHS.indexOf(monthFirst[1].toLowerCase())
+			year = Number(monthFirst[3])
+		}
+		if (day === null) {
+			return null
+		}
+		try {
+			return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' }).format(new Date(year, month, day))
+		} catch (e) {
+			return null
+		}
+	}
+
+	/**
+	 * Set an attribute only when it changes, so the watcher does not wake itself.
+	 *
+	 * @param {Element} element The element.
+	 * @param {string} name The attribute.
+	 * @param {string|null} value The value, or null to remove it.
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function setData(element, name, value) {
+		if (value === null) {
+			if (element.hasAttribute(name)) {
+				element.removeAttribute(name)
+			}
+			return
+		}
+		if (element.getAttribute(name) !== value) {
+			element.setAttribute(name, value)
+		}
+	}
+
+	/**
+	 * Give Deck's cards their number beside the type, their due date as a
+	 * short date, and the board title the number of open cards (TbBoard).
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	function drawDeckCards() {
+		var root = document.documentElement
+		var locale = (root.getAttribute('data-locale') || root.lang || 'en').replace('_', '-')
+		document.querySelectorAll('.app-deck .card').forEach(function (card) {
+			var labels = card.querySelector('.card-labels .labels')
+			var number = card.querySelector('.cardid span')
+			if (labels !== null) {
+				setData(labels, 'data-thematiq-number', number !== null ? (number.textContent || '').trim() || null : null)
+			}
+			var due = card.querySelector('.duedate .due')
+			if (due !== null) {
+				setData(due, 'data-thematiq-due', shortDate(due.getAttribute('name'), locale))
+			}
+		})
+		var title = document.querySelector('.app-deck .controls .board-title')
+		if (title !== null) {
+			var open = document.querySelectorAll('.app-deck .stack:not(.stack--done-column) .dnd-container > .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost)').length
+			var words = typeof n === 'function' ? n('thematiq', '%n open card', '%n open cards', open) : open + ' open cards'
+			setData(title, 'data-thematiq-open', document.querySelector('.app-deck .stack') !== null ? words : null)
+		}
+	}
+
+	/**
 	 * Set the words, mark the input in use, and keep Calendar's day names short.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
@@ -98,10 +186,13 @@
 			root.removeAttribute(POINTER)
 		}, true)
 
-		if (document.querySelector('#content.app-calendar, #content-vue.app-calendar') === null) {
+		var calendar = document.querySelector('#content.app-calendar, #content-vue.app-calendar') !== null
+		var deck = document.querySelector('#content.app-deck, #content-vue.app-deck') !== null
+		if (!calendar && !deck) {
 			return
 		}
-		shortenDays()
+		var redraw = calendar ? shortenDays : drawDeckCards
+		redraw()
 		if (typeof MutationObserver === 'function') {
 			var queued = false
 			// One watcher per page, even when the script is evaluated again.
@@ -115,14 +206,16 @@
 				queued = true
 				window.requestAnimationFrame(function () {
 					queued = false
-					shortenDays()
+					redraw()
 				})
 			})
-			window.thematiqWorkplaceAppsObserver.observe(document.body, {
-				childList: true,
-				subtree: true,
-				characterData: true,
-			})
+			var watch = { childList: true, subtree: true, characterData: true }
+			if (deck) {
+				// Deck writes a changed due date into the badge's name attribute.
+				watch.attributes = true
+				watch.attributeFilter = ['name']
+			}
+			window.thematiqWorkplaceAppsObserver.observe(document.body, watch)
 		}
 	}
 })()

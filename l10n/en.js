@@ -1354,6 +1354,7 @@ OC.L10N.register(
         "Nothing to create here.": "Nothing to create here.",
         "Quick add": "Quick add",
         "New event": "New event",
+        "_%n open card_::_%n open cards_": ["%n open card","%n open cards"],
         "Select a conversation": "Select a conversation",
         "Themes and appearance": "Themes and appearance",
         "Administration settings": "Administration settings",

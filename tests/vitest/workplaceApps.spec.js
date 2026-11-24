@@ -106,6 +106,40 @@ describe('the workplace app layer script', () => {
 		expect(document.documentElement.hasAttribute('data-thematiq-pointer')).toBe(false)
 	})
 
+	it('gives Deck\'s cards their number, a short due date and the board its open cards, also after a change', async () => {
+		document.documentElement.setAttribute('data-locale', 'en_GB')
+		global.n = (app, one, many, count) => (count === 1 ? one : many).replace('%n', count)
+		document.body.innerHTML = '<div id="content" class="app-deck">'
+			+ '<div class="controls"><div class="board-title"><h2>Service desk rollout</h2></div></div>'
+			+ '<div class="stack"><div class="dnd-container">'
+			+ '<div class="smooth-dnd-draggable-wrapper"><div class="card">'
+			+ '<div class="card-labels"><ul class="labels"><li><span>Task</span></li></ul></div>'
+			+ '<div class="badges"><div class="duedate"><div class="due" name="Friday, 16 October 2026 17:00"><span class="due--label">in 3 days</span></div></div>'
+			+ '<div class="inline-badges"><div class="cardid icon-badge"><span>#7</span></div></div></div>'
+			+ '</div></div>'
+			+ '<div class="smooth-dnd-draggable-wrapper"><div class="card"><div class="badges">'
+			+ '<div class="duedate"><div class="due" name="next week"><span class="due--label">in 7 days</span></div></div>'
+			+ '</div></div></div>'
+			+ '</div></div>'
+			+ '<div class="stack stack--done-column"><div class="dnd-container"><div class="smooth-dnd-draggable-wrapper"><div class="card"></div></div></div></div>'
+			+ '</div>'
+		await loadScript()
+
+		const labels = document.querySelector('.labels')
+		const dues = document.querySelectorAll('.due')
+		expect(labels.getAttribute('data-thematiq-number')).toBe('#7')
+		expect(dues[0].getAttribute('data-thematiq-due')).toBe('16 Oct')
+		expect(dues[1].hasAttribute('data-thematiq-due'), 'a date it cannot read keeps Deck\'s own text').toBe(false)
+		expect(document.querySelector('.board-title').getAttribute('data-thematiq-open'), 'the done column does not count').toBe('2 open cards')
+
+		dues[0].setAttribute('name', 'Monday, 2 November 2026 09:00')
+		await frame()
+		expect(dues[0].getAttribute('data-thematiq-due')).toBe('2 Nov')
+
+		document.documentElement.removeAttribute('data-locale')
+		delete global.n
+	})
+
 	it('does nothing without the app layer sheet', async () => {
 		sheetLoaded = false
 		document.body.innerHTML = WEEK
