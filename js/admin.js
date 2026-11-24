@@ -5377,6 +5377,7 @@
 			)
 
 			var chosen = h('span', { class: 'thematiq-admin-dialog__count' })
+			var tokensTable = null
 			var body = [
 				h('p', {
 					class: 'thematiq-admin-dialog__lead',
@@ -5401,7 +5402,7 @@
 					}),
 					chosen,
 				]),
-				frame.table(
+				tokensTable = frame.table(
 					[t('thematiq', 'Take over'), t('thematiq', 'Token'), t('thematiq', 'Current'), t('thematiq', 'New')],
 					changes.map(function (change) {
 						var meta = tokenRegistry[change.name] || { type: 'text' }
@@ -5421,6 +5422,7 @@
 					}),
 				),
 			]
+			tokensTable.classList.add('thematiq-apply-tokens')
 			// Core theming as a section of this dialog, ticked by default, so
 			// there is one confirm and not a second dialog afterwards.
 			if (plan.mode !== 'none') {
@@ -6576,7 +6578,7 @@
 				})
 				.join('')
 			return (
-				'<div class="nldesign-contrast-warning" role="alert">'
+				'<div class="nldesign-contrast-warning nldesign-contrast-warning--incomplete" role="alert">'
 				+ '<strong>'
 				+ escapeHtml(t('thematiq', 'Incomplete set'))
 				+ '</strong>'
