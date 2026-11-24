@@ -12,6 +12,8 @@
  * @spec openspec/changes/admin-pages-as-the-tq-boards/design.md
  */
 
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const PAGE = `
@@ -188,5 +190,10 @@ describe('panels of the Theming page', () => {
 
 		expect(select.value).toBe('')
 		expect(changed).toHaveBeenCalledTimes(1)
+	})
+
+	it('keeps the dialogs beside the panels out of the rule that hides the overview', () => {
+		const css = readFileSync(resolve(__dirname, '../../css/admin-panels.css'), 'utf8')
+		expect(css).toContain('html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):not(dialog) {')
 	})
 })

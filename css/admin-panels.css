@@ -7,9 +7,10 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  */
 
-/* While a panel is open, the overview steps aside; the page header stays. */
+/* While a panel is open, the overview steps aside; the page header stays. A panel's
+   dialogs sit beside it and keep their own display, which hides them while closed. */
 html[data-thematiq-open-panel] .settings-content > :not(#thematiq-page-header):not(#nldesign-settings),
-html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) {
+html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):not(dialog) {
 	display: none !important;
 }
 
