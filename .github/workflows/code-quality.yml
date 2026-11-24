@@ -619,7 +619,9 @@ jobs:
           cd server/apps/thematiq
           php scripts/phpunit-shard-config.php "$SHARD" "$PHPUNIT_SHARDS" phpunit.xml phpunit-shard.xml
           mkdir -p "$RUNNER_TEMP/coverage"
-          ARGS=(-c phpunit-shard.xml --colors=always --log-junit "$RUNNER_TEMP/phpunit-junit.xml")
+          # No colours: GitHub draws PHPUnit's yellow "OK, but there were issues!"
+          # background so dark that the summary under it cannot be read.
+          ARGS=(-c phpunit-shard.xml --colors=never --log-junit "$RUNNER_TEMP/phpunit-junit.xml")
           if [ "$COVERAGE_LEG" = "true" ]; then
             ARGS+=(--coverage-php "$RUNNER_TEMP/coverage/head-$SHARD.cov")
           else
