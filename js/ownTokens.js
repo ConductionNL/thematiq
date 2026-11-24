@@ -154,57 +154,129 @@
 	}
 
 	/**
-	 * Draw the own tokens list.
+	 * A table cell.
+	 *
+	 * @param {Array<Node|string>} children What goes in it.
+	 * @param {string} [className] Its class.
+	 * @return {HTMLTableCellElement} The cell.
+	 */
+	function cell(children, className) {
+		var td = document.createElement('td')
+		if (className) {
+			td.className = className
+		}
+		td.append.apply(td, children)
+		return td
+	}
+
+	/**
+	 * A row that says a list is empty.
+	 *
+	 * @param {string} text What it says.
+	 * @return {HTMLTableRowElement} The row.
+	 */
+	function emptyRow(text) {
+		var row = document.createElement('tr')
+		var td = cell([text], 'settings-hint')
+		td.colSpan = 5
+		row.className = 'nldesign-own-token-empty'
+		row.appendChild(td)
+		return row
+	}
+
+	/**
+	 * A code element.
+	 *
+	 * @param {string} text The code.
+	 * @return {HTMLElement} The element.
+	 */
+	function code(text) {
+		var c = document.createElement('code')
+		c.textContent = text
+		return c
+	}
+
+	/**
+	 * The kind of a token, in words.
+	 *
+	 * @param {string} type color, text, duration or easing.
+	 * @return {string} The kind.
+	 */
+	function kindLabel(type) {
+		return {
+			color: t('thematiq', 'Colour'),
+			text: t('thematiq', 'Text'),
+			duration: t('thematiq', 'Duration'),
+			easing: t('thematiq', 'Easing'),
+		}[type] || type
+	}
+
+	/**
+	 * The value cell of a token: light and dark for a colour, else the value.
+	 *
+	 * @param {object} token The token.
+	 * @return {HTMLTableCellElement} The cell.
+	 */
+	function valueCell(token) {
+		if (token.type !== 'color') {
+			return cell([code(token.value)], 'nldesign-own-token-value')
+		}
+		var light = document.createElement('span')
+		light.className = 'nldesign-own-token-shade'
+		light.append(t('thematiq', 'light') + ' ', code(token.value))
+		var dark = document.createElement('span')
+		dark.className = 'nldesign-own-token-shade'
+		if (token.darkValue) {
+			dark.append(t('thematiq', 'dark') + ' ', code(token.darkValue))
+		} else {
+			dark.textContent = t('thematiq', 'dark') + ' ' + t('thematiq', 'derived from light')
+		}
+		return cell([light, dark], 'nldesign-own-token-value')
+	}
+
+	/**
+	 * Draw the own tokens table.
 	 *
 	 * @return {void}
 	 */
 	function renderTokens() {
 		el.tokenList.textContent = ''
+		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: state.tokens, deprecations: state.deprecations } }))
 		if (state.tokens.length === 0) {
-			var empty = document.createElement('li')
-			empty.className = 'nldesign-own-token-empty'
-			empty.textContent = t(
-				'thematiq',
-				'No own tokens yet. Add one, then use it in custom CSS.',
-			)
-			el.tokenList.appendChild(empty)
+			el.tokenList.appendChild(emptyRow(t('thematiq', 'No own tokens yet. Add one, then use it in custom CSS.')))
 			return
 		}
 		state.tokens.forEach(function (token) {
-			var item = document.createElement('li')
-			item.className = 'nldesign-own-token-row'
-			item.setAttribute('data-own-token', token.name)
+			var row = document.createElement('tr')
+			row.className = 'nldesign-own-token-row'
+			row.setAttribute('data-own-token', token.name)
 
-			var text = document.createElement('span')
-			text.className = 'nldesign-own-token-text'
 			var label = document.createElement('strong')
 			label.textContent = token.label
-			var name = document.createElement('code')
-			name.textContent = token.name
-			var value = document.createElement('span')
-			value.textContent =
-				token.value
-				+ (token.darkValue
-					? ' / ' + t('thematiq', 'dark') + ' ' + token.darkValue
-					: '')
-			text.appendChild(label)
-			text.appendChild(document.createTextNode(' '))
-			text.appendChild(name)
-			text.appendChild(document.createTextNode(' '))
-			text.appendChild(value)
-			item.appendChild(text)
+			var nameCell = cell([label, code(token.name)], 'nldesign-own-token-text')
+
+			var kind = document.createElement('span')
+			kind.className = 'nldesign-own-token-kind'
+			kind.textContent = kindLabel(token.type)
+
+			var about = []
+			if (token.description) {
+				var description = document.createElement('span')
+				description.textContent = token.description
+				about.push(description)
+			}
 			var hint = token.type === 'color' ? contrastHint(token.value) : ''
 			if (hint !== '') {
 				var contrast = document.createElement('span')
 				contrast.className = 'nldesign-own-token-contrast'
 				contrast.textContent = hint
-				item.appendChild(contrast)
+				about.push(contrast)
 			}
 			if (token.deprecation) {
-				item.appendChild(badge(token.deprecation))
+				about.push(badge(token.deprecation))
 			}
 
-			item.appendChild(
+			var actions = cell([
 				button(
 					t('thematiq', 'Edit'),
 					t('thematiq', 'Edit {name}', { name: token.name }),
@@ -212,8 +284,6 @@
 						openTokenDialog(b, token)
 					},
 				),
-			)
-			item.appendChild(
 				button(
 					t('thematiq', 'Deprecate'),
 					t('thematiq', 'Deprecate {name}', { name: token.name }),
@@ -221,8 +291,6 @@
 						openDeprecationDialog(b, token.name, token.deprecation)
 					},
 				),
-			)
-			item.appendChild(
 				button(
 					t('thematiq', 'Remove'),
 					t('thematiq', 'Remove {name}', { name: token.name }),
@@ -230,66 +298,57 @@
 						removeToken(token)
 					},
 				),
-			)
-			el.tokenList.appendChild(item)
+			], 'nldesign-own-token-actions')
+
+			row.append(nameCell, cell([kind]), valueCell(token), cell(about, 'nldesign-own-token-about'), actions)
+			el.tokenList.appendChild(row)
 		})
 	}
 
 	/**
-	 * Draw the deprecations list.
+	 * Draw the deprecations table.
 	 *
 	 * @return {void}
 	 */
 	function renderDeprecations() {
 		el.deprecationList.textContent = ''
+		document.dispatchEvent(new CustomEvent('thematiq:own-tokens', { detail: { tokens: state.tokens, deprecations: state.deprecations } }))
 		if (state.deprecations.length === 0) {
-			var empty = document.createElement('li')
-			empty.textContent = t('thematiq', 'No deprecated tokens.')
-			el.deprecationList.appendChild(empty)
+			el.deprecationList.appendChild(emptyRow(t('thematiq', 'No deprecated tokens.')))
 			return
 		}
 		state.deprecations.forEach(function (record) {
-			var item = document.createElement('li')
-			item.className = 'nldesign-deprecation-row'
-			item.setAttribute('data-deprecated-token', record.token)
-			var name = document.createElement('code')
-			name.textContent = record.token
-			item.appendChild(name)
-			item.appendChild(document.createTextNode(' '))
-			item.appendChild(badge(record))
+			var row = document.createElement('tr')
+			row.className = 'nldesign-deprecation-row'
+			row.setAttribute('data-deprecated-token', record.token)
 
-			var details = []
+			var replacement = []
 			if (record.replacement) {
-				details.push(
-					t('thematiq', 'use {replacement}', {
-						replacement: record.replacement,
-					}),
-				)
+				replacement.push(code(record.replacement))
 			}
-			if (record.removalDate) {
-				details.push(
-					t('thematiq', 'removal {date}', { date: record.removalDate }),
-				)
-			}
-			if (record.state === 'removed') {
-				details.push(t('thematiq', 'removed'))
+			var when = document.createElement('span')
+			when.className = 'nldesign-deprecation-when'
+			when.textContent = record.state === 'removed'
+				? t('thematiq', 'removed')
+				: (record.removalDate
+					? t('thematiq', 'removed from {date}', { date: record.removalDate })
+					: t('thematiq', 'no date'))
+			replacement.push(when)
+
+			var message = []
+			if (record.message) {
+				var text = document.createElement('span')
+				text.textContent = record.message
+				message.push(text)
 			}
 			if (record.own === false) {
-				details.push(
-					t('thematiq', 'Notice only: the value comes from the token set'),
-				)
-			}
-			if (record.message) {
-				details.push(record.message)
-			}
-			if (details.length > 0) {
-				var detail = document.createElement('span')
-				detail.className = 'nldesign-deprecation-detail'
-				detail.textContent = ' ' + details.join(', ')
-				item.appendChild(detail)
+				var notice = document.createElement('span')
+				notice.className = 'nldesign-deprecation-detail'
+				notice.textContent = t('thematiq', 'Notice only: the value comes from the token set')
+				message.push(notice)
 			}
 
-			item.appendChild(
+			var actions = cell([
 				button(
 					t('thematiq', 'Edit'),
 					t('thematiq', 'Edit the deprecation of {name}', {
@@ -299,8 +358,6 @@
 						openDeprecationDialog(b, record.token, record)
 					},
 				),
-			)
-			item.appendChild(
 				button(
 					t('thematiq', 'Withdraw'),
 					t('thematiq', 'Withdraw the deprecation of {name}', {
@@ -310,8 +367,16 @@
 						withdraw(record.token)
 					},
 				),
+			], 'nldesign-own-token-actions')
+
+			row.append(
+				cell([code(record.token)]),
+				cell([badge(record)]),
+				cell(replacement, 'nldesign-deprecation-replacement'),
+				cell(message, 'nldesign-own-token-about'),
+				actions,
 			)
-			el.deprecationList.appendChild(item)
+			el.deprecationList.appendChild(row)
 		})
 	}
 

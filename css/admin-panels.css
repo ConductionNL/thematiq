@@ -2456,3 +2456,82 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+/* Own tokens (TqEigenTokens). */
+#nldesign-settings .thematiq-own-tokens-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-own-tokens-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-own-tokens-panel__table {
+	min-width: 640px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-own-tokens-panel__table td {
+	vertical-align: middle;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-own-tokens-panel__table code {
+	font: 400 12px ui-monospace, Menlo, monospace;
+	overflow-wrap: anywhere;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-text strong,
+#nldesign-settings .thematiq-panel .nldesign-own-token-text code,
+#nldesign-settings .thematiq-panel .nldesign-own-token-shade,
+#nldesign-settings .thematiq-panel .nldesign-own-token-about > *,
+#nldesign-settings .thematiq-panel .nldesign-deprecation-replacement > * {
+	display: block;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-text code {
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-kind {
+	display: inline-flex;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-background-hover) !important;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-shade {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-about,
+#nldesign-settings .thematiq-panel .nldesign-deprecation-when,
+#nldesign-settings .thematiq-panel .nldesign-own-token-contrast {
+	font-size: 13px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-deprecation-when,
+#nldesign-settings .thematiq-panel .nldesign-own-token-contrast {
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-actions {
+	white-space: nowrap;
+	text-align: end;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-own-token-actions button {
+	min-height: 32px;
+	margin: 0 0 0 4px;
+	padding: 0 10px;
+	border: 1px solid var(--color-border-dark) !important;
+	background: var(--color-main-background) !important;
+	font-size: 13px;
+}
+
+#nldesign-settings .thematiq-own-tokens-panel .nldesign-deprecation-badge {
+	margin: 0;
+	padding: 3px 10px;
+	font-weight: 600;
+}
