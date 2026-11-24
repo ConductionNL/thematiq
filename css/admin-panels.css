@@ -1334,3 +1334,116 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 #nldesign-settings .thematiq-bundle-panel .thematiq-panel__aside {
 	flex-basis: 320px;
 }
+
+/* AI assistant (TqAiAssistent). */
+#nldesign-settings .thematiq-assistant-panel .thematiq-panel__main {
+	flex-basis: 560px;
+}
+
+#nldesign-settings .thematiq-assistant-panel .thematiq-panel__aside {
+	flex-basis: 320px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__preview {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 14px;
+	border: 1px dashed var(--color-border-maxcontrast) !important;
+	border-radius: 8px;
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover)) !important;
+}
+
+#nldesign-settings .thematiq-assistant-panel .thematiq-fonts-panel__field input[type='text'] {
+	max-width: 390px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample {
+	display: flex;
+	flex: 0 1 382px;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--color-border) !important;
+	border-radius: 12px;
+	background: var(--color-main-background) !important;
+	box-shadow: 0 4px 16px rgba(27, 28, 29, 0.1);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-head {
+	display: flex;
+	align-items: center;
+	height: 40px;
+	padding: 0 12px;
+	border-bottom: 1px solid var(--color-border);
+	background: transparent !important;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-chat {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	background: transparent !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px 10px;
+	border-radius: 8px;
+	background: var(--color-background-hover) !important;
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble--user {
+	align-self: flex-end;
+	background: var(--color-primary-element-light) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble span {
+	font-size: 12px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-ask {
+	margin: 0 12px 12px;
+	padding: 8px 10px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: transparent !important;
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-foot {
+	padding: 10px 12px;
+	border-top: 1px solid var(--color-border);
+	background: transparent !important;
+	font-size: 12px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-text {
+	display: flex;
+	flex: 1 1 220px;
+	flex-direction: column;
+	gap: 8px;
+	background: transparent !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-text p {
+	margin: 0;
+	font-size: 14px !important;
+	line-height: 1.5 !important;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
