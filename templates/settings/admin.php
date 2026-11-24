@@ -58,6 +58,7 @@ script('thematiq', 'admin-website-lettering');
 script('thematiq', 'admin-panels');
 script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
+script('thematiq', 'admin-custom-css-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -601,7 +602,70 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+
+	<!-- Custom CSS (TqEigenCss), a panel of this page at #css (design.md): admin-authored
+	     rules, checked server-side and emitted after every other theming layer.
+	     js/admin.js saves them; js/admin-custom-css-panel.js numbers the lines. -->
+	<section class="thematiq-panel thematiq-css-panel" data-thematiq-panel="css" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card nldesign-custom-css" id="nldesign-custom-css" aria-labelledby="thematiq-css-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-css-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Custom CSS')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Free CSS for what the tokens cannot express. Use a token where you can, then your CSS follows the house style.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__check">
+						<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox" aria-describedby="thematiq-css-enabled-hint">
+						<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
+						<span id="thematiq-css-enabled-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Off: the CSS is not loaded.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__field">
+						<label for="nldesign-custom-css-input" class="thematiq-css-panel__label"><?php p($l->t('Custom CSS')); ?></label>
+						<div class="thematiq-css-panel__editor">
+							<div class="thematiq-css-panel__gutter" aria-hidden="true"></div>
+							<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false" aria-describedby="thematiq-css-input-hint" placeholder=".app-content { padding: 8px; }"></textarea>
+						</div>
+						<span id="thematiq-css-input-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Comes after all other layers of thematiq, so it always wins.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span id="nldesign-custom-css-feedback" class="thematiq-css-panel__feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-custom-css-save" class="thematiq-css-panel__save"><?php p($l->t('Save custom CSS')); ?></button>
+					</div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-css-refuses-title">
+					<h2 id="thematiq-css-refuses-title" class="thematiq-panel__card-title"><?php p($l->t('What the check refuses')); ?></h2>
+					<div class="thematiq-css-panel__rules">
+						<div><span>@import</span><strong><?php p($l->t('refused')); ?></strong></div>
+						<div><span><?php p($l->t('url() to outside')); ?></span><strong><?php p($l->t('refused')); ?></strong></div>
+						<div><span><?php p($l->t('scripts and HTML tags')); ?></span><strong><?php p($l->t('refused')); ?></strong></div>
+						<div><span><?php p($l->t('background variables for dark')); ?></span><strong><?php p($l->t('refused')); ?></strong></div>
+						<div><span><?php p($l->t('relative paths and data:')); ?></span><strong><?php p($l->t('allowed')); ?></strong></div>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('The check runs before saving. If something is refused, thematiq saves nothing and you see why.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-css-tokens-title">
+					<h2 id="thematiq-css-tokens-title" class="thematiq-panel__card-title"><?php p($l->t('Using custom tokens')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('A custom token such as --nldesign-org-brand-accent can be read here directly with var(). So you change a colour in one place only.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-css-log-title">
+					<h2 id="thematiq-css-log-title" class="thematiq-panel__card-title"><?php p($l->t('In the log')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Every save goes in the log, with who and when.')); ?></p>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
+
+	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
+	<nav class="thematiq-card thematiq-tools" aria-labelledby="thematiq-tools-title">
+		<h2 id="thematiq-tools-title" class="thematiq-card__title"><?php p($l->t('More settings')); ?></h2>
+		<ul class="thematiq-tools__list">
+			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
+		</ul>
+	</nav>
 
 
 
@@ -1156,30 +1220,6 @@ if ($_['mockUi'] === true) {
 		</form>
 	</dialog>
 	<?php // phpcs:enable Generic.Files.LineLength ?>
-
-	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
-	     server-side and emitted after every other theming layer. -->
-	<div class="nldesign-custom-css" id="nldesign-custom-css" style="margin-top:2em">
-		<h3><?php p($l->t('Custom CSS')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Freeform CSS applied after every other theming layer, so it always wins. Use it for tweaks the token editor cannot express.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('For safety this is checked before it is saved: @import, external url() references, script-execution vectors and HTML tags are refused, as are the background variables Nextcloud needs for dark mode. Relative paths and data: URIs are allowed. Every save is written to the audit log.')); ?>
-		</p>
-		<p>
-			<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox">
-			<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
-		</p>
-		<label for="nldesign-custom-css-input" class="hidden-visually"><?php p($l->t('Custom CSS')); ?></label>
-		<textarea id="nldesign-custom-css-input" rows="10" spellcheck="false"
-				  style="width:100%;font-family:monospace;font-size:13px"
-				  placeholder=".app-content { padding: 8px; }"></textarea>
-		<button type="button" id="nldesign-custom-css-save" class="button primary">
-			<?php p($l->t('Save custom CSS')); ?>
-		</button>
-		<span id="nldesign-custom-css-feedback" role="status" aria-live="polite"></span>
-	</div>
 
 	<!-- Theming per app — exclude individual apps from nldesign theming -->
 	<div class="nldesign-app-theming" id="nldesign-app-theming" style="margin-top:2em">

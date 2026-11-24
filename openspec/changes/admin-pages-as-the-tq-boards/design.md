@@ -27,3 +27,11 @@ panel is open and gives it back when the panel closes.
 Why: the boards draw these pages as separate screens of the Theming settings, while Nextcloud gives an app
 one settings section per area. A hash keeps everything on the page the admin already has open, with its
 state and its scripts loaded once, and still gives each page a link of its own.
+
+## Decision: the overview links the pages that have no card
+
+Decided 24 November 2026 in the admin lane. TqTheming draws card links only for Layout and Dark variant;
+the other pages are reached from one another on the boards (TqTokenSet leads to TqComponenten, TqEigenCss to
+TqLogboek). So that every panel can be reached from the overview, the overview ends with a More settings
+card that links each page without a card of its own. A section that becomes a panel leaves the overview's
+long column; the card links it instead.

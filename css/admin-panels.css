@@ -813,3 +813,177 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 #nldesign-settings .thematiq-panel .thematiq-dark-panel__row {
 	background: transparent !important;
 }
+
+/* Custom CSS (TqEigenCss). */
+#nldesign-settings .thematiq-panel .nldesign-custom-css {
+	gap: 16px;
+	margin: 0 !important;
+	padding: 22px 24px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__head {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__title {
+	font-size: 20px !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__lead {
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__check {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__check label {
+	font-size: 15px;
+	font-weight: 600 !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__check .thematiq-panel__fact-hint {
+	padding-inline-start: 34px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__label {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__editor {
+	display: flex;
+	overflow: hidden;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__gutter {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	align-items: flex-end;
+	overflow: hidden;
+	padding: 12px 10px;
+	border-right: 1px solid var(--color-border);
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover)) !important;
+	color: var(--color-text-maxcontrast);
+	font: 400 13px/1.6 ui-monospace, Menlo, monospace;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__editor textarea {
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 12px;
+	border: 0 !important;
+	border-radius: 0;
+	background: transparent;
+	color: var(--color-main-text);
+	font: 400 13px/1.6 ui-monospace, Menlo, monospace;
+	white-space: pre;
+	resize: vertical;
+	box-shadow: none !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__feedback:empty {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__feedback {
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background)) !important;
+	color: var(--color-success) !important;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__feedback--error {
+	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background)) !important;
+	color: var(--color-error-hover, var(--color-error)) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__save {
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 16px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
+	font-size: 14px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__aside-card {
+	gap: 12px;
+	padding: 18px 20px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__rules > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 7px 0;
+	border-top: 1px solid var(--color-background-dark);
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__rules span {
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__aside-card p {
+	margin: 0;
+	font-size: 13px !important;
+	line-height: 1.5 !important;
+}
+
+#nldesign-settings .thematiq-css-panel .thematiq-panel__main {
+	flex-basis: 560px;
+}
+
+#nldesign-settings .thematiq-css-panel .thematiq-panel__aside {
+	flex-basis: 320px;
+}
+
+/* More settings: links to the panels without a card of their own. */
+#nldesign-settings .thematiq-tools {
+	margin-bottom: 24px;
+}
+
+#nldesign-settings .thematiq-tools__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-settings .thematiq-tools__list a {
+	font-size: 14px;
+	font-weight: 600;
+}
