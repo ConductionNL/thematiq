@@ -52,7 +52,6 @@ class ApplyConfigSource implements IRepairStep {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	#[\Override]
 	public function getName(): string {
 		return 'Apply the thematiq branding package from config.php';
 	}//end getName()
@@ -66,7 +65,6 @@ class ApplyConfigSource implements IRepairStep {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	#[\Override]
 	public function run(IOutput $output): void {
 		try {
 			$result = $this->source->applyIfChanged();

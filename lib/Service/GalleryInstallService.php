@@ -69,7 +69,6 @@ class GalleryInstallService implements GalleryInstallServiceInterface {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-installing-is-checked-and-goes-through-the-upload-path
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-updates-are-offered-never-applied
 	 */
-	#[\Override]
 	public function install(string $galleryId): array {
 		$install = $this->prepareInstall(galleryId: $galleryId);
 		$install['wasActive'] = $this->retire(existing: $install['existing']);

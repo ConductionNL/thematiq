@@ -175,7 +175,6 @@ class MigrateAppConfigKeys implements IRepairStep {
 	 *  capability spec describes the rename, and pointing this at an existing
 	 *  one would claim conformance to a requirement that says nothing about it.
 	 */
-	#[\Override]
 	public function getName(): string {
 		return 'Copy Thematiq app configuration from the nldesign namespace to thematiq';
 	}//end getName()
@@ -191,7 +190,6 @@ class MigrateAppConfigKeys implements IRepairStep {
 	 *  moves oc_appconfig rows between namespaces and adds no behaviour of its
 	 *  own. The settings it preserves are specified where they are read.
 	 */
-	#[\Override]
 	public function run(IOutput $output): void {
 		$keys = $this->oldKeys();
 		if ($keys === []) {

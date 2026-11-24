@@ -71,7 +71,6 @@ class ThemeVersionRestoreService implements ThemeVersionRestoreServiceInterface 
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
-	#[\Override]
 	public function preview(string $id): ?array {
 		$version = $this->versions->get(id: $id);
 		if ($version === null) {
@@ -102,7 +101,6 @@ class ThemeVersionRestoreService implements ThemeVersionRestoreServiceInterface 
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
-	#[\Override]
 	public function restore(string $id, ?string $actor = null): ?array {
 		$preview = $this->preview(id: $id);
 		if ($preview === null) {

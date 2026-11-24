@@ -124,7 +124,6 @@ class ThemeGalleryService implements ThemeGalleryServiceInterface {
 	 *
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-the-gallery-is-opt-in-and-disclosed
 	 */
-	#[\Override]
 	public function setEnabled(bool $enabled): void {
 		(new AppConfigToggle(config: $this->config, key: self::CONFIG_ENABLED))->set(enabled: $enabled);
 	}//end setEnabled()
@@ -153,7 +152,6 @@ class ThemeGalleryService implements ThemeGalleryServiceInterface {
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-an-administrator-browses-the-gallery
 	 * @spec openspec/specs/theme-gallery/spec.md#requirement-updates-are-offered-never-applied
 	 */
-	#[\Override]
 	public function browse(): array {
 		$result = [
 			'enabled' => $this->isEnabled(),

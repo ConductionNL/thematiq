@@ -48,7 +48,6 @@ class ConfigExport extends ConfigBundleCommand {
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
-	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:config:export')
 			->setDescription(
@@ -79,7 +78,6 @@ class ConfigExport extends ConfigBundleCommand {
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
 	 */
-	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$packageDir = (string)$input->getOption('package');
 		if ($packageDir !== '') {

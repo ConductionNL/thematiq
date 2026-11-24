@@ -120,7 +120,6 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/dark-mode/spec.md
 	 * @spec openspec/specs/marianne-font/spec.md
 	 */
-	#[\Override]
 	public function getForm(): TemplateResponse {
 		$state = $this->formState();
 		$this->publishBootState(state: $state);
@@ -470,7 +469,6 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
 	 */
-	#[\Override]
 	public function getSection(): string {
 		return 'theming';
 	}//end getSection()
@@ -482,7 +480,6 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
 	 */
-	#[\Override]
 	public function getPriority(): int {
 		return 50;
 	}//end getPriority()
@@ -496,7 +493,6 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
 	 */
-	#[\Override]
 	public function getName(): ?string {
 		return null;
 	}//end getName()
@@ -515,7 +511,6 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/marianne-font/spec.md
 	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 */
-	#[\Override]
 	public function getAuthorizedAppConfig(): array {
 		return [
 			Application::APP_ID => [

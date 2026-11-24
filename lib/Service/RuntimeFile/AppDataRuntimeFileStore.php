@@ -63,7 +63,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function read(string $name): ?string {
 		$this->names->assertAllowed(name: $name);
 		[$directory, $file] = $this->names->split(name: $name);
@@ -86,7 +85,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function write(string $name, string $content): void {
 		$this->names->assertAllowed(name: $name);
 		[$directory, $file] = $this->names->split(name: $name);
@@ -112,7 +110,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function exists(string $name): bool {
 		$this->names->assertAllowed(name: $name);
 		[$directory, $file] = $this->names->split(name: $name);
@@ -132,7 +129,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function delete(string $name): void {
 		$this->names->assertAllowed(name: $name);
 		[$directory, $file] = $this->names->split(name: $name);
@@ -152,7 +148,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function listDirectory(string $directory): array {
 		$directory = trim($directory, '/');
 		try {
@@ -178,7 +173,6 @@ class AppDataRuntimeFileStore implements RuntimeFileStore {
 	 *
 	 * @spec openspec/specs/runtime-file-storage/spec.md
 	 */
-	#[\Override]
 	public function revision(string $name): string {
 		$this->names->assertAllowed(name: $name);
 		[$directory, $file] = $this->names->split(name: $name);

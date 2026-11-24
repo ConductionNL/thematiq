@@ -74,7 +74,6 @@ class MigrateOverrideValueTypes implements IRepairStep {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
 	 */
-	#[\Override]
 	public function getName(): string {
 		return 'Add motion twins and dark values to thematiq token overrides';
 	}//end getName()
@@ -88,7 +87,6 @@ class MigrateOverrideValueTypes implements IRepairStep {
 	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md#requirement-motion-tokens-are-typed-and-reach-every-transition
 	 */
-	#[\Override]
 	public function run(IOutput $output): void {
 		try {
 			$changed = $this->overrides->rewriteAll();

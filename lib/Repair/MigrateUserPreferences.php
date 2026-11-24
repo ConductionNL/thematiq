@@ -169,7 +169,6 @@ class MigrateUserPreferences implements IRepairStep {
 	 *  capability spec describes the rename, and pointing this at an existing
 	 *  one would claim conformance to a requirement that says nothing about it.
 	 */
-	#[\Override]
 	public function getName(): string {
 		return 'Copy Thematiq per-user preferences from the nldesign app id to thematiq';
 	}//end getName()
@@ -185,7 +184,6 @@ class MigrateUserPreferences implements IRepairStep {
 	 *  moves oc_preferences rows between namespaces and adds no behaviour of
 	 *  its own. The preferences it preserves are specified where they are read.
 	 */
-	#[\Override]
 	public function run(IOutput $output): void {
 		$this->migrated = 0;
 		$this->alreadyPresent = 0;

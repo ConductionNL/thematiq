@@ -8,6 +8,7 @@
     findUnusedCode="true"
     findUnusedVariablesAndParams="true"
     strictBinaryOperands="false"
+    ensureOverrideAttribute="false"
 >
     <projectFiles>
         <directory name="lib" />
@@ -38,7 +39,15 @@
     <!-- strictBinaryOperands: psalm 7 turned it on by default (psalm 5's
          default was false). This keeps the rule the code was written and
          checked against; with it on, psalm 7 reports 160 InvalidOperand
-         findings for int and float mixed in the colour arithmetic. -->
+         findings for int and float mixed in the colour arithmetic.
+
+         ensureOverrideAttribute: psalm 7 asks for #[\Override] on every
+         overriding method, but checks against nextcloud/ocp 35 only. The app
+         runs on Nextcloud 32 to 35 with PHP 8.3+, where #[\Override] on a
+         method the parent lacks is a fatal error when the class loads:
+         NLDesignEMailTemplate::renderHtmlWithInlineImages() exists in the
+         parent from Nextcloud 35 on, so the attribute would break mail on
+         32 to 34. -->
     <issueHandlers>
         <!-- Burned down on 2026-10-02 from 37 blanket handlers and a 70-class
              UndefinedClass list to the four below, plus the psalm 7 handlers

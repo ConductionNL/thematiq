@@ -58,7 +58,6 @@ class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
-	#[\Override]
 	public function getName(): string {
 		return 'Record restricted thematiq token sets that are applied without a confirmation';
 	}//end getName()
@@ -72,7 +71,6 @@ class RecordRestrictedSetsAwaitingConfirmation implements IRepairStep {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-an-upgrade-records-every-restricted-set-that-is-already-applied
 	 */
-	#[\Override]
 	public function run(IOutput $output): void {
 		try {
 			$recorded = $this->licences->recordAwaitingConfirmation();

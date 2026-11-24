@@ -112,7 +112,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function getAssets(): array {
 		$assets = json_decode((string)$this->config->getAppValue(Application::APP_ID, self::KEY_ASSETS, '{}'), true);
 		if (is_array($assets) === false) {
@@ -134,7 +133,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function store(string $kind, string $bytes): array {
 		$this->assertKind(kind: $kind);
 		if (strlen($bytes) > self::MAX_BYTES) {
@@ -172,7 +170,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function delete(string $kind): void {
 		$this->assertKind(kind: $kind);
 		$this->removeFiles(folder: $this->folder(), kind: $kind);
@@ -190,7 +187,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function read(string $kind): ?array {
 		$meta = ($this->getAssets()[$kind] ?? null);
 		if (is_array($meta) === false || isset(self::TYPES[$meta['mime'] ?? '']) === false) {
@@ -213,7 +209,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function getFooterLine(): string {
 		return (string)$this->config->getAppValue(Application::APP_ID, self::KEY_FOOTER_LINE, '');
 	}//end getFooterLine()
@@ -229,7 +224,6 @@ class DocumentAssetService implements DocumentAssetServiceInterface {
 	 *
 	 * @spec openspec/specs/document-house-style/spec.md
 	 */
-	#[\Override]
 	public function setFooterLine(string $line): string {
 		$line = trim($line);
 		if (mb_strlen($line) > self::MAX_FOOTER_LINE || preg_match('/[\r\n]/', $line) === 1) {

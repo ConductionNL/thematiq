@@ -94,7 +94,6 @@ class Capabilities implements IPublicCapability {
 	 *
 	 * @spec openspec/specs/theming-capability/spec.md
 	 */
-	#[\Override]
 	public function getCapabilities(): array {
 		try {
 			return ['nldesign' => $this->buildPayload()];

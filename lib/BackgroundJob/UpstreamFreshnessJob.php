@@ -86,7 +86,6 @@ class UpstreamFreshnessJob extends TimedJob {
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
 	 */
-	#[\Override]
 	protected function run($argument): void {
 		try {
 			$this->service->runCheck();

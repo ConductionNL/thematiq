@@ -69,7 +69,6 @@ class ConfigApply extends Command {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:config:apply')
 			->setDescription('Apply the branding package named in thematiq.config_source when it changed.')
@@ -91,7 +90,6 @@ class ConfigApply extends Command {
 	 *
 	 * @spec openspec/specs/theme-as-code/spec.md
 	 */
-	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$result = $this->source->applyIfChanged(force: ($input->getOption('force') === true));
 

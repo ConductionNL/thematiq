@@ -48,7 +48,6 @@ class ConfigVersions extends Command {
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
-	#[\Override]
 	protected function configure(): void {
 		$this->setName(name: 'thematiq:config:versions')
 			->setDescription('List the kept configuration versions, newest first: id, time, actor and audit action.');
@@ -66,7 +65,6 @@ class ConfigVersions extends Command {
 	 *
 	 * @spec openspec/specs/theme-versions/spec.md
 	 */
-	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$versions = $this->versions->list();
 		if ($versions === []) {

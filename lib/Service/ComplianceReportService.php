@@ -200,7 +200,6 @@ class ComplianceReportService implements ComplianceReportServiceInterface {
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	#[\Override]
 	public function renderJson(): string {
 		$data = $this->generate();
 
@@ -214,7 +213,6 @@ class ComplianceReportService implements ComplianceReportServiceInterface {
 	 *
 	 * @spec openspec/specs/compliance-evidence/spec.md
 	 */
-	#[\Override]
 	public function renderMarkdown(): string {
 		$data = $this->generate();
 		$lines = [

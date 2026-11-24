@@ -60,7 +60,6 @@ class ShareableConfigTypeListener implements IEventListener {
 	 *
 	 * @spec openspec/specs/federated-config-sharing/spec.md
 	 */
-	#[\Override]
 	public function handle(Event $event): void {
 		if (($event instanceof RegisterShareableConfigTypesEvent) === false) {
 			return;

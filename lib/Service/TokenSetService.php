@@ -120,7 +120,6 @@ class TokenSetService {
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-filesystem-based-discovery
 	 */
-	#[\Override]
 	public function getAppPath(): string {
 		return $this->setFiles->appManager->getAppPath('thematiq');
 	}//end getAppPath()
@@ -132,7 +131,6 @@ class TokenSetService {
 	 *
 	 * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
-	#[\Override]
 	protected function licenceConfig(): IConfig {
 		return $this->runtime->config;
 	}//end licenceConfig()
