@@ -219,6 +219,12 @@ use ReflectionProperty;
 #[UsesClass(\OCA\Thematiq\Service\GroupMappingRules::class)]
 #[UsesClass(\OCA\Thematiq\Service\SwitchPlan::class)]
 #[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
+#[UsesClass(\OCA\Thematiq\AppInfo\OpenRegisterAutoloader::class)]
+#[UsesClass(\OCA\Thematiq\Service\BundledFontLibrary::class)]
+#[UsesClass(\OCA\Thematiq\Service\DtcgColourSerializer::class)]
+#[UsesClass(\OCA\Thematiq\Service\DtcgValueSerializer::class)]
+#[UsesClass(\OCA\Thematiq\Service\PlannedSwitches::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchWindow::class)]
 class RestrictedSetRequestPathTest extends TestCase {
 
 	use RestrictedSetFixture;

@@ -57,6 +57,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\AppConfigManifest
  * @uses   \OCA\Thematiq\Service\ColourRgba
  * @uses   \OCA\Thematiq\Service\TokenSetManifestFile
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\AppFilePath
  */
 class CustomTokenSetStoreGoldenTest extends TestCase {
 

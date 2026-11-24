@@ -46,6 +46,7 @@ use ReflectionClassConstant;
  * @uses   \OCA\Thematiq\Service\CssParserService
  * @uses   \OCA\Thematiq\Service\CssDeclarationScanner
  * @uses \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\AppFilePath
  */
 class DarkPaletteRepairGoldenTest extends TestCase {
 

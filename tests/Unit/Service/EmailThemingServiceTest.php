@@ -167,7 +167,8 @@ class EmailThemingServiceTest extends TestCase {
 	}//end refusedLogoPaths()
 
 	/**
-	 * On the real file locator a stored path cannot climb out of img/, though the file is there to read.
+	 * On the real file locator a stored path cannot climb out of img/, though the file is there to read:
+	 * the locator refuses a climbing name itself, and the service never asks for one.
 	 *
 	 * @param string $logo The stored path.
 	 *
@@ -200,7 +201,7 @@ class EmailThemingServiceTest extends TestCase {
 		);
 
 		try {
-			$this->assertSame(expected: 'secret', actual: $locator->read(name: 'img/../config/config.svg'));
+			$this->assertNull(actual: $locator->read(name: 'img/../config/config.svg'));
 			$image = $service->getActiveEmailLogoImage();
 			if ($logo === 'img/logos/own.svg') {
 				$this->assertSame(expected: '<svg/>', actual: $image['content']);

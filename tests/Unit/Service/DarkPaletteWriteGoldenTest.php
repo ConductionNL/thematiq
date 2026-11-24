@@ -51,6 +51,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\ColourRgba
  * @uses   \OCA\Thematiq\Service\RuntimeFile\LocalFile
  * @uses   \OCA\Thematiq\Service\TokenSetManifestFile
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\AppFilePath
  */
 class DarkPaletteWriteGoldenTest extends TestCase {
 
