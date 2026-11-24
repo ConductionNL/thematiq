@@ -1015,7 +1015,7 @@ body:not(#body-login) {
 }
 
 /* The keyboard ring of the light workplace
- * (openspec/changes/zuiddrecht-workplace-type-and-focus/specs/zuiddrecht-token-set/spec.md).
+ * (openspec/specs/zuiddrecht-token-set/spec.md).
  *
  * A set that names its ring colour in --nldesign-color-focus-ring (Zuiddrecht:
  * the action blue, as DqTokens draws it) gets a 2px solid ring in it on every

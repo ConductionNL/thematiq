@@ -2,8 +2,8 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md
- * @e2e openspec/changes/zuiddrecht-workplace-type-and-focus/specs/zuiddrecht-token-set/spec.md
+ * @e2e openspec/specs/workplace-app-sheets/spec.md
+ * @e2e openspec/specs/zuiddrecht-token-set/spec.md
  *
  * The live look the two changes ask for (workplace-app-sheets-entry-states 3.1,
  * zuiddrecht-workplace-type-and-focus 2.3), as computed styles on a real

@@ -110,7 +110,7 @@
 	/* The workplace's keyboard ring, as DqTokens draws it ("Focus: 2 px blue
 	 * border, always visible"): the action blue, opaque, not the halo above.
 	 * 5.64:1 on white and 5.22:1 on the workspace #F5F6F8. Read by
-	 * css/workplace-layout.css (openspec/changes/zuiddrecht-workplace-type-and-focus). */
+	 * css/workplace-layout.css (openspec/changes/archive/2026-11-24-zuiddrecht-workplace-type-and-focus). */
 	--nldesign-color-focus-ring: #3669A5;
 
 	/* Link colours (interactive blue, not the red accent) */
