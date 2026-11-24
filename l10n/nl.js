@@ -1353,6 +1353,7 @@ OC.L10N.register(
         "Nothing to create here.": "Hier valt niets te maken.",
         "Quick add": "Snel toevoegen",
         "New event": "Nieuwe afspraak",
+        "_%n open card_::_%n open cards_": ["%n open kaart","%n open kaarten"],
         "Select a conversation": "Selecteer een gesprek",
         "Themes and appearance": "Thema's en uiterlijk",
         "Administration settings": "Beheerinstellingen",
