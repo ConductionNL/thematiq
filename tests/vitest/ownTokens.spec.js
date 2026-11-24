@@ -204,6 +204,27 @@ describe('ownTokens.js', () => {
 		expect(document.activeElement).toBe(add)
 	})
 
+	it('draws the board: the usage line follows the name, the colour hint follows the type, both close buttons close', async () => {
+		await mount({ tokens: [] })
+		const add = document.getElementById('nldesign-own-token-add')
+		add.focus()
+		click(add)
+		const dialog = document.getElementById('nldesign-own-token-dialog')
+		expect(dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent).toBe('Own tokens')
+		const form = dialog.querySelector('form')
+		form.elements.slug.value = 'footer-surface'
+		form.elements.slug.dispatchEvent(new window.Event('input'))
+		expect(dialog.querySelector('.nldesign-own-token-usage').textContent).toBe('background: var(--nldesign-org-footer-surface);')
+
+		form.elements.type.value = 'text'
+		form.elements.type.dispatchEvent(new window.Event('change'))
+		expect(dialog.querySelector('.nldesign-own-token-colour-hint').hidden).toBe(true)
+
+		click(dialog.querySelector('.thematiq-admin-dialog__close'))
+		expect(dialog.hasAttribute('open')).toBe(false)
+		expect(document.activeElement).toBe(add)
+	})
+
 	it('keeps the dialog open and shows the server text on a refusal', async () => {
 		answer('POST', '/settings/tokens/own', 400, {
 			error: 'Use lowercase letters, digits and single dashes for the name, at most 48 characters.',

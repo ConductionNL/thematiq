@@ -913,83 +913,122 @@ if ($_['mockUi'] === true) {
 		<p id="nldesign-own-tokens-status" role="status" aria-live="polite"></p>
 	</div>
 
-	<dialog id="nldesign-own-token-dialog" class="nldesign-own-dialog" aria-labelledby="nldesign-own-token-dialog-title">
-		<form method="dialog">
-			<h3 id="nldesign-own-token-dialog-title" class="nldesign-dialog-title"><?php p($l->t('Add a token')); ?></h3>
-			<p>
-				<label for="nldesign-own-token-slug"><?php p($l->t('Name')); ?></label>
-				<span class="nldesign-own-token-prefix" aria-hidden="true">--nldesign-org-</span>
-				<input type="text" id="nldesign-own-token-slug" name="slug" required maxlength="48"
-					pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="nldesign-own-token-slug-hint">
-				<span id="nldesign-own-token-slug-hint" class="settings-hint"><?php p($l->t('Lowercase letters, digits and single dashes, at most 48 characters.')); ?></span>
-			</p>
-			<p>
-				<label for="nldesign-own-token-label"><?php p($l->t('Label')); ?></label>
-				<input type="text" id="nldesign-own-token-label" name="label" required maxlength="80">
-			</p>
-			<p>
-				<label for="nldesign-own-token-type"><?php p($l->t('Type')); ?></label>
-				<select id="nldesign-own-token-type" name="type">
-					<option value="color"><?php p($l->t('Colour')); ?></option>
-					<option value="text"><?php p($l->t('Text')); ?></option>
-					<option value="duration"><?php p($l->t('Duration')); ?></option>
-					<option value="easing"><?php p($l->t('Easing')); ?></option>
-				</select>
-			</p>
-			<p>
-				<label for="nldesign-own-token-value"><?php p($l->t('Value')); ?></label>
-				<input type="text" id="nldesign-own-token-value" name="value" required>
-			</p>
-			<p class="nldesign-own-token-dark">
-				<label for="nldesign-own-token-dark"><?php p($l->t('Dark value (optional)')); ?></label>
-				<input type="text" id="nldesign-own-token-dark" name="darkValue">
-			</p>
-			<p>
-				<label for="nldesign-own-token-description"><?php p($l->t('Description (optional)')); ?></label>
-				<input type="text" id="nldesign-own-token-description" name="description" maxlength="500">
-			</p>
-			<p class="nldesign-dialog-error" role="alert"></p>
-			<div class="nldesign-dialog-buttons">
-				<button type="button" class="nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
-				<button type="submit" class="primary"><?php p($l->t('Save token')); ?></button>
+	<?php // phpcs:disable Generic.Files.LineLength -- the dialogs keep the board's markup on one line per element. ?>
+	<!-- Add a token and Deprecate a token, drawn as the TqTokenToevoegen and
+	     TqTokenUitfaseren boards in the admin dialog frame (css/admin-dialog.css).
+	     js/ownTokens.js opens, fills and saves them. -->
+	<dialog id="nldesign-own-token-dialog" class="nldesign-own-dialog thematiq-admin-dialog" aria-labelledby="nldesign-own-token-dialog-title" style="max-width: min(640px, calc(100vw - 32px))">
+		<form method="dialog" class="thematiq-admin-dialog__form">
+			<div class="thematiq-admin-dialog__head">
+				<div class="thematiq-admin-dialog__heading">
+					<span class="thematiq-admin-dialog__eyebrow"><?php p($l->t('Own tokens')); ?></span>
+					<h2 id="nldesign-own-token-dialog-title" class="thematiq-admin-dialog__title nldesign-dialog-title"><?php p($l->t('Add a token')); ?></h2>
+				</div>
+				<button type="button" class="thematiq-admin-dialog__close nldesign-dialog-cancel" aria-label="<?php p($l->t('Close')); ?>"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg></button>
+			</div>
+			<div class="thematiq-admin-dialog__body">
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-own-token-slug"><?php p($l->t('Name')); ?></label>
+					<div class="thematiq-admin-dialog__affix">
+						<span class="nldesign-own-token-prefix" aria-hidden="true">--nldesign-org-</span>
+						<input type="text" id="nldesign-own-token-slug" name="slug" required maxlength="48" pattern="[a-z0-9]+(-[a-z0-9]+)*" aria-describedby="nldesign-own-token-slug-hint">
+					</div>
+					<span id="nldesign-own-token-slug-hint" class="thematiq-admin-dialog__hint"><?php p($l->t('Lowercase letters, digits and single dashes, at most 48 characters.')); ?></span>
+				</div>
+				<div class="thematiq-admin-dialog__grid">
+					<div class="thematiq-admin-dialog__field">
+						<label for="nldesign-own-token-label"><?php p($l->t('Label')); ?></label>
+						<input type="text" id="nldesign-own-token-label" name="label" required maxlength="80">
+					</div>
+					<div class="thematiq-admin-dialog__field">
+						<label for="nldesign-own-token-type"><?php p($l->t('Type')); ?></label>
+						<select id="nldesign-own-token-type" name="type">
+							<option value="color"><?php p($l->t('Colour')); ?></option>
+							<option value="text"><?php p($l->t('Text')); ?></option>
+							<option value="duration"><?php p($l->t('Duration')); ?></option>
+							<option value="easing"><?php p($l->t('Easing')); ?></option>
+						</select>
+					</div>
+				</div>
+				<div class="thematiq-admin-dialog__grid">
+					<div class="thematiq-admin-dialog__field">
+						<label for="nldesign-own-token-value"><?php p($l->t('Value')); ?></label>
+						<input type="text" id="nldesign-own-token-value" name="value" required aria-describedby="nldesign-own-token-value-hint">
+						<span id="nldesign-own-token-value-hint" class="thematiq-admin-dialog__hint nldesign-own-token-colour-hint"><?php p($l->t('A colour, such as #EAF0F7 or rgb(234 240 247).')); ?></span>
+					</div>
+					<div class="thematiq-admin-dialog__field nldesign-own-token-dark">
+						<label for="nldesign-own-token-dark"><?php p($l->t('Dark value')); ?> <span class="thematiq-admin-dialog__optional"><?php p($l->t('(optional)')); ?></span></label>
+						<input type="text" id="nldesign-own-token-dark" name="darkValue" aria-describedby="nldesign-own-token-dark-hint">
+						<span id="nldesign-own-token-dark-hint" class="thematiq-admin-dialog__hint"><?php p($l->t('The value for the dark theme.')); ?></span>
+					</div>
+				</div>
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-own-token-description"><?php p($l->t('Description')); ?> <span class="thematiq-admin-dialog__optional"><?php p($l->t('(optional)')); ?></span></label>
+					<input type="text" id="nldesign-own-token-description" name="description" maxlength="500" aria-describedby="nldesign-own-token-description-hint">
+					<span id="nldesign-own-token-description-hint" class="thematiq-admin-dialog__hint"><?php p($l->t('At most 500 characters. Say what the token is for.')); ?></span>
+				</div>
+				<div class="thematiq-admin-dialog__usage">
+					<span><?php p($l->t('How to use it')); ?></span>
+					<code class="nldesign-own-token-usage">background: var(--nldesign-org-…);</code>
+				</div>
+				<p class="nldesign-dialog-error thematiq-admin-dialog__error" role="alert"></p>
+			</div>
+			<div class="thematiq-admin-dialog__foot">
+				<button type="button" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
+				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary"><?php p($l->t('Save token')); ?></button>
 			</div>
 		</form>
 	</dialog>
 
-	<dialog id="nldesign-deprecation-dialog" class="nldesign-own-dialog" aria-labelledby="nldesign-deprecation-dialog-title">
-		<form method="dialog">
-			<h3 id="nldesign-deprecation-dialog-title"><?php p($l->t('Deprecate a token')); ?></h3>
-			<p>
-				<label for="nldesign-deprecation-token"><?php p($l->t('Token')); ?></label>
-				<input type="text" id="nldesign-deprecation-token" name="token" required placeholder="--nldesign-">
-			</p>
-			<p>
-				<label for="nldesign-deprecation-severity"><?php p($l->t('Severity')); ?></label>
-				<select id="nldesign-deprecation-severity" name="severity">
-					<option value="info"><?php p($l->t('Info')); ?></option>
-					<option value="warning" selected><?php p($l->t('Warning')); ?></option>
-					<option value="critical"><?php p($l->t('Critical')); ?></option>
-				</select>
-			</p>
-			<p>
-				<label for="nldesign-deprecation-replacement"><?php p($l->t('Replacement token (optional)')); ?></label>
-				<input type="text" id="nldesign-deprecation-replacement" name="replacement">
-			</p>
-			<p>
-				<label for="nldesign-deprecation-date"><?php p($l->t('Removal date (optional)')); ?></label>
-				<input type="date" id="nldesign-deprecation-date" name="removalDate">
-			</p>
-			<p>
-				<label for="nldesign-deprecation-message"><?php p($l->t('Message (optional)')); ?></label>
-				<input type="text" id="nldesign-deprecation-message" name="message" maxlength="500">
-			</p>
-			<p class="nldesign-dialog-error" role="alert"></p>
-			<div class="nldesign-dialog-buttons">
-				<button type="button" class="nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
-				<button type="submit" class="primary"><?php p($l->t('Save deprecation')); ?></button>
+	<dialog id="nldesign-deprecation-dialog" class="nldesign-own-dialog thematiq-admin-dialog" aria-labelledby="nldesign-deprecation-dialog-title" style="max-width: min(640px, calc(100vw - 32px))">
+		<form method="dialog" class="thematiq-admin-dialog__form">
+			<div class="thematiq-admin-dialog__head">
+				<div class="thematiq-admin-dialog__heading">
+					<span class="thematiq-admin-dialog__eyebrow"><?php p($l->t('Deprecated tokens')); ?></span>
+					<h2 id="nldesign-deprecation-dialog-title" class="thematiq-admin-dialog__title"><?php p($l->t('Deprecate a token')); ?></h2>
+				</div>
+				<button type="button" class="thematiq-admin-dialog__close nldesign-dialog-cancel" aria-label="<?php p($l->t('Close')); ?>"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg></button>
+			</div>
+			<div class="thematiq-admin-dialog__body">
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-deprecation-token"><?php p($l->t('Token')); ?></label>
+					<input type="text" id="nldesign-deprecation-token" name="token" required placeholder="--nldesign-" aria-describedby="nldesign-deprecation-token-hint">
+					<span id="nldesign-deprecation-token-hint" class="thematiq-admin-dialog__hint"><?php p($l->t('The full name of the token that goes away.')); ?></span>
+				</div>
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-deprecation-severity"><?php p($l->t('Severity')); ?></label>
+					<select id="nldesign-deprecation-severity" name="severity">
+						<option value="warning" selected><?php p($l->t('Warning')); ?></option>
+						<option value="info"><?php p($l->t('Info')); ?></option>
+						<option value="critical"><?php p($l->t('Critical')); ?></option>
+					</select>
+				</div>
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-deprecation-replacement"><?php p($l->t('Replacement token')); ?> <span class="thematiq-admin-dialog__optional"><?php p($l->t('(optional)')); ?></span></label>
+					<input type="text" id="nldesign-deprecation-replacement" name="replacement">
+				</div>
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-deprecation-date"><?php p($l->t('Gone from')); ?> <span class="thematiq-admin-dialog__optional"><?php p($l->t('(optional)')); ?></span></label>
+					<input type="date" id="nldesign-deprecation-date" name="removalDate">
+				</div>
+				<div class="thematiq-admin-dialog__field">
+					<label for="nldesign-deprecation-message"><?php p($l->t('Message')); ?> <span class="thematiq-admin-dialog__optional"><?php p($l->t('(optional)')); ?></span></label>
+					<input type="text" id="nldesign-deprecation-message" name="message" maxlength="500" aria-describedby="nldesign-deprecation-message-hint">
+					<span id="nldesign-deprecation-message-hint" class="thematiq-admin-dialog__hint"><?php p($l->t('At most 500 characters.')); ?></span>
+				</div>
+				<div class="thematiq-admin-dialog__notice thematiq-admin-dialog__notice--neutral">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/></svg>
+					<span><?php p($l->t('Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.')); ?></span>
+				</div>
+				<p class="nldesign-dialog-error thematiq-admin-dialog__error" role="alert"></p>
+			</div>
+			<div class="thematiq-admin-dialog__foot">
+				<button type="button" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
+				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary"><?php p($l->t('Save deprecation')); ?></button>
 			</div>
 		</form>
 	</dialog>
+	<?php // phpcs:enable Generic.Files.LineLength ?>
 
 	<!-- Freeform custom CSS — admin-authored arbitrary rules, sanitised
 	     server-side and emitted after every other theming layer. -->

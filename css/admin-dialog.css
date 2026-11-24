@@ -523,3 +523,79 @@ dialog.thematiq-admin-dialog::backdrop {
 	font-size: 13px;
 	color: var(--color-text-maxcontrast);
 }
+
+/* The dialogs drawn in the template (Add a token, Deprecate a token). */
+.thematiq-admin-dialog__form {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.thematiq-admin-dialog__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 16px;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__field select,
+.thematiq-admin-dialog .thematiq-admin-dialog__field input[type='date'] {
+	box-sizing: border-box;
+	width: 100%;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 10px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 15px;
+}
+
+.thematiq-admin-dialog__optional {
+	font-weight: 400;
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-admin-dialog__affix {
+	display: flex;
+	min-width: 0;
+}
+
+.thematiq-admin-dialog__affix .nldesign-own-token-prefix {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 10px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-right: 0;
+	border-radius: 8px 0 0 8px;
+	background: var(--color-background-hover);
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	font: 400 13px ui-monospace, Menlo, monospace;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__affix input {
+	flex: 1;
+	min-width: 0;
+	border-radius: 0 8px 8px 0;
+}
+
+.thematiq-admin-dialog__usage {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 14px;
+	border-radius: 8px;
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-admin-dialog__usage code {
+	font: 400 13px ui-monospace, Menlo, monospace;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__error:empty {
+	display: none;
+}

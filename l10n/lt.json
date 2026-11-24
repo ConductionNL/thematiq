@@ -1477,7 +1477,21 @@
         "Choose and upload file": "Choose and upload file",
         "Choose brands to import": "Choose brands to import",
         "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.": "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.",
-        "Import chosen brands": "Import chosen brands"
+        "Import chosen brands": "Import chosen brands",
+        "Own tokens": "Own tokens",
+        "A colour, such as #EAF0F7 or rgb(234 240 247).": "A colour, such as #EAF0F7 or rgb(234 240 247).",
+        "Dark value": "Dark value",
+        "(optional)": "(optional)",
+        "The value for the dark theme.": "The value for the dark theme.",
+        "Description": "Description",
+        "At most 500 characters. Say what the token is for.": "At most 500 characters. Say what the token is for.",
+        "How to use it": "How to use it",
+        "The full name of the token that goes away.": "The full name of the token that goes away.",
+        "Replacement token": "Replacement token",
+        "Gone from": "Gone from",
+        "Message": "Message",
+        "At most 500 characters.": "At most 500 characters.",
+        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers."
     },
     "plurals": {}
 }
