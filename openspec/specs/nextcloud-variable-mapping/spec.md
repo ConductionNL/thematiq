@@ -206,6 +206,7 @@ no stock theme at all is a blank page.
 - THEN the resolved tokens MUST carry that colour, because it is the colour the instance wears
 
 #### Scenario: A token read by several variables takes the defining one
+@e2e exclude Which variable a token is resolved from is server-side resolution, invisible in the emitted value alone: PHPUnit tests/Unit/Service/StockTokensServiceTest.php (testTakesTheValueOfTheVariableSharingTheTokenName, testPicksDeterministicallyWithoutANameMatch)
 - GIVEN `--color-primary`, `--color-primary-element`, `--color-primary-light-text` and
   `--color-primary-element-light-text` all read `--nldesign-color-primary`
 - WHEN the stock set is resolved
@@ -213,12 +214,14 @@ no stock theme at all is a blank page.
 - AND MUST NOT take a text colour from one of the other three
 
 #### Scenario: A user's personal colour does not reach anyone else
+@e2e exclude Server-side resolution and caching of the one shared block: PHPUnit tests/Unit/Service/StockTokensServiceTest.php (testTheBlockIsTheInstanceColourNotTheUsers, testAServedBlockComesFromTheCache)
 - GIVEN user theming is enabled and a user has set a personal primary colour
 - WHEN the `nextcloud` token set is resolved, whoever the request belongs to
 - THEN the emitted tokens MUST carry the admin's colour, not that user's
 - AND the block served to another user, and to the anonymous login page, MUST be the same one
 
 #### Scenario: A value that cannot be frozen is dropped
+@e2e exclude Needs a stock variable holding a gradient or color-mix(), which the instance's theme does not offer on demand: PHPUnit tests/Unit/Service/StockTokensServiceTest.php (testDropsCompositesItCannotResolve, testTheReferenceChainLimitAndTrimming)
 - GIVEN a stock variable whose value is a gradient, a `color-mix()` or an unresolvable `var()` chain
 - WHEN the stock set is resolved
 - THEN no `--nldesign-*` token MUST be emitted for it, rather than one carrying a reference
