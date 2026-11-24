@@ -14,7 +14,8 @@ import { test, expect, type Page } from '@playwright/test'
 import { openThemedPage } from './_token-css'
 import { requestToken } from '../workflows/_helpers'
 
-const THEMING_URL = '/settings/admin/theming'
+/** The admin page's fonts panel (TqLettertypen); its list is hidden until the panel is open. */
+const THEMING_URL = '/settings/admin/theming#fonts'
 
 type LibraryFont = { name: string; licence?: string; roles?: string[] }
 
