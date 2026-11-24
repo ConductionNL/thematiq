@@ -32,19 +32,20 @@ applies to the tentative state alone and the builder MUST note that in the task.
 - WHEN the week renders
 - THEN the entry MUST have a dashed frame and edge
 
-### Requirement: Deck lifts a card mid-move over a dashed slot (REQ-TQAS-103)
+### Requirement: Deck lifts a card mid-move (REQ-TQAS-103)
 While a Deck card is dragged in the light layout, the card under the pointer MUST be drawn lifted, with
-a shadow and a slight tilt, and the place it will drop MUST be a dashed slot of the card's height in
-the border colour, as TbBoard draws it. With reduced motion asked for, the tilt MUST be left out. The
-rules MUST read tokens only and start at Deck's content element. When the dragged copy is drawn outside
-that element, the lift MUST be left out rather than styled from the body, and the dashed slot alone
-MUST show.
+a shadow and a slight tilt, as TbBoard draws it. With reduced motion asked for, the tilt MUST be left
+out. The rules MUST read tokens only and start at Deck's content element. When the dragged copy is
+drawn outside that element, the lift MUST be left out rather than styled from the body. TbBoard's
+dashed slot where the card will land is not drawn: Deck passes no `dropPlaceholder` to smooth-dnd, so
+no element marks the place, and drawing one would take a change to Deck's own code (see the proposal's
+"Not in this change").
 
 #### Scenario: A card between two columns
 @e2e exclude A pointer drag across columns; static check in tests/vitest/workplaceApps.spec.js, looked at live against TbBoard
 - GIVEN a Deck board
 - WHEN a card is dragged towards another column
-- THEN the card MUST be lifted and the target MUST show a dashed slot
+- THEN the card MUST be lifted
 
 #### Scenario: Reduced motion
 @e2e exclude Static file check: the tilt sits outside `prefers-reduced-motion: reduce`
