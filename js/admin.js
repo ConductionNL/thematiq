@@ -3144,49 +3144,12 @@
 		 * @return {void}
 		 */
 		function confirmBaseUnlock(proceed) {
-			var html =
-				'<div class="nldesign-dialog-overlay" id="nldesign-base-unlock-overlay">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', "Edit Nextcloud's base tokens?"))
-				+ '</h3>'
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'These are the colors and sizes Nextcloud itself is built from, such as the main text color. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
-					),
-				)
-				+ '</p>'
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(t('thematiq', 'Edit them anyway'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-base-unlock-overlay')
-
-			function close() {
-				overlay.remove()
-			}
-
-			makeDialogAccessible(overlay, close)
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed()
+			if (window.ThematiqBaseTokensDialog !== undefined) {
+				window.ThematiqBaseTokensDialog.open({
+					opener: document.getElementById('nldesign-base-unlock'),
+					onConfirm: proceed,
 				})
+			}
 		}
 
 		/**

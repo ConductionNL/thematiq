@@ -112,6 +112,26 @@
 	}
 
 	/**
+	 * A table of the body: column heads and rows of cells.
+	 *
+	 * @param {string[]} heads The column heads.
+	 * @param {Array<Array<Node|string>>} rows Each row's cells; a cell is a node or text.
+	 * @return {HTMLElement} The table.
+	 */
+	function table(heads, rows) {
+		return h('table', { class: BLOCK + '__table' }, [
+			h('thead', {}, [h('tr', {}, heads.map(function (head) {
+				return h('th', { scope: 'col', text: head })
+			}))]),
+			h('tbody', {}, rows.map(function (cells) {
+				return h('tr', {}, cells.map(function (cell) {
+					return h('td', {}, [cell])
+				}))
+			})),
+		])
+	}
+
+	/**
 	 * A text field with its label over it, a hint under it and a line for a refusal.
 	 *
 	 * @param {object} options The field.
@@ -254,5 +274,6 @@
 		list: list,
 		notice: notice,
 		field: field,
+		table: table,
 	}
 })()
