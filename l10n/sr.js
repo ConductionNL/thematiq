@@ -1382,7 +1382,24 @@ OC.L10N.register(
         "Workplace": "Workplace",
         "Login page": "Login page",
         "The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.": "The login page shows the logo, the login card with the primary button and the slogan, in the chosen set.",
-        "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.": "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme."
+        "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.": "Sign-in page tab: this is how the set draws the sign-in page. Logo and slogan come from the Nextcloud theme.",
+        "Token sets": "Token sets",
+        "Search token sets": "Search token sets",
+        "Own token set": "Own token set",
+        "Design system": "Design system",
+        "Primary colour": "Primary colour",
+        "Layout": "Layout",
+        "Show more": "Show more",
+        "Active": "Active",
+        "Available": "Available",
+        "Confirm licence": "Confirm licence",
+        "Light workplace": "Light workplace",
+        "Follows Nextcloud": "Follows Nextcloud",
+        "Own set": "Own set",
+        "More actions for {name}": "More actions for {name}",
+        "Use this token set": "Use this token set",
+        "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.": "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.",
+        "{shown} of {total}": "{shown} of {total}"
     },
     "nplurals=2; plural=(n != 1);"
 )
