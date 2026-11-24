@@ -335,14 +335,7 @@
 		})
 		if (own !== null) {
 			own.addEventListener('click', function () {
-				var target = document.getElementById('nldesign-custom-token-sets')
-				if (target !== null) {
-					target.scrollIntoView({ block: 'start' })
-					var tab = target.querySelector('[role="tab"]')
-					if (tab !== null) {
-						tab.focus()
-					}
-				}
+				window.location.hash = 'own-sets'
 			})
 		}
 		document.addEventListener('click', closeMenus)

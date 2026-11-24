@@ -66,6 +66,7 @@ script('thematiq', 'admin-bundle-panel');
 script('thematiq', 'admin-assistant-panel');
 script('thematiq', 'admin-switches-panel');
 script('thematiq', 'admin-gallery-panel');
+script('thematiq', 'admin-own-sets-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1112,6 +1113,182 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Own token sets (TqEigenSets), a panel of this page at #own-sets (design.md): a house style
+	     of your own, uploaded as a file or made from colours (openspec/specs/custom-token-sets,
+	     openspec/specs/simple-brand-form). admin.js uploads, creates, lists and deletes;
+	     js/admin-own-sets-panel.js writes the counts, the use and the contrast warnings. -->
+	<section class="thematiq-panel thematiq-own-sets-panel" id="nldesign-custom-token-sets" data-thematiq-panel="own-sets" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-own-sets-create-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-own-sets-create-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Create your own house style')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Two ways: upload a file, or start from your colours. Both appear in the list below and in the dropdown of the active token set.')); ?></span>
+					</div>
+					<div>
+						<!-- One form on screen at a time; admin.js switches the panels. -->
+						<div class="nldesign-create-tabs" role="tablist" aria-label="<?php p($l->t('Add a custom token set')); ?>">
+							<button type="button" class="nldesign-create-tab active" role="tab" id="nldesign-create-tab-upload" aria-selected="true" aria-controls="nldesign-create-panel-upload"><?php p($l->t('Upload file')); ?></button>
+							<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours" aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1"><?php p($l->t('Start from your colours')); ?></button>
+						</div>
+						<div class="nldesign-create-panels">
+						<div class="nldesign-create-panel" id="nldesign-create-panel-upload" role="tabpanel"
+							 aria-labelledby="nldesign-create-tab-upload">
+							<p class="settings-hint">
+								<?php p($l->t('An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.')); ?>
+							</p>
+							<div class="nldesign-fields">
+								<div class="nldesign-field">
+									<label for="nldesign-upload-name"><?php p($l->t('Token set name')); ?></label>
+									<input type="text" id="nldesign-upload-name" class="nldesign-upload-name"
+										   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>"
+										   maxlength="64">
+								</div>
+							</div>
+							<!-- Named, even though it is hidden. The visible <button> below is
+							     the trigger; this input only ever opens the file dialog via
+							     .click(). A `display:none` control is out of the
+							     accessibility tree WHILE hidden — but unlike an
+							     `aria-hidden` one it can be exposed again by a single style
+							     change from script or a user stylesheet, and at that moment
+							     an unnamed file input is a real WCAG 4.1.2 failure. The name
+							     costs nothing while hidden and is correct the instant it is
+							     not. (ConductionNL/.github#273 declines to exempt this shape
+							     for exactly that reason.) -->
+							<input type="file" id="nldesign-upload-input" accept=".css,.json,.tokens.json"
+								   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
+								   style="display:none">
+							<p class="nldesign-hint" id="nldesign-upload-figma-hint">
+								<?php p($l->t('Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.')); ?>
+							</p>
+							<div class="nldesign-form-actions">
+								<button type="button" id="nldesign-upload-btn" class="button primary">
+									<?php p($l->t('Choose file and upload')); ?>
+								</button>
+							</div>
+							<!-- A theme mostly arrives as text in a clipboard, not as a file
+							     (nlds-theme-converter, openspec/changes/nlds-theme-converter).
+							     The server converts it exactly as it converts an uploaded
+							     file; admin.js sends it as `content`. -->
+							<div class="nldesign-field nldesign-paste-field">
+								<label for="nldesign-upload-content"><?php p($l->t('Or paste the contents of a theme file')); ?></label>
+								<textarea id="nldesign-upload-content" rows="8" spellcheck="false"
+										  aria-describedby="nldesign-upload-content-hint"
+										  placeholder=".gemeente-theme { --gemeente-color-primary: #154273; }"></textarea>
+								<p class="settings-hint" id="nldesign-upload-content-hint">
+									<?php p($l->t('A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.')); ?>
+								</p>
+							</div>
+							<div class="nldesign-form-actions">
+								<button type="button" id="nldesign-convert-btn" class="button">
+									<?php p($l->t('Convert')); ?>
+								</button>
+							</div>
+							<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+						</div>
+						<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->
+						<div class="nldesign-create-panel nldesign-brand-form" id="nldesign-brand-form" role="tabpanel"
+							 aria-labelledby="nldesign-create-tab-colours" hidden>
+							<p class="settings-hint">
+								<?php p($l->t('Give a name, your primary colour and your background colour. Thematiq makes a complete token set from that. You can refine it later under Components and tokens.')); ?>
+							</p>
+							<div class="nldesign-fields">
+								<div class="nldesign-field">
+									<label for="nldesign-brand-name"><?php p($l->t('Token set name')); ?></label>
+									<input type="text" id="nldesign-brand-name" maxlength="64"
+										   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
+								</div>
+								<div class="nldesign-field">
+									<label for="nldesign-brand-primary"><?php p($l->t('Primary colour')); ?></label>
+									<input type="color" id="nldesign-brand-primary" class="nldesign-brand-colour" value="#154273">
+								</div>
+								<div class="nldesign-field">
+									<label for="nldesign-brand-background"><?php p($l->t('Background colour')); ?></label>
+									<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
+								</div>
+								<!-- The main button's own colour (openspec/specs/simple-brand-form). Off by
+								     default: without it the main button wears the primary, as every set did. -->
+								<div class="nldesign-field">
+									<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
+									<label for="nldesign-brand-action-enabled"><?php p($l->t('Main button colour')); ?> <span class="thematiq-switches-panel__optional"><?php p($l->t('(optional)')); ?></span></label>
+									<input type="color" id="nldesign-brand-action" class="nldesign-brand-colour" value="#1f883d" disabled
+										   aria-label="<?php p($l->t('Main button colour')); ?>" aria-describedby="thematiq-own-sets-action-hint">
+									<span id="thematiq-own-sets-action-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Off: the main button takes the primary colour. On: it becomes --nldesign-color-action.')); ?></span>
+								</div>
+								<div class="nldesign-field">
+									<!-- No `for`: a label for the button would replace its name with
+									     "Logo (optional)", so "Choose logo" would not be in it (WCAG
+									     2.5.3). The button names itself from both instead. -->
+									<label id="nldesign-brand-logo-label"><?php p($l->t('Logo')); ?> <span class="thematiq-switches-panel__optional"><?php p($l->t('(optional)')); ?></span></label>
+									<!-- Nextcloud's own button instead of the browser's file control,
+									     which draws in the browser's language and style. The input is
+									     named for the same reason as the upload's above. -->
+									<div class="nldesign-file-pick">
+										<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp" hidden
+											   aria-label="<?php p($l->t('Logo file (SVG, PNG, JPG, GIF or WebP)')); ?>">
+										<button type="button" class="button" id="nldesign-brand-logo-btn"
+												aria-labelledby="nldesign-brand-logo-label nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
+										<span class="nldesign-file-pick__name" id="nldesign-brand-logo-name"><?php p($l->t('No file chosen')); ?></span>
+									</div>
+								</div>
+							</div>
+							<div class="thematiq-own-sets-panel__preview">
+								<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
+									<span class="nldesign-brand-sample" id="nldesign-brand-sample"><?php p($l->t('Primary button')); ?></span>
+									<span class="nldesign-brand-sample" id="nldesign-brand-sample-hover"><?php p($l->t('On hover')); ?></span>
+								</div>
+								<div class="nldesign-brand-contrast" id="nldesign-brand-contrast" role="status" aria-live="polite"></div>
+							</div>
+							<div class="nldesign-form-actions thematiq-own-sets-panel__actions">
+								<button type="button" id="nldesign-brand-save" class="thematiq-css-panel__save">
+									<?php p($l->t('Create house style')); ?>
+								</button>
+							</div>
+							<div id="nldesign-brand-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+						</div>
+						</div>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-own-sets-list-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-own-sets-list-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Your own token sets')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead thematiq-own-sets-panel__count"></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Your own token sets')); ?>">
+						<table class="nldesign-audit-table thematiq-own-sets-panel__table">
+							<thead>
+								<tr>
+									<th scope="col"><?php p($l->t('Token set')); ?></th>
+									<th scope="col"><?php p($l->t('Contrast')); ?></th>
+									<th scope="col"><?php p($l->t('Used')); ?></th>
+									<th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th>
+								</tr>
+							</thead>
+							<tbody id="nldesign-custom-set-list" class="nldesign-custom-set-list">
+								<tr><td colspan="4" class="settings-hint"><?php p($l->t('Loading custom token sets…')); ?></td></tr>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-sets-upload-title">
+					<h2 id="thematiq-own-sets-upload-title" class="thematiq-panel__card-title"><?php p($l->t('Upload file')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('An NL Design CSS file with --nldesign-* variables, or a JSON file in the W3C Design Tokens format. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card thematiq-own-sets-panel__warnings" aria-labelledby="thematiq-own-sets-warning-title" hidden>
+					<h2 id="thematiq-own-sets-warning-title" class="thematiq-panel__card-title"><?php p($l->t('Contrast warning')); ?></h2>
+					<p class="thematiq-panel__fact-hint thematiq-own-sets-panel__warning-text"></p>
+					<a href="#contrast" class="thematiq-bundle-panel__link"><?php p($l->t('To the contrast report')); ?></a>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-sets-bundle-title">
+					<h2 id="thematiq-own-sets-bundle-title" class="thematiq-panel__card-title"><?php p($l->t('Also in the bundle')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Own token sets are included in the configuration bundle.')); ?></p>
+					<a href="#bundle" class="thematiq-bundle-panel__link"><?php p($l->t('Configuration bundle')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1123,6 +1300,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
 			<li><a href="#assistant"><?php p($l->t('AI assistant')); ?></a></li>
 			<li><a href="#switches"><?php p($l->t('Scheduled switches')); ?></a></li>
+			<li><a href="#own-sets"><?php p($l->t('Own token sets')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
@@ -1204,146 +1382,6 @@ if ($_['mockUi'] === true) {
 		<button type="button" id="nldesign-preview-discard-btn" class="button">
 			<?php p($l->t('Discard')); ?>
 		</button>
-	</div>
-
-	<!-- Custom token set upload (eigen huisstijl) -->
-	<div class="nldesign-custom-token-sets" id="nldesign-custom-token-sets" style="margin-top:2em">
-		<h3><?php p($l->t('Custom token sets')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Add your own house style in one of two ways. Both end up in the list below and in the Design token set dropdown above.')); ?>
-		</p>
-		<!-- Two ways in, as tabs: one form is on screen at a time, so the two
-		     "Token set name" fields can no longer be read as one form, and the
-		     list below belongs to neither. admin.js switches the panels; the
-		     second starts `hidden`, so the first paint shows the upload form. -->
-		<div class="nldesign-create-tabs" role="tablist" aria-label="<?php p($l->t('Add a custom token set')); ?>">
-			<button type="button" class="nldesign-create-tab active" role="tab" id="nldesign-create-tab-upload"
-					aria-selected="true" aria-controls="nldesign-create-panel-upload">
-				<?php p($l->t('Upload a file')); ?>
-			</button>
-			<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours"
-					aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1">
-				<?php p($l->t('Start from your colors')); ?>
-			</button>
-		</div>
-		<div class="nldesign-create-panels">
-			<div class="nldesign-create-panel" id="nldesign-create-panel-upload" role="tabpanel"
-				 aria-labelledby="nldesign-create-tab-upload">
-				<p class="settings-hint">
-					<?php p($l->t('An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.')); ?>
-				</p>
-				<div class="nldesign-fields">
-					<div class="nldesign-field">
-						<label for="nldesign-upload-name"><?php p($l->t('Token set name')); ?></label>
-						<input type="text" id="nldesign-upload-name" class="nldesign-upload-name"
-							   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>"
-							   maxlength="64">
-					</div>
-				</div>
-				<!-- Named, even though it is hidden. The visible <button> below is
-				     the trigger; this input only ever opens the file dialog via
-				     .click(). A `display:none` control is out of the
-				     accessibility tree WHILE hidden — but unlike an
-				     `aria-hidden` one it can be exposed again by a single style
-				     change from script or a user stylesheet, and at that moment
-				     an unnamed file input is a real WCAG 4.1.2 failure. The name
-				     costs nothing while hidden and is correct the instant it is
-				     not. (ConductionNL/.github#273 declines to exempt this shape
-				     for exactly that reason.) -->
-				<input type="file" id="nldesign-upload-input" accept=".css,.json,.tokens.json"
-					   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
-					   style="display:none">
-				<p class="nldesign-hint" id="nldesign-upload-figma-hint">
-					<?php p($l->t('Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.')); ?>
-				</p>
-				<div class="nldesign-form-actions">
-					<button type="button" id="nldesign-upload-btn" class="button primary">
-						<?php p($l->t('Choose file and upload')); ?>
-					</button>
-				</div>
-				<!-- A theme mostly arrives as text in a clipboard, not as a file
-				     (nlds-theme-converter, openspec/changes/nlds-theme-converter).
-				     The server converts it exactly as it converts an uploaded
-				     file; admin.js sends it as `content`. -->
-				<div class="nldesign-field nldesign-paste-field">
-					<label for="nldesign-upload-content"><?php p($l->t('Or paste the contents of a theme file')); ?></label>
-					<textarea id="nldesign-upload-content" rows="8" spellcheck="false"
-							  aria-describedby="nldesign-upload-content-hint"
-							  placeholder=".gemeente-theme { --gemeente-color-primary: #154273; }"></textarea>
-					<p class="settings-hint" id="nldesign-upload-content-hint">
-						<?php p($l->t('A design-tokens.css, a W3C Design Tokens JSON or a Style Dictionary tokens.json. You see what was used and what was left out.')); ?>
-					</p>
-				</div>
-				<div class="nldesign-form-actions">
-					<button type="button" id="nldesign-convert-btn" class="button">
-						<?php p($l->t('Convert')); ?>
-					</button>
-				</div>
-				<div id="nldesign-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-			</div>
-			<!-- The simple brand form (openspec/specs/simple-brand-form/spec.md): a complete set from two colours and a logo. -->
-			<div class="nldesign-create-panel nldesign-brand-form" id="nldesign-brand-form" role="tabpanel"
-				 aria-labelledby="nldesign-create-tab-colours" hidden>
-				<p class="settings-hint">
-					<?php p($l->t('Enter a name, your primary color and your background color. Thematiq makes a complete token set from them. You can refine it later in the token editor.')); ?>
-				</p>
-				<div class="nldesign-fields">
-					<div class="nldesign-field">
-						<label for="nldesign-brand-name"><?php p($l->t('Token set name')); ?></label>
-						<input type="text" id="nldesign-brand-name" maxlength="64"
-							   placeholder="<?php p($l->t('e.g. Gemeente Voorbeeld')); ?>">
-					</div>
-					<div class="nldesign-field">
-						<label for="nldesign-brand-primary"><?php p($l->t('Primary color')); ?></label>
-						<input type="color" id="nldesign-brand-primary" class="nldesign-brand-colour" value="#154273">
-					</div>
-					<div class="nldesign-field">
-						<label for="nldesign-brand-background"><?php p($l->t('Background color')); ?></label>
-						<input type="color" id="nldesign-brand-background" class="nldesign-brand-colour" value="#ffffff">
-					</div>
-					<!-- The main button's own colour (openspec/specs/simple-brand-form). Off by
-					     default: without it the main button wears the primary, as every set did. -->
-					<div class="nldesign-field">
-						<input type="checkbox" id="nldesign-brand-action-enabled" class="checkbox">
-						<label for="nldesign-brand-action-enabled"><?php p($l->t('Give the main button its own color')); ?></label>
-						<input type="color" id="nldesign-brand-action" class="nldesign-brand-colour" value="#1f883d" disabled
-							   aria-label="<?php p($l->t('Main button color')); ?>">
-					</div>
-					<div class="nldesign-field">
-						<!-- No `for`: a label for the button would replace its name with
-						     "Logo (optional)", so "Choose logo" would not be in it (WCAG
-						     2.5.3). The button names itself from both instead. -->
-						<label id="nldesign-brand-logo-label"><?php p($l->t('Logo (optional)')); ?></label>
-						<!-- Nextcloud's own button instead of the browser's file control,
-						     which draws in the browser's language and style. The input is
-						     named for the same reason as the upload's above. -->
-						<div class="nldesign-file-pick">
-							<input type="file" id="nldesign-brand-logo" accept=".svg,.png,.jpg,.gif,.webp" hidden
-								   aria-label="<?php p($l->t('Logo file (SVG, PNG, JPG, GIF or WebP)')); ?>">
-							<button type="button" class="button" id="nldesign-brand-logo-btn"
-									aria-labelledby="nldesign-brand-logo-label nldesign-brand-logo-btn"><?php p($l->t('Choose logo')); ?></button>
-							<span class="nldesign-file-pick__name" id="nldesign-brand-logo-name"><?php p($l->t('No file chosen')); ?></span>
-						</div>
-					</div>
-				</div>
-				<div class="nldesign-brand-preview" id="nldesign-brand-preview" aria-hidden="true">
-					<span class="nldesign-brand-sample" id="nldesign-brand-sample"><?php p($l->t('Primary button')); ?></span>
-					<span class="nldesign-brand-sample" id="nldesign-brand-sample-hover"><?php p($l->t('Hover')); ?></span>
-				</div>
-				<p class="nldesign-brand-contrast" id="nldesign-brand-contrast" role="status" aria-live="polite"></p>
-				<div class="nldesign-form-actions">
-					<button type="button" id="nldesign-brand-save" class="button primary">
-						<?php p($l->t('Create house style')); ?>
-					</button>
-				</div>
-				<div id="nldesign-brand-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-			</div>
-		</div>
-		<h4 class="nldesign-custom-set-heading"><?php p($l->t('Your custom token sets')); ?></h4>
-		<div id="nldesign-custom-set-list" class="nldesign-custom-set-list" role="group"
-			 aria-label="<?php p($l->t('Custom token sets')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading custom token sets…')); ?></p>
-		</div>
 	</div>
 
 	<div class="nldesign-preview" id="nldesign-preview">

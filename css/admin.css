@@ -713,51 +713,12 @@
 	margin-bottom: 0;
 }
 
-.nldesign-custom-set-heading {
-	margin-bottom: 0;
-	font-weight: 600;
-}
-
 .nldesign-import-result {
 	margin: 8px 0;
 	padding: 8px 12px;
 	border-radius: var(--border-radius);
 	background: var(--color-background-dark);
 	color: var(--color-main-text);
-}
-
-.nldesign-custom-set-list {
-	margin-top: 12px;
-}
-
-.nldesign-custom-set-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 12px;
-	padding: 8px 0;
-	border-top: 1px solid var(--color-border);
-}
-
-.nldesign-custom-set-row .nldesign-badge {
-	margin-top: 0;
-}
-
-/* The per-set links read quieter than the buttons beside them. */
-.nldesign-custom-set-row .nldesign-token-reference-link {
-	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
-}
-
-.nldesign-custom-set-name {
-	font-weight: bold;
-	flex: 1 1 auto;
-}
-
-.nldesign-custom-set-version {
-	font-size: 0.85em;
-	color: var(--color-text-maxcontrast);
-	font-family: monospace;
 }
 
 /* The paste box for a theme file (nlds-theme-converter): full width, code font. */

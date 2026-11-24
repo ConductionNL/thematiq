@@ -5071,7 +5071,7 @@
 					),
 					h('p', { class: 'thematiq-admin-dialog__aside' }, [
 						t('thematiq', 'Want to add a whole theme as a new token set? Then use') + ' ',
-						h('a', { href: '#nldesign-custom-token-sets', text: t('thematiq', 'Own token sets') }),
+						h('a', { href: '#own-sets', text: t('thematiq', 'Own token sets') }),
 						'.',
 					]),
 				],
@@ -6903,18 +6903,26 @@
 			var inputs = null
 
 			function ratioLine(label, value, minimum) {
-				var line = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
+				var line = document.createElement('div')
+				line.className = 'nldesign-brand-ratio'
+				var pill = document.createElement('span')
+				pill.className = 'nldesign-brand-ratio__pill'
+					+ (value < minimum ? ' nldesign-brand-ratio__pill--below' : '')
+				pill.textContent = value < minimum ? t('thematiq', 'Below') : t('thematiq', 'Meets')
+				var text = document.createElement('span')
+				text.textContent = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
 					.replace('{label}', label)
 					.replace('{ratio}', value.toFixed(2))
 					.replace('{min}', String(minimum))
 				if (value < minimum) {
-					line +=
+					text.textContent +=
 						' '
 						+ t(
 							'thematiq',
 							'Warning: below the threshold. You can still save.',
 						)
 				}
+				line.append(pill, text)
 				return line
 			}
 
@@ -6949,26 +6957,26 @@
 					'--brand-form-background',
 					d['--nldesign-color-nav-background'],
 				)
-				readout.textContent =
+				readout.replaceChildren(
 					ratioLine(
 						t('thematiq', 'Text on primary'),
 						result.textRatio,
 						brandForm.TEXT_MIN,
-					)
-					+ ' '
-					+ ratioLine(
+					),
+					ratioLine(
 						t('thematiq', 'Primary on background'),
 						result.uiRatio,
 						brandForm.UI_MIN,
-					)
+					),
+				)
 				if (result.actionTextRatio !== null) {
-					readout.textContent +=
-						' '
-						+ ratioLine(
+					readout.appendChild(
+						ratioLine(
 							t('thematiq', 'Text on the main button'),
 							result.actionTextRatio,
 							brandForm.TEXT_MIN,
-						)
+						),
+					)
 				}
 			}
 
@@ -7656,7 +7664,9 @@
 					return r.json()
 				})
 				.then(function (data) {
-					renderCustomSetList(listEl, (data && data.sets) || [])
+					var sets = (data && data.sets) || []
+					renderCustomSetList(listEl, sets)
+					document.dispatchEvent(new CustomEvent('thematiq:custom-sets', { detail: { sets: sets } }))
 				})
 				.catch(function (err) {
 					console.error('Error loading custom token sets:', err)
@@ -7675,11 +7685,13 @@
 		 * @return {HTMLElement} The header.
 		 */
 		function buildSourceHeader(set) {
-			var header = document.createElement('div')
+			var header = document.createElement('tr')
 			header.className = 'nldesign-custom-source'
+			var cell = document.createElement('td')
+			cell.colSpan = 4
 			var title = document.createElement('strong')
 			title.textContent = String(set.name || '').split(':')[0]
-			header.appendChild(title)
+			cell.appendChild(title)
 			var input = document.createElement('input')
 			input.type = 'file'
 			input.accept = '.css,.json,.tokens.json'
@@ -7701,20 +7713,86 @@
 			button.addEventListener('click', function () {
 				input.click()
 			})
-			header.appendChild(button)
-			header.appendChild(input)
+			cell.appendChild(button)
+			cell.appendChild(input)
+			header.appendChild(cell)
 			return header
+		}
+
+		/**
+		 * The "…" menu of a row: a button that opens the set's actions.
+		 *
+		 * @param {string} name The set's name.
+		 * @param {Array<HTMLElement>} items The actions.
+		 * @return {HTMLElement} The menu.
+		 */
+		function buildRowMenu(name, items) {
+			var wrap = document.createElement('div')
+			wrap.className = 'nldesign-custom-set-actions'
+			var toggle = document.createElement('button')
+			toggle.type = 'button'
+			toggle.className = 'nldesign-custom-set-menu-toggle'
+			toggle.textContent = '…'
+			toggle.setAttribute('aria-haspopup', 'true')
+			toggle.setAttribute('aria-expanded', 'false')
+			toggle.setAttribute(
+				'aria-label',
+				t('thematiq', 'Actions for {name}', { name: name }, undefined, { escape: false }),
+			)
+			var menu = document.createElement('div')
+			menu.className = 'nldesign-custom-set-menu'
+			menu.hidden = true
+			items.forEach(function (item) {
+				menu.appendChild(item)
+				item.addEventListener('click', function () {
+					menu.hidden = true
+					toggle.setAttribute('aria-expanded', 'false')
+				})
+			})
+			toggle.addEventListener('click', function () {
+				var open = menu.hidden === true
+				document.querySelectorAll('.nldesign-custom-set-menu').forEach(function (other) {
+					other.hidden = true
+				})
+				document.querySelectorAll('.nldesign-custom-set-menu-toggle').forEach(function (other) {
+					other.setAttribute('aria-expanded', 'false')
+				})
+				menu.hidden = !open
+				toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+			})
+			wrap.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape' && menu.hidden === false) {
+					menu.hidden = true
+					toggle.setAttribute('aria-expanded', 'false')
+					toggle.focus()
+				}
+			})
+			wrap.append(toggle, menu)
+			return wrap
+		}
+
+		/**
+		 * Where a set is used, as far as this page knows: active or not.
+		 *
+		 * @param {string} id The set id.
+		 * @return {string} The text.
+		 */
+		function customSetUse(id) {
+			return pageTokenSetId === id ? t('thematiq', 'Active') : ''
 		}
 
 		function renderCustomSetList(listEl, sets) {
 			listEl.replaceChildren()
 			if (sets.length === 0) {
-				var empty = document.createElement('p')
-				empty.className = 'settings-hint'
-				empty.textContent = t(
+				var empty = document.createElement('tr')
+				var none = document.createElement('td')
+				none.colSpan = 4
+				none.className = 'settings-hint'
+				none.textContent = t(
 					'thematiq',
 					'No custom token sets uploaded yet.',
 				)
+				empty.appendChild(none)
 				listEl.appendChild(empty)
 				return
 			}
@@ -7735,25 +7813,41 @@
 					if (!set.source) {
 						lastSource = null
 					}
-					var row = document.createElement('div')
+					var row = document.createElement('tr')
 					row.className = 'nldesign-custom-set-row'
+					row.setAttribute('data-set-id', set.id)
 					if (set.source) {
 						row.classList.add('nldesign-custom-set-row--brand')
 					}
 
+					var nameCell = document.createElement('td')
+					nameCell.className = 'nldesign-custom-set-cell'
+					var swatch = document.createElement('span')
+					swatch.className = 'nldesign-custom-set-swatch'
+					swatch.setAttribute('aria-hidden', 'true')
+					var primary = set.theming && set.theming.primary_color
+					if (primary) {
+						swatch.style.background = primary
+					}
+					var nameText = document.createElement('span')
+					nameText.className = 'nldesign-custom-set-text'
 					var nameSpan = document.createElement('span')
 					nameSpan.className = 'nldesign-custom-set-name'
 					nameSpan.textContent = set.name || set.id
-					row.appendChild(nameSpan)
-
+					nameText.appendChild(nameSpan)
+					var metaLine = document.createElement('span')
+					metaLine.className = 'nldesign-custom-set-meta'
 					if (set.version) {
 						var versionSpan = document.createElement('span')
 						versionSpan.className = 'nldesign-custom-set-version'
 						versionSpan.textContent = t('thematiq', 'v{version}', {
 							version: set.version,
 						})
-						row.appendChild(versionSpan)
+						metaLine.appendChild(versionSpan)
 					}
+					nameText.appendChild(metaLine)
+					nameCell.append(swatch, nameText)
+					row.appendChild(nameCell)
 
 					// Three states, in order of what the admin most needs to know:
 					// a set that never defines the vocabulary is broken in a way no
@@ -7781,9 +7875,15 @@
 						badge.textContent = t('thematiq', 'Contrast warning')
 					} else {
 						badge.classList.add('nldesign-badge--ok')
-						badge.textContent = t('thematiq', 'WCAG AA OK')
+						badge.textContent = t('thematiq', 'WCAG AA')
 					}
-					row.appendChild(badge)
+					var contrastCell = document.createElement('td')
+					contrastCell.appendChild(badge)
+					row.appendChild(contrastCell)
+					var usedCell = document.createElement('td')
+					usedCell.className = 'nldesign-custom-set-used'
+					usedCell.textContent = customSetUse(set.id)
+					row.appendChild(usedCell)
 
 					// A set installed from the theme gallery names its source and
 					// licence (openspec/specs/theme-gallery/spec.md).
@@ -7800,7 +7900,10 @@
 								licence: set.provenance.licence || '',
 							},
 						)
-						row.appendChild(provenance)
+						if (metaLine.childNodes.length > 0) {
+							metaLine.appendChild(document.createTextNode(', '))
+						}
+						metaLine.appendChild(provenance)
 					}
 
 					var downloadBtn = document.createElement('button')
@@ -7818,7 +7921,6 @@
 							t('thematiq', 'The token set could not be downloaded.'),
 						)
 					})
-					row.appendChild(downloadBtn)
 
 					var dtcgBtn = document.createElement('button')
 					dtcgBtn.type = 'button'
@@ -7828,7 +7930,6 @@
 					dtcgBtn.addEventListener('click', function () {
 						downloadDtcg(set.id)
 					})
-					row.appendChild(dtcgBtn)
 
 					// The token reference of this set (openspec/specs/token-reference/spec.md).
 					var referenceLink = document.createElement('a')
@@ -7843,7 +7944,6 @@
 							name: set.name || set.id,
 						}),
 					)
-					row.appendChild(referenceLink)
 
 					var referenceDownload = document.createElement('a')
 					referenceDownload.className = 'nldesign-token-reference-link'
@@ -7858,7 +7958,6 @@
 							name: set.name || set.id,
 						}),
 					)
-					row.appendChild(referenceDownload)
 
 					var deleteBtn = document.createElement('button')
 					deleteBtn.type = 'button'
@@ -7868,7 +7967,17 @@
 					deleteBtn.addEventListener('click', function () {
 						deleteCustomSet(set.id, set.name || set.id)
 					})
-					row.appendChild(deleteBtn)
+					var actionsCell = document.createElement('td')
+					actionsCell.appendChild(
+						buildRowMenu(set.name || set.id, [
+							downloadBtn,
+							dtcgBtn,
+							referenceLink,
+							referenceDownload,
+							deleteBtn,
+						]),
+					)
+					row.appendChild(actionsCell)
 
 					listEl.appendChild(row)
 				})
