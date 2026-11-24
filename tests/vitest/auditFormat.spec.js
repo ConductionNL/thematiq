@@ -123,3 +123,21 @@ describe('which identities changed', () => {
 		expect(format.formatAuditChanged({ changed: 'not-an-array' })).toBe('—')
 	})
 })
+
+describe('an action and a moment, as the log draws them', () => {
+	it('names a known action in words, with the family of its pill', () => {
+		expect(format.formatAuditAction('overrides_written')).toEqual({ label: 'Tokens changed', kind: 'tokens' })
+		expect(format.formatAuditAction('custom_set_deleted')).toEqual({ label: 'Custom token set deleted', kind: 'removed' })
+	})
+
+	it('keeps an unknown action as it is stored', () => {
+		expect(format.formatAuditAction('something_new')).toEqual({ label: 'something_new', kind: 'neutral' })
+	})
+
+	it('splits an ISO moment into a date and a time, and keeps anything else', () => {
+		const moment = format.formatAuditMoment('2026-10-02T16:00:00Z', 'en-GB')
+		expect(moment.date).toMatch(/2026/)
+		expect(moment.time).toMatch(/\d\d:\d\d/)
+		expect(format.formatAuditMoment('yesterday')).toEqual({ date: 'yesterday', time: '' })
+	})
+})

@@ -59,6 +59,7 @@ script('thematiq', 'admin-panels');
 script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
 script('thematiq', 'admin-custom-css-panel');
+script('thematiq', 'admin-log-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -657,6 +658,56 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+
+	<!-- Log (TqLogboek), a panel of this page at #log (design.md): who changed which theming
+	     setting, from what, to what, and when; evidence for accessibility audits.
+	     js/admin.js fills the table; js/admin-log-panel.js the counts. -->
+	<section class="thematiq-panel thematiq-log-panel" data-thematiq-panel="log" aria-labelledby="thematiq-page-title" hidden>
+		<section class="thematiq-card thematiq-panel__card nldesign-audit-log" id="nldesign-audit-log" aria-labelledby="thematiq-log-title">
+			<div class="thematiq-css-panel__head">
+				<h2 id="thematiq-log-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Changes')); ?></h2>
+				<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Who changed what, from what to what, and when. Usable as evidence in an accessibility audit.')); ?></span>
+			</div>
+			<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Changes')); ?>">
+				<table class="nldesign-audit-table" id="nldesign-audit-table">
+					<thead>
+						<tr>
+							<th scope="col"><?php p($l->t('Time')); ?></th>
+							<th scope="col"><?php p($l->t('Who')); ?></th>
+							<th scope="col"><?php p($l->t('Action')); ?></th>
+							<th scope="col"><?php p($l->t('From')); ?></th>
+							<th scope="col"><?php p($l->t('To')); ?></th>
+							<th scope="col"><?php p($l->t('Changed')); ?></th>
+							<th scope="col"><?php p($l->t('Version')); ?></th>
+						</tr>
+					</thead>
+					<tbody id="nldesign-audit-table-body">
+						<tr><td colspan="7" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
+					</tbody>
+				</table>
+			</div>
+			<span class="thematiq-log-panel__count"></span>
+			<button type="button" id="nldesign-audit-download-btn" hidden><?php p($l->t('Download full log')); ?></button>
+		</section>
+		<div class="thematiq-log-panel__cards">
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-log-restore-title">
+				<h2 id="thematiq-log-restore-title" class="thematiq-panel__card-title"><?php p($l->t('Restore')); ?></h2>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t('Every change keeps the configuration that resulted from it, up to the last 50 changes or 20 MB. Restore first shows what changes before anything is written.')); ?></p>
+				<div class="thematiq-css-panel__rules">
+					<div><span><?php p($l->t('Saved versions')); ?></span><strong class="thematiq-log-panel__versions"></strong></div>
+				</div>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-log-occ-title">
+				<h2 id="thematiq-log-occ-title" class="thematiq-panel__card-title"><?php p($l->t('Also via occ')); ?></h2>
+				<code class="thematiq-log-panel__code">occ thematiq:config:versions</code>
+				<code class="thematiq-log-panel__code">occ thematiq:config:restore &lt;id&gt; --dry-run</code>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-log-kinds-title">
+				<h2 id="thematiq-log-kinds-title" class="thematiq-panel__card-title"><?php p($l->t('What goes in the log')); ?></h2>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t('Token set switched, tokens changed or imported, custom token sets, theme per app, group theme, preview published, configuration imported, scheduled switches, custom tokens and deprecated tokens.')); ?></p>
+			</section>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -664,6 +715,7 @@ if ($_['mockUi'] === true) {
 		<h2 id="thematiq-tools-title" class="thematiq-card__title"><?php p($l->t('More settings')); ?></h2>
 		<ul class="thematiq-tools__list">
 			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
+			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
 	</nav>
 
@@ -1522,38 +1574,6 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
 		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
 		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Theming audit log — who changed which theming setting, from what, to
-	     what, and when. Evidence for accessibility/WCAG-EM audits. -->
-	<div class="nldesign-audit-log" id="nldesign-audit-log" style="margin-top:2em">
-		<h3><?php p($l->t('Theming audit log')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('A record of theming configuration changes: who changed what, from what, to what, and when. Useful evidence for accessibility audits.')); ?>
-			<?php p($l->t('Each change keeps the configuration it produced, up to the last 50 changes or 20 MB. Restore shows what will change before anything is written.')); ?>
-		</p>
-		<div class="nldesign-audit-scroll" tabindex="0" role="region"
-		     aria-label="<?php p($l->t('Theming audit log')); ?>">
-		<table class="nldesign-audit-table" id="nldesign-audit-table">
-			<thead>
-				<tr>
-					<th scope="col"><?php p($l->t('Timestamp')); ?></th>
-					<th scope="col"><?php p($l->t('User')); ?></th>
-					<th scope="col"><?php p($l->t('Action')); ?></th>
-					<th scope="col"><?php p($l->t('From')); ?></th>
-					<th scope="col"><?php p($l->t('To')); ?></th>
-					<th scope="col"><?php p($l->t('Changed')); ?></th>
-					<th scope="col"><?php p($l->t('Version')); ?></th>
-				</tr>
-			</thead>
-			<tbody id="nldesign-audit-table-body">
-				<tr><td colspan="7" class="settings-hint"><?php p($l->t('Loading audit log…')); ?></td></tr>
-			</tbody>
-		</table>
-		</div>
-		<button type="button" id="nldesign-audit-download-btn" class="button">
-			<?php p($l->t('Download full log')); ?>
-		</button>
 	</div>
 
 	<!-- Contrast evidence report: the export endpoint's two formats as

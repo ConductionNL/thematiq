@@ -198,7 +198,65 @@
 		return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
 	}
 
+	/**
+	 * What an entry's action did, in words, and the family its pill is drawn in.
+	 *
+	 * @param {string} action The action as the log stores it.
+	 * @return {{label: string, kind: string}} The words and the family.
+	 */
+	function formatAuditAction(action) {
+		var actions = {
+			token_set_changed: [t('thematiq', 'Token set switched'), 'switch'],
+			scheduled_switch_applied: [t('thematiq', 'Scheduled switch applied'), 'switch'],
+			overrides_written: [t('thematiq', 'Tokens changed'), 'tokens'],
+			overrides_imported: [t('thematiq', 'Tokens imported'), 'tokens'],
+			own_token_changed: [t('thematiq', 'Own token changed'), 'tokens'],
+			token_deprecation_changed: [t('thematiq', 'Deprecated token changed'), 'tokens'],
+			custom_set_uploaded: [t('thematiq', 'Custom token set added'), 'added'],
+			custom_set_deleted: [t('thematiq', 'Custom token set deleted'), 'removed'],
+			custom_source_updated: [t('thematiq', 'Custom token source updated'), 'added'],
+			group_theming_changed: [t('thematiq', 'Group theme changed'), 'switch'],
+			app_exclusions_changed: [t('thematiq', 'Theme per app changed'), 'switch'],
+			custom_css_written: [t('thematiq', 'Custom CSS saved'), 'tokens'],
+			custom_css_rejected: [t('thematiq', 'Custom CSS refused'), 'removed'],
+			config_imported: [t('thematiq', 'Configuration imported'), 'added'],
+			config_bundle_imported: [t('thematiq', 'Configuration imported'), 'added'],
+			theming_sync_applied: [t('thematiq', 'Nextcloud theme updated'), 'switch'],
+			theming_sync_reset: [t('thematiq', 'Nextcloud theme reset'), 'removed'],
+			toggle_changed: [t('thematiq', 'Option changed'), 'neutral'],
+			version_restored: [t('thematiq', 'Version restored'), 'switch'],
+			preview_published: [t('thematiq', 'Preview published'), 'added'],
+			restricted_set_confirmed: [t('thematiq', 'Licence confirmed'), 'added'],
+			restricted_set_confirmation_withdrawn: [t('thematiq', 'Licence confirmation withdrawn'), 'removed'],
+		}
+		var found = actions[String(action || '')]
+		return found !== undefined
+			? { label: found[0], kind: found[1] }
+			: { label: String(action || ''), kind: 'neutral' }
+	}
+
+	/**
+	 * An entry's moment as a date and a time of day, in the reader's language
+	 * and time zone; the stored text when it is no ISO moment.
+	 *
+	 * @param {string} ts The stored timestamp.
+	 * @param {string} [locale] The language, as a BCP 47 tag.
+	 * @return {{date: string, time: string}} The date and the time.
+	 */
+	function formatAuditMoment(ts, locale) {
+		var moment = new Date(String(ts || ''))
+		if (!ts || isNaN(moment.getTime())) {
+			return { date: String(ts || ''), time: '' }
+		}
+		return {
+			date: moment.toLocaleDateString(locale || undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
+			time: moment.toLocaleTimeString(locale || undefined, { hour: '2-digit', minute: '2-digit' }),
+		}
+	}
+
 	return {
+		formatAuditAction: formatAuditAction,
+		formatAuditMoment: formatAuditMoment,
 		formatAuditChanged: formatAuditChanged,
 		formatAuditTimestamp: formatAuditTimestamp,
 		formatAuditValue: formatAuditValue,
