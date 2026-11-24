@@ -59,12 +59,16 @@ describe('Reset theme to Nextcloud dialog', () => {
 		expect(texts('.thematiq-admin-dialog__foot button')).toEqual(['Cancel', 'Reset to Nextcloud'])
 	})
 
-	it('words the overrides line for one override and for an unknown count', () => {
+	it('words the overrides line for one override, for none and for an unknown count', () => {
 		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: 1, onConfirm: vi.fn() })
 		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The override of the current theme Utrecht')
 		document.querySelector('.thematiq-admin-dialog__close').click()
 
 		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: null, onConfirm: vi.fn() })
+		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The overrides of the current theme Utrecht')
+		document.querySelector('.thematiq-admin-dialog__close').click()
+
+		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: 0, onConfirm: vi.fn() })
 		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The overrides of the current theme Utrecht')
 	})
 
