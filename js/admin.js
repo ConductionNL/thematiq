@@ -1587,37 +1587,6 @@
 				})
 		}
 
-		/** One table row per diff, swatches for colours — shared by both surfaces. */
-		function themingRowsHtml(diffs) {
-			return diffs
-				.map(function (diff) {
-					var cell = function (value) {
-						if (diff.kind === 'color' && value) {
-							return (
-								'<span class="nldesign-dialog-swatch" style="background:'
-								+ escapeHtml(value)
-								+ '"></span> '
-								+ escapeHtml(value)
-							)
-						}
-						return escapeHtml(value || '')
-					}
-					return (
-						'<tr><td>'
-						+ escapeHtml(diff.label)
-						+ '</td><td>'
-						+ cell(diff.current)
-						+ '</td><td>'
-						+ cell(diff.proposed)
-						+ (diff.proposedNote
-							? ' ' + escapeHtml(diff.proposedNote)
-							: '')
-						+ '</td></tr>'
-					)
-				})
-				.join('')
-		}
-
 		function fetchCurrentTheming() {
 			return fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
 				headers: { requesttoken: OC.requestToken },
@@ -1944,21 +1913,6 @@
 			}
 		}
 
-		/**
-		 * Remove a hand-rolled overlay dialog from the DOM, running its
-		 * accessibility cleanup (focus restore) first. Safe to call more than
-		 * once or with an already-detached overlay.
-		 */
-		function closeDialogOverlay(overlay) {
-			if (overlay === null || overlay === undefined) {
-				return
-			}
-			if (typeof overlay.nldesignA11yCleanup === 'function') {
-				overlay.nldesignA11yCleanup()
-				overlay.nldesignA11yCleanup = null
-			}
-			overlay.remove()
-		}
 
 		// Handle hide slogan checkbox
 		if (hideSloganCheckbox) {
@@ -5398,142 +5352,155 @@
 				existing.remove()
 			}
 
-			var rowsHtml = ''
-			changes.forEach(function (change) {
-				var meta = tokenRegistry[change.name] || {
-					label: change.name,
-					type: 'text',
-				}
-				var isColor = meta.type === 'color'
-				var currentDisp = isColor
-					? '<span class="nldesign-apply-swatch" style="background:'
-						+ escapeHtml(change.current)
-						+ '"></span>'
-						+ escapeHtml(change.current)
-					: escapeHtml(change.current)
-				var newDisp = isColor
-					? '<span class="nldesign-apply-swatch" style="background:'
-						+ escapeHtml(change.newVal)
-						+ '"></span>'
-						+ escapeHtml(change.newVal)
-					: escapeHtml(change.newVal)
-				rowsHtml +=
-					'<tr>'
-					+ '<td><input type="checkbox" class="nldesign-apply-check" data-token="'
-					+ escapeHtml(change.name)
-					+ '" checked></td>'
-					+ '<td><span title="'
-					+ escapeHtml(change.name)
-					+ '">'
-					+ escapeHtml(meta.label)
-					+ '</span></td>'
-					+ '<td>'
-					+ currentDisp
-					+ '</td>'
-					+ '<td>'
-					+ newDisp
-					+ '</td>'
-					+ '</tr>'
-			})
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				saveTokenSet(newTokenSetId, publishMode)
+				return
+			}
+			var h = frame.h
+			var setName =
+				tokenSetsData[newTokenSetId] !== undefined
+					? tokenSetsData[newTokenSetId].name || newTokenSetId
+					: newTokenSetId
 
-			var html =
-				'<div id="nldesign-apply-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '<div class="nldesign-dialog">'
-				+ '<h3>'
-				+ escapeHtml(
-					t('thematiq', 'Apply token set: {name}').replace(
-						'{name}',
-						newTokenSetId,
-					),
-				)
-				+ '</h3>'
-				+ buildTokenSetWarningsHtml(newTokenSetId)
-				// A set other than the running switch's would be put back within
-				// five minutes; say so before it is applied.
-				+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
-					? '<p class="settings-hint nldesign-apply-switch-warning">'
-						+ escapeHtml(runningSwitchText())
-						+ '</p>'
-					: '')
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t(
+			var warnings = h('div', { class: 'thematiq-apply-warnings' })
+			window.NldesignMarkupRender.render(
+				warnings,
+				buildTokenSetWarningsHtml(newTokenSetId)
+					// A set other than the running switch's would be put back within
+					// five minutes; say so before it is applied.
+					+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
+						? '<p class="settings-hint nldesign-apply-switch-warning">'
+							+ escapeHtml(runningSwitchText())
+							+ '</p>'
+						: ''),
+			)
+
+			var chosen = h('span', { class: 'thematiq-admin-dialog__count' })
+			var tokensTable = null
+			var body = [
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: t(
 						'thematiq',
-						'These values would change. check which ones to apply to your custom overrides.',
+						'These values change. Tick which ones you take into your own overrides; what stays unticked keeps its current value. The page gets the new house style at once, without reloading.',
 					),
-				)
-				+ '</p>'
-				+ '<div style="margin-bottom:8px">'
-				+ '<button class="nldesign-apply-dialog-toggle" id="nldesign-apply-select-all">'
-				+ escapeHtml(t('thematiq', 'Select all'))
-				+ '</button>'
-				+ ' / '
-				+ '<button class="nldesign-apply-dialog-toggle" id="nldesign-apply-deselect-all">'
-				+ escapeHtml(t('thematiq', 'Deselect all'))
-				+ '</button>'
-				+ '</div>'
-				+ '<table class="nldesign-apply-dialog-table"><thead><tr>'
-				+ '<th></th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'Token'))
-				+ '</th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'New'))
-				+ '</th>'
-				+ '</tr></thead><tbody>'
-				+ rowsHtml
-				+ '</tbody></table>'
-				// Core theming as a SECTION of this dialog, checked by default,
-				// so there is one confirm — not a second modal afterwards.
-				+ (plan.mode !== 'none'
-					? '<div class="nldesign-apply-theming" id="nldesign-apply-theming">'
-						+ '<label class="nldesign-apply-theming__label">'
-						+ '<input type="checkbox" id="nldesign-apply-theming-check" checked> '
-						+ escapeHtml(
+				}),
+				warnings.childNodes.length > 0 ? warnings : null,
+				h('div', { class: 'thematiq-admin-dialog__toggles' }, [
+					h('button', {
+						type: 'button',
+						id: 'nldesign-apply-select-all',
+						class: 'thematiq-admin-dialog__toggle',
+						text: t('thematiq', 'Select all'),
+					}),
+					h('button', {
+						type: 'button',
+						id: 'nldesign-apply-deselect-all',
+						class: 'thematiq-admin-dialog__toggle',
+						text: t('thematiq', 'Select none'),
+					}),
+					chosen,
+				]),
+				tokensTable = frame.table(
+					[t('thematiq', 'Take over'), t('thematiq', 'Token'), t('thematiq', 'Current'), t('thematiq', 'New')],
+					changes.map(function (change) {
+						var meta = tokenRegistry[change.name] || { type: 'text' }
+						var colour = meta.type === 'color'
+						return [
+							h('input', {
+								type: 'checkbox',
+								class: 'nldesign-apply-check',
+								'data-token': change.name,
+								checked: true,
+								'aria-label': t('thematiq', 'Take over {token}', { token: change.name }),
+							}),
+							h('code', { text: change.name, title: meta.label || change.name }),
+							frame.value(change.current, { colour: colour, large: true }),
+							frame.value(change.newVal, { colour: colour, large: true }),
+						]
+					}),
+				),
+			]
+			tokensTable.classList.add('thematiq-apply-tokens')
+			tokensTable.querySelector('th').classList.add('hidden-visually')
+			// Core theming as a section of this dialog, ticked by default, so
+			// there is one confirm and not a second dialog afterwards.
+			if (plan.mode !== 'none') {
+				body.push(
+					h('h3', { class: 'thematiq-admin-dialog__subtitle', text: t('thematiq', 'Nextcloud theme') }),
+					frame.table(
+						[t('thematiq', 'Setting'), t('thematiq', 'Current'), t('thematiq', 'Proposed')],
+						plan.diffs.map(function (diff) {
+							var colour = diff.kind === 'color'
+							return [
+								diff.label,
+								frame.value(diff.current, { colour: colour, large: true }),
+								frame.value(diff.proposed, { colour: colour, large: true, note: diff.proposedNote }),
+							]
+						}),
+					),
+					h('label', { class: 'thematiq-admin-dialog__check', id: 'nldesign-apply-theming' }, [
+						h('input', { type: 'checkbox', id: 'nldesign-apply-theming-check', checked: true }),
+						h('span', {}, [
 							plan.mode === 'reset'
-								? t(
-										'thematiq',
-										'Also reset Nextcloud theming to its defaults (login page, e-mails, mobile apps)',
-									)
-								: t(
-										'thematiq',
-										'Also update Nextcloud theming (login page, e-mails, mobile apps)',
-									),
-						)
-						+ '</label>'
-						+ '<table class="nldesign-dialog-table"><thead><tr><th>'
-						+ escapeHtml(t('thematiq', 'Setting'))
-						+ '</th><th>'
-						+ escapeHtml(t('thematiq', 'Current'))
-						+ '</th><th>'
-						+ escapeHtml(t('thematiq', 'Proposed'))
-						+ '</th></tr></thead><tbody>'
-						+ themingRowsHtml(plan.diffs)
-						+ '</tbody></table>'
-						+ '</div>'
-					: '')
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Apply selected'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
+								? t('thematiq', 'Also reset the Nextcloud theme to the default')
+								: t('thematiq', 'Also update the Nextcloud theme'),
+							h('span', {
+								class: 'thematiq-admin-dialog__check-hint',
+								text: t('thematiq', 'Sign-in page, emails and the apps on phone and computer.'),
+							}),
+						]),
+					]),
+				)
+			}
 
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-apply-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				cancelDialog()
+			var dialog = frame.open({
+				id: 'nldesign-apply-dialog-overlay',
+				width: 720,
+				opener: tokenSetSelect,
+				eyebrow: t('thematiq', 'Active token set'),
+				title: t('thematiq', 'Apply token set: {name}', { name: setName }),
+				body: body,
+				onDismiss: function () {
+					cancelDialog()
+				},
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						className: 'nldesign-dialog-cancel',
+						onClick: function () {
+							cancelDialog()
+						},
+					},
+					{
+						label: t('thematiq', 'Apply chosen values'),
+						variant: 'primary',
+						icon: 'check',
+						className: 'nldesign-dialog-confirm',
+					},
+				],
 			})
+			var overlay = dialog.el
+
+			/**
+			 * Say how many values are ticked.
+			 *
+			 * @return {void}
+			 */
+			function updateChosen() {
+				var boxes = overlay.querySelectorAll('.nldesign-apply-check')
+				var ticked = Array.prototype.filter.call(boxes, function (cb) {
+					return cb.checked === true
+				}).length
+				chosen.textContent = t('thematiq', '{chosen} of {total} chosen', {
+					chosen: ticked,
+					total: boxes.length,
+				})
+			}
 
 			function updateApplyPreview() {
+				updateChosen()
 				changes.forEach(function (change) {
 					var cb = overlay.querySelector(
 						tokenSelector('.nldesign-apply-check', change.name),
@@ -5596,12 +5563,9 @@
 					tokenSetSelect.dataset.previousValue = prevTokenSetId
 					updatePreview(prevTokenSetId)
 				}
-				closeDialogOverlay(overlay)
+				dialog.close()
 			}
 
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', cancelDialog)
 			overlay.addEventListener('click', function (e) {
 				if (e.target === overlay) {
 					cancelDialog()
@@ -5795,7 +5759,7 @@
 							// theming is in, and the page behind the dialog is the
 							// theme the admin picked.
 							applying = false
-							closeDialogOverlay(overlay)
+							dialog.close()
 							notify(message)
 						})
 						.catch(function (err) {
@@ -6616,7 +6580,7 @@
 				})
 				.join('')
 			return (
-				'<div class="nldesign-contrast-warning" role="alert">'
+				'<div class="nldesign-contrast-warning nldesign-contrast-warning--incomplete" role="alert">'
 				+ '<strong>'
 				+ escapeHtml(t('thematiq', 'Incomplete set'))
 				+ '</strong>'

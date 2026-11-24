@@ -9,7 +9,7 @@
 dialog.thematiq-admin-dialog {
 	box-sizing: border-box;
 	width: 100%;
-	max-height: calc(100vh - 32px);
+	max-height: calc(100vh - 160px);
 	padding: 0;
 	border: 0;
 	border-radius: 12px;
@@ -283,6 +283,7 @@ dialog.thematiq-admin-dialog::backdrop {
 	font-size: 14px;
 	line-height: 1.2;
 	vertical-align: middle;
+	overflow-wrap: anywhere;
 }
 
 .thematiq-admin-dialog__table code {
@@ -299,6 +300,8 @@ dialog.thematiq-admin-dialog::backdrop {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
+	min-width: 0;
+	max-width: 260px;
 }
 
 .thematiq-admin-dialog__swatch {
@@ -342,4 +345,95 @@ dialog.thematiq-admin-dialog::backdrop {
 	height: 18px;
 	border: 0;
 	box-shadow: inset 0 0 0 1px rgba(27, 28, 29, 0.18);
+}
+
+.thematiq-admin-dialog__toggles {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	font-size: 14px;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__toggle {
+	min-height: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.thematiq-admin-dialog__count {
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-admin-dialog__table td > input[type='checkbox'] {
+	margin: 0;
+}
+
+.thematiq-admin-dialog__value code,
+.thematiq-admin-dialog__value span {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__table input[type='checkbox'] {
+	width: 20px;
+	height: 20px;
+	accent-color: var(--color-primary-element);
+	min-height: 0;
+	margin: 0;
+}
+
+/* The set's warnings in the apply dialog, as the board's notices. */
+.thematiq-admin-dialog .nldesign-contrast-warning {
+	margin: 0;
+	padding: 12px 14px;
+	border: 0;
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	color: var(--color-warning);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.thematiq-admin-dialog .nldesign-contrast-warning--incomplete {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
+.thematiq-admin-dialog .nldesign-contrast-warning p,
+.thematiq-admin-dialog .nldesign-contrast-warning li {
+	margin: 0;
+	color: inherit !important;
+	font-size: 14px !important;
+}
+
+.thematiq-admin-dialog .nldesign-contrast-warning ul {
+	margin: 4px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.thematiq-apply-warnings {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.thematiq-apply-tokens {
+	table-layout: fixed;
+}
+
+.thematiq-apply-tokens th:first-child {
+	width: 48px;
+}
+
+.thematiq-apply-tokens th:nth-child(2) {
+	width: 40%;
 }

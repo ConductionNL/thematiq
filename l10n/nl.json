@@ -1458,7 +1458,17 @@
         "Thematiq aligns the Nextcloud values with the token set, so sign-in page, email and apps show the same house style. Only values that differ are listed here; without a proposed value something stays as it is.": "Thematiq zet de waarden van Nextcloud gelijk aan de tokenset, zodat inlogpagina, e-mail en apps dezelfde huisstijl tonen. Alleen waarden die verschillen staan hier; zonder voorgestelde waarde blijft iets zoals het is.",
         "If you choose the token set Nextcloud, the same dialog asks \"Reset the Nextcloud theme to the default?\" with the Nextcloud default values in the Proposed column.": "Kiest u de tokenset Nextcloud, dan stelt hetzelfde venster de vraag \"Het Nextcloud-thema terugzetten naar de standaard?\" met in de kolom Voorgesteld de standaardwaarden van Nextcloud.",
         "Reset theme": "Thema terugzetten",
-        "Update theme": "Thema bijwerken"
+        "Update theme": "Thema bijwerken",
+        "These values change. Tick which ones you take into your own overrides; what stays unticked keeps its current value. The page gets the new house style at once, without reloading.": "Deze waarden veranderen. Vink aan welke u in uw eigen aanpassingen overneemt; wat uit staat, houdt zijn huidige waarde. De pagina krijgt de nieuwe huisstijl meteen, zonder herladen.",
+        "Select none": "Niets selecteren",
+        "Take over": "Overnemen",
+        "Take over {token}": "{token} overnemen",
+        "Nextcloud theme": "Nextcloud-thema",
+        "Also reset the Nextcloud theme to the default": "Ook het Nextcloud-thema terugzetten naar de standaard",
+        "Also update the Nextcloud theme": "Ook het Nextcloud-thema bijwerken",
+        "Sign-in page, emails and the apps on phone and computer.": "Inlogpagina, e-mails en de apps op telefoon en computer.",
+        "Apply chosen values": "Gekozen waarden toepassen",
+        "{chosen} of {total} chosen": "{chosen} van {total} gekozen"
     },
     "plurals": {}
 }

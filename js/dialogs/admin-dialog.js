@@ -112,6 +112,34 @@
 	}
 
 	/**
+	 * A value in a table: a swatch beside a colour, then the value, then a note.
+	 *
+	 * @param {string} value The value.
+	 * @param {object} [options] How to draw it.
+	 * @param {boolean} [options.colour] Whether the value is a colour.
+	 * @param {boolean} [options.large] An 18px swatch instead of 14px.
+	 * @param {boolean} [options.code] Show the value as code (always for a colour).
+	 * @param {string} [options.note] A word after the value.
+	 * @return {HTMLElement} The value.
+	 */
+	function value(value, options) {
+		var opts = options || {}
+		var shown = typeof value === 'string' && value !== '' ? value : '–'
+		var swatch = null
+		if (opts.colour === true && typeof value === 'string' && value !== '') {
+			swatch = h('span', { class: BLOCK + '__swatch' + (opts.large === true ? ' ' + BLOCK + '__swatch--large' : ''), 'aria-hidden': 'true' })
+			swatch.style.background = value
+		}
+		var text = opts.colour === true || opts.code === true ? h('code', { text: shown }) : h('span', { text: shown })
+		return h('span', { class: BLOCK + '__value' }, [
+			swatch,
+			text,
+			opts.note ? ' ' : null,
+			opts.note ? h('span', { class: BLOCK + '__value-note', text: opts.note }) : null,
+		])
+	}
+
+	/**
 	 * A table of the body: column heads and rows of cells.
 	 *
 	 * @param {string[]} heads The column heads.
@@ -165,6 +193,7 @@
 	 * @param {string} [options.focus] A selector for what gets focus when it opens.
 	 * @param {Element} [options.opener] What gets focus back when the dialog closes.
 	 * @param {Function} [options.onClose] Called once the dialog has closed.
+	 * @param {Function} [options.onDismiss] Called instead of closing on Escape and the close button.
 	 * @return {{el: HTMLDialogElement, close: Function, busy: Function}} The open dialog.
 	 */
 	function open(options) {
@@ -230,24 +259,37 @@
 			}, [action.icon ? icon(action.icon, 16) : null, action.label])
 		})
 
+		/**
+		 * Escape or the close button: the dialog's own dismissal when it has one.
+		 *
+		 * @return {void}
+		 */
+		function dismiss() {
+			if (typeof options.onDismiss === 'function') {
+				options.onDismiss()
+				return
+			}
+			close()
+		}
+
 		el.appendChild(h('div', { class: BLOCK + '__head' }, [
 			h('div', { class: BLOCK + '__heading' }, [
 				options.eyebrow ? h('span', { class: BLOCK + '__eyebrow', text: options.eyebrow }) : null,
 				h('h2', { class: BLOCK + '__title', id: titleId, text: options.title }),
 			]),
-			h('button', { type: 'button', class: BLOCK + '__close', 'aria-label': tr('Close'), on: { click: close } }, [icon('close', 18)]),
+			h('button', { type: 'button', class: BLOCK + '__close', 'aria-label': tr('Close'), on: { click: dismiss } }, [icon('close', 18)]),
 		]))
 		el.appendChild(h('div', { class: BLOCK + '__body' }, options.body || []))
 		el.appendChild(h('div', { class: BLOCK + '__foot' }, actions))
 
 		el.addEventListener('cancel', function (event) {
 			event.preventDefault()
-			close()
+			dismiss()
 		})
 		el.addEventListener('keydown', function (event) {
 			if (event.key === 'Escape') {
 				event.preventDefault()
-				close()
+				dismiss()
 			}
 		})
 
@@ -275,5 +317,6 @@
 		notice: notice,
 		field: field,
 		table: table,
+		value: value,
 	}
 })()

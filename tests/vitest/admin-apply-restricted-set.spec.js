@@ -86,6 +86,7 @@ async function loadAdminScript() {
 	vi.resetModules()
 	// The page loads js/lib/themingPlan.js before admin.js; so does the fixture.
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
