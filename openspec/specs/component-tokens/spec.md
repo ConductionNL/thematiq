@@ -263,12 +263,14 @@ the PHP registry and the CSS generator MUST read that file rather than restate i
 - AND a scope rule applying it MUST appear in `css/component-scopes.css`
 
 #### Scenario: Two tokens may not claim one global
+@e2e exclude Build-time refusal of the generator, no page involved: scripts/generate-component-scopes.mjs stops with "a component maps two tokens onto one global" and names both tokens; it runs in npm run test:component-scopes
 - GIVEN a component maps two of its tokens onto the same Nextcloud variable
 - WHEN `scripts/generate-component-scopes.mjs` runs
 - THEN it MUST refuse to emit and MUST name both tokens
 - BECAUSE the rule would declare one property twice and the second would silently win
 
 #### Scenario: The committed stylesheets are drift-checked
+@e2e exclude Build-time check of the committed file, no page involved: npm run test:component-scopes (scripts/generate-component-scopes.mjs --check) fails and prints the first difference at its line
 - GIVEN the mapping table has changed and the stylesheets have not been regenerated
 - WHEN `npm run test:component-scopes` runs
 - THEN it MUST fail and MUST report the first differing line

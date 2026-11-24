@@ -1310,6 +1310,7 @@ test.describe('theming-sync', () => {
 	})
 
 	// @e2e openspec/specs/theming-sync/spec.md#admin-cancels-theming-sync
+	// @e2e theming-sync-dialog::user-cancels-update
 	test('cancelling closes the dialog, applies no theming, keeps the set', async ({
 		page,
 	}) => {
