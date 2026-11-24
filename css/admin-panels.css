@@ -2144,3 +2144,170 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	line-height: 1.6 !important;
 	color: var(--color-main-text);
 }
+
+/* Brand per app (TqMerkPerApp). */
+#nldesign-settings .thematiq-brands-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-brands-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__row {
+	display: grid;
+	grid-template-columns: 64px minmax(0, 1fr) auto auto;
+	gap: 4px 16px;
+	align-items: center;
+	margin: 0;
+	padding: 16px 0;
+	border-top: 1px solid var(--color-border);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__row > label {
+	grid-column: 2;
+	grid-row: 1;
+	min-width: 0;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__row .settings-hint {
+	grid-column: 2;
+	grid-row: 2;
+	font-size: 12px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__preview {
+	display: flex;
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	box-sizing: border-box;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__preview img {
+	max-width: 48px;
+	max-height: 48px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__row > button {
+	grid-row: 1 / span 2;
+	min-height: 40px;
+	margin: 0;
+	border: 1px solid var(--color-border-dark) !important;
+	background: var(--color-main-background) !important;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-brands-panel__table {
+	min-width: 640px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-brands-panel__table td {
+	vertical-align: middle;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-row strong,
+#nldesign-settings .thematiq-panel .nldesign-app-brand-id {
+	display: block;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-id,
+#nldesign-settings .thematiq-panel .nldesign-app-brand-stale {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-stale {
+	display: block;
+	margin-top: 4px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-logos .nldesign-file-pick {
+	flex-wrap: wrap;
+	gap: 4px 8px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-logos .nldesign-file-pick label {
+	flex-basis: 100%;
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-contrast {
+	display: inline-flex;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background)) !important;
+	color: var(--color-success);
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-contrast::before {
+	content: '✓';
+	margin-inline-end: 6px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-contrast--below {
+	background: color-mix(in srgb, var(--color-warning) 18%, var(--color-main-background)) !important;
+	color: var(--color-warning-text, var(--color-main-text));
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-contrast--below::before {
+	content: '!';
+}
+
+#nldesign-settings .thematiq-panel .nldesign-app-brand-remove {
+	min-height: 34px;
+	margin: 0;
+	border: 1px solid var(--color-border-dark) !important;
+	background: var(--color-main-background) !important;
+	color: var(--color-error-text, var(--color-error));
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-brands-panel__subtitle {
+	margin: 8px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid var(--color-border);
+	font-size: 16px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-brands-panel__fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-brands-panel__fields select {
+	box-sizing: border-box;
+	width: 100%;
+	height: 40px;
+	margin: 0;
+}
+
+@media (max-width: 720px) {
+	#nldesign-settings .thematiq-panel .thematiq-brands-panel__fields {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__preview:not(:has(img)) {
+	grid-column: 2;
+	grid-row: 3;
+	justify-content: flex-start;
+	width: auto;
+	height: auto;
+	border: 0;
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}

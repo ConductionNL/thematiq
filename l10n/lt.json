@@ -1860,7 +1860,24 @@
         "Group of row {rank}": "Group of row {rank}",
         "Token set of row {rank}": "Token set of row {rank}",
         "{linked} groups linked, {delegated} with delegated choice": "{linked} groups linked, {delegated} with delegated choice",
-        "{delegated} of {linked} groups choose themselves": "{delegated} of {linked} groups choose themselves"
+        "{delegated} of {linked} groups choose themselves": "{delegated} of {linked} groups choose themselves",
+        "Add brand": "Add brand",
+        "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without these images Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.": "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without these images Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.",
+        "Both images apply to the whole workspace, whichever token set is active. A brand per app keeps its own small logo.": "Both images apply to the whole workspace, whichever token set is active. A brand per app keeps its own small logo.",
+        "Give an app its own house style and logo, such as a knowledge base or a participation platform. On that app's pages the brand replaces the house style, for everyone. Other pages stay as they are.": "Give an app its own house style and logo, such as a knowledge base or a participation platform. On that app's pages the brand replaces the house style, for everyone. Other pages stay as they are.",
+        "Logos": "Logos",
+        "Choose which apps the thematiq house style applies to. An excluded app draws its pages with the Nextcloud default style, including the top bar on those pages.": "Choose which apps the thematiq house style applies to. An excluded app draws its pages with the Nextcloud default style, including the top bar on those pages.",
+        "Save theme per app": "Save theme per app",
+        "Two settings, two questions": "Two settings, two questions",
+        "House style on or off": "House style on or off",
+        "Which house style": "Which house style",
+        "Theme per app turns the thematiq house style on or off per app. Brand per app chooses which token set and logo an app gets.": "Theme per app turns the thematiq house style on or off per app. Brand per app chooses which token set and logo an app gets.",
+        "Brands and excluded apps travel in the configuration bundle to test, acceptance and production.": "Brands and excluded apps travel in the configuration bundle to test, acceptance and production.",
+        "WCAG {level}": "WCAG {level}",
+        "Below WCAG AA": "Below WCAG AA",
+        "1 app with its own brand": "1 app with its own brand",
+        "{count} apps with their own brand": "{count} apps with their own brand",
+        "{themed} of {total} apps follow the house style": "{themed} of {total} apps follow the house style"
     },
     "plurals": {}
 }

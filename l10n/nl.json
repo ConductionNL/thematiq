@@ -1860,7 +1860,24 @@
         "Group of row {rank}": "Groep van rij {rank}",
         "Token set of row {rank}": "Tokenset van rij {rank}",
         "{linked} groups linked, {delegated} with delegated choice": "{linked} groepen gekoppeld, {delegated} met gedelegeerde keuze",
-        "{delegated} of {linked} groups choose themselves": "{delegated} van {linked} groepen kiezen zelf"
+        "{delegated} of {linked} groups choose themselves": "{delegated} van {linked} groepen kiezen zelf",
+        "Add brand": "Merk toevoegen",
+        "The header shows the mobile logo on screens narrower than 1024 pixels. A phone shows the home screen icon when someone adds the workspace to its home screen. Without these images Nextcloud uses the logo and the favicon. The favicon in the browser tab does not change.": "De kopbalk toont het mobiele logo op schermen smaller dan 1024 pixels. Een telefoon toont het startschermpictogram als iemand de werkplek aan het beginscherm toevoegt. Zonder deze afbeeldingen gebruikt Nextcloud het logo en het favicon. Het favicon in het browsertabblad verandert niet.",
+        "Both images apply to the whole workspace, whichever token set is active. A brand per app keeps its own small logo.": "Beide afbeeldingen gelden voor de hele werkplek, welke tokenset ook actief is. Een merk per app houdt zijn eigen kleine logo.",
+        "Give an app its own house style and logo, such as a knowledge base or a participation platform. On that app's pages the brand replaces the house style, for everyone. Other pages stay as they are.": "Geef een app een eigen huisstijl en logo, zoals een kennisbank of een participatieplatform. Op de pagina's van die app vervangt het merk de huisstijl, voor iedereen. Andere pagina's blijven zoals ze zijn.",
+        "Logos": "Logo's",
+        "Choose which apps the thematiq house style applies to. An excluded app draws its pages with the Nextcloud default style, including the top bar on those pages.": "Kies op welke apps de huisstijl van thematiq werkt. Een uitgezette app tekent zijn pagina's met de standaardstijl van Nextcloud, ook de bovenbalk op die pagina's.",
+        "Save theme per app": "Thema per app opslaan",
+        "Two settings, two questions": "Twee instellingen, twee vragen",
+        "House style on or off": "Huisstijl aan of uit",
+        "Which house style": "Welke huisstijl",
+        "Theme per app turns the thematiq house style on or off per app. Brand per app chooses which token set and logo an app gets.": "Thema per app zet de huisstijl van thematiq per app aan of uit. Merk per app kiest welke tokenset en welk logo een app krijgt.",
+        "Brands and excluded apps travel in the configuration bundle to test, acceptance and production.": "Merken en uitgezette apps gaan mee in de configuratiebundel naar test, acceptatie en productie.",
+        "WCAG {level}": "WCAG {level}",
+        "Below WCAG AA": "Onder WCAG AA",
+        "1 app with its own brand": "1 app met een eigen merk",
+        "{count} apps with their own brand": "{count} apps met een eigen merk",
+        "{themed} of {total} apps follow the house style": "{themed} van {total} apps volgen de huisstijl"
     },
     "plurals": {}
 }
