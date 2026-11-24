@@ -60,6 +60,7 @@ script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
 script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
+script('thematiq', 'admin-fonts-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -708,6 +709,84 @@ if ($_['mockUi'] === true) {
 			</section>
 		</div>
 	</section>
+
+	<!-- Fonts (TqLettertypen), a panel of this page at #fonts (design.md): self-hosted
+	     WOFF2 uploads and the approved library. js/admin.js uploads, lists and assigns. -->
+	<section class="thematiq-panel thematiq-fonts-panel nldesign-custom-fonts" id="nldesign-custom-fonts" data-thematiq-panel="fonts" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+		<div class="thematiq-panel__main">
+			<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-fonts-upload-title">
+				<div class="thematiq-css-panel__head">
+					<h2 id="thematiq-fonts-upload-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Upload font')); ?></h2>
+					<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('A WOFF2 file for the headings or the body text. Thematiq hosts it itself: no requests go outside.')); ?></span>
+				</div>
+				<div class="thematiq-fonts-panel__notice nldesign-license-notice"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"/></svg><span><?php p($l->t('Upload only fonts your organisation is licensed to host itself. Whoever uploads is responsible for the licence.')); ?></span></div>
+				<div class="thematiq-admin-dialog__grid thematiq-fonts-panel__grid">
+					<div class="thematiq-fonts-panel__field">
+						<label for="nldesign-font-name"><?php p($l->t('Display name')); ?></label>
+						<input type="text" id="nldesign-font-name" class="nldesign-font-name" placeholder="<?php p($l->t('for example Rijks Sans')); ?>" maxlength="64">
+					</div>
+					<div class="thematiq-fonts-panel__field">
+						<label for="nldesign-font-role"><?php p($l->t('Role')); ?></label>
+						<select id="nldesign-font-role" name="nldesign-font-role">
+							<option value="heading"><?php p($l->t('Headings')); ?></option>
+							<option value="body"><?php p($l->t('Body text')); ?></option>
+						</select>
+					</div>
+				</div>
+				<div class="thematiq-fonts-panel__field">
+					<span class="thematiq-fonts-panel__label"><?php p($l->t('File')); ?></span>
+					<div class="thematiq-admin-dialog__file-row">
+						<input type="file" id="nldesign-font-input" accept=".woff2" aria-label="<?php p($l->t('Font file to upload (WOFF2)')); ?>" hidden>
+						<button type="button" id="nldesign-font-upload-btn" class="thematiq-font-row__button"><?php p($l->t('Choose and upload font')); ?></button>
+						<span class="thematiq-panel__fact-hint"><?php p($l->t('WOFF2 only, at most 2 MB')); ?></span>
+					</div>
+				</div>
+				<div id="nldesign-font-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="nldesign-font-library-heading">
+				<div class="thematiq-css-panel__head">
+					<h2 id="nldesign-font-library-heading" class="thematiq-panel__card-title"><?php p($l->t('Library of approved fonts')); ?></h2>
+					<span class="thematiq-panel__fact-hint"><?php p($l->t('The fonts thematiq bundles, each with its licence. Pick one for the headings or the body text: no upload needed, the font goes into the token with its fallback chain.')); ?></span>
+				</div>
+				<div id="nldesign-font-library" class="thematiq-font-list" role="list" aria-labelledby="nldesign-font-library-heading">
+					<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
+				</div>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-fonts-uploaded-title">
+				<div class="thematiq-css-panel__head">
+					<h2 id="thematiq-fonts-uploaded-title" class="thematiq-panel__card-title"><?php p($l->t('Uploaded fonts')); ?></h2>
+					<span class="thematiq-panel__fact-hint"><?php p($l->t('At most 20. After an upload, reload the page to see the font.')); ?></span>
+				</div>
+				<div id="nldesign-font-list" class="thematiq-font-list" role="list" aria-labelledby="thematiq-fonts-uploaded-title">
+					<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
+				</div>
+			</section>
+		</div>
+		<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-fonts-now-title">
+				<h2 id="thematiq-fonts-now-title" class="thematiq-panel__card-title"><?php p($l->t('Now in use')); ?></h2>
+				<div class="thematiq-fonts-panel__now"></div>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t('Without an upload the font follows the active token set.')); ?></p>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-fonts-rules-title">
+				<h2 id="thematiq-fonts-rules-title" class="thematiq-panel__card-title"><?php p($l->t('Rules')); ?></h2>
+				<div class="thematiq-css-panel__rules">
+					<div><span><?php p($l->t('Format')); ?></span><strong>WOFF2</strong></div>
+					<div><span><?php p($l->t('Per file')); ?></span><strong><?php p($l->t('at most 2 MB')); ?></strong></div>
+					<div><span><?php p($l->t('Number')); ?></span><strong><?php p($l->t('at most 20')); ?></strong></div>
+					<div><span><?php p($l->t('Roles')); ?></span><strong><?php p($l->t('headings, body text')); ?></strong></div>
+					<div><span><?php p($l->t('External requests')); ?></span><strong><?php p($l->t('none')); ?></strong></div>
+				</div>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-fonts-set-title">
+				<h2 id="thematiq-fonts-set-title" class="thematiq-panel__card-title"><?php p($l->t('Fonts in the token set')); ?></h2>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t('A token set can ask for a font that still needs uploading or a licence confirmation. That is then shown with the token set.')); ?></p>
+			</section>
+			<div data-thematiq-slot="nldesign-marianne-gate"></div>
+		</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -715,6 +794,7 @@ if ($_['mockUi'] === true) {
 		<h2 id="thematiq-tools-title" class="thematiq-card__title"><?php p($l->t('More settings')); ?></h2>
 		<ul class="thematiq-tools__list">
 			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
+			<li><a href="#fonts"><?php p($l->t('Typefaces')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
 	</nav>
@@ -1354,50 +1434,6 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Save group theming')); ?>
 		</button>
 		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Custom font upload -->
-	<div class="nldesign-custom-fonts" id="nldesign-custom-fonts" style="margin-top:2em">
-		<h3><?php p($l->t('Custom fonts')); ?></h3>
-		<p class="nldesign-license-notice">
-			<?php p($l->t('Only upload fonts your organization holds a license to self-host. Licensing responsibility rests with the uploader.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Upload a WOFF2 font file (max 2 MB, 20 fonts max) and assign it to the body text or heading role. Uploaded fonts are self-hosted — no external requests.')); ?>
-		</p>
-		<div class="nldesign-upload-form">
-			<label for="nldesign-font-name"><?php p($l->t('Font display name')); ?></label>
-			<input type="text" id="nldesign-font-name" class="nldesign-font-name"
-				   placeholder="<?php p($l->t('e.g. Rijks Sans')); ?>"
-				   maxlength="64">
-			<label for="nldesign-font-role"><?php p($l->t('Font role')); ?></label>
-			<select id="nldesign-font-role" name="nldesign-font-role">
-				<option value="body"><?php p($l->t('Body text')); ?></option>
-				<option value="heading"><?php p($l->t('Heading')); ?></option>
-			</select>
-			<input type="file" id="nldesign-font-input" accept=".woff2"
-				   aria-label="<?php p($l->t('Font file to upload (WOFF2)')); ?>"
-				   style="display:none">
-			<button type="button" id="nldesign-font-upload-btn" class="button">
-				<?php p($l->t('Choose font and upload')); ?>
-			</button>
-		</div>
-		<div id="nldesign-font-upload-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-		<div id="nldesign-font-list" class="nldesign-custom-set-list" role="group"
-			 aria-label="<?php p($l->t('Custom fonts')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
-		</div>
-		<!-- Approved font library (openspec/specs/custom-fonts, change archive/2026-11-14-rows-without-a-requirement):
-		     the fonts the app bundles, each with its licence, assignable to a
-		     role without uploading a file. -->
-		<h4 id="nldesign-font-library-heading"><?php p($l->t('Font library')); ?></h4>
-		<p class="settings-hint">
-			<?php p($l->t('Fonts that come with the app, with the licence they ship under. Assign one to body text or headings without uploading a file. A font from the library takes the role over from an uploaded font.')); ?>
-		</p>
-		<div id="nldesign-font-library" class="nldesign-custom-set-list" role="group"
-			 aria-labelledby="nldesign-font-library-heading">
-			<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
-		</div>
 	</div>
 
 	<!-- Email template theming — mail_template_class toggle + compliance footer -->

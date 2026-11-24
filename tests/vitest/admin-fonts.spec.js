@@ -59,13 +59,14 @@ async function flush(rounds = 8) {
 
 async function load() {
 	vi.resetModules()
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
 
 const $ = (id) => document.getElementById(id)
 const calls = (method, url) => global.fetch.mock.calls.filter(([u, o = {}]) => u === url && (o.method || 'GET') === method)
-const rows = (id) => Array.from($(id).querySelectorAll('.nldesign-custom-set-row')).map((row) => Array.from(row.children).map((el) => el.textContent))
+const rows = (id) => Array.from($(id).querySelectorAll('.thematiq-font-row')).map((row) => Array.from(row.children).map((el) => (el.classList.contains('thematiq-font-row__actions') ? Array.from(el.children).map((b) => b.textContent).join(' | ') : el.textContent)))
 
 describe('admin.js custom fonts', () => {
 	beforeEach(() => {
@@ -96,17 +97,18 @@ describe('admin.js custom fonts', () => {
 		vi.restoreAllMocks()
 	})
 
-	it('lists the uploaded fonts with their role and size in KB, and the library with its roles', async () => {
+	it('lists the uploaded fonts and the library as the board: name and source, sample, licence, status, actions', async () => {
 		await load()
 
 		expect(rows('nldesign-font-list')).toEqual([
-			['Rijksoverheid Sans', 'Heading', '40 KB', 'Delete'],
-			['f2', 'Body text', '1 KB', 'Delete'],
+			['Rijksoverheid Sansuploaded, 40 kB', 'Waste and recycling', 'Own licence', 'In use for headings', 'Delete'],
+			['f2uploaded, 1 kB', 'Waste and recycling', 'Own licence', 'In use for body text', 'Delete'],
 		])
 		expect(rows('nldesign-font-library')).toEqual([
-			['Fira Sans', 'OFL-1.1', 'Body text', 'Stop using for body text', 'Use for headings'],
-			['Source Serif', 'OFL-1.1', 'Use for body text', 'Use for headings'],
+			['Fira Sansbundled', 'Waste and recycling', 'OFL-1.1', 'In use for body text', 'Use for headings | Stop using for body text'],
+			['Source Serifbundled', 'Waste and recycling', 'OFL-1.1', 'Available', 'Use for headings | Use for body text'],
 		])
+		expect($('nldesign-font-library').querySelector('.thematiq-font-row__sample').style.fontFamily).toContain('Fira Sans')
 	})
 
 	it('says so when there are no fonts', async () => {
@@ -190,21 +192,25 @@ describe('admin.js custom fonts', () => {
 	it('deletes a font only after the confirmation, and says how it went', async () => {
 		await load()
 		const deleteButton = () => $('nldesign-font-list').querySelector('button')
-		OC.dialogs.confirm.mockImplementation((text, title, callback) => callback(false))
+		const dialog = () => $('thematiq-delete-font-dialog')
 		deleteButton().click()
-		expect(OC.dialogs.confirm.mock.calls[0][0]).toBe('Delete the font "Rijksoverheid Sans"? Pages using it will fall back to Fira Sans.')
-		expect(OC.dialogs.confirm.mock.calls[0][1]).toBe('Delete font')
+		expect(dialog().querySelector('h2').textContent).toBe('Delete font Rijksoverheid Sans?')
+		expect(dialog().querySelector('.thematiq-admin-dialog__eyebrow').textContent).toBe('Typefaces')
+		dialog().querySelector('.nldesign-dialog-cancel').click()
+		expect(dialog()).toBeNull()
 		expect(calls('DELETE', BASE + '/f1')).toHaveLength(0)
 
-		OC.dialogs.confirm.mockImplementation((text, title, callback) => callback(true))
 		answers['DELETE ' + BASE + '/f1'] = { status: 200, data: { status: 'ok' } }
 		deleteButton().click()
+		dialog().querySelector('.nldesign-dialog-confirm').click()
 		await flush()
 		expect(calls('DELETE', BASE + '/f1')[0][1].headers).toEqual({ requesttoken: 'test-token' })
 		expect(toast).toHaveBeenCalledWith('Font deleted. Reload the page to refresh the styling.')
+		expect(dialog()).toBeNull()
 
 		answers['DELETE ' + BASE + '/f1'] = { status: 200, data: { status: 'error' } }
 		deleteButton().click()
+		dialog().querySelector('.nldesign-dialog-confirm').click()
 		await flush()
 		expect(toast).toHaveBeenLastCalledWith('Failed to delete font.')
 
@@ -212,6 +218,7 @@ describe('admin.js custom fonts', () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		toast.mockClear()
 		deleteButton().click()
+		dialog().querySelector('.nldesign-dialog-confirm').click()
 		await flush()
 		expect(toast).toHaveBeenCalledWith('Failed to delete font.')
 	})
