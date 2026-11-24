@@ -1478,7 +1478,21 @@ OC.L10N.register(
         "Choose and upload file": "Bestand kiezen en uploaden",
         "Choose brands to import": "Merken kiezen om te importeren",
         "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.": "Elk merk wordt een eigen tokenset die aan dit bestand gekoppeld blijft. Komt er een nieuwe versie, dan werkt Bron bijwerken alle merken in een keer bij.",
-        "Import chosen brands": "Gekozen merken importeren"
+        "Import chosen brands": "Gekozen merken importeren",
+        "Own tokens": "Eigen tokens",
+        "A colour, such as #EAF0F7 or rgb(234 240 247).": "Een kleur, zoals #EAF0F7 of rgb(234 240 247).",
+        "Dark value": "Donkere waarde",
+        "(optional)": "(niet verplicht)",
+        "The value for the dark theme.": "De waarde voor het donkere thema.",
+        "Description": "Beschrijving",
+        "At most 500 characters. Say what the token is for.": "Hoogstens 500 tekens. Zeg waar de token voor is.",
+        "How to use it": "Zo gebruikt u hem",
+        "The full name of the token that goes away.": "De volledige naam van de token die verdwijnt.",
+        "Replacement token": "Vervangende token",
+        "Gone from": "Weg per",
+        "Message": "Bericht",
+        "At most 500 characters.": "Hoogstens 500 tekens.",
+        "Deprecating never changes a value. Apps read the list via /apps/thematiq/api/token-deprecations and can warn their developers.": "Uitfaseren verandert nooit een waarde. Apps lezen de lijst via /apps/thematiq/api/token-deprecations en kunnen hun ontwikkelaars waarschuwen."
     },
     "nplurals=2; plural=(n != 1);"
 )

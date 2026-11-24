@@ -430,8 +430,27 @@
 	 */
 	function syncDarkField() {
 		var form = el.tokenDialog.querySelector('form')
-		el.tokenDialog.querySelector('.nldesign-own-token-dark').hidden =
-			form.elements.type.value !== 'color'
+		var colour = form.elements.type.value === 'color'
+		el.tokenDialog.querySelector('.nldesign-own-token-dark').hidden = colour === false
+		var hint = el.tokenDialog.querySelector('.nldesign-own-token-colour-hint')
+		if (hint !== null) {
+			hint.hidden = colour === false
+		}
+	}
+
+	/**
+	 * Show how the token is used, with the name being typed.
+	 *
+	 * @return {void}
+	 */
+	function syncUsage() {
+		var usage = el.tokenDialog.querySelector('.nldesign-own-token-usage')
+		if (usage === null) {
+			return
+		}
+		var form = el.tokenDialog.querySelector('form')
+		var slug = form.elements.slug.value.trim() || '…'
+		usage.textContent = 'background: var(' + state.prefix + slug + ');'
 	}
 
 	/**
@@ -458,6 +477,7 @@
 			? t('thematiq', 'Edit {name}', { name: token.name })
 			: t('thematiq', 'Add a token')
 		syncDarkField()
+		syncUsage()
 		openDialog(el.tokenDialog, from)
 	}
 
@@ -606,11 +626,11 @@
 			event.preventDefault()
 			onSubmit()
 		})
-		dialog
-			.querySelector('.nldesign-dialog-cancel')
-			.addEventListener('click', function () {
+		dialog.querySelectorAll('.nldesign-dialog-cancel').forEach(function (cancel) {
+			cancel.addEventListener('click', function () {
 				closeDialog(dialog)
 			})
+		})
 		dialog.addEventListener('cancel', function () {
 			if (opener && typeof opener.focus === 'function') {
 				opener.focus()
@@ -647,6 +667,9 @@
 		el.tokenDialog
 			.querySelector('select[name="type"]')
 			.addEventListener('change', syncDarkField)
+		el.tokenDialog
+			.querySelector('input[name="slug"]')
+			.addEventListener('input', syncUsage)
 		wireDialog(el.tokenDialog, saveToken)
 		wireDialog(el.deprecationDialog, saveDeprecation)
 		document.addEventListener('thematiq:deprecations-changed', load)
