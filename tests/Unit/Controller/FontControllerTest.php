@@ -287,7 +287,7 @@ class FontControllerTest extends TestCase {
 
 		$this->assertStringContainsString(needle: "getElementById('nldesign-font-list')", haystack: $script);
 		$this->assertMatchesRegularExpression(
-			pattern: '/fonts\.forEach\(function \(font\) \{.*font\.name.*font\.role.*font\.size.*deleteBtn.*deleteFont\(font\.id, font\.name \|\| font\.id\).*row\.appendChild\(deleteBtn\).*listEl\.appendChild\(row\)/s',
+			pattern: '/fonts\.forEach\(function \(font\) \{.*deleteBtn.*deleteFont\(font\.id, font\.name \|\| font\.id\).*actions\.appendChild\(deleteBtn\).*listEl\.appendChild\(fontRow\(\{.*font\.name.*font\.size.*font\.role/s',
 			string: $render,
 			message: 'Each font row shows its name, role and size, and carries its own delete action.'
 		);

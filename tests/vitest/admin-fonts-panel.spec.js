@@ -23,8 +23,8 @@ const PAGE = `
 		<section class="thematiq-panel" data-thematiq-panel="fonts" hidden>
 			<input type="text" id="nldesign-font-name">
 			<div class="thematiq-fonts-panel__now"></div>
-			<div id="nldesign-font-library"><div class="thematiq-font-row" data-name="Fira Sans" data-uses="body"></div></div>
-			<div id="nldesign-font-list"><div class="thematiq-font-row" data-name="Zuiddrecht Sans" data-uses="heading"></div><div class="thematiq-font-row" data-name="Zuiddrecht Text" data-uses=""></div></div>
+			<div id="nldesign-font-library"><div class="thematiq-font-row thematiq-font-row--body"><span class="thematiq-font-row__title">Fira Sans</span></div></div>
+			<div id="nldesign-font-list"><div class="thematiq-font-row thematiq-font-row--heading"><span class="thematiq-font-row__title">Zuiddrecht Sans</span></div><div class="thematiq-font-row"><span class="thematiq-font-row__title">Zuiddrecht Text</span></div></div>
 		</section>
 	</div>
 `

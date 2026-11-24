@@ -52,7 +52,7 @@
 		}
 		var rows = []
 		;[['heading', tr('Headings')], ['body', tr('Body text')]].forEach(function (role) {
-			var row = document.querySelector('.thematiq-font-row[data-uses~="' + role[0] + '"]')
+			var row = document.querySelector('.thematiq-font-row--' + role[0] + ' .thematiq-font-row__title')
 			if (row === null) {
 				return
 			}
@@ -60,7 +60,7 @@
 			var label = document.createElement('span')
 			label.textContent = role[1]
 			var name = document.createElement('strong')
-			name.textContent = row.dataset.name
+			name.textContent = row.textContent
 			entry.appendChild(label)
 			entry.appendChild(name)
 			rows.push(entry)

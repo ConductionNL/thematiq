@@ -8230,8 +8230,9 @@
 			var row = document.createElement('div')
 			row.className = 'thematiq-font-row'
 			row.setAttribute('role', 'listitem')
-			row.dataset.name = font.name
-			row.dataset.uses = (font.uses || []).join(' ')
+			;(font.uses || []).forEach(function (role) {
+				row.classList.add('thematiq-font-row--' + role)
+			})
 			var name = document.createElement('div')
 			name.className = 'thematiq-font-row__name'
 			var title = document.createElement('span')
