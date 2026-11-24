@@ -155,7 +155,9 @@ test.describe('admin audit log and downloads', () => {
 			await page.waitForLoadState('domcontentloaded')
 			const token = await requestToken(page)
 			const previous = await getTokenSet(page, token)
-			const next = previous === 'zuiddrecht' ? 'vng' : 'zuiddrecht'
+			// Both are unrestricted: a restricted set is refused until its licence is confirmed.
+			const next =
+				previous === 'zuiddrecht' ? 'example-gemeente' : 'zuiddrecht'
 			const uid = await page.evaluate(
 				() =>
 					(
