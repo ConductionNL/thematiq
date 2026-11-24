@@ -1451,7 +1451,7 @@ if ($_['mockUi'] === true) {
 			<div class="thematiq-panel__main">
 				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-email-theming" id="nldesign-email-theming" aria-labelledby="thematiq-email-title"
 					data-state="<?php p($_['emailThemingState']['state']); ?>"
-					data-config-read-only="<?php p($_['emailThemingState']['configReadOnly'] ? '1' : '0'); ?>"
+					data-config-read-only="<?php p((string)(int)($_['emailThemingState']['configReadOnly'] === true)); ?>"
 					data-foreign-class="<?php p($_['emailThemingState']['foreignClass'] ?? ''); ?>">
 					<div class="thematiq-css-panel__head">
 						<h2 id="thematiq-email-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Email template')); ?></h2>
