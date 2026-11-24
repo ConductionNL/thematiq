@@ -99,4 +99,26 @@ class AdminEnvironmentLineTest extends TestCase {
 			$this->assertStringContainsString(needle: 'id="' . $id . '"', haystack: $card);
 		}
 	}//end testThePickerIsTheActiveTokenSetCard()
+
+	/**
+	 * Layout, Website: lettering and Dark variant are cards in one grid, the options inside keep their ids.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testLayoutLetteringAndDarkAreCardsInOneGrid(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<div class="thematiq-card-grid">');
+		$this->assertNotFalse(condition: $start);
+		$grid = substr($template, $start, (strpos($template, 'phpcs:enable', $start) - $start));
+		foreach (['thematiq-layout-title', 'thematiq-lettering-title', 'thematiq-dark-title'] as $title) {
+			$this->assertStringContainsString(needle: 'id="' . $title . '"', haystack: $grid);
+		}
+
+		foreach (['thematiq-workplace-layout', 'nldesign-hide-slogan', 'nldesign-show-menu-labels', 'nldesign-dark-variants'] as $id) {
+			$this->assertStringContainsString(needle: 'id="' . $id . '"', haystack: $grid);
+		}
+	}//end testLayoutLetteringAndDarkAreCardsInOneGrid()
 }//end class

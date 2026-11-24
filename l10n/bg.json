@@ -1398,7 +1398,21 @@
         "More actions for {name}": "More actions for {name}",
         "Use this token set": "Use this token set",
         "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.": "{shown} of {total} token sets, of which {own} own sets. A set that does not set every token of its design system is marked as incomplete.",
-        "{shown} of {total}": "{shown} of {total}"
+        "{shown} of {total}": "{shown} of {total}",
+        "Leave empty to follow the theme. Your choice here always wins.": "Leave empty to follow the theme. Your choice here always wins.",
+        "Website: lettering": "Website: lettering",
+        "The website reads these sizes from the token set. Drawn here at 60 percent.": "The website reads these sizes from the token set. Drawn here at 60 percent.",
+        "Dark variant": "Dark variant",
+        "Page title": "Page title",
+        "Heading 2": "Heading 2",
+        "Heading 3": "Heading 3",
+        "Lead": "Lead",
+        "Waste and recycling": "Waste and recycling",
+        "When is it collected?": "When is it collected?",
+        "Bulky waste": "Bulky waste",
+        "Everything about collection days.": "Everything about collection days.",
+        "Put the bin out before 7:30.": "Put the bin out before 7:30.",
+        "{label} {size}": "{label} {size}"
     },
     "plurals": {}
 }
