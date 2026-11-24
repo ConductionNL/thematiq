@@ -61,6 +61,7 @@ script('thematiq', 'admin-dark-panel');
 script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
+script('thematiq', 'admin-contrast-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -787,6 +788,53 @@ if ($_['mockUi'] === true) {
 		</aside>
 		</div>
 	</section>
+
+	<!-- Contrast report (TqContrastrapport), a panel of this page at #contrast (design.md):
+	     the colour contrast of the active theme's tokens, as evidence for an accessibility
+	     statement. js/admin-contrast-panel.js reads the report; js/admin.js downloads it. -->
+	<section class="thematiq-panel thematiq-contrast-panel nldesign-compliance-report" id="nldesign-compliance-report" data-thematiq-panel="contrast" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-contrast-panel__tiles"></div>
+		<section class="thematiq-card thematiq-panel__card thematiq-contrast-panel__card" aria-labelledby="thematiq-contrast-title">
+			<div class="thematiq-css-panel__head">
+				<h2 id="thematiq-contrast-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Colour pairs of the active token set')); ?></h2>
+				<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Text must reach at least 4.5:1, parts such as borders and icons at least 3:1 (WCAG 2.1 AA, 1.4.3 and 1.4.11).')); ?></span>
+			</div>
+			<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Colour pairs of the active token set')); ?>">
+				<table class="nldesign-audit-table thematiq-contrast-panel__table">
+					<thead>
+						<tr>
+							<th scope="col"><?php p($l->t('Foreground')); ?></th>
+							<th scope="col"><?php p($l->t('Background')); ?></th>
+							<th scope="col"><?php p($l->t('Example')); ?></th>
+							<th scope="col"><?php p($l->t('Ratio')); ?></th>
+							<th scope="col"><?php p($l->t('Standard')); ?></th>
+							<th scope="col"><?php p($l->t('Verdict')); ?></th>
+						</tr>
+					</thead>
+					<tbody class="thematiq-contrast-panel__rows">
+						<tr><td colspan="6" class="settings-hint"><?php p($l->t('Loading the report…')); ?></td></tr>
+					</tbody>
+				</table>
+			</div>
+			<a id="nldesign-compliance-report-json" download hidden><?php p($l->t('Download as JSON')); ?></a>
+			<a id="nldesign-compliance-report-markdown" download hidden><?php p($l->t('Download as Markdown')); ?></a>
+		</section>
+		<div class="thematiq-log-panel__cards">
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-contrast-covers-title">
+				<h2 id="thematiq-contrast-covers-title" class="thematiq-panel__card-title"><?php p($l->t('What the report covers')); ?></h2>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t("Only the colour contrast of the theme's tokens. It is not a full WCAG audit: font size, focus, keyboard and app content fall outside it.")); ?></p>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-contrast-about-title">
+				<h2 id="thematiq-contrast-about-title" class="thematiq-panel__card-title"><?php p($l->t('About this report')); ?></h2>
+				<div class="thematiq-css-panel__rules thematiq-contrast-panel__about"></div>
+			</section>
+			<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-contrast-occ-title">
+				<h2 id="thematiq-contrast-occ-title" class="thematiq-panel__card-title"><?php p($l->t('Also via occ')); ?></h2>
+				<code class="thematiq-log-panel__code">occ thematiq:compliance-report</code>
+				<p class="thematiq-panel__fact-hint"><?php p($l->t('Gives the same report, for example for an accessibility statement you update with every release.')); ?></p>
+			</section>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -795,6 +843,7 @@ if ($_['mockUi'] === true) {
 		<ul class="thematiq-tools__list">
 			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
 			<li><a href="#fonts"><?php p($l->t('Typefaces')); ?></a></li>
+			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
 	</nav>
@@ -1610,24 +1659,6 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
 		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
 		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Contrast evidence report: the export endpoint's two formats as
-	     download links. js/admin.js initComplianceReport() fills the hrefs.
-	     (openspec/specs/compliance-evidence/spec.md) -->
-	<div class="nldesign-compliance-report" id="nldesign-compliance-report" style="margin-top:2em">
-		<h3><?php p($l->t('Contrast evidence report')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Download the color contrast of the active theme tokens as evidence for an accessibility statement. It covers color contrast of the theme only and is not a full WCAG audit.')); ?>
-		</p>
-		<div class="nldesign-upload-form">
-			<a id="nldesign-compliance-report-json" class="button" download>
-				<?php p($l->t('Download as JSON')); ?>
-			</a>
-			<a id="nldesign-compliance-report-markdown" class="button" download>
-				<?php p($l->t('Download as Markdown')); ?>
-			</a>
-		</div>
 	</div>
 
 	<!-- Complete configuration bundle — OTAP (dev/test/acceptatie/productie)
