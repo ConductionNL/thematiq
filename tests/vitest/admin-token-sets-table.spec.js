@@ -30,7 +30,7 @@ const SECTION = `
 function sets(n) {
 	const list = [
 		{ id: 'zuiddrecht', name: 'Gemeente Zuiddrecht', design_system: 'nldesign', theming: { primary_color: '#3669a5' }, workplaceLayout: 'light' },
-		{ id: 'rotterdam', name: 'Gemeente Rotterdam', design_system: 'nldesign', theming: { primary_color: '#00811F' }, licence: { confirmed: false } },
+		{ id: 'rotterdam', name: 'Gemeente Rotterdam', design_system: 'nldesign', theming: { primary_color: '#00811F' }, licence: { restricted: true, confirmed: false } },
 		{ id: 'custom-verkiezingen', name: 'Zuiddrecht verkiezingen', design_system: 'nldesign', custom: true, warnings: [{ kind: 'incomplete' }] },
 	]
 	for (let i = 0; i < n; i++) {
@@ -60,6 +60,13 @@ describe('the token sets table', () => {
 		expect(cells(rows[1])[4]).toBe('Confirm licence')
 		expect(cells(rows[2])[1]).toBe('NL Design SystemOwn setIncomplete set')
 		expect(cells(rows[2])[3]).toBe('Follows Nextcloud')
+	})
+
+	it('asks to confirm a licence only for a restricted set', async () => {
+		const list = sets(0)
+		list[1].licence = { restricted: false, confirmed: false }
+		await load(list, 'zuiddrecht')
+		expect(cells(document.querySelectorAll('tbody tr')[1])[4]).toBe('Available')
 	})
 
 	it('shows 14 rows, then 14 more', async () => {

@@ -201,8 +201,11 @@ if ($_['mockUi'] === true) {
 			</div>
 			<div class="thematiq-token-sets__tools">
 				<label for="thematiq-token-sets-search" class="hidden-visually"><?php p($l->t('Search token sets')); ?></label>
-				<input type="search" id="thematiq-token-sets-search" class="thematiq-token-sets__search"
-					placeholder="<?php p($l->t('Search token sets')); ?>" autocomplete="off">
+				<span class="thematiq-token-sets__field">
+					<span class="thematiq-token-sets__icon thematiq-token-sets__icon--search" aria-hidden="true"></span>
+					<input type="search" id="thematiq-token-sets-search" class="thematiq-token-sets__search"
+						placeholder="<?php p($l->t('Search token sets')); ?>" autocomplete="off">
+				</span>
 				<button type="button" class="thematiq-token-sets__own"><?php p($l->t('Own token set')); ?></button>
 			</div>
 		</div>

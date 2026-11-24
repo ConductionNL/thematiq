@@ -84,7 +84,7 @@
 		var status = 'available'
 		if (set.id === current) {
 			status = 'active'
-		} else if (set.licence && set.licence.confirmed !== true) {
+		} else if (set.licence && set.licence.restricted === true && set.licence.confirmed !== true) {
 			status = 'licence'
 		}
 		return {
@@ -118,6 +118,9 @@
 	 * @return {string} The sort key.
 	 */
 	function sortKey(row, column) {
+		if (column === 'default') {
+			return (row.status === 'active' ? '0' : '1') + row.name.toLowerCase()
+		}
 		if (column === 'status') {
 			return ['active', 'licence', 'available'].indexOf(row.status) + row.name
 		}
@@ -137,7 +140,7 @@
 	 */
 	function build(root, sets, current) {
 		var rows = sets.map(function (set) { return toRow(set, current) })
-		var view = { query: '', column: 'status', ascending: true, shown: PAGE }
+		var view = { query: '', column: 'default', ascending: true, shown: PAGE }
 
 		var count = root.querySelector('.thematiq-token-sets__count')
 		var search = root.querySelector('.thematiq-token-sets__search')
