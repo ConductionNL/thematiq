@@ -80,7 +80,7 @@
 	},
 	"devDependencies": {
 		"@conduction/nextcloud-vue": "^2.203.0",
-		"@cyclonedx/cyclonedx-npm": "^6.0.1",
+		"@cyclonedx/cyclonedx-npm": "^7.0.1",
 		"@eslint/js": "^10.0.0",
 		"@nextcloud/prettier-config": "^1.2.0",
 		"@openfun/cunningham-tokens": "^3.0.0",
