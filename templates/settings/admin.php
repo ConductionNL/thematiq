@@ -234,7 +234,7 @@ if ($_['mockUi'] === true) {
 	</section>
 
 	<!-- Layout, Website: lettering and Dark variant, in two columns as TqTheming draws them. -->
-	<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps -- a template reads its parameters from $_. ?>
+	<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength -- a template reads its parameters from $_; the options keep their markup. ?>
 	<div class="thematiq-card-grid">
 		<section class="thematiq-card thematiq-layout-card" aria-labelledby="thematiq-layout-title">
 			<h2 id="thematiq-layout-title" class="thematiq-card__title"><?php p($l->t('Layout')); ?></h2>
@@ -402,7 +402,7 @@ if ($_['mockUi'] === true) {
 					   name="nldesign-primary-drives-components"
 					   id="nldesign-primary-drives-components"
 					   class="checkbox"
-					   <?php if ($_['primaryDrivesComponents']): ?>checked<?php endif; ?>>
+					   <?php if ($_['primaryDrivesComponents'] === true): ?>checked<?php endif; ?>>
 				<label for="nldesign-primary-drives-components">
 					<?php p($l->t('Let the primary color drive every component')); ?>
 				</label>
@@ -416,7 +416,7 @@ if ($_['mockUi'] === true) {
 					   name="nldesign-hide-slogan"
 					   id="nldesign-hide-slogan"
 					   class="checkbox"
-					   <?php if ($_['hideSlogan']): ?>checked<?php endif; ?>>
+					   <?php if ($_['hideSlogan'] === true): ?>checked<?php endif; ?>>
 				<label for="nldesign-hide-slogan">
 					<?php p($l->t('Hide Nextcloud slogan/payoff on login page')); ?>
 				</label>
@@ -428,7 +428,7 @@ if ($_['mockUi'] === true) {
 					   name="nldesign-show-menu-labels"
 					   id="nldesign-show-menu-labels"
 					   class="checkbox"
-					   <?php if ($_['showMenuLabels']): ?>checked<?php endif; ?>>
+					   <?php if ($_['showMenuLabels'] === true): ?>checked<?php endif; ?>>
 				<label for="nldesign-show-menu-labels">
 					<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
 				</label>
@@ -452,7 +452,7 @@ if ($_['mockUi'] === true) {
 						   name="nldesign-dark-variants"
 						   id="nldesign-dark-variants"
 						   class="checkbox"
-						   <?php if ($_['darkVariantsEnabled']): ?>checked<?php endif; ?>>
+						   <?php if ($_['darkVariantsEnabled'] === true): ?>checked<?php endif; ?>>
 					<label for="nldesign-dark-variants">
 						<?php p($l->t('Enable dark mode variants for the active token set')); ?>
 					</label>
@@ -463,7 +463,7 @@ if ($_['mockUi'] === true) {
 			</section>
 		</div>
 	</div>
-	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
+	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 
 
