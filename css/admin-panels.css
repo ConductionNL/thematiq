@@ -2300,3 +2300,14 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+#nldesign-settings .thematiq-panel .nldesign-workspace-icons__preview:not(:has(img)) {
+	grid-column: 2;
+	grid-row: 3;
+	justify-content: flex-start;
+	width: auto;
+	height: auto;
+	border: 0;
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
