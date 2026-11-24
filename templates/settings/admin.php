@@ -520,7 +520,11 @@ if ($_['mockUi'] === true) {
 							<span class="thematiq-panel__fact-hint"><?php p($l->t('Source: the active design system. Changed with occ, not on this page.')); ?></span>
 						</div>
 						<div class="thematiq-panel__fact-value">
-							<span><?php p(empty($_['activeIconPacks']) === true ? $l->t('None') : implode(', ', $_['activeIconPacks'])); ?></span>
+							<?php if (empty($_['activeIconPacks']) === true): ?>
+								<span><?php p($l->t('None')); ?></span>
+							<?php else: ?>
+								<span><?php p(implode(', ', $_['activeIconPacks'])); ?></span>
+							<?php endif; ?>
 						</div>
 					</div>
 					<div class="thematiq-panel__fact">
