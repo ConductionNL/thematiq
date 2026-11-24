@@ -179,8 +179,8 @@ dialog.thematiq-admin-dialog::backdrop {
 	box-sizing: border-box;
 	height: 40px;
 	min-height: 40px;
-	margin: 0;
-	padding: 0 14px;
+	margin: 0 !important;
+	padding: 0 14px !important;
 	border: 1px solid var(--color-border-maxcontrast);
 	border-radius: 8px;
 	background: var(--color-main-background);
@@ -196,7 +196,7 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
-	padding: 0 18px;
+	padding: 0 18px !important;
 	border: 0;
 	background: var(--color-primary-element);
 	color: var(--color-primary-element-text);
@@ -209,9 +209,9 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog .thematiq-admin-dialog__button--link {
-	margin-inline-end: auto;
+	margin-inline-end: auto !important;
 	gap: 6px;
-	padding: 0 4px;
+	padding: 0 4px !important;
 	border: 0;
 	background: transparent;
 	color: var(--nldesign-color-link, var(--color-primary-element));
@@ -251,8 +251,8 @@ dialog.thematiq-admin-dialog::backdrop {
 .thematiq-admin-dialog__hint,
 .thematiq-admin-dialog .thematiq-admin-dialog__note {
 	margin: 0;
-	font-size: 13px;
-	line-height: 1.45;
+	font-size: 13px !important;
+	line-height: 1.5 !important;
 	color: var(--color-text-maxcontrast);
 }
 
