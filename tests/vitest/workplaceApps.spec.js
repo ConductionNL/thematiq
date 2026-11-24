@@ -140,6 +140,33 @@ describe('the workplace app layer script', () => {
 		delete global.n
 	})
 
+	it('draws a card\'s mail and project lines from Deck\'s API and the priority label as a mark', async () => {
+		window.history.replaceState({}, '', '/apps/deck/board/2')
+		global.t = (app, text, vars) => text.replace(/{(\w+)}/g, (whole, key) => (vars && key in vars ? vars[key] : whole))
+		global.fetch = vi.fn(() => Promise.resolve({
+			ok: true,
+			json: () => Promise.resolve({ ocs: { data: [{ cards: [{ id: 7, description: 'From mail: Hanneke Visser\nProject: Website\n\nText' }] }] } }),
+		}))
+		document.body.innerHTML = '<div id="content" class="app-deck"><div class="stack"><div class="dnd-container"><div class="smooth-dnd-draggable-wrapper"><div class="card">'
+			+ '<div class="card-upper"><h4><span>Prepare the demo</span></h4></div>'
+			+ '<div class="card-labels"><ul class="labels"><li><span>Task</span></li><li><span>Priority high</span></li></ul></div>'
+			+ '<div class="card-controls"><div class="badges"><div class="inline-badges"><div class="cardid icon-badge"><span>#7</span></div></div></div></div>'
+			+ '</div></div></div></div></div>'
+		await loadScript()
+		await frame()
+
+		expect(global.fetch.mock.calls[0][0]).toContain('/ocs/v2.php/apps/deck/api/v1.0/stacks/2')
+		expect(document.querySelector('.card-controls').getAttribute('data-thematiq-mail')).toBe('From mail: Hanneke Visser')
+		expect(document.querySelector('.card-upper').getAttribute('data-thematiq-project')).toBe('Website')
+		const labels = document.querySelectorAll('.labels li')
+		expect(labels[0].hasAttribute('data-thematiq-priority')).toBe(false)
+		expect(labels[1].getAttribute('data-thematiq-priority')).toBe('high')
+		expect(document.querySelector('.card-labels').getAttribute('data-thematiq-priority')).toBe('Priority high')
+
+		delete global.fetch
+		window.history.replaceState({}, '', '/')
+	})
+
 	it('does nothing without the app layer sheet', async () => {
 		sheetLoaded = false
 		document.body.innerHTML = WEEK
