@@ -309,9 +309,9 @@ describe('every rule of the app sheets starts at an allowed root', () => {
 })
 
 /**
- * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-calendar-fades-entries-that-have-passed-req-tqas-101
- * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-calendar-draws-an-entry-not-answered-yet-with-a-dashed-frame-req-tqas-102
- * @spec openspec/changes/workplace-app-sheets-entry-states/specs/workplace-app-sheets/spec.md#requirement-deck-lifts-a-card-mid-move-over-a-dashed-slot-req-tqas-103
+ * @spec openspec/specs/workplace-app-sheets/spec.md#requirement-calendar-fades-entries-that-have-passed-req-tqas-101
+ * @spec openspec/specs/workplace-app-sheets/spec.md#requirement-calendar-draws-an-entry-not-answered-yet-with-a-dashed-frame-req-tqas-102
+ * @spec openspec/specs/workplace-app-sheets/spec.md#requirement-deck-lifts-a-card-mid-move-req-tqas-103
  */
 describe('the entry states of Calendar and the card mid-move of Deck', () => {
 	const CONTENT = ':is(#content, #content-vue)'
