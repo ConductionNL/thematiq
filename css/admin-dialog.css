@@ -49,6 +49,7 @@ dialog.thematiq-admin-dialog::backdrop {
 
 .thematiq-admin-dialog__eyebrow {
 	font-size: 13px;
+	line-height: 1.2;
 	font-weight: 700;
 	color: var(--color-primary-element-light-text);
 }
@@ -188,6 +189,10 @@ dialog.thematiq-admin-dialog::backdrop {
 	font-weight: 600;
 	white-space: nowrap;
 	cursor: pointer;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button--secondary:focus {
+	background: var(--color-main-background);
 }
 
 .thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
