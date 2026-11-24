@@ -2042,3 +2042,105 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+/* House style per group (TqGroepen). */
+#nldesign-settings .thematiq-groups-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-groups-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-groups-panel__table {
+	min-width: 620px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-groups-panel__table td {
+	vertical-align: middle;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-rank {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	min-width: 26px;
+	height: 28px;
+	padding: 0 6px;
+	box-sizing: border-box;
+	border-radius: 14px;
+	background: var(--color-background-hover) !important;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-groups-panel__table select {
+	width: 100%;
+	min-width: 0;
+	height: 38px;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-delegation {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-delegation select[multiple] {
+	height: auto;
+	min-height: 72px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-delegation select[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-order {
+	white-space: nowrap;
+	text-align: end;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-order button {
+	width: 34px;
+	min-width: 34px;
+	height: 34px;
+	min-height: 34px;
+	margin: 0 0 0 4px;
+	padding: 0;
+	border: 1px solid var(--color-border-dark) !important;
+	border-radius: 8px;
+	background: var(--color-main-background) !important;
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-order button:disabled {
+	opacity: 0.4;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-group-theming-order .nldesign-group-theming-remove {
+	color: var(--color-error-text, var(--color-error));
+}
+
+#nldesign-settings .thematiq-panel .thematiq-groups-panel__add {
+	min-height: 40px;
+	margin: 0;
+	border: 1px solid var(--color-border-dark) !important;
+	background: var(--color-main-background) !important;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel p.thematiq-groups-panel__text {
+	max-width: none;
+	margin: 0;
+	font-size: 14px !important;
+	line-height: 1.6 !important;
+	color: var(--color-main-text);
+}

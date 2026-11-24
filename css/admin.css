@@ -2250,63 +2250,6 @@
 }
 
 /* ==========================================================================
- * Group theming — group -> token-set mapping rows (openspec/specs/per-group-theming/spec.md)
- * Row order IS priority order; up/down buttons are keyboard-operable
- * (no drag-and-drop), consistent with the admin-panel-keyboard-accessibility
- * work.
- * ========================================================================== */
-.nldesign-group-theming-list {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	margin-bottom: 1em;
-}
-
-.nldesign-group-theming-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
-}
-
-.nldesign-group-theming-row select {
-	flex: 1;
-	min-width: 0;
-}
-
-.nldesign-group-theming-move-up,
-.nldesign-group-theming-move-down,
-.nldesign-group-theming-remove {
-	flex: 0 0 auto;
-	min-width: 36px;
-	padding: 4px 8px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
-	color: var(--color-main-text);
-	cursor: pointer;
-}
-
-.nldesign-group-theming-move-up:disabled,
-.nldesign-group-theming-move-down:disabled {
-	opacity: 0.4;
-	cursor: default;
-}
-
-.nldesign-group-theming-remove {
-	color: var(--color-error, #c0392b);
-}
-
-.nldesign-group-theming-feedback {
-	display: block;
-	margin-top: 0.5em;
-	color: var(--color-text-maxcontrast);
-}
-
-/* ==========================================================================
    Theming audit log
    ==========================================================================
 

@@ -67,6 +67,7 @@ script('thematiq', 'admin-assistant-panel');
 script('thematiq', 'admin-switches-panel');
 script('thematiq', 'admin-gallery-panel');
 script('thematiq', 'admin-own-sets-panel');
+script('thematiq', 'admin-groups-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1289,6 +1290,71 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- House style per group (TqGroepen), a panel of this page at #groups (design.md): groups
+	     mapped to token sets for a shared instance (openspec/specs/per-group-theming/spec.md).
+	     Row order is precedence, moved with buttons, not dragged. admin.js loads, edits and
+	     saves; js/admin-groups-panel.js writes the counts. -->
+	<section class="thematiq-panel thematiq-groups-panel" id="nldesign-group-theming" data-thematiq-panel="groups" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-groups-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-groups-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('House style per group')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Link groups to a token set, so organisations that share this Nextcloud each see their own house style. The order is the precedence: if someone is in several groups, the top row wins.')); ?></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('House style per group')); ?>">
+						<table class="nldesign-audit-table thematiq-groups-panel__table">
+							<thead>
+								<tr>
+									<th scope="col"><?php p($l->t('Precedence and group')); ?></th>
+									<th scope="col"><?php p($l->t('Token set')); ?></th>
+									<th scope="col"><?php p($l->t('Delegated')); ?></th>
+									<th scope="col"><span class="hidden-visually"><?php p($l->t('Order and remove')); ?></span></th>
+								</tr>
+							</thead>
+							<tbody id="nldesign-group-theming-list" class="nldesign-group-theming-list">
+								<tr><td colspan="4" class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></td></tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<button type="button" id="nldesign-group-theming-add" class="thematiq-groups-panel__add"><?php p($l->t('Add connection')); ?></button>
+						<span id="nldesign-group-theming-feedback" class="thematiq-css-panel__feedback nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-group-theming-save" class="thematiq-css-panel__save"><?php p($l->t('Save group theme')); ?></button>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-groups-delegated-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-groups-delegated-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Delegated to sub-admins')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead thematiq-groups-panel__delegated"></span>
+					</div>
+					<p class="thematiq-groups-panel__text"><?php p($l->t("Tick Sub-admins choose to let a group's sub-admins pick the house style themselves, from the token sets you allow. They choose under Personal settings, Appearance and accessibility.")); ?></p>
+					<p class="thematiq-switches-panel__applies">
+						<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+						<span><?php p($l->t("A sub-admin chooses from this list only. Every choice goes in the log with the sub-admin's name.")); ?></span>
+					</p>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-groups-differs-title">
+					<h2 id="thematiq-groups-differs-title" class="thematiq-panel__card-title"><?php p($l->t('What differs per group')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Only the thematiq token set differs per group. Logo, email template and the rest of the Nextcloud house style always follow the default token set.')); ?></p>
+					<div class="thematiq-css-panel__rules">
+						<div><span><?php p($l->t('Default token set')); ?></span><strong class="thematiq-groups-panel__default"></strong></div>
+						<div><span><?php p($l->t('Linked groups')); ?></span><strong class="thematiq-groups-panel__linked"></strong></div>
+						<div><span><?php p($l->t('Delegated')); ?></span><strong class="thematiq-groups-panel__delegated-count"></strong></div>
+					</div>
+					<a href="#" class="thematiq-bundle-panel__link"><?php p($l->t('Change default token set')); ?></a>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-groups-subadmin-title">
+					<h2 id="thematiq-groups-subadmin-title" class="thematiq-panel__card-title"><?php p($l->t('What a sub-admin sees')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Under Appearance and accessibility, the card House style of my groups, with the allowed token sets per group.')); ?></p>
+					<a href="../user/theming" class="thematiq-bundle-panel__link"><?php p($l->t('View personal settings')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1301,6 +1367,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#assistant"><?php p($l->t('AI assistant')); ?></a></li>
 			<li><a href="#switches"><?php p($l->t('Scheduled switches')); ?></a></li>
 			<li><a href="#own-sets"><?php p($l->t('Own token sets')); ?></a></li>
+			<li><a href="#groups"><?php p($l->t('House style per group')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
@@ -1732,34 +1799,6 @@ if ($_['mockUi'] === true) {
 			<button type="button" class="button primary" id="nldesign-app-brands-add"><?php p($l->t('Save brand')); ?></button>
 		</p>
 		<span id="nldesign-app-brands-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Group theming — map Nextcloud groups to token sets for shared-instance
-	     multi-tenant huisstijl (openspec/specs/per-group-theming/spec.md).
-	     Row order IS priority order; keyboard-operable move-up/move-down
-	     buttons instead of drag-and-drop. -->
-	<div class="nldesign-group-theming" id="nldesign-group-theming" style="margin-top:2em">
-		<h3><?php p($l->t('Group theming')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Map Nextcloud groups to token sets so different gemeenten sharing one instance each see their own house style. Row order is priority order: for a user in multiple mapped groups, the first matching row wins.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Logo, mail templates, and other Nextcloud core branding always follow the instance default token set above — they are not per-group. Only this token-set stylesheet layer differs per group.')); ?>
-		</p>
-		<p class="settings-hint">
-			<?php p($l->t('Tick Subadmins choose to let the subadmins of a group pick its house style from the token sets you allow. They choose under Personal settings, Appearance and accessibility.')); ?>
-		</p>
-		<div id="nldesign-group-theming-list" class="nldesign-group-theming-list" role="group"
-			 aria-label="<?php p($l->t('Group theming')); ?>">
-			<p class="settings-hint"><?php p($l->t('Loading group mappings…')); ?></p>
-		</div>
-		<button type="button" id="nldesign-group-theming-add" class="button">
-			<?php p($l->t('Add mapping')); ?>
-		</button>
-		<button type="button" id="nldesign-group-theming-save" class="button primary">
-			<?php p($l->t('Save group theming')); ?>
-		</button>
-		<span id="nldesign-group-theming-feedback" class="nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
 	</div>
 
 	<!-- Email template theming — mail_template_class toggle + compliance footer -->

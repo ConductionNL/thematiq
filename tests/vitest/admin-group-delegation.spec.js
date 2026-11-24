@@ -160,7 +160,7 @@ describe('admin.js group delegation', () => {
 		const toggle = rows[0].querySelector('[data-field="delegated"]')
 		const label = rows[0].querySelector('label[for="' + toggle.id + '"]')
 		expect(toggle.checked).toBe(true)
-		expect(label.textContent).toBe('Subadmins choose')
+		expect(label.textContent).toBe('Sub-admins choose')
 		const picker = rows[0].querySelector('[data-field="allowedTokenSets"]')
 		expect(picker.hidden).toBe(false)
 		expect(picker.getAttribute('aria-label')).toContain('subadmins')

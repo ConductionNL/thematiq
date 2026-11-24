@@ -6064,21 +6064,26 @@
 
 			listEl.replaceChildren()
 
+			document.dispatchEvent(new CustomEvent('thematiq:group-theming', { detail: { rows: groupThemingRows } }))
+
 			if (groupThemingRows.length === 0) {
-				var empty = document.createElement('p')
-				empty.className = 'settings-hint'
-				empty.textContent = t('thematiq', 'No group mappings configured.')
+				var empty = document.createElement('tr')
+				var none = document.createElement('td')
+				none.colSpan = 4
+				none.className = 'settings-hint'
+				none.textContent = t('thematiq', 'No group mappings configured.')
+				empty.appendChild(none)
 				listEl.appendChild(empty)
 				return
 			}
 
 			groupThemingRows.forEach(function (row, index) {
-				var rowEl = document.createElement('div')
+				var rowEl = document.createElement('tr')
 				rowEl.className = 'nldesign-group-theming-row'
 
 				var groupSelect = document.createElement('select')
 				groupSelect.setAttribute('data-field', 'group')
-				groupSelect.setAttribute('aria-label', t('thematiq', 'Group'))
+				groupSelect.setAttribute('aria-label', t('thematiq', 'Group of row {rank}', { rank: index + 1 }))
 				groupThemingGroups.forEach(function (g) {
 					var opt = document.createElement('option')
 					opt.value = g.id
@@ -6094,7 +6099,7 @@
 
 				var tokenSetSelect = document.createElement('select')
 				tokenSetSelect.setAttribute('data-field', 'tokenSet')
-				tokenSetSelect.setAttribute('aria-label', t('thematiq', 'Token set'))
+				tokenSetSelect.setAttribute('aria-label', t('thematiq', 'Token set of row {rank}', { rank: index + 1 }))
 				groupThemingTokenSets.forEach(function (ts) {
 					var opt = document.createElement('option')
 					opt.value = ts.id
@@ -6148,12 +6153,20 @@
 					renderGroupThemingList()
 				})
 
-				rowEl.appendChild(groupSelect)
-				rowEl.appendChild(tokenSetSelect)
-				rowEl.appendChild(renderGroupDelegation(index))
-				rowEl.appendChild(moveUpBtn)
-				rowEl.appendChild(moveDownBtn)
-				rowEl.appendChild(removeBtn)
+				var groupCell = document.createElement('td')
+				groupCell.className = 'nldesign-group-theming-group'
+				var rank = document.createElement('span')
+				rank.className = 'nldesign-group-theming-rank'
+				rank.textContent = String(index + 1)
+				groupCell.append(rank, groupSelect)
+				var setCell = document.createElement('td')
+				setCell.appendChild(tokenSetSelect)
+				var delegationCell = document.createElement('td')
+				delegationCell.appendChild(renderGroupDelegation(index))
+				var orderCell = document.createElement('td')
+				orderCell.className = 'nldesign-group-theming-order'
+				orderCell.append(moveUpBtn, moveDownBtn, removeBtn)
+				rowEl.append(groupCell, setCell, delegationCell, orderCell)
 				listEl.appendChild(rowEl)
 			})
 
@@ -6242,7 +6255,7 @@
 			toggle.checked = row.delegated === true
 			var toggleLabel = document.createElement('label')
 			toggleLabel.setAttribute('for', toggleId)
-			toggleLabel.textContent = t('thematiq', 'Subadmins choose')
+			toggleLabel.textContent = t('thematiq', 'Sub-admins choose')
 			wrap.appendChild(toggle)
 			wrap.appendChild(toggleLabel)
 
