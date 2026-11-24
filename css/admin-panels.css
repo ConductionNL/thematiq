@@ -23,7 +23,8 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 }
 
 .thematiq-panel[hidden],
-.thematiq-panel__now {
+.thematiq-panel__now,
+#nldesign-settings .thematiq-panel .thematiq-panel__card[hidden] {
 	display: none !important;
 }
 
@@ -1769,4 +1770,275 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 
 #nldesign-settings .thematiq-gallery-panel .thematiq-css-panel__check .thematiq-panel__fact-hint {
 	padding-inline-start: 25px;
+}
+
+/* Own token sets (TqEigenSets). */
+#nldesign-settings .thematiq-own-sets-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-tabs {
+	gap: 4px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-tab {
+	margin: 0 0 -1px;
+	padding: 8px 12px;
+	border: 1px solid transparent !important;
+	border-radius: 8px 8px 0 0;
+	background: var(--color-background-hover) !important;
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 400;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-tab.active {
+	border-color: var(--color-border) var(--color-border) var(--color-main-background) !important;
+	background: var(--color-main-background) !important;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-panels {
+	margin: 0;
+	padding: 20px;
+	border: 1px solid var(--color-border);
+	border-top: 0;
+	border-radius: 0 0 8px 8px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-panel[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-create-panel > p {
+	margin: 0;
+	font-size: 14px !important;
+	line-height: 1.6 !important;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-form .nldesign-fields {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-fields .nldesign-field input[type='text'] {
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	height: 40px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-colour {
+	height: 40px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-field .thematiq-panel__fact-hint {
+	font-size: 12px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .thematiq-own-sets-panel__preview {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	padding: 16px;
+	border-radius: 8px;
+	background: var(--color-background-hover) !important;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-preview {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-sample {
+	padding: 8px 14px;
+	border-radius: 8px;
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-contrast {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 14px;
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-ratio {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-ratio__pill {
+	padding: 1px 10px;
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background)) !important;
+	color: var(--color-success);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-ratio__pill::before {
+	content: '✓';
+	margin-inline-end: 4px;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-ratio__pill--below {
+	background: color-mix(in srgb, var(--color-warning) 18%, var(--color-main-background)) !important;
+	color: var(--color-warning-text, var(--color-main-text));
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-ratio__pill--below::before {
+	content: '!';
+}
+
+#nldesign-settings .thematiq-own-sets-panel .thematiq-own-sets-panel__actions {
+	justify-content: flex-end;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-own-sets-panel .nldesign-paste-field textarea {
+	max-width: none;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-own-sets-panel__table {
+	min-width: 560px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-own-sets-panel__table td {
+	vertical-align: middle;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-cell {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-swatch {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	margin-top: 1px;
+	border-radius: 4px;
+	background: var(--color-background-darker);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-name {
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-meta,
+#nldesign-settings .thematiq-panel .nldesign-custom-set-meta a {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-meta:empty {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-used {
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-source td {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-actions {
+	position: relative;
+	display: flex;
+	justify-content: flex-end;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu-toggle {
+	width: 34px;
+	min-width: 34px;
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--color-border-dark) !important;
+	border-radius: 8px;
+	background: var(--color-main-background) !important;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu {
+	position: absolute;
+	z-index: 10;
+	top: 40px;
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	min-width: 240px;
+	padding: 6px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-main-background) !important;
+	box-shadow: 0 4px 16px rgb(0 0 0 / 15%);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu > * {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 36px;
+	margin: 0;
+	padding: 8px 10px;
+	border: 0 !important;
+	border-radius: 6px;
+	background: transparent !important;
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 400;
+	text-align: start;
+	text-decoration: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu > *:hover,
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu > *:focus-visible {
+	background: var(--color-background-hover) !important;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-custom-set-menu > .nldesign-btn--danger {
+	color: var(--color-error-text, var(--color-error));
+}
+
+@media (max-width: 720px) {
+	#nldesign-settings .thematiq-own-sets-panel .nldesign-brand-form .nldesign-fields {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }

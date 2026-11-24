@@ -1440,7 +1440,7 @@ describe('admin.js token editor', () => {
 				'Upload overrides into Nextcloud (Base)?',
 			)
 			expect(overlay.querySelector('.thematiq-admin-dialog__file-label').textContent).toBe('File')
-			expect(overlay.querySelector('a[href="#nldesign-custom-token-sets"]').textContent).toBe('Own token sets')
+			expect(overlay.querySelector('a[href="#own-sets"]').textContent).toBe('Own token sets')
 			expect(picker).not.toHaveBeenCalled()
 			click(overlay.querySelector('.thematiq-admin-dialog__file-row button'))
 			expect(picker).toHaveBeenCalledTimes(1)
