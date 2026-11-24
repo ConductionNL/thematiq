@@ -715,6 +715,8 @@
 
 .thematiq-token-sets__scroll {
 	overflow-x: auto;
+	/* The board's head text sits 2.5px lower: its filter buttons are 22px with 1.5px more around them. */
+	padding-top: 2.5px;
 }
 
 .thematiq-token-sets__table {
