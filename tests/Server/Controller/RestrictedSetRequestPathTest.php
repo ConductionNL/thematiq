@@ -212,6 +212,13 @@ use ReflectionProperty;
 #[UsesClass(TokenSetPreviewService::class)]
 #[UsesClass(TokenSetVocabularyAuditService::class)]
 #[UsesClass(UpstreamFreshnessService::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\ApiContractMiddleware::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\ApiPathAliases::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\StandardProtocolPaths::class)]
+#[UsesClass(\OCA\Thematiq\Service\GroupEntryRun::class)]
+#[UsesClass(\OCA\Thematiq\Service\GroupMappingRules::class)]
+#[UsesClass(\OCA\Thematiq\Service\SwitchPlan::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class RestrictedSetRequestPathTest extends TestCase {
 
 	use RestrictedSetFixture;

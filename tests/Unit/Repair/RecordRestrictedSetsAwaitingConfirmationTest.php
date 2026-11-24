@@ -50,6 +50,7 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(ScheduledSwitchStore::class)]
 #[UsesClass(SetFileReader::class)]
 #[UsesClass(TokenSetFontAuditService::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 
 	use RestrictedSetFixture;

@@ -54,6 +54,7 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\MappedToken
  * @uses   \OCA\Thematiq\Service\TokenSetDownload
  * @uses   \OCA\Thematiq\Service\TypedValue
+ * @uses   \OCA\Thematiq\Service\TokenReference
  */
 class DesignTokensMapperGoldenTest extends TestCase {
 

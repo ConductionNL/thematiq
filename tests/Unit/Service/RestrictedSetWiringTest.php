@@ -133,6 +133,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(\OCA\Thematiq\Service\SwitchWindow::class)]
 #[UsesClass(\OCA\Thematiq\Service\AppBrandRecords::class)]
 #[UsesClass(\OCA\Thematiq\Service\DelegatedChoice::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;

@@ -56,6 +56,7 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(\OCA\Thematiq\Service\IndexedJsonManifest::class)]
 #[UsesClass(\OCA\Thematiq\Service\ListedTokenSet::class)]
 #[UsesClass(\OCA\Thematiq\Service\RuntimeFile\LocalFile::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class TokenSetLicenceServiceTest extends TestCase {
 
 	use RestrictedSetFixture;

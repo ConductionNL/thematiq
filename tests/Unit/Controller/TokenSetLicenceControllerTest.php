@@ -33,6 +33,8 @@ use ReflectionMethod;
  */
 #[CoversClass(TokenSetLicenceController::class)]
 #[CoversClass(RestrictedSetInUseException::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\ApiPathAliases::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\StandardProtocolPaths::class)]
 class TokenSetLicenceControllerTest extends TestCase {
 
 	/**
