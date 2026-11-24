@@ -322,3 +322,12 @@ dialog.thematiq-admin-dialog::backdrop {
 	font-size: 13px;
 	color: var(--color-text-maxcontrast);
 }
+
+.thematiq-admin-dialog__notice--neutral {
+	background: var(--color-background-hover);
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+.thematiq-admin-dialog__value-note {
+	color: var(--color-text-maxcontrast);
+}

@@ -48,6 +48,7 @@ script('thematiq', 'dialogs/reset-theme-dialog');
 script('thematiq', 'dialogs/new-theme-dialog');
 script('thematiq', 'dialogs/save-overrides-dialog');
 script('thematiq', 'dialogs/base-tokens-dialog');
+script('thematiq', 'dialogs/theming-update-dialog');
 style('thematiq', 'admin-dialog');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');

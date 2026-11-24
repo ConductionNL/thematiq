@@ -1637,7 +1637,7 @@
 						t,
 					)
 					if (plan.mode === 'reset') {
-						showThemingResetDialog(tokenSetData, currentTheming)
+						showThemingResetDialog(plan.diffs)
 					} else if (plan.mode === 'match') {
 						showThemingDialog(
 							tokenSetData,
@@ -1659,178 +1659,23 @@
 		// background the way core's own undo arrows do. Same overlay id as the
 		// match dialog, so the accessibility helpers and the specs that look
 		// for it keep working.
-		function showThemingResetDialog(tokenSetData, currentTheming) {
+		function showThemingResetDialog(diffs) {
 			var existing = document.getElementById('nldesign-theming-dialog-overlay')
 			if (existing) existing.remove()
-
-			var defaultPrimary = currentTheming.default_primary_color || '#00679e'
-			var defaultBackground =
-				currentTheming.default_background_color || defaultPrimary
-			var defaultLogo = OC.imagePath('core', 'logo/logo.svg')
-			var currentBg = currentTheming.background_color || defaultBackground
-			var currentLogoUrl = currentTheming.logo_url || ''
-			var defaultLabel = escapeHtml(t('thematiq', 'Nextcloud default'))
-
-			var rows = ''
-			function swatchCell(hex) {
-				return (
-					'<span class="nldesign-dialog-swatch" style="background:'
-					+ escapeHtml(hex)
-					+ '"></span> '
-					+ escapeHtml(hex)
-				)
-			}
-			if (currentTheming.primary_color) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Primary color'))
-					+ '</td><td>'
-					+ swatchCell(currentTheming.primary_color)
-					+ '</td><td>'
-					+ swatchCell(defaultPrimary)
-					+ ' '
-					+ defaultLabel
-					+ '</td></tr>'
-			}
-			if (currentTheming.background_color) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Background color'))
-					+ '</td><td>'
-					+ swatchCell(currentTheming.background_color)
-					+ '</td><td>'
-					+ swatchCell(defaultBackground)
-					+ ' '
-					+ defaultLabel
-					+ '</td></tr>'
-			}
-			if (currentTheming.has_custom_logo === true) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Logo'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom logo)'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', 'Nextcloud logo'))
-					+ '</td></tr>'
-			}
-			if (currentTheming.has_custom_background === true) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Background image'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom)'))
-					+ '</td><td>'
-					+ defaultLabel
-					+ '</td></tr>'
+			if (window.ThematiqThemingUpdateDialog === undefined) {
+				return
 			}
 
-			var dialogHtml =
-				''
-				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '  <div class="nldesign-dialog">'
-				+ '    <h3>'
-				+ escapeHtml(
-					t('thematiq', 'Reset Nextcloud theming to its defaults?'),
-				)
-				+ '</h3>'
-				+ '    <div class="nldesign-dialog-previews">'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(currentBg)
-				+ ';'
-				+ (currentTheming.has_custom_background
-				&& currentTheming.background_url
-					? 'background-image:url('
-						+ escapeHtml(currentTheming.background_url)
-						+ ');background-size:cover;'
-					: '')
-				+ '">'
-				+ (currentLogoUrl
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(currentLogoUrl)
-						+ '" alt="'
-						+ escapeHtml(t('thematiq', 'Current logo'))
-						+ '">'
-					: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(defaultBackground)
-				+ ';">'
-				+ '          <img class="nldesign-dialog-preview-logo" src="'
-				+ escapeHtml(defaultLogo)
-				+ '" alt="'
-				+ escapeHtml(t('thematiq', 'Nextcloud logo'))
-				+ '">'
-				+ '        </div>'
-				+ '      </div>'
-				+ '    </div>'
-				+ '    <table class="nldesign-dialog-table">'
-				+ '      <thead><tr><th>'
-				+ escapeHtml(t('thematiq', 'Setting'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</th></tr></thead>'
-				+ '      <tbody>'
-				+ rows
-				+ '</tbody>'
-				+ '    </table>'
-				+ '    <p class="nldesign-dialog-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
-					),
-				)
-				+ '</p>'
-				+ '    <div class="nldesign-dialog-actions">'
-				+ '      <button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '      <button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Reset theming'))
-				+ '</button>'
-				+ '    </div>'
-				+ '  </div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', dialogHtml)
-			var overlay = document.getElementById('nldesign-theming-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				closeDialogOverlay(overlay)
-			})
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', function () {
-					closeDialogOverlay(overlay)
-				})
-			overlay.addEventListener('click', function (e) {
-				if (e.target === overlay) {
-					closeDialogOverlay(overlay)
-				}
-			})
-
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					var btn = this
+			window.ThematiqThemingUpdateDialog.open({
+				mode: 'reset',
+				diffs: diffs,
+				onConfirm: function (dialog, btn) {
 					btn.disabled = true
 					btn.textContent = t('thematiq', 'Resetting…')
 
 					applyThemingPlan({ mode: 'reset', diffs: [], payload: null })
 						.then(function () {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							notify(
 								t(
 									'thematiq',
@@ -1839,210 +1684,42 @@
 							)
 						})
 						.catch(function (error) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							console.error('Error resetting theming:', error)
 							notify(
 								t('thematiq', 'Failed to reset Nextcloud theming.'),
 							)
 						})
-				})
+				},
+			})
 		}
 
 		function showThemingDialog(tokenSetData, currentTheming, proposed, diffs) {
-			// Remove any existing dialog
 			var existing = document.getElementById('nldesign-theming-dialog-overlay')
 			if (existing) existing.remove()
-
-			var tokenSetName = tokenSetData.name
-
-			// Build comparison rows
-			var rows = ''
-			diffs.forEach(function (diff) {
-				var currentDisplay = diff.current || ''
-				var proposedDisplay = diff.proposed || ''
-
-				if (
-					diff.key === 'primary_color'
-					|| diff.key === 'background_color'
-				) {
-					currentDisplay =
-						'<span class="nldesign-dialog-swatch" style="background:'
-						+ escapeHtml(diff.current)
-						+ '"></span> '
-						+ escapeHtml(diff.current)
-					proposedDisplay =
-						'<span class="nldesign-dialog-swatch" style="background:'
-						+ escapeHtml(diff.proposed)
-						+ '"></span> '
-						+ escapeHtml(diff.proposed)
-				} else {
-					currentDisplay = escapeHtml(currentDisplay)
-					proposedDisplay = escapeHtml(proposedDisplay)
-				}
-
-				rows +=
-					'<tr>'
-					+ '<td>'
-					+ escapeHtml(diff.label)
-					+ '</td>'
-					+ '<td>'
-					+ currentDisplay
-					+ '</td>'
-					+ '<td>'
-					+ proposedDisplay
-					+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
-					+ '</td>'
-					+ '</tr>'
-			})
-
-			// Build preview boxes
-			var currentBg = currentTheming.background_color || '#0082c9'
-			var proposedBg = proposed.background_color || currentBg
-			var currentLogoUrl = currentTheming.logo_url || ''
-			var proposedLogoPath = proposed.logo
-				? OC.linkTo('thematiq', proposed.logo)
-				: ''
-
-			// Dark logo row — informational only. logo_dark is never sent to
-			// Nextcloud core theming (core has a single logo slot — the open
-			// upstream request is nextcloud/server#47357); nldesign's own
-			// generated dark stylesheet applies it via --nldesign-logo-url.
-			var darkLogoRow = ''
-			if (proposed.logo_dark) {
-				var darkLogoPath = OC.linkTo('thematiq', proposed.logo_dark)
-				darkLogoRow =
-					''
-					+ '    <div class="nldesign-dialog-dark-logo-row">'
-					+ '      <div class="nldesign-dialog-preview-box nldesign-dialog-preview-box--dark">'
-					+ '        <img class="nldesign-dialog-preview-logo" src="'
-					+ escapeHtml(darkLogoPath)
-					+ '" alt="'
-					+ escapeHtml(t('thematiq', 'Dark logo'))
-					+ '">'
-					+ '      </div>'
-					+ '      <p class="nldesign-dialog-hint">'
-					+ escapeHtml(
-						t(
-							'thematiq',
-							"This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.",
-						),
-					)
-					+ '</p>'
-					+ '    </div>'
+			if (window.ThematiqThemingUpdateDialog === undefined) {
+				return
 			}
 
-			var dialogHtml =
-				''
-				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '  <div class="nldesign-dialog">'
-				+ '    <h3>'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'Update Nextcloud theming to match {name}?',
-					).replace('{name}', tokenSetName),
-				)
-				+ '</h3>'
-				+ '    <div class="nldesign-dialog-previews">'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(currentBg)
-				+ ';'
-				+ (currentTheming.has_custom_background
-				&& currentTheming.background_url
-					? 'background-image:url('
-						+ escapeHtml(currentTheming.background_url)
-						+ ');background-size:cover;'
-					: '')
-				+ '">'
-				+ (currentLogoUrl
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(currentLogoUrl)
-						+ '" alt="Current logo">'
-					: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(proposedBg)
-				+ ';">'
-				+ (proposedLogoPath
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(proposedLogoPath)
-						+ '" alt="Proposed logo">'
-					: currentLogoUrl
-						? '          <img class="nldesign-dialog-preview-logo" src="'
-							+ escapeHtml(currentLogoUrl)
-							+ '" alt="Current logo">'
-						: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '    </div>'
-				+ '    <table class="nldesign-dialog-table">'
-				+ '      <thead><tr><th>'
-				+ escapeHtml(t('thematiq', 'Setting'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</th></tr></thead>'
-				+ '      <tbody>'
-				+ rows
-				+ '</tbody>'
-				+ '    </table>'
-				+ '    <p class="nldesign-dialog-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'Only values that differ are shown. items without a proposed value are left unchanged.',
-					),
-				)
-				+ '</p>'
-				+ darkLogoRow
-				+ '    <div class="nldesign-dialog-actions">'
-				+ '      <button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '      <button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Update theming'))
-				+ '</button>'
-				+ '    </div>'
-				+ '  </div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', dialogHtml)
-
-			var overlay = document.getElementById('nldesign-theming-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				closeDialogOverlay(overlay)
-			})
-
-			// Cancel button
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', function () {
-					closeDialogOverlay(overlay)
+			// logo_dark is never sent to Nextcloud core theming (core has a
+			// single logo slot, nextcloud/server#47357); thematiq's dark
+			// stylesheet applies it. The row says what the set brings.
+			var rows = diffs.slice()
+			if (proposed.logo_dark) {
+				rows.push({
+					key: 'logo_dark',
+					label: t('thematiq', 'Dark logo'),
+					kind: 'text',
+					current: t('thematiq', '(default)'),
+					proposed: String(proposed.logo_dark).split('/').pop(),
 				})
+			}
 
-			// Close on overlay click
-			overlay.addEventListener('click', function (e) {
-				if (e.target === overlay) {
-					closeDialogOverlay(overlay)
-				}
-			})
-
-			// Confirm button
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					var btn = this
+			window.ThematiqThemingUpdateDialog.open({
+				mode: 'match',
+				setName: tokenSetData.name,
+				diffs: rows,
+				onConfirm: function (dialog, btn) {
 					btn.disabled = true
 					btn.textContent = t('thematiq', 'Updating...')
 
@@ -2096,7 +1773,7 @@
 							return response.json()
 						})
 						.then(function (data) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							if (data.status === 'ok') {
 								// Core regenerates its theme stylesheets from the new
 								// values; re-request them and update core's own panel
@@ -2116,13 +1793,14 @@
 							}
 						})
 						.catch(function (error) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							console.error('Error updating theming:', error)
 							notify(
 								t('thematiq', 'Failed to update Nextcloud theming.'),
 							)
 						})
-				})
+				},
+			})
 		}
 
 		/**

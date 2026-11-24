@@ -101,14 +101,14 @@
 	}
 
 	/**
-	 * A notice in the body: a warning or a piece of information.
+	 * A notice in the body: a warning, a piece of information, or a grey aside.
 	 *
 	 * @param {string} text The notice.
-	 * @param {'warning'|'info'} kind Which notice.
+	 * @param {'warning'|'info'|'neutral'} kind Which notice.
 	 * @return {HTMLElement} The notice.
 	 */
 	function notice(text, kind) {
-		return h('div', { class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind }, [icon(kind, 18), h('span', { text: text })])
+		return h('div', { class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind }, [icon(kind === 'warning' ? 'warning' : 'info', 18), h('span', { text: text })])
 	}
 
 	/**
