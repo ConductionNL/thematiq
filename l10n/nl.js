@@ -1428,7 +1428,15 @@ OC.L10N.register(
         "Typefaces": "Lettertypen",
         "Custom CSS": "Eigen CSS",
         "This cannot be undone.": "Dit is niet terug te draaien.",
-        "Reset to Nextcloud": "Terugzetten naar Nextcloud"
+        "Reset to Nextcloud": "Terugzetten naar Nextcloud",
+        "Save these changes as a new theme?": "Deze wijzigingen bewaren als nieuw thema?",
+        "This question only comes when you work on the Nextcloud default theme and save.": "Deze vraag komt alleen als u op het standaardthema van Nextcloud werkt en opslaat.",
+        "Save the changes as a custom token set, or write them over the Nextcloud theme itself. Writing over Nextcloud changes Nextcloud for everyone; with Back to the Nextcloud theme you undo that later.": "Bewaar de wijzigingen als een eigen tokenset, of schrijf ze over het Nextcloud-thema zelf. Over Nextcloud schrijven verandert Nextcloud voor iedereen; met Terug naar het Nextcloud-thema zet u dat later terug.",
+        "Name of the new theme": "Naam van het nieuwe thema",
+        "You then choose it in the active token set list.": "U kiest het daarna in de keuzelijst van de actieve tokenset.",
+        "Values that do not fit in a token set are kept as overrides. You then see which.": "Waarden die niet in een tokenset passen, blijven als aanpassing bewaard. U ziet dan welke.",
+        "Change the Nextcloud theme": "Het Nextcloud-thema aanpassen",
+        "Save as new theme": "Bewaren als nieuw thema"
     },
     "nplurals=2; plural=(n != 1);"
 )

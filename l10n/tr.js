@@ -1428,7 +1428,15 @@ OC.L10N.register(
         "Typefaces": "Typefaces",
         "Custom CSS": "Custom CSS",
         "This cannot be undone.": "This cannot be undone.",
-        "Reset to Nextcloud": "Reset to Nextcloud"
+        "Reset to Nextcloud": "Reset to Nextcloud",
+        "Save these changes as a new theme?": "Save these changes as a new theme?",
+        "This question only comes when you work on the Nextcloud default theme and save.": "This question only comes when you work on the Nextcloud default theme and save.",
+        "Save the changes as a custom token set, or write them over the Nextcloud theme itself. Writing over Nextcloud changes Nextcloud for everyone; with Back to the Nextcloud theme you undo that later.": "Save the changes as a custom token set, or write them over the Nextcloud theme itself. Writing over Nextcloud changes Nextcloud for everyone; with Back to the Nextcloud theme you undo that later.",
+        "Name of the new theme": "Name of the new theme",
+        "You then choose it in the active token set list.": "You then choose it in the active token set list.",
+        "Values that do not fit in a token set are kept as overrides. You then see which.": "Values that do not fit in a token set are kept as overrides. You then see which.",
+        "Change the Nextcloud theme": "Change the Nextcloud theme",
+        "Save as new theme": "Save as new theme"
     },
     "nplurals=2; plural=(n != 1);"
 )

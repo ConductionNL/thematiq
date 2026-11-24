@@ -112,6 +112,26 @@
 	}
 
 	/**
+	 * A text field with its label over it, a hint under it and a line for a refusal.
+	 *
+	 * @param {object} options The field.
+	 * @param {string} options.id The input's id; the hint and the refusal take it as their prefix.
+	 * @param {string} options.label The label.
+	 * @param {string} [options.placeholder] The placeholder.
+	 * @param {string} [options.hint] The line under the field.
+	 * @return {HTMLElement} The field.
+	 */
+	function field(options) {
+		var hintId = options.hint ? options.id + '-hint' : null
+		return h('div', { class: BLOCK + '__field' }, [
+			h('label', { for: options.id, text: options.label }),
+			h('input', { type: 'text', id: options.id, placeholder: options.placeholder, 'aria-describedby': hintId }),
+			hintId ? h('span', { class: BLOCK + '__hint', id: hintId, text: options.hint }) : null,
+			h('p', { class: BLOCK + '__error', id: options.id.replace(/-name$/, '') + '-error', role: 'alert', hidden: true }),
+		])
+	}
+
+	/**
 	 * Open a dialog.
 	 *
 	 * @param {object} options The dialog.
@@ -119,7 +139,7 @@
 	 * @param {string} options.title The title.
 	 * @param {Array<Node>} options.body The body's content.
 	 * @param {Array<object>} options.actions The footer buttons, left to right: `{label, variant ('secondary',
-	 *   'primary', 'danger' or 'link'), icon, cancel (closes without acting), onClick(dialog)}`.
+	 *   'primary', 'danger' or 'link'), icon, className, cancel (closes without acting), onClick(dialog)}`.
 	 * @param {number} [options.width] The widest the dialog grows, in pixels (560 when left out).
 	 * @param {string} [options.id] The dialog's id.
 	 * @param {Element} [options.opener] What gets focus back when the dialog closes.
@@ -176,7 +196,7 @@
 		var actions = (options.actions || []).map(function (action) {
 			return h('button', {
 				type: 'button',
-				class: BLOCK + '__button ' + BLOCK + '__button--' + (action.variant || 'secondary'),
+				class: BLOCK + '__button ' + BLOCK + '__button--' + (action.variant || 'secondary') + (action.className ? ' ' + action.className : ''),
 				on: { click: function () {
 					if (action.cancel === true) {
 						close()
@@ -231,5 +251,6 @@
 		icon: icon,
 		list: list,
 		notice: notice,
+		field: field,
 	}
 })()
