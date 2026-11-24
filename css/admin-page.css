@@ -734,6 +734,7 @@
 
 #nldesign-settings .thematiq-token-sets__table th button {
 	min-height: 0;
+	height: 22px;
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -750,13 +751,13 @@
 	vertical-align: middle;
 }
 
-.thematiq-token-sets__table th:first-child,
-.thematiq-token-sets__table td:first-child {
+#nldesign-settings .thematiq-token-sets__table th:first-child,
+#nldesign-settings .thematiq-token-sets__table td:first-child {
 	padding-inline-start: 0;
 }
 
-.thematiq-token-sets__table th:last-child,
-.thematiq-token-sets__table td:last-child {
+#nldesign-settings .thematiq-token-sets__table th:last-child,
+#nldesign-settings .thematiq-token-sets__table td:last-child {
 	padding-inline-end: 0;
 	text-align: end;
 }
@@ -826,6 +827,9 @@
 }
 
 #nldesign-settings .thematiq-token-sets__toggle {
+	display: inline-flex;
+	align-items: center;
+	vertical-align: middle;
 	width: 34px;
 	height: 34px;
 	min-height: 34px;
