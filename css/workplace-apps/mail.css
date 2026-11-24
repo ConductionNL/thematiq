@@ -625,3 +625,61 @@
 		margin-inline-start: 12px;
 	}
 }
+
+/*
+ * The full column with no conversation open shows the open account's folders
+ * first and folds every other account to its caption, as MlInbox draws one
+ * account. Resting the pointer on the navigation for 400ms, or keyboard focus
+ * in it, unfolds every account; a pointer click focuses without
+ * `:focus-visible`, so it leaves the fold alone. The state is a registered
+ * property the folded rules query, as for the rail above. An account's
+ * caption and folders are siblings in one list, so an account is told apart
+ * by the caption before it. Without style queries every account stays open.
+ */
+@property --thematiq-mail-fold {
+	syntax: "<integer>";
+	inherits: true;
+	initial-value: 0;
+}
+
+@keyframes thematiq-mail-fold-open {
+	from,
+	to {
+		--thematiq-mail-fold: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation {
+		--thematiq-mail-fold: 1;
+	}
+
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:has(:focus-visible) {
+		--thematiq-mail-fold: 0;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:hover {
+			animation: thematiq-mail-fold-open 1ms 400ms forwards;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:hover {
+			--thematiq-mail-fold: 0;
+		}
+	}
+
+	/* The open account comes first: an account before it goes after it. */
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:not(.app-navigation-caption):has(~ .app-navigation-caption ~ li .active) {
+		order: 1;
+	}
+
+	@container style(--thematiq-mail-fold: 1) {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption ~ li:not(.app-navigation-caption),
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:not(.app-navigation-caption):has(~ .app-navigation-caption ~ li .active) {
+			display: none !important;
+		}
+	}
+}
