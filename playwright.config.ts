@@ -17,6 +17,7 @@ import { retriesFor } from './tests/e2e/instance-load'
 export default defineConfig({
 	testDir: './tests/e2e',
 	globalSetup: path.resolve(__dirname, 'tests/e2e/global-setup.ts'),
+	globalTeardown: path.resolve(__dirname, 'tests/e2e/global-teardown.ts'),
 	// 60 s per test, not Playwright's 30. Most specs start by loading a
 	// Nextcloud page, and the admin theming page alone takes about 20 s to its
 	// load event on CI; a test that then switches a token set or uploads one
