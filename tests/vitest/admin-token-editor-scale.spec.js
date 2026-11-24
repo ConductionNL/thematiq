@@ -134,6 +134,8 @@ async function mount() {
 		'<div id="nldesign-settings" class="section"></div><div id="nldesign-token-editor"></div>'
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/save-overrides-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
