@@ -95,7 +95,8 @@ async function load() {
 		<div id="nldesign-settings" class="section">
 			<div id="nldesign-gallery">
 				<input type="checkbox" id="nldesign-gallery-toggle">
-				<label for="nldesign-gallery-toggle" id="nldesign-gallery-toggle-label">Show the theme gallery</label>
+				<label for="nldesign-gallery-toggle">Show the theme gallery</label>
+				<span id="nldesign-gallery-toggle-hint"></span>
 				<p id="nldesign-gallery-status"></p>
 				<ul id="nldesign-gallery-list"></ul>
 			</div>
@@ -127,8 +128,8 @@ describe('admin.js theme gallery', () => {
 			false,
 		)
 		expect(
-			document.getElementById('nldesign-gallery-toggle-label').textContent,
-		).toBe('Show the theme gallery (contacts raw.githubusercontent.com)')
+			document.getElementById('nldesign-gallery-toggle-hint').textContent,
+		).toBe('Reads raw.githubusercontent.com while you have this page open. Off by default.')
 		expect(
 			document.getElementById('nldesign-gallery-list').children,
 		).toHaveLength(0)
@@ -150,7 +151,8 @@ describe('admin.js theme gallery', () => {
 		expect(JSON.parse(post.body)).toEqual({ enabled: true })
 		const item = document.querySelector('[data-gallery-id="provincie-utrecht"]')
 		expect(item.textContent).toContain('Provincie Utrecht')
-		expect(item.textContent).toContain('licence EUPL-1.2')
+		expect(item.querySelector('.nldesign-gallery-licence').textContent).toBe('Licence EUPL-1.2')
+		expect(item.querySelector('h3').textContent).toBe('Provincie Utrecht')
 		expect(item.textContent).toContain('Contrast: all checks pass')
 		expect(item.querySelectorAll('.nldesign-gallery-swatch')).toHaveLength(3)
 		expect(item.querySelector('a').getAttribute('href')).toBe(utrecht.sourceUrl)
@@ -172,7 +174,7 @@ describe('admin.js theme gallery', () => {
 			document.getElementById('nldesign-gallery-status').textContent,
 		).toContain('The gallery could not be reached')
 		expect(
-			document.getElementById('nldesign-gallery-toggle-label').textContent,
+			document.getElementById('nldesign-gallery-toggle-hint').textContent,
 		).toContain('intranet.example.nl')
 	})
 

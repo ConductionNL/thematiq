@@ -1594,3 +1594,179 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	content: '✓';
 	margin-inline-end: 6px;
 }
+
+/* Theme gallery and updates (TqGalerij). */
+#nldesign-settings .thematiq-gallery-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-gallery-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel #nldesign-gallery-status:empty {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-list:empty {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-entry {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	background: var(--color-main-background);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-swatches {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	height: 40px;
+	background: var(--color-background-hover) !important;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-swatch {
+	display: block;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-text {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 6px;
+	padding: 14px 16px 0;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-name {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-meta,
+#nldesign-settings .thematiq-panel .nldesign-gallery-contrast {
+	font-size: 12px;
+	line-height: 1.25;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-description {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-licence {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-licence code {
+	font: 400 12px ui-monospace, Menlo, monospace;
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-source {
+	font-size: 12px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-foot {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 12px 16px 14px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-foot .nldesign-badge--success {
+	align-self: stretch;
+	padding: 2px 10px;
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background)) !important;
+	color: var(--color-success);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-foot .nldesign-badge--success::before {
+	content: '✓';
+	margin-inline-end: 6px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-install {
+	align-self: stretch;
+	min-height: 40px;
+	margin: 0;
+	border-color: var(--color-primary-element) !important;
+	background: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-gallery-update {
+	min-height: 40px;
+	margin: 0;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-freshness-notices:empty {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-notice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 0;
+	border-top: 1px solid var(--color-border);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-notice__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-notice__text strong {
+	font-size: 15px;
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-notice__found {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .nldesign-upstream-notice button {
+	flex: none;
+	min-height: 40px;
+	margin: 0;
+}
+
+/* The theme sizes every paragraph with !important; a hint paragraph stays a hint. */
+#nldesign-settings .thematiq-panel p.thematiq-panel__fact-hint {
+	max-width: none;
+	margin: 0;
+	font-size: 13px !important;
+	line-height: 1.5 !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+#nldesign-settings .thematiq-gallery-panel .thematiq-css-panel__check .thematiq-panel__fact-hint {
+	padding-inline-start: 25px;
+}

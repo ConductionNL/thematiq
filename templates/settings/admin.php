@@ -65,6 +65,7 @@ script('thematiq', 'admin-contrast-panel');
 script('thematiq', 'admin-bundle-panel');
 script('thematiq', 'admin-assistant-panel');
 script('thematiq', 'admin-switches-panel');
+script('thematiq', 'admin-gallery-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1052,6 +1053,65 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Theme gallery and updates (TqGalerij), a panel of this page at #gallery (design.md): an
+	     opt-in index of house styles others built (openspec/specs/theme-gallery/spec.md) and the
+	     opt-in daily check for upstream token updates (openspec/specs/upstream-freshness/spec.md).
+	     Both are off by default; admin.js fills them, js/admin-gallery-panel.js the header line. -->
+	<section class="thematiq-panel thematiq-gallery-panel" data-thematiq-panel="gallery" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-gallery" id="nldesign-gallery" aria-labelledby="thematiq-gallery-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-gallery-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Theme gallery')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Install a house style another organisation made. Every package has an open licence and a fixed checksum.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__check">
+						<input type="checkbox" id="nldesign-gallery-toggle" class="checkbox" aria-describedby="nldesign-gallery-toggle-hint">
+						<label for="nldesign-gallery-toggle"><?php p($l->t('Show the theme gallery')); ?></label>
+						<span id="nldesign-gallery-toggle-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Reads the gallery index while you have this page open. Off by default.')); ?></span>
+					</div>
+					<p class="thematiq-panel__fact-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
+					<ul class="nldesign-gallery-list" id="nldesign-gallery-list" aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t("An installation adds the package as a custom token set. Thematiq checks the file's checksum before it writes anything; the active token set does not change.")); ?></p>
+				</section>
+				<!-- No apply control: the freshness check only informs; the update path remains the reviewed sync release. -->
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card nldesign-upstream-freshness" id="nldesign-upstream-freshness" aria-labelledby="thematiq-upstream-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-upstream-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Updates from the source')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Check once a day whether the NL Design System themes have new tokens.')); ?></span>
+					</div>
+					<div class="thematiq-css-panel__check">
+						<input type="checkbox" id="nldesign-upstream-freshness-toggle" class="checkbox" aria-describedby="thematiq-upstream-hint">
+						<label for="nldesign-upstream-freshness-toggle"><?php p($l->t('Check daily for new tokens (via api.github.com)')); ?></label>
+						<span id="thematiq-upstream-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Off by default. It never applies anything: you review and apply updates yourself.')); ?></span>
+					</div>
+					<p class="thematiq-panel__fact-hint" id="nldesign-upstream-freshness-lastchecked"></p>
+					<div id="nldesign-upstream-freshness-notices" class="nldesign-upstream-freshness-notices" role="group" aria-label="<?php p($l->t('Updates from the source')); ?>"></div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-gallery-outside-title">
+					<h2 id="thematiq-gallery-outside-title" class="thematiq-panel__card-title"><?php p($l->t('What goes outside')); ?></h2>
+					<div class="thematiq-css-panel__rules">
+						<div><span><?php p($l->t('Gallery')); ?></span><strong>raw.githubusercontent.com</strong></div>
+						<div><span><?php p($l->t('When')); ?></span><strong><?php p($l->t('only with this page open')); ?></strong></div>
+						<div><span><?php p($l->t('Updates')); ?></span><strong>api.github.com</strong></div>
+						<div><span><?php p($l->t('When')); ?></span><strong><?php p($l->t('once a day')); ?></strong></div>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Both are off by default.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-gallery-share-title">
+					<h2 id="thematiq-gallery-share-title" class="thematiq-panel__card-title"><?php p($l->t('Share a house style yourself')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('An organisation adds its house style to the gallery with a pull request on the thematiq repository: name, organisation, licence, file, checksum and four colours.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-gallery-after-title">
+					<h2 id="thematiq-gallery-after-title" class="thematiq-panel__card-title"><?php p($l->t('After an installation')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('The package is listed under your custom token sets. Choose it as the active token set or schedule a switch to it.')); ?></p>
+					<a href="#own-sets" class="thematiq-bundle-panel__link"><?php p($l->t('Own token sets')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1063,6 +1123,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
 			<li><a href="#assistant"><?php p($l->t('AI assistant')); ?></a></li>
 			<li><a href="#switches"><?php p($l->t('Scheduled switches')); ?></a></li>
+			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
@@ -1770,48 +1831,6 @@ if ($_['mockUi'] === true) {
 		</p>
 		<div class="nldesign-documents-preview" id="nldesign-documents-preview" aria-live="polite"></div>
 		<span id="nldesign-documents-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Upstream token updates — opt-in daily freshness check against
-	     nl-design-system/themes (openspec/specs/upstream-freshness/spec.md).
-	     Disabled by default; the toggle label discloses the contacted host.
-	     No apply control anywhere in this block — informational only, the
-	     update path remains the reviewed sync-workflow release. -->
-	<div class="nldesign-upstream-freshness" id="nldesign-upstream-freshness" style="margin-top:2em">
-		<h3><?php p($l->t('Upstream token updates')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Check once a day whether the upstream NL Design System themes have new tokens. The check is off by default and contacts api.github.com. It never applies anything: you review and apply updates yourself.')); ?>
-		</p>
-		<div class="nldesign-option">
-			<input type="checkbox"
-				   id="nldesign-upstream-freshness-toggle"
-				   class="checkbox">
-			<label for="nldesign-upstream-freshness-toggle">
-				<?php p($l->t('Check daily for upstream token updates (contacts api.github.com)')); ?>
-			</label>
-		</div>
-		<p class="settings-hint" id="nldesign-upstream-freshness-lastchecked"></p>
-		<div id="nldesign-upstream-freshness-notices"
-			 class="nldesign-upstream-freshness-notices"
-			 role="group"
-			 aria-label="<?php p($l->t('Upstream token updates')); ?>"></div>
-	</div>
-
-	<!-- Theme gallery: an opt-in index of house styles others built
-	     (openspec/specs/theme-gallery/spec.md). Off by default; admin.js
-	     puts the index host in the toggle label and fills the list. -->
-	<div class="nldesign-gallery" id="nldesign-gallery" style="margin-top:2em">
-		<h3><?php p($l->t('Theme gallery')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Install a house style that another organisation built. The gallery is off by default. When it is on, this page reads the gallery index while you have it open.')); ?>
-		</p>
-		<div class="nldesign-option">
-			<input type="checkbox" id="nldesign-gallery-toggle" class="checkbox">
-			<label for="nldesign-gallery-toggle" id="nldesign-gallery-toggle-label"><?php p($l->t('Show the theme gallery')); ?></label>
-		</div>
-		<p class="settings-hint" id="nldesign-gallery-status" role="status" aria-live="polite"></p>
-		<ul class="nldesign-gallery-list" id="nldesign-gallery-list"
-			aria-label="<?php p($l->t('Theme gallery')); ?>"></ul>
 	</div>
 
 	<p class="nldesign-info">
