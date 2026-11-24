@@ -11,9 +11,9 @@
 
 - [x] 2.1 Read which classes Deck and smooth-dnd put on the dragged card and the drop placeholder.
 - [x] 2.2 `css/workplace-apps/deck.css`: the lifted card, no tilt with reduced motion. Tokens only.
-- [ ] 2.4 The dashed slot. Deck passes no `dropPlaceholder` to smooth-dnd, so no element marks where the card will land, only a gap; a stylesheet has nothing to draw dashed. Needs a decision: an upstream Deck change, a script that draws an element (REQ-TQAS-005 allows text only), or dropping the slot from the requirement.
+- [x] 2.4 The dashed slot: decided (24 Nov 2026) to drop it from REQ-TQAS-103 and list it under "Not in this change" as an upstream Deck feature. Deck passes no `dropPlaceholder` to smooth-dnd, so a stylesheet has no element to draw dashed; a script-drawn element breaks REQ-TQAS-005 (text only) and an upstream Deck change is out of this change's scope (no app code).
 - [x] 2.3 vitest `tests/vitest/workplaceApps.spec.js`: the rules exist and the tilt sits outside reduced motion.
 
 ## 3. Look
 
-- [ ] 3.1 Look at both live against ClWeek and TbBoard (not on the demo stack at :8076).
+- [x] 3.1 Look at both live against ClWeek and TbBoard (not on the demo stack at :8076). Written as `tests/e2e/spec-coverage/workplace-live-look.spec.ts` (computed styles of the ended, the unanswered entry and the dragged card under Zuiddrecht), runs in nightly; not yet verified live.

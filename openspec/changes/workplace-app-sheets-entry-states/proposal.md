@@ -20,11 +20,12 @@ theme can draw them without changing the apps, but the app layer sheets do not d
 - **Not answered yet.** An entry Calendar marks as tentative, or as waiting for the person's
   answer, is drawn with a dashed edge and frame instead of the solid tint.
 - **A card mid-move.** While a Deck card is dragged, the card under the pointer is lifted (a
-  shadow and a slight tilt off with reduced motion) and the place it will drop is a dashed slot of
-  the card's height.
+  shadow and a slight tilt off with reduced motion).
 
 ## Not in this change
 
+- TbBoard's dashed drop slot. Deck passes no `dropPlaceholder` to smooth-dnd, so no element marks
+  where the card will land; drawing it needs an upstream Deck change.
 - What the apps cannot show: TbBoard's drop zone text "Setting the status in OpenProject",
   work-in-progress limits, a second time zone. Those are upstream features.
 - Any change to the apps' own code.
