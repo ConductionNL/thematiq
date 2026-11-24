@@ -1,8 +1,8 @@
 /**
  * @vitest-environment jsdom
  *
- * Unit tests for js/admin.js: the "Planned switches" block. It lists the
- * planned switches with a cancel button each, shows when the job last ran
+ * Unit tests for js/admin.js: the scheduled switches panel. It lists the
+ * planned switches as table rows with a status and a cancel button each, shows when the job last ran
  * and warns on AJAX cron, plans a switch with the times converted to UTC,
  * shows a refusal, and cancels through DELETE.
  *
@@ -108,7 +108,9 @@ async function load() {
 					<p id="nldesign-scheduled-zone"></p>
 					<button type="submit" id="nldesign-scheduled-submit">Plan switch</button>
 				</form>
-				<ul id="nldesign-scheduled-list"></ul>
+				<table><tbody id="nldesign-scheduled-list"></tbody></table>
+				<span id="nldesign-scheduled-last-run"></span>
+				<span class="thematiq-switches-panel__active"></span>
 			</div>
 		</div>
 	`
@@ -130,13 +132,16 @@ describe('admin.js planned switches', () => {
 	it('lists the switches with a cancel button each and the failure reason', async () => {
 		await load()
 
-		const items = document.querySelectorAll('#nldesign-scheduled-list li')
+		const items = document.querySelectorAll('#nldesign-scheduled-list tr')
 		expect(items).toHaveLength(2)
 		expect(items[0].textContent).toContain('koningsdag-oranje')
 		expect(
 			items[0].querySelector('button').getAttribute('aria-label'),
 		).toContain('koningsdag-oranje')
 		expect(items[1].textContent).toContain('no longer exists')
+		expect(items[0].querySelector('.thematiq-switches-panel__status').textContent).toBe('Scheduled')
+		expect(items[1].querySelector('.thematiq-switches-panel__status').textContent).toBe('Failed')
+		expect(items[1].children[2].textContent).toBe('no end')
 	})
 
 	it('shows the last run and warns on AJAX cron', async () => {
@@ -146,8 +151,11 @@ describe('admin.js planned switches', () => {
 			document.getElementById('nldesign-scheduled-cron-warning').hidden,
 		).toBe(false)
 		expect(
+			document.getElementById('nldesign-scheduled-last-run').textContent,
+		).toContain('last run')
+		expect(
 			document.getElementById('nldesign-scheduled-status').textContent,
-		).toContain('last ran')
+		).toBe('No switch is running now.')
 	})
 
 	it('says beside the dropdown that a running switch puts its set back, and nothing when none runs', async () => {
@@ -205,8 +213,9 @@ describe('admin.js planned switches', () => {
 			"Koningsdag 's-Hertogenbosch is active until",
 		)
 		expect(status.textContent).toContain('then Rijkshuisstijl comes back')
-		const item = document.querySelector('#nldesign-scheduled-list li')
-		expect(item.textContent).toContain("Koningsdag 's-Hertogenbosch from")
+		const item = document.querySelector('#nldesign-scheduled-list tr')
+		expect(item.querySelector('strong').textContent).toBe("Koningsdag 's-Hertogenbosch")
+		expect(document.querySelector('.thematiq-switches-panel__active').textContent).toBe("Koningsdag 's-Hertogenbosch")
 		expect(item.querySelector('button').getAttribute('aria-label')).toBe(
 			"Cancel the switch to Koningsdag 's-Hertogenbosch",
 		)
@@ -262,7 +271,7 @@ describe('admin.js planned switches', () => {
 	it('cancels a switch through DELETE and reloads the list', async () => {
 		await load()
 
-		document.querySelector('#nldesign-scheduled-list li button').click()
+		document.querySelector('#nldesign-scheduled-list tr button').click()
 		await flush()
 
 		const del = calls.find((c) => c.method === 'DELETE')

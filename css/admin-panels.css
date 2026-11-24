@@ -15,8 +15,11 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 
 /* Nextcloud's theme paints every element whose class holds "panel" white, with an
    id in its selector, so the panel's own fills carry !important. */
-#nldesign-settings section.thematiq-panel {
-	background: transparent;
+#nldesign-settings section.thematiq-panel,
+#nldesign-settings .thematiq-panel .thematiq-panel__columns,
+#nldesign-settings .thematiq-panel .thematiq-panel__main,
+#nldesign-settings .thematiq-panel .thematiq-panel__aside {
+	background: transparent !important;
 }
 
 .thematiq-panel[hidden],
@@ -1446,4 +1449,148 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	font-size: 14px !important;
 	line-height: 1.5 !important;
 	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+/* Scheduled switches (TqWissels). */
+#nldesign-settings .thematiq-switches-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-switches-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__fields {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	align-items: start;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__fields select,
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__fields input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 40px;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__optional {
+	font-weight: 400;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__form > .thematiq-panel__fact-hint {
+	margin: 0;
+	font-size: 13px !important;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__notice[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__applies {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 0;
+	padding: 12px 14px;
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--color-primary-element) 10%, var(--color-main-background)) !important;
+	color: var(--color-primary-element);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__applies svg {
+	flex: none;
+	margin-top: 3px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__table {
+	min-width: 600px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__table td {
+	vertical-align: middle;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__day,
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__time,
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__reason {
+	display: block;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__time,
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__reason {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__reason {
+	margin-top: 4px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__status--running {
+	background: color-mix(in srgb, var(--color-primary-element) 12%, var(--color-main-background)) !important;
+	color: var(--color-primary-element);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__status--failed {
+	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background)) !important;
+	color: var(--color-error-hover, var(--color-error));
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__table td:last-child,
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__table th:last-child {
+	text-align: end;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__jobs {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__mode[hidden] {
+	display: none;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__active {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__active::before {
+	content: '';
+	width: 20px;
+	height: 20px;
+	border-radius: 4px;
+	background: var(--color-primary-element) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__active:empty {
+	display: none;
+}
+
+@media (max-width: 720px) {
+	#nldesign-settings .thematiq-panel .thematiq-switches-panel__fields {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+#nldesign-settings .thematiq-panel .thematiq-switches-panel__mode.thematiq-contrast-panel__pill--pass::before {
+	content: '✓';
+	margin-inline-end: 6px;
 }

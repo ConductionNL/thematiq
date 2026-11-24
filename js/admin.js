@@ -8939,7 +8939,7 @@
 			}
 			return t(
 				'thematiq',
-				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Planned switches to change the theme before then.',
+				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Scheduled switches to change the theme before then.',
 				{
 					set: tokenSetName(runningSwitch.tokenSet),
 					time: formatLocalTime(runningSwitch.until),
@@ -8964,7 +8964,7 @@
 		}
 
 		/**
-		 * The "Planned switches" block: status, cron warning, plan form and
+		 * The scheduled switches panel (TqWissels): status, cron warning, plan form and
 		 * the list with a cancel button per switch. Times are entered and
 		 * shown in the browser's time zone and sent as UTC.
 		 *
@@ -9019,83 +9019,95 @@
 						),
 					)
 				}
-				lines.push(
-					status.lastRun
+				if (lines.length === 0) {
+					lines.push(t('thematiq', 'No switch is running now.'))
+				}
+				statusEl.textContent = lines.join(' ')
+				var lastRun = document.getElementById('nldesign-scheduled-last-run')
+				if (lastRun !== null) {
+					lastRun.textContent = status.lastRun
 						? t(
 								'thematiq',
-								'The schedule last ran at {time}.',
+								'last run {time}',
 								{ time: formatLocalTime(status.lastRun) },
 								undefined,
 								{ escape: false },
 							)
-						: t('thematiq', 'The schedule has not run yet.'),
-				)
-				statusEl.textContent = lines.join(' ')
+						: t('thematiq', 'not run yet')
+				}
+				var active = document.querySelector('.thematiq-switches-panel__active')
+				if (active !== null) {
+					active.textContent = status.activeTokenSet ? tokenSetName(status.activeTokenSet) : ''
+				}
 				if (warning !== null) {
 					warning.hidden = status.cronWarning !== true
 				}
 			}
 
-			function describe(entry) {
-				var text = entry.endAt
-					? t(
-							'thematiq',
-							'{set} from {start} to {end}',
-							{
-								set: tokenSetName(entry.tokenSet),
-								start: formatLocalTime(entry.startAt),
-								end: formatLocalTime(entry.endAt),
-							},
-							undefined,
-							{ escape: false },
-						)
-					: t(
-							'thematiq',
-							'{set} from {start}, no end',
-							{
-								set: tokenSetName(entry.tokenSet),
-								start: formatLocalTime(entry.startAt),
-							},
-							undefined,
-							{ escape: false },
-						)
-				if (entry.status === 'running') {
-					return text + ' (' + t('thematiq', 'running') + ')'
+			var statusNames = {
+				planned: t('thematiq', 'Scheduled'),
+				running: t('thematiq', 'Running'),
+				failed: t('thematiq', 'Failed'),
+			}
+
+			/**
+			 * A table cell with a date and, under it, the time.
+			 *
+			 * @param {string|null} iso The UTC time, or null for no end.
+			 * @return {HTMLTableCellElement} The cell.
+			 */
+			function timeCell(iso) {
+				var cell = document.createElement('td')
+				if (!iso) {
+					cell.textContent = t('thematiq', 'no end')
+					return cell
 				}
-				if (entry.status === 'failed') {
-					return (
-						text
-						+ '. '
-						+ t(
-							'thematiq',
-							'Failed: {reason}',
-							{ reason: entry.failureReason || '' },
-							undefined,
-							{ escape: false },
-						)
-					)
-				}
-				return text
+				var when = new Date(iso)
+				var day = document.createElement('span')
+				day.className = 'thematiq-switches-panel__day'
+				day.textContent = when.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+				var time = document.createElement('span')
+				time.className = 'thematiq-switches-panel__time'
+				time.textContent = when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+				cell.append(day, time)
+				return cell
 			}
 
 			function renderList(switches) {
 				list.replaceChildren()
 				if (!switches || switches.length === 0) {
-					var empty = document.createElement('li')
-					empty.className = 'settings-hint'
-					empty.textContent = t('thematiq', 'No switches are planned.')
+					var empty = document.createElement('tr')
+					var none = document.createElement('td')
+					none.colSpan = 5
+					none.className = 'settings-hint'
+					none.textContent = t('thematiq', 'No switches are planned.')
+					empty.appendChild(none)
 					list.appendChild(empty)
 					return
 				}
 				switches.forEach(function (entry) {
-					var item = document.createElement('li')
-					item.className = 'nldesign-scheduled-item'
-					if (entry.status === 'failed') {
-						item.classList.add('nldesign-scheduled-item--failed')
+					var row = document.createElement('tr')
+					row.className = 'nldesign-scheduled-item'
+					var status = entry.status || 'planned'
+					if (status === 'failed') {
+						row.classList.add('nldesign-scheduled-item--failed')
 					}
-					var label = document.createElement('span')
-					label.textContent = describe(entry)
-					item.appendChild(label)
+					var name = document.createElement('td')
+					var strong = document.createElement('strong')
+					strong.textContent = tokenSetName(entry.tokenSet)
+					name.appendChild(strong)
+					var state = document.createElement('td')
+					var pill = document.createElement('span')
+					pill.className = 'thematiq-contrast-panel__pill thematiq-switches-panel__status thematiq-switches-panel__status--' + status
+					pill.textContent = statusNames[status] || status
+					state.appendChild(pill)
+					if (status === 'failed' && entry.failureReason) {
+						var reason = document.createElement('span')
+						reason.className = 'thematiq-switches-panel__reason'
+						reason.textContent = entry.failureReason
+						state.appendChild(reason)
+					}
+					var actions = document.createElement('td')
 					var cancel = document.createElement('button')
 					cancel.type = 'button'
 					cancel.className = 'button nldesign-scheduled-cancel'
@@ -9113,8 +9125,9 @@
 					cancel.addEventListener('click', function () {
 						cancelSwitch(entry.id, cancel)
 					})
-					item.appendChild(cancel)
-					list.appendChild(item)
+					actions.appendChild(cancel)
+					row.append(name, timeCell(entry.startAt), timeCell(entry.endAt), state, actions)
+					list.appendChild(row)
 				})
 			}
 
@@ -9126,6 +9139,7 @@
 					.then(function (data) {
 						renderStatus(data.status)
 						renderList(data.switches)
+						document.dispatchEvent(new CustomEvent('thematiq:scheduled-switches', { detail: data }))
 					})
 					.catch(function (err) {
 						console.error('Error loading planned switches:', err)
