@@ -1443,7 +1443,15 @@
         "Was": "Was",
         "Becomes": "Becomes",
         "Do not ask again before saving": "Do not ask again before saving",
-        "Can be reset below the token list.": "Can be reset below the token list."
+        "Can be reset below the token list.": "Can be reset below the token list.",
+        "These are the colours and sizes Nextcloud itself is built on, such as the colour of regular text. Change one and every part of Nextcloud that reads it changes. That is far more than the component you are looking at, and more than this panel shows.": "These are the colours and sizes Nextcloud itself is built on, such as the colour of regular text. Change one and every part of Nextcloud that reads it changes. That is far more than the component you are looking at, and more than this panel shows.",
+        "Base token": "Base token",
+        "Read by": "Read by",
+        "all text on every page": "all text on every page",
+        "borders of fields, tables and cards": "borders of fields, tables and cards",
+        "corners of buttons and fields": "corners of buttons and fields",
+        "To change a component, use its own rows. Those affect only that component.": "To change a component, use its own rows. Those affect only that component.",
+        "Edit anyway": "Edit anyway"
     },
     "plurals": {}
 }

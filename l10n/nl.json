@@ -1443,7 +1443,15 @@
         "Was": "Was",
         "Becomes": "Wordt",
         "Do not ask again before saving": "Niet meer vragen voor het opslaan",
-        "Can be reset below the token list.": "Terug te zetten onder de lijst met tokens."
+        "Can be reset below the token list.": "Terug te zetten onder de lijst met tokens.",
+        "These are the colours and sizes Nextcloud itself is built on, such as the colour of regular text. Change one and every part of Nextcloud that reads it changes. That is far more than the component you are looking at, and more than this panel shows.": "Dit zijn de kleuren en maten waar Nextcloud zelf op gebouwd is, zoals de kleur van de gewone tekst. Verandert u er een, dan verandert elk deel van Nextcloud dat hem leest. Dat is veel meer dan het component waar u naar kijkt, en meer dan dit paneel laat zien.",
+        "Base token": "Basistoken",
+        "Read by": "Gelezen door",
+        "all text on every page": "alle tekst op elke pagina",
+        "borders of fields, tables and cards": "randen van velden, tabellen en kaarten",
+        "corners of buttons and fields": "hoeken van knoppen en velden",
+        "To change a component, use its own rows. Those affect only that component.": "Wilt u een component veranderen, gebruik dan zijn eigen rijen. Die raken alleen dat component.",
+        "Edit anyway": "Toch bewerken"
     },
     "plurals": {}
 }

@@ -44,11 +44,11 @@
 	}
 
 	/**
-	 * A value cell: a swatch for a colour, then the value as code.
+	 * A value: a swatch for a colour, then the value as code.
 	 *
 	 * @param {Function} h The element helper.
 	 * @param {string} value The value.
-	 * @return {HTMLElement} The cell.
+	 * @return {HTMLElement} The value.
 	 */
 	function valueCell(h, value) {
 		var shown = typeof value === 'string' && value !== '' ? value : '–'
@@ -57,7 +57,7 @@
 			swatch = h('span', { class: BLOCK + '__swatch', 'aria-hidden': 'true' })
 			swatch.style.background = value
 		}
-		return h('td', {}, [h('span', { class: BLOCK + '__value' }, [swatch, h('code', { text: shown })])])
+		return h('span', { class: BLOCK + '__value' }, [swatch, h('code', { text: shown })])
 	}
 
 	/**
@@ -84,23 +84,16 @@
 			h('p', { class: BLOCK + '__lead', text: tr('They go on top of {set}. Save puts them live for everyone and writes a line in the log.', { set: options.setName }) }),
 		]
 		if (changes.length > 0) {
-			body.push(h('table', { class: BLOCK + '__changes' }, [
-				h('thead', {}, [h('tr', {}, [
-					h('th', { scope: 'col', text: tr('Token') }),
-					h('th', { scope: 'col', text: tr('Was') }),
-					h('th', { scope: 'col', text: tr('Becomes') }),
-				])]),
-				h('tbody', {}, changes.map(function (change) {
-					return h('tr', {}, [
-						h('td', {}, [
-							h('span', { class: BLOCK + '__token-label', text: change.label || change.name }),
-							h('code', { text: change.name }),
-						]),
-						valueCell(h, change.was),
-						valueCell(h, change.becomes),
-					])
-				})),
-			]))
+			body.push(frame.table([tr('Token'), tr('Was'), tr('Becomes')], changes.map(function (change) {
+				return [
+					h('span', {}, [
+						h('span', { class: BLOCK + '__token-label', text: change.label || change.name }),
+						h('code', { text: change.name }),
+					]),
+					valueCell(h, change.was),
+					valueCell(h, change.becomes),
+				]
+			})))
 		}
 		body.push(h('label', { class: BLOCK + '__check' }, [
 			h('input', { type: 'checkbox', class: 'nldesign-dialog-dontask' }),
