@@ -1293,3 +1293,44 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background)) !important;
 	color: var(--color-error-hover, var(--color-error));
 }
+
+/* A panel's main header action. */
+#thematiq-page-header .thematiq-page-header__action--primary {
+	border-color: var(--color-primary-element) !important;
+	background: var(--color-primary-element) !important;
+	color: var(--color-primary-element-text) !important;
+}
+
+/* Configuration bundle (TqBundel). */
+#nldesign-settings .thematiq-panel .thematiq-bundle-panel__text {
+	margin: 0;
+	font-size: 14px !important;
+	line-height: 1.5 !important;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+#nldesign-settings .thematiq-panel .thematiq-bundle-panel__contents {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-bundle-panel__subtitle {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 16px !important;
+	font-weight: 700 !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-bundle-panel__link {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-bundle-panel .thematiq-panel__main {
+	flex-basis: 560px;
+}
+
+#nldesign-settings .thematiq-bundle-panel .thematiq-panel__aside {
+	flex-basis: 320px;
+}

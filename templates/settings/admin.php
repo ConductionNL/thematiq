@@ -62,6 +62,7 @@ script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
 script('thematiq', 'admin-contrast-panel');
+script('thematiq', 'admin-bundle-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -835,6 +836,55 @@ if ($_['mockUi'] === true) {
 			</section>
 		</div>
 	</section>
+
+	<!-- Configuration bundle (TqBundel), a panel of this page at #bundle (design.md): the
+	     complete configuration as one JSON file, for DTAP promotion, and theme as code
+	     (openspec/specs/config-portability, openspec/specs/theme-as-code). js/admin.js
+	     downloads and uploads; js/admin-bundle-panel.js lists what is in it. -->
+	<section class="thematiq-panel thematiq-bundle-panel nldesign-config-bundle" id="nldesign-config-bundle" data-thematiq-panel="bundle" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-bundle-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-bundle-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Configuration bundle')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('For DTAP: the same house style on every environment')); ?></span>
+					</div>
+					<p class="thematiq-bundle-panel__text"><?php p($l->t('Download or upload the complete thematiq configuration as a JSON file. That is how you carry the same house style from development to test, acceptance and production. This differs from downloading only the token overrides.')); ?></p>
+					<div class="thematiq-bundle-panel__contents">
+						<h3 class="thematiq-bundle-panel__subtitle"><?php p($l->t('What is in it')); ?></h3>
+						<div class="thematiq-css-panel__rules thematiq-bundle-panel__rows"></div>
+					</div>
+					<button type="button" id="nldesign-config-bundle-download-btn" hidden><?php p($l->t('Download configuration')); ?></button>
+					<input type="file" id="nldesign-config-bundle-input" accept=".json" aria-label="<?php p($l->t('Configuration bundle file to upload (JSON)')); ?>" hidden>
+					<button type="button" id="nldesign-config-bundle-upload-btn" hidden><?php p($l->t('Upload configuration')); ?></button>
+					<div id="nldesign-config-bundle-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-bundle-code-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-bundle-code-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Theme as code')); ?></h2>
+						<span class="thematiq-panel__fact-hint"><?php p($l->t('Set thematiq.config_source in config.php and the house style of this environment comes from the deployment configuration.')); ?></span>
+					</div>
+					<!-- Filled by js/admin-config-source.js when thematiq.config_source is set
+					     (openspec/specs/theme-as-code/spec.md). -->
+					<div id="nldesign-config-source" class="nldesign-config-source" role="status" aria-live="polite" hidden></div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-bundle-occ-title">
+					<h2 id="thematiq-bundle-occ-title" class="thematiq-panel__card-title"><?php p($l->t('Also via occ')); ?></h2>
+					<code class="thematiq-log-panel__code">occ thematiq:config:export &lt;file&gt;</code>
+					<code class="thematiq-log-panel__code">occ thematiq:config:import &lt;file&gt;</code>
+					<code class="thematiq-log-panel__code">occ thematiq:config:apply</code>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Handy in a deployment script. An import checks everything first and then applies everything at once, or nothing.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-bundle-log-title">
+					<h2 id="thematiq-bundle-log-title" class="thematiq-panel__card-title"><?php p($l->t('In the log')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('An import or applied package appears in the log as Configuration imported, with the revision.')); ?></p>
+					<a href="#log" class="thematiq-bundle-panel__link"><?php p($l->t('Open log')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -844,6 +894,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#css"><?php p($l->t('Custom CSS')); ?></a></li>
 			<li><a href="#fonts"><?php p($l->t('Typefaces')); ?></a></li>
 			<li><a href="#contrast"><?php p($l->t('Contrast report')); ?></a></li>
+			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
 		</ul>
 	</nav>
@@ -1659,33 +1710,6 @@ if ($_['mockUi'] === true) {
 		<div class="nldesign-assistant-mark-preview" id="nldesign-assistant-mark-preview" aria-live="polite"></div>
 		<button type="button" id="nldesign-assistant-mark-save" class="button primary"><?php p($l->t('Save AI assistant settings')); ?></button>
 		<span id="nldesign-assistant-mark-feedback" role="status" aria-live="polite"></span>
-	</div>
-
-	<!-- Complete configuration bundle — OTAP (dev/test/acceptatie/productie)
-	     promotion. Unlike the token-editor overrides download above, this
-	     covers the COMPLETE nldesign configuration (config-portability spec):
-	     token set, toggles, per-app exclusions, overrides, custom token sets,
-	     email footer, custom-font metadata, upstream-freshness toggle. -->
-	<div class="nldesign-config-bundle" id="nldesign-config-bundle" style="margin-top:2em">
-		<h3><?php p($l->t('Configuration bundle (OTAP promotion)')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Download or upload the complete NL Design configuration as one JSON file — the active token set, toggles, per-app exclusions, token overrides, custom token sets, email footer, and the upstream-update toggle. Use this to promote configuration between dev, test, acceptance, and production environments identically. This is different from the overrides-only download above.')); ?>
-		</p>
-		<div class="nldesign-upload-form">
-			<button type="button" id="nldesign-config-bundle-download-btn" class="button">
-				<?php p($l->t('Download configuration')); ?>
-			</button>
-			<input type="file" id="nldesign-config-bundle-input" accept=".json"
-				   aria-label="<?php p($l->t('Configuration bundle file to upload (JSON)')); ?>"
-				   style="display:none">
-			<button type="button" id="nldesign-config-bundle-upload-btn" class="button">
-				<?php p($l->t('Upload configuration')); ?>
-			</button>
-		</div>
-		<div id="nldesign-config-bundle-result" class="nldesign-import-result" role="status" aria-live="polite" style="display:none"></div>
-		<!-- Theme as code (openspec/specs/theme-as-code/spec.md): filled by
-		     js/admin-config-source.js when thematiq.config_source is set. -->
-		<div id="nldesign-config-source" class="nldesign-config-source" role="status" aria-live="polite" hidden></div>
 	</div>
 
 	<p class="nldesign-info">
