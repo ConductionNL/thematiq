@@ -10,6 +10,8 @@
 import { test, expect, Page } from '@playwright/test'
 
 const THEMING_URL = '/settings/admin/theming'
+/** The admin page panel that holds the per-app theming list (TqMerkPerApp). */
+const APP_THEMING_PANEL_URL = `${THEMING_URL}#brands`
 // An app that is present in the test instance and safe to toggle.
 //
 // `dashboard` — not `activity`. Activity is a separate appstore app; it is
@@ -70,7 +72,7 @@ async function openAppThemingDropdown(page: Page, appName = TARGET_APP) {
 
 /** Set the target app's themed state via the admin panel and save. */
 async function setThemed(page: Page, themed: boolean) {
-	await page.goto(THEMING_URL)
+	await page.goto(APP_THEMING_PANEL_URL)
 	await page.waitForLoadState('domcontentloaded')
 	await openAppThemingDropdown(page)
 	const box = page.locator(
@@ -160,7 +162,7 @@ test.describe('per-app-theming', () => {
 	'Every app row exposes a checkbox associated with a visible label', async ({
 		page,
 	}) => {
-		await page.goto(THEMING_URL)
+		await page.goto(APP_THEMING_PANEL_URL)
 		await page.waitForLoadState('domcontentloaded')
 		await openAppThemingDropdown(page)
 		const box = page.locator(
