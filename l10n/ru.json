@@ -1966,7 +1966,17 @@
         "No environment set": "No environment set",
         "Environment: {environment}, set in config.php": "Environment: {environment}, set in config.php",
         "No page of this server carries a marker.": "No page of this server carries a marker.",
-        "Every page of this server carries the marker {marker}.": "Every page of this server carries the marker {marker}."
+        "Every page of this server carries the marker {marker}.": "Every page of this server carries the marker {marker}.",
+        "Rows above More": "Rows above More",
+        "Fewer rows above More": "Fewer rows above More",
+        "More rows above More": "More rows above More",
+        "Preview: {columns} columns, {fold} rows above More, {rows} rows in total. More scrolls.": "Preview: {columns} columns, {fold} rows above More, {rows} rows in total. More scrolls.",
+        "Fewer": "Fewer",
+        "_%n open card_::_%n open cards_": ["%n open card","%n open cards"],
+        "%n open card": "%n open card",
+        "%n open cards": "%n open cards",
+        "From mail: {sender}": "From mail: {sender}",
+        "Priority high": "Priority high"
     },
     "plurals": {}
 }

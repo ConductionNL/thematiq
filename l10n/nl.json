@@ -1968,7 +1968,9 @@
         "No environment set": "Geen omgeving ingesteld",
         "Environment: {environment}, set in config.php": "Omgeving: {environment}, ingesteld in config.php",
         "No page of this server carries a marker.": "Geen pagina van deze server draagt een markering.",
-        "Every page of this server carries the marker {marker}.": "Elke pagina van deze server draagt de markering {marker}."
+        "Every page of this server carries the marker {marker}.": "Elke pagina van deze server draagt de markering {marker}.",
+        "%n open card": "%n open kaart",
+        "%n open cards": "%n open kaarten"
     },
     "plurals": {}
 }
