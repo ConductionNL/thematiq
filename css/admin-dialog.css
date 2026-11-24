@@ -462,3 +462,64 @@ dialog.thematiq-admin-dialog::backdrop {
 	line-height: 1.5 !important;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
+
+.thematiq-admin-dialog .nldesign-brand-picker {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.thematiq-admin-dialog .nldesign-brand-picker legend {
+	float: left;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.thematiq-brand-file {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-brand-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.thematiq-brand-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 12px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+}
+
+.thematiq-admin-dialog .thematiq-brand-row input[type='checkbox'] {
+	width: 20px;
+	height: 20px;
+	min-height: 0;
+	margin: 0;
+	accent-color: var(--color-primary-element);
+}
+
+.thematiq-brand-row label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 14px;
+}
+
+.thematiq-brand-row__name {
+	font-weight: 600;
+}
+
+.thematiq-brand-row__meta {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}

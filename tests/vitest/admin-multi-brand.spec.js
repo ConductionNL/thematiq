@@ -90,6 +90,7 @@ async function flush(rounds = 8) {
 /** (Re-)import js/admin.js as a fresh module instance, running its IIFE against the current DOM. */
 async function loadAdminScript() {
 	vi.resetModules()
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -175,10 +176,13 @@ describe('admin.js multi-brand sources', () => {
 		expect(picker.textContent).toContain('Noord (3 tokens) · brand')
 
 		boxes[2].checked = false
-		picker.querySelector('.nldesign-brand-import').click()
+		const dialog = document.getElementById('nldesign-brand-picker-dialog')
+		expect(dialog.querySelector('h2').textContent).toBe('Choose brands to import')
+		dialog.querySelector('.nldesign-brand-import').click()
 		await flush()
 
 		expect(uploads).toEqual([[], ['noord', 'zuid']])
+		expect(document.getElementById('nldesign-brand-picker-dialog')).toBeNull()
 		expect(document.getElementById('nldesign-upload-result').textContent).toBe(
 			'2 brands imported as token sets.',
 		)

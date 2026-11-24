@@ -1475,7 +1475,10 @@ OC.L10N.register(
         "custom-overrides.css, CSS only": "custom-overrides.css, alleen CSS",
         "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.": "Na het uploaden ziet u hoeveel tokens zijn geïmporteerd en hoeveel zijn overgeslagen omdat ze niet werden herkend.",
         "Want to add a whole theme as a new token set? Then use": "Wilt u een heel thema toevoegen als nieuwe tokenset? Gebruik dan",
-        "Choose and upload file": "Bestand kiezen en uploaden"
+        "Choose and upload file": "Bestand kiezen en uploaden",
+        "Choose brands to import": "Merken kiezen om te importeren",
+        "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.": "Elk merk wordt een eigen tokenset die aan dit bestand gekoppeld blijft. Komt er een nieuwe versie, dan werkt Bron bijwerken alle merken in een keer bij.",
+        "Import chosen brands": "Gekozen merken importeren"
     },
     "nplurals=2; plural=(n != 1);"
 )

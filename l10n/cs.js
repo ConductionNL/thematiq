@@ -1475,7 +1475,10 @@ OC.L10N.register(
         "custom-overrides.css, CSS only": "custom-overrides.css, CSS only",
         "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.": "After the upload you see how many tokens were imported and how many were skipped because they were not recognised.",
         "Want to add a whole theme as a new token set? Then use": "Want to add a whole theme as a new token set? Then use",
-        "Choose and upload file": "Choose and upload file"
+        "Choose and upload file": "Choose and upload file",
+        "Choose brands to import": "Choose brands to import",
+        "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.": "Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.",
+        "Import chosen brands": "Import chosen brands"
     },
     "nplurals=2; plural=(n != 1);"
 )
