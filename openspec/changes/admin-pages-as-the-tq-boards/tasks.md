@@ -40,7 +40,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 - [ ] 3.8 TqEigenTokens
 - [ ] 3.9 TqMerkPerApp
 - [ ] 3.10 TqGroepen
-- [ ] 3.11 TqLettertypen
+- [x] 3.11 TqLettertypen, the panel at #fonts, reached from More settings. Upload, library and uploads as the board's rows (name and source, a sample in the font, licence, status, actions), Now in use, Rules, Fonts in the token set and the Marianne card; deleting a font asks in the board's dialog. compdiff (main frame, without the dialog) pairs 6 of the board's 10 components: the demo stack's library comes back empty and no fonts are uploaded, so the board's rows have no live counterpart. Not built: the per-column filters and row menu of the uploads table, and the inspect button.
 - [ ] 3.12 TqEmailDocumenten
 - [x] 3.13 TqEigenCss, the panel at #css, reached from More settings. Not drawn: the last-saved date in the header line (not stored with the CSS) and the inspect button.
 - [ ] 3.14 TqWissels

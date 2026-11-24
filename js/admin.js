@@ -8195,40 +8195,73 @@
 			}
 
 			fonts.forEach(function (font) {
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
-
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = font.name || font.id
-				row.appendChild(nameSpan)
-
-				var roleBadge = document.createElement('span')
-				roleBadge.className = 'nldesign-badge'
-				roleBadge.textContent =
-					font.role === 'heading'
-						? t('thematiq', 'Heading')
-						: t('thematiq', 'Body text')
-				row.appendChild(roleBadge)
-
-				var sizeSpan = document.createElement('span')
-				sizeSpan.className = 'nldesign-badge'
-				sizeSpan.textContent =
-					Math.max(1, Math.round((font.size || 0) / 1024)) + ' KB'
-				row.appendChild(sizeSpan)
-
+				var actions = document.createElement('div')
 				var deleteBtn = document.createElement('button')
 				deleteBtn.type = 'button'
-				deleteBtn.className =
-					'nldesign-btn nldesign-btn--small nldesign-btn--danger'
+				deleteBtn.className = 'thematiq-font-row__button'
 				deleteBtn.textContent = t('thematiq', 'Delete')
 				deleteBtn.addEventListener('click', function () {
 					deleteFont(font.id, font.name || font.id)
 				})
-				row.appendChild(deleteBtn)
-
-				listEl.appendChild(row)
+				actions.appendChild(deleteBtn)
+				listEl.appendChild(fontRow({
+					name: font.name || font.id,
+					meta: t('thematiq', 'uploaded, {size} kB', {
+						size: Math.max(1, Math.round((font.size || 0) / 1024)),
+					}),
+					licence: t('thematiq', 'Own licence'),
+					status: t('thematiq', 'In use for {role}', { role: fontUseLabel(font.role) }),
+					inUse: true,
+					uses: [font.role],
+					actions: actions,
+				}))
 			})
+		}
+
+		/**
+		 * A font as the TqLettertypen board draws it: its name and where it
+		 * comes from, a sample in the font, its licence, what it does now, and
+		 * what can be done with it. Text only, never markup.
+		 *
+		 * @param {object} font The row: name, meta, licence, status, inUse, uses (the roles) and actions.
+		 * @return {HTMLElement} The row.
+		 */
+		function fontRow(font) {
+			var row = document.createElement('div')
+			row.className = 'thematiq-font-row'
+			row.setAttribute('role', 'listitem')
+			;(font.uses || []).forEach(function (role) {
+				row.classList.add('thematiq-font-row--' + role)
+			})
+			var name = document.createElement('div')
+			name.className = 'thematiq-font-row__name'
+			var title = document.createElement('span')
+			title.className = 'thematiq-font-row__title'
+			title.textContent = font.name
+			var meta = document.createElement('span')
+			meta.className = 'thematiq-font-row__meta'
+			meta.textContent = font.meta
+			name.appendChild(title)
+			name.appendChild(meta)
+			var sample = document.createElement('span')
+			sample.className = 'thematiq-font-row__sample'
+			sample.style.fontFamily = JSON.stringify(String(font.name)) + ', var(--font-face)'
+			sample.textContent = t('thematiq', 'Waste and recycling')
+			var licence = document.createElement('span')
+			licence.className = 'thematiq-font-row__licence'
+			licence.textContent = font.licence
+			var status = document.createElement('span')
+			var pill = document.createElement('span')
+			pill.className = 'thematiq-font-row__pill' + (font.inUse === true ? ' thematiq-font-row__pill--in-use' : '')
+			pill.textContent = font.status
+			status.appendChild(pill)
+			font.actions.className = 'thematiq-font-row__actions'
+			row.appendChild(name)
+			row.appendChild(sample)
+			row.appendChild(licence)
+			row.appendChild(status)
+			row.appendChild(font.actions)
+			return row
 		}
 
 		/*
@@ -8237,6 +8270,10 @@
 		 * body or heading role without an upload. Names come from the app's
 		 * own stylesheet; they are still written with textContent only.
 		 */
+		function fontUseLabel(role) {
+			return (role === 'heading' ? t('thematiq', 'Headings') : t('thematiq', 'Body text')).toLowerCase()
+		}
+
 		function fontRoleLabel(role) {
 			return role === 'heading'
 				? t('thematiq', 'Heading')
@@ -8266,7 +8303,7 @@
 		function libraryButton(label, onClick) {
 			var button = document.createElement('button')
 			button.type = 'button'
-			button.className = 'nldesign-btn nldesign-btn--small'
+			button.className = 'thematiq-font-row__button'
 			button.textContent = label
 			button.addEventListener('click', onClick)
 			return button
@@ -8284,45 +8321,39 @@
 
 			fonts.forEach(function (font) {
 				var roles = font.roles || []
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
-
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = font.name
-				row.appendChild(nameSpan)
-
-				var licenceBadge = document.createElement('span')
-				licenceBadge.className = 'nldesign-badge'
-				licenceBadge.textContent = font.licence
-				licenceBadge.title = t('thematiq', 'Licence')
-				row.appendChild(licenceBadge)
-
-				;['body', 'heading'].forEach(function (role) {
-					if (roles.indexOf(role) !== -1) {
-						var roleBadge = document.createElement('span')
-						roleBadge.className = 'nldesign-badge'
-						roleBadge.textContent = fontRoleLabel(role)
-						row.appendChild(roleBadge)
-						row.appendChild(libraryButton(
+				var actions = document.createElement('div')
+				;['heading', 'body'].forEach(function (role) {
+					var button = roles.indexOf(role) !== -1
+						? libraryButton(
 							t('thematiq', 'Stop using for {role}').replace('{role}', fontRoleLabel(role).toLowerCase()),
 							function () {
 								unassignLibraryFont(role)
 							},
-						))
-						return
-					}
-					row.appendChild(libraryButton(
-						role === 'heading'
-							? t('thematiq', 'Use for headings')
-							: t('thematiq', 'Use for body text'),
-						function () {
-							assignLibraryFont(font.name, role)
-						},
-					))
+						)
+						: libraryButton(
+							role === 'heading'
+								? t('thematiq', 'Use for headings')
+								: t('thematiq', 'Use for body text'),
+							function () {
+								assignLibraryFont(font.name, role)
+							},
+						)
+					actions.appendChild(button)
 				})
-
-				libraryEl.appendChild(row)
+				var status = roles.length === 0
+					? t('thematiq', 'Available')
+					: roles.map(function (role) {
+						return t('thematiq', 'In use for {role}', { role: fontUseLabel(role) })
+					}).join(', ')
+				libraryEl.appendChild(fontRow({
+					name: font.name,
+					meta: t('thematiq', 'bundled'),
+					licence: font.licence,
+					status: status,
+					inUse: roles.length > 0,
+					uses: roles,
+					actions: actions,
+				}))
 			})
 		}
 
@@ -8378,49 +8409,66 @@
 		}
 
 		function deleteFont(id, name) {
-			OC.dialogs.confirm(
-				t(
-					'thematiq',
-					'Delete the font "{name}"? Pages using it will fall back to Fira Sans.',
-				).replace('{name}', name),
-				t('thematiq', 'Delete font'),
-				function (confirmed) {
-					if (confirmed !== true) {
-						return
-					}
-					fetch(
-						OC.generateUrl(
-							'/apps/thematiq/settings/fonts/'
-								+ encodeURIComponent(id),
-						),
-						{
-							method: 'DELETE',
-							headers: { requesttoken: OC.requestToken },
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			frame.open({
+				id: 'thematiq-delete-font-dialog',
+				width: 560,
+				eyebrow: t('thematiq', 'Typefaces'),
+				title: t('thematiq', 'Delete font {name}?', { name: name }, undefined, { escape: false }),
+				body: [
+					frame.h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t('thematiq', 'Pages that use it fall back to the font of the token set. Then reload the page to refresh the style.'),
+					}),
+				],
+				actions: [
+					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: t('thematiq', 'Delete font'),
+						variant: 'danger',
+						icon: 'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.busy(true)
+							fetch(
+								OC.generateUrl(
+									'/apps/thematiq/settings/fonts/'
+										+ encodeURIComponent(id),
+								),
+								{
+									method: 'DELETE',
+									headers: { requesttoken: OC.requestToken },
+								},
+							)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (data) {
+									dialog.close()
+									if (data && data.status === 'ok') {
+										notify(
+											t(
+												'thematiq',
+												'Font deleted. Reload the page to refresh the styling.',
+											),
+										)
+										loadFonts()
+									} else {
+										notify(t('thematiq', 'Failed to delete font.'))
+									}
+								})
+								.catch(function (err) {
+									dialog.close()
+									console.error('Error deleting font:', err)
+									notify(t('thematiq', 'Failed to delete font.'))
+								})
 						},
-					)
-						.then(function (r) {
-							return r.json()
-						})
-						.then(function (data) {
-							if (data && data.status === 'ok') {
-								notify(
-									t(
-										'thematiq',
-										'Font deleted. Reload the page to refresh the styling.',
-									),
-								)
-								loadFonts()
-							} else {
-								notify(t('thematiq', 'Failed to delete font.'))
-							}
-						})
-						.catch(function (err) {
-							console.error('Error deleting font:', err)
-							notify(t('thematiq', 'Failed to delete font.'))
-						})
-				},
-				true,
-			)
+					},
+				],
+			})
 		}
 
 		// Initialise the custom fonts panel on page load.

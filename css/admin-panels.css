@@ -1015,3 +1015,151 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 #nldesign-settings .thematiq-panel .thematiq-log-panel__cards .thematiq-panel__card-title {
 	font-size: 17px !important;
 }
+
+/* Fonts (TqLettertypen). */
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__card {
+	gap: 16px;
+	margin: 0 !important;
+	padding: 22px 24px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 0;
+	padding: 12px 14px;
+	border: 0;
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background)) !important;
+	color: var(--color-warning);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__notice svg {
+	flex: none;
+	margin-top: 1px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__field label,
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__label {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__field input[type='text'],
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__field select {
+	box-sizing: border-box;
+	width: 100%;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+	font-size: 15px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-list {
+	display: flex;
+	flex-direction: column;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row {
+	display: grid;
+	grid-template-columns: minmax(140px, 1.2fr) minmax(140px, 1.4fr) minmax(120px, 1.2fr) minmax(120px, 1fr) auto;
+	gap: 12px;
+	align-items: center;
+	padding: 12px 0;
+	border-top: 1px solid var(--color-background-dark);
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__name {
+	display: flex;
+	flex-direction: column;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__title {
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__meta,
+#nldesign-settings .thematiq-panel .thematiq-font-row__licence {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__sample {
+	font-size: 18px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__pill {
+	display: inline-flex;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-background-hover);
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__pill--in-use {
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	color: var(--color-success);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row__button {
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0 12px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__now > div {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px 0;
+	border-top: 1px solid var(--color-background-dark);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__now span {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-fonts-panel__now strong {
+	font-size: 18px;
+}
+
+#nldesign-settings .thematiq-fonts-panel .thematiq-panel__main {
+	flex-basis: 560px;
+}
+
+#nldesign-settings .thematiq-fonts-panel .thematiq-panel__aside {
+	flex-basis: 280px;
+}
