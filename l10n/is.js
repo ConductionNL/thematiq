@@ -1436,7 +1436,15 @@ OC.L10N.register(
         "You then choose it in the active token set list.": "You then choose it in the active token set list.",
         "Values that do not fit in a token set are kept as overrides. You then see which.": "Values that do not fit in a token set are kept as overrides. You then see which.",
         "Change the Nextcloud theme": "Change the Nextcloud theme",
-        "Save as new theme": "Save as new theme"
+        "Save as new theme": "Save as new theme",
+        "Components and tokens": "Components and tokens",
+        "Save 1 override?": "Save 1 override?",
+        "Save {count} overrides?": "Save {count} overrides?",
+        "They go on top of {set}. Save puts them live for everyone and writes a line in the log.": "They go on top of {set}. Save puts them live for everyone and writes a line in the log.",
+        "Was": "Was",
+        "Becomes": "Becomes",
+        "Do not ask again before saving": "Do not ask again before saving",
+        "Can be reset below the token list.": "Can be reset below the token list."
     },
     "nplurals=2; plural=(n != 1);"
 )

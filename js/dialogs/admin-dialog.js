@@ -142,6 +142,7 @@
 	 *   'primary', 'danger' or 'link'), icon, className, cancel (closes without acting), onClick(dialog)}`.
 	 * @param {number} [options.width] The widest the dialog grows, in pixels (560 when left out).
 	 * @param {string} [options.id] The dialog's id.
+	 * @param {string} [options.focus] A selector for what gets focus when it opens.
 	 * @param {Element} [options.opener] What gets focus back when the dialog closes.
 	 * @param {Function} [options.onClose] Called once the dialog has closed.
 	 * @return {{el: HTMLDialogElement, close: Function, busy: Function}} The open dialog.
@@ -236,7 +237,8 @@
 		} else {
 			el.setAttribute('open', '')
 		}
-		var first = el.querySelector('.' + BLOCK + '__body input, .' + BLOCK + '__body select, .' + BLOCK + '__body textarea')
+		var first = (options.focus ? el.querySelector(options.focus) : null)
+			|| el.querySelector('.' + BLOCK + '__body input[type="text"], .' + BLOCK + '__body select, .' + BLOCK + '__body textarea')
 			|| el.querySelector('.' + BLOCK + '__foot button')
 		if (first !== null) {
 			first.focus()

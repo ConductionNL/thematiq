@@ -40,7 +40,7 @@ OC.L10N.register(
         "Custom token overrides": "Aangepaste token-overschrijvingen",
         "Download": "Downloaden",
         "Upload": "Uploaden",
-        "Save overrides": "Overschrijvingen opslaan",
+        "Save overrides": "Aanpassingen opslaan",
         "Custom value": "Aangepaste waarde",
         "Reset to default": "Terugzetten naar standaard",
         "Unsaved changes": "Niet-opgeslagen wijzigingen",
@@ -1436,7 +1436,15 @@ OC.L10N.register(
         "You then choose it in the active token set list.": "U kiest het daarna in de keuzelijst van de actieve tokenset.",
         "Values that do not fit in a token set are kept as overrides. You then see which.": "Waarden die niet in een tokenset passen, blijven als aanpassing bewaard. U ziet dan welke.",
         "Change the Nextcloud theme": "Het Nextcloud-thema aanpassen",
-        "Save as new theme": "Bewaren als nieuw thema"
+        "Save as new theme": "Bewaren als nieuw thema",
+        "Components and tokens": "Componenten en tokens",
+        "Save 1 override?": "1 aanpassing opslaan?",
+        "Save {count} overrides?": "{count} aanpassingen opslaan?",
+        "They go on top of {set}. Save puts them live for everyone and writes a line in the log.": "Ze komen bovenop {set}. Opslaan zet ze voor iedereen live en schrijft een regel in het logboek.",
+        "Was": "Was",
+        "Becomes": "Wordt",
+        "Do not ask again before saving": "Niet meer vragen voor het opslaan",
+        "Can be reset below the token list.": "Terug te zetten onder de lijst met tokens."
     },
     "nplurals=2; plural=(n != 1);"
 )

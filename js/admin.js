@@ -4742,20 +4742,6 @@
 		}
 
 		/**
-		 * The markup both dialogs share for the "do not ask again" row.
-		 *
-		 * @return {string} The row's HTML.
-		 */
-		function dontAskAgainRow() {
-			return (
-				'<label class="nldesign-dialog-dontask-row">'
-				+ '<input type="checkbox" class="nldesign-dialog-dontask">'
-				+ escapeHtml(t('thematiq', 'Do not ask again'))
-				+ '</label>'
-			)
-		}
-
-		/**
 		 * Ask before saving, and run `proceed` with the chosen route.
 		 *
 		 * `proceed` is called with `'new-set'` to keep the edits as a token set
@@ -4815,51 +4801,34 @@
 					: tokenSetSelect !== null
 						? tokenSetSelect.value
 						: ''
-
-			var html =
-				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', 'Save these overrides?'))
-				+ '</h3>'
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t('thematiq', 'They are applied on top of {set}.', {
-						set: setName,
-					}),
-				)
-				+ '</p>'
-				+ dontAskAgainRow()
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(t('thematiq', 'Save overrides'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-save-dialog-overlay')
-
-			function close() {
-				overlay.remove()
+			if (window.ThematiqSaveOverridesDialog === undefined) {
+				return
 			}
 
-			makeDialogAccessible(overlay, close)
-			wireDoNotAskAgain(overlay, 'theme')
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed('overrides')
+			var changes = Object.keys(tokenEditorState)
+				.filter(function (name) {
+					return tokenEditorState[name].isDirty === true
 				})
+				.map(function (name) {
+					var state = tokenEditorState[name]
+					var meta = tokenRegistry[name] || tokenInternal[name] || {}
+					return {
+						name: name,
+						label: meta.label || name,
+						was: state.saved !== undefined ? state.saved : state.resolved,
+						becomes: state.current,
+					}
+				})
+			var dialog = window.ThematiqSaveOverridesDialog.open({
+				setName: setName,
+				changes: changes,
+				onConfirm: function () {
+					proceed('overrides')
+				},
+			})
+			if (dialog !== null) {
+				wireDoNotAskAgain(dialog.el, 'theme')
+			}
 		}
 
 		/**
