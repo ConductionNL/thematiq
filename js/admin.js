@@ -1817,103 +1817,6 @@
 		 * triggering control on close (WCAG 2.1.1 Keyboard / 2.4.3).
 		 * ========================================================================== */
 
-		/**
-		 * Return the currently visible, non-disabled focusable elements inside a
-		 * container, in DOM order.
-		 *
-		 * Visibility is checked via computed `display`/`visibility` rather than
-		 * `offsetParent` — `offsetParent` is also null for `position: fixed`
-		 * elements even when they are visible, which would wrongly exclude a
-		 * fixed-position dialog's own controls from the focus trap.
-		 */
-		function getFocusableElements(container) {
-			var candidates = container.querySelectorAll(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-			)
-			return Array.prototype.filter.call(candidates, function (el) {
-				if (el.disabled === true) {
-					return false
-				}
-				var style = window.getComputedStyle(el)
-				return style.display !== 'none' && style.visibility !== 'hidden'
-			})
-		}
-
-		/**
-		 * Wire a hand-rolled overlay dialog for keyboard use: WAI-ARIA `dialog`
-		 * role, focus moved to the first focusable control on open, Tab/Shift+Tab
-		 * trapped within the dialog, Escape invoking the caller's close handler,
-		 * and focus restored to the element that had focus before the dialog
-		 * opened once it closes.
-		 *
-		 * @param {HTMLElement} overlay The `.nldesign-dialog-overlay` element already inserted into the DOM.
-		 * @param {Function}    closeFn Called when Escape is pressed; must remove the overlay (e.g. via closeDialogOverlay()).
-		 */
-		function makeDialogAccessible(overlay, closeFn) {
-			var dialogEl = overlay.querySelector('.nldesign-dialog')
-			if (dialogEl === null) {
-				return
-			}
-
-			var titleEl = dialogEl.querySelector('h3')
-			if (titleEl !== null) {
-				if (!titleEl.id) {
-					titleEl.id =
-						'nldesign-dialog-title-'
-						+ Math.random().toString(36).slice(2)
-				}
-				dialogEl.setAttribute('aria-labelledby', titleEl.id)
-			}
-			dialogEl.setAttribute('role', 'dialog')
-			dialogEl.setAttribute('aria-modal', 'true')
-			if (!dialogEl.hasAttribute('tabindex')) {
-				dialogEl.setAttribute('tabindex', '-1')
-			}
-
-			var previouslyFocused = document.activeElement
-			var initialFocusable = getFocusableElements(dialogEl)
-			;(initialFocusable[0] || dialogEl).focus()
-
-			function keydownHandler(e) {
-				if (e.key === 'Escape' || e.keyCode === 27) {
-					e.preventDefault()
-					closeFn()
-					return
-				}
-				if (e.key === 'Tab' || e.keyCode === 9) {
-					var items = getFocusableElements(dialogEl)
-					if (items.length === 0) {
-						return
-					}
-					var first = items[0]
-					var last = items[items.length - 1]
-					if (e.shiftKey && document.activeElement === first) {
-						e.preventDefault()
-						last.focus()
-					} else if (!e.shiftKey && document.activeElement === last) {
-						e.preventDefault()
-						first.focus()
-					}
-				}
-			}
-
-			overlay.addEventListener('keydown', keydownHandler)
-
-			// Teardown hook consumed by closeDialogOverlay() so every dialog-close
-			// path (Cancel, Escape, click-outside, successful submit) restores
-			// focus consistently.
-			overlay.nldesignA11yCleanup = function () {
-				overlay.removeEventListener('keydown', keydownHandler)
-				if (
-					previouslyFocused !== null
-					&& typeof previouslyFocused.focus === 'function'
-				) {
-					previouslyFocused.focus()
-				}
-			}
-		}
-
-
 		// Handle hide slogan checkbox
 		if (hideSloganCheckbox) {
 			hideSloganCheckbox.addEventListener('change', function () {
@@ -5058,70 +4961,45 @@
 		}
 
 		/**
-		 * Say what an overrides action does before it is taken.
+		 * Say what an overrides action does before it is taken, in the admin
+		 * dialog frame under "Components and tokens".
 		 *
-		 * @param {string}        id           The overlay's element id.
+		 * @param {string}        id           The dialog's element id.
 		 * @param {string}        title        The dialog heading.
-		 * @param {Array<string>} paragraphs   What the action does, one paragraph each.
+		 * @param {Array<Node>}   body         What the action does.
 		 * @param {string}        confirmLabel The label of the button that goes ahead.
 		 * @param {Function}      proceed      Called when the admin confirms.
 		 *
 		 * @return {void}
 		 */
-		function confirmOverridesAction(
-			id,
-			title,
-			paragraphs,
-			confirmLabel,
-			proceed,
-		) {
-			var html =
-				'<div class="nldesign-dialog-overlay" id="'
-				+ id
-				+ '">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(title)
-				+ '</h3>'
-				+ paragraphs
-					.map(function (text) {
-						return (
-							'<p class="settings-hint">' + escapeHtml(text) + '</p>'
-						)
-					})
-					.join('')
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button type="button" class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button type="button" class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(confirmLabel)
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById(id)
-
-			function close() {
-				overlay.remove()
+		function confirmOverridesAction(id, title, body, confirmLabel, proceed) {
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
 			}
-
-			makeDialogAccessible(overlay, close)
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed()
-				})
+			frame.open({
+				id: id,
+				width: 560,
+				eyebrow: t('thematiq', 'Components and tokens'),
+				title: title,
+				body: body,
+				actions: [
+					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: confirmLabel,
+						variant: 'primary',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.close()
+							proceed()
+						},
+					},
+				],
+			})
 		}
 
 		function confirmExportOverrides() {
+			var h = window.ThematiqAdminDialog.h
 			confirmOverridesAction(
 				'nldesign-export-overrides-overlay',
 				t(
@@ -5132,14 +5010,20 @@
 					{ escape: false },
 				),
 				[
-					t(
-						'thematiq',
-						'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
-					),
-					t(
-						'thematiq',
-						'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
-					),
+					h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
+						),
+					}),
+					h('p', {
+						class: 'thematiq-admin-dialog__note',
+						text: t(
+							'thematiq',
+							'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
+						),
+					}),
 				],
 				t('thematiq', 'Download'),
 				exportOverrides,
@@ -5147,6 +5031,11 @@
 		}
 
 		function confirmImportOverrides() {
+			var frame = window.ThematiqAdminDialog
+			var h = frame.h
+			var chooseFile = function () {
+				document.getElementById('nldesign-import-input').click()
+			}
 			confirmOverridesAction(
 				'nldesign-import-overrides-overlay',
 				t(
@@ -5157,19 +5046,37 @@
 					{ escape: false },
 				),
 				[
-					t(
-						'thematiq',
-						'The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.',
+					h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'The values in the file immediately replace every saved value of this theme. Values the editor does not know are skipped, and changes not yet saved are lost.',
+						),
+					}),
+					h('div', { class: 'thematiq-admin-dialog__file' }, [
+						h('span', { class: 'thematiq-admin-dialog__file-label', text: t('thematiq', 'File') }),
+						h('div', { class: 'thematiq-admin-dialog__file-row' }, [
+							h('button', {
+								type: 'button',
+								class: 'thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary',
+								text: t('thematiq', 'Choose file'),
+								on: { click: chooseFile },
+							}),
+							h('span', { class: 'thematiq-admin-dialog__hint', text: t('thematiq', 'custom-overrides.css, CSS only') }),
+						]),
+					]),
+					frame.notice(
+						t('thematiq', 'After the upload you see how many tokens were imported and how many were skipped because they were not recognised.'),
+						'neutral',
 					),
-					t(
-						'thematiq',
-						'To add a whole theme as a new token set, use Custom token sets further down instead.',
-					),
+					h('p', { class: 'thematiq-admin-dialog__aside' }, [
+						t('thematiq', 'Want to add a whole theme as a new token set? Then use') + ' ',
+						h('a', { href: '#nldesign-custom-token-sets', text: t('thematiq', 'Own token sets') }),
+						'.',
+					]),
 				],
-				t('thematiq', 'Choose file'),
-				function () {
-					document.getElementById('nldesign-import-input').click()
-				},
+				t('thematiq', 'Choose and upload file'),
+				chooseFile,
 			)
 		}
 

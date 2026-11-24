@@ -1373,7 +1373,7 @@ describe('admin.js token editor', () => {
 			const overlay = document.getElementById(
 				'nldesign-export-overrides-overlay',
 			)
-			expect(overlay.querySelector('h3').textContent).toBe(
+			expect(overlay.querySelector('h2').textContent).toBe(
 				'Download the overrides of Nextcloud (Base)?',
 			)
 			expect(overlay.textContent).toContain('It is not a complete theme.')
@@ -1436,10 +1436,15 @@ describe('admin.js token editor', () => {
 			const overlay = document.getElementById(
 				'nldesign-import-overrides-overlay',
 			)
-			expect(overlay.querySelector('h3').textContent).toBe(
+			expect(overlay.querySelector('h2').textContent).toBe(
 				'Upload overrides into Nextcloud (Base)?',
 			)
+			expect(overlay.querySelector('.thematiq-admin-dialog__file-label').textContent).toBe('File')
+			expect(overlay.querySelector('a[href="#nldesign-custom-token-sets"]').textContent).toBe('Own token sets')
 			expect(picker).not.toHaveBeenCalled()
+			click(overlay.querySelector('.thematiq-admin-dialog__file-row button'))
+			expect(picker).toHaveBeenCalledTimes(1)
+			picker.mockClear()
 
 			click(overlay.querySelector('.nldesign-dialog-cancel'))
 			expect(picker).not.toHaveBeenCalled()
