@@ -2,5 +2,21 @@ TqTheming	/settings/admin/theming	--lang	en	--ds	zuiddrecht
 TqTerugNaarNextcloud	/settings/admin/theming	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-reset-theme-btn"},{"wait":1500}]
 TqBasistokens	/settings/admin/theming	--lang	en	--ds	zuiddrecht	--steps	[{"click":"label[for=nldesign-base-unlock]"},{"wait":1500}]
 TqOverridesUploaden	/settings/admin/theming	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-import-btn"},{"wait":1500}]
-TqTokenToevoegen	/settings/admin/theming	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-own-token-add"},{"wait":1000}]
-TqTokenUitfaseren	/settings/admin/theming	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-deprecation-add"},{"wait":1000}]
+TqTokenToevoegen	/settings/admin/theming#own-tokens	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-own-token-add"},{"wait":1000}]
+TqTokenUitfaseren	/settings/admin/theming#own-tokens	--lang	en	--ds	zuiddrecht	--steps	[{"click":"#nldesign-deprecation-add"},{"wait":1000}]
+TqLayout	/settings/admin/theming#layout	--lang	en	--ds	zuiddrecht
+TqDonker	/settings/admin/theming#dark	--lang	en	--ds	zuiddrecht
+TqEigenCss	/settings/admin/theming#css	--lang	en	--ds	zuiddrecht
+TqLogboek	/settings/admin/theming#log	--lang	en	--ds	zuiddrecht
+TqLettertypen	/settings/admin/theming#fonts	--lang	en	--ds	zuiddrecht
+TqContrastrapport	/settings/admin/theming#contrast	--lang	en	--ds	zuiddrecht
+TqBundel	/settings/admin/theming#bundle	--lang	en	--ds	zuiddrecht
+TqAiAssistent	/settings/admin/theming#assistant	--lang	en	--ds	zuiddrecht
+TqWissels	/settings/admin/theming#switches	--lang	en	--ds	zuiddrecht
+TqGalerij	/settings/admin/theming#gallery	--lang	en	--ds	zuiddrecht
+TqEigenSets	/settings/admin/theming#own-sets	--lang	en	--ds	zuiddrecht
+TqGroepen	/settings/admin/theming#groups	--lang	en	--ds	zuiddrecht
+TqMerkPerApp	/settings/admin/theming#brands	--lang	en	--ds	zuiddrecht
+TqEmailDocumenten	/settings/admin/theming#email	--lang	en	--ds	zuiddrecht
+TqEigenTokens	/settings/admin/theming#own-tokens	--lang	en	--ds	zuiddrecht
+TqOmgevingsmarkering	/settings/admin/theming#environment	--lang	en	--ds	zuiddrecht
