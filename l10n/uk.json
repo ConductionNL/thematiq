@@ -1588,7 +1588,26 @@
         "Not generated": "Not generated",
         "1 contrast warning": "1 contrast warning",
         "{count} contrast warnings": "{count} contrast warnings",
-        "Generator version {version}": "Generator version {version}"
+        "Generator version {version}": "Generator version {version}",
+        "Free CSS for what the tokens cannot express. Use a token where you can, then your CSS follows the house style.": "Free CSS for what the tokens cannot express. Use a token where you can, then your CSS follows the house style.",
+        "Off: the CSS is not loaded.": "Off: the CSS is not loaded.",
+        "Comes after all other layers of thematiq, so it always wins.": "Comes after all other layers of thematiq, so it always wins.",
+        "Explanation": "Explanation",
+        "What the check refuses": "What the check refuses",
+        "refused": "refused",
+        "allowed": "allowed",
+        "url() to outside": "url() to outside",
+        "scripts and HTML tags": "scripts and HTML tags",
+        "background variables for dark": "background variables for dark",
+        "relative paths and data:": "relative paths and data:",
+        "The check runs before saving. If something is refused, thematiq saves nothing and you see why.": "The check runs before saving. If something is refused, thematiq saves nothing and you see why.",
+        "Using custom tokens": "Using custom tokens",
+        "A custom token such as --nldesign-org-brand-accent can be read here directly with var(). So you change a colour in one place only.": "A custom token such as --nldesign-org-brand-accent can be read here directly with var(). So you change a colour in one place only.",
+        "In the log": "In the log",
+        "Every save goes in the log, with who and when.": "Every save goes in the log, with who and when.",
+        "More settings": "More settings",
+        "{state}, 1 line": "{state}, 1 line",
+        "{state}, {count} lines": "{state}, {count} lines"
     },
     "plurals": {}
 }

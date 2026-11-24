@@ -34,15 +34,15 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 - [ ] 3.2 TqComponenten (components and tokens, with the More menu)
 - [ ] 3.3 TqEigenComponent
 - [ ] 3.4 TqBeweging
-- [ ] 3.5 TqLayout
-- [ ] 3.6 TqDonker
+- [x] 3.5 TqLayout, the panel at #layout (#1924). compdiff pairs all 15 components. Not built: the Save button (each choice saves at once) and the inspect button. The before and after drawings are the panel's own, from the current choices.
+- [x] 3.6 TqDonker, the panel at #dark (#1926). compdiff pairs the board's 12 components. Not built: the own dark value per token (the token editor keeps it for the tokens it can edit), Clear overrides, Generate dark variant (the files are generated at build time) and the inspect button.
 - [ ] 3.7 TqEigenSets
 - [ ] 3.8 TqEigenTokens
 - [ ] 3.9 TqMerkPerApp
 - [ ] 3.10 TqGroepen
 - [ ] 3.11 TqLettertypen
 - [ ] 3.12 TqEmailDocumenten
-- [ ] 3.13 TqEigenCss
+- [x] 3.13 TqEigenCss, the panel at #css, reached from More settings. Not drawn: the last-saved date in the header line (not stored with the CSS) and the inspect button.
 - [ ] 3.14 TqWissels
 - [ ] 3.15 TqGalerij
 - [ ] 3.16 TqBundel

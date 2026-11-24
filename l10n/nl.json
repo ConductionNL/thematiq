@@ -1588,7 +1588,26 @@
         "Not generated": "Niet gegenereerd",
         "1 contrast warning": "1 contrastwaarschuwing",
         "{count} contrast warnings": "{count} contrastwaarschuwingen",
-        "Generator version {version}": "Generator versie {version}"
+        "Generator version {version}": "Generator versie {version}",
+        "Free CSS for what the tokens cannot express. Use a token where you can, then your CSS follows the house style.": "Vrije CSS voor wat de tokens niet kunnen uitdrukken. Gebruik waar het kan een token, dan volgt uw CSS de huisstijl mee.",
+        "Off: the CSS is not loaded.": "Uit: de CSS wordt niet geladen.",
+        "Comes after all other layers of thematiq, so it always wins.": "Komt na alle andere lagen van thematiq, dus het wint altijd.",
+        "Explanation": "Toelichting",
+        "What the check refuses": "Wat de controle weigert",
+        "refused": "geweigerd",
+        "allowed": "toegestaan",
+        "url() to outside": "url() naar buiten",
+        "scripts and HTML tags": "scripts en HTML-tags",
+        "background variables for dark": "achtergrondvariabelen voor donker",
+        "relative paths and data:": "relatieve paden en data:",
+        "The check runs before saving. If something is refused, thematiq saves nothing and you see why.": "De controle draait voor het opslaan. Wordt iets geweigerd, dan slaat thematiq niets op en ziet u waarom.",
+        "Using custom tokens": "Eigen tokens gebruiken",
+        "A custom token such as --nldesign-org-brand-accent can be read here directly with var(). So you change a colour in one place only.": "Een eigen token als --nldesign-org-brand-accent kunt u hier meteen lezen met var(). Zo hoeft u een kleur maar op een plek te veranderen.",
+        "In the log": "In het logboek",
+        "Every save goes in the log, with who and when.": "Elke opslag komt in het logboek, met wie en wanneer.",
+        "More settings": "Meer instellingen",
+        "{state}, 1 line": "{state}, 1 regel",
+        "{state}, {count} lines": "{state}, {count} regels"
     },
     "plurals": {}
 }
