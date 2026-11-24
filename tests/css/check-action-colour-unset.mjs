@@ -138,7 +138,7 @@ const BODY = `
 <button id="b1" ${STILL} class="button-vue button-vue--primary button-vue--vue-primary"><span class="button-vue__wrapper"><span class="button-vue__text">x</span></span></button>
 <button id="b2" ${STILL} class="primary">x</button>
 <input id="b3" ${STILL} class="primary" type="submit" value="x">
-<a id="b4" ${STILL} class="primary">x</a>
+<a id="b4" ${STILL} class="button primary">x</a>
 <button id="b5" ${STILL} class="button-vue button-vue--secondary button-vue--vue-secondary">x</button>
 <div class="modal-container"><button id="b6" ${STILL} class="button-vue button-vue--primary">confirm</button></div>
 <form class="login-form"><button id="b7" ${STILL} type="submit">Log in</button></form>
@@ -151,6 +151,23 @@ const BODY = `
 <span class="files-list__row-icon"><span id="p-folder" class="folder-icon"></span></span>
 </div>`
 
+/**
+ * What Nextcloud itself paints the primary buttons with: core's inputs.scss
+ * for button.primary, input.primary and .button.primary, and NcButton's own
+ * styles for its primary variants. thematiq only sets the variables these
+ * read, so without this sheet the probes would show the browser's grey.
+ */
+export const CORE = `
+button:not(.button-vue).primary, input[type='submit'].primary, input[type='button'].primary, .button.primary {
+	background-color: var(--color-primary-element);
+	border-color: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+.button-vue--primary, .button-vue--vue-primary {
+	background-color: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}`
+
 /** The filled primary buttons, by probe id, and where each is drawn. */
 export const BUTTONS = {
 	b1: 'NcButton primary (.button-vue--primary and .button-vue--vue-primary)',
@@ -161,7 +178,7 @@ export const BUTTONS = {
 
 /** Buttons only the NL Design System bundle paints from the main button tokens. */
 export const NLDESIGN_BUTTONS = {
-	b4: 'a.primary',
+	b4: 'a link drawn as a primary button (a.button.primary)',
 	b7: 'the login button (.login-form button[type=submit])',
 }
 
@@ -195,7 +212,7 @@ async function measure(page, sheets, scheme) {
 		scheme === 'dark'
 			? 'data-theme-dark data-themes="dark"'
 			: 'data-theme-light data-themes="light"'
-	const styles = sheets.map((css) => `<style>${css}</style>`).join('')
+	const styles = [CORE, ...sheets].map((css) => `<style>${css}</style>`).join('')
 	await page.setContent(
 		`<!doctype html><html><head>${styles}</head><body ${attr}>${BODY}</body></html>`,
 	)
