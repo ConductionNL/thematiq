@@ -586,7 +586,7 @@ dialog.thematiq-admin-dialog::backdrop {
 	gap: 6px;
 	padding: 12px 14px;
 	border-radius: 8px;
-	background: var(--color-background-hover);
+	background: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
 	font-size: 13px;
 	color: var(--color-text-maxcontrast);
 }
