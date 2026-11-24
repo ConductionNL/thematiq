@@ -1,0 +1,218 @@
+/**
+ * The frame of the admin page's dialogs (js/dialogs/admin-dialog.js), as the
+ * Tq dialog boards draw it. Every colour reads a token.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ */
+
+dialog.thematiq-admin-dialog {
+	box-sizing: border-box;
+	width: 100%;
+	max-height: calc(100vh - 32px);
+	padding: 0;
+	border: 0;
+	border-radius: 12px;
+	background: var(--color-main-background);
+	box-shadow: 0 16px 48px rgba(27, 28, 29, 0.28);
+	color: var(--color-main-text);
+	font-size: 14px;
+	overflow: auto;
+}
+
+dialog.thematiq-admin-dialog[open] {
+	position: fixed;
+	inset: 130px 0 auto;
+	display: flex;
+	flex-direction: column;
+	height: fit-content;
+	margin: 0 auto !important;
+}
+
+dialog.thematiq-admin-dialog::backdrop {
+	background: rgba(27, 28, 29, 0.45);
+}
+
+.thematiq-admin-dialog__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 22px 24px 4px;
+}
+
+.thematiq-admin-dialog__heading {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.thematiq-admin-dialog__eyebrow {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--color-primary-element-light-text);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__title {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 1.2 !important;
+	color: var(--color-main-text);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__close {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 34px;
+	min-width: 34px;
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 17px;
+	background: transparent;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	cursor: pointer;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__close:hover,
+.thematiq-admin-dialog .thematiq-admin-dialog__close:focus-visible {
+	background: var(--color-background-hover);
+}
+
+.thematiq-admin-dialog__body {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 16px 24px 20px;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__lead {
+	margin: 0;
+	font-size: 15px;
+	line-height: 1.5;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__subtitle {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 16px !important;
+	font-weight: 700 !important;
+	line-height: 1.3 !important;
+}
+
+.thematiq-admin-dialog__list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.thematiq-admin-dialog__list li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	font-size: 14px;
+	line-height: 1.45;
+}
+
+.thematiq-admin-dialog__list svg {
+	flex: none;
+}
+
+.thematiq-admin-dialog__list--goes svg {
+	color: var(--color-error-hover, var(--color-error));
+}
+
+.thematiq-admin-dialog__list--stays svg {
+	color: var(--color-success);
+}
+
+.thematiq-admin-dialog__notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px 14px;
+	border-radius: 8px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.thematiq-admin-dialog__notice svg {
+	flex: none;
+	margin-top: 1px;
+}
+
+.thematiq-admin-dialog__notice--warning {
+	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background));
+	color: var(--color-error-hover, var(--color-error-text));
+}
+
+.thematiq-admin-dialog__notice--info {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
+.thematiq-admin-dialog__foot {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 10px;
+	padding: 16px 24px;
+	border-top: 1px solid var(--color-background-dark);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	box-sizing: border-box;
+	height: 40px;
+	min-height: 40px;
+	margin: 0;
+	padding: 0 14px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
+	padding: 0 18px;
+	border: 0;
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button--danger {
+	border: 0;
+	background: var(--color-error-hover, var(--color-error));
+	color: var(--color-primary-element-text);
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button--link {
+	margin-inline-end: auto;
+	gap: 6px;
+	padding: 0 4px;
+	border: 0;
+	background: transparent;
+	color: var(--nldesign-color-link, var(--color-primary-element));
+}
+
+.thematiq-admin-dialog .thematiq-admin-dialog__button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}

@@ -1413,7 +1413,21 @@
         "Everything about collection days.": "Alles over de ophaaldagen.",
         "Put the bin out before 7:30.": "Zet de container voor 7.30 uur buiten.",
         "{label} {size}": "{label} {size}",
-        "In the token set": "In de tokenset"
+        "In the token set": "In de tokenset",
+        "Reset theme to Nextcloud?": "Thema terugzetten naar Nextcloud?",
+        "This resets the theme completely to the Nextcloud default theme.": "Dit zet het thema helemaal terug naar het standaardthema van Nextcloud.",
+        "This goes": "Dit verdwijnt",
+        "This stays": "Dit blijft",
+        "The overrides of the current theme {name}": "De aanpassingen van het huidige thema {name}",
+        "The override of the current theme {name}": "De aanpassing van het huidige thema {name}",
+        "The {count} overrides of the current theme {name}": "De {count} aanpassingen van het huidige thema {name}",
+        "Every change written over the Nextcloud theme": "Elke wijziging die over het Nextcloud-thema is geschreven",
+        "Colours and logo of Nextcloud: these go back to the default": "Kleuren en logo van Nextcloud: die gaan terug naar de standaard",
+        "Own token sets": "Eigen tokensets",
+        "Typefaces": "Lettertypen",
+        "Custom CSS": "Eigen CSS",
+        "This cannot be undone.": "Dit is niet terug te draaien.",
+        "Reset to Nextcloud": "Terugzetten naar Nextcloud"
     },
     "plurals": {}
 }

@@ -2639,6 +2639,8 @@
 		 * server derives when there is none (the field's placeholder).
 		 */
 		var tokenEditorDark = {}
+		// How many overrides the edited set holds on the server, for the reset dialog.
+		var tokenEditorSavedCount = null
 		var tokenEditorDarkDerived = {}
 		// Registry from server: token name → { tab, type, label }
 		var tokenRegistry = {}
@@ -2859,6 +2861,7 @@
 								+ Object.keys(tokenInternal).length
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
+					tokenEditorSavedCount = Object.keys(overrides).length
 					tokenEditorDark = Object.assign({}, data.darkOverrides || {})
 					tokenEditorDarkDerived = data.darkDerived || {}
 					// Read resolved values from the live CSS stack.
@@ -8658,17 +8661,17 @@
 		var resetThemeBtn = document.getElementById('nldesign-reset-theme-btn')
 		if (resetThemeBtn !== null) {
 			resetThemeBtn.addEventListener('click', function () {
-				OC.dialogs.confirm(
-					t(
-						'thematiq',
-						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colors and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
-					),
-					t('thematiq', 'Reset theme to Nextcloud'),
-					function (confirmed) {
-						if (confirmed !== true) {
-							return
-						}
-
+				var setId = editedTokenSetId()
+				var resetDialog = window.ThematiqResetThemeDialog
+				if (resetDialog === undefined) {
+					return
+				}
+				resetDialog.open({
+					opener: resetThemeBtn,
+					themeName: tokenSetsData[setId] !== undefined ? tokenSetsData[setId].name : setId,
+					overrideCount: tokenEditorSavedCount,
+					onConfirm: function (dialog) {
+						dialog.busy(true)
 						resetThemeBtn.disabled = true
 						fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
 							method: 'POST',
@@ -8688,6 +8691,7 @@
 								window.location.reload()
 							})
 							.catch(function (err) {
+								dialog.close()
 								resetThemeBtn.disabled = false
 								console.error('Error resetting the theme:', err)
 								notify(
@@ -8695,8 +8699,7 @@
 								)
 							})
 					},
-					true,
-				)
+				})
 			})
 		}
 

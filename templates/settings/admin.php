@@ -42,6 +42,10 @@ script('thematiq', 'lib/themingPlan');
 // The inert markup renderer (window.NldesignMarkupRender) admin.js and the
 // playground put their built markup through instead of assigning innerHTML.
 script('thematiq', 'lib/markupRender');
+// The board-drawn dialog frame and the dialogs admin.js opens in it.
+script('thematiq', 'dialogs/admin-dialog');
+script('thematiq', 'dialogs/reset-theme-dialog');
+style('thematiq', 'admin-dialog');
 script('thematiq', 'admin');
 script('thematiq', 'admin-assistant-mark');
 script('thematiq', 'admin-active-set-preview');
