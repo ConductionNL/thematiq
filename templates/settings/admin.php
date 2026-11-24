@@ -71,6 +71,8 @@ script('thematiq', 'admin-groups-panel');
 script('thematiq', 'admin-brands-panel');
 script('thematiq', 'admin-email-panel');
 script('thematiq', 'admin-own-tokens-panel');
+script('thematiq', 'admin-environment-panel');
+style('thematiq', 'environment-marker');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1569,6 +1571,108 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 	</section>
+	<!-- Environment marker (TqOmgevingsmarkering), a panel of this page at #environment (design.md):
+	     the OTAP environment this server declares in config.php, read-only
+	     (openspec/specs/environment-marker/spec.md), and what each marker looks like. -->
+	<section class="thematiq-panel thematiq-environment-panel" data-thematiq-panel="environment" aria-labelledby="thematiq-page-title" hidden>
+		<?php
+		$environmentMarkers = [
+			'development' => $l->t('Development environment'),
+			'test' => $l->t('Test environment'),
+			'acceptance' => $l->t('Acceptance environment'),
+		];
+		$environmentLine = $l->t('No environment set');
+		$environmentNote = $l->t('No page of this server carries a marker.');
+		if ($_['environment'] !== '') {
+			$environmentLine = $l->t('Environment: {environment}, set in config.php', ['environment' => $_['environment']]);
+		}
+		if ($_['environment'] !== '' && $_['environment'] !== 'production') {
+			$environmentNote = $l->t('Every page of this server carries the marker {marker}.', ['marker' => ($environmentMarkers[$_['environment']] ?? $l->t('Unknown environment'))]);
+		}
+		?>
+		<p class="thematiq-environment-panel__line" hidden><?php p($environmentLine); ?></p>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-environment-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-environment-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Environment of this server')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Read-only. No button on this page changes the value.')); ?></span>
+					</div>
+					<?php if ($_['environment'] !== ''): ?>
+						<div class="thematiq-environment-panel__now">
+							<span class="nldesign-environment__chip"><?php p($l->t('Environment: {environment}', ['environment' => $_['environment']])); ?></span>
+							<span class="thematiq-environment-panel__marker"><?php p($environmentNote); ?></span>
+						</div>
+					<?php endif; ?>
+					<p class="thematiq-groups-panel__text"><?php p($l->t('The environment belongs to the server, not to the database. That is why it sits in config.php and you can only read it here. A database copied from production to test thus keeps the label test.')); ?></p>
+					<h3 class="thematiq-brands-panel__subtitle"><?php p($l->t('If no environment is set')); ?></h3>
+					<div class="thematiq-environment-panel__box">
+						<p class="thematiq-groups-panel__text"><?php p($l->t('No environment is set, so no page is marked. Set the environment in config.php with:')); ?></p>
+						<code class="thematiq-log-panel__code"><?php p($_['environmentCommand']); ?></code>
+					</div>
+					<p class="thematiq-groups-panel__text"><?php p($l->t('Or directly in config.php, for example from your Helm values or deployment scripts:')); ?></p>
+					<code class="thematiq-log-panel__code thematiq-environment-panel__code">'thematiq.environment' =&gt; 'acceptance',</code>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-environment-looks-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-environment-looks-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('What the marker looks like')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('A thin stripe at the top of the screen, with a label hanging from it.')); ?></span>
+					</div>
+					<div class="thematiq-environment-panel__samples">
+							<figure class="thematiq-environment-panel__sample">
+								<div class="thematiq-environment-panel__screen" aria-hidden="true">
+									<div class="thematiq-environment-panel__stripe thematiq-env-marker--development"><span class="thematiq-env-marker--development"><?php p($l->t('Development environment')); ?></span></div>
+									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+								</div>
+								<figcaption><strong><?php p($l->t('Development environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Development]')])); ?></span></figcaption>
+							</figure>
+							<figure class="thematiq-environment-panel__sample">
+								<div class="thematiq-environment-panel__screen" aria-hidden="true">
+									<div class="thematiq-environment-panel__stripe thematiq-env-marker--test"><span class="thematiq-env-marker--test"><?php p($l->t('Test environment')); ?></span></div>
+									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+								</div>
+								<figcaption><strong><?php p($l->t('Test environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Test]')])); ?></span></figcaption>
+							</figure>
+							<figure class="thematiq-environment-panel__sample">
+								<div class="thematiq-environment-panel__screen" aria-hidden="true">
+									<div class="thematiq-environment-panel__stripe thematiq-env-marker--acceptance"><span class="thematiq-env-marker--acceptance"><?php p($l->t('Acceptance environment')); ?></span></div>
+									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+								</div>
+								<figcaption><strong><?php p($l->t('Acceptance environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Acceptance]')])); ?></span></figcaption>
+							</figure>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('What the marker looks like')); ?>">
+						<table class="nldesign-audit-table thematiq-environment-panel__table">
+							<thead><tr><th scope="col"><?php p($l->t('Value in config.php')); ?></th><th scope="col"><?php p($l->t('Marker')); ?></th><th scope="col"><?php p($l->t('Tab title starts with')); ?></th></tr></thead>
+							<tbody>
+								<tr><td><code>development</code></td><td><span class="thematiq-environment-panel__pill thematiq-env-marker--development"><?php p($l->t('Development environment')); ?></span></td><td><?php p($l->t('[Development]')); ?></td></tr>
+								<tr><td><code>test</code></td><td><span class="thematiq-environment-panel__pill thematiq-env-marker--test"><?php p($l->t('Test environment')); ?></span></td><td><?php p($l->t('[Test]')); ?></td></tr>
+								<tr><td><code>acceptance</code></td><td><span class="thematiq-environment-panel__pill thematiq-env-marker--acceptance"><?php p($l->t('Acceptance environment')); ?></span></td><td><?php p($l->t('[Acceptance]')); ?></td></tr>
+								<tr><td><code>production</code> <?php p($l->t('or empty')); ?></td><td><?php p($l->t('no marker')); ?></td><td><?php p($l->t('nothing')); ?></td></tr>
+								<tr><td><?php p($l->t('anything else')); ?></td><td><span class="thematiq-environment-panel__pill thematiq-env-marker--test"><?php p($l->t('Unknown environment')); ?></span></td><td><?php p($l->t('[Unknown]')); ?></td></tr>
+							</tbody>
+						</table>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('The stripe sits at the top of every page, also on the sign-in page, on public share pages and in apps you excluded from the house style. The label is text, so it does not depend on colour alone. A screen reader reads it as the first note.')); ?></p>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-environment-colours-title">
+					<h2 id="thematiq-environment-colours-title" class="thematiq-panel__card-title"><?php p($l->t('Fixed colours')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('The colours of the stripe do not follow your house style. So a brand colour can never make a test environment look like production. Every pair reaches 4.5 to 1.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-environment-typo-title">
+					<h2 id="thematiq-environment-typo-title" class="thematiq-panel__card-title"><?php p($l->t('A typo')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('A value outside the list shows Unknown environment and writes a warning with that value in the Nextcloud log. So a typo never makes a server look like production.')); ?></p>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-environment-bundle-title">
+					<h2 id="thematiq-environment-bundle-title" class="thematiq-panel__card-title"><?php p($l->t('Not in the bundle')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('The configuration bundle never includes the environment. It is the only value that must differ per environment.')); ?></p>
+					<a href="#bundle" class="thematiq-bundle-panel__link"><?php p($l->t('Go to the configuration bundle')); ?></a>
+				</section>
+			</aside>
+		</div>
+	</section>
 	<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps,Generic.Files.LineLength ?>
 
 	<!-- The pages that have no card of their own on the overview, as links to their panels (design.md). -->
@@ -1585,6 +1689,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#brands"><?php p($l->t('Brand per app')); ?></a></li>
 			<li><a href="#email"><?php p($l->t('Email and documents')); ?></a></li>
 			<li><a href="#own-tokens"><?php p($l->t('Own tokens')); ?></a></li>
+			<li><a href="#environment"><?php p($l->t('Environment marker')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>

@@ -2535,3 +2535,121 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]) 
 	padding: 3px 10px;
 	font-weight: 600;
 }
+
+/* Environment marker (TqOmgevingsmarkering). The samples take the marker's own fixed
+   colours from css/environment-marker.css. */
+#nldesign-settings .thematiq-environment-panel .thematiq-panel__main {
+	flex-basis: 640px;
+}
+
+#nldesign-settings .thematiq-environment-panel .thematiq-panel__aside {
+	flex: 0 1 320px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__now {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__box {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 14px 16px;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-background-hover) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__box code,
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__code {
+	padding: 12px 14px;
+	border-radius: 6px;
+	background: var(--color-main-text) !important;
+	color: var(--color-main-background);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__samples {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__sample {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__screen {
+	position: relative;
+	height: 90px;
+	overflow: hidden;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-main-background) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__stripe {
+	display: flex;
+	justify-content: center;
+	height: 4px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__stripe span {
+	align-self: flex-start;
+	margin-top: 4px;
+	padding: 0 8px;
+	border-radius: 0 0 4px 4px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 18px;
+	white-space: nowrap;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__bar {
+	margin: 22px 10px 0;
+	padding: 6px 10px;
+	border-radius: 6px;
+	background: var(--color-background-hover) !important;
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__sample figcaption {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__sample figcaption span {
+	font-size: 12px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__table {
+	min-width: 560px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__table code {
+	font: 400 12px ui-monospace, Menlo, monospace;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-environment-panel__pill {
+	display: inline-flex;
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+@media (max-width: 720px) {
+	#nldesign-settings .thematiq-panel .thematiq-environment-panel__samples {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
