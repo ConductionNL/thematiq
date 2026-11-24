@@ -19,7 +19,7 @@ The addresses an administrator gave on the admin page before Menu settings exist
 #### Scenario: An administrator adds two external apps
 @e2e exclude Unit: vitest tests/vitest/menuSettingsDialog.spec.js and tests/vitest/appMenuSettings.spec.js; server check in tests/Unit/Service/AppMenuSettingsTest.php
 - GIVEN an administrator adds OpenProject at `https://op.example.org` and Forgejo at `https://code.example.org` for everyone
-- WHEN a person opens the apps menu with More apps unfolded
+- WHEN a person opens the apps menu with More unfolded
 - THEN both MUST be listed after the Nextcloud apps
 - AND Forgejo MUST link to `https://code.example.org` in a new tab
 
