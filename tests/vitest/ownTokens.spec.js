@@ -22,7 +22,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 /** The section and both dialogs, cut from the template, PHP calls replaced by their text. */
 function templateMarkup() {
 	const php = readFileSync(resolve(ROOT, 'templates/settings/admin.php'), 'utf8')
-	const start = php.indexOf('<div class="nldesign-own-tokens"')
+	const start = php.lastIndexOf('<section', php.indexOf('data-thematiq-panel="own-tokens"'))
 	const end =
 		php.indexOf('</dialog>', php.indexOf('id="nldesign-deprecation-dialog"')) + 9
 	return php
@@ -101,6 +101,7 @@ async function mount({ tokens = TOKENS, deprecations = DEPRECATIONS } = {}) {
 	document.body.innerHTML =
 		'<div id="nldesign-token-editor"><div data-token-row="--nldesign-color-primary-light"><span class="nldesign-token-label-wrap"></span></div></div>'
 		+ templateMarkup()
+	document.querySelector('[data-thematiq-panel="own-tokens"]').hidden = false
 	answer('GET', '/settings/tokens/own', 200, {
 		tokens,
 		prefix: '--nldesign-org-',
@@ -163,7 +164,7 @@ describe('ownTokens.js', () => {
 		await mount()
 		const rows = document.querySelectorAll('.nldesign-own-token-row')
 		expect(rows).toHaveLength(2)
-		expect(rows[1].textContent).toContain('#e17000 / dark #ff9a3c')
+		expect(rows[1].querySelector('.nldesign-own-token-value').textContent).toBe('light #e17000dark #ff9a3c')
 		expect(
 			rows[0].querySelector('.nldesign-deprecation-badge').textContent,
 		).toBe('Deprecated: warning, Due for removal')
@@ -288,6 +289,15 @@ describe('ownTokens.js', () => {
 		await flush()
 
 		expect(sent('/settings/tokens/own/', 'DELETE')).toHaveLength(0)
+	})
+
+	it('says when a deprecated token goes, or that it has no date, and names a colour token by its kind and shades', async () => {
+		await mount()
+		expect(document.querySelector('[data-deprecated-token="--nldesign-org-old-accent"] .nldesign-deprecation-when').textContent).toBe('removed from 2026-10-01')
+		expect(document.querySelector('[data-deprecated-token="--nldesign-color-primary-light"] .nldesign-deprecation-when').textContent).toBe('no date')
+		const row = document.querySelector('[data-own-token="--nldesign-org-old-accent"]')
+		expect(row.children[1].textContent).toBe('Colour')
+		expect(row.querySelector('.nldesign-own-token-value').textContent).toContain('dark derived from light')
 	})
 
 	it('labels a shipped token as notice only and offers no remove for it', async () => {
@@ -453,7 +463,8 @@ describe('ownTokens.js', () => {
 		})
 		const row = document.querySelector('[data-deprecated-token="--nldesign-org-gone"]')
 		expect(row.textContent).toContain('Deprecated: critical')
-		expect(row.querySelector('.nldesign-deprecation-detail').textContent).toBe(' removal 2026-01-01, removed, Use the brand colour.')
+		expect(row.querySelector('.nldesign-deprecation-when').textContent).toBe('removed')
+		expect(row.querySelector('.nldesign-own-token-about').textContent).toBe('Use the brand colour.')
 
 		await mount({ deprecations: [] })
 		expect(document.getElementById('nldesign-deprecation-list').textContent).toBe('No deprecated tokens.')

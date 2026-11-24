@@ -70,6 +70,7 @@ script('thematiq', 'admin-own-sets-panel');
 script('thematiq', 'admin-groups-panel');
 script('thematiq', 'admin-brands-panel');
 script('thematiq', 'admin-email-panel');
+script('thematiq', 'admin-own-tokens-panel');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
 script('thematiq', 'admin-documents');
@@ -1583,6 +1584,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#groups"><?php p($l->t('House style per group')); ?></a></li>
 			<li><a href="#brands"><?php p($l->t('Brand per app')); ?></a></li>
 			<li><a href="#email"><?php p($l->t('Email and documents')); ?></a></li>
+			<li><a href="#own-tokens"><?php p($l->t('Own tokens')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
 			<li><a href="#log"><?php p($l->t('Log')); ?></a></li>
@@ -1827,22 +1829,73 @@ if ($_['mockUi'] === true) {
 		<p class="settings-hint"><?php p($l->t('Loading token editor…')); ?></p>
 	</div>
 
-	<!-- Your own tokens and the deprecations list (authoring-token-lifecycle), mounted by ownTokens.js. -->
-	<div class="nldesign-own-tokens" id="nldesign-own-tokens" style="margin-top:2em">
-		<h3><?php p($l->t('Your own tokens')); ?></h3>
-		<p class="settings-hint">
-			<?php p($l->t('Add a token of your own, such as a brand accent. Its name starts with --nldesign-org-. Custom CSS and apps can read it at once, for example var(--nldesign-org-brand-accent).')); ?>
-		</p>
-		<button type="button" id="nldesign-own-token-add" class="button"><?php p($l->t('Add a token')); ?></button>
-		<ul class="nldesign-own-token-list" id="nldesign-own-token-list" aria-label="<?php p($l->t('Your own tokens')); ?>"></ul>
-		<h4 id="nldesign-deprecations-heading"><?php p($l->t('Deprecated tokens')); ?></h4>
-		<p class="settings-hint">
-			<?php p($l->t('Tell the teams that use the house style that a token is going away: which token replaces it, and when it may be removed. A deprecation never changes a value. Apps read the list from /apps/thematiq/api/token-deprecations.')); ?>
-		</p>
-		<button type="button" id="nldesign-deprecation-add" class="button"><?php p($l->t('Deprecate a token')); ?></button>
-		<ul class="nldesign-deprecations" id="nldesign-deprecation-list" aria-labelledby="nldesign-deprecations-heading"></ul>
-		<p id="nldesign-own-tokens-status" role="status" aria-live="polite"></p>
-	</div>
+	<?php // phpcs:disable Generic.Files.LineLength -- the panel keeps the board's markup on one line per element. ?>
+	<!-- Own tokens (TqEigenTokens), a panel of this page at #own-tokens (design.md): your own
+	     tokens and the deprecations list (authoring-token-lifecycle). js/ownTokens.js draws the
+	     tables and opens the dialogs below; js/admin-own-tokens-panel.js writes the counts. -->
+	<section class="thematiq-panel thematiq-own-tokens-panel nldesign-own-tokens" id="nldesign-own-tokens" data-thematiq-panel="own-tokens" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-own-tokens-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-own-tokens-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Your own tokens')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Add your own token, such as a brand accent. The name starts with --nldesign-org-. Custom CSS and apps can read it straight away, for example var(--nldesign-org-brand-accent).')); ?></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Your own tokens')); ?>">
+						<table class="nldesign-audit-table thematiq-own-tokens-panel__table">
+							<thead><tr><th scope="col"><?php p($l->t('Token')); ?></th><th scope="col"><?php p($l->t('Kind')); ?></th><th scope="col"><?php p($l->t('Value')); ?></th><th scope="col"><?php p($l->t('Description')); ?></th><th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th></tr></thead>
+							<tbody class="nldesign-own-token-list" id="nldesign-own-token-list"></tbody>
+						</table>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span class="thematiq-panel__fact-hint thematiq-own-tokens-panel__count"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-own-token-add" class="thematiq-groups-panel__add"><?php p($l->t('Add token')); ?></button>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="nldesign-deprecations-heading">
+					<div class="thematiq-css-panel__head">
+						<h2 id="nldesign-deprecations-heading" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Deprecated tokens')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Tell the teams that use the house style that a token is going away: which token replaces it and when it can be removed. Deprecating never changes a value.')); ?></span>
+					</div>
+					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Deprecated tokens')); ?>">
+						<table class="nldesign-audit-table thematiq-own-tokens-panel__table">
+							<thead><tr><th scope="col"><?php p($l->t('Token')); ?></th><th scope="col"><?php p($l->t('Severity')); ?></th><th scope="col"><?php p($l->t('Replacement')); ?></th><th scope="col"><?php p($l->t('Message')); ?></th><th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th></tr></thead>
+							<tbody class="nldesign-deprecations" id="nldesign-deprecation-list"></tbody>
+						</table>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<span class="thematiq-panel__fact-hint thematiq-own-tokens-panel__deprecated"></span>
+						<span class="thematiq-preview__spacer"></span>
+						<button type="button" id="nldesign-deprecation-add" class="thematiq-groups-panel__add"><?php p($l->t('Deprecate token')); ?></button>
+					</div>
+					<p id="nldesign-own-tokens-status" class="thematiq-panel__fact-hint" role="status" aria-live="polite"></p>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-tokens-css-title">
+					<h2 id="thematiq-own-tokens-css-title" class="thematiq-panel__card-title"><?php p($l->t('Use in custom CSS')); ?></h2>
+					<code class="thematiq-log-panel__code">.zd-banner { border-top: 4px solid var(--nldesign-org-brand-accent); }</code>
+					<a href="#css" class="thematiq-bundle-panel__link"><?php p($l->t('To custom CSS')); ?></a>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-tokens-apps-title">
+					<h2 id="thematiq-own-tokens-apps-title" class="thematiq-panel__card-title"><?php p($l->t('For apps')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Apps read the list of deprecated tokens through the API and show a notice to their developers.')); ?></p>
+					<code class="thematiq-log-panel__code">/apps/thematiq/api/token-deprecations</code>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-tokens-rules-title">
+					<h2 id="thematiq-own-tokens-rules-title" class="thematiq-panel__card-title"><?php p($l->t('Rules for a name')); ?></h2>
+					<div class="thematiq-css-panel__rules">
+						<div><span><?php p($l->t('Starts with')); ?></span><strong>--nldesign-org-</strong></div>
+						<div><span><?php p($l->t('Characters')); ?></span><strong><?php p($l->t('lower-case letters, digits, hyphens')); ?></strong></div>
+						<div><span><?php p($l->t('Length')); ?></span><strong><?php p($l->t('at most 48')); ?></strong></div>
+						<div><span><?php p($l->t('Types')); ?></span><strong><?php p($l->t('colour, text, duration, easing')); ?></strong></div>
+					</div>
+				</section>
+			</aside>
+		</div>
+	</section>
+	<?php // phpcs:enable Generic.Files.LineLength ?>
 
 	<?php // phpcs:disable Generic.Files.LineLength -- the dialogs keep the board's markup on one line per element. ?>
 	<!-- Add a token and Deprecate a token, drawn as the TqTokenToevoegen and
