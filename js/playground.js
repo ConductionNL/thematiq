@@ -414,7 +414,8 @@
 	/**
 	 * The hash for a selection while a panel of the page may be open. Inside the components
 	 * panel the hash stays the panel's own (`#components`, or `#components/own` on Your
-	 * components), so the panel survives a reload and the back button leaves it.
+	 * components), and so does the motion panel's (`#motion`), so the panel survives a reload
+	 * and the back button leaves it.
 	 *
 	 * @param {?string} panel The open panel of the page, or null.
 	 * @param {string} tab An editor tab id.
@@ -424,6 +425,9 @@
 	function hashIn(panel, tab, component) {
 		if (panel === 'components') {
 			return tab === OWN_TAB ? '#components/own' : '#components'
+		}
+		if (panel === 'motion') {
+			return '#motion'
 		}
 		return hashFor(tab, component)
 	}
