@@ -9,7 +9,7 @@
  * darkened, and the admin toggle gates it instance-wide.
  *
  * GLOBAL STATE: the tests read the stylesheets of a set that has a dark
- * variant, so Zuiddrecht is made the active set (activateTokenSet) for the
+ * variant, so the dark probe set is made the active set (activateTokenSet) for the
  * file and the previous set and its overrides are put back afterwards. The
  * instance's own default is the stock `nextcloud` set, which wears no design
  * system and therefore links no token file and no dark variant at all.
