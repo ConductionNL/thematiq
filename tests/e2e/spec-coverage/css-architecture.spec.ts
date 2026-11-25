@@ -593,22 +593,42 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#utrecht-token-absent-fallback-to-defaults
 	'without a --utrecht-* token the bridged component token falls back to the primary', async ({
+		browser,
 		page,
 	}) => {
-		const tokens = repoFile(`css/tokens/${NLDESIGN_SET}.css`)
-		expect(
-			tokens,
-			'precondition: the set declares no utrecht button token',
-		).not.toMatch(/--utrecht-button/)
-		const layers = await probeLayers(page)
-		expect(layers).not.toContain('primary-lock')
-		const bridged = await rootVar(
-			page,
-			'--nldesign-component-button-primary-action-background-color',
-		)
-		const primary = await rootVar(page, '--nldesign-color-primary')
-		expect(await resolveColor(page, bridged)).toBe(
-			await resolveColor(page, primary),
+		// The set brings no utrecht token of its own. Rijkshuisstijl no longer
+		// fits: converted from the community tokens 18.0.1, it declares the
+		// --utrecht-button-* family itself.
+		await withUploadedSet(
+			browser,
+			'no utrecht button',
+			':root {\n\t--nldesign-color-primary: #154273;\n}\n',
+			async (set) => {
+				await withThemeState(
+					browser,
+					{ tokenSet: set, overrides: {} },
+					async () => {
+						const layers = await probeLayers(page)
+						expect(layers).toContain(`tokens/${set}`)
+						expect(layers).not.toContain('primary-lock')
+						expect(
+							await servedCss(page, `tokens/${set}`),
+							'precondition: the set declares no utrecht button token',
+						).not.toMatch(/--utrecht-button/)
+						const bridged = await rootVar(
+							page,
+							'--nldesign-component-button-primary-action-background-color',
+						)
+						const primary = await rootVar(page, '--nldesign-color-primary')
+						expect(await resolveColor(page, bridged)).toBe(
+							await resolveColor(page, primary),
+						)
+						expect(await resolveColor(page, primary)).toBe(
+							'rgb(21, 66, 115)',
+						)
+					},
+				)
+			},
 		)
 	})
 
@@ -634,15 +654,22 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 			// Every --utrecht-* reference is an input: a mapping may read a
 			// second Utrecht name before its fallback (the textbox reads
 			// --utrecht-textbox-* and then the older --utrecht-form-input-*).
+			// So is the optional action colour (--nldesign-color-action,
+			// -hover, -text): a set declares it only when its theme names one
+			// (spec action-colour), and the primary-action button reads it
+			// before its Utrecht input. --thematiq-action-hover is its hover
+			// step (overrides.css), invalid when the set brings no action colour.
 			// Every other reference is a fallback and must be a token the
 			// defaults layer defines.
+			const isInput = (r: string) =>
+				r.startsWith('--utrecht-')
+				|| /^--nldesign-color-action(-|$)/.test(r)
+				|| r === '--thematiq-action-hover'
 			expect(
-				referenced[0],
-				`${name} reads an --utrecht-* input first`,
-			).toMatch(/^--utrecht-/)
-			for (const fallback of referenced.filter(
-				(r) => !r.startsWith('--utrecht-'),
-			)) {
+				isInput(referenced[0]),
+				`${name} reads an --utrecht-* or action colour input first: ${referenced[0]}`,
+			).toBe(true)
+			for (const fallback of referenced.filter((r) => !isInput(r))) {
 				expect(
 					defaults.has(fallback),
 					`${name} falls back to ${fallback}`,
