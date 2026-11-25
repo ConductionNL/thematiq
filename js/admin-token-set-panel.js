@@ -551,8 +551,8 @@
 		}
 		var frame = root.querySelector('.thematiq-set-panel__frame')
 		var vars = {
-			'--frame-ground': pick(['--nldesign-color-background', '--nldesign-component-content-surface-background-color'], dark ? '#171a20' : '#f5f6f8'),
-			'--frame-card': pick(dark ? ['--nldesign-color-background-dark', '--nldesign-color-background'] : ['--nldesign-component-content-surface-background-color'], dark ? '#22262e' : '#ffffff'),
+			'--frame-ground': pick(dark ? ['--nldesign-color-background'] : ['--nldesign-component-content-surface-background-color', '--nldesign-color-background'], dark ? '#171a20' : '#f5f6f8'),
+			'--frame-card': pick(dark ? ['--nldesign-color-background-dark', '--nldesign-color-background'] : ['--nldesign-color-background'], dark ? '#22262e' : '#ffffff'),
 			'--frame-bar': pick(['--nldesign-color-header-background'], dark ? '#22262e' : '#ffffff'),
 			'--frame-bar-ink': pick(['--nldesign-color-header-text', '--nldesign-color-text'], dark ? '#e2e3e4' : '#1b1c1d'),
 			'--frame-ink': pick(['--nldesign-color-text'], dark ? '#e2e3e4' : '#1b1c1d'),
@@ -561,7 +561,7 @@
 			'--frame-link': pick(['--nldesign-color-link', '--nldesign-color-primary'], '#3669a5'),
 			'--frame-button': pick(['--nldesign-color-button-primary-background', '--nldesign-color-primary'], '#3669a5'),
 			'--frame-button-ink': pick(['--nldesign-color-button-primary-text', '--nldesign-color-primary-text'], '#ffffff'),
-			'--frame-active': pick(['--nldesign-component-navigation-active-background-color', '--nldesign-color-accent-light', '--nldesign-color-primary-light'], '#eaf0f7'),
+			'--frame-active': pick(['--nldesign-color-accent-light', '--nldesign-color-primary-light'], '#eaf0f7'),
 			'--frame-active-ink': pick(['--nldesign-component-navigation-active-color', '--nldesign-color-accent-text', '--nldesign-color-primary'], '#234a78'),
 			'--frame-info': pick(['--nldesign-component-status-badge-info-background-color', '--nldesign-color-primary-light'], '#eaf0f7'),
 			'--frame-info-ink': pick(['--nldesign-component-status-badge-info-color', '--nldesign-color-primary-hover'], '#234a78'),
