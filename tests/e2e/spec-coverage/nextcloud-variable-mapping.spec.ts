@@ -52,6 +52,8 @@ const STATUSES = path.resolve(
 
 /** Amsterdam's primary, from css/tokens/amsterdam.css. */
 const AMSTERDAM_PRIMARY = '#004699'
+/** A defaults.css token the Amsterdam set leaves undeclared. */
+const UNSET_BY_AMSTERDAM = '--nldesign-component-textbox-disabled-background-color'
 
 type Entries = {
 	/** Nextcloud variable to the `--nldesign-*` token it is mapped to. */
@@ -64,7 +66,13 @@ type Entries = {
 
 /** Parse overrides.css into its mapped and commented entries. */
 function parseOverrides(css: string): Entries {
-	const mappedValues = declarations(stripComments(css), '--')
+	// The app's own helpers (--thematiq-*, --nldesign-*) are declared here
+	// too; they are not Nextcloud variables and have no mapping row.
+	const mappedValues = new Map(
+		[...declarations(stripComments(css), '--')].filter(
+			([name]) => /^--(thematiq|nldesign)-/.test(name) === false,
+		),
+	)
 	const mapped = new Map<string, string>()
 	for (const [name, value] of mappedValues) {
 		const token = /var\(\s*(--nldesign-[\w-]+)/.exec(value)
@@ -286,10 +294,13 @@ test.describe('nextcloud-variable-mapping', () => {
 		const overrides = await servedCss(page, OVERRIDES)
 		const entries = parseOverrides(overrides)
 		expect(entries.mapped.size).toBeGreaterThanOrEqual(50)
+		// A fallback after the token is allowed: a set that leaves the token
+		// out gets that value instead (the light-text and error-text inks).
 		const badShape = [...entries.mappedValues].filter(
 			([, v]) =>
-				/^var\(\s*--nldesign-[\w-]+\s*\)\s*!important$/.test(normaliseCss(v))
-				=== false,
+				/^var\(\s*--nldesign-[\w-]+\s*(,.*)?\)\s*!important$/s.test(
+					normaliseCss(v),
+				) === false,
 		)
 		expect(badShape.map(([n]) => n)).toEqual([])
 
@@ -459,14 +470,16 @@ test.describe('nextcloud-variable-mapping', () => {
 				await servedCss(page, DEFAULTS),
 				'--nldesign-',
 			)
-			expect(amsterdam.has('--nldesign-color-favorite')).toBe(false)
+			// Amsterdam 4.4 declares the favourite colour; this one it leaves to
+			// defaults.css, and only the dark variant redeclares it.
+			expect(amsterdam.has(UNSET_BY_AMSTERDAM)).toBe(false)
 			const expected = (
-				defaults.get('--nldesign-color-favorite') ?? ''
+				defaults.get(UNSET_BY_AMSTERDAM) ?? ''
 			).toLowerCase()
 			expect(expected).toMatch(/^#[0-9a-f]{6}$/)
 
-			const v = await rootVars(page, ['--nldesign-color-favorite'])
-			expect(v['--nldesign-color-favorite'].toLowerCase()).toBe(expected)
+			const v = await rootVars(page, [UNSET_BY_AMSTERDAM])
+			expect(v[UNSET_BY_AMSTERDAM].toLowerCase()).toBe(expected)
 		})
 
 		test(// @e2e openspec/specs/nextcloud-variable-mapping/spec.md#token-is-overridden-by-organization
