@@ -20,3 +20,4 @@ TqMerkPerApp	/settings/admin/theming#brands	--lang	en	--ds	zuiddrecht
 TqEmailDocumenten	/settings/admin/theming#email	--lang	en	--ds	zuiddrecht
 TqEigenTokens	/settings/admin/theming#own-tokens	--lang	en	--ds	zuiddrecht
 TqOmgevingsmarkering	/settings/admin/theming#environment	--lang	en	--ds	zuiddrecht
+TqTokenSet	/settings/admin/theming#set/zuiddrecht	--lang	en	--ds	zuiddrecht

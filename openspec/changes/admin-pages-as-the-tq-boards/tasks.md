@@ -30,7 +30,7 @@ component and flags none, and the before and after PNGs in the PR. Board ids are
 
 ## 3. Pages and panels
 
-- [ ] 3.1 TqTokenSet (a set from the inside)
+- [x] 3.1 TqTokenSet, the panel at #set/<id>, opened from a set's name or Open token set in the Token sets table. The header carries the set's name, Active and Light and dark, the line with design system, token count and font, a More menu (the token reference and its download) and Use this token set for a set that is not active. Colours, Typography, Shape, Components and Website as tabs with counts, a search over name, variable and value, the colours in the board's groups (Surface, Ink, Action, Accent, Status, then the set's other colours) each with its contrast on white, and the line that says whether every text colour reaches 4.5 : 1. The aside draws the sample in the set's light or dark tokens, the brand stripe with its colours, ratio, height and placement, and About this set (design system, layout, logo, dark variant) with View components and tokens, View dark variant (only for the active set) and Download token overview. House styles of other organisations is lent from the overview. Not built: Duplicate and Edit (a bundled set is not edited in place; own sets are made at #own-sets), Save (nothing on the page is edited), the Actions button beside the tabs (the More menu holds what it would), the inspect button, and the board's explainer card What you see while a house style is not confirmed, which describes refusals rather than a control. View components and tokens opens the Components tab until TqComponenten (3.2) is built.
 - [ ] 3.2 TqComponenten (components and tokens, with the More menu)
 - [ ] 3.3 TqEigenComponent
 - [ ] 3.4 TqBeweging
