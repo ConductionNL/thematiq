@@ -9,7 +9,7 @@
  * the new set in the dropdown without reloading. The conversion rules themselves are covered by
  * tests/vitest/tokenConverter.spec.js and the PHPUnit converter suites.
  */
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page, type Response } from '@playwright/test'
 
 import { removeE2eCustomSets } from './_fixtures'
 
@@ -25,6 +25,43 @@ const THEME = [
 	'  --utrecht-document-font-size: 18px;',
 	'}',
 ].join('\n')
+
+/** A GET of the thematiq settings API at `path`, or the upload POST. */
+function isSettingsCall(response: Response, method: string, path: string): boolean {
+	return (
+		response.request().method() === method
+		&& new RegExp('/apps/thematiq/settings/' + path + '(\\?|$)').test(
+			response.url(),
+		)
+	)
+}
+
+/**
+ * Run `upload`, then wait until the page has read `path` again after the upload answered.
+ * admin.js redraws the own-sets list and the dropdown from these reads; on a loaded
+ * instance they answer after the expect timeout, so the tests wait for the read itself
+ * instead of a fixed time. The page's own first read may still be pending when a test
+ * uploads, so only a read that starts after the upload counts.
+ *
+ * @param page The page.
+ * @param path `tokensets` (the selectable catalogue) or `tokensets/custom`.
+ * @param upload The action that uploads.
+ */
+async function uploadThenRead(
+	page: Page,
+	path: string,
+	upload: () => Promise<void>,
+): Promise<void> {
+	const uploaded = page.waitForResponse(
+		(response) => isSettingsCall(response, 'POST', 'tokensets/upload'),
+		{ timeout: 45000 },
+	)
+	await upload()
+	await uploaded
+	await page.waitForResponse((response) => isSettingsCall(response, 'GET', path), {
+		timeout: 45000,
+	})
+}
 
 test.describe('theme-converter-paste', () => {
 	test.beforeAll(async ({ browser }) => {
@@ -45,7 +82,9 @@ test.describe('theme-converter-paste', () => {
 			const setName = 'E2E Paste ' + Date.now()
 			await page.fill('#nldesign-upload-name', setName)
 			await page.fill('#nldesign-upload-content', THEME)
-			await page.click('#nldesign-convert-btn')
+			await uploadThenRead(page, 'tokensets/custom', () =>
+				page.click('#nldesign-convert-btn'),
+			)
 
 			await expect(page.locator('#nldesign-upload-result')).toBeVisible({
 				timeout: 10000,
@@ -66,11 +105,13 @@ test.describe('theme-converter-paste', () => {
 
 			const setName = 'E2E Built ' + Date.now()
 			await page.fill('#nldesign-upload-name', setName)
-			await page.locator('#nldesign-upload-input').setInputFiles({
-				name: 'design-tokens.css',
-				mimeType: 'text/css',
-				buffer: Buffer.from(THEME),
-			})
+			await uploadThenRead(page, 'tokensets/custom', () =>
+				page.locator('#nldesign-upload-input').setInputFiles({
+					name: 'design-tokens.css',
+					mimeType: 'text/css',
+					buffer: Buffer.from(THEME),
+				}),
+			)
 
 			await expect(page.locator('#nldesign-custom-set-list')).toContainText(
 				setName,
@@ -112,24 +153,34 @@ test.describe('theme-converter-paste', () => {
 			await page.goto(THEMING_URL)
 			await page.waitForLoadState('domcontentloaded')
 
-			let reloaded = false
-			page.on('framenavigated', (frame) => {
-				if (frame === page.mainFrame()) {
-					reloaded = true
-				}
+			// A reload wipes the window; a hash change (the preview playground
+			// rewrites the hash on load) does not. Playwright's framenavigated
+			// fires for both, so it cannot tell them apart; a marker on the
+			// window can.
+			await page.evaluate(() => {
+				;(window as unknown as { e2eNoReload?: boolean }).e2eNoReload = true
 			})
 
 			const setName = 'E2E Dropdown ' + Date.now()
 			await page.fill('#nldesign-upload-name', setName)
 			await page.fill('#nldesign-upload-content', THEME)
-			await page.click('#nldesign-convert-btn')
+
+			// admin.js adds the option once it has re-read the selectable catalogue.
+			await uploadThenRead(page, 'tokensets', () =>
+				page.click('#nldesign-convert-btn'),
+			)
 
 			await expect(
 				page.locator('#nldesign-token-set-select option', {
 					hasText: setName,
 				}),
-			).toHaveCount(1, { timeout: 10000 })
-			expect(reloaded).toBe(false)
+			).toHaveCount(1, { timeout: 5000 })
+			expect(
+				await page.evaluate(
+					() =>
+						(window as unknown as { e2eNoReload?: boolean }).e2eNoReload,
+				),
+			).toBe(true)
 		},
 	)
 
