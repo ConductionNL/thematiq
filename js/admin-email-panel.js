@@ -78,6 +78,8 @@
 	if (preview !== null && typeof MutationObserver === 'function') {
 		new MutationObserver(render).observe(preview, { childList: true })
 	}
+	// js/admin.js fills the toggle and the footer fields once the panel opens.
+	document.addEventListener('thematiq:email-theming', render)
 
 	if (window.ThematiqPanels !== undefined) {
 		window.ThematiqPanels.register('email', {

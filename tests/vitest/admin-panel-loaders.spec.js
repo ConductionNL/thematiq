@@ -2,7 +2,8 @@
  * @vitest-environment jsdom
  *
  * Unit tests for js/admin.js with js/lib/whenShown.js: the audit log, the
- * theme gallery, the upstream freshness block and the group theming list sit
+ * theme gallery, the upstream freshness block, the group theming list and the
+ * email template block sit
  * in closed panels of the Theming page and ask the server for nothing until
  * their panel opens; opening it loads them once.
  *
@@ -40,6 +41,8 @@ function install() {
 			body = { enabled: false, notices: [] }
 		} else if (String(url).indexOf('/settings/group-theming') !== -1) {
 			body = { mapping: [] }
+		} else if (String(url).indexOf('/settings/email-theming') !== -1) {
+			body = { state: { state: 'enabled' }, footer: { orgName: 'Gemeente Zuiddrecht' } }
 		}
 		return Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve(body) })
 	})
@@ -69,6 +72,13 @@ async function load(hidden) {
 				<span id="nldesign-gallery-toggle-hint"></span>
 				<span id="nldesign-gallery-status"></span>
 				<div id="nldesign-gallery-list"></div>
+			</section>
+			<section data-thematiq-panel="email"${attr}>
+				<div id="nldesign-email-theming">
+					<input type="checkbox" id="nldesign-email-theming-enabled">
+					<input id="nldesign-email-footer-org-name">
+					<button type="button" id="nldesign-email-theming-save">Save</button>
+				</div>
 			</section>
 		</div>
 	`
@@ -122,5 +132,18 @@ describe('admin.js panel loaders wait for their panel', () => {
 		await load(false)
 		expect(fetched('/settings/audit?limit=20')).toHaveLength(1)
 		expect(fetched('/settings/gallery').length).toBeGreaterThan(0)
+	})
+	it('loads the email template settings when the email panel opens, and tells the panel', async () => {
+		await load(true)
+		expect(fetched('/settings/email-theming')).toHaveLength(0)
+		const told = vi.fn()
+		document.addEventListener('thematiq:email-theming', told)
+		document.querySelector('section[data-thematiq-panel="email"]').hidden = false
+		await flush()
+		document.removeEventListener('thematiq:email-theming', told)
+		expect(fetched('/settings/email-theming')).toHaveLength(1)
+		expect(document.getElementById('nldesign-email-theming-enabled').checked).toBe(true)
+		expect(document.getElementById('nldesign-email-footer-org-name').value).toBe('Gemeente Zuiddrecht')
+		expect(told).toHaveBeenCalledTimes(1)
 	})
 })
