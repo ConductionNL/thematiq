@@ -15,14 +15,21 @@ test.describe('contrast evidence report and dark logo', () => {
 	test('an administrator downloads the contrast evidence report from the settings page', async ({
 		page,
 	}) => {
-		await page.goto(THEMING_URL)
+		await page.goto(`${THEMING_URL}#contrast`)
 		const section = page.locator('#nldesign-compliance-report')
 		await section.waitFor({ state: 'visible', timeout: 20_000 })
 
+		// The contrast panel offers the downloads as page-header buttons; each
+		// clicks a hidden link that still carries the export address.
+		const actions = page.locator('.thematiq-page-header__actions')
+		await expect(
+			actions.getByRole('button', { name: 'Download as JSON' }),
+		).toBeVisible()
+		await expect(
+			actions.getByRole('button', { name: 'Download as Markdown' }),
+		).toBeVisible()
 		const json = section.locator('#nldesign-compliance-report-json')
 		const markdown = section.locator('#nldesign-compliance-report-markdown')
-		await expect(json).toBeVisible()
-		await expect(markdown).toBeVisible()
 		await expect(json).toHaveAttribute(
 			'href',
 			/\/apps\/thematiq\/settings\/compliance-report\?format=json$/,

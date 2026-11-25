@@ -92,15 +92,17 @@ test.describe('links drawn as buttons under Zuiddrecht', () => {
 		// @e2e css-architecture::the-vandaag-eerst-card-on-mijn-werk
 		"the card's link actions read like its button, none underlined, the primary white on its fill",
 		async ({ page }) => {
+			// Mijn werk is drawn in the board look (.cn-look-board), where a
+			// secondary button is neutral: a grey border and the main text.
 			const seen = await render(
 				page,
-				'<div class="cn-widget-wrapper">'
+				'<div class="cn-look-board"><div class="cn-widget-wrapper">'
 					+ '<a href="#z" data-probe="open" class="button-vue button-vue--vue-secondary">Open deze zaken</a>'
 					+ '<a href="#b" data-probe="board" class="button-vue button-vue--vue-secondary">Naar het werkbord</a>'
 					+ '<a href="#c" data-probe="case" class="button-vue button-vue--vue-primary">Zaak openen</a>'
 					+ '<button type="button" data-probe="pause" class="button-vue button-vue--vue-secondary">Termijn opschorten</button>'
 					+ '<p>Zie ook <a href="#prose" data-probe="prose">de werkinstructie</a>.</p>'
-					+ '</div>',
+					+ '</div></div>',
 			)
 			for (const key of ['open', 'board', 'case']) {
 				expect(seen[key].decoration, `${key} is not underlined`).toBe('none')
