@@ -26,6 +26,18 @@ const CORE_EXCLUSIONS: Array<{ selector: string; reason: string }> = [
 	},
 ]
 
+/**
+ * Frames the scan leaves out, and why. axe runs its script inside every frame
+ * and waits for the answer; a sandboxed frame without allow-scripts never
+ * answers, so the scan hung until the test's timeout.
+ */
+const FRAME_EXCLUSIONS: Array<{ selector: string; reason: string }> = [
+	{
+		selector: '.nldesign-own-frame',
+		reason: "the #components/own preview: the administrator's own component HTML in an iframe sandboxed without scripts (allow-same-origin only), the way it is shown on purpose; it is the administrator's content, not the page",
+	},
+]
+
 /** The panels whose hash takes an argument, with the argument the scan opens. */
 const PANEL_ARGUMENTS: Record<string, string[]> = {
 	set: ['zuiddrecht'],
@@ -76,15 +88,23 @@ function panelHashes(): string[] {
  * @param {string} what The state being scanned, for the failure message.
  */
 async function expectNoViolations(page: Page, what: string): Promise<void> {
+	// Let the transitions settle. Only finite ones: an infinite animation (the
+	// code editor's blinking cursor on #components/own) never finishes, and
+	// waiting for it held the test until its timeout.
 	await page.evaluate(() =>
 		Promise.all(
 			document
 				.getAnimations()
+				.filter(
+					(animation) =>
+						animation.effect?.getComputedTiming().iterations
+						!== Infinity,
+				)
 				.map((animation) => animation.finished.catch(() => undefined)),
 		),
 	)
 	let builder = new AxeBuilder({ page }).withTags(TAGS)
-	for (const exclusion of CORE_EXCLUSIONS) {
+	for (const exclusion of [...CORE_EXCLUSIONS, ...FRAME_EXCLUSIONS]) {
 		builder = builder.exclude(exclusion.selector)
 	}
 	const { violations } = await builder.analyze()
