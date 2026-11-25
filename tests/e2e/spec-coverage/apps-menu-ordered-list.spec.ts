@@ -15,7 +15,12 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
 import { adminContext, api } from './_fixtures'
-import { withThemeState } from './_theme-state'
+import {
+	applyThemeState,
+	restoreThemeState,
+	withThemeState,
+	type ThemeSnapshot,
+} from './_theme-state'
 
 const ORDER = '/index.php/apps/thematiq/app-menu/order'
 const SETTINGS = '/index.php/apps/thematiq/app-menu/settings'
@@ -71,6 +76,33 @@ test.describe('the apps menu as one ordered list', () => {
 	test.describe.configure({ mode: 'serial' })
 
 	let admin: Page
+	let snapshot: ThemeSnapshot | null = null
+
+	// The thematiq apps menu exists only under a set with the workplace header
+	// (AppMenuService::inject() returns early otherwise), so every test here
+	// needs Zuiddrecht, not only the first. Without this the later tests ran on
+	// whatever set the instance had, found no `.app-menu__grid[data-thematiq-app-menu]`
+	// and, in serial mode, took the rest of the block down with them.
+	test.beforeAll(async ({ browser }) => {
+		const ctx = await adminContext(browser)
+		try {
+			snapshot = await applyThemeState(await ctx.newPage(), {
+				tokenSet: 'zuiddrecht',
+			})
+		} finally {
+			await ctx.close()
+		}
+	})
+
+	test.afterAll(async ({ browser }) => {
+		if (snapshot === null) return
+		const ctx = await adminContext(browser)
+		try {
+			await restoreThemeState(await ctx.newPage(), snapshot)
+		} finally {
+			await ctx.close()
+		}
+	})
 
 	test.beforeEach(async ({ page }) => {
 		admin = page
@@ -148,13 +180,17 @@ test.describe('the apps menu as one ordered list', () => {
 		await page.keyboard.press('ArrowRight')
 		await expect(entry(page, shown[1])).toBeFocused()
 		await page.keyboard.press('End')
-		const last =
-			(await toggle(page).count()) > 0
-				? toggle(page)
-				: entry(page, shown[shown.length - 1])
+		// With a fold, End lands on the "All apps" toggle and one step back is
+		// the last app on screen. Without one (an instance with no more apps
+		// than the fold holds), End lands on that last app and one step back is
+		// the app before it.
+		const folded = (await toggle(page).count()) > 0
+		const last = folded ? toggle(page) : entry(page, shown[shown.length - 1])
 		await expect(last).toBeFocused()
 		await page.keyboard.press('ArrowLeft')
-		await expect(entry(page, shown[shown.length - 1])).toBeFocused()
+		await expect(
+			entry(page, shown[shown.length - (folded ? 1 : 2)]),
+		).toBeFocused()
 	})
 
 	// @e2e apps-menu-order::move-an-app-with-the-keyboard
@@ -299,12 +335,25 @@ test.describe('the apps menu as one ordered list', () => {
 
 			await page.reload({ waitUntil: 'domcontentloaded' })
 			await openByClick(page)
-			if ((await toggle(page).count()) > 0) {
+			const folded = (await toggle(page).count()) > 0
+			if (folded) {
 				await toggle(page).click()
 			}
-			await expect(
-				grid(page).locator('[data-thematiq-row="external"] h2'),
-			).toBeVisible()
+			// Listed after the Nextcloud apps (the spec). The section heading is
+			// drawn only over the external apps below the fold, so it is there
+			// only on an instance with more apps than the fold holds.
+			const listed = await onScreen(page)
+			const at = listed.indexOf('external-code')
+			expect(at, 'Forgejo is listed').toBeGreaterThanOrEqual(0)
+			expect(
+				listed.slice(at).every((key) => key.startsWith('external-')),
+				`Forgejo comes after the Nextcloud apps: ${listed.join(', ')}`,
+			).toBe(true)
+			if (folded) {
+				await expect(
+					grid(page).locator('[data-thematiq-row="external"] h2'),
+				).toBeVisible()
+			}
 			const forgejo = entry(page, 'external-code')
 			await expect(forgejo).toHaveAttribute('href', 'https://code.example.org')
 			await expect(forgejo).toHaveAttribute('target', '_blank')

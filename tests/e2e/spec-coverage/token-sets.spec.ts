@@ -888,39 +888,44 @@ test.describe('token-sets', () => {
 	test('a set with lint tokens paints a ribbon of those dimensions behind the logo', async ({
 		page,
 	}) => {
-		const declared = nldesignDeclarations(tokenCss('rijkshuisstijl'))
-		const width = declared['--nldesign-size-lint']
-		const height = declared['--nldesign-size-lint-height']
-		const colour = declared['--nldesign-color-logo-background']
-		expect(
-			width && height && colour,
-			'rijkshuisstijl declares the lint tokens',
-		).toBeTruthy()
+		// The set brings its own lint tokens: no shipped set declares them since the
+		// rijkshuisstijl conversion from the community tokens 18.0.1, which carry none.
+		const width = '48px'
+		const height = '96px'
+		const colour = '#154273'
+		const css = `:root {
+	--nldesign-color-primary: ${colour};
+	--nldesign-color-logo-background: ${colour};
+	--nldesign-size-lint: ${width};
+	--nldesign-size-lint-height: ${height};
+}`
 		await openSettings(page)
-		await withActiveSet(page, 'rijkshuisstijl', async () => {
-			await openSettings(page)
-			const ribbon = await page.evaluate(() => {
-				const el = document.querySelector('#nextcloud') as HTMLElement | null
-				if (el === null) return null
-				const s = getComputedStyle(el, '::before')
-				return {
-					width: s.width,
-					height: s.height,
-					background: s.backgroundColor,
-				}
+		await withCustomSet(page, 'E2E lint ' + Date.now(), css, async (id) => {
+			await withActiveSet(page, id, async () => {
+				await openSettings(page)
+				const ribbon = await page.evaluate(() => {
+					const el = document.querySelector('#nextcloud') as HTMLElement | null
+					if (el === null) return null
+					const s = getComputedStyle(el, '::before')
+					return {
+						width: s.width,
+						height: s.height,
+						background: s.backgroundColor,
+					}
+				})
+				expect(ribbon).not.toBeNull()
+				expect(ribbon?.width).toBe(width)
+				expect(ribbon?.height).toBe(height)
+				const probe = await page.evaluate((c) => {
+					const el = document.createElement('div')
+					el.style.backgroundColor = c
+					document.body.appendChild(el)
+					const v = getComputedStyle(el).backgroundColor
+					el.remove()
+					return v
+				}, colour)
+				expect(ribbon?.background).toBe(probe)
 			})
-			expect(ribbon).not.toBeNull()
-			expect(ribbon?.width).toBe(width)
-			expect(ribbon?.height).toBe(height)
-			const probe = await page.evaluate((c) => {
-				const el = document.createElement('div')
-				el.style.backgroundColor = c
-				document.body.appendChild(el)
-				const v = getComputedStyle(el).backgroundColor
-				el.remove()
-				return v
-			}, colour)
-			expect(ribbon?.background).toBe(probe)
 		})
 	})
 
