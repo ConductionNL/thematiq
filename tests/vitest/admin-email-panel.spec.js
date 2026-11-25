@@ -89,4 +89,14 @@ describe('Email and documents panel', () => {
 		line.dispatchEvent(new Event('input'))
 		expect(text('.thematiq-email-panel__letter-foot')).toBe('Postbus 100, 2990 AA Zuiddrecht')
 	})
+
+	it('redraws when admin.js fills the fields after the panel opened', () => {
+		const toggle = document.getElementById('nldesign-email-theming-enabled')
+		const org = document.getElementById('nldesign-email-footer-org-name')
+		toggle.checked = false
+		org.value = 'Gemeente Noorddam'
+		document.dispatchEvent(new CustomEvent('thematiq:email-theming', { detail: {} }))
+		expect(text('.thematiq-page-header__intro')).toBe('Email template off, no document logo')
+		expect(text('.thematiq-email-panel__org')).toBe('Gemeente Noorddam')
+	})
 })
