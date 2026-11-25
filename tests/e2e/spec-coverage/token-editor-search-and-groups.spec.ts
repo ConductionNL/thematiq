@@ -159,8 +159,12 @@ test.describe('token editor search and groups', () => {
 		async ({ page }) => {
 			await openEditor(page)
 			await page.locator('#nldesign-token-search').fill('Selected text color')
+			// Keyed by its token on a set that wears a design system, by the
+			// Nextcloud variable itself on the stock set (design system none).
 			const row = page
-				.locator('[data-token-row="--nldesign-nc-color-text-selection"]')
+				.locator(
+					'[data-token-row="--nldesign-nc-color-text-selection"], [data-token-row="--color-text-selection"]',
+				)
 				.first()
 			await expect(row).toBeVisible()
 			await expect(row.locator('.nldesign-token-note')).toContainText(
