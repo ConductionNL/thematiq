@@ -38,11 +38,9 @@
 
 		var text = document.createElement('span')
 		text.className = 'nldesign-preview-banner-text'
-		text.textContent = t(
-			'thematiq',
-			'Preview: {name}, visible to you only',
-			{ name: name },
-		)
+		text.textContent = t('thematiq', 'Preview: {name}, visible to you only', {
+			name: name,
+		})
 		banner.appendChild(text)
 
 		var actions = document.createElement('span')
