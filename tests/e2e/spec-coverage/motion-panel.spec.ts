@@ -18,6 +18,8 @@ test.describe('the motion tokens panel', () => {
 		await expect(panel).toBeVisible()
 		await expect(page.locator('#thematiq-page-header .thematiq-page-header__title')).toHaveText('Motion tokens')
 		await expect(panel.locator('[data-token-row="--animation-quick"]')).toBeVisible()
+		await expect(page).toHaveURL(/#motion$/)
+		await expect(panel.locator('[data-token-row="--animation-quick"]')).toBeVisible()
 		await expect(panel.locator('[data-token-row="--animation-slow"]')).toBeVisible()
 		await expect(panel.locator('[data-token-row="--nldesign-animation-easing"]')).toBeVisible()
 		await expect(panel.locator('[data-token-row="--color-primary"]')).toBeHidden()
