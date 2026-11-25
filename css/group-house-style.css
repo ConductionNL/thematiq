@@ -53,7 +53,11 @@
 #thematiq-my-groups .thematiq-my-group-contrast {
 	padding: 3px 8px;
 	border-radius: 10px;
-	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-success) 12%,
+		var(--color-main-background)
+	);
 	color: var(--color-success-text, var(--color-success));
 	font-size: 12px;
 	font-weight: 600;
@@ -61,7 +65,11 @@
 }
 
 #thematiq-my-groups .thematiq-my-group-contrast--below {
-	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	background: color-mix(
+		in srgb,
+		var(--color-warning-hover) 35%,
+		var(--color-main-background)
+	);
 	color: var(--color-warning-text, var(--color-warning));
 }
 
