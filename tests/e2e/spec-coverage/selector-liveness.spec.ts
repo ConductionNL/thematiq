@@ -226,9 +226,10 @@ const SURFACES: Array<Surface> = [
 const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
 	{
 		pattern: /^\.cn-dashboard-page /,
-		reason: 'A nextcloud-vue dashboard (CnDashboardPage) is drawn only by the Conduction apps built on it '
+		reason:
+			'A nextcloud-vue dashboard (CnDashboardPage) is drawn only by the Conduction apps built on it '
 			+ '(dossiq, launchpad and the like); none of the surveyed surfaces is one, and the CI fixture '
-			+ 'installs none of them. The rule is live on those apps\' dashboards.',
+			+ "installs none of them. The rule is live on those apps' dashboards.",
 	},
 	{
 		pattern: /^#app-navigation(?![-\w])/,
