@@ -107,6 +107,16 @@ describe('the page shim', () => {
 		delete window.OCP
 	})
 
+	it('leaves window.fetch alone when the page opted out before it loaded', async () => {
+		window.ThematiqBootReadsOff = true
+		try {
+			await loadShim(READS)
+			expect(window.fetch).toBe(realFetch)
+		} finally {
+			delete window.ThematiqBootReadsOff
+		}
+	})
+
 	it('leaves window.fetch alone when the page carries no boot reads', async () => {
 		await loadShim(undefined)
 		expect(window.fetch).toBe(realFetch)

@@ -15,7 +15,9 @@
  * `window.fetch` is the browser's own again. A path the render did not
  * answer, another app's URL, or a request object always goes to the server.
  *
- * Load it before the scripts whose reads it answers.
+ * Load it before the scripts whose reads it answers. A page that sets
+ * `window.ThematiqBootReadsOff = true` before it loads (an e2e test that
+ * stubs one of these reads with page.route) gets no answers from the render.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -115,7 +117,8 @@
 	window.ThematiqBootReads = { create: create, keyOf: keyOf }
 
 	if (
-		typeof window.fetch !== 'function'
+		window.ThematiqBootReadsOff === true
+		|| typeof window.fetch !== 'function'
 		|| typeof Response === 'undefined'
 		|| typeof OCP === 'undefined'
 		|| !OCP.InitialState
