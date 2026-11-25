@@ -2361,7 +2361,7 @@
 		var(--color-success) 12%,
 		var(--color-main-background)
 	);
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 .nldesign-audit-pill--removed {
@@ -2370,7 +2370,7 @@
 		var(--color-error) 7%,
 		var(--color-main-background)
 	);
-	color: var(--color-error-hover, var(--color-error));
+	color: var(--color-error-text, var(--color-error));
 }
 
 .nldesign-audit-code {

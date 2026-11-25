@@ -1975,8 +1975,8 @@ OC.L10N.register(
         "{ratio} on action": "{ratio} op actie",
         "Surface, {ratio}": "Vlak, {ratio}",
         "Other colours": "Overige kleuren",
-        "{tab}, 1 token": "{tab}, 1 token",
-        "{tab}, {count} tokens": "{tab}, {count} tokens",
+        "{tab} 1 token": "{tab} 1 token",
+        "{tab} {count} tokens": "{tab} {count} tokens",
         "No token matches the search.": "Geen token past bij de zoekopdracht.",
         "This set brings no tokens of this kind.": "Deze set brengt geen tokens van deze soort mee.",
         "All text colours reach 4.5 : 1 on white": "Alle tekstkleuren halen 4,5 : 1 op wit",
@@ -2058,7 +2058,8 @@ OC.L10N.register(
         "Where motion lives": "Waar beweging zit",
         "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.": "Elke overgang van Nextcloud en de Conduction-apps leest deze drie tokens: menu's, dialogen, de zijbalk, meldingen en tabbladen.",
         "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion-tokens hebben een vast type: de server toetst elke waarde voordat hij iets opslaat.",
-        "Preview: {name}, visible to you only": "Voorbeeld: {name}, alleen zichtbaar voor u"
+        "Preview: {name}, visible to you only": "Voorbeeld: {name}, alleen zichtbaar voor u",
+        "You see this block only because you are group admin of a group for which the administrator has released the house style.": "Dit blok ziet u alleen omdat u groepsbeheerder bent van een groep waarvoor de beheerder de huisstijl heeft vrijgegeven."
     },
     "nplurals=2; plural=(n != 1);"
 )

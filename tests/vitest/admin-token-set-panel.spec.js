@@ -235,6 +235,13 @@ describe('token set panel', () => {
 			'Accent',
 			'Other colours',
 		])
+		document.querySelectorAll('[role="list"]').forEach((list) => {
+			expect(
+				[...list.children].every(
+					(child) => child.getAttribute('role') === 'listitem',
+				),
+			).toBe(true)
+		})
 		const rows = [...document.querySelectorAll('.thematiq-set-panel__row')]
 		const text = rows.find((row) =>
 			row.textContent.includes('--nldesign-color-text'),
@@ -282,11 +289,11 @@ describe('token set panel', () => {
 		await openAt('#set/zuiddrecht')
 		const tabs = [...document.querySelectorAll('.thematiq-set-panel__tab')]
 		expect(tabs.map((tab) => tab.getAttribute('aria-label'))).toEqual([
-			'Colours, 9 tokens',
-			'Typography, 1 token',
-			'Shape, 4 tokens',
-			'Components, 1 token',
-			'Website, 1 token',
+			'Colours 9 tokens',
+			'Typography 1 token',
+			'Shape 4 tokens',
+			'Components 1 token',
+			'Website 1 token',
 		])
 		document.getElementById('thematiq-set-tab-website').click()
 		expect(

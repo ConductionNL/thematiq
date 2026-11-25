@@ -881,7 +881,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="nldesign-font-library-heading" class="thematiq-panel__card-title"><?php p($l->t('Library of approved fonts')); ?></h2>
 					<span class="thematiq-panel__fact-hint"><?php p($l->t('The fonts thematiq bundles, each with its licence. Pick one for the headings or the body text: no upload needed, the font goes into the token with its fallback chain.')); ?></span>
 				</div>
-				<div id="nldesign-font-library" class="thematiq-font-list" role="list" aria-labelledby="nldesign-font-library-heading">
+				<div id="nldesign-font-library" class="thematiq-font-list" aria-labelledby="nldesign-font-library-heading">
 					<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
 				</div>
 			</section>
@@ -890,7 +890,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="thematiq-fonts-uploaded-title" class="thematiq-panel__card-title"><?php p($l->t('Uploaded fonts')); ?></h2>
 					<span class="thematiq-panel__fact-hint"><?php p($l->t('At most 20. After an upload, reload the page to see the font.')); ?></span>
 				</div>
-				<div id="nldesign-font-list" class="thematiq-font-list" role="list" aria-labelledby="thematiq-fonts-uploaded-title">
+				<div id="nldesign-font-list" class="thematiq-font-list" aria-labelledby="thematiq-fonts-uploaded-title">
 					<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
 				</div>
 			</section>

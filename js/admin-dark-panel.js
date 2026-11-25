@@ -391,6 +391,10 @@
 			pick('--nldesign-color-header-background', 'transparent'),
 		)
 		frame.style.setProperty(
+			'--frame-bar-ink',
+			pick('--nldesign-color-header-text', 'inherit'),
+		)
+		frame.style.setProperty(
 			'--frame-line',
 			pick('--nldesign-color-border', 'transparent'),
 		)

@@ -562,6 +562,7 @@
 				button.appendChild(document.createTextNode(tr(tab[1])))
 				var n = count(tabs[tab[0]])
 				if (n > 0 && tab[0] !== 'typography' && tab[0] !== 'shape') {
+					button.appendChild(document.createTextNode(' '))
 					button.appendChild(
 						el('span', 'thematiq-set-panel__tab-count', String(n)),
 					)
@@ -569,8 +570,8 @@
 				button.setAttribute(
 					'aria-label',
 					n === 1
-						? tr('{tab}, 1 token', { tab: tr(tab[1]) })
-						: tr('{tab}, {count} tokens', { tab: tr(tab[1]), count: n }),
+						? tr('{tab} 1 token', { tab: tr(tab[1]) })
+						: tr('{tab} {count} tokens', { tab: tr(tab[1]), count: n }),
 				)
 				return button
 			}),
@@ -600,12 +601,14 @@
 				return
 			}
 			var block = el('div', 'thematiq-set-panel__group')
-			block.setAttribute('role', 'list')
 			if (group.title !== '') {
 				block.appendChild(
 					el('h3', 'thematiq-set-panel__group-title', group.title),
 				)
 			}
+			var items = el('div', 'thematiq-set-panel__group-rows')
+			items.setAttribute('role', 'list')
+			block.appendChild(items)
 			rows.forEach(function (entry) {
 				var line = el('div', 'thematiq-set-panel__row')
 				line.setAttribute('role', 'listitem')
@@ -648,7 +651,7 @@
 					)
 				}
 				line.appendChild(verdict)
-				block.appendChild(line)
+				items.appendChild(line)
 			})
 			nodes.push(block)
 		})

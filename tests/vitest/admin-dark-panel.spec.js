@@ -173,5 +173,7 @@ describe('Dark variant panel', () => {
 		expect(titles).toEqual(['Light', 'Dark'])
 		const frames = document.querySelectorAll('.thematiq-dark-panel__frame')
 		expect(frames[1].style.getPropertyValue('--frame-ground')).toBe('#171a20')
+		// The bar's words take the header's text colour; this fixture sets none.
+		expect(frames[0].style.getPropertyValue('--frame-bar-ink')).toBe('inherit')
 	})
 })

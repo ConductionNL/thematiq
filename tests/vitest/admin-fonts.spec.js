@@ -142,6 +142,8 @@ describe('admin.js custom fonts', () => {
 	it('lists the uploaded fonts and the library as the board: name and source, sample, licence, status, actions', async () => {
 		await load()
 
+		expect($('nldesign-font-list').getAttribute('role')).toBe('list')
+		expect($('nldesign-font-library').getAttribute('role')).toBe('list')
 		expect(rows('nldesign-font-list')).toEqual([
 			[
 				'Rijksoverheid Sansuploaded, 40 kB',
@@ -185,9 +187,11 @@ describe('admin.js custom fonts', () => {
 		answers['GET ' + BASE + '/library'] = { status: 200, data: { library: [] } }
 		await load()
 		expect($('nldesign-font-list').textContent).toBe('No fonts uploaded yet.')
+		expect($('nldesign-font-list').hasAttribute('role')).toBe(false)
 		expect($('nldesign-font-library').textContent).toBe(
 			'The app bundles no fonts.',
 		)
+		expect($('nldesign-font-library').hasAttribute('role')).toBe(false)
 	})
 
 	it('says so when a list cannot be loaded', async () => {
@@ -196,6 +200,7 @@ describe('admin.js custom fonts', () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		await load()
 		expect($('nldesign-font-list').textContent).toBe('Failed to load fonts.')
+		expect($('nldesign-font-list').hasAttribute('role')).toBe(false)
 		expect($('nldesign-font-library').textContent).toBe(
 			'Failed to load the font library.',
 		)

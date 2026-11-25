@@ -113,7 +113,7 @@ html[data-thematiq-open-panel]
 		var(--color-warning-hover) 35%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 	font-size: 13px;
 	font-weight: 700;
 }
@@ -585,6 +585,7 @@ html[data-thematiq-open-panel]
 	padding: 0 12px;
 	border-bottom: 1px solid var(--frame-line);
 	background: var(--frame-bar) !important;
+	color: var(--frame-bar-ink);
 	font-size: 13px;
 }
 
@@ -755,7 +756,7 @@ html[data-thematiq-open-panel]
 #nldesign-settings .thematiq-panel .thematiq-dark-panel__note {
 	font-size: 12px;
 	font-weight: 600;
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 }
 
 #nldesign-settings .thematiq-panel .thematiq-dark-panel__colour {
@@ -799,7 +800,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 #nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--warn,
@@ -809,7 +810,7 @@ html[data-thematiq-open-panel]
 		var(--color-warning-hover) 35%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 }
 
 #thematiq-page-header .thematiq-page-header__intro .thematiq-dark-panel__status {
@@ -1013,7 +1014,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success) !important;
+	color: var(--color-success-text, var(--color-success)) !important;
 	font-size: 13px;
 	font-weight: 600;
 }
@@ -1024,7 +1025,7 @@ html[data-thematiq-open-panel]
 		var(--color-error) 7%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-error-hover, var(--color-error)) !important;
+	color: var(--color-error-text, var(--color-error)) !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-css-panel__save {
@@ -1146,7 +1147,7 @@ html[data-thematiq-open-panel]
 		var(--color-warning-hover) 35%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 	font-size: 14px;
 	line-height: 1.5;
 }
@@ -1235,7 +1236,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	);
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 #nldesign-settings .thematiq-panel .thematiq-font-row__actions {
@@ -1311,14 +1312,14 @@ html[data-thematiq-open-panel]
 	.thematiq-panel
 	.thematiq-contrast-panel__tile--pass
 	.thematiq-contrast-panel__number {
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 #nldesign-settings
 	.thematiq-panel
 	.thematiq-contrast-panel__tile--fail
 	.thematiq-contrast-panel__number {
-	color: var(--color-error-hover, var(--color-error));
+	color: var(--color-error-text, var(--color-error));
 }
 
 #nldesign-settings
@@ -1422,7 +1423,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 #nldesign-settings .thematiq-panel .thematiq-contrast-panel__pill--fail {
@@ -1431,7 +1432,7 @@ html[data-thematiq-open-panel]
 		var(--color-error) 7%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-error-hover, var(--color-error));
+	color: var(--color-error-text, var(--color-error));
 }
 
 /* A panel's main header action. */
@@ -1704,7 +1705,7 @@ html[data-thematiq-open-panel]
 		var(--color-error) 7%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-error-hover, var(--color-error));
+	color: var(--color-error-text, var(--color-error));
 }
 
 #nldesign-settings .thematiq-panel .thematiq-switches-panel__table td:last-child,
@@ -1863,7 +1864,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 	font-size: 12px;
 	font-weight: 600;
 }
@@ -2212,7 +2213,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 	font-size: 12px;
 	font-weight: 600;
 }
@@ -2596,7 +2597,7 @@ html[data-thematiq-open-panel]
 		var(--color-success) 12%,
 		var(--color-main-background)
 	) !important;
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 	font-size: 13px;
 	font-weight: 600;
 	white-space: nowrap;
@@ -3135,7 +3136,8 @@ html[data-thematiq-open-panel]
 	gap: 20px;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-set-panel__group {
+#nldesign-settings .thematiq-panel .thematiq-set-panel__group,
+#nldesign-settings .thematiq-panel .thematiq-set-panel__group-rows {
 	display: flex;
 	flex-direction: column;
 }
@@ -3290,10 +3292,7 @@ html[data-thematiq-open-panel]
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
 	) !important;
-	color: var(
-		--nldesign-color-primary-hover,
-		var(--color-primary-element-light-text)
-	);
+	color: var(--color-main-text);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-set-panel__mode:disabled {

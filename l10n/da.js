@@ -1981,8 +1981,8 @@ OC.L10N.register(
         "{ratio} on action": "{ratio} on action",
         "Surface, {ratio}": "Surface, {ratio}",
         "Other colours": "Other colours",
-        "{tab}, 1 token": "{tab}, 1 token",
-        "{tab}, {count} tokens": "{tab}, {count} tokens",
+        "{tab} 1 token": "{tab} 1 token",
+        "{tab} {count} tokens": "{tab} {count} tokens",
         "No token matches the search.": "No token matches the search.",
         "This set brings no tokens of this kind.": "This set brings no tokens of this kind.",
         "All text colours reach 4.5 : 1 on white": "All text colours reach 4.5 : 1 on white",
@@ -2064,7 +2064,8 @@ OC.L10N.register(
         "Where motion lives": "Where motion lives",
         "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.": "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.",
         "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion tokens have a fixed type: the server checks every value before it saves anything.",
-        "Preview: {name}, visible to you only": "Preview: {name}, visible to you only"
+        "Preview: {name}, visible to you only": "Preview: {name}, visible to you only",
+        "You see this block only because you are group admin of a group for which the administrator has released the house style.": "You see this block only because you are group admin of a group for which the administrator has released the house style."
     },
     "nplurals=2; plural=(n != 1);"
 )
