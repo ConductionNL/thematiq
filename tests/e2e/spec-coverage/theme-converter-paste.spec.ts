@@ -76,7 +76,7 @@ test.describe('theme-converter-paste', () => {
 	})
 
 	test(// @e2e openspec/specs/custom-token-sets/spec.md#the-report-groups-skipped-tokens-by-reason
-	'The result names what was left out, grouped by reason, with the counts', async ({
+	'The result names each token that was left out, with the counts', async ({
 		page,
 	}) => {
 		await page.goto(THEMING_URL)
@@ -91,12 +91,13 @@ test.describe('theme-converter-paste', () => {
 			'skipped',
 			{ timeout: 10000 },
 		)
-		const groups = result.locator('.nldesign-conversion-report li')
+		// One row per token left out, the token and what thematiq reports (TqSetUploaden).
+		const rows = result.locator('.thematiq-upload-result__row')
 		await expect(
-			groups.filter({ hasText: '--utrecht-page-max-inline-size' }),
+			rows.filter({ hasText: '--utrecht-page-max-inline-size' }),
 		).toHaveCount(1)
 		await expect(
-			groups.filter({ hasText: '--utrecht-document-font-size' }),
+			rows.filter({ hasText: '--utrecht-document-font-size' }),
 		).toHaveCount(1)
 	})
 

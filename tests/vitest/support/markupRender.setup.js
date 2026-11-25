@@ -7,7 +7,9 @@
  */
 
 import markupRender from '../../../js/lib/markupRender.js'
+import uploadResult from '../../../js/lib/uploadResult.js'
 
 if (typeof window !== 'undefined') {
 	window.NldesignMarkupRender = markupRender
+	window.ThematiqUploadResult = uploadResult
 }

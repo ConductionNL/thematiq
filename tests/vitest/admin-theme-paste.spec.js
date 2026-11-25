@@ -202,7 +202,7 @@ describe('admin.js pasted theme', () => {
 		expect(global.OC.Notification.showTemporary).toHaveBeenCalledTimes(2)
 	})
 
-	it("shows the report grouped by reason, in the table's words, with the counts", async () => {
+	it("shows each token the converter left out as a row, in the table's words, with the counts", async () => {
 		buildDom()
 		routeBy((url) =>
 			url.endsWith('/tokensets/upload')
@@ -213,12 +213,11 @@ describe('admin.js pasted theme', () => {
 		await paste('OpenWOO', THEME)
 
 		const result = document.getElementById('nldesign-upload-result')
-		const groups = result.querySelectorAll('.nldesign-conversion-report li')
-		expect(groups).toHaveLength(1)
-		expect(groups[0].textContent).toContain(
-			'Page width and paddings were not applied.',
-		)
-		expect(groups[0].textContent).toContain('--utrecht-page-max-inline-size')
+		const rows = result.querySelectorAll('.thematiq-upload-result__row')
+		expect(rows).toHaveLength(1)
+		expect(rows[0].cells[0].textContent).toBe('--utrecht-page-max-inline-size')
+		expect(rows[0].cells[1].textContent).toBe('Page width and paddings were not applied.')
+		expect(result.querySelector('.thematiq-upload-result__file')).toBeNull()
 		expect(result.textContent).toContain(
 			'1 applied, 28 adapted, 0 kept, 1 skipped',
 		)
