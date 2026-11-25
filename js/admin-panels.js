@@ -272,6 +272,93 @@
 		}
 	}
 
+	/**
+	 * A header button that opens a menu of actions: a link (`href`) or a press (`run`) each,
+	 * with a line under its name. Escape closes it and gives focus back, the arrow keys move.
+	 *
+	 * @param {string} label The button's text.
+	 * @param {Array<{text: string, hint: string, href: (string|undefined), run: (Function|undefined)}>} items The actions.
+	 * @return {HTMLElement} The button with its menu.
+	 */
+	function menu(label, items) {
+		var wrap = document.createElement('div')
+		wrap.className = 'thematiq-page-header__menu-wrap'
+		var toggle = document.createElement('button')
+		toggle.type = 'button'
+		toggle.className = 'thematiq-page-header__action thematiq-page-header__more'
+		toggle.textContent = label
+		toggle.setAttribute('aria-haspopup', 'true')
+		toggle.setAttribute('aria-expanded', 'false')
+		var list = document.createElement('div')
+		list.className = 'thematiq-page-header__menu'
+		list.setAttribute('role', 'menu')
+		list.hidden = true
+		var shut = function (focus) {
+			if (list.hidden === true) {
+				return
+			}
+			list.hidden = true
+			toggle.setAttribute('aria-expanded', 'false')
+			if (focus === true) {
+				toggle.focus()
+			}
+		}
+		items.forEach(function (item) {
+			var entry = document.createElement(item.href !== undefined ? 'a' : 'button')
+			entry.className = 'thematiq-page-header__menu-item'
+			entry.setAttribute('role', 'menuitem')
+			if (item.href !== undefined) {
+				entry.href = item.href
+				if (item.href.charAt(0) !== '#' && item.href.indexOf('download=1') === -1) {
+					entry.target = '_blank'
+					entry.rel = 'noopener noreferrer'
+				}
+			} else {
+				entry.type = 'button'
+				entry.addEventListener('click', function () {
+					shut(false)
+					item.run()
+				})
+			}
+			var name = document.createElement('strong')
+			name.textContent = item.text
+			var hint = document.createElement('span')
+			hint.textContent = item.hint
+			entry.appendChild(name)
+			entry.appendChild(hint)
+			list.appendChild(entry)
+		})
+		toggle.addEventListener('click', function (event) {
+			event.stopPropagation()
+			if (list.hidden === false) {
+				shut(false)
+				return
+			}
+			list.hidden = false
+			toggle.setAttribute('aria-expanded', 'true')
+			if (list.firstChild !== null) {
+				list.firstChild.focus()
+			}
+		})
+		list.addEventListener('keydown', function (event) {
+			var entries = Array.prototype.slice.call(list.querySelectorAll('[role="menuitem"]'))
+			var at = entries.indexOf(document.activeElement)
+			if (event.key === 'Escape') {
+				event.preventDefault()
+				shut(true)
+			} else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+				event.preventDefault()
+				entries[(at + (event.key === 'ArrowDown' ? 1 : entries.length - 1)) % entries.length].focus()
+			}
+		})
+		document.addEventListener('click', function () {
+			shut(false)
+		})
+		wrap.appendChild(toggle)
+		wrap.appendChild(list)
+		return wrap
+	}
+
 	window.addEventListener('hashchange', follow)
 
 	window.ThematiqPanels = {
@@ -284,5 +371,6 @@
 		argument: function () {
 			return argument
 		},
+		menu: menu,
 	}
 })()

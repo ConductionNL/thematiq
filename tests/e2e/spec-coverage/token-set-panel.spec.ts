@@ -50,9 +50,9 @@ test.describe('the token set panel', () => {
 		await expect(panel.locator('.thematiq-set-panel__row')).toHaveCount(1)
 		await search.fill('')
 
-		const more = page.locator('#thematiq-page-header .thematiq-set-panel__more')
+		const more = page.locator('#thematiq-page-header .thematiq-page-header__more')
 		await more.click()
-		const menu = page.locator('#thematiq-set-panel-menu')
+		const menu = page.locator('.thematiq-page-header__menu')
 		await expect(menu).toBeVisible()
 		await expect(menu.getByRole('menuitem', { name: /Download token overview/ })).toHaveAttribute('href', /format=md&download=1/)
 		await page.keyboard.press('Escape')

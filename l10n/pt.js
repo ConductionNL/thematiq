@@ -2012,7 +2012,11 @@ OC.L10N.register(
         "Brand stripe": "Brand stripe",
         "About this set": "About this set",
         "View components and tokens": "View components and tokens",
-        "View dark variant": "View dark variant"
+        "View dark variant": "View dark variant",
+        "Read an overrides file into this theme": "Read an overrides file into this theme",
+        "All values together as a new, complete set": "All values together as a new, complete set",
+        "Own component": "Own component",
+        "Preview HTML and CSS safely": "Preview HTML and CSS safely"
     },
     "nplurals=2; plural=(n != 1);"
 )
