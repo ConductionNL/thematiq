@@ -825,7 +825,11 @@ test.describe('menu-labels', () => {
 					})
 				expect(long.whiteSpace).toBe('nowrap')
 				expect(long.lines).toBe(1)
-				expect(long.entryWidth).toBeGreaterThanOrEqual(long.labelWidth)
+				// scrollWidth is rounded to a whole pixel, the entry's width is not:
+				// a label of 173.8px reports 174 against an entry of 173.8.
+				expect(Math.ceil(long.entryWidth)).toBeGreaterThanOrEqual(
+					long.labelWidth,
+				)
 				expect(long.entryWidth).toBeGreaterThan(80)
 			})
 		},

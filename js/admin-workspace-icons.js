@@ -9,9 +9,24 @@
  */
 ;(function thematiqWorkspaceIconsInit() {
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', thematiqWorkspaceIconsMain)
+		document.addEventListener('DOMContentLoaded', thematiqWhenVisible)
 	} else {
-		thematiqWorkspaceIconsMain()
+		thematiqWhenVisible()
+	}
+
+	/**
+	 * Load the block now when it is on screen, else once its panel opens: a closed
+	 * panel asks the server for nothing (PERF-HANDOFF thematiq Theming settings).
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 * @return {Promise|undefined} The request when it started at once.
+	 */
+	function thematiqWhenVisible() {
+		var block = document.getElementById('nldesign-workspace-icons-list')
+		if (typeof window.ThematiqWhenShown !== 'function') {
+			return thematiqWorkspaceIconsMain()
+		}
+		return window.ThematiqWhenShown(block, thematiqWorkspaceIconsMain)
 	}
 
 	/**

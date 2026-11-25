@@ -5109,6 +5109,24 @@
 		}
 
 		/**
+		 * Run a panel block's loader now when the block is on screen, else once its
+		 * panel opens: a closed panel asks the server for nothing (PERF-HANDOFF
+		 * thematiq Theming settings). Without js/lib/whenShown.js it runs at once.
+		 *
+		 * @spec openspec/specs/admin-settings/spec.md
+		 * @param {string} id The id of the element the loader fills.
+		 * @param {Function} run The loader.
+		 * @return {void}
+		 */
+		function whenPanelShown(id, run) {
+			if (typeof window.ThematiqWhenShown !== 'function') {
+				run()
+				return
+			}
+			window.ThematiqWhenShown(document.getElementById(id), run)
+		}
+
+		/**
 		 * Download the saved overrides of the edited set.
 		 *
 		 * @return {void}
@@ -6492,8 +6510,8 @@
 				})
 		}
 
-		// Initialise the group theming panel on page load.
-		initGroupTheming()
+		// Initialise the group theming panel once the groups panel opens.
+		whenPanelShown('nldesign-group-theming-list', initGroupTheming)
 
 		/* ==========================================================================
 		 * CUSTOM TOKEN SETS — upload / list / download / delete (eigen huisstijl)
@@ -9404,7 +9422,7 @@
 				})
 		}
 
-		initAuditLog()
+		whenPanelShown('nldesign-audit-table-body', initAuditLog)
 
 		/**
 		 * Point the contrast evidence report links at the export endpoint, one
@@ -10313,8 +10331,8 @@
 			loadUpstreamFreshness()
 		}
 
-		// Initialise the upstream freshness panel on page load.
-		initUpstreamFreshness()
+		// Initialise the upstream freshness block once the gallery panel opens.
+		whenPanelShown('nldesign-upstream-freshness-toggle', initUpstreamFreshness)
 
 		/**
 		 * Theme gallery (openspec/specs/theme-gallery/spec.md): an opt-in
@@ -10604,7 +10622,7 @@
 			load()
 		}
 
-		initGallery()
+		whenPanelShown('nldesign-gallery-list', initGallery)
 
 		/**
 		 * Freeform custom CSS panel.

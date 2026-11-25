@@ -73,6 +73,18 @@ const NLDESIGN_FILES = [
 	'element-overrides',
 ]
 
+/**
+ * The :root declarations of NLDESIGN_SET as the page gets them: its generated
+ * token file, then its own overrides layer (css/token-overrides/), which loads
+ * after it and carries the lint.
+ */
+function nldesignSetDeclarations(): Map<string, string> {
+	return new Map([
+		...rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`)),
+		...rootDeclarations(repoFile(`css/token-overrides/${NLDESIGN_SET}.css`)),
+	])
+}
+
 /** Open the probe page and return the Thematiq layers it loaded. */
 async function probeLayers(page: Page): Promise<string[]> {
 	await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
@@ -553,9 +565,7 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 		// @e2e openspec/specs/css-architecture/spec.md#rijkshuisstijl-lint-tokens
 		'rijkshuisstijl hangs a coloured ribbon behind the header logo',
 		async ({ page }) => {
-			const tokens = rootDeclarations(
-				repoFile(`css/tokens/${NLDESIGN_SET}.css`),
-			)
+			const tokens = nldesignSetDeclarations()
 			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 			await page.locator('#nextcloud').waitFor({ state: 'attached' })
 
@@ -615,21 +625,43 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	test(
 		// @e2e openspec/specs/css-architecture/spec.md#utrecht-token-absent-fallback-to-defaults
 		'without a --utrecht-* token the bridged component token falls back to the primary',
-		async ({ page }) => {
-			const tokens = repoFile(`css/tokens/${NLDESIGN_SET}.css`)
-			expect(
-				tokens,
-				'precondition: the set declares no utrecht button token',
-			).not.toMatch(/--utrecht-button/)
-			const layers = await probeLayers(page)
-			expect(layers).not.toContain('primary-lock')
-			const bridged = await rootVar(
-				page,
-				'--nldesign-component-button-primary-action-background-color',
-			)
-			const primary = await rootVar(page, '--nldesign-color-primary')
-			expect(await resolveColor(page, bridged)).toBe(
-				await resolveColor(page, primary),
+		async ({ browser, page }) => {
+			// The set brings no utrecht token of its own. Rijkshuisstijl no longer
+			// fits: converted from the community tokens 18.0.1, it declares the
+			// --utrecht-button-* family itself.
+			await withUploadedSet(
+				browser,
+				'no utrecht button',
+				':root {\n\t--nldesign-color-primary: #154273;\n}\n',
+				async (set) => {
+					await withThemeState(
+						browser,
+						{ tokenSet: set, overrides: {} },
+						async () => {
+							const layers = await probeLayers(page)
+							expect(layers).toContain(`tokens/${set}`)
+							expect(layers).not.toContain('primary-lock')
+							expect(
+								await servedCss(page, `tokens/${set}`),
+								'precondition: the set declares no utrecht button token',
+							).not.toMatch(/--utrecht-button/)
+							const bridged = await rootVar(
+								page,
+								'--nldesign-component-button-primary-action-background-color',
+							)
+							const primary = await rootVar(
+								page,
+								'--nldesign-color-primary',
+							)
+							expect(await resolveColor(page, bridged)).toBe(
+								await resolveColor(page, primary),
+							)
+							expect(await resolveColor(page, primary)).toBe(
+								'rgb(21, 66, 115)',
+							)
+						},
+					)
+				},
 			)
 		},
 	)
@@ -657,15 +689,22 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 				// Every --utrecht-* reference is an input: a mapping may read a
 				// second Utrecht name before its fallback (the textbox reads
 				// --utrecht-textbox-* and then the older --utrecht-form-input-*).
+				// So is the optional action colour (--nldesign-color-action,
+				// -hover, -text): a set declares it only when its theme names one
+				// (spec action-colour), and the primary-action button reads it
+				// before its Utrecht input. --thematiq-action-hover is its hover
+				// step (overrides.css), invalid when the set brings no action colour.
 				// Every other reference is a fallback and must be a token the
 				// defaults layer defines.
+				const isInput = (r: string) =>
+					r.startsWith('--utrecht-')
+					|| /^--nldesign-color-action(-|$)/.test(r)
+					|| r === '--thematiq-action-hover'
 				expect(
-					referenced[0],
-					`${name} reads an --utrecht-* input first`,
-				).toMatch(/^--utrecht-/)
-				for (const fallback of referenced.filter(
-					(r) => !r.startsWith('--utrecht-'),
-				)) {
+					isInput(referenced[0]),
+					`${name} reads an --utrecht-* or action colour input first: ${referenced[0]}`,
+				).toBe(true)
+				for (const fallback of referenced.filter((r) => !isInput(r))) {
 					expect(
 						defaults.has(fallback),
 						`${name} falls back to ${fallback}`,
@@ -827,9 +866,7 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 		// @e2e openspec/specs/css-architecture/spec.md#login-page-styled-with-government-branding
 		'the login page hides the stock header, draws a white box with the ribbon and token buttons',
 		async ({ browser }) => {
-			const tokens = rootDeclarations(
-				repoFile(`css/tokens/${NLDESIGN_SET}.css`),
-			)
+			const tokens = nldesignSetDeclarations()
 			const anon = await anonymousPage(browser)
 			try {
 				const page = anon.page
@@ -1028,12 +1065,32 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	test(
 		// @e2e openspec/specs/css-architecture/spec.md#typography-variable-mapped
 		'--font-face resolves to the nldesign font family, Fira Sans first',
-		async ({ page }) => {
-			await probeLayers(page)
-			const fontFace = await rootVar(page, '--font-face')
-			expect(fontFace).toBe(await rootVar(page, '--nldesign-font-family'))
-			expect(fontFace.replace(/['"]/g, '').split(',')[0].trim()).toBe(
-				'Fira Sans',
+		async ({ browser, page }) => {
+			// Fira Sans is the Layer 1 font the defaults name. The set brings no
+			// font of its own: the converted Rijkshuisstijl now asks for
+			// RijksSansVF first (it needs an upload), so it no longer shows the
+			// default.
+			await withUploadedSet(
+				browser,
+				'no font',
+				':root {\n\t--nldesign-color-primary: #154273;\n}\n',
+				async (set) => {
+					await withThemeState(
+						browser,
+						{ tokenSet: set, overrides: {} },
+						async () => {
+							const layers = await probeLayers(page)
+							expect(layers).toContain(`tokens/${set}`)
+							const fontFace = await rootVar(page, '--font-face')
+							expect(fontFace).toBe(
+								await rootVar(page, '--nldesign-font-family'),
+							)
+							expect(
+								fontFace.replace(/['"]/g, '').split(',')[0].trim(),
+							).toBe('Fira Sans')
+						},
+					)
+				},
 			)
 		},
 	)

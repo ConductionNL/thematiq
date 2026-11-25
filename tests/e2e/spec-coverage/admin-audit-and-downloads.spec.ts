@@ -21,12 +21,15 @@ const THEMING_URL = '/settings/admin/theming'
 const AUDIT_ROUTE = '**/apps/thematiq/settings/audit?*'
 const BODY = '#nldesign-audit-table-body'
 
-/** Open the Theming page and wait until the audit table has been filled. */
+/**
+ * Open the Theming page on its Log panel (#log) and wait until the audit table
+ * has been filled: the table asks the server only once its panel opens.
+ */
 async function openWithAudit(page: Page): Promise<void> {
 	const loaded = page.waitForResponse((r) =>
 		r.url().includes('/apps/thematiq/settings/audit?'),
 	)
-	await page.goto(THEMING_URL)
+	await page.goto(THEMING_URL + '#log')
 	await page.waitForLoadState('domcontentloaded')
 	await loaded
 	await expect(page.locator(`${BODY} tr`).first()).toBeAttached()
