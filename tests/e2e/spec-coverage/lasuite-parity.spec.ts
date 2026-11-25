@@ -120,7 +120,9 @@ const BRAND_050: Record<'lasuite' | 'cunningham', string> = {
  * primary-button rules read `--nldesign-color-action` before the brand, so a
  * set that declares one (Cunningham's green) fills its main button with it.
  */
-function actionColours(set: 'lasuite' | 'cunningham'): { fill: string; text: string } | null {
+function actionColours(
+	set: 'lasuite' | 'cunningham',
+): { fill: string; text: string } | null {
 	const css = fs.readFileSync(
 		path.resolve(__dirname, `../../../css/tokens/${set}.css`),
 		'utf8',
@@ -423,9 +425,14 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 	// folder is made first; 405 means it is already there.
 	const made = await page.evaluate(
 		async ({ t, name }) => {
-			const oc = (window as unknown as {
-				OC: { getCurrentUser: () => { uid: string }, linkToRemote: (s: string) => string }
-			}).OC
+			const oc = (
+				window as unknown as {
+					OC: {
+						getCurrentUser: () => { uid: string }
+						linkToRemote: (s: string) => string
+					}
+				}
+			).OC
 			const url = `${oc.linkToRemote('dav')}/files/${encodeURIComponent(oc.getCurrentUser().uid)}/${name}`
 			const r = await fetch(url, {
 				method: 'MKCOL',
@@ -437,28 +444,31 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 	)
 	expect([201, 405], `making ${SHARED_FOLDER}: HTTP ${made}`).toContain(made)
 
-	const res = await page.evaluate(async ({ t, name }) => {
-		const base = (
-			window as unknown as {
-				OC: { linkToOCS: (s: string, v: number) => string }
-			}
-		).OC.linkToOCS('apps/files_sharing/api/v1', 2)
-		const r = await fetch(`${base}shares?format=json`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'OCS-APIRequest': 'true',
-				requesttoken: t,
-			},
-			// shareType 3 = public link, permission 1 = read.
-			body: JSON.stringify({
-				path: `/${name}`,
-				shareType: 3,
-				permissions: 1,
-			}),
-		})
-		return { status: r.status, body: await r.text() }
-	}, { t: token, name: SHARED_FOLDER })
+	const res = await page.evaluate(
+		async ({ t, name }) => {
+			const base = (
+				window as unknown as {
+					OC: { linkToOCS: (s: string, v: number) => string }
+				}
+			).OC.linkToOCS('apps/files_sharing/api/v1', 2)
+			const r = await fetch(`${base}shares?format=json`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'OCS-APIRequest': 'true',
+					requesttoken: t,
+				},
+				// shareType 3 = public link, permission 1 = read.
+				body: JSON.stringify({
+					path: `/${name}`,
+					shareType: 3,
+					permissions: 1,
+				}),
+			})
+			return { status: r.status, body: await r.text() }
+		},
+		{ t: token, name: SHARED_FOLDER },
+	)
 
 	expect(
 		res.status,
@@ -478,32 +488,35 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 // The comparison itself, on a made-up mismatch: no page, no instance. A
 // failing assertion throws synchronously, so the deliberate failure is
 // caught and its message read, and this test passes.
-test(// @e2e lasuite-parity::mismatch-names-the-property-and-delta
-'a radius mismatch fails and names the property, the expected and the actual value', () => {
-	const computed: ComputedSubset = {
-		backgroundColor: '',
-		color: '',
-		borderColor: '',
-		borderWidth: '',
-		borderStyle: '',
-		borderRadius: '8px',
-		fontFamily: '',
-		fontWeight: '',
-	}
-	expect(() =>
-		assertMatchesReference('lasuite text input', computed, {
-			borderRadius: '4px',
-		}),
-	).toThrow(/border-radius — expected 4px, got 8px/)
-	// A matching value passes.
-	expect(() =>
-		assertMatchesReference(
-			'lasuite text input',
-			{ ...computed, borderRadius: '4px' },
-			{ borderRadius: '4px' },
-		),
-	).not.toThrow()
-})
+test(
+	// @e2e lasuite-parity::mismatch-names-the-property-and-delta
+	'a radius mismatch fails and names the property, the expected and the actual value',
+	() => {
+		const computed: ComputedSubset = {
+			backgroundColor: '',
+			color: '',
+			borderColor: '',
+			borderWidth: '',
+			borderStyle: '',
+			borderRadius: '8px',
+			fontFamily: '',
+			fontWeight: '',
+		}
+		expect(() =>
+			assertMatchesReference('lasuite text input', computed, {
+				borderRadius: '4px',
+			}),
+		).toThrow(/border-radius — expected 4px, got 8px/)
+		// A matching value passes.
+		expect(() =>
+			assertMatchesReference(
+				'lasuite text input',
+				{ ...computed, borderRadius: '4px' },
+				{ borderRadius: '4px' },
+			),
+		).not.toThrow()
+	},
+)
 
 test.describe('lasuite-parity', () => {
 	// NO `mode: 'serial'`.
@@ -567,46 +580,49 @@ test.describe('lasuite-parity', () => {
 
 	for (const set of ['lasuite', 'cunningham'] as const) {
 		for (const element of referenceTable(set)) {
-			test(// @e2e lasuite-parity::rendered-components-match-cunningham-reference-values
-			`${set}: ${element.name} matches the Cunningham reference`, async ({
-				page,
-			}) => {
-				await page.goto(THEMING_URL, { waitUntil: 'domcontentloaded' })
-				// `domcontentloaded`, not `networkidle`: Nextcloud polls in the background, so
-				// the network never goes idle and this wait burns the whole test budget.
-				await page.waitForLoadState('domcontentloaded')
-				const token = await requestToken(page)
-				await setTokenSet(page, token, set)
+			test(
+				// @e2e lasuite-parity::rendered-components-match-cunningham-reference-values
+				`${set}: ${element.name} matches the Cunningham reference`,
+				async ({ page }) => {
+					await page.goto(THEMING_URL, { waitUntil: 'domcontentloaded' })
+					// `domcontentloaded`, not `networkidle`: Nextcloud polls in the background, so
+					// the network never goes idle and this wait burns the whole test budget.
+					await page.waitForLoadState('domcontentloaded')
+					const token = await requestToken(page)
+					await setTokenSet(page, token, set)
 
-				// The token set is applied from the ADMIN page in both cases —
-				// it needs `OC.requestToken`, which a public share page does not
-				// expose. Only the surface the element is then MEASURED on
-				// differs.
-				if (element.surface === 'public') {
-					await page.goto(await createPublicShare(page, token), {
-						waitUntil: 'domcontentloaded',
-					})
-				} else if (element.path !== undefined) {
-					await page.goto(element.path, { waitUntil: 'domcontentloaded' })
-				} else if (element.panel !== undefined) {
-					await page.goto(`${THEMING_URL}#${element.panel}`, {
-						waitUntil: 'domcontentloaded',
-					})
-				} else {
-					await page.reload({ waitUntil: 'domcontentloaded' })
-				}
-				// `domcontentloaded`, not `networkidle`: Nextcloud polls in the background, so
-				// the network never goes idle and this wait burns the whole test budget.
-				await page.waitForLoadState('domcontentloaded')
+					// The token set is applied from the ADMIN page in both cases —
+					// it needs `OC.requestToken`, which a public share page does not
+					// expose. Only the surface the element is then MEASURED on
+					// differs.
+					if (element.surface === 'public') {
+						await page.goto(await createPublicShare(page, token), {
+							waitUntil: 'domcontentloaded',
+						})
+					} else if (element.path !== undefined) {
+						await page.goto(element.path, {
+							waitUntil: 'domcontentloaded',
+						})
+					} else if (element.panel !== undefined) {
+						await page.goto(`${THEMING_URL}#${element.panel}`, {
+							waitUntil: 'domcontentloaded',
+						})
+					} else {
+						await page.reload({ waitUntil: 'domcontentloaded' })
+					}
+					// `domcontentloaded`, not `networkidle`: Nextcloud polls in the background, so
+					// the network never goes idle and this wait burns the whole test budget.
+					await page.waitForLoadState('domcontentloaded')
 
-				await page.waitForSelector(element.selector, { timeout: 15_000 })
-				const computed = await readComputedStyle(page, element.selector)
-				assertMatchesReference(
-					`${set} ${element.name}`,
-					computed,
-					element.ref,
-				)
-			})
+					await page.waitForSelector(element.selector, { timeout: 15_000 })
+					const computed = await readComputedStyle(page, element.selector)
+					assertMatchesReference(
+						`${set} ${element.name}`,
+						computed,
+						element.ref,
+					)
+				},
+			)
 		}
 	}
 

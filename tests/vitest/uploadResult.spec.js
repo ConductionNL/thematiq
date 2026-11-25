@@ -15,17 +15,33 @@ const label = (code, reasons) => reasons[code] || 'label:' + code
 
 describe('uploadResult.notices', () => {
 	it('gives one row per token, from skipped, errors and the conversion report', () => {
-		const rows = uploadResult.notices({
-			skipped: [{ path: 'color.other', reason: 'unmapped-path' }, '--zd-legacy-shadow'],
-			errors: [{ path: 'color.brand.p3', reason: 'unsupported-color-space' }],
-			report: [
-				{ source: 'color.applied', action: 'applied', reason: 'x' },
-				{ source: 'color.accent.vivid', action: 'adapted', reason: 'out-of-gamut-clipped' },
-				{ source: 'color.other', action: 'skipped', reason: 'unmapped-path' },
-				{ source: '--page-width', action: 'skipped', reason: 'layout' },
-			],
-			reasons: { layout: 'Page width was not applied.' },
-		}, label)
+		const rows = uploadResult.notices(
+			{
+				skipped: [
+					{ path: 'color.other', reason: 'unmapped-path' },
+					'--zd-legacy-shadow',
+				],
+				errors: [
+					{ path: 'color.brand.p3', reason: 'unsupported-color-space' },
+				],
+				report: [
+					{ source: 'color.applied', action: 'applied', reason: 'x' },
+					{
+						source: 'color.accent.vivid',
+						action: 'adapted',
+						reason: 'out-of-gamut-clipped',
+					},
+					{
+						source: 'color.other',
+						action: 'skipped',
+						reason: 'unmapped-path',
+					},
+					{ source: '--page-width', action: 'skipped', reason: 'layout' },
+				],
+				reasons: { layout: 'Page width was not applied.' },
+			},
+			label,
+		)
 
 		expect(rows).toEqual([
 			{ token: 'color.other', reason: 'label:unmapped-path' },
@@ -44,17 +60,27 @@ describe('uploadResult.notices', () => {
 
 describe('uploadResult.stored', () => {
 	it('carries what the board draws for a stored upload', () => {
-		const model = uploadResult.stored({
-			imported: 312,
-			skipped: [{ path: 'a', reason: 'unmapped-path' }],
-			darkValues: 6,
-			version: '3.0.0',
-			warnings: [{ pair: 'text on primary', ratio: 3.5 }, { kind: 'incomplete', missing: ['x'] }],
-			importWarnings: [
-				{ path: 'color.old', message: 'Use color.new', token: '--nldesign-color-old' },
-				{ path: 'typography.body', message: null },
-			],
-		}, { name: 'Zuiddrecht', fileName: 'zd.tokens.json', label })
+		const model = uploadResult.stored(
+			{
+				imported: 312,
+				skipped: [{ path: 'a', reason: 'unmapped-path' }],
+				darkValues: 6,
+				version: '3.0.0',
+				warnings: [
+					{ pair: 'text on primary', ratio: 3.5 },
+					{ kind: 'incomplete', missing: ['x'] },
+				],
+				importWarnings: [
+					{
+						path: 'color.old',
+						message: 'Use color.new',
+						token: '--nldesign-color-old',
+					},
+					{ path: 'typography.body', message: null },
+				],
+			},
+			{ name: 'Zuiddrecht', fileName: 'zd.tokens.json', label },
+		)
 
 		expect(model).toMatchObject({
 			state: 'stored',
@@ -67,7 +93,13 @@ describe('uploadResult.stored', () => {
 			contrast: 1,
 		})
 		expect(model.deprecations).toHaveLength(2)
-		expect(model.adoptable).toEqual([{ path: 'color.old', message: 'Use color.new', token: '--nldesign-color-old' }])
+		expect(model.adoptable).toEqual([
+			{
+				path: 'color.old',
+				message: 'Use color.new',
+				token: '--nldesign-color-old',
+			},
+		])
 	})
 
 	it('has no file name for a paste and no version when the file declares none', () => {
@@ -81,10 +113,13 @@ describe('uploadResult.stored', () => {
 
 describe('uploadResult.refused', () => {
 	it('carries the status, the file, the error and the tokens the response names', () => {
-		const model = uploadResult.refused({
-			error: 'Property --nldesign-link-color contains a forbidden value.',
-			skipped: [{ path: 'color.x', reason: 'unmapped-path' }],
-		}, { status: 422, fileName: 'promo.css', label })
+		const model = uploadResult.refused(
+			{
+				error: 'Property --nldesign-link-color contains a forbidden value.',
+				skipped: [{ path: 'color.x', reason: 'unmapped-path' }],
+			},
+			{ status: 422, fileName: 'promo.css', label },
+		)
 
 		expect(model).toEqual({
 			state: 'refused',
@@ -98,7 +133,14 @@ describe('uploadResult.refused', () => {
 
 describe('uploadResult.missing', () => {
 	it('counts the tokens an incomplete set leaves to the design system', () => {
-		expect(uploadResult.missing({ warnings: [{ pair: 'a' }, { kind: 'incomplete', missing: ['a', 'b', 'c'] }] })).toBe(3)
+		expect(
+			uploadResult.missing({
+				warnings: [
+					{ pair: 'a' },
+					{ kind: 'incomplete', missing: ['a', 'b', 'c'] },
+				],
+			}),
+		).toBe(3)
 	})
 
 	it('is 0 for a complete set or no set', () => {

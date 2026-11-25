@@ -50,13 +50,18 @@
 			rows.push({ token: token, reason: label(code, reasons) })
 		}
 
-		;[].concat((data && data.skipped) || [], (data && data.errors) || []).forEach(function (entry) {
-			if (typeof entry === 'string') {
-				add(entry, 'unmapped-path')
-				return
-			}
-			add(String((entry && entry.path) || ''), String((entry && entry.reason) || 'unknown'))
-		})
+		;[]
+			.concat((data && data.skipped) || [], (data && data.errors) || [])
+			.forEach(function (entry) {
+				if (typeof entry === 'string') {
+					add(entry, 'unmapped-path')
+					return
+				}
+				add(
+					String((entry && entry.path) || ''),
+					String((entry && entry.reason) || 'unknown'),
+				)
+			})
 		;((data && data.report) || []).forEach(function (entry) {
 			if (!entry || entry.action === 'applied' || !entry.reason) {
 				return
@@ -125,7 +130,9 @@
 		var warning = ((set && set.warnings) || []).find(function (entry) {
 			return entry && entry.kind === 'incomplete'
 		})
-		return warning !== undefined && Array.isArray(warning.missing) === true ? warning.missing.length : 0
+		return warning !== undefined && Array.isArray(warning.missing) === true
+			? warning.missing.length
+			: 0
 	}
 
 	return { notices: notices, stored: stored, refused: refused, missing: missing }

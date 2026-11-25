@@ -326,12 +326,17 @@
 			}
 		}
 		items.forEach(function (item) {
-			var entry = document.createElement(item.href !== undefined ? 'a' : 'button')
+			var entry = document.createElement(
+				item.href !== undefined ? 'a' : 'button',
+			)
 			entry.className = 'thematiq-page-header__menu-item'
 			entry.setAttribute('role', 'menuitem')
 			if (item.href !== undefined) {
 				entry.href = item.href
-				if (item.href.charAt(0) !== '#' && item.href.indexOf('download=1') === -1) {
+				if (
+					item.href.charAt(0) !== '#'
+					&& item.href.indexOf('download=1') === -1
+				) {
 					entry.target = '_blank'
 					entry.rel = 'noopener noreferrer'
 				}
@@ -363,14 +368,19 @@
 			}
 		})
 		list.addEventListener('keydown', function (event) {
-			var entries = Array.prototype.slice.call(list.querySelectorAll('[role="menuitem"]'))
+			var entries = Array.prototype.slice.call(
+				list.querySelectorAll('[role="menuitem"]'),
+			)
 			var at = entries.indexOf(document.activeElement)
 			if (event.key === 'Escape') {
 				event.preventDefault()
 				shut(true)
 			} else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 				event.preventDefault()
-				entries[(at + (event.key === 'ArrowDown' ? 1 : entries.length - 1)) % entries.length].focus()
+				entries[
+					(at + (event.key === 'ArrowDown' ? 1 : entries.length - 1))
+						% entries.length
+				].focus()
 			}
 		})
 		document.addEventListener('click', function () {
