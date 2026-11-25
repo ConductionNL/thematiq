@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * Components and tokens (TqComponenten), the panel of the Theming page at
- * #components: it shows the overview's component selector, preview and token
- * editor, its header carries Download, More and Save, and closing it gives the
- * instrument back to the overview. Read-only: nothing here saves.
+ * #components, and #components/own on Your components (TqEigenComponent): it
+ * shows the overview's component selector, preview and token editor, its
+ * header carries Download, More and Save, and closing it gives the instrument
+ * back to the overview. Read-only: nothing here saves.
  */
 import { test, expect } from '@playwright/test'
 
@@ -53,5 +54,20 @@ test.describe('the components and tokens panel', () => {
 		await expect(page.locator('section[data-thematiq-panel="components"]')).toBeHidden()
 		await expect(page.locator('#nldesign-settings > #nldesign-token-editor')).toBeAttached()
 		await expect(page.locator('#nldesign-settings > #nldesign-preview')).toBeAttached()
+	})
+
+	test('#components/own opens Your components, and More leads there', async ({ page }) => {
+		await page.goto(THEMING_URL + '#components/own')
+		const panel = page.locator('section[data-thematiq-panel="components"]')
+		const own = panel.locator('.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]')
+		await expect(own).toHaveClass(/active/)
+
+		await page.goto(THEMING_URL + '#components')
+		await expect(panel.locator('.nldesign-pg-selector')).toBeVisible()
+		const actions = page.locator('#thematiq-page-header .thematiq-page-header__actions')
+		await actions.locator('.thematiq-page-header__more').click()
+		await actions.getByRole('menuitem', { name: /Own component/ }).click()
+		await expect(page).toHaveURL(/#components\/own$/)
+		await expect(own).toHaveClass(/active/)
 	})
 })

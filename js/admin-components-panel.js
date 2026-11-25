@@ -1,6 +1,7 @@
 /**
  * Components and tokens (the TqComponenten board), the panel of the Theming
- * page at #components. The instrument itself, the component selector, the
+ * page at #components; #components/own opens it on Your components (the
+ * TqEigenComponent board). The instrument itself, the component selector, the
  * preview and the token editor (js/playground.js over admin.js's editor), is
  * lent to the panel while it is open and given back when it closes, so it
  * saves exactly as on the overview. The header carries Download, a More menu
@@ -15,6 +16,7 @@
 	/** The instrument's parts, in the order the panel shows them. */
 	var PARTS = ['.nldesign-pg-selector', '#nldesign-preview', '#nldesign-token-editor']
 	var lent = []
+	var waiting = null
 
 	/**
 	 * A translated string of the app, with `{name}` placeholders filled.
@@ -60,18 +62,6 @@
 	}
 
 	/**
-	 * Open the selector's Your components tab.
-	 *
-	 * @return {void}
-	 */
-	function openOwn() {
-		var tab = document.querySelector('.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]')
-		if (tab !== null) {
-			tab.click()
-		}
-	}
-
-	/**
 	 * A header button that presses one of the editor's own controls.
 	 *
 	 * @param {string} label The text.
@@ -100,7 +90,7 @@
 		var items = [
 			{ text: tr('Upload'), hint: tr('Read an overrides file into this theme'), run: function () { press('nldesign-import-btn') } },
 			{ text: tr('Export as token set'), hint: tr('All values together as a new, complete set'), run: function () { press('nldesign-pg-export-btn') } },
-			{ text: tr('Own component'), hint: tr('Preview HTML and CSS safely'), run: openOwn },
+			{ text: tr('Own component'), hint: tr('Preview HTML and CSS safely'), href: '#components/own' },
 		]
 		if (reference !== null && reference.getAttribute('href')) {
 			items.push({ text: tr('Download token overview'), hint: tr('All tokens of this set as Markdown'), href: reference.getAttribute('href') })
@@ -173,6 +163,43 @@
 		}
 	}
 
+	/**
+	 * Open the tab the argument names: `own` opens Your components. The playground builds
+	 * its selector once the editor has rendered, which can be after a deep link opened the
+	 * panel; the tab is then chosen as soon as it appears.
+	 *
+	 * @param {HTMLElement} section The panel.
+	 * @param {string} argument The panel's argument.
+	 * @return {void}
+	 */
+	function chooseTab(section, argument) {
+		if (waiting !== null) {
+			waiting.disconnect()
+			waiting = null
+		}
+		if (argument !== 'own') {
+			return
+		}
+		var find = function () {
+			return section.querySelector('.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]')
+		}
+		if (find() !== null) {
+			find().click()
+			return
+		}
+		if (typeof MutationObserver === 'undefined') {
+			return
+		}
+		waiting = new MutationObserver(function () {
+			if (find() !== null) {
+				waiting.disconnect()
+				waiting = null
+				find().click()
+			}
+		})
+		waiting.observe(section, { childList: true, subtree: true })
+	}
+
 	if (typeof module !== 'undefined' && module.exports) {
 		module.exports = { PARTS: PARTS }
 	}
@@ -187,12 +214,14 @@
 			},
 			intro: introNodes,
 			actions: actions,
-			onOpen: function (section) {
+			onOpen: function (section, argument) {
 				lend(section)
+				chooseTab(section, argument)
 			},
 			onClose: function () {
 				var section = document.querySelector('section[data-thematiq-panel="components"]')
 				if (section !== null) {
+					chooseTab(section, '')
 					giveBack(section)
 				}
 			},
