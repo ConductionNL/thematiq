@@ -141,7 +141,7 @@ class AdminBootReadsTest extends TestCase {
 		$controllers[FontController::class] = $fonts;
 
 		$logger = $this->createMock(originalClassName: LoggerInterface::class);
-		$logger->expects($this->once())->method('debug')->with($this->stringContains('/settings/fonts'));
+		$logger->expects($this->once())->method('debug')->with($this->stringContains(string: '/settings/fonts'));
 
 		$reads = (new AdminBootReads(container: $this->container(controllers: $controllers), logger: $logger))->forTokenSet(tokenSetId: 'nextcloud');
 
