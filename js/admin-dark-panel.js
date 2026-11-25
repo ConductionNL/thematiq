@@ -300,6 +300,7 @@
 			: page.getPropertyValue('--nldesign-component-content-surface-background-color').trim() || 'transparent')
 		frame.style.setProperty('--frame-ink', pick('--nldesign-color-text', 'inherit'))
 		frame.style.setProperty('--frame-bar', pick('--nldesign-color-header-background', 'transparent'))
+		frame.style.setProperty('--frame-bar-ink', pick('--nldesign-color-header-text', 'inherit'))
 		frame.style.setProperty('--frame-line', pick('--nldesign-color-border', 'transparent'))
 		frame.style.setProperty('--frame-card', dark === true
 			? pick('--nldesign-color-background-dark', 'transparent')
