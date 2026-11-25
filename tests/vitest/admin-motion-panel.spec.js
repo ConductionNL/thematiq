@@ -151,6 +151,18 @@ describe('motion panel', () => {
 		expect(readout.textContent).toContain('Duration 300000 ms')
 	})
 
+	it('writes the readout once the editor renders its rows after a deep link', async () => {
+		const editor = document.getElementById('nldesign-token-editor')
+		const rows = editor.innerHTML
+		editor.innerHTML = ''
+		await openAt('#motion')
+		const readout = document.querySelector('.thematiq-motion-panel__readout')
+		expect(readout.textContent).toBe('The values in the rows are not a valid motion yet.')
+		editor.innerHTML = rows
+		await flush()
+		expect(readout.textContent).toContain('Duration 300 ms')
+	})
+
 	it('says whether the base tokens are open', async () => {
 		await openAt('#motion')
 		const notice = document.querySelector('.thematiq-motion-panel__notice')

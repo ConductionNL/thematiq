@@ -3348,6 +3348,11 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):
 	display: none !important;
 }
 
+#nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__notice {
+	color: var(--color-main-text);
+	font-size: 14px;
+}
+
 #nldesign-settings .thematiq-motion-panel .nldesign-token-row .nldesign-motion-preview {
 	display: none;
 }
