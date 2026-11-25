@@ -42,6 +42,8 @@ namespace OCA\Thematiq\Service;
  * dimension, fontFamily, fontWeight, composite typography, shadow, …) plus $extensions/$deprecated
  * handling. The complexity is essential to the spec surface, not accidental; the transitive alias
  * resolution — the one genuinely separable concern — already lives in DesignTokensAliasResolver.
+ * @SuppressWarnings(PHPMD.TooManyMethods) - see the ExcessiveClassComplexity rationale above: the
+ * methods are the per-type and per-step pieces of that one contract, each small and private.
  */
 class DesignTokensMapper {
 
@@ -446,12 +448,14 @@ class DesignTokensMapper {
 	 *
 	 * @return void
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenReference is a final class of pure functions
+	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-an-imported-alias-stays-a-reference
 	 */
 	private function assignReference(MappedToken $token, TypedValue $typed, string $reference): void {
 		$result = $this->values->serialize(type: $typed->type, value: $typed->value);
 		if ($result['ok'] === true) {
-			$result = ['ok' => true, 'value' => TokenReference::to(tokenName: $reference)];
+			$result = ['ok' => true, 'value' => TokenReference::valueFor(tokenName: $reference)];
 		}
 
 		$this->assignSingleTarget(token: $token, result: $result);

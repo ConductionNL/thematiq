@@ -12,7 +12,11 @@
  */
 ;(function thematiqMotionPanel() {
 	/** The motion tokens the panel shows. */
-	var TOKENS = ['--animation-quick', '--animation-slow', '--nldesign-animation-easing']
+	var TOKENS = [
+		'--animation-quick',
+		'--animation-slow',
+		'--nldesign-animation-easing',
+	]
 	var lent = null
 
 	/**
@@ -80,10 +84,13 @@
 		if (ms === null || easing === null) {
 			return tr('The values in the rows are not a valid motion yet.')
 		}
-		return tr('Duration {ms} ms, easing {easing}. Replays the dialog and the notification.', {
-			ms: reduced === true ? 0 : Math.round(ms),
-			easing: easing,
-		})
+		return tr(
+			'Duration {ms} ms, easing {easing}. Replays the dialog and the notification.',
+			{
+				ms: reduced === true ? 0 : Math.round(ms),
+				easing: easing,
+			},
+		)
 	}
 
 	/**
@@ -93,17 +100,28 @@
 	 * @return {{slow: number|null, easing: string|null}} The slow duration and the easing.
 	 */
 	function current(root) {
-		var number = root.querySelector('.nldesign-duration-number[data-token="--animation-slow"]')
-		var unit = root.querySelector('.nldesign-duration-unit[data-token="--animation-slow"]')
-		var select = root.querySelector('.nldesign-easing-select[data-token="--nldesign-animation-easing"]')
+		var number = root.querySelector(
+			'.nldesign-duration-number[data-token="--animation-slow"]',
+		)
+		var unit = root.querySelector(
+			'.nldesign-duration-unit[data-token="--animation-slow"]',
+		)
+		var select = root.querySelector(
+			'.nldesign-easing-select[data-token="--nldesign-animation-easing"]',
+		)
 		var points = Array.prototype.map.call(
-			root.querySelectorAll('.nldesign-easing-point[data-token="--nldesign-animation-easing"]'),
+			root.querySelectorAll(
+				'.nldesign-easing-point[data-token="--nldesign-animation-easing"]',
+			),
 			function (input) {
 				return input.value
 			},
 		)
 		return {
-			slow: number !== null ? toMs(number.value, unit !== null ? unit.value : 'ms') : null,
+			slow:
+				number !== null
+					? toMs(number.value, unit !== null ? unit.value : 'ms')
+					: null,
 			easing: select !== null ? toEasing(select.value, points) : null,
 		}
 	}
@@ -114,8 +132,10 @@
 	 * @return {boolean} The answer.
 	 */
 	function reducedMotion() {
-		return typeof window.matchMedia === 'function'
+		return (
+			typeof window.matchMedia === 'function'
 			&& window.matchMedia('(prefers-reduced-motion: reduce)').matches === true
+		)
 	}
 
 	/**
@@ -133,9 +153,14 @@
 		var unlock = document.getElementById('nldesign-base-unlock')
 		var notice = section.querySelector('.thematiq-motion-panel__notice')
 		if (notice !== null) {
-			notice.textContent = unlock !== null && unlock.checked === true
-				? tr('These are Nextcloud base tokens. They are open because "Also edit Nextcloud\'s base tokens" is on; a change affects every page.')
-				: tr('These are Nextcloud base tokens. Tick "Also edit Nextcloud\'s base tokens" to change them; a change affects every page.')
+			notice.textContent =
+				unlock !== null && unlock.checked === true
+					? tr(
+							'These are Nextcloud base tokens. They are open because "Also edit Nextcloud\'s base tokens" is on; a change affects every page.',
+						)
+					: tr(
+							'These are Nextcloud base tokens. Tick "Also edit Nextcloud\'s base tokens" to change them; a change affects every page.',
+						)
 		}
 	}
 
@@ -149,17 +174,26 @@
 	function play(section) {
 		refresh(section)
 		var values = current(section)
-		if (values.slow === null || values.easing === null || reducedMotion() === true) {
+		if (
+			values.slow === null
+			|| values.easing === null
+			|| reducedMotion() === true
+		) {
 			return
 		}
-		section.querySelectorAll('.thematiq-motion-panel__sample').forEach(function (sample) {
-			if (typeof sample.animate === 'function') {
-				sample.animate(
-					[{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
-					{ duration: values.slow, easing: values.easing },
-				)
-			}
-		})
+		section
+			.querySelectorAll('.thematiq-motion-panel__sample')
+			.forEach(function (sample) {
+				if (typeof sample.animate === 'function') {
+					sample.animate(
+						[
+							{ opacity: 0, transform: 'translateY(16px)' },
+							{ opacity: 1, transform: 'none' },
+						],
+						{ duration: values.slow, easing: values.easing },
+					)
+				}
+			})
 	}
 
 	/**
@@ -172,7 +206,9 @@
 	function lend(section) {
 		var slot = section.querySelector('.thematiq-motion-panel__editor')
 		var editor = document.getElementById('nldesign-token-editor')
-		var tab = document.querySelector('.nldesign-pg-selector .nldesign-tab-btn[data-tab="content"]')
+		var tab = document.querySelector(
+			'.nldesign-pg-selector .nldesign-tab-btn[data-tab="content"]',
+		)
 		if (tab !== null && tab.classList.contains('active') === false) {
 			tab.click()
 		}
@@ -207,7 +243,10 @@
 	 * @return {void}
 	 */
 	function whenRendered(panel) {
-		if (panel.querySelector('.nldesign-easing-select') !== null || typeof MutationObserver === 'undefined') {
+		if (
+			panel.querySelector('.nldesign-easing-select') !== null
+			|| typeof MutationObserver === 'undefined'
+		) {
 			return
 		}
 		var observer = new MutationObserver(function () {
@@ -230,7 +269,9 @@
 	function headerButton(label, id, primary) {
 		var button = document.createElement('button')
 		button.type = 'button'
-		button.className = 'thematiq-page-header__action' + (primary === true ? ' thematiq-page-header__action--primary' : '')
+		button.className =
+			'thematiq-page-header__action'
+			+ (primary === true ? ' thematiq-page-header__action--primary' : '')
 		button.textContent = label
 		button.addEventListener('click', function () {
 			var control = document.getElementById(id)
@@ -242,7 +283,13 @@
 	}
 
 	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = { TOKENS: TOKENS, toMs: toMs, toEasing: toEasing, readout: readout, current: current }
+		module.exports = {
+			TOKENS: TOKENS,
+			toMs: toMs,
+			toEasing: toEasing,
+			readout: readout,
+			current: current,
+		}
 	}
 
 	var section = document.querySelector('section[data-thematiq-panel="motion"]')

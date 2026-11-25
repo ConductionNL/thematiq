@@ -13,7 +13,9 @@ import { test, expect } from '@playwright/test'
 const THEMING_URL = '/settings/admin/theming'
 
 test.describe('the token set panel', () => {
-	test('opens from the Token sets table and lists the set\'s tokens', async ({ page }) => {
+	test("opens from the Token sets table and lists the set's tokens", async ({
+		page,
+	}) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
 		const table = page.locator('#thematiq-token-sets')
@@ -23,15 +25,29 @@ test.describe('the token set panel', () => {
 		await expect(page).toHaveURL(/#set\/zuiddrecht$/)
 		const panel = page.locator('section[data-thematiq-panel="set"]')
 		await expect(panel).toBeVisible()
-		await expect(page.locator('#thematiq-page-header .thematiq-page-header__title')).toHaveText('Gemeente Zuiddrecht')
-		await expect(page.locator('#thematiq-page-header .thematiq-page-header__intro')).toContainText('NL Design System')
+		await expect(
+			page.locator('#thematiq-page-header .thematiq-page-header__title'),
+		).toHaveText('Gemeente Zuiddrecht')
+		await expect(
+			page.locator('#thematiq-page-header .thematiq-page-header__intro'),
+		).toContainText('NL Design System')
 		await expect(page.locator('#thematiq-token-sets')).toBeHidden()
 
-		const primary = panel.locator('.thematiq-set-panel__row', { hasText: '--nldesign-color-primary' }).first()
-		await expect(primary.locator('.thematiq-set-panel__value')).toHaveText('#3669A5')
-		await expect(primary.locator('.thematiq-set-panel__pill')).toHaveText('5.6 : 1')
+		const primary = panel
+			.locator('.thematiq-set-panel__row', {
+				hasText: '--nldesign-color-primary',
+			})
+			.first()
+		await expect(primary.locator('.thematiq-set-panel__value')).toHaveText(
+			'#3669A5',
+		)
+		await expect(primary.locator('.thematiq-set-panel__pill')).toHaveText(
+			'5.6 : 1',
+		)
 		await expect(panel.locator('.thematiq-set-panel__summary')).not.toBeEmpty()
-		await expect(panel.locator('.thematiq-set-panel__facts')).toContainText('Light workplace, menu 264 px')
+		await expect(panel.locator('.thematiq-set-panel__facts')).toContainText(
+			'Light workplace, menu 264 px',
+		)
 		await expect(panel.locator('.thematiq-set-panel__stripe')).toBeVisible()
 	})
 
@@ -41,8 +57,13 @@ test.describe('the token set panel', () => {
 		await expect(panel).toBeVisible()
 
 		await panel.getByRole('tab', { name: /^Website/ }).click()
-		await expect(panel.getByRole('tab', { name: /^Website/ })).toHaveAttribute('aria-selected', 'true')
-		await expect(panel.locator('.thematiq-set-panel__groups')).toContainText('--nldesign-website-')
+		await expect(panel.getByRole('tab', { name: /^Website/ })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		)
+		await expect(panel.locator('.thematiq-set-panel__groups')).toContainText(
+			'--nldesign-website-',
+		)
 
 		await panel.getByRole('tab', { name: /^Colours/ }).click()
 		const search = panel.locator('.thematiq-set-panel__search')
@@ -50,23 +71,29 @@ test.describe('the token set panel', () => {
 		await expect(panel.locator('.thematiq-set-panel__row')).toHaveCount(1)
 		await search.fill('')
 
-		const more = page.locator('#thematiq-page-header .thematiq-page-header__more')
+		const more = page.locator(
+			'#thematiq-page-header .thematiq-page-header__more',
+		)
 		await more.click()
 		const menu = page.locator('.thematiq-page-header__menu')
 		await expect(menu).toBeVisible()
-		await expect(menu.getByRole('menuitem', { name: /Download token overview/ })).toHaveAttribute('href', /format=md&download=1/)
+		await expect(
+			menu.getByRole('menuitem', { name: /Download token overview/ }),
+		).toHaveAttribute('href', /format=md&download=1/)
 		await page.keyboard.press('Escape')
 		await expect(menu).toBeHidden()
 		await expect(more).toBeFocused()
 	})
 
-	test('the browser\'s back button returns to the overview', async ({ page }) => {
+	test("the browser's back button returns to the overview", async ({ page }) => {
 		await page.goto(THEMING_URL)
 		await page.waitForLoadState('domcontentloaded')
 		await page.evaluate(() => {
 			window.location.hash = 'set/zuiddrecht'
 		})
-		await expect(page.locator('section[data-thematiq-panel="set"]')).toBeVisible()
+		await expect(
+			page.locator('section[data-thematiq-panel="set"]'),
+		).toBeVisible()
 		await page.goBack()
 		await expect(page.locator('section[data-thematiq-panel="set"]')).toBeHidden()
 		await expect(page.locator('#thematiq-token-sets')).toBeVisible()

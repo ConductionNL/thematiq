@@ -33,7 +33,9 @@ function installState(value) {
 				if (typeof value === 'function') {
 					return value()
 				}
-				return app === 'thematiq' && key === 'search-placeholder' ? value : fallback
+				return app === 'thematiq' && key === 'search-placeholder'
+					? value
+					: fallback
 			},
 		},
 	}
@@ -50,13 +52,18 @@ async function loadScript() {
 }
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0))
-const label = () => document.querySelector('.unified-search-input__label').textContent
-const placeholder = () => document.querySelector('.unified-search-input input').getAttribute('placeholder')
+const label = () =>
+	document.querySelector('.unified-search-input__label').textContent
+const placeholder = () =>
+	document.querySelector('.unified-search-input input').getAttribute('placeholder')
 
 describe('the search placeholder', () => {
 	beforeEach(() => {
 		// A fresh body per test: an earlier test's observer watches the old one.
-		document.documentElement.replaceChild(document.createElement('body'), document.body)
+		document.documentElement.replaceChild(
+			document.createElement('body'),
+			document.body,
+		)
 		document.body.innerHTML = SEARCH
 	})
 
@@ -70,7 +77,11 @@ describe('the search placeholder', () => {
 		await loadScript()
 		expect(label()).toBe(WORDS)
 		expect(placeholder()).toBe(WORDS)
-		expect(document.querySelector('input.no-placeholder').hasAttribute('placeholder')).toBe(false)
+		expect(
+			document
+				.querySelector('input.no-placeholder')
+				.hasAttribute('placeholder'),
+		).toBe(false)
 	})
 
 	it('names the search dialog field, but not another field in the dialog', async () => {
@@ -86,17 +97,29 @@ describe('the search placeholder', () => {
 		document.body.appendChild(modal)
 		await flush()
 
-		expect(modal.querySelector('.search .input-field__label').textContent).toBe(WORDS)
-		expect(modal.querySelector('input[data-cy-unified-search-input]').getAttribute('placeholder')).toBe(WORDS)
-		expect(modal.querySelector('.filter .input-field__label').textContent).toBe('Filter')
-		expect(modal.querySelector(':scope > .input-field__label').textContent).toBe('Loose')
+		expect(modal.querySelector('.search .input-field__label').textContent).toBe(
+			WORDS,
+		)
+		expect(
+			modal
+				.querySelector('input[data-cy-unified-search-input]')
+				.getAttribute('placeholder'),
+		).toBe(WORDS)
+		expect(modal.querySelector('.filter .input-field__label').textContent).toBe(
+			'Filter',
+		)
+		expect(modal.querySelector(':scope > .input-field__label').textContent).toBe(
+			'Loose',
+		)
 	})
 
 	it('puts the words back when the search re-renders its own', async () => {
 		installState(WORDS)
 		await loadScript()
 		document.querySelector('.unified-search-input__label').textContent = 'Search'
-		document.querySelector('.unified-search-input input').setAttribute('placeholder', 'Search apps')
+		document
+			.querySelector('.unified-search-input input')
+			.setAttribute('placeholder', 'Search apps')
 		await flush()
 		expect(label()).toBe(WORDS)
 		expect(placeholder()).toBe(WORDS)
@@ -141,7 +164,9 @@ describe('the search placeholder', () => {
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
 		installState(WORDS)
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(label()).toBe('Search')
 

@@ -33,16 +33,22 @@ describe('Theme gallery panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+		window.t = (app, text, vars) =>
+			Object.keys(vars || {}).reduce(
+				(acc, key) => acc.replace('{' + key + '}', vars[key]),
+				text,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -53,18 +59,25 @@ describe('Theme gallery panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
 		delete document.documentElement.dataset.thematiqOpenPanel
 	})
 
-	const intro = () => document.querySelector('.thematiq-page-header__intro').textContent
+	const intro = () =>
+		document.querySelector('.thematiq-page-header__intro').textContent
 
 	it('opens with the title, the short crumb, and the gallery off', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Theme gallery and updates')
-		expect(document.querySelector('[aria-current="page"]').textContent).toBe('Theme gallery')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Theme gallery and updates')
+		expect(document.querySelector('[aria-current="page"]').textContent).toBe(
+			'Theme gallery',
+		)
 		expect(intro()).toBe('Gallery off, 0 notices from the source')
 	})
 

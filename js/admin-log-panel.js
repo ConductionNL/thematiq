@@ -36,12 +36,20 @@
 	function line() {
 		var since = summary.since !== null ? new Date(summary.since) : null
 		if (since === null || isNaN(since.getTime())) {
-			return summary.count === 1 ? tr('1 change') : tr('{count} changes', { count: summary.count })
+			return summary.count === 1
+				? tr('1 change')
+				: tr('{count} changes', { count: summary.count })
 		}
-		var date = since.toLocaleDateString(document.documentElement.lang || undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+		var date = since.toLocaleDateString(
+			document.documentElement.lang || undefined,
+			{ day: 'numeric', month: 'short', year: 'numeric' },
+		)
 		return summary.count === 1
 			? tr('1 change since {date}', { date: date })
-			: tr('{count} changes since {date}', { count: summary.count, date: date })
+			: tr('{count} changes since {date}', {
+					count: summary.count,
+					date: date,
+				})
 	}
 
 	/**
@@ -52,14 +60,22 @@
 	function draw() {
 		var count = document.querySelector('.thematiq-log-panel__count')
 		if (count !== null) {
-			count.textContent = tr('{shown} of {total} changes', { shown: summary.count, total: summary.count })
+			count.textContent = tr('{shown} of {total} changes', {
+				shown: summary.count,
+				total: summary.count,
+			})
 		}
 		var versions = document.querySelector('.thematiq-log-panel__versions')
 		if (versions !== null) {
 			versions.textContent = tr('{count} of 50', { count: summary.versions })
 		}
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'log') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'log'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.textContent = line()
 			}
@@ -86,7 +102,10 @@
 	}
 
 	document.addEventListener('thematiq:audit-rendered', function (event) {
-		summary = Object.assign({ count: 0, versions: 0, since: null }, event.detail || {})
+		summary = Object.assign(
+			{ count: 0, versions: 0, since: null },
+			event.detail || {},
+		)
 		draw()
 	})
 

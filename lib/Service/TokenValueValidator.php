@@ -194,6 +194,8 @@ class TokenValueValidator {
 	 *
 	 * @return array<string, string> Token name => reason.
 	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenReference is a final class of pure functions
+	 *
 	 * @spec openspec/specs/token-editor-ui/spec.md#scenario-a-cycle-is-refused
 	 */
 	private function cycleRejected(array $tokens): array {
@@ -284,6 +286,8 @@ class TokenValueValidator {
 	 * @param string $type The token type.
 	 *
 	 * @return string|null The reason, naming the type.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenReference is a final class of pure functions
 	 */
 	private function valueProblem(mixed $value, string $type): ?string {
 		if (is_string($value) === false || preg_match('/[{};]|\\/\\*|\\*\\//', $value) === 1) {

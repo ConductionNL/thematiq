@@ -28,7 +28,8 @@ function installGlobals() {
 	global.OC = {
 		generateUrl: (url) => '/index.php' + url,
 		linkTo: (app, path) => path,
-		filePath: (app, type, file) => '/custom_apps/' + app + '/' + type + '/' + file,
+		filePath: (app, type, file) =>
+			'/custom_apps/' + app + '/' + type + '/' + file,
 		requestToken: 'test-token',
 		Notification: { showTemporary: vi.fn() },
 		dialogs: { confirm: vi.fn() },
@@ -44,9 +45,18 @@ function installGlobals() {
 			if (answer instanceof Error) {
 				return Promise.reject(answer)
 			}
-			return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(answer) })
+			return Promise.resolve({
+				ok: true,
+				status: 200,
+				json: () => Promise.resolve(answer),
+			})
 		}
-		return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({}), headers: { get: () => null } })
+		return Promise.resolve({
+			ok: true,
+			status: 200,
+			json: () => Promise.resolve({}),
+			headers: { get: () => null },
+		})
 	})
 }
 
@@ -104,8 +114,13 @@ describe('admin.js layout layers', () => {
 	it('saves every option together, trimmed, with an empty value for a field the page lacks', async () => {
 		await change('thematiq-workplace-layout', 'light')
 
-		const [[, options]] = global.fetch.mock.calls.filter(([url, o]) => url === URL_LAYOUT && o && o.method === 'POST')
-		expect(options.headers).toEqual({ 'Content-Type': 'application/json', requesttoken: 'test-token' })
+		const [[, options]] = global.fetch.mock.calls.filter(
+			([url, o]) => url === URL_LAYOUT && o && o.method === 'POST',
+		)
+		expect(options.headers).toEqual({
+			'Content-Type': 'application/json',
+			requesttoken: 'test-token',
+		})
 		expect(JSON.parse(options.body)).toEqual({
 			workplaceLayout: 'light',
 			brandStripe: '',
@@ -142,25 +157,57 @@ describe('admin.js layout layers', () => {
 			'workplace-layout',
 		])
 		const link = document.head.querySelector('link[href*="workplace-layout"]')
-		expect(link.getAttribute('href')).toMatch(/^\/custom_apps\/thematiq\/css\/workplace-layout\.css\?v=\d+$/)
+		expect(link.getAttribute('href')).toMatch(
+			/^\/custom_apps\/thematiq\/css\/workplace-layout\.css\?v=\d+$/,
+		)
 		expect(link.getAttribute('data-nldesign-layer')).toBe('conditional')
 		const width = $('thematiq-navigation-width')
-		expect(width.textContent).toBe(':root { --thematiq-navigation-width: 300px; }')
+		expect(width.textContent).toBe(
+			':root { --thematiq-navigation-width: 300px; }',
+		)
 		expect(width.getAttribute('data-nldesign-layer')).toBe('conditional')
 		expect(toast).toHaveBeenCalledWith('Applied.')
 	})
 
 	it('adds a stylesheet once, updates the width in place, and takes off what is turned off', async () => {
-		answer = { status: 'ok', resolved: { workplaceLayout: 'light', brandStripe: true, brandStripePlacement: 'login', navigationWidth: 300 } }
+		answer = {
+			status: 'ok',
+			resolved: {
+				workplaceLayout: 'light',
+				brandStripe: true,
+				brandStripePlacement: 'login',
+				navigationWidth: 300,
+			},
+		}
 		await change('thematiq-workplace-layout', 'light')
-		answer = { status: 'ok', resolved: { workplaceLayout: 'light', brandStripe: true, brandStripePlacement: 'login', navigationWidth: 260 } }
+		answer = {
+			status: 'ok',
+			resolved: {
+				workplaceLayout: 'light',
+				brandStripe: true,
+				brandStripePlacement: 'login',
+				navigationWidth: 260,
+			},
+		}
 		await change('thematiq-navigation-width-input', '260')
 
-		expect(layers()).toEqual(['brand-stripe', 'brand-stripe-login-only', 'navigation-width', 'workplace-layout'])
-		expect(document.querySelectorAll('#thematiq-navigation-width')).toHaveLength(1)
-		expect($('thematiq-navigation-width').textContent).toBe(':root { --thematiq-navigation-width: 260px; }')
+		expect(layers()).toEqual([
+			'brand-stripe',
+			'brand-stripe-login-only',
+			'navigation-width',
+			'workplace-layout',
+		])
+		expect(document.querySelectorAll('#thematiq-navigation-width')).toHaveLength(
+			1,
+		)
+		expect($('thematiq-navigation-width').textContent).toBe(
+			':root { --thematiq-navigation-width: 260px; }',
+		)
 
-		answer = { status: 'ok', resolved: { workplaceLayout: 'classic', brandStripe: false } }
+		answer = {
+			status: 'ok',
+			resolved: { workplaceLayout: 'classic', brandStripe: false },
+		}
 		await change('thematiq-workplace-layout', 'classic')
 		expect(layers()).toEqual([])
 		expect($('thematiq-navigation-width')).toBeNull()

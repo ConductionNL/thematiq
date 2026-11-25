@@ -70,7 +70,11 @@
 				}
 			})
 		}
-		if (open === null || typeof open.name !== 'string' || open.name.trim() === '') {
+		if (
+			open === null
+			|| typeof open.name !== 'string'
+			|| open.name.trim() === ''
+		) {
 			return null
 		}
 
@@ -143,7 +147,10 @@
 	 */
 	function styled(host) {
 		return (
-			window.getComputedStyle(host).getPropertyValue('--thematiq-brand-block').trim() === '1'
+			window
+				.getComputedStyle(host)
+				.getPropertyValue('--thematiq-brand-block')
+				.trim() === '1'
 		)
 	}
 
@@ -201,7 +208,9 @@
 		var concernsBrand = function (node) {
 			return (
 				node.nodeType === 1
-				&& (node === host || node.matches(OWN_BRAND) || node.querySelector(OWN_BRAND) !== null)
+				&& (node === host
+					|| node.matches(OWN_BRAND)
+					|| node.querySelector(OWN_BRAND) !== null)
 			)
 		}
 		var relevant = function (records) {
@@ -210,7 +219,9 @@
 				if (record.target === header) {
 					return true
 				}
-				var nodes = Array.prototype.slice.call(record.addedNodes).concat(Array.prototype.slice.call(record.removedNodes))
+				var nodes = Array.prototype.slice
+					.call(record.addedNodes)
+					.concat(Array.prototype.slice.call(record.removedNodes))
 				for (var j = 0; j < nodes.length; j++) {
 					if (concernsBrand(nodes[j])) {
 						return true

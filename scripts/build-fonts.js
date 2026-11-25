@@ -636,7 +636,9 @@ const FORMAT_HINTS = {
 
 /** Render one @font-face block. */
 function renderFace(family, face) {
-	const sources = (face.local === undefined ? [] : [`local('${face.local}')`]).concat(
+	const sources = (
+		face.local === undefined ? [] : [`local('${face.local}')`]
+	).concat(
 		face.formats.map(
 			(format) =>
 				`url('${family.dir}/${face.file}.${format}') format('${FORMAT_HINTS[format] ?? format}')`,
@@ -652,7 +654,11 @@ function renderFace(family, face) {
 		`\tfont-style: ${face.style};`,
 		'\tfont-display: swap;',
 	]
-		.concat(face.unicodeRange === undefined ? [] : [`\tunicode-range: ${face.unicodeRange};`])
+		.concat(
+			face.unicodeRange === undefined
+				? []
+				: [`\tunicode-range: ${face.unicodeRange};`],
+		)
 		.concat(['}'])
 		.join('\n')
 }

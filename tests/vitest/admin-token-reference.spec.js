@@ -258,10 +258,16 @@ describe('admin.js token reference links', () => {
 
 		it("keeps a custom set's actions in the row's menu, which Escape closes", async () => {
 			await load()
-			const toggle = document.querySelector('#nldesign-custom-set-list .nldesign-custom-set-menu-toggle')
-			const menu = document.querySelector('#nldesign-custom-set-list .nldesign-custom-set-menu')
+			const toggle = document.querySelector(
+				'#nldesign-custom-set-list .nldesign-custom-set-menu-toggle',
+			)
+			const menu = document.querySelector(
+				'#nldesign-custom-set-list .nldesign-custom-set-menu',
+			)
 			expect(menu.hidden).toBe(true)
-			expect(Array.from(menu.children).map((item) => item.textContent)).toEqual([
+			expect(
+				Array.from(menu.children).map((item) => item.textContent),
+			).toEqual([
 				'Download',
 				'Download as design tokens',
 				'Token reference',
@@ -271,7 +277,9 @@ describe('admin.js token reference links', () => {
 			toggle.click()
 			expect(menu.hidden).toBe(false)
 			expect(toggle.getAttribute('aria-expanded')).toBe('true')
-			menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+			menu.dispatchEvent(
+				new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+			)
 			expect(menu.hidden).toBe(true)
 			expect(document.activeElement).toBe(toggle)
 		})

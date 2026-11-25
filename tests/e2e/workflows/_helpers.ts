@@ -200,8 +200,10 @@ export async function getServedOverrideCss(page: Page): Promise<string> {
 		return linked !== null
 			? linked.href
 			: (
-				window as unknown as { OC: { generateUrl: (p: string) => string } }
-			).OC.generateUrl('/apps/thematiq/runtime/css/custom-overrides.css')
+					window as unknown as {
+						OC: { generateUrl: (p: string) => string }
+					}
+				).OC.generateUrl('/apps/thematiq/runtime/css/custom-overrides.css')
 	})
 	const res = await page.request.get(url)
 	expect(

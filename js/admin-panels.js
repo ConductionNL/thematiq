@@ -109,9 +109,11 @@
 			[tr('Administration settings'), null],
 			[tr('Themes and appearance'), '#'],
 			['Thematiq', null],
-		].concat((crumbs || []).map(function (step) {
-			return [step.text, step.href || null]
-		}))
+		].concat(
+			(crumbs || []).map(function (step) {
+				return [step.text, step.href || null]
+			}),
+		)
 		steps.push([resolve(config.crumb) || resolve(config.title), null])
 		parts.crumbs.replaceChildren()
 		steps.forEach(function (step, index) {
@@ -121,7 +123,9 @@
 				slash.textContent = '/'
 				parts.crumbs.appendChild(slash)
 			}
-			parts.crumbs.appendChild(crumb(step[0], step[1], index === steps.length - 1))
+			parts.crumbs.appendChild(
+				crumb(step[0], step[1], index === steps.length - 1),
+			)
 		})
 		var intro = resolve(config.intro) || ''
 		if (Array.isArray(intro) === true) {
@@ -129,7 +133,10 @@
 		} else {
 			parts.intro.textContent = intro
 		}
-		parts.actions.replaceChildren.apply(parts.actions, typeof config.actions === 'function' ? config.actions(argument) : [])
+		parts.actions.replaceChildren.apply(
+			parts.actions,
+			typeof config.actions === 'function' ? config.actions(argument) : [],
+		)
 	}
 
 	/**
@@ -157,12 +164,18 @@
 	 */
 	function borrow(section) {
 		section.querySelectorAll('[data-thematiq-slot]').forEach(function (slot) {
-			var control = document.getElementById(slot.getAttribute('data-thematiq-slot'))
+			var control = document.getElementById(
+				slot.getAttribute('data-thematiq-slot'),
+			)
 			if (control === null) {
 				return
 			}
 			var option = control.closest('.nldesign-option') || control
-			borrowed.push({ option: option, parent: option.parentNode, next: option.nextSibling })
+			borrowed.push({
+				option: option,
+				parent: option.parentNode,
+				next: option.nextSibling,
+			})
 			slot.appendChild(option)
 		})
 	}
@@ -189,9 +202,13 @@
 			return
 		}
 		var hash = current
-		var link = document.querySelector('a[href="#' + (argument !== '' ? hash + '/' + argument : hash) + '"]')
+		var link = document.querySelector(
+			'a[href="#' + (argument !== '' ? hash + '/' + argument : hash) + '"]',
+		)
 		var config = panels[hash]
-		var section = document.querySelector('section[data-thematiq-panel="' + hash + '"]')
+		var section = document.querySelector(
+			'section[data-thematiq-panel="' + hash + '"]',
+		)
 		giveBack()
 		undressHeader()
 		if (section !== null) {
@@ -217,9 +234,12 @@
 	function open(target) {
 		var cut = String(target).indexOf('/')
 		var hash = cut === -1 ? String(target) : String(target).slice(0, cut)
-		var wanted = cut === -1 ? '' : decodeURIComponent(String(target).slice(cut + 1))
+		var wanted =
+			cut === -1 ? '' : decodeURIComponent(String(target).slice(cut + 1))
 		var config = panels[hash]
-		var section = document.querySelector('section[data-thematiq-panel="' + hash + '"]')
+		var section = document.querySelector(
+			'section[data-thematiq-panel="' + hash + '"]',
+		)
 		if (config === undefined || section === null) {
 			return false
 		}
@@ -237,7 +257,9 @@
 			config.onOpen(section, argument)
 		}
 		window.scrollTo(0, 0)
-		var title = document.querySelector('#thematiq-page-header .thematiq-page-header__title')
+		var title = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__title',
+		)
 		if (title !== null) {
 			title.setAttribute('tabindex', '-1')
 			title.focus()
@@ -304,12 +326,17 @@
 			}
 		}
 		items.forEach(function (item) {
-			var entry = document.createElement(item.href !== undefined ? 'a' : 'button')
+			var entry = document.createElement(
+				item.href !== undefined ? 'a' : 'button',
+			)
 			entry.className = 'thematiq-page-header__menu-item'
 			entry.setAttribute('role', 'menuitem')
 			if (item.href !== undefined) {
 				entry.href = item.href
-				if (item.href.charAt(0) !== '#' && item.href.indexOf('download=1') === -1) {
+				if (
+					item.href.charAt(0) !== '#'
+					&& item.href.indexOf('download=1') === -1
+				) {
 					entry.target = '_blank'
 					entry.rel = 'noopener noreferrer'
 				}
@@ -341,14 +368,19 @@
 			}
 		})
 		list.addEventListener('keydown', function (event) {
-			var entries = Array.prototype.slice.call(list.querySelectorAll('[role="menuitem"]'))
+			var entries = Array.prototype.slice.call(
+				list.querySelectorAll('[role="menuitem"]'),
+			)
 			var at = entries.indexOf(document.activeElement)
 			if (event.key === 'Escape') {
 				event.preventDefault()
 				shut(true)
 			} else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 				event.preventDefault()
-				entries[(at + (event.key === 'ArrowDown' ? 1 : entries.length - 1)) % entries.length].focus()
+				entries[
+					(at + (event.key === 'ArrowDown' ? 1 : entries.length - 1))
+						% entries.length
+				].focus()
 			}
 		})
 		document.addEventListener('click', function () {

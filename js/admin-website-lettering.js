@@ -12,11 +12,36 @@
 	var SCALE = 0.6
 
 	var SIZES = [
-		{ label: 'Page title', sample: 'Waste and recycling', token: '--nldesign-website-heading-1-font-size', weight: 700 },
-		{ label: 'Heading 2', sample: 'When is it collected?', token: '--nldesign-website-heading-2-font-size', weight: 700 },
-		{ label: 'Heading 3', sample: 'Bulky waste', token: '--nldesign-website-heading-3-font-size', weight: 700 },
-		{ label: 'Lead', sample: 'Everything about collection days.', token: '--nldesign-website-lead-font-size', weight: 400 },
-		{ label: 'Body text', sample: 'Put the bin out before 7:30.', token: '--nldesign-website-content-font-size', weight: 400 },
+		{
+			label: 'Page title',
+			sample: 'Waste and recycling',
+			token: '--nldesign-website-heading-1-font-size',
+			weight: 700,
+		},
+		{
+			label: 'Heading 2',
+			sample: 'When is it collected?',
+			token: '--nldesign-website-heading-2-font-size',
+			weight: 700,
+		},
+		{
+			label: 'Heading 3',
+			sample: 'Bulky waste',
+			token: '--nldesign-website-heading-3-font-size',
+			weight: 700,
+		},
+		{
+			label: 'Lead',
+			sample: 'Everything about collection days.',
+			token: '--nldesign-website-lead-font-size',
+			weight: 400,
+		},
+		{
+			label: 'Body text',
+			sample: 'Put the bin out before 7:30.',
+			token: '--nldesign-website-content-font-size',
+			weight: 400,
+		},
 	]
 
 	/**
@@ -66,7 +91,10 @@
 			row.className = 'thematiq-lettering__row'
 			var name = document.createElement('span')
 			name.className = 'thematiq-lettering__name'
-			name.textContent = tr('{label} {size}', { label: tr(size.label), size: Math.round(px) })
+			name.textContent = tr('{label} {size}', {
+				label: tr(size.label),
+				size: Math.round(px),
+			})
 			var sample = document.createElement('span')
 			sample.className = 'thematiq-lettering__sample'
 			sample.style.fontSize = Math.round(px * SCALE) + 'px'
@@ -105,17 +133,25 @@
 		if (link === null || !id) {
 			return
 		}
-		var path = '/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
-		link.href = (window.OC && typeof OC.generateUrl === 'function' ? OC.generateUrl(path) : path) + '?format=html'
+		var path =
+			'/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
+		link.href =
+			(window.OC && typeof OC.generateUrl === 'function'
+				? OC.generateUrl(path)
+				: path) + '?format=html'
 	}
 
 	/** Find the list and draw it, again when another set is applied. */
 	function main() {
-		var list = document.querySelector('#thematiq-website-lettering .thematiq-lettering')
+		var list = document.querySelector(
+			'#thematiq-website-lettering .thematiq-lettering',
+		)
 		if (list === null) {
 			return
 		}
-		var link = document.querySelector('#thematiq-website-lettering .thematiq-lettering__link')
+		var link = document.querySelector(
+			'#thematiq-website-lettering .thematiq-lettering__link',
+		)
 		draw(list)
 		pointLink(link, currentSet())
 		document.addEventListener('thematiq:theme-applied', function (event) {

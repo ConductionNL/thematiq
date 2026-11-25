@@ -32,8 +32,14 @@
 	 * @return {string} The line.
 	 */
 	function line() {
-		var mail = toggle !== null && toggle.checked === true ? tr('Email template on') : tr('Email template off')
-		var logo = preview !== null && preview.querySelector('img') !== null ? tr('document logo set') : tr('no document logo')
+		var mail =
+			toggle !== null && toggle.checked === true
+				? tr('Email template on')
+				: tr('Email template off')
+		var logo =
+			preview !== null && preview.querySelector('img') !== null
+				? tr('document logo set')
+				: tr('no document logo')
 		return mail + ', ' + logo
 	}
 
@@ -44,12 +50,17 @@
 	 */
 	function render() {
 		var name = org !== null ? org.value : ''
-		document.querySelectorAll('.thematiq-email-panel__org').forEach(function (el) {
-			el.textContent = name
-		})
+		document
+			.querySelectorAll('.thematiq-email-panel__org')
+			.forEach(function (el) {
+				el.textContent = name
+			})
 		var foot = document.querySelector('.thematiq-email-panel__letter-foot')
 		if (foot !== null) {
-			foot.textContent = footerLine !== null && footerLine.value !== '' ? footerLine.value : name
+			foot.textContent =
+				footerLine !== null && footerLine.value !== ''
+					? footerLine.value
+					: name
 		}
 		var logo = document.querySelector('.thematiq-email-panel__letter-logo')
 		var img = preview !== null ? preview.querySelector('img') : null
@@ -61,8 +72,13 @@
 				logo.appendChild(copy)
 			}
 		}
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'email') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'email'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.textContent = line()
 			}

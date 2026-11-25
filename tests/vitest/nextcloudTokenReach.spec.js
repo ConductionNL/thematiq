@@ -63,7 +63,8 @@ describe('the recorded reach of the Nextcloud internal tokens', () => {
 
 	it('proves a directly following token: its stock value reads a Nextcloud variable the design system maps from a set token', () => {
 		const following = nextcloud.filter(
-			(token) => reach[token].reach === 'follows' && isInherited(token) === false,
+			(token) =>
+				reach[token].reach === 'follows' && isInherited(token) === false,
 		)
 		expect(following.length).toBeGreaterThan(0)
 		for (const token of following) {
@@ -120,7 +121,10 @@ describe('the recorded reach of the Nextcloud internal tokens', () => {
 			expect(reach[token].reads.length, token).toBeGreaterThan(0)
 			for (const variable of reach[token].reads) {
 				expect(read, token).toContain(variable)
-				expect(internalVariables.has(variable), `${token}: ${variable}`).toBe(false)
+				expect(
+					internalVariables.has(variable),
+					`${token}: ${variable}`,
+				).toBe(false)
 			}
 		}
 	})
@@ -132,7 +136,10 @@ describe('the recorded reach of the Nextcloud internal tokens', () => {
 			const parent = reach[token].inherits
 			const read = variablesIn(internal[token].stock)
 			expect(read[0], token).toBe(internal[parent].variable)
-			expect(read.every((variable) => internalVariables.has(variable)), token).toBe(true)
+			expect(
+				read.every((variable) => internalVariables.has(variable)),
+				token,
+			).toBe(true)
 			const parentReach = reach[parent]?.reach
 			if (parentReach !== undefined) {
 				expect(reach[token].reach, token).toBe(parentReach)

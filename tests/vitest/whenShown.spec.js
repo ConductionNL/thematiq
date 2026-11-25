@@ -37,12 +37,15 @@ describe('ThematiqWhenShown', () => {
 	it('runs at once for a block outside any panel and returns its result', () => {
 		document.body.innerHTML = '<div id="block"></div>'
 		const run = vi.fn(() => 'started')
-		expect(window.ThematiqWhenShown(document.getElementById('block'), run)).toBe('started')
+		expect(window.ThematiqWhenShown(document.getElementById('block'), run)).toBe(
+			'started',
+		)
 		expect(run).toHaveBeenCalledTimes(1)
 	})
 
 	it('runs at once for a block in an open panel', () => {
-		document.body.innerHTML = '<section data-thematiq-panel="brands"><div id="block"></div></section>'
+		document.body.innerHTML =
+			'<section data-thematiq-panel="brands"><div id="block"></div></section>'
 		const run = vi.fn()
 		window.ThematiqWhenShown(document.getElementById('block'), run)
 		expect(run).toHaveBeenCalledTimes(1)
@@ -55,10 +58,13 @@ describe('ThematiqWhenShown', () => {
 	})
 
 	it('waits while the panel is closed and runs once when it opens', async () => {
-		document.body.innerHTML = '<section data-thematiq-panel="brands" hidden><div id="block"></div></section>'
+		document.body.innerHTML =
+			'<section data-thematiq-panel="brands" hidden><div id="block"></div></section>'
 		const section = document.querySelector('section')
 		const run = vi.fn()
-		expect(window.ThematiqWhenShown(document.getElementById('block'), run)).toBeUndefined()
+		expect(
+			window.ThematiqWhenShown(document.getElementById('block'), run),
+		).toBeUndefined()
 		await flush()
 		expect(run).not.toHaveBeenCalled()
 
@@ -77,8 +83,14 @@ describe('ThematiqWhenShown', () => {
 describe('panel-only loaders', () => {
 	beforeEach(async () => {
 		global.t = (app, text) => text
-		global.OC = { generateUrl: (url) => url, linkTo: (app, path) => path, requestToken: 'token' }
-		global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }))
+		global.OC = {
+			generateUrl: (url) => url,
+			linkTo: (app, path) => path,
+			requestToken: 'token',
+		}
+		global.fetch = vi.fn(() =>
+			Promise.resolve({ ok: true, json: () => Promise.resolve({}) }),
+		)
 		await loadHelper()
 	})
 
@@ -103,7 +115,9 @@ describe('panel-only loaders', () => {
 		document.querySelector('section').hidden = false
 		await flush()
 		expect(global.fetch).toHaveBeenCalled()
-		expect(String(global.fetch.mock.calls[0][0])).toContain('/apps/thematiq/settings/app-brands')
+		expect(String(global.fetch.mock.calls[0][0])).toContain(
+			'/apps/thematiq/settings/app-brands',
+		)
 	})
 
 	it('the workspace icons block asks for nothing until the brands panel opens', async () => {
@@ -118,7 +132,9 @@ describe('panel-only loaders', () => {
 
 		document.querySelector('section').hidden = false
 		await flush()
-		expect(String(global.fetch.mock.calls[0][0])).toContain('/apps/thematiq/settings/workspace-icons')
+		expect(String(global.fetch.mock.calls[0][0])).toContain(
+			'/apps/thematiq/settings/workspace-icons',
+		)
 	})
 
 	it('the document style block asks for nothing until the email panel opens', async () => {
@@ -135,7 +151,9 @@ describe('panel-only loaders', () => {
 
 		document.querySelector('section').hidden = false
 		await flush()
-		expect(String(global.fetch.mock.calls[0][0])).toContain('/apps/thematiq/settings/document-style')
+		expect(String(global.fetch.mock.calls[0][0])).toContain(
+			'/apps/thematiq/settings/document-style',
+		)
 	})
 
 	it('the assistant mark block asks for nothing until the assistant panel opens', async () => {
@@ -154,7 +172,9 @@ describe('panel-only loaders', () => {
 
 		document.querySelector('section').hidden = false
 		await flush()
-		expect(String(global.fetch.mock.calls[0][0])).toContain('/apps/thematiq/settings/assistant-mark')
+		expect(String(global.fetch.mock.calls[0][0])).toContain(
+			'/apps/thematiq/settings/assistant-mark',
+		)
 	})
 
 	it('a block on the overview still loads at once', async () => {

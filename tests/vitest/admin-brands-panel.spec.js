@@ -34,16 +34,22 @@ describe('Brand per app panel', () => {
 	let added = []
 
 	beforeEach(async () => {
-		window.t = (app, text, vars) => Object.keys(vars || {}).reduce((acc, key) => acc.replace('{' + key + '}', vars[key]), text)
+		window.t = (app, text, vars) =>
+			Object.keys(vars || {}).reduce(
+				(acc, key) => acc.replace('{' + key + '}', vars[key]),
+				text,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -54,31 +60,47 @@ describe('Brand per app panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
 		delete document.documentElement.dataset.thematiqOpenPanel
 	})
 
-	const intro = () => document.querySelector('.thematiq-page-header__intro').textContent
+	const intro = () =>
+		document.querySelector('.thematiq-page-header__intro').textContent
 
 	it('counts the brands, then the apps that follow the house style once the list is drawn', async () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Brand per app')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Brand per app')
 		expect(intro()).toBe('0 apps with their own brand')
-		document.dispatchEvent(new CustomEvent('thematiq:app-brands', { detail: { brands: { learniq: {} } } }))
+		document.dispatchEvent(
+			new CustomEvent('thematiq:app-brands', {
+				detail: { brands: { learniq: {} } },
+			}),
+		)
 		expect(intro()).toBe('1 app with its own brand')
-		document.getElementById('nldesign-app-theming-list').innerHTML = '<input type="checkbox" data-app-id="a" checked><input type="checkbox" data-app-id="b">'
+		document.getElementById('nldesign-app-theming-list').innerHTML =
+			'<input type="checkbox" data-app-id="a" checked><input type="checkbox" data-app-id="b">'
 		await flush()
-		expect(intro()).toBe('1 app with its own brand, 1 of 2 apps follow the house style')
+		expect(intro()).toBe(
+			'1 app with its own brand, 1 of 2 apps follow the house style',
+		)
 		const box = document.querySelector('[data-app-id="b"]')
 		box.checked = true
 		box.dispatchEvent(new Event('change', { bubbles: true }))
-		expect(intro()).toBe('1 app with its own brand, 2 of 2 apps follow the house style')
+		expect(intro()).toBe(
+			'1 app with its own brand, 2 of 2 apps follow the house style',
+		)
 	})
 
 	it('moves focus to the add form from the header button', () => {
-		const button = document.querySelector('.thematiq-page-header__actions button')
+		const button = document.querySelector(
+			'.thematiq-page-header__actions button',
+		)
 		expect(button.textContent).toBe('Add brand')
 		button.click()
 		expect(document.activeElement.id).toBe('nldesign-app-brands-app')

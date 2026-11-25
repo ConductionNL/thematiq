@@ -14,10 +14,17 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const BAR = '<header id="header"><nav class="apps"></nav></header><main><span id="clock">10:00</span></main>'
+const BAR =
+	'<header id="header"><nav class="apps"></nav></header><main><span id="clock">10:00</span></main>'
 
-const MAIL_APPS = { files: { active: false, name: 'Files' }, mail: { active: true, name: ' Mail ', href: '/apps/mail/' } }
-const CAPABILITIES = { theming: { name: ' Zuiddrecht ' }, nldesign: { logos: { emblem: '/emblem.svg' } } }
+const MAIL_APPS = {
+	files: { active: false, name: 'Files' },
+	mail: { active: true, name: ' Mail ', href: '/apps/mail/' },
+}
+const CAPABILITIES = {
+	theming: { name: ' Zuiddrecht ' },
+	nldesign: { logos: { emblem: '/emblem.svg' } },
+}
 
 let styleReads
 let blockValue
@@ -63,14 +70,20 @@ const flush = () => new Promise((resolveFlush) => setTimeout(resolveFlush, 0))
 
 beforeEach(() => {
 	// A fresh body per test: an earlier test's observer watches the old one.
-	document.documentElement.replaceChild(document.createElement('body'), document.body)
+	document.documentElement.replaceChild(
+		document.createElement('body'),
+		document.body,
+	)
 	document.body.innerHTML = BAR
 	installState(MAIL_APPS, CAPABILITIES)
 	styleReads = 0
 	blockValue = ' 1 '
 	vi.spyOn(window, 'getComputedStyle').mockImplementation(() => {
 		styleReads++
-		return { getPropertyValue: (name) => (name === '--thematiq-brand-block' ? blockValue : '') }
+		return {
+			getPropertyValue: (name) =>
+				name === '--thematiq-brand-block' ? blockValue : '',
+		}
 	})
 	vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
 		callback(0)
@@ -88,7 +101,9 @@ describe('header brand', () => {
 		await loadScript()
 		const header = document.getElementById('header')
 		expect(header.firstChild.className).toBe('thematiq-brand-host')
-		expect(header.querySelector('.thematiq-brand__name').textContent).toBe('Mail')
+		expect(header.querySelector('.thematiq-brand__name').textContent).toBe(
+			'Mail',
+		)
 		expect(header.hasAttribute('data-thematiq-brand')).toBe(true)
 	})
 
@@ -102,7 +117,9 @@ describe('header brand', () => {
 		expect(emblem.getAttribute('src')).toBe('/emblem.svg')
 		expect(emblem.getAttribute('alt')).toBe('')
 
-		expect(link.querySelector('.thematiq-brand__caption').textContent).toBe('Zuiddrecht')
+		expect(link.querySelector('.thematiq-brand__caption').textContent).toBe(
+			'Zuiddrecht',
+		)
 		const divider = host.querySelector('.thematiq-brand__divider')
 		expect(divider.getAttribute('aria-hidden')).toBe('true')
 		expect(host.lastChild).toBe(divider)
@@ -121,7 +138,9 @@ describe('header brand', () => {
 	it('draws the block without capabilities at all', async () => {
 		installState(MAIL_APPS, null)
 		await loadScript()
-		expect(document.querySelector('.thematiq-brand__name').textContent).toBe('Mail')
+		expect(document.querySelector('.thematiq-brand__name').textContent).toBe(
+			'Mail',
+		)
 		expect(document.querySelector('.thematiq-brand__emblem')).toBeNull()
 	})
 
@@ -162,13 +181,17 @@ describe('header brand', () => {
 	})
 
 	it('waits for DOMContentLoaded while the page is still loading', async () => {
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(document.querySelector('.thematiq-brand-host')).toBeNull()
 
 		readyState.mockReturnValue('interactive')
 		document.dispatchEvent(new Event('DOMContentLoaded'))
-		expect(document.getElementById('header').firstChild.className).toBe('thematiq-brand-host')
+		expect(document.getElementById('header').firstChild.className).toBe(
+			'thematiq-brand-host',
+		)
 	})
 
 	it('takes the block out again when the sheet does not style it', async () => {
@@ -180,10 +203,13 @@ describe('header brand', () => {
 	})
 
 	it('does not draw the block when the app already draws its own brand', async () => {
-		document.body.innerHTML = BAR + '<nav><div class="cn-app-nav__brand"></div></nav>'
+		document.body.innerHTML =
+			BAR + '<nav><div class="cn-app-nav__brand"></div></nav>'
 		await loadScript()
 		expect(document.querySelector('.thematiq-brand-host')).toBeNull()
-		expect(document.getElementById('header').hasAttribute('data-thematiq-brand')).toBe(false)
+		expect(
+			document.getElementById('header').hasAttribute('data-thematiq-brand'),
+		).toBe(false)
 	})
 
 	it('does not re-check the style or rewrite the bar when the page changes elsewhere', async () => {
@@ -194,7 +220,9 @@ describe('header brand', () => {
 
 		for (let tick = 1; tick <= 5; tick++) {
 			document.getElementById('clock').textContent = `10:0${tick}`
-			document.querySelector('main').appendChild(document.createElement('span'))
+			document
+				.querySelector('main')
+				.appendChild(document.createElement('span'))
 			await flush()
 		}
 

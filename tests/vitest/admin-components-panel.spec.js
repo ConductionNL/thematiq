@@ -60,10 +60,12 @@ let added = []
 async function openAt(hash) {
 	for (const target of [window, document]) {
 		const original = target.addEventListener.bind(target)
-		vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-			added.push([target, type, listener])
-			original(type, listener, options)
-		})
+		vi.spyOn(target, 'addEventListener').mockImplementation(
+			(type, listener, options) => {
+				added.push([target, type, listener])
+				original(type, listener, options)
+			},
+		)
 	}
 	vi.resetModules()
 	await import('../../js/admin-panels.js?t=' + Math.random())
@@ -75,12 +77,17 @@ async function openAt(hash) {
 
 /** The ids and classes of the instrument's parts, in the order they stand in the panel. */
 function instrument() {
-	return [...document.querySelector('.thematiq-components-panel__instrument').children].map((el) => el.id || el.className)
+	return [
+		...document.querySelector('.thematiq-components-panel__instrument').children,
+	].map((el) => el.id || el.className)
 }
 
 describe('components panel', () => {
 	beforeEach(() => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.scrollTo = vi.fn()
 		document.body.innerHTML = PAGE(SELECTOR)
 		window.history.replaceState(null, '', window.location.pathname)
@@ -88,7 +95,9 @@ describe('components panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		window.history.replaceState(null, '', window.location.pathname)
 		document.body.innerHTML = ''
@@ -96,10 +105,16 @@ describe('components panel', () => {
 		delete document.documentElement.dataset.thematiqOpenPanel
 	})
 
-	it('borrows the selector, the preview and the token editor in the board\'s order', async () => {
+	it("borrows the selector, the preview and the token editor in the board's order", async () => {
 		await openAt('#components')
-		expect(document.querySelector('[data-thematiq-panel="components"]').hidden).toBe(false)
-		expect(instrument()).toEqual(['nldesign-pg-selector', 'nldesign-preview', 'nldesign-token-editor'])
+		expect(
+			document.querySelector('[data-thematiq-panel="components"]').hidden,
+		).toBe(false)
+		expect(instrument()).toEqual([
+			'nldesign-pg-selector',
+			'nldesign-preview',
+			'nldesign-token-editor',
+		])
 	})
 
 	it('gives them back where they stood when the panel closes', async () => {
@@ -107,29 +122,54 @@ describe('components panel', () => {
 		window.history.replaceState(null, '', window.location.pathname)
 		window.dispatchEvent(new HashChangeEvent('hashchange'))
 		expect(instrument()).toEqual([])
-		const order = [...document.getElementById('nldesign-settings').children].map((el) => el.id || el.className)
-		expect(order.slice(-4)).toEqual(['overview-before', 'nldesign-pg-selector', 'nldesign-preview', 'nldesign-token-editor'])
+		const order = [...document.getElementById('nldesign-settings').children].map(
+			(el) => el.id || el.className,
+		)
+		expect(order.slice(-4)).toEqual([
+			'overview-before',
+			'nldesign-pg-selector',
+			'nldesign-preview',
+			'nldesign-token-editor',
+		])
 		expect(document.body.innerHTML).not.toContain('thematiq: ')
 	})
 
 	it('titles the header and leads the breadcrumb through the active set', async () => {
 		await openAt('#components')
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Components and tokens')
-		const crumbs = [...document.querySelectorAll('.thematiq-page-header__crumbs > :not([aria-hidden])')]
-		expect(crumbs.slice(-3).map((el) => el.textContent)).toEqual(['Token sets', 'zuiddrecht', 'Components'])
-		expect(crumbs[crumbs.length - 2].getAttribute('href')).toBe('#set/zuiddrecht')
-		const intro = document.querySelector('.thematiq-page-header__intro').textContent
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Components and tokens')
+		const crumbs = [
+			...document.querySelectorAll(
+				'.thematiq-page-header__crumbs > :not([aria-hidden])',
+			),
+		]
+		expect(crumbs.slice(-3).map((el) => el.textContent)).toEqual([
+			'Token sets',
+			'zuiddrecht',
+			'Components',
+		])
+		expect(crumbs[crumbs.length - 2].getAttribute('href')).toBe(
+			'#set/zuiddrecht',
+		)
+		const intro = document.querySelector(
+			'.thematiq-page-header__intro',
+		).textContent
 		expect(intro).toContain('Active')
 		expect(intro).toContain('714 editable tokens')
 	})
 
-	it('presses the editor\'s own Download and Save from the header', async () => {
+	it("presses the editor's own Download and Save from the header", async () => {
 		await openAt('#components')
 		const download = vi.fn()
 		const save = vi.fn()
-		document.getElementById('nldesign-export-btn').addEventListener('click', download)
+		document
+			.getElementById('nldesign-export-btn')
+			.addEventListener('click', download)
 		document.getElementById('nldesign-save-btn').addEventListener('click', save)
-		const buttons = [...document.querySelectorAll('.thematiq-page-header__actions > button')]
+		const buttons = [
+			...document.querySelectorAll('.thematiq-page-header__actions > button'),
+		]
 		expect(buttons.map((b) => b.textContent)).toEqual(['Download', 'Save'])
 		buttons[0].click()
 		buttons[1].click()
@@ -137,22 +177,36 @@ describe('components panel', () => {
 		expect(save).toHaveBeenCalledTimes(1)
 	})
 
-	it('opens the More menu, whose items press the editor\'s controls, and Escape closes it', async () => {
+	it("opens the More menu, whose items press the editor's controls, and Escape closes it", async () => {
 		await openAt('#components')
 		const upload = vi.fn()
 		const exportSet = vi.fn()
-		document.getElementById('nldesign-import-btn').addEventListener('click', upload)
-		document.getElementById('nldesign-pg-export-btn').addEventListener('click', exportSet)
+		document
+			.getElementById('nldesign-import-btn')
+			.addEventListener('click', upload)
+		document
+			.getElementById('nldesign-pg-export-btn')
+			.addEventListener('click', exportSet)
 		const more = document.querySelector('.thematiq-page-header__more')
 		more.click()
 		const menu = document.querySelector('.thematiq-page-header__menu')
 		expect(menu.hidden).toBe(false)
 		const items = [...menu.querySelectorAll('[role="menuitem"]')]
-		expect(items.map((item) => item.querySelector('strong').textContent)).toEqual(['Upload', 'Export as token set', 'Own component', 'Motion tokens', 'Download token overview'])
+		expect(
+			items.map((item) => item.querySelector('strong').textContent),
+		).toEqual([
+			'Upload',
+			'Export as token set',
+			'Own component',
+			'Motion tokens',
+			'Download token overview',
+		])
 		expect(items[2].getAttribute('href')).toBe('#components/own')
 		expect(items[3].getAttribute('href')).toBe('#motion')
 		expect(items[4].getAttribute('href')).toBe('/reference?format=md&download=1')
-		menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+		menu.dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }),
+		)
 		expect(document.activeElement).toBe(items[1])
 		items[0].click()
 		expect(upload).toHaveBeenCalledTimes(1)
@@ -161,7 +215,9 @@ describe('components panel', () => {
 		items[1].click()
 		expect(exportSet).toHaveBeenCalledTimes(1)
 		more.click()
-		menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		menu.dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 		expect(menu.hidden).toBe(true)
 		expect(document.activeElement).toBe(more)
 	})
@@ -188,7 +244,13 @@ describe('components panel', () => {
 		expect(own).toHaveBeenCalledTimes(1)
 		window.history.replaceState(null, '', window.location.pathname)
 		window.dispatchEvent(new HashChangeEvent('hashchange'))
-		const order = [...document.getElementById('nldesign-settings').children].map((el) => el.id || el.className)
-		expect(order.slice(-3)).toEqual(['nldesign-pg-selector', 'nldesign-preview', 'nldesign-token-editor'])
+		const order = [...document.getElementById('nldesign-settings').children].map(
+			(el) => el.id || el.className,
+		)
+		expect(order.slice(-3)).toEqual([
+			'nldesign-pg-selector',
+			'nldesign-preview',
+			'nldesign-token-editor',
+		])
 	})
 })

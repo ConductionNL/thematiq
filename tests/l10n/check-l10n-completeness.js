@@ -56,6 +56,21 @@ function readJson (p) {
 	return JSON.parse(fs.readFileSync(p, 'utf8'))
 }
 
+/**
+ * Whether a translation value carries text. A plural key
+ * (`_%n card_::_%n cards_`) holds one string per plural form, so it counts
+ * when every form is a non-empty string.
+ *
+ * @param {*} value The value of one key in a locale's translations.
+ * @return {boolean} True when the value shows the user text.
+ */
+function isFilled (value) {
+	if (Array.isArray(value)) {
+		return value.length > 0 && value.every((form) => typeof form === 'string' && form !== '')
+	}
+	return typeof value === 'string' && value !== ''
+}
+
 if (!fs.existsSync(enFile)) {
 	console.error(`l10n-completeness-check: en.json not found: ${enFile}`)
 	process.exit(2)
@@ -84,8 +99,7 @@ for (const file of localeFiles) {
 	// A key with an empty value is as invisible to the user as a missing one:
 	// Nextcloud shows nothing, not even the English source. Both count.
 	const missingKeys = enKeys.filter((k) => !Object.prototype.hasOwnProperty.call(translations, k)
-		|| typeof translations[k] !== 'string'
-		|| translations[k] === '')
+		|| !isFilled(translations[k]))
 
 	if (missingKeys.length === 0) {
 		continue

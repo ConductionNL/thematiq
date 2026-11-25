@@ -24,10 +24,15 @@
 	 * @return {*} What `run` returned when it ran at once, else undefined.
 	 */
 	function whenShown(element, run) {
-		var section = element && typeof element.closest === 'function'
-			? element.closest('section[data-thematiq-panel]')
-			: null
-		if (section === null || section.hidden !== true || typeof MutationObserver === 'undefined') {
+		var section =
+			element && typeof element.closest === 'function'
+				? element.closest('section[data-thematiq-panel]')
+				: null
+		if (
+			section === null
+			|| section.hidden !== true
+			|| typeof MutationObserver === 'undefined'
+		) {
 			return run()
 		}
 		var observer = new MutationObserver(function () {

@@ -13,7 +13,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import layerSwap from '../../js/lib/layerSwap.js'
 
-const { findLayerElements, insertBeforeAnchor, createLayerElement, swap, refreshStylesheets, refreshThemeStylesheets } = layerSwap
+const {
+	findLayerElements,
+	insertBeforeAnchor,
+	createLayerElement,
+	swap,
+	refreshStylesheets,
+	refreshThemeStylesheets,
+} = layerSwap
 
 const link = (href, extra = '') => `<link rel="stylesheet" href="${href}"${extra}>`
 
@@ -52,10 +59,17 @@ describe('the layer DOM helpers', () => {
 	})
 
 	it('anchors a new run before the admin layers, else before core theming, else nowhere', () => {
-		document.head.innerHTML = link('/apps/theming/theme/default.css', ' class="theme"') + link('/apps/thematiq/css/custom-overrides.css?v=3')
-		expect(insertBeforeAnchor(document).getAttribute('href')).toContain('custom-overrides')
+		document.head.innerHTML =
+			link('/apps/theming/theme/default.css', ' class="theme"')
+			+ link('/apps/thematiq/css/custom-overrides.css?v=3')
+		expect(insertBeforeAnchor(document).getAttribute('href')).toContain(
+			'custom-overrides',
+		)
 
-		document.head.innerHTML = link('/apps/theming/theme/default.css', ' class="theme"')
+		document.head.innerHTML = link(
+			'/apps/theming/theme/default.css',
+			' class="theme"',
+		)
 		expect(insertBeforeAnchor(document).className).toBe('theme')
 
 		document.head.innerHTML = link('/apps/thematiq/css/tokens/utrecht.css')
@@ -63,14 +77,28 @@ describe('the layer DOM helpers', () => {
 	})
 
 	it('makes a file layer a stylesheet link and an inline layer a style, each marked with its layer', () => {
-		const file = createLayerElement(document, { kind: 'file', href: '/a.css', layer: 'tokens' })
+		const file = createLayerElement(document, {
+			kind: 'file',
+			href: '/a.css',
+			layer: 'tokens',
+		})
 		expect(file.tagName).toBe('LINK')
 		expect(file.rel).toBe('stylesheet')
 		expect(file.getAttribute('href')).toBe('/a.css')
 		expect(file.getAttribute('data-nldesign-layer')).toBe('tokens')
-		expect(createLayerElement(document, { kind: 'file', href: '/b.css' }).getAttribute('data-nldesign-layer')).toBe('file')
+		expect(
+			createLayerElement(document, {
+				kind: 'file',
+				href: '/b.css',
+			}).getAttribute('data-nldesign-layer'),
+		).toBe('file')
 
-		const inline = createLayerElement(document, { kind: 'inline', id: 'nldesign-logo', css: ':root{}', layer: 'logo' })
+		const inline = createLayerElement(document, {
+			kind: 'inline',
+			id: 'nldesign-logo',
+			css: ':root{}',
+			layer: 'logo',
+		})
 		expect(inline.tagName).toBe('STYLE')
 		expect(inline.id).toBe('nldesign-logo')
 		expect(inline.textContent).toBe(':root{}')
@@ -83,7 +111,10 @@ describe('the layer DOM helpers', () => {
 	})
 
 	it('swaps an inline-only run at once, in the place of the old one, and drops the old style with the same id', async () => {
-		document.head.innerHTML = link('/first.css') + '<style id="nldesign-logo">old{}</style>' + link('/last.css')
+		document.head.innerHTML =
+			link('/first.css')
+			+ '<style id="nldesign-logo">old{}</style>'
+			+ link('/last.css')
 		const result = await swap(
 			document,
 			{ layers: [{ kind: 'inline', id: 'nldesign-logo' }] },
@@ -95,17 +126,30 @@ describe('the layer DOM helpers', () => {
 		const styles = document.head.querySelectorAll('style#nldesign-logo')
 		expect(styles).toHaveLength(1)
 		expect(styles[0].textContent).toBe('new{}')
-		expect(styles[0].previousElementSibling.getAttribute('href')).toBe('/first.css')
+		expect(styles[0].previousElementSibling.getAttribute('href')).toBe(
+			'/first.css',
+		)
 		expect(styles[0].nextElementSibling.getAttribute('href')).toBe('/last.css')
 	})
 
 	it('puts a run without an old one before the admin layers, or at the end of the head', async () => {
 		document.head.innerHTML = link('/apps/thematiq/css/custom-overrides.css')
-		await swap(document, null, { layers: [{ kind: 'inline', id: 'a' }, { kind: 'inline', id: 'b' }] })
-		expect(Array.from(document.head.children).map((el) => el.id || 'overrides')).toEqual(['a', 'b', 'overrides'])
+		await swap(document, null, {
+			layers: [
+				{ kind: 'inline', id: 'a' },
+				{ kind: 'inline', id: 'b' },
+			],
+		})
+		expect(
+			Array.from(document.head.children).map((el) => el.id || 'overrides'),
+		).toEqual(['a', 'b', 'overrides'])
 
 		document.head.innerHTML = '<meta charset="utf-8">'
-		await swap(document, { layers: [] }, { layers: [{ kind: 'inline', id: 'c' }] })
+		await swap(
+			document,
+			{ layers: [] },
+			{ layers: [{ kind: 'inline', id: 'c' }] },
+		)
 		expect(document.head.lastElementChild.id).toBe('c')
 
 		const nothing = await swap(document, null, null)
@@ -117,8 +161,16 @@ describe('the layer DOM helpers', () => {
 		document.head.innerHTML = link('/apps/thematiq/css/tokens/old.css')
 		const done = swap(
 			document,
-			{ layers: [{ kind: 'file', href: '/apps/thematiq/css/tokens/old.css' }] },
-			{ layers: [{ kind: 'file', href: '/apps/thematiq/css/tokens/new.css' }] },
+			{
+				layers: [
+					{ kind: 'file', href: '/apps/thematiq/css/tokens/old.css' },
+				],
+			},
+			{
+				layers: [
+					{ kind: 'file', href: '/apps/thematiq/css/tokens/new.css' },
+				],
+			},
 		)
 		expect(document.head.querySelectorAll('link')).toHaveLength(2)
 
@@ -126,12 +178,18 @@ describe('the layer DOM helpers', () => {
 		const result = await done
 
 		expect(result).toEqual({ ok: false, added: [], removed: [] })
-		expect(Array.from(document.head.querySelectorAll('link')).map((el) => el.getAttribute('href'))).toEqual(['/apps/thematiq/css/tokens/old.css'])
+		expect(
+			Array.from(document.head.querySelectorAll('link')).map((el) =>
+				el.getAttribute('href'),
+			),
+		).toEqual(['/apps/thematiq/css/tokens/old.css'])
 	})
 
 	it('counts a sheet that loads and then errors as loaded', async () => {
 		document.head.innerHTML = ''
-		const done = swap(document, null, { layers: [{ kind: 'file', href: '/x.css' }] })
+		const done = swap(document, null, {
+			layers: [{ kind: 'file', href: '/x.css' }],
+		})
 		const added = document.head.querySelector('link')
 		added.dispatchEvent(new window.Event('load'))
 		added.dispatchEvent(new window.Event('error'))
@@ -153,8 +211,14 @@ describe('the layer DOM helpers', () => {
 			'/apps/theming/theme/light.css?v=77',
 		])
 
-		const overrides = refreshStylesheets(document, 'link[href*="custom-overrides"]', '5')
-		expect(overrides[0].getAttribute('href')).toBe('/apps/thematiq/css/custom-overrides.css?v=5')
+		const overrides = refreshStylesheets(
+			document,
+			'link[href*="custom-overrides"]',
+			'5',
+		)
+		expect(overrides[0].getAttribute('href')).toBe(
+			'/apps/thematiq/css/custom-overrides.css?v=5',
+		)
 		expect(refreshStylesheets(document, 'link.none')).toEqual([])
 	})
 
@@ -162,7 +226,9 @@ describe('the layer DOM helpers', () => {
 		vi.spyOn(Date, 'now').mockReturnValue(1234)
 		document.head.innerHTML = link('/apps/theming/theme/default.css')
 		refreshThemeStylesheets(document)
-		expect(document.head.querySelector('link').getAttribute('href')).toBe('/apps/theming/theme/default.css?v=1234')
+		expect(document.head.querySelector('link').getAttribute('href')).toBe(
+			'/apps/theming/theme/default.css?v=1234',
+		)
 		vi.restoreAllMocks()
 	})
 })

@@ -44,7 +44,11 @@ function install() {
 		} else if (String(url).indexOf('/settings/email-theming') !== -1) {
 			body = { state: { state: 'enabled' }, footer: { orgName: 'Gemeente Zuiddrecht' } }
 		}
-		return Promise.resolve({ status: 200, ok: true, json: () => Promise.resolve(body) })
+		return Promise.resolve({
+			status: 200,
+			ok: true,
+			json: () => Promise.resolve(body),
+		})
 	})
 }
 
@@ -56,7 +60,9 @@ async function flush(rounds = 10) {
 
 /** The GET urls fetched so far that contain `part`. */
 function fetched(part) {
-	return global.fetch.mock.calls.map((call) => String(call[0])).filter((url) => url.indexOf(part) !== -1)
+	return global.fetch.mock.calls
+		.map((call) => String(call[0]))
+		.filter((url) => url.indexOf(part) !== -1)
 }
 
 async function load(hidden) {
@@ -123,7 +129,8 @@ describe('admin.js panel loaders wait for their panel', () => {
 
 	it('loads the gallery when the gallery panel opens', async () => {
 		await load(true)
-		document.querySelector('section[data-thematiq-panel="gallery"]').hidden = false
+		document.querySelector('section[data-thematiq-panel="gallery"]').hidden =
+			false
 		await flush()
 		expect(fetched('/settings/gallery').length).toBeGreaterThan(0)
 	})

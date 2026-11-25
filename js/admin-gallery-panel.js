@@ -38,12 +38,16 @@
 	function line() {
 		var parts = []
 		if (gallery !== null && gallery.enabled === true) {
-			var entries = Array.isArray(gallery.entries) === true ? gallery.entries.length : 0
+			var entries =
+				Array.isArray(gallery.entries) === true ? gallery.entries.length : 0
 			parts.push(tr('Gallery on, {count} house styles', { count: entries }))
 		} else {
 			parts.push(tr('Gallery off'))
 		}
-		var notices = freshness !== null && Array.isArray(freshness.notices) === true ? freshness.notices.length : 0
+		var notices =
+			freshness !== null && Array.isArray(freshness.notices) === true
+				? freshness.notices.length
+				: 0
 		parts.push(tr('{count} notices from the source', { count: notices }))
 		return parts.join(', ')
 	}
@@ -54,10 +58,15 @@
 	 * @return {void}
 	 */
 	function sayInHeader() {
-		if (window.ThematiqPanels === undefined || window.ThematiqPanels.current() !== 'gallery') {
+		if (
+			window.ThematiqPanels === undefined
+			|| window.ThematiqPanels.current() !== 'gallery'
+		) {
 			return
 		}
-		var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		var intro = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__intro',
+		)
 		if (intro !== null) {
 			intro.textContent = line()
 		}
