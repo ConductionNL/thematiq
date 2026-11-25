@@ -63,6 +63,10 @@ const PANELS: Array<{ task: string, hash: string, trigger: string, title: string
  */
 const ACTIONS: Record<string, (page: Page, section: Locator) => Promise<void>> = {
 	dark: async (page, section) => {
+		// The table is drawn once the panel has read the set's light and dark
+		// files, after it opens; its header row is there from that first draw
+		// on. Counting before it read 0 rows, and 15 after the toggle.
+		await expect(section.locator('.thematiq-dark-panel__row--head')).toHaveCount(1)
 		const rows = section.locator('.thematiq-dark-panel__row:not(.thematiq-dark-panel__row--head)')
 		const all = await rows.count()
 		const only = section.locator('.thematiq-dark-panel__only-warnings')
