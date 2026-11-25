@@ -305,17 +305,33 @@ test.describe('nextcloud-variable-mapping', () => {
 		expect(badShape.map(([n]) => n)).toEqual([])
 
 		// Nextcloud's own value comes LATER in this document and still loses.
+		// What each one should carry is its whole mapped expression, fallback
+		// included, resolved on its own under a probe name.
 		const mappedNames = [...entries.mapped.keys()]
+		const probe = (i: number) => `--e2e-expected-${i}`
+		const expected = `:root { ${mappedNames
+			.map(
+				(n, i) =>
+					`${probe(i)}: ${(entries.mappedValues.get(n) ?? '').replace(/!important\s*$/, '')};`,
+			)
+			.join(' ')} }`
 		const v = await isolatedCascade(
 			page,
-			[defaults, overrides, nextcloudSheet(mappedNames, 'rgb(1, 2, 3)')],
-			[...mappedNames, ...entries.mapped.values()],
+			[
+				defaults,
+				overrides,
+				nextcloudSheet(mappedNames, 'rgb(1, 2, 3)'),
+				expected,
+			],
+			[
+				...mappedNames,
+				...entries.mapped.values(),
+				...mappedNames.map((_, i) => probe(i)),
+			],
 		)
 		const lost = mappedNames.filter(
-			(n) =>
-				v[n] === ''
-				|| normaliseCss(v[n])
-					!== normaliseCss(v[entries.mapped.get(n) ?? '']),
+			(n, i) =>
+				v[n] === '' || normaliseCss(v[n]) !== normaliseCss(v[probe(i)]),
 		)
 		expect(
 			lost,
@@ -538,6 +554,12 @@ test.describe('nextcloud-variable-mapping', () => {
 			// A theme token that is also re-declared on an element keeps its check.
 			for (const name of elementScoped) {
 				if (defaults.has(name) === false) consumed.delete(name)
+			}
+			// The action colours are optional on purpose (action-colour):
+			// defaults.css leaves them out, so a set that declares none keeps
+			// its main button on the primary through each reader's fallback.
+			for (const name of [...consumed]) {
+				if (/^--nldesign-color-action(-|$)/.test(name)) consumed.delete(name)
 			}
 			expect(consumed.size).toBeGreaterThan(50)
 			const noDefault = [...consumed].filter((n) => defaults.has(n) === false)
