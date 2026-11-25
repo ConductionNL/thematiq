@@ -190,11 +190,19 @@ export async function appAssetUrl(
  * route (#811), never from the app folder, so `appAssetUrl()` cannot reach it.
  */
 export async function getServedOverrideCss(page: Page): Promise<string> {
-	const url = await page.evaluate(() =>
-		(
-			window as unknown as { OC: { generateUrl: (p: string) => string } }
-		).OC.generateUrl('/apps/thematiq/runtime/css/custom-overrides.css'),
-	)
+	// The file the active set reads: custom-overrides.css for a set on a
+	// design system, custom-overrides-<set>.css for one on `none` (the stock
+	// set among them). The page links it; the shared file is the fallback.
+	const url = await page.evaluate(() => {
+		const linked = document.querySelector<HTMLLinkElement>(
+			'link[href*="/runtime/css/custom-overrides"]',
+		)
+		return linked !== null
+			? linked.href
+			: (
+				window as unknown as { OC: { generateUrl: (p: string) => string } }
+			).OC.generateUrl('/apps/thematiq/runtime/css/custom-overrides.css')
+	})
 	const res = await page.request.get(url)
 	expect(
 		res.ok(),
