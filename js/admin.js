@@ -8302,12 +8302,29 @@
 				})
 				.catch(function (err) {
 					console.error('Error loading fonts:', err)
+					listRole(listEl, false)
 					listEl.textContent = t('thematiq', 'Failed to load fonts.')
 				})
 		}
 
+		/**
+		 * Give a font list the list role only while it holds rows: a hint in
+		 * an empty list is not a list item.
+		 *
+		 * @param {HTMLElement} el The font list.
+		 * @param {boolean} hasRows Whether it holds rows.
+		 */
+		function listRole(el, hasRows) {
+			if (hasRows) {
+				el.setAttribute('role', 'list')
+			} else {
+				el.removeAttribute('role')
+			}
+		}
+
 		function renderFontList(listEl, fonts) {
 			listEl.replaceChildren()
+			listRole(listEl, fonts.length > 0)
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8418,6 +8435,7 @@
 				})
 				.catch(function (err) {
 					console.error('Error loading the font library:', err)
+					listRole(libraryEl, false)
 					libraryEl.textContent = t('thematiq', 'Failed to load the font library.')
 				})
 		}
@@ -8433,6 +8451,7 @@
 
 		function renderFontLibrary(libraryEl, fonts) {
 			libraryEl.replaceChildren()
+			listRole(libraryEl, fonts.length > 0)
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
