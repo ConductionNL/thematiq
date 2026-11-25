@@ -369,6 +369,7 @@ class CssInjectionServiceTest extends TestCase {
 				'systems/nldesign/overrides',
 				'systems/nldesign/element-overrides',
 				'tokens/rijkshuisstijl',
+				'token-overrides/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
 				'theme-scopes',
@@ -1417,10 +1418,11 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	public function testASetWithoutElementOverridesLoadsNothingExtra(): void {
-		$emitted = $this->emitFor(tokenSet: 'rijkshuisstijl');
+		// Amsterdam ships no css/token-overrides/ file (Rijkshuisstijl does since it carries the lint).
+		$emitted = $this->emitFor(tokenSet: 'amsterdam');
 
-		$this->assertContains(needle: 'tokens/rijkshuisstijl', haystack: $emitted);
-		$this->assertNotContains(needle: 'token-overrides/rijkshuisstijl', haystack: $emitted);
+		$this->assertContains(needle: 'tokens/amsterdam', haystack: $emitted);
+		$this->assertNotContains(needle: 'token-overrides/amsterdam', haystack: $emitted);
 	}//end testASetWithoutElementOverridesLoadsNothingExtra()
 	/**
 	 * The stylesheet manifest is the SAME list `inject()` emits for the
