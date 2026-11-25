@@ -38,11 +38,13 @@ final class AdminPageState {
 	 * @param IInitialState $initialState Carries server state to admin.js.
 	 * @param IRequest $request The current request.
 	 * @param PlaygroundStateService $playground What the component playground reads at boot.
+	 * @param AdminBootReads|null $bootReads The answers to the page's first GETs; null leaves them to the page.
 	 */
 	public function __construct(
 		public readonly IInitialState $initialState,
 		public readonly IRequest $request,
 		public readonly PlaygroundStateService $playground,
+		public readonly ?AdminBootReads $bootReads = null,
 	) {
 	}//end __construct()
 }//end class
