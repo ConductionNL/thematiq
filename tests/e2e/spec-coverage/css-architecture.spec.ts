@@ -73,6 +73,18 @@ const NLDESIGN_FILES = [
 	'element-overrides',
 ]
 
+/**
+ * The :root declarations of NLDESIGN_SET as the page gets them: its generated
+ * token file, then its own overrides layer (css/token-overrides/), which loads
+ * after it and carries the lint.
+ */
+function nldesignSetDeclarations(): Map<string, string> {
+	return new Map([
+		...rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`)),
+		...rootDeclarations(repoFile(`css/token-overrides/${NLDESIGN_SET}.css`)),
+	])
+}
+
 /** Open the probe page and return the Thematiq layers it loaded. */
 async function probeLayers(page: Page): Promise<string[]> {
 	await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
@@ -532,12 +544,7 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	'rijkshuisstijl hangs a coloured ribbon behind the header logo', async ({
 		page,
 	}) => {
-		// The set is its generated token file plus its own overrides layer,
-		// which loads after it and carries the lint (css/token-overrides/).
-		const tokens = new Map([
-			...rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`)),
-			...rootDeclarations(repoFile(`css/token-overrides/${NLDESIGN_SET}.css`)),
-		])
+		const tokens = nldesignSetDeclarations()
 		await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 		await page.locator('#nextcloud').waitFor({ state: 'attached' })
 
@@ -826,7 +833,7 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	'the login page hides the stock header, draws a white box with the ribbon and token buttons', async ({
 		browser,
 	}) => {
-		const tokens = rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`))
+		const tokens = nldesignSetDeclarations()
 		const anon = await anonymousPage(browser)
 		try {
 			const page = anon.page
@@ -1014,12 +1021,35 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#typography-variable-mapped
 	'--font-face resolves to the nldesign font family, Fira Sans first', async ({
+		browser,
 		page,
 	}) => {
-		await probeLayers(page)
-		const fontFace = await rootVar(page, '--font-face')
-		expect(fontFace).toBe(await rootVar(page, '--nldesign-font-family'))
-		expect(fontFace.replace(/['"]/g, '').split(',')[0].trim()).toBe('Fira Sans')
+		// Fira Sans is the Layer 1 font the defaults name. The set brings no
+		// font of its own: the converted Rijkshuisstijl now asks for
+		// RijksSansVF first (it needs an upload), so it no longer shows the
+		// default.
+		await withUploadedSet(
+			browser,
+			'no font',
+			':root {\n\t--nldesign-color-primary: #154273;\n}\n',
+			async (set) => {
+				await withThemeState(
+					browser,
+					{ tokenSet: set, overrides: {} },
+					async () => {
+						const layers = await probeLayers(page)
+						expect(layers).toContain(`tokens/${set}`)
+						const fontFace = await rootVar(page, '--font-face')
+						expect(fontFace).toBe(
+							await rootVar(page, '--nldesign-font-family'),
+						)
+						expect(
+							fontFace.replace(/['"]/g, '').split(',')[0].trim(),
+						).toBe('Fira Sans')
+					},
+				)
+			},
+		)
 	})
 
 	test(// @e2e openspec/specs/css-architecture/spec.md#custom-overrides-file-initially-empty
