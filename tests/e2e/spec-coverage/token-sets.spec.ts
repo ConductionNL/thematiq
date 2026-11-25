@@ -888,7 +888,17 @@ test.describe('token-sets', () => {
 	test('a set with lint tokens paints a ribbon of those dimensions behind the logo', async ({
 		page,
 	}) => {
-		const declared = nldesignDeclarations(tokenCss('rijkshuisstijl'))
+		// The set is its generated token file plus its own overrides layer,
+		// which loads after it and carries the lint (css/token-overrides/).
+		const declared = {
+			...nldesignDeclarations(tokenCss('rijkshuisstijl')),
+			...nldesignDeclarations(
+				readRepoFile('css/token-overrides/rijkshuisstijl.css').replace(
+					/\/\*[\s\S]*?\*\//g,
+					'',
+				),
+			),
+		}
 		const width = declared['--nldesign-size-lint']
 		const height = declared['--nldesign-size-lint-height']
 		const colour = declared['--nldesign-color-logo-background']
