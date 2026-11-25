@@ -2043,7 +2043,23 @@
         "You see the contrast warning again in the dialog when applying.": "You see the contrast warning again in the dialog when applying.",
         "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, a file from Figma, or the OpenProject plugin set file.": "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, a file from Figma, or the OpenProject plugin set file.",
         "From Figma: a Tokens Studio file with $themes or $metadata becomes a custom token set. Thematiq merges the sets in the theme order and reads both value and $value. What it leaves out is named in the message after the upload: a disabled set, a reference cycle or a sum. A file with a light and a dark theme is one house style, not two brands.": "From Figma: a Tokens Studio file with $themes or $metadata becomes a custom token set. Thematiq merges the sets in the theme order and reads both value and $value. What it leaves out is named in the message after the upload: a disabled set, a reference cycle or a sum. A file with a light and a dark theme is one house style, not two brands.",
-        "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, or a Tokens Studio file from Figma. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.": "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, or a Tokens Studio file from Figma. Thematiq checks colour spaces, references and missing tokens and reports what it could not read."
+        "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, or a Tokens Studio file from Figma. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.": "An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, or a Tokens Studio file from Figma. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.",
+        "Motion tokens": "Motion tokens",
+        "Speed and curve of every transition": "Speed and curve of every transition",
+        "Motion": "Motion",
+        "The values in the rows are not a valid motion yet.": "The values in the rows are not a valid motion yet.",
+        "Duration {ms} ms, easing {easing}. Replays the dialog and the notification.": "Duration {ms} ms, easing {easing}. Replays the dialog and the notification.",
+        "These are Nextcloud base tokens. They are open because \"Also edit Nextcloud's base tokens\" is on; a change affects every page.": "These are Nextcloud base tokens. They are open because \"Also edit Nextcloud's base tokens\" is on; a change affects every page.",
+        "These are Nextcloud base tokens. Tick \"Also edit Nextcloud's base tokens\" to change them; a change affects every page.": "These are Nextcloud base tokens. Tick \"Also edit Nextcloud's base tokens\" to change them; a change affects every page.",
+        "No component chosen: Nextcloud's base tokens, which apply everywhere.": "No component chosen: Nextcloud's base tokens, which apply everywhere.",
+        "When the system asks for reduced motion the preview motion stands still: every duration becomes 0 ms, in the app itself too.": "When the system asks for reduced motion the preview motion stands still: every duration becomes 0 ms, in the app itself too.",
+        "Dialog slides in": "Dialog slides in",
+        "Notification: saved": "Notification: saved",
+        "Play motion": "Play motion",
+        "A duration is a number with ms or s, up to 5 seconds. An easing is one of the five words or a custom curve with both x values between 0 and 1. Anything outside those rules the server does not save, and you see why.": "A duration is a number with ms or s, up to 5 seconds. An easing is one of the five words or a custom curve with both x values between 0 and 1. Anything outside those rules the server does not save, and you see why.",
+        "Where motion lives": "Where motion lives",
+        "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.": "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.",
+        "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion tokens have a fixed type: the server checks every value before it saves anything."
     },
     "plurals": {}
 }

@@ -37,7 +37,7 @@ test.describe('the components and tokens panel', () => {
 		await more.click()
 		const menu = actions.locator('.thematiq-page-header__menu')
 		await expect(menu).toBeVisible()
-		await expect(menu.getByRole('menuitem')).toHaveCount(4)
+		await expect(menu.getByRole('menuitem')).toHaveCount(5)
 		await page.keyboard.press('Escape')
 		await expect(menu).toBeHidden()
 		await expect(more).toBeFocused()

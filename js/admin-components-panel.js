@@ -91,6 +91,7 @@
 			{ text: tr('Upload'), hint: tr('Read an overrides file into this theme'), run: function () { press('nldesign-import-btn') } },
 			{ text: tr('Export as token set'), hint: tr('All values together as a new, complete set'), run: function () { press('nldesign-pg-export-btn') } },
 			{ text: tr('Own component'), hint: tr('Preview HTML and CSS safely'), href: '#components/own' },
+			{ text: tr('Motion tokens'), hint: tr('Speed and curve of every transition'), href: '#motion' },
 		]
 		if (reference !== null && reference.getAttribute('href')) {
 			items.push({ text: tr('Download token overview'), hint: tr('All tokens of this set as Markdown'), href: reference.getAttribute('href') })
