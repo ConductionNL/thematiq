@@ -1,10 +1,10 @@
 /**
  * @vitest-environment jsdom
  *
- * Components and tokens (js/admin-components-panel.js, the TqComponenten
- * board), the panel at #components: it borrows the
+ * Components and tokens (js/admin-components-panel.js, the TqComponenten and
+ * TqEigenComponent boards), the panel at #components: it borrows the
  * overview's selector, preview and token editor, presses the editor's own
- * controls from the header.
+ * controls from the header, and opens Your components at #components/own.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -149,8 +149,7 @@ describe('components panel', () => {
 		expect(menu.hidden).toBe(false)
 		const items = [...menu.querySelectorAll('[role="menuitem"]')]
 		expect(items.map((item) => item.querySelector('strong').textContent)).toEqual(['Upload', 'Export as token set', 'Own component', 'Download token overview'])
-		const own = vi.fn()
-		document.querySelector('[data-tab="own"]').addEventListener('click', own)
+		expect(items[2].getAttribute('href')).toBe('#components/own')
 		expect(items[3].getAttribute('href')).toBe('/reference?format=md&download=1')
 		menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
 		expect(document.activeElement).toBe(items[1])
@@ -161,11 +160,34 @@ describe('components panel', () => {
 		items[1].click()
 		expect(exportSet).toHaveBeenCalledTimes(1)
 		more.click()
-		items[2].click()
-		expect(own).toHaveBeenCalledTimes(1)
-		more.click()
 		menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
 		expect(menu.hidden).toBe(true)
 		expect(document.activeElement).toBe(more)
+	})
+
+	it('opens on Your components at #components/own', async () => {
+		const own = vi.fn()
+		document.querySelector('[data-tab="own"]').addEventListener('click', own)
+		await openAt('#components/own')
+		expect(own).toHaveBeenCalledTimes(1)
+	})
+
+	it('chooses Your components once the playground builds its selector after a deep link', async () => {
+		document.body.innerHTML = PAGE('')
+		await openAt('#components/own')
+		expect(instrument()).toEqual(['nldesign-preview', 'nldesign-token-editor'])
+		const own = vi.fn()
+		const holder = document.createElement('div')
+		holder.innerHTML = SELECTOR
+		const selector = holder.firstElementChild
+		selector.querySelector('[data-tab="own"]').addEventListener('click', own)
+		const preview = document.getElementById('nldesign-preview')
+		preview.parentNode.insertBefore(selector, preview)
+		await flush()
+		expect(own).toHaveBeenCalledTimes(1)
+		window.history.replaceState(null, '', window.location.pathname)
+		window.dispatchEvent(new HashChangeEvent('hashchange'))
+		const order = [...document.getElementById('nldesign-settings').children].map((el) => el.id || el.className)
+		expect(order.slice(-3)).toEqual(['nldesign-pg-selector', 'nldesign-preview', 'nldesign-token-editor'])
 	})
 })
