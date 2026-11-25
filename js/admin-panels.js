@@ -13,6 +13,8 @@
  * describes a panel. `crumbs` are the steps between Thematiq and the page itself, which
  * the breadcrumb names `crumb` (the title when left out);
  * `intro` is the line under them, text or nodes; `actions` returns the header buttons.
+ * A panel about one thing (one token set) is opened as `#<hash>/<argument>`; its
+ * functions and `onOpen(section, argument)` receive the argument.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
@@ -22,6 +24,7 @@
 ;(function thematiqPanels() {
 	var panels = {}
 	var current = null
+	var argument = ''
 	var borrowed = []
 	var saved = null
 
@@ -74,6 +77,16 @@
 	}
 
 	/**
+	 * A panel's setting, called with the open argument when it is a function.
+	 *
+	 * @param {*} value The setting.
+	 * @return {*} Its value.
+	 */
+	function resolve(value) {
+		return typeof value === 'function' ? value(argument) : value
+	}
+
+	/**
 	 * Show the panel's words and actions in the page header.
 	 *
 	 * @param {object} config The panel.
@@ -90,9 +103,8 @@
 			intro: Array.prototype.slice.call(parts.intro.childNodes),
 			actions: Array.prototype.slice.call(parts.actions.childNodes),
 		}
-		parts.title.textContent = config.title
-		var crumbs =
-			typeof config.crumbs === 'function' ? config.crumbs() : config.crumbs
+		parts.title.textContent = resolve(config.title)
+		var crumbs = resolve(config.crumbs)
 		var steps = [
 			[tr('Administration settings'), null],
 			[tr('Themes and appearance'), '#'],
@@ -102,7 +114,7 @@
 				return [step.text, step.href || null]
 			}),
 		)
-		steps.push([config.crumb || config.title, null])
+		steps.push([resolve(config.crumb) || resolve(config.title), null])
 		parts.crumbs.replaceChildren()
 		steps.forEach(function (step, index) {
 			if (index > 0) {
@@ -115,8 +127,7 @@
 				crumb(step[0], step[1], index === steps.length - 1),
 			)
 		})
-		var intro =
-			typeof config.intro === 'function' ? config.intro() : config.intro || ''
+		var intro = resolve(config.intro) || ''
 		if (Array.isArray(intro) === true) {
 			parts.intro.replaceChildren.apply(parts.intro, intro)
 		} else {
@@ -124,7 +135,7 @@
 		}
 		parts.actions.replaceChildren.apply(
 			parts.actions,
-			typeof config.actions === 'function' ? config.actions() : [],
+			typeof config.actions === 'function' ? config.actions(argument) : [],
 		)
 	}
 
@@ -191,6 +202,9 @@
 			return
 		}
 		var hash = current
+		var link = document.querySelector(
+			'a[href="#' + (argument !== '' ? hash + '/' + argument : hash) + '"]',
+		)
 		var config = panels[hash]
 		var section = document.querySelector(
 			'section[data-thematiq-panel="' + hash + '"]',
@@ -202,10 +216,10 @@
 		}
 		delete document.documentElement.dataset.thematiqOpenPanel
 		current = null
+		argument = ''
 		if (typeof config.onClose === 'function') {
 			config.onClose()
 		}
-		var link = document.querySelector('a[href="#' + hash + '"]')
 		if (link !== null) {
 			link.focus()
 		}
@@ -214,10 +228,14 @@
 	/**
 	 * Open a panel.
 	 *
-	 * @param {string} hash The panel's hash, without the #.
+	 * @param {string} target The panel's hash without the #, perhaps followed by `/<argument>`.
 	 * @return {boolean} Whether a panel opened.
 	 */
-	function open(hash) {
+	function open(target) {
+		var cut = String(target).indexOf('/')
+		var hash = cut === -1 ? String(target) : String(target).slice(0, cut)
+		var wanted =
+			cut === -1 ? '' : decodeURIComponent(String(target).slice(cut + 1))
 		var config = panels[hash]
 		var section = document.querySelector(
 			'section[data-thematiq-panel="' + hash + '"]',
@@ -225,17 +243,18 @@
 		if (config === undefined || section === null) {
 			return false
 		}
-		if (current === hash) {
+		if (current === hash && argument === wanted) {
 			return true
 		}
 		close()
 		current = hash
+		argument = wanted
 		document.documentElement.dataset.thematiqOpenPanel = hash
 		section.hidden = false
 		borrow(section)
 		dressHeader(config)
 		if (typeof config.onOpen === 'function') {
-			config.onOpen(section)
+			config.onOpen(section, argument)
 		}
 		window.scrollTo(0, 0)
 		var title = document.querySelector(
@@ -269,8 +288,9 @@
 	 */
 	function register(hash, config) {
 		panels[hash] = config
-		if (window.location.hash === '#' + hash) {
-			open(hash)
+		var wanted = window.location.hash.replace(/^#/, '')
+		if (wanted === hash || wanted.indexOf(hash + '/') === 0) {
+			open(wanted)
 		}
 	}
 
@@ -282,6 +302,9 @@
 		close: close,
 		current: function () {
 			return current
+		},
+		argument: function () {
+			return argument
 		},
 	}
 })()

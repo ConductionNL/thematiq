@@ -217,7 +217,10 @@
 					},
 					hidden: row.status === 'active',
 				},
-				{ text: tr('Open token set'), href: referenceUrl(row.id, false) },
+				{
+					text: tr('Open token set'),
+					href: '#set/' + encodeURIComponent(row.id),
+				},
 				{
 					text: tr('Download token overview'),
 					href: referenceUrl(row.id, true),
@@ -231,7 +234,10 @@
 				if (item.href) {
 					node = el('a', 'thematiq-token-sets__item', item.text)
 					node.href = item.href
-					if (item.href.indexOf('download=1') === -1) {
+					if (
+						item.href.indexOf('download=1') === -1
+						&& item.href.charAt(0) !== '#'
+					) {
 						node.target = '_blank'
 						node.rel = 'noopener noreferrer'
 					}
@@ -277,9 +283,7 @@
 			var tr0 = el('tr')
 			var name = el('td', 'thematiq-token-sets__name')
 			var link = el('a', '', row.name)
-			link.href = referenceUrl(row.id, false)
-			link.target = '_blank'
-			link.rel = 'noopener noreferrer'
+			link.href = '#set/' + encodeURIComponent(row.id)
 			name.appendChild(link)
 			tr0.appendChild(name)
 

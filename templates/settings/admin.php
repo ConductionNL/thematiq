@@ -58,6 +58,7 @@ script('thematiq', 'admin-website-lettering');
 script('thematiq', 'admin-panels');
 script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
+script('thematiq', 'admin-token-set-panel');
 script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
@@ -615,6 +616,74 @@ if ($_['mockUi'] === true) {
 				</section>
 			</aside>
 		</div>
+	</section>
+
+	<!-- A token set from the inside (TqTokenSet), a panel of this page at #set/<id> (design.md),
+	     opened from a row of the Token sets table. js/admin-token-set-panel.js draws the tokens,
+	     the sample and the facts from the set's token file and its generated dark file. -->
+	<section class="thematiq-panel thematiq-set-panel" data-thematiq-panel="set" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main thematiq-set-panel__main">
+				<div class="thematiq-set-panel__tabs" role="tablist" aria-label="<?php p($l->t('Parts of the token set')); ?>"></div>
+				<section class="thematiq-card thematiq-panel__card thematiq-set-panel__tokens" id="thematiq-set-tokens" role="tabpanel">
+					<div class="thematiq-set-panel__tools">
+						<label class="thematiq-set-panel__search-wrap">
+							<span class="hidden-visually"><?php p($l->t('Search tokens')); ?></span>
+							<input type="search" class="thematiq-set-panel__search" placeholder="<?php p($l->t('Name, variable or colour')); ?>">
+						</label>
+						<span class="thematiq-set-panel__summary" role="status"></span>
+					</div>
+					<div class="thematiq-set-panel__groups"></div>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside thematiq-set-panel__aside">
+				<section class="thematiq-card thematiq-panel__card thematiq-set-panel__preview" aria-labelledby="thematiq-set-preview-title">
+					<div class="thematiq-panel__card-head">
+						<h2 id="thematiq-set-preview-title" class="thematiq-panel__card-title"><?php p($l->t('Preview')); ?></h2>
+						<div class="thematiq-set-panel__modes" role="group" aria-label="<?php p($l->t('Light or dark')); ?>">
+							<button type="button" class="thematiq-set-panel__mode" data-mode="light" aria-pressed="true"><?php p($l->t('Light')); ?></button>
+							<button type="button" class="thematiq-set-panel__mode" data-mode="dark" aria-pressed="false"><?php p($l->t('Dark')); ?></button>
+						</div>
+					</div>
+					<div class="thematiq-set-panel__frame" aria-hidden="true">
+						<div class="thematiq-set-panel__frame-bar"><span class="thematiq-set-panel__frame-app"><?php p($l->t('Cases')); ?></span><span class="thematiq-set-panel__frame-user">PJ</span></div>
+						<div class="thematiq-set-panel__frame-body">
+							<div class="thematiq-set-panel__frame-nav">
+								<span class="thematiq-set-panel__frame-active"><?php p($l->t('All cases')); ?></span>
+								<span><?php p($l->t('Tasks')); ?></span>
+								<span><?php p($l->t('Contacts')); ?></span>
+							</div>
+							<div class="thematiq-set-panel__frame-main">
+								<div class="thematiq-set-panel__frame-card">
+									<strong><?php p($l->t('Cycle path lighting')); ?></strong>
+									<span class="thematiq-set-panel__frame-muted"><?php p($l->t('2026-0082 · via the website')); ?></span>
+									<span class="thematiq-set-panel__frame-badges"><span class="thematiq-set-panel__frame-info"><?php p($l->t('In progress')); ?></span><span class="thematiq-set-panel__frame-alert"><?php p($l->t('Deadline passed')); ?></span></span>
+									<span class="thematiq-set-panel__frame-link"><?php p($l->t('View documents')); ?></span>
+								</div>
+								<div class="thematiq-set-panel__frame-actions"><span class="thematiq-set-panel__frame-button"><?php p($l->t('Save')); ?></span><span class="thematiq-set-panel__frame-secondary"><?php p($l->t('Cancel')); ?></span></div>
+							</div>
+						</div>
+					</div>
+					<span class="thematiq-panel__fact-hint"><?php p($l->t('Drawn with the tokens of this set. Nothing changes for anyone until you use the set.')); ?></span>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-set-panel__stripe" aria-labelledby="thematiq-set-stripe-title" hidden>
+					<h2 id="thematiq-set-stripe-title" class="thematiq-panel__card-title thematiq-set-panel__aside-title"><?php p($l->t('Brand stripe')); ?></h2>
+					<div class="thematiq-set-panel__stripe-bar" aria-hidden="true"></div>
+					<span class="thematiq-set-panel__stripe-line"></span>
+					<span class="thematiq-panel__fact-hint thematiq-set-panel__stripe-where"></span>
+				</section>
+				<section class="thematiq-card thematiq-panel__card thematiq-set-panel__about" aria-labelledby="thematiq-set-about-title">
+					<h2 id="thematiq-set-about-title" class="thematiq-panel__card-title thematiq-set-panel__aside-title"><?php p($l->t('About this set')); ?></h2>
+					<dl class="thematiq-set-panel__facts"></dl>
+					<div class="thematiq-set-panel__links">
+						<a href="#" class="thematiq-set-panel__components-link"><?php p($l->t('View components and tokens')); ?></a>
+						<a href="#dark" class="thematiq-set-panel__dark-link"><?php p($l->t('View dark variant')); ?></a>
+						<a href="#" class="thematiq-set-panel__download"><?php p($l->t('Download token overview')); ?></a>
+					</div>
+				</section>
+			</aside>
+		</div>
+		<div class="thematiq-set-panel__licences" data-thematiq-slot="nldesign-set-licences"></div>
 	</section>
 
 	<!-- Custom CSS (TqEigenCss), a panel of this page at #css (design.md): admin-authored
