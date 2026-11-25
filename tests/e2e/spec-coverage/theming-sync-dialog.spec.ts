@@ -89,8 +89,9 @@ test.describe('theming-sync-dialog', () => {
 	// -----------------------------------------------------------------------
 
 	// @e2e exclude openspec/specs/theming-sync-dialog/spec.md#user-confirms-update
-	// @e2e exclude openspec/specs/theming-sync-dialog/spec.md#user-cancels-update
-	// Require dialog to be open — dialog trigger mutates env.
+	// Requires the dialog to be open — dialog trigger mutates env.
+	// user-cancels-update is proved in theming-sync.spec.ts ("cancelling closes
+	// the dialog, applies no theming, keeps the set"), which stubs the trigger.
 
 	// -----------------------------------------------------------------------
 	// Requirement: Bundled Organization Images

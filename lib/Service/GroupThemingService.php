@@ -348,20 +348,41 @@ class GroupThemingService implements GroupThemingServiceInterface {
 			return $this->getDefaultTokenSet();
 		}
 
+		// Only the group match is cached, '' for none. The instance default
+		// is read on every request: it changes without bumping the mapping
+		// generation, and a cached default kept a user in no mapped group on
+		// the previous set until the TTL ran out.
 		$generation = $this->getGeneration();
 		$cacheKey = sprintf('resolve:%s:%d', $user->getUID(), $generation);
 
 		$cached = $this->cache->get(key: $cacheKey);
 		if (is_string($cached) === true) {
-			return $cached;
+			return $this->matchOrDefault(matched: $cached);
 		}
 
 		$userGroupIds = $this->groupManager->getUserGroupIds(user: $user);
-		$resolved = ($this->matchFirstEntry(mapping: $mapping, userGroupIds: $userGroupIds) ?? $this->getDefaultTokenSet());
-		$this->cache->set(key: $cacheKey, value: $resolved, ttl: self::CACHE_TTL);
+		$matched = ($this->matchFirstEntry(mapping: $mapping, userGroupIds: $userGroupIds) ?? '');
+		$this->cache->set(key: $cacheKey, value: $matched, ttl: self::CACHE_TTL);
 
-		return $resolved;
+		return $this->matchOrDefault(matched: $matched);
 	}//end resolveForUser()
+
+	/**
+	 * A group match, or the instance default when there is none ('').
+	 *
+	 * @param string $matched The matched token set id, '' for no match.
+	 *
+	 * @return string The token set id.
+	 *
+	 * @spec openspec/specs/per-group-theming/spec.md
+	 */
+	private function matchOrDefault(string $matched): string {
+		if ($matched === '') {
+			return $this->getDefaultTokenSet();
+		}
+
+		return $matched;
+	}//end matchOrDefault()
 
 	/**
 	 * Find the first mapping entry (in stored/priority order) matching one

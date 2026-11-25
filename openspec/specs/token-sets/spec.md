@@ -984,6 +984,7 @@ white text, reaches 4.5:1 against white, and the brand file MUST record the sour
 step.
 
 #### Scenario: The set passes the contrast audit
+@e2e exclude The shipped contrast audit and its committed report, no page involved: PHPUnit tests/Unit/TokenSetContrastAuditTest.php (testDocumentedAaSetsMeetAa, testReportIsDeterministicAndComplete) and tests/Unit/Service/DenhaagContrastPairsTest.php (testTheAuditCarriesTheDenhaagPairs, testTheReportListsTheDenhaagPairs)
 - **GIVEN** the generated `example-gemeente` set
 - **WHEN** the shipped token set contrast audit runs
 - **THEN** primary against primary text MUST be `AA` (8.80:1)
@@ -991,6 +992,7 @@ step.
 - **AND** the set MUST appear in `docs/reference/contrast-report.md`
 
 #### Scenario: A ramp step without a source is refused
+@e2e exclude Build-time refusal of the generator, no page involved: vitest tests/vitest/brandSetRampSources.spec.js (names a step whose from is missing or empty)
 - **GIVEN** a step in the `ramp` of `scripts/brands/example-gemeente.json` without a `from`
 - **WHEN** the generator runs
 - **THEN** the generator MUST refuse to write the file and MUST name the step

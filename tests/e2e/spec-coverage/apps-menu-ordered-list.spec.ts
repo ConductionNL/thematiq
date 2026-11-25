@@ -85,12 +85,17 @@ test.describe('the apps menu as one ordered list', () => {
 
 	// @e2e workplace-layout::zuiddrechts-apps-menu
 	// @e2e workplace-layout::all-apps-unfolds-the-rest
-	test('shows nine apps, the group apps first, and unfolds the rest', async ({
+	// The fold sits after `columns` x `rowsAboveFold` entries of the menu
+	// settings (apps-menu-settings), 4 x 2 by default.
+	test('shows the apps above the fold, the group apps first, and unfolds the rest', async ({
 		page,
 		browser,
 	}) => {
 		await withThemeState(browser, { tokenSet: 'zuiddrecht' }, async () => {
 			await page.reload({ waitUntil: 'domcontentloaded' })
+			const settings = (await api(page, 'GET', SETTINGS)).json.effective
+			const fold = settings.columns
+				* Math.min(settings.rowsAboveFold, settings.rows)
 			await openByClick(page)
 			const all = await grid(page).evaluate(
 				(el) =>
@@ -99,12 +104,12 @@ test.describe('the apps menu as one ordered list', () => {
 					).length,
 			)
 			test.skip(
-				all <= 9,
-				`this instance shows ${all} apps; the fold needs ten`,
+				all <= fold,
+				`this instance shows ${all} apps; the fold after ${fold} needs more`,
 			)
 
 			const shown = await onScreen(page)
-			expect(shown).toHaveLength(9)
+			expect(shown).toHaveLength(fold)
 			const werk = [
 				'launchpad',
 				'dossiq',
@@ -116,9 +121,10 @@ test.describe('the apps menu as one ordered list', () => {
 			const installed = werk.filter((id) => shown.includes(id))
 			expect(shown.slice(0, installed.length)).toEqual(installed)
 			await expect(toggle(page)).toHaveAttribute('aria-expanded', 'false')
+			// The footer's gear opens the Menu settings dialog (apps-menu-settings).
 			await expect(
-				grid(page).locator('[data-thematiq-row="footer"] a'),
-			).toHaveText(/^(Apps beheren|Manage apps)$/)
+				grid(page).locator('[data-thematiq-row="footer"] button[aria-haspopup="dialog"]'),
+			).toHaveText(/^(Menu settings|Menu-instellingen)$/)
 
 			await toggle(page).click()
 			await expect(toggle(page)).toHaveAttribute('aria-expanded', 'true')
@@ -128,7 +134,7 @@ test.describe('the apps menu as one ordered list', () => {
 			).toBeVisible()
 
 			await toggle(page).click()
-			expect(await onScreen(page)).toHaveLength(9)
+			expect(await onScreen(page)).toHaveLength(fold)
 		})
 	})
 

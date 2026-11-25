@@ -371,7 +371,8 @@ body,
  * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
  * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
 *:focus-visible,
-body .button-vue.button-vue:focus-visible {
+body .button-vue.button-vue:focus-visible,
+body .button.primary.skip-navigation:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;

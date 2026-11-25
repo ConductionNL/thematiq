@@ -69,6 +69,7 @@ activation is what is forbidden.
 - AND Inter MUST remain the fallback for any glyph Marianne does not cover
 
 #### Scenario: License artifacts present
+@e2e exclude Files in the package, no page involved: PHPUnit tests/Unit/LasuiteDesignStackTest.php (testFontsDirectoryCarriesOflLicenceAndExpectedWeights) and tests/Unit/MarianneFontTest.php (testAllEightMarianneWoff2FilesAreBundled, testLegalArtifactsExistAndCiteTheSource)
 
 - GIVEN the shipped app package
 - WHEN `css/systems/lasuite/fonts/` is inspected
@@ -98,6 +99,7 @@ generation, naming, aliases, and drift live in the lasuite-parity spec.
 - AND the deployed violet `#4844AD` MUST come only from the `brand-override` layer, not this file
 
 #### Scenario: Attribution and generation present
+@e2e exclude A file header, no page involved: PHPUnit tests/Unit/LasuiteDesignStackTest.php (testGeneratedDefaultsCarryProvenanceHeader) and vitest tests/vitest/generateLasuiteTokens.spec.js (records the source package, version and token count; is deterministic)
 
 - GIVEN `css/systems/lasuite/defaults.css`
 - WHEN its header is read
@@ -214,6 +216,7 @@ other French-government-restricted asset beyond the gated Marianne fonts; the la
 set's logo slot MUST remain empty.
 
 #### Scenario: Compliance is test-enforced
+@e2e exclude The scenario is about the test suite itself: PHPUnit tests/Unit/LasuiteDesignStackTest.php (testFontsDirectoryCarriesOflLicenceAndExpectedWeights, testNoUrlSourceForMarianneOutsideTheGatedStylesheet, testTokenSetManifestEntryHasNoLogoKey) and tests/Unit/MarianneFontTest.php (testLicenseOverridesMapsMarianneFilesToEtalab, testLegalArtifactsExistAndCiteTheSource, testGatedStylesheetUsesOnlyAppRelativeUrlsToBundledFiles)
 
 - GIVEN the test suite runs
 - WHEN the license-compliance test executes

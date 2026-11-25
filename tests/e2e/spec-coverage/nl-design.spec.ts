@@ -29,6 +29,8 @@ import {
 
 /** Amsterdam's primary, from css/tokens/amsterdam.css. */
 const AMSTERDAM_PRIMARY = '#004699'
+/** A defaults.css token the Amsterdam set leaves undeclared. */
+const UNSET_BY_AMSTERDAM = '--nldesign-component-textbox-disabled-background-color'
 
 /** Read custom properties off <body>, where theme.css maps Nextcloud's own. */
 async function bodyVars(
@@ -104,23 +106,24 @@ test.describe('nl-design', () => {
 				await servedCss(page, 'systems/nldesign/defaults.css'),
 				'--nldesign-',
 			)
-			// The GIVEN: Amsterdam defines the primary but not the favourite colour.
+			// The GIVEN: Amsterdam defines the primary but not the disabled textbox
+			// background (since 4.4 it does define the favourite colour).
 			expect(amsterdam.get('--nldesign-color-primary')?.toLowerCase()).toBe(
 				AMSTERDAM_PRIMARY,
 			)
-			expect(amsterdam.has('--nldesign-color-favorite')).toBe(false)
-			const favoriteDefault = defaults.get('--nldesign-color-favorite') ?? ''
-			expect(favoriteDefault).toMatch(/^#[0-9a-fA-F]{6}$/)
+			expect(amsterdam.has(UNSET_BY_AMSTERDAM)).toBe(false)
+			const unsetDefault = defaults.get(UNSET_BY_AMSTERDAM) ?? ''
+			expect(unsetDefault).toMatch(/^#[0-9a-fA-F]{6}$/)
 
 			const v = await rootVars(page, [
 				'--nldesign-color-primary',
-				'--nldesign-color-favorite',
+				UNSET_BY_AMSTERDAM,
 			])
 			expect(v['--nldesign-color-primary'].toLowerCase()).toBe(
 				AMSTERDAM_PRIMARY,
 			)
-			expect(v['--nldesign-color-favorite'].toLowerCase()).toBe(
-				favoriteDefault.toLowerCase(),
+			expect(v[UNSET_BY_AMSTERDAM].toLowerCase()).toBe(
+				unsetDefault.toLowerCase(),
 			)
 		},
 	)

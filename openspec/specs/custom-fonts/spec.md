@@ -209,6 +209,7 @@ linked: listed under a design system in `design-systems.json`, or the public sit
 NOT ship a font stylesheet that nothing links.
 
 #### Scenario: Every font stylesheet is linked
+@e2e exclude Which stylesheets the design systems list, no page involved: vitest tests/vitest/fontStylesheetsAreLinked.spec.js (has no font stylesheet outside a design system list and the public site layer; links the opt-in Marianne layer from the set layers; names the retired stylesheet nowhere a reader would follow it)
 
 - GIVEN the stylesheets under `css/` that declare an `@font-face`, the token sets left out
 - WHEN each is looked up in the design systems' stylesheet lists
@@ -216,6 +217,7 @@ NOT ship a font stylesheet that nothing links.
 - AND `css/fonts-conduction.css` is not shipped
 
 #### Scenario: The faces of the retired stylesheet are still served
+@e2e exclude Declarations and files in the package, no page involved: vitest tests/vitest/fontStylesheetsAreLinked.spec.js (still serves the faces the retired stylesheet named)
 
 - GIVEN the nldesign design system is active
 - WHEN a token set names Figtree or IBM Plex Mono

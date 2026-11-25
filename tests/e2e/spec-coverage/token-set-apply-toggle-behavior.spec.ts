@@ -153,16 +153,16 @@ test.describe('token-set-apply-toggle-behavior', () => {
 
 	test(
 		// @e2e openspec/specs/token-set-apply-dialog/spec.md#dialog-closed-with-cancel
-		'Clicking the overlay backdrop cancels the dialog (reverts the dropdown)',
+		'Closing the dialog with its close button cancels it (reverts the dropdown)',
 		async ({ page }) => {
 			const { overlay, select, original, target } = await openApplyDialog(page)
 			// Sanity: the dropdown currently shows the (un-applied) target value.
 			expect(target).not.toBe(original)
 			await expect(select).toHaveValue(target)
 
-			// Click the overlay itself (its own backdrop) — handler cancels when
-			// e.target === overlay.
-			await overlay.click({ position: { x: 4, y: 4 } })
+			// The Tq dialog boards close a dialog with Escape, its round close
+			// button or Cancel; a click on the backdrop does nothing.
+			await overlay.getByRole('button', { name: 'Close', exact: true }).click()
 			await expect(overlay).not.toBeVisible({ timeout: 5_000 })
 
 			// cancelDialog reverts the dropdown to the originally-active token set

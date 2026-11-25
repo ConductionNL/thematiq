@@ -13,7 +13,8 @@ import { test, expect } from '@playwright/test'
 
 import { removeE2eCustomSets } from './_fixtures'
 
-const THEMING_URL = '/settings/admin/theming'
+/** The admin page's own-sets panel; its forms are hidden until it is open. */
+const THEMING_URL = '/settings/admin/theming#own-sets'
 
 const THEME = [
 	'.e2e-theme {',

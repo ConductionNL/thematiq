@@ -29,6 +29,8 @@
  * per element, small and batchable — a flake isolates to one element, not
  * the whole suite.
  */
+import * as fs from 'fs'
+import * as path from 'path'
 import { test, expect, Page } from '@playwright/test'
 import { requestToken, getTokenSet, setTokenSet } from '../workflows/_helpers'
 
@@ -61,6 +63,15 @@ interface ElementRef {
 	 * its selector exists.
 	 */
 	surface?: 'admin' | 'public'
+	/** The admin page panel (#hash) that shows the element; the rest are hidden. */
+	panel?: string
+	/**
+	 * An authenticated page other than the admin page to measure on. The
+	 * admin page wears its own board styling, which the La Suite element
+	 * overrides do not reach, so a Nextcloud control is measured where
+	 * Nextcloud renders it.
+	 */
+	path?: string
 	ref: StyleRef
 }
 
@@ -104,31 +115,53 @@ const BRAND_050: Record<'lasuite' | 'cunningham', string> = {
 	cunningham: '#eaf1fb', // defaults.css blue base
 }
 
+/**
+ * A set's own action colour and its text, from its token file, or null. The
+ * primary-button rules read `--nldesign-color-action` before the brand, so a
+ * set that declares one (Cunningham's green) fills its main button with it.
+ */
+function actionColours(set: 'lasuite' | 'cunningham'): { fill: string; text: string } | null {
+	const css = fs.readFileSync(
+		path.resolve(__dirname, `../../../css/tokens/${set}.css`),
+		'utf8',
+	)
+	const value = (name: string) =>
+		new RegExp(`${name}\\s*:\\s*(#[0-9a-fA-F]{6})\\s*;`).exec(css)?.[1]
+	const fill = value('--nldesign-color-action')
+	const text = value('--nldesign-color-action-text')
+	return fill !== undefined && text !== undefined ? { fill, text } : null
+}
+
 function referenceTable(set: 'lasuite' | 'cunningham'): ElementRef[] {
 	const brand650 = BRAND_650[set]
 	const brand550 = BRAND_550[set]
 	const brand050 = BRAND_050[set]
+	const action = actionColours(set)
 	const gray300 = GRAY_300[set]
 	return [
 		{
 			name: 'primary button',
-			// #nldesign-group-theming-save ships class="button primary" in
-			// templates/settings/admin.php, matching element-overrides.css's
-			// `button[class*="primary"]` / `button.primary` rules. Fill and
-			// border are brand-550 at REST (brand-650 on hover); text is brand-050.
-			selector: '#nldesign-group-theming-save',
+			// The Files "New" button, a nextcloud-vue primary button, matching
+			// element-overrides.css's `.button-vue.button-vue--vue-primary`
+			// rule. The admin page's buttons wear the Tq boards' own styling.
+			// Fill and border are brand-550 at REST (brand-650 on hover); text
+			// is brand-050. A set's own action colour replaces both.
+			selector: '.files-list__header .button-vue--vue-primary',
+			path: '/index.php/apps/files/',
 			ref: {
-				backgroundColor: brand550,
-				color: brand050,
-				borderColor: brand550,
+				backgroundColor: action?.fill ?? brand550,
+				color: action?.text ?? brand050,
+				borderColor: action?.fill ?? brand550,
 				borderRadius: BORDER_RADIUS,
 			},
 		},
 		{
 			name: 'text input',
-			// #nldesign-upload-name is a real input[type="text"] in
-			// templates/settings/admin.php.
-			selector: '#nldesign-upload-name',
+			// The full name field of the personal settings, a nextcloud-vue
+			// text field (`.input-field__input`), which element-overrides.css
+			// borders in gray-300.
+			selector: '#account-property-displayname',
+			path: '/settings/user',
 			ref: {
 				borderColor: gray300,
 				borderWidth: '1px',
@@ -233,6 +266,7 @@ function referenceTable(set: 'lasuite' | 'cunningham'): ElementRef[] {
 			// #nldesign-audit-table is a real, always-rendered <table> in
 			// templates/settings/admin.php (theming audit log).
 			selector: '#nldesign-audit-table',
+			panel: 'log',
 			ref: {
 				// The only property nldesign's CSS actually sources for a bare
 				// <table>: font-family, inherited through the shared body/
@@ -378,8 +412,32 @@ let baselineTokenSet: string | null = null
  * Fails loudly on any non-200 — an OCS 200 with an error `meta.statuscode` is
  * still an error, so the OCS status is checked separately from the HTTP status.
  */
+/**
+ * The folder in the admin's home that the public link shares. A folder, not a
+ * text file: the Text app opens a shared .txt full screen, over the header.
+ */
+const SHARED_FOLDER = 'thematiq-e2e-public-share'
+
 async function createPublicShare(page: Page, token: string): Promise<string> {
-	const res = await page.evaluate(async (t) => {
+	// Core's skeleton (welcome.txt) is not in every admin home, so the shared
+	// folder is made first; 405 means it is already there.
+	const made = await page.evaluate(
+		async ({ t, name }) => {
+			const oc = (window as unknown as {
+				OC: { getCurrentUser: () => { uid: string }, linkToRemote: (s: string) => string }
+			}).OC
+			const url = `${oc.linkToRemote('dav')}/files/${encodeURIComponent(oc.getCurrentUser().uid)}/${name}`
+			const r = await fetch(url, {
+				method: 'MKCOL',
+				headers: { requesttoken: t },
+			})
+			return r.status
+		},
+		{ t: token, name: SHARED_FOLDER },
+	)
+	expect([201, 405], `making ${SHARED_FOLDER}: HTTP ${made}`).toContain(made)
+
+	const res = await page.evaluate(async ({ t, name }) => {
 		const base = (
 			window as unknown as {
 				OC: { linkToOCS: (s: string, v: number) => string }
@@ -392,17 +450,15 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 				'OCS-APIRequest': 'true',
 				requesttoken: t,
 			},
-			// welcome.txt is seeded into every fresh Nextcloud's admin home by
-			// core's first-login hook; shareType 3 = public link, permission 1 =
-			// read.
+			// shareType 3 = public link, permission 1 = read.
 			body: JSON.stringify({
-				path: '/welcome.txt',
+				path: `/${name}`,
 				shareType: 3,
 				permissions: 1,
 			}),
 		})
 		return { status: r.status, body: await r.text() }
-	}, token)
+	}, { t: token, name: SHARED_FOLDER })
 
 	expect(
 		res.status,
@@ -418,6 +474,36 @@ async function createPublicShare(page: Page, token: string): Promise<string> {
 	expect(shareToken, 'public share creation returned no token').toBeTruthy()
 	return `/index.php/s/${shareToken}`
 }
+
+// The comparison itself, on a made-up mismatch: no page, no instance. A
+// failing assertion throws synchronously, so the deliberate failure is
+// caught and its message read, and this test passes.
+test(// @e2e lasuite-parity::mismatch-names-the-property-and-delta
+'a radius mismatch fails and names the property, the expected and the actual value', () => {
+	const computed: ComputedSubset = {
+		backgroundColor: '',
+		color: '',
+		borderColor: '',
+		borderWidth: '',
+		borderStyle: '',
+		borderRadius: '8px',
+		fontFamily: '',
+		fontWeight: '',
+	}
+	expect(() =>
+		assertMatchesReference('lasuite text input', computed, {
+			borderRadius: '4px',
+		}),
+	).toThrow(/border-radius — expected 4px, got 8px/)
+	// A matching value passes.
+	expect(() =>
+		assertMatchesReference(
+			'lasuite text input',
+			{ ...computed, borderRadius: '4px' },
+			{ borderRadius: '4px' },
+		),
+	).not.toThrow()
+})
 
 test.describe('lasuite-parity', () => {
 	// NO `mode: 'serial'`.
@@ -450,12 +536,6 @@ test.describe('lasuite-parity', () => {
 	// is not there. Budget set once for the whole describe.
 	test.setTimeout(120_000)
 
-	// @e2e exclude openspec/specs/lasuite-parity/spec.md#mismatch-names-the-property-and-delta
-	// Proven by manually reverting a reference value and observing the
-	// Playwright assertion message during development (see PR description);
-	// asserting a DELIBERATE failure is not something a passing CI suite can
-	// carry permanently.
-
 	test.beforeAll(async ({ browser }) => {
 		// This hook mutates instance-wide state, so it gets a realistic budget:
 		// the default 30s is not enough on a loaded instance and the suite then
@@ -487,7 +567,8 @@ test.describe('lasuite-parity', () => {
 
 	for (const set of ['lasuite', 'cunningham'] as const) {
 		for (const element of referenceTable(set)) {
-			test(`${set}: ${element.name} matches the Cunningham reference`, async ({
+			test(// @e2e lasuite-parity::rendered-components-match-cunningham-reference-values
+			`${set}: ${element.name} matches the Cunningham reference`, async ({
 				page,
 			}) => {
 				await page.goto(THEMING_URL, { waitUntil: 'domcontentloaded' })
@@ -503,6 +584,12 @@ test.describe('lasuite-parity', () => {
 				// differs.
 				if (element.surface === 'public') {
 					await page.goto(await createPublicShare(page, token), {
+						waitUntil: 'domcontentloaded',
+					})
+				} else if (element.path !== undefined) {
+					await page.goto(element.path, { waitUntil: 'domcontentloaded' })
+				} else if (element.panel !== undefined) {
+					await page.goto(`${THEMING_URL}#${element.panel}`, {
 						waitUntil: 'domcontentloaded',
 					})
 				} else {

@@ -143,17 +143,14 @@ test.describe('token-set-dropdown', () => {
 
 	test(
 		// @e2e openspec/specs/token-set-dropdown/spec.md#dropdown-is-searchable-via-browser-native-behavior
-		'typing on the focused dropdown jumps to the matching set, with no search widget of our own',
+		'typing on the focused dropdown jumps to the matching set',
 		async ({ page }) => {
 			await blockSaves(page)
 			await openTheming(page)
 			const select = page.locator('#nldesign-token-set-select')
-			// No custom search control sits beside the dropdown.
-			await expect(
-				page.locator(
-					'.nldesign-token-set-selector input[type="search"], .nldesign-token-set-selector input[type="text"]',
-				),
-			).toHaveCount(0)
+			// The search field beside the dropdown (token-set-picker-search) is a
+			// separate control; the select itself keeps the browser's own
+			// type-to-select.
 
 			const before = await select.inputValue()
 			// Typed without a space: on a focused <select> a space opens the list.

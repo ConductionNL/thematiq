@@ -21,6 +21,7 @@ element-overrides layers read (e.g. `--lasuite-color-brand-650`, `--lasuite-bord
 `--lasuite-spacing-md`) to their canonical `--lasuite--*` tokens.
 
 #### Scenario: All 1167 tokens generated with reversible names
+@e2e exclude Generator output, no page involved: vitest tests/vitest/generateLasuiteTokens.spec.js (emits one --lasuite--* token for every --c--* declaration; renameCToLasuite is reversible) and npm run test:lasuite-tokens
 
 - GIVEN `@openfun/cunningham-tokens` is installed as a devDependency
 - WHEN `node scripts/generate-lasuite-tokens.mjs` runs
@@ -38,6 +39,7 @@ element-overrides layers read (e.g. `--lasuite-color-brand-650`, `--lasuite-bord
 - AND the file MUST NOT hard-code the violet deployment values (those live in the brand-override layer)
 
 #### Scenario: Provenance header and compatibility aliases present
+@e2e exclude A file header and alias block, no page involved: vitest tests/vitest/generateLasuiteTokens.spec.js (records the source package, version and token count; appends the closed compatibility-alias block) and PHPUnit tests/Unit/LasuiteDesignStackTest.php (testGeneratedDefaultsCarryProvenanceHeader)
 
 - GIVEN the generated `defaults.css`
 - WHEN its header and trailing alias block are read
@@ -99,6 +101,7 @@ behaviour.
 - AND activating `lasuite` afterwards MUST still resolve to the violet `#4844AD`
 
 #### Scenario: Sibling reuses the generated base
+@e2e exclude The bundles as declared in design-systems.json, no page involved: PHPUnit tests/Unit/LasuiteDesignStackTest.php (testLasuiteDesignSystemResolvesFiveStylesheetsInOrder, testCunninghamDesignSystemResolvesFourStylesheetsWithoutBrandOverride)
 
 - GIVEN both the `lasuite` and `cunningham` design systems are declared
 - WHEN their bundles are inspected
@@ -118,6 +121,7 @@ in the "not overridden" category with their `REQ-CSS-007` reason. No mapping may
 `var()` reference (REQ-CSS-005).
 
 #### Scenario: Every audited variable is accounted for
+@e2e exclude A scan of bridge.css, no page involved: PHPUnit tests/Unit/LasuiteDesignStackTest.php (testBridgeAccountsForEveryAuditedColorVariable, testBridgeNeverSetsDarkModeCompatibilityVariables) and npm run test:lasuite-bridge-coverage
 
 - GIVEN the audited Nextcloud `--color-*` variable set (as enumerated in
   `css/systems/nldesign/overrides.css` per the `nextcloud-variable-mapping` spec)
@@ -128,6 +132,7 @@ in the "not overridden" category with their `REQ-CSS-007` reason. No mapping may
   overrides
 
 #### Scenario: Coverage is test-asserted
+@e2e exclude The scenario is about the coverage check itself: npm run test:lasuite-bridge-coverage (tests/css/check-lasuite-bridge-coverage.js) fails and lists the missing variable names
 
 - GIVEN a coverage check comparing the audited variable name set against `bridge.css`
 - WHEN it runs
@@ -182,6 +187,7 @@ bump is therefore a deliberate `package.json` version change plus a regenerate-a
 this guard.
 
 #### Scenario: Committed file matches the generator
+@e2e exclude Build-time drift check, no page involved: npm run test:lasuite-tokens (scripts/generate-lasuite-tokens.mjs --check)
 
 - GIVEN the pinned `@openfun/cunningham-tokens` version is installed
 - WHEN the drift check runs
@@ -189,6 +195,7 @@ this guard.
 - AND the check MUST exit zero
 
 #### Scenario: Drift is caught
+@e2e exclude Build-time drift check, no page involved: npm run test:lasuite-tokens (scripts/generate-lasuite-tokens.mjs --check) prints the first differing tokens and exits non-zero
 
 - GIVEN a hand edit to a token value in the committed `defaults.css`, or an un-regenerated upstream
   version bump

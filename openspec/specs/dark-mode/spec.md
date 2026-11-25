@@ -290,6 +290,7 @@ carrying an explicit light choice. Dark variants exclusively FOLLOW the theme st
 already established (user choice or OS preference).
 
 #### Scenario: No enforce_theme usage in the codebase
+@e2e exclude A search of the source, no page involved: vitest tests/vitest/noEnforceTheme.spec.js (has no enforce_theme or setEnabledThemes in its source)
 
 - GIVEN the implemented change
 - WHEN the app source is searched for `enforce_theme` and `setEnabledThemes`

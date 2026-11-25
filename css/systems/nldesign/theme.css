@@ -700,9 +700,14 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
  * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
  * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
  * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
- * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+ * `body` reach 0,3,1. The third is core's skip link, whose
+ * `.button.primary.skip-navigation:focus-visible` ring (0,4,0) reads
+ * --color-main-text, which the primary-button focus scope sets to the
+ * translucent focus colour. tests/vitest/buttonFocusRing.spec.js holds every
+ * system. */
 *:focus-visible,
-body .button-vue.button-vue:focus-visible {
+body .button-vue.button-vue:focus-visible,
+body .button.primary.skip-navigation:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;

@@ -30,6 +30,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 /** NcButton's scoped ring: `.button-vue[data-v-…]:focus-visible`. */
 const NC_BUTTON_RING_SPECIFICITY = [0, 3, 0]
 
+/** Core's skip link ring: `.button.primary.skip-navigation:focus-visible`. */
+const SKIP_LINK_RING_SPECIFICITY = [0, 4, 0]
+
 /** Each design system's ring stylesheets (cunningham shares lasuite's bridge). */
 const RING_STYLESHEETS = {
 	nldesign: ['css/systems/nldesign/theme.css'],
@@ -137,6 +140,19 @@ describe('NcButton draws the design system focus ring (#1050)', () => {
 							/\.button-vue\b/.test(s)
 							&& /:focus-visible\b/.test(s)
 							&& beats(specificity(s), NC_BUTTON_RING_SPECIFICITY),
+					)
+					expect(
+						winners,
+						`selectors: ${rule.selectors.join(', ')}`,
+					).not.toEqual([])
+				})
+
+				it(`${file} (${context(rule)}) lists a skip link selector that beats core's skip link ring`, () => {
+					const winners = rule.selectors.filter(
+						(s) =>
+							/\.skip-navigation\b/.test(s)
+							&& /:focus-visible\b/.test(s)
+							&& beats(specificity(s), SKIP_LINK_RING_SPECIFICITY),
 					)
 					expect(
 						winners,
