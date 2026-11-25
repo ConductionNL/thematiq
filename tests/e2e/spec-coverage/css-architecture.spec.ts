@@ -360,20 +360,25 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 						.getPropertyValue('font-family')
 						.replace(/['"]/g, '')
 					const src = style.getPropertyValue('src')
+					const range = style.getPropertyValue('unicode-range')
 					const urls = [
 						...src.matchAll(
 							/url\("?([^")]+)"?\)\s*format\("?([\w-]+)"?\)/g,
 						),
 					].map((m) => ({ url: new URL(m[1], base).href, format: m[2] }))
-					return { family, src, urls }
+					return { family, src, range, urls }
 				})
 		})
 		expect(faces, 'systems/nldesign/fonts.css must be loaded').not.toBeNull()
 		// Every Fira Sans face: at least the four the requirement names, plus
 		// the 500 and 600 weights #1049 added, and each must follow the rule
 		// below. Source Sans 3 (#899, the (EXAMPLE) Gemeente set) ships woff2
-		// only, so the rule is checked for Fira Sans alone.
-		const fira = (faces ?? []).filter((f) => f.family === 'Fira Sans')
+		// only, so the rule is checked for Fira Sans alone. The faces limited to
+		// U+2E31 only add the word separator dot Fira Sans lacks, from one
+		// OpenType file, and are not a weight of the family.
+		const fira = (faces ?? []).filter(
+			(f) => f.family === 'Fira Sans' && /U\+2E31/i.test(f.range) === false,
+		)
 		expect(fira.length).toBeGreaterThanOrEqual(4)
 		for (const face of fira) {
 			expect(face.src.trim().startsWith('local(')).toBe(true)
