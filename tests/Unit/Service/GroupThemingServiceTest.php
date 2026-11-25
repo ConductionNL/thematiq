@@ -596,6 +596,39 @@ class GroupThemingServiceTest extends TestCase {
 	}//end testSecondResolveHitsCacheWithoutGroupLookup()
 
 	/**
+	 * A user in no mapped group follows a changed instance default on the
+	 * next request. Changing the default bumps no mapping generation, so a
+	 * cached default would keep the previous set until the TTL ran out.
+	 *
+	 * @return void
+	 */
+	public function testUnmappedUserFollowsAChangedDefaultDespiteTheCache(): void {
+		$config = $this->fakeConfig(
+			initial: [
+				'group_token_sets' => json_encode([['group' => 'gemeente-a', 'tokenSet' => 'amsterdam']]),
+				'token_set' => 'nextcloud',
+			]
+		);
+
+		$groupManager = $this->createMock(originalClassName: IGroupManager::class);
+		$groupManager->expects($this->once())->method('getUserGroupIds')->willReturn(['some-other-group']);
+
+		$userSession = $this->createMock(originalClassName: IUserSession::class);
+		$userSession->method('getUser')->willReturn($this->fakeUser(uid: 'carol'));
+
+		[$service] = $this->buildService(
+			config: $config,
+			groupManager: $groupManager,
+			userSession: $userSession,
+			tokenSetService: $this->fakeTokenSetService(available: ['amsterdam'])
+		);
+
+		$this->assertSame(expected: 'nextcloud', actual: $service->resolveTokenSetForRequest());
+		$config->setAppValue('thematiq', 'token_set', 'utrecht');
+		$this->assertSame(expected: 'utrecht', actual: $service->resolveTokenSetForRequest());
+	}//end testUnmappedUserFollowsAChangedDefaultDespiteTheCache()
+
+	/**
 	 * Saving a changed mapping bumps the generation, invalidating every
 	 * cached resolution: the very next resolve re-queries group membership.
 	 *
