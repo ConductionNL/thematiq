@@ -32,6 +32,7 @@ import {
 	stripComments,
 	stylesheetPaths,
 } from './_token-css'
+import { coreLogoUploaded } from './_fixtures'
 
 const THEMING_URL = '/settings/admin/theming'
 
@@ -151,12 +152,16 @@ test.describe('vng-token-set', () => {
 			expect(declared.size).toBeGreaterThanOrEqual(40)
 
 			const live = await rootVars(page, [...declared.keys()])
+			// An uploaded core logo wins over the set's (REQ-TPLAT-001).
+			const logo = (await coreLogoUploaded(page))
+				? '/apps/theming/image/logo'
+				: 'vng.svg'
 			const mismatches: string[] = []
 			for (const [name, value] of declared) {
 				if (name === '--nldesign-logo-url') {
 					// The logo layer re-declares it as an absolute URL right after
 					// the token file (CssInjectionService::logoUrlLayer()).
-					expect(live[name]).toContain('vng.svg')
+					expect(live[name]).toContain(logo)
 					continue
 				}
 				if (normaliseCss(live[name]) !== normaliseCss(value)) {
