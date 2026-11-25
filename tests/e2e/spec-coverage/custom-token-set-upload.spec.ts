@@ -145,7 +145,7 @@ test.describe('custom-token-set-upload', () => {
 			name: 'promo.css',
 			mimeType: 'text/css',
 			buffer: Buffer.from(
-				':root { --nldesign-color-primary: #154273; --nldesign-logo-url: url(https://cdn.example.org/zd.svg); }',
+				':root { --nldesign-color-primary: #154273; --nldesign-color-link: javascript:alert(1); }',
 			),
 		})
 
