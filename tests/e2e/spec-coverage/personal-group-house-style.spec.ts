@@ -7,8 +7,11 @@
  * /settings/user/theming under Nextcloud's own theme settings, with the thematiq chip, a
  * card per group and a contrast pill per set; someone without such a group does not.
  *
- * The fixture is a group of its own with the non-admin fixture user as its subadmin and one
- * delegated mapping entry; the mapping as it was is put back afterwards and the group removed.
+ * The fixture is a group of its own with the non-admin fixture user as its subadmin, one
+ * delegated mapping entry, and the group granted "House style of my groups" under
+ * Administration privileges: the per-group-theming spec has the endpoints require that grant
+ * (`#[AuthorizedAdminSetting]`), and its scenario's subadmin holds it. The mapping and the
+ * grants as they were are put back afterwards and the group removed.
  */
 import { test, expect, type Page } from '@playwright/test'
 
@@ -51,9 +54,62 @@ async function ocs(
 	)
 }
 
+/** The delegated setting the my-groups endpoints require. */
+const GRANT_CLASS = 'OCA\\Thematiq\\Settings\\GroupHouseStyle'
+const ADMIN_USER = process.env.NC_ADMIN_USER ?? 'admin'
+const ADMIN_PASS = process.env.NC_ADMIN_PASS ?? 'admin'
+
+/** The groups granted the delegated setting now, read from the Administration privileges page. */
+async function grantedGroups(page: Page): Promise<string[]> {
+	await page.goto('/settings/admin/admindelegation', {
+		waitUntil: 'domcontentloaded',
+	})
+	return page.evaluate((cls) => {
+		const el = document.querySelector<HTMLInputElement>(
+			'#initial-state-settings-authorized-groups',
+		)
+		const all: Array<{ group_id: string; class: string }> = el
+			? JSON.parse(atob(el.value))
+			: []
+		return all.filter((g) => g.class === cls).map((g) => g.group_id)
+	}, GRANT_CLASS)
+}
+
+/**
+ * Grant the delegated setting to exactly `gids`. The endpoint asks a strict password
+ * confirmation, which Nextcloud reads from the Basic authorization header.
+ */
+async function setGrantedGroups(page: Page, gids: string[]): Promise<number> {
+	return page.evaluate(
+		async ({ gids, cls, user, pass }) => {
+			const OC = (window as any).OC
+			const res = await fetch(
+				OC.generateUrl(
+					'/apps/settings/settings/authorizedgroups/saveSettings',
+				),
+				{
+					method: 'POST',
+					headers: {
+						requesttoken: OC.requestToken,
+						'Content-Type': 'application/json',
+						Authorization: 'Basic ' + btoa(user + ':' + pass),
+					},
+					body: JSON.stringify({
+						newGroups: gids.map((gid) => ({ gid, displayName: gid })),
+						class: cls,
+					}),
+				},
+			)
+			return res.status
+		},
+		{ gids, cls: GRANT_CLASS, user: ADMIN_USER, pass: ADMIN_PASS },
+	)
+}
+
 test.describe('house style of my groups in the personal Appearance section', () => {
 	test.describe.configure({ mode: 'serial' })
 	let before: unknown[] = []
+	let grantedBefore: string[] = []
 
 	test.beforeAll(async ({ browser }) => {
 		const context = await adminContext(browser)
@@ -82,6 +138,13 @@ test.describe('house style of my groups in the personal Appearance section', () 
 			],
 		})
 		expect(saved.status).toBe(200)
+		grantedBefore = await grantedGroups(page)
+		expect(
+			await setGrantedGroups(page, [
+				...grantedBefore.filter((gid) => gid !== GROUP),
+				GROUP,
+			]),
+		).toBe(200)
 		await context.close()
 	})
 
@@ -90,6 +153,10 @@ test.describe('house style of my groups in the personal Appearance section', () 
 		const page = await context.newPage()
 		await page.goto('/settings/admin/theming', { waitUntil: 'domcontentloaded' })
 		await api(page, 'POST', `${APP}/settings/group-theming`, { mapping: before })
+		await setGrantedGroups(
+			page,
+			grantedBefore.filter((gid) => gid !== GROUP),
+		)
 		await ocs(page, 'DELETE', `users/${NONADMIN_USER}/subadmins`, {
 			groupid: GROUP,
 		})
