@@ -94,9 +94,9 @@ test.describe('component-tokens', () => {
 			await openThemedPage(page)
 			const defaults = await servedCss(page, DEFAULTS)
 			const bridge = await servedCss(page, BRIDGE)
-			// Rijkshuisstijl is a real set on this design system that defines
-			// no --utrecht-* token at all.
-			const tokens = await servedCss(page, 'tokens/rijkshuisstijl.css')
+			// Zuiddrecht is a real set on this design system that defines no
+			// --utrecht-* token at all (Rijkshuisstijl v18 now ships them).
+			const tokens = await servedCss(page, 'tokens/zuiddrecht.css')
 			expect(declarations(tokens, '--utrecht-').size).toBe(0)
 
 			// What defaults.css alone resolves the token to.
@@ -133,7 +133,7 @@ test.describe('component-tokens', () => {
 			await openThemedPage(page)
 			const defaults = await servedCss(page, DEFAULTS)
 			const bridge = await servedCss(page, BRIDGE)
-			const tokens = await servedCss(page, 'tokens/rijkshuisstijl.css')
+			const tokens = await servedCss(page, 'tokens/zuiddrecht.css')
 
 			const declared = declarations(
 				defaults,
@@ -145,10 +145,11 @@ test.describe('component-tokens', () => {
 						'--nldesign-component-button-primary-action-background-color',
 					) ?? '',
 				),
-			).toBe('var(--nldesign-color-primary)')
+			).toBe('var(--nldesign-color-action,var(--nldesign-color-primary))')
 
-			// No organisation token overrides it: Rijkshuisstijl defines no
-			// --utrecht-button-primary-action-background-color.
+			// No organisation token overrides it: Zuiddrecht defines neither
+			// --utrecht-button-primary-action-background-color nor an action
+			// colour, so the default lands on the primary.
 			const v = await isolatedCascade(
 				page,
 				[defaults, bridge, tokens],
@@ -157,7 +158,7 @@ test.describe('component-tokens', () => {
 					'--nldesign-color-primary',
 				],
 			)
-			expect(v['--nldesign-color-primary'].toLowerCase()).toBe('#154273')
+			expect(v['--nldesign-color-primary'].toLowerCase()).toBe('#3669a5')
 			expect(
 				v['--nldesign-component-button-primary-action-background-color'],
 			).toBe(v['--nldesign-color-primary'])

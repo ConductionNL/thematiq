@@ -137,7 +137,7 @@ test.describe('the example municipality set', () => {
 				).toBeGreaterThan(0)
 				for (const url of sourceSans) {
 					expect(new URL(url).pathname, url).toContain(
-						'/thematiq/css/fonts/',
+						'/thematiq/css/systems/nldesign/fonts/',
 					)
 				}
 				for (const url of fonts) {

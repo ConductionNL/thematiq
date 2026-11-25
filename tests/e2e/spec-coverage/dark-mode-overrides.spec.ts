@@ -12,14 +12,16 @@
  * scheme, as dark-mode-scope.spec.ts does. The colour is read off an element
  * in the page, where the theme scopes apply.
  *
- * GLOBAL STATE: Zuiddrecht is made the active set with its overrides emptied
- * (activateTokenSet), then given one light and one dark primary colour; the
- * dark-variants toggle is flipped. Everything is put back afterwards.
+ * GLOBAL STATE: the dark probe set (_dark-probe-set.ts) is made the active
+ * set with its overrides emptied (activateTokenSet), then given one light and
+ * one dark primary colour; the dark-variants toggle is flipped with that set
+ * active. Everything is put back afterwards.
  */
 import { test, expect, type Page } from '@playwright/test'
 import { activateTokenSet, openThemedPage } from './_token-css'
 import { adminContext } from './_fixtures'
 import { requestToken } from '../workflows/_helpers'
+import { DARK_PROBE_SET } from './_dark-probe-set'
 
 const THEMING_URL = '/settings/admin/theming'
 const LIGHT = '#154273'
@@ -107,7 +109,7 @@ test.describe('dark overrides for every dark user', () => {
 	let restore: (() => Promise<void>) | null = null
 
 	test.beforeAll(async ({ browser }) => {
-		restore = await activateTokenSet(browser, 'zuiddrecht')
+		restore = await activateTokenSet(browser, DARK_PROBE_SET)
 		const ctx = await adminContext(browser)
 		const page = await ctx.newPage()
 		try {
@@ -156,6 +158,20 @@ test.describe('dark overrides for every dark user', () => {
 })
 
 test.describe('the dark variants toggle', () => {
+	// The instance default, the stock set, links no dark layer at all, so a
+	// set with a dark variant is made active for the toggle to switch.
+	let restore: (() => Promise<void>) | null = null
+
+	test.beforeAll(async ({ browser }) => {
+		restore = await activateTokenSet(browser, DARK_PROBE_SET)
+	})
+
+	test.afterAll(async () => {
+		if (restore !== null) {
+			await restore()
+		}
+	})
+
 	test(
 		// @e2e dark-mode::toggle-disables-dark-variants
 		'off, no page links a dark stylesheet, and the files stay served',

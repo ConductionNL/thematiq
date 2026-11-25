@@ -39,7 +39,7 @@
  *
  * GLOBAL STATE: a dark stylesheet only loads for a set on a design system
  * that ships a generated dark variant, and the instance's own default is the
- * stock `nextcloud` set, which has neither. So Zuiddrecht is made the active
+ * stock `nextcloud` set, which has neither. So the dark probe set is made the active
  * set (activateTokenSet) for the file, and the previous set and its overrides
  * are put back afterwards. The probe tokens are still read from whatever dark
  * file that set loads, nothing is hardcoded.

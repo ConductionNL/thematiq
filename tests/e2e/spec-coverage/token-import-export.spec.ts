@@ -75,7 +75,7 @@ test.describe('token-import-export', () => {
 		const dialog = page.locator('#nldesign-import-overrides-overlay')
 		await expect(dialog).toBeVisible()
 		await expect(dialog).toContainText(
-			'replace every value saved for this theme',
+			'replace every saved value of this theme',
 		)
 
 		await dialog.locator('.nldesign-dialog-cancel').click()
